@@ -388,7 +388,7 @@
 	function addRow(type) { 
 		if (type=='lab') {
 			num = labNum;
-		} else if (type=='func') {
+		} else if (type=='func1') {
 			num = funcNum;
 		}
 		if (document.getElementById(type+'Servicies').value==""){
@@ -453,6 +453,177 @@
 		}
 	
 	}
+	function checkError(aErrorList) {
+		for (var i=0;i<aErrorList.length;i++) {
+			if (aErrorList[i][3]=="isEmptyUnit") {
+				if ($(aErrorList[i][0]).value==""){
+					alert("Обязательное поле: "+aErrorList[i][2]) ;
+					//alert(aErrorList[i][0]+aErrorList[i][1]);
+					$(aErrorList[i][0]+aErrorList[i][1]).focus() ;
+					return true;
+				}
+			}
+		}
+		return false ;
+	}
+	
+	function prepareLabRow(type) {
+		var fldList,reqList =[];
+		if (type=='func') {
+			var error = [
+							[type+'Servicies','Name', 'Услуга!','isEmptyUnit']
+					      	,[type+'CalTime','', 'Дата и время услуги!','isEmptyUnit']
+						  
+						];
+			num = funcNum;
+			fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
+			,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
+		] ;
+		
+		}
+		if (checkError(error)) return ;
+		// Проверим на дубли 
+		var checkNum = 1;
+		while (checkNum<=num) {
+			if (document.getElementById(type+'Service'+checkNum)) {
+				if ($(type+'CalTime')) {
+					if ($(type+'CalTime').value == $(type+'CalTime'+checkNum).value) {
+						alert ("На это время уже назначена запись!");
+						return;
+					}
+				}
+				if ($(type+'Servicies').value==document.getElementById(type+'Service'+checkNum).value){
+					if (confirm("В этом листе назначений уже назначено это исследование, ВЫ УВЕРЕНЫ, что хотите назначить его еще раз?")) {
+						break; 
+					} else {
+						return;
+					}
+				}
+				
+			}
+			checkNum+=1;
+		}
+		var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
+		addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value);
+		addRows(type+":"+ar[0],1);
+	}
+		
+	function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
+		alert ("addROw "+aLabID+":"+ aLabDepartment+":"+ aLabCabinet+":"+ aDateStart+":"+ aWCT+":"+ comments);
+		PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
+	}
+	function deletePrescription(aMedService, aWCT) {
+		PrescriptionService.removePrescriptionFromListWCT($('prescriptionList').value,aMedService,aWCT);
+	}
+	
+	function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
+		return "<input id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='hidden' />"
+	}
+	function textInput(aLabel,aType,aFld,aNum,aValue,aDefaultValue,aSize) {
+		return "<span>"+aLabel+"</span><input "+(+aSize>0?"size="+aSize:"")+" id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='text' />"
+	}
+	function spanTag(aText,aValue,aDefaultValue) {
+		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
+	}
+	
+	function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId) {
+		var next = true ;
+		var l="",lAll="",isDoubble=0 ;
+	for (var i=0;i<aReqFldId.length;i++) {
+		if ($(aType+aFldList[aReqFldId[i]][0]+aTypeNum).value=="") {next=false ; break;}  
+	}
+	if (next) {
+		//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
+		for (var i=0;i<aFldList.length;i++) {
+			var val = aFldList[i][0]==""?"":$(aType+aFldList[i][0]+aTypeNum).value ;
+			val = val.replace(":","-");
+			if (i!=0) {
+				l += ":" ;lAll+=":";
+			} 
+			if (aCheckId==i) {
+				if ($(aCheckFld).value==val) {
+	            	isDoubble=1;	
+	            }						
+			}
+			if (aFldList[i][1]==1) { l += val ; }
+			lAll+=val ;
+			if (i==(aFldList.length-1)) {l += "#" ;lAll+="#" ;}
+		}
+	}
+	return [l,lAll,isDoubble] ;
+	}
+	function addRows(aResult,aFocus) {
+		var resultRow = aResult.split(":");
+		/*
+		0 - ms.type
+		1 - ms.ID 2 - ms. code+name
+		3 - date
+		4 - cabinetcode           5 - cabinetname
+		6 - departmentintakecode  7 - departmentintakename (for lab)
+		8 - timecode              9 - timename (for func)
+		*/
+		var type = resultRow[0];
+		var id = resultRow[1]; 
+		var name = resultRow[2];
+		var date = resultRow[3]!=""?resultRow[3]:textDate;
+		var cabinet = resultRow[4]?resultRow[4]:"";
+		var cabinetName = resultRow[5]?resultRow[5]:"";
+		
+		if (type=='LABSURVEY' || type=='lab') {
+			type='lab'; num = labNum;
+		} else if (type=='DIAGNOSTIC' || type=='func') {
+			type='func'; num = funcNum; 
+		} else if (type=='surg') {
+			num = surgNum;
+		} else if (type='hosp') {
+			num = hospNum;
+		}
+		num+=1;
+	    
+ 		var tbody = document.getElementById('add'+type+'Elements');
+	    var row = document.createElement("TR");
+		row.id = type+"Element"+num;
+	    tbody.appendChild(row);
+	
+	    // Создаем ячейки в вышесозданной строке и добавляем тх 
+	    var td1 = document.createElement("TD"); td1.colSpan="1"; td1.align="right";
+	    var td2 = document.createElement("TD"); td2.colSpan="3";
+	    var td3 = document.createElement("TD");
+	    row.appendChild(td1); row.appendChild(td2); row.appendChild(td3);
+	   
+	    // Наполняем ячейки 
+	    //var dt2="<input id='"+type+"Cabinet"+num+"' name='"+type+"Cabinet"+num+"' value='"+cabinet+"' type='hidden'  />";
+	    
+	  	td1.innerHTML = "";//textInput("Дата",type,"Date",num,resultRow[3],date,10) ;
+	    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
+	   	if (type=="lab") {
+	   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
+	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,cabinet,"");
+	   		labNum = num;
+	   	} else if (type=="func"){
+		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
+	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[3]+' '+resultRow[9],"") ;
+	   		funcNum = num;
+	   		$(type+'Cabinet').value='';
+			$(type+'CabinetName').value='';
+	   	} else if (type=='surg') {
+	   		surgNum=num;
+	   		td1.innerHTML = spanTag("Дата",resultRow[3]+" "+resultRow[9],"") ;
+	   		td1.colSpan="1";
+	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Операционная",resultRow[5],"");
+	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"");
+	   		$(type+'CalTime').value='';
+	   		$(type+'CalTimeName').value='';
+	   
+	   	}
+	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);deletePrescription("+resultRow[1]+","+resultRow[8]+")' value='Удалить' />";
+	   	//new dateutil.DateField($(type+'Date'+num));
+		
+		$(type+'Servicies').value='';
+		$(type+'ServiciesName').value='';
+		if (aFocus) $(type+'ServiciesName').focus() ;
+}
+	
 			</script>
 			</msh:ifFormTypeIsNotView>
 			</tiles:put>
@@ -523,31 +694,8 @@
     		
 
         </msh:row>
-         <msh:panel>
-
-        <msh:row>
-        <tr><td>
+        <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
         
-
-        <table id="funcTable">
-                <msh:row>
-        	 <msh:separator label="Функциональные исследования" colSpan="10"/>
-        </msh:row>
-        <tbody id="addfuncElements">
-    		<tr>
-    		
-			<msh:textField property="funcDate" label="Дата " size="10"/>
-			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
-			<td>        	
-            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
-            </td>
-			</tr>
-			<tr>
-			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" /></tr>
-       		</tbody>
-    		</table>
-    		</td></tr></msh:row>
-        </msh:panel>
         </msh:ifFormTypeIsCreate>
          <msh:ifFormTypeAreViewOrEdit formName="pres_servicePrescriptionForm">
          <msh:row>

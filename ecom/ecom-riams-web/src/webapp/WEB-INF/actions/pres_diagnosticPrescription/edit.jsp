@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+ <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -8,7 +8,7 @@
 
 	<tiles:put name="javascript" type="string">
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
-	<msh:ifFormTypeIsNotView formName="pres_operationPrescriptionForm">
+	<msh:ifFormTypeIsNotView formName="pres_diagnosticPrescriptionForm">
 	<script type="text/javascript">
 	
 	var currentDate = new Date;
@@ -36,8 +36,8 @@
 		
 	}
 
-	var oldaction = document.forms['pres_operationPrescriptionForm'].action ;
-	document.forms['pres_operationPrescriptionForm'].action="javascript:cancell()";
+	var oldaction = document.forms['pres_diagnosticPrescriptionForm'].action ;
+	document.forms['pres_diagnosticPrescriptionForm'].action="javascript:cancell()";
 	
 	var num=0;
 	var labNum=0;
@@ -153,6 +153,17 @@
 					  
 					];
 		num = surgNum;
+		fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
+		,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
+	] ;
+	
+	} else if (type=='func') {
+		var error = [
+						[type+'Servicies','Name', 'Услуга!','isEmptyUnit']
+				      	,[type+'CalTime','', 'Дата и время услуги!','isEmptyUnit']
+					  
+					];
+		num = funcNum;
 		fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
 		,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
 	] ;
@@ -301,15 +312,15 @@ function deletePrescription(aMedService, aWCT) {
 		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
 	}
 	
-			</script>
+				</script>
 			</msh:ifFormTypeIsNotView>
-			</tiles:put>
+		</tiles:put>
 
   <tiles:put name="body" type="string">
     <!-- 
-    	  - Назначение на операцию
+    	  - Назначение медицинской услуги
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_operationPrescription.do" defaultField="id" title="Назначение операции">
+    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="id" title="Назначение диагностического исследования/консультации">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
@@ -318,12 +329,12 @@ function deletePrescription(aMedService, aWCT) {
          <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
           <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
         </msh:row>
-         <msh:ifFormTypeIsView formName="pres_operationPrescriptionForm">
+         <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm">
       <msh:row>
-    			<msh:autoComplete property="medService" label="Исследование" vocName="surgicalOperations" horizontalFill="true" size="90" viewOnlyField="true" />
+    			<msh:autoComplete property="medService" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" viewOnlyField="true" />
     		 </msh:row>
 			 <msh:row>
-				 <msh:autoComplete property="prescriptCabinet" label="Операционная"  viewOnlyField="true" vocName="operationRoom" size='20' horizontalFill="true" />
+				 <msh:autoComplete property="prescriptCabinet" label="Кабинет"  viewOnlyField="true" vocName="funcMedServiceRoom" size='20' horizontalFill="true" />
 			</msh:row>
 			<msh:row>
 				 <msh:textField property="planStartDate" size="10" fieldColSpan="1" />
@@ -334,42 +345,55 @@ function deletePrescription(aMedService, aWCT) {
       
     </msh:ifFormTypeIsView>
  <%-- --------------------------------------------------Начало блока "Операции" ------ --%>
-         <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm"> 
-        <msh:panel styleId="tblSurgOperation">
-       	 <msh:row>
-        	<msh:separator label="Операции" colSpan="10"/>
-        </msh:row>
+         <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm"> 
+        <msh:panel>
         <msh:row>
         <tr><td>
-        <table id="surgTable">
-        <tbody id="addsurgElements">
+        <table id="funcTable">
+            <msh:row>
+        	 	<msh:separator label="Функциональные исследования" colSpan="10"/>
+        </msh:row>
+        <tbody id="addfuncElements">
     		<msh:row>
-    			<msh:autoComplete property="surgServicies" label="Исследование" vocName="surgicalOperations" horizontalFill="true" size="90" fieldColSpan="4" />
+    			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
 			 <msh:row>
-				 <msh:autoComplete property="surgCabinet" label="Операционная"  fieldColSpan="4" vocName="operationRoom" size='20' horizontalFill="true" />
+				 <msh:autoComplete property="funcCabinet" label="Кабинет"  fieldColSpan="4" vocName="funcMedServiceRoom" parentAutocomplete="funcServicies" size='20' horizontalFill="true" />
 			</msh:row>
 			<msh:row>
-				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
+				 <msh:autoComplete property="funcCalDate" parentAutocomplete="funcCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
 			</msh:row>
 			<msh:row>
-    			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
+    			 <msh:autoComplete property="funcCalTime" parentAutocomplete="funcCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
     		</msh:row>
 			<msh:row>
 				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
 			</msh:row>
 			<msh:row>
 				<td colspan="4" align="center">        	
-	            	<input type="button" name="subm" onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
+	            	<input type="button" name="subm" onclick="prepareLabRow('func');" value="Создать назначение" tabindex="4" />
 	            </td>
 	        </msh:row>
-           </tbody>
+    		<%-- 
+    		<tr>
+    		
+			<msh:textField property="funcDate" label="Дата " size="10"/>
+			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" />
+			<td>        	
+            <input type="button" name="subm" onclick="addRow('func');" value="+" tabindex="4" />
+            </td>
+			</tr>
+			<tr>
+			<msh:autoComplete property="funcCabinet" label="Кабинет" parentAutocomplete="funcServicies" vocName="funcMedServiceRoom" size='20' fieldColSpan="3" horizontalFill="true" /></tr>
+       		 --%>
+       		 </tbody>
     		</table>
     		</td></tr></msh:row>
+    		 <input type='button' onclick='cancell()' value='Закрыть'>
         </msh:panel>
         </msh:ifFormTypeIsCreate>
         <%-- -- --------------------------------------------------Конец блока "Операции" ------ --%>
-        <msh:ifFormTypeAreViewOrEdit formName="pres_operationPrescriptionForm">
+        <msh:ifFormTypeAreViewOrEdit formName="pres_diagnosticPrescriptionForm">
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
@@ -389,41 +413,35 @@ function deletePrescription(aMedService, aWCT) {
         </msh:row>  
         </msh:ifFormTypeAreViewOrEdit>
         <msh:row><td>
-        <input type='button' onclick='cancell()' value='Закрыть'>
+       
         </td></msh:row>              
         <%--  <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" /> --%> 
       </msh:panel>
     </msh:form>
-    <tags:enter_date name="2" functionSave="prepare1RowByDate"/>
+  <%--   <tags:enter_date name="2" functionSave="prepare1RowByDate"/> --%>
    
     
   </tiles:put>
   <tiles:put name="title" type="string">
-    <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_operationPrescriptionForm" />
+    <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_diagnosticPrescriptionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:ifFormTypeIsView formName="pres_operationPrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
+    <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
       <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">
-        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_operationPrescription" name="Изменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
-        <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_operationPrescription" name="Удалить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+DEL"/>
-      </msh:sideMenu>
-      <msh:sideMenu title="Добавить" guid="0e2ac7-5361-434d-a8a7-1284796f">
-    
-        <msh:sideLink roles="/Policy/Mis/Prescription/PrescriptionFulfilment/Create" params="id" action="/entityParentPrepareCreate-pres_prescriptionFulfilment" name="Исполнение назначения" guid="ca3s9-9239-47e3-aec4-9a846547144" key="ALT+3"/>
-      
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_diagnosticPrescription" name="Изменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
+        <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_diagnosticPrescription" name="Удалить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+DEL"/>
       </msh:sideMenu>
       <msh:sideMenu title="Показать" guid="67aa758-3ad2-4e6f-a791-4839460955" >
-        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_operationPrescription" name="К списку назначений на операцию" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_servicePrescription" name="К списку назначений на услугу" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
         <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
-    <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm">
+    <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm">
     <tags:templatePrescription record="2" parentId="${param.prescriptionList}" name="add" />
-<%--     <msh:sideMenu title="Шаблоны">
-  			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
-  		</msh:sideMenu> --%>
-  		
     </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
 
+ 
+ 
+ 
