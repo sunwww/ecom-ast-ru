@@ -199,6 +199,8 @@ public class PropertyUtil {
             return DateFormat.formatToTime((java.sql.Time) aValue);
        } else if (aOutClass.equals(Object.class)) {
     	   return aValue ;
+       } else if (aInClass.equals(java.math.BigInteger.class) && aOutClass.equals(String.class)) {
+    	   return aValue.toString();
        }
     	throw new IllegalArgumentException("Нет преобразования из "+aInClass+" в "+aOutClass+ " для значения "+aValue) ;
 
