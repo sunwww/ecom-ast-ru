@@ -184,9 +184,9 @@
 			<msh:section title="Договорные правила" createRoles="/Policy/Mis/Contract/MedContract/ContractRule/Create"
 			createUrl="entityParentPrepareCreate-contract_rule.do?id=${param.id}">
 			<ecom:webQuery name="rules" nativeSql="select cr.id,cr.name as crname
-			,coalesce(vcrp.name,cr.dateFrom||'-'||coalesce(cr.dateTo,'неограничено')) as p3eriod
+			,coalesce(vcrp.name,to_char(cr.dateFrom,'dd.mm.yyyy')||'-'||coalesce(to_char(cr.dateTo,'dd.mm.yyyy'),'неограничено'))) as p3eriod
 			,cr.medserviceAmount,cr.courseAmount,cr.medserviceCourseAmount
-			,cng.name as c7ngname, cmsg.name as 8cmsgname,cgg.name as c9ggname
+			,cng.name as c7ngname, cmsg.name as c8msgname,cgg.name as c9ggname
 			,vcp.name as v10cpname
 			,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') 
 			when cp.dtype='JuridicalPerson' then 'Юрид.лицо: '||cp.name 
