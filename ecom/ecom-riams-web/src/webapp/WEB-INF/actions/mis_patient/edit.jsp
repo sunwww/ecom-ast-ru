@@ -63,27 +63,45 @@ and
 (
 select max(d1.establishDate) from Diagnosis d1  left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
  where d1.patient_id=pcc.patient_id and d1.medcase_id is null and vpd1.code='1' 
-)=d.establishDate ) 
-,(select list(distinct mkb.code) from Diagnosis d 
-left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id 
-left join vocidc10 mkb on mkb.id=d.idc10_id 
-where d.patient_id=pcc.patient_id and d.medcase_id is null and vpd.code='1' 
-and 
-(
-select max(d1.establishDate) from Diagnosis d1  left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
- where d1.patient_id=pcc.patient_id and d.medcase_id is not null and vpd1.code='1' 
-)=d.establishDate ) as diag2
-
+)=d.establishDate ) as diag3
+,(select list(distinct mkb.code) from Diagnosis d left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id 
+left join medcase mc on mc.id=d.medcase_id
+left join vocidc10 mkb on mkb.id=d.idc10_id where mc.patient_id=pcc.patient_id and d.medcase_id is not null and vpd.code='1' and upper(mc.dtype)='SHORTMEDCASE' and (select max(mc1.datestart) from Diagnosis d1 
+left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
+left join medcase mc1 on mc1.id=d1.medcase_id
+where mc1.patient_id=pcc.patient_id and d1.medcase_id is not null and vpd1.code='1' and upper(mc1.dtype)='SHORTMEDCASE')=MC.DATESTART  )
+||' от '|| (select TO_CHAR(max(mc1.datestart),'DD.MM.YYYY') from Diagnosis d1 
+left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
+left join medcase mc1 on mc1.id=d1.medcase_id
+where mc1.patient_id=pcc.patient_id and d1.medcase_id is not null and vpd1.code='1')
+as diag_pol
+,(select list(distinct mkb.code) from Diagnosis d left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id 
+left join medcase mc on mc.id=d.medcase_id
+LEFT JOIN VOCDIAGNOSISREGISTRATIONTYPE VDRT ON VDRT.ID=D.REGISTRATIONTYPE_ID
+left join vocidc10 mkb on mkb.id=d.idc10_id where mc.patient_id=pcc.patient_id and d.medcase_id is not null and vpd.code='1' and vdrt.code='3' and upper(mc.dtype)='HOSPITALMEDCASE' AND (select max(mc1.dateFINISH) from Diagnosis d1 
+left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
+left join medcase mc1 on mc1.id=d1.medcase_id
+LEFT JOIN VOCDIAGNOSISREGISTRATIONTYPE VDRT1 ON VDRT1.ID=D1.REGISTRATIONTYPE_ID
+where mc1.patient_id=pcc.patient_id and d1.medcase_id is not null and vpd1.code='1' and vdrt1.code='3' and upper(mc1.dtype)='HOSPITALMEDCASE')=MC.DATEFINISH) 
+||' от '
+|| (select TO_CHAR(max(mc1.datefinish),'DD.MM.YYYY') from Diagnosis d1 
+left join VocPriorityDiagnosis vpd1 on vpd1.id=d1.priority_id 
+left join medcase mc1 on mc1.id=d1.medcase_id
+LEFT JOIN VOCDIAGNOSISREGISTRATIONTYPE VDRT1 ON VDRT1.ID=D1.REGISTRATIONTYPE_ID
+where mc1.patient_id=pcc.patient_id  and vpd1.code='1' and vdrt1.code='3' and upper(mc1.dtype)='HOSPITALMEDCASE' )
+as diag_hosp
 
 from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
 		         "
 		         />
+		         
 		        <msh:tableNotEmpty name="psychCard">
 			        <msh:table viewUrl="entityShortView-psych_careCard.do" hideTitle="false" disableKeySupport="false" idField="1" name="psychCard" action="entityParentView-psych_careCard.do" disabledGoFirst="false" disabledGoLast="false">
 			            <msh:tableColumn columnName="Номер карты" identificator="false" property="2" />
 			            <msh:tableColumn columnName="Наблюдения" identificator="false" property="3" />
 			            <msh:tableColumn columnName="МКБ10 для ОМКО" identificator="false" property="4" />
-			            <msh:tableColumn columnName="МКБ10 по СМО" identificator="false" property="4" />
+			            <msh:tableColumn columnName="МКБ10 по талону" identificator="false" property="5" />
+			            <msh:tableColumn columnName="МКБ10 по выписке" identificator="false" property="6" />
 			        </msh:table>
 		        </msh:tableNotEmpty>
 		        <msh:tableEmpty name="psychCard">
@@ -1344,4 +1362,3 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </style>
   </tiles:put>
 </tiles:insert>
-
