@@ -12,7 +12,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityForm
 @EntityFormPersistance(clazz = ContractGuaranteeLetter.class)
 @Comment("Гарантийное письмо по договору")
-@WebTrail(comment = "Гарантийное письмо по договору", nameProperties= "id", list="entityParentList-contract_contractGuaranteeLetter.do", view="entityParentView-contract_contractGuaranteeLetter.do")
+@WebTrail(comment = "Гарантийное письмо по договору", nameProperties= "id", list="entityParentList-contract_guaranteeLetter.do", view="entityParentView-contract_guaranteeLetter.do")
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter")
 public class ContractGuaranteeLetterForm extends ContractGuaranteeForm {
