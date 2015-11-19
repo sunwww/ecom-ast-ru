@@ -13,13 +13,19 @@
 				<msh:row>
 					<msh:textField property="name" label="Название" size="150"/>
 				</msh:row>
+				<msh:ifFormTypeIsNotView formName="contract_medServiceGroupForm">
+					<msh:row>
+						<msh:textArea property="rangeMkb" label="Маска"/>
+					</msh:row>
+				</msh:ifFormTypeIsNotView>
+				
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_nosologyGroupForm">
-			<msh:section title="Нозологические интервалы">
+			<msh:section title="Нозологические интервалы" createUrl="entityParentPrepareCreate-contract_nosologyInterval.do?id=${param.id}">
 			<ecom:parentEntityListAll formName="contract_nosologyIntervalForm" attribute="nosologyGroup" />
-				<msh:table name="nosologyGroup" action="entityParentView-contract_nosologyInterval.do" idField="id">
+				<msh:table name="nosologyGroup" deleteUrl="entityParentDeleteGoParentView-contract_nosologyInterval.do" action="entityParentView-contract_nosologyInterval.do" idField="id">
 					<msh:tableColumn columnName="Начиная с кода" property="fromIdc10Code" />
 					<msh:tableColumn columnName="Заканчивая кодом" property="toIdc10Code" />
 				</msh:table>

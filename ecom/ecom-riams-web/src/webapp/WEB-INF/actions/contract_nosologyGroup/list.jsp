@@ -15,8 +15,17 @@
 		<tags:contractMenu currentAction="nosologyGroup"/>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
-		<msh:table name="list" action="entityView-contract_nosologyGroup.do" idField="id">
-			<msh:tableColumn columnName="Название" property="name" />
+		<ecom:webQuery name="list" nativeSql="
+		select cng.id,cng.name
+		,list(cni.fromIdc10Code||'-'||cni.toIdc10Code)
+		from ContractNosologyGroup cng
+		left join NosologyInterval cni on cng.id=cni.nosologyGroup_id
+		group by cng.id,cng.name
+		order by cng.name
+		"/>
+		<msh:table name="list" action="entityView-contract_nosologyGroup.do" idField="1">
+			<msh:tableColumn columnName="Название" property="2" />
+			<msh:tableColumn columnName="Маска" property="3" />
 		</msh:table>
 	</tiles:put>
 </tiles:insert>
