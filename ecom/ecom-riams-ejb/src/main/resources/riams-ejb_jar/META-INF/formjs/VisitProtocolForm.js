@@ -1,5 +1,4 @@
 function onPreCreate(aForm, aCtx) {
-	check(aForm,aCtx) ;
 	var date = new java.util.Date() ;
 	aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setUsername(aCtx.getUsername()) ;
@@ -13,6 +12,9 @@ function onPreCreate(aForm, aCtx) {
 
 	var wf =java.lang.Long.valueOf(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionListByPoliclinic"
 			,wfeid)) ;
+	aForm.setSpecialist(wf) ;
+	check(aForm,aCtx) ;
+	
 	if (wf!=null) {
 		var protocols ;
 		//throw "select d.id,d.record from Diary d where d.dtype='Protocol'"
@@ -26,7 +28,7 @@ function onPreCreate(aForm, aCtx) {
 			)
 			.getResultList() ;
 		errorThrow(protocols, "В базе уже существует заключение созданное Вами в это время") ;
-		aForm.setSpecialist(wf) ;
+		
 	}
 	
 }
@@ -58,6 +60,15 @@ function onSave(aForm, aEntity, aCtx) {
 function check(aForm,aCtx) {
 	
 	if (aForm.medCase!=null&&(+aForm.medCase)>0) {
+		
+		var lother = aCtx.manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('"+aForm.getDateRegistration()+"','dd.mm.yyyy') and mc.workfunctionexecute_id='"+aForm.specialist+"' then mc.id end from medcase mc where mc.id='"+aForm.medCase+"'").getResultList() ;
+		if (lother.size()>0) {
+			var lobj=lother.get(0) ;
+			if (lobj[0]!=null && lobj[1]==null)
+				throw "Протокол в талоне может быть создан только датой талона и врачом, за которым зарегистрирован талон!!!" ; 
+		}
+		
+		
 		
 		var t = aCtx.manager.createNativeQuery("select m1.dtype,case when m1.dtype='DepartmentMedCase' and m2.dischargeTime is not null then m2.dateFinish else null end as datefinish from medcase m1 left join medcase m2 on m2.id=m1.parent_id where m1.id="+aForm.medCase).getResultList() ;
 		var hmc = aCtx.manager.createNativeQuery("select case when dtype='HospitalMedCase' or dtype='PolyclinicMedCase' then id else parent_id end from medcase where id="+aForm.medCase).getSingleResult(); 
