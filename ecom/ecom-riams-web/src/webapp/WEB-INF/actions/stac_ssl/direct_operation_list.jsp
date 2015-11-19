@@ -69,7 +69,7 @@
 select mc.id as medcaseid
 ,pat.patientinfo
 ,wf.id
-,vms.code||' '||vms.name as oper_name
+,ms.code||' '||ms.name as oper_name
 ,wf.groupname
 ,to_char(wcd.calendardate,'dd.MM.yyyy') as oper_date
 ,cast(wct.timefrom as varchar(5)) as oper_time
@@ -83,14 +83,15 @@ left join medcase mc on mc.id=pl.medcase_id
 left join medcase mcP on mcP.id=mc.parent_id
 left join patient pat on pat.id=mc.patient_id
 left join medservice ms on ms.id=p.medservice_id
-left join vocmedservice vms on vms.id=ms.vocmedservice_id
+left join vocservicetype vst on vst.id=ms.medservicetype_id
 left join workfunction wf on wf.id=p.prescriptcabinet_id
 left join workfunction wfN on wfN.id=p.prescriptspecial_id
 left join worker wN on wN.id=wfN.worker_id
 left join patient wp on wp.id=wN.person_id
 left join mislpu mlN on mlN.id=wN.lpu_id
 left join statisticstub ss on ss.id=coalesce(mc.statisticstub_id,mcP.statisticstub_id)
-where wcd.calendardate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') 
+where wcd.calendardate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+and vst.code='OPERATION'  
 ${dep}
 order by wcd.calendardate, wct.timefrom
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />${journal_list_suroper_sql}
