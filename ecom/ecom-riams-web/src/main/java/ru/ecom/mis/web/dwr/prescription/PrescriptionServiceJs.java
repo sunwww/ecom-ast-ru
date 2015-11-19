@@ -180,7 +180,7 @@ public class PrescriptionServiceJs {
 			} catch (Exception e) {e.printStackTrace(); throw new IllegalDataException(e.toString());}
 			if (wf==null) {throw new IllegalDataException("Нет рабочей функции!!!");}
 			String sqlCreate = "insert into prescriptionlist (dtype,medcase_id, createusername, createdate, createtime, workfunction_id) values ('PrescriptList',"
-					+aMedcase+", '"+username+"',to_date('"+formatD.format(date)+"','dd.MM.yyyy'),"
+					+aMedcase+", '"+username+"',to_date('"+formatD.format(date)+"','dd.MM.yyyy')"
 					+", cast('"+formatT.format(date)+"' as time), "+wf+")";
 			System.out.println(" ========= "+sqlCreate);
 			service.executeUpdateNativeSql(sqlCreate);
