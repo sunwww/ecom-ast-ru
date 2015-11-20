@@ -73,9 +73,9 @@
 		<form-bean name="contract_accountOperationForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationForm" />
 		<form-bean name="contract_accountOperationServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationByMedServiceForm" />
 		<form-bean name="contract_contractAccountRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountRuleForm" />
-		<form-bean name="contract_contractGuaranteeForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeForm" />
+		<form-bean name="contract_guaranteeForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeForm" />
 		<form-bean name="contract_contractGuaranteeGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeGroupForm" />
-		<form-bean name="contract_contractGuaranteeLetterForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeLetterForm" />
+		<form-bean name="contract_guaranteeLetterForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeLetterForm" />
 		<form-bean name="contract_contractMedPolicyForm" type="ru.ecom.mis.ejb.form.contract.ContractMedPolicyForm" />
 		<form-bean name="contract_contractPaymentOrderForm" type="ru.ecom.mis.ejb.form.contract.ContractPaymentOrderForm" />
 		<form-bean name="contract_contractPersonForm" type="ru.ecom.mis.ejb.form.contract.ContractPersonForm" />
