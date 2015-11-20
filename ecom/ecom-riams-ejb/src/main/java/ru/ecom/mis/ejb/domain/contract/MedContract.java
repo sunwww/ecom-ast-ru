@@ -279,4 +279,17 @@ public class MedContract extends BaseEntity{
 
 	/** Лимит денег */
 	private BigDecimal theLimitMoney;
+
+	/** Обязательно гарантийный документ */
+	@Comment("Обязательно гарантийный документ")
+	public Boolean getIsRequiredGuaratee() {
+		return theIsRequiredGuaratee;
+	}
+
+	public void setIsRequiredGuaratee(Boolean aIsRequiredGuaratee) {
+		theIsRequiredGuaratee = aIsRequiredGuaratee;
+	}
+
+	/** Обязательно гарантийный документ */
+	private Boolean theIsRequiredGuaratee;
 }
