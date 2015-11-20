@@ -236,4 +236,17 @@ public class MedContractForm extends IdEntityForm{
 
 	/** Лимит денег */
 	private String theLimitMoney;	
+	/** Обязательно гарантийный документ */
+	@Comment("Обязательно гарантийный документ")
+	@Persist
+	public Boolean getIsRequiredGuaratee() {
+		return theIsRequiredGuaratee;
+	}
+
+	public void setIsRequiredGuaratee(Boolean aIsRequiredGuaratee) {
+		theIsRequiredGuaratee = aIsRequiredGuaratee;
+	}
+
+	/** Обязательно гарантийный документ */
+	private Boolean theIsRequiredGuaratee;
 }
