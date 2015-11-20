@@ -75,6 +75,7 @@ select mc.id as medcaseid
 ,cast(wct.timefrom as varchar(5)) as oper_time
 ,mlN.name||' (' ||wp.lastname||')' as naprInfo
 ,ss.code
+,p.comments
 from prescription p 
 left join workcalendartime wct on wct.prescription=p.id
 left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
@@ -83,7 +84,7 @@ left join medcase mc on mc.id=pl.medcase_id
 left join medcase mcP on mcP.id=mc.parent_id
 left join patient pat on pat.id=mc.patient_id
 left join medservice ms on ms.id=p.medservice_id
-left join vocservicetype vst on vst.id=ms.medservicetype_id
+left join vocservicetype vst on vst.id=ms.servicetype_id
 left join workfunction wf on wf.id=p.prescriptcabinet_id
 left join workfunction wfN on wfN.id=p.prescriptspecial_id
 left join worker wN on wN.id=wfN.worker_id
@@ -94,7 +95,7 @@ where wcd.calendardate between to_date('${param.dateBegin}','dd.MM.yyyy') and to
 and vst.code='OPERATION'  
 ${dep}
 order by wcd.calendardate, wct.timefrom
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />${journal_list_suroper_sql}
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_suroper"
          action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Пациент" property="2"/>
@@ -104,6 +105,7 @@ order by wcd.calendardate, wct.timefrom
             <msh:tableColumn columnName="Операционная" property="5"/>
             <msh:tableColumn columnName="Дата назначения" property="6"/>
             <msh:tableColumn columnName="Время назначения" property="7"/>
+            <msh:tableColumn columnName="Примечание" property="10"/>
             
             
         </msh:table>
