@@ -35,6 +35,8 @@
 				</msh:row>
 				<msh:row>
 					<msh:textField property="limitMoney"/>
+										<msh:checkBox property="isRequiredGuaratee" />
+					
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>
