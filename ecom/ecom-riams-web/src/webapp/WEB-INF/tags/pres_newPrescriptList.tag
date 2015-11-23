@@ -59,6 +59,7 @@
 <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 <script type="text/javascript"><!--
 var plId ;
+var isSLSClosed = true;
      var theIs${name}PrescriptListDialogInitialized = false ;
      var the${name}PolicyDialog = new msh.widget.Dialog($('${name}PrescriptListDialog')) ;
      var the${name}PrescriptListDialog = new msh.widget.Dialog($('${name}PrescriptListDialog')) ;
@@ -96,6 +97,13 @@ var plId ;
 				 plId = aPresID;
 			 }
 		 });
+		 PrescriptionService.isSLSClosed('${parentID}', {
+			 callback: function (aResult) {
+				 alert (aResult);
+			 }
+		 });
+			 
+		 
 		 theIs${name}PrescriptListDialogInitialized=true;
      }
 </script>
