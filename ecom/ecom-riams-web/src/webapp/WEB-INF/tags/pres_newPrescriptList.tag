@@ -97,11 +97,11 @@ var isSLSClosed = true;
 				 plId = aPresID;
 			 }
 		 });
-		 PrescriptionService.isSLSClosed('${parentID}', {
+		/*  PrescriptionService.isSLSClosed('${parentID}', {
 			 callback: function (aResult) {
 				 alert (aResult);
 			 }
-		 });
+		 }); */
 			 
 		 
 		 theIs${name}PrescriptListDialogInitialized=true;
