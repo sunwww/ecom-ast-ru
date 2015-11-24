@@ -17,6 +17,7 @@ public interface ISecUserService {
 
 
 	public String changePassword (String aNewPassword, String aOldPassword, String aUsername)throws IOException;
+	public String setDefaultPassword (String aNewPassword, String aUsername, String aUsernameChange)throws IOException;
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException;
     public void exportUsersProperties(String aFilename) throws IOException ;
     public void exportUsersProperties() throws IOException ;

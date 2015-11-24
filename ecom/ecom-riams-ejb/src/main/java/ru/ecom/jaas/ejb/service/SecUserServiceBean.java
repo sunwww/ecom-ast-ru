@@ -52,6 +52,17 @@ public class SecUserServiceBean implements ISecUserService {
 		}
 	}
 	
+	public String setDefaultPassword(String aNewPassword, String aUsername, String aUsernameChange) throws IOException {
+		String hashPassword = null;
+		
+		hashPassword = getHashPassword(aUsername, aNewPassword);
+		if (hashPassword==null) {
+			return "0Хеш не получился";
+		}
+		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', editDate=current_date,editTime=current_time,editUsername='"+aUsernameChange+"', changePasswordAtLogin='1' where login = '"+aUsername+"'").executeUpdate();
+		exportUsersProperties();
+		return "1Пароль успешно обновлен";
+	}
 	public String changePassword(String aNewPassword, String aOldPassword, String aUsername) throws IOException {
 		String regexp = null;
 		String hashPassword = null;
