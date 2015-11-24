@@ -60,10 +60,10 @@ left join workfunctionservice wfs on wfs.lpu_id=slo.department_id
     and wfs.roomType_id=wp.roomType_id
 left join medservice ms on ms.id=wfs.medservice_id
     left join pricemedservice pms on pms.medservice_id=wfs.medservice_id
-        left join priceposition pp on pp.id=pms.priceposition_id
-
+        left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
+and (pp.isvat is null or pp.isvat='0')
 where slo.parent_id='${param.id}'
-and pp.priceList_id='${priceList}' and ms.servicetype_id=${idsertypebed} and (pp.isvat is null or pp.isvat='0')
+ and ms.servicetype_id=${idsertypebed} 
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
@@ -77,25 +77,6 @@ and pp.priceList_id='${priceList}' and ms.servicetype_id=${idsertypebed} and (pp
   </msh:sectionContent>
   <msh:sectionTitle>Диагностика</msh:sectionTitle>
   <msh:sectionContent>
-      <ecom:webQuery name="list2" nativeSql="
-      select
-      vis.id,vis.datestart||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
-      from medcase vis
-      left join workfunction wf on wf.id=vis.workfunctionexecute_id
-      left join vocworkfunction vwf on vwf.id=wf.workfunction_id
-      left join worker w on w.id=wf.worker_id
-      left join patient wp on wp.id=w.person_id
-      left join vocservicestream vss on vss.id=vis.servicestream_id
-      left join medcase smc on smc.parent_id=vis.id and upper(smc.dtype)='SERVICEMEDCASE'
-      left join medservice ms on ms.id=smc.medservice_id
-    left join pricemedservice pms on pms.medservice_id=smc.medservice_id
-    left join priceposition pp on pp.id=pms.priceposition_id
-      where vis.patient_id='${patient_id}' and vis.datestart between to_date('${datestart}','dd.mm.yyyy') and to_date('${datefinish}','dd.mm.yyyy')
-       and upper(vis.dtype)='VISIT' and (vss.code='HOSPITAL' or vss.id='${serStreamId}' or vss.code='OTHER')
-       
-       group by vis.id,vis.datestart,ms.code,ms.name,vwf.name,wp.lastname
-       having count(case when pp.priceList_id='${priceList}' then '1' else null end)=0
-      "/>
       <ecom:webQuery name="list1" nativeSql="
       select
       vis.id,vis.datestart||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
@@ -110,21 +91,18 @@ and pp.priceList_id='${priceList}' and ms.servicetype_id=${idsertypebed} and (pp
       left join medcase smc on smc.parent_id=vis.id and upper(smc.dtype)='SERVICEMEDCASE'
       left join medservice ms on ms.id=smc.medservice_id
     left join pricemedservice pms on pms.medservice_id=smc.medservice_id
-    left join priceposition pp on pp.id=pms.priceposition_id
+    left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where vis.patient_id='${patient_id}' and vis.datestart between to_date('${datestart}','dd.mm.yyyy') and to_date('${datefinish}','dd.mm.yyyy')
        and upper(vis.dtype)='VISIT' and (vss.code='HOSPITAL' or vss.id='${serStreamId}' or vss.code='OTHER')
-       and pp.priceList_id='${priceList}'
+       
       "/>
+
 
     <msh:table name="list1" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Информация о визите" property="2" />
       <msh:tableColumn columnName="Наименование услуги" property="3" />
       <msh:tableColumn columnName="Сумма" property="4" isCalcAmount="true" />
-    </msh:table>
-    <msh:table name="list2" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
-      <msh:tableColumn columnName="#" property="sn" />
-      <msh:tableColumn columnName="Информация о визите" property="2" />
     </msh:table>
   </msh:sectionContent>
   <msh:sectionTitle>Лаборатория</msh:sectionTitle>
@@ -146,7 +124,8 @@ select
     left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where vis.parent_id='${param.id}'
       and vis.datestart between to_date('${datestart}','dd.mm.yyyy') and to_date('${datefinish}','dd.mm.yyyy')
-       and upper(vis.dtype)='VISIT' and upper(smc.dtype)='SERVICEMEDCASE' and (vss.code='HOSPITAL' or vss.id is null)
+       and upper(vis.dtype)='VISIT' and upper(smc.dtype)='SERVICEMEDCASE'
+        and (vss.code='HOSPITAL' or vss.id is null)
        
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
@@ -173,10 +152,10 @@ select
       left join vocservicestream vss on vss.id=so.servicestream_id
       left join medservice ms on ms.id=so.medservice_id
     left join pricemedservice pms on pms.medservice_id=so.medservice_id
-    left join priceposition pp on pp.id=pms.priceposition_id
+    left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where
       (slo.parent_id='${param.id}' or slo.id='${param.id}')
-       and pp.priceList_id='${priceList}'
+      
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
@@ -190,4 +169,3 @@ select
   <%} %>
   </tiles:put>
 </tiles:insert>
-
