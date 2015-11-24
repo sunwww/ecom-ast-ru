@@ -87,9 +87,9 @@
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Код" property="2"/>
 					<msh:tableColumn columnName="Наименование" property="3"/>
-					<msh:tableColumn columnName="Стоимость" property="4"/>
-					<msh:tableColumn columnName="Дата начала" property="5"/>
-					<msh:tableColumn columnName="Дата окончания" property="6"/>
+					<msh:tableColumn columnName="Стоимость" property="5"/>
+					<msh:tableColumn columnName="Дата начала" property="6"/>
+					<msh:tableColumn columnName="Дата окончания" property="7"/>
 				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>
