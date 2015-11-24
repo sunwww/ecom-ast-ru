@@ -264,7 +264,7 @@
     	,list(distinct case when  (vdrt.code='3' or vdrt.code='4') and vpd.code='1' then mkb.code when mkb.id is null then 'не указан' else null end) 
     	,os.code ||' '||os.name as osname
     	,to_char(hmc.dateStart,'dd.mm.yyyy') as hmcDateStart
-    	,to_char(m.dateStart,'dd.mm.yyyy') as mdateStart
+    	,to_char(m.dateStart,'dd.mm.yyyy')||'-'||to_char(coalesce(m.dateFinish,m.transferDate),'dd.mm.yyyy') as mdateStart
     	,to_char(hmc.dateFinish,'dd.mm.yyyy') as hmcdateFinish
 
     	
@@ -305,7 +305,7 @@
     left join VocSocialStatus pvss on pvss.id=p.socialStatus_id 
     left join VocAdditionStatus vas on vas.id=p.additionStatus_id
     left join Omc_Oksm ok on p.nationality_id=ok.id
-    where m.DTYPE='DepartmentMedCase' and m.${dateSql} between 
+    where m.DTYPE='DepartmentMedCase' and hmc.${dateSql} between 
     to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') 
     ${departmentSql} ${serviceStreamSql} ${bedSubTypeSql} ${bedTypeSql} ${standartSql}  
     and os.id is not null  ${emergencySql} ${patientSql} 
