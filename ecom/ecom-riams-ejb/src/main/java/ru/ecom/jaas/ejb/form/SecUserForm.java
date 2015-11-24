@@ -26,6 +26,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Jaas/SecUser")
 public class SecUserForm  extends IdEntityForm {
 
+	/** Сменить пароль при входе в систему */
+	@Comment("Сменить пароль при входе в систему")
+	@Persist
+	public Boolean getChangePasswordAtLogin() {return theChangePasswordAtLogin;}
+	public void setChangePasswordAtLogin(Boolean aChangePasswordAtLogin) {theChangePasswordAtLogin = aChangePasswordAtLogin;}
+	/** Сменить пароль при входе в систему */
+	private Boolean theChangePasswordAtLogin;
+	
 	/** Дата изменение пароля */
 	@Comment("Дата изменение пароля")
 	@Persist

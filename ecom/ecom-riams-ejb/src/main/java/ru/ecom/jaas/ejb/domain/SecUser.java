@@ -27,6 +27,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class SecUser extends BaseEntity {
 
+	/** Сменить пароль при входе в систему */
+	@Comment("Сменить пароль при входе в систему")
+	public Boolean getChangePasswordAtLogin() {return theChangePasswordAtLogin;}
+	public void setChangePasswordAtLogin(Boolean aChangePasswordAtLogin) {theChangePasswordAtLogin = aChangePasswordAtLogin;}
+	/** Сменить пароль при входе в систему */
+	private Boolean theChangePasswordAtLogin;
 
 	/** Дата последнего изменение пароля */
 	@Comment("Дата последнего изменение пароля")
