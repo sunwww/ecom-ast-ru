@@ -18,7 +18,14 @@
       </msh:ifFormTypeIsCreate>
       <msh:panel guid="020e354f-560d-48a7-8a14-9e9699027a3e">
         <msh:row guid="eb8c8794-7b03-49fb-abf9-b9c86d184477">
+        <msh:ifFormTypeIsCreate formName="secuserForm">
           <msh:textField property="login" label="Пользователь" guid="08315d12-8575-44d1-a6a1-408bf687b766" />
+        
+         </msh:ifFormTypeIsCreate>
+         <msh:ifFormTypeAreViewOrEdit formName="secuserForm">
+         <msh:textField property="login" label="Пользователь" viewOnlyField="true" guid="08315d12-8575-44d1-a6a1-408bf687b766" />
+        
+         </msh:ifFormTypeAreViewOrEdit>
           <msh:ifFormTypeIsView formName="secuserForm" guid="ac99c5fc-e76e-4720-92a4-b44cbcac9907">
             <msh:checkBox property="disable" label="Заблокирован" guid="c4d6e9dee-470f-b18f-5dcd5e38b404" />
           </msh:ifFormTypeIsView>
@@ -61,12 +68,12 @@
         	<msh:label property="createDate" label="Дата создания"/>
         	<msh:label property="createTime" label="время"/>
         </msh:row>
+		<msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
          <msh:row>
         	<msh:label property="passwordChangedDate" label="Дата изменения пароля"/>
         	
-        </msh:row>
-        <msh:row>
-        	<msh:label property="createUsername" label="пользователь"/>
         </msh:row>
         <msh:row>
         	<msh:label property="editDate" label="Дата редактирования"/>
@@ -131,6 +138,7 @@
     <msh:sideMenu guid="e7e68c90-9624-4f8a-9392-4eabfca9fd22">
       <msh:sideLink key="ALT+2" params="id" action="/entityEdit-secuser" name="Редактировать" roles="/Policy/Jaas/SecUser/Edit" guid="aa2cd52f-8392-4edf-a2c9-80e2f309d72e" />
       <msh:sideLink key="ALT+3" params="id" action="/userRoleEdit" name="Изменить роли пользователя" roles="/Policy/Jaas/SecUser/EditRoles" guid="c81c676b-39ab-4ad3-b55d-946012bf258d" />
+      <msh:sideLink action="/javascript:setDefaultPassword('.do')" name="Установить пароль по умолчанию" roles="/Policy/Jaas/SecUser/Edit" guid="c81c676b-39ab-4ad3-b55d-946012bf258d" />
     </msh:sideMenu>
     <msh:sideMenu title="Списки пользователей" guid="8a39450d-3f79-4741-9555-c379c457a830">
       <msh:sideLink action="/entityList-secuser.do?list=all" name="Все пользователи" guid="cdeac23a-ab60-49b9-a53f-d7fcbbd6bd86" styleId="listall" roles="/Policy/Jaas/SecUser/View" />
@@ -148,6 +156,26 @@
     <script type="text/javascript">
     Element.addClassName($('mainMenuUsers'), "selected");
     </script>
+    <msh:ifFormTypeAreViewOrEdit formName="secuserForm">
+   
+    <script type='text/javascript' src='./dwr/interface/RolePoliciesService.js'></script>
+    
+  <script type="text/javascript">
+  function setDefaultPassword() {
+  	RolePoliciesService.defaultPassword(
+			
+			$('login').value,
+	     {
+				callback: function(aResult) {
+					if (+aResult.substring(0,1)>0) {
+						alert(aResult.substring(1));
+						window.location.reload() ;
+					}
+				}
+	     });
+  }
+    </script>
+    </msh:ifFormTypeAreViewOrEdit>
     <msh:ifFormTypeIsCreate formName="secuserForm">
     <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
     <script type="text/javascript">
