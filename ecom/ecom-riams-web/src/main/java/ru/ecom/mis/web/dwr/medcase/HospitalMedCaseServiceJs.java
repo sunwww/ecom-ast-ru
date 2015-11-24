@@ -394,7 +394,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" ,vs.omcCode as vsomccode");
 			sql.append(" ,ml.omccode as mlomccode");
 			sql.append(" ,case when sls.hotelServices='1' then '1' else '0' end as hotelserv");
-			sql.append(" ,vhr.code as result");
+			sql.append(" ,case when vrd1.code='1' then vhr.code else vrd.code='DIS_PAT' then '16' when vrd.code='DIS_LPU' then '17' when vho.code='2' then '5' when vho.code='3' then '4' when vho.code='4' then '14' when vhr.code is null then '2' else vhr.code end as result");
 			sql.append(" ,case when pvss.code='И0' then '1' else '0' end as foreign");
 			sql.append(" , to_char(sls.dateStart,'dd.mm.yyyy') as date5start");
 			sql.append(" ,to_char(sls.dateFinish,'dd.mm.yyyy') as date5Finish");
@@ -410,9 +410,12 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
 			sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id") ;
 			sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id") ;
+			sql.append(" left join VocReasonDischarge vrd on vrd.id=ss.reasonDischarge_id") ;
+			sql.append(" left join VocResultDischarge vrd1 on vrd1.id=ss.resultDischarge_id") ;
 			sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id") ;
 			sql.append(" left join medpolicy mp on mcmp.policies_id=mp.id") ;
 			sql.append(" left join VocHospitalizationResult vhr on vhr.id=sls.result_id") ;
+			sql.append(" left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id") ;
 			sql.append(" left join MisLpu ml on ml.id=sls.lpu_id") ;
 			sql.append(" where sls.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and sls.dischargeTime is not null") ;
 			

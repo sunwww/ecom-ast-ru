@@ -19,6 +19,8 @@
 			<msh:panel colsWidth="1%,1%,1%">
 				<msh:row>
 					<msh:autoComplete fieldColSpan="3" property="person" label="Договорная персона" vocName="contractPerson" size="100" />
+					
+					<td align="right" width="1px" ><div id="personButton"></div></td>
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала обслуживания"/>
@@ -53,7 +55,10 @@
 			<msh:submitCancelButtonsRow colSpan="3" />
 			</msh:panel>
 		</msh:form>
-
+<msh:ifFormTypeIsNotView formName="contract_servedPersonForm">
+			<tags:contract_natPerson_new autoCompliteContractPerson="contractPerson" 
+			divForButton="personButton" name="Person" title="Поиск персоны"></tags:contract_natPerson_new>
+		</msh:ifFormTypeIsNotView>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_servedPersonForm" />
@@ -73,5 +78,10 @@
 				$('autoAccount').checked=true ;
 			</script>
 		</msh:ifFormTypeIsCreate>
-	</tiles:put>
+	
+  	<msh:ifFormTypeIsNotView formName="contract_servedPersonForm">
+  	<script type="text/javascript">
+  	initPersonContractPersonDialog()</script>
+  		</msh:ifFormTypeIsNotView>
+  </tiles:put>
 </tiles:insert>

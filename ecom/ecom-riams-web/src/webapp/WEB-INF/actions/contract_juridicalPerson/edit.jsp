@@ -59,6 +59,9 @@
 				<msh:row>
 					<msh:textField property="email" label="Электронная почта" horizontalFill="true"/>
 				</msh:row>
+				<msh:row>
+                    <msh:autoComplete vocName="vocInsuranceCompany" property="regCompany" label="Страховая&nbsp;компания" size='50' horizontalFill="true" fieldColSpan="5"/>
+                </msh:row>
 			<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
 		</msh:form>

@@ -987,12 +987,17 @@ order by p.lastname,p.firstname,p.middlename " />
     <msh:sectionTitle>
         ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nameFldSql="report14swod_sql" nativeSql="
         select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
-    ,count(distinct sls.id) as cntDeath
+    ,count(distinct sls.id) as c5ntDeath
     ,count(distinct
-case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then sls.id else null end    ) as cntRash
+case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then sls.id else null end    ) as c6ntRash
     ,
-    count(distinct case when dc.isAutopsy='1' then sls.id else null end) autopsy
-    , count(distinct case when dc.id is null then sls.id else null end) noDeathof
+    count(distinct case when dc.isAutopsy='1' then sls.id else null end) a7utopsy
+    , count(distinct case when dc.id is null then sls.id else null end) n8oDeathof
+    , count(distinct case when sls.emergency='1' then sls.id else null end) n9emergency
+    , count(distinct case when dc.postmortemBureauDate is not null or (dc.postmortemBureauNumber!='' and dc.PostmortemBureauNumber is not null) then sls.id else null end) n10pat
+    , count(distinct case when (dc.postmortemBureauDate is not null or (dc.postmortemBureauNumber!='' and dc.PostmortemBureauNumber is not null)) and (dc.categoryDifference_id is not null or dc.latrogeny_id is not null) then sls.id else null end) n11patRaz
+    , count(distinct case when dc.DateForensic is not null  then sls.id else null end) n12fopat
+    , count(distinct case when (dc.DateForensic is not null ) and (dc.categoryDifference_id is not null or dc.latrogeny_id is not null) then sls.id else null end) n13patforRaz
      from medcase sls
     left join DeathCase dc on dc.medCase_id=sls.id
     left join MedCase sloa on sloa.parent_id=sls.id
@@ -1050,9 +1055,14 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
           <msh:tableColumn columnName="№ строки" property="3" />
           <msh:tableColumn columnName="Код МКБ10" property="4" />
           <msh:tableColumn columnName="Умерло" property="5"/>
+          <msh:tableColumn columnName="Кол-во экстр." property="9"/>
           <msh:tableColumn columnName="Расхождение диагноза" property="6"/>
           <msh:tableColumn columnName="Кол-во вскрытий" property="7"/>
           <msh:tableColumn columnName="Кол-во неоформл" property="8"/>
+          <msh:tableColumn columnName="пат.-анат. вскрытий" property="10"/>
+          <msh:tableColumn columnName="пат.-анат. вскрытий расх." property="11"/>
+          <msh:tableColumn columnName="суд.-мед. вскрытий" property="12"/>
+          <msh:tableColumn columnName="суд.-мед. вскрытий расх." property="13"/>
         </msh:table>
         
         </msh:sectionContent>
@@ -1117,6 +1127,9 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     ,case when dc.isAutopsy='1' then 'Да' else null end as dcisAutopsy
     , vdc.name || coalesce (' ятрогения кат.'||vdcL.name,'')as vdcname
     ,case when dc.id is null then 'Да' else null end as dcid
+    ,dc.DateForensic as dcDateForensic
+    ,dc.postmortemBureauDate as dcpostmortemBureauDate
+    ,dc.postmortemBureauNumber as dcpostmortemBureauNumber
      from medcase sls
     left join StatisticStub ss on ss.id=sls.statisticStub_id
     left join VocHospitalizationResult vhr on vhr.id=sls.result_id
@@ -1190,6 +1203,9 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
           <msh:tableColumn columnName="Было вскрытие?" property="13"/>
           <msh:tableColumn columnName="Категория расхождений" property="14"/>
           <msh:tableColumn columnName="Неоформлен случай смерти" property="15"/>
+          <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
+          <msh:tableColumn columnName="Дата пат.-анат. вскрытия" property="17"/>
+          <msh:tableColumn columnName="Номер пат.-анат. вскрытия" property="17"/>
         </msh:table>
         </msh:sectionContent>
         </msh:section>    		

@@ -34,7 +34,11 @@
 					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="3"  vocName="actualPriceList" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3"  vocName="vocServiceStream" horizontalFill="true" />
+				</msh:row>
+				<msh:row>
 					<msh:textField property="limitMoney"/>
+					<msh:checkBox property="isRequiredGuaratee" />
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>

@@ -10,6 +10,60 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
+	public String addContractPerson(
+   		 Long aIdPat,String aField,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		StringBuilder res = new StringBuilder() ;
+		res.append(aIdPat) ;
+		res.append("#") ;
+		service.executeUpdateNativeSql("insert into ContractPerson (patient_id,dtype) values ('"
+				+aIdPat+"','NaturalPerson')") ;
+		Collection<WebQueryResult> col = service.executeNativeSql("select id from ContractPerson where patient_id="+aIdPat) ;
+		if (col.isEmpty()) {
+			throw new IllegalArgumentException("ОШИБКА ПРИ ОБРАБОТКА ДАННЫХ!!!") ;
+		} else {
+			res.append(col.iterator().next().get1()) ;
+		}
+		res.append("#") ;
+		res.append(aField) ;
+		return res.toString();
+		
+	}
+	public String findPerson(String aLastname, String aFirstname, String aMiddlename
+			, String aBirthday, String aJavascript, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select p.id as pid,cp.id as cpid,p.lastname||' '||p.firstname||' '||p.middlename||' г.р. '||to_char(p.birthday,'dd.mm.yyyy') from patient p left join ContractPerson cp on cp.patient_id=p.id where ") ;
+		if (aLastname!=null && !aLastname.equals("")) {
+			sql.append(" p.lastname like '").append(aLastname.toUpperCase()).append("%'") ;
+		}
+		if (aFirstname!=null && !aFirstname.equals("")) {
+			sql.append(" and p.firstname like '").append(aFirstname.toUpperCase()).append("%'") ;
+		}
+		if (aMiddlename!=null && !aMiddlename.equals("")) {
+			sql.append(" and p.middlename like '").append(aMiddlename.toUpperCase()).append("%'") ;
+		}
+		if (aBirthday!=null && !aBirthday.equals("")) {
+			sql.append(" and p.birthday = to_date('").append(aBirthday).append("','dd.mm.yyyy')") ;
+		}
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		StringBuilder res = new StringBuilder() ;
+		if (list.isEmpty()) return "НЕТ ДАННЫХ" ;
+		res.append("<ll>" ) ;
+		for (WebQueryResult wqr:list) {
+			res.append("<li><a href=\"").append(aJavascript).append("('");
+			res.append(wqr.get1()!=null?wqr.get1():"") ;
+			res.append("','");
+			res.append(wqr.get2()!=null?wqr.get2():"") ;
+			res.append("','");
+			res.append(wqr.get3()!=null?wqr.get3():"") ;
+			res.append("')\">").append(wqr.get3()).append("</a></li>");
+		}
+		res.append("</ll>" ) ;
+		return res.toString() ;
+	}
+	
 	public String updateExtDispPlanService(Long aPlan, String aAction, Long aServiceId, Long aAgeGroup, Long aSex, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String actionNext="" ;

@@ -22,14 +22,18 @@
 				</msh:row>
 			<msh:row>
 			
-				<msh:autoComplete property="contractPerson" size="150" vocName="contractPerson" label="Договорная персона"/>
+				<msh:autoComplete property="contractPerson" fieldColSpan="3" horizontalFill="true" size="150" vocName="contractPerson" label="Договорная персона"/>
+				<td align="right" width="1px" ><div id="personButton"></div></td>
 			</msh:row>
 			
 			<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
 		</msh:form>
-		<msh:ifFormTypeIsView formName="contract_guaranteeLetterForm">
-		</msh:ifFormTypeIsView>
+		<msh:ifFormTypeIsNotView formName="contract_guaranteeLetterForm">
+			<tags:contract_natPerson_new autoCompliteContractPerson="contractPerson" 
+			divForButton="personButton" name="Person" title="Поиск персоны"></tags:contract_natPerson_new>
+		</msh:ifFormTypeIsNotView>
+		
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_guaranteeLetterForm" />
@@ -40,4 +44,10 @@
 			<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_guaranteeLetter" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Delete"/>
 		</msh:sideMenu>
 	</tiles:put>
+	<tiles:put name="javascript" type="string">
+  	<msh:ifFormTypeIsNotView formName="contract_guaranteeLetterForm">
+  	<script type="text/javascript">
+  	initPersonContractPersonDialog()</script>
+  		</msh:ifFormTypeIsNotView>
+  </tiles:put>
 </tiles:insert>

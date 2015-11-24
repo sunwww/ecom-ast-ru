@@ -52,9 +52,19 @@
 				<msh:row>
 					<msh:autoComplete parentId="contract_ruleForm.contract" property="servedPerson" label="Обслуживаемая персона" vocName="servedPerson" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
+				<msh:row>
+					<msh:autoComplete fieldColSpan="3" property="person" label=" или договорная персона" vocName="contractPerson" size="100" />
+					<td align="right" width="1px" ><div id="personButton"></div></td>
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
+			<tiles:put name="javascript" type="string">
+  	<msh:ifFormTypeIsNotView formName="contract_ruleForm">
+  	<script type="text/javascript">
+  	initPersonContractPersonDialog()</script>
+  		</msh:ifFormTypeIsNotView>
+  </tiles:put>
 		<msh:ifFormTypeIsView formName="contract_ruleForm">
 		</msh:ifFormTypeIsView>
 	</tiles:put>
@@ -67,4 +77,10 @@
 			<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_rule" name="Удалить" title="Удалить" roles=""/>
 		</msh:sideMenu>
 	</tiles:put>
+		<tiles:put name="javascript" type="string">
+  	<msh:ifFormTypeIsNotView formName="contract_ruleForm">
+  	<script type="text/javascript">
+  	initPersonContractPersonDialog()</script>
+  		</msh:ifFormTypeIsNotView>
+  </tiles:put>
 </tiles:insert>
