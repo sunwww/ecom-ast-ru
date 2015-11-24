@@ -24,6 +24,7 @@ import ru.ecom.mis.ejb.domain.contract.PriceList;
 import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.ecom.mis.ejb.domain.contract.voc.VocContractRulesProcessing;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
 	 * Медицинский договор
@@ -292,4 +293,18 @@ public class MedContract extends BaseEntity{
 
 	/** Обязательно гарантийный документ */
 	private Boolean theIsRequiredGuaratee;
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@OneToOne
+	public VocServiceStream getServiceStream() {
+		return theServiceStream;
+	}
+
+	public void setServiceStream(VocServiceStream aServiceStream) {
+		theServiceStream = aServiceStream;
+	}
+
+	/** Поток обслуживания */
+	private VocServiceStream theServiceStream;
+
 }

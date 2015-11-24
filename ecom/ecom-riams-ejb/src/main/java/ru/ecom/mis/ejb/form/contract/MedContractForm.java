@@ -249,4 +249,18 @@ public class MedContractForm extends IdEntityForm{
 
 	/** Обязательно гарантийный документ */
 	private Boolean theIsRequiredGuaratee;
+	
+	/** Поток обслуживания */
+	@Comment("Поток обслуживания")
+	@Persist 
+	public Long getServiceStream() {
+		return theServiceStream;
+	}
+
+	public void setServiceStream(Long aServiceStream) {
+		theServiceStream = aServiceStream;
+	}
+
+	/** Поток обслуживания */
+	private Long theServiceStream;
 }

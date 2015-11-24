@@ -17,4 +17,9 @@ function onSave(aForm,aEntity, aCtx) {
 		aEntity.statisticStub.setReasonDischarge(reasonDischarge) ;
 		aCtx.manager.persist(aEntity) ;
 	}
+	if (+aForm.resultDischarge>0 && aEntity.statisticStub!=null) {
+		var resultDischarge = getObject(aCtx, aForm.resultDischarge, Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocResultDischarge);
+		aEntity.statisticStub.setResultDischarge(resultDischarge) ;
+		aCtx.manager.persist(aEntity) ;
+	}
 }

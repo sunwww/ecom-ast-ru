@@ -301,123 +301,18 @@ public class HospitalMedCase extends LongMedCase {
 		}
 		return reasonDischarge;
 	}
-	
-	/*
+	/** Номер стат.карты */
+	@Comment("Номер стат.карты")
 	@Transient
-	@Comment("Диагноз приемного отделения, при поступлении")
-	public Diagnosis getDiagnosEntrance() {
-		Diagnosis diagEntrance = null;
-		if (!getDiagnosis().isEmpty()) {
-			for (int i = 0; i < getDiagnosis().size(); i++) {
-				Diagnosis diag =getDiagnosis().get(i) ; 
-				if (diag.getRegistrationType()!=null && diag.getRegistrationType().getCode().equals("1")) {
-					diagEntrance = getDiagnosis().get(i);
-					break;
-				}
-			}
+	public Long getResultDischarge() {
+		Long reasonDischarge = null;
+		if (theStatisticStub != null) {
+			reasonDischarge = theStatisticStub.getResultDischarge()!=null?theStatisticStub.getResultDischarge().getId():null;
 		}
-		return diagEntrance;
-	}
-
-	@Transient
-	@Comment("Диагноз направившего учреждения")
-	public Diagnosis getDiagnosOrder() {
-		Diagnosis diagOrder = null;
-		if (!getDiagnosis().isEmpty()) {
-			for (int i = 0; i <= getDiagnosis().size() - 1; i++) {
-				Diagnosis diag =getDiagnosis().get(i) ; 
-				if (diag.getRegistrationType()!=null && diag.getRegistrationType().getCode().equals("2")) {
-					diagOrder = getDiagnosis().get(i);
-					break;
-				}
-			}
-		}
-		return diagOrder;
+		return reasonDischarge;
 	}
 	
-	@Transient
-	@Comment("Клинический диагноз")
-	public String getDiagnosClinical() {
-		Diagnosis diagClinical = null;
-		if (!getDiagnosis().isEmpty()) {
-			for (int i = 0; i <= getDiagnosis().size() - 1; i++) {
-				Diagnosis diag =getDiagnosis().get(i) ; 
-				if (diag.getRegistrationType()!=null &&  diag.getPriority()!=null ) {
-					if(diag.getRegistrationType().getCode().equals("4") && diag.getPriority().getCode().equals("1")){
-						diagClinical = getDiagnosis().get(i);
-						return diagClinical.getName();
-					}
-				}
-			}
-		}
-		return null;
-	}
 	
-	@Transient
-	@Comment("Патанатомический диагноз")
-	public Diagnosis getDiagnosPathanatomical() {
-		Diagnosis diagPathanatomical = null;
-		if (!getDiagnosis().isEmpty()) {
-			for (int i = 0; i <= getDiagnosis().size() - 1; i++) {
-				Diagnosis diag =getDiagnosis().get(i) ; 
-				if (diag.getRegistrationType()!=null && diag.getRegistrationType().getCode().equals("5")) {
-					diagPathanatomical = getDiagnosis().get(i);
-					break;
-				}
-			}
-		}
-		return diagPathanatomical;
-	} 
-		@Transient
-		@Comment("Основной заключительный диагноз, выписной")
-		public Diagnosis getDiagnosConcluding() {
-			Diagnosis diagConcluding = null;
-			if (!getDiagnosis().isEmpty()) {
-				for (int i = 0; i <= getDiagnosis().size() - 1; i++) {
-					Diagnosis diag =getDiagnosis().get(i) ; 
-					if (diag.getRegistrationType()!=null &&  diag.getPriority()!=null ) {
-						if(diag.getRegistrationType().getCode().equals("3") && diag.getPriority().getCode().equals("1")){
-						diagConcluding = getDiagnosis().get(i);
-						break;
-					}
-				}
-			}
-			}
-			return diagConcluding;
-	} 
-		
-		@Transient
-		@Comment("Осложнение основного заключительного диагноза")
-		public Diagnosis getDiagnosComplication() {
-			Diagnosis diagComplication = null;
-			if (!getDiagnosis().isEmpty()) {
-				for (int i = 0; i <= getDiagnosis().size() - 1; i++) {
-					Diagnosis diag =getDiagnosis().get(i) ; 
-				if (diag.getPriority()!=null && diag.getPriority().getCode().equals("4")) {
-						diagComplication = getDiagnosis().get(i);
-						break;
-					}
-				}
-			}
-			return diagComplication;
-	} 
-	
-		@Transient
-		@Comment("Сопутствующий заключительный диагноз")
-		public Diagnosis getDiagnosConcominant() {
-			Diagnosis diagConcominant = null;
-			if (!getDiagnosis().isEmpty()) {
-				for (int i = 0; i <= getDiagnosis().size() - 1; i++) {
-					Diagnosis diag =getDiagnosis().get(i) ; 
-				if (diag.getPriority()!=null && diag.getPriority().getCode().equals("3")) {
-						diagConcominant = getDiagnosis().get(i);
-						break;
-					}
-				}
-			}
-			return diagConcominant;
-	} 
-		*/
 
 	
 	

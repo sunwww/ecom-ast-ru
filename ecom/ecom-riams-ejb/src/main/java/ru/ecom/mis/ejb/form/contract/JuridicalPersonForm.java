@@ -1,6 +1,9 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.contract.JuridicalPerson;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -285,4 +288,14 @@ public class JuridicalPersonForm extends ContractPersonForm{
 	 * Территория
 	 */
 	private Long theTerritory;
+
+	/** Страховая компания */
+	@Comment("Страховая компания")
+	@Persist
+	public Long getRegCompany() {return theRegCompany;}
+	public void setRegCompany(Long aRegCompany) {theRegCompany = aRegCompany;}
+
+	/** Страховая компания */
+	private Long theRegCompany;
+
 }

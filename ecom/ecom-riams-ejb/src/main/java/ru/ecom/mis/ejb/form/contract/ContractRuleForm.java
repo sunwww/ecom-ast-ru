@@ -212,5 +212,16 @@ public class ContractRuleForm extends IdEntityForm{
 
 	/** Название правила */
 	private String theName;
+	
+	/**
+	 * Договорная персона
+	 */
+	@Comment("Договорная персона")
+	public Long getPerson() {return thePerson;}
+	public void setPerson(Long aPerson) {thePerson = aPerson;}
+	/**
+	 * Договорная персона
+	 */
+	private Long thePerson;
 
 }
