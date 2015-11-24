@@ -47,6 +47,14 @@ public class LoginSaveAction extends LoginExitAction {
 
     private final static Log LOG = LogFactory.getLog(LoginSaveAction.class) ;
     private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    
+    public static boolean needChangePasswordAtLogin (String aUsername, HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+    	String res = service.executeNativeSql("select case when changePasswordAtLogin='1' then '1' else '0' end" +
+    			" from secuser where login='"+aUsername+"'").iterator().next().get1().toString();
+    	if (res!=null&&res.equals("1")) return true;
+    	return false;
+    }
     public static Long getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Long passwordLifetime = null;
@@ -63,7 +71,7 @@ public class LoginSaveAction extends LoginExitAction {
 			passwordAge = ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null);
 		}
 		if (passwordLifetime!=null) {
-			System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
+			//System.out.println("PasswordAAAA , passLT = "+passwordLifetime+", passAge = "+passwordAge+", passStartdate = "+passwordStartDate);
 			diff = passwordLifetime - passwordAge;
 			if (diff<=0) {
 				diff = Long.valueOf(0);
@@ -102,15 +110,13 @@ public class LoginSaveAction extends LoginExitAction {
             
             Long d = getPasswordAge(form.getUsername(),aRequest);
             loginInfo.setUserRoles(service.getUserRoles());
-            if (d!=null&& d==0){
-            	System.out.println("===ЛогинСейвАктив, Д=0");
+            boolean changePasswordAtLogin = needChangePasswordAtLogin(form.getUsername(), aRequest);
+            if ((d!=null&& d==0)||changePasswordAtLogin){
             	return aMapping.findForward("new_password") ;
             }  else if (d!=null&&d<8L) {
             	UserMessage.addMessage(aRequest,d,"Срок действия вашего пароля истекает через "+d+" дней. ", "Сменить пароль","js-secuser-changePassword.do") ;
             	
-            }
-            System.out.println("===ЛогинСейвАктив, Д!=0");
-           
+            }           
         } catch (Exception e) {
             LOG.error("Ошибка при входе: "+getErrorMessage(e),e);
             e.printStackTrace() ;
