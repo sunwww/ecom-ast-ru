@@ -48,6 +48,9 @@
           <msh:textField property="password" label="Пароль" size="20" passwordEnabled="true" fieldColSpan="1" guid="9c145321-5a15-4d06-be73-881ddde7cf84" />
           <msh:checkBox property="isRemoteUser" label="Удаленный пол-ль"/>
         </msh:row>
+        <msh:row>
+          <msh:checkBox property="changePasswordAtLogin" label="Сменить пароль при входе в систему"/>
+        </msh:row>
         <msh:row guid="feafa852-b426-470a-baa1-46187ba71a45">
           <msh:textArea property="comment" label="Комментарий" horizontalFill="true" fieldColSpan="3" guid="d4fda195-9f04-4511-b5dc-a37a1691b735" />
         </msh:row>
