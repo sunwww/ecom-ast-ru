@@ -82,7 +82,7 @@ public class SecUserServiceBean implements ISecUserService {
 		if (hashPassword==null) {
 			return "0Хеш не получился";
 		}
-		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', passwordChangedDate=current_date where login = '"+aUsername+"'").executeUpdate();
+		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', passwordChangedDate=current_date, changePasswordAtLogin='0' where login = '"+aUsername+"'").executeUpdate();
 		exportUsersProperties();
 		return "1Пароль успешно обновлен";
 	}
