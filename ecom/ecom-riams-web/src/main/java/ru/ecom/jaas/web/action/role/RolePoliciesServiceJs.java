@@ -54,6 +54,13 @@ public class RolePoliciesServiceJs  {
 		return service.changePassword(aNewPassword, aOldPassword, username);
 		
 	}
+	public String defaultPassword (String aUsername,  HttpServletRequest aRequest) throws NamingException, InstanceNotFoundException, MalformedObjectNameException, ReflectionException, MBeanException, IOException {
+		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		
+		return service.setDefaultPassword("1", aUsername,username);
+		
+	}
     public void savePolicies(long aRoleId, String[] aAdds, String[] aRemoves, HttpServletRequest aRequest) throws Exception {
 	long[] adds = RolePoliciesSaveAction.getLongs(aAdds) ;
 	long[] removes = RolePoliciesSaveAction.getLongs(aRemoves) ;
