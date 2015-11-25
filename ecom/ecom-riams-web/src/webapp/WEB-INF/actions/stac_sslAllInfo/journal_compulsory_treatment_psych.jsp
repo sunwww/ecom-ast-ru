@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал учета больных в соответствие с поступлением (добровольно, недобровольно)"/>
+    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал по принудительному лечению"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	
@@ -17,11 +17,11 @@
   <tiles:put name="body" type="string">
   <%
   
-	String typeAdmissionOrder =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeAdmissionOrder","1", request) ;
-	String typeDate =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeDate","1", request) ;
+	String typeAdmissionOrder =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeAdmissionOrder","1", request) ;
+	String typeDate =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeDate","1", request) ;
 	//String typeDirect =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeAdmissionOrder","2", request) ;
-	String typeEmergency =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeEmergency","3", request) ;
-	String typeView =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeView","2", request) ;
+	String typeEmergency =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeEmergency","3", request) ;
+	String typeView =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeView","2", request) ;
   %>
   
     <msh:form action="/stac_journal_compulsory_treatment_psych.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
