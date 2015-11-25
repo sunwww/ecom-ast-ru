@@ -45,11 +45,15 @@ public class VocServiceJs {
     public String getEmergencyMessages(HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	StringBuilder sqlA = new StringBuilder() ;
+    	java.util.Date date = new java.util.Date() ;
+    	java.sql.Time dispatchTime = new java.sql.Time(date.getTime()) ;
     	String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sqlA.append("select id,messagetitle,messageText,to_char(dispatchdate,'dd.mm.yyyy')||' '||cast(dispatchtime as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
+		sqlA.append("select id,messagetitle,messageText as messageText,to_char(dispatchdate,'dd.mm.yyyy')||' '||cast(dispatchtime as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
 		sqlA.append(" where recipient='").append(username).append("'") ;
 		sqlA.append(" and readDate is null");
-		sqlA.append(" and isEmergency='1' and (validitydate>current_date or validitydate=current_date and validitytime>=current_time) ");
+		sqlA.append(" and isEmergency='1' and (validitydate>current_date or validitydate=current_date and validitytime>=cast('")
+		.append(dispatchTime)
+		.append("' as time)) ");
     	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
     	StringBuilder sb = new StringBuilder() ;
     	sb.append("{");
@@ -80,7 +84,16 @@ public class VocServiceJs {
     }
     private String str(String aValue) {
     	if (aValue.indexOf("\"")!=-1) {
-    		aValue = aValue.replaceAll("\"", "\\\\\"") ;
+    		aValue = aValue.replaceAll("\"", "\\\"") ;
+    	}
+    	if (aValue.indexOf("\n")!=-1) {
+    		aValue = aValue.replaceAll("\n", "\\\\n") ;
+    	}
+    	if (aValue.indexOf("\r")!=-1) {
+    		aValue = aValue.replaceAll("\r", "\\\\r") ;
+    	}
+    	if (aValue.indexOf("\t")!=-1) {
+    		aValue = aValue.replaceAll("\t", "\\\\t") ;
     	}
     	return aValue ;
     }
