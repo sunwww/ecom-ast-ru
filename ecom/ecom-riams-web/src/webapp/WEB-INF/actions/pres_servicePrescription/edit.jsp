@@ -508,13 +508,13 @@
 		addRows(type+":"+ar[0],1);
 	}
 		
-	function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
+	/* function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
 		alert ("addROw "+aLabID+":"+ aLabDepartment+":"+ aLabCabinet+":"+ aDateStart+":"+ aWCT+":"+ comments);
 		PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
-	}
-	function deletePrescription(aMedService, aWCT) {
+	} 
+	 function deletePrescription(aMedService, aWCT) {
 		PrescriptionService.removePrescriptionFromListWCT($('prescriptionList').value,aMedService,aWCT);
-	}
+	} */
 	
 	function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
 		return "<input id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='hidden' />"
@@ -552,77 +552,6 @@
 	}
 	return [l,lAll,isDoubble] ;
 	}
-	function addRows(aResult,aFocus) {
-		var resultRow = aResult.split(":");
-		/*
-		0 - ms.type
-		1 - ms.ID 2 - ms. code+name
-		3 - date
-		4 - cabinetcode           5 - cabinetname
-		6 - departmentintakecode  7 - departmentintakename (for lab)
-		8 - timecode              9 - timename (for func)
-		*/
-		var type = resultRow[0];
-		var id = resultRow[1]; 
-		var name = resultRow[2];
-		var date = resultRow[3]!=""?resultRow[3]:textDate;
-		var cabinet = resultRow[4]?resultRow[4]:"";
-		var cabinetName = resultRow[5]?resultRow[5]:"";
-		
-		if (type=='LABSURVEY' || type=='lab') {
-			type='lab'; num = labNum;
-		} else if (type=='DIAGNOSTIC' || type=='func') {
-			type='func'; num = funcNum; 
-		} else if (type=='surg') {
-			num = surgNum;
-		} else if (type='hosp') {
-			num = hospNum;
-		}
-		num+=1;
-	    
- 		var tbody = document.getElementById('add'+type+'Elements');
-	    var row = document.createElement("TR");
-		row.id = type+"Element"+num;
-	    tbody.appendChild(row);
-	
-	    // Создаем ячейки в вышесозданной строке и добавляем тх 
-	    var td1 = document.createElement("TD"); td1.colSpan="1"; td1.align="right";
-	    var td2 = document.createElement("TD"); td2.colSpan="3";
-	    var td3 = document.createElement("TD");
-	    row.appendChild(td1); row.appendChild(td2); row.appendChild(td3);
-	   
-	    // Наполняем ячейки 
-	    //var dt2="<input id='"+type+"Cabinet"+num+"' name='"+type+"Cabinet"+num+"' value='"+cabinet+"' type='hidden'  />";
-	    
-	  	td1.innerHTML = "";//textInput("Дата",type,"Date",num,resultRow[3],date,10) ;
-	    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
-	   	if (type=="lab") {
-	   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
-	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,cabinet,"");
-	   		labNum = num;
-	   	} else if (type=="func"){
-		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
-	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[3]+' '+resultRow[9],"") ;
-	   		funcNum = num;
-	   		$(type+'Cabinet').value='';
-			$(type+'CabinetName').value='';
-	   	} else if (type=='surg') {
-	   		surgNum=num;
-	   		td1.innerHTML = spanTag("Дата",resultRow[3]+" "+resultRow[9],"") ;
-	   		td1.colSpan="1";
-	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Операционная",resultRow[5],"");
-	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"");
-	   		$(type+'CalTime').value='';
-	   		$(type+'CalTimeName').value='';
-	   
-	   	}
-	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);deletePrescription("+resultRow[1]+","+resultRow[8]+")' value='Удалить' />";
-	   	//new dateutil.DateField($(type+'Date'+num));
-		
-		$(type+'Servicies').value='';
-		$(type+'ServiciesName').value='';
-		if (aFocus) $(type+'ServiciesName').focus() ;
-}
 	
 			</script>
 			</msh:ifFormTypeIsNotView>
