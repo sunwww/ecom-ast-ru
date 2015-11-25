@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Стоимость госпитализации (СЛС)" />
@@ -60,10 +60,11 @@ left join workfunctionservice wfs on wfs.lpu_id=slo.department_id
     and wfs.roomType_id=wp.roomType_id
 left join medservice ms on ms.id=wfs.medservice_id
     left join pricemedservice pms on pms.medservice_id=wfs.medservice_id
-        left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
+        left join priceposition pp on pp.id=pms.priceposition_id 
 and (pp.isvat is null or pp.isvat='0')
 where slo.parent_id='${param.id}'
- and ms.servicetype_id=${idsertypebed} 
+ and ms.servicetype_id=${idsertypebed} and pp.priceList_id='${priceList}'
+ group by slo.id,ml.name,vbt.name,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />

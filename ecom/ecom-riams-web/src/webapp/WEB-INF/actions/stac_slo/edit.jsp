@@ -332,7 +332,7 @@
 						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/Control"/>
 					<msh:tableButton property="6" buttonFunction="checkErrorProtocolVk" 
 					buttonName="На редакцию врачу VK" buttonShortName="На редак." 
-						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/ControlVK"/>
+						hideIfEmpty="true" role="/Policy/Mis/MedCase/Stac/Journal/ControlVk"/>
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Протокол" property="3" cssClass="preCell"/>
@@ -488,7 +488,7 @@
   	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ControlVk">
   	<tags:smo_diary_defect name="SMODef" title="Выбор причины редакции дневника (ВК)" parentID="${param.id}" />
   		<script type="text/javascript">
-  			function checkErrorProtocol(aId) {
+  			function checkErrorProtocolVk(aId) {
   				showSMODefDiaryDefect(aId,'1') ;
   				
   			}

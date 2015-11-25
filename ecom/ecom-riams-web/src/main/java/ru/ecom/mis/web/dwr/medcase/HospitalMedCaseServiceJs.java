@@ -394,7 +394,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" ,vs.omcCode as vsomccode");
 			sql.append(" ,ml.omccode as mlomccode");
 			sql.append(" ,case when sls.hotelServices='1' then '1' else '0' end as hotelserv");
-			sql.append(" ,case when vrd1.code='1' then vhr.code else vrd.code='DIS_PAT' then '16' when vrd.code='DIS_LPU' then '17' when vho.code='2' then '5' when vho.code='3' then '4' when vho.code='4' then '14' when vhr.code is null then '2' else vhr.code end as result");
+			sql.append(" ,case when vrd1.code='1' then vhr.code when vrd.code='DIS_PAT' then '16' when vrd.code='DIS_LPU' then '17' when vho.code='2' then '5' when vho.code='3' then '4' when vho.code='4' then '14' when vhr.code is null then '2' else vhr.code end as result");
 			sql.append(" ,case when pvss.code='И0' then '1' else '0' end as foreign");
 			sql.append(" , to_char(sls.dateStart,'dd.mm.yyyy') as date5start");
 			sql.append(" ,to_char(sls.dateFinish,'dd.mm.yyyy') as date5Finish");
