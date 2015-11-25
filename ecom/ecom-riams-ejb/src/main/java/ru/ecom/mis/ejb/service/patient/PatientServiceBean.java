@@ -96,11 +96,11 @@ public class PatientServiceBean implements IPatientService {
 		//	try {
 				if (aLpuAttached!=null&&aAttachedDate!=null&&aAttachedType!=null) {
 					String aSql = "select " +
-							" case when (select keyvalue from softconfig where key='DEFAULT_LPU_OMCCODE')!='"+aLpuAttached+"' then 1" +
+							" case when (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')!='"+aLpuAttached+"' then 1" +
 							" else (select count(att.id) from lpuattachedbydepartment att where (att.patient_id="+aPatientId+
 							" and att.attachedtype_id=(select id from vocattachedtype where code='"+aAttachedType+"')" +
 							" and att.dateFrom=to_date('"+aAttachedDate+"','dd.MM.yyyy')and att.dateTo is null" +
-							" and (select keyvalue from softconfig where key='DEFAULT_LPU_OMCCODE')='"+aLpuAttached+"')) end";
+							" and (select max(sc.keyvalue) from softconfig sc where sc.ey='DEFAULT_LPU_OMCCODE')='"+aLpuAttached+"')) end";
 							//System.out.println("=========== aSQL = "+aSql);
 					Object a = theManager.createNativeQuery(aSql).getSingleResult();
 					if (a.toString().equals("0")) {isDifference = true;}
