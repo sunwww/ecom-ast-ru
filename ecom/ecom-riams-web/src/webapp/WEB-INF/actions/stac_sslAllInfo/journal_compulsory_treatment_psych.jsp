@@ -54,19 +54,16 @@
       <msh:row>
         <td class="label" title="Поиск по показаниям поступления (typeAdmissionOrder)" colspan="1"><label for="typeAdmissionOrderName" id="typeAdmissionOrderLabel">Поступил:</label></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typeAdmissionOrder" value="1">  добровольное+согласия не требуется
+        	<input type="radio" name="typeAdmissionOrder" value="1">  находящихся в стационаре
         </td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typeAdmissionOrder" value="2" >  недобровольное
+        	<input type="radio" name="typeAdmissionOrder" value="2" >  выписанных
         </td>
       </msh:row>
       <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typeAdmissionOrder" value="3"> добровольное
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-        	<input type="radio" name="typeAdmissionOrder" value="4"> согласия не требуется
+        	<input type="radio" name="typeAdmissionOrder" value="3"> переведенных
         </td>
       </msh:row>
 
@@ -79,21 +76,7 @@
 	        	<input type="radio" name="typeView" value="2">  свод по отделениям 
 	        </td>
       </msh:row>
-      <msh:row>
-        <td></td>
-	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
-	        	<input type="radio" name="typeView" value="3">  свод по решениям судьи по ст.35 
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
-	        	<input type="radio" name="typeView" value="4">  свод по порядку поступления  (статьи 29 и др)
-	        </td>
-      </msh:row>
-      <msh:row>
-        <td></td>
-	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
-	        	<input type="radio" name="typeView" value="5">  свод по типу напр.учр.
-	        </td>
-        </msh:row>
+
       <msh:row>
         <msh:textField fieldColSpan="2" property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
@@ -157,12 +140,12 @@
     	} 
     	
     	ActionUtil.setParameterFilterSql("department","ml.id", request) ;
-    	if (typeDate!=null && typeDate.equals("2")) {
+    	/*if (typeDate!=null && typeDate.equals("2")) {
     		request.setAttribute("dateSql", "sls.dateFinish") ;
     	} else {
     		request.setAttribute("dateSql", "sls.dateStart") ;
-    	}
-    	if (typeAdmissionOrder==null) typeAdmissionOrder = "1" ;
+    	}*/
+    	/*if (typeAdmissionOrder==null) typeAdmissionOrder = "1" ;
     	if (typeAdmissionOrder.equals("1")) {
     		request.setAttribute("admissionOrderSql", "and (vao.code='1' or vao.code='3')") ;
     	} else if (typeAdmissionOrder.equals("2")) {
@@ -171,7 +154,7 @@
     		request.setAttribute("admissionOrderSql", "and vao.code='1'") ;
     	} else if (typeAdmissionOrder.equals("4")) {
     		request.setAttribute("admissionOrderSql", "and vao.code='3'") ;
-    	}
+    	}*/
     	%>
     	  <ecom:webQuery name="diag_typeReg_ord_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='2'"/>
     	
@@ -183,35 +166,23 @@
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="reestr_sql" name="journal_reestr" nativeSql="
-    
-    select sls.id as slsid, ss.code as sscoe,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
-, to_char(pat.birthday,'dd.mm.yyyy') as patbirthday
+    select ct.id as ctid,sls.id as slsid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
+,pat.birthday as birthday,sls.datestart, ml.name as mlname,slo.id as sloid,
+ct.registrationDate as ctregistrationDate
 ,list(distinct case when vdrt.id='${diag_typeReg_ord}' then mkb.code else null end) as mkbcode
-	 ,to_char(sls.dateStart,'dd.mm.yyyy') as slsdatestart,
-vht.name as vhtname,ml.name as mlname,vao.name as vaoname
-, vj.name as vjname
-,list(distinct case when slo.dateFinish is not null then to_char(sls.dateFinish,'dd.mm.yyyy') ||' '||mlSlo.name 
-when (slo.datefinish is null and slo.transferdate is null) then 'сост. на тек.момент '||mlSlo.name 
-else null end) as depaDischarge
-from medcase sls
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join Patient pat on pat.id=sls.patient_id
-left join Diagnosis diag on diag.medcase_id=sls.id
-left join VocIdc10 mkb on mkb.id=diag.idc10_id
-left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
-left join VocHospType vht on sls.sourceHospType_id=vht.id
-left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
-left join mislpu ml on ml.id=sls.department_id
-left join mislpu mlSlo on mlSlo.id=slo.department_id
-left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
-left join VocJudgment vj on vj.id=sls.judgment35_id
-where sls.dtype='HospitalMedCase' and ${dateSql} between 
-to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null
-${emergencySql} ${departmentSql} ${admissionOrderSql}
-group by sls.id, ss.code,pat.lastname,pat.firstname,pat.middlename
-, pat.birthday,sls.dateStart,vht.name,ml.name,vao.name, vj.name
-order by ml.name,pat.lastname,pat.firstname,pat.middlename
+
+ from compulsorytreatment ct 
+left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id
+left join patient pat on pat.id=pcc.patient_id
+left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.dateFinish is null and sls.deniedhospitalizating_id is null
+left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.transferDate is null
+left join MisLpu ml on ml.id=slo.department_id
+where ct.datereplace is null
+and ct.kind_id in (2,3)
+    ${emergencySql} ${departmentSql} ${admissionOrderSql}
+    
+
+
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
     
@@ -249,126 +220,8 @@ order by ml.name,pat.lastname,pat.firstname,pat.middlename
     <msh:section>
     <msh:sectionTitle>Свод по отделениям за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="swod_department" nativeSql="
-select ml.id,ml.name,count(distinct sls.id)
-from medcase sls
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join Patient pat on pat.id=sls.patient_id
-left join Diagnosis diag on diag.medcase_id=sls.id
-left join VocIdc10 mkb on mkb.id=diag.idc10_id
-left join VocHospType vht on sls.sourceHospType_id=vht.id
-left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
-left join mislpu ml on ml.id=sls.department_id
-left join mislpu mlSlo on mlSlo.id=slo.department_id
-left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
-left join VocJudgment vj on vj.id=sls.judgment35_id
-where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
-group by ml.id,ml.name
-order by ml.id,ml.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="swod_department"
-    viewUrl="stac_journal_compulsory_treatment_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_compulsory_treatment_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
-      <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn columnName="Кол-во" property="3" />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    
-    <%} else if (typeView!=null && (typeView.equals("3"))) {%>
-    
-    <msh:section>
-    <msh:sectionTitle>Свод по решениям судьи по ст. 35 за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="swod_department" nativeSql="
-select vj.id,vj.name,count(distinct sls.id)
-from medcase sls
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join Patient pat on pat.id=sls.patient_id
-left join Diagnosis diag on diag.medcase_id=sls.id
-left join VocIdc10 mkb on mkb.id=diag.idc10_id
-left join VocHospType vht on sls.sourceHospType_id=vht.id
-left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
-left join mislpu ml on ml.id=sls.department_id
-left join mislpu mlSlo on mlSlo.id=slo.department_id
-left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
-left join VocJudgment vj on vj.id=sls.judgment35_id
-where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
-group by vj.id,vj.name
-order by vj.id,vj.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="swod_department"
-    viewUrl="stac_journal_compulsory_treatment_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_compulsory_treatment_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
-      <msh:tableColumn columnName="Решение по ст. 35" property="2" />
-      <msh:tableColumn columnName="Кол-во" property="3" />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <%} else if (typeView!=null && (typeView.equals("4"))) {%>
-    
-    <msh:section>
-    <msh:sectionTitle>Свод по порядку поступления за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="swod_department" nativeSql="
-select vao.id,vao.name,count(distinct sls.id)
-from medcase sls
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join Patient pat on pat.id=sls.patient_id
-left join Diagnosis diag on diag.medcase_id=sls.id
-left join VocIdc10 mkb on mkb.id=diag.idc10_id
-left join VocHospType vht on sls.sourceHospType_id=vht.id
-left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
-left join mislpu ml on ml.id=sls.department_id
-left join mislpu mlSlo on mlSlo.id=slo.department_id
-left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
-left join VocJudgment vj on vj.id=sls.judgment35_id
-where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
-group by vao.id,vao.name
-order by vao.id,vao.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="swod_department"
-    viewUrl="stac_journal_compulsory_treatment_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_compulsory_treatment_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
-      <msh:tableColumn columnName="Порядок поступления" property="2" />
-      <msh:tableColumn columnName="Кол-во" property="3" />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
-    <%} else if (typeView!=null && (typeView.equals("5"))) {%>
-    
-    <msh:section>
-    <msh:sectionTitle>Свод по типу напр. учр. за период ${param.dateBegin}-${dateEnd} ${emergencyInfo}.</msh:sectionTitle>
-    <msh:sectionContent>
-    <ecom:webQuery name="swod_department" nativeSql="
-select vht.id,vht.name,count(distinct sls.id)
-from medcase sls
-left join StatisticStub ss on ss.id=sls.statisticStub_id
-left join Patient pat on pat.id=sls.patient_id
-left join Diagnosis diag on diag.medcase_id=sls.id
-left join VocIdc10 mkb on mkb.id=diag.idc10_id
-left join VocHospType vht on sls.sourceHospType_id=vht.id
-left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
-left join mislpu ml on ml.id=sls.department_id
-left join mislpu mlSlo on mlSlo.id=slo.department_id
-left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
-left join VocJudgment vj on vj.id=sls.judgment35_id
-where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
-group by vht.id,vht.name
-order by vht.id,vht.name
-    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="swod_department"
-    viewUrl="stac_journal_compulsory_treatment_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_compulsory_treatment_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
-      <msh:tableColumn columnName="Тип напр. учр." property="2" />
-      <msh:tableColumn columnName="Кол-во" property="3" />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
+   </msh:sectionContent></msh:section>
+   
     <% }  %>
     <% 
     } else {%>
