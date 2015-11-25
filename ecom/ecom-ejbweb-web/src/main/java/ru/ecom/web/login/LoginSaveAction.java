@@ -62,10 +62,10 @@ public class LoginSaveAction extends LoginExitAction {
 		Long passwordAge = null;
 		Date passwordStartDate = null;
 		try {
-			passwordLifetime = Long.valueOf(service.executeNativeSql("select KeyValue from SoftConfig where key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
+			passwordLifetime = Long.valueOf(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
 		} catch (Exception e){}
 		try {
-			passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when passwordChangedDate is not null then to_char(passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(editdate,createdate),'dd.MM.yyyy') end as date from secuser where login='"+username+"'").iterator().next().get1().toString());
+			passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when su.passwordChangedDate is not null then to_char(su.passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(su.editdate,su.createdate),'dd.MM.yyyy') end as sudate from secuser su where su.login='"+username+"'").iterator().next().get1().toString());
 		} catch (Exception e){}
 		if (passwordStartDate !=null) {
 			passwordAge = ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null);
