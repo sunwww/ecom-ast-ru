@@ -142,4 +142,18 @@ public class Anesthesia extends BaseEntity{
 	public String getAnesthesistInfo() {
 		return theAnesthesist != null ? theAnesthesist.getWorkerInfo():"" ;
 	}
+	
+	/** Мед.услуга */
+	@Comment("Мед.услуга")
+	@OneToOne
+	public MedService getMedService() {
+		return theMedService;
+	}
+
+	public void setMedService(MedService aMedService) {
+		theMedService = aMedService;
+	}
+
+	/** Мед.услуга */
+	private MedService theMedService;
 }
