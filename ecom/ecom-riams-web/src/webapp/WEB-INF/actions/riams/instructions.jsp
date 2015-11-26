@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis"%>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
 	<tiles:put name='title' type='string'>
 		<msh:title>ИНСТРУКЦИИ</msh:title>
