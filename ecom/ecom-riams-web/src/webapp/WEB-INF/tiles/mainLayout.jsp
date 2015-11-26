@@ -60,7 +60,7 @@
         </a>
         <ul id='user'>
         	<msh:ifInRole roles="/Policy/Mis/CustomMessage/PhoneAmokb">
-            <li><a href='js-riams-phone.do' target='_blank'>Телефоны АМОКБ</a></li>
+            <li><a href='js-riams-phone.do' target='_blank'>Тел.АМОКБ</a></li>
             </msh:ifInRole>
             <li class="separator">|</li>
             <li><a href='ecom_releases.do'>Новости</a></li>
@@ -74,6 +74,10 @@
            
             </msh:ifInRole>
              <li class="separator">|</li>
+            <li> <a href='javascript:void(0)' onclick='getDefinition("js-riams-instructions.do?short=Short")'>Инструкции</a>
+             </li>
+             <li class="separator">|</li>
+             
              <li>
              <% request.setAttribute("servletPath", request.getServletPath()); %>
              <msh:ifNotInRole roles="/Policy/Mis/Help/Edit">
@@ -86,9 +90,9 @@
             <li class="separator">|</li>
             <li><ecom:loginName /></li>
             <li class="separator">|</li>
-            <li><a href='js-secuser-changePassword.do'>Сменить пароль</a></li>
+            <li><a href='js-secuser-changePassword.do'>Смена пароля</a></li>
             <li class="separator">|</li>
-            <li><a href="javascript:window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под другим именем</a></li>
+            <li><a href="javascript:window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под др. именем</a></li>
             <li class="separator">|</li>
             <li><msh:link action="/ecom_loginExit.do">Завершить работу</msh:link></li>
 
