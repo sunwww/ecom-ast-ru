@@ -16,8 +16,14 @@
 				<div class='menu'>
 				<h2>Лаборатория</h2>
 				<ul>
-					<li><msh:link  action="js-riams-instruction.do?id=lab">
+					<li><msh:link  action="js-riams-instruction.do?id=lab_pr_m_s">
 					Рабочее место процедурной мед.сестры
+                        </msh:link></li>
+					<li><msh:link  action="js-riams-instruction.do?id=lab_doctor">
+					Рабочее место врача-лаборанта
+                        </msh:link></li>
+					<li><msh:link  action="js-riams-instruction.do?id=lab_tech">
+					Рабочее место техника-лаборанта
                         </msh:link></li>
 					
 					

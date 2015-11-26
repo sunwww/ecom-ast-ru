@@ -128,7 +128,8 @@ try {
      </div>
 
     <div id="content">
-    <msh:link action="${nextUrl}">Вернуться к работе)</msh:link>
+   <h2><a href='js-riams-instructions.do'>ИНСТРУКЦИИ ПО РАБОТЕ В МедОС</a></h2>
+	 <msh:link action="${nextUrl}">Вернуться к работе)</msh:link>
         		<msh:form action="mis_helpsave.csp" defaultField="contextText" method="post">
 			<msh:panel colsWidth="1%,99%">
 				<msh:row>
