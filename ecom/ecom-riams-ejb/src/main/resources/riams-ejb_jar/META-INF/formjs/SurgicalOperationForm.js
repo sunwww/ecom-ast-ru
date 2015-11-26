@@ -16,7 +16,10 @@ function onCreate(aForm, aSurgOper, aCtx) {
 						,aForm.anaesthetist) ;
 				var anesthesia = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesiaMethod
 						,aForm.anesthesia) ;
+				var anesthesiaService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService
+						,aForm.anesthesiaService) ;
 				anes.setMethod(anesthesia) ;
+				anes.setMethod(anesthesiaService) ;
 				anes.setAnesthesist(anaesthetist) ;
 				anes.setSurgicalOperation(aSurgOper) ;
 				aCtx.manager.persist(anes) ;
