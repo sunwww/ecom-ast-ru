@@ -10,6 +10,9 @@
 	</tiles:put>
 
 	<tiles:put name='body' type='string'>
+	
+	<h2><a href='js-riams-instructions.do'>ИНСТРУКЦИИ ПО РАБОТЕ В МедОС</a></h2>
+	<h2>Контекстная помощь</h2>
 		${contextText}
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
