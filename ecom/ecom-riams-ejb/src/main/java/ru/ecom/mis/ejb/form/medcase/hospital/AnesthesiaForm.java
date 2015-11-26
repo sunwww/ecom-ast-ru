@@ -1,8 +1,11 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Anesthesia;
+import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -152,4 +155,18 @@ public class AnesthesiaForm extends IdEntityForm {
 	private String theCreateUsername;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	/** Мед.услуга */
+	@Comment("Мед.услуга")
+	@Persist
+	public Long getMedService() {
+		return theMedService;
+	}
+
+	public void setMedService(Long aMedService) {
+		theMedService = aMedService;
+	}
+
+	/** Мед.услуга */
+	private Long theMedService;
 }
