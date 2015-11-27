@@ -43,4 +43,31 @@ public class WorkCalendarHospitalBedByVisitForm extends WorkCalendarHospitalBedF
 	/** Рабочая функция */
 	private Long theWorkFunction;
 
+	   /** Операци */
+		@Comment("Операци")
+		public Long getSurgService() {return theSurgService;}
+		public void setSurgService(Long aSurgService) {theSurgService = aSurgService;	}
+		/** Операци */
+		private Long theSurgService;
+		
+		/** Время для направления на операцию */
+		@Comment("Время для направления на операцию")
+		public Long getSurgCalTime() {return theSurgCalTime;}
+		public void setSurgCalTime(Long aSurgCalTime) {	theSurgCalTime = aSurgCalTime;}
+		/** Время для направления на операцию */
+		private Long theSurgCalTime;
+		
+		/** Дата для направления на операцию */
+		@Comment("Дата для направления на операцию")
+		public Long getSurgCalDate() {return theSurgCalDate;}
+		public void setSurgCalDate(Long aSurgCalDate) {theSurgCalDate = aSurgCalDate;}
+		/** Дата для направления на операцию */
+		private Long theSurgCalDate;
+		
+		/** Операционная */
+		@Comment("Операционная")
+		public Long getSurgCabinet() {return theSurgCabinet;}
+		public void setSurgCabinet(Long aSurgCabinet) {theSurgCabinet = aSurgCabinet;}
+		/** Операционная */
+		private Long theSurgCabinet;
 }
