@@ -98,7 +98,7 @@
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на лабораторные исследования</msh:sectionTitle>
     	<msh:sectionContent>
-    		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
+    		<msh:table name="pres" action="entityView-pres_servicePrescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Исследование"/>
     			<msh:tableColumn property="7" columnName="Тип назначения"/>
     			<msh:tableColumn property="8" columnName="Место забора"/>
@@ -153,7 +153,7 @@
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список койко-дней</msh:sectionTitle>
     	<msh:sectionContent>
-    		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
+    		<msh:table name="pres" action="entityView-pres_servicePrescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Тип услуги"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
     			<msh:tableColumn property="5" columnName="Дата окончания"/>
