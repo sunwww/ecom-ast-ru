@@ -315,8 +315,8 @@ public class AddressPointServiceBean implements IAddressPointService {
         			{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
         	    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
         	    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
-        	    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode","1","Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries",null,"Серия документа"}
-        	    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber","1","Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued","1","Дата выдачи документа"}
+        	    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode",null,"Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries",null,"Серия документа"}
+        	    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber",null,"Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDT" ,"p.passportdateissued",null,"Дата выдачи документа"}
         	    	,		{"cast('' as varchar(1))","TEL" ,"p.phone",null,"Телефон"} ,		{"p.commonNumber","RZ" ,"p.commonNumber",null,"ЕПН"}
         	    	,		{" case when lp.id is null then '1' else coalesce(vat.code,'2') end","SP_PRIK" ,"lp.id,vat.code","1","Тип прикрепления"} 
         	    	,		{"case when lp.dateTo is null then '1' else '2' end","T_PRIK" ,"lp.dateTo","1","прикреплениt/открепление"}
@@ -477,11 +477,12 @@ public class AddressPointServiceBean implements IAddressPointService {
     	XmlUtil.saveXmlDocument(xmlDoc, outFile) ;
     }
     WebQueryResult res = new WebQueryResult();
+    
     public void setExportDate (String aDate, String aAttachmentId) {
     	if (aDate==null||aDate.equals("")) {
     		aDate=DateFormat.formatToDate(new java.util.Date());
     	}
-    	theManager.createNativeQuery("update lpuattachedbydepartment set exportDate=to_date('"+aDate+"','dd.MM.yyyy') where id="+aAttachmentId).executeUpdate();
+    	theManager.createNativeQuery("update lpuattachedbydepartment set exportDate=to_date('"+aDate+"','dd.MM.yyyy') , defectperiod='' where id="+aAttachmentId).executeUpdate();
     }
     public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr
     		, List<Object[]> listPat, String[][] aProps
