@@ -373,7 +373,8 @@ public class WorkCalendarServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
-		sql.append("select w.lpu_id,w.id from SecUser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.id="+aServiceStream ) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		sql.append("select w.lpu_id,w.id from SecUser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.login="+username ) ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		if (list.isEmpty()) return "" ;
 		String dep = ""+list.iterator().next().get1() ;
