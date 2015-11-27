@@ -66,8 +66,9 @@
     <msh:section title="Журнал направлений на хир. операции. Период с ${param.dateBegin} по ${dateEnd}.">
     <msh:sectionContent>
     <ecom:webQuery name="journal_list_suroper" nameFldSql="journal_list_suroper_sql" nativeSql=" 
-select mc.id as medcaseid
-,pat.patientinfo
+select 
+case when wct.prescription is not null then  mc.id else wchb.visit_id end as medcaseid
+,case when wct.prescription is not null then pat.patientinfo else patP.patientInfo end
 ,wf.id
 ,ms.code||' '||ms.name as oper_name
 ,wf.groupname
@@ -76,27 +77,31 @@ select mc.id as medcaseid
 ,mlN.name||' (' ||wp.lastname||')' as naprInfo
 ,ss.code
 ,p.comments
-from prescription p 
-left join workcalendartime wct on wct.prescription=p.id
+, case when wct.prescription is not null then 'background:#F6D8CE;color:black;' else 'background:#6495ED;color:black;' end
+from workcalendartime wct 
+left join patient patP on patP.id=wct.prepatient_id
+left join prescription p on wct.prescription=p.id
 left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
+left join workcalendar wc on wc.id=wcd.workcalendar_id
 left join prescriptionlist pl on pl.id=p.prescriptionlist_id
 left join medcase mc on mc.id=pl.medcase_id
 left join medcase mcP on mcP.id=mc.parent_id
 left join patient pat on pat.id=mc.patient_id
-left join medservice ms on ms.id=p.medservice_id
+left join medservice ms on ms.id=coalesce(p.medservice_id, wct.service)
 left join vocservicetype vst on vst.id=ms.servicetype_id
-left join workfunction wf on wf.id=p.prescriptcabinet_id
+left join workfunction wf on wf.id=wc.workfunction_id
 left join workfunction wfN on wfN.id=p.prescriptspecial_id
 left join worker wN on wN.id=wfN.worker_id
 left join patient wp on wp.id=wN.person_id
 left join mislpu mlN on mlN.id=wN.lpu_id
+left join WorkCalendarHospitalBed wchb on wchb.id=wct.prehospital
 left join statisticstub ss on ss.id=coalesce(mc.statisticstub_id,mcP.statisticstub_id)
 where wcd.calendardate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 and vst.code='OPERATION'  
 ${dep}
 order by wcd.calendardate, wct.timefrom
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_suroper"
+        <msh:table styleRow='11' name="journal_list_suroper"
          action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Пациент" property="2"/>
             <msh:tableColumn columnName="ИБ" property="9"/>
