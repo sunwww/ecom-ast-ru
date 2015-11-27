@@ -43,8 +43,11 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" horizontalFill="true"/>
-        	<msh:checkBox property="isOperation" label="Операция?"/>
-        </msh:row>
+        	
+         </msh:row>
+        
+          
+       
         <msh:row>
         	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="vocLpuHospOtdAll"/>
         </msh:row>
@@ -82,6 +85,28 @@
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        <msh:checkBox property="isOperation" label="Назначить операцию?"/>
+        </msh:row>
+        </msh:panel>
+         <msh:panel styleId='createOperationDiv'> 
+          <msh:row>
+        	<msh:separator label="Назначение на операцию" colSpan="4"/>
+        </msh:row>
+		<msh:row>
+    			<msh:autoComplete property="surgService" label="Исследование" vocName="surgicalOperations" horizontalFill="true" size="90" fieldColSpan="4" />
+   		</msh:row>
+   		<msh:row>
+				 <msh:autoComplete property="surgCabinet" label="Операционная"  fieldColSpan="4" parentAutocomplete="surgService" vocName="operatingRoomsByMedService" size='20' horizontalFill="true" />
+			</msh:row>
+		<msh:row>
+				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
+			</msh:row>
+			<msh:row>
+    			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
+    		</msh:row>   
+        </msh:panel>
+        <msh:panel>
+        <msh:row>
         	<msh:separator label="Фактическая госпитализация" colSpan="4"/>
         </msh:row>
         <msh:row>
@@ -108,8 +133,12 @@
         <msh:row>
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>                
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+        
       </msh:panel>
+     
+        <msh:panel> 
+		<msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />   
+        </msh:panel>
     </msh:form>
 
 </tiles:put>
@@ -155,6 +184,24 @@
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
   	
   	<script type="text/javascript">
+  	
+  	eventutil.addEventListener($('isOperation'), 'click', function () {showTable('createOperationDiv', 'isOperation');}) ;
+  	showTable('createOperationDiv', 'isOperation');
+  	function showTable(aTableId, aCheckFld) {
+    	//alert(aTableId+"--" + aCheckFld) ;
+    	var aCanShow = $(aCheckFld).checked ;
+		//try {
+			//alert( aCanShow ? 'table-row' : 'none') ;
+			$(aTableId).style.display = aCanShow ? 'block' : 'none' ;
+		//} catch (e) {
+			// for IE
+			//alert(aCanShow ? 'block' : 'none') ;
+		//	try{
+		//	$(aTableId).style.display = aCanShow ? 'block' : 'none' ;
+		//	}catch(e) {}
+		//}	
+	}
+  	
   		//initPersonPatientDialog();
   		function getTextDiaryByMedCase(aElement) {
   			HospitalMedCaseService.getTextDiaryByMedCase(
