@@ -50,7 +50,7 @@ function changePassword () {
 			RolePoliciesService.changePassword($('newPassword').value,$('oldPassword').value, {
 				callback: function (aResult) {
 					alert (aResult.substring(1));
-					if (aResult.startsWith("1")) {
+					if (aResult.substring(0,1)==("1")) {
 						window.location = "ecom_relogin.do?next=/start.do";
 					} else {
 						$('btnChangePassword').disabled=false;
