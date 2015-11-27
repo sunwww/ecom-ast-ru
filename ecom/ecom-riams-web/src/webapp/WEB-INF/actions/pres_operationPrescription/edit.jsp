@@ -67,7 +67,7 @@
 			
 		 $('1ListIds').value=list;
 	 }
- 	//onload =
+ 	onload = showShowPrescriptList($('prescriptionList').value);
 	function startLoad () {
 		var date = new Date();
 		var month = date.getMonth()+1; if (month<10) {month="0"+month;}
@@ -181,7 +181,6 @@
 		checkNum+=1;
 	}
 	var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
-	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value);
 	addRows(type+":"+ar[0],1);
 }
 	
@@ -199,7 +198,6 @@ function deletePrescription(aMedService, aWCT) {
 			if ($(aType+aFldList[aReqFldId[i]][0]+aTypeNum).value=="") {next=false ; break;}  
 		}
 		if (next) {
-			//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
 			for (var i=0;i<aFldList.length;i++) {
 				var val = aFldList[i][0]==""?"":$(aType+aFldList[i][0]+aTypeNum).value ;
 				val = val.replace(":","-");
@@ -221,14 +219,14 @@ function deletePrescription(aMedService, aWCT) {
 		
 
 		function addRows(aResult,aFocus) {
-		var resultRow = aResult.split(":");
+			var resultRow = aResult.split(":");
 		/*
 		0 - ms.type
 		1 - ms.ID 2 - ms. code+name
 		3 - date
-		4 - cabinetcode           5 - cabinetname
-		6 - departmentintakecode  7 - departmentintakename (for lab)
-		8 - timecode              9 - timename (for func)
+		4 - cabinetID	        	5 - cabinetname
+		6 - departmentintakecode	7 - departmentintakename (for lab)
+		8 - timeID	                9 - timename (for func)
 		*/
 		var type = resultRow[0];
 		var id = resultRow[1]; 
@@ -236,6 +234,9 @@ function deletePrescription(aMedService, aWCT) {
 		var date = resultRow[3]!=""?resultRow[3]:textDate;
 		var cabinet = resultRow[4]?resultRow[4]:"";
 		var cabinetName = resultRow[5]?resultRow[5]:"";
+		var calTime = resultRow[8];
+		var calDateName = resultRow[9];
+		var comment = resultRow[10]?resultRow[10]:"";
 		
 		if (type=='LABSURVEY' || type=='lab') {
 			type='lab'; num = labNum;
@@ -243,9 +244,13 @@ function deletePrescription(aMedService, aWCT) {
 			type='func'; num = funcNum; 
 		} else if (type=='surg') {
 			num = surgNum;
-		} else if (type='hosp') {
+		} else if (type=='hosp') {
 			num = hospNum;
+		} else {
+			alert ("unknown type " + type);
+			return;
 		}
+		addPrescription(id,'',cabinet,date,calTime,comment);
 		num+=1;
 	    
  		var tbody = document.getElementById('add'+type+'Elements');
@@ -343,12 +348,14 @@ function deletePrescription(aMedService, aWCT) {
         <tr><td>
         <table id="surgTable">
         <tbody id="addsurgElements">
-    		<msh:row>
-    			<msh:autoComplete property="surgServicies" label="Исследование" vocName="surgicalOperations" horizontalFill="true" size="90" fieldColSpan="4" />
+        <msh:row>
+    			<msh:autoComplete property="surgServicies" label="Операция" vocName="surgicalOperations" horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
-			 <msh:row>
-				 <msh:autoComplete property="surgCabinet" label="Операционная"  fieldColSpan="4" vocName="operationRoom" size='20' horizontalFill="true" />
+    		<msh:row>
+				 <msh:autoComplete property="surgCabinet" parentAutocomplete="surgServicies" label="Операционная"  fieldColSpan="4" vocName="operatingRoomsByMedService" size='20' horizontalFill="true" />
 			</msh:row>
+			
+			 
 			<msh:row>
 				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
 			</msh:row>
@@ -419,6 +426,7 @@ function deletePrescription(aMedService, aWCT) {
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm">
     <tags:templatePrescription record="2" parentId="${param.prescriptionList}" name="add" />
+    <tags:pres_addFromDirections parentID='${param.prescriptionList}' name='Show'/>
 <%--     <msh:sideMenu title="Шаблоны">
   			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
   		</msh:sideMenu> --%>

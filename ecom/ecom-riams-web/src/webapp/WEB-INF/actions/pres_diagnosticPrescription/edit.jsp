@@ -146,24 +146,13 @@
 	}
 	function prepareLabRow(type) {
 	var fldList,reqList =[];
-	if (type=='surg') {
-		var error = [
-						[type+'Servicies','Name', 'Операция!','isEmptyUnit']
-				      	,[type+'CalTime','', 'Дата и время операции!','isEmptyUnit']
-					  
-					];
-		num = surgNum;
-		fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
-		,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
-	] ;
-	
-	} else if (type=='func') {
+	 if (type=='surg') {
 		var error = [
 						[type+'Servicies','Name', 'Услуга!','isEmptyUnit']
 				      	,[type+'CalTime','', 'Дата и время услуги!','isEmptyUnit']
 					  
 					];
-		num = funcNum;
+		num = surgNum;
 		fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
 		,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
 	] ;
@@ -279,22 +268,13 @@ function deletePrescription(aMedService, aWCT) {
 	   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
 	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,cabinet,"");
 	   		labNum = num;
-	   	} else if (type=="func"){
+	   	} else if (type=="surg"){
 		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
 	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
 	   		funcNum = num;
 	   		$(type+'Cabinet').value='';
 			$(type+'CabinetName').value='';
-	   	} else if (type=='surg') {
-	   		surgNum=num;
-	   		td1.innerHTML = spanTag("Дата",resultRow[3]+" "+resultRow[9],"") ;
-	   		td1.colSpan="1";
-	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Операционная",resultRow[5],"");
-	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"");
-	   		$(type+'CalTime').value='';
-	   		$(type+'CalTimeName').value='';
-	   
-	   	}
+	   	} 
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);deletePrescription("+resultRow[1]+","+resultRow[8]+")' value='Удалить' />";
 	   	//new dateutil.DateField($(type+'Date'+num));
 		
@@ -349,29 +329,29 @@ function deletePrescription(aMedService, aWCT) {
         <msh:panel>
         <msh:row>
         <tr><td>
-        <table id="funcTable">
+        <table id="surgTable">
             <msh:row>
         	 	<msh:separator label="Функциональные исследования" colSpan="10"/>
         </msh:row>
-        <tbody id="addfuncElements">
+        <tbody id="addsurgElements">
     		<msh:row>
-    			<msh:autoComplete property="funcServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" fieldColSpan="4" />
+    			<msh:autoComplete property="surgServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
 			 <msh:row>
-				 <msh:autoComplete property="funcCabinet" label="Кабинет"  fieldColSpan="4" vocName="funcMedServiceRoom" parentAutocomplete="funcServicies" size='20' horizontalFill="true" />
+				 <msh:autoComplete property="surgCabinet" label="Кабинет"  fieldColSpan="4" vocName="funcMedServiceRoom" parentAutocomplete="surgServicies" size='20' horizontalFill="true" />
 			</msh:row>
 			<msh:row>
-				 <msh:autoComplete property="funcCalDate" parentAutocomplete="funcCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
+				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
 			</msh:row>
 			<msh:row>
-    			 <msh:autoComplete property="funcCalTime" parentAutocomplete="funcCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
+    			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
     		</msh:row>
 			<msh:row>
 				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
 			</msh:row>
 			<msh:row>
 				<td colspan="4" align="center">        	
-	            	<input type="button" name="subm" onclick="prepareLabRow('func');" value="Создать назначение" tabindex="4" />
+	            	<input type="button" name="subm" onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
 	            </td>
 	        </msh:row>
     		<%-- 
