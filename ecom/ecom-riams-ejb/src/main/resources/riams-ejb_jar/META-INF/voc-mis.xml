@@ -1,5 +1,34 @@
 <vocconfig>
 
+<voc id="medServiceByWorkfunction" type="NativeVocService">
+	<NativeVocService
+		from="Workfunction wf"
+		parent="wf.id=:parent"
+		nameId="ms.id"
+		order="ms.name, ms.code"
+		groupBy="ms.id, ms.name, ms.code"
+		names="ms.code||' '||ms.name"
+		queryAppend="vst.code='OPERATION'"
+		queried="cast(wf.id as varchar(2)) like :querId or upper(wf.groupname) like upper(:query) "
+		join="left join workfunctionservice wfs on wfs.lpu_id=wf.lpu_id 
+			left join medservice ms on ms.id=wfs.medservice_id
+			left join vocservicetype vst on vst.id=ms.servicetype_id"
+	/>
+</voc>
+
+<voc id="operatingRoomsByMedService" type="NativeVocService">
+	<NativeVocService
+		from="WorkFunctionService wfs"
+		parent="wfs.medservice_id=:parent"
+		nameId="wf.id"
+		queryAppend="wf.dtype = 'OperatingRoom'" 
+		join=" left join WorkFunction wf on wf.lpu_id=wfs.lpu_id  " order=""
+		names="wf.code||' '|| ms.groupname"
+		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+		
+	/>
+</voc>
+
 <voc id="operationRoom" type="NativeVocService">
 	<NativeVocService
 		from="Workfunction wf"
