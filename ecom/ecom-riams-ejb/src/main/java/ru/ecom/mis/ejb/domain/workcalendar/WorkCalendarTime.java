@@ -259,4 +259,12 @@ public class WorkCalendarTime extends BaseEntity{
 	/** Назначение */
 	private Long thePrescription;
 	
+	/** Предварительная госпитализация */
+	@Comment("Предварительная госпитализация")
+	public Long getPreHospital() {return thePreHospital;}
+	public void setPreHospital(Long aPreHospital) {thePreHospital = aPreHospital;}
+	/** Предварительная госпитализация */
+	private Long thePreHospital;
+	
+	
 }
