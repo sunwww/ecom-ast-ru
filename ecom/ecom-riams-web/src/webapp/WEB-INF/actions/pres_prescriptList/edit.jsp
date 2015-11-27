@@ -31,7 +31,9 @@
     		var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
     		$('labDate').value=newTextDate;
     		for (var i=1;i<=labNum;i++) {
-    			$('labDate'+i).value=newTextDate;
+    			if ($('labDate'+i)){
+    				$('labDate'+i).value=newTextDate;
+    			}
     		}
     	}
     	
@@ -1082,8 +1084,9 @@
       <msh:sideMenu title="Добавить" guid="9825ef2b-1d4b-4070-b035-b6707a878e5c">
         <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-pres_drugPrescription" name="Лекарственное средство" roles="/Policy/Mis/Prescription/DrugPrescription/View" guid="f5549341-6246-4cc4-8369-6f7b04931f2a" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-pres_dietPrescription" name="Диету" guid="71dca8ec-ccdf-4f2a-88c7-750cbc00b045" roles="/Policy/Mis/Prescription/DietPrescription/View" />
-        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_servicePrescription" name="Медицинскую услугу" guid="3bb119f6-39d0-4bf4-9198-48f90e56f944" />
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_servicePrescription" name="Лабораторное исследование" guid="3bb119f6-39d0-4bf4-9198-48f90e56f944" />
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_operationPrescription" name="Назначение на операцию" guid="3bb119f6-39d0-4bf4-9198-48f90e56f944" />
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentPrepareCreate-pres_diagnosticPrescription" name="Назначение на диаг. услугу" guid="3bb119f6-39d0-4bf4-9198-48f90e56f944" />
         <msh:sideLink roles="/Policy/Mis/Prescription/ModePrescription/View" params="id" action="/entityParentPrepareCreate-pres_modePrescription" name="Режим" />
       </msh:sideMenu>
       <msh:sideMenu title="Перейти" guid="4943cb98-adb2-4c2d-9668-e973ee0ed67f">
