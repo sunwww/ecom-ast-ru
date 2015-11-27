@@ -84,6 +84,7 @@
      // Отмена
      function cancel${name}DirMedService() {
          the${name}DirMedServiceDialog.hide() ;
+         msh.effect.FadeEffect.pushFadeAll();
      }
 
      // Сохранение данных
