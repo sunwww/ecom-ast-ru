@@ -2,6 +2,7 @@ package ru.ecom.mis.web.dwr.prescription;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,90 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  */
 public class PrescriptionServiceJs {
 	
+	/**
+	 * Получение списка предварительных записей на услуги по пациенту 
+	 */
+	public String getDirections (Long aId, String aIdType, String aDateFrom, String aServiceType, HttpServletRequest aRequest ) throws NamingException {
+		//medserviceId:mcName:cabinetID:cabinetName:wctID, WCDName
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String fromSql = "", leftJoinSql = "", whereSql = "";
+		StringBuilder ret = new StringBuilder();
+		if (aIdType.equals("PrescriptionList")) {
+			fromSql = "prescriptionlist pl ";
+			leftJoinSql=" left join medcase mc on mc.id=pl.medcase_id left join patient p on p.id=mc.patient_id";
+			whereSql = "pl.id="+aId;
+		} else if (aIdType.equals("Medcase")) {
+			fromSql = "medcase mc ";
+			leftJoinSql=" left join patient p on p.id=mc.patient_id";
+			whereSql = "mc.id="+aId;
+		} else {
+			return "Плохой ID тип = "+aIdType;
+		}
+			
+		String sql = "select p.id from "+fromSql+" "+leftJoinSql+" where "+whereSql;
+		
+		String patientId=null;
+		try{
+			patientId = service.executeNativeSql(sql).iterator().next().get1().toString();
+		} catch (Exception e) {e.printStackTrace();}
+		if (patientId!=null) {
+			StringBuilder pz = new StringBuilder().append("select ms.id as msId, ms.code||' ' ||ms.name as msName" +
+					", to_char(wcd.calendardate, 'dd.MM.yyyy') as calDateName, wf.id as wfId , wf.groupname as wfGroupName, wct.id as wctId " +
+					" ,cast (wct.timefrom as varchar(5)) as timeName");
+			pz.append(" from patient pat ")
+			.append(" left join workcalendartime wct on wct.prepatient_id=pat.id")
+			.append(" left join workcalendarday wcd on wcd.id=wct.workcalendarday_id")
+			.append(" left join prescription p on p.id=wct.prescription")
+			.append(" left join medservice ms on ms.id=coalesce(wct.service, p.medservice_id)")
+			.append(" left join vocservicetype vst on vst.id=ms.servicetype_id")
+			.append(" left join workcalendar wc on wc.id=wcd.workcalendar_id")
+			.append(" left join workfunction wf on wf.id=wc.workfunction_id")
+			.append(" where pat.id="+patientId+" and vst.code='"+aServiceType+"'");
+			if (aDateFrom!=null&&!aDateFrom.equals("")){
+				pz.append(" and wcd.calendardate>=to_date('"+aDateFrom+"','dd.MM.yyyy')");
+			} else {
+				//pz.append(" and wcd.calendardate>=current_date");
+			}
+			System.out.println("===== PZ = "+pz);
+			Collection <WebQueryResult> res = service.executeNativeSql(pz.toString());
+			if (aServiceType!=null&&aServiceType.equals("OPERATION")) {aServiceType="surg";}
+			if (!res.isEmpty()) {
+				boolean isFirst = true;
+				for (WebQueryResult r: res) {
+					String msID = r.get1().toString();
+					String msCode = r.get2().toString();
+					String wfID = r.get4().toString();
+					String wfName = r.get5().toString();
+					String timeId = r.get6().toString();
+					String dateName = r.get3().toString();
+					String timeName = r.get7().toString();
+				if (!isFirst) ret.append("#");
+				isFirst=false;
+					ret.append(aServiceType).append(":").append(msID).append(":").append(msCode)
+					.append(":").append(dateName)
+					.append(":").append(wfID).append(":").append(wfName).append(":::").append(timeId).append(":").append(timeName.replace(":", "-"));
+				}
+			}
+		}
+		return ret.toString();
+	}
+	
+	public boolean  isSLSClosed (String aId, HttpServletRequest aRequest) throws NamingException {
+		String sql = "select case when mc.dtype='HospitalMedCase' then" +
+				" case when mc.datefinish is not null and mc.dischargetime is not null then 1 else 0 end" +
+				" when mc.dtype='DepartmentMedCase' then" +
+				" case when mcP.datefinish is not null and mcP.dischargetime is not null then 1 else 0 end end" +
+				" from medcase mc" +
+				" left join medcase mcP on mcP.id=mc.parent_id" +
+				" where mc.id=" + aId;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String res = service.executeNativeSql(sql, 1).iterator().next().get1().toString();
+		if (res!=null&&res.equals("1")) {
+			return true;
+		}
+		return false;
+		
+	}
 	public boolean isMedcaseIsDepartment(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedcaseId);
@@ -102,6 +187,14 @@ public class PrescriptionServiceJs {
 	public String addPrescriptionToList (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, HttpServletRequest aRequest) throws NamingException {
 		return addPrescriptionToListWCT (aPrescriptList, aMedService, aDepartment, aCabinet, dType,null,null,"", aRequest);
 	}
+	
+	/**
+	 * Создаем назначение. Если на это время есть предварительное направление, то заменяем его на назначение
+	 * @param aPrescriptList - лист назначений
+	 * @param aMedService - мед. услуга
+	 * @param aDepartment - Отдел для забора биоматериала
+	 * @param aCabinet - рабочая функция для направления
+	 */
 	public String addPrescriptionToListWCT (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, String aDateStart, String aWorkCalendarTime, String aComments, HttpServletRequest aRequest) throws NamingException {
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
@@ -133,7 +226,7 @@ public class PrescriptionServiceJs {
 		service.executeUpdateNativeSql(str.toString());
 		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")){
 			String presId = service.executeNativeSql("select id from prescription where calendartime_id="+aWorkCalendarTime).iterator().next().get1().toString();
-			 service.executeUpdateNativeSql("update workcalendartime set prescription="+presId+" where id = "+aWorkCalendarTime);
+			 service.executeUpdateNativeSql("update workcalendartime set prescription="+presId+", prepatient_id=null where id = "+aWorkCalendarTime);
 		}
 		return "Выполнено: ";
 	}
@@ -159,17 +252,19 @@ public class PrescriptionServiceJs {
 	 * @return - ИД листа назначений
 	 * @throws NamingException
 	 */
-	
+		
 	public String isPrescriptListExists(String aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String req = "Select pl.id from prescriptionlist pl where pl.medcase_id='"+aMedcase+"' order by id ";
+		boolean isMedcaseClosed = isSLSClosed(aMedcase, aRequest);
 		Collection <WebQueryResult> wrt = service.executeNativeSql(req, 1);
 		String plId = null;
 		if (wrt.size()>0) {
 			WebQueryResult obj = wrt.iterator().next();
 			//System.out.println("---------------------in isPrescriptListExists, id="+obj.get1().toString());
-			plId = obj.get1().toString();
+			plId = (isMedcaseClosed?"0":"1") + obj.get1().toString();
 		} else {
+			if (isMedcaseClosed) { return plId;}
 			java.util.Date date = new java.util.Date() ;
 			SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 			SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
@@ -179,6 +274,7 @@ public class PrescriptionServiceJs {
 				wf = service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+username+"'").iterator().next().get1().toString();
 			} catch (Exception e) {e.printStackTrace(); throw new IllegalDataException(e.toString());}
 			if (wf==null) {throw new IllegalDataException("Нет рабочей функции!!!");}
+			
 			String sqlCreate = "insert into prescriptionlist (dtype,medcase_id, createusername, createdate, createtime, workfunction_id) values ('PrescriptList',"
 					+aMedcase+", '"+username+"',to_date('"+formatD.format(date)+"','dd.MM.yyyy')"
 					+", cast('"+formatT.format(date)+"' as time), "+wf+")";
