@@ -371,7 +371,7 @@ public class WorkCalendarServiceJs {
 	public String getReserveByDateAndServiceByPrescriptionList(Long aWorkCalendarDay,Long aPrescriptList
 			,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> col = service.executeNativeSql("select case when mc.dtype='DepartmentMedCase' or mc.dtype='HospitalMedCase' then (select min(vss.id) from vocservicestream vss where vss.code='HOSPITAL') else mc.servicestream_id end,mc.patient_id from PrescriptList pl left join MedCase mc on mc.id=pl.medcase_id where pl.id="+aPrescriptList) ;
+		Collection<WebQueryResult> col = service.executeNativeSql("select case when mc.dtype='DepartmentMedCase' or mc.dtype='HospitalMedCase' then (select min(vss.id) from vocservicestream vss where vss.code='HOSPITAL') else mc.servicestream_id end,mc.patient_id from PrescriptionList pl left join MedCase mc on mc.id=pl.medcase_id where pl.id="+aPrescriptList) ;
 		if (col.isEmpty()) return "" ;
 		WebQueryResult wqr = col.iterator().next() ;
 		return getReserveByDateAndService( aWorkCalendarDay,ConvertSql.parseLong(wqr.get2())
@@ -383,7 +383,7 @@ public class WorkCalendarServiceJs {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sql.append("select w.lpu_id,w.id from SecUser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.login="+username ) ;
+		sql.append("select w.lpu_id,w.id from SecUser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.login='"+username+"'" ) ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		if (list.isEmpty()) return "" ;
 		String dep = ""+list.iterator().next().get1() ;
