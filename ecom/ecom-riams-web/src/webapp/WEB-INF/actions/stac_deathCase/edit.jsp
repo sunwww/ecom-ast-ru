@@ -70,7 +70,7 @@
         </msh:row>
         <msh:row>
           <msh:textField property="postmortemBureauNumber" label="№ПАБ" />
-          <msh:textField property="postmortemBureauDate" label="Дата ПАБ" />
+          <msh:textField property="postmortemBureauDt" label="Дата ПАБ" />
         </msh:row>
         <msh:row>
           <msh:textField property="dateForensic" label="Дата СМЭ" />
@@ -261,8 +261,8 @@
       }
       eventutil.addEventListener($('postmortemBureauNumber'), "change", function() {isAutopsyCheck() ;}) ;
       eventutil.addEventListener($('postmortemBureauNumber'),'blur',function(){isAutopsyCheck() ;}) ;
-      eventutil.addEventListener($('postmortemBureauDate'), "change", function() {isAutopsyCheck() ;}) ;
-      eventutil.addEventListener($('postmortemBureauDate'),'blur',function(){isAutopsyCheck() ;}) ;
+      eventutil.addEventListener($('postmortemBureauDt'), "change", function() {isAutopsyCheck() ;}) ;
+      eventutil.addEventListener($('postmortemBureauDt'),'blur',function(){isAutopsyCheck() ;}) ;
       eventutil.addEventListener($('dateForensic'), "change", function() {isAutopsyCheck() ;}) ;
       eventutil.addEventListener($('dateForensic'),'blur',function(){isAutopsyCheck() ;}) ;
     </script>
