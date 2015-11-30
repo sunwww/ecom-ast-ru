@@ -296,9 +296,11 @@
 		}
 	}
 	function setDeniedByHDF(aHDFid,aFrm,aDenied) {
-		var frm=document.forms[aFrm] ;
-		var val = getCheckedRadio(frm,aDenied) ;
-		//alert(val) ;
+		var val =null;
+		if (aFrm!=null) {
+			var frm=document.forms[aFrm] ;
+			val = getCheckedRadio(frm,aDenied) ;
+		}
 		HospitalMedCaseService.updateTable('HospitalDataFond','id',aHDFid,'deniedHospital',val,'',{
   			callback: function(aResult) {
   				window.location.reload() ;
@@ -308,7 +310,7 @@
 	function setHospByHDF(aHDFid,aSls) {
 		HospitalMedCaseService.updateTable('HospitalDataFond','id',aHDFid,'hospitalMedCase_id',aSls,'',{
   			callback: function(aResult) {
-  				setDeniedByHDF(aHDFid,null) ;
+  				setDeniedByHDF(aHDFid,null,null) ;
   			}
   		}) ;
 	}
@@ -387,7 +389,7 @@
 		
 		<ecom:webQuery name="table1" nativeSql="select sls.id as slsid
 ,oml.name as omlname		
-,ss.code as sscode,pat.lastname||' '||pat.firstname||' '||pat.middlename as patmiddlename
+,ss.code as sscode,pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'') as patmiddlename
 ,pat.birthday as birthday
 , case when sls.emergency='1' then 'экстренно' else 'планово' end as emergency
 ,sls.dateStart as slsdatestart,sls.dateFinish as slsdatefinish
@@ -401,7 +403,7 @@ left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id
 where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')
 ,bf.id||''','''||coalesce(bf.snilsDoctorDirect263,'') as bfid
 ,bf.snilsDoctorDirect263
-,sls.id||''','''||to_char(sls.dateStart,'dd.mm.yyyy')||''','''||pat.lastname||''','''||pat.firstname||''','''||pat.middlename
+,sls.id||''','''||to_char(sls.dateStart,'dd.mm.yyyy')||''','''||pat.lastname||''','''||pat.firstname||''','''||coalesce(pat.middlename,'')
 	||''','''||to_char(pat.birthday,'dd.mm.yyyy')||''',''1'',''1' as snarp
 from medcase sls 
 left join MisLpu lpu on lpu.id=sls.lpu_id
@@ -432,7 +434,7 @@ ${lpuSlsSql} ${emergencySlsSql}
 	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
 	||hdf.numberfond||'<'||'/'||'span'||'>' as f2numberfond
 	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
-	||hdf.lastname||' '||hdf.firstname||' '||hdf.middlename||'<'||'/'||'span'||'>' as f3io
+	||hdf.lastname||' '||hdf.firstname||' '||coalesce(hdf.middlename,'')||'<'||'/'||'span'||'>' as f3io
 	
 	,hdf.birthday,hdf.formHelp
 ,hdf.profile,hdf.prehospdate,hdf.hospdate,hdf.directdate,hdf.snils as f10snils
@@ -442,7 +444,7 @@ ${lpuSlsSql} ${emergencySlsSql}
 ,hdf.statcard as f15
 ,hdf.deniedHospital
 ,hdf.id||''','''||coalesce(''||hdf.deniedHospital,'') as idden
-,hdf.id||''','''||to_char(coalesce(hdf.prehospdate,hdf.hospdate),'dd.mm.yyyy')||''','''||hdf.lastname||''','''||hdf.firstname||''','''||hdf.middlename
+,hdf.id||''','''||to_char(coalesce(hdf.prehospdate,hdf.hospdate),'dd.mm.yyyy')||''','''||hdf.lastname||''','''||hdf.firstname||''','''||coalesce(hdf.middlename,'')
 	||''','''||to_char(hdf.birthday,'dd.mm.yyyy')||''',''1'','''||coalesce(hdf.deniedHospital,0) as idforsls
 
 from HospitalDataFond hdf
@@ -517,7 +519,7 @@ order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
 		<ecom:webQuery name="table1" nativeSql="select sls.id as slsid
 ,oml.name as omlname		
 ,ss.code as sscode,pat.lastname as patlastname,pat.firstname as patfirstname
-,pat.middlename as patmiddlename
+,coalesce(pat.middlename,'') as patmiddlename
 , case when sls.emergency='1' then 'экстренно' else 'планово' end as emergency
 ,sls.dateStart as slsdatestart,sls.dateFinish as slsdatefinish
 ,ml.name as mlname
