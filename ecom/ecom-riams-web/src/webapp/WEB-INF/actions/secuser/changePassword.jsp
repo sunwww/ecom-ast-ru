@@ -28,12 +28,12 @@ if (sho==null ||sho.equals(""))  {%>
     
     <div align='center'>
     <table>
-    	<tr><td>Старый пароль:</td><td><input type='password' id='oldPassword'></td></tr>
-        <tr><td>Новый пароль:</td><td><input type='password' id='newPassword'></td></tr>
-        <tr><td colspan="2"><h2 style="color: red; font-size: xx-large; text-transform: uppercase; "><pre>${info_password}</pre></h2></td></tr>
-        <tr><td>Подтвердите новый пароль:</td><td><input type='password' id='newPasswordRetype'></td></tr>
+    	<tr><td align="right">Старый пароль:</td><td><input type='password' id='oldPassword'></td></tr>
+        <tr><td align="right">Новый пароль:</td><td><input type='password' id='newPassword'></td></tr>
+        <tr><td align="right">Подтвердите новый пароль:</td><td><input type='password' id='newPasswordRetype'></td></tr>
         <tr><td colspan="2" ><input id="btnChangePassword" type='button' onclick='changePassword()'  value ='Сменить пароль' ></td></tr>
 </table>
+        <h2 style="color: red; font-size: xx-large; " align="center"><pre>${info_password}</pre></h2>
 
 </div>
    
