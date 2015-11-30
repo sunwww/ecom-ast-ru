@@ -326,4 +326,13 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 			return new StringBuilder().append(l.get(0)[1]).toString() ;
 		}
 	}
+	public static  String getDefaultDescriptionParameterByConfig(String aParameter, String aValueDefault, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		List<Object[]> l = service.executeNativeSqlGetObj("select sf.id,sf.description from SoftConfig sf where  sf.key='"+aParameter+"'");
+		if (l.isEmpty()) {
+			return aValueDefault ;
+		} else {
+			return new StringBuilder().append(l.get(0)[1]).toString() ;
+		}
+	}
 }
