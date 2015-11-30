@@ -994,8 +994,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     count(distinct case when dc.isAutopsy='1' then sls.id else null end) a7utopsy
     , count(distinct case when dc.id is null then sls.id else null end) n8oDeathof
     , count(distinct case when sls.emergency='1' then sls.id else null end) n9emergency
-    , count(distinct case when dc.postmortemBureauDate is not null or (dc.postmortemBureauNumber!='' and dc.PostmortemBureauNumber is not null) then sls.id else null end) n10pat
-    , count(distinct case when (dc.postmortemBureauDate is not null or (dc.postmortemBureauNumber!='' and dc.PostmortemBureauNumber is not null)) and (dc.categoryDifference_id is not null or dc.latrogeny_id is not null) then sls.id else null end) n11patRaz
+    , count(distinct case when dc.postmortemBureauDt is not null or (dc.postmortemBureauNumber!='' and dc.PostmortemBureauNumber is not null) then sls.id else null end) n10pat
+    , count(distinct case when (dc.postmortemBureauDt is not null or (dc.postmortemBureauNumber!='' and dc.PostmortemBureauNumber is not null)) and (dc.categoryDifference_id is not null or dc.latrogeny_id is not null) then sls.id else null end) n11patRaz
     , count(distinct case when dc.DateForensic is not null  then sls.id else null end) n12fopat
     , count(distinct case when (dc.DateForensic is not null ) and (dc.categoryDifference_id is not null or dc.latrogeny_id is not null) then sls.id else null end) n13patforRaz
      from medcase sls
@@ -1128,7 +1128,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     , vdc.name || coalesce (' ятрогения кат.'||vdcL.name,'')as vdcname
     ,case when dc.id is null then 'Да' else null end as dcid
     ,dc.DateForensic as dcDateForensic
-    ,dc.postmortemBureauDate as dcpostmortemBureauDate
+    ,dc.postmortemBureauDt as dcpostmortemBureauDt
     ,dc.postmortemBureauNumber as dcpostmortemBureauNumber
      from medcase sls
     left join StatisticStub ss on ss.id=sls.statisticStub_id
