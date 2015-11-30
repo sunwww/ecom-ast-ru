@@ -23,9 +23,9 @@
 		nameId="wf.id"
 		queryAppend="wf.dtype = 'OperatingRoom'" 
 		join=" left join WorkFunction wf on wf.lpu_id=wfs.lpu_id  " order=""
-		names="wf.code||' '|| ms.groupname"
+		names="wf.code||' '|| wf.groupname"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
-		
+		groupBy="wf.id, wf.code, wf.groupname"
 	/>
 </voc>
 
