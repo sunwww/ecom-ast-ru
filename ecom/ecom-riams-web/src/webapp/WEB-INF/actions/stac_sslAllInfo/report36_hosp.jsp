@@ -565,7 +565,7 @@ order by vrspt.strCode
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
    
-    <msh:section><ecom:webQuery isReportBase="${isReportBase}" maxResult="5000" name="reestr" nameFldSql="reestr_sql" nativeSql="
+    <msh:section><ecom:webQuery isReportBase="${isReportBase}" name="reestr" nameFldSql="reestr_sql" nativeSql="
 select ahr.sls as slsid
 ,(select list(vrspt1.strCode) from ReportSetTYpeParameterType rspt1 
 left join VocReportSetParameterType vrspt1 on rspt1.parameterType_id=vrspt1.id 
