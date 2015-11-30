@@ -368,6 +368,15 @@ public class WorkCalendarServiceJs {
 		}
 		return res.toString() ; 
 	}
+	public String getReserveByDateAndServiceByPrescriptionList(Long aWorkCalendarDay,Long aPrescriptList
+			,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> col = service.executeNativeSql("select case when mc.dtype='DepartmentMedCase' or mc.dtype='HospitalMedCase' then (select vss.id from vocservicestream vss where vss.code='HOSPITAL') else mc.servicestream_id end,mc.patient_id from PrescriptList pl left join MedCase mc on mc.id=pl.medcase_id where pl.id="+aPrescriptList) ;
+		if (col.isEmpty()) return "" ;
+		WebQueryResult wqr = col.iterator().next() ;
+		return getReserveByDateAndService( aWorkCalendarDay,ConvertSql.parseLong(wqr.get2())
+				, ConvertSql.parseLong(wqr.get1()),  aRequest) ;
+	}
 	public String getReserveByDateAndService(Long aWorkCalendarDay,Long aServiceStream
 			, Long aPatient, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
