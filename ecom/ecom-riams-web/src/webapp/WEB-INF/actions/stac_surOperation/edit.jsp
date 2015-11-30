@@ -141,6 +141,9 @@
 	          <msh:autoComplete property="anesthesia" label="Метод" horizontalFill="true" vocName="vocAnesthesiaMethod" fieldColSpan="3" />
 	        </msh:row>
 	        <msh:row>
+	          <msh:autoComplete property="anesthesiaService" label="Услуга" horizontalFill="true" vocName="medServiceAnesthesia" fieldColSpan="3" />
+	        </msh:row>
+	        <msh:row>
 	          <msh:autoComplete property="anesthesiaType" label="Вид" horizontalFill="true" vocName="vocAnesthesia" fieldColSpan="3" />
 	        </msh:row>
 	        <msh:row >
