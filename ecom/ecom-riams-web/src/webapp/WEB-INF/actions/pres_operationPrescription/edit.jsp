@@ -8,6 +8,7 @@
 
 	<tiles:put name="javascript" type="string">
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+	<script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
 	<msh:ifFormTypeIsNotView formName="pres_operationPrescriptionForm">
 	<script type="text/javascript">
 	
@@ -146,6 +147,7 @@
 	}
 	function prepareLabRow(type) {
 	var fldList,reqList =[];
+	
 	if (type=='surg') {
 		var error = [
 						[type+'Servicies','Name', 'Операция!','isEmptyUnit']
@@ -158,6 +160,18 @@
 	] ;
 	
 	}
+	var typeDate = new Date();
+	var l = $(type+'CalDateName').value;
+	l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
+	typeDate.setTime (Date.parse(l));
+	
+	if (typeDate<currentDate) {
+		if (!confirm ('Дата назначения меньше текущей даты. Создать назначение прошедшим днем?')) {
+			return;
+		}
+	} 
+	
+	
 	if (checkError(error)) return ;
 	// Проверим на дубли 
 	var checkNum = 1;
@@ -211,7 +225,7 @@ function deletePrescription(aMedService, aWCT) {
 				}
 				if (aFldList[i][1]==1) { l += val ; }
 				lAll+=val ;
-				if (i==(aFldList.length-1)) {l += "#" ;lAll+="#" ;}
+				//if (i==(aFldList.length-1)) {l += "#" ;lAll+="#" ;}
 			}
 		}
 		return [l,lAll,isDoubble] ;
@@ -305,7 +319,82 @@ function deletePrescription(aMedService, aWCT) {
 	function spanTag(aText,aValue,aDefaultValue) {
 		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
 	}
+	surgCalDateAutocomplete.addOnChangeCallback(function(){
+	  	  getPreRecord() ;
+	 });
+	surgCabinetAutocomplete.addOnChangeCallback(function(){
+		updateDefaultDate() ;
+	}) ;
 	
+function getPreRecord() {
+		
+		if ($('tdPreRecord')) {
+			
+			if ($('surgCalDate') && +$('surgCalDate').value>0) {
+	  			WorkCalendarService.getPreRecord($('surgCalDate').value,
+	  		  			{
+	  		  				callback:function(aResult) {
+	  		  					if (aResult!=null) {
+	  		  						$('tdPreRecord').innerHTML=aResult;
+	  		  					}
+	  			  				else {
+	  			  					$('tdPreRecord').innerHTML="";
+	  			  				}
+	  		  				
+	  		  					updateTime() ;
+	  		  					
+	  			  			}
+	  		  			}
+	  		  			) ;
+	  			} else {
+	  				$('tdPreRecord').innerHTML="";
+	  			}
+		} else {
+			updateTime() ;
+		}
+	}
+	
+	function updateTime() {
+ 		if (+$('surgCalDate').value>0 ) {
+ 			WorkCalendarService.getReserveByDateAndServiceByPrescriptionList($('surgCalDate').value,$('prescriptionList').value
+	    			  
+	  		, {
+	                 callback: function(aResult) {
+	                	 //alert(aResult) ;
+	                	 $('divReserve').innerHTML = aResult ;
+	                 }
+		        	}
+		        	); 
+  }
+ 	}
+	function updateDefaultDate() {
+			WorkCalendarService.getDefaultDate($('surgServicies').value,
+			{
+				callback:function(aDateDefault) {
+					if (aDateDefault!=null) {
+						//alert(aDateDefault) ;
+					var calDayId, calDayInfo,ind1 ;
+					ind1 = aDateDefault.indexOf("#") ;
+						calDayInfo = aDateDefault.substring(0,ind1) ;
+						calDayId = aDateDefault.substring(ind1+1) ;
+						
+					$('surgCalDate').value=calDayId ;
+			        $('surgCalDateName').value = calDayInfo;
+			        getPreRecord();
+					} else {
+					$('surgCalDate').value=0 ;
+			        $('surgCalDateName').value = "";
+			        getPreRecord();
+				}
+					
+				    
+			}
+			}
+			) ;
+			$('surgCalTime').value="0" ;
+		$('surgCalTimeName').value = "";
+		 
+		}
 			</script>
 			</msh:ifFormTypeIsNotView>
 			</tiles:put>
@@ -370,6 +459,25 @@ function deletePrescription(aMedService, aWCT) {
 	            	<input type="button" name="subm" onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
 	            </td>
 	        </msh:row>
+	         <tr><td colspan="10"><table><tr><td valign="top"><table>
+        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
+          <msh:separator label="Резервы" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        </msh:row>
+        <msh:row>
+        	<td colspan="4">
+        	<div id="divReserve"></div>
+        	</td>
+        </msh:row></table>
+        </td><td valign="top"><table>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
+        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
+          <msh:separator label="Предварительная запись" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        </msh:row>
+        <msh:row>
+        	<td colspan="4" id="tdPreRecord"></td>
+        </msh:row>
+        </msh:ifInRole></table>
+        </td></tr></table></td></tr>
            </tbody>
     		</table>
     		</td></tr></msh:row>

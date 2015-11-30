@@ -8,6 +8,7 @@
 
 	<tiles:put name="javascript" type="string">
 	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+	<script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
 	<msh:ifFormTypeIsNotView formName="pres_diagnosticPrescriptionForm">
 	<script type="text/javascript">
 	
@@ -20,7 +21,6 @@
 
 	//Заполняем ЛН данными из шаблона (не удаляя существующие назначения). 
 	function fillFormFromTemplate(aData) {
-		
 		var aRow = aData.split("#");
 		if (aRow.length>0) {
 			for (var i=0;i<aRow.length;i++) {
@@ -33,7 +33,6 @@
 				}
 			}
 		}
-		
 	}
 
 	var oldaction = document.forms['pres_diagnosticPrescriptionForm'].action ;
@@ -44,27 +43,26 @@
 	var funcNum=0;
 	var surgNum=0;
 	var labList="";
+	
 	function cancell () {
 		window.location='entityParentView-pres_prescriptList.do?id='+$('prescriptionList').value;	
-	} 
+	}
+	
 	function preShowDir() {
-		 $('1IsViewButton').value=$('prescriptType').value ;
-		 var list = +$('labServicies').value;
-		 clear1DirMedServiceDialog() ;
-		 var typeNum = 0;
-			type='lab';
-				typeNum = labNum;
-				
-			
-			while (typeNum>0) {
-				if (document.getElementById(type+"Element"+typeNum)) {
-					var ar = $(type+"Service"+typeNum).value ;
-					list+="," ;
-					list+=ar ;
-				}
-	       		typeNum-=1;
-		 	}
-			
+		$('1IsViewButton').value=$('prescriptType').value ;
+		var list = +$('labServicies').value;
+		clear1DirMedServiceDialog() ;
+		var typeNum = 0;
+		type='lab';
+		typeNum = labNum;
+		while (typeNum>0) {
+			if (document.getElementById(type+"Element"+typeNum)) {
+				var ar = $(type+"Service"+typeNum).value ;
+				list+="," ;
+				list+=ar ;
+			}
+	       	typeNum-=1;
+		 }			
 		 $('1ListIds').value=list;
 	 }
  	//onload =
@@ -103,15 +101,10 @@
 									}
 						}
 						checkLabs();
-						
-						
 					}
 				});		
 			}
 		});
-		 
-	
-
 	}
 
 	function removeRows(type) {
@@ -145,7 +138,7 @@
 		return false ;
 	}
 	function prepareLabRow(type) {
-	var fldList,reqList =[];
+ 	var fldList,reqList =[];
 	 if (type=='surg') {
 		var error = [
 						[type+'Servicies','Name', 'Услуга!','isEmptyUnit']
@@ -158,7 +151,19 @@
 	] ;
 	
 	}
+	 
 	if (checkError(error)) return ;
+	var typeDate = new Date();
+	var l = $(type+'CalDateName').value;
+	l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
+	typeDate.setTime (Date.parse(l));
+	
+	if (typeDate<currentDate) {
+		if (!confirm ('Дата назначения меньше текущей даты. Создать назначение прошедшим днем?')) {
+			return;
+		}
+	} 
+	
 	// Проверим на дубли 
 	var checkNum = 1;
 	while (checkNum<=num) {
@@ -182,7 +187,7 @@
 	}
 	var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
 	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value);
-	addRows(type+":"+ar[0],1);
+	addRows(type+":"+ar[0],1); 
 }
 	
 function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
@@ -292,15 +297,18 @@ function deletePrescription(aMedService, aWCT) {
 		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
 	}
 	surgCalDateAutocomplete.addOnChangeCallback(function(){
-  	  
-  	  getPreRecord() ;
-  	   });
+  	  	  getPreRecord() ;
+  	 });
+	surgCabinetAutocomplete.addOnChangeCallback(function(){
+		updateDefaultDate() ;
+	}) ;
+	
 function getPreRecord() {
   		
   		if ($('tdPreRecord')) {
   			
-  			if (+$('datePlan').value>0) {
-  	  			WorkCalendarService.getPreRecord($('datePlan').value,
+  			if ($('surgCalDate') && +$('surgCalDate').value>0) {
+  	  			WorkCalendarService.getPreRecord($('surgCalDate').value,
   	  		  			{
   	  		  				callback:function(aResult) {
   	  		  					if (aResult!=null) {
@@ -322,6 +330,7 @@ function getPreRecord() {
   			updateTime() ;
   		}
 	}
+	
 	function updateTime() {
    		if (+$('surgCalDate').value>0 ) {
    			WorkCalendarService.getReserveByDateAndServiceByPrescriptionList($('surgCalDate').value,$('prescriptionList').value
@@ -493,12 +502,6 @@ function getPreRecord() {
   <%--   <tags:enter_date name="2" functionSave="prepare1RowByDate"/> --%>
    
     
-  </tiles:put>
-  <tiles:put name="javascript" type="string">
-  surgCabinetAutocomplete.addOnChangeCallback(function(){
-  		updateDefaultDate() ;
-  		
-  		}) ;
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_diagnosticPrescriptionForm" />
