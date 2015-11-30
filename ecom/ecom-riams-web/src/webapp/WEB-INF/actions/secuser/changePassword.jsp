@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/tiles/header.jsp" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -5,7 +6,9 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 <%
-String sho =request.getParameter("short"); 
+String sho =request.getParameter("short");
+request.setAttribute("info_password", ActionUtil.getDefaultDescriptionParameterByConfig("PASSWORDREGEXP", "", request)) ;
+
 if (sho==null ||sho.equals(""))  {%>
     <tiles:put name='title' type='string'>
         <h1>Смена пароля</h1>
@@ -22,13 +25,16 @@ if (sho==null ||sho.equals(""))  {%>
 
 
     <tiles:put name='body' type='string'>
+    
     <div align='center'>
     <table>
     	<tr><td>Старый пароль:</td><td><input type='password' id='oldPassword'></td></tr>
+        <tr><td colspan="2"><h2>${info_password}</h2></td></tr>
         <tr><td>Новый пароль:</td><td><input type='password' id='newPassword'></td></tr>
-        <tr><td>Подтвердите новый пароль:</td><td><input type='password' id='newPasswordRetype'></td>
+        <tr><td>Подтвердите новый пароль:</td><td><input type='password' id='newPasswordRetype'></td></tr>
         <tr><td colspan="2" ><input id="btnChangePassword" type='button' onclick='changePassword()'  value ='Сменить пароль' ></td></tr>
 </table>
+
 </div>
    
     <script type='text/javascript' src='./dwr/interface/RolePoliciesService.js'></script>
