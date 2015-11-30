@@ -1205,7 +1205,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
           <msh:tableColumn columnName="Неоформлен случай смерти" property="15"/>
           <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
           <msh:tableColumn columnName="Дата пат.-анат. вскрытия" property="17"/>
-          <msh:tableColumn columnName="Номер пат.-анат. вскрытия" property="17"/>
+          <msh:tableColumn columnName="Номер пат.-анат. вскрытия" property="18"/>
         </msh:table>
         </msh:sectionContent>
         </msh:section>    		
