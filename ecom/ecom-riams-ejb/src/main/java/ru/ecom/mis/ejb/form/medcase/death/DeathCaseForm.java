@@ -252,8 +252,8 @@ public class DeathCaseForm extends IdEntityForm{
 	/** Дата ПАБ */
 	@Comment("Дата ПАБ")
 	@Persist @DateString @DoDateString
-	public String getPostmortemBureauDate() {return thePostmortemBureauDate;}
-	public void setPostmortemBureauDate(String aPostmortemBureauDate) {thePostmortemBureauDate = aPostmortemBureauDate;}
+	public String getPostmortemBureauDt() {return thePostmortemBureauDt;}
+	public void setPostmortemBureauDt(String aPostmortemBureauDt) {thePostmortemBureauDt = aPostmortemBureauDt;}
 
 	/** Квартира, где умер человек */
 	@Comment("Квартира, где умер человек")
@@ -317,7 +317,7 @@ public class DeathCaseForm extends IdEntityForm{
 	/** Квартира, где умер человек */
 	private String theDeathPlaceFlatNumber;
 	/** Дата ПАБ */
-	private String thePostmortemBureauDate;
+	private String thePostmortemBureauDt;
 	/** Номер в патологоанатомическом бюро */
 	private String thePostmortemBureauNumber;
 	/** Комментарий к категории смерти */

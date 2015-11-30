@@ -64,7 +64,7 @@ public class DeathCaseSaveInterceptor implements IFormInterceptor {
 		List<Diagnosis> diagList = aManager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
 		if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
 		for(Diagnosis diag:diagList){
-			if (!adding5) adding5=DischargeMedCaseSaveInterceptor.setDiagnosisByType(false,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getPostmortemBureauDate(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
+			if (!adding5) adding5=DischargeMedCaseSaveInterceptor.setDiagnosisByType(false,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getPostmortemBureauDt(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
 			if (!adding3) adding3=DischargeMedCaseSaveInterceptor.setDiagnosisByType(false,diag, vocTypeConcluding, form.getConcludingDiagnos(), form.getDeathDate(), form.getConcludingMkb(), medCase, aManager,vocPriorType,form.getConcludingActuity()) ;
 			if (adding5&&adding3) break ;
 		}
@@ -72,7 +72,7 @@ public class DeathCaseSaveInterceptor implements IFormInterceptor {
 		if (!adding5|| !adding3) {
 			if (!adding5) {
 				Diagnosis diag = new Diagnosis();
-				DischargeMedCaseSaveInterceptor.setDiagnosisByType(true,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getPostmortemBureauDate(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
+				DischargeMedCaseSaveInterceptor.setDiagnosisByType(true,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getPostmortemBureauDt(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
 				//diagList.add(diag);
 			}
 			if (!adding3) {
