@@ -33,7 +33,9 @@
 		
 		for (var i=1;i<=labNum;i++) {
 			if ($('labDate'+i)) { 
+				try {
 				$('labDate'+i).value=newTextDate;
+				} catch() {}
 			}
 		}
 	}
