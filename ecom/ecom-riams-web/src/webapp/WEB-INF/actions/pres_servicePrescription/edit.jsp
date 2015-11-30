@@ -32,11 +32,11 @@
 		if ($('planStartDate')) $('planStartDate').value=newTextDate;
 		
 		for (var i=1;i<=labNum;i++) {
-			if ($('labDate'+i)) { 
-				try {
-				$('labDate'+i).value=newTextDate;
-				} catch() {}
-			}
+			try {
+				if ($('labDate'+i)) { 
+					$('labDate'+i).value=newTextDate;
+				}
+			} catch() {}
 		}
 	}
 	//Заполняем ЛН данными из шаблона (не удаляя существующие назначения). 
