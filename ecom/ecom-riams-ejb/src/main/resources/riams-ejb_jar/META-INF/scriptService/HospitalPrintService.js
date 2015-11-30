@@ -1681,6 +1681,7 @@ function printProtocol (aCtx,aParams){
 		map.put("typeInfo",null) ;
 	}
 	recordDiagnosis(aCtx,medCase.id,"3","1","diag") ;
+	recordDiagnosis(aCtx,medCase.id,"1","1","diag_order") ;
 	return map ;
 }
 // получить возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
