@@ -25,9 +25,29 @@
 					<li><msh:link  action="js-riams-instruction.do?id=lab_tech">
 					Рабочее место техника-лаборанта
                         </msh:link></li>
-					
-					
 				</ul>
+				<h2>Стационар</h2>
+				<ul>
+					<li><msh:link  action="js-riams-instruction.do?id=zav_send_diary">
+						Отправка дневника заведующим на редактирование (врачу)
+                    </msh:link></li>
+					<li><msh:link  action="js-riams-instruction.do?id=prescript_list">
+						Создание назначений (в листе назначений)
+                    </msh:link></li>
+				</ul>
+				
+				<h2>Общее</h2>
+				<ul>
+					<li><msh:link  action="js-riams-instruction.do?id=setup_lab">
+						Настройка модуля "Лаборатория"
+                    </msh:link></li>
+					<li><msh:link  action="js-riams-instruction.do?id=create_calendar">
+						Создание календаря
+                    </msh:link></li>
+				</ul>
+				
+				
+				
 				</div>
 			</tr>
 
