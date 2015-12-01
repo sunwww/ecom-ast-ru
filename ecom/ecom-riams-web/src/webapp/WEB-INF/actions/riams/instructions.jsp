@@ -10,13 +10,14 @@
 	</tiles:put>
 
 	<tiles:put name='body' type='string'>
+	
 		<table class='mainMenu'>
 			<tr>
 				<td class='col1'>
 				<div class='menu'>
-				<h2>Лаборатория</h2>
-				<ul>
-					<li><msh:link  action="js-riams-instruction.do?id=lab_pr_m_s">
+				<h2 style="font-size: large;" align="center">Лаборатория</h2>
+				<ul style="font-size: large; list-style: none;" >
+					<li><msh:link  action="js-riams-instruction.do?id=lab_pr_m_s" >
 					Рабочее место процедурной мед.сестры
                         </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=lab_doctor">
