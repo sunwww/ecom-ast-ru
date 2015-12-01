@@ -27,8 +27,8 @@
 					Рабочее место техника-лаборанта
                         </msh:link></li>
 				</ul>
-				<h2>Стационар</h2>
-				<ul>
+				<h2 style="font-size: large;" align="center">Стационар</h2>
+				<ul style="font-size: large; list-style: none;" >
 					<li><msh:link  action="js-riams-instruction.do?id=zav_send_diary">
 						Отправка дневника заведующим на редактирование (врачу)
                     </msh:link></li>
@@ -37,8 +37,8 @@
                     </msh:link></li>
 				</ul>
 				
-				<h2>Общее</h2>
-				<ul>
+				<h2 style="font-size: large;" align="center">Общее</h2>
+				<ul style="font-size: large; list-style: none;">
 					<li><msh:link  action="js-riams-instruction.do?id=setup_lab">
 						Настройка модуля "Лаборатория"
                     </msh:link></li>
