@@ -35,7 +35,7 @@
   	 left join WorkCalendar wc on wc.workFunction_id=wf.id  
   	 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
   	 where ((w.lpu_id=${param.id} and wf.DTYPE='PersonalWorkFunction') or
-  	 (wf.lpu_id=${param.id} and wf.DTYPE='GroupWorkFunction') ) 
+  	 (wf.lpu_id=${param.id} and (wf.DTYPE='GroupWorkFunction' or wf.DTYPE='OperatingRoom')) ) 
   	 and (wf.archival is null or cast(wf.archival as integer)=0) 
   	 and wf.group_id is null
   	 and wc.id is not null
