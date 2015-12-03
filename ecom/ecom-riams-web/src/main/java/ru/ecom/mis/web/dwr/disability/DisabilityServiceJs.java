@@ -45,10 +45,10 @@ public class DisabilityServiceJs {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		return service.closeDisabilityDocument(aDocId, aReasonId,aSeries,aNumber,aOtherCloseDate) ;
 	}
-	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, HttpServletRequest aRequest) throws Exception {
+	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, String aDateType, HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		
-		return service.exportLNByDate(aDateStart, aDateFinish,  aLpu, aWorkFunction,  aPacketNumber );
+		return service.exportLNByDate(aDateStart, aDateFinish,  aLpu, aWorkFunction,  aPacketNumber, aDateType );
 	}
 	
 	public String exportLNByNumber (String aNumber,HttpServletRequest aRequest) throws Exception {
