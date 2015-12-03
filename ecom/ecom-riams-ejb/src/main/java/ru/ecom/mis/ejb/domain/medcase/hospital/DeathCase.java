@@ -241,8 +241,8 @@ public class DeathCase extends BaseEntity {
 
 	/** Дата ПАБ */
 	@Comment("Дата ПАБ")
-	public String getPostmortemBureauDate() {return thePostmortemBureauDate;}
-	public void setPostmortemBureauDate(String aPostmortemBureauDate) {thePostmortemBureauDate = aPostmortemBureauDate;}
+	public Date getPostmortemBureauDt() {return thePostmortemBureauDt;}
+	public void setPostmortemBureauDt(Date aPostmortemBureauDt) {thePostmortemBureauDt = aPostmortemBureauDt;}
 
 	/** Квартира, где умер человек */
 	@Comment("Квартира, где умер человек")
@@ -266,7 +266,7 @@ public class DeathCase extends BaseEntity {
 	/** Квартира, где умер человек */
 	private String theDeathPlaceFlatNumber;
 	/** Дата ПАБ */
-	private String thePostmortemBureauDate;
+	private Date thePostmortemBureauDt;
 	/** Номер в патологоанатомическом бюро */
 	private String thePostmortemBureauNumber;
 	/** Комментарий к категории смерти */
