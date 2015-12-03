@@ -213,7 +213,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>016/у-02 форма. Реестр пациентов</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}"  name="journal_priem" nativeSql="select 
+	    <ecom:webQuery isReportBase="${isReportBase}"  name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
 	    slo.id
 	    ,ss.code as sscode
 	    ,pat.lastname||' '||pat.middlename||' '||pat.firstname||' '||to_char(pat.birthday,'dd.mm.yyyy') as patfio
@@ -375,9 +375,94 @@ if (date!=null && !date.equals("")) {
 	
 	
 	 as cntDays
+, case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
+	and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)
+	then 'X' else null end
+	as cnt21EntranceMoreTRUDOSPOSOB
 
+,case when vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	) then 'X' else null end 
+	as cnt22FinishedTrudosposob	
+
+,case when vhr.code='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	) then 'X' else null end 
+	as cnt23DeathTrudosposob
+
+, case when 	
+	 case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)	then 
+	case when 
+		slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.dateFinish = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+			or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime		
+		then slo.dateFinish
+			-case
+				when slo.dateFinish=to_date('${dateEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time) then 1
+				when slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime then 2
+				when cast('${timeSql}' as time)>slo.dischargetime then 2 
+				else 1 end
+		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy') then slo.dateFinish-1
+		when slo.dateFinish=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.dischargetime then slo.dateFinish-2
+	     when 
+		slo.transferDate between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.transferDate = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time)
+			or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime		
+		then slo.transferDate
+			-case 
+			when slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time) then 1
+			when slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime then 2
+			when cast('${timeSql}' as time)>slo.transfertime then 2 else 1 end
+		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy') then slo.transferDate-1
+		when slo.transferDate=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.transfertime then slo.transferDate-2
+		else to_date('${dateEnd}','dd.mm.yyyy')
+		
+		end
+	-
+	case when
+		(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
+		or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
+		and (slo.datefinish is null 
+		or slo.datefinish > to_date('${dateBegin}','dd.mm.yyyy') 
+		or slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time))
+		and (slo.transferdate is null 
+		or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy') 
+		or
+		slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time))
+	then to_date('${datePrevBegin}','dd.mm.yyyy')
+	else slo.dateStart - case 
+		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
+	end 
+	else null end 
+	
+	 as cnt24DaysTrudosposob
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
+	 left join vocsex vs on vs.id=pat.sex_id
 	 left join medcase sls on sls.id=slo.parent_id
 	 left join statisticstub ss on ss.id=sls.statisticstub_id
 	 left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
@@ -420,16 +505,20 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn columnName="с.ж" property="9" />
 	      <msh:tableColumn columnName="0-17 лет" property="10" />
 	      <msh:tableColumn columnName="60 лет и старше" property="11" />
+	      <msh:tableColumn columnName="старше труд. возраста" property="22" />
 	      <msh:tableColumn columnName="перев. из других отд" property="12" />
 	      <msh:tableColumn columnName="перев. в другие отд" property="13" />
 	      <msh:tableColumn columnName="выписано" property="14" />
+	      <msh:tableColumn columnName="старше труд. возраста" property="23" />
 	      <msh:tableColumn columnName="в др. стац." property="15" />
 	      <msh:tableColumn columnName="в кругл. стац." property="16" />
 	      <msh:tableColumn columnName="в дн. стац." property="17" />
 	      <msh:tableColumn columnName="умерло" property="18" />
+	      <msh:tableColumn columnName="старше труд. возраста" property="24" />
 	      <msh:tableColumn columnName="состоит всего" property="19" />
 	      <msh:tableColumn columnName="состоит матерей" property="20" />
 	      <msh:tableColumn isCalcAmount="true" columnName="к/дней" property="21" />
+	      <msh:tableColumn isCalcAmount="true"columnName="старше труд. возраста" property="25" />
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>
@@ -522,9 +611,7 @@ if (date!=null && !date.equals("")) {
 	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
 	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) then slo.id else null end) 
 	as cnt17Death
-	,
-
-	count(distinct case when 
+	,count(distinct case when 
 			(
 				slo.transferdate is null
 				or slo.transferdate > to_date('${dateNextEnd}','dd.mm.yyyy')
@@ -603,10 +690,95 @@ if (date!=null && !date.equals("")) {
 	
 	
 	
-	) as cntDays
+	) as cnt20Days
+,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
+	and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)
+	then slo.id else null end)
+	as cnt21EntranceMoreTRUDOSPOSOB
 
+,count(distinct case when vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	) then slo.id else null end) 
+	as cnt22FinishedTrudosposob	
+
+,count(distinct case when vhr.code='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	) then slo.id else null end) 
+	as cnt23DeathTrudosposob
+
+,sum(	 case when 	
+	 case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)	then 
+	case when 
+		slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.dateFinish = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+			or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime		
+		then slo.dateFinish
+			-case
+				when slo.dateFinish=to_date('${dateEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time) then 1
+				when slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime then 2
+				when cast('${timeSql}' as time)>slo.dischargetime then 2 
+				else 1 end
+		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy') then slo.dateFinish-1
+		when slo.dateFinish=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.dischargetime then slo.dateFinish-2
+	     when 
+		slo.transferDate between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.transferDate = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time)
+			or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime		
+		then slo.transferDate
+			-case 
+			when slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time) then 1
+			when slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime then 2
+			when cast('${timeSql}' as time)>slo.transfertime then 2 else 1 end
+		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy') then slo.transferDate-1
+		when slo.transferDate=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.transfertime then slo.transferDate-2
+		else to_date('${dateEnd}','dd.mm.yyyy')
+		
+		end
+	-
+	case when
+		(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
+		or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
+		and (slo.datefinish is null 
+		or slo.datefinish > to_date('${dateBegin}','dd.mm.yyyy') 
+		or slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time))
+		and (slo.transferdate is null 
+		or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy') 
+		or
+		slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time))
+	then to_date('${datePrevBegin}','dd.mm.yyyy')
+	else slo.dateStart - case 
+		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
+	end 
+	else null end 
+	
+	) as cnt24DaysTrudosposob
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
+	 left join vocsex vs on vs.id=pat.sex_id
 	 left join medcase sls on sls.id=slo.parent_id
 	 left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
 	 left join vochospitalizationresult vhr on vhr.id=sls.result_id
@@ -660,16 +832,20 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="с.ж" property="7" />
 	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="9" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше труд. возраста" property="20" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="10" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="11" />
 	      <msh:tableColumn isCalcAmount="true" columnName="выписано" property="12" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше труд. возраста" property="21" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в другие стационары" property="13" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в круглосуточный стационар" property="14" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в дневной стационар" property="15" />
 	      <msh:tableColumn isCalcAmount="true" columnName="умерло" property="16" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше труд. возраста" property="22" />
 	      <msh:tableColumn isCalcAmount="true" columnName="состоит всего" property="17" />
 	      <msh:tableColumn isCalcAmount="true" columnName="состоит матерей" property="18" />
 	      <msh:tableColumn isCalcAmount="true" columnName="проведено койко дней" property="19" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше труд. возраста" property="23" />
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>
@@ -1220,20 +1396,101 @@ if (date!=null && !date.equals("")) {
 		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
 		when slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
 		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
-	end
-	
-	
-	
-	
-	
-	
-	) as cntDays
+	end	
+	) as cnt20Days
 	 
  ,cast((select sum(bf1.amount) from BedFund bf1 where ${queryBedFundSql} and bf1.dateStart<=to_date('${dateEnd}','dd.mm.yyyy')
-	and (bf1.dateFinish is null or bf1.dateFinish>=to_date('${dateEnd}','dd.mm.yyyy')) ) as int) as cnt20BF
+	and (bf1.dateFinish is null or bf1.dateFinish>=to_date('${dateEnd}','dd.mm.yyyy')) ) as int) as cnt21BF
 
+,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}:00' as time)
+	or slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime) 
+	and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)
+	then slo.id else null end)
+	as cnt22EntranceMoreTRUDOSPOSOB
+
+,count(distinct case when vhr.code!='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	) then slo.id else null end) 
+	as cnt23FinishedTrudosposob	
+
+,count(distinct case when vhr.code='11' and (slo.dateFinish between to_date('${dateNextBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+	 or slo.dateFinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+	or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime) and 
+	case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	) then slo.id else null end) 
+	as cnt24DeathTrudosposob
+
+,sum(	 case when 	
+	 case when vs.omccode='1' then 60 else 55 end
+	 <=(
+	cast(to_char(slo.datestart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
+	+case when (cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)) <0 then -1 when (cast(to_char(slo.datestart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) and ((cast(to_char(slo.datestart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)-1)<0)  then -1 else 0 end
+	)	then 
+	case when 
+		slo.dateFinish between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.dateFinish = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time)
+			or slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime		
+		then slo.dateFinish
+			-case
+				when slo.dateFinish=to_date('${dateEnd}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}:00' as time) then 1
+				when slo.dateFinish = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.dischargetime then 2
+				when cast('${timeSql}' as time)>slo.dischargetime then 2 
+				else 1 end
+		when slo.dateFinish=to_date('${dateBegin}','dd.mm.yyyy') then slo.dateFinish-1
+		when slo.dateFinish=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.dischargetime then slo.dateFinish-2
+	     when 
+		slo.transferDate between to_date('${dateBegin}','dd.mm.yyyy')+2 and to_date('${dateEnd}','dd.mm.yyyy')
+			or slo.transferDate = to_date('${dateNextBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time)
+			or slo.transferDate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime		
+		then slo.transferDate
+			-case 
+			when slo.transferDate = to_date('${dateEnd}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}:00' as time) then 1
+			when slo.transferdate = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.transfertime then 2
+			when cast('${timeSql}' as time)>slo.transfertime then 2 else 1 end
+		when slo.transferDate=to_date('${dateBegin}','dd.mm.yyyy') then slo.transferDate-1
+		when slo.transferDate=to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.transfertime then slo.transferDate-2
+		else to_date('${dateEnd}','dd.mm.yyyy')
+		
+		end
+	-
+	case when
+		(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
+		or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
+		and (slo.datefinish is null 
+		or slo.datefinish > to_date('${dateBegin}','dd.mm.yyyy') 
+		or slo.datefinish = to_date('${dateBegin}','dd.mm.yyyy') and slo.dischargetime>=cast('${timeSql}' as time))
+		and (slo.transferdate is null 
+		or slo.transferdate > to_date('${dateBegin}','dd.mm.yyyy') 
+		or
+		slo.transferdate = to_date('${dateBegin}','dd.mm.yyyy') and slo.transfertime>=cast('${timeSql}' as time))
+	then to_date('${datePrevBegin}','dd.mm.yyyy')
+	else slo.dateStart - case 
+		when slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextBegin}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when slo.datestart = to_date('${dateEnd}','dd.mm.yyyy') and slo.entrancetime>=cast('${timeSql}' as time) then 1
+		when slo.datestart = to_date('${dateNextEnd}','dd.mm.yyyy') and cast('${timeSql}' as time)>slo.entrancetime then 2
+		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
+	end 
+	else null end 
+	
+	) as cnt25DaysTrudosposob
+		
 	 from medcase slo
 	 left join patient pat on pat.id=slo.patient_id
+	 left join vocsex vs on vs.id=pat.sex_id
 	 left join address2 a on a.addressid=pat.address_addressid
 	 left join mislpu lpu on lpu.id=slo.department_id
 	 left join medcase sls on sls.id=slo.parent_id
@@ -1289,19 +1546,23 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="пост. т.ч. с.ж." property="8" />
 	      <msh:tableColumn isCalcAmount="true" columnName="0-17 лет" property="9" />
 	      <msh:tableColumn isCalcAmount="true" columnName="60 лет и старше" property="10" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше трудоспособного возраста" property="22" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено из других отд" property="11" />
 	      <msh:tableColumn isCalcAmount="true" columnName="переведено в другие отд" property="12" />
 	      <msh:tableColumn isCalcAmount="true" columnName="выписано" property="13" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше трудоспособного возраста" property="23" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в другие стационары" property="14" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в кругл. стационар" property="15" />
 	      <msh:tableColumn isCalcAmount="true" columnName="в дневной стационар" property="16" />
 	      <msh:tableColumn isCalcAmount="true" columnName="умерло" property="17" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше трудоспособного возраста" property="24" />
 	      <msh:tableColumn isCalcAmount="true" columnName="состоит всего" property="18" />
 	      <msh:tableColumn isCalcAmount="true" columnName="состоит матерей" property="19" />
 	      <msh:tableColumn isCalcAmount="true" columnName="проведено койко дней" property="20" />
+	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше трудоспособного возраста" property="25" />
 	    </msh:table>
 	    </msh:sectionContent>
-	    </msh:section>
+	    </msh:section>${journal_priem_sql}
 	    		
 	    		
 	    		
