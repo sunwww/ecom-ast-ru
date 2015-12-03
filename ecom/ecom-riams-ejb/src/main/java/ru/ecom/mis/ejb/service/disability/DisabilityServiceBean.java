@@ -203,7 +203,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	if (aField==null) return "";
     	else return aField.toString();
     }
-    public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber) throws ParseException, NamingException {
+    public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, String aDateType) throws ParseException, NamingException {
     	if (aLpu!=null&&!aLpu.equals("")) {
     		MisLpu lpu = theManager.find(MisLpu.class, Long.valueOf(aLpu));
     		if (aWorkFunction!=null&&!aWorkFunction.equals("")){
@@ -216,8 +216,12 @@ public class DisabilityServiceBean implements IDisabilityService  {
     		if (aDateFinish==null || aDateFinish.equals("")) {
         		aDateFinish = aDateStart;
         	}
-    		
-        	String sqlAdd = "dd.issuedate between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
+    		if (aDateType!=null&&aDateType.equals("2")){
+    			aDateType="(select max (dateTo) from disabilityrecord where disabilitydocument_id=dd.id)";
+    		} else {
+    			aDateType="dd.issueDate";
+    		}
+        	String sqlAdd = aDateType+" between to_date('"+aDateStart+"','dd.mm.yyyy') and to_date('"+aDateFinish+"','dd.mm.yyyy') ";
         	return exportLN(sqlAdd, checkIsNull(lpu.getSocCode()), checkIsNull(lpu.getPhone()), checkIsNull(lpu.getEmail()), lpu.getOgrn()!=null?lpu.getOgrn().toString():"", checkIsNull(aWorkFunction), checkIsNull(aPacketNumber),lpu);
     	} else return null;
     	
