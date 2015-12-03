@@ -21,13 +21,14 @@
       <msh:row>
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Поиск по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="1">  начала нетруд.
+        	<input type="radio" name="typeDate" value="1">  Выдачи
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="2">  выдачи
+        	<input type="radio" name="typeDate" value="2">  Закрытия
         </td>
       </msh:row>
-      <msh:row>
+      <!-- Пока фонд не отвечает, уберем это -->
+      <%-- <msh:row>
         <td class="label" title="Статус документа  (typeDocument)" colspan="1"><label for="typeDateName" id="typeDateLabel">Статус документа:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDocument" value="1">  все экспортированные
@@ -38,19 +39,7 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDocument" value="3">  дефекты
         </td>
-      </msh:row>
-            <msh:row>
-        <td class="label" title="Сортировать  (orderBy)" colspan="1"><label for="ordeByName" id="orderByLabel">Сортировка:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="orderBy" value="1">  по номеру
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="orderBy" value="2">  по дате
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="orderBy" value="3">  по ФИО
-        </td>
-      </msh:row>
+      </msh:row> --%>
       <msh:row >
         <msh:textField property="beginDate" label="Период с" />
         <msh:textField property="endDate" label="по" />
@@ -205,9 +194,16 @@
     var noActuality = document.forms[0].noActuality ;
     
     checkFieldUpdate('typeDate','${typeDate}',2) ;
-    checkFieldUpdate('typeDocument','${typeDocument}',3) ;
-    checkFieldUpdate('orderBy','${orderBy}',1) ;
-
+    
+	function getCheckBoxValue (aField) {
+		var chk = document.getElementsByName(aField);
+		for (var i=0; i<chk.length;i++) {
+			if (chk[i].checked=='checked'||chk[i].checked=='true'||chk[i].checked==true) {
+				return chk[i].value;
+			}
+		}
+		return '0';
+	}
 	
     function getXmlHttp() {
     	var xmlHttp;
@@ -301,9 +297,10 @@
     		alert ('Выберите исполнителя!');
     		return;
     	}
+    	var dateType = getCheckBoxValue('typeDate');
 		$('aView').innerHTML="Подождите..." ;
 		$('aViewTD').style.display="block";
-    	DisabilityService.exportLNByDate($('beginDate').value, $('endDate').value, $('lpu').value, $('workFunction').value, $('packetNumber').value, {
+    	DisabilityService.exportLNByDate($('beginDate').value, $('endDate').value, $('lpu').value, $('workFunction').value, $('packetNumber').value,dateType, {
     		callback: function (aResult) {
     			if (aResult!=null) {
     				$('exportTable').style.display = 'none' ;
