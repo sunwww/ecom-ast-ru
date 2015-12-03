@@ -32,16 +32,13 @@
 		if ($('planStartDate')) $('planStartDate').value=newTextDate;
 		
 		for (var i=1;i<=labNum;i++) {
-			try {
 				if ($('labDate'+i)) { 
 					$('labDate'+i).value=newTextDate;
 				}
-			} catch() {}
-		}
+			}
 	}
 	//Заполняем ЛН данными из шаблона (не удаляя существующие назначения). 
 	function fillFormFromTemplate(aData) {
-		
 		var aRow = aData.split("#");
 		if (aRow.length>0) {
 			for (var i=0;i<aRow.length;i++) {
