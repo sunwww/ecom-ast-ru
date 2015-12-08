@@ -11,6 +11,7 @@ import ru.ecom.mis.ejb.service.medcase.IReportsService;
 import ru.ecom.web.util.ActionUtil;
 import ru.ecom.poly.web.action.ticket.JournalBySpecialistForm;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.web.struts.BaseAction;
 
 public class VisitPatientByPoliclinic  extends BaseAction {
@@ -20,7 +21,7 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 		IReportsService repService  = Injection.find(aRequest).getService(IReportsService.class) ;
 		String groupBy =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeGroup","1", aRequest) ;
 		String view ; 
-		
+	
 		String whereDop = "" ;
 		if (id!=null && !id.equals("") && form!=null) {
 			view=ActionUtil.setParameter("VisitPatientByPoliclinic","typeView","1", aRequest) ;
@@ -47,8 +48,8 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 			if (ids[8]!=null && !ids[8].equals("")) 	form.setWorkPlaceType(Long.valueOf(ids[8])) ;
 			if (ids[9]!=null && !ids[9].equals("")) 	form.setOrderLpu(Long.valueOf(ids[9])) ;
 			if (ids[10]!=null && !ids[10].equals("")) 	form.setOrderWorkFunction(Long.valueOf(ids[10])) ;
-			if (ids[11]!=null && !ids[11].equals("")) 	form.setSocialStatus(Long.valueOf(ids[11])) ;
-			if (ids[12]!=null && !ids[12].equals("")) 	form.setDefect(Long.valueOf(ids[12])) ;
+			/*if (ids[13]!=null && !ids[13].equals("")) 	form.setSocialStatus(Long.valueOf(ids[13])) ;
+			if (ids[12]!=null && !ids[12].equals("")) 	form.setDefect(Long.valueOf(ids[12])) ;*/
 			
 		} else {
 			view =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeView","2", aRequest) ;
@@ -315,7 +316,7 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 		sql.append(" LEFT JOIN MisLpu olpu on olpu.id=t.orderLpu_id") ;
 		 sql.append(sqlAdd);
 		sql.append(" WHERE ") ;
-		sql.append("  t.dtype='Visit' and t.dateStart BETWEEN TO_DATE('").append(aStartDate).append("','dd.mm.yyyy') and TO_DATE('").append(aFinishDate).append("','dd.mm.yyyy')");
+		sql.append("  (t.dtype='Visit' or t.dtype='ShortMedCase') and t.dateStart BETWEEN TO_DATE('").append(aStartDate).append("','dd.mm.yyyy') and TO_DATE('").append(aFinishDate).append("','dd.mm.yyyy')");
 		sql.append(" and (t.noActuality is null or t.noActuality='0')") ;
 		sql.append(getFilter(aSpecialist, aWorkFunction, aLpu, aServiceStream,aWorkPlaceType,aOrderLpu,aOrderWF,aSocialStatus,aDefect)) ;
 
