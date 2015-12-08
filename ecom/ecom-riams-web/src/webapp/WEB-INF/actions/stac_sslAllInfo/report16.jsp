@@ -1562,7 +1562,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn isCalcAmount="true" columnName="в т.ч. старше трудоспособного возраста" property="25" />
 	    </msh:table>
 	    </msh:sectionContent>
-	    </msh:section>${journal_priem_sql}
+	    </msh:section>
 	    		
 	    		
 	    		
