@@ -664,7 +664,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 						rowLpuLn.addContent(new Element("MSE_DT3").addContent(o[2].toString()));
 						rowLpuLn.addContent(new Element("MSE_INVALID_GROUP").addContent(o[3].toString()));						
 					}					
-				} else if (mseResult.equals("32")||mseResult.equals("33")) {
+				} else if (mseResult!=null&&(mseResult.equals("32")||mseResult.equals("33"))) {
 					defect.append(ln).append(":").append(ln_id).append(":ELN-087 - При указании инвалидости должны быть заполнены поля МСЭ!!!").append(":")
 					.append(patId).append(":").append(patInfo).append("#");
 					continue;
