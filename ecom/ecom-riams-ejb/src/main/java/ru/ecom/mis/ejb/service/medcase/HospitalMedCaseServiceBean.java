@@ -1188,8 +1188,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select hdf.numberfond as orderNumber");
-    	sql.append(" ,to_char(hdf.directDate,'yyyy-mm-dd')  as orderDate");
-    	sql.append(" ,hdf.formHelp  as pokaz");
+    	sql.append(" ,to_char(coalesce(hdf.directDate,hdf.hospdate),'yyyy-mm-dd')  as orderDate");
+    	sql.append(" ,case when hdf.formHelp is null and hdf.istable3='1' then '3' else hdf.formHelp end as pokaz");
     	sql.append(" ,hdf.DirectLpuCode  as lpuSent");
     	sql.append(" ,to_char(coalesce(hdf.hospDate,sls.dateStart),'yyyy-mm-dd') as datestart");
     	sql.append(" ,to_char(sls.dateFinish,'yyyy-mm-dd') as dateFinish");
