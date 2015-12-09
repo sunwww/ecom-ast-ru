@@ -47,6 +47,15 @@
         	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         	<msh:textField property="finishDate" fieldColSpan="3" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
         </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="lpu" vocName="lpu"
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        </msh:row>
+
         <tr><td colspan="12"><table>    
 
         <msh:row>
@@ -81,7 +90,13 @@
 	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeReestr" value="2"> Свод по врачам
 	        </td>
-	    </msh:row>
+	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeReestr" value="3"> Свод по потокам обслуживания
+	        </td>	    
+	        <td colspan="2" onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeReestr" value="4"> Свод по отделению направления
+	        </td>	    
+</msh:row>
 
         </table></td></tr>
         <msh:row>
@@ -121,6 +136,10 @@
    </script>
     
     <%
+    		ActionUtil.setParameterFilterSql("serviceStream","visit.serviceStream_id", request) ;
+    		ActionUtil.setParameterFilterSql("lpu","wchb.department_id", request) ;
+
+
     	if (request.getParameter("beginDate")!=null	) {
     		request.setAttribute("dateFrom",request.getParameter("beginDate")) ;
     		if (request.getParameter("finishDate")==null) {
@@ -156,13 +175,15 @@
         	
         	if (typeReestr!=null&&typeReestr.equals("1")){
     		%>
-    
+    ${serviceStreamSql} 
+
     <msh:section>
 <ecom:webQuery name="journal_reestr" nameFldSql="journal_reestr_sql" nativeSql="
 select wchb.id,ml.name as mlname,p.id,p.lastname||' '||p.firstname||' '||p.middlename as fio,p.birthday
 as birthday,mkb.code,wchb.diagnosis
  ,wchb.dateFrom,mc.dateStart,mc.dateFinish,list(mkbF.code),wchb.phone
  ,wchb.createDate as wchbcreatedate
+,vss.name as vssname,vss1.name as vss1name
 from WorkCalendarHospitalBed wchb
 left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
@@ -170,11 +191,16 @@ left join VocIdc10 mkb on mkb.id=wchb.idc10_id
 left join MisLpu ml on ml.id=wchb.department_id
 left join Diagnosis diag on diag.medcase_id=mc.id
 left join VocIdc10 mkbF on mkbF.id=diag.idc10_id
+left join MedCase visit on visit.id=wchb.visit_id
+left join VocServiceStream vss on vss.id=visit.serviceStream_id
+left join VocServiceStream vss1 on vss1.id=wchb.serviceStream_id
+   	left join mislpu mlD on mlD.id=wchb.department_id
+
 where ${infoSql} ${idSql}
 and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
-${viewSql} 
+${viewSql} ${serviceStreamSql} ${lpuSql}
 group by wchb.id,wchb.createDate,ml.name,p.id,p.lastname,p.firstname,p.middlename,p.birthday
-,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone
+,mkb.code,wchb.diagnosis,wchb.dateFrom,mc.dateStart,mc.dateFinish,wchb.phone,vss.name,vss1.name
 order by ${dateSql}
 "/> 
     <msh:sectionTitle>
@@ -203,6 +229,8 @@ order by ${dateSql}
             <msh:tableColumn columnName="Дата факт. госпитализации" property="9"/>
             <msh:tableColumn columnName="Дата выписки" property="10"/>
             <msh:tableColumn columnName="Выписной диагноз" property="11"/>
+            <msh:tableColumn columnName="Поток обслуживания СМО" property="14"/>
+            <msh:tableColumn columnName="Поток облуживания госпитализации" property="15"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -210,6 +238,8 @@ order by ${dateSql}
     <%}
    	else if (typeReestr!=null&&typeReestr.equals("2")) {
    		%>
+${serviceStreamSql} 
+
    	 <msh:section>
    	<ecom:webQuery name="journal_svod" nameFldSql="journal_svod_sql" nativeSql="
    	select ml.name as mlname
@@ -219,14 +249,18 @@ order by ${dateSql}
    	from WorkCalendarHospitalBed wchb
    	left join Patient p on p.id=wchb.patient_id
 left join MedCase mc on mc.id=wchb.medcase_id
+left join MedCase visit on visit.id=wchb.visit_id
+
    	left join workfunction wf on wf.id=wchb.workfunction_id
    	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
    	left join worker w on w.id=wf.worker_id
    	left join Patient wp on wp.id=w.person_id
    	left join mislpu ml on ml.id=w.lpu_id
+   	left join mislpu mlD on mlD.id=wchb.department_id
+
    	where ${infoSql}
    	and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
-   	${viewSql} 
+   	${viewSql}  ${serviceStreamSql} ${lpuSql}
    	group by wf.id,ml.name, wp.lastname, wp.firstname, wp.middlename, vwf.name
    	order by wp.lastname,wp.firstname,wp.middlename
    	"/> 
@@ -235,16 +269,103 @@ left join MedCase mc on mc.id=wchb.medcase_id
    	    </msh:sectionTitle>
    	    <msh:sectionContent>
    	        <msh:table
-   	         name="journal_svod" action="smo_report_plan_hospital_by_visit.do?typeView=${param.typeView}&beginDate=${dateFrom}&finishDate=${dateTo}&typeDate=${param.typeDate}&short=Short&typeReestr=1" idField="4" 
+   	         name="journal_svod" action="smo_report_plan_hospital_by_visit.do?lpu=${param.lpu}&serviceStream=${param.serviceStream}&typeView=${param.typeView}&beginDate=${dateFrom}&finishDate=${dateTo}&typeDate=${param.typeDate}&short=Short&typeReestr=1" idField="4" 
    	         cellFunction="true" noDataMessage="Не найдено">
    	            <msh:tableColumn columnName="#" property="sn"/>
    	            <msh:tableColumn columnName="Отделение" property="1"/>
    	            <msh:tableColumn columnName="Специалист" property="2"/>
-   	            <msh:tableColumn columnName="Количество направленных" property="3"/>
+   	            <msh:tableColumn columnName="Количество направленных" property="3" isCalcAmount="true"/>
    	        </msh:table>
    	    </msh:sectionContent>
 
    	    </msh:section>
+   <%}
+   	else if (typeReestr!=null&&typeReestr.equals("3")) {
+   		%>
+${serviceStreamSql}  
+
+   	 <msh:section>
+   	<ecom:webQuery name="journal_svod" nameFldSql="journal_svod_sql" nativeSql="
+   	select vss.name as mlname
+   	,vss.name as fio
+   	,count (wchb.id) as cnt1
+   	,'&serviceStream='||vss.id as wfId
+   	from WorkCalendarHospitalBed wchb
+   	left join Patient p on p.id=wchb.patient_id
+left join MedCase mc on mc.id=wchb.medcase_id
+left join MedCase visit on visit.id=wchb.visit_id
+left join VocServiceStream vss on vss.id=visit.serviceStream_id
+   	left join workfunction wf on wf.id=wchb.workfunction_id
+   	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+   	left join worker w on w.id=wf.worker_id
+   	left join Patient wp on wp.id=w.person_id
+   	left join mislpu ml on ml.id=w.lpu_id
+   	left join mislpu mlD on mlD.id=wchb.department_id
+
+   	where ${infoSql}
+   	and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
+   	${viewSql}  ${serviceStreamSql} ${lpuSql}
+   	group by vss.id, vss.name
+   	order by vss.name
+   	"/> 
+   	    <msh:sectionTitle>
+   	    
+   	    </msh:sectionTitle>
+   	    <msh:sectionContent>
+   	        <msh:table
+   	         name="journal_svod" action="smo_report_plan_hospital_by_visit.do?lpu=${param.lpu}&typeView=${param.typeView}&beginDate=${dateFrom}&finishDate=${dateTo}&typeDate=${param.typeDate}&short=Short&typeReestr=1" idField="4" 
+   	         cellFunction="true" noDataMessage="Не найдено">
+   	            <msh:tableColumn columnName="#" property="sn"/>
+   	               	            <msh:tableColumn columnName="Поток обслуживания" property="2"/>
+   	            <msh:tableColumn columnName="Количество направленных" property="3" isCalcAmount="true"/>
+   	        </msh:table>
+   	    </msh:sectionContent>
+
+   	    </msh:section>
+
+   	   <%}
+   	else if (typeReestr!=null&&typeReestr.equals("4")) {
+   		%>
+${serviceStreamSql} 
+
+   	 <msh:section>
+   	<ecom:webQuery name="journal_svod" nameFldSql="journal_svod_sql" nativeSql="
+   	select mlD.name as mlname
+   	,mlD.name as fio
+   	,count (wchb.id) as cnt1
+   	,'&lpu='||mlD.id as wfId
+   	from WorkCalendarHospitalBed wchb
+   	left join Patient p on p.id=wchb.patient_id
+left join MedCase mc on mc.id=wchb.medcase_id
+left join MedCase visit on visit.id=wchb.visit_id
+left join VocServiceStream vss on vss.id=visit.serviceStream_id
+   	left join workfunction wf on wf.id=wchb.workfunction_id
+   	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+   	left join worker w on w.id=wf.worker_id
+   	left join Patient wp on wp.id=w.person_id
+   	left join mislpu ml on ml.id=w.lpu_id
+   	left join mislpu mlD on mlD.id=wchb.department_id
+   	where ${infoSql}
+   	and ${dateSql} between to_date('${dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy')
+   	${viewSql}  ${serviceStreamSql} ${lpuSql}
+   	group by mlD.id, mlD.name
+   	order by mlD.name
+   	"/> 
+   	    <msh:sectionTitle>
+   	    
+   	    </msh:sectionTitle>
+   	    <msh:sectionContent>
+   	        <msh:table
+   	         name="journal_svod" action="smo_report_plan_hospital_by_visit.do?serviceStream=${param.serviceStream}&typeView=${param.typeView}&beginDate=${dateFrom}&finishDate=${dateTo}&typeDate=${param.typeDate}&short=Short&typeReestr=1" idField="4" 
+   	         cellFunction="true" noDataMessage="Не найдено">
+   	            <msh:tableColumn columnName="#" property="sn"/>
+   	               	            <msh:tableColumn columnName="Поток обслуживания" property="2"/>
+   	            <msh:tableColumn columnName="Количество направленных" property="3" isCalcAmount="true"/>
+   	        </msh:table>
+   	    </msh:sectionContent>
+
+   	    </msh:section>
+
    	   <%}
         	} else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
