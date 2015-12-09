@@ -368,7 +368,7 @@ function getPreRecord() {
   }
  	}
 	function updateDefaultDate() {
-			WorkCalendarService.getDefaultDate($('surgServicies').value,
+			WorkCalendarService.getDefaultDate($('surgCabinet').value,
 			{
 				callback:function(aDateDefault) {
 					if (aDateDefault!=null) {
