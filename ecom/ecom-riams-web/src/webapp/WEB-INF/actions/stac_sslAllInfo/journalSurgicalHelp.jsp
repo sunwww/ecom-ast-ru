@@ -168,7 +168,25 @@ left join VocPreAdmissionTime vpat on vpat.id=sls.preAdmissionTime_id
 where 
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-and mkb.code between rspt.codefrom and rspt.codeto 
+and coalesce(
+    (select max(mkb.code) from Diagnosis diag 
+    left join vocidc10 mkb on mkb.id=diag.idc10_id
+    left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    where sls.id=diag.medcase_id  
+    and vdrt.id='${diag_typeReg_pat}'
+    and vpd.id='${diag_priority_m}'
+    )
+    ,
+    (select max(mkb.code) from Diagnosis diag 
+    left join vocidc10 mkb on mkb.id=diag.idc10_id
+    left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    where sls.id=diag.medcase_id  
+    and vdrt.id='${diag_typeReg_cl}'
+    and vpd.id='${diag_priority_m}'
+    )
+    ) between rspt.codefrom and rspt.codeto 
     and sloa.dateFinish is not null
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 ${departmentSql}
@@ -199,7 +217,7 @@ order by vrspt.strCode ${tableOrder}"
 			<msh:tableColumn property="9" columnName="опер. всего"/>
 			<msh:tableColumn property="10" columnName="опер. умерло"/>
 		</msh:table>
-		</msh:sectionContent>
+		</msh:sectionContent><pre>${list_surgical_sql}</pre>
 	</msh:section>
         <%
     	
@@ -233,7 +251,26 @@ where
 sls.dtype='HospitalMedCase' and sls.dateFinish 
 between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
     and sls.dateFinish is not null
-and mkb.code between 'C00' and 'C97.999'
+
+and coalesce(
+    (select max(mkb.code) from Diagnosis diag 
+    left join vocidc10 mkb on mkb.id=diag.idc10_id
+    left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    where sls.id=diag.medcase_id  
+    and vdrt.id='${diag_typeReg_pat}'
+    and vpd.id='${diag_priority_m}'
+    )
+    ,
+    (select max(mkb.code) from Diagnosis diag 
+    left join vocidc10 mkb on mkb.id=diag.idc10_id
+    left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    where sls.id=diag.medcase_id  
+    and vdrt.id='${diag_typeReg_cl}'
+    and vpd.id='${diag_priority_m}'
+    )
+    ) between 'C00' and 'C97.999'
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 ${departmentSql}
 group by mkb.id,mkb.code,mkb.name
