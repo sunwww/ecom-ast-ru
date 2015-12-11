@@ -307,7 +307,7 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/list_groupByBedFund_data.jsp" />
         </action>
 
-        <action path="/stac_sslList" type='ru.ecom.mis.web.action.medcase.AllHospitalMedCasesListAction'
+        <action path="/stac_sslList" type='ru.ecom.web.actions.base.ForwardAction'
             scope='request' validate="false" name="stac_sslForm">
             <forward name="success" path="/WEB-INF/actions/stac_ssl/list.jsp" />
         </action>
