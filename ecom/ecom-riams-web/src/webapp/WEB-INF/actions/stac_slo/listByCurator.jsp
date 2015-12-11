@@ -34,8 +34,12 @@
     select m.id as m1id,m.dateStart as m2datestart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as m3fio
     ,pat.birthday m4birthday,sc.code as m5sccode
-    ,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) 
-    ||list((current_Date-so1.operationDate)||' дн. после операции: '||ms1.name)
+    ,(select list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) 
+    from SurgicalOperation so
+    left join MedCase soMC on so.medCase_id = soMC.id
+    left join medservice ms on ms.id=so.medService_id
+    where (soMC.id = sls.id or soMC.parent_id=sls.id)
+    )
     as m6oper
       
     ,	  case 
@@ -53,14 +57,11 @@
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id 
     left outer join Patient pat on m.patient_id = pat.id 
-    left join SurgicalOperation so on so.medCase_id = m.id
-    left join SurgicalOperation so1 on so1.medCase_id = sls.id
-    left join medservice ms on ms.id=so.medService_id
-    left join medservice ms1 on ms1.id=so1.medService_id
-    where m.DTYPE='DepartmentMedCase' and m.ownerFunction_id='${curator}' and m.transferDate is null and m.dateFinish is null
+    where m.DTYPE='DepartmentMedCase' and m.ownerFunction_id='${curator}' 
+    and m.transferDate is null and m.dateFinish is null
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code
-    ,bf.addCaseDuration,m.dateStart,sls.dateStart
+    ,bf.addCaseDuration,m.dateStart,sls.dateStart,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
     <msh:table name="datelist" 
@@ -86,7 +87,13 @@
     select m.ownerFunction_id,ml.name as mlname,ovwf.name as ovwfname,owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'') as worker
     ,count(distinct sls.id) as cntAll
     ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
-    ,count(distinct case when (so.id is not null or so1.id is not null) then sls.id else null end) as cntOper    
+    ,
+	count(distinct case when (select count(so.id) 
+from SurgicalOperation so 
+left join MedCase soMC on so.medCase_id = soMC.id 
+where (soMC.id = sls.id or soMC.parent_id = sls.id) )>0 then sls.id else null end
+)
+	 as cntOper    
     from medCase m 
     left join MedCase as sls on sls.id = m.parent_id 
     left join SurgicalOperation so on so.medCase_id = m.id
