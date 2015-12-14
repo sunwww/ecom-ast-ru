@@ -1898,7 +1898,7 @@ if (date!=null && !date.equals("")) {
 	    		%>
 	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
 	    cast ('&department=${param.department}&dateBegin=${dateBegin}&dateEnd=${dateEnd}' as varchar) as vbstid,
-	    vbt.name||' '||vbst.name ||' '||list(ml.name) as vbstname,cast('' as varchar)
+	    vbt.name||' '||vbst.name ||' '||list(ml.name)||vss.name as vbstname,cast('' as varchar)
 	,count(distinct case when 
 	(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
@@ -2050,12 +2050,12 @@ if (date!=null && !date.equals("")) {
 		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
 	end
 	
-	) as cntDays
+	)/count(distinct bfc.id) as cntDays
 ,sum(distinct cast(bfc.actualbedcount||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f21
 ,sum(distinct cast(bfc.countdays||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f22
 ,sum(distinct cast(bfc.counthospitals||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f23 
 ,cast(avg(bfc.plantreatmentduration) as numeric(9,2))	 as f24
-,vfs.name as f25
+,cast ('' as varchar) as f25
 	from medcase slo
 	left join patient pat on pat.id=slo.patient_id
 	left join medcase sls on sls.id=slo.parent_id
@@ -2087,8 +2087,8 @@ if (date!=null && !date.equals("")) {
 	${departmentSql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
 	and bfc.financesource=vfs.id ${departmentBFC} 
 	and bfc.department=slo.department_id and bfc.bedsubtype=vbst.id
-	and slo.datefinish between bfc.startDate and bfc.finishDate
-	group by vbst.id, vbst.name,vbt.id, vbt.name ,bfc.plantreatmentduration,vfs.id,vfs.name
+	and (coalesce(slo.datefinish,current_date) between bfc.startDate and coalesce(bfc.finishDate, current_date))
+	group by vbst.id, vbst.name,vbt.id, vbt.name 
 	
 	      " />
 	    <%-- <form action="print-stac_report016_1.do" method="post" target="_blank">
