@@ -17,6 +17,7 @@ import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -226,7 +227,7 @@ public class PatientServiceBean implements IPatientService {
 		return getAddressByKladr(aKladr, aRegion, aRayon, aCity, aStreet,null);
 	}
 	
-	private String getAddressByOkato (String aOkato, String aStreet) {
+	public String getAddressByOkato (String aOkato, String aStreet) {
 		if (aOkato==null||aOkato.equals("")) return null;
 		if (aOkato.length()<11) {
 			aOkato +="0000000000";
@@ -579,6 +580,26 @@ public class PatientServiceBean implements IPatientService {
 		
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
 	//	System.out.println("====-----------Создаем прикрепления!!");
+		Object obj =null;
+		if (attachedType!=null&&attachedType.equals("1")){
+			try{ 
+				obj = theManager.createNativeQuery("select max(la.id) from patient p" +
+			
+					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
+					" and (laap.housenumber=case when p.address_addressid is not null then p.housenumber end or laap.housenumber is null or laap.housenumber ='')" +
+					" left join lpuareaaddresstext laat on laat.id=laap.lpuareaaddresstext_id" +
+					" left join lpuarea la on la.id=laat.area_id" +
+					" left join vocareatype vat on vat.id=la.type_id" +
+					" where p.id=" +aPatientId +
+					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getSingleResult();
+			} catch (NoResultException e) {
+				System.out.println("Участок по адресу не найден");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		Long areaId = obj!=null?Long.valueOf(obj.toString()):null;
+		LpuArea la = areaId!=null?theManager.find(LpuArea.class, areaId):null;
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
 			.setParameter("pat", aPatientId).getResultList();
 			
@@ -594,7 +615,11 @@ public class PatientServiceBean implements IPatientService {
 				
 			}
 			MisLpu lpuAtt = null;
-			if (lpuId!=null&&!lpuId.equals("")) {
+			if (la!=null) {
+				Long l = Long.valueOf(theManager.createNativeQuery("select lpu_id from lpuarea where id="+areaId).getSingleResult().toString());
+				lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(l));
+			}
+			if (lpuAtt!=null && lpuId!=null && !lpuId.equals("")) {
 				lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
 			}
 			if (lpuAtt!=null) {
@@ -608,7 +633,7 @@ public class PatientServiceBean implements IPatientService {
 					att.setCompany(insCompany);
 					att.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
 					att.setCreateUsername("fond_check");
-					//Указать участок!!!
+					if (la!=null) att.setArea(la);
 					theManager.persist(att);
 				} catch (ParseException e) {
 					System.out.println("Дата не распознана "+attachedDate);
@@ -623,13 +648,15 @@ public class PatientServiceBean implements IPatientService {
 		} else  { // Обновляем существующее 
 			for (LpuAttachedByDepartment a: attachments) {
 				StringBuilder str = new StringBuilder();
+				String areaSql = areaId!=null?(", area_id="+areaId):"";
 				if (a.getAttachedType()==null||a.getAttachedType().equals(attType)||ignoreType) {
+					
 					ret.append("Обновлено прикрепление. Старый тип - " +
 						(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
 						", дата - "+ DateFormat.formatToDate(a.getDateFrom()) + 
 						". Новый тип - "+attType.getCode()+ ", дата - "+ attachedDate+". ");
 					str.append("update LpuAttachedByDepartment set "+updateDate+" dateFrom=to_date('").append(attachedDate)
-						.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check', attachedtype_id=(select id from vocattachedtype where code='"+attachedType+"') where id='").append(a.getId()).append("'");
+						.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check', attachedtype_id=(select id from vocattachedtype where code='"+attachedType+"') "+areaSql+" where id='").append(a.getId()).append("'");
 					theManager.createNativeQuery(str.toString()).executeUpdate();
 			//		System.out.println("Прикрепление Обновлено! Пациент = "+a.getPatient().getPatientInfo());
 				} else {
@@ -638,7 +665,7 @@ public class PatientServiceBean implements IPatientService {
 					", дата - "+ DateFormat.formatToDate(a.getDateFrom()) + 
 					". Новая дата - "+ attachedDate+". ");
 				str.append("update LpuAttachedByDepartment set "+updateDate+" dateFrom=to_date('").append(attachedDate)
-					.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check' where id='").append(a.getId()).append("'");
+					.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check'"+areaSql+" where id='").append(a.getId()).append("'");
 				theManager.createNativeQuery(str.toString()).executeUpdate();						
 				}
 			}
