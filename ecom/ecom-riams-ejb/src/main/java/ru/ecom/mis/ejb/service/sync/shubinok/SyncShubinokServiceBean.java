@@ -171,7 +171,18 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	            	VocRayon vr = findOrCreateRayon(patImp.getRayonName(),patImp.getRegion()) ;
 	            	patImp.setRayon(vr) ;
 	            	if (adr==null) {
-	            		Long adrId=getKladrByRayon(patImp.getRegion(), vr!=null?vr.getKladr():"", patImp.getCity(), patImp.getNp(), patImp.getStreet(), patImp.getIndex(), adrAstr) ;
+	            		String aStreet = patImp.getStreet();
+	            		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
+	            		else if (aStreet.toUpperCase().endsWith(" ПЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
+	            		else if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
+	            		aStreet=aStreet.toUpperCase().trim() ;
+	            		
+	            		System.out.println("=== === Адрес не указан, вычисляем автоматически");
+	            		String adrStr = thePatientService.getAddressByOkato(patImp.getRn(), aStreet);
+	            		Long adrId = adrStr!=null?Long.valueOf(adrStr):null;
+	            		if (adrId==null) {
+	            			adrId=getKladrByRayon(patImp.getRegion(), vr!=null?vr.getKladr():"", patImp.getCity(), patImp.getNp(), patImp.getStreet(), patImp.getIndex(), adrAstr) ;
+	            		}
 	            		if (adrId!=null) adr=theManager.find(Address.class, adrId) ;
 	            	}
 	            	patImp.setAddressRegistration(adr) ;
@@ -245,6 +256,9 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	patient.setSnils(aEntity.getSnils());
     	patient.setCommonNumber(aEntity.getCommonNumber());
     	//aPatient.setBirthPlace(aEntity.getBirthPlace()) ;
+    	if (aEntity.getAddressRegistration()==null) {
+    		
+    	}
     	if (aEntity.getAddressRegistration()!=null) {
     		patient.setAddress(aEntity.getAddressRegistration());
     	} else {
@@ -451,6 +465,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			else if (aCity.startsWith("Г.")||aCity.startsWith("Г ")) aCity = aCity.substring(2) ;
 			else if (aCity.startsWith("П.")||aCity.startsWith("П ")) aCity = aCity.substring(2) ;
 			else if (aCity.startsWith("ГОР.")) aCity = aCity.substring(4) ;
+			else if (aCity.endsWith(" РП")) aCity = aCity.substring(0,aCity.length()-2);
 			else if (aCity.startsWith("ПОС.")) aCity = aCity.substring(4) ;
 			else if (aCity.startsWith("ГОР ")) aCity = aCity.substring(4) ;
 			else if (aCity.startsWith("ПОС ")) aCity = aCity.substring(4) ;
