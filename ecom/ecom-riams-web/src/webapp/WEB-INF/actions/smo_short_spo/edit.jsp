@@ -293,6 +293,27 @@ order by vis.dateStart
   </tiles:put>
   <tiles:put name="javascript" type="string">
  <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+ <msh:ifFormTypeIsCreate formName="smo_short_spoForm">
+ <script type="text/javascript">
+  	if (+$('ownerFunction').value<1) {
+	  	TicketService.getSessionData( {
+		   		callback: function(aResult) {
+		   			//alert(aResult) ;
+		   			if (aResult!=null&&aResult!="") {
+		   				var val = aResult.split("@") ;
+		   	   			if (val[0]!="") $('dateStart').value = val[0] ;
+		   	   			if (val[1]!="") $('ownerFunction').value=val[1] ;
+		   	   			if (val[2]!="") $('ownerFunctionName').value=val[2];
+		   	   			if (val[4]!=""&&(+val[4]>0)) $('emergency').checked=true;
+		   	   			
+		   	   		}
+	   			}
+	   		
+	  	}) ;
+  	}
+  	</script>
+ 
+ </msh:ifFormTypeIsCreate>
  	<msh:ifFormTypeIsNotView formName="smo_short_spoForm">
       	<script type="text/javascript"> 
         onload=function(){
@@ -338,6 +359,12 @@ order by vis.dateStart
       		}
       		str=str.length>0?str.trim().substring(0,str.length-1):"";
       		$('otherTicketDates').value=str;
+      		TicketService.saveSession($('dateStart').value,$('ownerFunction').value
+    	   			,$('ownerFunctionName').value,$('medServices').value,$('emergency').checked, {
+    	   		callback: function(aResult) {
+    	   			
+    	   		}
+    	   	});
       	}
       	function addRow (aValue) {
       		var table = document.getElementById('otherDates');
