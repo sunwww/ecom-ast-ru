@@ -256,7 +256,30 @@ function referenceSMOmap(aCtx,aParams,aMap) {
 	aMap.put("cost_full",parseSymRub(sum)) ;
 	//return map ;
 }
-
+function printRequitDirection (aCtx,aParams) {
+	var historyNumber = '';
+	var doc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.licence.RequitDirectionDocument
+			, new java.lang.Long(aParams.get("id"))) ;
+	
+	var list = aCtx.manager.createNativeQuery("select mc.number from MedCard mc where mc.person_id='"+doc.medCase.patient.id+"'")
+	.getResultList();
+	if (list.size()>0) {
+		historyNumber=""+list.get(0);
+	}
+	var map = printDocument (aCtx, aParams) ;
+	map.put('abuse', recordMultiText(doc.abuses));
+	map.put('history', recordMultiText(doc.history));
+	map.put('research', recordMultiText(doc.research));
+	map.put('labresearch', recordMultiText(doc.labResearch));
+	map.put('dateFrom',doc.planDateFrom);
+	map.put('dateTo', doc.planDateTo);
+	map.put('historyNumber', historyNumber);
+	map.put('orderDate', doc.orderDate);
+	map.put('orderOffice', doc.orderOffice);
+	map.put('orderNum', doc.orderNumber);
+	
+	return map;
+}
 
 function printDocument(aCtx,aParams) {
 	//var map = new java.util.HashMap() ;

@@ -57,4 +57,13 @@
     	</fields>
     	<print filename='dischargeDocumentDiag'/>
 	</parameter>
+    <parameter id='6' type='DischargeDocument' name='Заключение для военкомата' 
+    	action='entityParentPrepareCreate-doc_requitDirection' roles='/Policy/Mis/MedCase/Document/Internal/RequitDirection/Create'>
+<fields>
+    		<field type='row' open='1'/>
+    		<field property='history' type='textArea' label='Краткий анамнез...' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>
+    	</fields>
+    	<print filename='requitDirection'/>
+	</parameter>
 </parameterconfig>

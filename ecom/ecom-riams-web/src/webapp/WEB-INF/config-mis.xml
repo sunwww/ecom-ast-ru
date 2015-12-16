@@ -38,6 +38,7 @@
 		<form-bean name="doc_directionMicrobiologForm" type="ru.ecom.mis.ejb.form.licence.DirectionToMicrobiologAnalysisForm"/>
 		<form-bean name="doc_directionForm" type="ru.ecom.mis.ejb.form.licence.DirectionDocumentForm"/>
 		<form-bean name="doc_dischargeForm" type="ru.ecom.mis.ejb.form.licence.DischargeDocumentForm"/>
+		<form-bean name="doc_requitDirectionForm" type="ru.ecom.mis.ejb.form.licence.RequitDirectionDocumentForm"/>
 		<form-bean name="doc_dischargeDiagForm" type="ru.ecom.mis.ejb.form.licence.DischargeDiagnostDocumentForm"/>
 		<form-bean name="doc_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentForm"/>
 	    <form-bean name="cal_patternByOperRoomForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternByOperatingRoomForm" />
