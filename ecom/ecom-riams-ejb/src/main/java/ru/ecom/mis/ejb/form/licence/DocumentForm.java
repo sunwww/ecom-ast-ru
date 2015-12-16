@@ -4,6 +4,7 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.licence.Document;
+import ru.ecom.mis.ejb.domain.licence.RequitDirectionDocument;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -26,7 +27,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses(value = { DischargeDocumentForm.class
 		,DirectionDocumentForm.class ,BaseMedicalExaminationForm.class
 		,DirectionToMicrobiologAnalysisForm.class
-		,DischargeDiagnostDocumentForm.class})
+		,DischargeDiagnostDocumentForm.class
+		,RequitDirectionDocumentForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Document")
 public class DocumentForm extends IdEntityForm{
 
