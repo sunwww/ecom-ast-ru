@@ -86,6 +86,20 @@ function check(aForm,aCtx) {
 			var isCheck = null ;
 
 			var param1 = new java.util.HashMap() ;
+			
+		}
+		var ldm = aCtx.manager.createNativeQuery("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id="+aForm.id+" and (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time)").getResultList() ;
+		if (ldm.size()>0) {
+			aCtx.manager.createNativeQuery("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id="+aForm.id+"").executeUpdate() ;
+		}
+		if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
+			var curDate = java.util.Calendar.getInstance();
+			var maxVisit = java.util.Calendar.getInstance();
+			var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(),aForm.getTimeRegistration()) ;
+			maxVisit.setTime(dateVisit);
+			var cntHour = +getDefaultParameterByConfig("count_hour_edit_protocol", 24, aCtx) ;
+			maxVisit.add(java.util.Calendar.HOUR,cntHour);
+			
 			param1.put("obj","Protocol") ;
 			param1.put("permission" ,"editAllProtocolsInSLS") ;
 			param1.put("id", +hmc) ;
@@ -99,29 +113,17 @@ function check(aForm,aCtx) {
 					isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
 					if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
 				}
-			}
-		}
-		var ldm = aCtx.manager.createNativeQuery("select dm.id,dm.validitydate from diarymessage dm where dm.diary_id="+aForm.id+" and (dm.validitydate>current_date or dm.validitydate=current_date and dm.validitytime>=current_time)").getResultList() ;
-		if (ldm.size()>0) {
-			aCtx.manager.createNativeQuery("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id="+aForm.id+"").executeUpdate() ;
-		}
-		if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
-			var curDate = java.util.Calendar.getInstance();
-			var maxVisit = java.util.Calendar.getInstance();
-			var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(),aForm.getTimeRegistration()) ;
-			maxVisit.setTime(dateVisit);
-			var cntHour = +getDefaultParameterByConfig("count_hour_edit_protocol", 24, aCtx) ;
-			maxVisit.add(java.util.Calendar.HOUR,cntHour);
-			if (curDate.after(maxVisit)) {
-				var param1 = new java.util.HashMap() ;
-				param1.put("obj","Protocol") ;
-				param1.put("permission" ,"editAfterCertainHour") ;
-				param1.put("id", +aForm.id) ;
-				var isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
-				if (+isCheck!=1) {
-					if (ldm.size()==0) {
-						throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
-					} 
+				if (curDate.after(maxVisit)) {
+					//var param1 = new java.util.HashMap() ;
+					param1.put("obj","Protocol") ;
+					param1.put("permission" ,"editAfterCertainHour") ;
+					param1.put("id", +aForm.id) ;
+					isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
+					if (+isCheck!=1) {
+						if (ldm.size()==0) {
+							throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
+						} 
+					}
 				}
 			}
 		}
