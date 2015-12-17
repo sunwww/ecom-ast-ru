@@ -282,7 +282,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	",dd2.number as prevDocument "+
 	",dd3.number as nextDocument "+
 	",dd.workcombotype_id as workcombotypeid "+
-	",vddcr.codef as mseResult " +
+	",coalesce(vddcr.codef,'') as mseResult " +
 	",dd.otherclosedate as otherdate " +
 	",dr.datefrom as startDate "+
 	" from disabilitydocument dd " +
