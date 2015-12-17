@@ -185,6 +185,7 @@
       		when d.dtype='DischargeDiagnostDocument' then 'Выписка диагностическая'
       		when d.dtype='BaseMedicalExamination' then 'Паспорт здоровья'
       		when d.dtype='DirectionToMicrobiologAnalysis' then 'Направление на микробиологическое исследование'
+      		when d.dtype='RequitDirectionDocument' then 'Акт в военкомат'
       		else '-' end,d.diagnosis
       		from Document d where d.medCase_id='${param.id}'
       		"/>
