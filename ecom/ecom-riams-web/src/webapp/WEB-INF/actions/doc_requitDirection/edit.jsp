@@ -13,8 +13,8 @@
       <msh:hidden property="medCase" />
       <msh:panel>
       <msh:row>
-      <msh:textField property="planDateFrom"/>
-      <msh:textField property="planDateTo"/>
+      <msh:textField property="planDateFrom" label="Дата начала обследования" />
+      <msh:textField property="planDateTo" label="Дата окончания обследования"/>
        </msh:row><msh:row>
       <msh:textField property="orderDate"/>
       <msh:textField property="orderNumber"/>
@@ -24,27 +24,27 @@
       </msh:row>
         <msh:row>
           <msh:textArea property="abuses" 
-               size="40" rows="1" fieldColSpan="2" />
+               size="40" rows="2" fieldColSpan="2" />
                     
         </msh:row>
         <msh:row>
           <msh:textArea property="history" 
-               size="40" rows="1" fieldColSpan="2" />
+               size="40" rows="8" fieldColSpan="2" />
                     
         </msh:row>
        <msh:row>
           <msh:textArea property="research" 
-               size="40" rows="1" fieldColSpan="2" />
+               size="40" rows="2" fieldColSpan="2" />
                     
         </msh:row>
         <msh:row>
           <msh:textArea property="labResearch" 
-               size="40" rows="1" fieldColSpan="2" />
+               size="40" rows="2" fieldColSpan="2" />
                     
         </msh:row>
         <msh:row>
           <msh:textArea property="diagnosis" label="Диагноз:"
-               size="40" rows="1" fieldColSpan="2" />
+               size="40" rows="2" fieldColSpan="2" />
                
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
