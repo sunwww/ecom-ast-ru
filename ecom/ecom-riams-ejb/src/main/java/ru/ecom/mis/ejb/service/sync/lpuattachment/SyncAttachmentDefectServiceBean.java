@@ -44,10 +44,13 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 	
 	public String changeAttachmentArea (Long aOldAreaId, Long aNewLpuId, Long aNewAreaId) {
 		String sql = "update LpuAttachedByDepartment set area_id="+aNewAreaId+", lpu_id="+aNewLpuId+" where area_id="+aOldAreaId;
+		String sql2 = "update LpuAreaAddressText set set area_id="+aNewAreaId+" where area_id="+aOldAreaId;
 		try {
+			theManager.createNativeQuery(sql2).executeUpdate();
 			return "Изменено записей: "+theManager.createNativeQuery(sql).executeUpdate();
 		} catch (Exception e) { 
-			return "Ошибка: "+e.toString();
+			e.printStackTrace();
+			return "Ошибка при перекреплении: "+e.toString();
 		}
 		}
 	
