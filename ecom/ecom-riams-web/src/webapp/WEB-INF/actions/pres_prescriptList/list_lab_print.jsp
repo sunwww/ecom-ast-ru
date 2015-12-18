@@ -113,7 +113,7 @@
 	    <input type='hidden' name="cntColumn" id="cntColumn" value="3">
 	    <input type='hidden' name="updateId" id="updateId" value="1">
 	    <input type='hidden' name="updateSql" id="updateSql" value="update diary set printdate=current_date,printtime=current_time where id=':id'">
-	    
+	    <input type='hidden' name='next' id="next" value="pres_lab_print.do">
 	    <input type="submit" value="Печать текстовый" onclick="print();this.form.action='print-pres_lab_print_txt.do'"> 
 	    <input type="submit" value="Печать файл" onclick="print();this.form.action='print-pres_lab_print_odt.do';"> 
                            
