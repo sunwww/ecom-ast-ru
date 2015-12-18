@@ -37,7 +37,7 @@ function isUnitLpu(aMainLpuId,aChildLpuId,aCtx) {
 	while (child==true) {
 		if (aChildLpuId==aMainLpuId) return true ;
 		//throw "select top 1 parent_id from MisLpu where id="+aChildLpuId ;
-		var idparent = aCtx.manager.createNativeQuery("select top 1 parent_id,count(*) from MisLpu where id="+aChildLpuId).getSingleResult() ;
+		var idparent = aCtx.manager.createNativeQuery("select parent_id,count(*) from MisLpu where id="+aChildLpuId+" group by parent_id").getSingleResult() ;
 		if (idparent[0]==null) break ;
 		aChildLpuId = 0+ idparent[0] ;
 		if(aChildLpuId<1) child=false ;
