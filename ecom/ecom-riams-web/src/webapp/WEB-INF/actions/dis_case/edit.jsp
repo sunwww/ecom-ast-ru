@@ -53,16 +53,44 @@
     </msh:form>
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="dis_caseForm">
       <msh:section createRoles="/Policy/Mis/Disability/Case/Document/Create" createUrl="entityParentPrepareCreate-dis_document.do?id=${param.id}" guid="sectionChilds" title="Документы нетрудоспособности">
-        <ecom:parentEntityListAll guid="parentEntityListChilds" formName="dis_documentForm" attribute="childs" />
-        <msh:table viewUrl="entityShortView-dis_document.do" guid="tableChilds3434" name="childs" action="entityParentView-dis_document.do" idField="id">
-          <msh:tableColumn columnName="Дата выдачи" property="issueDate" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-          <msh:tableColumn columnName="Статус" property="statusInfo" />
-          <msh:tableColumn columnName="Тип документа" property="documentTypeInfo" guid="71edd77-ddd1-4ed-453fa2687534" />
-          <msh:tableColumn columnName="Первичность" property="primarityInfo" guid="71edd774-ddd1-4e0b-ae7d-453fa2687534" />
-          <msh:tableColumn columnName="Информация" property="info" guid="d61b9d49-a94d-4cf2-af1b-05020213901f" />
-          <msh:tableColumn identificator="false" property="dateFrom" guid="7623c0df-b830-43de-9e73-957a91423b77" columnName="Дата начала" />
-          <msh:tableColumn columnName="Дата окончания" identificator="false" property="dateTo" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-        </msh:table>
+        <ecom:webQuery name="docs" nativeSql="
+  	select dd.id
+  	,dd.issueDate
+  	,vds.name as vdsname
+  	, vddt.name as vddtname
+  	,vdp.name as vdpname
+  	, 'сер. '||dd.series||' №'||dd.number as sernumber
+  	, min(dr.datefrom) as mindatefrom
+  	, case when 
+count(case when dr.dateto is null then '1' else null end)>0 
+then '-' else to_char(max(dr.dateto),'dd.mm.yyyy') end maxdateto 
+, case when 
+count(case when dr.dateto is null then '1' else null end)>0 
+then null 
+else 
+case when max(dr.dateto)=min(dr.datefrom) then '1' else max(dr.dateto)-min(dr.datefrom)+1 end end
+  	from disabilitydocument dd 
+  	left join disabilityrecord dr on dr.disabilitydocument_id=dd.id 
+  	left join VocDisabilityStatus vds on vds.id=dd.status_id
+  	left join VocDisabilityDocumentType vddt on vddt.id=dd.documentType_id
+  	left join VocDisabilityDocumentPrimarity vdp on vdp.id=dd.primarity_id
+  	where dd.disabilitycase_id='${param.id}'
+  	group by dd.id,dd.issueDate,vds.name,vddt.name,vdp.name,dd.series,dd.number
+  	order by dd.issueDate
+  	"/>
+    <msh:table viewUrl="entityParentView-dis_document.do?short=Short" name="docs" 
+    action="entityParentView-dis_document.do" idField="1" >
+      <msh:tableColumn columnName="#" property="sn" guid="06d94f6a7-ed40-4ebf-a274-1efd69d01cfe4" />
+          <msh:tableColumn columnName="Дата выдачи" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+          <msh:tableColumn columnName="Статус" property="3" />
+          <msh:tableColumn columnName="Тип документа" property="4" guid="71edd77-ddd1-4ed-453fa2687534" />
+          <msh:tableColumn columnName="Первичность" property="5" guid="71edd774-ddd1-4e0b-ae7d-453fa2687534" />
+          <msh:tableColumn columnName="Информация" property="6" guid="d61b9d49-a94d-4cf2-af1b-05020213901f" />
+      <msh:tableColumn columnName="Дата начала" property="7" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
+      <msh:tableColumn columnName="Дата окончания" property="8" guid="6682eeef-105f-43a0-be61-30a865f27972" />
+      <msh:tableColumn columnName="Продолжительность" property="9" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+    </msh:table>
+        
       </msh:section>
     </msh:ifFormTypeIsView>
   </tiles:put>
