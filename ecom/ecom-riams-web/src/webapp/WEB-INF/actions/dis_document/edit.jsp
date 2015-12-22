@@ -36,7 +36,7 @@
         </msh:row>
         <msh:row>
           <msh:textField property="series" label="Серия" guid="b9d0f37f-bd93-4e91-be9c-703c363ca9a8" />
-          <msh:textField property="number" label="Номер"  fieldColSpan="30" />
+          <msh:textField property="number" label="Номер"  fieldColSpan="50" />
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="disabilityDocumentByCase" property="prevDocument" label="Предыдущий документ" guid="c431085f-265a-40ab-9581-a1c8b5babeff" fieldColSpan="3" horizontalFill="true" />
