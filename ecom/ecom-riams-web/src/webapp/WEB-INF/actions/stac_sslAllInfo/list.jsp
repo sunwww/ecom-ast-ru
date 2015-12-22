@@ -15,7 +15,52 @@
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
-    <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" decorator="decorator">
+  <%
+  String sslid = request.getParameter("sslid") ;
+  if (sslid!=null) {
+	  
+  } else {
+	  request.setAttribute("patient", request.getParameter("id")) ;
+  }
+  %>
+  <ecom:webQuery name="list" nativeSql="
+  select sls.id as f0slsid
+  ,case when sls.dtype='ExtHospitalMedCase' then sls.dtype else null end as f1isexthosp
+  ,to_char(sls.dateStart,'dd.mm.yyyy') as f2dateStart
+  ,to_char(sls.dateFinish,'dd.mm.yyyy') as f3dateFinish 
+  ,vdh.id as f4vhdid,sls.username as f5slsusername
+  ,case when sls.emergency='1' then 'да' else null end as f6emergency 
+  ,coalesce(ss.code,'')||case when vdh.id is not null then ' '||vdh.name else '' end as f7stacard 
+  ,ml.name as f8entdep,mlLast.name as f9mlLastdep 
+  ,case when vdh.id is not null then null when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart) end as f10countDays 
+  ,list(vpd.name||' '||mkb.code) as f11diagDisch 
+  ,list(vpd1.name||' '||mkb1.code) as f12diagClinic
+  ,case when sls.deniedHospitalizating_id is null then 'color: red ;' else '' end||
+  case when sls.id='${param.sslid}' then 'background-color: #DDDDDD;border-bottom: 2px solid #666666;border-top: 2px solid #666666;' else '' end
+   end as f13style 
+  from MedCase sls 
+  left join VocHospType vht on vht.id=sls.hospType_id 
+  left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id 
+  left join MedCase sloLast on sloLast.parent_id=sls.id and UPPER(sloLast.dtype)='DEPARTMENTMEDCASE' 
+  left join StatisticStub ss on ss.id=sls.statisticStub_id 
+  left join MisLpu mlLast on mlLast.id=sloLast.department_id 
+  left join MisLpu ml on ml.id=sls.department_id	
+  left join Diagnosis diag on sls.id=diag.medCase_id	
+  left join VocIdc10 mkb on mkb.id=diag.idc10_id	
+  left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id and vdrt.code='3'	
+  left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id	
+  left join Diagnosis diag1 on sloLast.id=diag1.medCase_id	
+  left join VocIdc10 mkb1 on mkb1.id=diag1.idc10_id	
+  left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'	
+  left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id where sls.patient_id=${param.id} 
+  and UPPER(sls.DTYPE) IN ('HOSPITALMEDCASE','EXTHOSPITALMEDCASE') 
+  and  (sloLast.id is null or sloLast.transferDate is null) 
+   group by sls.id,sls.dtype,sls.dateStart,sls.dateFinish,vdh.id ,sls.username ,sls.emergency, ss.code,vdh.id,vdh.name ,ml.name,mlLast.name,vht.code 
+   order by sls.dateStart
+
+  "
+  />
+    <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c" styleRow="13">
       <msh:tableColumn columnName="Номер" property="id" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
       <msh:tableColumn columnName="Дата поступления" property="dateStart" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Экстренность" property="emergency" guid="e98f6bbc96" />

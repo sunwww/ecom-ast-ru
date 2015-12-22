@@ -21,7 +21,7 @@
 	String typeDate =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeDate","1", request) ;
 	//String typeDirect =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeAdmissionOrder","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeEmergency","3", request) ;
-	String typeView =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeView","2", request) ;
+	String typeView =ActionUtil.updateParameter("Hospital_Reestr_Psych1","typeView","1", request) ;
   %>
   
     <msh:form action="/stac_journal_compulsory_treatment_psych.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -72,9 +72,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
 	        	<input type="radio" name="typeView" value="1">  реестр
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	      <!--  <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
 	        	<input type="radio" name="typeView" value="2">  свод по отделениям 
-	        </td>
+	        </td>-->
       </msh:row>
 
       <msh:row>
@@ -166,21 +166,27 @@
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="reestr_sql" name="journal_reestr" nativeSql="
-    select ct.id as ctid,sls.id as slsid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
-,pat.birthday as birthday,sls.datestart, ml.name as mlname,slo.id as sloid,
-ct.registrationDate as ctregistrationDate
-,list(distinct case when vdrt.id='${diag_typeReg_ord}' then mkb.code else null end) as mkbcode
-
- from compulsorytreatment ct 
-left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id
-left join patient pat on pat.id=pcc.patient_id
-left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.dateFinish is null and sls.deniedhospitalizating_id is null
-left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.transferDate is null
-left join MisLpu ml on ml.id=slo.department_id
-where ct.datereplace is null
-and ct.kind_id in (2,3)
+    select ct.id as ctid,ss.code as slsid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio ,pat.birthday as birthday,sls.datestart, 
+(select ml.name from MedCase slo 
+left join MisLpu ml on ml.id=slo.department_id 
+where 
+slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and slo.transferDate is null 
+),oml.name as omlname
+, ct.registrationDate as ctregistrationDate 
+,(select list(mkb.code) from diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id where diag.medcase_id=sls.id and diag.registrationtype_id=2) as mkbcode 
+,pml.name as pmlname
+,dml.name as dmlname
+from compulsorytreatment ct left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id 
+left join patient pat on pat.id=pcc.patient_id 
+left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.dateFinish is null and sls.deniedhospitalizating_id is null 
+left join statisticstub ss on ss.id=sls.statisticstub_id
+  left join mislpu oml on oml.id=sls.orderlpu_id
+  left join mislpu dml on dml.id=sls.department_id
+  left join vochosptype pml on pml.id=sls.sourcehosptype_id
+where ct.datereplace is null and ct.kind_id in (2,3) 
     ${emergencySql} ${departmentSql} ${admissionOrderSql}
-    
+group by ct.id ,sls.id ,pat.lastname,pat.firstname,pat.middlename ,pat.birthday ,sls.datestart,  ct.registrationDate,ss.code
+order by  pat.lastname    ,pat.firstname, pat.middlename
 
 
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -198,19 +204,17 @@ and ct.kind_id in (2,3)
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="journal_reestr"
-    viewUrl="entityParentView-stac_ssl.do?short=Short" 
-     action="entityParentView-stac_ssl.do" idField="1" >
+    viewUrl="entityParentView-psych_compulsoryTreatment.do?short=Short" 
+     action="entityParentView-psych_compulsoryTreatment.do" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="№Стат карты" property="2" />
       <msh:tableColumn columnName="ФИО пациента" property="3" />
       <msh:tableColumn columnName="Дата рождения" property="4" />
-      <msh:tableColumn columnName="Диагноз" property="5" />
-      <msh:tableColumn columnName="Дата поступления" property="6" />
-      <msh:tableColumn columnName="Кем направлен" property="7" />
-      <msh:tableColumn columnName="Отделение поступления" property="8" />
-      <msh:tableColumn columnName="Порядок поступления (статья)" property="9" />
-      <msh:tableColumn columnName="Решение по статье 35" property="10" />
-      <msh:tableColumn columnName="Отделение выписки или нахождения" property="11" />
+      <msh:tableColumn columnName="Диагноз" property="9" />
+      <msh:tableColumn columnName="Дата поступления" property="5" />
+      <msh:tableColumn columnName="Кем направлен" property="10" />
+      <msh:tableColumn columnName="Отделение поступления" property="11" />
+      <msh:tableColumn columnName="Отделение выписки или нахождения" property="6" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
