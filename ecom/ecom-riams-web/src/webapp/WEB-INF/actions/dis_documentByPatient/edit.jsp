@@ -35,7 +35,7 @@
         </msh:row>
         <msh:row>
           <msh:textField property="series" label="Серия"/>
-          <msh:textField property="number" label="Номер" size="20" />
+          <msh:textField property="number" label="Номер" size="50" />
         </msh:row>
         
         <msh:row guid="e1b2ffa3-e51c-46ef-9a21-6b6c19b60831">
