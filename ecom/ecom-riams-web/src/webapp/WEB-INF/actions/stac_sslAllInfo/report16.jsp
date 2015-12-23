@@ -1886,6 +1886,29 @@ if (date!=null && !date.equals("")) {
 	    		
 	    		<%
 	    	}  if (view.equals("8")) {
+	    		 String typeGroup = (String) request.getParameter("typeGroup");
+	    		//String isReestr = (String) request.getAttribute("reestr");
+	    		/* String groupBy = "" ;
+	    		String orderBy = "" ;
+	    		String fldId = "" ;
+	    		String fldName = "" ; */
+	    		if (typeGroup!=null&&typeGroup.equals("2")) {
+	    			request.setAttribute("groupBy","vfs.id, vfs.name, vbst.name, vbt.name");
+	    			request.setAttribute("orderBy","vfs.name");
+	    			//request.setAttribute("fldId","cast ('&department="+dep+"&dateBegin="+date+"&dateEnd="+dateEnd+"&bedSubType='||vbst.id||'&bedType='||vbt.id as varchar)") ;
+	    			request.setAttribute("fldId","cast ('' as varchar)");
+	    			request.setAttribute("fldName","vbt.name||' '||vbst.name ||' '||list(ml.name)||' '||list(vss.name) ");
+	    			request.setAttribute("typeGroupNext", "javascript:void(0)") ;
+	    		} else {
+	    			typeGroup = "1" ;
+	    			request.setAttribute("typeGroupNext", "stac_report_016.do?typeGroup=2") ;
+	    			request.setAttribute("groupBy","vbst.id, vbst.name,vbt.id, vbt.name ");
+	    			request.setAttribute("orderBy","vbst.name,vbt.name");
+	    			request.setAttribute("fldId","cast ('&department="+dep+"&dateBegin="+date+"&dateEnd="+dateEnd+"&bedSubType='||vbst.id||'&bedType='||vbt.id as varchar)") ;
+	    			request.setAttribute("fldName","vbt.name||' '||vbst.name ||' '||list(ml.name)||' '||list(vss.name) ");
+	    			
+	    		} 
+	    		
 	    		String serviceStream = (String) request.getAttribute("serviceStream") ;
 	    		String departmentBFC = "";
 	    		/* if (department!=null&&!department.equals("")) {
@@ -1894,11 +1917,12 @@ if (date!=null && !date.equals("")) {
 	    		if (serviceStream!=null&&!serviceStream.equals("")) {
 	    			departmentBFC+=" and bfc.financeSource=vfs.id";
 	    		} */
+	    		
 	    		request.setAttribute("departmentBFC",departmentBFC);
 	    		%>
 	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
-	    cast ('&department=${param.department}&dateBegin=${dateBegin}&dateEnd=${dateEnd}' as varchar) as vbstid,
-	    vbt.name||' '||vbst.name ||' '||list(ml.name)||vss.name as vbstname,cast('' as varchar)
+	    ${fldId} as vbstid,
+	    ${fldName} as vbstname,cast('' as varchar)
 	,count(distinct case when 
 	(slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
@@ -2088,7 +2112,8 @@ if (date!=null && !date.equals("")) {
 	and bfc.financesource=vfs.id ${departmentBFC} 
 	and bfc.department=slo.department_id and bfc.bedsubtype=vbst.id
 	and (coalesce(slo.datefinish,current_date) between bfc.startDate and coalesce(bfc.finishDate, current_date))
-	group by vbst.id, vbst.name,vbt.id, vbt.name 
+	group by ${groupBy} 
+	order by ${orderBy} 
 	
 	      " />
 	    <%-- <form action="print-stac_report016_1.do" method="post" target="_blank">
@@ -2153,6 +2178,7 @@ if (date!=null && !date.equals("")) {
 			newWQR.set10(new BigDecimal(f10_dead).setScale(2,2));
 			newWQR.set14(new BigDecimal(f14_aver_kd_fact).setScale(2,2));
 			newWQR.set12(new BigDecimal(f12_perc_hosp).setScale(2,2));
+			newWQR.set19(wqr.get1());
     		newList.add(i, newWQR);
     	// } catch (Exception e) {
     	//	 e.printStackTrace();
@@ -2164,8 +2190,8 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Отчет о деятельности отделений стационара</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <msh:table  name="list_newform" action="javascript:void()" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
-	      <msh:tableColumn columnName="#" property="sn" />
+	    <msh:table  name="list_newform" action="${typeGroupNext}" idField="19" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	      
 	      <msh:tableColumn property="18" columnName="Профиль коек"/>
 	      <msh:tableColumn property="1" columnName="Факт коек"/>
 	      <msh:tableColumn property="2" columnName="План по к/д"/>
