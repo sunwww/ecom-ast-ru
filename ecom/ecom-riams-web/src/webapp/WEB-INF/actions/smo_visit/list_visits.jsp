@@ -172,7 +172,7 @@
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery name="journal_reestr" nativeSql="
+<ecom:webQuery name="journal_reestr" nameFldSql="journal_reestr_sql" nativeSql="
 select t.id as tid
 , lpu.name as lpuname
 , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfinfo
