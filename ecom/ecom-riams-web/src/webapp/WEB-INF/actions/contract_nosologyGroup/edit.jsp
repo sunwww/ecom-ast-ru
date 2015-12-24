@@ -39,6 +39,16 @@
 					<msh:tableColumn property="4" columnName="Дата окончания"/>
 				</msh:table>
 			</msh:section>
+			
+			<msh:section title="Отделения, в которых используется данная группа">
+				<ecom:webQuery nativeSql="select lpu.id, lpu.name from LpuContractNosologyGroup lcng 
+				left join LpuDiagnosisRule ldr on ldr.id=lcng.diagnosisrule
+				left join MisLpu lpu on lpu.id=ldr.department where lcng.nosologyGroup=${param.id}" name="contractRule"/>
+				<msh:table name="contractRule" action="entityView-mis_lpu.do" idField="1">
+					<msh:tableColumn property="sn" columnName="#"/>
+					<msh:tableColumn property="2" columnName="Название"/>
+				</msh:table>
+			</msh:section>
 		</msh:ifFormTypeIsView>
 		
 		<msh:ifFormTypeIsNotView formName="contract_nosologyGroupForm">
