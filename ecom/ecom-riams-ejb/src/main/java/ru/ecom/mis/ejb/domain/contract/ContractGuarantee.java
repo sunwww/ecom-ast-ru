@@ -58,6 +58,13 @@ public abstract class ContractGuarantee extends BaseEntity{
 	public BigDecimal getLimitMoney() {return theLimitMoney;}
 	public void setLimitMoney(BigDecimal aLimitMoney) {theLimitMoney = aLimitMoney;}
 
+	/** Без лимита */
+	@Comment("Без лимита")
+	public Boolean getIsNoLimit() {return theIsNoLimit;}
+	public void setIsNoLimit(Boolean aIsNoLimit) {theIsNoLimit = aIsNoLimit;}
+
+	/** Без лимита */
+	private Boolean theIsNoLimit;
 	/** Лимит денег */
 	private BigDecimal theLimitMoney;
 	
@@ -82,6 +89,14 @@ public abstract class ContractGuarantee extends BaseEntity{
 
 	/** Дата действия */
 	private Date theActionDate;
+	
+	/** Дата окончания действия */
+	@Comment("Дата окончания действия")
+	public Date getActionDateTo() {return theActionDateTo;}
+	public void setActionDateTo(Date aActionDateTo) {theActionDateTo = aActionDateTo;}
+
+	/** Дата окончания действия */
+	private Date theActionDateTo;
 	/** Дата выдачи */
 	private Date theIssueDate;
 }
