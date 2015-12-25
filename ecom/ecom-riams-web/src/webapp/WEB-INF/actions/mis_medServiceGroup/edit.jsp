@@ -58,38 +58,6 @@
     </msh:form>
     
       <msh:ifFormTypeIsView formName="mis_medServiceGroupForm">
-      <%--
-    <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
-    	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
-    		createUrl="entityParentPrepareCreate-mis_medServiceGroup_workFunction.do?id=${param.id}"
-    		title="Прикрепление к рабочим функциям по отделениям" >
-    	<ecom:webQuery name="workFunc" nativeSql="
-    	select wfs.id as wfsid,vwf.name as vwfname,lpu.name as lpuname
-    	,vbt.name as vbtname,vbst.name as vbstname
-    	,vrt.name as vrtname
-    	from WorkFunctionService wfs 
-    	left join MisLpu lpu on lpu.id=wfs.lpu_id 
-    	left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 
-     	left join VocBedType vbt on vbt.id=wfs.bedType_id
-     	left join VocBedSubType vbst on vbst.id=wfs.bedSubType_id
-     	left join VocRoomType vrt on vrt.id=wfs.roomType_id
-    	
-    	where wfs.medService_id='${param.id}'
-    	"/>
-  		<msh:table selection="true" name="workFunc" 
-  		action="entityParentView-mis_medServiceGroup_workFunction.do"
-  		editUrl="entityParentEdit-mis_medServiceGroup_workFunction.do" 
-  		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medServiceGroup_workFunction.do">
-            <msh:tableColumn property="2" columnName="Рабочая функция"  />
-            <msh:tableColumn property="3" columnName="ЛПУ" />
-            <msh:tableColumn property="4" columnName="Профиль коек" />
-            <msh:tableColumn property="5" columnName="Тип коек" />
-            <msh:tableColumn property="6" columnName="Уровень палат" />
-        </msh:table>
-    	
-    	</msh:section>
-    </msh:ifInRole>
-     --%>
      <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
     	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
     		createUrl="entityParentPrepareCreate-mis_medServiceGroup_workFunction.do?id=${param.id}"
@@ -116,7 +84,7 @@
     	"/>
   		<msh:table selection="true" name="workFunc" 
   		action="entityParentView-mis_medServiceGroup_workFunction.do"
-  		editUrl="entityParentEdit-mis_medServiceGroup_workFunction.do" 
+  		editUrl="entityParentEdit-mis_medServiceGroup_workFunction.do" disableKeySupport="true"
   		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medServiceGroup_workFunction.do">
             <msh:tableColumn property="2" columnName="Рабочая функция"  />
             <msh:tableColumn property="7" columnName="Специалист (групповая функция)"  />
@@ -145,14 +113,15 @@
           	 where ms.parent_id='${param.id}' and ms.dtype='MedServiceGroup'
           	 order by ms.code
           " guid="childMedService" />
-  	<msh:table selection="true" name="childMedService" action="entityParentView-mis_medServiceGroup.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
+  	<msh:table selection="true" name="childMedService" disableKeySupport="true" action="entityParentView-mis_medServiceGroup.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
             <msh:tableColumn  property="7" columnName="Код"  />
             <msh:tableColumn  property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
 		    <msh:tableColumn columnName="Дата начала" property="4"/>
 		    <msh:tableColumn columnName="Дата окончания" property="5"/>
      </msh:table>
         </msh:section>
-        
+        <tags:service_work_function name="WFS"/>
+        <tags:service_change name="VMS"/>
         
         <msh:section title="Услуги категории" guid="e681be03-dea7-4bce-96cf-aa600185f156" createUrl="entityParentPrepareCreate-mis_medService.do?id=${param.id}" shortList="js-mis_medServiceGroup-viewTemplate.do?id=${param.id}&short=Short">
           <ecom:webQuery  name="childMedService" nativeSql="
@@ -167,50 +136,40 @@
           	 ,ms.code as mscode,ms.complexity as mscomplexity
           	 ,case when ms.isNoOmc='1' then '' else 'Да. '||coalesce(vms.code,'НЕТ КОДА!!!!') end as isNoOmc
           	 , ms.additionCode as msadditionCode
+          	 ,list(pl.name||'-'||pp.code) as prinfo 
           	 from MedService ms 
+          	 left join PriceMedservice pms on pms.medservice_id=ms.id
+          	 left join priceposition pp on pp.id=pms.priceposition_id
+          	 left join PriceList pl on pl.id=pp.priceList_id
           	 left join VocMedService vms on vms.id=ms.vocMedService_id 
           	 where ms.parent_id='${param.id}' and ms.dtype='MedService'
+          	 group by ms.id,ms.name ,vms.name, ms.startDate,ms.finishDate
+          	 ,ms.code ,ms.complexity , ms.isNoOmc 	 , ms.additionCode, vms.code
           	 order by ms.code
           " guid="childMedService" />
-		  	<msh:tableNotEmpty name="childMedService">
-		  	<msh:toolbar >
-			                	<tbody>
-			                		<msh:toolbar>
-				                		<tr>
-				                			<th class='linkButtons' colspan="6">
-			                					<msh:textField property="planDate" label="Дата"/>
-			                					<input type='button' value='Изменить начало актуальности' onclick="javascript:updateStartDate()" />
-			                					<input type='button' value='Изменить окончание актуальности' onclick="javascript:updateEndDate()" />
-			                					<input type='button' value='Удалить категории(мед.услуги)' onclick="javascript:deleteMedService()" />
-			                					<br/>
-			                					<input type='button' value='Добавить раб.функцию (если прикреп. услуга)' onclick="javascript:updateWorkFunction('add')" />
-			                					<input type='button' value='Убрать прикрепление раб.функции' onclick="javascript:updateWorkFunction('delete')" />
-			                					<msh:autoComplete property="function" horizontalFill="true" label="Раб. функция" vocName="vocWorkFunction"/>
-			                					<br/>
-			                					<msh:autoComplete property="lpu" horizontalFill="true" label="ЛПУ" vocName="lpu"/>
-			                				</th>
-				                		</tr>
-			                		</msh:toolbar>
-			                	</tbody>
-		  	</msh:toolbar>
-  	</msh:tableNotEmpty>
-  	<msh:table selection="true" name="childMedService" action="entityParentView-mis_medService.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
+  	<msh:table name="childMedService" 
+  	action="entityParentView-mis_medService.do" disableKeySupport="true" 
+  	idField="1" >
             <msh:tableColumn  property="7" columnName="Код"  />
             <msh:tableColumn  property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
             <msh:tableColumn columnName="Прикрепленная услуга" identificator="false" property="3" guid="0c0e08bc-a8af-47b7-ae6d-89e52e73b2e5" />
 		    <msh:tableColumn columnName="Дата начала" property="4"/>
 		    <msh:tableColumn columnName="Дата окончания" property="5"/>
+	  	<msh:tableButton property="1" buttonFunction="showWFSServiceWorkFunction" buttonName="Прикрепление" buttonShortName="П"/>
 		    <msh:tableColumn columnName="Прикреп. рабочие функции" property="6"/>
 		    <msh:tableColumn columnName="Уровень сложности" property="8"/>
+	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'VocMedService','MedService'" buttonName="Прикрепление к ОМС" buttonShortName="П"/>
 		    <msh:tableColumn columnName="ОМС?" property="9"/>
 		    <msh:tableColumn columnName="Доп. код" property="10"/>
+	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'PricePosition','MedService'" buttonName="Прикрепление к прейскуранту" buttonShortName="П"/>
+		    <msh:tableColumn columnName="Прейскурант" property="11"/>
      </msh:table>
         </msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
         <msh:section title="Шаблоны заключений" guid="e681be03-d0185f156">
           <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />
-          <msh:table name="templates" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
+          <msh:table name="templates" disableKeySupport="true" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
             <msh:tableColumn property="title" columnName="Заголовок" guid="2fd022ea-59b0-4cc9a3ddc91f" />
             <msh:tableColumn columnName="Информация" identificator="false" property="information" guid="0c047b7-ae6d-89e52e73b2e5" />
           </msh:table>
