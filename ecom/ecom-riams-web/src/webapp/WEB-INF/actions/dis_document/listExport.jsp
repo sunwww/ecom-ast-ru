@@ -117,7 +117,7 @@
        	</table>
       <table id="exportTable" border="1" style="padding: 15px; display: none">
        <tr style="color: red">
-        	<td colspan="2">Внимание! Следующие записи не выгружены!</td>
+        	<td colspan="3">Внимание! Следующие записи не выгружены!</td>
        </tr>
        <tr>
        		<td>Пациент</td>
