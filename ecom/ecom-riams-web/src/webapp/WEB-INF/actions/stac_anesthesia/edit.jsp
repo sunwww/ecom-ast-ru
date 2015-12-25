@@ -29,6 +29,12 @@
         <msh:row guid="6f8494e5-f641-4e50-905e-9df8b3cf7f8e">
           <msh:autoComplete property="method" label="Метод" guid="a1f275e2-6780-4c50-a4e9-b1da5b3e15a9" horizontalFill="true" vocName="vocAnesthesiaMethod" fieldColSpan="3" />
         </msh:row>
+	        <msh:row>
+	          <msh:autoComplete property="type" label="Вид" horizontalFill="true" vocName="vocAnesthesia" fieldColSpan="3" />
+	        </msh:row>
+            <msh:row>
+	          <msh:autoComplete property="medService" label="Услуга" horizontalFill="true" vocName="medServiceAnesthesia" fieldColSpan="3" />
+	        </msh:row>
         <msh:row guid="5edd4c78-6105-4726-acba-cc999e71ed78">
           <msh:textArea property="description" label="Описание" guid="fd59275f-0cb5-4959-b7d7-b49a701eb2ee" horizontalFill="true" fieldColSpan="2" />
           <msh:ifFormTypeIsNotView formName="stac_anesthesiaForm" guid="367dc712-da06-4520-a295-57680ba1a56a">
