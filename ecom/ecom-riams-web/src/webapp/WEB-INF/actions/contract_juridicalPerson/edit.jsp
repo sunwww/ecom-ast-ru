@@ -6,20 +6,19 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entitySaveGoView-contract_juridicalPerson.do" defaultField="organizationName">
+		<msh:form action="/entitySaveGoView-contract_juridicalPerson.do" defaultField="shortName">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:panel>
-			
-				<msh:row>
-					<msh:autoComplete fieldColSpan="3" property="organization" label="Организация" vocName="vocOrg" horizontalFill="true" />
-				</msh:row>
 				<msh:row>
 					<msh:textField property="shortName" label="Короткое название" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
 					<msh:textField fieldColSpan="3" property="name" label="Полное название" size="200"/>
 				</msh:row>
+				<msh:row>
+                    <msh:autoComplete vocName="vocInsuranceCompanyAll" property="regCompany" label="Страховая&nbsp;компания" size='50' horizontalFill="true" fieldColSpan="5"/>
+                </msh:row>
 				<msh:row>
 					<msh:autoComplete fieldColSpan="3" property="juridicalPersonType" label="Тип юридической персоны" vocName="vocJuridicalPerson" horizontalFill="true" />
 				</msh:row>
@@ -60,14 +59,14 @@
 					<msh:textField property="email" label="Электронная почта" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
-                    <msh:autoComplete vocName="vocInsuranceCompany" property="regCompany" label="Страховая&nbsp;компания" size='50' horizontalFill="true" fieldColSpan="5"/>
-                </msh:row>
+					<msh:autoComplete fieldColSpan="3" property="organization" label="Организация" vocName="vocOrg" horizontalFill="true" />
+				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="2" />
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_juridicalPersonForm">
 		
-		      <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityParentPrepareCreate-contract_juridicalContract.do?id=${param.id}" 
+		      <msh:section createRoles="/Policy/Mis/Contract/MedContract/Create" createUrl="entityPrepareCreate-contract_juridicalContract.do?person=${param.id}" 
       	 title="Список последних 10 договоров заказчика">
       	<ecom:webQuery name="medContracts" nativeSql="
       	select mc.id as mcid ,mc.contractNumber as mccontractNumber
