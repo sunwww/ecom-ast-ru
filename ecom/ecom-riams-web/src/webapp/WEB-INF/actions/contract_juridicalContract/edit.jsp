@@ -166,6 +166,7 @@
 			</msh:section>
 			
 			<msh:section title="Гарантийные документы (последние 20)" listUrl="js-contract_guarantee-listAll.do?id=${param.id}" 
+			shortList="js-contract_guarantee-listAll.do?id=${param.id}&short=Short"
 				createUrl="entityParentPrepareCreate-contract_guaranteeLetter.do?id=${param.id}"
 				createRoles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/Create">
 				<ecom:webQuery maxResult="20" name="contractGuaranteeList" nativeSql="
@@ -184,7 +185,6 @@
 				<msh:table name="contractGuaranteeList" action="entitySubclassView-contract_guarantee.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Номер" property="4" />
-					<msh:tableColumn columnName="Дата действия" property="4" />
 					<msh:tableColumn columnName="Лимит" property="3" />
 					<msh:tableColumn columnName="Договорная персона" property="2" />
 				</msh:table>
@@ -227,13 +227,22 @@
 			</msh:section>
       	</msh:ifFormTypeIsView>
 	</tiles:put>
+	<tiles:put name="javascript" type="string">
+      	<msh:ifFormTypeIsCreate formName="contract_juridicalContractForm">
+      		<script type="text/javascript">
+      			if (($('customer').value=='' || $('customer').value=='0')&&'${param.person}'!='') {
+      				customerAutocomplete.setVocId('${param.person}') ;
+      			}
+      		</script>
+      	</msh:ifFormTypeIsCreate>
+	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_juridicalContractForm" />
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<msh:sideMenu>
 			<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_juridicalContract" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/Edit"/>
-			<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить контракт?" params="id" action="/entityParentDeleteGoSubclassView-contract_juridicalContract_person" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/Delete"/>
+			<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить контракт?" params="id" action="/entityParentDeleteGoSubclassView-contract_medContract_person" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/Delete"/>
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-contract_servedPerson" name="Обслуживаемые персоны" title="Обслуживаемые персоны" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create"/>
