@@ -44,7 +44,7 @@ public class ContractGuaranteeForm extends IdEntityForm{
 	 * Договорная персона
 	 */
 	@Comment("Договорная персона")
-	@Persist
+	@Persist @Required
 	public Long getContractPerson() {
 		return theContractPerson;
 	}
@@ -87,8 +87,27 @@ public class ContractGuaranteeForm extends IdEntityForm{
 	public String getActionDate() {return theActionDate;}
 	public void setActionDate(String aActionDate) {theActionDate = aActionDate;}
 
+	/** Дата окончания действия */
+	@Comment("Дата окончания действия")
+	@Persist @DateString @DoDateString 
+	public String getActionDateTo() {return theActionDateTo;}
+	public void setActionDateTo(String aActionDateTo) {theActionDateTo = aActionDateTo;}
+
+	/** Дата окончания действия */
+	private String theActionDateTo;	
 	/** Дата действия */
 	private String theActionDate;
 	/** Дата выдачи */
 	private String theIssueDate;
+	/** Без лимита */
+	@Comment("Без лимита")
+	@Persist
+	public Boolean getIsNoLimit() {return theIsNoLimit;}
+	public void setIsNoLimit(Boolean aIsNoLimit) {theIsNoLimit = aIsNoLimit;}
+
+	/** Без лимита */
+	private Boolean theIsNoLimit;
+	
+	
+
 }

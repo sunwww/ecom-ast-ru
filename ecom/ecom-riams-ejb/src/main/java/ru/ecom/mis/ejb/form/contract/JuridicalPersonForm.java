@@ -10,6 +10,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = JuridicalPerson.class)
@@ -112,7 +114,7 @@ public class JuridicalPersonForm extends ContractPersonForm{
 	 * Короткое название
 	 */
 	@Comment("Короткое название")
-	@Persist
+	@Persist @DoUpperCase
 	public String getShortName() {
 		return theShortName;
 	}
@@ -127,7 +129,7 @@ public class JuridicalPersonForm extends ContractPersonForm{
 	 * Полное название
 	 */
 	@Comment("Полное название")
-	@Persist
+	@Persist @Required @DoUpperCase
 	public String getName() {
 		return theName;
 	}
