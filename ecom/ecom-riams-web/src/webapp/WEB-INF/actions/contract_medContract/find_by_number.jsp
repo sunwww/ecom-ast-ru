@@ -69,7 +69,9 @@
 		String contractNumber  = request.getParameter("contractNumber").toUpperCase() ;
 		
 		if (typeContractPerson.equals("1"))	{
+			
 			request.setAttribute("cpdtypeSql", " and cp.dtype='NaturalPerson'") ;
+			request.setAttribute("prefix", "med") ;
 			StringTokenizer st = new StringTokenizer(contractNumber, " \t;,.");
 			if (st.hasMoreTokens()) {
 				fio.append(" p.lastname like '").append(st.nextToken()).append("%'");
@@ -81,9 +83,11 @@
 				fio.append(" and p.middlename like '").append(st.nextToken()).append("%'");
 			}
 		} else if (typeContractPerson.equals("2")) {
+			request.setAttribute("prefix", "juridical") ;
 			request.setAttribute("cpdtypeSql", " and cp.dtype='JuridicalPerson'") ;
 			fio.append("cp.name like '%").append(contractNumber).append("%'") ;
 		} else if (typeContractPerson.equals("3")) {
+			request.setAttribute("prefix", "juridical") ;
 			request.setAttribute("cpdtypeSql", " and cp.dtype='JuridicalPerson'") ;
 			fio.append("(cp.name like '%").append(contractNumber).append("%' or reg.name like '%").append(contractNumber).append("%')") ;
 		}
@@ -109,7 +113,7 @@
 			 ${fiocp}) 
 			${cpdtypeSql}
 			"/>
-				<msh:table name="childContract" action="entityParentView-contract_medContract.do" idField="1" disableKeySupport="true">
+				<msh:table name="childContract" action="entityParentView-contract_${prefix}Contract.do" idField="1" disableKeySupport="true">
 					<msh:tableColumn columnName="#" property="sn" />
 					<msh:tableColumn columnName="№ договора" property="4" />
 					<msh:tableColumn columnName="Заказчик" property="2" />
