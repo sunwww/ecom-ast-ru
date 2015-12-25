@@ -146,6 +146,9 @@
 	        <msh:row>
 	          <msh:autoComplete property="anesthesiaType" label="Вид" horizontalFill="true" vocName="vocAnesthesia" fieldColSpan="3" />
 	        </msh:row>
+	        <msh:row>
+	          <msh:textField property="anesthesiaDuration" label="Длительность (мин)"  fieldColSpan="3" />
+	        </msh:row>
 	        <msh:row >
 	          <msh:autoComplete property="anaesthetist" label="Анестезист" vocName="workFunction" fieldColSpan="3" horizontalFill="true" />
 	        </msh:row>
@@ -389,10 +392,14 @@
             		$('anesthesiaName').style.display = "block" ;
               		$('anaesthetistName').style.display = "block" ;
             		$('anesthesiaTypeName').style.display = "block" ;
+            		$('anesthesiaServiceName').style.display = "block" ;
+            		$('anesthesiaDuration').style.display = "block" ;
               } else {
               		$('anesthesiaName').style.display = "none" ;
               		$('anaesthetistName').style.display = "none" ;
               		$('anesthesiaTypeName').style.display = "none" ;
+              		$('anesthesiaServiceName').style.display = "none" ;
+              		$('anesthesiaDuration').style.display = "none" ;
               }
           }
 		});
@@ -401,11 +408,11 @@
     </script>
             <style type="text/css">
             #anesthesiaLabel,#anaesthetistLabel, #isAnesthesiaLabel
-            , #anesthesiaTypeLabel,#anaesthetistLabel, #isAnesthesiaTypeLabel
+            , #anesthesiaTypeLabel,#anaesthetistLabel, #isAnesthesiaTypeLabel,#anesthesiaDurationLabel
              {
                 color: blue ;
             }
-            #isAnesthesiaName,#anaesthetistName, #anesthesiaName
+            #isAnesthesiaName,#anaesthetistName, #anesthesiaName,#anesthesiaDuration
             , #anesthesiaTypeName {
                 background-color:#FFFFA0;
             }
