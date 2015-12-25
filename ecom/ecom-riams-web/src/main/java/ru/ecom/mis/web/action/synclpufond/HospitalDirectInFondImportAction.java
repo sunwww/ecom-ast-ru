@@ -62,7 +62,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
         	if (form.getFile()!=null && form.getFile().getContentType()!=null) {
         		filename=form.getFile().getFileName() ;
         	InputStream in = null;
-    		//System.out.println("file="+form.getFile().getContentType()+" "+form.getFile().getInputStream()) ;
+    		System.out.println("file="+form.getFile().getContentType()+" "+form.getFile().getInputStream()) ;
             try {
             	in =form.getFile().getInputStream() ;
                	Document doc = new SAXBuilder().build(in);
@@ -74,7 +74,8 @@ public class HospitalDirectInFondImportAction extends BaseAction {
                 for (Object o : parConfigElement.getChildren()) {
                     Element parEl = (Element) o;
                     if ("ZGLV".equals(parEl.getName())) {
-                    	type = parEl.getChild("FILENAME").getText().substring(0,2) ;
+                    	type = parEl.getChild("FILENAME").getText().trim().toUpperCase().substring(0,2) ;
+                    	System.out.println("type-------------"+type) ;
                     } else if("NPR".equals(parEl.getName())) {
                     	//System.out.println("parel=="+parEl.getChildren("REFREASON")) ;
                     	if (parEl.getChildren("REFREASON").isEmpty()) {
@@ -150,6 +151,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
     	if (!list.isEmpty()&&(typeImport.equals("1")||typeImport.equals("2"))) {
         new Thread() {
             public void run() {
+            	System.out.println("typeId-------------"+typeId) ;
             	service.importDataFond(monitorId,typeId, list) ;
             	
             }
