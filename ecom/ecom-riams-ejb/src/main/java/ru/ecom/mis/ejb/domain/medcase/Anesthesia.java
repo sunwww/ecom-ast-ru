@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -56,13 +57,8 @@ public class Anesthesia extends BaseEntity{
 	private VocAnesthesia theType;
 	/** Длительность в минутах */
 	@Comment("Длительность в минутах")
-	public Integer getDuration() {
-		return theDuration;
-	}
-
-	public void setDuration(Integer aDuration) {
-		theDuration = aDuration;
-	}
+	public Integer getDuration() {return theDuration;}
+	public void setDuration(Integer aDuration) {theDuration = aDuration;}
 
 	/** Длительность в минутах */
 	private Integer theDuration;
@@ -70,13 +66,8 @@ public class Anesthesia extends BaseEntity{
 	/** Описание */
 	@Comment("Описание")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getDescription() {
-		return theDescription;
-	}
-
-	public void setDescription(String aDescription) {
-		theDescription = aDescription;
-	}
+	public String getDescription() {return theDescription;}
+	public void setDescription(String aDescription) {theDescription = aDescription;}
 
 	/** Описание */
 	private String theDescription;
@@ -84,13 +75,8 @@ public class Anesthesia extends BaseEntity{
 	/** Хирургическая операция */
 	@Comment("Хирургическая операция")
 	@ManyToOne
-	public SurgicalOperation getSurgicalOperation() {
-		return theSurgicalOperation;
-	}
-
-	public void setSurgicalOperation(SurgicalOperation aSurgicalOperation) {
-		theSurgicalOperation = aSurgicalOperation;
-	}
+	public SurgicalOperation getSurgicalOperation() {return theSurgicalOperation;}
+	public void setSurgicalOperation(SurgicalOperation aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
 
 	/** Хирургическая операция */
 	private SurgicalOperation theSurgicalOperation;
@@ -98,36 +84,21 @@ public class Anesthesia extends BaseEntity{
 	/** Анестезиолог */
 	@Comment("Анестезист")
 	@OneToOne
-	public WorkFunction getAnesthesist() {
-		return theAnesthesist;
-	}
-
-	public void setAnesthesist(WorkFunction aAnesthesist) {
-		theAnesthesist = aAnesthesist;
-	}
+	public WorkFunction getAnesthesist() {return theAnesthesist;}
+	public void setAnesthesist(WorkFunction aAnesthesist) {theAnesthesist = aAnesthesist;}
 
 	/** Анестезиолог */
 	private WorkFunction theAnesthesist;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
-	public Date getCreateDate() {
-		return theCreateDate;
-	}
-
-	public void setCreateDate(Date aCreateDate) {
-		theCreateDate = aCreateDate;
-	}
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
 
 	/** Пользователь создавший запись */
 	@Comment("Пользователь создавший запись")
-	public String getCreateUsername() {
-		return theCreateUsername;
-	}
-
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
-	}
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
 
 	/** Пользователь создавший запись */
 	private String theCreateUsername;
@@ -156,4 +127,12 @@ public class Anesthesia extends BaseEntity{
 
 	/** Мед.услуга */
 	private MedService theMedService;
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+
+	/** Время создания */
+	private Time theCreateTime;
 }
