@@ -187,6 +187,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			    			sql1.append("IsTable1") ; sql2.append("'1'") ;
 			    		} else if (aFileType.equals("N2")) {
 			    			sql1.append("IsTable2,") ; sql2.append("'1',") ;
+			    			sql1.append("deniedhospital,") ; sql2.append("null,") ;
 			    			sql1.append("IsTable4,") ; sql2.append("null,") ;
 			    			sql1.append("IsTable5") ; sql2.append("null") ;
 			    		} else if (aFileType.equals("N3")) {
@@ -234,8 +235,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			    			sql1.append("IsTable1").append("=").append("'1'") ;
 			    		} else if (aFileType.equals("N2")) {
 			    			sql1.append("IsTable2").append("=").append("'1',") ;
-			    			sql1.append("IsTable4").append("=").append("'1',") ;
-			    			sql1.append("IsTable5").append("=").append("'1'") ;
+			    			sql1.append("deniedhospital").append("=").append("null,") ;
+			    			sql1.append("IsTable4").append("=").append("null,") ;
+			    			sql1.append("IsTable5").append("=").append("null") ;
 			    		} else if (aFileType.equals("N3")) {
 			    			sql1.append("IsTable3").append("=").append("'1'") ;
 			    		} else if (aFileType.equals("N4")) {
