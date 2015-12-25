@@ -93,22 +93,30 @@ public class ContractServiceJs {
 				sql.append("update MedService set isNoOmc=null,vocMedService_id='").append(aId).append("' where id=").append(aId1) ;
 				service.executeUpdateNativeSql(sql.toString()) ;
 			} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
-				sql.append("select id from pricemedservice where medService_id='").append(aId1).append("' and pricePosition_id='").append(aId).append("'") ;
-				Collection<WebQueryResult> col = service.executeNativeSql(sql.toString()) ;
-				if (col.isEmpty()) {
-					sql = new StringBuilder() ;
-					sql.append("insert into PriceMedService (medService_id,pricePosition_id) values ('").append(aId1).append("','").append(aId).append("') ") ;
-					service.executeUpdateNativeSql(sql.toString()) ;
-				}
+				aTable1="PRICEPOSITION" ;aTable="MEDSERVICE" ;
+				String id = aId1 ;
+				aId1=aId;aId=id;
 			}	
-		} else if (aTable1.toUpperCase().equals("PRICEPOSITION")) {
+		} 
+		if (aTable1.toUpperCase().equals("PRICEPOSITION")) {
 			if (aTable.toUpperCase().equals("MEDSERVICE")) {
 				sql.append("select id from pricemedservice where medService_id='").append(aId).append("' and pricePosition_id='").append(aId1).append("'") ;
 				Collection<WebQueryResult> col = service.executeNativeSql(sql.toString()) ;
 				if (col.isEmpty()) {
 					sql = new StringBuilder() ;
-					sql.append("insert into PriceMedService (medService_id,pricePosition_id) values ('").append(aId).append("','").append(aId1).append("') ") ;
-					service.executeUpdateNativeSql(sql.toString()) ;
+					sql.append("select id from pricemedservice where medService_id is null and pricePosition_id='").append(aId1).append("'") ;
+					col.clear() ;
+					col = service.executeNativeSql(sql.toString()) ;
+					if (col.isEmpty()) {
+						sql = new StringBuilder() ;
+						sql.append("insert into PriceMedService (medService_id,pricePosition_id) values ('").append(aId).append("','").append(aId1).append("') ") ;
+						service.executeUpdateNativeSql(sql.toString()) ;
+					} else {
+						sql = new StringBuilder() ;
+						sql.append("update PriceMedService set medService_id='").append(aId).append("' where id=").append(col.iterator().next().get1()) ;
+						service.executeUpdateNativeSql(sql.toString()) ;
+						
+					}
 				}
 			}
 		}
