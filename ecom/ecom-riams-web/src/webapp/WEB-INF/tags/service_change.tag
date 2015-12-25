@@ -137,6 +137,7 @@
 		     		 			+aString
 		     		 			+'<br/><i>Выберите услугу</i><br/>'
 		     		 			+'<button onclick="edit${name}ServiceFind()">Изменить данные</button>' ;
+		     		 			+'<button onclick="cancel${name}ServiceFind()">Отменить</button>' ;
 
 		     		 		
 		     		 		return false ;
@@ -158,7 +159,7 @@
     			 aTable,aId,aTable1,aId1
        		 ,{
 		     		 callback: function(aString) {
-		     			 alert('Обновлено') ;
+		     			window.document.location.reload();
 		     		 }
       			}) ;
      }
