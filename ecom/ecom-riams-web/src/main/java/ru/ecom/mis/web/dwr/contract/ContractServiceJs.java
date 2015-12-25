@@ -10,6 +10,60 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
+	
+	public String saveWorkFunctionService(
+ 			String aMedServiciesId, String aVWF,String aWF,String aLpu,String aBedType,String aBedSubType
+      		 ,String aRoomType,String aPrescriptType,String aNoActiveByPrescript,HttpServletRequest aRequest) throws NamingException {
+		StringBuilder sql = new StringBuilder() ;
+		String[][] fld = new String[9][2] ;
+		fld[0][1] = "medService_id" ;
+		fld[1][0]= aVWF; fld[1][1] = "vocWorkFunction_id" ;
+		fld[2][0]= aWF; fld[2][1] = "workFunction_id" ;
+		fld[3][0]= aLpu; fld[3][1] = "lpu_id" ;
+		fld[4][0]= aBedType; fld[4][1] = "bedType_id" ;
+		fld[5][0]= aBedSubType; fld[5][1] = "bedSubType_id" ;
+		fld[6][0]= aRoomType; fld[6][1] = "roomType_id" ;
+		fld[7][0]= aPrescriptType; fld[7][1] = "prescriptType_id" ;
+		fld[8][0]= aNoActiveByPrescript; fld[8][1] = "noActiveByPrescript" ;
+		String[] ids = aMedServiciesId.split(",") ;
+		for (int i=0;i<fld.length-1;i++) {
+			if (fld[i][0]==null||fld[i][0].equals("0")||fld[i][0].equals("")) {fld[i][0]=null;}
+		}
+		for (String medService:ids) {
+			fld[0][0]= medService;
+			sql.append("select id from workfunctionservice where");
+			for (int i=0;i<fld.length-1;i++) {
+				if (i>0) sql.append(" and ") ;
+				sql.append(" ").append(fld[i][1]).append(" ") ;if (fld[i][0]!=null) {sql.append(" = ").append(fld[i][0]);} else {sql.append(" is null") ;}
+			}
+			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			Collection<WebQueryResult> col = service.executeNativeSql(sql.toString()) ;
+			if (col.isEmpty()) {
+				sql = new StringBuilder() ;
+				sql.append("insert into workfunctionservice (");
+				for (int i=0;i<fld.length;i++) {
+					if (i>0) sql.append(",") ;
+					sql.append(fld[i][1]).append(" ") ;
+				}
+				sql.append(") values (") ;
+				for (int i=0;i<fld.length;i++) {
+					if (i>0) sql.append(",") ;
+					if (fld[i][0]!=null) {
+						sql.append("'").append(fld[i][0]).append("' ") ;
+					} else {
+						sql.append("null") ;
+					}
+				}
+				sql.append(")") ;
+				service.executeUpdateNativeSql(sql.toString()) ;
+			} else {
+				sql = new StringBuilder() ;
+				sql.append("update workfunctionservice set noActiveByPrescript='").append(aNoActiveByPrescript).append("' where id=").append(col.iterator().next().get1());
+				service.executeUpdateNativeSql(sql.toString()) ;
+			}
+		}
+		return "" ;
+	}
 	public String addContractPerson(
    		 Long aIdPat,String aField,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -29,6 +83,74 @@ public class ContractServiceJs {
 		res.append(aField) ;
 		return res.toString();
 		
+	}
+	public String updateService(String aTable, String aId, String aTable1, String aId1
+			, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		if (aTable1.toUpperCase().equals("MEDSERVICE")) {
+			if (aTable.toUpperCase().equals("VOCMEDSERVICE")) {
+				sql.append("update MedService set isNoOmc=null,vocMedService_id='").append(aId).append("' where id=").append(aId1) ;
+				service.executeUpdateNativeSql(sql.toString()) ;
+			} else if (aTable.toUpperCase().equals("PRICEPOSITION")) {
+				sql.append("select id from pricemedservice where medService_id='").append(aId1).append("' and pricePosition_id='").append(aId).append("'") ;
+				Collection<WebQueryResult> col = service.executeNativeSql(sql.toString()) ;
+				if (col.isEmpty()) {
+					sql = new StringBuilder() ;
+					sql.append("insert into PriceMedService (medService_id,pricePosition_id) values ('").append(aId1).append("','").append(aId).append("') ") ;
+					service.executeUpdateNativeSql(sql.toString()) ;
+				}
+			}	
+		} else if (aTable1.toUpperCase().equals("PRICEPOSITION")) {
+			if (aTable.toUpperCase().equals("MEDSERVICE")) {
+				sql.append("select id from pricemedservice where medService_id='").append(aId).append("' and pricePosition_id='").append(aId1).append("'") ;
+				Collection<WebQueryResult> col = service.executeNativeSql(sql.toString()) ;
+				if (col.isEmpty()) {
+					sql = new StringBuilder() ;
+					sql.append("insert into PriceMedService (medService_id,pricePosition_id) values ('").append(aId).append("','").append(aId1).append("') ") ;
+					service.executeUpdateNativeSql(sql.toString()) ;
+				}
+			}
+		}
+		return "" ;
+	}
+	public String findService(String aTable, String aServiceId, String aTable1, Long aPriceList, String aCode, String aName
+			, String aJavascript, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select p.id as pid,p.code as pcode,p.name as pname from ").append(aTable).append(" p where ") ;
+		if (aTable.toUpperCase().trim().equals("PRICEPOSITION")) {
+			sql.append(" p.priceList_id='").append(aPriceList).append("' and ") ;
+		}
+		boolean isNext = false;
+		if (aCode!=null && !aCode.equals("")) {
+			sql.append(" p.code like '%").append(aCode.toUpperCase()).append("%'") ;
+			isNext=true ;
+		}
+		if (aName!=null && !aName.equals("")) {
+			if (isNext) sql.append(" and ") ;
+			sql.append(" upper(p.name) like '%").append(aName.toUpperCase()).append("%'") ;
+		}
+		
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		StringBuilder res = new StringBuilder() ;
+		if (list.isEmpty()) return "НЕТ ДАННЫХ" ;
+		res.append("<ll>" ) ;
+		for (WebQueryResult wqr:list) {
+			res.append("<li><a href=\"").append(aJavascript).append("('");
+			res.append(aTable) ;
+			res.append("','");
+			res.append(wqr.get1()!=null?wqr.get1():"") ;
+			res.append("','");
+			res.append(aTable1) ;
+			res.append("','");
+			res.append(aServiceId) ;
+			res.append("','");
+			res.append(wqr.get2()).append(" ").append(wqr.get3()) ;
+			res.append("')\">").append(wqr.get2()).append(" ").append(wqr.get3()).append("</a></li>");
+		}
+		res.append("</ll>" ) ;
+		return res.toString() ;
 	}
 	public String findPerson(String aLastname, String aFirstname, String aMiddlename
 			, String aBirthday, String aJavascript, HttpServletRequest aRequest) throws NamingException {
