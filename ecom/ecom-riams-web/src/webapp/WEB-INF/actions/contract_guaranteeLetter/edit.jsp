@@ -7,19 +7,25 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 	
-		<msh:form action="/entityParentSaveGoParentView-contract_guaranteeLetter.do" defaultField="contractPersonName">
+		<msh:form action="/entityParentSaveGoParentView-contract_guaranteeLetter.do" defaultField="numberDoc">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="contract" />
 			<msh:panel>
 			<msh:row>
-				<msh:textField property="numberDoc" label="Номер"/>
+				<msh:textField property="numberDoc" size="100" label="Номер" fieldColSpan="3"/>
+			</msh:row>
+		    <msh:row>
 				<msh:textField property="issueDate" label="Дата Выдачи"/>
 			</msh:row>
-							<msh:row>
-					<msh:textField property="limitMoney"/>
+		    <msh:row>
 					<msh:textField property="actionDate" label="Действует с"/>
-				</msh:row>
+					<msh:textField property="actionDateTo" label="по"/>
+			</msh:row>
+		    <msh:row>
+					<msh:textField property="limitMoney"/>
+					<msh:checkBox property="isNoLimit" label="Без лимита" />
+			</msh:row>
 			<msh:row>
 			
 				<msh:autoComplete property="contractPerson" fieldColSpan="3" horizontalFill="true" size="150" vocName="contractPerson" label="Договорная персона"/>
