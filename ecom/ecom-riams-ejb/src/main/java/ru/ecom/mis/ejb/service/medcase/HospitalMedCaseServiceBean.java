@@ -164,8 +164,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    				if (wqr.get11()!=null) {sql1.append("SmoOkato,") ; sql2.append("'").append(wqr.get11()).append("',") ;}
 	    				if (wqr.get12()!=null) {sql1.append("SmoName,") ; sql2.append("'").append(wqr.get12()).append("',") ;}
 	    				if (wqr.get13()!=null) {sql1.append("Lastname,") ; sql2.append("'").append(wqr.get13()).append("',") ;}
-	    				if (wqr.get14()!=null) {sql1.append("Firstname,") ; sql2.append("'").append(wqr.get14()).append("',") ;}
-	    				if (wqr.get15()!=null) {sql1.append("Middlename,") ; sql2.append("'").append(wqr.get15()).append("',") ;}
+	    				sql1.append("Firstname,") ; sql2.append("'").append(wqr.get14()!=null?wqr.get14():"").append("',") ;
+	    				sql1.append("Middlename,") ; sql2.append("'").append(wqr.get15()!=null?wqr.get15():"").append("',") ;
 			    		if (wqr.get16()!=null) {
 			    			String sex = ""+wqr.get16() ;
 		    				if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
