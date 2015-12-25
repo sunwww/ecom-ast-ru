@@ -240,4 +240,12 @@ public class MedService extends BaseEntity{
 
 	/** Обязательное заполнение комментария */
 	private String theIsReqComment;
+	
+	/** Не федеральный код */
+	@Comment("Не федеральный код")
+	public Boolean getIsNoFederal() {return theIsNoFederal;}
+	public void setIsNoFederal(Boolean aIsNoFederal) {theIsNoFederal = aIsNoFederal;}
+
+	/** Не федеральный код */
+	private Boolean theIsNoFederal;
 }
