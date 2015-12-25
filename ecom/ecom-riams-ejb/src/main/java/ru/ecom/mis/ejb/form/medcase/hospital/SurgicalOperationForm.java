@@ -474,4 +474,17 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Анестезия услуга */
 	private Long theAnesthesiaService;
+	
+	/** Длительность */
+	@Comment("Длительность")
+	public Integer getAnesthesiaDuration() {
+		return theAnesthesiaDuration;
+	}
+
+	public void setAnesthesiaDuration(Integer aAnesthesiaDuration) {
+		theAnesthesiaDuration = aAnesthesiaDuration;
+	}
+
+	/** Длительность */
+	private Integer theAnesthesiaDuration;
 }
