@@ -102,6 +102,7 @@
     }
     </script>
 
+        <tags:service_change name="VMS"/>    
     
     <%
     String priceList = (String)request.getParameter("priceList") ;
@@ -165,23 +166,16 @@ order by pp.code
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table selection="multy" name="journal_expert"
+    <msh:table name="journal_expert"
     viewUrl="entityParentView-contract_pricePosition.do?short=Short" 
      action="entityParentView-contract_pricePosition.do" idField="1" >
      	<msh:tableNotEmpty>
-     		                        <tr>
-                            <th colspan='9'>
-                                <msh:toolbar>
-                                    <a href='javascript:updatePriceMedServices()'>Установить соответствия</a>
-                                </msh:toolbar>
-                            </th>
-                        </tr>
+     		                  
      		<tr>
      			<th></th>
      			<th></th>
-     			<th></th>
      			<th colspan="3">По прейскуранту</th>
-     			<th colspan="2">Соответсвие</th>
+     			<th colspan="3">Соответсвие</th>
      			<th colspan="2">Подобранное соответствие</th>
      		</tr>
      	</msh:tableNotEmpty>
@@ -191,6 +185,7 @@ order by pp.code
       <msh:tableColumn columnName="цена" property="8" />
       <msh:tableColumn columnName="код" property="4" />
       <msh:tableColumn columnName="наименование" property="5" />
+	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'MedService','PricePosition'" buttonName="Прикрепление к услуге" buttonShortName="П"/>
       <msh:tableColumn columnName="код" property="6" />
       <msh:tableColumn columnName="наименование" property="7" />
     </msh:table>
@@ -221,23 +216,15 @@ order by pp.code
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table selection="multy" name="journal_expert"
+    <msh:table name="journal_expert"
     viewUrl="entityParentView-contract_pricePosition.do?short=Short" 
      action="entityParentView-contract_pricePosition.do" idField="1" >
      	<msh:tableNotEmpty>
-     		                        <tr>
-                            <th colspan='9'>
-                                <msh:toolbar>
-                                    <a href='javascript:updatePriceMedServices()'>Установить соответствия</a>
-                                </msh:toolbar>
-                            </th>
-                        </tr>
      		<tr>
      			<th></th>
      			<th></th>
-     			<th></th>
      			<th colspan="4">По прейскуранту</th>
-     			<th colspan="2">Соответсвие</th>
+     			<th colspan="3">Соответсвие</th>
      		</tr>
      	</msh:tableNotEmpty>
       <msh:tableColumn columnName="#" property="sn" />
@@ -245,6 +232,7 @@ order by pp.code
       <msh:tableColumn columnName="наименование" property="3" />
       <msh:tableColumn columnName="цена" property="6" />
       <msh:tableColumn columnName="id" property="7" />
+	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'MedService','PricePosition'" buttonName="Прикрепление к услуге" buttonShortName="П"/>
       <msh:tableColumn columnName="код" property="4" />
       <msh:tableColumn columnName="наименование" property="5" />
     </msh:table>

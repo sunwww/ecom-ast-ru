@@ -102,7 +102,7 @@
     }
     </script>
 
-    
+        <tags:service_change name="VMS"/>    
     <%
     String priceList = (String)request.getParameter("priceList") ;
     String date1 = (String)request.getParameter("dateEnd") ;
@@ -133,23 +133,23 @@
     	} 
     	String filterByCode = request.getParameter("filterByCode") ;
     	String filterByName = request.getParameter("filterByName") ;
-    	ActionUtil.setLikeSql("filterByCode", "ms1.code", request) ;
-    	ActionUtil.setLikeSql("filterByName", "ms1.name", request) ;
+    	ActionUtil.setUpperLikeSql("filterByCode", "ms1.code", request) ;
+    	ActionUtil.setUpperLikeSql("filterByName", "ms1.name", request) ;
     	ActionUtil.setParameterFilterSql("priceList","pp.priceList_id", request) ;
     	if (typeFindMed!=null && (typeFindMed.equals("1") ||typeFindMed.equals("2")||typeFindMed.equals("3")||typeFindMed.equals("4"))) {
     	%>
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
-select coalesce(pp.id,0)||':'||coalesce(ms.id,'0') as ppid,pp.code as ppcode,pp.name as ppname
+select coalesce(pp.id,0)||'&medService_id='||coalesce(ms.id,'0') as ppid,pp.code as ppcode,pp.name as ppname
 ,ms1.code as ms1code,ms1.name as ms1name
 ,ms.code as mscode,ms.name as msname,pp.cost
 from MedService ms1
 left join PriceMedService pms on ms1.id=pms.pricePosition_id
 left join PricePosition pp on pms.medService_id=pp.id
-left join MedService ms on ${findMedSql}
+left join MedService ms on ${findMedSql} and ms.finishdate is null
 where (pp.dtype='PricePosition' and pp.priceList_id = '${param.priceList}' or pp.dtype is null) ${viewSql} ${findMedAddSql}
-${filterByCodeSql} ${filterByNameSql}
+${filterByCodeSql} ${filterByNameSql} and ms1.finishdate is null
 order by ms1.code
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -186,6 +186,7 @@ order by ms1.code
      		</tr>
      	</msh:tableNotEmpty>
       <msh:tableColumn columnName="#" property="sn" />
+	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'PricePosition','MedService'" buttonName="Прикрепление к прейскуранту" buttonShortName="П"/>
       <msh:tableColumn columnName="код" property="2" />
       <msh:tableColumn columnName="наименование" property="3" />
       <msh:tableColumn columnName="цена" property="8" />
@@ -202,10 +203,10 @@ order by ms1.code
 select ms1.id as ms1id,pp.code as ppcode,pp.name as ppname
 ,ms1.code as ms1code,ms1.name as ms1name,pp.cost,pp.id
 from MedService ms1
-left join PriceMedService pms on ms1.id=pms.pricePosition_id
-left join PricePosition pp on pms.medService_id=pp.id
+left join PriceMedService pms on ms1.id=pms.medService_id
+left join PricePosition pp on pms.pricePosition_id=pp.id
 where (pp.dtype='PricePosition' and pp.priceList_id = '${param.priceList}' or pp.dtype is null) ${viewSql} 
-${filterByCodeSql} ${filterByNameSql}
+${filterByCodeSql} ${filterByNameSql}  and ms1.finishdate is null
 order by ms1.code
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -221,32 +222,26 @@ order by ms1.code
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table selection="multy" name="journal_expert"
+    <msh:table name="journal_expert"
     viewUrl="entityParentView-mis_medService.do?short=Short" 
      action="entityParentView-mis_medService.do" idField="1" >
      	<msh:tableNotEmpty>
-     		                        <tr>
-                            <th colspan='9'>
-                                <msh:toolbar>
-                                    <a href='javascript:updatePriceMedServices()'>Установить соответствия</a>
-                                </msh:toolbar>
-                            </th>
-                        </tr>
      		<tr>
      			<th></th>
      			<th></th>
-     			<th></th>
-     			<th colspan="4">По прейскуранту</th>
-     			<th colspan="2">Соответсвие</th>
+     			<th colspan="2">Услуга</th>
+     			<th colspan="5">По прейскуранту</th>
      		</tr>
      	</msh:tableNotEmpty>
       <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="код" property="4" />
+      <msh:tableColumn columnName="наименование" property="5" />
+	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'PricePosition','MedService'" buttonName="Прикрепление к прейскуранту" buttonShortName="П"/>
+      
       <msh:tableColumn columnName="код" property="2" />
       <msh:tableColumn columnName="наименование" property="3" />
       <msh:tableColumn columnName="цена" property="6" />
       <msh:tableColumn columnName="id" property="7" />
-      <msh:tableColumn columnName="код" property="4" />
-      <msh:tableColumn columnName="наименование" property="5" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
