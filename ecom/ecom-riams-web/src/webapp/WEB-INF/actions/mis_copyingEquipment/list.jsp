@@ -12,7 +12,7 @@
 		</msh:sideMenu>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
-	<ecom:webQuery name="list" />
+
 		<ecom:webQuery name="child" nativeSql="select id,name,ipaddress,isTxtFile from copyingEquipment where parent_id is null"/>
 		<msh:table name="child" action="entityView-mis_copyingEquipment.do" idField="1">
 			<msh:tableColumn columnName="#" property="sn" />

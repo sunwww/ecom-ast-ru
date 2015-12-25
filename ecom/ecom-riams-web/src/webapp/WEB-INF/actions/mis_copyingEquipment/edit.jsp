@@ -41,8 +41,22 @@
 		<msh:section title="Список отделений, использующие принтер">
         <ecom:webQuery name="child" nativeSql="select id,name from mislpu where copyingEquipmentDefault_id=${param.id}"/>
         <msh:table name="child" action="entityView-mis_lpu.do" idField="1">
-            <msh:tableColumn property="sn" columnName="в„–"/>
-            <msh:tableColumn property="2" columnName="РќР°РёРјРµРЅРѕРІР°РЅРёРµ РїСЂРёРЅС‚РµСЂР°"/>
+            <msh:tableColumn property="sn" columnName="#"/>
+            <msh:tableColumn property="2" columnName="Отделение"/>
+        </msh:table>
+        </msh:section>
+		<msh:section title="Список ВРАЧЕЙ, использующие принтер">
+        <ecom:webQuery name="child" nativeSql="select wf.id,coalesce(ml.name,ml1.name) as dep,coalesce(vwf.name||' '||wp.lastname,wf.groupname) from WorkFunction wf 
+left join worker w on w.id=wf.worker_id
+left join vocworkfunction vwf on vwf.id=wf.workFunction_id
+left join patient wp on wp.id=w.person_id
+left join mislpu ml on ml.id=w.lpu_id
+left join mislpu ml1 on ml1.id=wf.lpu_id
+where wf.copyingEquipmentDefault_id=${param.id}"/>
+        <msh:table name="child" action="entityView-mis_lpu.do" idField="1">
+            <msh:tableColumn property="sn" columnName="#"/>
+            <msh:tableColumn property="2" columnName="Отделение"/>
+            <msh:tableColumn property="3" columnName="Информация"/>
         </msh:table>
         </msh:section>
 		</msh:ifFormTypeIsView>
