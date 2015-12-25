@@ -251,4 +251,13 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Обязательное заполнение комментария */
 	private String theIsReqComment;
+	/** Не федеральный код */
+	@Comment("Не федеральный код")
+	@Persist
+	public Boolean getIsNoFederal() {return theIsNoFederal;}
+	public void setIsNoFederal(Boolean aIsNoFederal) {theIsNoFederal = aIsNoFederal;}
+
+	/** Не федеральный код */
+	private Boolean theIsNoFederal;
+
 }
