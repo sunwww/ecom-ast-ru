@@ -144,6 +144,7 @@
 select coalesce(pp.id,0)||'&medService_id='||coalesce(ms.id,'0') as ppid,pp.code as ppcode,pp.name as ppname
 ,ms1.code as ms1code,ms1.name as ms1name
 ,ms.code as mscode,ms.name as msname,pp.cost
+,ms1.id as msidname
 from MedService ms1
 left join PriceMedService pms on ms1.id=pms.pricePosition_id
 left join PricePosition pp on pms.medService_id=pp.id
@@ -186,7 +187,7 @@ order by ms1.code
      		</tr>
      	</msh:tableNotEmpty>
       <msh:tableColumn columnName="#" property="sn" />
-	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'PricePosition','MedService'" buttonName="Прикрепление к прейскуранту" buttonShortName="П"/>
+	  	<msh:tableButton property="9" buttonFunction="showVMSServiceFind" addParam="'PricePosition','MedService'" buttonName="Прикрепление к прейскуранту" buttonShortName="П"/>
       <msh:tableColumn columnName="код" property="2" />
       <msh:tableColumn columnName="наименование" property="3" />
       <msh:tableColumn columnName="цена" property="8" />

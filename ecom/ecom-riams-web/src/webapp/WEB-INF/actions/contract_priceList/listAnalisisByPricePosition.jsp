@@ -134,8 +134,8 @@
     	} 
     	String filterByCode = request.getParameter("filterByCode") ;
     	String filterByName = request.getParameter("filterByName") ;
-    	ActionUtil.setLikeSql("filterByCode", "pp.code", request) ;
-    	ActionUtil.setLikeSql("filterByName", "pp.name", request) ;
+    	ActionUtil.setUpperLikeSql("filterByCode", "pp.code", request) ;
+    	ActionUtil.setUpperLikeSql("filterByName", "pp.name", request) ;
     	ActionUtil.setParameterFilterSql("priceList","pp.priceList_id", request) ;
     	if (typeFindMed!=null && (typeFindMed.equals("1") ||typeFindMed.equals("2")||typeFindMed.equals("3")||typeFindMed.equals("4"))) {
     	%>
