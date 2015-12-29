@@ -162,12 +162,13 @@ then -1 else 0 end) as age
 		else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
 		end as countDays
 	,hmc.dateStart as hmcdatestart,hmc.dateFinish as hmcdatefinish
-    , list(distinct case when vpd.code='1' and vdrt.code='4' then mkb.code||' '||mkb.name else null end) as diag
+    , list(distinct case when vpd.code='1' and vdrt.code='3' then mkb.code||' '||mkb.name else null end) as diag
 	, cast(count(soHosp.id)+count(soDep.id) as int) as cntOper
 	, list(to_char(soDep.operationDate,'dd.mm.yyyy')|| '-'||voDep.code|| ' '||voDep.name) ||' ' ||list(to_char(soHosp.operationDate,'dd.mm.yyyy')|| '-'||voHosp.code|| ' '||voHosp.name)
 	, d.name ||case when d.isNoOmc='1' then coalesce(' ('||pd.name||')','') else '' end as depname
 	, coalesce(oml.name,'') as omlname1,coalesce(vof.name,'') as whomOrder1  
 	,coalesce(vhtS.name,'') as vhtSname
+    , list(distinct case when vpd.code='1' and vdrt.code='5' then mkb.code||' '||mkb.name else null end) as diagPat
     from MedCase as hmc
    	left join diagnosis diag on diag.medcase_id=hmc.id
    	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
@@ -226,7 +227,8 @@ then -1 else 0 end) as age
             <msh:tableColumn columnName="Кол-во койко дней" property="7"/>
             <msh:tableColumn columnName="Дата поступления" property="8"/>
             <msh:tableColumn columnName="Дата выписки" property="9"/>
-            <msh:tableColumn columnName="Диагноз" property="10"/>
+            <msh:tableColumn columnName="Диагноз выписной" property="10"/>
+            <msh:tableColumn columnName="Диагноз пат." property="17"/>
             <msh:tableColumn columnName="Кол-во операций" property="11"/>
             <msh:tableColumn columnName="Операции" property="12"/>
             <msh:tableColumn columnName="Тип напр.ЛПУ" property="16"/>
