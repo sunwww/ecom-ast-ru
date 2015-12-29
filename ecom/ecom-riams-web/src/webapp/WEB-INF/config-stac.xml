@@ -45,7 +45,15 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
-	
+
+	<action path='/gosuslugi_report' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/gosuslugi_report.jsp" />
+        </action>
+        	
 	 <action path='/direct_operation_list' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
