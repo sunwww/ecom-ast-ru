@@ -54,8 +54,8 @@
   ,coalesce(ss.code,'')||case when vdh.id is not null then ' '||vdh.name else '' end as f7stacard 
   ,ml.name as f8entdep,mlLast.name as f9mlLastdep 
   ,case when vdh.id is not null then null when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart) end as f10countDays 
-  ,list(vpd.name||' '||mkb.code) as f11diagDisch 
-  ,list(vpd1.name||' '||mkb1.code) as f12diagClinic
+  ,list(distinct vpd.name||' '||mkb.code) as f11diagDisch 
+  ,list(distinct vpd1.name||' '||mkb1.code) as f12diagClinic
   ,case when vdh.id is not null then 'color: red ;' 
   when UPPER(sls.DTYPE) ='EXTHOSPITALMEDCASE' then 'color: blue ;'
   else '' end||
