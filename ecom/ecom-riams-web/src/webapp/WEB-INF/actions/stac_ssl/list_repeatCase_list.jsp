@@ -51,12 +51,6 @@
 	        	<input type="radio" name="typeView" value="5">  по обращениям к специалистам
 	        </td>
         </msh:row>
-	    <msh:row>
-	        <td></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="6">  по результат госпитализация
-	        </td>
-        </msh:row>
         <msh:row>
 	        <td class="label" title="Поиск по показаниям (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
@@ -76,6 +70,10 @@
         <msh:row>
         	<msh:textField property="cnt" label="искать более" />
         	<td>случаев</td>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="department" fieldColSpan="4"
+        	label="Отделение" horizontalFill="true" vocName="lpu"/>
         </msh:row>
         <msh:row>
         	<msh:submitCancelButtonsRow colSpan="3" labelCreate="Найти" labelSave="Найти" labelCreating="Поиск..." labelSaving="Поиск..."/>
@@ -116,9 +114,8 @@
     		&&typeView!=null
     )  {
     	try {
-    	//SimpleDateFormat FORMAT_1 = new SimpleDateFormat("yyyy-MM-dd") ;
     	SimpleDateFormat FORMAT_2 = new SimpleDateFormat("dd.MM.yyyy") ;
-    	//FORMAT_1.format( FORMAT_2.parse(frm.getDateBegin())) ;
+    	ActionUtil.setParameterFilterSql("department", "ml.id", request) ;
     	request.setAttribute("startDate",frm.getDateBegin()) ;
     	request.setAttribute("finishDate",frm.getDateEnd()) ;
     	request.setAttribute("count",frm.getCnt()) ;
@@ -144,24 +141,36 @@
     mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase' 
     ||': and m.deniedHospitalizating_id is null ${emergencySql}' as id
     ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
-    ,count(*) as cntAll
+    ,count(distinct mm.id) as cntAll
     ,count(case when mm.deniedHospitalizating_id is not null then mm.id else null end) as cntDenied
-
+    , list(distinct case 
+    when vpd.code='1' and vdrt.code='3' and mm.datefinish is not null then 'СК№'||ss.code||' '||mkb.code 
+    when vpd.code='1' and vdrt.code='1' and mm.datefinish is null then 'невыпис. СК№'||ss.code||' '||mkb.code 
+    else null end) as diag
+    
      from medcase mm 
+        	left join diagnosis diag on diag.medcase_id=mm.id
+   	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
+   	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+   	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+     
 left join patient p on mm.patient_id=p.id 
 left join statisticstub ss on ss.id=mm.statisticstub_id
-
-where mm.dtype='HospitalMedCase' and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
-and to_date('${finishDate}','dd.mm.yyyy') ${emergency}
+left join mislpu ml on ml.id=mm.department_id
+where  mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
+and to_date('${finishDate}','dd.mm.yyyy') 
+and upper(mm.dtype)='HOSPITALMEDCASE' 
+${emergency} ${departmentSql}
 group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
-having count(*)>=${count}
+having count(distinct mm.id)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
-            <msh:tableColumn columnName="Кол-во случаев" property="3"/>
-            <msh:tableColumn columnName="из них отказы" property="4"/>
+            <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>
+            <msh:tableColumn columnName="из них отказы" property="4" isCalcAmount="true"/>
+            <msh:tableColumn columnName="диагнозы" property="5" />
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -173,22 +182,33 @@ order by p.lastname,p.middlename,p.firstname
     <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase'
     ||': and m.deniedHospitalizating_id is not null ${emergencySql}' as id
     ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
-    ,count(*) as cntAll
+    ,count(distinct mm.id) as cntAll
 
+    , list(distinct case 
+    when vpd.code='1' and vdrt.code='3' and mm.datefinish is not null then 'СК№'||ss.code||' '||mkb.code 
+    when vpd.code='1' and vdrt.code='1' and mm.datefinish is null then 'невыпис. СК№'||ss.code||' '||mkb.code 
+    else null end) as diag
+    
      from medcase mm 
+        	left join diagnosis diag on diag.medcase_id=mm.id
+   	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
+   	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+   	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+left join mislpu ml on ml.id=mm.department_id
 left join patient p on mm.patient_id=p.id 
 left join statisticstub ss on ss.id=mm.statisticstub_id
 where mm.dtype='HospitalMedCase'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy') and mm.deniedHospitalizating_id is not null
-${emergency}
+${emergency} ${departmentSql}
 group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
-having count(*)>=${count}
+having count(distinct mm.id)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do?department=${param.department}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
-            <msh:tableColumn columnName="Кол-во случаев" property="3"/>
+            <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>
+            <msh:tableColumn columnName="диагнозы" property="4" />
          </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -200,22 +220,34 @@ order by p.lastname,p.middlename,p.firstname
     <msh:sectionContent>
     <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase: ${emergencySql}' as id
     ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
-    ,count(*) as cntAll
+    ,count(distinct mm.id) as cntAll
 
+    , list(distinct case 
+    when vpd.code='1' and vdrt.code='3' and mm.datefinish is not null then 'СК№'||ss.code||' '||mkb.code 
+    when vpd.code='1' and vdrt.code='1' and mm.datefinish is null then 'невыпис. СК№'||ss.code||' '||mkb.code 
+    else null end) as diag
+    
      from medcase mm 
+        	left join diagnosis diag on diag.medcase_id=mm.id
+   	left join VocIdc10 mkb on mkb.id=diag.idc10_id 
+   	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+   	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+left join mislpu ml on ml.id=mm.department_id
 left join patient p on mm.patient_id=p.id 
 left join statisticstub ss on ss.id=mm.statisticstub_id
 where mm.dtype='HospitalMedCase'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy') and mm.deniedHospitalizating_id is null
-${emergency}
+${emergency} ${departmentSql}
 group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
-having count(*)>=${count}
+having count(distinct mm.id)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
-            <msh:tableColumn columnName="Кол-во случаев" property="3"/>
+            <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>
+                        <msh:tableColumn columnName="диагнозы" property="4" />
+            
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -234,10 +266,12 @@ order by p.lastname,p.middlename,p.firstname
 left join patient p on mm.patient_id=p.id 
 left join statisticstub ss on ss.id=mm.statisticstub_id
 left join workfunction wf on wf.id=mm.workFunctionExecute_id
+left join worker w on w.id=wf.worker_id
+left join mislpu ml on ml.id=w.lpu_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 where mm.dtype='Visit'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy')
-${emergency}
+${emergency} ${departmentSql}
 and  (mm.noActuality='0' or mm.noActuality is null) 
 
 group by mm.patient_id,mm.dateStart,p.lastname,p.middlename,p.firstname,p.birthday
@@ -248,7 +282,7 @@ order by p.lastname,p.middlename,p.firstname
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
             <msh:tableColumn columnName="Дата приема" property="5"/>
-            <msh:tableColumn columnName="Кол-во случаев" property="3"/>
+            <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>
             <msh:tableColumn columnName="Рабочая функция" property="4"/>
         </msh:table>
     </msh:sectionContent>
@@ -270,10 +304,11 @@ left join statisticstub ss on ss.id=mm.statisticstub_id
 left join workfunction wf on wf.id=mm.workFunctionExecute_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
+left join mislpu ml on ml.id=w.lpu_id
 left join patient wp on wp.id=w.person_id
 where mm.dtype='Visit'  and mm.dateStart between to_date('${startDate}','dd.mm.yyyy')
 and to_date('${finishDate}','dd.mm.yyyy') 
-${emergency}
+${emergency} ${departmentSql}
 and  (mm.noActuality='0' or mm.noActuality is null)
 group by mm.patient_id,wf.workFunction_id,p.lastname,p.middlename,p.firstname,p.birthday,vwf.name
 having count(*)>=${count}
@@ -282,7 +317,7 @@ order by p.lastname,p.middlename,p.firstname
         <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
-            <msh:tableColumn columnName="Кол-во случаев" property="3"/>
+            <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>
             <msh:tableColumn columnName="Рабочая функция" property="4"/>
             <msh:tableColumn columnName="Специалисты" property="5"/>
         </msh:table>
