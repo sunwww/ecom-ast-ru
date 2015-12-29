@@ -16,7 +16,7 @@
 </style>
 
 <div id='${name}ServiceWorkFunctionDialog' class='dialog'>
-    <h2>Параметры прикрепления к услуге</h2>
+    <h2>Параметры прикрепления к услуге: <span id='${name}ServiceInfoName'>Услуга</span></h2>
     <div class='rootPane'>
     
 <form action="javascript:save${name}ServiceWorkFunction()">
@@ -71,16 +71,17 @@
      var the${name}ServiceWorkFunctionDialog = new msh.widget.Dialog($('${name}ServiceWorkFunctionDialog')) ;
 
      // Показать
-     function show${name}ServiceWorkFunction(aMedServiceId) {
+     function show${name}ServiceWorkFunction(aMedServiceId, aName, aBtn) {
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}ServiceWorkFunctionDialogInitialized) {
          	init${name}ServiceWorkFunctionDialog() ;
           }
+         $('${name}ServiceInfoName').innerHTML = aName ;
          the${name}ServiceWorkFunctionDialog.show() ;
          $('${name}MedServiceId').value=aMedServiceId ;
          $("${name}vocWorkFunctionName").focus() ;
          $("${name}vocWorkFunctionName").select() ;
-         
+         aBtn.style.background="blue" ;
          eventutil.addEnterSupport("${name}noActiveByPrescript", '${name}Ok') ;
 
      }
@@ -105,7 +106,7 @@
     		     			
     		     		 ,{
     		     		 callback: function(aString) {
-    		     			 //window.document.reload() ;
+    			     			window.document.location.reload();
     		     		 }})
     		     		 
              }
