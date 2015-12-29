@@ -165,7 +165,7 @@ group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
 having count(distinct mm.id)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do?department=${param.department}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
             <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>
@@ -242,7 +242,7 @@ group by mm.patient_id,p.lastname,p.middlename,p.firstname,p.birthday
 having count(distinct mm.id)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do?department=${param.department}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
             <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>
@@ -278,7 +278,7 @@ group by mm.patient_id,mm.dateStart,p.lastname,p.middlename,p.firstname,p.birthd
 having count(*)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do?department=${param.department}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
             <msh:tableColumn columnName="Дата приема" property="5"/>
@@ -314,7 +314,7 @@ group by mm.patient_id,wf.workFunction_id,p.lastname,p.middlename,p.firstname,p.
 having count(*)>=${count}
 order by p.lastname,p.middlename,p.firstname
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_repeatCase" action="stac_journalRepeatCaseByHospital_data.do?department=${param.department}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="ФИО пациент" property="2"/>
             <msh:tableColumn columnName="Кол-во случаев" property="3" isCalcAmount="true"/>

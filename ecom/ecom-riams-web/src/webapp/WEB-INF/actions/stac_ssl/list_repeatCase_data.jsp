@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -22,6 +23,7 @@
     request.setAttribute("count", ids[3]) ;
     request.setAttribute("dtype", dtype) ;
     request.setAttribute("addSql", ids[5].replaceAll("@", "'")) ;
+    ActionUtil.setParameterFilterSql("department", "ml.id", request) ;
     if (dtype.equals("HospitalMedCase")) {
   %>
     <msh:section>
@@ -31,7 +33,7 @@
     <msh:sectionContent>
     <ecom:webQuery name="journal_repeatCase" nativeSql="
     select m.id,p.lastname||' '||p.firstname||' '||p.middlename
-    ,d.name as depname,ss.code as sscode,p.birthday
+    ,ml.name as depname,ss.code as sscode,p.birthday
     ,m.dateStart,m.dateFinish,vdh.name as vdhname,m.ambulanceTreatment 
     from MedCase as m 
     left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id 
@@ -39,13 +41,13 @@
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join vocbedsubtype as vbst on vbst.id=bf.bedSubType_id 
     left join vocbedtype as vbt on vbt.id=bf.bedtype_id 
-    left join mislpu as d on d.id=m.department_id 
+    left join mislpu as ml on ml.id=m.department_id 
     left join patient as p on p.id=m.patient_id 
     where 
     m.patient_id='${patient}'
     and m.DTYPE='${dtype}' 
     and m.dateStart between to_date('${startDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-    ${addSql} 
+    ${addSql} ${departmentSql}
     and  (m.noActuality='0' or m.noActuality is null)
     order by m.dateStart" />
     <msh:table name="journal_repeatCase" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
@@ -77,12 +79,14 @@
     left join workfunction wf on wf.id=m.workFunctionExecute_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
+left join mislpu ml on ml.id=w.lpu_id
+
 left join patient wp on wp.id=w.person_id
     where 
     m.patient_id='${patient}'
     and m.DTYPE='${dtype}' 
     and m.dateStart between to_date('${startDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-    ${addSql} 
+    ${addSql}  ${departmentSql}
     order by m.dateStart" />
     <msh:table name="journal_repeatCase" action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />

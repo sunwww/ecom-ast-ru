@@ -64,7 +64,7 @@
   from MedCase sls 
   left join VocHospType vht on vht.id=sls.hospType_id 
   left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id 
-  left join MedCase sloLast on sloLast.parent_id=sls.id and UPPER(sloLast.dtype)='DEPARTMENTMEDCASE' 
+  left join MedCase sloLast on sloLast.parent_id=sls.id and sloLast.dtype='DepartmentMedCase' 
   left join StatisticStub ss on ss.id=sls.statisticStub_id 
   left join MisLpu mlLast on mlLast.id=sloLast.department_id 
   left join MisLpu ml on ml.id=sls.department_id	
