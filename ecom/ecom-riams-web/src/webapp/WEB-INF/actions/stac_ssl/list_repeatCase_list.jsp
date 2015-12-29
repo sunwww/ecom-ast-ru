@@ -139,7 +139,7 @@
     <msh:sectionContent>
     <ecom:webQuery name="journal_repeatCase" nativeSql="select 
     mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase' 
-    ||': and m.deniedHospitalizating_id is null ${emergencySql}' as id
+    ||': ${emergencySql}' as id
     ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(distinct mm.id) as cntAll
     ,count(case when mm.deniedHospitalizating_id is not null then mm.id else null end) as cntDenied
@@ -218,7 +218,7 @@ order by p.lastname,p.middlename,p.firstname
       <msh:section>
     <msh:sectionTitle>Повторные госпитализации</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase: ${emergencySql}' as id
+    <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase: and m.deniedHospitalizating_id is null ${emergencySql}' as id
     ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(distinct mm.id) as cntAll
 
