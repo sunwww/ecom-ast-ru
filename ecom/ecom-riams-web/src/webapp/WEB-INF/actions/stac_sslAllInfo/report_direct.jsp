@@ -9,7 +9,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="StacJournal" title="Отчет по направленным"/>
+    <msh:title guid="helloItle-123" mainMenu="Journals" title="Отчет по направленным"/>
   </tiles:put>
   <tiles:put name="side" type="string">
 
@@ -18,6 +18,7 @@
   <%
   	String noViewForm = request.getParameter("noViewForm") ;
 
+  	String typeView=ActionUtil.updateParameter("ReportDirectByHospital","typeView","1", request) ;
   	String typeEmergency=ActionUtil.updateParameter("ReportDirectByHospital","typeEmergency","3", request) ;
   	String typeDepartment=ActionUtil.updateParameter("ReportDirectByHospital","typeDepartment","2", request) ;
   	String typeDate=ActionUtil.updateParameter("ReportDirectByHospital","typeDate","2", request) ;
@@ -78,6 +79,15 @@
         	<input type="radio" name="typeEmergency" value="3"  >  все
         </td>
        </msh:row>
+      <msh:row>
+        <td class="label" title="Отображение (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отображение:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="1">  разбивка по экст. план.
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="2"  >  по типам доставки
+        </td>
+       </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
@@ -107,6 +117,7 @@
            checkFieldUpdate('typeGroup','${typeGroup}',2) ;
            checkFieldUpdate('typeDate','${typeDate}',2) ;
            checkFieldUpdate('typeDepartment','${typeDepartment}',2) ;
+           checkFieldUpdate('typeView','${typeView}',2) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -203,13 +214,84 @@
     } else {
     	
     }
-    String view = (String)request.getAttribute("typeView") ;
+    
     
     if (date!=null && !date.equals("")) {
-        
+        if (typeView.equals("1")) {
     	%>
     
     <msh:section>
+    <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+    </msh:section>
+   
+    <msh:section>
+    <msh:sectionTitle>Свод ${reportInfo}</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="report_direct_swod" nativeSql="
+select '&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления (самообращение)'),
+count(distinct sls.id) 
+,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
+,count(distinct case when sls.emergency='1' and of_.voc_code='А' then sls.id else null end) as cntEmerVrAmb
+,count(distinct case when sls.emergency='1' and of_.voc_code='В' then sls.id else null end) as cntEmerRVK
+,count(distinct case when sls.emergency='1' and of_.voc_code='К' then sls.id else null end) as cntEmerAmb
+,count(distinct case when sls.emergency='1' and of_.voc_code='О' then sls.id else null end) as cntEmerSam 
+,count(distinct case when sls.emergency='1' and of_.voc_code='П' then sls.id else null end) as cntEmerPoly
+,count(distinct case when sls.emergency='1' and of_.voc_code='С' then sls.id else null end) as cntEmerStac
+,count(distinct case when (sls.emergency is null or sls.emergency='0') then sls.id else null end) as cntPlan
+,count(distinct case when (sls.emergency is null or sls.emergency='0') and vht.code='POLYCLINIC' then sls.id else null end) as cntPlanPoly
+,count(distinct case when sls.emergency='1' then sls.id else null end)
+-count(distinct case when sls.emergency='1' and of_.voc_code='В' then sls.id else null end)
+-count(distinct case when sls.emergency='1' and of_.voc_code='К' then sls.id else null end)
+ as cntEmergencyNoRVK
+
+from medcase sls
+left join medcase slo on slo.parent_id=sls.id  and slo.dtype='DepartmentMedCase'
+left join misLpu ml on ml.id=sls.orderLpu_id
+left join misLpu dep on dep.id=sls.department_id
+left join omc_frm of_ on of_.id=sls.orderType_id
+left join vocServiceStream vss on vss.id=sls.serviceStream_id
+left join VocHospType vht on sls.sourceHospType_id=vht.id
+left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
+where ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
+    and to_date('${dateEnd}','dd.mm.yyyy')
+    and    upper(sls.dtype)='HOSPITALMEDCASE'
+${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
+${lpuFunctionDirectSql}
+and sls.deniedhospitalizating_id is null
+group by ${typeGroupId},${typeGroupName}
+order by ${typeGroupName}
+" />
+    <msh:table name="report_direct_swod" 
+    viewUrl="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+     <msh:tableNotEmpty>
+     	<tr>
+     		<th></th>
+     		<th></th>
+     		<th></th>
+     		<th></th>
+     		<th></th>
+     		<th colspan="2">в т.ч. (из экстр. общ.)</th>
+     		<th></th>
+     		<th class="rigthBold">из них</th>
+     	</tr>
+     </msh:tableNotEmpty>
+      <msh:tableColumn columnName="Наименование ЛПУ" property="2" />
+      <msh:tableColumn columnName="Кол-во" property="3" isCalcAmount="true" />
+      <msh:tableColumn property="4" columnName="Кол-во экстренных (общее кол-во)" isCalcAmount="true"/>
+      <msh:tableColumn property="13" columnName="Кол-во экстренных (без КСП и РВК)" isCalcAmount="true"/>
+      <msh:tableColumn columnName="коммисий РВК" property="6" isCalcAmount="true"/>
+      <msh:tableColumn columnName="карета скорой помощи" property="7" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во плановых" property="11" isCalcAmount="true"/>
+      <msh:tableColumn columnName="пол-ка" property="12" isCalcAmount="true"/>
+    </msh:table>
+    
+    </msh:sectionContent>
+    </msh:section>
+    		<%
+    } else if (typeView.equals("2")) {
+    	%>
+    	    <msh:section>
     <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
     </msh:section>
    
@@ -247,8 +329,8 @@ group by ${typeGroupId},${typeGroupName}
 order by ${typeGroupName}
 " />
     <msh:table name="report_direct_swod" 
-    viewUrl="stac_report_direct_in_hospital.do?typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
-     action="stac_report_direct_in_hospital.do?typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    viewUrl="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
+     action="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
      <msh:tableNotEmpty>
      	<tr>
      		<th></th>
@@ -275,6 +357,10 @@ order by ${typeGroupName}
     
     </msh:sectionContent>
     </msh:section>
+    <%} 
+    		%>
+
+    	
     <%} else if (period!=null && !period.equals("")) {
     	
     	String[] obj = period.split("-") ;
@@ -355,7 +441,10 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
-    		<%
+    	
+    	
+    	<%
+    
     	} else {%>
     	<i>Нет данных </i>
     	<% } %>
