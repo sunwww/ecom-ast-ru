@@ -1174,7 +1174,9 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     group by sls.id
     ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
     ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-    ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name
+    ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name,dc.dateforensic
+    ,dc.postmortemBureauDt
+    ,dc.postmortemBureauNumber
     order by p.lastname,p.firstname,p.middlename " />
     	    <form action="print-stac_report_14_3r.do" method="post" target="_blank">
 	    Реестр пациентов ${param.strname} по нозоологиям (умершие)
