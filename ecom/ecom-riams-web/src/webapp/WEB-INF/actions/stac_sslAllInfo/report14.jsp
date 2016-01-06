@@ -1107,7 +1107,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
      else (sls.dateFinish-sls.dateStart)
     end
      as cntDays
-    ,(select mkb.code from Diagnosis diag 
+    ,(select list(mkb.code) from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -1116,7 +1116,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     and vpd.id='${diag_priority_m}'
     ) as mkbcode1
     ,
-    (select mkb.code from Diagnosis diag 
+    (select list(mkb.code) from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
