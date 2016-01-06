@@ -62,13 +62,9 @@
   %>
     <msh:section guid="863b6d75-fded-49ba-8eab-108bec8e092a">
       <msh:sectionTitle guid="1dcd4d93-235d-4141-a7ee-eca528858925">
-        Результаты поиска за дату с ${beginDate} по ${endDate}.
-        <msh:link action="journal_surOperation.do">Выбрать другие параметры</msh:link>
-      </msh:sectionTitle>
-      <msh:sectionContent>
-		<ecom:webQuery name="journal_surOperation1" nativeSql="select so.id as id
+		<ecom:webQuery name="journal_surOperation1" nameFldSql="journal_surOperation1_sql" nativeSql="select so.id as id
 	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(so.operationDate,'DD.MM.YYYY')) as operDate
-	    , vo.name as voname
+	    , vo.code||' '||vo.name as voname
 	    ,(select list(' '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) from SurgicalOperation_WorkFunction sowf left join WorkFunction wf on wf.id=sowf.surgeonFunctions_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id left join vocworkFunction vwf on vwf.id=wf.workFunction_id where sowf.SurgicalOperation_id=so.id ) as surgOper 
 	    ,p.lastname||' '||p.firstname||' '||p.middlename ||' гр '||to_char(p.birthday,'DD.MM.YYYY') as patientInfo,
 	    (select list(' '||vam.name|| ' '|| a.duration||' мин '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) as aneth 
@@ -105,6 +101,20 @@
 	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql}
 	          order by p.lastname,p.firstname,p.middlename
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+	        
+	            	    <form action="print-journal_surOperationByDate_r.do" method="post" target="_blank">
+        Результаты поиска за дату с ${beginDate} по ${endDate}.
+        <msh:link action="journal_surOperation.do">Выбрать другие параметры</msh:link>
+	    <input type='hidden' name="sqlText" id="sqlText" value="${journal_surOperation1_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Результаты поиска за дату с ${beginDate} по ${endDate}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+	        
+      </msh:sectionTitle>
+      <msh:sectionContent>
 	    <msh:table name="journal_surOperation1" 
 	    action="entityView-stac_surOperation.do" idField="1" 
 	    viewUrl="entityShortView-stac_surOperation.do"
