@@ -136,7 +136,8 @@
           	 ,ms.code as mscode,ms.complexity as mscomplexity
           	 ,case when ms.isNoOmc='1' then '' else 'Да. '||coalesce(vms.code,'НЕТ КОДА!!!!') end as isNoOmc
           	 , ms.additionCode as msadditionCode
-          	 ,list(pl.name||'-'||pp.code) as prinfo 
+          	 ,list(pl.name||'-'||pp.code) as prinfo
+          	 ,ms.id||''','''||ms.code||' '||ms.name as msidname 
           	 from MedService ms 
           	 left join PriceMedservice pms on pms.medservice_id=ms.id
           	 left join priceposition pp on pp.id=pms.priceposition_id
@@ -155,7 +156,7 @@
             <msh:tableColumn columnName="Прикрепленная услуга" identificator="false" property="3" guid="0c0e08bc-a8af-47b7-ae6d-89e52e73b2e5" />
 		    <msh:tableColumn columnName="Дата начала" property="4"/>
 		    <msh:tableColumn columnName="Дата окончания" property="5"/>
-	  	<msh:tableButton property="1" buttonFunction="showWFSServiceWorkFunction" buttonName="Прикрепление" buttonShortName="П"/>
+	  	<msh:tableButton property="12" addParam="this" buttonFunction="showWFSServiceWorkFunction" buttonName="Прикрепление" buttonShortName="П"/>
 		    <msh:tableColumn columnName="Прикреп. рабочие функции" property="6"/>
 		    <msh:tableColumn columnName="Уровень сложности" property="8"/>
 	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'VocMedService','MedService'" buttonName="Прикрепление к ОМС" buttonShortName="П"/>
