@@ -74,6 +74,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         			form.setOwnerFunction(ConvertSql.parseLong(wf[0])) ;
         		}
         	}
+    		 
     	} else {
     		throw new IllegalStateException("Невозможно добавить случай лечения. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
     	}
@@ -190,4 +191,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		return null ;
 		
     }
+
+
 }

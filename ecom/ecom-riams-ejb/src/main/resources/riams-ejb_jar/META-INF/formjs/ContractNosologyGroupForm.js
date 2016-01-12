@@ -1,4 +1,10 @@
 function onCreate(aForm, aEntity, aCtx) {
+	if (aForm.getDiagnosisRule!=null&&aForm.getDiagnosisRule!=0) {
+		var lncg = Packages.ru.ecom.mis.ejb.domain.lpu.LpuContractNosologyGroup();
+		lncg.setLpuDiagnosisRule(aForm.getDiagnosisRule());
+		lncg.setNosologyGroup(aEntity.getId());
+		aCtx.manager.persist(lncg);
+	}
 	 save_interval(aForm,aEntity,aCtx)
 }
 

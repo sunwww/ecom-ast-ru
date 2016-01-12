@@ -52,10 +52,34 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	if (!isDiagnosisAllowed(aForm, aCtx)) {
+		throw "Данный диагноз запрещен в отделении!";
+	} 
 }
 function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date();
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	
+	if (!isDiagnosisAllowed(aForm, aCtx)) {
+		throw "Данный диагноз запрещен в отделении!";
+	} 
+}
+
+function isDiagnosisAllowed(aForm, aCtx) {
+	var medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase, 
+				new java.lang.Long(aForm.getMedCase())) ;
+	if (medcase==null) {
+		return true;
+	}
+	var clinicalMkb = aForm.getIdc10();
+	var department = medcase.getDepartment().getId();
+	var patient = aForm.getPatient();
+	var serviceStream = medcase.getServiceStream().getId();
+	var diagnosisRegistrationType = aForm.getRegistrationType();
+	var diagnosisPriority = aForm.getPriority();
+	return Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.isDiagnosisAllowed(clinicalMkb
+			,department, patient, serviceStream, diagnosisRegistrationType,diagnosisPriority, aCtx.manager );
+	
 }

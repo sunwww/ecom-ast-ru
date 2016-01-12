@@ -181,7 +181,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	            		String adrStr = thePatientService.getAddressByOkato(patImp.getRn(), aStreet);
 	            		Long adrId = adrStr!=null?Long.valueOf(adrStr):null;
 	            		if (adrId==null) {
-	            			adrId=getKladrByRayon(patImp.getRegion(), vr!=null?vr.getKladr():"", patImp.getCity(), patImp.getNp(), patImp.getStreet(), patImp.getIndex(), adrAstr) ;
+	            			adrId=getKladrByRayon(patImp.getRegion(), vr!=null?vr.getKladr():"", patImp.getCity(), patImp.getNp(), aStreet, patImp.getIndex(), adrAstr) ;
 	            		}
 	            		if (adrId!=null) adr=theManager.find(Address.class, adrId) ;
 	            	}

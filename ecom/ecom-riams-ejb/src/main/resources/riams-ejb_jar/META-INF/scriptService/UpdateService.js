@@ -5,6 +5,7 @@ function update_postgres(aCtx, aParams) {
 	default_id(aCtx,"prescriptionlist") ;
 	default_id(aCtx,"HospitalDataFond") ;
 	default_id(aCtx,"ContractPerson") ;
+	default_id(aCtx,"LpuContractNosologyGroup") ;
 	return "1" ;
 }
 

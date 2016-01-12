@@ -234,10 +234,10 @@ public class PatientServiceBean implements IPatientService {
 			aOkato = aOkato.substring(0,11);
 		}
 		StringBuilder sql = new StringBuilder();
-		
+		System.out.println("getAddressByOkato "+aOkato+" : "+aStreet);
 		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode"+
 	" where k.okatd='"+aOkato+"' and upper(a.name) = '"+aStreet+"'");
-		System.out.println("==== find by okato, sql = "+sql.toString());
+		System.out.println("==== finding by okato, sql = "+sql.toString());
 		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (listO.size()>0) {
 			System.out.println("==== found by okato, res = "+listO.get(0));
@@ -276,9 +276,11 @@ public class PatientServiceBean implements IPatientService {
 		System.out.println("==== All is good, OKATO = "+aOkato);
 		if (aOkato!=null&&!aOkato.equals("")) {
 			String s = getAddressByOkato(aOkato, aStreet);
-			if (s!=null&&!s.equals("")) return s;
-			
+			if (s!=null&&!s.equals("")) { 
+				return s;
+			}	
 		}
+		
 		sql.append("select addressid,kladr from Address2 where kladr='").append(aKladr).append("'" ) ;
 		StringBuilder res = new StringBuilder() ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
@@ -581,6 +583,8 @@ public class PatientServiceBean implements IPatientService {
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
 	//	System.out.println("====-----------Создаем прикрепления!!");
 		Object obj =null;
+		Long areaId = null;
+		LpuArea la = null;
 		if (attachedType!=null&&attachedType.equals("1")){
 			try{ 
 				obj = theManager.createNativeQuery("select max(la.id) from patient p" +
@@ -597,9 +601,14 @@ public class PatientServiceBean implements IPatientService {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		
+		
+		if (obj!=null&&Long.valueOf(obj.toString())!=0) {
+			areaId=Long.valueOf(obj.toString());
+			la = theManager.find(LpuArea.class, areaId);
 		}
-		Long areaId = obj!=null?Long.valueOf(obj.toString()):null;
-		LpuArea la = areaId!=null?theManager.find(LpuArea.class, areaId):null;
+		}
+		
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
 			.setParameter("pat", aPatientId).getResultList();
 			
@@ -609,21 +618,19 @@ public class PatientServiceBean implements IPatientService {
 		
 		if (attachments.isEmpty()) { // Создаем новое 
 			String lpuId = null;
+			MisLpu lpuAtt = null;
 			try {
 				 lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
 			} catch (Exception e) {
-				
+				e.printStackTrace();
 			}
-			MisLpu lpuAtt = null;
 			if (la!=null) {
-				Long l = Long.valueOf(theManager.createNativeQuery("select lpu_id from lpuarea where id="+areaId).getSingleResult().toString());
+				Long l = Long.valueOf(theManager.createNativeQuery("select lpu_id from lpuarea where id="+areaId).getResultList().get(0).toString());
 				lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(l));
-			}
-			if (lpuAtt!=null && lpuId!=null && !lpuId.equals("")) {
+			} else {
 				lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
 			}
 			if (lpuAtt!=null) {
-			//	System.out.println("+++++++++++++++++++Найденное ЛПУ - "+lpuAtt.getFullname());
 				LpuAttachedByDepartment att = new LpuAttachedByDepartment();
 				att.setPatient(theManager.find(Patient.class, aPatientId));
 				att.setLpu(lpuAtt);

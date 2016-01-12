@@ -119,6 +119,13 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 				//medCase.setDiagnosis(diagList);
 			}
 		}
+		Long clinicalMkb = form.getClinicalMkb();
+		Long department = form.getDepartment();
+		Long patient = form.getPatient();
+		Long serviceStream = form.getServiceStream();
+		if (!isDiagnosisAllowed(clinicalMkb, department, patient, serviceStream, null,null,manager)) {
+			throw new IllegalStateException ("Данный диагноз запрещен в отделении!");
+		}
 	}
     
     private Object getVocByCode(EntityManager manager,String aTable, String aCode) {
@@ -173,5 +180,37 @@ private static boolean isEmpty(String aString) {
     return (aString == null)||(aString.trim().equals("")) ;
 }
 
+public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long patient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
+	if (diagnosisRegistrationType==null) {
+		diagnosisRegistrationType = Long.valueOf(manager.createNativeQuery("select id from vocdiagnosisregistrationtype where code='4'").getResultList().get(0).toString());  //4
+	}
+	
+	if (diagnosisPriority==null) {
+		diagnosisPriority =Long.valueOf(manager.createNativeQuery("select id from vocprioritydiagnosis where code='1'").getResultList().get(0).toString()); //1
+	}
+	String sql = "select mkb.id " +
+			" from vocidc10 mkb" +
+			" left join patient p on p.id=" + patient +
+			" left join lpudiagnosisrule ldr on ldr.department=" + department +
+			" left join lpucontractnosologygroup lcng on lcng.lpudiagnosisrule=ldr.id" +
+			" left join contractnosologygroup cng on cng.id=lcng.nosologygroup" +
+			" left join nosologyinterval cni on cni.nosologygroup_id=cng.id" +
+			" where mkb.id=" + clinicalMkb +
+			" and ((ldr.diagnosisregistrationtype is null or ldr.diagnosisregistrationtype=0) or ldr.diagnosisregistrationtype="+diagnosisRegistrationType+")" +
+			" and ((ldr.sex is null or ldr.sex=0) or ldr.sex=p.sex_id)" +
+			" and ((ldr.diagnosispriority is null or ldr.diagnosispriority=0) or ldr.diagnosispriority="+diagnosisPriority+")" +
+			" and ((ldr.servicestream is null or ldr.servicestream=0) or ldr.servicestream="+serviceStream+")" +
+			" and mkb.code between cni.fromidc10code and cni.toidc10code" +
+			" and '1' = case when (ldr.permissionrule is null or ldr.permissionrule='0') and mkb.id is not null then '1'" +
+			" when (ldr.permissionrule='1') and mkb.id is null then '1' else '0' end";
+	System.out.println("===== "+ sql);
+	List<Object> o = manager.createNativeQuery(sql).getResultList();
+	if (o!=null &&!o.isEmpty()) {
+		return false;
+	}    	    	
+	else {
+		return true;
+	}
+}
 
 }

@@ -16,6 +16,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Нозологическая группа по договору", nameProperties= "id", list="entityList-contract_nosologyGroup.do", view="entityView-contract_nosologyGroup.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractNosologyGroup")
 public class ContractNosologyGroupForm extends IdEntityForm{
+	
+	/** Правило установки диагноза по отделению */
+	@Comment("Правило установки диагноза по отделению")
+	public Long getDiagnosisRule() {return theDiagnosisRule;}
+	public void setDiagnosisRule(Long aDiagnosisRule) {theDiagnosisRule = aDiagnosisRule;}
+	/** Правило установки диагноза по отделению */
+	private Long theDiagnosisRule;
+
 	/**
 	 * Название
 	 */
