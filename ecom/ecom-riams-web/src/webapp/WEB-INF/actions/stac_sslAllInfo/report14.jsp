@@ -1605,9 +1605,8 @@ order by p.lastname,p.firstname,p.middlename " />
     </msh:section>
    
     <msh:section>
-    <msh:sectionTitle>Свод по операциям</msh:sectionTitle>
-    <msh:sectionContent>
-    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nativeSql="
+    <msh:sectionTitle>
+    <ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nameFldSql="report14swod_sql" nativeSql="
 
 select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name,vrspt.strCode 
 ,count(distinct so.id) as cntOper
@@ -1641,7 +1640,20 @@ ${age_sql}
 group by vrspt.id,vrspt.name,vrspt.strCode
 order by vrspt.strCode
 " />
-
+    
+        	    <form action="print-report_14_7.do" method="post" target="_blank">
+	    Свод по операциям
+	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по операциям за ${dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+	    <input type='hidden' name="m" id="m" value="printNativeQuery">
+	    <input type="submit" value="Печать"> 
+	    </form>     
+    
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    ${isReportBase}
     <msh:table name="report14swod" 
     viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" >

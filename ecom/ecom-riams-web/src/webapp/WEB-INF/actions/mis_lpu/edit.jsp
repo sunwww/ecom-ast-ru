@@ -226,6 +226,9 @@
               </msh:section>
             </msh:ifInRole>
           </td>
+          
+          
+          
           <td valign="top">
             <!-- Сохранить -->
             <msh:section title="Прикрепленное население" guid="2096d29b-b1b1-435d-858d-19ddfd3d7713">
@@ -248,6 +251,27 @@
               </msh:table>
             </msh:section>
           </td>
+        </tr>
+        <tr>
+        <msh:ifInRole roles="/Policy/Mis/MisLpu/OperatingRoom/View">
+          <td width="15%" valign="top" colspan="3" style="padding-right: 1em">
+    			<msh:section>
+    				<msh:sectionTitle>Правила установки диагноза в отделении. <a href='entityParentPrepareCreate-mis_lpuDiagnosisRule.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
+    				<msh:sectionContent>
+    					<ecom:webQuery name="diagnosisRule" nativeSql="
+    					select ldr.id, list (cng.name) from lpudiagnosisrule ldr
+						left join lpucontractnosologygroup lcng on lcng.lpudiagnosisrule=ldr.id
+						left join contractnosologygroup cng on cng.id=lcng.nosologygroup
+    					where ldr.department='${param.id}' group by ldr.id"/>
+    					<msh:table  name="diagnosisRule" hideTitle="true" action="entityParentView-mis_lpuDiagnosisRule.do" idField="1">
+    						<msh:tableColumn property="1"/>
+    						<msh:tableColumn property="2"/>
+    						
+    					</msh:table>
+    				</msh:sectionContent>
+    			</msh:section>
+    		</td>
+  			</msh:ifInRole>
         </tr>
       </table>
     </msh:ifFormTypeIsView>

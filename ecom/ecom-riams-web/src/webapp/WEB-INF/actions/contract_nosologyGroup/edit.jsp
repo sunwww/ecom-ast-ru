@@ -9,6 +9,7 @@
 		<msh:form action="/entitySaveGoView-contract_nosologyGroup.do" defaultField="name">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
+			<msh:hidden property="diagnosisRule" />
 			<msh:panel>
 				<msh:row>
 					<msh:textField property="name" label="Название" size="150"/>
@@ -18,7 +19,20 @@
 						<msh:textArea property="rangeMkb" label="Маска"/>
 					</msh:row>
 				</msh:ifFormTypeIsNotView>
-				
+			<msh:ifFormTypeIsCreate formName="contract_nosologyGroupForm">
+			<div id="divDepartment" style='display: none'>
+			<msh:section title="Существующие нозологические группы">
+				<ecom:webQuery nativeSql="select cng.id, cng.name from contractnosologygroup cng
+				left join lpucontractnosologygroup lcng on lcng.nosologygroup=cng.id
+				where lcng.id is null or lcng.lpudiagnosisrule!=${param.diagnosisRule}" name="contractRule"/>
+				<msh:table name="contractRule" action="/javascript:createFromExistGroup()" idField="1">
+					<msh:tableColumn property="sn" columnName="#"/>
+					<msh:tableColumn property="2" columnName="Название группы"/>
+					<msh:tableButton property="1" buttonFunction="createFromExistGroup" buttonName="Добавить" buttonShortName="Добавить"/>
+				</msh:table>
+			</msh:section>
+			</div>
+			</msh:ifFormTypeIsCreate>	
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
@@ -42,7 +56,7 @@
 			
 			<msh:section title="Отделения, в которых используется данная группа">
 				<ecom:webQuery nativeSql="select lpu.id, lpu.name from LpuContractNosologyGroup lcng 
-				left join LpuDiagnosisRule ldr on ldr.id=lcng.diagnosisrule
+				left join LpuDiagnosisRule ldr on ldr.id=lcng.lpudiagnosisrule
 				left join MisLpu lpu on lpu.id=ldr.department where lcng.nosologyGroup=${param.id}" name="contractRule"/>
 				<msh:table name="contractRule" action="entityView-mis_lpu.do" idField="1">
 					<msh:tableColumn property="sn" columnName="#"/>
@@ -51,8 +65,32 @@
 			</msh:section>
 		</msh:ifFormTypeIsView>
 		
+		<msh:ifFormTypeIsCreate formName="contract_nosologyGroupForm">
+		<script type='text/javascript' src='./dwr/interface/ContractService.js' ></script>
+		<script type='text/javascript'>
+		$('diagnosisRule').value='${param.diagnosisRule}';
+		if ($('diagnosisRule')!=null && $('diagnosisRule').value!='' && $('diagnosisRule').value!='0') {
+			$('divDepartment').style='display: block';
+		}
+		
+		function createFromExistGroup (aContractId) {
+			if ($('diagnosisRule').value!='' && $('diagnosisRule').value!='0') {
+				alert ('Hello');
+				var ruleId = $('diagnosisRule').value; 
+				ContractService.createLpuContractGroup (aContractId, ruleId, {
+					callback: function (a) {
+						alert ('Операция успешно выполнена!');
+						window.history.back();
+					}
+				});
+			}
+		}
+		</script>
+		</msh:ifFormTypeIsCreate>
 		<msh:ifFormTypeIsNotView formName="contract_nosologyGroupForm">
 		<script type="text/javascript">
+		
+		
 		eventutil.addEventListener($('rangeMkb'), eventutil.EVENT_KEY_UP, 
 	 		  	function() {$('rangeMkb').value = latRus($('rangeMkb').value) ;}
 			) ;

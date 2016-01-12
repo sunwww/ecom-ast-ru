@@ -77,6 +77,8 @@
 		<ecom:webQuery isReportBase="${isReportBase}"  name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
   ${isReportBase}
 		<ecom:webQuery isReportBase="${isReportBase}"  name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
+      ${isReportBase}
+      <ecom:webQuery isReportBase="${isReportBase}" name="diag_typeReg_pat_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='5'"/>
     
        <script type='text/javascript'>
     
@@ -116,6 +118,8 @@ if (date!=null && !date.equals("")) {
 	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
+  	ActionUtil.getValueByList("diag_typeReg_pat_sql", "diag_typeReg_pat", request) ;
+
 	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
 	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
 	ActionUtil.getValueByList("result_death_sql", "result_death", request) ;

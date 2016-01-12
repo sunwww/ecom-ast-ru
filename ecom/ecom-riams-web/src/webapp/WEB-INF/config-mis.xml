@@ -6,6 +6,7 @@
 
 	<form-beans>
 		
+		<form-bean name="mis_lpuDiagnosisRuleForm" type="ru.ecom.mis.ejb.form.lpu.LpuDiagnosisRuleForm" />
 		<form-bean name="mis_bedFundCapacityForm" type="ru.ecom.mis.ejb.form.lpu.BedFundCapacityForm" />
 		<form-bean name="mis_medicalEquipmentPositionForm" type="ru.ecom.mis.ejb.form.equipment.MedicalEquipmentPositionForm" />
 		<form-bean name="mis_medicalStandardForm" type="ru.ecom.mis.ejb.form.medstandard.MedicalStandardForm" />
