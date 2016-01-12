@@ -2074,7 +2074,7 @@ if (date!=null && !date.equals("")) {
 		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
 	end
 	
-	)/count(distinct bfc.id) as cntDays
+	) as cntDays
 ,sum(distinct cast(bfc.actualbedcount||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f21
 ,sum(distinct cast(bfc.countdays||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f22
 ,sum(distinct cast(bfc.counthospitals||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f23 
