@@ -10,7 +10,13 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
-	
+
+	public String createLpuContractGroup (String aContractId, String aDiagnosisRuleId, HttpServletRequest aRequest) throws NamingException {
+		String sql = "insert into lpucontractnosologygroup (lpudiagnosisrule, nosologygroup) values ("+aDiagnosisRuleId+","+aContractId+")";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		return "" +service.executeUpdateNativeSql(sql);
+	}
+
 	public String saveWorkFunctionService(
  			String aMedServiciesId, String aVWF,String aWF,String aLpu,String aBedType,String aBedSubType
       		 ,String aRoomType,String aPrescriptType,String aNoActiveByPrescript,HttpServletRequest aRequest) throws NamingException {
@@ -64,6 +70,7 @@ public class ContractServiceJs {
 		}
 		return "" ;
 	}
+
 	public String addContractPerson(
    		 Long aIdPat,String aField,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
