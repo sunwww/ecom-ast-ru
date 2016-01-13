@@ -11,6 +11,11 @@ import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
 
+	public String deleteLpuContractGroup (String aId, HttpServletRequest aRequest) throws NamingException {
+		String sql = "delete from lpucontractnosologygroup where id="+aId;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		return ""+service.executeUpdateNativeSql(sql);
+	}
 	public String createLpuContractGroup (String aContractId, String aDiagnosisRuleId, HttpServletRequest aRequest) throws NamingException {
 		String sql = "insert into lpucontractnosologygroup (lpudiagnosisrule, nosologygroup) values ("+aDiagnosisRuleId+","+aContractId+")";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
