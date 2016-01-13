@@ -27,16 +27,18 @@
         <msh:checkBox property="permissionRule"  label="Разрешены только эти диагнозы"/>
         </msh:row>
         <msh:ifFormTypeIsView formName="mis_lpuDiagnosisRuleForm">
-        <msh:row> <td colspan="3"> 
-        <ecom:webQuery name="ruleList" nativeSql="select ng.id, ng.name from lpucontractnosologygroup lcng 
+        <msh:row> 
+        <td colspan='3'>
+        <ecom:webQuery name="ruleList" nativeSql="select ng.id as ngid, ng.name, lcng.id as lcngid from lpucontractnosologygroup lcng 
         left join contractnosologygroup ng on ng.id=lcng.nosologygroup
          where lcng.lpudiagnosisrule=${param.id}"/>        
-           <msh:section guid="b67c5be3-5330-4589-8da8-7888453aaeb8">
+        <msh:section guid="b67c5be3-5330-4589-8da8-7888453aaeb8">
         <msh:sectionTitle guid="3ae2d769-07ed-4109-b6cc-75bf939a86d2">Список правил</msh:sectionTitle>
         <msh:sectionContent guid="6dd31b9f-5068-4961-9033-417c6e01ff13">
         <a href='entityPrepareCreate-contract_nosologyGroup.do?diagnosisRule=${param.id}'>+ДОБАВИТЬ</a>
-          <msh:table name="ruleList" action="entityView-contract_nosologyGroup.do" idField="1">
+          <msh:table name="ruleList" action="/javascript:void()" idField="1">
             <msh:tableColumn columnName="Название" property="2" guid="e7ee8550-c34b-40bb-9aac-fcdd4da970e0" />
+            <msh:tableButton property="3" buttonShortName="Удалить" buttonFunction="deleteLpuContractGroup" buttonName="Удалить"/>
           </msh:table>
         </msh:sectionContent>
       </msh:section>
@@ -61,8 +63,16 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
     
- <script type="text/javascript" src="./dwr/interface/AttachmentService.js"></script>
- 
+ <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
+ <script type='text/javascript'>
+ function deleteLpuContractGroup(aId){
+	 ContractService.deleteLpuContractGroup (aId, {
+		 callback: function (){
+			 window.location.reload();
+		 }
+	 });
+ }
+ </script>
  </tiles:put>
 </tiles:insert>
 
