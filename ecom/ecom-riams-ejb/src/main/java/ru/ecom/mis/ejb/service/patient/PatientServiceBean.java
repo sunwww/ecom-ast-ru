@@ -1355,6 +1355,12 @@ public class PatientServiceBean implements IPatientService {
 			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
 				appendNativeToList(findByPatientSync(sqlFld,aLastname), ret,null);
 			}
+			if (theSessionContext.isCallerInRole("/Policy/Mis/Patient/FindByCommonNumber") ) {
+				// Поиск по RZ
+				if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
+					appendNativeToList(findByPatientRz(sqlFld,aLastname), ret,null);
+				}
+			}
 			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
 				appendNativeToList(findByPolicy(sqlFld,aLpuId, aLpuAreaId, aLastname), ret,null);
 			}
@@ -1422,6 +1428,24 @@ public class PatientServiceBean implements IPatientService {
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
 		b.add("patientSync", number);
+		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		// from MedPolicy where series = :series and 
+	}
+	private Query findByPatientRz(StringBuilder aSqlFld, String aPolicyQuery) {
+		QueryClauseBuilder b = new QueryClauseBuilder() ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append(aSqlFld);
+		sql.append(" from Patient p") ;
+		sql.append(" left join LpuAttachedByDepartment att on att.patient_id=p.id") ;
+		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
+		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
+		sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
+		sql.append(" where") ;
+		//b.add("MedPolicy.patient.lpu_id", aLpuId) ;
+		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
+		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
+		String number = st.hasMoreTokens() ? st.nextToken() : null ;
+		b.add("commonNumber", number);
 		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
