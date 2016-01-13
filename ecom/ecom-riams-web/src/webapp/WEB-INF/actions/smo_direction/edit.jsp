@@ -188,6 +188,7 @@
   	<msh:ifFormTypeIsView formName="smo_directionForm">
   	<script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
         <script type="text/javascript">//var theBedFund = $('bedFund').value;
+        
         function printReference(aFormat) {
     		TicketService.getDataByReference(
     			'${param.id}','PREVISIT',{
@@ -215,6 +216,13 @@
     </msh:ifFormTypeIsView>
     <script type="text/javascript">//var theBedFund = $('bedFund').value;
 		if ($('infoByPolicy').value.length>0) {
+			WorkCalendarService.getChargedServiceStream({
+				callback: function(a) {
+					var res = a.split(":");
+					$('serviceStream').value=res[0];
+					$('serviceStreamName').value=res[1];
+				}
+			});
 			$('medPolicyInformation').innerHTML = $('infoByPolicy').value + " <u>Направление к врачу по потоку обслуживания ОМС создаваться не будет!!!</u>";
 			$('medPolicyInformation').style.display = 'block' ;
 		} else {
@@ -266,7 +274,7 @@
  			 {
  				 callback: function(aResult) {
  					 if (+aResult<1) {
- 							checkDouble();
+ 						checkServiceStreamInHospital();
  				  	  } else {
  				  		  alert('У Вас стоит запрет на запись пациентов по ОМС без полиса!!!');
  				  		document.forms[0].submitButton.disabled = false ;
@@ -275,10 +283,22 @@
  					 }
  				 });
  		  } else {
- 			 checkDouble();
+ 			 checkServiceStreamInHospital();
  		  }
  		 
  		 }
+      function checkServiceStreamInHospital () {
+    	  WorkCalendarService.getIsServiceStreamEnabled ($('patient').value, $('serviceStream').value, {
+    		  callback: function (a) {
+    			  if (a!=null&&a=='1') {
+    				  alert ('Невозможно создать направление с указанным потоком обслуживания, т.к пациент лежит в стационаре. Измените поток обслуживания, либо создайте направление из листа назначений');
+    				  document.forms[0].submitButton.disabled = false ;
+    			  } else {
+    				  checkDouble();
+    			  }
+    		  }
+    	  });
+      }
       function checkDouble() {
     	  WorkCalendarService.findDoubleBySpecAndDate($('id').value,$('patient').value
 	    			  ,$('workFunctionPlan').value, $('datePlan').value
