@@ -23,9 +23,10 @@
 			<div id="divDepartment" style='display: none'>
 			<msh:section title="Существующие нозологические группы">
 				<ecom:webQuery nativeSql="select cng.id, cng.name from contractnosologygroup cng
-				left join lpucontractnosologygroup lcng on lcng.nosologygroup=cng.id
-				where lcng.id is null or lcng.lpudiagnosisrule!=${param.diagnosisRule}" name="contractRule"/>
-				<msh:table name="contractRule" action="/javascript:createFromExistGroup()" idField="1">
+				where cng.id not in (select cng2.id from contractnosologygroup cng2
+				left join lpucontractnosologygroup lcng on lcng.nosologygroup=cng2.id
+				where lcng.lpudiagnosisrule=${param.diagnosisRule})" name="contractRule"/>
+				<msh:table name="contractRule" action="/javascript:void()" idField="1">
 					<msh:tableColumn property="sn" columnName="#"/>
 					<msh:tableColumn property="2" columnName="Название группы"/>
 					<msh:tableButton property="1" buttonFunction="createFromExistGroup" buttonName="Добавить" buttonShortName="Добавить"/>
@@ -75,10 +76,9 @@
 		
 		function createFromExistGroup (aContractId) {
 			if ($('diagnosisRule').value!='' && $('diagnosisRule').value!='0') {
-				alert ('Hello');
 				var ruleId = $('diagnosisRule').value; 
 				ContractService.createLpuContractGroup (aContractId, ruleId, {
-					callback: function (a) {
+					callback: function () {
 						alert ('Операция успешно выполнена!');
 						window.history.back();
 					}
