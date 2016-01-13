@@ -1,0 +1,120 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+
+<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+
+  <tiles:put name="title" type="string">
+    <msh:title guid="helloItle-123" mainMenu="Contract" title="Анализ услуг"/>
+  </tiles:put>
+  <tiles:put name="side" type="string">
+  	
+    	<tags:contractMenu currentAction="analisisMedServices"/>
+  </tiles:put>
+  <tiles:put name="body" type="string">
+  <%
+    //String typeView =ActionUtil.updateParameter("Contract_analisis","typeView","3", request) ;
+	//String typeFindMed =ActionUtil.updateParameter("Contract_analisis","typeFindMed","5", request) ;
+	
+	
+  %>
+  
+    <msh:form action="/contact_analisis_no_accrual.do" defaultField="dateFrom">
+    <msh:panel>
+      <msh:row>
+        <msh:separator label="Параметры поиска" colSpan="7"/>
+      </msh:row>
+				<msh:row>
+				<msh:textField property="dateFrom" label="c"/>
+				<msh:textField property="dateTo" label="по"/>
+				</msh:row>
+     <msh:row>
+           <td colspan="11">
+            <input type="submit" onclick="find()" value="Найти" />
+          </td>
+      </msh:row>
+      
+    </msh:panel>
+    </msh:form>
+    <script type='text/javascript'>
+    
+//    checkFieldUpdate('typeFindMed','${typeFindMed}',3) ;
+ //   checkFieldUpdate('typeView','${typeView}',1) ;
+  
+   function checkFieldUpdate(aField,aValue,aDefaultValue) {
+   	eval('var chk =  document.forms[0].'+aField) ;
+   	var aMax=chk.length ;
+   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
+   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
+   		chk[+aDefaultValue-1].checked='checked' ;
+   	} else {
+   		chk[+aValue-1].checked='checked' ;
+   	}
+   }
+			 
+       </script>
+
+        <tags:service_change name="VMS"/>    
+    <%
+    String date1 = (String)request.getParameter("dateFrom") ;
+    String date2 = (String)request.getParameter("dateTo") ;
+    
+    if (date1!=null && !date1.equals("") )  {
+    	if (date2==null || date2.equals("")) {request.setAttribute("dateTo", date1) ;} else {request.setAttribute("dateTo", date2) ;}
+    	%>
+    
+    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
+    <ecom:webQuery nameFldSql="serverPerson_sql" name="serverPerson" nativeSql="
+select ca.id,
+	CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
+			,sp.dateFrom,sp.dateTo
+			, count(distinct case when cao.id is null then cams.id else null end) as cntMedService 
+			, sum(case when cao.id is null then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
+			, round(sum((case when cao.id is null then cams.countMedService*cams.cost else 0 end)*(100-ca.discountDefault)/100),2) as sumNoAccraulMedServiceWithDiscount 
+			from ContractAccount ca
+			left join ServedPerson sp on ca.id = sp.account_id
+			left join ContractAccountMedService cams on cams.account_id=ca.id
+			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
+			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
+			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
+			where ca.dateFrom between to_date('${param.dateFrom}','dd.mm.yyyy') and to_date('${dateTo}','dd.mm.yyyy') 
+			and cao.id is null  and caos.id is null
+			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
+			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+    
+    <form action="print-contact_analisis_no_accrual.do" method="post" target="_blank">
+    Реестр счетов.
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_expert_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateFrom} по ${dateTo}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    </msh:sectionTitle>
+    <msh:sectionContent>
+				<msh:table name="serverPerson" viewUrl="entityParentView-contract_account.do?short=Short" 
+				action="entityParentPrepareCreate-contract_accountOperationAccrual.do"
+				idField="1">
+					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Информация" property="2"/>
+					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
+					<msh:tableColumn columnName="Дата окончания" property="4"/>
+					<msh:tableColumn columnName="кол-во неопл. услуг" property="5"/>
+					<msh:tableColumn columnName="сумма к оплате" property="6"/>
+					<msh:tableColumn columnName="сумма к оплате с учетом скидки" property="7"/>
+				</msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <% } else {%>
+    	<i>Нет данных </i>
+    	<% 
+    	}%>
+    
+  </tiles:put>
+</tiles:insert>
