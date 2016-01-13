@@ -161,6 +161,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="8">  свод по пациентам
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="9">  свод по у.е
+	        </td>
 
         </msh:row>
         <msh:row>
@@ -1721,6 +1724,73 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="дети до 18 лет" property="11"/>
             <msh:tableColumn isCalcAmount="true" columnName="0-14" property="12"/>
             <msh:tableColumn isCalcAmount="true" columnName="15-17" property="13"/>
+        </msh:table>
+    </msh:sectionContent>
+
+    </msh:section>    	
+    <%} else if (typeView!=null && (typeView.equals("9"))) {
+    	%>
+    <msh:section>
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
+select
+''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
+,${groupSql} as nameFld
+
+,count(distinct smo.id) as cntSmoAll 
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and (ad1.addressid is null or ad1.kladr not like '30%') then smo.id else null end) as cntSmoInog 
+,count(distinct case when oo.voc_code!='643' and oo.id is not null then smo.id else null end) as cntSmoInostr
+,count(distinct smo.patient_id) as cntPatAll 
+,count(distinct case when (oo.voc_code='643' or oo.id is null) and (ad1.addressid is null or ad1.kladr not like '30%') then smo.patient_id else null end) as cntPatInog 
+,count(distinct case when oo.voc_code!='643' and oo.id is not null then smo.patient_id else null end) as cntPatInostr
+,sum(smo.uet)  as sumuet
+
+FROM MedCase smo  
+left join MedCase spo on spo.id=smo.parent_id
+LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join VocSex vs on vs.id=p.sex_id
+LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
+left join VocAdditionStatus vas on vas.id=p.additionStatus_id
+LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
+LEFT JOIN vocWorkPlaceType vwpt on vwpt.id=smo.workPlaceType_id 
+LEFT JOIN VocServiceStream vss on vss.id=smo.serviceStream_id 
+LEFT JOIN VocSocialStatus pvss on pvss.id=p.socialStatus_id
+LEFT JOIN WorkFunction wf on wf.id=smo.workFunctionExecute_id 
+LEFT JOIN VocWorkFunction vwf on vwf.id=wf.workFunction_id 
+LEFT JOIN Worker w on w.id=wf.worker_id 
+LEFT JOIN Patient wp on wp.id=w.person_id 
+LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id 
+Left join Omc_oksm oo on oo.id=p.nationality_id
+WHERE  ${dtypeSql} 
+and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
+and (smo.noActuality is null or smo.noActuality='0')  
+${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
+${personSql} and smo.dateStart is not null ${emergencySql} ${ageSql}
+GROUP BY ${groupGroup} ORDER BY ${groupOrder}
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" nameFldSql="journal_ticket_sql"/> 
+    <msh:sectionTitle>
+    <form action="print-f039_patient.do" method="post" target="_blank">
+    Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
+    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="date1" id="date1" value="${beginDate}">
+    <input type='hidden' name="date2" id="date2" value="${finishDate}">
+    <input type="submit" value="Печать"> 
+    </form>
+    </msh:sectionTitle>
+    <msh:sectionContent>
+        <msh:table
+         name="journal_ticket" action="visit_f039_list.do?typeReestr=1&typeView=${typeView}&typeGroup=${typeGroup}&typeDiag=${typeDiag}&ageFrom=${param.ageFrom}&ageTo=${param.ageTo}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="${groupName}" property="2"/>            
+            <msh:tableColumn isCalcAmount="true" columnName="Всего посещ." property="3"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иног. посещ." property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иностр. посещ." property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего пац." property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иног.пац." property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Иностр. пац." property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Сумма ует" property="9"/>
         </msh:table>
     </msh:sectionContent>
 
