@@ -28,6 +28,38 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class WorkCalendarServiceJs {
+	
+	public static String getIsServiceStreamEnabled(String aPatientId, String aServiceStreamId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+	String sql = "select case when "+aServiceStreamId+" = (select mc.servicestream_id from MedCase mc " +
+				" where mc.patient_id='"+aPatientId+"' and mc.dtype='HospitalMedCase' " +
+				" and mc.dateFinish is null and mc.deniedHospitalizating_id is null)" +
+				"or "+aServiceStreamId+" in " +
+				"(select id from vocservicestream where code='OBLIGATORYINSURANCE') then '1' else '0' end" ;
+	System.out.println(sql);
+	return service.executeNativeSql(sql).iterator().next().get1().toString();
+	}
+	
+	public static String getChargedServiceStream (HttpServletRequest aRequest) throws NamingException {
+		String res = "";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		try{
+		
+			Collection<WebQueryResult> wqr= service.executeNativeSql("select id, name from vocservicestream where code='CHARGED' ");
+			if (!wqr.isEmpty()) {
+				WebQueryResult w = wqr.iterator().next();
+			res = w.get1().toString() + ":" + w.get2().toString();
+			}
+			
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			res = "0:ERROR";
+		}
+		return res;
+	}
+	
 	public static boolean remoteUser(IWebQueryService service,HttpServletRequest aRequest) {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		boolean ret = false ;
