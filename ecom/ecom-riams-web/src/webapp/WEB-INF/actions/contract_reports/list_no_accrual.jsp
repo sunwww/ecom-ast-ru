@@ -66,7 +66,7 @@
     	if (date2==null || date2.equals("")) {request.setAttribute("dateTo", date1) ;} else {request.setAttribute("dateTo", date2) ;}
     	%>
     
-    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
+    <msh:section title="Реестр за период с ${param.dateFrom} по ${dateTo}.">
     <ecom:webQuery nameFldSql="serverPerson_sql" name="serverPerson" nativeSql="
 select ca.id,
 	CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
