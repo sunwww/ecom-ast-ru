@@ -100,7 +100,7 @@ where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dat
             <msh:tableColumn columnName="Записано всего" property="1"/>            
             <msh:tableColumn columnName="Записано удаленными пользователями" property="2"/>
             </msh:table>
-    </msh:sectionContent>${journal_ticket_sql }
+    </msh:sectionContent>
 
     </msh:section>
     <% }  else {%>
