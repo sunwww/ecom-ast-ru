@@ -304,6 +304,14 @@ public class HospitalMedCase extends LongMedCase {
 	/** Номер стат.карты */
 	@Comment("Номер стат.карты")
 	@Transient
+	public Long getChildBirth() {
+		Long childBirth = null;
+		if (theStatisticStub != null) {
+			childBirth = theStatisticStub.getChildBirth()!=null?theStatisticStub.getChildBirth().getId():null;
+		}
+		return childBirth;
+	}
+	@Transient
 	public Long getResultDischarge() {
 		Long reasonDischarge = null;
 		if (theStatisticStub != null) {
