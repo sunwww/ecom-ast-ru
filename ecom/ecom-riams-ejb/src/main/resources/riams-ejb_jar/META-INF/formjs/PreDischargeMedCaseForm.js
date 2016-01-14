@@ -22,4 +22,10 @@ function onSave(aForm,aEntity, aCtx) {
 		aEntity.statisticStub.setResultDischarge(resultDischarge) ;
 		aCtx.manager.persist(aEntity) ;
 	}
+	if (+aForm.childBirth>0 && aEntity.statisticStub!=null) {
+		var childBirth = getObject(aCtx, aForm.resultDischarge, Packages.ru.ecom.mis.ejb.domain.birth.voc.VocChildBirth);
+		aEntity.statisticStub.setChildBirth(childBirth) ;
+		aCtx.manager.persist(aEntity) ;
+	}
+
 }
