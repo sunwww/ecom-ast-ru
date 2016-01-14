@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.birth.voc.VocChildBirth;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocReasonDischarge;
@@ -106,4 +107,13 @@ public abstract class StatisticStub extends BaseEntity {
 
 	/** Итог лечения */
 	private VocResultDischarge theResultDischarge;
+	
+	/** Тип родов */
+	@Comment("Тип родов")
+	@OneToOne
+	public VocChildBirth getChildBirth() {return theChildBirth;}
+	public void setChildBirth(VocChildBirth aChildBirth) {theChildBirth = aChildBirth;}
+
+	/** Тип родов */
+	private VocChildBirth theChildBirth;
 }
