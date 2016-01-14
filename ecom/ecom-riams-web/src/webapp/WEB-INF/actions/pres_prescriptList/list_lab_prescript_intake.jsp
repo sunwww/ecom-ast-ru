@@ -27,6 +27,7 @@
   	String typeIntake =ActionUtil.updateParameter("PrescriptJournal","typeIntake","2", request) ;
   	String typeMaterial =ActionUtil.updateParameter("PrescriptJournal","typeMaterial","1", request) ;
     String typeTransfer =ActionUtil.updateParameter("PrescriptJournal","typeTransfer","2", request) ;
+    String typeGroup =ActionUtil.updateParameter("PrescriptJournal","typeGroup","1", request) ;
 
   	if (lpu!=null && !lpu.equals("")) {
   		String beginDate = request.getParameter("beginDate") ;
@@ -43,6 +44,15 @@
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" />
+      </msh:row>
+      <msh:row>
+        <td class="label" title="Группировка (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;">
+        	<input type="radio" name="typeGroup" value="1"> по типу биоматериала
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;" >
+        	<input type="radio" name="typeGroup" value="2"> без группировки
+        </td>
       </msh:row>
       <msh:row>
         <td class="label" title="Забор материала (typeIntake)" colspan="1"><label for="typeIntakeame" id="typeIntakeLabel">Забор:</label></td>
@@ -97,7 +107,7 @@
     
     <script type='text/javascript'>
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
-    //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
+    checkFieldUpdate('typeGroup','${typeGroup}',1) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
     function checkfrm() {
     	document.forms[1].submit() ;
@@ -120,6 +130,7 @@
 			 
     </script>
     <%
+    if (typeGroup.equals("2")) {request.setAttribute("addByGroup", "p.id,");}
     StringBuilder sqlAdd = new StringBuilder() ;
     StringBuilder title = new StringBuilder() ;
     if (typeIntake!=null && typeIntake.equals("1")) {
@@ -187,7 +198,7 @@
     and vst.code='LABSURVEY' 
     and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and p.cancelDate is null ${sqlAdd}
-    group by pat.id,pat.lastname,pat.firstname,pat.middlename
+    group by ${addByGroup} pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime,p.planStartDate
     ,vst.name
@@ -246,7 +257,7 @@
     and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and vst.code='LABSURVEY' 
     and p.cancelDate is null ${sqlAdd}
-    group by pat.id,pat.lastname,pat.firstname,pat.middlename
+    group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
     ,p.planStartDate , vst.name,vpt.name

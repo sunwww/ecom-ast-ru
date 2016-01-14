@@ -49,13 +49,19 @@
         	<input type="radio" name="typeTransfer" value="1"> осуществлена
         </td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-        	<input type="radio" name="typeTransfer" value="2"> не была произведена
+        	<input type="radio" name="typeTransfer" value="2"> не была произведена (с группировкой по типу биоматериала)
         </td>
-        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
+       </msh:row>
+        <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" >
         	<input type="radio" name="typeTransfer" value="3"> отбракованные
         </td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-        	<input type="radio" name="typeTransfer" value="4"> все
+        	<input type="radio" name="typeTransfer" value="4"> не была произведена (без группировки по типу биоматериала)
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
+        	<input type="radio" name="typeTransfer" value="5"> все
         </td>
 
        </msh:row>
@@ -247,6 +253,7 @@
 
 <%    	
     } else {
+    	if (typeTransfer.equals("4")) {request.setAttribute("addByGroup", "p.id,");}
     %>
     <msh:section title="${titleInfo}">
     <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
@@ -295,7 +302,7 @@
     and vst.code='LABSURVEY' 
     
     ${sqlAdd}
-    group by pat.id,pat.lastname,pat.firstname,pat.middlename
+    group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id
     ,p.intakedate,pat.birthday,iwp.lastname,iwp.firstname,iwp.middlename,p.intakeTime
     ,p.transferDate,p.transferTime,vsst.biomaterial,p.cancelDAte,p.cancelTime,wfCab.groupName
