@@ -259,8 +259,10 @@
         </msh:row>  
         <msh:row guid="f2hba5-68fb-4ccc-9982-7b4h147">
           <msh:autoComplete vocName="vocHospType" property="targetHospType" label="Куда выписан" horizontalFill="true" guid="109g-23b2-42c0-ba47-65g0747816c" />
-      
         	<msh:autoComplete label="Итог выписки" property="resultDischarge"  horizontalFill="true" vocName="vocResultDischarge" />
+        </msh:row>
+        <msh:row>
+          <msh:autoComplete vocName="vocChildBirth" property="childBirth" fieldColSpan="3" label="Тип родов" horizontalFill="true"/>
         </msh:row>
         <msh:row>
           <msh:checkBox label="Провизорность" property="provisional" guid="d8588d59-3adb-4485-af94-cadecb04f82b" />
