@@ -2,15 +2,7 @@
  * При просмотре
  */
 function onView(aForm, aEntity, aContext) {
-	/*var view = new Packages.ru.ecom.jaas.ejb.domain.ViewJournal() ;
-	var date = new java.util.Date();
-	view.setIdObject(aEntity.id) ;
-	view.setClassObject("Admission") ;
-	view.setUsername(aContext.sessionContext.callerPrincipal.name) ;
-	view.setViewDate(new java.sql.Date(date.getTime())) ;
-	view.setViewTime(new java.sql.Time(date.getTime())) ;
-	aContext.manager.persist(view) ;
-	*/
+	
 }
 
 
@@ -35,15 +27,6 @@ function onPreCreate(aForm, aCtx) {
 	}
 	if (ret==true) {
 		throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
-	}
-	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
-		if (pat.getDeathDate()!=null) {
-			
-			var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
-			if (date.getTime() > deathDate.getTime()) {
-			throw "Невозможно создать СЛС позже даты смерти пациента: "
-			+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate);
-			}
 	}
 	
 }
@@ -110,12 +93,26 @@ function onSave(aForm,aEntity,aCtx) {
 }
 
 function onPreSave(aForm,aEntity, aCtx) {
+	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
+	if (pat.getDeathDate()!=null) {
+		
+		var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
+		if (date.getTime() > deathDate.getTime()) {
+		throw "Невозможно создать СЛС позже даты смерти пациента: "
+		+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate);
+		}
+	}
+
 	if (aForm.getEmergency()==null || !aForm.getEmergency()) {
 		if (+aForm.orderType>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (+aForm.intoxication>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (+aForm.preAdmissionDefect>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (aForm.supplyOrderNumber!=null&&aForm.supplyOrderNumber!="") throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (+aForm.preAdmissionTime>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
+		if (pat.newborn==null) {
+			if (+aForm.orderLpu>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Кем направлен!!!" ;}
+			if (+aForm.sourceHospType>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Тип направившего ЛПУ!!!" ;}
+		}
 	} else {
 		if (+aForm.orderType>0) {} else {throw "При экстренной госпитализации раздел доставлен является обязательным для заполнения!!!" ;}
 		if (+aForm.preAdmissionTime>0) {} else {throw "При экстренной госпитализации раздел доставлен является обязательным для заполнения!!!" ;}
