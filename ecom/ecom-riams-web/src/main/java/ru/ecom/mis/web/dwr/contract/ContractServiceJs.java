@@ -138,10 +138,17 @@ public class ContractServiceJs {
 			, String aJavascript, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select p.id as pid,p.code as pcode,p.name as pname from ").append(aTable).append(" p where ") ;
-		if (aTable.toUpperCase().trim().equals("PRICEPOSITION")) {
-			sql.append(" p.priceList_id='").append(aPriceList).append("' and ") ;
+		String table=aTable ;String addWhereSql = "" ;String addLeftSql="";
+		if (aTable.toUpperCase().trim().equals("MEDSERVICEOPERATION")) {
+			table="MedService" ;
+			addWhereSql = "p.dtype='MedService' and vmt.code in ('OPERATION','SURVEY') and p.finishDate is null and " ;
+			addLeftSql = "left join VocServiceType vmt on vmt.id=p.serviceType_id ";
+		} else if (aTable.toUpperCase().trim().equals("PRICEPOSITION")) {
+			addWhereSql=" p.priceList_id='"+aPriceList+"' and " ;
 		}
+		sql.append("select p.id as pid,p.code as pcode,p.name as pname from ").append(table).append(" p ").append(addLeftSql).append("where ") ;
+			sql.append(addWhereSql) ;
+		
 		boolean isNext = false;
 		if (aCode!=null && !aCode.equals("")) {
 			sql.append(" p.code like '%").append(aCode.toUpperCase()).append("%'") ;
