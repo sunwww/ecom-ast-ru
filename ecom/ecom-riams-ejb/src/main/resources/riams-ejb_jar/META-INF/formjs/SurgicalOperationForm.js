@@ -53,10 +53,13 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	checkPeriod(aForm,aCtx.manager) ;
 	if (+aForm.isAnesthesia>0) {
+		var ch = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocYesNo,aForm.isAnesthesia) ;
+		if (ch!=null && ch.code.equals("1")) {
 		if (+aForm.anaesthetist>0 && +aForm.anesthesia>0 && +aForm.anesthesiaType>0 && +aForm.anesthesiaDuration>0) {
 			
 		} else {
 			throw "Необходимо заполнить все обязательные поля по анестезии!!!" ;
+		}
 		}
 	} else {throw "Необходимо указать была анестезия или нет!!!" ;}
 }
