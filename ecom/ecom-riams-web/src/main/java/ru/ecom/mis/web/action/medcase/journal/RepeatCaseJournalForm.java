@@ -32,4 +32,17 @@ public class RepeatCaseJournalForm extends BaseValidatorForm{
 	private String theDateEnd;
 	/** Дата начала периода */
 	private String theDateBegin;
+	
+	/** Отделение */
+	@Comment("Отделение")
+	public Long getDepartment() {
+		return theDepartment;
+	}
+
+	public void setDepartment(Long aDepartment) {
+		theDepartment = aDepartment;
+	}
+
+	/** Отделение */
+	private Long theDepartment;
 }
