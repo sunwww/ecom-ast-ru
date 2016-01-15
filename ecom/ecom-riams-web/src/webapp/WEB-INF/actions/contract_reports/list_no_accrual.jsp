@@ -12,7 +12,7 @@
   </tiles:put>
   <tiles:put name="side" type="string">
   	
-    	<tags:contractMenu currentAction="analisisMedServices"/>
+    	<tags:contractMenu currentAction="controlReportNoAccrual"/>
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
@@ -32,9 +32,7 @@
 				<msh:textField property="dateTo" label="по"/>
 				</msh:row>
      <msh:row>
-           <td colspan="11">
-            <input type="submit" onclick="find()" value="Найти" />
-          </td>
+        	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
       </msh:row>
       
     </msh:panel>
@@ -66,7 +64,7 @@
     	if (date2==null || date2.equals("")) {request.setAttribute("dateTo", date1) ;} else {request.setAttribute("dateTo", date2) ;}
     	%>
     
-    <msh:section title="Реестр за период с ${param.dateFrom} по ${dateTo}.">
+    <msh:section >
     <ecom:webQuery nameFldSql="serverPerson_sql" name="serverPerson" nativeSql="
 select ca.id,
 	CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
@@ -88,9 +86,9 @@ select ca.id,
     <msh:sectionTitle>
     
     <form action="print-contact_analisis_no_accrual.do" method="post" target="_blank">
-    Реестр счетов.
+    Реестр счетов на оплату за период с ${param.dateFrom} по ${dateTo}.
     <input type='hidden' name="sqlText" id="sqlText" value="${journal_expert_sql}"> 
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateFrom} по ${dateTo}.">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр счетов на оплату за период с ${param.dateFrom} по ${dateTo}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
