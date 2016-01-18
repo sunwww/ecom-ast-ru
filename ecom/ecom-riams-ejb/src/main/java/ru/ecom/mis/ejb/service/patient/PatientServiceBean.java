@@ -586,7 +586,7 @@ public class PatientServiceBean implements IPatientService {
 		Long areaId = null;
 		LpuArea la = null;
 		if (attachedType!=null&&attachedType.equals("1")){
-			try{ 
+			try { 
 				obj = theManager.createNativeQuery("select max(la.id) from patient p" +
 			
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
@@ -596,17 +596,18 @@ public class PatientServiceBean implements IPatientService {
 					" left join vocareatype vat on vat.id=la.type_id" +
 					" where p.id=" +aPatientId +
 					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getSingleResult();
+				
+				System.out.println("==== ATT= laID = "+obj.toString());
 			} catch (NoResultException e) {
 				System.out.println("Участок по адресу не найден");
 			} catch (Exception e) {
 				e.printStackTrace();
+			}		
+			
+			if (obj!=null&&Long.valueOf(obj.toString())!=0) {
+				areaId=Long.valueOf(obj.toString());
+				la = theManager.find(LpuArea.class, areaId);
 			}
-		
-		
-		if (obj!=null&&Long.valueOf(obj.toString())!=0) {
-			areaId=Long.valueOf(obj.toString());
-			la = theManager.find(LpuArea.class, areaId);
-		}
 		}
 		
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
@@ -617,18 +618,15 @@ public class PatientServiceBean implements IPatientService {
 			.setParameter("code", attachedType).getResultList().get(0):null);
 		
 		if (attachments.isEmpty()) { // Создаем новое 
-			String lpuId = null;
+			String defauleLpuId = null;
 			MisLpu lpuAtt = null;
-			try {
-				 lpuId = ((SoftConfig)theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0)).getKeyValue();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			
 			if (la!=null) {
 				Long l = Long.valueOf(theManager.createNativeQuery("select lpu_id from lpuarea where id="+areaId).getResultList().get(0).toString());
-				lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(l));
+				lpuAtt = (MisLpu) theManager.find(MisLpu.class, l);
 			} else {
-				lpuAtt = (MisLpu) theManager.find(MisLpu.class, Long.valueOf(lpuId));
+				Long l = Long.valueOf(theManager.createNativeQuery("select keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0).toString());
+				lpuAtt = (MisLpu) theManager.find(MisLpu.class, l);
 			}
 			if (lpuAtt!=null) {
 				LpuAttachedByDepartment att = new LpuAttachedByDepartment();
