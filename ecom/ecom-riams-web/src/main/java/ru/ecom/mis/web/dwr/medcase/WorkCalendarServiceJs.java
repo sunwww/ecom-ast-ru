@@ -31,16 +31,16 @@ public class WorkCalendarServiceJs {
 	
 	public static String getIsServiceStreamEnabled(String aPatientId, String aServiceStreamId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		
-	String sql = "select case when (select mc.id from MedCase mc " +
-				" where mc.patient_id='"+aPatientId+"' and mc.dtype='HospitalMedCase' " +
-				" and mc.dateFinish is null and mc.deniedHospitalizating_id is null) is null then '0' else case when "+aServiceStreamId+" = (select mc.servicestream_id from MedCase mc " +
-				" where mc.patient_id='"+aPatientId+"' and mc.dtype='HospitalMedCase' " +
-				" and mc.dateFinish is null and mc.deniedHospitalizating_id is null)" +
-				"or "+aServiceStreamId+" in " +
-				"(select id from vocservicestream where code='OBLIGATORYINSURANCE') then '1' else '0' end end" ;
-	//System.out.println(sql);
-	return service.executeNativeSql(sql).iterator().next().get1().toString();
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select mc.id, case ")
+			.append(" when (select code from vocservicestream where id='").append(aServiceStreamId).append("')='CHARGED' then '0'")
+			.append(" else '1' end ")
+			.append(" from medcase mc ")
+			.append(" left join vocservicestream vss on vss.id=mc.serviceStream_id")
+			.append(" where mc.patient_id='").append(aPatientId).append("' and mc.dtype='HospitalMedCase'") 
+			.append(" and mc.deniedHospitalizating_id is null and mc.datefinish is null") ;
+		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
+		return l.isEmpty()?"0":l.iterator().next().get1().toString();
 	}
 	
 	public static String getChargedServiceStream (HttpServletRequest aRequest) throws NamingException {
