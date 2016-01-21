@@ -141,7 +141,7 @@
             	if (+$("serviceSubType").value>0) addParam+=" and ms.serviceSubType_id="+$("serviceSubType").value ;
             	if (+$("patient").value>0) addParam+=" and pat.id="+$("department").value ;
             	if ($("number").value!="") {
-            		addParam+=" and p.materialId="+$("number").value ;
+            		addParam+=" and p.materialId='"+$("number").value+"'" ;
             		
             	}
             	var print = +getCheckedRadio(document.forms[0],"typePrint");
