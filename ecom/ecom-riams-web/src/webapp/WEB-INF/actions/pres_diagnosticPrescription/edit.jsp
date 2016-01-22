@@ -19,6 +19,12 @@
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
 
+	function checkRecord(aId,aValue,aIdService,aService) {
+    	$('surgCalTime').value = aId; 
+    	$('surgTimeCalName').value = aValue ;
+    
+    }
+	
 	//Заполняем ЛН данными из шаблона (не удаляя существующие назначения). 
 	function fillFormFromTemplate(aData) {
 		var aRow = aData.split("#");
