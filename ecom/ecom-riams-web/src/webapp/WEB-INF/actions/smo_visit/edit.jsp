@@ -295,10 +295,6 @@
         <msh:sideLink params="id" action="/print-talon_amb_short.do?s=VisitPrintService&amp;m=printTalon"  name="Укороченного талона" title="Печать короткой версии талона" guid="1daf61-0108-4845-86c3-cs3" roles="/Policy/Mis/MedCase/Visit/PrintShortTalon" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Visit/PrintBakExp" params="id" action="/print-BakExp.do?s=VisitPrintService&amp;m=printBakExp" name="Направления на бак.исследование" guid="51g38-f936-45d0-ac70-0g66c" />
         <tags:diary_parameterCreate document="документа" roles="/Policy/Mis/MedCase/Document/Internal/Create" action="doc_create_type.do?id=${param.id}" name="type" title="Документа" vocName="documentType" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
-    	name="Печать справки" 
-    	action='.javascript:printReference(".do")' title='Печать справки'
-    	/>
       </msh:sideMenu>
       </msh:tableNotEmpty>
     </msh:ifFormTypeIsView>

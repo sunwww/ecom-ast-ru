@@ -82,6 +82,10 @@
         	 $('${name}Title').innerHTML="Услуги по внутр. справочник" ;
              $("${name}Code").focus() ;
              $("${name}Code").select() 
+         } else if (aTable=="MedServiceOperation") {
+        	 $('${name}Title').innerHTML="Справочник операций и манипуляций" ;
+             $("${name}Code").focus() ;
+             $("${name}Code").select() 
          }
          if (aFunction==null || aFunction=="") {
         	 if ('${autoCompliteServiceFind}'!='') {

@@ -29,6 +29,7 @@
     
   </tiles:put>
   <tiles:put name="body" type="string">
+    <%request.setAttribute("kv", "\"") ; %>
     <!-- 
     	  - Медицинских услуг
     	  -->
@@ -137,7 +138,7 @@
           	 ,case when ms.isNoOmc='1' then '' else 'Да. '||coalesce(vms.code,'НЕТ КОДА!!!!') end as isNoOmc
           	 , ms.additionCode as msadditionCode
           	 ,list(pl.name||'-'||pp.code) as prinfo
-          	 ,ms.id||''','''||ms.code||' '||ms.name as msidname 
+          	 ,ms.id||''','''||ms.code||' '||replace(ms.name,'{kv}','') as msidname 
           	 from MedService ms 
           	 left join PriceMedservice pms on pms.medservice_id=ms.id
           	 left join priceposition pp on pp.id=pms.priceposition_id

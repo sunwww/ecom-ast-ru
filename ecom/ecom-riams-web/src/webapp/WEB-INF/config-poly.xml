@@ -278,6 +278,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_directOtherSpecialist_list.jsp"/>
         </action>
+        <action path='/visit_f039_param' type='ru.ecom.poly.web.action.ticket.Report039Action'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/f039_param.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/f039_param.jsp"/>
+        </action>
         <action path='/visit_f039_list' type='ru.ecom.poly.web.action.ticket.Report039Action'
                 name='poly_journalBySpecForm'
                 validate='true'

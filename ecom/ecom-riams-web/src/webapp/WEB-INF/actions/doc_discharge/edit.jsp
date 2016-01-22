@@ -70,26 +70,7 @@ if (request.getAttribute("vssPrint_sql")!=null) {ActionUtil.getValueByList("vssP
     function printDocument() {
       	if (confirm('Распечатать документ?')) {
       		var addParam = "" ;
-      		if (confirm('Распечатать дополнительно справку о стоимости визита?')) {
-      			TicketService.getDataByReference(
-      					$('medCase').value,'VISIT',{
-      						callback: function(aResult) {
-      							if (aResult!=null) {
-      								//window.location.href = "print-doc_reference.do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
-      					      		window.location.href = "print-documentDischarge${vssPrint}.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}"+aResult ;
-      							} else {
-      								window.location.href = "print-documentDischarge${vssPrint}.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}"
-      							}
-      						}, errorHandler: function(aMessage) {
-      						    alert("Справка о стоимости распечатываться не будет") ;
-      							window.location.href = "print-documentDischarge${vssPrint}.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      						}
-      					
-      					}
-      				);
-      		} else {
-      			window.location.href = "print-documentDischarge${vssPrint}.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      		}
+      		window.location.href = "print-documentDischarge${vssPrint}.do?next=entityParentView-smo_visit.do__id="+$('medCase').value+"&s=VisitPrintService&m=printDocument&id=${param.id}" ;
       		
       	}
   }
@@ -100,30 +81,7 @@ if (request.getAttribute("vssPrint_sql")!=null) {ActionUtil.getValueByList("vssP
   <script type="text/javascript">
     function printDocument() {
       	if (confirm('Распечатать документ?')) {
-      		if (confirm('Распечатать дополнительно справку о стоимости посещения?')) {
-      			TicketService.getDataByReference(
-      					$('medCase').value,'VISIT',{
-      						callback: function(aResult) {
-      							if (aResult!=null) {
-      								//window.location.href = "print-doc_reference.do?medCase=${param.id}&m=refenceSMO&s=VisitPrintService"+aResult;
-      					      		window.location.href = "print-documentDischarge${vssPrint}.do?s=VisitPrintService&m=printDocument&id=${param.id}"+aResult ;
-      								
-      							}
-      						}, errorHandler: function(aMessage) {
-      							if (aMessage!=null) {
-      								alert("----"+aMessage);
-      							} else {
-      						    	alert("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
-      							}
-      			          		window.location.href = "print-documentDischarge${vssPrint}.do?s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      						}
-      					
-      					}
-      				);
-      			
-      		} else {
           		window.location.href = "print-documentDischarge${vssPrint}.do?s=VisitPrintService&m=printDocument&id=${param.id}" ;
-      		}
       	}
       }
     printDocument();

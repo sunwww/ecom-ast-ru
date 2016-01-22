@@ -35,7 +35,7 @@
                   <a href=" javascript:showTimeWorkCalendar('.do') ">расписание специалистов</a>
                 </msh:ifFormTypeIsNotView>
               </h3>
-            </div>
+            </div> 
           </td>
         </tr>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">

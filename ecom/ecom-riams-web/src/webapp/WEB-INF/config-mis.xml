@@ -474,6 +474,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/contract_contractAccountMedService/add.jsp" />
         </action>
+        <action path='/contact_analisis_no_accrual' type='ru.ecom.web.actions.base.ForwardAction'
+                validate='false'
+                scope="request"
+                name="contract_reportsForm"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/contract_reports/list_no_accrual.jsp" />
+        </action>
         <action path='/contract_contractAccountMedServiciesSave' type='ru.ecom.mis.web.action.contract.ContractAccountMedServiceSaveAction'
                 validate='false'
                 scope="request"

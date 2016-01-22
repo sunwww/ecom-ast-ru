@@ -32,7 +32,7 @@ public class WorkCalendarServiceJs {
 	public static String getIsServiceStreamEnabled(String aPatientId, String aServiceStreamId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select mc.id, case ")
+		sql.append("select  case ")
 			.append(" when (select code from vocservicestream where id='").append(aServiceStreamId).append("')='CHARGED' then '0'")
 			.append(" else '1' end ")
 			.append(" from medcase mc ")
@@ -427,7 +427,7 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and vsrt.serviceStreams like '%,"+aServiceStream+",%' and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') order by wct.timefrom") ;
+		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,"+aServiceStream+",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') order by wct.timefrom") ;
 
 		list = service.executeNativeSql(sql.toString(),50);
 

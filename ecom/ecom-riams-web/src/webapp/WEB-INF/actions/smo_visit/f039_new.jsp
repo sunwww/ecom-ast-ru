@@ -227,231 +227,184 @@
     </msh:form>
     
     <%
-    	if (request.getParameter("beginDate")!=null  
-    			&& !request.getParameter("beginDate").equals("") 
-    			&& request.getParameter("finishDate")!=null
-    			&& !request.getParameter("finishDate").equals("")) {
-    		request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("beginDate"),request.getParameter("finishDate"),request));
-    		ActionUtil.setParameterFilterSql("workFunction","wf.workFunction_id", request) ;
-    		ActionUtil.setParameterFilterSql("specialist","smo.workFunctionExecute_id", request) ;
-    		ActionUtil.setParameterFilterSql("lpu","w.lpu_id", request) ;
-    		ActionUtil.setParameterFilterSql("serviceStream","smo.serviceStream_id", request) ;
-    		ActionUtil.setParameterFilterSql("workPlaceType","smo.workPlaceType_id", request) ;
-    		ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
-    		ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
-    		ActionUtil.setParameterFilterSql("person","wp.id", request) ;
-    		ActionUtil.setParameterFilterSql("visitReason","smo.visitReason_id", request) ;
-    		String age =null;
-    		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
-			String ageTo = request.getParameter("ageTo") ;
-			String ageFrom = request.getParameter("ageFrom") ;
-			if (ageFrom!=null && !ageFrom.equals("")) {
-				if (ageTo!=null && !ageTo.equals("")) {
-					age=" between "+ageFrom+" and "+ageTo ;
-				} else {
-					age=">="+ageFrom ;
-				}
-			} else if (ageTo!=null && !ageTo.equals("")) {
-				age="<="+ageTo ;
-			}
-			if (age!=null) {
-				StringBuilder as = new StringBuilder() ;
-				as.append(" and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
-				as.append(" +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
-				as.append(" +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
-				as.append(" then -1 else 0 end) ");
-				as.append(age) ;
-				request.setAttribute("ageSql", as.toString()) ;
-			}
-    		if (typeDtype.equals("1")) {
-    			request.setAttribute("dtypeSql", "upper(smo.dtype)='VISIT'") ;
-    		} else if (typeDtype.equals("2")) {
-    			request.setAttribute("dtypeSql", "upper(smo.dtype)='SHORTMEDCASE'") ;
-    		} else {
-    			request.setAttribute("dtypeSql", "(UPPER(smo.dtype)='SHORTMEDCASE' or UPPER(smo.dtype)='VISIT')") ;
-    		}
-    		if (typeDiag.equals("1")) {
-    			request.setAttribute("is039Sql", " and vwf.isNo039='1'") ;
-    		} else if (typeDiag.equals("2")) {
-    			request.setAttribute("is039Sql", " and (vwf.isNo039='0' or vwf.isNo039 is null)") ;
-    		} 
-    		if (typeAgeWork.equals("1")) {
-    			request.setAttribute("typeAgeWorkId", "16") ;
-    		} else {
-    			request.setAttribute("typeAgeWorkId", "18") ;
-    		}
-    		if (typeEmergency.equals("1")) {
-    			request.setAttribute("emergencySql", " and smo.emergency='1'") ;
-    		} else if (typeEmergency.equals("2")) {
-    			request.setAttribute("emergencySql", " and (smo.emergency='0' or smo.emergency is null)") ;
-    		}
-    		if (typeDate.equals("1")) {
-    			request.setAttribute("dateSql", "spo.dateFinish") ;
-    		} else {
-    			request.setAttribute("dateSql", "smo.dateStart") ;
-    		}
-    		if (typeGroup.equals("1")) {
-    			request.setAttribute("printPrefix", "_date");
-    			// Группировка по дате
-    			if (typeDate.equals("2")) {
-	       			request.setAttribute("groupSql", "to_char(smo.dateStart,'dd.mm.yyyy')") ;
-	       			request.setAttribute("groupSqlId", "'&beginDate='||to_char(smo.dateStart,'dd.mm.yyyy')||'&finishDate='||to_char(smo.dateStart,'dd.mm.yyyy')") ;
-	       			request.setAttribute("groupName", "Дата посещения") ;
-	       			request.setAttribute("groupGroup", "smo.dateStart") ;
-	       			request.setAttribute("groupOrder", "smo.dateStart") ;
-    			} else {
-	       			request.setAttribute("groupSql", "to_char(spo.dateFinish,'dd.mm.yyyy')") ;
-	       			request.setAttribute("groupSqlId", "'&beginDate='||to_char(spo.dateFinish,'dd.mm.yyyy')||'&finishDate='||to_char(spo.dateFinish,'dd.mm.yyyy')") ;
-	       			request.setAttribute("groupName", "Дата закрытия СПО") ;
-	       			request.setAttribute("groupGroup", "spo.dateFinish") ;
-	       			request.setAttribute("groupOrder", "spo.dateFinish") ;
-    			}
-    		} else if (typeGroup.equals("2")) {
-    			// Группировка по ЛПУ
-       			request.setAttribute("groupSql", "lpu.name") ;
-       			request.setAttribute("groupSqlId", "'&lpu='||w.lpu_id") ;
-       			request.setAttribute("groupName", "ЛПУ") ;
-       			request.setAttribute("groupGroup", "w.lpu_id,lpu.name") ;
-       			request.setAttribute("groupOrder", "lpu.name") ;
-    		} else if (typeGroup.equals("4")) {
-    			// Группировка по врачам 
-       			request.setAttribute("groupSql", "wp.lastname||' '||wp.firstname||' '||wp.middlename") ;
-       			request.setAttribute("groupSqlId", "'&person='||wp.id") ;
-       			request.setAttribute("groupName", "Врач") ;
-       			request.setAttribute("groupGroup", "wp.id,wp.lastname,wp.firstname,wp.middlename") ;
-       			request.setAttribute("groupOrder", "wp.lastname,wp.firstname,wp.middlename") ;
-    		} else if (typeGroup.equals("3")) {
-    			// Группировка по сотрудникам 
-       			request.setAttribute("groupSql", "vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename") ;
-       			request.setAttribute("groupSqlId", "'&specialist='||wf.id") ;
-       			request.setAttribute("groupName", "Сотрудник") ;
-       			request.setAttribute("groupGroup", "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename") ;
-       			request.setAttribute("groupOrder", "vwf.name,wp.lastname,wp.firstname,wp.middlename") ;
-    		} else if (typeGroup.equals("5")) {
-    			// Группировка по специальностям
-       			request.setAttribute("groupSql", "vwf.name") ;
-       			request.setAttribute("groupSqlId", "'&workFunction='||vwf.id") ;
-       			request.setAttribute("groupName", "Рабочая функция") ;
-       			request.setAttribute("groupGroup", "vwf.id,vwf.name") ;
-       			request.setAttribute("groupOrder", "vwf.name") ;
-    		} else if (typeGroup.equals("6")) {
-    			// Группировка по потоку обслуживания
-       			request.setAttribute("groupSql", "vss.name") ;
-       			request.setAttribute("groupSqlId", "'&serviceStream='||smo.serviceStream_id") ;
-       			request.setAttribute("groupName", "Поток обслуживания") ;
-       			request.setAttribute("groupGroup", "smo.serviceStream_id,vss.name") ;
-       			request.setAttribute("groupOrder", "vss.name") ;
-    		} else if (typeGroup.equals("7")) {
-    			// Группировка по месту обслуживания
-       			request.setAttribute("groupSql", "vwpt.name") ;
-       			request.setAttribute("groupSqlId", "'&workPlaceType='||smo.workPlaceType_id") ;
-       			request.setAttribute("groupName", "Место обслуживания") ;
-       			request.setAttribute("groupGroup", "smo.workPlaceType_id,vwpt.name") ;
-       			request.setAttribute("groupOrder", "vwpt.name") ;
-    		} else if (typeGroup.equals("8")) {
-    			// Группировка по социальному статусу
-       			request.setAttribute("groupSql", "pvss.name") ;
-       			request.setAttribute("groupSqlId", "'&socialStatus='||pvss.id") ;
-       			request.setAttribute("groupName", "Социальный статус") ;
-       			request.setAttribute("groupGroup", "pvss.id,pvss.name") ;
-       			request.setAttribute("groupOrder", "pvss.name") ;
-    		} else if (typeGroup.equals("9")) {
-    			// Группировка по месяцам
-       			request.setAttribute("groupSql", "to_char(smo.dateStart,'mm.yyyy')") ;
-       			request.setAttribute("groupSqlId", "''") ;
-       			request.setAttribute("groupName", "Период") ;
-       			request.setAttribute("groupGroup", "to_char(smo.dateStart,'mm.yyyy')") ;
-       			request.setAttribute("groupOrder", "to_char(smo.dateStart,'mm.yyyy')") ;
-    		} else if (typeGroup.equals("10")) {
-    			// Группировка по доп.статусу
-       			request.setAttribute("groupSql", "vas.name") ;
-       			request.setAttribute("groupSqlId", "'&additionStatus='||vas.id") ;
-       			request.setAttribute("groupName", "Доп.статус") ;
-       			request.setAttribute("groupGroup", "vas.id,vas.name") ;
-       			request.setAttribute("groupOrder", "vas.name") ;
-    		}
-    		if (typeReestr!=null && (typeReestr.equals("1"))) {
-    			
-    			String homeVisit = request.getParameter("homeAge");
-    			String pay = request.getParameter("pay");
-    			StringBuilder sqlAppend = new StringBuilder();
-    			if (pay!=null) {
-    				if (pay.equals("DMS")){sqlAppend.append(" and vss.code='PRIVATEINSURANCE'");} 
-    				else if (pay.equals("Budget")) {sqlAppend.append(" and vss.code='BUDGET'");}
-    				else if (pay.equals("Charge")) {sqlAppend.append(" and vss.code='CHARGED'");}
-    				else if (pay.equals("OMS")) {sqlAppend.append(" and vss.code='OBLIGATORYINSURANCE'");}
-    			}
-    			if (homeVisit!=null) {
-    				if (homeVisit.equals("-17")) {sqlAppend.append(
-        					"and (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') "+
-        		    				"and (cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) "+
-        		    				"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) "+
-        		    				"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) "+
-        		    				"then -1 else 0 end)<18)" );}
-    				else if (homeVisit.equals("0-1")) {sqlAppend.append(
-        					"and (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') "+
-        		    				"and (cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) "+
-        		    				"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) "+
-        		    				"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) "+
-        		    				"then -1 else 0 end)<2)" );}
-    				else if (homeVisit.equals("60")) {sqlAppend.append(
-        					"and (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') "+
-        		    				"and (cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) "+
-        		    				"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) "+
-        		    				"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) "+
-        		    				"then -1 else 0 end)>=60)" );}
-    				else if (homeVisit.equals("prof-17")) {sqlAppend.append(
-        					"and vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') "+
-        		    				"and (cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) "+
-				    				"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) "+
-				    				"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) "+
-				    				"then -1 else 0 end)<18)" );}
-    				else if (homeVisit.equals("prof0-1")) {sqlAppend.append(
-    					"and vr.code='PROFYLACTIC' and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') "+
-	    				"and (cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) "+
-	    				"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) "+
-	    				"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) "+
-	    				"then -1 else 0 end)<2)" );}
-    				else if (homeVisit.equals("homeIll")) {sqlAppend.append(
-    					"and (vr.code='ILLNESS' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') ");}
-    				else if (homeVisit.equals("homeAll")) {sqlAppend.append(
-    					"and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') ");}
-    				else if (homeVisit.equals("prof")) {sqlAppend.append(
-    					"and vr.code='PROFYLACTIC'  and vwpt.code='POLYCLINIC' ");}
-    				else if (homeVisit.equals("polIll60")) {
-    					sqlAppend.append("and (vr.code='ILLNESS' or vr.code='CONSULTATION') and vwpt.code='POLYCLINIC' "+
-    							"and (cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) "+
-    							"then -1 else 0 end)<0)then -1 else 0 end)>=60)");}
-					else if (homeVisit.equals("polIll-17")) {
-						sqlAppend.append("and (vr.code='ILLNESS' or vr.code='CONSULTATION')  and vwpt.code='POLYCLINIC' "+
-    							"and (cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) "+
-    							"then -1 else 0 end)<0) then -1 else 0 end)<18)");}
-					else if (homeVisit.equals("polIllAll")) {
-						sqlAppend.append(" and (vr.code='ILLNESS' or vr.code='CONSULTATION') and vwpt.code='POLYCLINIC'");}
-    				else if (homeVisit.equals("pol60")) {
-    					sqlAppend.append(" and vwpt.code='POLYCLINIC' and "+
-    							"(cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) "+
-    							"then -1 else 0 end)<0)then -1 else 0 end)>=60)");}
-    				else if (homeVisit.equals("pol-17")) {
-    					sqlAppend.append(" and vwpt.code='POLYCLINIC' and "+
-    							"(cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)"+
-    							"+(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) "+
-    							"then -1 else 0 end)<0)then -1 else 0 end)<18)");}
-    				else if (homeVisit.equals("polVil")) {
-    					sqlAppend.append(" and vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') ");}
-    				else if (homeVisit.equals("polAll")) {
-    					sqlAppend.append(" and vwpt.code='POLYCLINIC' ");}
-    				}
-    			request.setAttribute("appendSQL", sqlAppend.toString() );
-    			
-    			
+	if (request.getParameter("beginDate")!=null  
+	&& !request.getParameter("beginDate").equals("") 
+	&& request.getParameter("finishDate")!=null
+	&& !request.getParameter("finishDate").equals("")) {
+boolean isAggregate =false ;
+request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("beginDate"),request.getParameter("finishDate"),request));
+ActionUtil.setParameterFilterSql("workFunction","wf.workFunction_id", request) ;
+ActionUtil.setParameterFilterSql("specialist","wf.id", request) ;
+ActionUtil.setParameterFilterSql("lpu","lpu.id", request) ;
+ActionUtil.setParameterFilterSql("serviceStream","vss.id", request) ;
+ActionUtil.setParameterFilterSql("workPlaceType","vwpt.id", request) ;
+ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
+ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
+ActionUtil.setParameterFilterSql("person","wp.id", request) ;
+ActionUtil.setParameterFilterSql("visitReason","vr.id", request) ;
+String age =null;
+SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+String ageTo = request.getParameter("ageTo") ;
+String ageFrom = request.getParameter("ageFrom") ;
+if (ageFrom!=null && !ageFrom.equals("")) {
+	if (ageTo!=null && !ageTo.equals("")) {
+		age=" between "+ageFrom+" and "+ageTo ;
+	} else {
+		age=">="+ageFrom ;
+	}
+} else if (ageTo!=null && !ageTo.equals("")) {
+	age="<="+ageTo ;
+} 
+if (age!=null) {
+	StringBuilder as = new StringBuilder() ;
+	if (isAggregate ) {as.append("ag.age ") ;} else {
+	as.append(" and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+	as.append(" +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+	as.append(" +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+	as.append(" then -1 else 0 end) ");}
+	as.append(age) ;
+	request.setAttribute("ageSql", as.toString()) ;
+}
+if (typeDtype.equals("1")) {
+	request.setAttribute("dtypeSql", isAggregate ?" and ag.isTicket='0'":"upper(smo.dtype)='VISIT'") ;
+} else if (typeDtype.equals("2")) {
+	request.setAttribute("dtypeSql", isAggregate ?" and ag.isTicket='1'":"upper(smo.dtype)='SHORTMEDCASE'") ;
+} else {
+	request.setAttribute("dtypeSql", isAggregate ?"":"(UPPER(smo.dtype)='SHORTMEDCASE' or UPPER(smo.dtype)='VISIT')") ;
+}
+if (typeDiag.equals("1")) {
+	request.setAttribute("is039Sql", isAggregate ?" and ag.isDiagnost='1'":" and vwf.isNo039='1'") ;
+} else if (typeDiag.equals("2")) {
+	request.setAttribute("is039Sql", isAggregate ?" and ag.isDiagnost is null":" and (vwf.isNo039='0' or vwf.isNo039 is null)") ;
+} 
+if (typeAgeWork.equals("1")) {
+	request.setAttribute("typeAgeWorkId", "16") ;
+} else {
+	request.setAttribute("typeAgeWorkId", "18") ;
+}
+if (typeEmergency.equals("1")) {
+	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='1'":" and smo.emergency='1'") ;
+} else if (typeEmergency.equals("2")) {
+	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='0'":" and (smo.emergency='0' or smo.emergency is null)") ;
+}
+if (typeDate.equals("1")) {
+	request.setAttribute("dateSql", isAggregate ?"ag.finishSpoDate":"spo.dateFinish") ;
+} else {
+	request.setAttribute("dateSql", isAggregate ?"ag.visitDate":"smo.dateStart") ;
+}
+if (typeGroup.equals("1")) {
+	request.setAttribute("printPrefix", "_date");
+	// Группировка по дате
+	if (typeDate.equals("2")) {
+			request.setAttribute("groupSql", isAggregate ?"to_char(ag.visitdate,'dd.mm.yyyy')":"to_char(smo.dateStart,'dd.mm.yyyy')") ;
+			request.setAttribute("groupSqlId", isAggregate ?"'&beginDate='||to_char(ag.visitdate,'dd.mm.yyyy')||'&finishDate='||to_char(ag.visitdate,'dd.mm.yyyy')":"'&beginDate='||to_char(smo.dateStart,'dd.mm.yyyy')||'&finishDate='||to_char(smo.dateStart,'dd.mm.yyyy')") ;
+			request.setAttribute("groupName", "Дата посещения") ;
+			request.setAttribute("groupGroup", isAggregate ?"ag.visitdate":"smo.dateStart") ;
+			request.setAttribute("groupOrder", isAggregate ?"ag.visitdate":"smo.dateStart") ;
+	} else {
+			request.setAttribute("groupSql", isAggregate ?"to_char(ag.finishSpoDate,'dd.mm.yyyy')":"to_char(spo.dateFinish,'dd.mm.yyyy')") ;
+			request.setAttribute("groupSqlId", isAggregate ?"'&beginDate='||to_char(ag.finishSpoDate,'dd.mm.yyyy')||'&finishDate='||to_char(ag.finishSpoDate,'dd.mm.yyyy')":"'&beginDate='||to_char(spo.dateFinish,'dd.mm.yyyy')||'&finishDate='||to_char(spo.dateFinish,'dd.mm.yyyy')") ;
+			request.setAttribute("groupName", "Дата закрытия СПО") ;
+			request.setAttribute("groupGroup", isAggregate ?"ag.finishSpoDate":"spo.dateFinish") ;
+			request.setAttribute("groupOrder", isAggregate ?"ag.finishSpoDate":"spo.dateFinish") ;
+	}
+} else if (typeGroup.equals("2")) {
+	// Группировка по ЛПУ
+		request.setAttribute("groupSql", "lpu.name") ;
+		request.setAttribute("groupSqlId", "'&lpu='||lpu.id") ;
+		request.setAttribute("groupName", "ЛПУ") ;
+		request.setAttribute("groupGroup", "lpu.id,lpu.name") ;
+		request.setAttribute("groupOrder", "lpu.name") ;
+} else if (typeGroup.equals("4")) {
+	// Группировка по врачам 
+		request.setAttribute("groupSql", "wp.lastname||' '||wp.firstname||' '||wp.middlename") ;
+		request.setAttribute("groupSqlId", "'&person='||wp.id") ;
+		request.setAttribute("groupName", "Врач") ;
+		request.setAttribute("groupGroup", "wp.id,wp.lastname,wp.firstname,wp.middlename") ;
+		request.setAttribute("groupOrder", "wp.lastname,wp.firstname,wp.middlename") ;
+} else if (typeGroup.equals("3")) {
+	// Группировка по сотрудникам 
+		request.setAttribute("groupSql", "vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename") ;
+		request.setAttribute("groupSqlId", "'&specialist='||wf.id") ;
+		request.setAttribute("groupName", "Сотрудник") ;
+		request.setAttribute("groupGroup", "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename") ;
+		request.setAttribute("groupOrder", "vwf.name,wp.lastname,wp.firstname,wp.middlename") ;
+} else if (typeGroup.equals("5")) {
+	// Группировка по специальностям
+		request.setAttribute("groupSql", "vwf.name") ;
+		request.setAttribute("groupSqlId", "'&workFunction='||vwf.id") ;
+		request.setAttribute("groupName", "Рабочая функция") ;
+		request.setAttribute("groupGroup", "vwf.id,vwf.name") ;
+		request.setAttribute("groupOrder", "vwf.name") ;
+} else if (typeGroup.equals("6")) {
+	// Группировка по потоку обслуживания
+		request.setAttribute("groupSql", "vss.name") ;
+		request.setAttribute("groupSqlId", "'&serviceStream='||vss.id") ;
+		request.setAttribute("groupName", "Поток обслуживания") ;
+		request.setAttribute("groupGroup", "vss.id,vss.name") ;
+		request.setAttribute("groupOrder", "vss.name") ;
+} else if (typeGroup.equals("7")) {
+	// Группировка по месту обслуживания
+		request.setAttribute("groupSql", "vwpt.name") ;
+		request.setAttribute("groupSqlId", "'&workPlaceType='||vwpt.id") ;
+		request.setAttribute("groupName", "Место обслуживания") ;
+		request.setAttribute("groupGroup", "vwpt.id,vwpt.name") ;
+		request.setAttribute("groupOrder", "vwpt.name") ;
+} else if (typeGroup.equals("8")) {
+	// Группировка по социальному статусу
+		request.setAttribute("groupSql", "pvss.name") ;
+		request.setAttribute("groupSqlId", "'&socialStatus='||pvss.id") ;
+		request.setAttribute("groupName", "Социальный статус") ;
+		request.setAttribute("groupGroup", "pvss.id,pvss.name") ;
+		request.setAttribute("groupOrder", "pvss.name") ;
+} else if (typeGroup.equals("9")) {
+	// Группировка по месяцам
+		request.setAttribute("groupSql", isAggregate ?"to_char(ag.visitdate,'mm.yyyy')":"to_char(smo.dateStart,'mm.yyyy')") ;
+		request.setAttribute("groupSqlId", "''") ;
+		request.setAttribute("groupName", "Период") ;
+		request.setAttribute("groupGroup", isAggregate ?"to_char(ag.visitdate,'mm.yyyy')":"to_char(smo.dateStart,'mm.yyyy')") ;
+		request.setAttribute("groupOrder", isAggregate ?"to_char(ag.visitdate,'mm.yyyy')":"to_char(smo.dateStart,'mm.yyyy')") ;
+} else if (typeGroup.equals("10")) {
+	// Группировка по доп.статусу
+		request.setAttribute("groupSql", "vas.name") ;
+		request.setAttribute("groupSqlId", "'&additionStatus='||vas.id") ;
+		request.setAttribute("groupName", "Доп.статус") ;
+		request.setAttribute("groupGroup", "vas.id,vas.name") ;
+		request.setAttribute("groupOrder", "vas.name") ;
+}
+if (typeReestr!=null && (typeReestr.equals("1"))) {
+	
+	StringBuilder sqlAppend = new StringBuilder();
+	String place= request.getParameter("place"); if (place!=null) { sqlAppend.append(" and vwpt.code='"+place+"'"); }
+	String payment= request.getParameter("payment"); if (payment!=null) { sqlAppend.append(" and vss.code='"+payment+"'"); }
+	String isVillage = request.getParameter("isVillage"); if (isVillage!=null) { sqlAppend.append(" and ad1.addressIsVillage='1'"); }
+	String reason= request.getParameter("reason"); if (reason!=null) { sqlAppend.append(" and vr.code='"+reason+"'"); }
+String ageToR = request.getParameter("ageToR") ;
+String ageFromR = request.getParameter("ageFromR") ;
+String ageR=null;
+if (ageFromR!=null && !ageFromR.equals("")) {
+	if (ageToR!=null && !ageToR.equals("")) {
+		ageR=" between "+ageFromR+" and "+ageToR ;
+	} else {
+		ageR=">="+ageFromR ;
+	}
+} else if (ageToR!=null && !ageToR.equals("")) {
+	ageR="<="+ageToR ;
+} 
+if (ageR!=null) {
+	StringBuilder asR = new StringBuilder() ;
+	if (isAggregate ) {asR.append("ag.age ") ;} else {
+	asR.append(" and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+	asR.append(" +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+	asR.append(" +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+	asR.append(" then -1 else 0 end) ");}
+	asR.append(ageR) ;
+	sqlAppend.append(asR) ;
+}
+
+	request.setAttribute("appendSQL", sqlAppend.toString() );
+	
+	
     	%>
     
     <msh:section>
@@ -486,6 +439,7 @@ else '' end as vssname
 ,olpu.name as olpuname
 ,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename||' ('||owflpu.name||')' as owfinfo
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename||' ('||lpu.name||')' as wfinfo
+,smo.uet
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
@@ -518,7 +472,7 @@ ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql} ${serviceStreamSql} ${
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql} ${appendSQL}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
-,vwf.name,wp.lastname,wp.firstname,wp.middlename,lpu.name
+,vwf.name,wp.lastname,wp.firstname,wp.middlename,lpu.name,smo.uet
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
@@ -551,6 +505,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="напр. ЛПУ" property="12"/>
             <msh:tableColumn columnName="напр. внутр." property="13"/>
             <msh:tableColumn columnName="специалист" property="14"/>
+            <msh:tableColumn columnName="у.е" property="15"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -689,28 +644,28 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn columnName="${groupName}" property="2" addParam="&10=00" />            
             <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во посещ." property="3"/>
             
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="4" addParam="&homeAge=polAll"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж." property="5" addParam="&homeAge=polVil"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего до 17 лет" property="6" addParam="&homeAge=pol-17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего старше 60 лет" property="7" addParam="&homeAge=pol60"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="4" addParam="&place=POLYCLINIC"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж." property="5" addParam="&place=POLYCLINIC&isVillage=1"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего до 17 лет" property="6" addParam="&place=POLYCLINIC&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего старше 60 лет" property="7" addParam="&place=POLYCLINIC&ageFromR=60"/>
             
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="8" addParam="&homeAge=polIllAll"/>
-            <msh:tableColumn isCalcAmount="true" columnName="числе до 17 лет" property="9" addParam="&homeAge=polIll-17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="числе старше 60 лет" property="10" addParam="&homeAge=polIll60"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="8" addParam="&reason=ILLNESS,CONSULTATION&place=POLYCLINIC"/>
+            <msh:tableColumn isCalcAmount="true" columnName="числе до 17 лет" property="9" addParam="&reason=ILLNESS,CONSULTATION&place=POLYCLINIC&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="числе старше 60 лет" property="10" addParam="&reason=ILLNESS,CONSULTATION&place=POLYCLINIC&ageFromR=60"/>
             
-            <msh:tableColumn isCalcAmount="true" columnName="Проф." property="11" addParam="&homeAge=prof"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Проф." property="11" addParam="&reason=PROFYLACTIC&place=POLYCLINIC"/>
             
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="12" addParam="&homeAge=homeAll" />
-            <msh:tableColumn isCalcAmount="true" columnName="по забол." property="13" addParam="&homeAge=homeIll" />
-            <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="14" addParam="&homeAge=-17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="15" addParam="&homeAge=0-1"/>
-            <msh:tableColumn isCalcAmount="true" columnName="старше 60 лет" property="16" addParam="&homeAge=60"/>
-            <msh:tableColumn isCalcAmount="true" columnName="проф до 17 лет" property="17" addParam="&homeAge=prof-17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="проф 0-1(вкл) лет" property="18" addParam="&homeAge=prof0-1"/>
-            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="19" addParam="&pay=OMS"/>
-            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="20" addParam="&pay=Budget"/>
-            <msh:tableColumn isCalcAmount="true" columnName="платные" property="21" addParam="&pay=Charge"/>
-            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="22" addParam="&pay=DMS"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="12" addParam="&place=HOMEACTIVE,HOME" />
+            <msh:tableColumn isCalcAmount="true" columnName="по забол." property="13" addParam="&place=HOMEACTIVE,HOME&reason=ILLNESS,CONSULTATION" />
+            <msh:tableColumn isCalcAmount="true" columnName="до 17 лет" property="14" addParam="&place=HOMEACTIVE,HOME&reason=ILLNESS,CONSULTATION&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-1(вкл) лет" property="15" addParam="&place=HOMEACTIVE,HOME&reason=ILLNESS,CONSULTATION&agetToR=1"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше 60 лет" property="16" addParam="&place=HOMEACTIVE,HOME&reason=PROFYLACTIC&ageFromR=60"/>
+            <msh:tableColumn isCalcAmount="true" columnName="проф до 17 лет" property="17" addParam="&place=HOMEACTIVE,HOME&reason=PROFYLACTIC&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="проф 0-1(вкл) лет" property="18" addParam="&place=HOMEACTIVE,HOME&reason=PROFYLACTIC&ageToR=1"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="19" addParam="&payment=OBLIGATORYINSURANCE"/>
+            <msh:tableColumn isCalcAmount="true" columnName="бюджет" property="20" addParam="&payment=BUDGET"/>
+            <msh:tableColumn isCalcAmount="true" columnName="платные" property="21" addParam="&payment=CHARGED"/>
+            <msh:tableColumn isCalcAmount="true" columnName="ДМС" property="22" addParam="&payment=PRIVATEINSURANCE"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -883,28 +838,36 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
          	</tr>
          </msh:tableNotEmpty>  
             <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="4"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="5"/>
-            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="10"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="11"/>
-            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="12"/>
-            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="13"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Проф." property="14"/>
-            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="15"/>
-            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="16"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="18"/>
-            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="19"/>
-            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="20"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="21"/>
-            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="22"/>
-            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="23"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Проф. на дому" property="24"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="3" />
+
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="4"  addParam="&place=POLYCLINIC" />
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="5"  addParam="&place=POLYCLINIC&isVillage=1"/>
+
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="6" addParam="&reason=ILLNESS&place=POLYCLINIC"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="7" addParam="&reason=ILLNESS&place=POLYCLINIC&ageToR=14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="8" addParam="&reason=ILLNESS&place=POLYCLINIC&ageFromR=15&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="9" addParam="&reason=ILLNESS&place=POLYCLINIC&ageFromR=18"/>
+
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="10" addParam="&reason=CONSULTATION&place=POLYCLINIC&ageToR=14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="11" addParam="&reason=CONSULTATION&place=POLYCLINIC&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="12" addParam="&reason=CONSULTATION&place=POLYCLINIC&ageFromR=15&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="13" addParam="&reason=CONSULTATION&place=POLYCLINIC&ageFromR=18"/>
+
+            <msh:tableColumn isCalcAmount="true" columnName="Проф." property="14" addParam="&place=POLYCLINIC&reason=PROFYLACTIC"/>
+
+            <msh:tableColumn isCalcAmount="true" columnName="На дому" property="15" addParam="&place=HOMEACTIVE,HOME"/>
+
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="16" addParam="&place=HOMEACTIVE,HOME&reason=ILLNESS"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="17" addParam="&place=HOMEACTIVE,HOME&reason=ILLNESS&ageToR=14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="18" addParam="&place=HOMEACTIVE,HOME&reason=ILLNESS&ageFromR=15&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="19" addParam="&place=HOMEACTIVE,HOME&reason=ILLNESS&ageFromR=18"/>
+
+            <msh:tableColumn isCalcAmount="true" columnName="кол-во" property="20" addParam="&place=HOMEACTIVE,HOME&reason=CONSULTATION"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="21" addParam="&place=HOMEACTIVE,HOME&reason=CONSULTATION&ageToR=14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="15-17" property="22" addParam="&place=HOMEACTIVE,HOME&reason=CONSULTATION&ageFromR=15&ageToR=17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="от 18" property="23" addParam="&place=HOMEACTIVE,HOME&reason=CONSULTATION&ageFromR=18"/>
+
+            <msh:tableColumn isCalcAmount="true" columnName="Проф. на дому" property="24" addParam="&place=HOMEACTIVE,HOME&reason=PROFYLACTIC"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -1355,7 +1318,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
          	<tr>
          		<th></th>
          		<th colspan="3">Число посещений (в поликлинику)</th>
-         		<th colspan="4">Из посещ. в пол-ку сделано по поводу заболеваний</th>
+         		<th colspan="5">Из посещ. в пол-ку сделано по поводу заболеваний</th>
          		<th colspan="4">Из посещ. в пол-ку сделано по поводу консультаций</th>
          		<th colspan="6">Число посещ. врачами на дому</th>
          	</tr>
@@ -1365,19 +1328,20 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="из всего старше труд. возраста" property="4"/>
             <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="5"/>
             <msh:tableColumn isCalcAmount="true" columnName="всего" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="взрослыми труд. возраст" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста с.ж." property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="всего" property="10"/>
-            <msh:tableColumn isCalcAmount="true" columnName="взрослыми труд. возраст" property="11"/>
-            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="12"/>
-            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста с.ж." property="13"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="14"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="15"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего старше труд.возраста" property="16"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего старше труд.возраста по поводу заболеваний" property="18"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="взрослыми труд. возраст" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста с.ж." property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="всего" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="взрослыми труд. возраст" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста с.ж." property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего старше труд.возраста" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего старше труд.возраста по поводу заболеваний" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="20"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -1523,19 +1487,20 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17" property="4"/>
             <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="5"/>
             <msh:tableColumn isCalcAmount="true" columnName="всего" property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-17" property="8"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-17 с.ж." property="9"/>
-            <msh:tableColumn isCalcAmount="true" columnName="всего" property="10"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="11"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-17" property="12"/>
-            <msh:tableColumn isCalcAmount="true" columnName="0-17 с.ж." property="13"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="14"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="15"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17" property="16"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="17"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 по поводу заболеваний" property="18"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-17" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-17 с.ж." property="10"/>
+            <msh:tableColumn isCalcAmount="true" columnName="всего" property="11"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-14" property="12"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-17" property="13"/>
+            <msh:tableColumn isCalcAmount="true" columnName="0-17 с.ж." property="14"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="15"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17" property="17"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="18"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 по поводу заболеваний" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="20"/>
         </msh:table>
     </msh:sectionContent>
 

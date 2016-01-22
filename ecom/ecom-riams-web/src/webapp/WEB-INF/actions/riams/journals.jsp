@@ -101,6 +101,9 @@
 						<li><msh:link isReport="true" action="visit_f039_list.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 	                            039 форма
 	                        </msh:link></li>
+						<li><msh:link isReport="true" action="visit_f039_param.do" roles="/Policy/Mis/MedCase/Visit/Report039Param">
+	                            039 форма (хранимые параметры)
+	                        </msh:link></li>
 						<li><msh:link isReport="true" action="visit_report_service.do" roles="/Policy/Mis/MedCase/Visit/ReportService">
 	                            Отчет по услугам
 	                        </msh:link></li>
@@ -196,7 +199,7 @@
 						<li><msh:link isReport="true" action="stac_diagnosis_by_slo_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
 	                            Журнал диагнозов по отделениям (СЛО)
 	                        </msh:link></li>
-						<li><msh:link isReport="true" action="stac_diagnosis_by_slo_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
+						<li><msh:link isReport="true" action="stac_diagnosis_by_sls_list.do" roles="/Policy/Mis/Journal/DiagnosisBySlo">
 	                            Журнал диагнозов по стационару (СЛС)
 	                        </msh:link></li>
 	                    <li><msh:link  isReport="true" roles="/Policy/Mis/MedCase/Stac/Journal/StandartOmc" action="stac_report_standartOmc.do">

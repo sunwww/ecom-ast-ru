@@ -55,6 +55,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="Контрольный отчет" roles="/Policy/Mis/Contract/Journals/Control,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
 		title="Контрольный отчет"
 		/>
+	<msh:sideLink styleId="controlReportNoAccrual" 
+		action="/contact_analisis_no_accrual" 
+		name="Контрольный отчет по счетам на оплату" roles="/Policy/Mis/Contract/Journals/ControlNoAccrual,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
+		title="Контрольный отчет по счетам на оплату"
+		/>
 	<msh:sideLink styleId="serviciesReport" 
 		action="/contract_reports_services" 
 		name="Отчет по услугам" roles="/Policy/Mis/Contract/Journals/Servicies,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"

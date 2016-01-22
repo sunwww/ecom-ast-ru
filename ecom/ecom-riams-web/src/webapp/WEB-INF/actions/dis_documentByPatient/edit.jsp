@@ -35,7 +35,7 @@
         </msh:row>
         <msh:row>
           <msh:textField property="series" label="Серия"/>
-          <msh:textField property="number" label="Номер" size="50" />
+          <msh:textField property="number" label="Номер" size="30" />
         </msh:row>
         
         <msh:row guid="e1b2ffa3-e51c-46ef-9a21-6b6c19b60831">
@@ -164,7 +164,7 @@
         	<msh:textField property="otherCloseDate" label="Иная дата закрытия для причин 32, 33, 34, 36" labelColSpan="3"/>
         </msh:row>
         <msh:row guid="685ad8f8-f93c-4bd6-98b5-a1618944cb07">
-          <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+          <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
         </msh:row>
       </msh:panel>
     </msh:form>

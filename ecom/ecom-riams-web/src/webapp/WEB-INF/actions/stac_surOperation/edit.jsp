@@ -76,6 +76,12 @@
         </msh:ifFormTypeIsView>
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
+	        </msh:row>
+	        <msh:row>
+          <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
+          	<td></td>
+          	<td><input type="button" value="Выбрать из списка всех операций" onclick="showServiceChangeServiceFind(0,'MedServiceOperation','MedService')"></td>
+          	</msh:ifFormTypeIsNotView>
         </msh:row>
         <mis:ifPatientIsWoman classByObject="MedCase" idObject="${medcase}">
 	        <msh:row>
@@ -226,7 +232,11 @@
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
     	<tags:mis_double name='MedService' title='Данная операция оказана:' cmdAdd="document.forms[0].submitButton.disabled = false "/>
-    </msh:ifFormTypeIsNotView>  </tiles:put>
+    	<tags:service_change name="ServiceChange" autoCompliteServiceFind="medService"></tags:service_change>
+    </msh:ifFormTypeIsNotView>  
+    
+    
+    </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="StacJournal" beginForm="stac_surOperationForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
   </tiles:put>

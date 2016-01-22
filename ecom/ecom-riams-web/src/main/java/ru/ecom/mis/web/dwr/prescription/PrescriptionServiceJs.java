@@ -240,6 +240,24 @@ public class PrescriptionServiceJs {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
 		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id in (").append(aPrescript).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
+		
+		sql = new StringBuilder() ;
+		List<Object[]> list = service.executeNativeSqlGetObj("select pl.id,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name from prescription p left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id where p.id='"+aPrescript+"'") ;
+		if (list.size()>0) {
+			Object[] obj = list.get(0) ;
+			String usernameO=""+obj[1] ;
+			
+			sql = new StringBuilder() ;
+			
+			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
+				.append(",dispatchDate,dispatchTime,username,validityDate,messageUrl)") 
+				.append("values ('").append("Брак биоматериала").append("','")
+				.append(obj[2]).append(" пациент ").append(obj[3]).append(" услуга ").append(obj[4]).append("','").append(usernameO)
+				.append("',current_date,current_time,'").append(username).append("',current_date,'")
+				.append("entityView-pres_prescriptList.do?id="+obj[0]).append("')") ;
+			service.executeUpdateNativeSql(sql.toString()) ;
+		}
+
 		return "1" ;
 	}
 	
