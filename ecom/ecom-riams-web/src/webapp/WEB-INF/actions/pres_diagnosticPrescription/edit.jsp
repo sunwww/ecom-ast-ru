@@ -426,18 +426,16 @@ function getPreRecord() {
         	 	<msh:separator label="Функциональные исследования" colSpan="10"/>
         </msh:row>
         <tbody id="addsurgElements">
-    		<msh:row>
-    			<msh:autoComplete property="surgServicies" label="Исследование" vocName="funcMedService" horizontalFill="true" size="90" fieldColSpan="4" />
-    		 </msh:row>
 			 <msh:row>
-				 <msh:autoComplete property="surgCabinet" label="Кабинет"  fieldColSpan="4" vocName="funcMedServiceRoom" parentAutocomplete="surgServicies" size='20' horizontalFill="true" />
+				 <msh:autoComplete property="surgCabinet" label="Кабинет"  fieldColSpan="4" vocName="funcMedServiceRoom"  horizontalFill="true" />
 			</msh:row>
 			<msh:row>
 				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
-			</msh:row>
-			<msh:row>
     			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
     		</msh:row>
+    		<msh:row>
+    			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
+    		 </msh:row>
 			<msh:row>
 				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
 			</msh:row>
