@@ -721,7 +721,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			//System.out.println("---------------cal1="+format.format(cal1.getTime())) ;
 			//int weekYear =cal1.get(Calendar.WEEK_OF_YEAR) ;
 			//boolean parityYear= (weekYear%2==1)?true:false ;
-			int weekMonth =cal1.get(Calendar.WEEK_OF_MONTH) ;
+			int weekMonth =cal1.get(Calendar.WEEK_OF_YEAR) ;
 			boolean parityWeek= (weekMonth%2==1)?false:true ;
 			int weekDayV =cal1.get(Calendar.DAY_OF_WEEK);
 			int weekDay =cal1.get(Calendar.DAY_OF_WEEK) -1;
