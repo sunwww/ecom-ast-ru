@@ -245,8 +245,9 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'DIAGNOSTIC'" 
-		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
+		parent=" wf.id = :parent "
+		queryAppend="MS.DTYPE='MedService' " 
+		join="  left join WorkFunctionService wfs on wfs.medservice_id =ms.id left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
@@ -254,10 +255,9 @@
 <voc id="funcMedServiceRoom" type="NativeVocService">
 	<NativeVocService
 		from="WorkFunction wf "
-		parent=" wfs.medservice_id = :parent "
 		nameId="wf.id"
 		queryAppend="wf.dtype = 'GroupWorkFunction' " 
-		join=" left join WorkFunctionService wfs on  wf.workfunction_id=wfs.vocworkfunction_id " order=""
+		join=" " order=""
 		names="wf.id||' '|| wf.groupname"
 		queried=" upper(wf.groupname) like upper(:query) "
 	/>
