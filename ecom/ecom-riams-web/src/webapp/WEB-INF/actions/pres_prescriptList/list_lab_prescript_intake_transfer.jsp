@@ -129,7 +129,7 @@
 	}
     if (typeTransfer!=null && typeTransfer.equals("1")) {
 		sqlAdd.append(" and p.transferDate is not null and p.cancelDate is null") ;
-	} else if (typeTransfer!=null && typeTransfer.equals("2")) {
+	} else if (typeTransfer!=null && (typeTransfer.equals("2")||typeTransfer.equals("4"))) {
 		sqlAdd.append(" and p.transferDate is null and p.cancelDate is null") ;
 	} else if (typeTransfer!=null && typeTransfer.equals("3")) {
 		sqlAdd.append(" and p.transferDate is null and p.cancelDate is not null ") ;
