@@ -61,7 +61,7 @@ function check(aForm,aCtx) {
 	
 	if (aForm.medCase!=null&&(+aForm.medCase)>0) {
 		
-		var lother = aCtx.manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('"+aForm.getDateRegistration()+"','dd.mm.yyyy') and mc.workfunctionexecute_id='"+aForm.specialist+"' then mc.id end from medcase mc where mc.id='"+aForm.medCase+"'").getResultList() ;
+		var lother = aCtx.manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('"+aForm.getDateRegistration()+"','dd.mm.yyyy') and mc.workfunctionexecute_id='"+aForm.specialist+"' then mc.id end as agrmc,to_char(mc.datefinish,'dd.mm.yyyy') as mcfinish,mc.id as mcid from medcase mc where mc.id='"+aForm.medCase+"'").getResultList() ;
 		if (lother.size()>0) {
 			var lobj=lother.get(0) ;
 			if (lobj[0]!=null && lobj[1]==null)
@@ -92,38 +92,36 @@ function check(aForm,aCtx) {
 		if (ldm.size()>0) {
 			aCtx.manager.createNativeQuery("update diarymessage dm set IsDoctorCheck='1' where dm.diary_id="+aForm.id+"").executeUpdate() ;
 		}
-		if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
-			var curDate = java.util.Calendar.getInstance();
-			var maxVisit = java.util.Calendar.getInstance();
-			var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(),aForm.getTimeRegistration()) ;
-			maxVisit.setTime(dateVisit);
-			var cntHour = +getDefaultParameterByConfig("count_hour_edit_protocol", 24, aCtx) ;
-			maxVisit.add(java.util.Calendar.HOUR,cntHour);
-			
-			param1.put("obj","Protocol") ;
-			param1.put("permission" ,"editAllProtocolsInSLS") ;
-			param1.put("id", +hmc) ;
-			isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
-			//throw ""+isCheck;
-			if (+isCheck!=1){
+		if (dtype=='HospitalMedCase'||dtype=='DepartmentMedCase') {
+			if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
 				if (t.get(0)[1]!=null) {
-					param1.put("obj","Protocol") ;
-					param1.put("permission" ,"editAfterDischarge") ;
-					param1.put("id", +aForm.id) ;
-					isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
-					if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
+					param1.put("obj","MedCase") ;
+					param1.put("permission" ,"editAllProtocolsInSLS") ;
+					param1.put("id", +hmc) ;
+					isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
+					if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование (создание) данных после выписки!!!";
 				}
+				
+			}
+		} else {
+			if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
+				var curDate = java.util.Calendar.getInstance();
+				var maxVisit = java.util.Calendar.getInstance();
+				var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(),aForm.getTimeRegistration()) ;
+				maxVisit.setTime(dateVisit);
+				var cntHour = +getDefaultParameterByConfig("count_hour_edit_protocol", 24, aCtx) ;
+				maxVisit.add(java.util.Calendar.HOUR,cntHour);
 				if (curDate.after(maxVisit)) {
-					//var param1 = new java.util.HashMap() ;
-					param1.put("obj","Protocol") ;
-					param1.put("permission" ,"editAfterCertainHour") ;
-					param1.put("id", +aForm.id) ;
-					isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
-					if (+isCheck!=1) {
-						if (ldm.size()==0) {
-							throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
-						} 
-					}
+						//var param1 = new java.util.HashMap() ;
+						param1.put("obj","Protocol") ;
+						param1.put("permission" ,"editAfterCertainHour") ;
+						param1.put("id", +aForm.id) ;
+						isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
+						if (+isCheck!=1) {
+							if (ldm.size()==0) {
+								throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола!!!";
+							} 
+						}
 				}
 			}
 		}
