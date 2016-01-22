@@ -137,6 +137,11 @@
 		}
 		return false ;
 	}
+    function checkRecord(aId,aValue,aIdService,aService) {
+    	$('surgTimePlan').value = aId; 
+    	$('surgTimePlanName').value = aValue ;
+    	
+    }
 	function prepareLabRow(type) {
  	var fldList,reqList =[];
 	 if (type=='surg') {
@@ -155,7 +160,8 @@
 	if (checkError(error)) return ;
 	var typeDate = new Date();
 	var l = $(type+'CalDateName').value;
-	l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
+	var t = $(type+'CalTimeName').value;
+	l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2)+'T'+t+':00';
 	typeDate.setTime (Date.parse(l));
 	
 	if (typeDate<currentDate) {

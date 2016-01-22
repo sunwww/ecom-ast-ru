@@ -75,6 +75,7 @@
       <msh:sideMenu guid="sideMenu-123" title="Рабочая функция">
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-work_groupWorkFunction" name="Изменить" roles="/Policy/Mis/Worker/WorkFunction/Create" />
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-work_groupWorkFunction" name="Удалить" roles="/Policy/Mis/Worker/WorkFunction/Delete" />
+        <msh:sideLink guid="sideLinkDelete" params="id" action="/entityParentPrepareCreate-mis_workFunctionClaimType" name="Привязать к типу заявки" roles="/Policy/Mis/Worker/WorkFunction" />
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="53f4a828-71f4-4c29-a2e8-fd61ff083187">
         <msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-cal_workCalendar" name="Календарь" title="Добавить календарь" guid="2f18fed4-7259-479a-97df-ff073fc4569d" />

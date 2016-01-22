@@ -7,6 +7,11 @@
     </init>
 
     <allow>
+    <!-- Работа с заявками -->
+    <create creator="new" javascript="ClaimService" scope="application">
+    	<param name="class" value="ru.ecom.mis.web.dwr.claim.ClaimServiceJs"/>
+    </create>
+        
 		<!-- Редактирование ЛПУ -->
         <create creator="new" javascript="LpuService" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.lpu.LpuJs"/>
