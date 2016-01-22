@@ -324,11 +324,16 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			patient.setPatientSync(patientSync) ;
 	    	theManager.persist(patient);
 		}
-		FondImportReestr fir = new FondImportReestr();
-		fir.setImportType(fi);
-		fir.setImportResult(firRecord);
-		fir.setNumberFond(String.valueOf(aEntity.getId()));
-		theManager.persist(fir);
+		try {
+
+			FondImportReestr fir = new FondImportReestr();
+			fir.setImportType(fi);
+			fir.setImportResult(firRecord.substring(0, 255));
+			fir.setNumberFond(String.valueOf(aEntity.getId()));
+			theManager.persist(fir);	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     	theManager.flush() ;
     	theManager.clear() ;
 

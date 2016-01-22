@@ -1,5 +1,31 @@
 <vocconfig>
 
+<voc id="executorByClaimType" type="NativeVocService">
+	<NativeVocService
+		from="VocClaimType vct"
+		nameId="su.login"
+		order="pat.lastname, pat.firstname, pat.middlename"
+		names="su.login, vwf.name, pat.lastname||' ' ||pat.firstname||' '||pat.middlename"
+		join=" left join workfunctionclaimtype wfct on wfct.claimtype=vct.id
+			left join workfunction gwf on gwf.id=wfct.workfunction
+			left join workfunction pwf on pwf.group_id=gwf.id
+			left join vocworkfunction vwf on vwf.id=pwf.workfunction_id
+			left join worker w on w.id=pwf.worker_id
+			left join patient pat on pat.id=w.person_id"
+		queried="cast(vct.id as varchar(2)) like :querId or upper(vct.name) like upper(:query) "
+		parent="cvt.id=:parent"
+	/>
+</voc>
+<voc id="vocClaimType" type="NativeVocService">
+	<NativeVocService
+		from="VocClaimType vct"
+		nameId="vct.id"
+		order="vct.name, vct.code"
+		names="vct.name"
+		queried="cast(vct.id as varchar(2)) like :querId or upper(vct.name) like upper(:query) "
+	/>
+</voc>
+
 <voc id="medServiceByWorkfunction" type="NativeVocService">
 	<NativeVocService
 		from="Workfunction wf"
