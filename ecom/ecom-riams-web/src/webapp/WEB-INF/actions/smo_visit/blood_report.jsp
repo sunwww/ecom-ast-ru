@@ -140,7 +140,7 @@ left join omc_frm  ot on ot.id=sls.ordertype_id
 left join medcase slo on slo.parent_id=sls.id
 left join bedfund bf on bf.id=slo.bedfund_id
 left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
-left join diagnosis diag on diag.medcase_id=slo.id
+left join diagnosis diag on diag.medcase_id=slo.id or diag.medcase_id=sls.id
 left join vocprioritydiagnosis vpd on vpd.id=diag.priority_id
 left join vocdiagnosisregistrationtype vdrt on vdrt.id=diag.registrationtype_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
