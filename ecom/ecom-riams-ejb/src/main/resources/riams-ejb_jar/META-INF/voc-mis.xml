@@ -10,10 +10,12 @@
 			left join workfunction gwf on gwf.id=wfct.workfunction
 			left join workfunction pwf on pwf.group_id=gwf.id
 			left join vocworkfunction vwf on vwf.id=pwf.workfunction_id
+			left join secuser su on su.id=pwf.secuser_id
 			left join worker w on w.id=pwf.worker_id
-			left join patient pat on pat.id=w.person_id"
+			left join patient pat on pat.id=w.person_id			
+			"
 		queried="cast(vct.id as varchar(2)) like :querId or upper(vct.name) like upper(:query) "
-		parent="cvt.id=:parent"
+		parent="vct.id=:parent"
 	/>
 </voc>
 <voc id="vocClaimType" type="NativeVocService">
