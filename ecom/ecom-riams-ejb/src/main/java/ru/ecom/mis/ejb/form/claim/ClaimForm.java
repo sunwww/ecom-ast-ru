@@ -88,10 +88,10 @@ public class ClaimForm extends IdEntityForm{
 	/** Оператор */
 	@Comment("Оператор")
 	@Persist
-	public String getOperatorUsername() {return theOperatorUsername;}
-	public void setOperatorUsername(String aOperatorUsername) {theOperatorUsername = aOperatorUsername;}
+	public String getViewUsername() {return theViewUsername;}
+	public void setViewUsername(String aViewUsername) {theViewUsername = aViewUsername;}
 	/** Оператор */
-	private String theOperatorUsername;
+	private String theViewUsername;
 	
 	/** Дата получения в работу */
 	@Comment("Дата получения в работу")
@@ -114,10 +114,10 @@ public class ClaimForm extends IdEntityForm{
 	/** Исполнитель */
 	@Comment("Исполнитель")
 	@Persist
-	public String getExecutorUsername() {return theExecutorUsername;}
-	public void setExecutorUsername(String aExecutorUsername) {theExecutorUsername = aExecutorUsername;}
+	public String getStartWorkUsername() {return theStartWorkUsername;}
+	public void setStartWorkUsername(String aStartWorkUsername) {theStartWorkUsername = aStartWorkUsername;}
 	/** Исполнитель */
-	private String theExecutorUsername;
+	private String theStartWorkUsername;
 	
 	/** Комментарий исполнителя */
 	@Comment("Комментарий исполнителя")
@@ -179,26 +179,26 @@ public class ClaimForm extends IdEntityForm{
 	
 	/** Дата исполнения */
 	@Comment("Дата исполнения")
-	@Persist
-	public Date getFinishDate() {return theFinishDate;}
-	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
+	@Persist @DateString @DoDateString
+	public String getFinishDate() {return theFinishDate;}
+	public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
 	/** Дата исполнения */
-	private Date theFinishDate;
+	private String theFinishDate;
 	
 	/** Время исполнения */
 	@Comment("Время исполнения")
-	@Persist
-	public Time getFinishTime() {return theFinishTime;}
-	public void setFinishTime(Time aFinishTime) {theFinishTime = aFinishTime;}
+	@Persist @TimeString @DoTimeString
+	public String getFinishTime() {return theFinishTime;}
+	public void setFinishTime(String aFinishTime) {theFinishTime = aFinishTime;}
 	/** Время исполнения */
-	private Time theFinishTime;
+	private String theFinishTime;
 	
 	/** Пользователь, подтвердивший исполнение */
 	@Comment("Пользователь, подтвердивший исполнение")
 	@Persist
-	public String getFinishUserame() {return theFinishUserame;}
-	public void setFinishUserame(String aFinishUserame) {theFinishUserame = aFinishUserame;}
+	public String getFinishUsername() {return theFinishUsername;}
+	public void setFinishUsername(String aFinishUsername) {theFinishUsername = aFinishUsername;}
 	/** Пользователь, подтвердивший исполнение */
-	private String theFinishUserame;
+	private String theFinishUsername;
 	
 }
