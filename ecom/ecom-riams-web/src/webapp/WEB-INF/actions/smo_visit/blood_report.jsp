@@ -22,6 +22,7 @@
 	//String typeDate =request.getParameter("typeDate") ;
   String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request) ;
   String typeDiagnosis=ActionUtil.updateParameter("BloodReport","typeDiagnosis","1", request) ;
+  String typeDiagnosisType=ActionUtil.updateParameter("BloodReport","typeDiagnosisType","1", request) ;
   %>
     <msh:form action="/blood_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="id" id="id"/>
@@ -60,6 +61,17 @@
 	        	<input type="radio" name="typeDiagnosis" value="3">  Острый инфаркт миокарда (I21-I23)
 	        </td>
         </msh:row> 
+        <msh:row>
+	        <td class="label" title="Тип диагноза" colspan="1">
+	        <label for="typeDiagnosisTypeName" id="typeDiagnosisTypeLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDiagnosisType" value="1"> Клинический
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDiagnosisType" value="2" >  Выписной
+	        </td>
+	      </msh:row> 
+        
         <msh:row> 
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         
@@ -87,12 +99,17 @@
     		} else {
     			request.setAttribute("dateSql","sls.dateFinish" ) ;
     		}
+    		if (typeDiagnosisType!=null&&typeDiagnosisType.equals("1")) {
+    			sqlAdd.append(" and vdrt.code='4'"); 
+    		} else {
+    			sqlAdd.append(" and vdrt.code='3'"); 
+    		}
     		if (typeDiagnosis!=null && (typeDiagnosis.equals("1"))) {    			
-    			 sqlAdd.append(" (mkb.code between 'I60' and 'I64.999') ");
+    			 sqlAdd.append(" and (mkb.code between 'I60' and 'I64.999') ");
     		} else if (typeDiagnosis!=null && (typeDiagnosis.equals("2"))) {
-    			sqlAdd.append(" mkb.code='I20.0' ");    			
+    			sqlAdd.append(" and mkb.code='I20.0' ");    			
     		} else if (typeDiagnosis!=null && (typeDiagnosis.equals("3"))) {
-    			sqlAdd.append(" (mkb.code between 'I21' and 'I23.999') ");
+    			sqlAdd.append(" and (mkb.code between 'I21' and 'I23.999') ");
     		}
     		
     		request.setAttribute ("appendSQL", sqlAdd.toString());
@@ -132,10 +149,9 @@ left join address2 adr on adr.addressid = p.address_addressid
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
 where sls.deniedhospitalizating_id is null and  sls.dtype='HospitalMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
-and vdrt.code='4'
 and vpd.code='1'
 and vbst.code='1'
-and ${appendSQL} 
+ ${appendSQL} 
 group by sls.id, p.lastname, p.firstname, p.middlename, p.birthday, sls.datestart, sls.datefinish, mkb.code 
 order by p.lastname, p.firstname, p.middlename 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
@@ -179,6 +195,7 @@ order by p.lastname, p.firstname, p.middlename
 
     checkFieldUpdate('typeDate','${typeDate}',1) ;
     checkFieldUpdate('typeDiagnosis','${typeDiagnosis}',1) ;
+    checkFieldUpdate('typeDiagnosisType','${typeDiagnosisType}',1) ;
     
     function checkFieldUpdate(aField,aValue,aDefault) {
     	
