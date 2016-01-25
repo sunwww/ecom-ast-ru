@@ -66,10 +66,10 @@ public class Claim extends BaseEntity{
 	
 	/** Оператор */
 	@Comment("Оператор")
-	public String getOperatorUsername() {return theOperatorUsername;}
-	public void setOperatorUsername(String aOperatorUsername) {theOperatorUsername = aOperatorUsername;}
+	public String getViewUsername() {return theViewUsername;}
+	public void setViewUsername(String aViewUsername) {theViewUsername = aViewUsername;}
 	/** Оператор */
-	private String theOperatorUsername;
+	private String theViewUsername;
 	
 	/** Дата получения в работу */
 	@Comment("Дата получения в работу")
@@ -87,10 +87,10 @@ public class Claim extends BaseEntity{
 	
 	/** Исполнитель */
 	@Comment("Исполнитель")
-	public String getExecutorUsername() {return theExecutorUsername;}
-	public void setExecutorUsername(String aExecutorUsername) {theExecutorUsername = aExecutorUsername;}
+	public String getStartWorkUsername() {return theStartWorkUsername;}
+	public void setStartWorkUsername(String aStartWorkUsername) {theStartWorkUsername = aStartWorkUsername;}
 	/** Исполнитель */
-	private String theExecutorUsername;
+	private String theStartWorkUsername;
 	
 	/** Комментарий исполнителя */
 	@Comment("Комментарий исполнителя")
@@ -157,8 +157,8 @@ public class Claim extends BaseEntity{
 	
 	/** Пользователь, подтвердивший исполнение */
 	@Comment("Пользователь, подтвердивший исполнение")
-	public String getFinishUserame() {return theFinishUserame;}
-	public void setFinishUserame(String aFinishUserame) {theFinishUserame = aFinishUserame;}
+	public String getFinishUsername() {return theFinishUsername;}
+	public void setFinishUsername(String aFinishUsername) {theFinishUsername = aFinishUsername;}
 	/** Пользователь, подтвердивший исполнение */
-	private String theFinishUserame;
+	private String theFinishUsername;
 }
