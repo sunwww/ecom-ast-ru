@@ -65,6 +65,15 @@
           <msh:tableColumn property="workerInfo" columnName="Сотрудник" guid="c7e6d86d-c0b9-4cc4-869e-71968f1b6481" />
         </msh:table>
       </msh:section>
+      <msh:section>
+      <ecom:webQuery name="claimTypeList" nativeSql="
+      select wfct.id, vct.name from workfunctionclaimtype wfct
+	left join vocclaimtype vct on vct.id=wfct.claimtype
+	where workfunction=${param.id}"/>
+	<msh:table name="claimTypeList" action="entityParentView-mis_workFunctionClaimType.do" idField="1" guid="5de5a4f7-4a9a-4bca-907b-7506e87dc49b">
+          <msh:tableColumn property="2" columnName="Тип заявки" />
+        </msh:table>
+        </msh:section>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">

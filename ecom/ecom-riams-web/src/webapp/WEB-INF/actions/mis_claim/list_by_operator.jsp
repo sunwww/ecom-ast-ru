@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -5,7 +6,11 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<%
+String login = LoginInfo.find(request.getSession(true)).getUsername();
+request.setAttribute("login", login);
 
+%>
     <tiles:put name='title' type='string'>
         <msh:title mainMenu="Lpu">Заявки в техподдержку</msh:title>
     </tiles:put>
@@ -42,7 +47,7 @@ left join workfunctionclaimtype wfct on wfct.claimtype=vct.id
 left join workfunction gwf on gwf.id=wfct.workfunction
 left join workfunction pwf on pwf.group_id=gwf.id
 left join secuser su on su.id=pwf.secuser_id
-
+where su.login='${login}'
 order by cl.createdate , cl.createtime 
 "/>
         <msh:table name="claimList" action="entityView-mis_claim.do" idField="1">
