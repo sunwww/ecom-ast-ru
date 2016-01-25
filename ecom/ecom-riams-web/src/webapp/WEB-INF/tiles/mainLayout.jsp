@@ -63,8 +63,10 @@
             <li><a href='js-riams-phone.do' target='_blank'>Тел.АМОКБ</a></li>
             </msh:ifInRole>
            <li class="separator">|</li>
-            <li><a href='entityPrepareCreate-mis_claim.do'>Создать задачу</a></li>
+           <msh:ifInRole roles="/Policy/Mis/Claim/View">
+            <li><a href='js-mis_claim-my_claims.do'>Заявки в ТП</a></li>
             <li class="separator">|</li>
+            </msh:ifInRole>
             <li><a href='ecom_releases.do'>Новости</a></li>
             <msh:ifInRole roles="/Policy/Mis/CustomMessage/View">
             <li class="separator">|</li>
