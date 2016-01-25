@@ -38,17 +38,46 @@
           <msh:row>
 	         <msh:autoComplete vocName="workFunction" property="workfunction" label="Создал" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
           </msh:row> 
-	        
+	        <msh:separator label="Информация о создании заявки" colSpan="10"></msh:separator>
      	<msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
+        	</msh:row> <msh:row>
         	<msh:label property="createTime" label="Время создания"/>
+        	</msh:row> <msh:row>
           	<msh:label property="username" label="Пользователь" />
         </msh:row>   
-        
+        <msh:separator label="Информация о просмотре заявки оператором" colSpan="10"></msh:separator>
         <msh:row>
         	<msh:label property="viewDate" label="Дата просмотра оператором"/>
+        	</msh:row> <msh:row>
         	<msh:label property="viewTime" label="Время просмотра оператором"/>
-          	<msh:label property="operatorUsername" label="Оператор" />
+        	</msh:row> <msh:row>
+          	<msh:label property="viewUsername" label="Оператор" />
+        </msh:row>  
+        <msh:separator label="Информация об исполнении заявки" colSpan="10"></msh:separator>
+        <msh:row>
+        	<msh:label property="startWorkDate" label="Дата начала исполнения"/>
+        	</msh:row> <msh:row>
+        	<msh:label property="startWorkTime" label="Время начала исполнения"/>
+        	</msh:row> <msh:row>
+          	<msh:label property="startWorkUsername" label="Исполнитель" />
+        </msh:row>  
+        <msh:separator label="Информация о выполнении заявки" colSpan="10"></msh:separator>
+        <msh:row>
+        	<msh:label property="finishDate" label="Дата исполнения"/>
+        	</msh:row> <msh:row>
+        	<msh:label property="finishTime" label="Время исполнения"/>
+        	</msh:row> <msh:row>
+          	<msh:label property="finishUsername" label="Пользователь, подтвердивший исполнение" />
+        </msh:row>  
+        
+        <msh:separator label="Информация об отмене заявки" colSpan="10"></msh:separator>
+        <msh:row>
+        	<msh:label property="cancelDate" label="Дата отмены"/>
+        	</msh:row> <msh:row>
+        	<msh:label property="cancelTime" label="Время отмены"/>
+        	</msh:row> <msh:row>
+          	<msh:label property="cancelUsername" label="Пользователь, отменивший заявку" />
         </msh:row>  
         
         <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
@@ -67,12 +96,8 @@
     <tiles:put name='side' type='string'>
       <msh:ifFormTypeAreViewOrEdit formName="mis_claimForm">
         <msh:sideMenu>
-	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_claim" name="Изменить" roles="/Policy/Mis/MedCase/Diagnosis/Edit" />
-	        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_claim" name="Удалить" roles="/Policy/Mis/MedCase/Diagnosis/Delete" />
-        </msh:sideMenu>
-        <msh:sideMenu title="Добавить">
-	      
-        </msh:sideMenu>
+	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_claim" name="Изменить" roles="/Policy/Mis/Claim/Edit" />
+	   </msh:sideMenu>
       </msh:ifFormTypeAreViewOrEdit>
     </tiles:put>
 <tiles:put name="javascript" type="string">
