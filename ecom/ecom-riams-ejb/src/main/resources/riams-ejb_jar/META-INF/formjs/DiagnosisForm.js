@@ -74,7 +74,7 @@ function isDiagnosisAllowed(aForm, aCtx) {
 		return true;
 	}
 	var clinicalMkb = aForm.getIdc10();
-	var department = medcase.getDepartment().getId();
+	var department = medcase.workFunctionExecute.worker.lpu.getId();
 	var patient = aForm.getPatient();
 	var serviceStream = medcase.getServiceStream().getId();
 	var diagnosisRegistrationType = aForm.getRegistrationType();
