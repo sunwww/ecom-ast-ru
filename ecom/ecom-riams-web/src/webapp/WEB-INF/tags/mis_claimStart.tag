@@ -4,6 +4,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="status" required="true" description="tttt" %>
 
 <msh:ifInRole roles="${roles}">
 
@@ -17,20 +18,23 @@
 
 <div id='${name}ClaimStartDialog' class='dialog'>
     <h2>Дата</h2>
-    <div class='rootPane'>
+    <input type='hidden' id='${name}ClaimType' name='${name}ClaimType'>
+    <input type='hidden' id='${name}ClaimId' name='${name}ClaimId'>
+    <input type='hidden' id='${name}ClaimStatus' name='${name}ClaimStatus'>
+     <div class='rootPane'>
     
 <form action="javascript:void(0)">
     <msh:panel>
-    <msh:hidden property="claimType" />
+   
     	<msh:row>
     		<msh:textField property="${name}Date" label="Дата"/>
     		<msh:textField property="${name}Time" label="Время"/>
-    		<msh:autoComplete vocName="executorByClaimType" parentId="claimType" property="${name}Executor" label="Исполнитель"/>
+    		<msh:autoComplete vocName="executorByClaimType" parentId="${name}ClaimType" property="${name}Executor" label="Исполнитель"/>
     	</msh:row>
     </msh:panel>
         <msh:row>
             <td colspan="6">
-                <input type="button" name="${name}butOK" id="${name}butOK" value='OK'  onclick="javascript:save${name}ClaimStart()"/>
+                <input type="button" name="${name}butOK" id="${name}butOK" value='OK'  onclick="javascript:set${name}Status()"/>
                 <input type="button" value='Отменить' onclick='javascript:cancel${name}ClaimStart()'/>
             </td>
         </msh:row>
@@ -49,10 +53,7 @@
          if (!theIs${name}ClaimStartDialogInitialized) {
          	init${name}ClaimStartDialog() ;
           }
-         var claimIDS = '${name}'.split(':');
-         $('claimType').value=claimIDS[1];
-         claimId = claimIDS[0];
-         alert (''+claimIDS);
+        ${name}ExecutorAutocomplete.setParentId($('${name}ClaimType').value);
          the${name}ClaimStartDialog.show() ;
          $("${name}Date").focus() ;
 
@@ -67,15 +68,30 @@
      function save${name}ClaimStart() {
     	 set${name}Started ();
      }
-     
-     function set${name}Started() {
-    	 var executorLogin = ${name}Executor;
-     	ClaimService.setStarted(claimId, ${name}Date, ${name}Time, executorLogin, {
+     function set${name}Status() {
+    	 var comment='';
+    	 var username = $('${name}Executor').value;
+     	ClaimService.setStatusClaim($('${name}ClaimStatus').value, $('${name}ClaimId').value, $('${name}Date').value, $('${name}Time').value, username, comment, {
      		callback: function (a) {
+     			$('${name}ClaimId').value='';
+     			$('${name}ClaimType').value='';
+     			alert (a);
+     			window.location.reload();
+     		}
+     	});
+     }
+     function set${name}Started() {
+    	 var comment='';
+    	 var executorLogin = $('${name}Executor').value;
+     	ClaimService.set${name}Claim($('${name}ClaimId').value, $('${name}Date').value, $('${name}Time').value, executorLogin, comment, {
+     		callback: function (a) {
+     			$('${name}ClaimId').value='';
+     			$('${name}ClaimType').value='';
      			alert (a);
      		}
      	});
      }
+    
      
          // инициализация диалогового окна
      function init${name}ClaimStartDialog() {
@@ -93,6 +109,7 @@
      	theIs${name}ClaimStartDialogInitialized = true ;
      	 eventutil.addEnterSupport('${name}Date', '${name}Time') ;
      	 eventutil.addEnterSupport( '${name}Time','${name}butOK') ;
+     	 
 
      }
 </script>
