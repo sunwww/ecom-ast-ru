@@ -200,14 +200,13 @@ public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long
 			" and ((ldr.sex is null or ldr.sex=0) or ldr.sex=p.sex_id)" +
 			" and ((ldr.diagnosispriority is null or ldr.diagnosispriority=0) or ldr.diagnosispriority="+diagnosisPriority+")" +
 			" and ((ldr.servicestream is null or ldr.servicestream=0) or ldr.servicestream="+serviceStream+")" +
-			" and mkb.code between cni.fromidc10code and cni.toidc10code" +
-			" and '1' = case when (ldr.permissionrule is null or ldr.permissionrule='0') and mkb.id is not null then '1'" +
-			" when (ldr.permissionrule='1') and mkb.id is null then '1' else '0' end";
+			" and '1' = case when (ldr.permissionrule is null or ldr.permissionrule='0') and mkb.code not between cni.fromidc10code and cni.toidc10code then '0' " +
+			" when (ldr.permissionrule='1') and mkb.code between cni.fromidc10code and cni.toidc10code then '0' else '1' end";
 	System.out.println("===== "+ sql);
 	List<Object> o = manager.createNativeQuery(sql).getResultList();
 	if (o!=null &&!o.isEmpty()) {
 		return false;
-	}    	    	
+	} 	    	
 	else {
 		return true;
 	}
