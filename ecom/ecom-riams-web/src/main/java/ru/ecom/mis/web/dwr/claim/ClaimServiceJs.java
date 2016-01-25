@@ -18,13 +18,41 @@ import ru.ecom.web.util.Injection;
  */
 public class ClaimServiceJs {
 
-	public static String setViewed (String aId, HttpServletRequest aRequest) throws NamingException {
+	public static String setStatusClaim (String aStatus, String aId,String aDate, String aTime, String aUsername, String aComment, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		String sql = "update Claim set viewDate = current_date, viewTime = current_time, operatorUsername='"+login+"' where id = "+aId;
-		System.out.println(sql);
-		service.executeUpdateNativeSql(sql);
-		return aId;
+		if (aStatus==null) return "Не указан статус";
+		if (aUsername==null||aUsername.equals("")) {
+			aUsername = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		}
+			
+		if (aDate!=null&&!aDate.equals("")) {
+			aDate = "to_date('"+aDate+"', 'dd.MM.yyyy')";
+		} else {
+			aDate = "current_date";
+		}
+		if (aTime!=null&&!aTime.equals("")) {
+			aTime = "cast('"+aTime+"' as time)";
+		} else {
+			aTime = "current_time";
+		}
+		String sql = "update claim set "+aStatus+"Date = "+aDate;
+			sql+=", "+aStatus+"Time =" +aTime;
+			
+			if (aComment!=null&&!aComment.equals("")) {
+				sql+=", executorComment='"+aComment +"'";
+				
+			}
+			if (aUsername!=null&&!aUsername.equals("")) {
+				sql+=", "+aStatus+"Username='"+aUsername+"'";
+						
+			}
+			sql+=" where id="+aId;
+			return aStatus+" : "+ service.executeUpdateNativeSql(sql);
+		
+	}
+
+	public static String setViewed (String aId, HttpServletRequest aRequest) throws NamingException {
+		return setStatusClaim("View", aId, null, null, null, null, aRequest);
 	}
 	
 	public static String setStartClaim(String aId, String aDate, String aTime, String aExecutorLogin, HttpServletRequest aRequest) throws NamingException {
@@ -33,18 +61,18 @@ public class ClaimServiceJs {
 		}
 		
 		if (aDate!=null&&!aDate.equals("")) {
-			aDate = "to_date('dd.MM.yyyy','"+aDate+"')";
+			aDate = "to_date('"+aDate+"', 'dd.MM.yyyy')";
 		} else {
 			aDate = "current_date";
 		}
 		if (aTime!=null&&!aTime.equals("")) {
-			aTime = "to_time('HH:MI','"+aTime+"')";
+			aTime = "cast('"+aTime+"' as time)";
 		} else {
 			aTime = "current_time";
 		}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		
-		String sql = "update Claim set startWorkDate = "+aDate+", startWorkTime = "+aTime+", executorUsername = '"+aExecutorLogin+"' where id="+aId;
+		String sql = "update Claim set startWorkDate = "+aDate+", startWorkTime = "+aTime+", startworkUsername = '"+aExecutorLogin+"' where id="+aId;
 		System.out.println("===== "+sql);
 		service.executeUpdateNativeSql(sql);
 		return aId;
