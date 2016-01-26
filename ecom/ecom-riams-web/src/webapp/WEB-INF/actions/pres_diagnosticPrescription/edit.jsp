@@ -21,7 +21,7 @@
 
 	function checkRecord(aId,aValue,aIdService,aService) {
     	$('surgCalTime').value = aId; 
-    	$('surgTimeCalName').value = aValue ;
+    	$('surgCalTimeName').value = aValue ;
     
     }
 	
@@ -143,11 +143,7 @@
 		}
 		return false ;
 	}
-    function checkRecord(aId,aValue,aIdService,aService) {
-    	$('surgTimePlan').value = aId; 
-    	$('surgTimePlanName').value = aValue ;
-    	
-    }
+
 	function prepareLabRow(type) {
  	var fldList,reqList =[];
 	 if (type=='surg') {
