@@ -163,7 +163,7 @@ public class ClaimForm extends IdEntityForm{
 	
 	/** Тип заявки */
 	@Comment("Тип заявки")
-	@Persist
+	@Persist @Required
 	public Long getClaimType() {return theClaimType;}
 	public void setClaimType(Long aClaimType) {theClaimType = aClaimType;}
 	/** Тип заявки */

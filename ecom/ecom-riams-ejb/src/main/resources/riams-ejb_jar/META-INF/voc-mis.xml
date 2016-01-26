@@ -5,7 +5,7 @@
 		from="VocClaimType vct"
 		nameId="su.login"
 		order="pat.lastname, pat.firstname, pat.middlename"
-		names="su.login, vwf.name, pat.lastname||' ' ||pat.firstname||' '||pat.middlename"
+		names=" pat.lastname||' ' ||pat.firstname||' '||pat.middlename"
 		join=" left join workfunctionclaimtype wfct on wfct.claimtype=vct.id
 			left join workfunction gwf on gwf.id=wfct.workfunction
 			left join workfunction pwf on pwf.group_id=gwf.id

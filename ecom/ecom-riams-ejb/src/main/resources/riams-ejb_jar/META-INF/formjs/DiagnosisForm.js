@@ -67,14 +67,31 @@ function onPreCreate(aForm, aCtx) {
 	} 
 }
 
+function getMedCaseType (aId, aCtx) {
+	return ""+aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList().get(0);
+}
+
 function isDiagnosisAllowed(aForm, aCtx) {
-	var medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase, 
+	
+	var dtype = getMedCaseType(aForm.getMedCase(),aCtx);
+	var medcase;
+	var department;
+	if (dtype='Visit') {
+		medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase, 
 				new java.lang.Long(aForm.getMedCase())) ;
+		department = medcase.workFunctionExecute.worker.lpu.getId();
+	} else { 
+		medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, 
+				new java.lang.Long(aForm.getMedCase())) ;
+		department = medcase.getDepartment().getId();
+	}
+	
 	if (medcase==null) {
 		return true;
 	}
+	
 	var clinicalMkb = aForm.getIdc10();
-	var department = medcase.workFunctionExecute.worker.lpu.getId();
+	//var department = medcase.workFunctionExecute.worker.lpu.getId();
 	var patient = aForm.getPatient();
 	var serviceStream = medcase.getServiceStream().getId();
 	var diagnosisRegistrationType = aForm.getRegistrationType();

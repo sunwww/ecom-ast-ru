@@ -196,12 +196,13 @@ public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long
 			" left join contractnosologygroup cng on cng.id=lcng.nosologygroup" +
 			" left join nosologyinterval cni on cni.nosologygroup_id=cng.id" +
 			" where mkb.id=" + clinicalMkb +
+			" and ldr.id is not null" +
 			" and ((ldr.diagnosisregistrationtype is null or ldr.diagnosisregistrationtype=0) or ldr.diagnosisregistrationtype="+diagnosisRegistrationType+")" +
 			" and ((ldr.sex is null or ldr.sex=0) or ldr.sex=p.sex_id)" +
 			" and ((ldr.diagnosispriority is null or ldr.diagnosispriority=0) or ldr.diagnosispriority="+diagnosisPriority+")" +
 			" and ((ldr.servicestream is null or ldr.servicestream=0) or ldr.servicestream="+serviceStream+")" +
-			" and '1' = case when (ldr.permissionrule is null or ldr.permissionrule='0') and mkb.code not between cni.fromidc10code and cni.toidc10code then '0' " +
-			" when (ldr.permissionrule='1') and mkb.code between cni.fromidc10code and cni.toidc10code then '0' else '1' end";
+			" and '1' = case when (ldr.permissionrule is null or ldr.permissionrule='0') and 0<(select count (mkb2.id) from vocidc10 mkb2 where mkb2.code between cni.fromidc10code and cni.toidc10code) then '1' " +
+			" when (ldr.permissionrule='1') and 0<(select count (mkb2.id) from vocidc10 mkb2 where mkb2.code between cni.fromidc10code and cni.toidc10code) then '0' else '1' end";
 	System.out.println("===== "+ sql);
 	List<Object> o = manager.createNativeQuery(sql).getResultList();
 	if (o!=null &&!o.isEmpty()) {

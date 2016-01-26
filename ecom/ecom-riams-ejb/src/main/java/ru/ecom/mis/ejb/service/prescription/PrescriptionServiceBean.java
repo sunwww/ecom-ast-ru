@@ -34,6 +34,7 @@ import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.prescription.AbstractPrescriptionList;
 import ru.ecom.mis.ejb.domain.prescription.DietPrescription;
 import ru.ecom.mis.ejb.domain.prescription.DrugPrescription;
@@ -41,6 +42,9 @@ import ru.ecom.mis.ejb.domain.prescription.PrescriptList;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
 import ru.ecom.mis.ejb.domain.prescription.Prescription;
 import ru.ecom.mis.ejb.domain.prescription.ServicePrescription;
+import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
+import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
@@ -54,6 +58,44 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
+
+	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction) {
+		long date = new java.util.Date().getTime() ;
+		Visit vis = new Visit();
+	PrescriptList pl = theManager.find(PrescriptList.class, aPrescriptionListId);
+	Patient pat = pl.getMedCase().getPatient();
+	WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
+	WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
+	WorkCalendarDay wcd = theManager.find(WorkCalendarDay.class, aDatePlanId);
+	WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
+	VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
+	VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
+	 
+	
+	
+	vis.setWorkPlaceType(wpt) ;
+	vis.setServiceStream(vss);
+	vis.setPatient(pat);
+	vis.setCreateDate(new java.sql.Date(date));
+	vis.setCreateTime(new java.sql.Time(date));
+	vis.setDatePlan(wcd);
+	vis.setNoActuality(false);
+	vis.setTimePlan(wct);
+	vis.setWorkFunctionPlan(wfp);
+	vis.setOrderWorkFunction(wfo);
+	vis.setUsername(aUsername);
+	theManager.persist(vis);
+	
+	if (aMedServiceId!=null&&aMedServiceId!=0) {
+	MedService sms = theManager.find(MedService.class, aMedServiceId);
+	ServiceMedCase smc = new ServiceMedCase();
+	smc.setParent(vis);
+	smc.setMedService(sms);
+	smc.setPatient(pat);
+	smc.setNoActuality(false);
+	}
+		return ""+vis.getId();	
+	}
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername) throws JSONException {
 		Protocol d =null;
 		//if (aProtocolId!=null )) {
