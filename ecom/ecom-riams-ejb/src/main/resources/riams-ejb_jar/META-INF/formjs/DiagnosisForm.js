@@ -76,14 +76,15 @@ function isDiagnosisAllowed(aForm, aCtx) {
 	var dtype = getMedCaseType(aForm.getMedCase(),aCtx);
 	var medcase;
 	var department;
-	if (dtype='Visit') {
+	if (dtype!='Visit') {
 		medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase, 
 				new java.lang.Long(aForm.getMedCase())) ;
-		department = medcase.workFunctionExecute.worker.lpu.getId();
+		department = medcase.getDepartment().getId();
 	} else { 
 		medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, 
 				new java.lang.Long(aForm.getMedCase())) ;
-		department = medcase.getDepartment().getId();
+		department = medcase.workFunctionExecute.worker.lpu.getId();
+		
 	}
 	
 	if (medcase==null) {
