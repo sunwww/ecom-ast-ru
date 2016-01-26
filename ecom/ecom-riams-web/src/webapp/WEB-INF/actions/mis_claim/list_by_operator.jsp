@@ -23,22 +23,23 @@ request.setAttribute("login", login);
 
     <tiles:put name='body' type='string' >
     <ecom:webQuery name="claimList" nativeSql="
-    select cl.id as clid, upat.patientinfo, cl.description
+    select cl.id as clid, vwf.name ||' '|| upat.lastname ||' '|| upat.firstname||' '||upat.middlename, cl.description
     , to_char(cl.createdate, 'dd.MM.yyyy') ||' '||to_char(cl.createtime,'HH24:MI') as crdatetime
-,case when cl.canceldate is not null then 'Отменена'
- when cl.finishdate is not null then 'Выполнено'
- when cl.startworkdate is not null then 'В работе '
- when cl.viewdate is not null then 'В процессе назначения'
+,case when cl.canceldate is not null then 'Отменена ' || to_char(cl.canceldate, 'dd.MM.yyyy')||' '||to_char(cl.canceltime,'HH24:MI')
+ when cl.finishdate is not null then 'Выполнена ' || to_char(cl.finishdate, 'dd.MM.yyyy')||' '||to_char(cl.finishtime,'HH24:MI')
+ when cl.startworkdate is not null then 'В работе ' || to_char(cl.startworkdate, 'dd.MM.yyyy')||' '||to_char(cl.startworktime,'HH24:MI') ||' '||cl.startworkusername
+ when cl.viewdate is not null then 'В процессе назначения ' || to_char(cl.viewdate, 'dd.MM.yyyy')||' '||to_char(cl.viewtime,'HH24:MI')
  when cl.createdate is not null then 'Новая'
  else 'ВАХВАХ' end as status
  ,cl.id||':'||vct.id as idvocid
-,case when cl.canceldate is null then cl.id else null end as btnCancel
+,case when cl.canceldate is null and cl.finishdate is null then cl.id else null end as btnCancel
 ,case when cl.finishdate is null and cl.canceldate is null then cl.id else null end as btnFinish
 ,case when cl.startworkdate is null and cl.finishdate is null and cl.canceldate is null then cl.id||':'||cl.claimtype else null end as btnStartWork
-,case when cl.viewdate is null then cl.id else null end as btnView
-
+,case when cl.viewdate is null and cl.canceldate is null and cl.finishdate is null then cl.id else null end as btnView
+, cl.phone
 from claim cl
 left join workfunction uwf on uwf.id=cl.workfunction
+left join vocworkfunction vwf on vwf.id=uwf.workfunction_id
 left join worker uw on uw.id=uwf.worker_id
 left join patient upat on upat.id=uw.person_id
 
@@ -53,6 +54,7 @@ order by cl.createdate , cl.createtime
         <msh:table name="claimList" action="entityView-mis_claim.do" idField="1">
             <msh:tableColumn columnName="Пользователь" property="2" />
             <msh:tableColumn columnName="Заявка" property="3" />
+            <msh:tableColumn columnName="Телефон" property="11" />
             <msh:tableColumn columnName="Дата и время создания" property="4" />
             <msh:tableColumn columnName="Статус" property="5" />
             <msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />

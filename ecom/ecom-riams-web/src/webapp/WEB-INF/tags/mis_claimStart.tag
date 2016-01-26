@@ -75,7 +75,7 @@
      		callback: function (a) {
      			$('${name}ClaimId').value='';
      			$('${name}ClaimType').value='';
-     			alert (a);
+     			
      			window.location.reload();
      		}
      	});
@@ -87,7 +87,7 @@
      		callback: function (a) {
      			$('${name}ClaimId').value='';
      			$('${name}ClaimType').value='';
-     			alert (a);
+     			
      		}
      	});
      }

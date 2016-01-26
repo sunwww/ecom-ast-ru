@@ -25,10 +25,10 @@ request.setAttribute("login", login);
     <ecom:webQuery name="claimList" nativeSql="
     select cl.id as clid, cast('' as varchar),  cl.description
     , to_char(cl.createdate, 'dd.MM.yyyy') ||' '||to_char(cl.createtime,'HH24:MI') as crdatetime
-,case when cl.canceldate is not null then 'Отменена'
- when cl.finishdate is not null then 'Выполнено'
- when cl.startworkdate is not null then 'В работе '
- when cl.viewdate is not null then 'В процессе назначения'
+,case when cl.canceldate is not null then 'Отменена ' || to_char(cl.canceldate, 'dd.MM.yyyy')||' '||to_char(cl.canceltime,'HH24:MI')
+ when cl.finishdate is not null then 'Выполнена ' || to_char(cl.finishdate, 'dd.MM.yyyy')||' '||to_char(cl.finishtime,'HH24:MI')
+ when cl.startworkdate is not null then 'В работе ' || to_char(cl.startworkdate, 'dd.MM.yyyy')||' '||to_char(cl.startworktime,'HH24:MI') ||' '||cl.startworkusername
+ when cl.viewdate is not null then 'В процессе назначения ' || to_char(cl.viewdate, 'dd.MM.yyyy')||' '||to_char(cl.viewtime,'HH24:MI')
  when cl.createdate is not null then 'Новая'
  else 'ВАХВАХ' end as status
  ,cl.id||':'||vct.id as idvocid

@@ -288,16 +288,16 @@
  		 
  		 }
       function checkServiceStreamInHospital () {
-    	  WorkCalendarService.getIsServiceStreamEnabled ($('patient').value, $('serviceStream').value, {
-    		  callback: function (a) {
-    			  if (a!=null&&a=='1') {
-    				  alert ('Невозможно создать направление с указанным потоком обслуживания, т.к пациент лежит в стационаре. Измените поток обслуживания, либо создайте направление из листа назначений');
-    				  document.forms[0].submitButton.disabled = false ;
-    			  } else {
+    	//  WorkCalendarService.getIsServiceStreamEnabled ($('patient').value, $('serviceStream').value, {
+    	//	  callback: function (a) {
+    	//		  if (a!=null&&a=='1') {
+    	//			  alert ('Невозможно создать направление с указанным потоком обслуживания, т.к пациент лежит в стационаре. Измените поток обслуживания, либо создайте направление из листа назначений');
+    	//			  document.forms[0].submitButton.disabled = false ;
+    	//		  } else {
     				  checkDouble();
-    			  }
-    		  }
-    	  });
+    	//		  }
+    	//	  }
+    	//  });
       }
       function checkDouble() {
     	  WorkCalendarService.findDoubleBySpecAndDate($('id').value,$('patient').value

@@ -200,6 +200,14 @@
 	
 function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
 	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
+	PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
+	,$('surgServicies').value, {
+		callback: function(a) {
+			alert (a);
+		}
+	});
+	
+	
 }
 function deletePrescription(aMedService, aWCT) {
 	PrescriptionService.removePrescriptionFromListWCT($('prescriptionList').value,aMedService,aWCT);

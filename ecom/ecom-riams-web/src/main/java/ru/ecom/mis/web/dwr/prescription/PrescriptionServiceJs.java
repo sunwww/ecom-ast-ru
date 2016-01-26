@@ -32,7 +32,31 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
+
+	// 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, 
+//Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, 
+//String aUsername, Long aOrderWorkFunction) {
+
 	
+	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
+		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, HttpServletRequest aRequest )throws NamingException {
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
+		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Long wf = null;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		try {
+			wf =Long.valueOf(wqs.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+username+"'").iterator().next().get1().toString());
+		} catch (Exception e) {
+			e.printStackTrace(); 
+			throw new IllegalDataException(e.toString());
+		}
+		 
+		String visit = service.createNewDirectionFromPrescription(aPrescriptListId, aWorkFunctionPlanId
+			,aDatePlanId, aTimePlanId, aMedServiceId, username, wf);
+		
+		
+		return visit;
+	}
 	/**
 	 * Получение списка предварительных записей на услуги по пациенту 
 	 */

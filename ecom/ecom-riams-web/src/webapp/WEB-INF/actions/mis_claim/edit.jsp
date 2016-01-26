@@ -32,6 +32,9 @@
           <msh:row>
           	<msh:textArea  property="description" label="Текст заявки" viewOnlyField="true" />
           </msh:row>
+           <msh:row>
+      	  <msh:textField property="phone" label="Контактный телефон" viewOnlyField="true"/>
+        </msh:row>
           <msh:row>
 	         <msh:autoComplete vocName="vocClaimType" property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
           </msh:row> 
