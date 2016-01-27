@@ -161,4 +161,11 @@ public class Claim extends BaseEntity{
 	public void setFinishUsername(String aFinishUsername) {theFinishUsername = aFinishUsername;}
 	/** Пользователь, подтвердивший исполнение */
 	private String theFinishUsername;
+	
+	/** Место исполнения заявки */
+	@Comment("Место исполнения заявки")
+	public String getAddress() {return theAddress;}
+	public void setAddress(String aAddress) {theAddress = aAddress;}
+	/** Место исполнения заявки */
+	private String theAddress;
 }

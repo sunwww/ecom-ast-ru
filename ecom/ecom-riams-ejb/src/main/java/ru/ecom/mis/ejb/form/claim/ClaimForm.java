@@ -201,4 +201,12 @@ public class ClaimForm extends IdEntityForm{
 	/** Пользователь, подтвердивший исполнение */
 	private String theFinishUsername;
 	
+	/** Место исполнения заявки */
+	@Comment("Место исполнения заявки")
+	@Persist @Required
+	public String getAddress() {return theAddress;}
+	public void setAddress(String aAddress) {theAddress = aAddress;}
+	/** Место исполнения заявки */
+	private String theAddress;
+	
 }
