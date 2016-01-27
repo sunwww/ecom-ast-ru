@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
@@ -248,4 +249,12 @@ public class MedService extends BaseEntity{
 
 	/** Не федеральный код */
 	private Boolean theIsNoFederal;
+	
+	/** УЕТ */
+	@Comment("УЕТ")
+	public BigDecimal getUet() {return theUet;}
+	public void setUet(BigDecimal aUet) {theUet = aUet;}
+
+	/** УЕТ */
+	private BigDecimal theUet;
 }

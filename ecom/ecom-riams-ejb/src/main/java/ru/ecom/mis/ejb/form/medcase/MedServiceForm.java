@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import java.math.BigDecimal;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -259,5 +261,13 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** Не федеральный код */
 	private Boolean theIsNoFederal;
+
+	/** УЕТ */
+	@Comment("УЕТ")
+	public String getUet() {return theUet;}
+	public void setUet(String aUet) {theUet = aUet;}
+
+	/** УЕТ */
+	private String theUet;
 
 }

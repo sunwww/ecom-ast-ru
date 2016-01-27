@@ -118,8 +118,7 @@ public class WorkerServiceBean implements IWorkerService{
 	return list.get(0).getId() ;
 	}
 	public String getUsernameByWorkFunction(Long aWorkFunction) {
-		System.out.println("select count(*), su.login from WorkFunction wf left join SecUser su on wf.secUser_id=su.id where wf.id='"+aWorkFunction+"'") ;
-		List<Object[]> list = theManager.createNativeQuery("select count(*), su.login from WorkFunction wf left join SecUser su on wf.secUser_id=su.id where wf.id='"+aWorkFunction+"'").getResultList() ;
+		List<Object[]> list = theManager.createNativeQuery("select count(*), su.login from WorkFunction wf left join SecUser su on wf.secUser_id=su.id where wf.id='"+aWorkFunction+"' group by su.login").getResultList() ;
 		return list.size()>0 ? String.valueOf(list.get(0)[1]) :"" ;
 	}
 	public static WorkFunction getWorkFunction(SessionContext aContext, EntityManager aManager)  {

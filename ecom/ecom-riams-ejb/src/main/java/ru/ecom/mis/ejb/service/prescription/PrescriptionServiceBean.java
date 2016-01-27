@@ -60,6 +60,8 @@ import ru.nuzmsh.util.format.DateFormat;
 public class PrescriptionServiceBean implements IPrescriptionService {
 
 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction) {
+		MedService sms = theManager.find(MedService.class, aMedServiceId);
+	if (sms!=null) {
 		long date = new java.util.Date().getTime() ;
 		Visit vis = new Visit();
 	PrescriptList pl = theManager.find(PrescriptList.class, aPrescriptionListId);
@@ -86,15 +88,17 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	vis.setUsername(aUsername);
 	theManager.persist(vis);
 	
-	if (aMedServiceId!=null&&aMedServiceId!=0) {
-	MedService sms = theManager.find(MedService.class, aMedServiceId);
 	ServiceMedCase smc = new ServiceMedCase();
 	smc.setParent(vis);
 	smc.setMedService(sms);
 	smc.setPatient(pat);
 	smc.setNoActuality(false);
+	theManager.persist(smc);
+	wct.setMedCase(vis) ;
+	theManager.persist(wct) ;
+	return ""+vis.getId();	
 	}
-		return ""+vis.getId();	
+		return null ;
 	}
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername) throws JSONException {
 		Protocol d =null;

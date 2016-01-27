@@ -1,3 +1,7 @@
+function onPreDelete(aEntityId, aContext) {
+	aContext.manager.createNativeQuery("delete from medcase where parent_id="+aEntityId).executeUpdate() ;
+}
+
 function onCreate(aForm, aEntity, aCtx) {
 	if (aForm.isCreatePlanHosp!=null && aForm.isCreatePlanHosp) {
 		var plan = new Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed ;

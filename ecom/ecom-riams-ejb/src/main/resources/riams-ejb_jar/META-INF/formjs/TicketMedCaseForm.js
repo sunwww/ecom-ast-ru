@@ -93,7 +93,17 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	//aCtx.getSessionContext().set("dCreate","123");
+	if (+aEntity.workFunctionExecute.id!=+aForm.workFunctionExecute) {
+		var txtD ;
+		txtD="update Diary set specialist_id='"+aForm.workFunctionExecute+"' where medCase_id='"
+		+aForm.id+"' and username='"+aCtx.getSessionContext().getCallerPrincipal().toString()+"'" ;
+		//throw txtD ;
+		aCtx.manager.createNativeQuery(txtD).executeUpdate();
+	}
+
 }
+
+
 /**
  * При сохранении
  */
@@ -161,7 +171,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			  ,"objNew.setIdc10(objS);"
 			  ,"objNew.setPriority(vocConcomType);"]
 			,"from Diagnosis where medCase_id='"+aEntity.getId()+"' ") ;
-	
+	/*
 	// Медицинские услуги
 	saveArray(aEntity, aCtx.manager,aForm.getMedServices()
 			,Packages.ru.ecom.mis.ejb.domain.medcase.MedService
@@ -173,14 +183,43 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			  ,"objNew.setNoActuality(false);objNew.setMedService(objS);"]
 			,"from MedCase where parent_id='"+aEntity.getId()+"' and dtype='ServiceMedCase' and medService_id"
 			) ;
-
+*/
+	saveServices(aForm,aEntity,aCtx) ;
 	
 		
 	
 
 	
 }
-
+function saveServices(aForm,aEntity,aCtx) {
+	aCtx.manager.createNativeQuery("delete from medcase where parent_id="+aEntity.id+" and dtype='ServiceMedCase'").executeUpdate();
+	
+	if (aForm.getMedServices()!=null&&aForm.getMedServices()!='') {
+		var otherServs = aForm.medServices.split("##");
+		if (otherServs.length>0) {
+			for (var i=0;i<otherServs.length;i++) {
+				var serv = otherServs[i].split("@") ;
+				var servMC = new Packages.ru.ecom.mis.ejb.domain.medcase.ServiceMedCase();
+				var servObj = aCtx.manager.find(  Packages.ru.ecom.mis.ejb.domain.medcase.MedService,java.lang.Long.valueOf(serv[0])) ;
+				servMC.setUet(+serv[1]>0?new java.math.BigDecimal(serv[1]):null);
+				servMC.setOrderNumber(serv[2]);
+				var am=java.lang.Long.valueOf(serv[3]) ;
+				servMC.setMedServiceAmount(am!=null?am.intValue():null);
+				servMC.setMedService(servObj);
+				servMC.setPatient(aEntity.getPatient());
+				servMC.setWorkFunctionExecute(aEntity.getWorkFunctionExecute());
+				servMC.setUsername(aEntity.getUsername());
+				servMC.setCreateDate(aEntity.getCreateDate());
+				servMC.setNoActuality(aEntity.getNoActuality());
+				servMC.setServiceStream(aEntity.getServiceStream());
+				servMC.setCreateTime(aEntity.getCreateTime());
+				servMC.setParent(aEntity);
+				servMC.setDateStart(aEntity.dateStart);
+				aCtx.manager.persist(servMC);
+			}
+		}
+	}
+}
 function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 		 aTableSql) {
 	

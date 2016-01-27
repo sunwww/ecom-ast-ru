@@ -46,9 +46,10 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 			form.setConcomitantDiseases( getArray(manager,"Diagnosis","idc10_id"
 					,new StringBuilder().append("medCase_id='").append(aIdEntity).append("'").append(" and priority_id='").append(vocConcomType.getId()).append("'").toString()
 					)) ;
-			form.setMedServices(getArray(manager,"MedCase","medService_id"
+			/*form.setMedServices(getArray(manager,"MedCase","medService_id"
 					,new StringBuilder().append("parent_id='").append(aIdEntity).append("'").append(" and dtype='ServiceMedCase'").toString()
-				)) ;
+				)) ;*/
+			form.setMedServices(getMedServiceArray(form, manager)) ;
 			List<Object[]> listac = manager.createNativeQuery("select id,numbercard from ambulanceCard where medcase_id="+aIdEntity).getResultList() ;
 			if (!listac.isEmpty()) {
 				form.setAmbulanceCard(""+listac.get(0)[1]) ;
@@ -61,6 +62,21 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
     		if (row[0]!=null)form.setCategoryChild(ConvertSql.parseLong(row[0])) ;
     	}
 
+	}
+	public static String  getMedServiceArray(TicketMedCaseForm aForm, EntityManager aManager){
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder res = new StringBuilder() ;
+		sql.append("select mc.medservice_id,ms.code||' '||ms.name,mc.uet,mc.ordernumber,mc.medserviceamount from MedCase mc left join MedService ms on ms.id=mc.medservice_id where mc.parent_id='").append(aForm.getId()).append("' and mc.dtype='ServiceMedCase' order by mc.id") ;
+		//System.out.println(sql) ;
+		List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList(); 
+		for (Object[] child : list) {
+			res.append(child[0]).append("@").append(child[2]).append("@") ;
+			res.append(child[3]).append("@").append(child[4]).append("@") ;
+			res.append(child[1]).append("##") ;
+		}
+			
+			
+		return res.length()>0?res.substring(0,res.length()-2):"" ;
 	}
 	public static String  getArray(EntityManager aManager
 			, String aTableName

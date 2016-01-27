@@ -273,5 +273,52 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 
 	/** Карта скорой помощи */
 	private String theAmbulanceCard;
+	
+	/** Номер зуба */
+	@Comment("Номер зуба")
+	public String getOrderNumber() {return theOrderNumber;}
+	public void setOrderNumber(String aOrderNumber) {theOrderNumber = aOrderNumber;}
+
+	/** Номер зуба */
+	private String theOrderNumber;
+	
+	/** Кол-во услуг */
+	@Comment("Кол-во услуг")
+	public Integer getMedServiceAmount() {
+		return theMedServiceAmount;
+	}
+
+	public void setMedServiceAmount(Integer aMedServiceAmount) {
+		theMedServiceAmount = aMedServiceAmount;
+	}
+
+	/** Кол-во услуг */
+	private Integer theMedServiceAmount;
+	
+	/** услуга */
+	@Comment("услуга")
+	public Long getMedService() {
+		return theMedService;
+	}
+
+	public void setMedService(Long aMedService) {
+		theMedService = aMedService;
+	}
+
+	/** услуга */
+	private Long theMedService;
+	
+	/** УЕТ */
+	@Comment("УЕТ")
+	public String getUetT() {
+		return theUetT;
+	}
+
+	public void setUetT(String aUetT) {
+		theUetT = aUetT;
+	}
+
+	/** УЕТ */
+	private String theUetT;
 }
 

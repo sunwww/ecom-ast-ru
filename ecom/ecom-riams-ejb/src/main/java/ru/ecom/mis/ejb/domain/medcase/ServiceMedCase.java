@@ -18,7 +18,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class ServiceMedCase extends ShortMedCase{
-	
+	/** Номер направления */
+	@Comment("Номер направления")
+	public String getOrderNumber() {return theOrderNumber;}
+	public void setOrderNumber(String aOrderNumber) {theOrderNumber = aOrderNumber;}
+	/** Номер направления */
+	private String theOrderNumber;
+
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@OneToOne
