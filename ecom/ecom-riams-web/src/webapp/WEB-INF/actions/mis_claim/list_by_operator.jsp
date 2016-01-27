@@ -156,9 +156,9 @@ left join workfunction pwf on pwf.group_id=gwf.id
 left join secuser su on su.id=pwf.secuser_id
 where su.login='${login}'
 ${statusSql}
-${dateSql}
+
 order by cl.createdate , cl.createtime
-"/>${claimListSql}
+"/>
         <msh:table styleRow="12" name="claimList" action="entityView-mis_claim.do" idField="1">
             <msh:tableColumn columnName="Пользователь" property="2" />
             <msh:tableColumn columnName="Заявка" property="3" />
