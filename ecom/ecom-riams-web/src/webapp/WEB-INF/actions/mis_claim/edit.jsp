@@ -23,6 +23,9 @@
         <msh:row>
       	  <msh:textField property="phone" label="Контактный телефон"/>
         </msh:row>
+        <msh:row>
+      	  <msh:textField property="address" label="Место исполнения заявки"/>
+        </msh:row>
         <msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
           <msh:autoComplete vocName="vocClaimType" property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -30,16 +33,19 @@
         
         <msh:ifFormTypeAreViewOrEdit formName="mis_claimForm">
           <msh:row>
-          	<msh:textArea  property="description" label="Текст заявки" viewOnlyField="true" />
+          	<msh:textArea  property="description" rows="5"  size="50" label="Текст заявки" viewOnlyField="true" />
           </msh:row>
            <msh:row>
       	  <msh:textField property="phone" label="Контактный телефон" viewOnlyField="true"/>
         </msh:row>
+         <msh:row>
+      	  <msh:textField property="address" size="50"  label="Место исполнения заявки" viewOnlyField="true"/>
+        </msh:row>
           <msh:row>
-	         <msh:autoComplete vocName="vocClaimType" property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
+	         <msh:autoComplete vocName="vocClaimType" size="50"  property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
           </msh:row> 
           <msh:row>
-	         <msh:autoComplete vocName="workFunction" property="workfunction" label="Создал" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
+	         <msh:autoComplete vocName="workFunction" size="50"  property="workfunction" label="Создал" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
           </msh:row> 
 	        <msh:separator label="Информация о создании заявки" colSpan="10"></msh:separator>
      	<msh:row>
@@ -90,7 +96,7 @@
         
         </msh:ifFormTypeAreViewOrEdit>
         <msh:ifFormTypeIsCreate formName="mis_claimForm">
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1"  />
         </msh:ifFormTypeIsCreate>
       </msh:panel>
       </msh:form>

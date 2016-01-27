@@ -28,7 +28,7 @@
 					<li><msh:link isReport="true" roles="/Policy/Mis/MedCase/Stac/Journal/AddressList" action="stac_address_list.do">
                              Адресные листки
                         </msh:link></li>
-					<li><msh:link isReport="true" action="js-mis_claim-list_by_user.do">
+					<li><msh:link isReport="true" action="all_claims.do">
                              Просмотр заявок
                         </msh:link></li>
                         
