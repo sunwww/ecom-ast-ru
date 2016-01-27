@@ -29,7 +29,10 @@
   	left join Patient wp on wp.id=w.person_id 
   	left join WorkFunction gr on gr.id=wf.group_id  
   	left join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
-  	where w.lpu_id=${param.id} and (wf.archival is null or wf.archival='0')"/>
+  	where w.lpu_id=${param.id} and (wf.archival is null or wf.archival='0')
+  	order by wp.lastname,wp.firstname,wp.middlename
+  	
+  	"/>
   	
     <msh:table name="listArch" viewUrl="entitySubclassShortView-work_workFunction.do" action="entitySubclassView-work_workFunction.do" idField="1" guid="d20ae6f6-f534-4d56-affe-ff02d3034d32">
       <msh:tableColumn columnName="#" property="sn" guid="4797" />

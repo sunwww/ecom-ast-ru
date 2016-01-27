@@ -51,6 +51,9 @@
           <msh:textField property="code" label="Код"  horizontalFill="true" />
           <msh:textField property="additionCode" label="Код доп."   horizontalFill="true" />
         </msh:row>
+        <msh:row>
+        	<msh:textField property="uet" label="УЕТ"/>
+        </msh:row>
         <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
           <msh:textField property="name" label="Наименование"  guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>

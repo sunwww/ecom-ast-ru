@@ -105,15 +105,32 @@
         </msh:row>
         <msh:row guid="7dfb3b2c-407d-48f1-9e70-76cb3328f5f5">
         	<msh:autoComplete property="mkbAdc" vocName="vocMkbAdc" parentAutocomplete="concludingMkb" label="Доп.код"/>
-        	<msh:textField property="uet" label="Усл.един.трудоем."/>
         </msh:row>
-        <msh:row>
-	   	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="6"/>
-	    </msh:row>
         <msh:row guid="1283d16a-e417-4add-acf5-5185dbb7737d">
           <ecom:oneToManyOneAutocomplete vocName="vocIdc10" label="Соп. заболевания" property="concomitantDiseases" colSpan="6" guid="1204d6c4-a3ff-44aa-a698-b99816d10337" />
         </msh:row>
+        </msh:panel><msh:panel>
+       <msh:ifFormTypeIsNotView formName="smo_ticketForm">
        
+       <msh:row>
+       <msh:separator label="Мед.услуги" colSpan="7"/>
+       </msh:row>
+        <msh:row>
+        <msh:hidden property="medServices"/>
+	   	<msh:autoComplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medService" vocName="medServiceForSpec" size="45"/>
+        	<msh:textField property="uetT" label="УЕТ" size="4"/>
+        	<msh:textField property="orderNumber" label="№зуба" size="1"/>
+            <msh:textField property="medServiceAmount" label="Кол-во" size="2" />
+        
+        	<td><input type="button" value="+ услугу" onclick="addService()"/></td>
+        </msh:row>
+        <msh:row>
+        <table id="otherMedServices" border="1px solid">
+        	
+        </table>
+        </msh:row>
+       
+       </msh:ifFormTypeIsNotView>
         <msh:ifFormTypeAreViewOrEdit formName="smo_ticketForm">
         <msh:separator label="Выдан талон" colSpan="4" guid="d9a7ec35-7893-48b3-aa08-f2e04d9a9400" />
         <msh:row>
@@ -132,6 +149,23 @@
       </msh:panel>
     </msh:form>
     <msh:ifFormTypeIsView formName="smo_ticketForm">
+          	<msh:section title="Услуги">
+      		<ecom:webQuery name="services" nativeSql="select mc.id,ms.name
+      		,mc.uet,mc.orderNumber
+      		,mc.medServiceAmount
+      		from MedCase mc 
+      		left join MedService ms on mc.medService_id=ms.id
+      		where mc.parent_id='${param.id}' and mc.dtype='ServiceMedCase'
+      		"/>
+      		<msh:table name="services" action="javascript:void(0)" 
+      	 	  idField="1" >
+      			<msh:tableColumn columnName="Название услуги" property="2"/>
+      			<msh:tableColumn columnName="Ует" property="3"/>
+      			<msh:tableColumn columnName="№зуба" property="4"/>
+      			<msh:tableColumn columnName="Кол-во" property="5"/>
+      		</msh:table>
+      	</msh:section>
+    
     <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
     	<msh:section>
     		<msh:sectionTitle>Талоны беседы с родственниками <msh:link action="/js-smo_ticket-addTalk.do?id=${param.id}" roles="/Policy/Poly/Ticket/CreateTalk">добавить</msh:link> </msh:sectionTitle>
@@ -281,9 +315,76 @@
     
       	<msh:ifFormTypeIsNotView formName="smo_ticketForm">
       	<script type="text/javascript"> 
+      	onload=function(){
+      		if (+$('medServiceAmount').value<1) $('medServiceAmount').value="1";
+         	if ($('medServices').value!=null&&$('medServices').value!='') {
+        		var arr = $('medServices').value.split("##");
+        		for (var i=0;i<arr.length;i++) {
+        			var ar=arr[i].split("@") ;
+                    addRow ("<b>"+ar[4]+"</b> ует: <input type='text' value='"+(ar[1]!='null'?ar[1]:"")+"' size='4'> №зуба: <input type='text' value='"+ar[2]+"' size='2'> кол-во: </i><input type='text' value='"+ar[3]+"' size='1'>",ar[0]);
+        		}
+        	}
+        }
+
+        
    
-    
-    	function checkCrossSPO () {
+        function addService(check) {
+            var service = $('medService').value;
+            var serviceName = $('medServiceName').value;
+            var medServiceAmount=$('medServiceAmount').value;
+	  		var uetT=$('uetT').value;
+  		    var orderNumber=$('orderNumber').value ;
+            if (+service>0) {
+            	var servs = document.getElementById('otherMedServices').childNodes;
+                  var l = servs.length;
+                  for (var i=1; i<l;i++) {
+                	 if (servs[i].childNodes[0].childNodes[0].value==service && 
+                			 servs[i].childNodes[0].childNodes[5].value==orderNumber) {
+                 		 if (+check!=1) {
+                 			 if (confirm("Такая услуга уже есть в талоне. Вы хотите ее заменить?")) {
+                 			var node=servs[i];node.parentNode.removeChild(node);
+                 		 } else {
+                  			return;
+                  		 } 
+                 		} else {return;}
+                    }                 
+                 }
+                 addRow ("<b>"+serviceName+"</b> ует: <input type='text' value='"+uetT+"' size='4'> №зуба: <input type='text' value='"+orderNumber+"' size='2'> кол-во: </i><input type='text' value='"+medServiceAmount+"' size='1'>",service);
+                 $('medService').value="";
+                 $('medServiceName').value="";
+                 $('medServiceAmount').value="1";
+     	  		 $('uetT').value="";
+       		     $('orderNumber').value="" ;
+            }
+         }
+        
+      	function createOtherMedServices() {
+      		var servs = document.getElementById('otherMedServices').childNodes;
+      		var str = ""; $('medServices').value='';
+      		for (var i=1;i<servs.length;i++) {
+      			str+=servs[i].childNodes[0].childNodes[0].value
+      			+"@"+servs[i].childNodes[0].childNodes[3].value
+      			+"@"+servs[i].childNodes[0].childNodes[5].value
+      			+"@"+servs[i].childNodes[0].childNodes[7].value
+      			+"##";
+      		}
+      		str=str.length>0?str.trim().substring(0,str.length-2):"";
+      		$('medServices').value=str;
+      	}
+      	function addRow (aValue,aFld) {
+      		var table = document.getElementById('otherMedServices');
+      		var row = document.createElement('TR');
+      		var td = document.createElement('TD');
+      		var tdDel = document.createElement('TD');
+      		table.appendChild(row);
+      		row.appendChild(td);
+      		td.innerHTML="<input type='hidden' value='"+aFld+"'>"+aValue;
+      		row.appendChild(tdDel);
+      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherMedServices()' value='- услугу' />";
+      		createOtherMedServices();
+      	}
+    	
+      	function checkCrossSPO () {
     		TicketService.getCrossSPO($('dateStart').value,$('patient').value,$('workFunctionExecute').value,{
     			callback: function(aResult) {
 					if (aResult!=null&&aResult!='') {
@@ -454,10 +555,19 @@
 	      	 	}) ;
 	      	 }
 	    });
+      	medServiceAutocomplete.addOnChangeCallback(function() {
+    		if (+$('medService').value>0) {
+	      	 	TicketService.getUetByService($('medService').value,{
+	      	 		callback: function(aResult) {
+	      	 			$('uetT').value=aResult ;
+	      	 		}
+	      	 	}) ;
+	      	 }
+	    });
       	function setAdditionParam() {
       		var wf = +$("workFunctionExecute").value;
-    		if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
-    		if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+    		medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value) ;
+    		
      		if (wf>0) {
         		TicketService.getOpenSpoByPatient(wf,$('patient').value,{
         			callback: function(aResult) {
@@ -469,14 +579,10 @@
             				$('parent').value = '';
             				$('parentName').value= '';
         				}
-        				TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-        	      	 		callback: function(aResult) {
-        	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-        	      	 		}
-        	      	 	}) ;
+        				
         			}}) ;
         		} else {
-        			$('parent').value = '';$('parentName').value = '';if (theOtmoa_medServices) theOtmoa_medServices.setIds("") ;
+        			$('parent').value = '';$('parentName').value = '';
         		}		
       	}
   		function setDiagnosisText(aFieldMkb,aFieldText) {
@@ -496,11 +602,10 @@
 		  		if (oldValue!=$('dateStart').value) {
 		  			var wf = +$("workFunctionExecute").value;
 		    		if (wf=='') {wf=0;}
-		  			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
-		    		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+		  			 medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value) ;
 		    		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
 			      	 		callback: function(aResult) {
-			      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+			      	 			//medServiceAutocomplete.setId(aResult) ;
 			      	 		}
 			      	 	}) ;
 		  		}
@@ -529,7 +634,6 @@
   			isExistTicket();
   		}
     	function isExistTicket() {
-    		
     		 if ($('dateStart').value!="") {
     		TicketService.findDoubleBySpecAndDate($('id').value,document.forms[0].medcard.value,$('workFunctionExecute').value, $('dateStart').value
     		, {
@@ -556,6 +660,8 @@
                                     	   	TicketService.saveSession($('dateStart').value,$('workFunctionExecute').value
                                     	   			,$('workFunctionExecuteName').value,$('medServices').value,$('emergency').checked, {
                                     	   		callback: function(aResult) {
+                                    	    		addService(1) ;
+                                    	    		createOtherMedServices() ;
                                     	   			document.forms[0].action = oldaction ;
                         				    		document.forms[0].submit() ;
                                     	   		}
@@ -578,7 +684,7 @@
     				return "none" ;
     			}
     		}
-    		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+    		 medServiceAutocomplete.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
     	//]]>
     	</script>
     	

@@ -101,7 +101,16 @@
     </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsView formName="secuserForm" guid="4640a7ef-b9d6-469c-b18b-07c74c890d">
       <msh:ifInRole roles="/Policy/Mis/Worker/WorkFunction/View" guid="dfcf6e04-a278-46d3-b4b2-63b53eb4b5">
-            <ecom:webQuery name="workFunction" hql="select id,COALESCE(workFunction.name,','),&#xA; worker.person.lastname || ' '|| worker.person.firstname || ' ' || worker.person.middlename&#xA;from WorkFunction where secUser.id=${param.id}" guid="e13952fe-a624-4b4d-b97f-e52768edf0db" />
+            <ecom:webQuery name="workFunction" nativeSql ="select wf.id
+            ,COALESCE(vwf.name,'') as vwfname
+            , wp.lastname || ' '|| wp.firstname || ' ' || wp.middlename as fiow
+            , gr.groupName as grgroupName 
+			from WorkFunction wf 
+			left join worker w on w.id=wf.worker_id 
+  			left join Patient wp on wp.id=w.person_id
+			left join WorkFunction gr on gr.id=wf.group_id
+			left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+			where wf.secUser_id=${param.id}" guid="e13952fe-a624-4b4d-b97f-e52768edf0db" />
       </msh:ifInRole>
     </msh:ifFormTypeIsView>
     <% 
@@ -128,6 +137,7 @@
             <msh:table name="workFunction" action="entitySubclassView-work_workFunction.do" idField="1" guid="5fdef5ee-ac48-46eb-80ce-faca6933b9d2">
               <msh:tableColumn columnName="ФИО специалиста" identificator="false" property="3" guid="e601249e-b653-4c13-9621-524bd2bde28b" />
               <msh:tableColumn property="2" columnName="Рабочая функция" guid="e4542fb4-df71-4865-8420-f4b3510cb1d3" />
+              <msh:tableColumn property="4" columnName="Групповая функция" guid="e4542fb4-df71-4865-8420-f4b3510cb1d3" />
             </msh:table>
           </msh:sectionContent>
         </msh:section>

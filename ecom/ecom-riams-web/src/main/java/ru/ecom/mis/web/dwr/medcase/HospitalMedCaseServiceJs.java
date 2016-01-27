@@ -29,6 +29,10 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	public String getServiceByMedCase(Long aMedCase, HttpServletRequest aRequest) {
+		return "" ;
+	}
+	
 	public String checkEditProtocolControl(Long aDiaryMessage, Long aDiary, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -1452,7 +1456,7 @@ public class HospitalMedCaseServiceJs {
     	sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
     	sql.append(" where bf.lpu_id='").append(aDepartment) ;
     	if (aServiceStream!=null && aServiceStream.intValue()>0) sql.append("' and bf.serviceStream_id='").append(aServiceStream) ;
-    	sql.append("' and bf.dateFinish is null") ;
+    	sql.append("' and bf.dateFinish is null order by bf.amount desc") ;
     	
     	
     	
@@ -1517,7 +1521,7 @@ public class HospitalMedCaseServiceJs {
     	.append("' and bf.serviceStream_id='").append(aServiceStream)
     	.append("' and to_date('").append(aDateFrom)
     	.append("','dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)") ;
-    	sql.append(" ").append(bedSubType).append("");
+    	sql.append(" ").append(bedSubType).append(" order by bf.amount desc");
     	
     	list.clear() ;
     	list = service.executeNativeSql(sql.toString(),2) ;

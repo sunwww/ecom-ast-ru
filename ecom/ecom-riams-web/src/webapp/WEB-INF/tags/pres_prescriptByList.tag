@@ -87,6 +87,7 @@
     	
  ,p.planStartDate,p.planEndDate,p.materialId,vpt.name as vptname
  ,ml.name as mlname,vpcr.name||' '||coalesce(p.cancelReasonText,'') as fldCancel
+ ,case when vpcr.id is not null then 'color:red;' else null end as stylCancel
  from Prescription p 
  left join PrescriptionList pl on pl.id=p.prescriptionList_id 
  left join mislpu ml on ml.id=p.department_id
@@ -99,14 +100,14 @@
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на лабораторные исследования</msh:sectionTitle>
     	<msh:sectionContent>
-    		<msh:table name="pres" action="entityView-pres_servicePrescription.do" idField="1">
+    		<msh:table styleRow="10" name="pres" action="entityView-pres_servicePrescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Исследование"/>
     			<msh:tableColumn property="7" columnName="Тип назначения"/>
     			<msh:tableColumn property="8" columnName="Место забора"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
     			<msh:tableColumn property="5" columnName="Дата окончания"/>
     			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
-    			<msh:tableColumn property="8" columnName="Причина отмены"/>
+    			<msh:tableColumn property="9" columnName="Причина брака"/>
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>

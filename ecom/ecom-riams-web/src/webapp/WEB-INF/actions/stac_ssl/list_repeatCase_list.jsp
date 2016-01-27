@@ -140,7 +140,7 @@
     <ecom:webQuery name="journal_repeatCase" nativeSql="select 
     mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase' 
     ||': ${emergencySql}' as id
-    ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(distinct mm.id) as cntAll
     ,count(case when mm.deniedHospitalizating_id is not null then mm.id else null end) as cntDenied
     , list(distinct case 
@@ -181,7 +181,7 @@ order by p.lastname,p.middlename,p.firstname
     <msh:sectionContent>
     <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase'
     ||': and m.deniedHospitalizating_id is not null ${emergencySql}' as id
-    ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(distinct mm.id) as cntAll
 
     , list(distinct case 
@@ -219,7 +219,7 @@ order by p.lastname,p.middlename,p.firstname
     <msh:sectionTitle>Повторные госпитализации</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:HospitalMedCase: and m.deniedHospitalizating_id is null ${emergencySql}' as id
-    ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(distinct mm.id) as cntAll
 
     , list(distinct case 
@@ -258,7 +258,7 @@ order by p.lastname,p.middlename,p.firstname
     <msh:sectionContent>
     <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:Visit'
     ||': and m.dateStart=to_date(@'||to_char(mm.dateStart,'dd.mm.yyyy')||'@,@dd.mm.yyyy@) ${emergencySql}' as id
-    ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(*) as cntCount
     ,list(vwf.name) as listspec
     ,mm.dateStart as mmdateStart
@@ -294,7 +294,7 @@ order by p.lastname,p.middlename,p.firstname
     <msh:sectionContent>
     <ecom:webQuery name="journal_repeatCase" nativeSql="select mm.patient_id||':${startDate}:${finishDate}:${count}:Visit'
     ||':  ${emergencySql} and wf.workFunction_id='||wf.workFunction_id as id
-    ,p.lastname||' '||p.middlename||' '||p.firstname||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
+    ,p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'DD.MM.YYYY') as patient
     ,count(*) as cntCount
     ,vwf.name as vwfname
     ,list(wp.lastname||' '||substring(wp.firstname,1,1)||coalesce(substring(wp.middlename,1,1),'')) as listspec
