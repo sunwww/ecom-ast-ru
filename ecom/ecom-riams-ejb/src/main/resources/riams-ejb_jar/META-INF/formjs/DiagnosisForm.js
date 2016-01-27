@@ -76,15 +76,25 @@ function isDiagnosisAllowed(aForm, aCtx) {
 	var dtype = getMedCaseType(aForm.getMedCase(),aCtx);
 	var medcase;
 	var department;
-	if (dtype!='Visit') {
+	if (dtype=='DepartmentMedCase') {
 		medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase, 
 				new java.lang.Long(aForm.getMedCase())) ;
 		department = medcase.getDepartment().getId();
-	} else { 
+	} else if (dtype=='Visit'){ 
 		medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, 
 				new java.lang.Long(aForm.getMedCase())) ;
-		department = medcase.workFunctionExecute.worker.lpu.getId();
+		department = medcase.workFunctionExecute.worker.lpu.getId();		
+	} else if (dtype=='HospitalMedCase') {
+		try {
+		medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase, 
+				new java.lang.Long(aForm.getMedCase())) ;
 		
+		department = medcase.getDepartment().getId();
+		} catch (e) {
+			return true;
+		}
+	} else {
+		return true;
 	}
 	
 	if (medcase==null) {
