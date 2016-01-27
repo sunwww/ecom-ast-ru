@@ -203,7 +203,8 @@ function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, 
 	PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
 	,$('surgServicies').value, {
 		callback: function(a) {
-			alert (a);
+			if (a==null) {alert("Ошибка при назначении услуги!!!");}
+			//alert (a);
 		}
 	});
 	
@@ -415,9 +416,7 @@ function getPreRecord() {
 			<msh:row>
 				 <msh:textField property="planStartDate" size="10" fieldColSpan="1" />
     		</msh:row>
-			<msh:row>
-				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
-			</msh:row>
+				 <msh:hidden property="comments"  />
       
     </msh:ifFormTypeIsView>
  <%-- --------------------------------------------------Начало блока "Операции" ------ --%>
@@ -440,9 +439,7 @@ function getPreRecord() {
     		<msh:row>
     			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
-			<msh:row>
-				 <msh:textArea property="comments" label="Примечание" size="50" fieldColSpan="4" />
-			</msh:row>
+				 <msh:hidden property="comments"  />
 			<msh:row>
 				<td colspan="4" align="center">        	
 	            	<input type="button" name="subm" onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
