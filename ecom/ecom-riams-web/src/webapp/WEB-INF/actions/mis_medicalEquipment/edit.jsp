@@ -107,7 +107,6 @@
 <tiles:put name="javascript" type="string">
       <script type="text/javascript">
       onload=function() {
-    	  alert("HELLO");
     	  var val = (+$('wearout').value) /(+$('price').value)*100;
     	  $('wearoutPercent').value=""+(val.toFixed(2))+" %";
       }
