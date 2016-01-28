@@ -35,8 +35,10 @@ public class AttachmentByLpuBypassAction extends BaseAction {
     	if (form!=null ) {
     		//ActionErrors  erros = form.validate(aMapping, aRequest) ;
     	//	System.out.println(erros) ;
-    		if (true) {
-    		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
+    		String dateFrom =form.getPeriod();
+    		String dateTo = form.getPeriodTo();
+    		
+    		//IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
     		String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
     		String typeAge = ActionUtil.updateParameter("PatientAttachment","typeAge","3", aRequest) ; 
     		String typeAttachment = ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", aRequest) ; 
@@ -46,9 +48,16 @@ public class AttachmentByLpuBypassAction extends BaseAction {
     		String typeSex=ActionUtil.updateParameter("PatientAttachment", "typeSex", "3", aRequest);
     		String age = null ;
 	    	StringBuilder sqlAdd=new StringBuilder() ;
+	    	if (dateFrom !=null &&!dateFrom.equals("")) {
+	    		if (dateTo!=null&&!dateTo.equals("")) {
+	    			sqlAdd.append(" and lp.datefrom between to_date('"+dateFrom+"','dd.MM.yyyy') and to_date('"+dateTo+"','dd.MM.yyyy')");
+	    		} else {
+	    			sqlAdd.append(" and lp.datefrom >= to_date('"+dateFrom+"','dd.MM.yyyy')");
+	    		}
+	    	}
 	    	if (typeAge!=null) {
 	    		if (typeAge!=null&&typeAge.equals("1")) {
-		    		age = "<=18" ;
+		    		age = "<18" ;
 		    	} else if (typeAge!=null&&typeAge.equals("2")) {
 		    		age = ">=18" ;
 		    	}
@@ -97,7 +106,7 @@ public class AttachmentByLpuBypassAction extends BaseAction {
 		    			sqlAdd.append(" and lp.area_id=").append(form.getArea());
 		    		}
 	    		aRequest.setAttribute("sqlAdd", sqlAdd.toString()) ;
-        } 
+        
     		}
         return aMapping.findForward("success") ;
     }
