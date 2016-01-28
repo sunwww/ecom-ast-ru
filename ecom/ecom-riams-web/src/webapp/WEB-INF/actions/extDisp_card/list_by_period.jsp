@@ -911,7 +911,7 @@ order by vedarg.code
 				<msh:table name="extDispAgeSwod" 
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
-					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
 					<msh:tableColumn columnName="Прошли диспансеризацию мужчин" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Прошли диспансеризацию женщин" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Всего" isCalcAmount="true" property="7" />
@@ -1144,7 +1144,16 @@ order by vwf.name,wp.lastname,wf.id,veds.id
  //   checkFieldUpdate('typeDtype','${typeDtype}',3) ;
   //  checkFieldUpdate('typeDate','${typeDate}',2) ;
    var sqlAdd = ""; 
-   
+  
+   function createSqlField (aField, aSqlField) {
+	   if ($(aField)) {
+		   if ($(aField).value!=null&&$(aField).value!='') {
+			   return " and "+aSqlField + " = "+$(aField).value;
+			   
+		   }
+	   }
+	   return '';
+   }
   function showForm() {
 	
 	  if ($('formOrphDiv').style.display=='block') {
@@ -1162,12 +1171,18 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 			  +"Поле \"Группа для занятий физ. культурой\" - обязательное\nРезультат анализов - как пример \"Без патологий\"");
   }
   function prepareForm30() {
-	  $('exportTable').style.display = 'none' ;
 	  sqlAdd="";
+	  sqlAdd += createSqlField ('workFunction', 'edc.workfunction_id');
+	  sqlAdd += createSqlField ('dispType', 'edc.dispType_id');
+	  sqlAdd += createSqlField ('ageGroup', 'edc.ageGroup_id');
+	  sqlAdd += createSqlField ('healthGroup', 'edc.healthGroup_id');
+	  
+	  $('exportTable').style.display = 'none' ;
+	 
 	  for (var i=0; i<document.getElementsByName("expDispAge").length;i++) {
 		  if (document.getElementsByName("expDispAge")[i].checked){
 			  if (document.getElementsByName("expDispAge")[i].value=="2") {
-				  sqlAdd+="and vedag.code not like '%.%' ";
+				  sqlAdd+=" and vedag.code not like '%.%' ";
 			  }  
 		  }		
 	  }
@@ -1195,7 +1210,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     	return;
     }
 	 	$('aView').innerHTML="Подождите...";
-    	
+    	alert ("SQLADD = "+sqlAdd);
      ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
     		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
     		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value,$('lpu').value, {
