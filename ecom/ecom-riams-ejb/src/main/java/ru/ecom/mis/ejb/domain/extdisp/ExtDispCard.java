@@ -36,6 +36,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @EntityListeners(DeleteListener.class)
 public class ExtDispCard extends BaseEntity{
+	
+	/** Дата экспорта в федеральную систему */
+	@Comment("Дата экспорта в федеральную систему")
+	public Date getExportDate() {return theExportDate;}
+	public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
+	/** Дата экспорта в федеральную систему */
+	private Date theExportDate;
+
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne

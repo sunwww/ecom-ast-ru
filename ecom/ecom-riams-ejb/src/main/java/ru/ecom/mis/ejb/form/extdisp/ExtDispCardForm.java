@@ -38,6 +38,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(ExtDispCardViewInterceptor.class)
 )
 public class ExtDispCardForm extends IdEntityForm{
+	
+	/** Дата выгрузки в федеральную систему */
+	@Comment("Дата выгрузки в федеральную систему")
+	@Persist
+	public String getExportDate() {return theExportDate;}
+	public void setExportDate(String aExportDate) {theExportDate = aExportDate;}
+	/** Дата выгрузки в федеральную систему */
+	private String theExportDate;
+
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist

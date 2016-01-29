@@ -63,7 +63,9 @@ public class ExtDispServiceBean implements IExtDispService {
 		String aAnalysesText = "Без патологий"; // Результат анализов
 		return exportOrph(aStartDate,aFinishDate, aFileNameSuffix, aSqlAdd,aFizGroup, aHeight, aWeight, aHeadSize, aAnalysesText, aZOJReccomend, aReccomend,"200",null );
 	}
-	
+	public void setIsExported(String aId) {
+		theManager.createNativeQuery("update ExtDispCard set exportDate = current_date where id="+aId).executeUpdate();
+	}
 	public String createArchive(String archiveName) {
 //		System.out.println("DEBUG ----createArchive='"+archiveName+"'");
 		if (aFileNames.length()>0) {
@@ -592,6 +594,7 @@ public class ExtDispServiceBean implements IExtDispService {
 						createFile(rootElement);
 						rootElement = new Element("children");
 					}
+					setIsExported(card_id);
 				}
 			dbh.close();
 			if (!rootElement.getChildren().isEmpty()) {
