@@ -31,6 +31,25 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkFunction")
 @Subclasses({PersonalWorkFunctionForm.class, GroupWorkFunctionForm.class, OperatingRoomForm.class})
 public class WorkFunctionForm extends IdEntityForm{
+	
+	/** Дата начала работы */
+	@Comment("Дата начала работы")
+	@Persist
+	@DateString @DoDateString
+	public String getStartDate() {return theStartDate;}
+	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+	/** Дата начала работы */
+	private String theStartDate;
+	
+	/** Дата окончания работы */
+	@Comment("Дата окончания работы")
+	@Persist
+	@DateString @DoDateString
+	public String getFinishDate() {return theFinishDate;}
+	public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+	/** Дата окончания работы */
+	private String theFinishDate;
+	
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist
