@@ -24,7 +24,7 @@
       	  <msh:textField property="phone" label="Контактный телефон"/>
         </msh:row>
         <msh:row>
-      	  <msh:textField property="address" label="Место исполнения заявки"/>
+      	  <msh:textField property="address" size="20" label="Место исполнения заявки"/>
         </msh:row>
         <msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
           <msh:autoComplete vocName="vocClaimType" property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" />
