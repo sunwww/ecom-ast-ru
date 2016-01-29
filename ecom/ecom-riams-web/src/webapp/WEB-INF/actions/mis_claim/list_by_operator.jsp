@@ -142,7 +142,9 @@ if (beginDate!=null&&!beginDate.equals("")) {
  when cl.viewdate is not null then ''
  when cl.createdate is not null then ''
  else 'ВАХВАХ' end as color_status
-, cl.address as address
+,cl.address as address
+,case when cl.executorusername = '${login}' then cl.id else null end as btnComment
+,cl.executorcomment as comment
 from claim cl
 left join workfunction uwf on uwf.id=cl.workfunction
 left join vocworkfunction vwf on vwf.id=uwf.workfunction_id
@@ -166,9 +168,11 @@ order by cl.createdate , cl.createtime
             <msh:tableColumn columnName="Место" property="13" />
             <msh:tableColumn columnName="Дата и время создания" property="4" />
             <msh:tableColumn columnName="Статус" property="5" />
+            <msh:tableColumn columnName="Комментарий исполнителя" property="15" />
             <msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />
             <msh:tableButton hideIfEmpty="true" property="9" buttonFunction="setStartWork" buttonShortName="Передать в работу" buttonName="Передать в работу"/>
             <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setCancel" buttonShortName="Отменить" buttonName="Отменить"/>
+            <msh:tableButton hideIfEmpty="true" property="14" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
             <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
         </msh:table>
         <tags:mis_claimStart name="New" status="id" />
@@ -205,6 +209,14 @@ order by cl.createdate , cl.createtime
     }
     function setStartWork(aId) {
     	setStatus(aId, 'StartWork')
+    }
+    function setComment (aId) {
+    	var comment = prompt('Введите комментарий');
+    	ClaimService.setComment(aId, comment,{
+    		callback: function(){
+    		window.location.reload();
+    		}
+    	});
     }
     function setStatus(aIds, aStatus) {
     	var arr = aIds.split(':');
