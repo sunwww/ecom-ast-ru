@@ -314,6 +314,8 @@ function deletePrescription(aMedService, aWCT) {
 		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
 	}
 	surgCalDateAutocomplete.addOnChangeCallback(function(){
+		  $('surgCalTime').value="" ;
+		  $('surgCalTimeName').value="" ;
   	  	  getPreRecord() ;
   	 });
 	surgCabinetAutocomplete.addOnChangeCallback(function(){

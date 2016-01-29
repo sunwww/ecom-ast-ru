@@ -555,14 +555,19 @@
 	}
 	
 			</script>
-			</msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
+			</msh:ifFormTypeIsNotView >
+			
+			<msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
 			<script type="text/javascript">
 			function cancelService() {
-				PrescriptionService.cancelPrescription() ;
+				var reason = prompt('Введите причину отмены');
+				PrescriptionService.cancelPrescription($('id').value, reason, {
+					callback:function (a) {
+						alert(a);
+					}
+				}) ;
 			}
 			</script>
-			<msh:ifFormTypeIsView>
-			
 			</msh:ifFormTypeIsView>
 			</tiles:put>
 
