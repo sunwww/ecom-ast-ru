@@ -37,7 +37,12 @@ public class PrescriptionServiceJs {
 //Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, 
 //String aUsername, Long aOrderWorkFunction) {
 
-	
+	public String cancelPrescription (String aId, String aReason, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		String sql = "update prescription set cancelDate = current_date, canceltime = current_time, cancelReasonText = '"+aReason+"' , cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='"+username+"') where id="+aId;
+		return "Назначение отменено " +wqs.executeUpdateNativeSql(sql);
+	}
 	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
 		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, HttpServletRequest aRequest )throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
