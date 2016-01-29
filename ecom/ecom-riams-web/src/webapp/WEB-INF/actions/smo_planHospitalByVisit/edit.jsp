@@ -103,7 +103,28 @@
 			</msh:row>
 			<msh:row>
     			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
-    		</msh:row>   
+    		</msh:row> 
+    		 <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
+         </msh:row>
+         <tr><td colspan="10"><table><tr><td valign="top"><table>
+        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
+          <msh:separator label="Резервы" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        </msh:row>
+        <msh:row>
+        	<td colspan="4">
+        	<div id="divReserve"></div>
+        	</td>
+        </msh:row></table>
+        </td><td valign="top"><table>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/PreRecord">
+        <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
+          <msh:separator label="Предварительная запись" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+        </msh:row>
+        <msh:row>
+        	<td colspan="4" id="tdPreRecord"></td>
+        </msh:row>
+        </msh:ifInRole></table>
+        </td></tr></table></td></tr>
         </msh:panel>
         <msh:panel>
         <msh:row>
@@ -182,8 +203,93 @@
   </msh:ifFormTypeIsView>
   <msh:ifFormTypeIsNotView formName="smo_planHospitalByVisitForm">
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+<script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
   	
   	<script type="text/javascript">
+	
+	surgCalDateAutocomplete.addOnChangeCallback(function(){
+		 $('surgCalTime').value="" ;
+		  $('surgCalTimeName').value="" ;
+	  	  getPreRecord() ;
+ 	 });
+	surgCabinetAutocomplete.addOnChangeCallback(function(){
+		updateDefaultDate() ;
+	}) ;
+	function checkRecord(aId,aValue,aIdService,aService) {
+    	$('surgCalTime').value = aId; 
+    	$('surgCalTimeName').value = aValue ;
+    
+    }
+  	function getPreRecord() {
+  	  		
+  	  		if ($('tdPreRecord')) {
+  	  			
+  	  			if ($('surgCalDate') && +$('surgCalDate').value>0) {
+  	  	  			WorkCalendarService.getPreRecord($('surgCalDate').value,
+  	  	  		  			{
+  	  	  		  				callback:function(aResult) {
+  	  	  		  					if (aResult!=null) {
+  	  	  		  						$('tdPreRecord').innerHTML=aResult;
+  	  	  		  					}
+  	  	  			  				else {
+  	  	  			  					$('tdPreRecord').innerHTML="";
+  	  	  			  				}
+  	  	  		  				
+  	  	  		  					updateTime() ;
+  	  	  		  					
+  	  	  			  			}
+  	  	  		  			}
+  	  	  		  			) ;
+  	  	  			} else {
+  	  	  				$('tdPreRecord').innerHTML="";
+  	  	  			}
+  	  		} else {
+  	  			updateTime() ;
+  	  		}
+  		}
+  		
+  		function updateTime() {
+  	   		if (+$('surgCalDate').value>0 ) {
+  	   			WorkCalendarService.getReserveByDateAndService($('surgCalDate').value,$('serviceStream').value,$('patient').value
+  		    			  
+  		  		, {
+  		                 callback: function(aResult) {
+  		                	 //alert(aResult) ;
+  		                	 $('divReserve').innerHTML = aResult ;
+  		                 }
+  			        	}
+  			        	); 
+  	    }
+  	   	}
+  	
+  	function updateDefaultDate() {
+		WorkCalendarService.getDefaultDate($('surgCabinet').value,
+		{
+			callback:function(aDateDefault) {
+				if (aDateDefault!=null) {
+					//alert(aDateDefault) ;
+					var calDayId, calDayInfo,ind1 ;
+					ind1 = aDateDefault.indexOf("#") ;
+					calDayInfo = aDateDefault.substring(0,ind1) ;
+					calDayId = aDateDefault.substring(ind1+1) ;
+					
+					$('surgCalDate').value=calDayId ;
+		        $('surgCalDateName').value = calDayInfo;
+		        getPreRecord();
+				} else {
+					$('surgCalDate').value=0 ;
+		        $('surgCalDateName').value = "";
+		        getPreRecord();
+				}
+				
+			    
+			}
+		}
+		) ;
+		$('surgCalTime').value="0" ;
+	$('surgCalTimeName').value = "";
+	 
+	}
   	
   	eventutil.addEventListener($('isOperation'), 'click', function () {showTable('createOperationDiv', 'isOperation');}) ;
   	showTable('createOperationDiv', 'isOperation');
