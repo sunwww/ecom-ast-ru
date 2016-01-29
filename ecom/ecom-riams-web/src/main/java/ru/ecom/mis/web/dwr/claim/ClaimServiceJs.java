@@ -18,6 +18,11 @@ import ru.ecom.web.util.Injection;
  */
 public class ClaimServiceJs {
 
+	public static String setComment (String aId, String comment, HttpServletRequest aRequest) throws NamingException {
+		
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		return ""+service.executeUpdateNativeSql("update claim set executorcomment = '"+comment+"' where id="+aId);
+	}
 	public static String setStatusClaim (String aStatus, String aId,String aDate, String aTime, String aUsername, String aComment, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		if (aStatus==null) return "Не указан статус";
