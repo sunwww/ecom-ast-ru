@@ -8,6 +8,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 
 public class ExtDispJournalForm extends BaseValidatorForm {
 
+	
 	/** Дата начала периода */
 	@Comment("Дата начала периода")
 	@DateString @DoDateString @Required
@@ -56,12 +57,12 @@ public class ExtDispJournalForm extends BaseValidatorForm {
 	/** Тип диспасеризации */
 	private Long theDispType;
 	
-	/** Возрасная категория */
-	@Comment("Возрасная категория")
+	/** Возрастная категория */
+	@Comment("Возрастная категория")
 	public Long getAgeGroup() {return theAgeGroup;}
 	public void setAgeGroup(Long aAgeGroup) {theAgeGroup = aAgeGroup;}
 
-	/** Возрасная категория */
+	/** Возрастная категория */
 	private Long theAgeGroup;
 	
 	/** Группа здоровья */
@@ -223,6 +224,22 @@ private int theExpFizGroup;
 	
 	/** vocworkfunction */
 	private Long theVocWorkFunction;
+	
+	/** Дата создания карты с */
+	@Comment("Дата создания карты с")
+	@DateString @DoDateString
+	public String getCreateFrom() {return theCreateFrom;}
+	public void setCreateFrom(String aCreateFrom) {theCreateFrom = aCreateFrom;}
+	/** Дата создания карты с */
+	private String theCreateFrom;
+	
+	/** Дата создания карты по */
+	@Comment("Дата создания карты по")
+	@DateString @DoDateString
+	public String getCreateTo() {return theCreateTo;}
+	public void setCreateTo(String aCreateTo) {theCreateTo = aCreateTo;}
+	/** Дата создания карты по */
+	private String theCreateTo;
 }
 
 
