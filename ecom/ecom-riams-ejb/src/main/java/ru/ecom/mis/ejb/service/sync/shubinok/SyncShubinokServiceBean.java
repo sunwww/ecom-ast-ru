@@ -328,7 +328,9 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 
 			FondImportReestr fir = new FondImportReestr();
 			fir.setImportType(fi);
-			fir.setImportResult(firRecord.substring(0, 255));
+			if (firRecord.length()>255){
+				fir.setImportResult(firRecord.substring(0, 255));
+			}
 			fir.setNumberFond(String.valueOf(aEntity.getId()));
 			theManager.persist(fir);	
 		} catch (Exception e) {

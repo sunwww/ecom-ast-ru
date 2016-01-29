@@ -68,7 +68,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	Patient pat = pl.getMedCase().getPatient();
 	WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
 	WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
-	WorkCalendarDay wcd = theManager.find(WorkCalendarDay.class, aDatePlanId);
 	WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
 	VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
 	VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
@@ -80,7 +79,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	vis.setPatient(pat);
 	vis.setCreateDate(new java.sql.Date(date));
 	vis.setCreateTime(new java.sql.Time(date));
-	vis.setDatePlan(wcd);
+	vis.setDatePlan(wct.getWorkCalendarDay());
 	vis.setNoActuality(false);
 	vis.setTimePlan(wct);
 	vis.setWorkFunctionPlan(wfp);
