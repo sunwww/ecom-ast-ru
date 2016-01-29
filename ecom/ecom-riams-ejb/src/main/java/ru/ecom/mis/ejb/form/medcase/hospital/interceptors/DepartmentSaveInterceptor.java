@@ -180,6 +180,8 @@ private static boolean isEmpty(String aString) {
     return (aString == null)||(aString.trim().equals("")) ;
 }
 
+
+
 public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long patient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
 	if (diagnosisRegistrationType==null) {
 		diagnosisRegistrationType = Long.valueOf(manager.createNativeQuery("select id from vocdiagnosisregistrationtype where code='4'").getResultList().get(0).toString());  //4
@@ -188,29 +190,52 @@ public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long
 	if (diagnosisPriority==null) {
 		diagnosisPriority =Long.valueOf(manager.createNativeQuery("select id from vocprioritydiagnosis where code='1'").getResultList().get(0).toString()); //1
 	}
-	String sql = "select mkb.id " +
-			" from vocidc10 mkb" +
-			" left join patient p on p.id=" + patient +
-			" left join lpudiagnosisrule ldr on ldr.department=" + department +
-			" left join lpucontractnosologygroup lcng on lcng.lpudiagnosisrule=ldr.id" +
-			" left join contractnosologygroup cng on cng.id=lcng.nosologygroup" +
-			" left join nosologyinterval cni on cni.nosologygroup_id=cng.id" +
-			" where mkb.id=" + clinicalMkb +
-			" and ldr.id is not null" +
-			" and ((ldr.diagnosisregistrationtype is null or ldr.diagnosisregistrationtype=0) or ldr.diagnosisregistrationtype="+diagnosisRegistrationType+")" +
-			" and ((ldr.sex is null or ldr.sex=0) or ldr.sex=p.sex_id)" +
-			" and ((ldr.diagnosispriority is null or ldr.diagnosispriority=0) or ldr.diagnosispriority="+diagnosisPriority+")" +
-			" and ((ldr.servicestream is null or ldr.servicestream=0) or ldr.servicestream="+serviceStream+")" +
-			" and '1' = case when (ldr.permissionrule is null or ldr.permissionrule='0') and 0<(select count (mkb2.id) from vocidc10 mkb2 where mkb2.code between cni.fromidc10code and cni.toidc10code) then '1' " +
-			" when (ldr.permissionrule='1') and 0<(select count (mkb2.id) from vocidc10 mkb2 where mkb2.code between cni.fromidc10code and cni.toidc10code) then '0' else '1' end";
-	System.out.println("===== "+ sql);
-	List<Object> o = manager.createNativeQuery(sql).getResultList();
-	if (o!=null &&!o.isEmpty()) {
-		return false;
-	} 	    	
-	else {
-		return true;
-	}
+	VocIdc10 mkb = manager.find(VocIdc10.class, clinicalMkb);
+	boolean ret = true;
+	boolean isPermitted = false;
+	String sql = "select ni.id as f1, case when ldr.permissionrule='1' then '1' else '0' end as f2" +
+		" ,case when '"+mkb.getCode()+"' between ni.fromidc10code and ni.toidc10code then '1' else '0' end as f3" +
+		" from lpudiagnosisrule ldr" +
+		" left join lpucontractnosologygroup lcng on lcng.lpudiagnosisrule = ldr.id" +
+		" left join contractnosologygroup cng on cng.id=lcng.nosologygroup" +
+		" left join nosologyinterval ni on ni.nosologygroup_id=cng.id" +
+		" left join patient p on p.id=" + patient +
+		" where ldr.department = "+department +
+		" and ldr.id is not null" +
+		" and ((ldr.diagnosisregistrationtype is null or ldr.diagnosisregistrationtype=0) or ldr.diagnosisregistrationtype="+diagnosisRegistrationType+")" +
+		" and ((ldr.sex is null or ldr.sex=0) or ldr.sex=p.sex_id)" +
+		" and ((ldr.diagnosispriority is null or ldr.diagnosispriority=0) or ldr.diagnosispriority="+diagnosisPriority+")" +
+		" and ((ldr.servicestream is null or ldr.servicestream=0) or ldr.servicestream="+serviceStream+")";
+		
+	//System.out.println("=== DIAG, sql ="+sql);
+		List<Object[]> o = manager.createNativeQuery(sql).getResultList();
+	//	System.out.println("=== DIAG o = "+o.size());
+		if (o==null||o.isEmpty()) {
+			return true;
+		} 
+		boolean first = true;
+		for (Object[] oo: o) {
+		//	System.out.println("=== DIAG_n, o[] = "+oo[0]+":"+oo[1]+":"+oo[2]);
+			if (first){
+				isPermitted = oo[1].toString().equals("1")?true:false;
+				first = false;
+				ret = isPermitted?false:true;
+			}
+			boolean isEnter = oo[2].toString().equals("1")?true:false;
+			if (isPermitted) {
+				if (isEnter) {
+					ret =  true;
+					break;
+				}
+			} else {
+				if (isEnter) {
+					ret =  false;
+					break;
+				}
+			}
+			
+		}
+		return ret;
 }
 
 }
