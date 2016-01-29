@@ -177,6 +177,20 @@
 				</td>
 			</msh:row>
 			<msh:row>
+				<td>Выгружать: 
+				</td>
+				<td onclick="this.childNodes[1].checked='checked';">
+					<input type="radio" name="typeExport" value="1">Все карты
+				</td>
+				<td onclick="this.childNodes[1].checked='checked';">
+					<input type="radio" name="typeExport" value="2" checked="checked" >Только невыгруженные
+				</td>
+			</msh:row>
+			<msh:row>
+				<msh:textField property="createFrom" label="созданные c"/>
+				<msh:textField property="createTo" label="созданные по"/>
+			</msh:row>
+			<msh:row>
 				<td>
 					<span>Значения по умолчанию: </span>
 				</td>
@@ -205,6 +219,7 @@
 			<msh:row>
 				<msh:textField label="Число записей в файле " property="expDivideNum" fieldColSpan="10" horizontalFill="true" />
 			</msh:row>
+			
 			<msh:row>
 				<td>
 	       			<input type="button" onclick="prepareForm30();" value="Экспортировать"/>
@@ -233,8 +248,8 @@
 			</div>
 		</msh:form>
 <%
-		String beginDate = request.getParameter("beginDate") ;
-		if (beginDate!=null && !beginDate.equals("")) {
+	String beginDate = request.getParameter("beginDate") ;
+	if (beginDate!=null && !beginDate.equals("")) {
 		String finishDate = request.getParameter("finishDate") ;
 		String dispType = request.getParameter("dispType") ;
 		if (finishDate==null || finishDate.equals("")) {
@@ -1178,7 +1193,21 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 	  sqlAdd += createSqlField ('healthGroup', 'edc.healthGroup_id');
 	  
 	  $('exportTable').style.display = 'none' ;
-	 
+	 if ($('createFrom').value!=null&&$('createFrom').value!='') {
+		 if ($('createTo').value!=null&&$('createTo').value!='') {
+			 sqlAdd += " and edc.createdate between to_date('"+$('createFrom').value+ "','dd.MM.yyyy')"+
+			 " and to_date('"+$('createTo').value+"','dd.MM.yyyy')";
+		 } else {
+			 sqlAdd +=" and edc.createdate >= to_date('"+$('createFrom').value+"','dd.MM.yyyy')"
+		 }
+	 }
+	  for (var i=0; i<document.getElementsByName("typeExport").length;i++) {
+		  if (document.getElementsByName("typeExport")[i].checked){
+			  if (document.getElementsByName("typeExport")[i].value=="2") {
+				  sqlAdd+=" and edc.exportDate is null ";
+			  }  
+		  }		
+	  }
 	  for (var i=0; i<document.getElementsByName("expDispAge").length;i++) {
 		  if (document.getElementsByName("expDispAge")[i].checked){
 			  if (document.getElementsByName("expDispAge")[i].value=="2") {
