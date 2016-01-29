@@ -50,19 +50,6 @@ public class ExtDispServiceBean implements IExtDispService {
 		
 	}
 	
-	public String exportOrphDefaultValues(String aStartDate, String aFinishDate,
-			String aFileNameSuffix, String aSqlAdd) throws ParseException,
-			NamingException {
-		String aHeight = "150"; //Рост (в см)
-		String aWeight = "40"; //Вес (в см)
-		String aHeadSize = "30";  //Окружность головы (в см)
-		String aReccomend = "_";
-		String aZOJReccomend = "Режим дня и отдыха - по возрасту, рациональное питание"
-				+ ", закаливание, профилактика вредных привычек."; //Рекомендации
-		String aFizGroup = "1"; //"1"; //Группа здоровья для физкультуры
-		String aAnalysesText = "Без патологий"; // Результат анализов
-		return exportOrph(aStartDate,aFinishDate, aFileNameSuffix, aSqlAdd,aFizGroup, aHeight, aWeight, aHeadSize, aAnalysesText, aZOJReccomend, aReccomend,"200",null );
-	}
 	public void setIsExported(String aId) {
 		theManager.createNativeQuery("update ExtDispCard set exportDate = current_date where id="+aId).executeUpdate();
 	}
