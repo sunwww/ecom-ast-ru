@@ -225,9 +225,6 @@
 	       			<input type="button" onclick="prepareForm30();" value="Экспортировать"/>
 	       		</td>
 				<td>
-	       			<input hidden="true" type="button" onclick="createForm30default();" value="Экспорт(значения по умолчанию)"/>
-	       		</td>
-				<td>
 	       			<input type="button" onclick="showExpHelp();" value="Подсказка по экспорту"/>
 	       		</td>
 			</msh:row>
@@ -1250,34 +1247,6 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     			var aData = aResult.split("@");
     			$('aView').innerHTML="<a href='../rtf/"+aData[0]+"''>"+aData[0]+"</a>" ;
     			if (aData[1]!="" && aData[1]!="null" && aData[1]!=null) {
-    				$('exportTable').style.display = 'block' ;
-	    			aData[1] = aData[1].substring(0,aData[1].length-1);
-	    			var rows = aData[1].split("#");
-	    			flushTable();
-	    			for (var i=0;i<rows.length;i++) {
-	    				addRow (rows[i]);
-	    			}
-    			}
-    		}
-    	}
-    });	 
- 
-	
-    }
-  function createForm30default() {
-  	if ($('beginDate').value=='' || $('finishDate').value=='') {
-    	alert ("Заполните дату начала и окончания!!") ;
-    	return;
-    }
-	 	$('aView').innerHTML="Подождите...";
-    	
-     ExtDispService.exportOrphDefaultValues($('beginDate').value, $('finishDate').value,"misDefault_"," and vedag.code not like '%.%' and vedsg.code='4' ",{
-    	callback: function(aResult) {
-    	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
-    		else {
-    			var aData = aResult.split("@");
-    			$('aView').innerHTML="<a href='../rtf/"+aData[0]+"''>"+aData[0]+"</a>" ;
-    			if (aData[1]!="" && aData[1]!=null) {
     				$('exportTable').style.display = 'block' ;
 	    			aData[1] = aData[1].substring(0,aData[1].length-1);
 	    			var rows = aData[1].split("#");
