@@ -40,9 +40,21 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Table(schema="SQLUser")
 abstract public class WorkFunction extends BaseEntity {
 
-  
+	/** Дата начала работы */
+	@Comment("Дата начала работы")
+	public Date getStartDate() {return theStartDate;}
+	public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
+	/** Дата начала работы */
+	private Date theStartDate;
 
-    /** Рабочий календарь */
+	/** Дата окончания работы */
+	@Comment("Дата окончания работы")
+	public Date getFinishDate() {return theFinishDate;}
+	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
+	/** Дата окончания работы */
+	private Date theFinishDate;
+
+	/** Рабочий календарь */
 	@Comment("Рабочий календарь")
 	@OneToOne
 	public WorkCalendar getWorkCalendar() {
