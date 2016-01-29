@@ -555,7 +555,15 @@
 	}
 	
 			</script>
-			</msh:ifFormTypeIsNotView>
+			</msh:ifFormTypeIsNotView formName="pres_servicePrescriptionForm">
+			<script type="text/javascript">
+			function cancelService() {
+				PrescriptionService.cancelPrescription() ;
+			}
+			</script>
+			<msh:ifFormTypeIsView>
+			
+			</msh:ifFormTypeIsView>
 			</tiles:put>
 
   <tiles:put name="body" type="string">
@@ -693,7 +701,7 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
       <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">
-        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_servicePrescription" name="Изменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/javascript:cancelService()" name="Отменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
         <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_servicePrescription" name="Удалить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+DEL"/>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="0e2ac7-5361-434d-a8a7-1284796f">
