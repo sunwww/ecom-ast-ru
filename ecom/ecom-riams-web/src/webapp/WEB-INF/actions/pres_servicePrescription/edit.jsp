@@ -560,7 +560,7 @@
 			<msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
 			<script type="text/javascript">
 			function cancelService() {
-				var reason = prompt('Введите причину отмены');
+				var reason = ''+ prompt('Введите причину отмены');
 				PrescriptionService.cancelPrescription($('id').value, reason, {
 					callback:function (a) {
 						alert(a);
