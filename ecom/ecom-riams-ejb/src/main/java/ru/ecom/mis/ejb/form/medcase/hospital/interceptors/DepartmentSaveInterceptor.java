@@ -93,7 +93,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			if (!adding4|| !adding5|| !adding3|| !adding1|| !adding6) {
 				if (!adding4) {
 					Diagnosis diag = new Diagnosis();
-					setDiagnosisByType(true,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, manager,vocPriorType,form.getClinicalActuity()) ;
+					setDiagnosisByType(true,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, manager,vocPriorType,form.getClinicalActuity(),form.getMkbAdc()) ;
 					//diagList.add(diag);
 				}
 				if (!adding5) {
@@ -133,8 +133,10 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     	return list.size()>0?list.get(0):null ; 
     }
 
-
-private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity) {
+    private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity) {
+    	return setDiagnosisByType( aNewIs,  aDiag, aType, aName, aDate,  aCode, aMedCase, aManager, aPriorityType, aActuity,null);
+    }
+private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity, String aMkbAdc) {
 	boolean resault = false ;
 	if (!aNewIs) {
 		aNewIs = aDiag.getRegistrationType()!=null && aDiag.getRegistrationType().equals(aType) 
@@ -144,6 +146,7 @@ private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosis
 	}
 	if (aNewIs) {
 		aDiag.setName(aName);
+		aDiag.setMkbAdc(aMkbAdc);
 		if (aCode!=null) {
 			VocIdc10 mkb = aManager.find(VocIdc10.class, aCode) ;
 			aDiag.setIdc10(mkb);
@@ -155,6 +158,7 @@ private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosis
 		}
 		if (aDiag.getRegistrationType()==null) aDiag.setRegistrationType(aType);
 		if (aDiag.getPriority()==null) aDiag.setPriority(aPriorityType) ;
+		
 		if(!isEmpty(aActuity)) {
 			VocIllnesPrimary illnes = aManager.find(VocIllnesPrimary.class, aActuity) ;
 			VocAcuityDiagnosis actuity = illnes.getIllnesType() ;
