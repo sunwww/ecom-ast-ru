@@ -311,4 +311,13 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	private Long theMethodHighCare;
 	/** Вид ВМП */
 	private Long theKindHighCare;
+
+	/** Доп.код мкб */
+	@Comment("Доп.код мкб")
+	public String getMkbAdc() {return theMkbAdc;}
+	public void setMkbAdc(String aMkbAdc) {theMkbAdc = aMkbAdc;}
+
+	/** Доп.код мкб */
+	private String theMkbAdc;
+
 }
