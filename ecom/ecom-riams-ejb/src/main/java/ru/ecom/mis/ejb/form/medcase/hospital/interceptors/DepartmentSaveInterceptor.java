@@ -82,7 +82,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ; 
 			if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
 			for(Diagnosis diag:diagList){
-				if (!adding4) adding4=setDiagnosisByType(false,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, manager,vocPriorType,form.getClinicalActuity()) ;
+				if (!adding4) adding4=setDiagnosisByType(false,diag, vocTypeClinical, form.getClinicalDiagnos(), form.getDateFinish(), form.getClinicalMkb(), medCase, manager,vocPriorType,form.getClinicalActuity(),form.getMkbAdc()) ;
 				if (!adding5) adding5=setDiagnosisByType(false,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getDateFinish(), form.getPathanatomicalMkb(), medCase, manager,vocPriorType,null) ;
 				if (!adding3) adding3=setDiagnosisByType(false,diag, vocTypeConcluding, form.getConcludingDiagnos(), form.getDateFinish(), form.getConcludingMkb(), medCase, manager,vocPriorType,null) ;
 				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, manager,vocPriorType,null) ;
@@ -145,8 +145,8 @@ private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosis
 			; 
 	}
 	if (aNewIs) {
-		aDiag.setName(aName);
 		aDiag.setMkbAdc(aMkbAdc);
+		aDiag.setName(aName);
 		if (aCode!=null) {
 			VocIdc10 mkb = aManager.find(VocIdc10.class, aCode) ;
 			aDiag.setIdc10(mkb);
