@@ -239,7 +239,7 @@
 		queryAppend="" 
 		parent=" mkb.id=:parent "
 		join="left join VocIdc10 mkb on mkb.code=vma.name" order=""
-		names="'('||vma.code||')'"
+		names="'('||vma.code||') '||coalesce(vma.mkb,'')"
 		queried=" upper(vpt.code) like upper(:query) "
 	/>
 </voc>
