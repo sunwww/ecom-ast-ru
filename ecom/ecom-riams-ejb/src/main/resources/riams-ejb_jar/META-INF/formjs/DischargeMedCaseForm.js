@@ -36,7 +36,13 @@ function onPreSave(aForm,aEntity, aCtx) {
 	var dateCur = new java.sql.Date(new java.util.Date().getTime()) ;
 
 	if (aForm.concludingDiagnos!=null &&aForm.concludingDiagnos!="" && (aForm.concludingMkb==null || aForm.concludingMkb==0)) throw "Не указан код МКБ заключительного диагноза!" ;
+	
+	
 	if ((aForm.concludingMkb!=null && aForm.concludingMkb>0)&&(aForm.concludingDiagnos==null||aForm.concludingDiagnos=="")) throw "Не сформулирован заключительный диагноз!" ;
+	var d=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,aForm.concludingMkb) ;
+	if (d!=null) {d=d.code ;} else {d=""} ;
+	if ((d>='O69.0' && d<='O69.9' || d>='O80.0' && d<='O80.9' ||
+	 		d>='O82.0' && d<='O82.9' || d>='O84.0' && d<='O84.9') && +aForm.childBirth<1) throw "Необходимо указать тип родов" ;
 	var dateFsql = new java.sql.Date(dateFinish.getTime()) ;
 	if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки должна быть больше, чем дата поступления";
 	//if ((((dateFsql.getTime()-dateCur.getTime())/1000/60/60)%24)>6) throw "Максимальная дата выписки - сегодняшняя" ;
