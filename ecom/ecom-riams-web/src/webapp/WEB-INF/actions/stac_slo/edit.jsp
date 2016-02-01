@@ -13,7 +13,7 @@
         <style type="text/css">
 
 
-            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel {
+            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel,#mkbAdcLabel {
                 color: blue ;
             }
             #concomitantDiagnosLabel, #concomitantMkbLabel {
