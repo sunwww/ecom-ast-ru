@@ -1236,7 +1236,6 @@ order by vwf.name,wp.lastname,wf.id,veds.id
     	return;
     }
 	 	$('aView').innerHTML="Подождите...";
-    	alert ("SQLADD = "+sqlAdd);
      ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
     		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
     		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value,$('lpu').value, {

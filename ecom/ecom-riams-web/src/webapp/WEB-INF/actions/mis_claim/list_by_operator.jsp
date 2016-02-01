@@ -42,7 +42,7 @@ if (beginDate!=null&&!beginDate.equals("")) {
 		statusSql += " and cl.canceldate is not null";
 	}
 	if (typeUser!=null&&typeUser.equals("2")) {
-		statusSql += " and cl.executorusername ='"+login+"'";
+		statusSql += " and cl.startworkusername ='"+login+"'";
 	}
 	request.setAttribute("statusSql", statusSql);
 %>
