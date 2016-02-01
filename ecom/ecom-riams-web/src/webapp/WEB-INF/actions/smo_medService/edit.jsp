@@ -28,7 +28,7 @@
         </msh:row>
         
         <msh:row>
-          <msh:autoComplete  property="medService" label="Медицинская услуга" vocName="medServiceForCategory" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete  property="medService" label="Медицинская услуга" vocName="medService" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:row>
           <msh:textField property="medServiceAmount" label="Количество" guid="b2d298c5fb3" />
