@@ -34,6 +34,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 					form.setClinicalDiagnos(diag.getName());
 					if (mkb!=null) form.setClinicalMkb(mkb) ;
 					if(illnes!=null) form.setClinicalActuity(illnes) ;
+					if (diag.getMkbAdc()!=null) form.setMkbAdc(diag.getMkbAdc()) ;
 				}
 			    //Pathanatomical
 				if (regType.equals("5") && prior.equals("1")) {
