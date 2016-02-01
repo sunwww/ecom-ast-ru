@@ -698,19 +698,16 @@
         <IAllValue>ru.ecom.mis.ejb.service.lpu.LpuAllValueVoc</IAllValue>
     </voc>
     
-    <voc id='medService' type='AllValueHelper'>
-        <IAllValue>ru.ecom.mis.ejb.service.medcase.MedServiceAllValueVoc</IAllValue>
-    </voc>
-    <voc id='medServiceForCategory' type='NativeVocService'>
+    <voc id='medService' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService'
-    			parent="parent_id=:par1 and (startDate is null or to_date(:par2,'dd.mm.yyyy') >=startDate) and (finishDate is null or finishDate>=to_date(:par2,'dd.mm.yyyy'))"
-    			names = "name"
+    			parent=""
+    			names = "code||' '||name"
     			nameId="id"
-    			queryAppend="dtype='MedService'"
+    			queryAppend="dtype='MedService' and finishdate is null"
     			join=''
     			order=''
-    			queried = "(cast(id as varchar(10)) like :query or name like UPPER(:query))"
+    			queried = "(cast(id as varchar(10)) like :query or name like UPPER(:query) or code like UPPER(:query))"
     			parentSplitCount="2"
     			 			
     	/>
