@@ -373,6 +373,17 @@
   		try {
   		if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('concludingMkb','concludingDiagnos');
+	      	 	var d=getDiagnosis('concludingMkb') ;
+	      	 	if (d>='O69.0' && d<='O69.9' ||
+	      	 		d>='O80.0' && d<='O80.9' ||
+	      	 		d>='O82.0' && d<='O82.9' ||
+	      	 		d>='O84.0' && d<='O84.9') {
+	      	 		$('childBirthName').className="autocomplete horizontalFill required";
+	      	 	} else {
+	      	 		$('childBirthName').className="autocomplete horizontalFill";
+
+	      	 	}
+
 	    });} catch(e) {
 	    }
   		try {
@@ -398,6 +409,15 @@
   			if (ind!=-1) {
   				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
   			}
+  		}
+  		function getDiagnosis(aFieldMkb) {
+  			var val = $(aFieldMkb+'Name').value ;
+  			var ind = val.indexOf(' ') ;
+  			//alert(ind+' '+val)
+  			if (ind!=-1) {
+  				return val.substring(0,ind) ;
+  			}
+  			return null
   		}
   		function savePreRecord() {
   			HospitalMedCaseService.preRecordDischarge(
