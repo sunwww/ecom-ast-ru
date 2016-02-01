@@ -41,6 +41,10 @@ function onPreSave(aForm,aEntity, aContext) {
 		aForm.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 		
 	}
+	if (aForm.mkbAdc==null||aForm.mkbAdc.equals("")) {
+		var lMkb = aContext.manager.createNativeQuery("select vma.code from VocMkbAdc vma left join VocIdc10 mkb on mkb.code=vma.name where  mkb.id='"+aForm.clinicalMkb+"'").getResultList() ;
+		if (lMkb.size()>0) throw "Необходимо ввести дополнительный код по диагнозу" ;
+	}
 	var bedFund = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.BedFund, aForm.bedFund) ;
 	var hosp = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase,aForm.parent) ;
 	var prev = +aForm.prevMedCase>0?aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase,aForm.prevMedCase):null ;
