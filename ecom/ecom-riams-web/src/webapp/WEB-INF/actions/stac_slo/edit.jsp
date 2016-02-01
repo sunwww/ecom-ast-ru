@@ -223,6 +223,9 @@
     	    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="mkbAdc" vocName="vocMkbAdc" parentAutocomplete="clinicalMkb" label="Доп.код клин.диаг." fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
 	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
