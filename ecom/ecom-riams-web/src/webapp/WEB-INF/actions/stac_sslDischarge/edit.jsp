@@ -374,7 +374,7 @@
   		if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('concludingMkb','concludingDiagnos');
 	      	 	var d=getDiagnosis('concludingMkb') ;
-	      	 	if (d>='O69.0' && d<='O69.9' ||
+	      	 	if (d>='O60.0' && d<='O60.9' ||
 	      	 		d>='O80.0' && d<='O80.9' ||
 	      	 		d>='O82.0' && d<='O82.9' ||
 	      	 		d>='O84.0' && d<='O84.9') {
