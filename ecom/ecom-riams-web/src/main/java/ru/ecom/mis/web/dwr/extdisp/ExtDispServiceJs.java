@@ -118,9 +118,4 @@ public class ExtDispServiceJs {
 				aWeight, aHeadSize, aAnalysesText,
 				aZOJReccomend, aReccomend, aDivideNum, aLpu);
 	}
-	public String exportOrphDefaultValues(String aStartDate, String aFinishDate,
-			String aFileNameSuffix, String aSqlAdd, HttpServletRequest aRequest) throws NamingException, ParseException {
-		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
-		return service.exportOrphDefaultValues(aStartDate, aFinishDate, aFileNameSuffix, aSqlAdd);
-	} 
 }
