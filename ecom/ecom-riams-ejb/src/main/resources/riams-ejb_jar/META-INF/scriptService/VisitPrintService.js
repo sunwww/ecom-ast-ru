@@ -358,9 +358,23 @@ function printVisit(aCtx, aParams) {
 		, new java.lang.Long(aParams.get("id"))) ;
 	var list = aCtx.manager.createQuery("from Protocol where medCase_id=:visit")
 		.setParameter("visit",visit.id).getResultList();
-	var protocol = !list.isEmpty()?list.iterator().next().record:"";
-	map.put("protocol", recordMultiText(protocol)) ;
-	//map.put("protocol",protocol);
+	
+//	if (aParams.get("typePrint")!=null&&aParams.get("typePrint").equals("all")) {
+		if (!list.isEmpty()) {
+			var prots = "";
+			for (var i =0;i<list.size();i++) {
+				prots +=list.get(i).record+"\n";
+			}			
+			map.put("protocol",recordMultiText(prots));
+		} else {
+			map.put("protocol","");
+		}
+
+/*	} else {
+		var protocol = !list.isEmpty()?list.iterator().next().record:"";
+		map.put("protocol", recordMultiText(protocol)) ;
+	}*/
+	
 	map.put("id", +visit.getId()) ;
 	map.put("visit", visit) ;
 	map.put("ticket", visit) ;
