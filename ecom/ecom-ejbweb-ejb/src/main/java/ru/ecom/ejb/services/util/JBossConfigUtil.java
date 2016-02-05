@@ -12,7 +12,7 @@ public class JBossConfigUtil {
 
     static {
         String dir = System.getProperty("jboss.server.config.url"
-        		, "file:///home/esinev/opt/jboss-4.0.4.GAi/server/default/conf") // FIXME
+        		, "/opt/jboss-4.0.4.GAi/server/default/conf") // FIXME
             .substring("file:\\".length()) ;
         if(dir.indexOf(':')==-1) {
             JBOSS_SERVER_CONFIG_DIR = "/"+dir ;
