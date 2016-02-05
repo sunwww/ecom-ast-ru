@@ -24,16 +24,19 @@ if (beginDate!=null&&!beginDate.equals("")) {
 	else if (typeDate.equals("4")) {typeDate="cl.finishdate";}
 	else if (typeDate.equals("5")) {typeDate="cl.canceldate";}
 	if (endDate==null|| endDate.equals("")) {
-		endDate = beginDate;
+		statusSql +=" and "+typeDate+ ">= to_date('"+beginDate+"','dd.MM.yyyy')";
+	} else {
+		statusSql += " and "+typeDate+" between to_date('"+beginDate+"','dd.MM.yyyy') and to_date('"+endDate+"','dd.MM.yyyy')";
 	}
-	statusSql += " and "+typeDate+" between to_date('"+beginDate+"','dd.MM.yyyy') and to_date('"+endDate+"','dd.MM.yyyy')";
+} else {
+	statusSql +=" and cl.createdate <=current_date";
 }
 	if (typeStatus==null) {
-		statusSql = "nulla";
+		statusSql = " nulla";
 	} else if (typeStatus.equals("1")) {
-		statusSql += "and cl.viewDate is null";
+		statusSql += " and cl.viewDate is null";
 	} else if (typeStatus.equals("2")) {
-		statusSql += "and (cl.viewDate is not null and cl.startworkdate is null)";
+		statusSql += " and (cl.viewDate is not null and cl.startworkdate is null)";
 	} else if (typeStatus.equals("3")) {
 		statusSql += " and cl.finishdate is null and cl.canceldate is null and cl.startworkdate is not null";
 	} else if (typeStatus.equals("4")) {
@@ -143,8 +146,8 @@ if (beginDate!=null&&!beginDate.equals("")) {
  when cl.createdate is not null then ''
  else 'ВАХВАХ' end as color_status
 ,cl.address as address
-,case when cl.executorusername = '${login}' then cl.id else null end as btnComment
-,cl.executorcomment as comment
+,case when cl.startworkusername = '${login}' then cl.id else null end as btnComment
+,coalesce(cl.executorcomment,'') as comment
 from claim cl
 left join workfunction uwf on uwf.id=cl.workfunction
 left join vocworkfunction vwf on vwf.id=uwf.workfunction_id
@@ -156,8 +159,8 @@ left join workfunctionclaimtype wfct on wfct.claimtype=vct.id
 left join workfunction gwf on gwf.id=wfct.workfunction
 left join workfunction pwf on pwf.group_id=gwf.id
 left join secuser su on su.id=pwf.secuser_id
-where su.login='${login}'
-${statusSql}
+where su.login='${login}' 
+${statusSql} 
 
 order by cl.createdate , cl.createtime
 "/>
@@ -183,7 +186,7 @@ order by cl.createdate , cl.createtime
     <script type='text/javascript'>
     
    
-     checkFieldUpdate('typeStatus','${typeStatus}',1) ;
+     checkFieldUpdate('typeStatus','${typeStatus}',6) ;
     checkFieldUpdate('typeUser','${typeUser}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
     
