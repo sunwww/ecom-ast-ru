@@ -155,8 +155,8 @@
 					  
 					];
 		num = surgNum;
-		fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
-		,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
+		fldList = [['surgServicies',1],['surgServiciesName',1],['surgCalDateName',1],['surgCabinet',1]
+		,['surgCabinetName',1],['',1],['',1],['surgCalTime',1],['surgCalTimeName',1],['comments',1]
 	] ;
 	
 	}
@@ -197,7 +197,11 @@
 	var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
 	addRows(type+":"+ar[0],1);
 }
-	
+    function checkRecord(aId,aValue,aIdService,aService) {
+    	$('surgCalTime').value = aId; 
+    	$('surgCalTimeName').value = aValue ;
+    	
+    }	
 function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
 	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
 }
@@ -213,7 +217,7 @@ function deletePrescription(aMedService, aWCT) {
 		}
 		if (next) {
 			for (var i=0;i<aFldList.length;i++) {
-				var val = aFldList[i][0]==""?"":$(aType+aFldList[i][0]+aTypeNum).value ;
+				var val = aFldList[i][0]==""?"":$(aFldList[i][0]+aTypeNum).value ;
 				val = val.replace(":","-");
 				if (i!=0) {
 					l += ":" ;lAll+=":";
