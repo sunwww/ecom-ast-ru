@@ -26,7 +26,7 @@ public class ClaimServiceJs {
 	public static String setStatusClaim (String aStatus, String aId,String aDate, String aTime, String aUsername, String aComment, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		if (aStatus==null) return "Не указан статус";
-		if (aUsername==null||aUsername.equals("")) {
+		if (!aStatus.equals("finish")&&(aUsername==null||aUsername.equals(""))) {
 			aUsername = LoginInfo.find(aRequest.getSession(true)).getUsername();
 		}
 			
@@ -50,6 +50,8 @@ public class ClaimServiceJs {
 			if (aUsername!=null&&!aUsername.equals("")) {
 				sql+=", "+aStatus+"Username='"+aUsername+"'";
 						
+			} else if (aStatus.equals("finish")) {
+				sql +="finishUsername = startWorkUsername";
 			}
 			sql+=" where id="+aId;
 			return aStatus+" : "+ service.executeUpdateNativeSql(sql);
