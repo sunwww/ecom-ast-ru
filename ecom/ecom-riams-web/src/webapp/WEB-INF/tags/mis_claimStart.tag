@@ -80,17 +80,6 @@
      		}
      	});
      }
-     function set${name}Started() {
-    	 var comment='';
-    	 var executorLogin = $('${name}Executor').value;
-     	ClaimService.set${name}Claim($('${name}ClaimId').value, $('${name}Date').value, $('${name}Time').value, executorLogin, comment, {
-     		callback: function (a) {
-     			$('${name}ClaimId').value='';
-     			$('${name}ClaimType').value='';
-     			
-     		}
-     	});
-     }
     
      
          // инициализация диалогового окна
