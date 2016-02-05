@@ -193,12 +193,12 @@ public class ClaimForm extends IdEntityForm{
 	/** Время исполнения */
 	private String theFinishTime;
 	
-	/** Пользователь, подтвердивший исполнение */
-	@Comment("Пользователь, подтвердивший исполнение")
+	/** Пользователь, исполнивший заявку*/
+	@Comment("Пользователь, исполнивший заявку")
 	@Persist
 	public String getFinishUsername() {return theFinishUsername;}
 	public void setFinishUsername(String aFinishUsername) {theFinishUsername = aFinishUsername;}
-	/** Пользователь, подтвердивший исполнение */
+	/** Пользователь, исполнивший заявку*/
 	private String theFinishUsername;
 	
 	/** Место исполнения заявки */
