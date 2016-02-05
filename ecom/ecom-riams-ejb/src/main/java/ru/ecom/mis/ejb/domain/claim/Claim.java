@@ -155,11 +155,11 @@ public class Claim extends BaseEntity{
 	/** Время исполнения */
 	private Time theFinishTime;
 	
-	/** Пользователь, подтвердивший исполнение */
-	@Comment("Пользователь, подтвердивший исполнение")
+	/** Пользователь, исполнивший заявку*/
+	@Comment("Пользователь, исполнивший заявку")
 	public String getFinishUsername() {return theFinishUsername;}
 	public void setFinishUsername(String aFinishUsername) {theFinishUsername = aFinishUsername;}
-	/** Пользователь, подтвердивший исполнение */
+	/** Пользователь, исполнивший заявку*/
 	private String theFinishUsername;
 	
 	/** Место исполнения заявки */
