@@ -1,4 +1,113 @@
 var map = new java.util.HashMap() ;
+
+function unNull (aStr) {
+	return aStr!=null?""+aStr:"";
+}
+function printPrescriptList(aCtx, aParams) {
+	var id = new java.lang.Long(aParams.get("id"));
+	var sscode="";
+	var lastname="";
+	var firstname="";
+	var middlename="";
+	var birthday="";
+	var doctor="";
+	var date = "";
+	var prescriptions = new java.util.ArrayList();
+	
+		var presSql = "select p.id, p.dtype" +
+				" ,to_char(p.planstartdate,'dd.MM.yyyy') as datestart" +
+				" ,to_char(p.planstarttime,'HH24:MI') as timestart" +
+				" ,to_char(p.canceldate,'dd.MM.yyyy') as canceldate" +
+				" ,case when p.dtype='ServicePrescription' then ms.name" +
+					"  when p.dtype='DietPrescription' then diet.name" +
+					"  when p.dtype='DrugPrescription' then dr.name else '' end" +
+				" ,'Частота: '||p.frequency ||' '||coalesce(vfu.name,'') as vfuname" +
+				" ,p.orderTime ||' '||coalesce(vpot.name,'') as vpotname" +
+				" ,'Дозировка: '||p.amount ||' '||coalesce(vdau.name,'') as vdauname" +
+				" ,'Продолжительность: '||p.duration ||' '||coalesce(vdu.name,'') as vduname" +
+				" ,p.comments as comments" +
+				" from prescription p" +
+				" left join medservice ms on ms.id=p.medservice_id" +
+				" left join vocdrugclassify as dr on dr.id=p.drug_id" +
+				" left join vocdrugmethod as vdm on vdm.id=p.method_id" +
+				" left join vocfrequencyunit as vfu on vfu.id=p.frequencyunit_id" +
+				" left join vocPrescriptOrderType as vpot on vpot.id=p.orderType_id" +
+				" left join vocDrugAmountUnit as vdau on vdau.id=p.amountUnit_id" +
+				" left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id" +
+				" left join diet diet on diet.id=p.diet_id" +
+				" where p.prescriptionlist_id="+id+"order by p.planstartdate ";
+		var pres = aCtx.manager.createNativeQuery(presSql).getResultList();
+		if (!pres.isEmpty()) {
+			for (var i=0;i<pres.size();i++) {
+				
+				var comments = new java.util.ArrayList();
+				var p = pres.get(i);
+				var pp = new java.util.ArrayList();
+				var dtype = p[1];
+				var name = unNull(p[5]);
+				var startDate = unNull(p[2]);
+				if (p[3]!=null) {startDate +=" "+p[3];}
+				var cancelDate = unNull(p[4]);
+				if (p[1].equals("ServicePrescription")) {
+					
+				} else if (p[1].equals("DietPrescription")) {
+					
+				} else if (p[1].equals("DrugPrescription")) {
+					for (var j=6;j<10;j++) {
+						if (p[j]!=null) {
+							comments.add(unNull(p[j]));
+						}
+					}
+				}
+				if (p[7]!=null) {
+					comments.add(unNull(p[7]));
+				}
+				pp.add(name);
+				pp.add(startDate);
+				pp.add(cancelDate);
+				pp.add(comments);
+				prescriptions.add(pp);
+				
+			}
+		}
+		var sql = "select ss.code, pat.lastname, pat.firstname, pat.middlename, to_char(pat.birthday,'dd.MM.yyyy')as birthDay" +
+			" ,vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as doctor, to_char(current_date,'dd.MM.yyyy') as curDate" +
+			" from prescriptionlist pl" +
+			" left join medcase dep on dep.id=pl.medcase_id" +
+			" left join medcase sls on sls.id=dep.parent_id" +
+			" left join statisticstub ss on ss.medcase_id=coalesce(sls.id, dep.id)" +
+			" left join patient pat on pat.id=dep.patient_id" +
+			" left join workfunction wf on wf.id=pl.workfunction_id" +
+			" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+			" left join worker w on w.id=wf.worker_id" +
+			" left join patient wp on wp.id=w.person_id" +
+			" where pl.id="+id;
+			var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
+	if (arr.size()>0) {
+		var data = arr.get(0);
+		sscode = ""+data[0];
+		lastname = ""+data[1];
+		firstname = ""+data[2];
+		middlename = ""+data[3];
+		birthday = ""+data[4];
+		doctor = ""+data[5];
+		date =""+data[6];
+		
+	}
+	//map.put("comments",comments);
+	map.put ("sql", sql);
+	map.put("cardNumber", sscode);
+	map.put("pat.lastname", lastname);
+	map.put("pat.firstname", firstname);
+	map.put("pat.middlename", middlename);
+	map.put("doctorInfo", doctor);
+	map.put("currentDate", date);
+	
+	map.put ("listNumber", id);
+	map.put
+	map.put("prescriptions",prescriptions);
+	return map;
+}
 function printBloodTransfusionInfo(aCtx,aParams) {
 	var id = new java.lang.Long(aParams.get("id")) ;
 	var trans = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.BloodTransfusion,id);
