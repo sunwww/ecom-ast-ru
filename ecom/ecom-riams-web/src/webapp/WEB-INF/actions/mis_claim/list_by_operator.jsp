@@ -215,11 +215,13 @@ order by cl.createdate , cl.createtime
     }
     function setComment (aId) {
     	var comment = prompt('Введите комментарий');
-    	ClaimService.setComment(aId, comment,{
-    		callback: function(){
-    		window.location.reload();
-    		}
-    	});
+    	if (comment!=null&&comment!=''){
+	    	ClaimService.setComment(aId, comment,{
+	    		callback: function(){
+	    		window.location.reload();
+	    		}
+	    	});
+    	}
     }
     function setStatus(aIds, aStatus) {
     	var arr = aIds.split(':');
