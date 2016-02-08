@@ -187,6 +187,7 @@ private static boolean isEmpty(String aString) {
 
 
 public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long patient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
+	if (clinicalMkb==null || clinicalMkb.equals(Long.valueOf(0))) return true ;
 	if (diagnosisRegistrationType==null) {
 		diagnosisRegistrationType = Long.valueOf(manager.createNativeQuery("select id from vocdiagnosisregistrationtype where code='4'").getResultList().get(0).toString());  //4
 	}
