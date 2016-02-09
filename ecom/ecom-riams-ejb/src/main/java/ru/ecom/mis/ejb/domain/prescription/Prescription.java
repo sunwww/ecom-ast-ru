@@ -38,7 +38,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Назначение")
 @Entity
 @Table(schema="SQLUser")
-@AIndexes(value = { @AIndex(properties = { "intakeDate" }),@AIndex(properties = { "calendartime" }) })
+@AIndexes(value = { @AIndex(properties = { "intakeDate" })
+,@AIndex(properties = { "calendarTime" }) })
 public abstract class Prescription extends BaseEntity{
 
 	/** Лист назначений */
