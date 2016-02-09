@@ -27,7 +27,7 @@
 	String typeAgeWork =ActionUtil.updateParameter("Form039Action","typeAgeWork","2", request) ;
 	String typeDtype =ActionUtil.updateParameter("Form039Action","typeDtype","3", request) ;
 	String typeDate =ActionUtil.updateParameter("Form039Action","typeDate","2", request) ;
-	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","3", request) ;
+	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","4", request) ;
 	String typeDiag =ActionUtil.updateParameter("Form039Action","typeDiag","2", request) ;
 
   %>
@@ -179,13 +179,18 @@
         <msh:row>
 	        <td class="label" title="Показания (typeEmergency)" colspan="1"><label for="typeEmergencyName" id="typeEmergencyLabel">Показания:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeEmergency" value="1">  Экстренные
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeEmergency" value="2" >  Плановые
+	        	<input type="radio" name="typeEmergency" value="1">  Неотлож.помощь
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeEmergency" value="3">  Все
+	        	<input type="radio" name="typeEmergency" value="2">  Скорая помощь
+	        </td>
+        </msh:row>
+        <msh:row>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeEmergency" value="3" >  Плановые
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeEmergency" value="4">  Все
 	        </td>
 	    </msh:row>
         <msh:row>
@@ -283,8 +288,10 @@ if (typeAgeWork.equals("1")) {
 	request.setAttribute("typeAgeWorkId", "18") ;
 }
 if (typeEmergency.equals("1")) {
-	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='1'":" and smo.emergency='1'") ;
+	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='1'":" and smo.emergency='1' and smo. and smo.ambulance_id is null") ;
 } else if (typeEmergency.equals("2")) {
+	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='1'":" and (smo.emergency='1') and smo.ambulance_id is not null") ;
+} else if (typeEmergency.equals("3")) {
 	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='0'":" and (smo.emergency='0' or smo.emergency is null)") ;
 }
 if (typeDate.equals("1")) {
