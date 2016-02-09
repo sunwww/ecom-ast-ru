@@ -125,11 +125,11 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
                         .setParameter("id", id).getResultList();
               //  Iterator<PatientAttachedImport> pats = QueryIteratorUtil.iterate(PatientAttachedImport.class, query);
             	if (paiList.isEmpty()) {break;}
-            	System.out.println("=== before pats.hasnext");
+            	//System.out.println("=== before pats.hasnext");
             	//nextData=false ;
 	            for (PatientAttachedImport patImp: paiList) {
 	            	
-	            	System.out.println("=== while pats.hasnext");
+	            	
 	            	//PatientAttachedImport patImp = pats.next();
 	                if (monitor.isCancelled()) {
 	                    throw new IllegalMonitorStateException("Прервано пользователем");
@@ -236,7 +236,9 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     		if ((patient.getBirthPlace()==null||patient.getBirthPlace().equals(""))&&aEntity.getBirthPlace()!=null) {
     			patient.setBirthPlace(aEntity.getBirthPlace()) ;
     		}
-    		if ((patient.getPassportSeries()==null||patient.getPassportSeries().equals(""))&&aEntity.getDocSeries()!=null) {
+    		if (((patient.getPassportSeries()==null||patient.getPassportSeries().equals(""))&&aEntity.getDocSeries()!=null)||
+    				patient.getPassportDateIssued()!=null&&aEntity.getDocDateIssued()!=null&&aEntity.getDocDateIssued().getTime()>patient.getPassportDateIssued().getTime()) {
+    			//Обновляем, если паспорт пациента не заполнен, либо дата выдачи паспорта по фонду больше даты выдачи паспорта пациента
     			patient.setPassportSeries(aEntity.getDocSeries()) ;
             	patient.setPassportNumber(aEntity.getDocNumber()) ;
             	patient.setPassportDateIssued(aEntity.getDocDateIssued()) ;
@@ -329,8 +331,9 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			FondImportReestr fir = new FondImportReestr();
 			fir.setImportType(fi);
 			if (firRecord.length()>255){
-				fir.setImportResult(firRecord.substring(0, 255));
+				firRecord = firRecord.substring(0, 255);
 			}
+			fir.setImportResult(firRecord);
 			fir.setNumberFond(String.valueOf(aEntity.getId()));
 			theManager.persist(fir);	
 		} catch (Exception e) {

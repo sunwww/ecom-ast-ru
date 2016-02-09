@@ -1,5 +1,17 @@
 <vocconfig>
 
+
+<voc id="userDocumentGroup" type="NativeVocService">
+	<NativeVocService
+		from="VocUserDocumentGroup vudg"
+		nameId="vudg.id"
+		order="vudg.name"
+		names="vudg.name"
+		queried="upper(vudg.name) like upper(:querId) "
+	/>
+</voc>
+
+
 <voc id="executorByClaimType" type="NativeVocService">
 	<NativeVocService
 		from="VocClaimType vct"
