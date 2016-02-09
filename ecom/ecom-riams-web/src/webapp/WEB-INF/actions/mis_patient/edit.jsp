@@ -779,6 +779,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </msh:ifFormTypeIsView>
  
     
+    <tags:mis_userDocumentList type="PATIENT" name="Pat" />
     <tags:addressTag nextField="rayonName" fieldRayon="rayon"/>
     <tags:addressNewTag form="mis_patientForm" name="realAddress" zipcode="realZipcode" flatNumber="realFlatNumber" houseNumber="realHouseNumber" houseBuilding="realHouseBuilding" addressField="realAddressField" />
     <tags:addressNonresident form="mis_patientForm" name="nonresidentAddress" flatNumber="apartmentNonresident" 
@@ -869,6 +870,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink key="SHIFT+9" action="/print-agreement.do?s=PatientPrintService&amp;m=printAgreement" params="id"
         	name="Информ. согласия на мед. вмешательство" title="Печать информационного согласия"  
         	roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+        <msh:sideLink action="/javascript:showPatClaimStart()" 
+        	name="Документов по пациенту" title="Печать документов по пациенту" roles="/Policy/Mis/Patient/View"/>
+        	
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

@@ -21,6 +21,19 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
 	
+	public String getUserDocumentList(String aGroupName, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder ret = new StringBuilder();
+		String sql = "select ud.id, ud.name, ud.filename from VocUserDocumentGroup vudg" +
+				" left join userDocument ud on ud.groupType_id = vudg.id where upper(vudg.code) = upper('"+aGroupName+"')";
+	 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+	 Collection <WebQueryResult> res = service.executeNativeSql(sql);
+	 if (!res.isEmpty()) {
+		 for (WebQueryResult r: res) {
+			 ret.append(r.get1()+":"+r.get2()+":"+r.get3()+"#");
+		 }
+	 }
+		return ret.length()>0?ret.substring(0, ret.length()-1):"";
+	}
 	public void changeMedPolicyType(Long aPolicyId, Long aNewPolicyTypeId, HttpServletRequest aRequest) throws NamingException {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
 		service.changeMedPolicyType(aPolicyId, aNewPolicyTypeId);

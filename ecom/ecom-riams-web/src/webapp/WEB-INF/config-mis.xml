@@ -6,6 +6,7 @@
 
 	<form-beans>
 		
+		<form-bean name="mis_userDocumentForm" type="ru.ecom.mis.ejb.form.userdocument.UserDocumentForm" />
 		<form-bean name="mis_workFunctionClaimTypeForm" type="ru.ecom.mis.ejb.form.claim.WorkFunctionClaimTypeForm" />
 		<form-bean name="mis_claimForm" type="ru.ecom.mis.ejb.form.claim.ClaimForm" />
 		<form-bean name="mis_lpuDiagnosisRuleForm" type="ru.ecom.mis.ejb.form.lpu.LpuDiagnosisRuleForm" />

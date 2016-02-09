@@ -27,6 +27,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </style>
 <msh:sideMenu></msh:sideMenu>
 	    <msh:sideMenu title="Перейти">
+	    	<msh:sideLink styleId="org" action="/entityList-mis_userDocument" name="Пользовательские документы" roles="/Policy/Mis/UserDocument" title="Перейти к справочнику пользовательских документов"/>
 	    	<msh:sideLink styleId="org" action="/js-mis_bedFundCapacity-listAll.do" name="Объемы коечного фонда" roles="/Policy/Mis/BedFund" title="Перейти к справочнику объемов коечного фонда"/>
 	    	<msh:sideLink styleId="org" action="/js-mis_medicalEquipment-listAll.do" name="Мед. оборудования" roles="/Policy/Voc/VocTypeEquip/View" title="Перейти к справочнику стандартов"/>
 	    	<msh:sideLink styleId="org" action="/entityList-mis_medicalStandard" name="Мед. стандарты" roles="/Policy/Voc/VocTypeEquip/View" title="Перейти к справочнику стандартов"/>

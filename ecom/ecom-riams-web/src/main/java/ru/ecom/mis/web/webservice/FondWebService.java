@@ -302,7 +302,7 @@ public class FondWebService {
 					String ac = "" ;
 					
 					if (current.equals("1")) {
-						String datEnd = (ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
+						String datEnd = ddosr; //(ddosr!=null && !ddosr.equals(""))?ddosr:dpe ;
 						policy.append(serPol).append(":").append(numPol).append(":").append(sk).append(":")
 						.append(dpp).append(":").append(datEnd);
 						
@@ -444,7 +444,7 @@ public class FondWebService {
 			
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
-        	System.out.println("getInfoByPatient , result info:") ;
+        	System.out.println("getInfoByPatient FIODR_from_RZ, result info:") ;
             System.out.println(result) ;
         	result = updateXml(result) ;
         	IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
