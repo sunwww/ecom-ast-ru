@@ -134,7 +134,7 @@ if (beginDate!=null&&!beginDate.equals("")) {
  when cl.createdate is not null then 'Новая'
  else 'ВАХВАХ' end as status
  ,cl.id||':'||vct.id as idvocid
-,case when cl.canceldate is null and cl.finishdate is null then cl.id else null end as btnCancel
+,case when cl.canceldate is null then cl.id else null end as btnCancel
 ,case when cl.finishdate is null and cl.canceldate is null then cl.id else null end as btnFinish
 ,case when cl.startworkdate is null and cl.finishdate is null and cl.canceldate is null then cl.id||':'||cl.claimtype else null end as btnStartWork
 ,case when cl.viewdate is null and cl.canceldate is null and cl.finishdate is null then cl.id else null end as btnView
