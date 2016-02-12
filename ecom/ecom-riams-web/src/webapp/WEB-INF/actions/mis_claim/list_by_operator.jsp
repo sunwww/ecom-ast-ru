@@ -34,7 +34,7 @@ if (beginDate!=null&&!beginDate.equals("")) {
 	if (typeStatus==null) {
 		statusSql = " nulla";
 	} else if (typeStatus.equals("1")) {
-		statusSql += " and cl.viewDate is null";
+		statusSql += " and cl.viewDate is null and cl.finishDate is null and cl.cancelDate is null and cl.startworkdate is null";
 	} else if (typeStatus.equals("2")) {
 		statusSql += " and (cl.viewDate is not null and cl.startworkdate is null)";
 	} else if (typeStatus.equals("3")) {
