@@ -3,6 +3,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
@@ -24,27 +25,29 @@
       </msh:row>
         <msh:row>
           <msh:textArea property="abuses" 
-               size="40" rows="2" fieldColSpan="2" />
+               size="60" rows="8" fieldColSpan="2" />
                     
         </msh:row>
         <msh:row>
           <msh:textArea property="history" 
-               size="40" rows="8" fieldColSpan="2" />
+               size="60" rows="8" fieldColSpan="2" />
                     
         </msh:row>
        <msh:row>
           <msh:textArea property="research" 
-               size="40" rows="2" fieldColSpan="2" />
-                    
+               size="60" rows="8" fieldColSpan="2" />
+        </msh:row> <msh:row><td align="center" colspan="3">
+        <input type="button" value="Добавить данные из визитов" onclick="showTextTemplateProtocol()"/>
+        </td>
         </msh:row>
         <msh:row>
           <msh:textArea property="labResearch" 
-               size="40" rows="2" fieldColSpan="2" />
+               size="60" rows="8" fieldColSpan="2" />
                     
-        </msh:row>
+      </msh:row>
         <msh:row>
           <msh:textArea property="diagnosis" label="Диагноз:"
-               size="40" rows="2" fieldColSpan="2" />
+               size="40" rows="6" fieldColSpan="2" />
                
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
@@ -52,6 +55,7 @@
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
+  <tags:templateProtocol property="research" name="Text" version="Visit" idSmo="id" voc="protocolVisitByPatient" />
     <ecom:titleTrail mainMenu="Poly" beginForm="doc_requitDirectionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
