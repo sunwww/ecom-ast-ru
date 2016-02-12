@@ -73,44 +73,13 @@ try {
        <div id='titleHead'>
        <tiles:insert attribute="title" ignore="true"/>
        </div>
-        <%--
-        <ul id='user'>
-
-            <li><a href='ecom_releases.do'>Новости</a></li>
-            <msh:ifInRole roles="/Policy/Mis/CustomMessage/View">
-            <li class="separator">|</li>
-            <li><a href='javascript:void(0)' onclick='getDefinition("js-mis_customMessage-getSystemMessages.do?id=-1&short=Short")'>Сообщения</a></li>
-            </msh:ifInRole>
-            <li class="separator">|</li>
-             <li>
-             <% request.setAttribute("servletPath", request.getServletPath()); %>
-             <msh:ifNotInRole roles="/Policy/Mis/Help/Edit">
-             <a href='javascript:void(0)' onclick='getDefinition("mis_help.do?code="+escape("${servletPath}")+"&nextUrl="+escape(window.location))'>Помощь</a>
-             </msh:ifNotInRole>
-             <msh:ifInRole roles="/Policy/Mis/Help/Edit">
-             <a href='javascript:void(0)' onclick='window.open("mis_help.do?code="+escape("${servletPath}")+"&nextUrl="+escape(window.location))'>Помощь</a>
-             </msh:ifInRole>
-             </li>
-            <li class="separator">|</li>
-            <li><ecom:loginName /></li>
-            <li class="separator">|</li>
-            <li><a href="javascript:window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под другим именем</a></li>
-            <li class="separator">|</li>
-            <li><msh:link action="/ecom_loginExit.do">Завершить работу</msh:link></li>
-
-        </ul>
         
-        <ul id='mainMenu'>
-            <msh:sideLink params="" key="SHIFT+CTRL+0" styleId="mainMenuPatient" action="/mis_patientSearch.do" name="Персона"
-                          title="Персоны" roles="/Policy/MainMenu/Patient"/>
-        </ul>
-         --%>
     </div>
     <div id='side'>    	
         <tiles:insert attribute="side" ignore="true"/>
     </div>
 
-    <div id="content" >
+    <div id="content" style="padding-right: 30px">
          <msh:errorMessage/>
         <msh:infoMessage/>
         <msh:userMessage/>

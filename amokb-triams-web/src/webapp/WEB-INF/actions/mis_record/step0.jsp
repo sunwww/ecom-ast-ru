@@ -19,6 +19,15 @@ div.button {
     </tiles:put>
 
     <tiles:put name='body' type='string'>
+    <% String infomat = request.getParameter("infomat");
+    if (infomat!=null && !infomat.equals("")) {
+    	%>
+    	<script type="text/javascript">
+    	window.location = "infomat.do" ;
+    	</script>
+    	<%
+    }
+    %>
 	    <div class="button fb " onclick="next_pre_record()">
 	    	<p class="label">Оформить предварительную запись</p>
 	    	<p class="info">Необходимо будет подойти в регистратура</p>
@@ -30,6 +39,30 @@ div.button {
 	    	<p class="info">Необходимо будет оформить Ваши анкетные данные.</p>
 	    	<p class="info">Затем подойти к врачу к назначенному времени.</p>
 	    </div>
+	    <br/>
+	    <div class="button fb " onclick="next_record_view_table_specialist()">
+	    	<p class="label">Прием врачей-специалистов</p>
+	    	<p class="info">Просмотр расписания специалистов</p>
+	    	<p class="info"> </p>
+	    </div>
+	    <br/>
+	    <div class="button fb " onclick="next_record_view_table_all_specialist()">
+	    	<p class="label">Расписание всех специалистов</p>
+	    	<p class="info">Просмотр расписания всех специалистов</p>
+	    	<p class="info"> </p>
+	    </div>
+	    <br/>
+	    <div class="button fb " onclick="next_record_view_table_diag()">
+	    	<p class="label">Услуги, оказываемые в больнице</p>
+	    	<p class="info">Просмотр прейскуранта по услугам</p>
+	    	<p class="info">специалистов </p>
+	    </div>
+	    <br/>
+	    <div class="button fb " onclick="next_gosgarant()">
+	    	<p class="label">Программа гос. гарантий</p>
+	    	<p class="info">Постановление Правительства Астраханской области</p>
+	    	<p class="info">от 25 декабря 2014г №620-П.</p>
+	    </div>
 	    
     </tiles:put>
     <tiles:put name="javascript" type="string">
@@ -40,8 +73,23 @@ div.button {
     	function next_record_direct() {
     		window.location = "step_record_info.do" ;
     	}
+    	function next_record_direct() {
+    		window.location = "step_gosgarant_info.do" ;
+    	}
     	function next_record_view_table_specialist() {
     		window.location = "step_table_0.do" ;
+    	}
+    	function next_record_view_table_diag() {
+    		window.location = "step_diag_0.do" ;
+    	}
+    	function next_record_view_table_specialist() {
+    		window.location = "step_table_0.do" ;
+    	}
+    	function next_record_view_table_all_specialist() {
+    		window.location = "step_table_1.do" ;
+    	}
+    	function next_gosgarant() {
+    		window.location = "step_gosgarant_info.do" ;
     	}
     	</script>
     	<tags:timerGoMain interval="600000"/>

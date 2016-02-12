@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainInfomatLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.infomat}Layout.jsp" flush="true">
 
     <tiles:put name="side" type="string">
       
@@ -46,7 +46,7 @@ padding:5px ;
 
     <tiles:put name='body' type='string'>
 	    ${tableTime}
-	    <a href='step_table_1.do?vocWorkFunction=${param.vocWorkFunction}' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
+	    <a href='step_table_1.do?vocWorkFunction=${param.vocWorkFunction}&infomat=${param.infomat}' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
 	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 

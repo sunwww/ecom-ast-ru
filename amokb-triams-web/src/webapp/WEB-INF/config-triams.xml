@@ -24,6 +24,12 @@
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/mis_record/infomat.jsp" />
 		</action>
+		<action path='/step_gosgarant_*'
+			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/gosgarant/step_{1}.jsp" />
+		</action>
 		<action path='/step_pre_record_info'
 			type='ru.ecom.web.poly.actions.visit.prerecord.InfoAction' validate='false'
 			scope="request">

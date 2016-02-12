@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainInfomatLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.infomat}Layout.jsp" flush="true">
 
     <tiles:put name="side" type="string">
       
@@ -54,7 +54,7 @@ td {
 	    	<msh:tableColumn property="2" columnName="Наименование услуги"/>
 	    	<msh:tableColumn property="4" columnName="Подготовка к исследованию"/>
 	    </msh:table>
-	    <a href='step_diag_0.do' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
+	    <a href='step_diag_0.do?infomat=${param.infomat}' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
 	    <tags:timerGoMain interval="600000"/>
     </tiles:put>
 

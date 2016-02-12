@@ -35,21 +35,28 @@ div.button {
 	    	<p class="info">Просмотр прейскуранта по услугам</p>
 	    	<p class="info">специалистов </p>
 	    </div>
-	    
+	    <div class="button fb " onclick="next_gosgarant()">
+	    	<p class="label">Программа гос. гарантий</p>
+	    	<p class="info">Постановление Правительства Астраханской области</p>
+	    	<p class="info">от 25 декабря 2014г №620-П.</p>
+	    </div>
     </tiles:put>
     <tiles:put name="javascript" type="string">
     	<script type="text/javascript">
     	function next_pre_record() {
-    		window.location = "step_pre_record_info.do" ;
+    		window.location = "step_pre_record_info.do?infomat=Infomat" ;
     	}
     	function next_record_view_table_diag() {
-    		window.location = "step_diag_0.do" ;
+    		window.location = "step_diag_0.do?infomat=Infomat" ;
     	}
     	function next_record_view_table_specialist() {
-    		window.location = "step_table_0.do" ;
+    		window.location = "step_table_0.do?infomat=Infomat" ;
     	}
     	function next_record_view_table_all_specialist() {
-    		window.location = "step_table_1.do" ;
+    		window.location = "step_table_1.do?infomat=Infomat" ;
+    	}
+    	function next_gosgarant() {
+    		window.location = "step_gosgarant_info.do?infomat=Infomat" ;
     	}
     	</script>
     </tiles:put>

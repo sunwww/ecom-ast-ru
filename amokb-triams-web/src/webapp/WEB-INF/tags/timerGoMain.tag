@@ -5,7 +5,7 @@
 <script type="text/javascript">
 	
 	function goMainPage() {
-		window.location='start.do' ;
+		window.location='start.do?infomat=${param.infomat}' ;
 	}
 	setTimeout("goMainPage()",${interval}) ;
 </script>

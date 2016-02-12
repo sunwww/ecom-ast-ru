@@ -180,7 +180,8 @@ td.kbButton{
 }
 
 	
-.button {       
+.button {  
+	cursor:pointer;
     display: inline-block;
     white-space: nowrap;
     background-color: #DDD;

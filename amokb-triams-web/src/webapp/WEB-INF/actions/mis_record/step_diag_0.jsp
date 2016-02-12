@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainInfomatLayout.jsp" flush="true">
+<tiles:insert page="/WEB-INF/tiles/main${param.infomat}Layout.jsp" flush="true">
     <tiles:put name="side" type="string">  
     <tags:sideMenu/>  	
     </tiles:put>
@@ -45,10 +45,10 @@
 
 	    </div>
 	    	    <div id='div1' style="float: left; height: 300px">
-	    <msh:table name="listFunctions" action="step_diag_1.do" idField="1" hideTitle="true">
+	    <msh:table name="listFunctions" action="step_diag_1.do?infomat=${param.infomat}" idField="1" hideTitle="true">
 	    	<msh:tableColumn property="2" columnName="Наименование специальности"/>
 	    </msh:table>
-	    <a href='infomat.do' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
+	    <a href='start.do?infomat=${param.infomat}' style='font-size: 2em;font-weight: bolder;text-align: center;'>НАЗАД</a>
 	    </div>
 	    <script type="text/javascript">
 	    	//$('div1').style.display='none' ;
