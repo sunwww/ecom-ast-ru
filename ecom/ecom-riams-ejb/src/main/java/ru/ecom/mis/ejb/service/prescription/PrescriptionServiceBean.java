@@ -38,6 +38,7 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.prescription.AbstractPrescriptionList;
 import ru.ecom.mis.ejb.domain.prescription.DietPrescription;
 import ru.ecom.mis.ejb.domain.prescription.DrugPrescription;
+import ru.ecom.mis.ejb.domain.prescription.ModePrescription;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptList;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
 import ru.ecom.mis.ejb.domain.prescription.Prescription;
@@ -392,11 +393,12 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	
 	public String getLabListFromTemplate(Long aIdTemplateList) {
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
+		System.out.println("======= getLabList, tmpl = "+template );
 		StringBuilder labList = new StringBuilder();
 		for (Prescription presc: template.getPrescriptions()) {
 			labList.append(getPrescriptionInfo(presc));
 		}
-		if (template.getComments().length()>0) {
+		if (template.getComments()!=null&&template.getComments().length()>0) {
 			labList.append("COMMENT@").append(template.getComments()).append("#");
 		}
 		 
@@ -430,8 +432,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @param aPresc - ID назначения (шаблона)
 	 * @return список исследований по шаблону
 	 */
-	private String getPrescriptionInfo (Prescription aPresc)
-	{
+	private String getPrescriptionInfo (Prescription aPresc) {
 		StringBuilder list = new StringBuilder();
 	//	System.out.println("in getPrescriptioninfo, aPresc = "+aPresc);
 		if (aPresc instanceof DrugPrescription) {
@@ -465,8 +466,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				System.out.println("catch Drug "+e);
 				e.printStackTrace();
 			}
-		}
-		if (aPresc instanceof DietPrescription) {
+		} else if (aPresc instanceof DietPrescription) {
 			try{
 			DietPrescription presNew = (DietPrescription) aPresc;
 			list.setLength(0);
@@ -479,27 +479,32 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				System.out.println("catch DIET "+e);
 				e.printStackTrace();
 			}
-		}
-		if (aPresc instanceof ServicePrescription) {
-			try{
-			ServicePrescription presNew = (ServicePrescription) aPresc;
-			list.setLength(0);
-			list.append("SERVICE@");
-			list.append(presNew.getMedService().getServiceType().getCode()).append(":");
-			list.append(presNew.getMedService().getId()).append(":");
-			list.append(presNew.getMedService().getCode()).append(" ");
-			list.append(presNew.getMedService().getName()).append("::"); //: aLabDate 
-			list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getId():"").append(":");
-			list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getName():"").append(":");
-			list.append(presNew.getDepartment()!=null?presNew.getDepartment().getId():"").append(":");
-			list.append(presNew.getDepartment()!=null?presNew.getDepartment().getName():"").append("#");
-			return list.toString();
-			}
-			catch (Exception e) {
+		} else if (aPresc instanceof ServicePrescription) {
+			try {
+				ServicePrescription presNew = (ServicePrescription) aPresc;
+				list.setLength(0);
+				list.append("SERVICE@");
+				list.append(presNew.getMedService().getServiceType().getCode()).append(":");
+				list.append(presNew.getMedService().getId()).append(":");
+				list.append(presNew.getMedService().getCode()).append(" ");
+				list.append(presNew.getMedService().getName()).append("::"); //: aLabDate 
+				list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getId():"").append(":");
+				list.append(presNew.getPrescriptCabinet()!=null?presNew.getPrescriptCabinet().getName():"").append(":");
+				list.append(presNew.getDepartment()!=null?presNew.getDepartment().getId():"").append(":");
+				list.append(presNew.getDepartment()!=null?presNew.getDepartment().getName():"").append("#");
+				return list.toString();
+			} catch (Exception e) {
 				System.out.println("catch Service "+e);
 				e.printStackTrace();
 			}
-		}
+		} else if (aPresc instanceof ModePrescription)  {
+			ModePrescription prescNew = (ModePrescription) aPresc;
+			list.setLength(0);
+			list.append("MODE@");
+			list.append(prescNew.getModePrescription().getName()).append(":");
+			list.append(prescNew.getModePrescription().getId()).append("#");
+			return list.toString();
+		} 
 		System.out.println("_----------------Some shit happens!!!"+aPresc);
 		return "";
 	}
@@ -522,8 +527,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	//	PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
 		MedCase medCase = theManager.find(MedCase.class, aIdParent) ;
 		WorkFunction wf = WorkerServiceBean.getWorkFunction(theContext, theManager) ;
-//		System.out.println("template="+aIdTemplateList);
-//		System.out.println("medCase="+aIdParent) ;
+		System.out.println("template="+template.getId());
+		System.out.println("medCase="+aIdParent) ;
+		
 		AbstractPrescriptionList list  ;
 		if (medCase!=null) {
 //			System.out.println("MedCase существует ! Создается PrescriptList") ;
@@ -622,21 +628,24 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			presNew.setOrderType(presOld.getOrderType());
 			presNew.setPrescriptSpecial(aSpecialist) ;
 			return presNew ;
-		}
-		if (aPrescOld instanceof DietPrescription) {
+		} else if (aPrescOld instanceof DietPrescription) {
 			DietPrescription presNew = new DietPrescription() ;
 			DietPrescription presOld = (DietPrescription)aPrescOld ;
 			presNew.setDiet(presOld.getDiet()) ;
 			presNew.setPrescriptSpecial(aSpecialist) ;
 			return presNew ;
-		}
-		if (aPrescOld instanceof ServicePrescription) {
+		} else if (aPrescOld instanceof ServicePrescription) {
 			ServicePrescription presNew = new ServicePrescription();
 			ServicePrescription presOld = (ServicePrescription) aPrescOld;
 			presNew.setMedService(presOld.getMedService());
 			presNew.setPrescriptCabinet(presOld.getPrescriptCabinet());
 			presNew.setPrescriptSpecial(presOld.getPrescriptSpecial());
 			presNew.setDepartment(presOld.getDepartment());
+			return presNew;
+		} else if (aPrescOld instanceof ModePrescription) {
+			ModePrescription presNew = new ModePrescription();
+			ModePrescription presOld = (ModePrescription) aPrescOld;
+			presNew.setModePrescription(presOld.getModePrescription());
 			return presNew;
 		}
 		

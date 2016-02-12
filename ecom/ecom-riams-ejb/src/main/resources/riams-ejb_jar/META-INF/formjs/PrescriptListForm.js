@@ -63,8 +63,9 @@ function onCreate(aForm, aEntity, aCtx) {
 				var par4u = (+param[4]>0)?java.lang.Long.valueOf(param[4]):null ; //frequencyUnit
 				var par5 = (param[5])?java.math.BigDecimal.valueOf(param[5]):null ; //amount
 				var par5u = (+param[6]>0)?java.lang.Long.valueOf(param[6]):null ; //amountUnit
-				var par6 = (param[7])?java.lang.Integer.valueOf(param[7]):null ; //duration
+				var par6 = (+param[7]>0)?java.lang.Integer.valueOf(param[7]):null ; //duration
 				var par6u = (+param[8]>0)?java.lang.Long.valueOf(param[8]):null ; //durationUnit
+				var par7 = (param[9])?""+param[9]:""; //comment
 				var drug = aCtx.manager.find(Packages.ru.ecom.mis.ejb.uc.privilege.domain.VocDrugClassify,par1) ;
 						
 				if (drug!=null) {
@@ -97,6 +98,9 @@ function onCreate(aForm, aEntity, aCtx) {
 					}
 					if (par6u!=null&&!par6u.equals(java.lang.Long(0))) {
 						adMedService.setDurationUnit(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocDurationUnit,par6u));
+					}
+					if (par7!=null&&!par7.equals("")) {
+						adMedService.setComments(par7);
 					}
 					
 					aCtx.manager.persist(adMedService) ;

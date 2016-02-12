@@ -20,7 +20,8 @@ function printPrescriptList(aCtx, aParams) {
 				" ,to_char(p.canceldate,'dd.MM.yyyy') as canceldate" +
 				" ,case when p.dtype='ServicePrescription' then ms.name" +
 					"  when p.dtype='DietPrescription' then diet.name" +
-					"  when p.dtype='DrugPrescription' then dr.name else '' end" +
+					"  when p.dtype='DrugPrescription' then dr.name " +
+					"  when p.dtype='ModePrescription' then vmp.name else '' end" +
 				" ,'Частота: '||p.frequency ||' '||coalesce(vfu.name,'') as vfuname" +
 				" ,p.orderTime ||' '||coalesce(vpot.name,'') as vpotname" +
 				" ,'Дозировка: '||p.amount ||' '||coalesce(vdau.name,'') as vdauname" +
@@ -35,6 +36,7 @@ function printPrescriptList(aCtx, aParams) {
 				" left join vocDrugAmountUnit as vdau on vdau.id=p.amountUnit_id" +
 				" left join vocDurationUnit as vdu on vdu.id=p.durationUnit_id" +
 				" left join diet diet on diet.id=p.diet_id" +
+				" left join vocmodeprescription vmp on vmp.id=p.modeprescription_id" +
 				" where p.prescriptionlist_id="+id+"order by p.planstartdate ";
 		var pres = aCtx.manager.createNativeQuery(presSql).getResultList();
 		if (!pres.isEmpty()) {
@@ -48,6 +50,9 @@ function printPrescriptList(aCtx, aParams) {
 				var startDate = unNull(p[2]);
 				if (p[3]!=null) {startDate +=" "+p[3];}
 				var cancelDate = unNull(p[4]);
+				if (p[10]!=null) {
+					comments.add(unNull(p[10]));
+				}
 				if (p[1].equals("ServicePrescription")) {
 					
 				} else if (p[1].equals("DietPrescription")) {
@@ -58,10 +63,10 @@ function printPrescriptList(aCtx, aParams) {
 							comments.add(unNull(p[j]));
 						}
 					}
+				} else if (p[1].equals("ModePrescription")) {
+					
 				}
-				if (p[7]!=null) {
-					comments.add(unNull(p[7]));
-				}
+				
 				pp.add(name);
 				pp.add(startDate);
 				pp.add(cancelDate);
