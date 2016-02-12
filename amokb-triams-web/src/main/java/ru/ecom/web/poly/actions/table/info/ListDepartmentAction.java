@@ -26,6 +26,9 @@ public class ListDepartmentAction extends BaseAction {
 		String addParam="";
 		StringBuilder sql = new StringBuilder() ;
 		String vocworkFunction = aRequest.getParameter("vocWorkFunction") ;
+		String infomat = aRequest.getParameter("infomat") ;
+		String additionUrl ="" ;
+		if (infomat!=null) additionUrl = "&infomat="+infomat ;
 		StringBuilder addVWF = new StringBuilder() ;
 		if (vocworkFunction!=null) {
 			addVWF.append(" and vwf.id='").append(vocworkFunction).append("' ") ;
@@ -100,7 +103,7 @@ public class ListDepartmentAction extends BaseAction {
 				res.append("<tr>") ;
 				//res.append("<td>").append(wqrS.get3()).append("</td>") ;
 				res.append("<td><b><a href=\"step_table_2.do?vocWorkFunction=")
-						.append(wqrS.get8())
+						.append(wqrS.get8()).append(additionUrl)
 						.append("\">").append(wqrS.get9()).append(" </a></b><br/>")
 					.append(wqrS.get4()).append(" <br/>")
 					.append(wqrS.get6()).append("</td>") ;
@@ -109,7 +112,7 @@ public class ListDepartmentAction extends BaseAction {
 					res.append("<td>").append(wqrS.get7());
 					res.append(" <a href=\"step_table_2.do?vocWorkFunction=")
 						.append(wqrS.get8())
-						.append("&workFunction=").append(wqrS.get2());
+						.append(additionUrl).append("&workFunction=").append(wqrS.get2());
 					res.append("\")> Отобразить</a>") ; 
 					res.append("</td>") ;
 				} else {

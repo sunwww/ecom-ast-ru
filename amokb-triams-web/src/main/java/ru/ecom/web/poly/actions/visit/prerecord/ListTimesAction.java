@@ -26,11 +26,11 @@ public class ListTimesAction  extends BaseAction {
 
 		String lpuRemoteUser="-1";
 		sql.append(" select wct.id,cast(wct.timeFrom as varchar(5)) as wcttimeFrom")
-			.append(" ,case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2 else 1 end")
+			.append(" ,case when vsrt.id is not null and (vsrt.isRemoteRayon is null or vsrt.isRemoteRayon='0') then 2 when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 0 when wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 2  else 1 end")
 			.append(" ,wct.medCase_id");
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
-		sql.append(",wct.prepatientInfo) as fio") ;
+		sql.append(",wct.prepatientInfo, case when vsrt.id is not null and (vsrt.isRemoteRayon is null or vsrt.isRemoteRayon='0') then 'резерв' else null end) as fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as patid")

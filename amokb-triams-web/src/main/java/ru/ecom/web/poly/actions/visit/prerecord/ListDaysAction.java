@@ -29,7 +29,8 @@ public class ListDaysAction  extends BaseAction {
 		sql.append(" select  wcd.id as wcdid, to_char(wcd.calendardate,'dd.mm.yyyy') as wcdcalendardate");
 		sql.append(" ,to_char(wcd.calendardate,'dd') as CDday");
 		sql.append(" ,count(case when wct.medCase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') then 1 else null end) as cntFree");
-		sql.append(" ,count(case when wct.medCase_id is not null or wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='') then 1 else null end) as cntBasy");
+		//if ()
+		sql.append(" ,count(case when (vsrt.id is not null and (vsrt.isViewRemoteUser='0' or vsrt.isViewRemoteUser is null)) or (vsrt.id is null and wct.medCase_id is not null or wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) then 1 else null end) as cntBusy");
 		sql.append(" ,count(wct.id) as cntAll");
 		sql.append(" from workCalendar wc"); 
 		sql.append(" left join workcalendarday wcd on wcd.workcalendar_id=wc.id");

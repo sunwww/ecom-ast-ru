@@ -128,6 +128,8 @@ public class FondWebService {
 			;String aKladr;String aHouse; String aHouseBuilding; String aFlat;
         	*/
         	String lastname = null, firstname = null, middlename = null, birthday = null, snils = null;
+        	String attachedDate = null; String attachedType = null; String attachedLpu = null;
+			
 			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 			//String commonNumber;
         	InputStream in = new ByteArrayInputStream(result.getBytes());
@@ -155,7 +157,9 @@ public class FondWebService {
             	String i = e.getChildText("i") ;
             	String o = e.getChildText("o") ;
             	String dr = upDate(e.getChildText("dr")) ;
-            	
+            	String attDate = upDate(e.getChildText("date_prik"));
+            	String attType = e.getChildText("sp_prik");
+            	String attLpu = e.getChildText("lpu");
             	String ss =e.getChildText("ss") ;
             	sb.append("<td>").append("<input  onclick=\"patientcheck('patient')\" type='radio'")
             	.append(isStart?" checked='true'":"") 
@@ -177,6 +181,7 @@ public class FondWebService {
             	if (isStart) {
             		isStart=false ;
             		lastname = f ; firstname = i ; middlename = o; birthday = dr ;snils=ss;
+            		attachedLpu = attLpu; attachedDate = attDate; attachedType = attType;
             	}
             }
             sb.append("</table>") ;
@@ -392,7 +397,7 @@ public class FondWebService {
             		, username, PatientFond.STATUS_CHECK_TYPE_MANUAL 
             		, companyCode, "", "", ""
             		, documentType, documentSeries, documentNumber
-            		, kladr, house, houseBuilding, flat);
+            		, kladr, house, houseBuilding, flat,attachedLpu, attachedDate, attachedType);
             return sb.toString() ;
         }
 		
