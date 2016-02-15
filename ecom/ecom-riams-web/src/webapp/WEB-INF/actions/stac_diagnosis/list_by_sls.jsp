@@ -225,9 +225,14 @@
 			when bf.addCaseDuration='1' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) 
 			else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)
 	 end as cntDays
+	 ,vof.name as vofname,vr.name as vrname
+	 ,case when sls.emergency='1' then 'Экстр.' else 'План.' end as emergency
 	from Diagnosis diag
 		left join VocIdc10 mkb on mkb.id=diag.idc10_id
 		left join MedCase sls on sls.id=diag.medCase_id
+		left join MedCase slo on sls.id=slo.parent_id
+		left joi BedFund bf on bf.id=slo.bedFund_id
+		left join Omc_Frm vof on vof.id=sls.orderType_id
 		
 	left join StatisticStub as sc on sc.medCase_id=sls.id 
 	left join Patient pat on sls.patient_id = pat.id 
@@ -236,6 +241,7 @@
 	left join VocServiceStream vss on vss.id=sls.serviceStream_id
 	left join VocHospitalization vh on vh.id=sls.hospitalization_id
 	left join Address2 a on a.addressid=pat.address_addressId
+	left join VocRayon vr on vr.id=pat.rayon_id
 	where ${fldDate} between to_date('${param.dateBegin}','dd.mm.yyyy')
 			and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
 			${serviceStreamSql} ${departmentSql} ${prioritySql} ${registrationTypeSql} ${bedSubTypeSql}
@@ -258,6 +264,9 @@
       <msh:tableColumn columnName="Кол-во к.дней" property="11" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Госпитализация" property="8" guid="d9642df9-5653-4920-bb78-1622cbeefa34" />
       <msh:tableColumn columnName="Диагноз" property="7" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Тип доставки" property="12" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Район" property="13" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Показания" property="14" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
     </msh:table>
     	
     		
@@ -340,7 +349,8 @@
 		from Diagnosis diag
 		left join VocIdc10 mkb on mkb.id=diag.idc10_id
 		left join MedCase sls on sls.id=diag.medCase_id
-		left join MedCase slo on slo.id=sls.parent_id
+		left join MedCase slo on sls.id=slo.parent_id
+		left joi BedFund bf on bf.id=slo.bedFund_id
 		left join SurgicalOperation so on so.medcase_id=slo.id
 		left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 		left join VocServiceStream vss on vss.id=sls.serviceStream_id
