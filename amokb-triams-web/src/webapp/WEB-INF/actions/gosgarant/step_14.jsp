@@ -17,1339 +17,1142 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
+    <div id='step_14_text'>
     
-    <h2 align="right">Приложение
-N 14<br/>
-к
-<a href="step_gosgarant_0.do?infomat=${param.infomat}">Программе</a></h2>
-<h4>Перечень<br/>медицинских
-организаций, участвующих в реализации
-Программы, в том числе территориальной
-программы обязательного медицинского
-страхования</h4>
-<p class="western" style="margin-bottom: 0cm;"><br>
-</p>
-<table border="1" bordercolor="#000000" cellpadding="7" cellspacing="0" width="672">
-	<col width="50">
-
-	<col width="462">
-	<col width="116">
-	<tbody><tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">N
-			п/п</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">Наименование
-			медицинской организации</font></p>
-
-		</td>
-		<td valign="TOP" width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">Осуществляющие
-			деятельность в сфере ОМС </font><a href="#sub_14001"><font color="#106bbe"><font face="Times New Roman, serif">(+)</font></font></a></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">1</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">2</font></p>
-		</td>
-		<td valign="TOP" width="116">
-			<p style="text-indent: 0cm;" align="LEFT"><font face="Times New Roman, serif">3</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">1</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО Александро-Мариинская областная
-			клиническая больница</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">2</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областная детская клиническая
-			больница им. Н.Н. Силищевой"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">3</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной кардиологический
-			диспансер"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">4</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областная инфекционная клиническая
-			больница им. А.М. Ничоги"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">5</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной онкологический
-			диспансер"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">6</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной кожно-венерологический
-			диспансер"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">7</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной клинический
-			противотуберкулезный диспансер"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">8</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной наркологический
-			диспансер"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">9</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областная клиническая
-			психиатрическая больница"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">10</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной клинический
-			стоматологический центр"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">11</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной центр по профилактике
-			и борьбе со СПИД и инфекционными
-			заболеваниями"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">12</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной врачебно-физкультурный
-			диспансер"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">13</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Областной центр крови"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">14</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			"Территориальный центр медицины
-			катастроф Астраханской области"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">15</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Бюро судебно-медицинской
-			экспертизы"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">16</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Патологоанатомическое бюро"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">17</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Центр медицинской профилактики"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">18</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Медицинский центр "Пластическая
-			хирургия и косметология"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">19</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУ
-			АО "Управление по экспертизе, учету
-			и анализу обращения средств медицинского
-			применения"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">20</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Медицинский информационно-аналитический
-			центр"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">21</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГКУЗ
-			АО "Медицинский центр мобилизационных
-			резервов "Резерв"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">22</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ОГБОУ
-			СПО "Астраханский базовый медицинский
-			колледж"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">-</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">23</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБОУ
-			ВПО "Астраханский государственный
-			медицинский университет Минздрава
-			России"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">24</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская клиническая больница
-			N 2 им. братьев Губиных"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">25</font></p>
-
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская клиническая больница
-			N 3 им. С.М. Кирова"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">26</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская клиническая больница
-			N 4 им. В.И. Ленина"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">27</font></p>
-		</td>
-		<td valign="TOP" width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская клиническая больница
-			N 5"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">28</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Детская городская клиническая
-			больница N 2"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">29</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская поликлиника N 1"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">30</font></p>
-
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская поликлиника N 2"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">31</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская поликлиника N 3"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">32</font></p>
-		</td>
-		<td valign="TOP" width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская поликлиника N 5"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">33</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская поликлиника N 8 им.
-			Н.И. Пирогова"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">34</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская поликлиника N 10"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">35</font></p>
-
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Детская городская поликлиника
-			N 1"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">36</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Детская городская поликлиника
-			N 3"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">37</font></p>
-		</td>
-		<td valign="TOP" width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Детская городская поликлиника
-			N 4"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">38</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Детская городская поликлиника
-			N 5"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">39</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Стоматологическая поликлиника
-			N 1"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">40</font></p>
-
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Стоматологическая поликлиника
-			N 2"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">41</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Стоматологическая поликлиника
-			N 3"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">42</font></p>
-		</td>
-		<td valign="TOP" width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Стоматологическая поликлиника
-			N 4"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">43</font></p>
-		</td>
-		<td valign="TOP" width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Клинический родильный дом"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">44</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Центр охраны здоровья семьи и
-			репродукции"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">45</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Станция скорой медицинской
-			помощи"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">46</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Ахтубинская РБ"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">47</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Володарская РБ"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">48</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Енотаевская РБ"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">49</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Икрянинская РБ"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">50</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Камызякская РБ"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">51</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Красноярская РБ"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">52</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Лиманская РБ"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">53</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Наримановская РБ"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">54</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Приволжская РБ"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">55</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Харабалинская РБ им. Г.В. Храповой"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">56</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Черноярская РБ"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">57</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ГБУЗ
-			АО "Городская больница ЗАТО Знаменск"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">58</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Астраханская
-			клиническая больница ФГБУЗ ЮОМЦ ФМБА
-			России</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">59</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Негосударственное
-			учреждение здравоохранения
-			"Медико-санитарная часть"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">60</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Негосударственное
-			учреждение здравоохранения "Отделенческая
-			больница на станции Астрахань-1 ОАО
-			"РЖД"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">61</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Госпиталь
-			(на 150 коек, г. Ахтубинск) ФГКУ "1602
-			ВКГ" Минобороны России</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">62</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Филиал
-			N 8 ФГКУ "1602 ВКГ" Минобороны России</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">63</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Филиал
-			N 13 ФГКУ "1602 ВКГ" Минобороны России</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">64</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Филиал
-			N 12 ФГКУ "1602 ВКГ" Минобороны России</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">65</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФКУЗ
-			"МСЧ МВД России по Астраханской
-			области"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">66</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФБУ
-			Центр реабилитации Фонда социального
-			страхования Российской Федерации
-			"Тинаки"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">67</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Открытое
-			акционерное общество "Новая
-			Поликлиника-Астрахань"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">68</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Медицинский центр Альтернатива"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">69</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Стоматология XXI век"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">70</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Специализированное протезно-ортопедическое
-			предприятие "Протезист"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">71</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Медиал"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">72</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Мэтр-Дент"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">73</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Аполлония +"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">74</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ИП
-			У.С. Уразова</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">75</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФГБУ
-			"ФМИЦ им. В.А. Алмазова" Минздрава
-			России</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">76</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФГБУ
-			"Федеральный центр сердечно-сосудистой
-			хирургии" МЗ РФ (г. Астрахань)</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">77</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Астраханский
-			филиал ФГБУ "Научно-клинический
-			центр оториноларингологии ФМБА России"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">78</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Центр диализа Астрахань"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">79</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФГБУЗ
-			"Центральная детская клиническая
-			больница ФМБА России"</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">80</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФГБУ
-			"РОСНИИ гематологии и трансфузиологии
-			ФМБА России"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">81</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФГБУЗ
-			"Клиническая больница N 122 им. Л.Г.
-			Соколова ФМБА России"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">82</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Травматологический центр "Локохелп"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">83</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Медицинский центр "Локохелп"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">84</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФГБУ
-			"Новосибирский НИИ травматологии
-			и ортопедии им. Я.Л. Цивьяна" МЗ РФ</font></p>
-
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">85</font></p>
-
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФГБУ
-			"Научный центр акушерства, гинекологии
-			и перинатологии им. В.И. Кулакова"
-			МЗ РФ</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">86</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"МедЭкс-Астрахань"</font></p>
-		</td>
-		<td width="116">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">87</font></p>
-		</td>
-		<td width="462">
-
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">Общество
-			с ограниченной ответственностью
-			"Окулист А"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">88</font></p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">ФКУЗ
-			"Медико-санитарная часть N 30 ФСИН
-			России"</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">+</font></p>
-
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-			<p style="text-indent: 0cm;"><br>
-			</p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font color="#26282f"><b><font face="Times New Roman, serif">Итого</font></b></font><font face="Times New Roman, serif">
-
-			медицинских организаций, участвующих
-			Программе</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">88</font></p>
-		</td>
-	</tr>
-	<tr>
-		<td width="50">
-
-			<p style="text-indent: 0cm;"><br>
-			</p>
-		</td>
-		<td width="462">
-			<p style="text-indent: 0cm;"><font face="Times New Roman, serif">из
-			них медицинских организаций,
-			осуществляющих деятельность в сфере
-			ОМС</font></p>
-		</td>
-		<td width="116">
-			<p style="text-indent: 0cm;" align="CENTER"><font face="Times New Roman, serif">76</font></p>
-
-		</td>
-	</tr>
-</tbody></table>
-<p class="western" style="margin-bottom: 0cm;"><br>
-</p>
-<p class="western" style="margin-bottom: 0cm;"><a name="sub_14001"></a>
-<font color="#26282f"><b><font face="Times New Roman, serif">(+)</font></b></font><font face="Times New Roman, serif">
-знак отличия об участии в сфере ОМС.</font>
-    
+    <FONT COLOR="#26282f"><B>Приложение N 14<BR>к </B></FONT><FONT COLOR="#106bbe"><B>Программе</B></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<H1 CLASS="western">Перечень<BR>медицинских организаций, участвующих
+в реализации Программы, в том числе территориальной программы
+обязательного медицинского страхования</H1>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<TABLE WIDTH=675 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+	<COL WIDTH=49>
+	<COL WIDTH=419>
+	<COL WIDTH=162>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">N п/п</P>
+		</TD>
+		<TD WIDTH=419>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">Наименование медицинской
+			организации</P>
+		</TD>
+		<TD WIDTH=162 VALIGN=TOP>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">Осуществляющие
+			деятельность в сфере ОМС<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">(+)</SPAN></FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">1</P>
+		</TD>
+		<TD WIDTH=419>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">2</P>
+		</TD>
+		<TD WIDTH=162 VALIGN=TOP>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">3</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">1</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО Александро-Мариинская
+			областная клиническая больница</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">2</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областная детская
+			клиническая больница им. Н.Н. Силищевой&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">3</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной
+			кардиологический диспансер&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">4</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областная инфекционная
+			клиническая больница им. А.М. Ничоги&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">5</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной онкологический
+			диспансер&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">6</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной
+			кожно-венерологический диспансер&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">7</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной клинический
+			противотуберкулезный диспансер&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">8</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной
+			наркологический диспансер&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">9</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областная клиническая
+			психиатрическая больница&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">10</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной клинический
+			стоматологический центр&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">11</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной центр по
+			профилактике и борьбе со СПИД и инфекционными заболеваниями&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">12</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной
+			врачебно-физкультурный диспансер&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">13</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Областной центр крови&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">14</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Бюро судебно-медицинской
+			экспертизы&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">15</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Патологоанатомическое
+			бюро&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">16</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Центр медицинской
+			профилактики&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">17</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Медицинский центр
+			&quot;Пластическая хирургия и косметология&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">18</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУ АО &quot;Управление по экспертизе,
+			учету и анализу обращения средств медицинского применения&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">19</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Медицинский
+			информационно-аналитический центр&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">20</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГКУЗ АО &quot;Медицинский центр
+			мобилизационных резервов &quot;Резерв&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">-</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">21</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Центр медицины катастроф
+			и скорой медицинской помощи&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">22</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская клиническая
+			больница N 2 им. братьев Губиных&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">23</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская клиническая
+			больница N 3 им. С.М. Кирова&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">24</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская клиническая
+			больница N 4 им. В.И. Ленина&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">25</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская клиническая
+			больница N 5&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">26</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Детская городская
+			клиническая больница N 2&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">27</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская поликлиника N
+			1&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">28</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская поликлиника N
+			2&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">29</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская поликлиника N
+			3&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">30</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская поликлиника N
+			5&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">31</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская поликлиника N
+			8 им. Н.И. Пирогова&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">32</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская поликлиника N
+			10&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">33</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Детская городская
+			поликлиника N 1&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">34</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Детская городская
+			поликлиника N 3&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">35</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Детская городская
+			поликлиника N 4&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">36</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Детская городская
+			поликлиника N 5&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">37</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Стоматологическая
+			поликлиника N 1&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">38</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Стоматологическая
+			поликлиника N 2&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">39</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Стоматологическая
+			поликлиника N 3&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">40</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Стоматологическая
+			поликлиника N 4&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">41</P>
+		</TD>
+		<TD WIDTH=419 VALIGN=TOP>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Клинический родильный
+			дом&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">42</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Центр охраны здоровья
+			семьи и репродукции&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">43</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Ахтубинская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">44</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Володарская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">45</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Енотаевская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">46</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Икрянинская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">47</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Камызякская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">48</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Красноярская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">49</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Лиманская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">50</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Наримановская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">51</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Приволжская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">52</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Харабалинская РБ им.
+			Г.В. Храповой&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">53</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Черноярская РБ&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">54</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБУЗ АО &quot;Городская больница ЗАТО
+			Знаменск&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">55</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Астраханская клиническая больница
+			ФГБУЗ ЮОМЦ ФМБА России</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">56</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Частное учреждение здравоохранения
+			&quot;Медико-санитарная часть&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">57</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Негосударственное учреждение
+			здравоохранения &quot;Отделенческая больница на станции
+			Астрахань-1 ОАО &quot;РЖД&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">58</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ФКУЗ &quot;МСЧ МВД России по
+			Астраханской области&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">59</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ФБУ Центр реабилитации Фонда
+			социального страхования Российской Федерации &quot;Тинаки&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">60</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Открытое акционерное общество &quot;Новая
+			Поликлиника-Астрахань&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">61</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Медицинский центр Альтернатива&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">62</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Стоматология XXI век&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">63</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Специализированное протезно-ортопедическое
+			предприятие &quot;Протезист&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">64</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Медиал&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">65</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Мэтр-Дент&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">66</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Дент-Арт&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">67</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Медицинский центр новых технологий&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">68</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Травматологический центр &quot;Локохелп&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">69</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;МСЦ &quot;Ваш доктор&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">70</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью Центр современной стоматологии &quot;Голливуд&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">71</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью ПКФ &quot;АРТ-Юг&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">72</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Альма плюс&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">73</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Центр микрохирургии глаза&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">74</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Поликлиника (Астраханская обл., г.
+			Знаменск) ФГКУ &quot;413 ВГ&quot; Минобороны России</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">75</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ФГБУ &quot;Федеральный центр
+			сердечно-сосудистой хирургии&quot; МЗ РФ (г. Астрахань)</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">76</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Астраханский филиал ФГБУ
+			&quot;Научно-клинический центр оториноларингологии ФМБА России&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">77</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Общество с ограниченной
+			ответственностью &quot;Центр диализа Астрахань&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">78</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Филиал N 1 ФГКУ &quot;413 ВГ&quot;
+			Минобороны России</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">79</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">Филиал N 3 ФГКУ &quot;413 ВГ&quot;
+			Минобороны России</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">80</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГБОУ ВПО &quot;Астраханский
+			государственный медицинский университет Минздрава России&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">81</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ИП У.С. Уразова</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">82</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ООО &quot;Окулист А&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">83</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ООО &quot;Геном-Волга&quot; (г.
+			Волгоград)</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">84</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ГУЗ &quot;ГКБ N 1&quot; (г. Волгоград)</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">85</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ООО &quot;ЭКО Центр&quot; (г. Москва)</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">86</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ФГБУЗ &quot;МЦ &quot;Юность&quot; ФМБА
+			России (г. Ессентуки)</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">87</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">НМЧУ &quot;Здоровье+&quot; (г.
+			Волгоград)</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">88</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ООО &quot;БИРЧ&quot; (г.
+			Санкт-Петербург)</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">89</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ООО &quot;Медицинский центр &quot;Локохелп&quot;</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">90</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">ФКУЗ МСЧ-30 ФСИН России</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">+</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P STYLE="text-indent: 0cm"><BR>
+			</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm"><FONT COLOR="#26282f"><B>Итого</B></FONT>
+			медицинских организаций, участвующих Программе</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">90</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=49>
+			<P STYLE="text-indent: 0cm"><BR>
+			</P>
+		</TD>
+		<TD WIDTH=419>
+			<P STYLE="text-indent: 0cm">из них медицинских организаций,
+			осуществляющих деятельность в сфере ОМС</P>
+		</TD>
+		<TD WIDTH=162>
+			<P ALIGN=CENTER STYLE="text-indent: 0cm">79</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm">_____________________</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><A NAME="sub_1401"><FONT COLOR="#26282f"><B>(+)
+</B></FONT>знак отличия об участии в сфере ОМС.</P>
+       
     </div>
 	   <tags:timerGoMain interval="600000"/>
 </tiles:put>
