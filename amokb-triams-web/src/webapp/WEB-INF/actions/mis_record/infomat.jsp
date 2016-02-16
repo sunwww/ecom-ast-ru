@@ -38,7 +38,7 @@ div.button {
 	    <div class="button fb " onclick="next_gosgarant()">
 	    	<p class="label">Программа гос. гарантий</p>
 	    	<p class="info">Постановление Правительства Астраханской области</p>
-	    	<p class="info">от 25 декабря 2014г №620-П.</p>
+	    	<p class="info">от 24 декабря 2015г №655-П.</p>
 	    </div>
     </tiles:put>
     <tiles:put name="javascript" type="string">

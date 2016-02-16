@@ -30,7 +30,7 @@ div.button {
     %>
 	    <div class="button fb " onclick="next_pre_record()">
 	    	<p class="label">Оформить предварительную запись</p>
-	    	<p class="info">Необходимо будет подойти в регистратура</p>
+	    	<p class="info">Необходимо будет подойти в регистратуру</p>
 	    	<p class="info"> за 10-20 минут до приема</p>
 	    </div>
 	    <br/>
@@ -61,7 +61,7 @@ div.button {
 	    <div class="button fb " onclick="next_gosgarant()">
 	    	<p class="label">Программа гос. гарантий</p>
 	    	<p class="info">Постановление Правительства Астраханской области</p>
-	    	<p class="info">от 25 декабря 2014г №620-П.</p>
+	    	<p class="info">от 24 декабря 2015г №655-П.</p>
 	    </div>
 	    
     </tiles:put>
