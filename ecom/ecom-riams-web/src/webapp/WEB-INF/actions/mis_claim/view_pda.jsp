@@ -16,11 +16,11 @@
          <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
         <table>
         <tr> <td>	
-    	<input type='button' value='Начал делать' onclick="show('Start')">
+    	<input type='button' value='Начал делать' onclick="show('startWork')">
     	</td></tr><tr> <td>
-    	<input type='button' value='Сделано' onclick="show('Finish')">
+    	<input type='button' value='Сделано' onclick="show('finish')">
     	</td></tr><tr> <td>
-    	<input type='button' value='Отменить' onclick="show('Cancel')">
+    	<input type='button' value='Отменить' onclick="show('cancel')">
     	</td></tr></table>
 	</msh:ifInRole>
     <ecom:webQuery name="claimInfo" nameFldSql="claimInfoSql" nativeSql="
@@ -58,6 +58,8 @@ where cl.id=${param.id}
    
 	  	<script type="text/javascript">
 	  	function show(status) {
+	  		$('NewClaimId').value = '${param.id}';
+	  		$('NewClaimStatus').value = status;
 	  		$('statusState').value=status;
 	  		showNewClaimStart();
 	  	}

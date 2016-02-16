@@ -291,6 +291,13 @@
 
 	<action-mappings>
 
+ <action path='/pda_claims' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_claim/list_by_operator_pda.jsp" />
+        </action>
  <action path='/all_claims' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'

@@ -5,6 +5,8 @@
 
 <%@ attribute name="name" required="true" description="Название" %>
 <%@ attribute name="status" required="true" description="tttt" %>
+<%@ attribute name="type" required="false" description="Тип заявки" %>
+
 
 <msh:ifInRole roles="${roles}">
 
@@ -25,7 +27,6 @@
     
 <form action="javascript:void(0)">
     <msh:panel>
-   
     	<msh:row>
     		<msh:textField property="${name}Date" label="Дата"/>
     		<msh:textField property="${name}Time" label="Время"/>
@@ -46,6 +47,8 @@
 <script type="text/javascript"><!--
      var theIs${name}ClaimStartDialogInitialized = false ;
      var claimId =0;
+    
+     
      var the${name}ClaimStartDialog = new msh.widget.Dialog($('${name}ClaimStartDialog')) ;
      // Показать
      function show${name}ClaimStart() {
@@ -53,7 +56,9 @@
          if (!theIs${name}ClaimStartDialogInitialized) {
          	init${name}ClaimStartDialog() ;
           }
-        ${name}ExecutorAutocomplete.setParentId($('${name}ClaimType').value);
+         var claimType = ($('${type}')!=null && $('${type}').value!='')?$('${type}').value : $('${name}ClaimType').value;
+         $('${name}ClaimType').value=claimType;
+        ${name}ExecutorAutocomplete.setParentId(+$('${name}ClaimType').value);
          the${name}ClaimStartDialog.show() ;
          $("${name}Date").focus() ;
 
@@ -74,7 +79,7 @@
      	ClaimService.setStatusClaim($('${name}ClaimStatus').value, $('${name}ClaimId').value, $('${name}Date').value, $('${name}Time').value, username, comment, {
      		callback: function (a) {
      			$('${name}ClaimId').value='';
-     			$('${name}ClaimType').value='';
+     			if ($('${name}ClaimType')) $('${name}ClaimType').value='';
      			
      			window.location.reload();
      		}

@@ -64,7 +64,7 @@
             </msh:ifInRole>
            <li class="separator">|</li>
            <msh:ifInRole roles="/Policy/Mis/Claim/View">
-            <li><a href='js-mis_claim-my_claims.do'>Заявки в ТП</a></li>
+            <li><a href='js-mis_claim-my_claims.do'>Заявки в АСУ</a></li>
             <li class="separator">|</li>
             </msh:ifInRole>
             <li><a href='ecom_releases.do'>Новости</a></li>
