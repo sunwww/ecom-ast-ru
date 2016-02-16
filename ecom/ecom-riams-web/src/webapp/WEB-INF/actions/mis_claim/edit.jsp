@@ -34,16 +34,6 @@
         </msh:ifFormTypeIsCreate>
         
         <msh:ifFormTypeAreViewOrEdit formName="mis_claimForm">
-         <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
-        <msh:row> <td>	
-    	<input type='button' value='Начал делать' onclick="show('Start')">
-    	</td></msh:row><msh:row> <td>
-    	<input type='button' value='Сделано' onclick="show('Finish')">
-    	</td></msh:row><msh:row> <td>
-    	<input type='button' value='Отменить' onclick="show('Cancel')">
-    	</td></msh:row>
-</msh:ifInRole>
-
           <msh:row>
           	<msh:textArea  property="description" rows="5"  size="50" label="Текст заявки" viewOnlyField="true" />
           </msh:row>
