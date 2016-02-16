@@ -1,5 +1,25 @@
 <vocconfig>
 
+<voc id="executorsByCurrentUserName" type="NativeVocService">
+	<NativeVocService
+		from="SecUser suu"
+		nameId="su.login"
+		order="pat.lastname, pat.firstname, pat.middlename"
+		names=" pat.lastname||' ' ||pat.firstname||' '||pat.middlename"
+		join="
+			left join workfunction wf on wf.secuser_id=suu.id
+			left join workfunction allwf on allwf.group_id=wf.group_id
+			left join worker w on w.id=allwf.worker_id
+			left join worker allw on allw.person_id=w.person_id
+			left join workfunction aallwf on aallwf.worker_id=allw.id
+			left join secuser su on su.id=aallwf.secuser_id		
+			left join patient pat on pat.id=allw.person_id
+			"
+		queried="upper(pat.lastname) like upper(:querId) or upper(su.login) like upper(:query) "
+		parent="suu.login=:parent"
+		queryAppend="su.id is not null"
+	/>
+</voc>
 
 <voc id="userDocumentGroup" type="NativeVocService">
 	<NativeVocService
