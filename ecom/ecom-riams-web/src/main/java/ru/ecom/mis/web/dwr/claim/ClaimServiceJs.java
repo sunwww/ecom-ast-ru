@@ -51,7 +51,7 @@ public class ClaimServiceJs {
 				sql+=", "+aStatus+"Username='"+aUsername+"'";
 						
 			} else if (aStatus.equals("finish")) {
-				sql +="finishUsername = startWorkUsername";
+				sql +=", finishUsername = startWorkUsername";
 			}
 			sql+=" where id="+aId;
 			return aStatus+" : "+ service.executeUpdateNativeSql(sql);
