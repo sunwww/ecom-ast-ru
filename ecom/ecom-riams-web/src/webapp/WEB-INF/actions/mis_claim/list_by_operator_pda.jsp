@@ -98,7 +98,7 @@ if (beginDate!=null&&!beginDate.equals("")) {
 	    </td>
 	  </msh:row>
 	  --%> 
-	   <msh:row>
+	    <%-- <msh:row>
         <td class="label" title="Искать по дате (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();">
         	<input type="radio" name="typeDate" value="1">  Создания
@@ -115,14 +115,8 @@ if (beginDate!=null&&!beginDate.equals("")) {
 	    <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
 	     	<input type="radio" name="typeDate" value="5">  Отмены
 	    </td>	        
-	    </msh:row>
-	   <msh:row>
-        <msh:textField property="beginDate" label="Период с" />
-        <msh:textField property="endDate" label="по" />
-           <td>
-            <input type="submit" value="Отобразить данные" />
-          </td>
-          </msh:row>
+	    </msh:row>  --%>
+	  
     </msh:panel>
     </msh:form> 
     <ecom:webQuery name="claimList" nameFldSql="claimListSql" nativeSql="
@@ -173,64 +167,13 @@ order by cl.createdate , cl.createtime
             <msh:tableColumn columnName="Дата и время создания" property="4" />
             <msh:tableColumn columnName="Статус" property="5" />
         </msh:table>
-        <tags:mis_claimStart name="New" status="id" />
-    </tiles:put>
+        <tags:mis_claimStart name="New" status="id" /> <!-- vocName='executorsByCurrentUserName' /> -->
     
-    <tiles:put name='javascript' type='string'>
-    <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>
     <script type='text/javascript'>
-    
-   
-     checkFieldUpdate('typeStatus','${typeStatus}',3) ;
-    checkFieldUpdate('typeUser','${typeUser}',1) ;
-    checkFieldUpdate('typeDate','${typeDate}',1) ;
-    
-    function checkFieldUpdate(aField,aValue,aDefaultValue) {
-	   	eval('var chk =  document.forms[0].'+aField) ;
-	   	var aMax=chk.length ;
-	   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
-	   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
-	   		chk[+aDefaultValue-1].checked='checked' ;
-	   	} else {
-	   		chk[+aValue-1].checked='checked' ;
-	   	}
-	   }
-    function setView (aId) {
-    	setStatus(aId, 'View');
-    }
-    
-    function setFinish (aId) {
-    	setStatus(aId, 'Finish');
-    }
-    function setCancel (aId) {
-    	setStatus(aId, 'Cancel');
-    }
-    function setStartWork(aId) {
-    	setStatus(aId, 'StartWork')
-    }
-    function setComment (aId) {
-    	var comment = prompt('Введите комментарий');
-    	if (comment!=null&&comment!=''){
-	    	ClaimService.setComment(aId, comment,{
-	    		callback: function(){
-	    		window.location.reload();
-	    		}
-	    	});
-    	}
-    }
-    function setStatus(aIds, aStatus) {
-    	var arr = aIds.split(':');
-    	$('NewClaimId').value = ''+arr[0];
-    	if (arr.length>1) {
-    		$('NewClaimType').value = ''+arr[1];
-    	}
-    	$('NewClaimStatus').value = aStatus;
-    	showNewClaimStart();
-    }
     function checkfrm() {
     	document.forms[0].submit() ;
     }
-   
     </script>
-</tiles:put>
+    </tiles:put>
+
 </tiles:insert>

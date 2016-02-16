@@ -14,14 +14,18 @@
         	<input type='hidden' id='id' name='id' value='${param.id}'>
               
          <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
-        <table>
-        <tr> <td>	
+     <table>
+        <tr><td>	
     	<input type='button' value='Начал делать' onclick="show('startWork')">
     	</td></tr><tr> <td>
     	<input type='button' value='Сделано' onclick="show('finish')">
     	</td></tr><tr> <td>
     	<input type='button' value='Отменить' onclick="show('cancel')">
-    	</td></tr></table>
+    	</td></tr>
+    	<tr><td>
+    	<input type='button' value='Назад' onclick="window.location.href='pda_claims.do'">
+    	</td></tr>
+    </table>
 	</msh:ifInRole>
     <ecom:webQuery name="claimInfo" nameFldSql="claimInfoSql" nativeSql="
     select cl.id as clid,  upat.lastname ||' '|| upat.firstname||' '||upat.middlename, cl.description

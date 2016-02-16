@@ -14,6 +14,8 @@ String typeDate =ActionUtil.updateParameter("ClaimList","typeDate","1", request)
 String beginDate = request.getParameter("beginDate");
 String endDate = request.getParameter("endDate");
 String login = LoginInfo.find(request.getSession(true)).getUsername();
+String executorUserName = request.getParameter("number");
+String searchField = request.getParameter("searchField");
 request.setAttribute("login", login);
 String statusSql = " ", orderBySql=" cl.createdate , cl.createtime";
 
@@ -39,6 +41,13 @@ if (beginDate!=null&&!beginDate.equals("")) {
 	}
 } else {
 	statusSql +=" and cl.createdate <=current_date";
+}
+
+if (executorUserName!=null&&!executorUserName.equals("")) {
+	statusSql +=" and cl.startWorkUserName='"+executorUserName+"'";
+}
+if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
+	statusSql +=" and upper(cl.description) like upper('%"+searchField+"%')";
 }
 	if (typeStatus==null) {
 		statusSql = " nulla";
@@ -72,11 +81,19 @@ if (beginDate!=null&&!beginDate.equals("")) {
     <tiles:put name='body' type='string' >
    <msh:form  action="/all_claims.do" defaultField="typeStatus" disableFormDataConfirm="true" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f" > 
   <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
-    <%-- <msh:autoComplete property="userName" parentId="${login}" vocName="executorByUserName"/> --%>
+     
        <a href='js-mis_claim-list_pda.do'><input type='button' value='pda'></a>
     <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
-      
-   
+     <msh:row>
+     <msh:autoComplete label="Исполнитель" property="number" parentId="${login}" vocName="executorsByCurrentUserName" size="50" fieldColSpan="10"/>  
+   </msh:row>
+   <msh:row>
+   <td>
+   	<p>Поиск по тексту заявки:</p>
+   </td>
+   <td colspan="10">
+   	<input type='text' name='searchField' id='searchField' size="50">
+   </td></msh:row>
     <msh:row>
         <td class="label" title="Статус заявки (typeStatus)" colspan="1"><label for="typeStatusName" id="typeStatusLabel">Статус:</label></td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();">
@@ -146,17 +163,17 @@ if (beginDate!=null&&!beginDate.equals("")) {
  when cl.createdate is not null then 'Новая (создана '||to_char(cl.createdate, 'dd.MM.yyyy')||')'
  else 'ВАХВАХ' end as status
  ,cl.id||':'||vct.id as idvocid
-,case when cl.canceldate is null then cl.id else null end as btnCancel
+,case when cl.canceldate is null and cl.finishdate is null then cl.id else null end as btnCancel
 ,case when cl.finishdate is null and cl.canceldate is null then cl.id||':'||cl.claimtype else null end as btnFinish
 ,case when cl.startworkdate is null and cl.finishdate is null and cl.canceldate is null then cl.id||':'||cl.claimtype else null end as btnStartWork
 ,case when cl.viewdate is null and cl.canceldate is null and cl.finishdate is null then cl.id||':'||cl.claimtype else null end as btnView
 , cl.phone
-,case when cl.canceldate is not null then 'background-color:#F3F781; color:black; '
- when cl.finishdate is not null then 'background-color:#81F781; color:black;'
- when cl.startworkdate is not null then 'background-color:F78181; '
- when cl.viewdate is not null then ''
- when cl.createdate is not null then ''
- else 'ВАХВАХ' end as color_status
+,case when cl.canceldate is not null then 'font-size:16px; background-color:#F3F781; color:black; '
+ when cl.finishdate is not null then 'font-size:16px; background-color:#81F781; color:black;'
+ when cl.startworkdate is not null then 'font-size:16px; background-color:F78181; '
+ when cl.viewdate is not null then 'font-size:16px;'
+ when cl.createdate is not null then 'font-size:16px;'
+ else 'font-size:16px; ВАХВАХ' end as color_status
 ,cl.address as address
 ,coalesce(cl.executorcomment,'') as comment
 from claim cl
@@ -174,7 +191,7 @@ where su.login='${login}'
 ${statusSql} 
 
 order by ${orderBySql}
-"/>
+"/>${claimListSql}
         <msh:table styleRow="12" name="claimList" action="entityView-mis_claim.do" idField="1">
             <msh:tableColumn columnName="Номер заявки" property="1" />
             <msh:tableColumn columnName="Пользователь" property="2" />

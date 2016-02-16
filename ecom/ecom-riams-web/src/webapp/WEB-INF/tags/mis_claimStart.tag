@@ -20,6 +20,7 @@
 
 <div id='${name}ClaimStartDialog' class='dialog'>
     <h2>Дата</h2>
+    <input type='hidden' id='${name}ExecutorVoc' name='${name}ExecutorVoc' >
     <input type='hidden' id='${name}ClaimType' name='${name}ClaimType'>
     <input type='hidden' id='${name}ClaimId' name='${name}ClaimId'>
     <input type='hidden' id='${name}ClaimStatus' name='${name}ClaimStatus'>
@@ -48,7 +49,7 @@
      var theIs${name}ClaimStartDialogInitialized = false ;
      var claimId =0;
     
-     
+     //executorsByCurrentUserName 
      var the${name}ClaimStartDialog = new msh.widget.Dialog($('${name}ClaimStartDialog')) ;
      // Показать
      function show${name}ClaimStart() {
@@ -57,8 +58,10 @@
          	init${name}ClaimStartDialog() ;
           }
          var claimType = ($('${type}')!=null && $('${type}').value!='')?$('${type}').value : $('${name}ClaimType').value;
+       
          $('${name}ClaimType').value=claimType;
-        ${name}ExecutorAutocomplete.setParentId(+$('${name}ClaimType').value);
+         //${name}ExecutorAutocomplete.setVocName($('${name}ExecutorVoc').value);
+         ${name}ExecutorAutocomplete.setParentId(+$('${name}ClaimType').value);
          the${name}ClaimStartDialog.show() ;
          $("${name}Date").focus() ;
 
