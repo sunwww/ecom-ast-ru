@@ -26,16 +26,16 @@ request.setAttribute("login", login);
     select cl.id as clid, cast('' as varchar),  cl.description
     , to_char(cl.createdate, 'dd.MM.yyyy') ||' '||to_char(cl.createtime,'HH24:MI') as crdatetime
 ,case when cl.canceldate is not null then 'Отменена ' || to_char(cl.canceldate, 'dd.MM.yyyy')||' '||to_char(cl.canceltime,'HH24:MI')
- when cl.finishdate is not null then 'Выполнена ' || to_char(cl.finishdate, 'dd.MM.yyyy')||' '||to_char(cl.finishtime,'HH24:MI')
- when cl.startworkdate is not null then 'В работе ' || to_char(cl.startworkdate, 'dd.MM.yyyy')||' '||to_char(cl.startworktime,'HH24:MI') ||' '||cl.startworkusername
- when cl.viewdate is not null then 'В процессе назначения ' || to_char(cl.viewdate, 'dd.MM.yyyy')||' '||to_char(cl.viewtime,'HH24:MI')
+ when cl.finishdate is not null then 'Выполнена ' || to_char(cl.finishdate, 'dd.MM.yyyy')||' '||to_char(cl.finishtime,'HH24:MI')||' '||coalesce (cl.finishusername,cl.executeusername)
+ when cl.startworkdate is not null and cl.finishdate is null and cl.canceldate is null then 'В работе ' || to_char(cl.startworkdate, 'dd.MM.yyyy')||' '||to_char(cl.startworktime,'HH24:MI') ||' '||cl.startworkusername
+ when cl.viewdate is not null then 'Новая ' 
  when cl.createdate is not null then 'Новая'
  else 'ВАХВАХ' end as status
  ,cl.id||':'||vct.id as idvocid
-,case when cl.canceldate is null then cl.id else null end as btnCancel
-,case when cl.finishdate is null then cl.id else null end as btnFinish
-,case when cl.startworkdate is null then cl.id||':'||cl.claimtype else null end as btnStartWork
-,case when cl.viewdate is null then cl.id else null end as btnView
+,case when cl.cancelDate is null and cl.finishDate is null then cl.id else null end as btnCancel
+,case when cl.cancelDate is null and cl.finishDate is null then cl.id else null end as btnFinish
+,case when cl.startWorkDate is null and cl.cancelDate is null and cl.finishDate is null then cl.id||':'||cl.claimtype else null end as btnStartWork
+,case when cl.viewdate is null and cl.cancelDate is null and cl.finishDate is null then cl.id else null end as btnView
 
 from claim cl
 left join workfunction uwf on uwf.id=cl.workfunction

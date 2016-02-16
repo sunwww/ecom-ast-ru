@@ -4,8 +4,9 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
+    
+   
     <tiles:put name='body' type='string'>
     
         <msh:form action="entitySaveGoView-mis_claim.do" defaultField="id">
@@ -14,8 +15,9 @@
             <msh:hidden property="workfunction"/>
             <msh:hidden property="saveType"/>
             <msh:panel guid="panel" colsWidth="20% 20% 15%">
-       
+       		<input type='hidden' id='statusState'>
         <msh:ifFormTypeIsCreate formName="mis_claimForm">
+  
          <msh:row guid="row1">
           <msh:textArea  property="description" label="Текст заявки" />
           
@@ -32,6 +34,16 @@
         </msh:ifFormTypeIsCreate>
         
         <msh:ifFormTypeAreViewOrEdit formName="mis_claimForm">
+         <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
+        <msh:row> <td>	
+    	<input type='button' value='Начал делать' onclick="show('Start')">
+    	</td></msh:row><msh:row> <td>
+    	<input type='button' value='Сделано' onclick="show('Finish')">
+    	</td></msh:row><msh:row> <td>
+    	<input type='button' value='Отменить' onclick="show('Cancel')">
+    	</td></msh:row>
+</msh:ifInRole>
+
           <msh:row>
           	<msh:textArea  property="description" rows="5"  size="50" label="Текст заявки" viewOnlyField="true" />
           </msh:row>
@@ -55,6 +67,7 @@
         	</msh:row> <msh:row>
           	<msh:label property="username" label="Пользователь" />
         </msh:row>   
+      <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
         <msh:separator label="Информация о просмотре заявки оператором" colSpan="10"></msh:separator>
         <msh:row>
         	<msh:label property="viewDate" label="Дата просмотра оператором"/>
@@ -63,6 +76,7 @@
         	</msh:row> <msh:row>
           	<msh:label property="viewUsername" label="Оператор" />
         </msh:row>  
+        </msh:ifInRole>
         <msh:separator label="Информация об исполнении заявки" colSpan="10"></msh:separator>
         <msh:row>
         	<msh:label property="startWorkDate" label="Дата начала исполнения"/>
@@ -88,7 +102,6 @@
         	</msh:row> <msh:row>
           	<msh:label property="cancelUsername" label="Пользователь, отменивший заявку" />
         </msh:row>  
-        
         <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
         
         </msh:ifInRole>
@@ -100,6 +113,16 @@
         </msh:ifFormTypeIsCreate>
       </msh:panel>
       </msh:form>
+      <tags:mis_claimStart name="New" status="id" type='claimType'/>
+      
+	  	<script type="text/javascript">
+	  	function show(status) {
+	  		$('statusState').value=status;
+	  		showNewClaimStart();
+	  	}
+		  	</script>
+      
+      
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -108,11 +131,10 @@
 	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_claim" name="Изменить" roles="/Policy/Mis/Claim/Edit" />
 	   </msh:sideMenu>
       </msh:ifFormTypeAreViewOrEdit>
+       
     </tiles:put>
-<tiles:put name="javascript" type="string">
-	  	<script type="text/javascript">
-		  	</script>
-	  </tiles:put>  
+    
+  
 
     <tiles:put name='title' type='string'>
         <ecom:titleTrail mainMenu="Patient" beginForm="mis_claimForm" />

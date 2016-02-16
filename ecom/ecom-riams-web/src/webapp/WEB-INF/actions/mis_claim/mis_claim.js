@@ -8,3 +8,10 @@ function list_by_user (aForm, aCtx) {
 function my_claims (aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/mis_claim/list_by_creator.jsp");
 }
+
+function list_pda (aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/mis_claim/list_by_operator_pda.jsp");
+}
+function pda (aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/mis_claim/view_pda.jsp");
+}
