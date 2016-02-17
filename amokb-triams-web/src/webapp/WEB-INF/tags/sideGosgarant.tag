@@ -215,7 +215,7 @@ background-color: #F4A9A9;
     	<p class="label_gosgarant">Приложение 22.</p>
     	<p class="info_gosgarant">продолжение</p>
     	</div>
-    	<div class="button_gosgarant ${step25}" onclick="${stepclick25}">
+    	<%-- <div class="button_gosgarant ${step25}" onclick="${stepclick25}">
     	<p class="label_gosgarant">Приложение 22.</p>
     	<p class="info_gosgarant">продолжение</p>
     	</div>
@@ -226,7 +226,7 @@ background-color: #F4A9A9;
     	<div class="button_gosgarant ${step27}" onclick="${stepclick27}">
     	<p class="label_gosgarant">Приложение 22.</p>
     	<p class="info_gosgarant">продолжение</p>
-    	</div>
+    	</div> --%>
     	<br>
     	<div class="button_gosgarant delete" style="margin-top:40px;" onclick="window.location='start.do?infomat=${param.infomat}'">
     	<p class="label_gosgarant">Отмена</p>
