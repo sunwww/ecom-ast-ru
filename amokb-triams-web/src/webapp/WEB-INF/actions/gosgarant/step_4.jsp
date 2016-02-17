@@ -9,7 +9,7 @@
     <tags:sideGosgarant curUrl="4"/>  	
     </tiles:put>
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">Программа гос. гарантий бесплатного оказания гражданам мед. помощи на территории АО на 2015 год</msh:title>
+        <msh:title mainMenu="Lpu">Программа гос. гарантий бесплатного оказания гражданам мед. помощи на территории АО на 2016 год</msh:title>
     </tiles:put>
     <tiles:put name="style" type="string">
     <style type="text/css">

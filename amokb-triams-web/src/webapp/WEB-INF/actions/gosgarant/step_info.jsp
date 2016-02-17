@@ -18,7 +18,7 @@
 
     <tiles:put name='body' type='string'>
     <div>
-<H1 CLASS="western"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Постановление
+<H1 CLASS="western"><FONT ><SPAN STYLE="align: center; font-weight: normal">Постановление
 Правительства Астраханской области<BR>от 24 декабря 2015 г. N
 655-П<BR>&quot;О Программе государственных гарантий бесплатного
 оказания гражданам медицинской помощи на территории Астраханской
@@ -27,36 +27,37 @@
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0cm">В целях реализации
 основных принципов охраны здоровья граждан в Российской Федерации, в
-соответствии с федеральными законами <FONT COLOR="#106bbe"><B>от
-29.11.2010 N 326-ФЗ</B></FONT> &quot;Об обязательном медицинском
-страховании в Российской Федерации&quot;, <FONT COLOR="#106bbe"><B>от
-21.11.2011 N 323-ФЗ</B></FONT> &quot;Об основах охраны здоровья
-граждан в Российской Федерации&quot;, во исполнение <FONT COLOR="#106bbe"><B>постановления</B></FONT>
+соответствии с федеральными законами <B>от
+29.11.2010 N 326-ФЗ</B> &quot;Об обязательном медицинском
+страховании в Российской Федерации&quot;, <B>от
+21.11.2011 N 323-ФЗ</B> &quot;Об основах охраны здоровья
+граждан в Российской Федерации&quot;, во исполнение <B>постановления</B>
 Правительства Российской Федерации от 19.12.2015 N 1382 &quot;О
 Программе государственных гарантий бесплатного оказания гражданам
 медицинской помощи на 2016 год&quot; Правительство Астраханской
 области постановляет:</P>
-<P CLASS="western" STYLE="margin-bottom: 0cm"><A NAME="sub_1">1.
-Утвердить прилагаемую <FONT COLOR="#106bbe"><B>Программу</B></FONT>
+<P CLASS="western" STYLE="margin-bottom: 0cm">1.
+Утвердить прилагаемую ><B>Программу</B>
 государственных гарантий бесплатного оказания гражданам медицинской
 помощи на территории Астраханской области на 2016 год.</P>
-<P CLASS="western" STYLE="margin-bottom: 0cm"><A NAME="sub_2">2.
+<P CLASS="western" STYLE="margin-bottom: 0cm">2.
 Агентству связи и массовых коммуникаций Астраханской области (Зайцева
 М.А.) <FONT COLOR="#106bbe"><B>опубликовать</B></FONT>
 настоящее постановление в средствах массовой информации.</P>
-<P CLASS="western" STYLE="margin-bottom: 0cm"><A NAME="sub_3">3.
-Постановление вступает в силу с 01.01.2016.</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm">Постановление вступает в силу с 01.01.2016.</P>
 <P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
 </P>
-<TABLE WIDTH=667 BORDER=0 CELLPADDING=7 CELLSPACING=0>
-	<COL WIDTH=430>
-	<COL WIDTH=208>
-	<TR VALIGN=TOP>
-		<TD WIDTH=430>
+<TABLE BORDER=0 CELLPADDING=7 CELLSPACING=0>
+	<COL >
+	<COL >
+	<TR >
+		<TD>
+		<img src="img/jilkin.jpg" height="250px" />
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Губернатор Астраханской
 			области</P>
 		</TD>
-		<TD WIDTH=208>
+		<TD>
+		
 			<P ALIGN=RIGHT STYLE="text-indent: 0cm">А.А. Жилкин</P>
 		</TD>
 	</TR>
