@@ -31,471 +31,471 @@
 50-процентной скидкой</H1>
 <P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
 </P>
-<TABLE WIDTH=675 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-	<COL WIDTH=475>
-	<COL WIDTH=170>
+<TABLE  BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+	<COL >
+	<COL >
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Международное
 			непатентованное наименование</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Форма выпуска</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">1</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">2</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Анальгетики, нестероидные
 			противовоспалительные препараты, средства для лечения
 			ревматических заболеваний</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Ненаркотические
 			анальгетики и нестероидные противовоспалительные средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ацетилсалициловая кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; таблетки, покрытые
 			кишечно-растворимой оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Диклофенак</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; таблетки, покрытые
 			кишечно-растворимой оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ибупрофен</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; суспензия для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Кетопрофен</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; таблетки, покрытые
 			кишечно-растворимой оболочкой; гель для наружного применения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Кеторолак</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Нимесулид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">суспензия для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Парацетамол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">сироп для приема внутрь; суппозитории</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Мелоксикам</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Прочие
 			противовоспалительные средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Пеницилламин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Сульфасалазин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, применяемые для
 			лечения аллергических реакций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лоратадин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Цетиризин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; капли для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, влияющие на
 			центральную нервную систему</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Противосудорожные
 			средства и средства для лечения паркинсонизма</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Амантадин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Вальпроевая кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; капсулы; сироп; капли для
 			приема внутрь; гранулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Карбамазепин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Клоназепам</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Леводопа + бенсеразид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы, таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Леветирацетам<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; раствор для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ламотриджин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Леводопа + карбидопа</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Пирибедил</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Топирамат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы, таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Тригексифенидил</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Окскарбазепин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">суспензия для приема внутрь; таблетки,
 			покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Прамипексол<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; таблетки пролонгированного
 			действия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Седативные и
 			анксиолитические средства, средства для лечения психотических
 			расстройств</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Галоперидол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, раствор для внутримышечного
 			введения масляный</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Клозапин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Сульпирид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Тиоридазин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Бромдигидрохлорфенил-бензодиазепин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Хлорпромазин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Хлорпротиксен</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Левомепромазин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Флуфеназин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для внутримышечного введения
 			масляный</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Зуклопентиксол<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для внутримышечного введения
 			масляный</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Антидепрессанты и
 			средства нормотимического действия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Амитриптилин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Прочие средства, влияющие
 			на центральную нервную систему</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Винпоцетин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Пирацетам</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Полипептиды коры головного мозга скота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">лиофилизат для приготовления раствора
 			для внутримышечного введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инозин + Никотинамид + Рибофлавин +
 			Янтарная кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые кишечно-растворимой
 			оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Церебролизин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">N-карбамоилметил-4-фенил-2-пирролидон<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Бетагистин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Холина альфосцерат<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы; раствор для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, применяемые для
 			профилактики и лечения инфекций</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Антибактериальные
 			средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Амоксициллин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Амоксициллин + клавулановая кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для приготовления суспензии
 			для приема внутрь; таблетки диспергируемые; таблетки, покрытые
 			оболочкой; таблетки, покрытые пленочной оболочкой; таблетки с
@@ -503,1372 +503,1372 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Азитромицин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для приготовления суспензий,
 			капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Кларитромицин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ко-тримоксазол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; суспензия для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Цефазолин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для раствора для в/в и в/м
 			введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ципрофлоксацин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Противовирусные средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ацикловир</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Умифеновир</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые оболочкой; капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Интерферон альфа-2</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">суппозитории</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Противогрибковые средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Флуконазол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы; таблетки; таблетки, покрытые
 			пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Вориконазол<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для приготовления суспензии
 			для приема внутрь; таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Противопротозойные
 			средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Метронидазол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Прочие средства
 			профилактики и лечения инфекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Бифидумбактерии бифидум</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">лиофилизат для приготовления раствора
 			для приема внутрь и местного применения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лизаты бактерий</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы; спрей назальный</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Противоопухолевые,
 			иммунодепрессивные и сопутствующие средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Меркаптопурин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Метотрексат<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, влияющие на
 			сердечно-сосудистую систему</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Верапамил</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Дигоксин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Амлодипин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лизиноприл</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Карведилол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Метопролол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Молсидомин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Нитроглицерин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки (капсулы)</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Нифедипин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; таблетки пролонгированного
 			действия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Периндоприл</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Эналаприл</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Калия и магния аспарагинат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; таблетки, покрытые пленочной
 			оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Атенолол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Соталол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Пропранолол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Бисопролол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Каптоприл</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Амиодарон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Нимодипин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лозартан</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые оболочкой;
 			таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Изосорбида динитрат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">спрей дозированный; спрей подъязычный
 			дозированный; таблетки; таблетки пролонгированного действия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Изосорбида мононитрат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы; капсулы пролонгированного
 			действия; капсулы ретард; капсулы с пролонгированным
 			высвобождением; таблетки; таблетки пролонгированного действия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ривароксабан<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Аторвастатин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы; таблетки, покрытые оболочкой;
 			таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Антикоагулянты</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Варфарин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Клопидогрел<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">таблетки, покрытые
 			пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Дабигатрана этексилат<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">капсулы</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства для лечения
 			заболеваний желудочно-кишечного тракта</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, используемые
 			для лечения заболеваний, сопровождающихся эрозивно-язвенными
 			процессами в пищеводе, желудке и двенадцатиперстной кишке</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Метоклопрамид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Омепразол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ранитидин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Спазмолитические средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Дротаверин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Солифенацин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Панкреатические энзимы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Панкреатин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые оболочкой; капсулы</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Слабительные средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лактулоза</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">сироп</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Антидиарейные средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Смектит диоктаэдрический</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для приготовления суспензии
 			для приема внутрь в пакетах</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, используемые
 			для лечения заболеваний печени и желчевыводящих путей</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Урсодеоксихолевая кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы, суспензия для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Фосфолипиды + глицирризиновая кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Гормоны и средства,
 			влияющие на эндокринную систему</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Неполовые гормоны,
 			синтетические субстанции и антигормоны</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Дексаметазон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Метилпреднизолон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Преднизолон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Препараты для лечения
 			сахарного диабета</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Глибенкламид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Гликлазид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Метформин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Тиоктовая кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Вилдаглиптин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Саксаглиптин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ситаглиптин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Фенофибрат<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин двухфазный (человеческий
 			генноинженерный)</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">суспензия для подкожного введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин-изофан (человеческий
 			генно-инженерный)</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">суспензия для подкожного введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин растворимый (человеческий
 			генноинженерный</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для подкожного введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин лизпро</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для подкожного введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин аспарт</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин аспарт двухфазный</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин гларгин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин глулизин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин детемир</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инсулин лизпро двухфазный</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">суспензия для подкожного введения</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства для лечения
 			заболеваний почек и мочевыводящих путей</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ацетазоламид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Гидрохлоротиазид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Спиронолактон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Фуросемид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Индапамид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, использующиеся
 			при офтальмологических заболеваниях</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Пилокарпин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор (глазные капли)</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Дорзоламид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор (глазные капли)</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Таурин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор (глазные капли)</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Тимолол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор (глазные капли)</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Бутиламиногидрокси-пропоксифеноксиметил-метилоксадиазол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор (капли глазные)</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Бринзоламид + Тимолол<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор (капли глазные)</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства, влияющие на
 			органы дыхания</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Противоастматические
 			средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Беклометазон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль для ингаляций; спрей
 			назальный</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Беклометазон + Формотерол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль для ингаляций дозированный</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ипратропия бромид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль для ингаляций дозированный,
 			раствор</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ипратропия бромид + фенотерол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль для ингаляций; раствор</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Будесонид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль, суспензия для ингаляций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Будесонид + формотерол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для ингаляций; аэрозоль;
 			капсулы с порошком для ингаляций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Сальбутамол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль для ингаляций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Сальметерол + флутиказон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль; порошок для ингаляций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Тиотропия бромид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы с порошком для ингаляций;
 			раствор для ингаляций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Формотерол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для ингаляций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Фенотерол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">аэрозоль для ингаляций</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Прочие препараты для
 			лечения заболеваний органов дыхания, не обозначенные в других
 			рубриках</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Амброксол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор; сироп для приема внутрь;
 			таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ацетилцистеин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки шипучие для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Витамины</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Фолиевая кислота</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Железа (III) гидроксид
 			полимальтозат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для приема внутрь, капли для
 			приема внутрь, сироп, таблетки жевательные, раствор для
 			внутримышечного введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Поливитамины</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">сироп</P>
 		</TD>
 	</TR>
 	<TR VALIGN=BOTTOM>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Левокарнитин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">раствор для приема внутрь</P>
 		</TD>
 	</TR>
 	<TR VALIGN=BOTTOM>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Колекальциферол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капли для приема внутрь, раствор для
 			приема внутрь масляный</P>
 		</TD>
 	</TR>
 	<TR VALIGN=BOTTOM>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Колекальциферол + Кальция
 			карбонат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">таблетки жевательные</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Антихолинэстеразные
 			средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Пиридостигмина бромид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Опиоидные анальгетики и
 			анальгетик смешанного действия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Морфин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Кодеин + Морфин + Носкапин +
 			Папаверина гидрохлорид + Тебаин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для подкожного введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Трамадол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций; таблетки;
 			капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Тримеперидин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Фентанил</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">трансдермальная терапевтическая
 			система</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Прочие
 			противовоспалительные средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лефлуномид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые оболочкой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Седативные и
 			анксиолитические средства, средства для лечения психотических
 			расстройств</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Рисперидон<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Сульпирид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Противотуберкулезные
 			средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Изониазид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Канамицин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">порошок для приготовления раствора для
 			инъекций</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Пиразинамид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Протионамид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Рифампицин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Этамбутол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Изоникотиноилгидразин железа сульфат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Цитостатические средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Азатиоприн</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Гидроксикарбамид<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Гормоны и антигормоны</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Анастрозол<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Бикалутамид<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Гозерелин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы-депо для инъекций в
 			шприц-ампулах</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Летрозол</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Медроксипрогестерон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Тамоксифен</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Флутамид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Эксеместан<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Гидразина сульфат</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые кишечно-растворимой
 			оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Золедроновая кислота<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">лиофилизат для приготовления раствора
 			для инфузий</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Гонадотропин хорионический<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">лиофилизат для приготовления раствора
 			для внутримышечного введения; лиофилизат для приготовления
 			раствора для внутримышечного и подкожного введения</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Неполовые гормоны,
 			синтетические субстанции и антигормоны</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Десмопрессин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки; таблетки подъязычные</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Левотироксин натрия</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Средства для лечения
 			аденомы простаты</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Тамсулозин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капсулы</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Финастерид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Иммуностимулирующее,
 			противовирусное</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Цепэгинтерферон альфа-2b<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">раствор для подкожного
 			введения</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">Рибавирин<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">*</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P ALIGN=LEFT STYLE="text-indent: 0cm">капсулы; таблетки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=2 WIDTH=659 VALIGN=TOP>
+		<TD COLSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Прочие лекарственные
 			средства</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ксилометазолин</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капли назальные</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Толперизон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">таблетки, покрытые пленочной оболочкой</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лидокаин + Феназон</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">капли ушные</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=475>
+		<TD >
 			<P STYLE="text-indent: 0cm">Гидроксиметилхиноксалиндиоксид</P>
 		</TD>
-		<TD WIDTH=170>
+		<TD >
 			<P STYLE="text-indent: 0cm">раствор для внутривенного введения и
 			местного применения</P>
 		</TD>

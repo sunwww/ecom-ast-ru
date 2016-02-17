@@ -19,7 +19,7 @@
     <tiles:put name='body' type='string'>
        <div id='step_23_text'>
    
-   <H2 CLASS="western" STYLE="page-break-before: always"><A NAME="sub_22002">
+   <H2 CLASS="western" STYLE="page-break-before: always">
 Раздел II.<BR>Перечень видов высокотехнологичной медицинской помощи,
 не включенных в базовую программу обязательного медицинского
 страхования, финансовое обеспечение которых осуществляется за счет за
@@ -28,105 +28,99 @@
 межбюджетных трансфертов</H2>
 <P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
 </P>
-<TABLE WIDTH=1004 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-	<COL WIDTH=106>
-	<COL WIDTH=182>
-	<COL WIDTH=80>
-	<COL WIDTH=158>
-	<COL WIDTH=88>
-	<COL WIDTH=210>
-	<COL WIDTH=80>
+<TABLE BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+	
 	<TR>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">N группы
 			высокотехнологичной медицинской помощи</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Наименование вида
 			высокотехнологичной медицинской помощи</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Коды по Международной
 			классификации болезней десятого пересмотра</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Модель пациента</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Вид лечения</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Метод лечения</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Норматив финансовых
 			затрат на единицу объема предоставления медицинской помощи, рублей</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">1</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">2</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">3</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">4</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">6</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">7</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=7 WIDTH=988>
+		<TD COLSPAN=7 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Абдоминальная хирургия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=6 WIDTH=106>
+		<TD ROWSPAN=6 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">1.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Микрохирургические, расширенные,
 			комбинированные и реконструктивно-пластические операции на
 			поджелудочной железе, в том числе лапароскопически ассистированные</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">K86.0
 			- K86.8</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">заболевания поджелудочной железы</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">панкреатодуоденальная резекция
 			тотальная, панкреатодуоденэктомия</P>
 		</TD>
-		<TD ROWSPAN=6 WIDTH=80>
+		<TD ROWSPAN=6 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">179690</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургические и
 			реконструктивно-пластические операции на печени, желчных протоках
 			и сосудах печени, в том числе эндоваскулярные операции на сосудах
 			печени, и реконструктивные операции на сосудах системы воротной
 			вены, стентирование внутри- и внепеченочных желчных протоков</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">D18.0</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">D13.4</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">D13.5</SPAN></FONT>,
@@ -136,17 +130,17 @@
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Q26.5</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">I85.0</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">заболевания, врожденные аномалии
 			печени, желчных протоков, воротной вены, новообразования печени,
 			новообразования внутрипеченочных желчных протоков, новообразования
 			внепеченочных желчных протоков, новообразования желчного пузыря,
 			инвазия печени, вызванная эхинококком</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоваскулярная окклюзирующая операция
 			на сосудах печени, гемигепатэктомия, резекция двух и более
 			сегментов печени, реконструктивная гепатикоеюностомия,
@@ -156,24 +150,24 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=3 WIDTH=182 VALIGN=TOP>
+		<TD ROWSPAN=3  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Реконструктивно-пластические, в том
 			числе лапароскопически ассистированные операции на прямой кишке и
 			промежности</P>
 		</TD>
-		<TD ROWSPAN=3 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=3  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">L05.9</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">K62.3</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">N81.6</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">K62.8</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">пресакральная киста</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">иссечение пресакральной кисты
 			парасакральным или комбинированным доступом с удалением копчика, в
 			том числе с пластикой свищевого отверстия полнослойным лоскутом
@@ -181,14 +175,14 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опущение мышц тазового дна с
 			выпадением органов малого таза</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ликвидация ректоцеле, в том числе с
 			циркулярной эндоректальной проктопластикой по методике Лонго,
 			пластика ректовагинальной перегородки имплантатом, ректопексия с
@@ -197,53 +191,53 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">недостаточность анального сфинктера</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">создание сфинктера из
 			поперечнополосатых мышц с реконструкцией запирательного аппарата
 			прямой кишки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Реконструктивно-пластические операции
 			на пищеводе, желудке</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">K22.5</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">K22.2</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">K22</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">приобретенный дивертикул пищевода,
 			ахалазия кардиальной части пищевода, рубцовые стриктуры пищевода</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">иссечение дивертикула пищевода,
 			пластика пищевода, эозофагокардиомиотомия, экстирпация пищевода с
 			пластикой, в том числе лапароскопическая</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">2.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Реконструктивно-пластические операции
 			на поджелудочной железе, печени и желчных протоках, пищеводе,
 			желудке, тонкой и толстой кишке, операции на надпочечниках и при
 			новообразованиях забрюшинного пространства с использованием
 			робототехники</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">D12.4</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">D12.6</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">D13.1</SPAN></FONT>,
@@ -268,7 +262,7 @@
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">E26.0</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">E27.5</SPAN></FONT></P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">гастроэзофагеальная рефлюксная
 			болезнь, язвенная болезнь желудка, язвенная болезнь
 			двенадцатиперстной кишки, новообразования желудка, новообразования
@@ -278,27 +272,27 @@
 			надпочечника, киста селезенки, неорганное забрюшинное
 			новообразование</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">реконструктивно-пластические,
 			органосохраняющие операции с применением робототехники</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">231650</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=7 WIDTH=988 VALIGN=TOP>
+		<TD COLSPAN=7  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Акушерство и гинекология</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=10 WIDTH=106>
+		<TD ROWSPAN=10 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">3.</P>
 		</TD>
-		<TD ROWSPAN=3 WIDTH=182>
+		<TD ROWSPAN=3 >
 			<P STYLE="text-indent: 0cm">Комплексное лечение фетофетального
 			синдрома, гемолитической болезни плода, синдрома фето-аморфуса,
 			асцита, гидронефроза почек, гидроторакса, гидроцефалии, клапана
@@ -306,38 +300,38 @@
 			лазерную коагуляцию анастомозов внутриутробное переливание крови
 			плоду, другие пункционные методы лечения</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">043.0</SPAN></FONT>,
 			<FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">O31.2,</SPAN></FONT>
 			O31.8, P02.3</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">монохориальная двойня с синдромом
 			фето-фетальной трансфузии</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">лазерная коагуляция анастомозов при
 			синдроме фето-фетальной трансфузии, фетоскопия</P>
 		</TD>
-		<TD ROWSPAN=10 WIDTH=80>
+		<TD ROWSPAN=10 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">182860</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">036.2, 036.0, P00.2, P60,
 			P61.8, P56.0, P56.9, P83.2</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">водянка плода (асцит, гидроторакс)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">кордоцентез с определением группы
 			крови и резус-фактора плода, фетального гемоглобина, гематокрита,
 			билирубина в пуповинной крови в момент проведения кордоцентеза,
@@ -347,64 +341,64 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">035.9, Q33.0, Q36.2, Q62,
 			Q64.2, Q03</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">пороки развития плода, требующие
 			антенатального лечения в виде пункционных методик с возможностью
 			дренирования (гидронефроз почек, гидроцефалия, клапан задней
 			уретры)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">антенатальные пункционные методики для
 			обеспечения оттока жидкости с последующим дренированием при
 			состояниях, угрожающих жизни плода</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=182 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Хирургическое органосохраняющее и
 			реконструктивно-пластическое лечение распространенных форм
 			гигантских опухолей гениталий, смежных органов малого таза и
 			других органов брюшной полости у женщин с использованием
 			лапароскопического и комбинированного доступов</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D26, D27, D28, D25</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">доброкачественная опухоль шейки матки,
 			а также гигантская (от 8 см и более) доброкачественная опухоль
 			яичника, вульвы у женщин репродуктивного возраста, гигантская
 			миома матки у женщин репродуктивного возраста</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли в пределах здоровых
 			тканей с использованием лапароскопического и комбинированного
 			доступа с иммуногистохимическим исследованием удаленных тканей</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">N80</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">наружный эндометриоз, инфильтративная
 			форма с вовлечением в патологический процесс забрюшинного
 			пространства органов брюшной полости и малого таза</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">иссечение очагов инфильтративного
 			эндометриоза, в том числе с резекцией толстой кишки (мочеточника
 			или мочевого пузыря) с одномоментной пластикой пораженного органа
@@ -412,7 +406,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=4 WIDTH=182 VALIGN=TOP>
+		<TD ROWSPAN=4  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Хирургическое органосохраняющее
 			лечение пороков развития гениталий и мочевыделительной системы у
 			женщин, включая лапароскопическую сальпинго-стоматопластику,
@@ -420,10 +414,10 @@
 			лапароскопической ассистенцией, реконструкцию влагалища с
 			использованием синтетических имплаптатов, кольпопоэза</P>
 		</TD>
-		<TD ROWSPAN=4 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=4  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Q43.7, Q50, Q51, Q52, Q56</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">врожденные аномалии (пороки развития)
 			тела и шейки матки, в том числе с удвоением тела матки и шейки
 			матки, с двурогой маткой, с агенезией и аплазией шейки матки,
@@ -431,10 +425,10 @@
 			урогенитальный синус, с врожденной аномалией клитора, врожденные
 			аномалии вульвы с атопическим расположением половых органов</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">реконструктивно-пластические,
 			органосохраняющие операции на внутренних и наружных половых
 			органах эндоскопическим, влагалищным и абдоминальным доступом и их
@@ -442,14 +436,14 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">врожденное отсутствие влагалища,
 			замкнутое рудиментарное влагалище при удвоении матки и влагалища</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">коррекция пороков развития влагалища
 			методом комплексного кольпопоэза с применением
 			реконструктивно-пластических операций лапароскопическим доступом с
@@ -458,51 +452,51 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=158 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">женский псевдогермафродитизм,
 			неопределенность пола</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">феминизирующая пластика наружных
 			половых органов и формирование влагалища с использованием
 			лапароскопического доступа</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое удаление гонад,
 			формирование влагалища методом комплексного кольпопоэза с
 			последующим индивидуальным подбором гормональной терапии</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Комплексное лечение при задержке
 			полового созревания у женщин, подтвержденной молекулярно- и
 			иммуногенетическими методами, включающее гормональные,
 			иммунологические, физические и малоинвазивные хирургические методы
 			лечения</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">E23.0, E28.3, E30.0,
 			E30.9, E34.5, E89.3, Q50.0, Q87.1, Q96, Q97.2, Q97.3, Q97.8,
 			Q97.9, Q99.0, Q99.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">задержка полового созревания,
 			обусловленная первичным эстрогенным дефицитом, в том числе при
 			наличии мужской (y) хромосомы в кариотипе</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление половых желез (дисгенетичных
 			гонад, тестикулов) с использованием лапароскопического доступа,
 			реконструктивно-пластические феминизирующие операции с последующим
@@ -515,10 +509,10 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">4.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Неинвазивное и малоинвазивное
 			хирургическое органосохраняющее лечение миомы матки, аденомиоза
 			(узловой формы) у женщин с применением
@@ -526,43 +520,43 @@
 			артерий и ультразвуковой аблации под ультразвуковым контролем
 			и(или)контролем магнитно-резонансной томографии</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D25, N80.0</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">множественная узловая форма
 			аденомиоза, требующая хирургического лечения</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">реконструктивно-пластические,
 			органосохраняющие операции (миомэктомия с использованием
 			комбинированного эндоскопического доступа), ультразвуковая абляция
 			под контролем магнитно-резонансной томографии или ультразвуковым
 			контролем, эндоваскулярная окклюзия маточных артерий</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">154760</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Хирургическое лечение
 			распространенного эндометриоза, пороков развития и опухолей
 			гениталий, пролапса гениталий у женщин с использованием
 			робототехники</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D25, D26.0, D26.7, D27,
 			D28, N80, N81, N99.3, N39.4, Q51, Q56.0, Q56.2, Q56.3, Q56.4,
 			Q96.3, Q97.3, Q99.0, E34.5, E30.0, E30.9</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">доброкачественная опухоль шейки матки,
 			яичников, вульвы у женщин репродуктивного возраста, гигантская
 			миома матки у женщин репродуктивного возраста, наружный
@@ -582,27 +576,27 @@
 			требующая хирургического лечения, опущение и выпадение гениталий у
 			женщин репродуктивного возраста</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">реконструктивно-пластические,
 			органосохраняющие операции с применением робототехники</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">241330</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=7 WIDTH=988 VALIGN=TOP>
+		<TD COLSPAN=7  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Гематология</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=4 WIDTH=106>
+		<TD ROWSPAN=4 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">6.</P>
 		</TD>
-		<TD ROWSPAN=4 WIDTH=182>
+		<TD ROWSPAN=4 >
 			<P STYLE="text-indent: 0cm">Комплексное лечение, включая
 			полихимиотерапию, иммунотерапию, трансфузионную терапию
 			препаратами крови и плазмы, методы экстракорпорального воздействия
@@ -611,39 +605,39 @@
 			и цитолитических синдромах, нарушениях плазменного и
 			тромбоцитарного гемостаза, острой лучевой болезни</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D69.1, D82.0, D69.5, D58,
 			D59</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">патология гемостаза с течением,
 			осложненным угрожаемыми геморрагическими явлениями, гемолитическая
 			анемия</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">проведение различных хирургических
 			вмешательств у больных с тяжелым геморрагическим синдромом</P>
 		</TD>
-		<TD ROWSPAN=4 WIDTH=80>
+		<TD ROWSPAN=4 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">289720</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D69.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">патология гемостаза, резистентная к
 			стандартной терапии, и (или) с течением, осложненным угрожаемыми
 			геморрагическими явлениями</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комплексное консервативное и
 			хирургическое лечение, включающее иммуносупрессивную терапию с
 			использованием моноклональных антител, иммуномодулирующую терапию
@@ -651,17 +645,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D61.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">рефрактерная апластическая анемия и
 			рецидивы заболевания</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комплексное консервативное и
 			хирургическое лечение, в том числе программная иммуносупрессивная
 			терапия, заместительная терапия компонентами донорской крови,
@@ -670,18 +664,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D60</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">парциальная красноклеточная аплазия
 			(пациенты, перенесшие трансплантацию костного мозга, пациенты с
 			почечным трансплантатом)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комплексное консервативное лечение, в
 			том числе программная иммуносупрессивная терапия, заместительная
 			терапия компонентами донорской крови, противовирусная терапия,
@@ -689,10 +683,10 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=2 WIDTH=106>
+		<TD ROWSPAN=2 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">7.</P>
 		</TD>
-		<TD ROWSPAN=2 WIDTH=182>
+		<TD ROWSPAN=2 >
 			<P STYLE="text-indent: 0cm">Комплексное консервативное лечение и
 			реконструктивно-восстановительные операции при деформациях и
 			повреждениях конечностей с коррекцией формы и длины конечностей у
@@ -700,20 +694,20 @@
 			факторов и других факторов свертывания крови (в том числе с
 			наличием ингибиторов к факторам свертывания), болезнью Гоше</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D66, D67, D68</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">пациенты с наследственным и
 			приобретенным дефицитом VIII, IX факторов, фактора Виллебранда и
 			других факторов свертывания крови (в том числе с наличием
 			ингибиторов к факторам свертывания) с кровотечениями, с острой
 			травмой, деформацией и (или) повреждением конечностей</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">комплексное лечение, включающее
 			эфферентные и афферентные методы лечения, хирургические
 			вмешательства на органах и системах грудной, брюшной полости, на
@@ -726,24 +720,24 @@
 			вмешательства на конечностях (сухожильная и артропластика,
 			корригирующая остеотомия)</P>
 		</TD>
-		<TD ROWSPAN=2 WIDTH=80>
+		<TD ROWSPAN=2 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">492800</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">E75.2</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">пациенты с болезнью Гоше со
 			специфическим поражением внутренних органов (печени, селезенки),
 			деструкцией костей с патологическими переломами и поражением
 			суставов</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комплексное лечение, включающее
 			эфферентные методы лечения, хирургические вмешательства на органах
 			и системах грудной, брюшной полости, на костно-мышечной системе и
@@ -755,56 +749,56 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=7 WIDTH=988 VALIGN=TOP>
+		<TD COLSPAN=7  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Детская хирургия в период
 			новорожденности</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=4 WIDTH=106>
+		<TD ROWSPAN=4 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">8.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Реконструктивно-пластические операции
 			на тонкой и толстой кишке у новорожденных, в том числе
 			лапароскопические</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Q41, Q42</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">врожденная атрезия и стеноз тонкого
 			кишечника, врожденная атрезия и стеноз толстого кишечника</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">межкишечный анастомоз (бок-в-бок,
 			конец-в-конец или конец-в-бок), в том числе с лапароскопической
 			ассистенцией</P>
 		</TD>
-		<TD ROWSPAN=4 WIDTH=80>
+		<TD ROWSPAN=4 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">322110</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Хирургическое лечение диафрагмальной
 			грыжи, гастрошизиса и омфалоцеле у новорожденных, в том числе
 			торако- и лапароскопическое</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Q79.0, Q79.2, Q79.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">врожденная диафрагмальная грыжа,
 			омфалоцеле, гастрошизис</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">пластика диафрагмы, в том числе
 			торакоскопическая, с применением синтетических материалов пластика
 			передней брюшной стенки, в том числе с применением синтетических
@@ -813,23 +807,23 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Реконструктивно-пластические операции
 			при опухолевидных образованиях различной локализации у
 			новорожденных, в том числе торако- и лапароскопические</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D18, D20.0, D21.5</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">тератома, объемные образования
 			забрюшинного пространства и брюшной полости, гемангиома и
 			лимфангиома любой локализации</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление крестцово-копчиковой
 			тератомы, в том числе с применением лапароскопии, удаление
 			врожденных объемных образований, в том числе с применением
@@ -837,26 +831,26 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Реконструктивно-пластические операции
 			на почках, мочеточниках и мочевом пузыре у новорожденных, в том
 			числе лапароскопические</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Q61.8, Q62.0, Q62.1,
 			Q62.2, Q62.3, Q62.7, Q64.1, D30.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">врожденный гидронефроз, врожденный
 			уретерогидронефроз, врожденный мегауретер, мультикистоз почек,
 			экстрофия мочевого пузыря, врожденный пузырно-мочеточниковый
 			рефлюкс III степени и выше, врожденное уретероцеле, в том числе
 			при удвоении почки, доброкачественные новообразования почки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">пластика пиелоуретрального сегмента со
 			стентированием мочеточника, в том числе с применением
 			видеоассистированной техники, вторичная нефрэктомия,
@@ -868,32 +862,32 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=7 WIDTH=988 VALIGN=TOP>
+		<TD COLSPAN=7  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Комбустиология</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=5 WIDTH=106>
+		<TD ROWSPAN=5 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">9.</P>
 		</TD>
-		<TD ROWSPAN=5 WIDTH=182>
+		<TD ROWSPAN=5 >
 			<P STYLE="text-indent: 0cm">Комплексное лечение больных с
 			обширными ожогами более 30 процентов поверхности тела,
 			ингаляционным поражением, осложнениями и последствиями ожогов</P>
 		</TD>
-		<TD ROWSPAN=2 WIDTH=80>
+		<TD ROWSPAN=2 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">T20, T21, T22, T23, T24,
 			T25, T29, T30, T31, T75.4</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">термические, химические и
 			электрические ожоги I, II, III степени более 30 процентов
 			поверхности тела</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">интенсивное поликомпонентное лечение в
 			палатах (боксах) с абактериальной средой специализированного
 			структурного подразделения (ожогового центра) с применением
@@ -911,20 +905,20 @@
 			перевязочных материалов, хирургическую и (или) химическую
 			некрэктомию, кожную пластику для закрытия ран</P>
 		</TD>
-		<TD ROWSPAN=5 WIDTH=80>
+		<TD ROWSPAN=5 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">230660</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">термические, химические и
 			электрические ожоги с развитием тяжелых инфекционных осложнений
 			(пневмония, сепсис) вне зависимости от площади поражения</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">интенсивное поликомпонентное лечение в
 			палатах (боксах) с абактериальной средой специализированного
 			структурного подразделения (ожогового центра), при необходимости
@@ -944,17 +938,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">T27, T58, T59</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ингаляционное поражение, требующее
 			проведения респираторной поддержки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">интенсивное поликомпонентное лечение в
 			палатах (боксах) с абактериальной средой специализированного
 			структурного подразделения (ожогового центра), при необходимости
@@ -972,22 +966,22 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">T20.3, T20.7, T21.3,
 			T21.7, T22.3, T22.7, T23.3, T23.7, T24.3, T24.7, T25.3, T25.7,
 			T29.3, T29.7, T30.3, T30.7, T31.0, T31.1, L58.9, T75.4, T95, L66,
 			L90, L90.5, L91, M95.0 - M95.5</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локальные термические, химические,
 			электрические и лучевые глубокие ожоги III степени особых
 			локализаций (голова, лицо, кисти, половые органы, область шеи и
 			крупных суставов)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">интенсивное поликомпонентное лечение в
 			условиях специализированного структурного подразделения (ожогового
 			центра), при необходимости включающее: экстракорпоральное
@@ -1002,15 +996,15 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">послеожоговые рубцы и рубцовые
 			деформации, которые нуждаются в проведении
 			реконструктивно-пластических операций</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">медикаментозное и
 			инфузионно-трансфузионное лечение в условиях специализированного
 			структурного подразделения (ожогового центра), при необходимости
@@ -1021,34 +1015,34 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=7 WIDTH=988 VALIGN=TOP>
+		<TD COLSPAN=7  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Нейрохирургия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=17 WIDTH=106>
+		<TD ROWSPAN=17 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">10.</P>
 		</TD>
-		<TD ROWSPAN=4 WIDTH=182>
+		<TD ROWSPAN=4 >
 			<P STYLE="text-indent: 0cm">Микрохирургические вмешательства с
 			использованием операционного микроскопа, стереотаксической
 			биопсии, интраоперационной навигации и нейрофизиологического
 			мониторинга при внутримозговых новообразованиях головного мозга и
 			каверномах функционально значимых зон головного мозга</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C71.0, C71.1, C71.2,
 			C71.3, C71.4, C79.3, D33.0, D43.0, C71.8, Q85.0</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">внутримозговые злокачественные
 			новообразования (первичные и вторичные) и доброкачественные
 			новообразования функционально значимых зон головного мозга</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">удаление опухоли с применением
 			нейрофизиологического мониторинга функционально значимых зон
 			головного мозга, удаление опухоли с применением интраоперационной
@@ -1056,24 +1050,24 @@
 			вмешательство с целью дренирования опухолевых кист и установки
 			длительно существующих дренажных систем</P>
 		</TD>
-		<TD ROWSPAN=17 WIDTH=80>
+		<TD ROWSPAN=17 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">262840</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C71.5, C79.3, D33.0,
 			D43.0, Q85.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутримозговые злокачественные
 			(первичные и вторичные) и доброкачественные новообразования
 			боковых и III желудочков мозга</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с сочетанным
 			применением интраоперационной флюоресцентной микроскопии,
 			эндоскопии или эндоскопической ассистенции, удаление опухоли с
@@ -1083,19 +1077,19 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C71.6, C71.7, C79.3,
 			D33.1, D18.0, D43.1, Q85.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутримозговые злокачественные
 			(первичные и вторичные) и доброкачественные новообразования IV
 			желудочка мозга, стволовой и парастволовой локализации</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с применением
 			нейрофизиологического мониторинга, удаление опухоли с применением
 			интраоперационной флюоресцентной микроскопии и эндоскопии,
@@ -1104,42 +1098,42 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D18.0, Q28.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">кавернома (кавернозная ангиома)
 			функционально значимых зон головного мозга</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с примением
 			нейрофизиологического мониторинга</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургические вмешательства при
 			злокачественных (первичных и вторичных) и доброкачественных
 			новообразованиях оболочек головного мозга с вовлечением синусов,
 			фалькса, намета мозжечка, а также внутрижелудочковой локализации</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C70.0, C79.3, D32.0, Q85,
 			D42.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные (первичные и
 			вторичные) и доброкачественные новообразования оболочек головного
 			мозга парасаггитальной локализации с вовлечением синусов, фалькса,
 			намета мозжечка, а также внутрижелудочковой локализации</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с применением
 			нейрофизиологического мониторинга, удаление опухоли с применением
 			интраоперационной флюоресцентной микроскопии и лазерной
@@ -1150,7 +1144,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургические, эндоскопические и
 			стереотаксические вмешательства при глиомах зрительных нервов и
 			хиазмы, краниофарингеомах, аденомах гипофиза, невриномах, в том
@@ -1160,11 +1154,11 @@
 			новообразованиях шишковидной железы (в том числе кистозных),
 			туберозном склерозе, гамартозе</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C72.2, D33.3, Q85, C75.3,
 			D35.2 - D35.4, D44.3, D44.4, D44.5, Q04.6</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">доброкачественные и злокачественные
 			новообразования зрительного нерва (глиомы, невриномы и
 			нейрофибромы, в том числе внутричерепные новообразования при
@@ -1173,10 +1167,10 @@
 			доброкачественные новообразования шишковидной железы, врожденные
 			церебральные кисты</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с применением
 			нейрофизиологического мониторинга, эндоскопическое удаление
 			опухоли, удаление опухоли с применением нейрофизиологического
@@ -1188,23 +1182,23 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=4 WIDTH=182 VALIGN=TOP>
+		<TD ROWSPAN=4  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургические, эндоскопические,
 			стереотаксические, а также комбинированные вмешательства при
 			различных новообразованиях и других объемных процессах основания
 			черепа и лицевого скелета, врастающих в полость черепа</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C31</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			придаточных пазух носа, прорастающие в полость черепа</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с одномоментным
 			пластическим закрытием хирургического дефекта при помощи
 			сложносоставных ауто- или аллотрансплантатов, эндоскопическое
@@ -1215,19 +1209,19 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C41.0, C43.4, C44.4,
 			C79.4, C79.5, C49.0, D16.4, D48.0, C90.2</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные (первичные и
 			вторичные) и доброкачественные новообразования костей черепа и
 			лицевого скелета, прорастающие в полость черепа</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с одномоментным
 			пластическим закрытием хирургического дефекта при помощи
 			сложносоставных ауто- или аллотрансплантатов, эндоскопическое
@@ -1238,16 +1232,16 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">M85.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">фиброзная дисплазия</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическое удаление опухоли с
 			одномоментным пластическим закрытием хирургического дефекта при
 			помощи формируемых ауто- или аллотрансплантатов,
@@ -1257,18 +1251,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D10.6, D10.9, D21.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">доброкачественные новообразования
 			носоглотки и мягких тканей головы, лица и шеи, прорастающие в
 			основание черепа</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с одномоментным
 			пластическим закрытием хирургического дефекта при помощи
 			сложносоставных ауто- или аллотрансплантатов, эндоскопическое
@@ -1278,7 +1272,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургическое удаление
 			новообразований (первичных и вторичных) и дермоидов (липом)
 			спинного мозга и его оболочек, корешков и спинномозговых нервов,
@@ -1286,23 +1280,23 @@
 			вовлечения твердой мозговой оболочки, корешков и спинномозговых
 			нервов</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C41.2, C41.4, C70.1,
 			C72.0, C72.1, C72.8, C79.4, C79.5, C90.0, C90.2, D48.0, D16.6,
 			D16.8, D18.0, D32.1, D33.4, D33.7, D36.1, D43.4, Q06.8, M85.5,
 			D42.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные (первичные и
 			вторичные) и доброкачественные новообразования позвоночного
 			столба, костей таза, крестца и копчика, в том числе с вовлечением
 			твердой мозговой оболочки, корешков и спинномозговых нервов,
 			дермоиды (липомы) спинного мозга</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли с применением
 			нейрофизиологического мониторинга, удаление опухоли с применением
 			систем, стабилизирующих позвоночник, удаление опухоли с
@@ -1311,24 +1305,24 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургические и эндоскопические
 			вмешательства при поражениях межпозвоночных дисков шейных и
 			грудных отделов с миелопатией, радикуло- и нейропатией,
 			спондилолистезах и спинальных стенозах</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">M43.1, M48.0, T91.1,
 			Q76.4</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">спондилолистез (все уровни
 			позвоночника), спинальный стеноз (все уровни позвоночника)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">декомпрессия спинного мозга, корешков
 			и спинномозговых нервов с имплантацией различных стабилизирующих
 			систем, двухуровневое проведение эпидуральных электродов с
@@ -1337,7 +1331,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=4 WIDTH=182 VALIGN=TOP>
+		<TD ROWSPAN=4  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Сложные
 			декомпрессионно-стабилизирующие и реконструктивные операции при
 			травмах и заболеваниях позвоночника, сопровождающихся развитием
@@ -1345,18 +1339,18 @@
 			и наружных фиксирующих устройств. Имплантация временных электродов
 			для нейростимуляции спинного мозга и периферических нервов</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G95.1, G95.2, G95.8,
 			G95.9, M50, M51.0 - M51.3, M51.8, M51.9</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">поражения межпозвоночных дисков шейных
 			и грудных отделов с миелопатией, радикуло- и нейропатией</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление межпозвонкового диска с
 			имплантацией системы, стабилизирующей позвоночник, или
 			протезирование межпозвонкового диска, удаление межпозвонкового
@@ -1366,21 +1360,21 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G95.1, G95.2, G95.8,
 			G95.9, B67, D16, D18, M88</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">деструкция и деформация
 			(патологический перелом) позвонков вследствие их поражения
 			доброкачественным новообразованием непосредственно или контактным
 			путем в результате воздействия опухоли спинного мозга,
 			спинномозговых нервов, конского хвоста и их оболочек</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">декомпрессивно-стабилизирующее
 			вмешательство с резекцией новообразования и позвонка из
 			вентрального или заднего доступа со спондилосинтезом позвоночника
@@ -1392,22 +1386,22 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G95.1, G95.2, G95.8,
 			G95.9, M42, M43, M45, M46, M48, M50, M51, M53, M92, M93, M95,
 			G95.1, G95.2, G95.8, G95.9, Q76.2</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">дегенеративно-дистрофическое поражение
 			межпозвонковых дисков, суставов и связок позвоночника с
 			формированием грыжи диска, деформацией (гипертрофией) суставов и
 			связочного аппарата, нестабильностью сегмента, спондилолистезом,
 			деформацией и стенозом позвоночного канала и его карманов</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">декомпрессивно-стабилизирующее
 			вмешательство с резекцией позвонка, межпозвонкового диска,
 			связочных элементов сегмента позвоночника из заднего или
@@ -1425,22 +1419,22 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G95.1, G95.2, G95.8,
 			G95.9, A18.0, S12.0, S12.1, S13, S14, S19, 522.0, S22.1, S23, S24,
 			S32.0, S32.1, S33, S34, T08, T09, T85, T91, M80, M81, M82, M86,
 			M85, M87, M96, M99, Q67, Q76.0, Q76.1, Q76.4, Q77, Q76.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">переломы позвонков, повреждения
 			(разрыв) межпозвонковых дисков и связок позвоночника, деформации
 			позвоночного столба вследствие его врожденной патологии или
 			перенесенных заболеваний</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">декомпрессивно-стабилизирующее
 			вмешательство с резекцией позвонка, межпозвонкового диска,
 			связочных элементов сегмента позвоночника из вентрального или
@@ -1455,30 +1449,30 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургическая васкулярная
 			декомпрессия корешков черепных нервов</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G50 - G53</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">невралгии и нейропатии черепных нервов</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">интракраниальная микрохирургическая
 			васкулярная декомпрессия черепных нервов, в том числе с
 			эндоскопической ассистенцией</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=8 WIDTH=106>
+		<TD ROWSPAN=8 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">11.</P>
 		</TD>
-		<TD ROWSPAN=5 WIDTH=182>
+		<TD ROWSPAN=5 >
 			<P STYLE="text-indent: 0cm">Микрохирургические, эндоваскулярные и
 			стереотаксические вмешательства с применением адгезивных клеевых
 			композиций, микроэмболов, микроспиралей (менее 5 койлов), стентов
@@ -1486,19 +1480,19 @@
 			кровоснабжаемых опухолях головы и головного мозга, внутримозговых
 			и внутрижелудочковых гематомах</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">I60, I61, I62</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">артериальная аневризма в условиях
 			разрыва или артериовенозная мальформация головного мозга в
 			условиях острого и подострого периода субарахноидального или
 			внутримозгового кровоизлияния</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">микрохирургическое вмешательство с
 			применением нейрофизиологического мониторинга, эндоваскулярное
 			вмешательство с применением адгезивных клеевых композиций,
@@ -1506,22 +1500,22 @@
 			внутримозговых и внутрижелудочковых гематом с использованием
 			нейронавигации</P>
 		</TD>
-		<TD ROWSPAN=8 WIDTH=80>
+		<TD ROWSPAN=8 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">358280</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">I67.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">артериальная аневризма головного мозга
 			вне стадии разрыва</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">микрохирургическое вмешательство с
 			применением интраоперационного ультразвукового контроля кровотока
 			в церебральных артериях, эндоваскулярное вмешательство с
@@ -1530,17 +1524,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Q28.2, Q28.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">артериовенозная мальформация головного
 			мозга и спинного мозга</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">микрохирургическое вмешательство с
 			применением нейрофизиологического мониторинга, эндоваскулярное
 			вмешательство с применением адгезивной клеевой композиции,
@@ -1548,38 +1542,38 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">I67.8, I72.0, I77.0,
 			I78.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">дуральные артериовенозные фистулы
 			головного и спинного мозга, в том числе каротидно-кавернозные,
 			ложные аневризмы внутренней сонной артерии, наследственная
 			геморрагическая телеангиэктазия (болезнь Рендю - Ослера - Вебера)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоваскулярное вмешательство с
 			применением адгезивных клеевых композиций и микроэмболов</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C83.9, C85.1, D10.6,
 			D10.9, D18.0 - D18.1, D21.0, D35.5 - D35.7, D36.0, Q85.8, Q28.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">артериовенозные мальформации, ангиомы,
 			гемангиомы, гемангиобластомы, ангиофибромы, параганглиомы и
 			лимфомы головы, шеи, головного и спинного мозга</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоваскулярное вмешательство с
 			применением адгезивных клеевых композиций микроэмболов и (или)
 			микроспиралей (менее 5 койлов), эндоваскулярное вмешательство с
@@ -1591,37 +1585,37 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=3 WIDTH=182 VALIGN=TOP>
+		<TD ROWSPAN=3  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Имплантация временных электродов для
 			нейростимуляции спинного мозга. Микрохирургические и
 			стереотаксические деструктивные операции на головном и спинном
 			мозге и спинномозговых нервах, в том числе селективная ризотомия,
 			для лечения эпилепсии, гиперкинезов и миелопатий различного генеза</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G20, G21, G24, G25.0,
 			G25.2, G80, G95.0, G95.1, G95.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">болезнь паркинсона и вторичный
 			паркинсонизм, деформирующая мышечная дистония, детский
 			церебральный паралич и эссенциальный тремор</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">стереотаксическая деструкция
 			подкорковых структур</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G09, G24, G35, G80,
 			G81.1, G82.1, G82.4, G95.0, G95.1, G95.8, I69.0 - I69.8, M96,
 			T90.5, T91.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">спастические, болевые синдромы,
 			двигательные и тазовые нарушения как проявления энцефалопатий и
 			миелопатий различного генеза (онкологических процессов,
@@ -1630,10 +1624,10 @@
 			геморрагическому типу, рассеянного склероза, инфекционных
 			заболеваний, последствий медицинских вмешательств и процедур)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">двухуровневое проведение эпидуральных
 			электродов с применением малоинвазивного инструментария под
 			нейровизуализационным контролем, селективная невротомия,
@@ -1642,18 +1636,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G31.8, G40.1 - G40.4,
 			Q04.3, Q04.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">симптоматическая эпилепсия
 			(медикаментозно-резистентная)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">селективное удаление и разрушение
 			эпилептических очагов с использованием интраоперационного
 			нейрофизиологического контроля, деструктивные операции на
@@ -1665,29 +1659,29 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=5 WIDTH=106>
+		<TD ROWSPAN=5 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">12.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Реконструктивные вмешательства при
 			сложных и гигантских дефектах и деформациях свода и основания
 			черепа, орбиты и прилегающих отделов лицевого скелета врожденного
 			и приобретенного генеза с использованием ресурсоемких имплантатов</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">M84.8, M85.0, M85.5, Q01,
 			Q67.2 - Q67.3, Q75.0 - Q75.2, Q75.8, Q87.0, S02.1 - S02.2, S02.7 -
 			S02.9, T90.2, T88.8</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">сложные и гигантские дефекты и
 			деформации свода и основания черепа, орбиты и прилегающих отделов
 			лицевого скелета врожденного и приобретенного генеза</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">микрохирургическая реконструкция при
 			врожденных и приобретенных сложных и гигантских дефектах и
 			деформациях свода, лицевого скелета и основания черепа с
@@ -1697,31 +1691,31 @@
 			и деформации лицевого скелета и основания черепа с применением
 			ауто- и (или) аллотрансплантатов</P>
 		</TD>
-		<TD ROWSPAN=5 WIDTH=80>
+		<TD ROWSPAN=5 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">190260</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=3 WIDTH=182 VALIGN=TOP>
+		<TD ROWSPAN=3  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Микрохирургические вмешательства на
 			периферических нервах и сплетениях с одномоментной пластикой
 			нервных стволов аутотрансплантатами. Имплантация временных
 			электродов для нейростимуляции спинного мозга и периферических
 			нервов</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G54.0 - G54.4, G54.6,
 			G54.8, G54.9</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">поражения плечевого сплетения и шейных
 			корешков, синдром фантома конечности с болью, невропатией или
 			радикулопатией</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">невролиз и трансплантация нерва под
 			интраоперационным нейрофизиологическим и эндоскопическим
 			контролем, двухуровневое проведение эпидуральных электродов с
@@ -1731,18 +1725,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G56, G57, T14.4</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">последствия травматических и других
 			поражений периферических нервов и сплетений с туннельными и
 			компрессионно-ишемическими невропатиями</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">микрохирургические вмешательства под
 			интраоперационным нейрофизиологическим и эндоскопическим
 			контролем, комбинированное проведение эпидуральных и
@@ -1752,17 +1746,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C47, D36.1, D48.2, D48.7</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные и доброкачественные
 			опухоли периферических нервов и сплетений</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">микрохирургические вмешательства на
 			периферических нервах и сплетениях с одномоментной пластикой
 			нервных стволов аутотрансплантатами под интраоперационным
@@ -1770,23 +1764,23 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Эндоскопические и стереотаксические
 			вмешательства при врожденной или приобретенной гидроцефалии
 			окклюзионного характера и приобретенных церебральных кистах</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G91, G93.0, Q03</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">врожденная или приобретенная
 			гидроцефалия окклюзионного характера, приобретенные церебральные
 			кисты</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическая вентрикулостомия дна
 			III желудочка мозга, эндоскопическая фенестрация стенок кист,
 			эндоскопическая кистовентрикулоциестерностомия, стереотаксическая
@@ -1794,22 +1788,22 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">13.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Стереотаксически ориентированное
 			дистанционное лучевое лечение с использованием специализированных
 			ускорителей при поражениях головы, головного и спинного мозга,
 			позвоночника, тригеминальной невралгии и
 			медикаментознорезистентных болевых синдромах различного генеза</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C31, C41, C71.0 - C71.7,
 			C72, C75.3, C79.3 - C79.5, D10.6, D16.4, D16.6, D16.8, D21, D32,
 			D33, D35, G50.0, Q28.2, Q85.0, I67.8</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">злокачественные (первичные и
 			вторичные) и доброкачественные опухоли головного и спинного мозга,
 			их оболочек, черепных нервов, костей черепа и лицевого скелета,
@@ -1818,10 +1812,10 @@
 			головного мозга различного генеза, тригеминальная невралгия,
 			медикаментознорезистентные болевые синдромы различного генеза</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">лучевое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">стереотаксически ориентированное
 			лучевое лечение злокачественных (первичных и вторичных) и
 			доброкачественных опухолей головного и спинного мозга, оболочек,
@@ -1831,34 +1825,34 @@
 			головного мозга, стереотаксически ориентированное лучевое лечение
 			тригеминальной невралгии и болевых синдромов</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">287150</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=6 WIDTH=106>
+		<TD ROWSPAN=6 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">14.</P>
 		</TD>
-		<TD ROWSPAN=6 WIDTH=182>
+		<TD ROWSPAN=6 >
 			<P STYLE="text-indent: 0cm">Микрохирургические, эндоваскулярные и
 			стереотаксические вмешательства с применением неадгезивной клеевой
 			композиции, микроспиралей (5 и более койлов) или потоковых стентов
 			при патологии сосудов головного и спинного мозга, богато
 			кровоснабжаемых опухолях головы и головного мозга</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">I60, I61, I62</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">артериальная аневризма в условиях
 			разрыва или артериовенозная мальформация головного мозга в
 			условиях острого и подострого периода субарахноидального или
 			внутримозгового кровоизлияния</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">ресурсоемкое эндоваскулярное
 			вмешательство с применением адгезивной и неадгезивной клеевой
 			композиции, микроспиралей, стентов, в том числе потоковых,
@@ -1867,22 +1861,22 @@
 			микроспиралей и стентов, ресурсоемкое комбинированное
 			микрохирургическое и эндоваскулярное вмешательство</P>
 		</TD>
-		<TD ROWSPAN=6 WIDTH=80>
+		<TD ROWSPAN=6 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">970920</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">I67.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">артериальная аневризма головного мозга
 			вне стадии разрыва</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ресурсоемкое эндоваскулярное
 			вмешательство с применением адгезивной и неадгезивной клеевой
 			композиции, микроспиралей (5 и более койлов) и стентов,
@@ -1891,118 +1885,118 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Q28.2, Q28.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">артериовенозная мальформация головного
 			и спинного мозга</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ресурсоемкое эндоваскулярное
 			вмешательство с применением адгезивной и неадгезивной клеевой
 			композиции, микроспиралей</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">I67.8, I72.0, I77.0,
 			I78.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">дуральные артериовенозные фистулы
 			головного и спинного мозга, в том числе каротидно-кавернозные,
 			ложные аневризмы внутренней сонной артерии, наследственная
 			геморрагическая телеангиэктазия (болезнь Рендю - Ослера - Вебера)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ресурсоемкое эндоваскулярное
 			вмешательство с применением адгезивной и неадгезивной клеевой
 			композиции, микроспиралей, стентов</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">D18.0, D18.1, D21.0,
 			D36.0, D35.6, I67.8, Q28.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">артериовенозные мальформации, ангиомы,
 			гемангиомы, гемангиобластомы, ангиофибромы и параганглиомы головы,
 			шеи и головного и спинного мозга, варикозное расширение вен орбиты</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ресурсоемкое эндоваскулярное
 			вмешательство с комбинированным применением адгезивной и
 			неадгезивной клеевой композиции, микроспиралей и стентов</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">I66</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">окклюзии, стенозы, эмболии и тромбозы
 			интракраниальных отделов церебральных артерий, ишемия головного
 			мозга как последствие цереброваскулярных болезней</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоваскулярная ангиопластика и
 			стентирование</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=6 WIDTH=106>
+		<TD ROWSPAN=6 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">15.</P>
 		</TD>
-		<TD ROWSPAN=6 WIDTH=182>
+		<TD ROWSPAN=6 >
 			<P STYLE="text-indent: 0cm">Имплантация, в том числе
 			стереотаксическая, внутримозговых, эпидуральных и периферийных
 			электродов, включая тестовые, нейростимуляторов и помп на
 			постоянных источниках тока и их замена для нейростимуляции
 			головного и спинного мозга, периферических нервов</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G20, G21, G24, G25.0,
 			G25.2, G80, G95.0, G95.1, G95.8</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">болезнь паркинсона и вторичный
 			паркинсонизм, деформирующая мышечная дистония, детский
 			церебральный паралич и эссенциальный тремор</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">имплантация, в том числе
 			стереотаксическая, внутримозговых и эпидуральных электродов и
 			постоянных нейростимуляторов на постоянных источниках тока и их
 			замена</P>
 		</TD>
-		<TD ROWSPAN=6 WIDTH=80>
+		<TD ROWSPAN=6 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">1281490</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">E75.2, G09, G24, G35 -
 			G37, G80, G81.1, G82.1, G82.4, G95.0, G95.1, G95.8, I69.0 - I69.8,
 			M53.3, M54, M96, T88.8, T90.5, T91.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">спастические, болевые синдромы,
 			двигательные и тазовые нарушения как проявления энцефалопатий и
 			миелопатий различного генеза (онкологические процессы, последствия
@@ -2011,10 +2005,10 @@
 			типу, демиелинизирующие болезни, инфекционные болезни, последствия
 			медицинских вмешательств и процедур)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">имплантация, в том числе
 			стереотаксическая, внутримозговых и эпидуральных электродов и
 			постоянных нейростимуляторов на постоянных источниках тока и их
@@ -2024,18 +2018,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G31.8, G40.1 - G40.4,
 			Q04.3, Q04.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">симптоматическая эпилепсия
 			(резистентная к лечению лекарственными преператами)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">имплантация, в том числе
 			стереотаксическая, внутричерепных и периферических временных или
 			постоянных электродов и нейростимуляторов на постоянных источниках
@@ -2043,18 +2037,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">M50, M51.0 - M51.3,
 			M51.8, M51.9</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">поражения межпозвоночных дисков шейных
 			и грудных отделов с миелопатией, радикуло- и нейропатией</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">имплантация, в том числе
 			стереотаксическая, внутримозговых и эпидуральных электродов и
 			постоянных нейростимуляторов на постоянных источниках тока и их
@@ -2062,73 +2056,73 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G50 - G53, G54.0 - 54.4,
 			G54.6, G54.8, G54.9, G56, G57, T14.4, T91, T92, T93</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">поражения плечевого сплетения и шейных
 			корешков, синдром фантома конечности с болью, невропатией или
 			радикулопатией</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">имплантация эпидуральных и
 			периферических электродов и постоянных нейростимуляторов на
 			постоянных источниках тока и их замена</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">G56, G57, T14.4, T91,
 			T92, T93</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">последствия травматических и других
 			поражений периферических нервов и сплетений с туннельными и
 			компрессионно-ишемическими невропатиями</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">имплантация эпидуральных и
 			периферических электродов и постоянных нейростимуляторов на
 			постоянных источниках тока и их замена</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=7 WIDTH=988 VALIGN=TOP>
+		<TD COLSPAN=7  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Онкология</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=34 WIDTH=106>
+		<TD ROWSPAN=34 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">16.</P>
 		</TD>
-		<TD ROWSPAN=34 WIDTH=182>
+		<TD ROWSPAN=34 >
 			<P STYLE="text-indent: 0cm">Видеоэндоскопические внутриполостные и
 			видеоэндоскопические внутрипросветные хирургические вмешательства,
 			интервенционные радиологические вмешательства, малоинвазивные
 			органосохранные вмешательства при злокачественных новообразованиях</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C00, C01, C02, C04 - C06,
 			C09.0, C09.1, C09.8, C09.9, C10.0, C10.1, C10.2, C10.3, C10.4,
 			C11.0, C11.1, C11.2, C11.3, C11.8, C11.9, C12, C13.0, C13.1,
 			C13.2, C13.8, C13.9, C14.0, C14.2, C15.0, C30.0, C31.0, C31.1,
 			C31.2, C31.3, C31.8, C31.9, C32, C43, C44, C69, C73</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">злокачественные новообразования головы
 			и шеи I - III стадий</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">удаление опухоли полости носа
 			видеоэндоскопическое тиреоидэктомия видеоэндоскопическая,
 			микроэндоларингеальная резекция гортани с использованием
@@ -2143,125 +2137,125 @@
 			глазную артерию химиопрепарата как вид органосохраняющего лечения
 			ретинобластомы у детей</P>
 		</TD>
-		<TD ROWSPAN=34 WIDTH=80>
+		<TD ROWSPAN=34 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">199870</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C15, C16, C17, C18, C19,
 			C20, C21</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			пищевода, желудка, двенадцатиперстной кишки, ободочной кишки,
 			ректосигмоидного соединения, прямой кишки, заднего прохода и
 			анального канала в пределах слизистого слоя Т1</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическое электрохирургическое
 			удаление опухоли</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные и
 			местнораспространенные формы злокачественных новообразований
 			пищевода</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоассистированная одномоментная
 			резекция и пластика пищевода с лимфаденэктомией 2S, 2F, 3F</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C16</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">начальные и локализованные формы
 			злокачественных новообразований желудка</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая парциальная резекция
 			желудка, в том числе с исследованием сторожевых лимфатических
 			узлов, лапароскопическая дистальная субтотальная резекция желудка</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C17</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные и
 			местнораспространенные формы злокачественных новообразований
 			двенадцатиперстной и тонкой кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая резекция тонкой
 			кишки, лапароскопическая панкреатодуоденальная резекция</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18.1, C18.2, C18.3,
 			C18.4</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные формы злокачественных
 			новообразований правой половины ободочной кишки, карциноидные
 			опухоли червеобразного отростка</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопически-ассистированная
 			правосторонняя гемиколэктомия, лапароскопически-ассистированная
 			правосторонняя гемиколэктомия с расширенной лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18.5, C18.6</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные формы злокачественных
 			новообразований левой половины ободочной кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопически-ассистированная
 			левосторонняя гемиколэктомия, лапароскопически-ассистированная
 			левосторонняя гемиколэктомия с расширенной лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18.7, C19</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные формы злокачественных
 			новообразований сигмовидной кишки и ректосигмоидного отдела</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопически-ассистированная
 			резекция сигмовидной кишки, лапароскопически-ассистированная
 			резекция сигмовидной кишки с расширенной лимфаденэктомией,
@@ -2270,30 +2264,30 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C20</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ранние формы злокачественных
 			новообразований прямой кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">трансанальная эндоскопическая
 			микрохирургия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные формы злокачественных
 			новообразований прямой кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопически-ассистированная
 			резекция прямой кишки, лапароскопически-ассистированная резекция
 			прямой кишки с расширенной лимфаденэктомией,
@@ -2304,71 +2298,71 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=5 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=5  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C22, C78.7, C24.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">первичные и метастатические
 			злокачественные новообразования печени</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоэндоскопическая сегментэктомия,
 			атипичная резекция печени</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">нерезектабельные злокачественные
 			новообразования печени и внутрипеченочных желчных протоков</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутрипротоковая фотодинамическая
 			терапия под рентгеноскопическим контролем</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования общего
 			желчного протока</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическая комбинированная
 			операция (электрорезекция, аргоноплазменная коагуляция и
 			фотодинамическая терапия опухоли желчных протоков)</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования общего
 			желчного протока в пределах слизистого слоя T1</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическая комбинированная
 			операция (электрорезекция, аргоноплазменная коагуляция и
 			фотодинамическая терапия опухоли желчных протоков)</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			желчных протоков</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное
 			интервенционнорадиологическое и эндоскопическое формирование и
 			стентирование пункционного билиодигестивного шунта при опухолевых
@@ -2380,17 +2374,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C33, C34</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">немелкоклеточный ранний центральный
 			рак легкого (Tis-T1NoMo)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическое электрохирургическое
 			удаление опухоли бронхов, эндоскопическая фотодинамическая терапия
 			опухоли бронхов, эндоскопическая комбинированная операция
@@ -2400,16 +2394,16 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=3 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=3  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C33, C34</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ранний рак трахеи</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическая комбинированная
 			операция (электрорезекция, аргоноплазменная коагуляция и
 			фотодинамическая терапия опухоли трахеи), эндоскопическое
@@ -2417,15 +2411,15 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">стенозирующие злокачественные
 			новообразования трахеи. Стенозирующий центральный рак легкого
 			(T2-4NxMx)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">эндоскопическая комбинированная
 			операция (электрорезекция, аргоноплазменная коагуляция и
 			фотодинамическая терапия опухоли трахеи), эндоскопическая
@@ -2436,48 +2430,48 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ранние формы злокачественных опухолей
 			легкого (I - II стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоторакоскопическая лобэктомия,
 			билобэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C37, C38.1, C38.2, C38.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоль вилочковой железы (I - II
 			стадии), опухоль переднего, заднего средостения (начальные формы),
 			метастатическое поражение средостения</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоэндоскопическое удаление опухоли
 			средостения, видеоэндоскопическое удаление опухоли средостения с
 			медиастинальной лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C48.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">неорганные злокачественные
 			новообразования забрюшинного пространства (первичные и рецидивные)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоэндоскопическое удаление опухоли
 			забрюшинного пространства, видеоэндоскопическое удаление опухоли
 			забрюшинного пространства с паракавальной, парааортальной,
@@ -2485,224 +2479,224 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C50.2, C50.3, C50.9</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			молочной железы IIa, IIb, IIIa стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">радикальная мастэктомия или
 			радикальная резекция с видеоассистированной парастернальной
 			лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C53</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования шейки
 			матки (I - III стадии), местнораспространенные формы рака шейки
 			матки, осложненные кровотечением</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоэндоскопическая расширенная
 			экстирпация матки с придатками, видеоэндоскопическая расширенная
 			экстирпация матки с транспозицией яичников</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C54</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			эндометрия in situ (III стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоэндоскопическая экстирпация матки
 			с придатками и тазовой лимфаденэктомией, экстирпация матки
 			расширенная видеоэндоскопическая</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные формы
 			злокачественных новообразований тела матки, осложненных
 			кровотечением</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">селективная эмболизация
 			(химиоэмболизация) маточных артерий</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C56</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			яичников I стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая экстирпация матки с
 			придатками, субтотальная резекция большого сальника</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C61</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные злокачественные
 			новообразования предстательной железы I стадии (T1a-T2cNxMo)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая простатэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C64</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования почки
 			(I - III стадия), нефробластома</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая резекция почки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C64</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные злокачественные
 			новообразования почки (I - IV стадия), нефробластома, в том числе
 			двусторонняя (T1a-T2NxMo-M1)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая нефрадреналэктомия,
 			парааортальная лимфаденэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C66, C65</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			мочеточника, почечной лоханки (I - II стадия (T1a-T2NxMo)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая нефруретероэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C67</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные злокачественные
 			новообразования, саркома мочевого пузыря (I - II стадия
 			(T1-T2bNxMo)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая резекция мочевого
 			пузыря, лапароскопическая цистэктомия, лапароскопическая
 			цистпростатвезикулэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			мочевого пузыря (I стадия (T1NxMo)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">трансуретральная резекция мочевого
 			пузыря с внутрипузырной химиотерапией, фотодинамической
 			диагностикой и терапией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C74</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			надпочечника</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая адреналэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C38.4, C38.8, C45.0</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоль плевры, распространенное
 			поражение плевры, мезотелиома плевры</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">видеоторакоскопическое удаление
 			опухоли плевры, видеоторакоскопическая плеврэктомия</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=36 WIDTH=106>
+		<TD ROWSPAN=36 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">17.</P>
 		</TD>
-		<TD ROWSPAN=36 WIDTH=182>
+		<TD ROWSPAN=36 >
 			<P STYLE="text-indent: 0cm">Реконструктивно-пластические,
 			микрохирургические, обширные циторедуктивные,
 			расширенно-комбинированные хирургические вмешательства, в том
 			числе с применением физических факторов при злокачественных
 			новообразованиях</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C00.0, C00.1, C00.2,
 			C00.3, C00.4, C00.5, C00.6, C00.8, C00.9, C01, C02, C03.1, C03.9,
 			C04.0, C04.1, C04.8, C04.9, C05, C06.0, C06.1, C06.2, C06.8,
@@ -2713,14 +2707,14 @@
 			C31.1, C31.2, C31.3, C31.8, C31.9, C32.0, C32.1, C32.2, C32.3,
 			C32.8, C32.9, C33, C43.0 - C43.9, C44.0 - C44.9, C49.0, C69, C73</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">опухоли головы и шеи, первичные и
 			рецидивные, метастатические опухоли центральной нервной системы</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">поднакостничная экзентерация орбиты,
 			поднакостничная экзентерация орбиты с сохранением век,
 			орбитосинуальная экзентерация, удаление опухоли орбиты
@@ -2774,23 +2768,23 @@
 			мозга с краниоорбитофациальным ростом, удаление опухоли головы и
 			шеи с интракраниальным ростом</P>
 		</TD>
-		<TD ROWSPAN=36 WIDTH=80>
+		<TD ROWSPAN=36 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">220220</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C15</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">начальные, локализованные и
 			местнораспространенные формы злокачественных новообразований
 			пищевода</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">отсроченная пластика пищевода
 			желудочным стеблем, отсроченная пластика пищевода сегментом
 			толстой кишки, отсроченная пластика пищевода сегментом тонкой
@@ -2801,18 +2795,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C17</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные и
 			диссеминированные формы злокачественных новообразований
 			двенадцатиперстной и тонкой кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">панкреатодуоденальная резекция с
 			интраоперационной фотодинамической терапией, циторедуктивная
 			резекция тонкой кишки с интраоперационной фотодинамической
@@ -2820,16 +2814,16 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные и
 			метастатические формы первичных и рецидивных злокачественных
 			новообразований ободочной, сигмовидной, прямой кишки и
 			ректосигмоидного соединения (II - IV стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">левосторонняя гемиколэктомия с
 			резекцией печени, левосторонняя гемиколэктомия с резекцией
 			легкого, резекция сигмовидной кишки с резекцией печени, резекция
@@ -2845,51 +2839,51 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C20</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные опухоли средне- и
 			нижнеампулярного отдела прямой кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">сфинктеросохраняющие низкие
 			внутрибрюшные резекции прямой кишки с реконструкцией сфинктерного
 			аппарата и (или) формированием толстокишечных резервуаров</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C22, C23, C24</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные первичные и
 			метастатические опухоли печени</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">анатомическая резекция печени
 			правосторонняя, гемигепатэктомия левосторонняя, гемигепатэктомия
 			медианная резекция печени, двухэтапная резекция печени</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C25</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резектабельные опухоли поджелудочной
 			железы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">панкреатодуоденальная резекция,
 			пилоруссберегающая панкреатодуоденальная резекция, срединная
 			резекция поджелудочной железы тотальная дуоденопанкреатэктомия,
@@ -2902,16 +2896,16 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C33</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоль трахеи</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">расширенная, комбинированная
 			циркулярная резекция трахеи с формированием межтрахеального или
 			трахеогортанного анастомозов, расширенная, комбинированная
@@ -2921,16 +2915,16 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C34</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоли легкого I - III стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">изолированная (циркулярная) резекция
 			бронха (формирование межбронхиального анастомоза), комбинированная
 			пневмонэктомия с циркулярной резекцией бифуркации трахеи
@@ -2944,36 +2938,36 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C37, C08.1, C38.2, C38.3,
 			C78.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоль вилочковой железы III стадии,
 			опухоль переднего, заднего средостения, местнораспространенные
 			формы, метастатическое поражение средостения</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли средостения с
 			интраоперационной фотодинамической терапией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C38.4, C38.8, C45, C78.2</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоль плевры, распространенное
 			поражение плевры, мезотелиома плевры, метастатическое поражение
 			плевры</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Плевропневмонэктомия, тотальная
 			плеврэктомия с гемиперикардэктомией, резекцией диафрагмы,
 			тотальная плеврэктомия или плевропневмонэктомия с
@@ -2982,17 +2976,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C39.8, C41.3, C49.3</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоли грудной стенки (мягких тканей,
 			ребер, грудины, ключицы)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли грудной стенки с
 			экзартикуляцией ребер, ключицы и пластикой дефекта грудной стенки
 			местными тканями, удаление опухоли грудной стенки с
@@ -3005,21 +2999,21 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C40.0, C40.1, C40.2,
 			C40.3, C40.8, C40.9, C41.2, C41.3, C41.4, C41.8, C41.9, C79.5,
 			C43.5</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">первичные злокачественные
 			новообразования костей и суставных хрящей туловища и конечностей
 			Ia-b, IIa-b, IVa-b стадии, метастатические новообразования костей,
 			суставных хрящей туловища и конечностей</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резекция кости с микрохирургической
 			реконструкцией, резекция грудной стенки с микрохирургической
 			реконструкцией, удаление злокачественного новообразования кости с
@@ -3044,31 +3038,31 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные формы первичных
 			и метастатических злокачественных опухолей длинных трубчатых
 			костей</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">изолированная гипертермическая
 			регионарная химиоперфузия конечностей</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C43, C43.5, C43.6, C43.7,
 			C43.8, C43.9, C44, C44.5, C44.6, C44.7, C44.8, C44.9</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования кожи</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">широкое иссечение меланомы кожи с
 			пластикой дефекта кожно-мышечным лоскутом на сосудистой ножке,
 			широкое иссечение опухоли кожи с реконструктивно-пластическим
@@ -3076,31 +3070,31 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные формы первичных
 			и метастатических меланом кожи конечностей</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">изолированная гипертермическая
 			регионарная химиоперфузия конечностей</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C48</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные и
 			диссеминированные формы первичных и рецидивных неорганных опухолей
 			забрюшинного пространства</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление первичных и рецидивных
 			неорганных забрюшинных опухолей с ангиопластикой, удаление
 			первичных и рецидивных неорганных забрюшинных опухолей с
@@ -3108,80 +3102,80 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные формы первичных
 			и метастатических опухолей брюшной стенки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление первичных, рецидивных и
 			метастатических опухолей брюшной стенки с
 			реконструктивно-пластическим компонентом</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C49.1, C49.2, C49.3,
 			C49.5, C49.6, C47.1, C47.2, C47.3, C47.5,</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">первичные злокачественные
 			новообразования мягких тканей туловища и конечностей</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">иссечение новообразования мягких
 			тканей с микрохирургической пластикой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C43.5</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			периферической нервной системы туловища, нижних и верхних
 			конечностей I a-b, II a-b, III, IV a-b стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm"><BR>
 			</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm"><BR>
 			</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные формы первичных
 			и метастатических сарком мягких тканей конечностей</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">изолированная гипертермическая
 			регионарная химиоперфузия конечностей</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C50, C50.1, C50.2, C50.3,
 			C50.4, C50.5, C50.6, C50.8, C50.9</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			молочной железы (0 - IV стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">радикальная мастэктомия с пластикой
 			подмышечно-подключично-подлопаточной области композитным мышечным
 			трансплантатом, радикальная мастэктомия с перевязкой лимфатических
@@ -3210,17 +3204,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C51</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования вульвы
 			(I - III стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">расширенная вульвэктомия с
 			реконструктивно-пластическим компонентом, вульвэктомия с
 			двусторонней расширенной подвздошно-паховой лимфаденэктомией и
@@ -3230,17 +3224,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C52</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			влагалища (II - III стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление опухоли влагалища с
 			реконструктивно-пластическим компонентом, удаление опухоли
 			влагалища с резекцией смежных органов, пахово-бедренной
@@ -3248,17 +3242,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C53</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования шейки
 			матки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">радикальная абдоминальная
 			трахелэктомия, радикальная влагалищная трахелэктомия с
 			видеоэндоскопической тазовой лимфаденэктомией, расширенная
@@ -3271,20 +3265,20 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C54</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования тела
 			матки (местнораспространенные формы), злокачественные
 			новообразования эндометрия IA - III стадий с осложненным
 			соматическим статусом (тяжелая степень ожирения, тяжелая степень
 			сахарного диабета и т.д.)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">расширенная экстирпация матки с
 			парааортальной лимфаденэктомией и субтотальной резекцией большого
 			сальника, нервосберегающая экстирпация матки с придатками, с
@@ -3295,58 +3289,58 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C56</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			яичников (I - IV стадии), рецидивы злокачественных новообразований
 			яичников</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">экстирпация матки с придатками,
 			субтотальная резекция большого сальника с интраоперационной
 			флюоресцентной диагностикой и фотодинамической терапией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C53, C54, C56, C57.8</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">рецидивы злокачественных
 			новообразований тела матки, шейки матки и яичников</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">тазовые эвисцерации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C60</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			полового члена (I - IV стадии)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резекция полового члена с пластикой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C61</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			предстательной железы II стадии (Tlc-2bN0M0), уровень ПСА менее 10
 			нг/мл, сумма баллов по Глисону менее 7 злокачественные
@@ -3356,179 +3350,179 @@
 			метастазирования, локализованные злокачественные новообразования
 			предстательной железы (I - II стадии (T1-2cN0M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">радикальная простатэктомия
 			промежностным доступом</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=3 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=3  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C64</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			единственной почки с инвазией в лоханку почки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резекция почечной лоханки с
 			пиелопластикой</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования почки
 			(III - IV стадии)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">радикальная нефрэктомия с расширенной
 			забрюшинной лимфаденэктомией, радикальная нефрэктомия с резекцией
 			соседних органов</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования почки
 			(I - III стадия (T1a-T3aNxMo)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">удаление рецидивной опухоли почки с
 			расширенной лимфаденэктомией, удаление рецидивной опухоли почки с
 			резекцией соседних органов</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C67</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			мочевого пузыря (I - IV стадии)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">цистпростатвезикулэктомия с пластикой
 			мочевого резервуара сегментом тонкой кишки, передняя экзентерация
 			таза</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C74</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			надпочечника (I - III стадии (T1a-T3aNxMo)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическое удаление рецидивной
 			опухоли надпочечника с расширенной лимфаденэктомией, удаление
 			рецидивной опухоли надпочечника с резекцией соседних органов</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			надпочечника (III - IV стадии)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">лапароскопическая расширенная
 			адреналэктомия или адреналэктомия с резекцией соседних органов</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=23 WIDTH=106>
+		<TD ROWSPAN=23 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">18.</P>
 		</TD>
-		<TD ROWSPAN=23 WIDTH=182>
+		<TD ROWSPAN=23 >
 			<P STYLE="text-indent: 0cm">Комбинированное лечение
 			злокачественных новообразований, сочетающее обширные хирургические
 			вмешательства и лекарственное противоопухолевое лечение, требующее
 			интенсивной поддерживающей и коррегирующей терапии</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C00, C01, C02, C03, C04,
 			C05.0, C05, C06, C07, C08, C09, C10, C11, C12, C13, C14, C15.0,
 			C30, C31, C32, C33, C43, C44, C49.0, C69, C73</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">злокачественные новообразования головы
 			и шеи (III - IV стадии), рецидив</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">внутриартериальная или системная
 			предоперационная полихимиотерапия с последующей операцией в
 			течение одной госпитализации</P>
 		</TD>
-		<TD ROWSPAN=23 WIDTH=80>
+		<TD ROWSPAN=23 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">337830</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C16</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные злокачественные
 			новообразования желудка (T2N2M0, T3N1M0, T4N0M0, T3N2M0,
 			T4N1-3M0-1) после операций в объеме R0</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение с последующим
 			курсом химиотерапии в течение одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18, C19, C20</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные колоректальные
 			злокачественные новообразования (T1-2N1M0, T3-4N1M0, T1-4N2M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение с последующим
 			курсом химиотерапии в течение одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">метастатические колоректальные
 			злокачественные новообразования, предполагающие использование на
 			одном из этапов лечения хирургического метода</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная химиотерапия с
 			применением таргетных лекарственных препаратов после проведения
 			генетических исследований (определение мутаций) с последующим
@@ -3540,37 +3534,37 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C34</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Местнораспространенные злокачественные
 			новообразования легкого (T3N1M0, T1-3N2M0, T4N0-2M0, T1-4N3M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C40, C41.2, C41.3, C41.4,
 			C41.8, C41.9</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">первичные злокачественные
 			новообразования костей и суставных хрящей туловища и конечностей
 			IIb - IVa,b стадии. Первичные злокачественные новообразования
 			мягких тканей туловища и конечностей IIa-b, III, IV стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутриартериальная химиотерапия с
 			последующим хирургическим вмешательством, предоперационная или
 			послеоперационная химиотерапия с проведением хирургического
@@ -3578,63 +3572,63 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C48</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные и
 			метастатические формы первичных и рецидивных неорганных опухолей
 			забрюшинного пространства</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные формы опухолей
 			брюшной стенки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=3 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=3  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C50</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">первичные злокачественные
 			новообразования молочной железы (T1-3N0-1M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">первичные злокачественные
 			новообразования молочной железы (T1N2-3M0; T2-3N1-3M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная химиотерапия, в том
 			числе в сочетании с таргетными лекарственными препаратами, с
 			проведением хирургического вмешательства в течение одной
@@ -3642,147 +3636,147 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">метастатические и рецидивные
 			злокачественные новообразования молочной железы, предполагающие
 			использование на одном из этапов лечения хирургического метода</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C53</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные формы
 			злокачественных новообразований шейки матки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C54</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			эндометрия (II - III стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">послеоперационная химиотерапия с
 			проведением хирургического вмешательства в течение одной
 			госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C56</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			яичников (I - IV стадии)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">рецидивы злокачественных
 			новообразований яичников</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C62</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные,
 			метастатические и рецидивные злокачественные новообразования яичка</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования яичка
 			(I - III стадия (T1-4N1-3M0-1)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C64</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования почки
 			IV стадии (T3b-3c4,N0-1M1)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">послеоперационная лекарственная
 			терапия с проведением хирургического вмешательства в течение одной
 			госпитализации</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C65, C66, C67</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">местнораспространенные уротелиальные
 			злокачественные новообразования (T3-4N0M0) при планировании
 			органосохраняющей операции местнораспространенные уротелиальные
 			злокачественные новообразования (T1-4N1-3M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации, предоперационная или послеоперационная
@@ -3791,21 +3785,21 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C00, C01, C02, C03, C04,
 			C05, C09, C10, C11, C30, C31, C41.0, C41.1, C49.0, C69.2, C69.4,
 			C69.6</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоли головы и шеи у детей
 			(остеосаркома, опухоли семейства саркомы Юинга, саркомы мягких
 			тканей, хондросаркома, злокачественная фиброзная гистиоцитома,
 			ретинобластома)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации, комплексное лечение с применением
@@ -3816,17 +3810,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C71</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоли центральной нервной системы у
 			детей</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации, комплексное лечение с применением
@@ -3837,21 +3831,21 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C22, C34, C38, C48.0,
 			C52, C53.9, C56, C61, C62, C64, C67.8, C74</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			торако-абдоминальной локализации у детей (опухоли средостения,
 			опухоли надпочечника, опухоли печени, яичка, яичников, неорганные
 			забрюшинные опухоли, опухоли почки, мочевыводящей системы и
 			другие), программное лечение</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации, комплексное лечение с применением
@@ -3862,18 +3856,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C40, C41, C49</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоли опорно-двигательного аппарата
 			у детей (остеосаркома, опухоли семейства саркомы Юинга,
 			злокачественная фиброзная гистиоцитома, саркомы мягких тканей)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">комбинированное лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">предоперационная или послеоперационная
 			химиотерапия с проведением хирургического вмешательства в течение
 			одной госпитализации, комплексное лечение с применением
@@ -3884,10 +3878,10 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">19.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Комплексное лечение с применением
 			стандартной химио- и (или) иммунотерапии (включая таргетные
 			лекарственные препараты), лучевой и афферентной терапии при
@@ -3896,19 +3890,19 @@
 			бластного криза и фазе акселерации), рецидивах и рефрактерных
 			формах солидных опухолей</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C81 - C90, C91.1 - C91.9,
 			C92.1, C93.1, D45, C95.1</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">первичные хронические лейкозы и
 			лимфомы (кроме высокозлокачественных лимфом, хронического
 			миелолейкоза в фазе бластного криза и фазе акселерации)</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">комплексная иммунохимиотерапия с
 			поддержкой ростовыми факторами и использованием антибактериальной,
 			противогрибковой, противовирусной терапии, методов афферентной
@@ -3919,34 +3913,34 @@
 			противогрибковых, противовирусных лекарственных препаратов,
 			методов афферентной терапии и лучевой терапии</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">272930</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=29 WIDTH=106>
+		<TD ROWSPAN=29 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">20.</P>
 		</TD>
-		<TD ROWSPAN=28 WIDTH=182>
+		<TD ROWSPAN=28 >
 			<P STYLE="text-indent: 0cm">Дистанционная, внутритканевая,
 			внутриполостная, стереотаксическая, радионуклидная лучевая терапия
 			в радиотерапевтических отделениях, высокоинтенсивная
 			фокусированная ультразвуковая терапия при злокачественных
 			новообразованиях</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C00 - C14, C30, C31, C32,
 			C77.0</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">злокачественные новообразования головы
 			и шеи (T1-4N любая M0), локализованные и местнораспространенные
 			формы</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">интраоперационная лучевая терапия,
 			конформная дистанционная лучевая терапия, в том числе IMRT, IGRT,
 			ViMAT, стереотаксическая. Радиомодификация. Компьютерная
@@ -3964,23 +3958,23 @@
 			3D-4D-планирование. Внутриполостная лучевая терапия.
 			Рентгенологический контроль установки эндостата</P>
 		</TD>
-		<TD ROWSPAN=29 WIDTH=80>
+		<TD ROWSPAN=29 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">245360</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C15</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			пищевода (T1-4N любая M0), локализованные и местнораспространенные
 			формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -3997,18 +3991,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C16</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			желудка (T2b-4aN0-3M0), локализованные и местнораспространенные
 			формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4018,18 +4012,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C17, C77.2</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			тонкого кишечника, локализованные и местнораспространенные формы с
 			метастазами во внутрибрюшные лимфатические узлы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая
 			фиксация. Компьютерная томография и (или) магнитно-резонансная
@@ -4039,18 +4033,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18, C19</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			ободочной кишки и ректосигмоидного угла (T2b-4aN0-3M0),
 			локализованные и местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4060,18 +4054,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C20, C77.5</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования прямой
 			кишки (T1-4N любая M0), локализованные и местнораспространенные
 			формы с метастазами во внутритазовые лимфатические узлы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4088,18 +4082,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C21</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			анального канала (T1-3N любая M0), локализованные и
 			местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4116,18 +4110,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C22, C23</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования печени
 			и желчного пузыря (T1-4N любая M0), локализованные и
 			местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4137,18 +4131,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C24, C25</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования других
 			частей желчных путей и поджелудочной железы (T1-4NxM0),
 			локализованные и местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4158,18 +4152,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C33, C34</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			трахеи, бронхов и легкого (T1-3N0-3M0), локализованные и
 			местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4188,19 +4182,19 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C37, C39, C77.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования плевры
 			и средостения (T1-3N0-3M0), локализованные и
 			местнораспространенные формы с метастазами во внутригрудные
 			лимфатические узлы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4210,18 +4204,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C40, C41</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования костей
 			и суставных хрящей (T любая N любая M0), локализованные и
 			местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT. Радиомодификация.
 			Компьютерная томография и (или) магнитно-резонансная топометрия.
@@ -4230,17 +4224,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C44</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования кожи
 			(T1-4N0M0), локализованные и местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия. Радиомодификация. Компьютерная томография и (или)
 			магнитно-резонансная топометрия. 3D-4D-планирование. Фиксирующие
@@ -4250,19 +4244,19 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C48, C49, C50, C67, C74,
 			C73</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования мягких
 			тканей (T любая N любая M0), локализованные и
 			местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4274,15 +4268,15 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			молочной железы, мочевого пузыря и надпочечника, рак щитовидной
 			железы (T1-3N0M0), локализованные и местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе в комбинации с лекарственной терапией (IMRT,
 			IGRT, ViMAT). Радиомодификация. Компьютерная томография и (или)
@@ -4292,17 +4286,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C51</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования вульвы
 			интраэпителиальные, микроинвазивные, местнораспространенные</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">дистанционная конформная лучевая
 			терапия. Радиомодификация. Компьютерная томография и (или)
 			магнитно-резонансная топометрия. 3D-4D-планирование. Фиксирующие
@@ -4320,18 +4314,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C52</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			влагалища интраэпителиальные, микроинвазивные,
 			местнораспространенные</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутриполостная, аппликационная,
 			внутритканевая лучевая терапия на брахитерапевтических аппаратах.
 			Рентгенологический контроль установки эндостата.
@@ -4345,18 +4339,18 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C53</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования шейки
 			матки ((T1-3N0-1M0-1), в том числе с метастазами в парааортальные
 			или паховые лимфоузлы), интраэпителиальные и микроинвазивные</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутриполостная лучевая терапия на
 			брахитерапевтических аппаратах. Рентгенологический и
 			ультразвуковой контроль установки эндостата. 3D-4D-планирование.
@@ -4371,17 +4365,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C54</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования тела
 			матки локализованные и местнораспространенные</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутриполостная лучевая терапия на
 			брахитерапевтических аппаратах. Рентгенологический и
 			ультразвуковой контроль установки эндостата. 3D-4D-планирование.
@@ -4400,19 +4394,19 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C56</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			яичников. Локальный рецидив, поражение лимфатических узлов после
 			неоднократных курсов полихимиотерапии и невозможности выполнить
 			хирургическое вмешательство</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">дистанционная конформная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT. Радиомодификация.
 			Компьютерная томография и (или) магнитно-резонансная топометрия.
@@ -4421,19 +4415,19 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C57</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			маточных труб. Локальный рецидив после неоднократных курсов
 			полихимиотерапии и невозможности выполнить хирургическое
 			вмешательство</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">дистанционная конформная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT. Радиомодификация.
 			Компьютерная томография и (или) магнитно-резонансная топометрия.
@@ -4442,35 +4436,35 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C60</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			полового члена (T1N0-M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">аппликационная лучевая терапия с
 			изготовлением и применением индивидуальных аппликаторов.
 			3D-4D-планирование</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C61</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			предстательной железы (T1-3N0M0), локализованные и
 			местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Радиомодификация. Компьютерная томография и (или)
@@ -4481,34 +4475,34 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C64</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования почки
 			(T1-3N0M0), локализованные и местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">интраоперационная лучевая терапия.
 			Компьютерная томография и (или) магнитно-резонансная топометрия.
 			3D-4D-планирование</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C73</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			щитовидной железы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">радиойодабляция остаточной тиреоидной
 			ткани, радиойодтерапия отдаленных метастазов дифференцированного
 			рака щитовидной железы (в легкие, в кости и другие органы)
@@ -4520,11 +4514,11 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C50, C61, C34, C73, C64,
 			C79</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">множественные метастазы в кости при
 			злокачественных новообразованиях молочной железы, предстательной
 			железы, злокачественныых новообразованиях легкого, злокачественных
@@ -4532,10 +4526,10 @@
 			щитовидной железы (радиойоднегативный вариант) и других опухолей,
 			сопровождающиеся болевым синдромом</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">системная радионуклидная терапия
 			самарием-оксабифором, Sm-153 сочетание системной радионуклидной
 			терапии самарием-оксабифором, Sm-153 и локальной лучевой терапии,
@@ -4543,17 +4537,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C70, C71, C72, C75.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			оболочек головного мозга, спинного мозга, головного мозга</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT, стереотаксическая.
 			Компьютерная томография и (или) магнитно-резонансная топометрия.
@@ -4562,17 +4556,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C81, C82, C83, C84, C85</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			лимфоидной ткани</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">конформная дистанционная лучевая
 			терапия, в том числе IMRT, IGRT, ViMAT. Компьютерная томография и
 			(или) магнитно-резонансная топометрия. 3D-4D-планирование.
@@ -4581,30 +4575,30 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=182 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Контактная лучевая терапия при раке
 			предстательной железы с использованием I125</P>
 		</TD>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C61</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			предстательной железы (T1-2N0M0), локализованные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">внутритканевая лучевая терапия с
 			использованием I125</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">21.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Комплексная и высокодозная
 			химиотерапия (включая эпигеномную терапию) острых лейкозов,
 			высокозлокачественных лимфом, рецидивов и рефрактерных форм
@@ -4613,14 +4607,14 @@
 			(включая лечение таргетными лекарственными препаратами) солидных
 			опухолей, рецидивов и рефрактерных форм солидных опухолей у детей</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C81 - C90, C91.0, C91.5 -
 			C91.9, C92, C93, C94.0, C94.2 - 94.7, C95, C96.9, C00 - C14, C15 -
 			C21, C22, C23 - C26, C30 - C32, C34, C37, C38, C39, C40, C41, C45,
 			C46, C47, C48, C49, C51 - C58, C60, C61, C62, C63, C64, C65, C66,
 			C67, C68, C69, C71, C72, C73, C74, C75, C76, C77, C78, C79</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">острые лейкозы, высокозлокачественные
 			лимфомы, рецидивы и резистентные формы других лимфопролиферативных
 			заболеваний, хронический миелолейкоз в фазах акселерации и
@@ -4634,10 +4628,10 @@
 			хондросаркома, ЗФГ, саркомы мягких тканей, ретинобластома, опухоли
 			параменингеальной области), высокий риск</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">терапевтическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">высокодозная химиотерапия, применение
 			таргетных лекарственных препаратов с поддержкой ростовыми
 			факторами, использованием компонентов крови, антибактериальных,
@@ -4662,35 +4656,35 @@
 			противогрибковых, противовирусных лекарственных препаратов,
 			компонентов крови</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">304750</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=106>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">22.</P>
 		</TD>
-		<TD WIDTH=182>
+		<TD >
 			<P STYLE="text-indent: 0cm">Эндопротезирование,
 			реэндопротезирование сустава, реконструкция кости с применением
 			эндопротезов онкологических раздвижных и нераздвижных при
 			опухолевых заболеваниях, поражающих опорно-двигательный аппарат у
 			детей</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C40.0, C40.2, C41.2,
 			C41.4</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">опухоли опорно-двигательного аппарата
 			у детей, остеосаркома, опухоли семейства саркомы Юинга,
 			хондросаркома, злокачественная фиброзная гистиоцитома, саркомы
 			мягких тканей</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">резекция большой берцовой кости
 			сегментарная с эндопротезированием, резекция костей голени
 			сегментарная с эндопротезированием, резекция бедренной кости
@@ -4706,53 +4700,53 @@
 			удаление тела позвонка с эндопротезированием, удаление позвонка с
 			эндопротезированием и фиксацией</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">1608490</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=2 WIDTH=106>
+		<TD ROWSPAN=2 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">23.</P>
 		</TD>
-		<TD ROWSPAN=2 WIDTH=182>
+		<TD ROWSPAN=2 >
 			<P STYLE="text-indent: 0cm">Эндопротезирование,
 			реэндопротезирование сустава, реконструкция кости при опухолевых
 			заболеваниях, поражающих опорно-двигательный аппарат у взрослых</P>
 		</TD>
-		<TD ROWSPAN=2 WIDTH=80>
+		<TD ROWSPAN=2 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C12, C13, C13.1, C13.2,
 			C13.8, C13.9, C14, C32.1 - C32.3, C32.8, C32.9, C33, C41.1, C41.2,
 			C43.1, C43.2, C43.3, C43.4, C44.1 - C44.4, C49.1 - C49.3, C69,
 			C69.1 - C69.6, C69.8, C69.9, C40.0, C40.1, C40.2, C40.3, C40.8,
 			C40.9, C41.2, C41.3, C41.4, C41.8, C41.9, C79.5</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">опухоли черепно-челюстной локализации</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">реконструкция костей черепа,
 			эндопротезирование верхней челюсти, эндопротезирование
 			нижнечелюстного сустава с изготовлением стереолитографической
 			модели и пресс-формы</P>
 		</TD>
-		<TD ROWSPAN=2 WIDTH=80>
+		<TD ROWSPAN=2 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">860880</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">первичные опухоли длинных костей fe-б,
 			Па-б, ГУа, IV6 стадии у взрослых. Метастатические опухоли длинных
 			костей у взрослых. Гигантоклеточная опухоль длинных костей у
 			взрослых</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резекция большой берцовой кости
 			сегментарная с эндопротезированием, резекция костей голени
 			сегментарная с эндопротезированием, резекция бедренной кости
@@ -4768,28 +4762,28 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD ROWSPAN=25 WIDTH=106>
+		<TD ROWSPAN=25 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">24.</P>
 		</TD>
-		<TD ROWSPAN=25 WIDTH=182>
+		<TD ROWSPAN=25 >
 			<P STYLE="text-indent: 0cm">Хирургическое лечение злокачественных
 			новообразований, в том числе у детей, с использованием
 			робототехники</P>
 		</TD>
-		<TD WIDTH=80>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C06.2, C09.0, C09.1,
 			C09.8, C09.9, C10.0 - С10.4, C11.0 - C11.3, C11.8, C11.9, C12,
 			C13.0 - C13.2, C13.8, C13.9, C14.0 - C14.2, C15.0, C30.0, C31.0 -
 			C31.3, C31.8, C31.9, C32.0 - C32.3, C32.8, C32.9</P>
 		</TD>
-		<TD WIDTH=158>
+		<TD >
 			<P STYLE="text-indent: 0cm">опухоли головы и шеи (T1-2, N3-4),
 			рецидив</P>
 		</TD>
-		<TD WIDTH=88>
+		<TD >
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210>
+		<TD >
 			<P STYLE="text-indent: 0cm">роботассистированное удаление опухолей
 			головы и шеи, роботассистированные резекции щитовидной железы,
 			роботассистированная тиреоидэктомия, роботассистированная
@@ -4802,123 +4796,123 @@
 			роботассистированное удаление опухоли глотки, роботассистированное
 			удаление опухолей мягких тканей головы и шеи</P>
 		</TD>
-		<TD ROWSPAN=25 WIDTH=80>
+		<TD ROWSPAN=25 >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">256060</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C16</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">начальные и локализованные формы
 			злокачественных новообразований желудка</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная парциальная
 			резекция желудка, роботассистированная дистальная субтотальная
 			резекция желудка</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C17</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">начальные и локализованные формы
 			злокачественных новообразований тонкой кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная резекция тонкой
 			кишки</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18.1, C18.2, C18.3,
 			C18.4</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные опухоли правой половины
 			ободочной кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная правосторонняя
 			гемиколэктомия, роботассистированная правосторонняя гемиколэктомия
 			с расширенной лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18.5, C18.6</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные опухоли левой половины
 			ободочной кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная левосторонняя
 			гемиколэктомия, роботассистированная левосторонняя гемиколэктомия
 			с расширенной лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C18.7, C19</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные опухоли сигмовидной
 			кишки и ректосигмоидного отдела</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная резекция
 			сигмовидной кишки, роботассистированная резекция сигмовидной кишки
 			с расширенной лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C20</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные опухоли прямой кишки</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная резекция прямой
 			кишки, роботассистированная резекция прямой кишки с расширенной
 			лимфаденэктомией</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C22</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резектабельные первичные и
 			метастатические опухоли печени</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная анатомическая
 			резекция печени, роботассистированная правосторонняя
 			гемигепатэктомия, роботассистированная левосторонняя
@@ -4928,32 +4922,32 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C23</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованные формы злокачественных
 			новообразований желчного пузыря</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная холецистэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C24</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резектабельные опухоли внепеченочных
 			желчных протоков</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная
 			панкреатодуоденальная резекция, роботассистированная
 			панкреатодуоденальная резекция с расширенной лимфаденэктомией,
@@ -4962,17 +4956,17 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C25</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резектабельные опухоли поджелудочной
 			железы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная
 			панкреатодуоденальная резекция, роботассистированная
 			панкреатодуоденальная резекция с расширенной лимфаденэктомией,
@@ -4983,136 +4977,136 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C34</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">ранние формы злокачественных
 			новообразований легкого I стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная лобэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C37, C38.1</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">опухоль вилочковой железы I стадии,
 			опухоль переднего средостения (начальные формы)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированное удаление опухоли
 			средостения</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=4 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=4  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C53</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования шейки
 			матки Ia стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистрированная экстирпация
 			матки с придатками, роботассистированная экстирпация матки без
 			придатков</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования шейки
 			матки (Ia2 - Ib стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная радикальная
 			трахелэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования шейки
 			матки (Ia2 - III стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная расширенная
 			экстирпация матки с придатками, роботассистированная расширенная
 			экстирпация матки с транспозицией яичников</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования шейки
 			матки (II - III стадия), местнораспространенные формы</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная транспозиция
 			яичников</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD ROWSPAN=2 WIDTH=80 VALIGN=TOP>
+		<TD ROWSPAN=2  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C54</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			эндометрия (Ia - Ib стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная экстирпация матки
 			с придатками, роботоассистированная экстирпация матки с маточными
 			трубами</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			эндометрия (Ib - III стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная экстирпация матки
 			с придатками и тазовой лимфаденэктомией, роботассистированная
 			экстирпация матки расширенная</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C56</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			яичников I стадии</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная аднексэктомия или
 			резекция яичников, субтотальная резекция большого сальника,
 			роботассистированная аднексэктомия односторонняя с резекцией
@@ -5121,80 +5115,80 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C61</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">локализованный рак предстательной
 			железы II стадии (T1C-2CN0M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">радикальная простатэктомия с
 			использованием робототехники, роботассистированная тазовая
 			лимфаденэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C64</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования почки
 			I стадии (T1a-1bN0M0)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">резекция почки с использованием
 			робототехники, роботассистированная нефрэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C62</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования яичка</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная расширенная
 			забрюшинная лимфаденэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C67</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">злокачественные новообразования
 			мочевого пузыря (I - IV стадия)</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная радикальная
 			цистэктомия</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=80 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">C78</P>
 		</TD>
-		<TD WIDTH=158 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">метастатическое поражение легкого</P>
 		</TD>
-		<TD WIDTH=88 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">хирургическое лечение</P>
 		</TD>
-		<TD WIDTH=210 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">роботассистированная атипичная
 			резекция легкого</P>
 		</TD>

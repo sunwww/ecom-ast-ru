@@ -37,119 +37,119 @@
 маломестных палатах (боксах)&quot;:</P>
 <P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
 </P>
-<TABLE WIDTH=675 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-	<COL WIDTH=59>
-	<COL WIDTH=412>
-	<COL WIDTH=160>
+<TABLE  BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+	<COL >
+	<COL >
+	<COL >
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">N п/п</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Наименование показаний</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Код диагноза по МКБ-Х</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">1.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Болезнь, вызванная вирусом
 			иммунодефицита человека (ВИЧ)</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">В
 			20 - В 24</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">2.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Кистозный фиброз (муковисцидоз)</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Е
 			84</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">3.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Злокачественные новообразования
 			лимфоидной, кроветворной и родственных тканей</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">С
 			81 - С 96</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">4.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Термические и химические ожоги</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Т
 			2 - Т 32</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Заболевания, вызванные
 			метициллин(оксациллин)резистентным золотистым стафилококком или
 			ванкомицинрезистентным энтерококком:</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P STYLE="text-indent: 0cm"><BR>
 			</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.1.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Пневмония</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">J
 			15.2</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">J
 			15.8</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.2.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Менингит</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">G
 			00.3</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">G
 			00.8</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.3.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Остеомиелит</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">M
 			86</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">В
 			95.6</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">В
@@ -157,64 +157,64 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.4.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Острый и подострый инфекционный
 			эндокардит</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">I
 			33.0</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.5.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инфекционно-токсический шок</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">А
 			48.3</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">5.6.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Сепсис</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">А
 			41.0</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">А
 			41.8</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">6.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Недержание кала (энкопрез)</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">R
 			15</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">F
 			98.1</SPAN></FONT></P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">7.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Недержание мочи</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">R
 			32</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">N
 			39.3</SPAN></FONT>, <FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">N
@@ -222,14 +222,14 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=59>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">8.</P>
 		</TD>
-		<TD WIDTH=412>
+		<TD >
 			<P STYLE="text-indent: 0cm">Заболевания, сопровождающиеся тошнотой
 			и рвотой</P>
 		</TD>
-		<TD WIDTH=160>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">R
 			11</SPAN></FONT></P>
 		</TD>

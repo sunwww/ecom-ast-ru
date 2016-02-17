@@ -36,48 +36,48 @@
 граждан), при наличии медицинских показаний:</P>
 <P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
 </P>
-<TABLE WIDTH=675 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
-	<COL WIDTH=345>
-	<COL WIDTH=300>
+<TABLE  BORDER=1 BORDERCOLOR="#000000" CELLPADDING=7 CELLSPACING=0>
+	<COL >
+	<COL >
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Наименование льготных
 			категорий граждан</P>
 		</TD>
-		<TD WIDTH=300>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">Основание права</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">1</P>
 		</TD>
-		<TD WIDTH=300>
+		<TD >
 			<P ALIGN=CENTER STYLE="text-indent: 0cm">2</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P STYLE="text-indent: 0cm">Ветераны Великой Отечественной войны</P>
 		</TD>
-		<TD ROWSPAN=10 WIDTH=300>
+		<TD ROWSPAN=10 >
 			<P STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Федеральный
 			закон</SPAN></FONT> от 12.01.95 N 5-ФЗ &quot;О ветеранах&quot;</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Ветераны боевых действий</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Инвалиды Великой Отечественной войны и
 			инвалиды боевых действий</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Военнослужащие, проходившие военную
 			службу в воинских частях, учреждениях, военно-учебных заведениях,
 			не входивших в состав действующей армии в период с 22.06.1941 по
@@ -86,13 +86,13 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Лица, награжденные знаком &quot;Жителю
 			блокадного Ленинграда&quot;</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Лица, работавшие в период Великой
 			Отечественной войны на объектах противовоздушной обороны, местной
 			противовоздушной обороны, на строительстве оборонительных
@@ -105,7 +105,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Лица, проработавшие в тылу в период с
 			22.06.1941 по 09.05.1945 не менее 6 месяцев, либо награжденные
 			орденами или медалями СССР за самоотверженный труд в период
@@ -113,7 +113,7 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Члены семей погибших (умерших)
 			инвалидов войны, участников Великой Отечественной войны и
 			ветеранов боевых действий, дети военнослужащих погибших (пропавших
@@ -122,31 +122,31 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Ветераны военной службы</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD WIDTH=345 VALIGN=TOP>
+		<TD  VALIGN=TOP>
 			<P STYLE="text-indent: 0cm">Ветераны труда</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P STYLE="text-indent: 0cm">Инвалиды I, II группы</P>
 		</TD>
-		<TD WIDTH=300>
+		<TD >
 			<P STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Федеральный
 			закон</SPAN></FONT> от 24.11.1995 N 181-ФЗ &quot;О социальной
 			защите инвалидов в Российской Федерации&quot;</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P STYLE="text-indent: 0cm">Граждане, подвергшиеся воздействию
 			радиации</P>
 		</TD>
-		<TD WIDTH=300>
+		<TD >
 			<P STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Закон</SPAN></FONT>
 			Российской Федерации от 15.05.1991 N 1244-1 &quot;О социальной
 			защите граждан, подвергшихся воздействию радиации вследствие
@@ -163,23 +163,23 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P STYLE="text-indent: 0cm">Лица, награжденные нагрудными знаками
 			&quot;Почетный донор России&quot;, &quot;Почетный донор СССР&quot;</P>
 		</TD>
-		<TD WIDTH=300>
+		<TD >
 			<P STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Федеральный
 			закон</SPAN></FONT> от 20.07.2012 N 125-ФЗ &quot;О донорстве
 			крови и ее компонентов&quot;</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P STYLE="text-indent: 0cm">Герои Советского Союза, Герои
 			Российской Федерации, полные кавалеры орденов Славы, Герои
 			Социалистического Труда, полные кавалеры ордена Трудовой Славы</P>
 		</TD>
-		<TD WIDTH=300>
+		<TD >
 			<P STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Закон</SPAN></FONT>
 			Российской Федерации от 15.01.93 N 4301-1 &quot;О статусе Героев
 			Советского Союза, Героев Российской Федерации и полных кавалеров
@@ -187,12 +187,12 @@
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
-		<TD WIDTH=345>
+		<TD >
 			<P STYLE="text-indent: 0cm">Дети-сироты и дети, оставшиеся без
 			попечения родителей, а также лица из числа детей-сирот и детей,
 			оставшихся без попечения родителей</P>
 		</TD>
-		<TD WIDTH=300>
+		<TD >
 			<P STYLE="text-indent: 0cm"><FONT COLOR="#106bbe"><SPAN STYLE="font-weight: normal">Закон</SPAN></FONT>
 			Астраханской области от 11.02.2002 N 6/2002-ОЗ &quot;О защите прав
 			детей-сирот и детей, оставшихся без попечения родителей, а также
