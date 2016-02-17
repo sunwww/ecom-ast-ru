@@ -73,9 +73,7 @@ div.button {
     	function next_record_direct() {
     		window.location = "step_record_info.do" ;
     	}
-    	function next_record_direct() {
-    		window.location = "step_gosgarant_info.do" ;
-    	}
+    	
     	function next_record_view_table_specialist() {
     		window.location = "step_table_0.do" ;
     	}
