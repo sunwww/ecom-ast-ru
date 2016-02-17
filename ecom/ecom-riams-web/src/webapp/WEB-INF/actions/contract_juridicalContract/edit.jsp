@@ -73,7 +73,7 @@
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_juridicalContractForm">
-			<msh:section title="Счета на оплату" createRoles="" createUrl="javascript:void(0)">
+			<msh:section title="Счета на оплату" createRoles="" createUrl="javascript:showAccountCreationAccount()">
 			<ecom:webQuery nativeSql="select ca.id,
 			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			,sp.dateFrom,sp.dateTo
@@ -225,9 +225,18 @@
 					<msh:tableColumn columnName="Обс. персона" property="11"/>
 				</msh:table>
 			</msh:section>
+			
+			<tags:contract_creationAccount name="Account" functionSave="creationAccountGo"/>
       	</msh:ifFormTypeIsView>
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
+	<msh:ifFormTypeIsView formName="contract_juridicalContractForm">
+	<script type="text/javascript">
+		function creationAccountGo(aDateFrom,aDateTo,aAccountNumber) {
+			document.location.href = "contract_accountCreationByJurPerson.do?medContart=${param.id}&dateFrom="+aDateFrom+"&dateTo="+aDateTo+"&accountNumber="+aAccountNumber ;
+		}
+	</script>
+	</msh:ifFormTypeIsView>
       	<msh:ifFormTypeIsCreate formName="contract_juridicalContractForm">
       		<script type="text/javascript">
       			if (($('customer').value=='' || $('customer').value=='0')&&'${param.person}'!='') {

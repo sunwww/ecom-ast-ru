@@ -21,22 +21,32 @@
 	<%
 	String typeContractPerson =ActionUtil.updateParameter("ReportContractFind","typeContractPerson","1", request) ;
 	%>
-	<msh:form action="contract_find_person.do" defaultField="contractNumber">
+	<msh:form action="contract_find_person.do" defaultField="contractNumber" method="get">
 			<msh:panel>
 				<msh:row>
 					<msh:textField property="contractNumber" label="Наименование" fieldColSpan="3" horizontalFill="true"/>
 				</msh:row>
 				        <msh:row>
 	        <td class="label" title="Договорная персона (typeContractPerson)" colspan="1"><label for="typeContractPersonName" id="typeContractPersonLabel">Договорная персона:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeContractPerson" value="1"> физическое лицо
+	        <td onclick="this.childNodes[1].checked='checked';"  title="поиск по всем физическим лицам">
+	        	<input type="radio" name="typeContractPerson" value="1"> физ. лицо
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeContractPerson" value="2"> юридическое лицо
+	        <td onclick="this.childNodes[1].checked='checked';" title="поиск по всем юридическим лицам">
+	        	<input type="radio" name="typeContractPerson" value="2"> юрид. лицо (все)
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeContractPerson" value="3"> страховая компания
+	        <td onclick="this.childNodes[1].checked='checked';"  title="поиск по юридическим лицам: страховая компания">
+	        	<input type="radio" name="typeContractPerson" value="3"> страх. компания
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  title="поиск по юридическим лицам: силовые структуры">
+	        	<input type="radio" name="typeContractPerson" value="4"> силовые структуры
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  title="поиск по юридическим лицам: ЛПУ">
+	        	<input type="radio" name="typeContractPerson" value="5"> ЛПУ
+	        </td>	 
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="juridicalPersonType" fieldColSpan="10" label="Тип юрид. персоны" 
+        		vocName="vocJuridicalPerson" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Найти" doNotDisableButtons="cancel" labelSaving="Поиск..." colSpan="4"/>
@@ -107,12 +117,13 @@
 		}
 			 
     </script>
-	<% if (request.getParameter("contractNumber")!=null) { 
+	<% if (request.getParameter("contractNumber")!=null) {
 		StringBuilder fio = new StringBuilder() ;
+		StringBuilder paramSql= new StringBuilder() ;
+	  	StringBuilder paramHref= new StringBuilder() ;
 		String contractNumber  = request.getParameter("contractNumber").toUpperCase() ;
-		
 		if (typeContractPerson.equals("1"))	{
-			request.setAttribute("cpdtypeSql", "  cp.dtype='NaturalPerson'") ;
+			paramSql.append("  cp.dtype='NaturalPerson'") ;
 			StringTokenizer st = new StringTokenizer(contractNumber, " \t;,.");
 			if (st.hasMoreTokens()) {
 				fio.append(" p.lastname like '").append(st.nextToken()).append("%'");
@@ -124,31 +135,55 @@
 				fio.append(" and p.middlename like '").append(st.nextToken()).append("%'");
 			}
 		} else if (typeContractPerson.equals("2")) {
-			request.setAttribute("cpdtypeSql", "  cp.dtype='JuridicalPerson'") ;
+			paramSql.append("  cp.dtype='JuridicalPerson'") ;
 			fio.append("cp.name like '%").append(contractNumber).append("%'") ;
 		} else if (typeContractPerson.equals("3")) {
-			request.setAttribute("cpdtypeSql", "  cp.dtype='JuridicalPerson'") ;
+			paramSql.append( "  cp.dtype='JuridicalPerson'") ;
+			paramSql.append( "  and reg.id is not null") ;
 			fio.append("(cp.name like '%").append(contractNumber).append("%' or reg.name like '%").append(contractNumber).append("%')") ;
+		} else if (typeContractPerson.equals("4")) {
+			paramSql.append(" cp.dtype='JuridicalPerson'") ;
+			paramSql.append("  and vjp.code='SILOVIK'") ;
+			fio.append("(cp.name like '%").append(contractNumber).append("%' )") ;
+		} else if (typeContractPerson.equals("5")) {
+			paramSql.append(" cp.dtype='JuridicalPerson'") ;
+			paramSql.append( "  and lpu.id is not null") ;
+			fio.append("(cp.name like '%").append(contractNumber).append("%' or lpu.name like '%").append(contractNumber).append("%')") ;
 		}
 			//request.setAttribute("cpdtypeSql", " and ") ;
-			
+		paramSql.append(" and ").append(fio.toString()) ;
+	  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("juridicalPersonType", "cp.juridicalPersonType_id", request)) ;
+	  	paramHref.append("&bedType=").append(request.getParameter("juridicalPersonType")!=null?request.getParameter("juridicalPersonType"):"") ;
+	  	request.setAttribute("paramSql", paramSql.toString()) ;
+	  	request.setAttribute("paramHref", paramHref.toString()) ;
 		
-		request.setAttribute("fiocp", fio.toString()) ;
+		
 	%>
 			<ecom:webQuery name="childContract" nativeSql="
 			select cp.id
-			,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') 
-			when cp.dtype='JuridicalPerson' then 'Юрид.лицо: '||cp.name else 'Страховая компания'||reg.name END as persname
+			,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: ' 
+				when cp.dtype='JuridicalPerson' 
+				  then case   
+					when reg.id is not null then 'Страховая компания '
+					when lpu.id is not null then 'ЛПУ '
+					when vjp.code='SILOVIK' then 'Силовые структуры'
+					else 'Юрид.лицо '||coalesce(vjp.name||' ','') end 
+				END as persname
+			,coalesce(p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY'),cp.name) as cpname
+			, coalesce(lpu.name,reg.name) as vjpname 
 			from  ContractPerson cp
+			left join MisLpu lpu on lpu.id=cp.lpu_id
 			left join REG_IC reg on reg.id=cp.regCompany_id
 			left join Patient p on p.id=cp.patient_id
-			where  ${cpdtypeSql} and ${fiocp} 
+			left join VocJuridicalPerson vjp on vjp.id=cp.juridicalPersonType_id
+			where ${paramSql}
 			
 			"/>
 				<msh:table name="childContract" viewUrl="entitySubclassView-contract_contractPerson.do?short=Short" action="entitySubclassView-contract_contractPerson.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn" />
-					<msh:tableColumn columnName="Наименование" property="2" />
-					<msh:tableColumn columnName="Страховая компания" property="3" />
+					<msh:tableColumn columnName="Тип юрид. персоны" property="2" />
+					<msh:tableColumn columnName="Наименование" property="3" />
+					<msh:tableColumn columnName="Описание" property="4" />
 				</msh:table>	
 				<%} %>	
 	</tiles:put>

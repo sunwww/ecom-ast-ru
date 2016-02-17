@@ -16,17 +16,11 @@
 
 	</tiles:put>
 	<tiles:put name='body' type='string' >
-		<msh:table name="list" action="entityView-contract_juridicalPerson.do" idField="id">
-			<msh:tableColumn columnName="Короткое название" property="shortName" />
-			<msh:tableColumn columnName="Полное название" property="name" />
-			<msh:tableColumn columnName="Факс" property="fax" />
-			<msh:tableColumn columnName="Телефоны" property="phones" />
-			<msh:tableColumn columnName="Электронная почта" property="email" />
-		</msh:table>
+		
 	</tiles:put>
 	<tiles:put name="javascript" type="string">
 		<script type="text/javascript">
-			//document.location.href = "entityList-contract_contractPerson.do" ;
+			document.location.href = "contract_find_person.do" ;
 		</script>
 	</tiles:put>
 </tiles:insert>

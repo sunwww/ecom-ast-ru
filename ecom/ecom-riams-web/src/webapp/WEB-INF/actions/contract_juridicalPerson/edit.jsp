@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<msh:form action="/entitySaveGoView-contract_juridicalPerson.do" defaultField="shortName">
+		<msh:form action="/entitySaveGoView-contract_juridicalPerson.do" defaultField="shortName" method="get">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:panel>
@@ -19,6 +19,9 @@
 				<msh:row>
                     <msh:autoComplete vocName="vocInsuranceCompanyAll" property="regCompany" label="Страховая&nbsp;компания" size='50' horizontalFill="true" fieldColSpan="5"/>
                 </msh:row>
+                <msh:row>
+					<msh:autoComplete property="lpu" label="ЛПУ" vocName="mainLpu" horizontalFill="true" size="100" fieldColSpan="3"/>
+				</msh:row>
 				<msh:row>
 					<msh:autoComplete fieldColSpan="3" property="juridicalPersonType" label="Тип юридической персоны" vocName="vocJuridicalPerson" horizontalFill="true" />
 				</msh:row>
@@ -100,8 +103,8 @@ order by mc.dateFrom desc
 	</tiles:put>
 	<tiles:put name="side" type="string">
 		<msh:sideMenu>
-			<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_juridicalPerson" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/ContractPerson/JuridicalPerson/Edit"/>
-			<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-contract_juridicalPerson" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/ContractPerson/JuridicalPerson/Delete" confirm="Вы уверены?"/>
+			<msh:sideLink key="ALT+2" params="id" action="/entityEdit-contract_juridicalPerson" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/ContractPerson/JuridicalPerson/Edit"/>
+			<msh:sideLink key="ALT+DEL" params="id" action="/entityDelete-contract_juridicalPerson" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/ContractPerson/JuridicalPerson/Delete" confirm="Вы уверены?"/>
 		</msh:sideMenu>
 		<tags:contractMenu currentAction="juridicalPerson"/>
 
