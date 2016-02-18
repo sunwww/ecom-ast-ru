@@ -313,7 +313,16 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_kidney.jsp" />
         </action>
-	        <action path='/mis_mortality_report' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+        
+        <action path='/stac_diff_diagnosis' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/listDifferentDiagnosis.jsp" />
+        </action>
+	    
+	    <action path='/mis_mortality_report' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"
