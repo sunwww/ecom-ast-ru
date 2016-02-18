@@ -28,7 +28,7 @@
 					<li><msh:link isReport="true" roles="/Policy/Mis/MedCase/Stac/Journal/AddressList" action="stac_address_list.do">
                              Адресные листки
                         </msh:link></li>
-					<li><msh:link isReport="true" action="all_claims.do">
+					<li><msh:link isReport="true" roles="/Policy/Mis/Claim/Operator" action="all_claims.do">
                              Просмотр заявок
                         </msh:link></li>
                         
@@ -243,6 +243,9 @@
 	                        </msh:link></li>
 	                        <li><msh:link  isReport="true" action="stac_elections.do" roles="/Policy/Mis/MedCase/Stac/Journal/ReportElections">
 	                            Выборы
+	                        </msh:link></li>
+	                        <li><msh:link  isReport="true" action="stac_diff_diagnosis.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
+	                            Журнал расхождений диагнозов
 	                        </msh:link></li>
 					</ul>
 					</div>
