@@ -662,10 +662,21 @@
         <NativeVocService
                 from  = 'ContractPerson cp'
     			parent=""
-    			names = "CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END"
+    			names = "
+    			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: ' ||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY')
+				when cp.dtype='JuridicalPerson' 
+				  then coalesce(vjp.name||' ','')||case   
+					when reg.id is not null then 'Страх.комп. '
+					when lpu.id is not null then 'ЛПУ '
+					when vjp.code='SILOVIK' then 'Сил. стр-ра:'
+					else 'Юрид.лицо: ' end ||cp.name
+				END
+    			"
     			nameId="cp.id"
     			queryAppend=''
-    			join=' left join patient p on p.id=cp.patient_id'
+    			join=' left join patient p on p.id=cp.patient_id left join VocJuridicalPerson vjp on vjp.id=cp.juridicalPersonType_id
+    			left join MisLpu lpu on lpu.id=cp.lpu_id
+			left join REG_IC reg on reg.id=cp.regCompany_id'
     			order=''
     			queried = " cast(cp.id as varchar(10)) like :querId or UPPER(cp.name) like :query 
     				or 
