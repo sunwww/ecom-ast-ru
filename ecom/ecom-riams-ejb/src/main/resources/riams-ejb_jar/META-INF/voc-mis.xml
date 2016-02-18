@@ -65,27 +65,27 @@
 
 <voc id="medServiceByWorkfunction" type="NativeVocService">
 	<NativeVocService
-		from="Workfunction wf"
+		from="medservice ms"
 		parent="wf.id=:parent"
 		nameId="ms.id"
 		order="ms.name, ms.code"
 		groupBy="ms.id, ms.name, ms.code"
 		names="ms.code||' '||ms.name"
-		queryAppend="vst.code='OPERATION'"
+		queryAppend="vst.code='OPERATION' and ms.finishDate is null"
 		queried="cast(wf.id as varchar(2)) like :querId or upper(wf.groupname) like upper(:query) "
-		join="left join workfunctionservice wfs on wfs.lpu_id=wf.lpu_id 
-			left join medservice ms on ms.id=wfs.medservice_id
+		join="left join workfunctionservice wfs on  ms.id=wfs.medservice_id
+			left join Workfunction wf on wfs.lpu_id=wf.lpu_id
 			left join vocservicetype vst on vst.id=ms.servicetype_id"
 	/>
 </voc>
 
 <voc id="operatingRoomsByMedService" type="NativeVocService">
 	<NativeVocService
-		from="WorkFunctionService wfs"
+		from="WorkFunction wf"
 		parent="wfs.medservice_id=:parent"
 		nameId="wf.id"
 		queryAppend="wf.dtype = 'OperatingRoom'" 
-		join=" left join WorkFunction wf on wf.lpu_id=wfs.lpu_id  " order=""
+		join=" left join WorkFunctionService wfs on wf.lpu_id=wfs.lpu_id  " order=""
 		names="wf.code||' '|| wf.groupname"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 		groupBy="wf.id, wf.code, wf.groupname"
@@ -170,7 +170,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'к/д'" 
+		queryAppend="vst.code = 'к/д' and ms.finishDate is null" 
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
@@ -180,7 +180,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'ANESTHESIA'" 
+		queryAppend="vst.code = 'ANESTHESIA' and ms.finishDate" 
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
@@ -191,7 +191,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'OPERATION'" 
+		queryAppend="vst.code = 'OPERATION'  and ms.finishDate" 
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
@@ -283,7 +283,7 @@
 		from="MedService ms"
 		nameId="ms.id"
 		parent=" wf.id = :parent "
-		queryAppend="MS.DTYPE='MedService' " 
+		queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null" 
 		join="  left join WorkFunctionService wfs on wfs.medservice_id =ms.id left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
@@ -310,7 +310,7 @@
 	and vsts.code='LABSURVEY'
 	)"
 		nameId=" ms.id"
-		queryAppend="vst.code = 'LABSURVEY' and ms.dtype='MedService'" 
+		queryAppend="vst.code = 'LABSURVEY' and ms.dtype='MedService' and ms.finishDate is null" 
 		join=" left join workfunctionservice wfs on wfs.medservice_id=ms.id 
 				left join vocprescripttype vpt on vpt.id=wfs.prescripttype_id 
 				left join vocservicetype vst on vst.id=ms.servicetype_id " 
