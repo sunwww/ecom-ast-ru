@@ -36,8 +36,11 @@
        <msh:row>
           <msh:textArea property="research" 
                size="60" rows="8" fieldColSpan="2" />
-        </msh:row> <msh:row><td align="center" colspan="3">
+        </msh:row> 
+        <msh:row><td align="center" colspan="3">
+        <msh:ifFormTypeIsCreate formName="doc_requitDirectionForm">
         <input type="button" value="Добавить данные из визитов" onclick="showTextTemplateProtocol()"/>
+        </msh:ifFormTypeIsCreate>
         </td>
         </msh:row>
         <msh:row>
