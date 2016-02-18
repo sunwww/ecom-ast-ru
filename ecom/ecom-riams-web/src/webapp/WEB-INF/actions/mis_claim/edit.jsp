@@ -20,7 +20,6 @@
   
          <msh:row guid="row1">
           <msh:textArea  property="description" label="Текст заявки" />
-          
         </msh:row>
         <msh:row>
       	  <msh:textField property="phone" label="Контактный телефон"/>
@@ -103,7 +102,7 @@
         </msh:ifFormTypeIsCreate>
       </msh:panel>
       </msh:form>
-      <tags:mis_claimStart name="New" status="id" type='claimType'/>
+      <tags:mis_claimStart name="New" status="id"/>
       
 	  	<script type="text/javascript">
 	  	function show(status) {
