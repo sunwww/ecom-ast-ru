@@ -26,7 +26,7 @@ request.setAttribute("login", login);
     select cl.id as clid, cast('' as varchar),  cl.description
     , to_char(cl.createdate, 'dd.MM.yyyy') ||' '||to_char(cl.createtime,'HH24:MI') as crdatetime
 ,case when cl.canceldate is not null then 'Отменена ' || to_char(cl.canceldate, 'dd.MM.yyyy')||' '||to_char(cl.canceltime,'HH24:MI')
- when cl.finishdate is not null then 'Выполнена ' || to_char(cl.finishdate, 'dd.MM.yyyy')||' '||to_char(cl.finishtime,'HH24:MI')||' '||coalesce (cl.finishusername,cl.executeusername)
+ when cl.finishdate is not null then 'Выполнена ' || to_char(cl.finishdate, 'dd.MM.yyyy')||' '||to_char(cl.finishtime,'HH24:MI')||' '||coalesce (cl.finishusername,cl.startworkusername)
  when cl.startworkdate is not null and cl.finishdate is null and cl.canceldate is null then 'В работе ' || to_char(cl.startworkdate, 'dd.MM.yyyy')||' '||to_char(cl.startworktime,'HH24:MI') ||' '||cl.startworkusername
  when cl.viewdate is not null then 'Новая ' 
  when cl.createdate is not null then 'Новая'
