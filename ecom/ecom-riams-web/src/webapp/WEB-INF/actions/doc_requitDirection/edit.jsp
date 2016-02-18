@@ -55,7 +55,7 @@
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
-  <tags:templateProtocol property="research" name="Text" version="Visit" idSmo="id" voc="protocolVisitByPatient" />
+  <tags:templateProtocol property="research" name="Text" version="Visit" idSmo="doc_requitDirectionForm.medCase" voc="protocolVisitByPatient" />
     <ecom:titleTrail mainMenu="Poly" beginForm="doc_requitDirectionForm" />
   </tiles:put>
   <tiles:put name="side" type="string">
