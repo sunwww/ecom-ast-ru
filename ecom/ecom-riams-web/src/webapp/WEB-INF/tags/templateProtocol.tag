@@ -27,43 +27,61 @@
 <div id='${name}templateProtocolDialog' class='dialog'>
     <h2>Выбор шаблона протокола</h2>
     <div class='rootPane'>
-    <form>
+    <form name="frm${name}TemplateProt">
     <table>
-		<tr><td valign="top">
+		<tr>
+			<td colspan="3">
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('temp')">Шаблоны все</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('my')">Свои шаблоны</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('mydiary')">Список своих протоколов по пациенту (предыдущие)</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('polyc')">Список протоколов по пациенту</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('hospit')">Госпитализация (осмотры врачей)</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('disch')">Госпитализация (выписки)</a>
+				
+			</td>
+		</tr>
+		<msh:row styleId="noswod">
+	        <td class="label" title="Поиск по показаниям поступления (${name}typeReestr)" colspan="1"><label for="${name}typeReestrName" id="${name}typeReestrLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';load${name}ListProtocols(theIs${name}TempProtLastFunction)">
+	        	<input type="radio" name="${name}typeReestr" value="1">  реестр
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';load${name}ListProtocols(theIs${name}TempProtLastFunction)">
+	        	<input type="radio" name="${name}typeReestr" value="2">  свод
+	        </td>
+        </msh:row>
+		
+		<tr>
+		<td valign="top" style="width:300px">
+			<div id="${name}divListCategs"></div>
+		</td>
+		<td valign="top" style="width:300px">
+			<div id="${name}divListProtocols"></div>
+		</td>
+		<td valign="top">
 		    <msh:panel>
-		            <msh:row>
-		        	<msh:autoComplete label="Категория" property="${name}tempProtCategory"                  vocName="vocTemplateCategory"   fieldColSpan="5" horizontalFill="true"/>
+		    <tr><td colspan="3">
+		    <msh:panel>
+		    		        <msh:row>
+		            <msh:checkBox property="${name}IsClose" label="Закрывать окно после выбора заключения" />
 		        </msh:row>
-		        <msh:row>
-		            <msh:autoComplete horizontalFill="true" property='${name}tempProtocol' vocName="vocTemplateProtocolByCategory" label='Шаблоны:' fieldColSpan="5" parentAutocomplete="${name}tempProtCategory"/>
-		        </msh:row>
-
-		        <msh:row styleId="tdPrev2">
-		        	<msh:autoComplete label="Информация о пред.протоколах" 
-		        		property="${name}PrevProtocol"                 
-		        		vocName="${voc}"   
-		        		fieldColSpan="5" horizontalFill="true" parentId="${idSmo}"/>
-		        </msh:row>
-		        <msh:row>
-		            <msh:textArea isNotGoEnter="true"  property="${name}textTemplProtocol" label='Текст шаблона:' size="50" fieldColSpan="5" hideLabel="true"/>
-		        </msh:row>
-		        <msh:row>
-		            <msh:checkBox property="${name}IsClose" label="Закрывать окно после выбора заключения" fieldColSpan="3"/>
-		        </msh:row>
-
-		    </msh:panel>
 		        <msh:row>
 		            <td colspan="3">
 		                <input type="button" name="buttonTempProtOk" id='buttonTempProtOk' value='Добавить в протокол' onclick='save${name}TemplateProtocol()'/>
-		                <input type="button" name="buttonPreViewProtOk" id='buttonPreViewProtOk' value='Просмотр протокола' onclick='preView${name}TemplateProtocol()'/>
-		                <input type="button" value='Закрыть' onclick='cancel${name}TemplateProtocol()'/>
+		                <input type="button" value='ЗАКРЫТЬ' onclick='cancel${name}TemplateProtocol()'/>
 		                
 		            </td>
 		        </msh:row>
+		    
+		    </msh:panel></td>
+		    </tr>
+		        <msh:row>
+		            <msh:textArea property="${name}textTemplProtocol" rows="25" hideLabel="true"/>
+		        </msh:row>
+
+		        </msh:panel>
+		    
 		</td>
-		<td valign="top">
-			<div id="${name}divListProtocols"></div>
-		</td>
+		
 		</tr>
 		</table>
 		</form>
@@ -72,6 +90,7 @@
 </div>
 <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
 <script type="text/javascript">
+     var theIs${name}TempProtLastFunction = "temp" ;
      var theIs${name}TempProtDialogInitialized = false ;
      var the${name}TempProtDialog = new msh.widget.Dialog($('${name}templateProtocolDialog')) ;
 
@@ -80,14 +99,9 @@
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}TempProtDialogInitialized) {
 			init${name}TemplateProtocol() ;
-			$("${name}tempProtCategoryName").focus() ;
-			$("${name}tempProtCategoryName").select() ;
-         } else {
-			$("${name}tempProtCategoryName").focus() ;
-			$("${name}tempProtCategoryName").select() ;
+			document.forms['frm${name}TemplateProt'].${name}typeReestr[1].checked='checked' ;
          }
          the${name}TempProtDialog.show() ;
-         //setFocusOnField('${name}tempProtCategoryName' );
 
      }
 
@@ -127,50 +141,93 @@
      // инициализация диалогового окна выбора шаблона протокола
      function init${name}TemplateProtocol() {
              $('${name}textTemplProtocol').readOnly=true ;
-             ${name}tempProtCategoryAutocomplete.addOnChangeCallback(function() {
-             	 ${name}tempProtocolAutocomplete.setVocId("");
-             	 $('${name}textTemplProtocol').value = "" ;
-             }) ;
-             ${name}tempProtocolAutocomplete.addOnChangeCallback(function() {
-            	 get${name}TextProtocolById($('${name}tempProtocol').value) ;
-             }) ;
 
              theIs${name}TempProtDialogInitialized = true ;
-             eventutil.addEnterSupport('${name}tempProtocolName', 'buttonTempProtOk') ;
-             eventutil.addEnterSupport('${name}PrevProtocolName', 'buttonTempProtOk') ;
-             
-             
-             ${name}PrevProtocolAutocomplete.addOnChangeCallback(function() {
-            	 get${name}TextDiaryById($('${name}PrevProtocol').value,0) ;
-             }) ;
              $("${name}IsClose").checked=true ;
-             load${name}ListProtocolsByUsername() ;
-             setFocusOnField('${name}tempProtCategoryName') ;
+             //load${name}ListProtocolsByUsername() ;
+             /*setFocusOnField('${name}tempProtCategoryName') ;*/
      }
      function ${name}showRow(aRowId, aCanShow, aField ) {
-  		//alert(aRowId) ;
  			try {
- 				//alert( aCanShow ? 'table-row' : 'none') ;
  				$(aRowId).style.display = aCanShow ? 'table-row' : 'none' ;
  			} catch (e) {
- 				// for IE
- 				//alert(aCanShow ? 'block' : 'none') ;
  				$(aRowId).style.display = aCanShow ? 'block' : 'none' ;
  			}	
  		}
-     function load${name}ListProtocolsByUsername() {
-    	 TemplateProtocolService.listProtocolsByUsername( ${name}PrevProtocolAutocomplete.getParentId(), 'get${name}TextProtocolById','get${name}TextDiaryById','${version}',{
+    
+     function get${name}TextDiaryByIdSearch(aType,aParent) {
+    	 	load${name}ListProtocols(aType,aParent,$('fldSearchget${name}TextDiaryById').value) ;
+    	 
+     }
+     
+     function load${name}ListProtocolsAll(aType,aParent,aSearchText) {
+    	 theIs${name}TempProtLastFunction=aType;
+    	 var idSmo = '${idSmo}' ;
+    	 var pos = idSmo.indexOf('.') ;
+    	 if (+aParent>0|| +aParent<0) {} else {aParent=0}
+    	 if (pos>0) {
+    		 idSmo= $(idSmo.substring(pos+1)).value ;
+    	 }
+    		 $('${name}divListCategs').innerHTML = "Загрузка..." ;
+        	 TemplateProtocolService.listCategProtocolsByUsername( aParent, aType
+        			 , 'load${name}ListProtocols',{
+                 callback: function(aString) {
+                     $('${name}divListCategs').innerHTML = aString ;
+            		 $('${name}divListProtocols').innerHTML = "Загрузка..." ;
+            	 	 TemplateProtocolService.listProtocolsByUsername( idSmo,aParent, aType
+        			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,{
+                 		callback: function(aString) {
+                     		$('${name}divListProtocols').innerHTML = aString ;
+                  		}
+              		} ) ;
+                  
+              }} ) ;
+     }
+     function load${name}ListProtocols(aType,aParent,aSearchText) {
+    	 theIs${name}TempProtLastFunction=aType;
+    	 var idSmo = '${idSmo}' ;
+    	 var pos = idSmo.indexOf('.') ;
+    	 if (aParent==null||+aParent==0) {aParent=0}
+    	 if (pos>0) {
+    		 idSmo= $(idSmo.substring(pos+1)).value ;
+    	 }
+    	 if (aType=='temp') idSmo=0;
+    	 var isR = true ;
+    	 if (+aParent>0 || (+aParent==-1)|| aParent.length>0) {
+    		 if (+aParent==-1 && aType=='temp' && (aSearchText==null || aSearchText.length==0)) {
+    			 isR=false;
+    			 $('${name}divListProtocols').innerHTML = "Выберите категорию"
+    				 +"<form action='javascript:get${name}TextDiaryByIdSearch(\""+aType+"\",\"\")'><input type='text' id='fldSearchget${name}TextDiaryById' name='fldSearchget${name}TextDiaryById' value=''>" 
+    					+"<input type='submit' value='Поиск' onclick='get${name}TextDiaryByIdSearch(\""+aType+"\",\"-1\")'></form>" ; ;
+    	    		 
+    		 }
+    	 } else {
+    		 if (aType=='temp') {
+    			 aParent=-1 ;
+    			 if (aSearchText!=null && aSearchText.length>1) {isR=true;} else {isR=false;}
+    		 $('${name}divListProtocols').innerHTML = "Выберите категорию"
+    		 	+"<form action='javascript:get${name}TextDiaryByIdSearch(\""+aType+"\",\"\")'><input type='text' id='fldSearchget${name}TextDiaryById' name='fldSearchget${name}TextDiaryById' value=''>" 
+				+"<input type='submit' value='Поиск' onclick='get${name}TextDiaryByIdSearch(\""+aType+"\",\"-1\")'></form>" ; ;
+    		 } else {isR=document.forms['frm${name}TemplateProt'].${name}typeReestr[0].checked;}
+    	}
+    	 
+    	 if (isR) {
+    		 $('${name}divListProtocols').innerHTML = "Загрузка..." ;
+        	 	 TemplateProtocolService.listProtocolsByUsername( idSmo,aParent, aType
+    			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,{
              callback: function(aString) {
                  $('${name}divListProtocols').innerHTML = aString ;
-                 /*if ('${version}'=='Ticket') {
-                	 ${name}PrevProtocolAutocomplete.setUrl('simpleVocAutocomplete/protocolTicketByPatient') ;
-                 } else if ('${version}'=='Visit') {
-                	 ${name}PrevProtocolAutocomplete.setUrl('simpleVocAutocomplete/protocolVisitByPatient') ;
-                 } else {
-                	 ${name}showRow("tdPrev2",false) ;
-                 }*/
               }
           } ) ;
+    	 }else{
+    		 $('${name}divListCategs').innerHTML = "Загрузка..." ;
+        	 TemplateProtocolService.listCategProtocolsByUsername( idSmo, aType
+        			 , 'load${name}ListProtocols',{
+                 callback: function(aString) {
+                     $('${name}divListCategs').innerHTML = aString ;
+                  }
+              } ) ;
+    	 }
      }
      function get${name}TextProtocolById(aId,aOk) {
          TemplateProtocolService.getText(aId, {
@@ -178,11 +235,12 @@
                  $('${name}textTemplProtocol').value = aString ;
                  if (+aOk==1) {
                 	 save${name}TemplateProtocol() ;
-                	 $('${name}tempProtocol').value='' ;
-                	 $('${name}tempProtocolName').value='' ;
+                	 //$('${name}tempProtocol').value='' ;
+                	 //$('${name}tempProtocolName').value='' ;
                  }
-            	 $('${name}PrevProtocol').value='' ;
-            	 $('${name}PrevProtocolName').value='' ;
+                 
+            	 //$('${name}PrevProtocol').value='' ;
+            	 //$('${name}PrevProtocolName').value='' ;
               }
           } ) ;
     	 
@@ -193,11 +251,11 @@
                  $('${name}textTemplProtocol').value = aString ;
                  if (+aOk==1) {
                 	 save${name}TemplateProtocol() ;
-                	 $('${name}tempProtocol').value='' ;
-                	 $('${name}tempProtocolName').value='' ;
+                	 //$('${name}tempProtocol').value='' ;
+                	 //$('${name}tempProtocolName').value='' ;
                  }
-            	 $('${name}PrevProtocol').value='' ;
-            	 $('${name}PrevProtocolName').value='' ;
+            	 //$('${name}PrevProtocol').value='' ;
+            	 //$('${name}PrevProtocolName').value='' ;
               }
           } ) ;
     	 
@@ -208,11 +266,11 @@
                  $('${name}textTemplProtocol').value = aString ;
                  if (+aOk==1) {
                 	 save${name}TemplateProtocol() ;
-                	 $('${name}tempProtocol').value='' ;
-                	 $('${name}tempProtocolName').value='' ;
+                	 //$('${name}tempProtocol').value='' ;
+                	 //$('${name}tempProtocolName').value='' ;
                  }
-            	 $('${name}PrevProtocol').value='' ;
-            	 $('${name}PrevProtocolName').value='' ;
+            	 //$('${name}PrevProtocol').value='' ;
+            	 //$('${name}PrevProtocolName').value='' ;
               }
           } ) ;
     	 
@@ -223,11 +281,11 @@
                  $('${name}textTemplProtocol').value = aString ;
                  if (+aOk==1) {
                 	 save${name}TemplateProtocol() ;
-                	 $('${name}PrevProtocol').value='' ;
-                	 $('${name}PrevProtocolName').value='' ;
+                	 //$('${name}PrevProtocol').value='' ;
+                	 //$('${name}PrevProtocolName').value='' ;
                  } 
-            	 $('${name}tempProtocol').value='' ;
-            	 $('${name}tempProtocolName').value='' ;
+            	 //$('${name}tempProtocol').value='' ;
+            	 //$('${name}tempProtocolName').value='' ;
               }
           } ) ;
     	 
