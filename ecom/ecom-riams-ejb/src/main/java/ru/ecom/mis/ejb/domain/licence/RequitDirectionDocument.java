@@ -2,9 +2,11 @@ package ru.ecom.mis.ejb.domain.licence;
 
 import java.sql.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
@@ -34,6 +36,7 @@ public class RequitDirectionDocument extends InternalDocuments {
 	
 	/** Данные объективного исследования */
 	@Comment("Данные объективного исследования")
+	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getResearch() {return theResearch;}
 	public void setResearch(String aResearch) {theResearch = aResearch;}
 	/** Данные объективного исследования */
@@ -41,6 +44,7 @@ public class RequitDirectionDocument extends InternalDocuments {
 	
 	/** Результаты диагностических исследований */
 	@Comment("Результаты диагностических исследований")
+	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getLabResearch() {return theLabResearch;}
 	public void setLabResearch(String aLabResearch) {theLabResearch = aLabResearch;}
 	/** Результаты диагностических исследований */
@@ -48,6 +52,7 @@ public class RequitDirectionDocument extends InternalDocuments {
 	
 	/** Жалобы */
 	@Comment("Жалобы")
+	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getAbuses() {return theAbuses;}
 	public void setAbuses(String aAbuses) {theAbuses = aAbuses;}
 	/** Жалобы */
