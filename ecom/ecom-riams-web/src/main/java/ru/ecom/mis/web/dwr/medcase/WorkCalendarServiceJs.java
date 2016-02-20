@@ -408,8 +408,8 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> col = service.executeNativeSql("select case when mc.dtype='DepartmentMedCase' or mc.dtype='HospitalMedCase' then (select min(vss.id) from vocservicestream vss where vss.code='HOSPITAL') else mc.servicestream_id end,mc.patient_id from PrescriptionList pl left join MedCase mc on mc.id=pl.medcase_id where pl.id="+aPrescriptList) ;
 		if (col.isEmpty()) return "" ;
 		WebQueryResult wqr = col.iterator().next() ;
-		return getReserveByDateAndService( aWorkCalendarDay,ConvertSql.parseLong(wqr.get2())
-				, ConvertSql.parseLong(wqr.get1()),  aRequest) ;
+		return getReserveByDateAndService( aWorkCalendarDay,ConvertSql.parseLong(wqr.get1())
+				, ConvertSql.parseLong(wqr.get2()),  aRequest) ;
 	}
 	public String getReserveByDateAndService(Long aWorkCalendarDay,Long aServiceStream
 			, Long aPatient, HttpServletRequest aRequest) throws NamingException {
