@@ -109,7 +109,7 @@
     			 var r=aResult.split('@');
     			 
     			 if (r.length>0) {
-    				 p+='<table border=\'1\' ><tr> <td></td><td>Дата создания</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
+    				 p+='<table border=\'1\' ><tr> <td></td><td>Дата</td><td>Дневник</td></tr><tbody id=\'diariesTable\'>';
     				 
     				 for (var i=0;i<r.length;i++){
     				 var text = r[i].split('#');
