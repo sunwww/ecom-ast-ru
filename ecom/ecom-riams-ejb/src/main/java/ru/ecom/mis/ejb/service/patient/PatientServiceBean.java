@@ -512,21 +512,21 @@ public class PatientServiceBean implements IPatientService {
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
 				if (aDocType.equals("3"));{
-				System.out.println("------------- UPDATE SQL STRING FIO = "+aLastname+" "+ aFirstname+" "+aMiddlename);
-				System.out.println("------------- UPDATE SQL STRING = "+str.toString());
+				//System.out.println("------------- UPDATE SQL STRING FIO = "+aLastname+" "+ aFirstname+" "+aMiddlename);
+				//System.out.println("------------- UPDATE SQL STRING = "+str.toString());
 				}
 				
 				System.out.println ("UpdatePatient = "+theManager.createNativeQuery(str.toString()).executeUpdate());
 			}
 			if (needUpdatePolicy) {
-				System.out.println("++++ UPDATE POLICY! = "+aLastname + " "+ aFirstname);
+				//System.out.println("++++ UPDATE POLICY! = "+aLastname + " "+ aFirstname);
 				patF.setIsPolicyUpdate(updateOrCreatePolicyByFond(aPatientId, aRz, aLastname, aFirstname, aMiddlename, aBirthday, aCompany
 						, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aCheckDate));
 				
 				
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
-				System.out.println("++++ UPDATE ATTACHMENT! = "+aLastname + " "+ aFirstname);
+				//System.out.println("++++ UPDATE ATTACHMENT! = "+aLastname + " "+ aFirstname);
 				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate,true, false);
 				patF.setIsAttachmentUpdate((s!=null&&s.length()>0)?true:false);
 				
@@ -590,14 +590,15 @@ public class PatientServiceBean implements IPatientService {
 				obj = theManager.createNativeQuery("select max(la.id) from patient p" +
 			
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
-					" and (laap.housenumber=case when p.address_addressid is not null then p.housenumber end or laap.housenumber is null or laap.housenumber ='')" +
 					" left join lpuareaaddresstext laat on laat.id=laap.lpuareaaddresstext_id" +
 					" left join lpuarea la on la.id=laat.area_id" +
 					" left join vocareatype vat on vat.id=la.type_id" +
 					" where p.id=" +aPatientId +
+					" and (laap.housenumber is null or laap.housenumber='' or laap.housenumber=p.housenumber )" +
+					" and (((p.housebuilding is null or p.housebuilding='') and (laap.housebuilding is null or laap.housebuilding='')) or laap.housebuilding=p.housebuilding)" +
 					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getSingleResult();
 				
-				System.out.println("==== ATT= laID = "+obj.toString());
+			//	System.out.println("==== ATT= laID = "+obj.toString());
 			} catch (NoResultException e) {
 				System.out.println("Участок по адресу не найден");
 			} catch (Exception e) {

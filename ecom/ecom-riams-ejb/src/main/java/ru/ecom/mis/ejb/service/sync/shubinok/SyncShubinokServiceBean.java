@@ -175,9 +175,9 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	            		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
 	            		else if (aStreet.toUpperCase().endsWith(" ПЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
 	            		else if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
+	            		else if (aStreet.toUpperCase().endsWith(" ПРОЕЗД")) aStreet = aStreet.substring(0,aStreet.length()-6);
 	            		aStreet=aStreet.toUpperCase().trim() ;
 	            		
-	            		System.out.println("=== === Адрес не указан, вычисляем автоматически");
 	            		String adrStr = thePatientService.getAddressByOkato(patImp.getRn(), aStreet);
 	            		Long adrId = adrStr!=null?Long.valueOf(adrStr):null;
 	            		if (adrId==null) {
