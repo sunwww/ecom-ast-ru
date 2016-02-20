@@ -105,9 +105,17 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder res = new StringBuilder();
 		String sql = "select d.id, to_char(d.dateregistration,'dd.MM.yyyy')|| ' ' ||to_char(d.timeregistration,'HH:MI') as dt," +
-				" d.record from medcase sls left join medcase slo on slo.parent_id=sls.id" +
-				" left join diary d on d.medcase_id=slo.id" +
-				" where sls.id="+aMedcaseId +" order by d.dateregistration desc, d.timeregistration desc";
+			" d.record from medcase sls " +
+			" left join medcase vis on vis.patient_id=sls.patient_id" +
+			" left join diary d on d.medcase_id= vis.id" +
+			" where sls.id="+aMedcaseId +
+			" and d.dtype='Protocol'" +
+			" and (vis.dtype='Visit' or vis.dtype='HospitalMedCase' or vis.dtype='DepartmentMedCase')" +
+			" and d.dateregistration is not null and d.dateregistration>=sls.datestart" +
+			" and case when vis.dtype='Visit' and vis.parent_id!=sls.id then (select case when vwf.isNoDiagnosis='1' then '1' else '0' end from medcase v" +
+			" left join workfunction wf on wf.id=v.workfunctionexecute_id" +
+			" left join vocworkfunction vwf on vwf.id=wf.workfunction_id where v.id=vis.id) else '1' end = '1'" +
+			" order by d.dateregistration desc, d.timeregistration desc";
 		Collection<WebQueryResult> wqr = service.executeNativeSql(sql);
 		if (!wqr.isEmpty()) {
 			for (WebQueryResult w: wqr) {
