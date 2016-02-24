@@ -12,9 +12,12 @@ import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
+import ru.nuzmsh.util.format.DateFormat;
 
 public class SurgicalOperationCreateInterceptor implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
@@ -38,6 +41,21 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     	} else if (parentSSL!=null && parentSSL instanceof DepartmentMedCase){
     		DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
     		if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
+    		if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
+    	} else  if (parentSSL!=null && parentSSL instanceof Visit){
+    		Visit slo = (Visit) parentSSL ;
+    		if (slo.getWorkFunctionExecute()!=null) {
+    			if (slo.getWorkFunctionExecute() instanceof PersonalWorkFunction) {
+    				PersonalWorkFunction pwf = (PersonalWorkFunction) slo.getWorkFunctionExecute() ;
+    				form.setDepartment(pwf.getWorker().getLpu().getId()) ;
+    				if (slo.getWorkFunctionExecute().getIsSurgical()!=null&&slo.getWorkFunctionExecute().getIsSurgical().booleanValue()) {
+    					form.setSurgeon(slo.getWorkFunctionExecute().getId()) ;
+    				}
+    			}
+    			form.setOperationDate(DateFormat.formatToDate(slo.getDateStart())) ;
+    			form.setOperationTime(DateFormat.formatToTime(slo.getTimeExecute())) ;
+    			
+    		}
     		if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
     	} else {
     		throw new IllegalStateException("Невозможно добавить хирургическую операцию. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
