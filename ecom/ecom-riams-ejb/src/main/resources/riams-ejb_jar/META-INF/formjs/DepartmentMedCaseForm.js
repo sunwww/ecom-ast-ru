@@ -125,7 +125,8 @@ function onPreSave(aForm,aEntity, aContext) {
 		var bedSubType = bedFund.bedSubType.code ;
 		if (hosp.hospType!=null) {
 			if ((hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==2) 
-				|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1) ) {
+					||(hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==3) 
+					|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1) ) {
 			} else {
 				if (prev!=null || +bedSubType>2) {
 					throw "Не соответствует тип стационара "+hosp.hospType.name+" и профиль коек "+ bedFund.bedSubType.name;
