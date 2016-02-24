@@ -353,7 +353,7 @@ order by p.lastname,p.firstname,p.middlename
     <form action="print-extDisp_journal_period_reestr.do" method="post" target="_blank">
 Реестр карт по доп.диспансеризации за период ${param.beginDate}-${param.finishDate}
     <input type='hidden' name="sqlText" id="sqlText" value="${reestrExtDispCard_sql}"> 
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.beginDate} по ${param.finishDate}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -369,7 +369,7 @@ order by p.lastname,p.firstname,p.middlename
 					<msh:tableColumn columnName="Дата начала" property="3" />
 					<msh:tableColumn columnName="Дата окончания" property="4" />
 					<msh:tableColumn columnName="Код МКБ" property="5" />
-					<msh:tableColumn columnName="Возрасная категория" property="6" />
+					<msh:tableColumn columnName="Возрастная категория" property="6" />
 					<msh:tableColumn columnName="Социальная группа" property="7" />
 					<msh:tableColumn columnName="Группа здоровья" property="8" />
 					<msh:tableColumn columnName="Факторы риска" property="9" />
@@ -427,7 +427,7 @@ order by p.lastname,p.firstname,p.middlename
     <form action="print-extDisp_journal_period_reestr2.do" method="post" target="_blank">
 Реестр карт по доп.диспансеризации за период ${param.beginDate}-${param.finishDate}
     <input type='hidden' name="sqlText" id="sqlText" value="${reestrExtDispCard_sql}"> 
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.beginDate} по ${param.finishDate}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -499,7 +499,7 @@ order by p.lastname,p.firstname,p.middlename
     <form action="print-extDisp_journal_period_reestr2.do" method="post" target="_blank">
 Реестр карт по доп.диспансеризации за период ${param.beginDate}-${param.finishDate}
     <input type='hidden' name="sqlText" id="sqlText" value="${reestrExtDispCard_sql}"> 
-    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр карт по доп.диспансеризации за период с ${param.beginDate} по ${param.finishDate}.">
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -590,7 +590,7 @@ order by vedag.name
 				<msh:table name="extDispAgeSwod" 
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
-					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
 					<msh:tableColumn columnName="Прошли диспансеризацию мужчин" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Прошли диспансеризацию женщин" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Всего" isCalcAmount="true" property="7" />
@@ -629,7 +629,7 @@ order by vedr.id,vedag.name
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Фактор риска" property="5" />
-					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
 					<msh:tableColumn columnName="Выявлено у мужчин"  property="6" />
 					<msh:tableColumn columnName="Выявлено у женщин"  property="7" />
 					<msh:tableColumn columnName="Выявлено всего"  property="8" />
@@ -688,7 +688,7 @@ order by vedhg.name,vedag.name
 					</tr>
 				</msh:tableNotEmpty>
 					<msh:tableColumn columnName="Группа здоровья" property="5" />
-					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
 					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Установлено дисп.наблюдение" isCalcAmount="true" property="7" />
 					<msh:tableColumn columnName="Назначено лечение" isCalcAmount="true" property="8" />
@@ -797,7 +797,7 @@ order by substring(mkb.code,1,3),vedag.name
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Класс МКБ" property="5" />
-					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
 					<msh:tableColumn columnName="Мужчины" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Женщины" isCalcAmount="true" property="7" />
 					<msh:tableColumn columnName="Всего" isCalcAmount="true" property="8" />
@@ -1023,7 +1023,7 @@ order by vedhg.name,vedarg.code
 					</tr>
 				</msh:tableNotEmpty>
 					<msh:tableColumn columnName="Группа здоровья" property="5" />
-					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
 					<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Установлено дисп.наблюдение" isCalcAmount="true" property="7" />
 					<msh:tableColumn columnName="Назначено лечение" isCalcAmount="true" property="8" />
@@ -1077,7 +1077,7 @@ order by substring(mkb.code,1,3),vedarg.name
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Класс МКБ" property="5" />
-					<msh:tableColumn columnName="Возрасная группа" property="4" />
+					<msh:tableColumn columnName="Возрастная группа" property="4" />
 					<msh:tableColumn columnName="Мужчины" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Женщины" isCalcAmount="true" property="7" />
 					<msh:tableColumn columnName="Всего" isCalcAmount="true" property="8" />
