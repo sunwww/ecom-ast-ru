@@ -28,7 +28,7 @@ if (sho==null ||sho.equals(""))  {%>
     
     <div align='center'>
     <table>
-    	<tr><td align="right">Старый пароль:</td><td><input type='password' id='oldPassword'></td></tr>
+    	<tr><td align="right">Текущий пароль:</td><td><input type='password' id='oldPassword'></td></tr>
         <tr><td align="right">Новый пароль:</td><td><input type='password' id='newPassword'></td></tr>
         <tr><td align="right">Подтвердите новый пароль:</td><td><input type='password' id='newPasswordRetype'></td></tr>
         <tr><td colspan="2" ><input id="btnChangePassword" type='button' onclick='changePassword()'  value ='Сменить пароль' ></td></tr>
