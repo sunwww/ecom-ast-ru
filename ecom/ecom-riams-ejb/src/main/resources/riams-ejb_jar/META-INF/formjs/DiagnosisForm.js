@@ -68,7 +68,8 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function getMedCaseType (aId, aCtx) {
-	return ""+aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList().get(0);
+	var list = aCtx.manager.createNativeQuery("select dtype from medcase where id="+aId).getResultList() ;
+	return list.size()>0?""+list.get(0):"";
 }
 
 function isDiagnosisAllowed(aForm, aCtx) {
