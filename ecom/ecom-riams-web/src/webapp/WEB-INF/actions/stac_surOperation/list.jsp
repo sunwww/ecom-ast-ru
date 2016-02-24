@@ -29,7 +29,6 @@
            so.medCase_id=${param.id}
           order by so.operationDate
           "/>
-    <msh:tableNotEmpty name="allSurgOper">
 	    <msh:section title="Хирургические операции " createUrl="entityParentPrepareCreate-stac_surOperation.do?id=${param.id}"
 	    createRoles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create">
 	    	<msh:table viewUrl="entityShortView-stac_surOperation.do"
@@ -43,7 +42,6 @@
 	    		<msh:tableColumn columnName="Отделение" property="4"/>
 	    	</msh:table>
 	    </msh:section>
-    </msh:tableNotEmpty>    
     </msh:ifInRole>
   </tiles:put>
   <tiles:put name="side" type="string">
