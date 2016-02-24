@@ -427,7 +427,7 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,"+aServiceStream+",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') order by wct.timefrom") ;
+		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,"+aServiceStream+",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') and vsrt.id is not null order by wct.timefrom") ;
 
 		list = service.executeNativeSql(sql.toString(),50);
 
