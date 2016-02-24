@@ -136,7 +136,7 @@ if (beginDate!=null&&!beginDate.equals("")) {
 , cl.phone
 ,case when cl.canceldate is not null then 'height:50px; background-color:#F3F781; color:black; '
  when cl.finishdate is not null then 'height:50px; background-color:#81F781; color:black;'
- when cl.startworkdate is not null then 'height:50px; background-color:F78181; '
+ when cl.startworkdate is not null then 'height:50px; background-color:#F78181; '
  when cl.viewdate is not null then ''
  when cl.createdate is not null then ''
  else 'ВАХВАХ' end as color_status

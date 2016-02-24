@@ -170,7 +170,7 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 , cl.phone
 ,case when cl.canceldate is not null then 'font-size:16px; background-color:#F3F781; color:black; '
  when cl.finishdate is not null then 'font-size:16px; background-color:#81F781; color:black;'
- when cl.startworkdate is not null then 'font-size:16px; background-color:F78181; '
+ when cl.startworkdate is not null then 'font-size:16px; background-color:#F78181; '
  when cl.viewdate is not null then 'font-size:16px;'
  when cl.createdate is not null then 'font-size:16px;'
  else 'font-size:16px; ВАХВАХ' end as color_status
