@@ -29,7 +29,6 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
-	
 	public String toNull (String aValue) {
 		if (aValue==null ||aValue.equals("")||aValue.trim().equals("")) return "null";
 		return aValue.trim();
@@ -68,7 +67,62 @@ public class HospitalMedCaseServiceJs {
 		return "" + service.executeUpdateNativeSql(sql.toString());
 		
 	}
-	public String getServiceByMedCase(Long aMedCase, HttpServletRequest aRequest) {
+
+	public String getServiceByMedCase(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder res = new StringBuilder() ;
+		sql.append("select smc.medservice_id,ms.code||' '||ms.name as serviceName")
+			.append(",smc.workfunctionexecute_id,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfinfo")
+			.append(",smc.idc10_id,mkb.code||' '||mkb.name as mkb")
+			.append(",to_char(smc.datestart,'dd.mm.yyyy') as datestart,smc.medserviceAmount")
+			.append(",smc.serviceStream_id,vss.name as vssname")
+			.append(" from medcase smc")
+			.append(" left join MedService ms on ms.id=smc.medservice_id")
+			.append(" left join WorkFunction wf on wf.id=smc.workFunctionExecute_id")
+			.append(" left join Worker w on w.id=wf.worker_id")
+			.append(" left join Patient wp on wp.id=w.person_id")
+			.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id")
+			.append(" left join VocIdc10 mkb on mkb.id=smc.idc10_id")
+			.append(" left join VocServiceStream vss on vss.id=smc.serviceStream_id")
+			.append(" where smc.parent_id='").append(aMedCase).append("' and smc.dtype='ServiceMedCase' order by smc.id") ;
+		List<Object[]> resL = service.executeNativeSqlGetObj(sql.toString()) ;
+		for (int i=0;i<resL.size();i++) {
+			for (int j=0;j<10;j++) {
+				res.append(resL.get(i)[j]).append("@#@") ;
+			}
+			res=new StringBuilder(res.length()>0?res.toString().trim().substring(0,res.length()-3):"");
+			res.append("#@#") ;
+		}
+		return res.length()>0?res.toString().trim().substring(0,res.length()-3):"" ;
+	}
+	
+	public String saveServiceByMedCase(Long aMedCase, String aServices, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		StringBuilder res = new StringBuilder() ;
+		StringBuilder sql = new StringBuilder() ;
+		service.executeUpdateNativeSql("delete from medcase where parent_id="+aMedCase+" and dtype='ServiceMedCase'");
+		if (aServices!=null&&!aServices.equals("")) {
+			String[] otherServs = aServices.split("#@#");
+			if (otherServs.length>0) {
+				
+				for (int i=0;i<otherServs.length;i++) {
+					String[] serv = otherServs[i].split("@#@") ;
+					sql = new StringBuilder() ;
+					sql.append("insert into medcase (noActuality,dtype,createdate,createtime,username,parent_id")
+						.append(",medservice_id,workfunctionexecute_id,idc10_id")
+						.append(",datestart,medserviceAmount,serviceStream_id) values (") ;
+					sql.append("'0','ServiceMedCase',current_date,current_time,'").append(login)
+						.append("','").append(aMedCase).append("','").append(serv[0]).append("','").append(serv[1]).append("','").append(serv[2])
+						.append("',to_date('").append(serv[3]).append("','dd.mm.yyyy'),'").append(serv[4]).append("','").append(serv[5])
+						.append("')");
+					System.out.println(sql) ;
+					service.executeUpdateNativeSql(sql.toString()) ;
+				}
+			}
+		}
+
 		return "" ;
 	}
 	
