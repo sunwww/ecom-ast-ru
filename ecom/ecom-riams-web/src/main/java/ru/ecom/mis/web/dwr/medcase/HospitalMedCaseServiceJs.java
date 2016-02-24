@@ -29,6 +29,45 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	
+	public String toNull (String aValue) {
+		if (aValue==null ||aValue.equals("")||aValue.trim().equals("")) return "null";
+		return aValue.trim();
+	}
+	public String createTemperatureCurve (Long aMedCase, String aParams, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		String[] par = aParams.split(":");
+		System.out.println("=== == medcase = "+aMedCase+" = " +aParams+" = length "+par.length);
+		String takingDate = toNull(par[0]);
+		String pulse = toNull(par[6]);
+		String bloodPressureDown = toNull(par[5]);
+		String bloodPressureUp = toNull(par[4]);
+		String weight = toNull(par[9]);
+		String respirationRate = toNull(par[8]);
+		String degree = toNull(par[7]);
+		String illnessDayNumber = toNull(par[1]);
+		String dayTime = toNull(par[3]);
+		
+		String stool = par.length>10?toNull(par[10]):"null";
+		
+		//String hospDayNumber = par[2];
+		
+		
+		
+		 
+	
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into temperatureCurve (takingDate, pulse, bloodPressureDown, bloodPressureUp, weight, respirationRate, degree")
+		.append(", illnessdaynumber, daytime_id, medcase_id, stool_id) values (");
+		
+		sql.append("to_date('"+takingDate+"','dd.MM.yyyy'),"+pulse+","+bloodPressureDown+","+bloodPressureUp+","+weight+","+respirationRate);
+		sql.append(", "+degree+", "+illnessDayNumber+", "+dayTime+", "+aMedCase+", "+stool);
+		sql.append(")");
+		System.out.println("=== === "+sql);
+		return "" + service.executeUpdateNativeSql(sql.toString());
+		
+	}
 	public String getServiceByMedCase(Long aMedCase, HttpServletRequest aRequest) {
 		return "" ;
 	}
