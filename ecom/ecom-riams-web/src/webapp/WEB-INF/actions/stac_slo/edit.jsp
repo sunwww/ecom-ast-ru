@@ -49,7 +49,8 @@
         </msh:ifNotInRole>
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/Create" name="Диагноз" params="id" action="/entityParentPrepareCreate-stac_diagnosis" title="Диагноз" guid="c3e59a04-8858-4523-9370-74b16ec784e6" />
         <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript:showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист" params="id" action="/entityParentPrepareCreate-stac_temperatureCurve" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" />
+        <%-- <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист" params="id" action="/entityParentPrepareCreate-stac_temperatureCurve" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" /> --%>
+        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист"  action="/javascript:showNewCurve()" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" />
         <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" name="Услугу" params="id" action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23-45a26d-5hfd" />
 
       <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание донорской крови и её компонентов" title="Добавить донорской крови и её компонентов" />
@@ -89,7 +90,9 @@
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
       </msh:sideMenu>
+      <tags:temperatureCurve name="New" />
       <msh:sideMenu title="Печать">
+      
       	<tags:stac_documentsPrint name="Docum" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" title="Документов" medCase="${param.id}"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневников по СЛО" action="/printProtocolsBySLO.do?stAll=selected&medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
