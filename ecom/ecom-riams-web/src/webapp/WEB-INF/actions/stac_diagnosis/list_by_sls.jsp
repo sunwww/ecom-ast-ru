@@ -275,7 +275,7 @@
     		
     	%>
 		<ecom:webQuery name="diag_list" nameFldSql="diag_list_sql" nativeSql="
-		select '&mkbcode='||${mkbCode}||'&priority='||vpd.id as id
+		select '&mkbcode='||${mkbCode}||'&registrationType='||vdrt.id||'&priority='||vpd.id as id
 		,${mkbCode} as mkb,count(distinct slo.id) as cntSlo,vpd.name as vpdname,vdrt.name as vdrtname 
 		,${mkbName} as mkbname
 		,count(distinct sls.id) as cntSls
@@ -374,7 +374,7 @@
    
     <input type="submit" value="Печать"> 
     </form>
-		<msh:table name="diag_list" idField="1" action="stac_diagnosis_by_sls_list.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&bedSubType=${param.bedSubType}&bedType=${param.bedType}&registrationType=${param.registrationType}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDate=${typeDate}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+		<msh:table name="diag_list" idField="1" action="stac_diagnosis_by_sls_list.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&bedSubType=${param.bedSubType}&bedType=${param.bedType}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDate=${typeDate}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="5" columnName="Тип регистрации"/>
 			<msh:tableColumn property="4" columnName="Приоритет"/>
