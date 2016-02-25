@@ -107,12 +107,9 @@ var funcemergencymessage = {
 		}
 }
 function viewEmergencyUserMessage(aJsonId) {
-	//alert(aJsonId) ;
 	var fldJson = JSON.parse(aJsonId) ;
-	//alert(fldJson) ;
 	var cnt = fldJson.params.length ;
 	var txt="";var ids = "" ;
-	//alert(cnt) ;
 	if (cnt>0) {
 	    for (var ind=0;ind<cnt;ind++) {
 	    	var param = fldJson.params[ind] ;
