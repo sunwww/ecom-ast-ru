@@ -294,14 +294,17 @@ function deletePrescription(aMedService, aWCT) {
 		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
 	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
 	   		funcNum = num;
-	   		$(type+'Cabinet').value='';
-			$(type+'CabinetName').value='';
+	   		//$(type+'Cabinet').value='';
+			//$(type+'CabinetName').value='';
 	   	} 
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);deletePrescription("+resultRow[1]+","+resultRow[8]+")' value='Удалить' />";
 	   	//new dateutil.DateField($(type+'Date'+num));
 		
 		$(type+'Servicies').value='';
 		$(type+'ServiciesName').value='';
+		$(type+'CalTime').value='';
+		$(type+'CalTimeName').value='';
+		
 		if (aFocus) $(type+'ServiciesName').focus() ;
 }
 	function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
