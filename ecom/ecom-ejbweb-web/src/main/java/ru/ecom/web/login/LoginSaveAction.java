@@ -209,12 +209,23 @@ public class LoginSaveAction extends LoginExitAction {
 	    	for (WebQueryResult wqr:list1) {
 	    		Long id = ConvertSql.parseLong(wqr.get1()) ;
 		    	serviceLogin.dispatchMessage(id) ;
-		    	if ((wqr.get5()!=null?""+wqr.get5():"").equals("system_claim")) {
-		    		ClaimMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
-		    	} else  {
-		    		UserMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
-		    	}
+		    	UserMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
 	    	}
+		}
+		if (RolesHelper.checkRoles("/Policy/Mis/Claim/View1", aRequest)) {
+			sqlA= new StringBuilder() ;
+			sqlA.append("select id,messagetitle,messageText,to_char(datereceipt,'dd.mm.yyyy')||' '||cast(timereceipt as varchar(5)) as inforeceipt,messageUrl,username from Claim") ;
+			sqlA.append(" where recipient='").append(aUsername).append("'") ;
+			sqlA.append(" and readDate is null");
+			sqlA.append(" and username!='system_message' ");
+			sqlA.append(" and (validitydate is null or validitydate>=current_date) and (isEmergency is null or isEmergency='0')");
+			if (!list1.isEmpty()) {
+		    	for (WebQueryResult wqr:list1) {
+		    		Long id = ConvertSql.parseLong(wqr.get1()) ;
+			    	serviceLogin.dispatchMessage(id) ;
+			    	ClaimMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
+		    	}
+			}
 		}
 		sqlA = new StringBuilder() ;
 		sqlA.append("select su.id as suid,w.lpu_id as depuser,wf.id as wfid from SecUser su left join WorkFunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id where su.login='").append(aUsername).append("'") ;
