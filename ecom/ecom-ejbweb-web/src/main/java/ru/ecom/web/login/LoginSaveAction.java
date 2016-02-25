@@ -36,6 +36,7 @@ import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.web.messages.ClaimMessage;
 import ru.nuzmsh.web.messages.UserMessage;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.util.StringSafeEncode;
@@ -196,10 +197,10 @@ public class LoginSaveAction extends LoginExitAction {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         ILoginService serviceLogin = Injection.find(aRequest).getService(ILoginService.class) ;
     	StringBuilder sqlA = new StringBuilder() ;
-		sqlA.append("select id,messagetitle,messageText,to_char(datereceipt,'dd.mm.yyyy')||' '||cast(timereceipt as varchar(5)) as inforeceipt,messageUrl from CustomMessage") ;
+		sqlA.append("select id,messagetitle,messageText,to_char(datereceipt,'dd.mm.yyyy')||' '||cast(timereceipt as varchar(5)) as inforeceipt,messageUrl,username from CustomMessage") ;
 		sqlA.append(" where recipient='").append(aUsername).append("'") ;
 		sqlA.append(" and readDate is null");
-		sqlA.append(" and username!='system_message'");
+		sqlA.append(" and username!='system_message' ");
 		sqlA.append(" and (validitydate is null or validitydate>=current_date) and (isEmergency is null or isEmergency='0')");
 	
 		Collection<WebQueryResult> list1 =service.executeNativeSql(sqlA.toString()) ;
@@ -208,7 +209,11 @@ public class LoginSaveAction extends LoginExitAction {
 	    	for (WebQueryResult wqr:list1) {
 	    		Long id = ConvertSql.parseLong(wqr.get1()) ;
 		    	serviceLogin.dispatchMessage(id) ;
-		    	UserMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
+		    	if ((wqr.get5()!=null?""+wqr.get5():"").equals("system_claim")) {
+		    		ClaimMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
+		    	} else  {
+		    		UserMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
+		    	}
 	    	}
 		}
 		sqlA = new StringBuilder() ;
