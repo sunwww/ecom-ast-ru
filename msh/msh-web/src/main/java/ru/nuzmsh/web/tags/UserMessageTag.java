@@ -8,6 +8,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import ru.nuzmsh.web.messages.ClaimMessage;
 import ru.nuzmsh.web.messages.ErrorMessage;
 import ru.nuzmsh.web.messages.UserMessage;
 
@@ -30,6 +31,25 @@ public class UserMessageTag  extends SimpleTagSupport {
 	            JspWriter out = getJspContext().getOut() ;
 	            out.println("<table id='userMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
 	            out.println(" <div class='userMessage'>") ;
+	            out.println(" <a href='javascript:void(0)' class='userMessageClose' title='Убрать сообщение' onclick='checkUserMessage("+message.getId()+")'>Убрать</a>") ;
+	            out.println(message.getInfo()) ;
+	            out.println("<br/>") ;
+	            out.println("<u>"+message.getTitle()+"</u>") ;
+	            out.println("<br/>") ;
+	            out.println(message.getMessage()) ;
+	            if (message.getUrl()!=null) {
+	            	out.println("<a href='javascript:void(0)' onclick='checkUserMessage("+message.getId()+");window.location=\""+message.getUrl()+"\";'>Подробно...</a>") ;
+	            }
+	            out.println(" </div>") ;
+	            out.println("</td></tr></table>") ;
+	        }
+        }
+        List<ClaimMessage> claim_messages = ClaimMessage.findInRequest(ctx.getRequest()) ;
+        if(messages!=null) {
+        	for (UserMessage message:messages) {
+	            JspWriter out = getJspContext().getOut() ;
+	            out.println("<table id='claimMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
+	            out.println(" <div class='claimMessage'>") ;
 	            out.println(" <a href='javascript:void(0)' class='userMessageClose' title='Убрать сообщение' onclick='checkUserMessage("+message.getId()+")'>Убрать</a>") ;
 	            out.println(message.getInfo()) ;
 	            out.println("<br/>") ;
