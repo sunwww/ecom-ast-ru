@@ -191,7 +191,7 @@ where su.login='${login}'
 ${statusSql} 
 
 order by ${orderBySql}
-"/>${claimListSql}
+"/>
         <msh:table styleRow="12" name="claimList" action="entityView-mis_claim.do" idField="1">
             <msh:tableColumn columnName="Номер заявки" property="1" />
             <msh:tableColumn columnName="Пользователь" property="2" />
