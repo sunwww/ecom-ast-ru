@@ -350,7 +350,7 @@
 		left join VocIdc10 mkb on mkb.id=diag.idc10_id
 		left join MedCase sls on sls.id=diag.medCase_id
 		left join MedCase slo on sls.id=slo.parent_id
-		left joi BedFund bf on bf.id=slo.bedFund_id
+		left join BedFund bf on bf.id=slo.bedFund_id
 		left join SurgicalOperation so on so.medcase_id=slo.id
 		left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 		left join VocServiceStream vss on vss.id=sls.serviceStream_id
