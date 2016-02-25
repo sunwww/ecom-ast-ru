@@ -115,7 +115,7 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4"
-        	label="Отделение" horizontalFill="true" vocName="lpu"/>
+        	label="Отделение" horizontalFill="true" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="serviceStream" fieldColSpan="4"

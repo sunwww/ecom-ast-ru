@@ -49,13 +49,13 @@
         	<msh:textField property="dateEnd" label="Дата окончания"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение 1" vocName="lpu"/>
+        	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение 1" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department1" fieldColSpan="7" horizontalFill="true" label="Отделение 2" vocName="lpu"/>
+        	<msh:autoComplete property="department1" fieldColSpan="7" horizontalFill="true" label="Отделение 2" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="department2" fieldColSpan="7" horizontalFill="true" label="Отделение 3" vocName="lpu"/>
+        	<msh:autoComplete property="department2" fieldColSpan="7" horizontalFill="true" label="Отделение 3" vocName="vocLpuHospOtdAll"/>
         </msh:row>
       <msh:row>
            <td colspan="11">
