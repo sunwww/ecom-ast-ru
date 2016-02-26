@@ -29,19 +29,18 @@ public class UserMessageTag  extends SimpleTagSupport {
         if(messages!=null) {
         	List<ClaimMessage> claim_messages = ClaimMessage.findInRequest(ctx.getRequest()) ;
             if(messages!=null) {
-            	for (UserMessage message:messages) {
+            	for (ClaimMessage message:claim_messages) {
     	            JspWriter out = getJspContext().getOut() ;
     	            out.println("<table id='claimMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
     	            out.println(" <div class='claimMessage'>") ;
-    	            out.println(" <a href='javascript:void(0)' class='userMessageClose' title='Убрать сообщение' onclick='checkUserMessage("+message.getId()+")'>Убрать</a>") ;
+    	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Убрать (заявка выполнена)</a>") ;
     	            out.println(message.getInfo()) ;
     	            out.println("<br/>") ;
     	            out.println("<u>"+message.getTitle()+"</u>") ;
     	            out.println("<br/>") ;
     	            out.println(message.getMessage()) ;
-    	            if (message.getUrl()!=null) {
-    	            	out.println("<a href='javascript:void(0)' onclick='checkUserMessage("+message.getId()+");window.location=\""+message.getUrl()+"\";'>Подробно...</a>") ;
-    	            }
+    	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Заявка выполнена</a>") ;
+    	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",0)'>Заявка невыполнена</a>") ;
     	            out.println(" </div>") ;
     	            out.println("</td></tr></table>") ;
     	        }
