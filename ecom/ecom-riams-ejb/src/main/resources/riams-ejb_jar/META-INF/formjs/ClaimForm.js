@@ -6,11 +6,11 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	if (aForm.getWorkfunction==null||aForm.getWorkfunction==0){
-	var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
-	aForm.setWorkfunction(wf.getId()) ;
-	} 
-	
+	if (+aForm.getWorkfunction>0){
+	}  else {		
+		var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+		aForm.setWorkfunction(wf.getId()) ;
+	}	
 }
 
 function onCreate (aForm, aEntity, aCtx) {
