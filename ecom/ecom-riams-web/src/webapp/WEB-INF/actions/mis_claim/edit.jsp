@@ -12,12 +12,18 @@
         <msh:form action="entitySaveGoView-mis_claim.do" defaultField="id">
         
             <msh:hidden property="id"/>
+            <msh:ifNotInRole roles="/Policy/Mis/Claim/Operator">
             <msh:hidden property="workfunction"/>
+            </msh:ifNotInRole>
             <msh:hidden property="saveType"/>
             <msh:panel guid="panel" colsWidth="20% 20% 15%">
        		<input type='hidden' id='statusState'>
         <msh:ifFormTypeIsCreate formName="mis_claimForm">
-  
+  		<msh:ifInRole roles="/Policy/Mis/Claim/Operator">
+  		<msh:row>
+  		<msh:autoComplete property="workfunction" vocName="workFunction" label="Пользователь" fieldColSpan="3" size="50"/>  		
+  		</msh:row>
+  		</msh:ifInRole>
          <msh:row guid="row1">
           <msh:textArea  property="description" label="Текст заявки" />
         </msh:row>
