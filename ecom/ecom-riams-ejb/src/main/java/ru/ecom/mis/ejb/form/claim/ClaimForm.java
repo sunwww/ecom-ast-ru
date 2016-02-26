@@ -209,4 +209,12 @@ public class ClaimForm extends IdEntityForm{
 	/** Место исполнения заявки */
 	private String theAddress;
 	
+	/** Пользователь подтвердил выполнение */
+	@Comment("Пользователь подтвердил выполнение")
+	@Persist
+	public Boolean getCompleteConfirmed() {return theCompleteConfirmed;}
+	public void setCompleteConfirmed(Boolean aCompleteConfirmed) {theCompleteConfirmed = aCompleteConfirmed;}
+	/** Пользователь подтвердил выполнение */
+	private Boolean theCompleteConfirmed;
+	
 }

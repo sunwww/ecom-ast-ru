@@ -168,4 +168,11 @@ public class Claim extends BaseEntity{
 	public void setAddress(String aAddress) {theAddress = aAddress;}
 	/** Место исполнения заявки */
 	private String theAddress;
+	
+	/** Пользователь подтвердил выполнение заявки */
+	@Comment("Пользователь подтвердил выполнение заявки")
+	public Boolean getCompleteConfirmed() {return theCompleteConfirmed;}
+	public void setCompleteConfirmed(Boolean aCompleteConfirmed) {theCompleteConfirmed = aCompleteConfirmed;}
+	/** Пользователь подтвердил выполнение заявки */
+	private Boolean theCompleteConfirmed;
 }
