@@ -212,18 +212,15 @@ public class LoginSaveAction extends LoginExitAction {
 		    	UserMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
 	    	}
 		}
-		if (RolesHelper.checkRoles("/Policy/Mis/Claim/View1", aRequest)) {
+		if (RolesHelper.checkRoles("/Policy/Mis/Claim/View", aRequest)) {
 			sqlA= new StringBuilder() ;
-			sqlA.append("select id,messagetitle,messageText,to_char(datereceipt,'dd.mm.yyyy')||' '||cast(timereceipt as varchar(5)) as inforeceipt,messageUrl,username from Claim") ;
-			sqlA.append(" where recipient='").append(aUsername).append("'") ;
-			sqlA.append(" and readDate is null");
-			sqlA.append(" and username!='system_message' ");
-			sqlA.append(" and (validitydate is null or validitydate>=current_date) and (isEmergency is null or isEmergency='0')");
+			sqlA.append("select cl.id,cl.description,to_char(cl.createdate,'dd.mm.yyyy') as createdate from claim cl left join workfunction wf on wf.id=cl.workfunction left join secuser su on su.id=wf.secuser_id where su.login='")
+				.append(aUsername).append("' and cl.finishdate is not null and cl.completeconfirmed is null");
 			if (!list1.isEmpty()) {
 		    	for (WebQueryResult wqr:list1) {
 		    		Long id = ConvertSql.parseLong(wqr.get1()) ;
 			    	serviceLogin.dispatchMessage(id) ;
-			    	ClaimMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
+			    	ClaimMessage.addMessage(aRequest,id,"Заявка от "+wqr.get3()+" выполнена",""+wqr.get2(),null) ;
 		    	}
 			}
 		}
