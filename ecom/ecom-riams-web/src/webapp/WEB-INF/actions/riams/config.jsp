@@ -79,6 +79,9 @@
                      </msh:link>
 					</li>
 					<li><msh:link action="entityPrepareCreate-mis_customMessage.do" roles="/Policy/Mis/CustomMessage/Create">Создать информационное сообщение</msh:link></li>
+					<li>
+					<msh:link action="js-riams-sync_parus.do" >Отчет по синхронизации с Парусом</msh:link>
+					</li>
                         
 				</ul>
 				</div>

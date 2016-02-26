@@ -13,3 +13,6 @@ function instruction(aForm,aCtx) {
 	var id = aCtx.request.getParameter("id") ;
 	return aCtx.createForward("/WEB-INF/actions/riams/instruction/"+id+".doc") ;
 }
+function sync_parus(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/riams/sync_parus.jsp") ;	
+}
