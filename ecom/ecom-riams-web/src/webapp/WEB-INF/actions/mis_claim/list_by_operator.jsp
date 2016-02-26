@@ -192,6 +192,21 @@ ${statusSql}
 
 order by ${orderBySql}
 "/>
+<msh:section>
+	<msh:tableNotEmpty name="claimList">
+	<msh:sectionTitle>
+	<form action="print-claim_all_reestr.do" method="post" target="_blank">
+    Список заявок
+        <input type='hidden' name="sqlText" id="sqlText" value="${claimListSql}">
+            <input type='hidden' name="sqlInfo" id="sqlInfo" value="">
+                <input type='hidden' name="s" id="s" value="PrintService">
+                    <input type='hidden' name="m" id="m" value="printNativeQuery">
+                        <input type="submit" value="Печать">
+                            </form>
+	
+	</msh:sectionTitle>
+	</msh:tableNotEmpty>
+
         <msh:table styleRow="12" name="claimList" action="entityView-mis_claim.do" idField="1">
             <msh:tableColumn columnName="Номер заявки" property="1" />
             <msh:tableColumn columnName="Пользователь" property="2" />
@@ -207,6 +222,7 @@ order by ${orderBySql}
             <msh:tableButton hideIfEmpty="true" property="1" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
             <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
         </msh:table>
+	</msh:section>
         <tags:mis_claimStart name="New" status="id" />
     </tiles:put>
     
