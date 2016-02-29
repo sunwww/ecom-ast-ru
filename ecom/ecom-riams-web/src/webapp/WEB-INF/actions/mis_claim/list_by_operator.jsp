@@ -176,6 +176,7 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
  else 'font-size:16px; ВАХВАХ' end as color_status
 ,cl.address as address
 ,coalesce(cl.executorcomment,'') as comment
+,cl.id||':'||coalesce(cl.executorcomment,'') as comment2
 from claim cl
 left join workfunction uwf on uwf.id=cl.workfunction
 left join vocworkfunction vwf on vwf.id=uwf.workfunction_id
@@ -219,7 +220,7 @@ order by ${orderBySql}
             <msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />
             <msh:tableButton hideIfEmpty="true" property="9" buttonFunction="setStartWork" buttonShortName="В работу" buttonName="В работу"/>
             <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setCancel" buttonShortName="Отменить" buttonName="Отменить"/>
-            <msh:tableButton hideIfEmpty="true" property="1" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
+            <msh:tableButton hideIfEmpty="true" property="15" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
             <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
         </msh:table>
 	</msh:section>
@@ -235,6 +236,7 @@ order by ${orderBySql}
     checkFieldUpdate('typeUser','${typeUser}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
     
+ 
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
 	   	eval('var chk =  document.forms[0].'+aField) ;
 	   	var aMax=chk.length ;
@@ -258,8 +260,10 @@ order by ${orderBySql}
     function setStartWork(aId) {
     	setStatus(aId, 'StartWork')
     }
-    function setComment (aId) {
-    	var comment = prompt('Введите комментарий');
+    function setComment (aIds) {
+    	var arr = aIds.split(':');
+    	var aId = arr[0];
+    	var comment = prompt('Введите комментарий', ''+arr[1]);
     	if (comment!=null&&comment!=''){
 	    	ClaimService.setComment(aId, comment,{
 	    		callback: function(){
