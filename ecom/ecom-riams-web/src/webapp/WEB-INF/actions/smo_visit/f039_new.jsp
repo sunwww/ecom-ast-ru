@@ -288,7 +288,7 @@ if (typeAgeWork.equals("1")) {
 	request.setAttribute("typeAgeWorkId", "18") ;
 }
 if (typeEmergency.equals("1")) {
-	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='1'":" and smo.emergency='1' and smo. and smo.ambulance_id is null") ;
+	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='1'":" and smo.emergency='1' and smo.ambulance_id is null") ;
 } else if (typeEmergency.equals("2")) {
 	request.setAttribute("emergencySql", isAggregate ?" and ag.isEmergency='1'":" and (smo.emergency='1') and smo.ambulance_id is not null") ;
 } else if (typeEmergency.equals("3")) {
