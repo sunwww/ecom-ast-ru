@@ -73,16 +73,7 @@ var isSLSClosed = true;
     	else if (aValue=='view') window.location='entityParentView-pres_prescriptList.do?id='+plId;
      }
      
-     function show${name}PrescriptList() {
-    	 the${name}PrescriptListDialog.hide() ;
-    	 // устанавливается инициализация для диалогового окна 
-         if (!theIs${name}PrescriptListDialogInitialized) {
-         	init${name}PrescriptListDialog() ;
-         	 
-          } else {
-        		//  the${name}PrescriptListDialog.show() ;
-          }
-     }
+   
      
      // Отмена 
      function cancel${name}PrescriptList() {
@@ -99,7 +90,7 @@ var isSLSClosed = true;
 		 }
      }
      // инициализация диалогового окна 
-     function init${name}PrescriptListDialog() {
+     function show${name}PrescriptList() {
 		//alert ("In TAG, $id = ="+'${parentID}'); 
 		 PrescriptionService.isPrescriptListExists('${parentID}', {
 						 callback: function (aPresID) {
