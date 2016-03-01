@@ -194,16 +194,21 @@
 		checkNum+=1;
 	}
 	var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
+	$('tdPreRecord').innerHTML="";
+	$('divReserve').innerHTML="";
 	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value);
 	addRows(type+":"+ar[0],1); 
 }
 	
 function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
+	
 	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
 	PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
 	,$('surgServicies').value, {
 		callback: function(a) {
 			if (a==null) {alert("Ошибка при назначении услуги!!!");}
+			getPreRecord();
+			updateTime();
 			//alert (a);
 		}
 	});
