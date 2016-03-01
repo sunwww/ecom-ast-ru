@@ -16,7 +16,6 @@ function max_sequnce_default_id(aCtx,aTable,aFldId) {
 	if (l.size()>0) {
 		aCtx.manager.createNativeQuery("alter sequence "+aTable.toLowerCase()+"_sequence restart with "+(l.get(0)[0]+1)).executeUpdate() ;
 	} 
-	
 }
 function default_id(aCtx,aTable) {
 	aTable=aTable.toLowerCase() ;
