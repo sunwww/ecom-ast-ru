@@ -48,6 +48,16 @@
         </msh:table>
       </msh:section>
     </msh:ifFormTypeIsView>    
+    <msh:ifFormTypeIsView formName="temp_categoryForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
+      <msh:section title="Листы назначений" guid="712b744d-be86-4dc1-9d3a-0ab52eb1bed9">
+        <ecom:webQuery name="prescriptionLists" nativeSql="select pl.id,pl.name,pl.createusername from PrescriptionList_templatecategory pltc 
+        left join PrescriptionList pl on pl.id=pltc.prescriptlists_id where pltc.categories_id='${param.id}' group by pl.id,pl.name,pl.createusername order by pl.name" />
+	    <msh:table name="prescriptionLists" action="entityView-pres_template.do" idField="1" guid="c0ba5c22-fda6-4d4f-89c4-aa58abb1e9d8">
+          <msh:tableColumn property="2" columnName="Название" guid="4d4c6566-75c9-4ef5-931c-723e88d4efbb" />
+          <msh:tableColumn columnName="Пользователь" property="3" guid="c28f06f0-c64a-4cdd-b84f-b1e081186496" />
+        </msh:table>
+      </msh:section>
+    </msh:ifFormTypeIsView>    
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Template" beginForm="temp_categoryForm" guid="af3d88cd-60b5-4bba-a85d-ac2334f43161" />
