@@ -31,12 +31,12 @@
     <table>
 		<tr>
 			<td colspan="3">
-				<a href="javascript:void(0)" onclick="load${name}ListProtocols('temp')">Шаблоны все</a>
-				<a href="javascript:void(0)" onclick="load${name}ListProtocols('my')">Свои шаблоны</a>
-				<a href="javascript:void(0)" onclick="load${name}ListProtocols('mydiary')">Список своих протоколов по пациенту (предыдущие)</a>
-				<a href="javascript:void(0)" onclick="load${name}ListProtocols('polyc')">Список протоколов по пациенту</a>
-				<a href="javascript:void(0)" onclick="load${name}ListProtocols('hospit')">Госпитализация (осмотры врачей)</a>
-				<a href="javascript:void(0)" onclick="load${name}ListProtocols('disch')">Госпитализация (выписки)</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('temp')" id="temp${name}A">Шаблоны все</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('my')" id="my${name}A">Свои шаблоны</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('mydiary')" id="mydiary${name}A">Список своих заключений по пациенту</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('polyc')" id="polyc${name}A">Список заключения по пациенту</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('hospit')" id="hospit${name}A">Госпитализация (осмотры врачей)</a>
+				<a href="javascript:void(0)" onclick="load${name}ListProtocols('disch')" id="disch${name}A">Госпитализация (выписки)</a>
 				
 			</td>
 		</tr>
@@ -137,7 +137,19 @@
      		}
    			$('${name}textTemplProtocol').value = $(prop).value;
      }
-
+     function edit${name}StyleA(aTemp) {
+    	 var a = ["temp","my","mydiary","hospit","disch","polyc"] ;
+    	 for (var i=0;i<a.length;i++) {
+    		 if (aTemp==a[i]) {
+    			 $(a[i]+"${name}A").style.background="#C3D9FF" ;
+    			 $(a[i]+"${name}A").style.backgroundImage="url('/skin/images/main/sideSelected.gif') no-repeat" ;
+    		 } else {
+    			 $(a[i]+"${name}A").style.background="" ;
+    			 $(a[i]+"${name}A").style.backgroundImage="" ;
+    		 }
+    		 
+    	 }
+     } 
      // инициализация диалогового окна выбора шаблона протокола
      function init${name}TemplateProtocol() {
              $('${name}textTemplProtocol').readOnly=true ;
@@ -161,6 +173,7 @@
      }
      
      function load${name}ListProtocolsAll(aType,aParent,aSearchText) {
+    	 edit${name}StyleA(aType) ;
     	 theIs${name}TempProtLastFunction=aType;
     	 var idSmo = '${idSmo}' ;
     	 var pos = idSmo.indexOf('.') ;
@@ -184,6 +197,7 @@
               }} ) ;
      }
      function load${name}ListProtocols(aType,aParent,aSearchText) {
+    	 edit${name}StyleA(aType) ;
     	 theIs${name}TempProtLastFunction=aType;
     	 var idSmo = '${idSmo}' ;
     	 var pos = idSmo.indexOf('.') ;
@@ -194,11 +208,8 @@
     	 if (aType=='temp') idSmo=0;
     	 var isR = true ;
     	 if (+aParent>0 || (+aParent==-1)|| aParent.length>0) {
-    		 if (+aParent==-1 && aType=='temp' && (aSearchText==null || aSearchText.length==0)) {
+    		 if (+aParent==-1 && (aType=='temp') && (aSearchText==null || aSearchText.length==0)) {
     			 isR=false;
-    			 $('${name}divListProtocols').innerHTML = "Выберите категорию"
-    				 +"<form action='javascript:get${name}TextDiaryByIdSearch(\""+aType+"\",\"\")'><input type='text' id='fldSearchget${name}TextDiaryById' name='fldSearchget${name}TextDiaryById' value=''>" 
-    					+"<input type='submit' value='Поиск' onclick='get${name}TextDiaryByIdSearch(\""+aType+"\",\"-1\")'></form>" ; ;
     	    		 
     		 }
     	 } else {
@@ -212,11 +223,15 @@
     	}
     	 
     	 if (isR) {
+    		  
     		 $('${name}divListProtocols').innerHTML = "Загрузка..." ;
         	 	 TemplateProtocolService.listProtocolsByUsername( idSmo,aParent, aType
     			 , 'get${name}TextProtocolById','get${name}TextDiaryById',aSearchText,{
              callback: function(aString) {
                  $('${name}divListProtocols').innerHTML = aString ;
+                 if (document.forms['frm${name}TemplateProt'].${name}typeReestr[0].checked) {
+         			// $('${name}divListCategs').innerHTML = "Для отображения категорий перейдите в режим свод" ;
+         		 }
               }
           } ) ;
     	 }else{
@@ -225,6 +240,14 @@
         			 , 'load${name}ListProtocols',{
                  callback: function(aString) {
                      $('${name}divListCategs').innerHTML = aString ;
+                     if ((aType=='temp'||aType=="my")) {
+            			 $('${name}divListProtocols').innerHTML = ""
+            				 +"<form action='javascript:get${name}TextDiaryByIdSearch(\""+aType+"\",\"\")'><input type='text' id='fldSearchget${name}TextDiaryById' name='fldSearchget${name}TextDiaryById' value=''>" 
+            					+"<input type='submit' value='Поиск' onclick='get${name}TextDiaryByIdSearch(\""+aType+"\",\"-1\")'></form>" ; ;
+                     } else {
+                    	 $('${name}divListProtocols').innerHTML = "" ;
+                     }
+                     
                   }
               } ) ;
     	 }
