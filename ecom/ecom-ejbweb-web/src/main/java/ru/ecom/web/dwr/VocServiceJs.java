@@ -23,6 +23,14 @@ public class VocServiceJs {
     public String getNameById(HttpServletRequest aRequest, String aVocName, String aId, String aParentId) throws NamingException, VocServiceException {
         return EntityInjection.find(aRequest).getVocService().getNameById(aId, aVocName, new VocAdditional(aParentId)) ;
     }
+    public boolean checkClaimMessage (HttpServletRequest aRequest, Long aClaimId, Long aStatus) throws NamingException {
+    	String sql = "update Claim set completeConfirmed = '"+aStatus+"' where id = "+aClaimId;
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	service.executeUpdateNativeSql(sql) ;
+    	return true;
+  
+    }
+    
     public boolean checkMessage(HttpServletRequest aRequest, Long aIdMessage) throws NamingException {
     	ILoginService serviceLogin = Injection.find(aRequest).getService(ILoginService.class) ;
     	serviceLogin.checkMessage(aIdMessage) ;
