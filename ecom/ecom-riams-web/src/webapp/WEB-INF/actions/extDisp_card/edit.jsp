@@ -168,7 +168,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			if (aDate!=null && aDate!='' && $('workFunction').value!=null && $('workFunction').value!=0) {
 				ExtDispService.checkDispService(aDate, 0,$('patient').value, $('workFunction').value,{
 					callback: function(aResult) {
-						if (aResult.startsWith("1")) {
+						if (aResult.substring(0,1)=="1") {
 							if (!confirm("ВНИМАНИЕ!\n"+aResult.substring(1)+".\nВы хотите продолжить?")){
 								document.getElementById('submitButton').disabled=false;
 								document.getElementById('submitButton').value='Создать';
@@ -177,7 +177,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 								document.forms['extDisp_cardForm'].action=oldaction ;
 	    						document.forms['extDisp_cardForm'].submit();
 							}
-						} else if (aResult.startsWith("2")) {
+						} else if (aResult.substring(0,1)=="2") {
 							alert ("Внимание! Дубль!\n "+aResult.substring(1)+" . \nСоздание карты невозможно.");
 							document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
