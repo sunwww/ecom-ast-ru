@@ -26,7 +26,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("КЛАДР")
 @Table(schema="SQLUser")
-@AIndexes(@AIndex(unique = true, properties = "KladrCode"))
+@AIndexes(@AIndex( properties = "KladrCode"))
 @NamedQueries({
 @NamedQuery(name = "kladr.findByKladrcode"
         , query = "from Kladr where kladrcode=:code"
