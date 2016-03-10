@@ -18,7 +18,27 @@
         <tags:template_menu currentAction="prescriptions"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityParentView-pres_template.do" idField="id" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543" navigationAction="js-pres_template-listTemplate.do">
+  	<msh:toolbar >
+			                	<tbody>
+			                		<msh:toolbar>
+			                		<form >
+			                			<table>
+				                		<msh:row>
+										    <td colspan="1" class='label'>
+										    <input type='checkbox' name='findByUsername' id='findByUsername' onClick='javascript:document.location.href="js-pres_template-listTemplate.do?findByUsername="+this.checked'>
+										    </td>
+										    <td colspan=3 class='findByUsernameLabel'>
+											    <label id='findByUsernameLabel' for="findByUsername"> Отображать только свои шаблоны </label>
+										    
+										    </td>
+					     				</msh:row>
+
+				                		</table>
+				                		</form>
+			                		</msh:toolbar>
+			                	</tbody>
+		  	</msh:toolbar>
+    <msh:table name="list" action="entityParentView-pres_template.do" idField="id" guid="3c4adc65-cfce-4205-a2dd-91ba8ba87543" navigationAction="js-pres_template-listTemplate.do?findByUsername=${findByUsername}">
       <msh:tableColumn columnName="Название" property="name" />
       <msh:tableColumn columnName="Комментарии" property="comments" guid="5c893448-9084-4b1a-b301-d7aca8f6307c" cssClass="preCell"/>
       <msh:tableColumn columnName="Владелец" property="workFunctionInfo" guid="44482100-2200-4c8b-9df5-4f5cc0e3fe68" />
@@ -26,6 +46,14 @@
       <msh:tableColumn columnName="Создан" property="createUsername" guid="715694de-3af4-4395-b777-2cb19bdbcf62" />
     </msh:table>
     <tags:templatePrescription record="2" parentId="0" name="new" />
+  </tiles:put>
+  <tiles:put type="string" name="javascript">
+  <script type="text/javascript">
+  if (+'${findByUsername}'>0) {
+	  $('findByUsername').checked=true ;
+  }
+  
+  </script>
   </tiles:put>
 </tiles:insert>
 
