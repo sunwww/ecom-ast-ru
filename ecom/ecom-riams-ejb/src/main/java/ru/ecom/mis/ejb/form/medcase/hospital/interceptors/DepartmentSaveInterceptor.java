@@ -53,9 +53,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		manager.createNativeQuery(sqlupdate.toString())
 			.setParameter("parent", form.getId())
 			.executeUpdate() ;
-		setDiagnosis(manager, form.getId(), new StringBuilder().append(form.getClinicalMkb()).append("@#@ @#@").append(form.getClinicalDiagnos()).toString(), "4", "1") ;
-		setDiagnosis(manager, form.getId(), form.getComplicationDiags(), "4", "4") ;
-		setDiagnosis(manager, form.getId(), form.getConcomitantDiags(), "4","3") ;
+		
 		
 	}
     public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority) {
@@ -77,6 +75,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     					.setParameter("idc10", Long.valueOf(serv[0])).executeUpdate() ;
     					
     				} else {
+    					
     					aManager.createNativeQuery("insert into Diagnosis (name,idc10_id,medCase_id,priority_id,registrationType_id) values (:name,'"+serv[0]+"','"+aMedCase+"','"+vocPrior.getId()+"','"+vocDRT.getId()+"')")
     					.setParameter("name", serv[2]) 
     						.executeUpdate() ;
