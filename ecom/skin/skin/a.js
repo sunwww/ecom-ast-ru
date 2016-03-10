@@ -5154,7 +5154,7 @@ function goToPage(aPage,aId,aTableCell) {
 	    		func = func + "," ;
 	    	} 
 	    	event(func+"'"+aId+"','"+aTableCell+"')") ;
-	    	alert(func+"'"+aId+"'"+")");
+	    	//alert(func+"'"+aId+"'"+")");
     	}
     } else {
     	var delim = aPage.indexOf('?')==-1 ? '?' : '&' ;
@@ -5204,12 +5204,9 @@ var funcemergencymessage = {
 		}
 }
 function viewEmergencyUserMessage(aJsonId) {
-	//alert(aJsonId) ;
 	var fldJson = JSON.parse(aJsonId) ;
-	//alert(fldJson) ;
 	var cnt = fldJson.params.length ;
 	var txt="";var ids = "" ;
-	//alert(cnt) ;
 	if (cnt>0) {
 	    for (var ind=0;ind<cnt;ind++) {
 	    	var param = fldJson.params[ind] ;
@@ -5235,6 +5232,15 @@ function hideUserMessage(aId) {
     } ) ;
 
 }
+
+function checkClaimMessage (aId, aStatus) {
+	VocService.checkClaimMessage(aId, aStatus, {
+		callback: function (aResult) {
+			if ($('claimMessageContainer'+aId)) { $('claimMessageContainer'+aId).style.display='none'; }
+		}
+	});
+}
+
 function checkUserMessage(aId) {
 	VocService.checkMessage(aId, {
         callback: function(aName) {
