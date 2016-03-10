@@ -443,20 +443,21 @@ public class TicketServiceJs {
 	}
 	public String isEditCheck(Long aIdTicket, Long aDoctor, HttpServletRequest aRequest) throws Exception {
     	IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
-    	IWorkerService servWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
-    	String funcs = servWorker.getWorkFunctions(aDoctor) ;
-    	String[] workFunctions = funcs.split(",") ;
-		boolean isEditUser = false ; 
-		for (String work:workFunctions) {
-    		isEditUser = checkUser(aIdTicket, Long.valueOf(work), aRequest) ;
+    	IWebQueryService serviceWQ = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String userCur=TemplateProtocolJs.getUsername(aRequest) ;
+    	StringBuilder sql =new StringBuilder().append("select wf.id from WorkFunction wf " +
+    			"left join Worker w on w.id=wf.worker_id " +
+    			"left join SecUser su on su.id=wf.secuser_id where su.login='").append(userCur).append("'") ;
+    	Collection<WebQueryResult> workFunctions = serviceWQ.executeNativeSql(sql.toString()) ;
+		boolean isEditUser = !RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit",aRequest) ; ;
+		if (!isEditUser) {
+		for (WebQueryResult work:workFunctions) {
+    		isEditUser = checkUser(aIdTicket,aDoctor, ConvertSql.parseLong(work.get1()), aRequest) ;
     		if (isEditUser) break ;
     	}
-
-		
-		System.out.println("isEditUser="+isEditUser) ;
+		}
 		if (isEditUser) {
 			boolean isClosedPeriod = checkPermission(service, "ShortMedCase", "dateClosePeriod", aIdTicket, aRequest) ;
-			System.out.println("isClosedPeriod="+isClosedPeriod) ;
 			if (isClosedPeriod) {
 				boolean isEditClose = checkPermission(service, "ShortMedCase", "editDataClosePeriod", aIdTicket, aRequest); 
 				System.out.println("isEditClose="+isEditClose) ;
@@ -465,30 +466,24 @@ public class TicketServiceJs {
 				return "1" ;
 			}
 		}
-    	return "0#У Вас стоит ограничение на редактрование данного протокола!" ;
+    	return "0#У Вас стоит ограничение на редактрование данного талона!" ;
 	}
     	
 	public boolean checkCreateDoubleBySpecAndDate(HttpServletRequest aRequest) throws Exception {
 		boolean always = RolesHelper.checkRoles("/Policy/Poly/Ticket/IsNotCreateDoubleTicket",aRequest) ;
 		return always ;
 	}
-    private boolean checkUser(Long aIdTicket, Long aDoctor, HttpServletRequest aRequest) throws Exception {
-    	boolean always = RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit",aRequest) ;
-    	if (always) {
-    		IWorkerService servWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
-        	String userByDoc = servWorker.getUsernameByWorkFunction(aDoctor) ;
-        	String userCur=TemplateProtocolJs.getUsername(aRequest) ;
-        	if (userByDoc==null||userByDoc.equals("") || userCur.equals(userByDoc)) {
-            	return true ;
-            } else {
-            	//HashMap param = new HashMap() ;
-            	//long res1 ;
-            	//Object res ;
-            	IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
-            	return checkPermission(service, "Ticket", "editOtherUser", aIdTicket, aRequest) ;
-            }
-    	}
-    	return true ;
+    private boolean checkUser(Long aIdTicket,Long aDoctorExecute, Long aDoctorCur
+    		, HttpServletRequest aRequest) throws Exception {
+    	
+		if (aDoctorExecute==null||aDoctorExecute.intValue()==0
+				||aDoctorCur.intValue()==aDoctorExecute.intValue()) {
+        	return true ;
+        } else {
+        	IScriptService service = (IScriptService)Injection.find(aRequest).getService("ScriptService") ;
+        	return checkPermission(service, "Ticket", "editOtherUser", aIdTicket, aRequest) ;
+        }
+    	
     }
     public static boolean checkPermission(IScriptService aService, String aObject, String aPermission,  Long aIdTicket, HttpServletRequest aRequest) throws Exception {
     	HashMap<String, Comparable> param = new HashMap<String, Comparable>() ;

@@ -152,9 +152,9 @@
       	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 
       	// 3. Номер node в добавленной услуге 4. Обяз.поля да-1 нет-2 
       	// 5. наим. поля в форме 6. очищать поле в форме при добавление да-1, нет-0 
-  		var theFld = [['Услуга','Service',1,1,1,'medService',1],['Специалист','WF',1,3,1,'workFunctionExecute',1]
-			,['МКБ','Idc',1,5,1,'idc10',1],['Дата','Date',2,7,1,'dateStart',1],['Кол-во','Amount',2,9,1,'medServiceAmount',1]
-  			,['Поток обслуживания','ServiceStream',1,11,1,'serviceStream',1]] ;
+  		var theFld = [['Услуга','Service',1,1,1,'medService',0],['Специалист','WF',1,3,1,'workFunctionExecute',0]
+			,['МКБ','Idc',1,5,1,'idc10',0],['Дата','Date',2,7,1,'dateStart',1],['Кол-во','Amount',2,9,1,'medServiceAmount',0]
+  			,['Поток обслуживания','ServiceStream',1,11,1,'serviceStream',0]] ;
       	function addRow (aService,aServiceName,aWF,aWFName,aIdc,aIdcName,aDate,aAmount,aServiceStream,aServiceStreamName) {
       		var table = document.getElementById('otherMedServices');
       		var row = document.createElement('TR');

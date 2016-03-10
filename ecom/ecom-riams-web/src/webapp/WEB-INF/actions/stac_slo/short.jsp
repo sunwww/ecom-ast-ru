@@ -91,21 +91,8 @@
         <msh:row>
         	<msh:autoComplete property="omcStandartExpert" fieldColSpan="6" label="ОМС стандарт (эксперт)" horizontalFill="true" vocName="omcStandart"/>
         </msh:row>
-        <msh:row>
-        	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="3" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
-        </msh:row>
-        <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
-        <msh:row>
-    	    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
-        <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
-        <msh:row>
-    	    <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>      
+       
+             
         <msh:separator label="Перевод в другое отделение" colSpan="" guid="dd7185d0-e499-4307-9e58-6ef41d83c2b0" />
         <msh:row guid="a3509d1f-9324-4997-a7c3-6ca8f12a9347">
           <msh:textField property="transferDate" label="Дата" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" />
@@ -136,7 +123,39 @@
 
       </msh:panel>
     </msh:form>
-    
+          <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
+      
+		<ecom:webQuery name='diagnosis' nativeSql="select d.id as did, d.establishDate as destablishDate, vrt.name as vrtinfo
+		, vpd.name as vpdname, d.name as dname, mkb.code
+		,vwf.name|| ' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+		,case 
+		when vpd.code='4' then 'color: purple;'
+		when vpd.code='3' then 'color: green;'
+		when vpd.code='1' then 'color: blue;'
+		 end as style
+		from Diagnosis d
+		left join VocDiagnosisRegistrationType vrt on vrt.id=d.registrationType_id
+		left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
+		left join VocIdc10 mkb on mkb.id=d.idc10_id
+		left join WorkFunction wf on wf.id=d.medicalWorker_id
+		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+		left join Worker w on w.id=wf.worker_id
+		left join Patient wp on wp.id=w.person_id
+		where d.medcase_id='${param.id}'
+		order by vpd.code,mkb.code
+		"/>
+		
+        <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>" guid="1f214-8ea0-4b66-a0f3-62713c1">
+          <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d916" styleRow="8">
+          	<msh:tableColumn property="sn" columnName="#"/>
+            <msh:tableColumn columnName="Тип регистрации" property="3" guid="6682eeef-105f-43a0-be61-30a865f27972" />
+            <msh:tableColumn columnName="Приоритет" property="4" guid="6682eeef-12" />            
+            <msh:tableColumn columnName="Наименование" property="5" guid="6682eeef-105f-43a0-be61-30a865f27972" />
+            <msh:tableColumn columnName="Код МКБ" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+            <msh:tableColumn columnName="Специалист" property="7" guid="-3392-4978-b31f-5e54ff2e45" />
+          </msh:table>
+        </msh:section>
+      </msh:ifInRole>
     <msh:ifFormTypeIsView formName="stac_sloForm" guid="48eb9700-d07d-4115-a476-a5a5e">
       <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="932601e0-0d99-4b63-8f44-2466f6e91c0f">
         <msh:section title="Дневники специалистов (последние 50). 
@@ -145,14 +164,7 @@
         <a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stAll=selected'>Печать (весь список)</a>&nbsp;&nbsp;
         <a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stNoPrint=selected'>Печать (список нераспеч.)</a>
         " guid="1f21294-8ea0-4b66-a0f3-62713c1">
-          <%--
-<ecom:parentEntityListAll formName="smo_visitProtocolForm" attribute="protocols" guid="30260c-7369-4ec7-a67c-882abcf" />          
-          <msh:table hideTitle="true" idField="id" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
-            <msh:tableColumn columnName="Дата" property="dateRegistration" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
-            <msh:tableColumn columnName="Время" property="timeRegistration" guid="b85b1cb-4320-aa85-014d26" cssClass="preCell" />
-            <msh:tableColumn columnName="Запись" property="record" guid="bd2fe4-b1cb-4320-aa85-02bd26" cssClass="preCell" />
-            <msh:tableColumn columnName="Специалист" property="specialistInfo" guid="bd2fe4-b1cb-4320-aa85-02bd26" cssClass="preCell" />
-          </msh:table>--%>
+         
       <ecom:webQuery maxResult="50" name="protocols"  nativeSql="
       select d.id as did, d.dateRegistration as ddateRegistration
       , d.timeRegistration as dtimeRegistration, d.record as drecord 
@@ -179,46 +191,7 @@
         </msh:section>
         
       </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
-       <%--  <ecom:parentEntityListAll formName="stac_diagnosisForm" attribute="diagnosis" guid="302c-7369-4ec7-a67c-882abcf" />
-		--%>
-		<ecom:webQuery name='diagnosis' nativeSql="select d.id as did, d.establishDate as destablishDate, vrt.name as vrtinfo
-		, vpd.name as vpdname, d.name as dname, mkb.code
-		,vwf.name|| ' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
-		from Diagnosis d
-		left join VocDiagnosisRegistrationType vrt on vrt.id=d.registrationType_id
-		left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
-		left join VocIdc10 mkb on mkb.id=d.idc10_id
-		left join WorkFunction wf on wf.id=d.medicalWorker_id
-		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-		left join Worker w on w.id=wf.worker_id
-		left join Patient wp on wp.id=w.person_id
-		where d.medcase_id='${param.id}'
-		"/>
-		<%-- 
-        <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>" guid="1f214-8ea0-4b66-a0f3-62713c1">
-          <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d916">
-            <msh:tableColumn columnName="Дата установления" property="establishDate" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-            <msh:tableColumn columnName="Тип регистрации" property="registrationTypeInfo" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-            <msh:tableColumn columnName="Приоритет" property="priorityDiagnosisText" guid="6682eeef-12" />            
-            <msh:tableColumn columnName="Наименование" property="name" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-            <msh:tableColumn columnName="Код МКБ" property="idc10Text" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-            <msh:tableColumn columnName="Специалист" property="workerInfo" guid="f31b12-3392-4978-b31f-5e54ff2e45" />
-          </msh:table>
-        </msh:section>
-        --%>
-        <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>" guid="1f214-8ea0-4b66-a0f3-62713c1">
-          <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d916">
-          	<msh:tableColumn property="sn" columnName="#"/>
-            <msh:tableColumn columnName="Дата установления" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
-            <msh:tableColumn columnName="Тип регистрации" property="3" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-            <msh:tableColumn columnName="Приоритет" property="4" guid="6682eeef-12" />            
-            <msh:tableColumn columnName="Наименование" property="5" guid="6682eeef-105f-43a0-be61-30a865f27972" />
-            <msh:tableColumn columnName="Код МКБ" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
-            <msh:tableColumn columnName="Специалист" property="7" guid="-3392-4978-b31f-5e54ff2e45" />
-          </msh:table>
-        </msh:section>
-      </msh:ifInRole>
+
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View">
           <ecom:webQuery name="allSurgOper" nativeSql="select so.id
           ,so.operationDate as sooperationDate,so.operationTime as soperationTime,coalesce(vo.code,'')||' '||vo.name as voname

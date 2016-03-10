@@ -604,7 +604,7 @@
       			}
       		}
             } else {
-            	alert("Заполнены не все поля по диагноза!!");
+            	alert("Заполнены не все поля диагноза!!");
             }
          }
         //alert(document.getElementById('othercomplicationDiagsTable').childNodes.childNodes[0].childNodes[4].value);

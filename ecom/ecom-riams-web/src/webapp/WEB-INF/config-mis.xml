@@ -499,6 +499,12 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/contract_contractAccountMedService/add.jsp" />
         </action>
+        <action path='/contract_accountCreationByJurPerson' type='ru.ecom.mis.web.action.contract.ContractAccountCreationAction'
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="false" path="/entityView-contract_juridicalContract.do" />
+        </action>
         <action path='/contact_analisis_no_accrual' type='ru.ecom.web.actions.base.ForwardAction'
                 validate='false'
                 scope="request"
@@ -631,6 +637,12 @@
 		</action>
 
 
+		<action path='/default_message_update'
+			type='ru.ecom.jaas.web.action.service.ServiceAfterUpdateAction' validate='false'
+			scope="request">
+			<forward name="success" redirect="false"
+				path="/mis_patients.do" />
+		</action>
 		<action path='/start'
 			type='ru.ecom.web.actions.base.ForwardAction' validate='false'
 			scope="request">

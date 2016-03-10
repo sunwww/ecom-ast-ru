@@ -479,6 +479,17 @@
   </script>
   </msh:ifFormTypeIsCreate>
   <msh:ifFormTypeIsNotView formName="smo_ticketForm">
+  <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
+  <script type="text/javascript">
+  	try{
+  		ambulanceAutocomplete.addOnChangeCallback(function() {
+  			if (+$('ambulance').value>0) $('emergency').checked=true;
+  		});
+  	} catch(e) {
+  		
+  	}
+  </script>
+  </msh:ifInRole>
   <script type="text/javascript">
    TicketService.getWorkFunction(
     		 {

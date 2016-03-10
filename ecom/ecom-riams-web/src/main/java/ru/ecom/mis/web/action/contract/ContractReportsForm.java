@@ -82,4 +82,11 @@ public class ContractReportsForm extends BaseValidatorForm{
 
 	/** Номер контракта */
 	private String theContractNumber;
+	
+	/** Тип юрид. персоны */
+	public Long getJuridicalPersonType() {return theJuridicalPersonType;}
+	public void setJuridicalPersonType(Long aJuridicalPersonType) {theJuridicalPersonType = aJuridicalPersonType;}
+
+	/** Тип юрид. персоны */
+	private Long theJuridicalPersonType;
 }

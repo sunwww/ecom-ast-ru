@@ -87,7 +87,7 @@
         </msh:ifInRole>
         </msh:ifFormTypeIsNotView>
         <msh:row guid="6898ae03-16fe-46dd-9b8f-8cc25e19913b">
-          <msh:separator label="Дополнительные параметры (необходимы для справки о стоимости МО)" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
+          <msh:separator label="Дополнительные параметры" colSpan="4" guid="314f5445-a630-411f-88cb-16813fefa0d9" />
         </msh:row>
 
         <msh:row guid="a970fa32-6038-4e0b-a0a8-c57b5ebd3a04">

@@ -62,13 +62,6 @@
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="62fd4ce0-85b5-4661-87b2-fea2d4fb7339">
         <msh:sideLink roles="/Policy/Poly/ShortTicket/View" key="SHIFT+8" params="id" action="/print-ticketshort.do?s=PrintTicketService&amp;m=printInfo&amp;next=entityParentView-smo_short_ticket.do__id=${param.id}&noView=1t&id=${param.id}" name="Талон" title="Печатать талон" />
-        <msh:sideLink roles="/Policy/Poly/ShortTicket/View" params="id" action="/print-ticketshort_ref.do?s=PrintTicketService&amp;m=printInfo&amp;next=entityParentView-smo_short_ticket.do__id=${param.id}&noView=1t&id=${param.id}" name="Талон и справка о стоимости пустая" title="Печатать талон и справку о стоимости пустую " />
-         <msh:sideLink roles="/Policy/Poly/ShortTicket/View" name="Справка о стоимости 1 вариант"	action='.javascript:printReference("",".do")' title='Печать справки'
-    	/>
-         <msh:sideLink roles="/Policy/Poly/ShortTicket/View" name="Справка о стоимости 2 вариант" action='.javascript:printReference("_f5",".do")' title='Печать справки'
-    	/>
-        <msh:sideLink roles="/Policy/Poly/ShortTicket/View" name="Справка о стоимости без указания услуг" action='.javascript:printReference("_empty",".do")' title='Печать справки'
-    	/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
@@ -97,7 +90,6 @@
     			
     			}
     		);
-    		//print-discharge_reference.do?m=printReference&s=HospitalPrintService
     	}
       	
       	</script>
