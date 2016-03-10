@@ -172,9 +172,10 @@ function onSave(aForm, aEntity, aContext) {
 		aEntity.prevMedCase.transferTime = aEntity.entranceTime ;
 		aEntity.prevMedCase.transferDepartment = aEntity.department ;
 	}
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, form.getId(), new StringBuilder().append(form.getClinicalMkb()).append("@#@ @#@").append(form.getClinicalDiagnos()).toString(), "4", "1") ;
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, form.getId(), form.getComplicationDiags(), "4", "4") ;
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, form.getId(), form.getConcomitantDiags(), "4","3") ;
+	//throw  "--"+aForm.getId() ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString(), "4", "1") ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getComplicationDiags(), "4", "4") ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getConcomitantDiags(), "4","3") ;
 }
 
 // Перед удалением
