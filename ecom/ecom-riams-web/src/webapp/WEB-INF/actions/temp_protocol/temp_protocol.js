@@ -30,5 +30,6 @@ function getIsFindByUser(aCtx) {
 		}
 	}
 	aCtx.request.setAttribute("findByUsername",isUsername) ;
+	aCtx.request.setAttribute("findByUsernameC",isUsername>0?"true":"false") ;
 	return isUsername ;
 }
