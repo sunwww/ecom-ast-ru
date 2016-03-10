@@ -520,7 +520,7 @@
       	function check_diags() {
       		var list_diag = ["complication","concomitant"] ;
       		for (var i=0;i<list_diag.length;i++) {
-      			addDiag(list_diag[i],1)
+      			addDiag(list_diag[i],1);
       			createOtherDiag(list_diag[i]);
       		}
       		document.forms[0].action=old_action ;
