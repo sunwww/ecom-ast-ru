@@ -101,7 +101,7 @@ public class PatientServiceBean implements IPatientService {
 							" else (select count(att.id) from lpuattachedbydepartment att where (att.patient_id="+aPatientId+
 							" and att.attachedtype_id=(select id from vocattachedtype where code='"+aAttachedType+"')" +
 							" and att.dateFrom=to_date('"+aAttachedDate+"','dd.MM.yyyy')and att.dateTo is null" +
-							" and (select max(sc.keyvalue) from softconfig sc where sc.ey='DEFAULT_LPU_OMCCODE')='"+aLpuAttached+"')) end";
+							" and (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')='"+aLpuAttached+"')) end";
 							//System.out.println("=========== aSQL = "+aSql);
 					Object a = theManager.createNativeQuery(aSql).getSingleResult();
 					if (a.toString().equals("0")) {isDifference = true;}
@@ -511,11 +511,7 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsDocumentUpdate(false);}
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
-				if (aDocType.equals("3"));{
-				//System.out.println("------------- UPDATE SQL STRING FIO = "+aLastname+" "+ aFirstname+" "+aMiddlename);
-				//System.out.println("------------- UPDATE SQL STRING = "+str.toString());
-				}
-				
+								
 				System.out.println ("UpdatePatient = "+theManager.createNativeQuery(str.toString()).executeUpdate());
 			}
 			if (needUpdatePolicy) {
@@ -617,9 +613,8 @@ public class PatientServiceBean implements IPatientService {
 		VocAttachedType attType = (VocAttachedType) (!theManager.createQuery("from VocAttachedType where code=:code")
 			.setParameter("code", attachedType).getResultList().isEmpty()?theManager.createQuery("from VocAttachedType where code=:code")
 			.setParameter("code", attachedType).getResultList().get(0):null);
-		
+		System.out.println("check no create att_area === Patient = "+aPatientId+", AreaId = "+areaId);
 		if (attachments.isEmpty()) { // Создаем новое 
-			String defauleLpuId = null;
 			MisLpu lpuAtt = null;
 			
 			if (la!=null) {
@@ -639,7 +634,8 @@ public class PatientServiceBean implements IPatientService {
 					att.setCompany(insCompany);
 					att.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
 					att.setCreateUsername("fond_check");
-					if (la!=null) att.setArea(la);
+					System.out.println("=== Почему же не проставляется участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+					if (la!=null) {att.setArea(la);}
 					theManager.persist(att);
 				} catch (ParseException e) {
 					System.out.println("Дата не распознана "+attachedDate);
