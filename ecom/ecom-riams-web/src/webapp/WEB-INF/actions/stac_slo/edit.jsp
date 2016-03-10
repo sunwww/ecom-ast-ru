@@ -16,17 +16,26 @@
             #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel,#mkbAdcLabel {
                 color: blue ;
             }
-            #concomitantDiagnosLabel, #concomitantMkbLabel {
+            #concomitantDiagnosLabel, #concomitantMkbLabel, .concomitantDiags {
                 color: green ;
             }
 
             #concludingDiagnosLabel, #concludingMkbLabel {
                 color: black ;
             }
+            #complicationDiagnosLabel, #complicationMkbLabel, .complicationDiags {
+                color: purple;
+            }
+            
             #pathanatomicalDiagnosLabel, #pathanatomicalMkbLabel {
                 color: red ;
             }
-
+            .otherTable {
+            	width:99% ;
+            }
+            .otherTable tr {
+            	border: 1px solid ;
+            }
         </style>
     </tiles:put>
   <tiles:put name="side" type="string">
@@ -49,9 +58,7 @@
         </msh:ifNotInRole>
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/Create" name="Диагноз" params="id" action="/entityParentPrepareCreate-stac_diagnosis" title="Диагноз" guid="c3e59a04-8858-4523-9370-74b16ec784e6" />
         <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript:showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />
-        <%-- <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист" params="id" action="/entityParentPrepareCreate-stac_temperatureCurve" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" /> --%>
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист"  action="/javascript:showNewCurve()" title="Добавить температурный лист" guid="df23-45a-43cc-826d-5hfd" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" name="Услугу" params="id" action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23-45a26d-5hfd" />
 
       <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id" action="/entityParentPrepareCreate-trans_blood" name="Переливание донорской крови и её компонентов" title="Добавить донорской крови и её компонентов" />
       <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id" action="/entityParentPrepareCreate-trans_other" name="Переливание кровезамещающих растворов" title="Добавить переливание кровезамещающих растворов" />
@@ -74,7 +81,7 @@
         <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" name="Диагнозы" params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы СЛО" guid="4ac8c095-3853-4150-9e4a-d01b4abc8061" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневники специалистов" params="id" action="/entityParentList-smo_visitProtocol" title="Показать все дневники специалиста" guid="d43123-45ca-43cc-826d-bc85" />
         <msh:sideLink name="Температурные листы" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы" guid="df23-45ca-43cc-826d-5hf5dd" params="id" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Услуги" params="id" action="/entityParentList-smo_medService" title="Показать все услуги" guid="df23-45a26d-5hfd" />
+        <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Услуги" styleId="viewShort"  action="/javascript:getDefinition('entityParentList-smo_medService.do?short=Short&id=${param.id}')" title="Показать все услуги" guid="df23-45a26d-5hfd" />
         
         <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/View" name="Переливание"     
     	params="id"  action='/entityParentList-trans_transfusion'  key='Alt+8' 
@@ -90,21 +97,11 @@
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
       </msh:sideMenu>
-      <tags:temperatureCurve name="New" />
       <msh:sideMenu title="Печать">
       
       	<tags:stac_documentsPrint name="Docum" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" title="Документов" medCase="${param.id}"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневников по СЛО" action="/printProtocolsBySLO.do?stAll=selected&medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
-      	<%--<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" name="Согласие на установку имплантанта" action="/print-consentImplant.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentOperation" name="Согласие на медицинское (операционное) вмешательство" action="/print-consentOperation.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentTransfusion" name="Согласие на переливание крови" action="/print-consentTransfusion.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentTreatment" name="Согласие с обшим планом лечения и обследования" action="/print-consentTreatment.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionIntervention" name="Отказ от медицинского лечения" action="/print-rejectionIntervention.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionIntervention1" name="Отказ от стац. лечения" action="/print-rejectionIntervention1.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/RejectionOperation1" name="Отказ от операции" action="/print-rejectionOperation1.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/DirectVK" name="Направление на ВК" action="/print-directVK.do?s=HospitalPrintService&m=printConsentBySlo&id=${param.id}" params="id"/>
-      	 --%>
       </msh:sideMenu>
       </msh:ifNotInRole>
       <msh:sideMenu title="Администрирование">
@@ -146,7 +143,7 @@
       <msh:hidden property="transferTime"/>
       <msh:hidden property="transferDepartment"/>
       <msh:hidden property="targetHospType"/>
-      <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="5%,5%,5%">
+      <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="5%,5%,5%,75%,5%,5%">
       <msh:ifFormTypeAreViewOrEdit formName="stac_sloForm">
       	<msh:row >
       		<msh:label property="statCardBySLS" label="Номер стат.карты" labelColSpan="1"/>
@@ -176,13 +173,10 @@
         </msh:row>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="9b781235-66ad-4f9d-991b-afb9aedfb7a8">
-          <%-- <msh:textField label="№палаты" property="roomNumber" guid="fff1dd1d-b7a5-4fe2-899b-3292ec9f3fad" /> --%>
           <msh:autoComplete property="roomNumber" vocName="hospitalRoomByLpu" label="№палаты" parentId="stac_sloForm.department"/>
           <msh:autoComplete property="bedNumber" vocName="hospitalBedByRoom" label="№ койки" parentAutocomplete="roomNumber"/>
-          <%-- <msh:autoComplete property="roomType" vocName="vocRoomType" label="Тип палаты" horizontalFill="true"/> --%>
          </msh:row>
          <msh:row>
-         <%-- <msh:textField label="№ койки" property="bedNumber" guid="ed0d86e6-71b9-44f6-9c3a-213f5e8465c8" />  --%>
         </msh:row>
         </msh:ifNotInRole>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
@@ -217,25 +211,49 @@
         	<msh:autoComplete property="methodHighCare" parentAutocomplete="kindHighCare" fieldColSpan="6" label="Метод ВМП" horizontalFill="true" vocName="vocMethodHighCare"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="3" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
+        	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="6" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
         </msh:row>
         <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="3" horizontalFill="true"/>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="6" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-    	    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
+    	    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="6" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="mkbAdc" vocName="vocMkbAdc" parentAutocomplete="clinicalMkb" label="Доп.код клин.диаг." fieldColSpan="3" horizontalFill="true"/>
+        	<msh:autoComplete property="mkbAdc" vocName="vocMkbAdc" parentAutocomplete="clinicalMkb" label="Доп.код клин.диаг." fieldColSpan="6" horizontalFill="true"/>
+        </msh:row>
+        <msh:hidden property="complicationDiags"/>
+        	<msh:hidden property="concomitantDiags"/>
+        <msh:ifFormTypeIsNotView formName="stac_sloForm">
+                <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="6" horizontalFill="true"/>
+        </msh:row>
+
+        <msh:row>
+    	    <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="5" horizontalFill="true"/>
+    	    <td><input type="button" value="+ диагноз" onclick="addDiag('concomitant')"/></td>
+        </msh:row>
+        </msh:ifFormTypeIsNotView>
+        <tr><td colspan="7">
+        <table class="otherTable" id='otherconcomitantDiagsTable'></table>
+        </td></tr>   
+        <msh:ifFormTypeIsNotView formName="stac_sloForm">     
+        <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.осл." property="complicationMkb" fieldColSpan="6" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
+    	    <msh:textField label="Клин. диаг. осл." property="complicationDiagnos" fieldColSpan="5" horizontalFill="true"/>
+    	    <td><input type="button" value="+ диагноз" onclick="addDiag('complication')"/></td>
         </msh:row>
-        <msh:row>
-    	    <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>      
+        </msh:ifFormTypeIsNotView>
+                <msh:row><td colspan="7">
+        <table class="otherTable" id='othercomplicationDiagsTable'></table>
+        </td></msh:row>        
+        
         <msh:ifFormTypeIsView formName="stac_sloForm">
-        <msh:separator label="Перевод в другое отделение" colSpan="" guid="dd7185d0-e499-4307-9e58-6ef41d83c2b0" />
+        <msh:row>
+        <msh:separator label="Перевод в другое отделение" colSpan="6" guid="dd7185d0-e499-4307-9e58-6ef41d83c2b0" />
+        </msh:row>
         <msh:row guid="a3509d1f-9324-4997-a7c3-6ca8f12a9347">
           <msh:textField viewOnlyField="true"  property="transferDate" label="Дата" guid="f8f5c912-00b8-4fd8-87b9-abe417212d78" />
           <msh:textField viewOnlyField="true" property="transferTime" label="Время" guid="c04ab410-42df-4f5b-b365-b4acf17a2616" />
@@ -286,8 +304,10 @@
 	}
     %>
     <msh:ifFormTypeIsView formName="stac_sloForm" guid="48eb9700-d07d-4115-a476-a5a5e">
+          <tags:temperatureCurve name="New"  />
+    
     <tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
-    ${lpu_wf}
+    
       <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View" guid="932601e0-0d99-4b63-8f44-2466f6e91c0f">
         <msh:section title="Дневники специалистов (последние 50). 
         <a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id }'>Добавить</a>&nbsp;&nbsp;
@@ -351,6 +371,11 @@
        <ecom:webQuery name='diagnosis' nativeSql="select d.id as did, d.establishDate as destablishDate, vrt.name as vrtinfo
 		, vpd.name as vpdname, d.name as dname, mkb.code
 		,vwf.name|| ' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+		,case 
+		when vpd.code='4' then 'color: purple;'
+		when vpd.code='3' then 'color: green;'
+		when vpd.code='1' then 'color: blue;'
+		 end as style
 		from Diagnosis d
 		left join VocDiagnosisRegistrationType vrt on vrt.id=d.registrationType_id
 		left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
@@ -360,13 +385,13 @@
 		left join Worker w on w.id=wf.worker_id
 		left join Patient wp on wp.id=w.person_id
 		where d.medcase_id='${param.id}'
+		order by vpd.code,mkb.code
 		"/>
 		
         
         <msh:section title="Диагнозы. <a href='entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }'> Добавить новый диагноз</a>" guid="1f214-8ea0-4b66-a0f3-62713c1">
-          <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d916">
+          <msh:table name="diagnosis" action="entityParentView-stac_diagnosis.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d916" styleRow="8">
           	<msh:tableColumn property="sn" columnName="#"/>
-            <msh:tableColumn columnName="Дата установления" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
             <msh:tableColumn columnName="Тип регистрации" property="3" guid="6682eeef-105f-43a0-be61-30a865f27972" />
             <msh:tableColumn columnName="Приоритет" property="4" guid="6682eeef-12" />            
             <msh:tableColumn columnName="Наименование" property="5" guid="6682eeef-105f-43a0-be61-30a865f27972" />
@@ -481,7 +506,158 @@
     <ecom:titleTrail mainMenu="Patient" beginForm="stac_sloForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  <script type="text/javascript">
+  var slo_form_is_view = 0 ;
+  </script>
   <msh:ifFormTypeIsView formName="stac_sloForm">
+  <script type="text/javascript">
+  slo_form_is_view = 1 ;
+  </script>
+  </msh:ifFormTypeIsView>
+      	<script type="text/javascript"> 
+      	var old_action = document.forms[0].action ; 
+      	document.forms[0].action="javascript:check_diags()" ; 
+      	function check_diags() {
+      		var list_diag = ["complication","concomitant"] ;
+      		for (var i=0;i<list_diag.length;i++) {
+      			addDiag(list_diag[i],1)
+      			createOtherDiag(list_diag[i]);
+      		}
+      		document.forms[0].action=old_action ;
+      		document.forms[0].submit() ;
+      	}
+      	onload=function(){
+      		
+      		var list_diag = ["complication","concomitant"] ;
+      		for (var j=0;j<list_diag.length;j++) {
+      			
+               		if ($(list_diag[j]+'Diags').value!='') {
+                        var addRowF="";
+                        var ind_f=0 ;
+                  		for (var i=0;i<theFld.length;i++) {
+                  			addRowF+="ar["+(ind_f++)+"],"
+                  			if (theFld[i][2]==1) {
+                  				addRowF+="ar["+(ind_f++)+"],"
+                  			}
+                  		}
+                		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+                        addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+");"
+                        
+                  		var arr = $(list_diag[j]+'Diags').value.split("#@#");
+                  		for (var i=0;i<arr.length;i++) {
+                  			var ar=arr[i].split("@#@") ;
+                  			//alert(addRowF);
+                              eval(addRowF) ;
+                  		}
+                  	}
+                    
+            }
+	        	
+        }
+      	
+        function addDiag(aDiagType,aCheck) {
+            var addRowF="";
+            var isCheckReq =true ;
+      		for (var i=0;i<theFld.length;i++) {
+      			var fld_i = theFld[i] ;
+  				eval("var "+fld_i[1]+"=$('"+aDiagType+fld_i[5]+"').value;");
+      			var fld_i = theFld[i] ;addRowF+=fld_i[1]+","
+      			
+      			if (fld_i[2]==1) {
+      				eval("var "+fld_i[1]+"Name=$('"+aDiagType+fld_i[5]+"Name').value;");
+      				eval("if ("+fld_i[1]+">0) {} else {isCheckReq=false ;}") ;
+          			addRowF+=fld_i[1]+"Name," ;
+      			} else {
+      				eval("if ("+fld_i[1]+".length>0) {} else {isCheckReq=false ;}") ;
+      			}
+      		}
+    		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+            addRowF="addRowDiag('"+aDiagType+"',"+addRowF+");"
+      		
+            if (isCheckReq) {
+            	var servs = document.getElementById('other'+aDiagType+"DiagsTable").childNodes;
+                  var l = servs.length;
+                  for (var i=1; i<l;i++) {
+                	  
+                	  var isCheckDouble = (+$(aDiagType+theFld[0][5]).value 
+                			  == +servs[i].childNodes[0].childNodes[theFld[0][3]].value)?false:true ;
+                	 if (!isCheckDouble) {
+                 		 if (+aCheck!=1) {
+                 			 if (confirm("Такой диагноз уже зарегистрирован. Вы хотите его заменить?")) {
+                 			var node=servs[i];node.parentNode.removeChild(node);
+                 		 } else {
+                  			return;
+                  		 } 
+                 		} else {return;}
+                    }                 
+                 }
+            		
+            
+            eval(addRowF) ;
+      		for (var i=0;i<theFld.length;i++) {
+      			var fld_i = theFld[i] ;
+      			if (fld_i[6]==1) {
+	  				eval("$('"+aDiagType+fld_i[5]+"').value='';");
+	      			if (fld_i[2]==1) {
+	      				eval("$('"+aDiagType+fld_i[5]+"Name').value='';");
+	      			}
+      			}
+      		}
+            } else {
+            	alert("Заполнены не все поля по диагноза!!");
+            }
+         }
+        //alert(document.getElementById('othercomplicationDiagsTable').childNodes.childNodes[0].childNodes[4].value);
+      	function createOtherDiag(aDiagType) {
+      		var servs = document.getElementById('other'+aDiagType+"DiagsTable").childNodes;
+      		var str = ""; $(aDiagType+"Diags").value='';
+      		for (var i=0;i<servs.length;i++) {
+      			
+      			for (var ii=0;ii<theFld.length;ii++) {
+      				str+=servs[i].childNodes[0].childNodes[theFld[ii][3]].value+"@#@";
+      				if (theFld[ii][2]==1) {
+      					str+=servs[i].childNodes[0].childNodes[theFld[ii][3]+1].value+"@#@";
+      				}
+      			}
+      			str=str.length>0?str.trim().substring(0,str.length-3):"";
+      			str+="#@#" ;
+      		}
+      		str=str.length>0?str.trim().substring(0,str.length-3):"";
+      		$(aDiagType+"Diags").value=str;
+      		
+      	}
+      	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 
+      	// 3. Номер node в добавленной услуге 4. Обяз.поля да-1 нет-2 
+      	// 5. наим. поля в форме 6. очищать поле в форме при добавление да-1, нет-0 
+  		var theFld = [['Код МКБ','Mkb',1,3,1,'Mkb',1],['Наименование','Diagnos',2,8,1,'Diagnos',1]] ;
+      	function addRowDiag(aDiagType,aMkb,aMkbName,aDiagnos) {
+      		var table = document.getElementById('other'+aDiagType+"DiagsTable");
+      		var row = document.createElement('TR');
+      		var td = document.createElement('TD');
+      		var tdDel = document.createElement('TD');
+      		table.appendChild(row);
+      		row.appendChild(td);
+      		var txt ="" ;addText="" ;
+      		if (aDiagType=="complication") {addText="ослож."} else if (aDiagType=="concomitant") {addText="сопут." ;}
+      		for (var i=0;i<theFld.length;i++) {
+      			var fld_i = theFld[i] ;
+      			if (fld_i[2]==1) {
+      				txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+": </label>"+eval("a"+fld_i[1]+"Name")+" <input type='hidden' value='"+eval("a"+fld_i[1])+"'><input type='hidden' value='"+eval("a"+fld_i[1]+"Name")+"'>"
+      			} else if (fld_i[2]==2) {
+      				txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+":  </label><input type='text' style='width:85%' value='"+eval("a"+fld_i[1])+"'>"
+      			}
+      			if (i<theFld.length-1) txt+="<br>" ; 
+      		}
+      		td.innerHTML=txt ;
+      		if (slo_form_is_view==0) {
+	      		row.appendChild(tdDel);
+	      		tdDel.style.width='2%' ;
+	      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\""+aDiagType+"\")' value='- диагноз' />";
+      		}
+      	}
+</script>
+
+<msh:ifFormTypeIsView formName="stac_sloForm">
   	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/Control">
   	<tags:smo_diary_defect name="SMODef" title="Выбор причины редакции дневника" parentID="${param.id}" />
   		<script type="text/javascript">
@@ -554,6 +730,11 @@
   		try {
 	    if (concomitantMkbAutocomplete) concomitantMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('concomitantMkb','concomitantDiagnos');
+	    });} catch(e) {}
+	    try{
+	    if (complicationMkbAutocomplete) complicationMkbAutocomplete.addOnChangeCallback(function() {
+	      	 	setDiagnosisText('complicationMkb','complicationDiagnos');
+	      	 	
 	    });} catch(e) {}
   		function setDiagnosisText(aFieldMkb,aFieldText) {
   			var val = $(aFieldMkb+'Name').value ;
