@@ -33,26 +33,46 @@ public class ExtDispServiceJs {
 		}
 		String res = "";
 		
-		if (isHoliday(aDate)) {res = "2Услуга приходится на выходной день";}
-		if (aDispCardId!=null&& aDispCardId!=0){
+		
+		if (aDispCardId!=null&& !aDispCardId.equals(Long.valueOf(0))){
 			if (isInDispPeriod(aDate, aDispCardId, aRequest)) {res = "1Дата услуги ("+aDate+") выходит за период диспансеризации";}
+		} else {
+			System.out.println("=== Пришло время проверить полис!");
+			if (!isMedPolicyExists(aPatientId,aDate,aRequest)) {
+				res = "2У пациета отсутствует актуальный полис ОМС, создание карты невозможно!";
+			}
 		}
+		if (isHoliday(aDate)) {res = "2Услуга приходится на выходной день";}
 		if (aWorkFunctionId!=null && aWorkFunctionId!=0){
 			if (existDoublesVisit(aDate, aPatientId, aWorkFunctionId, aRequest)) {res = "2У пациента есть посещение к данному специалисту за указанную дату ("+aDate+")";}
 		}
 		if (existDoublesStac (aDate, aPatientId, aRequest)) {res="2Пациент находился в стационаре на эту дату ("+aDate+")";}
-		System.out.println("Res = "+res);
+		
+		// System.out.println("Res = "+res);
 		return res;
 	}
 	
+	public boolean isMedPolicyExists(Long aPatientId, String aDate, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql = "select id from medpolicy where patient_id="+aPatientId+" and dtype='MedPolicyOmc' " +
+				"and (actualdateto is null or to_date('"+aDate+"','dd.MM.yyyy') between actualdatefrom and actualdateto)";
+		Collection <WebQueryResult> wqr = service.executeNativeSql(sql);
+	//	System.out.println("=== Check policy sql = "+sql);
+		if (!wqr.isEmpty()) {
+			if (Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public boolean isHoliday (String aDate) throws ParseException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(ru.nuzmsh.util.format.DateFormat.parseDate(aDate));
 		 if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
-			 System.out.println("is Holiday = true");
+	//		 System.out.println("is Holiday = true");
 			 return true;
 		 }
-		 System.out.println("is Holiday = false");
+		// System.out.println("is Holiday = false");
 		return false;
 	}
 	
@@ -62,7 +82,7 @@ public class ExtDispServiceJs {
 		String str = "select count(edc.id) from extdispcard edc" +
 				" where edc.id=" +aDispCardId+
 				" and to_date('"+aDate+"','dd.MM.yyyy') between edc.startdate and edc.finishdate";
-		System.out.println("isInDispPeriod = "+str);
+	//	System.out.println("isInDispPeriod = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
 		if (!wqr.isEmpty()) {
 			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
@@ -77,7 +97,7 @@ public class ExtDispServiceJs {
 		String str = "select count(sls.id) from medcase sls" +
 				" where (sls.dtype='HospitalMedCase') and sls.patient_id=" +aPatientId+
 				" and (to_date('"+aDate+"','dd.MM.yyyy') between sls.datestart and sls.datefinish or (to_date('"+aDate+"','dd.MM.yyyy')>=sls.datestart and sls.datefinish is null and sls.deniedhospitalizating_id is null))";
-		System.out.println("existDoublesStac = "+str);
+	//	System.out.println("existDoublesStac = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
 		if (!wqr.isEmpty()) {
 			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
@@ -94,7 +114,7 @@ public class ExtDispServiceJs {
 				" where (mc.dtype='ShortMedCase' or mc.dtype='Visit') and mc.patient_id=" +aPatientId+
 				" and mc.workfunctionexecute_id="+aWorkFunctionId+
 				" and mc.datestart=to_date('"+aDate+"','dd.MM.yyyy')";
-		System.out.println("existDoublesVisit = "+str);
+	//	System.out.println("existDoublesVisit = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
 		if (!wqr.isEmpty()) {
 			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
