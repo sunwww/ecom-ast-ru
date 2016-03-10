@@ -40,18 +40,28 @@
   	<style type="text/css">
 
 
-            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel {
+            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel,#mkbAdcLabel {
                 color: blue ;
             }
-            #concomitantDiagnosLabel, #concomitantMkbLabel {
+            #concomitantDiagnosLabel, #concomitantMkbLabel, .concomitantDiags {
                 color: green ;
             }
 
-            #concludingDiagnosLabel, #concludingMkbLabel {
+            #concludingDiagnosLabel, #concludingMkbLabel, .concludingDiags {
                 color: black ;
             }
-            #complicationDiagnosLabel, #complicationMkbLabel {
+            #complicationDiagnosLabel, #complicationMkbLabel, .complicationDiags {
                 color: purple;
+            }
+            
+            #pathanatomicalDiagnosLabel, #pathanatomicalMkbLabel {
+                color: red ;
+            }
+            .otherTable {
+            	width:99% ;
+            }
+            .otherTable tr {
+            	border: 1px solid ;
             }
             
             .epicrisis {
