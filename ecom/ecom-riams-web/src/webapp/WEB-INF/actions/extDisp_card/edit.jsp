@@ -159,7 +159,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     <script type="text/javascript" src="./dwr/interface/ExtDispService.js"></script>
 		<msh:ifNotInRole roles="/Policy/Mis/ExtDisp/Card/IgnoreAttachmentDisp">
-		<msh:ifFormTypeIsCreate formName="extDisp_cardForm">
+		<msh:ifFormTypeIsNotView formName="extDisp_cardForm">
 		<script type="text/javascript">
 		var oldaction = document.forms['extDisp_cardForm'].action ;
 		document.forms['extDisp_cardForm'].action="javascript:checkDispAttached('1')";
@@ -178,7 +178,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 	    						document.forms['extDisp_cardForm'].submit();
 							}
 						} else if (aResult.substring(0,1)=="2") {
-							alert ("Внимание! Дубль!\n "+aResult.substring(1)+" . \nСоздание карты невозможно.");
+							alert ("ВНИМАНИЕ!\n "+aResult.substring(1)+" . \nСоздание карты невозможно.");
 							document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
 						} else {
@@ -214,7 +214,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			
     	}
 		</script>
-		</msh:ifFormTypeIsCreate>
+		</msh:ifFormTypeIsNotView>
 		</msh:ifNotInRole>
 		<script type="text/javascript">
     	function updateAge() {
