@@ -54,7 +54,7 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 	} else if (typeStatus.equals("1")) {
 		statusSql += " and cl.viewDate is null and cl.finishDate is null and cl.cancelDate is null and cl.startworkdate is null";
 	} else if (typeStatus.equals("2")) {
-		statusSql += " and (cl.viewDate is not null and cl.startworkdate is null)";
+		statusSql += " and (cl.viewDate is not null and cl.startworkdate is null and cl.canceldate is not null and cl.finishdate is not null)";
 	} else if (typeStatus.equals("3")) {
 		statusSql += " and cl.finishdate is null and cl.canceldate is null and cl.startworkdate is not null";
 	} else if (typeStatus.equals("4")) {
@@ -163,9 +163,9 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
  when cl.createdate is not null then 'Новая (создана '||to_char(cl.createdate, 'dd.MM.yyyy')||')'
  else 'ВАХВАХ' end as status
  ,cl.id||':'||vct.id as idvocid
-,case when cl.canceldate is null and cl.finishdate is null then cl.id else null end as btnCancel
-,case when cl.finishdate is null and cl.canceldate is null then cl.id||':'||cl.claimtype else null end as btnFinish
-,case when cl.startworkdate is null and cl.finishdate is null and cl.canceldate is null then cl.id||':'||cl.claimtype else null end as btnStartWork
+,case when cl.canceldate is null and cl.finishdate is null then cl.id||':'||cl.claimtype else null end as btnCancel_Finish_StartWork
+,cast('' as varchar) as f0
+,cast('' as varchar) as f1
 ,case when cl.viewdate is null and cl.canceldate is null and cl.finishdate is null then cl.id||':'||cl.claimtype else null end as btnView
 , cl.phone
 ,case when cl.canceldate is not null then 'font-size:16px; background-color:#F3F781; color:black; '
@@ -218,10 +218,10 @@ order by ${orderBySql}
             <msh:tableColumn columnName="Статус" property="5" />
             <msh:tableColumn columnName="Комментарий исполнителя" property="14" />
             <msh:tableButton hideIfEmpty="true" property="10" buttonFunction="setView" buttonShortName='Просмотрено' buttonName="Просмотрено" />
-            <msh:tableButton hideIfEmpty="true" property="9" buttonFunction="setStartWork" buttonShortName="В работу" buttonName="В работу"/>
+            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setStartWork" buttonShortName="В работу" buttonName="В работу"/>
             <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setCancel" buttonShortName="Отменить" buttonName="Отменить"/>
             <msh:tableButton hideIfEmpty="true" property="15" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
-            <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
+            <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
         </msh:table>
 	</msh:section>
         <tags:mis_claimStart name="New" status="id" />
