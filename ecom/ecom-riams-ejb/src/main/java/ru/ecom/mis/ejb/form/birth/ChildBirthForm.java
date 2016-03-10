@@ -29,6 +29,23 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy/ChildBirth")
 public class ChildBirthForm extends IdEntityForm {
+	
+	/** Вес */
+	@Comment("Вес")
+	@Persist 
+	public String getWeight() {return theWeight;}
+	public void setWeight(String aBirthWeight) {theWeight = aBirthWeight;}
+	
+	/** Рост */
+	@Comment("Рост")
+	@Persist 
+	public String getHeight() {return theHeight;}
+	public void setHeight(String aHeight) {theHeight = aHeight;}
+	
+	/** Вес */
+	private String theWeight;
+	/** Рост */
+	private String theHeight;
 
 	/** Время начала потуг */
 	@Comment("Время начала потуг")
@@ -170,14 +187,14 @@ public class ChildBirthForm extends IdEntityForm {
 	
 	/** Дата окончания родов */
 	@Comment("Дата окончания родов")
-	@Persist @Required
+	@Persist 
 	@DateString @DoDateString
 	public String getBirthFinishDate() {return theBirthFinishDate;}
 	public void setBirthFinishDate(String aBirthFinishDate) {theBirthFinishDate = aBirthFinishDate;}
 	
 	/** Время окончания родов */
 	@Comment("Время окончания родов")
-	@Persist @Required
+	@Persist 
 	@TimeString @DoTimeString
 	public String getBirthFinishTime() {return theBirthFinishTime;}
 	public void setBirthFinishTime(String aBirthFinishTime) {theBirthFinishTime = aBirthFinishTime;}
@@ -404,4 +421,55 @@ public class ChildBirthForm extends IdEntityForm {
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	/** pregnancy */
+	@Comment("pregnancy")
+	public PregnancyForm getPregnancyForm() {
+		return thePregnancyForm;
+	}
+
+	public void setPregnancyForm(PregnancyForm aPregnancyForm) {
+		thePregnancyForm = aPregnancyForm;
+	}
+
+	/** pregnancy */
+	private PregnancyForm thePregnancyForm=new PregnancyForm();
+	
+	/** PregnanInspectionForm */
+	@Comment("PregnanInspectionForm")
+	public PregnanInspectionForm getPregnanInspectionForm() {
+		return thePregnanInspectionForm;
+	}
+
+	public void setPregnanInspectionForm(PregnanInspectionForm aPregnanInspectionForm) {
+		thePregnanInspectionForm = aPregnanInspectionForm;
+	}
+
+	/** PregnanInspectionForm */
+	private PregnanInspectionForm thePregnanInspectionForm = new PregnanInspectionForm();
+	
+	/** PregnanExchangeCardForm */
+	@Comment("PregnanExchangeCardForm")
+	public PregnanExchangeCardForm getPregnanExchangeCardForm() {
+		return thePregnanExchangeCardForm;
+	}
+
+	public void setPregnanExchangeCardForm(PregnanExchangeCardForm aPregnanExchangeCardForm) {
+		thePregnanExchangeCardForm = aPregnanExchangeCardForm;
+	}
+
+	/** PregnanExchangeCardForm */
+	private PregnanExchangeCardForm thePregnanExchangeCardForm = new PregnanExchangeCardForm();
+	
+	/** Новорожденный форма */
+	@Comment("Новорожденный форма")
+	public NewBornForm getNewBornForm() {
+		return theNewBornForm;
+	}
+
+	public void setNewBornForm(NewBornForm aNewBornForm) {
+		theNewBornForm = aNewBornForm;
+	}
+
+	/** Новорожденный форма */
+	private NewBornForm theNewBornForm = new NewBornForm();
 }

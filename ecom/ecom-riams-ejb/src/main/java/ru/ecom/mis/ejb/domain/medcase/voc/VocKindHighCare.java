@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
+import java.sql.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -16,4 +18,19 @@ public class VocKindHighCare extends VocBaseEntity {
 
 	/** Код потока обслуживания */
 	private String theServiceStreamCode;
+	
+	/** Дата окончания */
+	@Comment("Дата окончания")
+	public Date getDateTo() {return theDateTo;}
+	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
+
+	/** Дата начала */
+	@Comment("Дата начала")
+	public Date getDateFrom() {return theDateFrom;}
+	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
+
+	/** Дата начала */
+	private Date theDateFrom;
+	/** Дата окончания */
+	private Date theDateTo;
 }

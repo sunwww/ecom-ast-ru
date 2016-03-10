@@ -2,11 +2,14 @@ package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
+import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 
 public class DepartmentViewInterceptor  implements IFormInterceptor{
@@ -14,42 +17,30 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		DepartmentMedCaseForm form = (DepartmentMedCaseForm)aForm ;
 		DepartmentMedCase dep = (DepartmentMedCase)aEntity ;
-		List<Diagnosis> diags=aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", dep).getResultList() ; 
-		for (Diagnosis diag:diags) {
+		DiagnosisForm frm ;
+		frm = DischargeMedCaseViewInterceptor.getDiagnosis(aContext.getEntityManager(), dep.getId(), "4", "1", false) ;
+		if (frm!=null) {
+			form.setClinicalDiagnos(frm.getName());
+			if (frm.getIdc10()!=null) form.setClinicalMkb(frm.getIdc10()) ;
+			if (frm.getIllnesPrimary()!=null) form.setClinicalActuity(frm.getIllnesPrimary()) ;
+		}
+		form.setComplicationDiags(getDiagnosis(aContext.getEntityManager(), dep.getId(), "4","4")) ;
+		form.setConcomitantDiags(getDiagnosis(aContext.getEntityManager(), dep.getId(), "4", "3")) ;
+	}
+	public static String getDiagnosis(EntityManager aManager, Long aMedCase, String aRegistrationType, String aPriority) {
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append("select d.idc10_id,mkb.code||mkb.name,d.name from Diagnosis as d left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id");
+		sql.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id left join VocIdc10 mkb on mkb.id=d.idc10_id where d.medCase_id=").append(aMedCase)
+    		.append(" and vdrt.code='").append(aRegistrationType)
+    		.append("' and vpd.code='").append(aPriority).append("' order by d.id") ;
+    	StringBuilder res = new StringBuilder() ;
+    	List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList() ;
+    	for (Object[] child : list) {
+			res.append(child[0]).append("@#@").append(child[1]).append("@#@") ;
+			res.append(child[2]).append("#@#") ;
+		}
 			
-			if (diag.getRegistrationType()!=null && diag.getPriority()!=null) {
-				
-				String regType = diag.getRegistrationType().getCode() ;
-				String prior = diag.getPriority()!=null?diag.getPriority().getCode():"" ;
-				Long mkb = diag.getIdc10()!=null?diag.getIdc10().getId():null ;
-				Long illnes = diag.getIllnesPrimary()!=null?diag.getIllnesPrimary().getId():null;
-
-				// Concluding
-				if (regType.equals("3")&& prior.equals("1")){
-					form.setConcludingDiagnos(diag.getName());
-					if (mkb!=null) form.setConcludingMkb(mkb) ;
-				}
-			    //Clinical
-				if ( regType.equals("4") && prior.equals("1")){
-					form.setClinicalDiagnos(diag.getName());
-					if (mkb!=null) form.setClinicalMkb(mkb) ;
-					if(illnes!=null) form.setClinicalActuity(illnes) ;
-					if (diag.getMkbAdc()!=null) form.setMkbAdc(diag.getMkbAdc()) ;
-				}
-			    //Pathanatomical
-				if (regType.equals("5") && prior.equals("1")) {
-					form.setPathanatomicalDiagnos(diag.getName());
-					if (mkb!=null) form.setPathanatomicalMkb(mkb) ;
-				}	
-				//Concomitant
-				if (regType.equals("4") && prior.equals("3")) {
-					form.setConcomitantDiagnos(diag.getName());
-					if (mkb!=null) form.setConcomitantMkb(mkb) ;
-				}	
-				
-			}
-		
-	}
-
-	}
+			
+		return res.length()>0?res.substring(0,res.length()-3):"" ;
+    }
 }

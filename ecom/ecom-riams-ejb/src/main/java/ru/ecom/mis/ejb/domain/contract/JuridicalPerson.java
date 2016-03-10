@@ -11,6 +11,7 @@ import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.contract.voc.VocJuridicalPerson;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServedPersonStatus;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServiceProgram;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -317,4 +318,19 @@ public class JuridicalPerson extends ContractPerson{
 
 	/** Поток обслуживания */
 	private VocServiceStream theServiceStream;
+	/**
+	 * ЛПУ
+	 */
+	@Comment("ЛПУ")
+	@OneToOne
+	public MisLpu getLpu() {
+		return theLpu;
+	}
+	public void setLpu(MisLpu aLpu) {
+		theLpu = aLpu;
+	}
+	/**
+	 * ЛПУ
+	 */
+	private MisLpu theLpu;
 }

@@ -22,6 +22,7 @@ import ru.ecom.mis.ejb.domain.contract.ContractRule;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.domain.contract.PriceList;
 import ru.ecom.mis.ejb.domain.contract.ServedPerson;
+import ru.ecom.mis.ejb.domain.contract.voc.VocContractLabel;
 import ru.ecom.mis.ejb.domain.contract.voc.VocContractRulesProcessing;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
@@ -306,5 +307,14 @@ public class MedContract extends BaseEntity{
 
 	/** Поток обслуживания */
 	private VocServiceStream theServiceStream;
+	
+	/** Метка договора */
+	@Comment("Метка договора")
+	@OneToOne
+	public VocContractLabel getContractLabel() {return theContractLabel;}
+	public void setContractLabel(VocContractLabel aContractLabel) {theContractLabel = aContractLabel;}
+
+	/** Метка договора */
+	private VocContractLabel theContractLabel;
 
 }

@@ -67,10 +67,11 @@ function onPreCreate(aForm, aCtx) {
 
 function checkPeriod(aForm,aManager) {
 	var operDate = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.operationDate) ;
-	var medCase = aManager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
+	var medCase = aManager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
 			,aForm.medCase) ;
 	if (medCase.dateStart.getTime()>operDate.getTime()) {
-		throw "Дата операции "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(operDate)+" должна быть больше или равна началу СМО "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(medCase.dateStart) ;
+		throw "Дата операции "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(operDate)+" должна быть больше или равна началу СМО "
+		+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(medCase.dateStart) ;
 	}
 	
 }

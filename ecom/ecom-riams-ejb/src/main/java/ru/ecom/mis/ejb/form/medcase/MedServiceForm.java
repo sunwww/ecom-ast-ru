@@ -264,6 +264,7 @@ public class MedServiceForm extends IdEntityForm  {
 
 	/** УЕТ */
 	@Comment("УЕТ")
+	@Persist
 	public String getUet() {return theUet;}
 	public void setUet(String aUet) {theUet = aUet;}
 

@@ -21,6 +21,7 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+	public String getDischargeEpicrisis(long aMedCaseId) ;
 	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) ;
 	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
 	public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 

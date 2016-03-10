@@ -413,6 +413,8 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Long theConcomitantMkb;
 	/** Диагноз клин. сопутствующий */
 	private String theConcomitantDiagnos;
+	
+	
 	/** Редкий случай */
 	private Boolean theRareCase;
 
@@ -588,6 +590,23 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Long theComplicationMkb;
 	/** Осложнение текст диагноза */
 	private String theComplicationDiagnos;
+	
+	/** Диагнозы осложнение */
+	@Comment("Диагнозы осложнение")
+	public String getComplicationDiags() { return theComplicationDiags; }
+	public void setComplicationDiags(String aComplicationDiags) { theComplicationDiags = aComplicationDiags; }
+
+	/** Диагнозы осложнение */
+	private String theComplicationDiags;
+	
+	/** Диагнозы сопутствующие */
+	@Comment("Диагнозы сопутствующие")
+	public String getConcomitantDiags() { return theConcomitantDiags; }
+
+	public void setConcomitantDiags(String aConcomitantDiags) { theConcomitantDiags = aConcomitantDiags; }
+
+	/** Диагнозы сопутствующие */
+	private String theConcomitantDiags;
 
 
 	/** Поступление в данный стационар */

@@ -26,6 +26,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 		long id = form.getId() ;
 		form.setDischargeEpicrisis(HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
 		//System.out.println("----------------1") ;
+		Long sloLast = null ;
 		if (medCase.getDateFinish()==null || medCase.getDischargeTime()==null){
 			if (medCase instanceof ExtHospitalMedCase) {}else{
 			if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/CheckPrintAllProtocol")) {
@@ -51,21 +52,14 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				throw new IllegalArgumentException("Нет случая лечения в отделении c датой выписки или без перевода");
 			} 
 			
-			//System.out.println("----------------1") ;
 			DepartmentMedCase dischargeDepartment = list.get(0) ;
+			sloLast = dischargeDepartment.getId() ;
 			if (dischargeDepartment.getDateFinish()!=null) form.setDateFinish(DateFormat.formatToDate(dischargeDepartment.getDateFinish())) ;
 			if (dischargeDepartment.getDischargeTime()!=null) form.setDischargeTime(DateFormat.formatToTime(dischargeDepartment.getDischargeTime())) ;
-			//List<MedCase> listdep = medCase.getChildMedCase();
 			}
+			
 			DiagnosisForm frm ;
-			//System.out.println("----------------1") ;
-			// Entrance
-			//DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), id, "1", "1", true) ;
-			//if (frm!=null){
-			//	form.setEntranceDiagnos(frm.getName());
-			//	form.setEntranceMkb(frm.getIdc10()) ;
-			//}
-			// Concluding
+			
 			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "1", true) ;
 			if (frm!=null){
 				form.setConcludingDiagnos(frm.getName());
@@ -79,19 +73,16 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 					if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
 				}
 			}
+			form.setConcomitantDiags(DepartmentViewInterceptor.getDiagnosis(aContext.getEntityManager(), id, "3", "3")) ;
+			if (sloLast!=null&&form.getConcomitantDiags()==null||form.getConcomitantDiags().equals("")) {
+				form.setConcomitantDiags(DepartmentViewInterceptor.getDiagnosis(aContext.getEntityManager(),sloLast , "4", "3")) ;
+			}
 			// Complication
-			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "4", true) ;
-			if (frm!=null){
-				form.setComplicationDiagnos(frm.getName());
-				if (frm.getIdc10()!=null) form.setComplicationMkb(frm.getIdc10()) ;
-			} else {
-				frm = getDiagnosis(aContext.getEntityManager(), id, "4", "4", true) ;
-				if (frm!=null) {
-					form.setComplicationDiagnos(frm.getName());
-					if (frm.getIdc10()!=null) form.setComplicationMkb(frm.getIdc10()) ;
-					//if (frm.getIllnesPrimary()!=null) form.setConcludingActuity(frm.getIllnesPrimary()) ;
-				}
-			}			
+			form.setComplicationDiags(DepartmentViewInterceptor.getDiagnosis(aContext.getEntityManager(), id, "3","4")) ;
+			if (sloLast!=null&&form.getComplicationDiags()==null||form.getComplicationDiags().equals("")) {
+				form.setComplicationDiags(DepartmentViewInterceptor.getDiagnosis(aContext.getEntityManager(),sloLast , "4", "4")) ;
+			}
+			
 			//Clinical
 			frm = getDiagnosis(aContext.getEntityManager(), id, "4", "1", true) ;
 			if (frm!=null){
@@ -120,14 +111,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			}	
 		} else {
 			DiagnosisForm frm ;
-			//System.out.println("----------------1") ;
-			// Entrance
-			//DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), id, "1", "1", true) ;
-			//if (frm!=null){
-			//	form.setEntranceDiagnos(frm.getName());
-			//	form.setEntranceMkb(frm.getIdc10()) ;
-			//}
-			// Concluding
+			
 			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "1", false) ;
 			if (frm!=null){
 				form.setConcludingDiagnos(frm.getName());
@@ -147,21 +131,14 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 				form.setPathanatomicalDiagnos(frm.getName());
 				if (frm.getIdc10()!=null) form.setPathanatomicalMkb(frm.getIdc10()) ;
 			}	
-			//Concomitant
-			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "3", false) ;
-			if (frm!=null) {
-				form.setConcomitantDiagnos(frm.getName());
-				if (frm.getIdc10()!=null) form.setConcomitantMkb(frm.getIdc10()) ;
-			}
-			//Complication
-			frm = getDiagnosis(aContext.getEntityManager(), id, "3", "4", false) ;
-			if (frm!=null) {
-				form.setComplicationDiagnos(frm.getName());
-				if (frm.getIdc10()!=null) form.setComplicationMkb(frm.getIdc10()) ;
-			}
+			
+			form.setConcomitantDiags(DepartmentViewInterceptor.getDiagnosis(aContext.getEntityManager(), id, "3", "3")) ;
+			form.setComplicationDiags(DepartmentViewInterceptor.getDiagnosis(aContext.getEntityManager(), id, "3","4")) ;
+
 		}
 		
 	}
+	
 	public static DiagnosisForm getDiagnosis(EntityManager aManager, Long aHospitalMedCase
 			,String aRegType, String aPriority, boolean aIsDepartmentSearch) {
 		StringBuilder sql = new StringBuilder() ;

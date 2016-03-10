@@ -95,11 +95,13 @@ function check(aForm,aCtx) {
 		if (dtype=='HospitalMedCase'||dtype=='DepartmentMedCase') {
 			if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
 				if (t.get(0)[1]!=null) {
-					param1.put("obj","MedCase") ;
-					param1.put("permission" ,"editAllProtocolsInSLS") ;
+					param1.put("obj","DischargeMedCase") ;
+					param1.put("permission" ,"editAfterDischarge") ; //editAllProtocolsInSLS
 					param1.put("id", +hmc) ;
 					isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
+					//throw +hmc ;
 					if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование (создание) данных после выписки!!!";
+					
 				}
 				
 			}

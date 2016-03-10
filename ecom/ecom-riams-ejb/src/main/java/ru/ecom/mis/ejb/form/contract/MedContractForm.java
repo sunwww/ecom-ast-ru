@@ -1,11 +1,14 @@
 package ru.ecom.mis.ejb.form.contract;
 
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
+import ru.ecom.mis.ejb.domain.contract.voc.VocContractLabel;
 import ru.ecom.mis.ejb.form.contract.interceptor.MedContractPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -263,4 +266,13 @@ public class MedContractForm extends IdEntityForm{
 
 	/** Поток обслуживания */
 	private Long theServiceStream;
+	
+	/** Метка договора */
+	@Comment("Метка договора")
+	@Persist
+	public Long getContractLabel() {return theContractLabel;}
+	public void setContractLabel(Long aContractLabel) {theContractLabel = aContractLabel;}
+
+	/** Метка договора */
+	private Long theContractLabel;
 }

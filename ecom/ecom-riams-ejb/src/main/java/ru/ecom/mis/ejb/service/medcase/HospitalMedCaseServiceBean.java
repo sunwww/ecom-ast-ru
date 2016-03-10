@@ -74,6 +74,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.form.medcase.hospital.ExtHospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
@@ -94,6 +95,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    
+    public String getDischargeEpicrisis(long aMedCaseId) {
+    	return HospitalMedCaseViewInterceptor.getDischargeEpicrisis(aMedCaseId, theManager) ;
+    }
     
     public static boolean saveDischargeEpicrisisByCase(MedCase aMedCase,String aDischargeEpicrisis,EntityManager aManager) {
     	aManager.createNativeQuery("delete from diary d where d.medcase_id= "+aMedCase.getId()+" and upper(d.dtype)='DISCHARGEEPICRISIS' ").executeUpdate() ;
@@ -1717,7 +1722,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String findDoubleServiceByPatient(Long aMedService, Long aPatient, Long aService, String aDate) throws ParseException {
     	StringBuilder sql = new StringBuilder() ;
     	Date date=DateFormat.parseSqlDate(aDate) ;
-    	sql.append("select smc.id,convert(varchar(20),smc.dateExecute,104),smc.timeExecute,vss.name,'Оказана в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end from medcase as smc ")
+    	sql.append("select smc.id,to_char(smc.dateExecute,'dd.mm.yyyy') as dateexecute,smc.timeExecute,vss.name,'Оказана в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end from medcase as smc ")
     			.append(" left join medcase as p on p.id=smc.parent_id ")
     			.append(" left join mislpu as d on d.id=p.department_id ")
     			.append(" left join vocservicestream as vss on vss.id=smc.servicestream_id")

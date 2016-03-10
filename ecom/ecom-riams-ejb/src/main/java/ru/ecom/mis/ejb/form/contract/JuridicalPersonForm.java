@@ -300,4 +300,19 @@ public class JuridicalPersonForm extends ContractPersonForm{
 	/** Страховая компания */
 	private Long theRegCompany;
 
+	/**
+	 * ЛПУ
+	 */
+	@Comment("ЛПУ")
+	@Persist
+	public Long getLpu() {
+		return theLpu;
+	}
+	public void setLpu(Long aLpu) {
+		theLpu = aLpu;
+	}
+	/**
+	 * ЛПУ
+	 */
+	private Long theLpu;
 }

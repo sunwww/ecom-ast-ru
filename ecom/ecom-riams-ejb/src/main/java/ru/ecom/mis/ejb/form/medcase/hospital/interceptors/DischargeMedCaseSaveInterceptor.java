@@ -35,8 +35,6 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 		boolean adding5is = (!isEmpty(form.getPathanatomicalDiagnos()) || (!isEmpty(form.getPathanatomicalMkb()))) ;	
 		boolean adding3is = (!isEmpty(form.getConcludingDiagnos()) || (!isEmpty(form.getConcludingMkb()))) ;
 		boolean adding1is = (!isEmpty(form.getEntranceDiagnos()) || (!isEmpty(form.getEntranceMkb()))) ;
-		boolean adding6is = (!isEmpty(form.getConcomitantDiagnos()) || (!isEmpty(form.getConcomitantMkb()))) ;
-		boolean adding7is = (!isEmpty(form.getComplicationDiagnos()) || (!isEmpty(form.getComplicationMkb()))) ;
 		
 		String dateFinish = "null" ;
 		if (medCase.getDateFinish()!=null) {
@@ -67,10 +65,7 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 			if (!adding3is) adding3 = true ;
 			boolean adding1 = false ;
 			if (!adding1is) adding1 = true ; 
-			boolean adding6 = false ;
-			if (!adding6is) adding6 = true ; 
-			boolean adding7 = false ;
-			if (!adding7is) adding7 = true ; 
+			
 			
 			/*VocDiagnosisRegistrationType vocTypeClinical = aManager.find(VocDiagnosisRegistrationType.class, Long.valueOf(4));
 			VocDiagnosisRegistrationType vocTypePathanatomical = aManager.find(VocDiagnosisRegistrationType.class, Long.valueOf(5));
@@ -93,9 +88,7 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				if (!adding5) adding5=setDiagnosisByType(false,diag, vocTypePathanatomical, form.getPathanatomicalDiagnos(), form.getDateFinish(), form.getPathanatomicalMkb(), medCase, aManager,vocPriorType,null) ;
 				if (!adding3) adding3=setDiagnosisByType(false,diag, vocTypeConcluding, form.getConcludingDiagnos(), form.getDateFinish(), form.getConcludingMkb(), medCase, aManager,vocPriorType,form.getConcludingActuity()) ;
 				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aManager,vocPriorType,null) ;
-				if (!adding6) adding6=setDiagnosisByType(false,diag, vocTypeConcluding, form.getConcomitantDiagnos(), form.getDateFinish(), form.getConcomitantMkb(), medCase, aManager,vocConcomType,null) ;
-				if (!adding7) adding7=setDiagnosisByType(false,diag, vocTypeConcluding, form.getComplicationDiagnos(), form.getDateFinish(), form.getComplicationMkb(), medCase, aManager,vocComplicationType,null) ;
-				if (adding4&&adding5&&adding3&&adding1&&adding7&&adding6) break ;
+				if (adding4&&adding5&&adding3&&adding1) break ;
 			}
 			
 			if (!adding4) {
@@ -118,19 +111,11 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				setDiagnosisByType(true,diag, vocTypeEnter, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aManager,vocPriorType,null) ;
 				//diagList.add(diag);
 			}
-			if (!adding6) {
-				Diagnosis diag = new Diagnosis();
-				setDiagnosisByType(true,diag, vocTypeConcluding, form.getConcomitantDiagnos(), form.getDateFinish(), form.getConcomitantMkb(), medCase, aManager,vocConcomType,null) ;
-				//diagList.add(diag);
-			}
-			if (!adding7) {
-				Diagnosis diag = new Diagnosis();
-				setDiagnosisByType(true,diag, vocTypeConcluding, form.getComplicationDiagnos(), form.getDateFinish(), form.getComplicationMkb(), medCase, aManager,vocComplicationType,null) ;
-				//diagList.add(diag);
-			}
-			//medCase.setDiagnosis(diagList);
+			
 			
 		}
+		DepartmentSaveInterceptor.setDiagnosis(aManager, form.getId(), form.getComplicationDiags(), "3", "4") ;
+		DepartmentSaveInterceptor.setDiagnosis(aManager, form.getId(), form.getConcomitantDiags(), "3", "3") ;
 	}
     
     public static Object getVocByCode(EntityManager aManager,String aTable, String aCode) {

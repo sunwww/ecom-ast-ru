@@ -14,6 +14,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxLength;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
@@ -129,7 +130,7 @@ public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 
 	/** Лечение на момент подачи */
 	@Comment("Лечение на момент подачи")
-	@Persist 
+	@Persist @MaxLength(value = 250)
 	public String getTreatmentCurrent() {return theTreatmentCurrent;}
 	public void setTreatmentCurrent(String aTreatmentCurrent) {theTreatmentCurrent = aTreatmentCurrent;}
 

@@ -154,4 +154,17 @@ public class ContractAccount extends BaseEntity{
 
 	/** Скидка по умолчанию */
 	private BigDecimal theDiscountDefault;
+	
+	/** Номер счета */
+	@Comment("Номер счета")
+	public String getAccountNumber() {
+		return theAccountNumber;
+	}
+
+	public void setAccountNumber(String aAccountNumber) {
+		theAccountNumber = aAccountNumber;
+	}
+
+	/** Номер счета */
+	private String theAccountNumber;
 }
