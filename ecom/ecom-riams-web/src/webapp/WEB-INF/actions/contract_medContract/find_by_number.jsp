@@ -50,8 +50,8 @@
 	        </td>	        
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="juridicalPersonType" fieldColSpan="10" label="Тип юрид. персоны" 
-        		vocName="vocJuridicalPerson" horizontalFill="true"/>
+        	<msh:autoComplete property="contractLabel" fieldColSpan="10" label="Метка" 
+        		vocName="vocContractLabel" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Найти" doNotDisableButtons="cancel" labelSaving="Поиск..." colSpan="4"/>
@@ -81,6 +81,7 @@
 			StringBuilder paramSql= new StringBuilder() ;
 		  	StringBuilder paramHref= new StringBuilder() ;
 			String contractNumber  = request.getParameter("contractNumber").toUpperCase() ;
+			String orderBy = "mc.id" ;
 			if (typeContractPerson.equals("1"))	{
 				prefix = "med" ;
 				paramSql.append("  cp.dtype='NaturalPerson'") ;
@@ -106,17 +107,20 @@
 				paramSql.append("  and vjp.code='SILOVIK'") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' )") ;
 			} else if (typeContractPerson.equals("5")) {
+				orderBy = "vcl.code,lpu.name,contractNumber" ;
 				paramSql.append(" cp.dtype='JuridicalPerson'") ;
 				paramSql.append( "  and lpu.id is not null") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' or lpu.name like '%").append(contractNumber).append("%')") ;
 			}
 			paramSql.append(" and (").append(fio.toString()).append(" or mc.contractNumber='").append(contractNumber).append("')") ;
 		  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("juridicalPersonType", "cp.juridicalPersonType_id", request)) ;
+		  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("contractLabel", "vcl.id", request)) ;
 		  	
 		request.setAttribute("paramSql", paramSql.toString()) ;
 	  	request.setAttribute("paramHref", paramHref.toString()) ;
 		request.setAttribute("fiocp", fio.toString()) ;
 		request.setAttribute("prefix", prefix) ;
+		request.setAttribute("orderBy", orderBy) ;
 	%>
 			<ecom:webQuery name="childContract" nativeSql="
 			select mc.id,mc.contractNumber as mccontractNumber
@@ -134,7 +138,11 @@
 			,ml.name as mlname
 			
 			,vcrp.name as vcrpname,pl.name as plname
+			,mc.limitMoney ||case when mc.isRequiredGuaratee='1'
+				then ' (обязательно гарант.письмо)' else '' end as limitMoney
+			,vcl.name as vclname
 			from MedContract mc
+			left join VocContractLabel vcl on vcl.id=mc.contractLabel_id
 			left join ContractPerson cp on cp.id=mc.customer_id
 			left join MisLpu lpu on lpu.id=cp.lpu_id
 			left join REG_IC reg on reg.id=cp.regCompany_id
@@ -145,17 +153,21 @@
 			left join VocJuridicalPerson vjp on vjp.id=cp.juridicalPersonType_id
 			where  
 			${paramSql}
+			order by ${orderBy}
 			"/>
 				<msh:table name="childContract" action="entityParentView-contract_${prefix}Contract.do" idField="1" disableKeySupport="true">
 					<msh:tableColumn columnName="#" property="sn" />
+					<msh:tableColumn property="11" columnName="Метка"/>
 					<msh:tableColumn columnName="№ договора" property="2" />
 					<msh:tableColumn columnName="Период действия" property="3" />
 					<msh:tableColumn columnName="Заказчик тип" property="4" />
 					<msh:tableColumn columnName="Наименование" property="5" />
-					<msh:tableColumn columnName="Описание" property="6" />
-					<msh:tableColumn columnName="Обработка правил" property="7" />
-					<msh:tableColumn columnName="Прейскурант" property="8" />
-				</msh:table>	
+					
+					<msh:tableColumn columnName="Обработка правил" property="8" />
+					<msh:tableColumn columnName="Прейскурант" property="9" />
+					<msh:tableColumn columnName="Лимит" property="10" />
+				</msh:table>
+				
 				<%} %>	
 	</tiles:put>
 </tiles:insert>

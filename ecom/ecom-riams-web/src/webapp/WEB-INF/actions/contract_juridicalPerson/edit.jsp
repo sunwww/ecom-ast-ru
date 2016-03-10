@@ -11,7 +11,7 @@
 			<msh:hidden property="saveType" />
 			<msh:panel>
 				<msh:row>
-					<msh:textField property="shortName" label="Короткое название" horizontalFill="true"/>
+					<msh:textField property="shortName" label="Короткое название" fieldColSpan="3" size="200"/>
 				</msh:row>
 				<msh:row>
 					<msh:textField fieldColSpan="3" property="name" label="Полное название" size="200"/>

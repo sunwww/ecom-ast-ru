@@ -19,6 +19,11 @@
 			<msh:panel>	
 				<msh:row>
 					<msh:textField property="contractNumber" label="Номер договора"/>
+					<msh:autoComplete property="contractLabel" label="Метка" vocName="vocContractLabel" />
+				</msh:row>
+				<msh:row>
+					<msh:textField property="dateFrom" label="Дата начала "/>
+					<msh:textField property="dateTo" label="Дата окончания "/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" size="100" fieldColSpan="3"/>
@@ -40,10 +45,7 @@
 					<msh:textField property="limitMoney"/>
 					<msh:checkBox property="isRequiredGuaratee" />
 				</msh:row>
-				<msh:row>
-					<msh:textField property="dateFrom" label="Дата начала "/>
-					<msh:textField property="dateTo" label="Дата окончания "/>
-				</msh:row>
+
 				<msh:row>
 					<msh:textArea property="comment" label="Описание" fieldColSpan="3"/>
 				</msh:row>
