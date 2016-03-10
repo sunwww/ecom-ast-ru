@@ -216,6 +216,8 @@ public class LoginSaveAction extends LoginExitAction {
 			sqlA= new StringBuilder() ;
 			sqlA.append("select cl.id,cl.description,to_char(cl.createdate,'dd.mm.yyyy') as createdate from claim cl left join workfunction wf on wf.id=cl.workfunction left join secuser su on su.id=wf.secuser_id where su.login='")
 				.append(aUsername).append("' and cl.finishdate is not null and cl.completeconfirmed is null");
+			list1.clear() ;
+	    	list1 =service.executeNativeSql(sqlA.toString(),10) ;
 			if (!list1.isEmpty()) {
 		    	for (WebQueryResult wqr:list1) {
 		    		Long id = ConvertSql.parseLong(wqr.get1()) ;
