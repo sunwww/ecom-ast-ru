@@ -116,7 +116,45 @@ function findListCalendarTemplate(aContext, aId, aCnt, aNext) {
 	}
 	return ret ;
 }
-
+function findListPrescriptTemplateByUser(aContext, aId, aCnt, aNext) {
+	var list ;
+	var ret = new java.util.ArrayList() ;
+	var username=aContext.sessionContext.callerPrincipal.name ;
+	
+	//if (aCnt==0) aCnt=10 ;
+	if (aNext < 0) {
+		if (aCnt<0) aCnt = aCnt*(-1) ;
+		if (aId==null || aId == "" || aId==0) {
+			list =  aContext.manager.createQuery("from AbstractPrescriptionList where DTYPE='PrescriptListTemplate' and createUsername='"+username+"' order by id desc").setMaxResults(aCnt).getResultList() ;
+		} else {
+			list =  aContext.manager.createQuery("from AbstractPrescriptionList where DTYPE='PrescriptListTemplate' and id < "+aId+" and createUsername='"+username+"' order by id desc").setMaxResults(aCnt).getResultList() ;
+			if (list.size()<aCnt) {
+				return findListPrescriptTemplate(aContext,"",aCnt,1) ; 
+			}
+			
+		}
+		
+		for (var i=list.size()-1 ; i>=0 ; i--) {
+			var temp = list.get(i) ;
+			ret.add(prescriptMap(temp)) ;
+			
+		}
+	} else {
+		if (aId==null || aId == "" || aId==0) {
+			list =  aContext.manager.createQuery("from AbstractPrescriptionList where DTYPE='PrescriptListTemplate'  and createUsername='"+username+"' order by id asc").setMaxResults(aCnt).getResultList() ;
+		} else {
+			list =  aContext.manager.createQuery("from AbstractPrescriptionList where DTYPE='PrescriptListTemplate'  and createUsername='"+username+"' and id > "+aId+" order by id asc").setMaxResults(aCnt).getResultList() ;
+			if (list.size()<aCnt) {
+				return findListPrescriptTemplate(aContext,"",aCnt,-1) ;
+			}
+		}
+		for (var i=0 ; i< list.size() ; i++) {
+			var temp = list.get(i) ;
+			ret.add(prescriptMap(temp)) ;
+		}
+	}
+	return ret ;
+}
 function findListPrescriptTemplate(aContext, aId, aCnt, aNext) {
 	var list ;
 	var ret = new java.util.ArrayList() ;
