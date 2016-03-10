@@ -135,6 +135,15 @@ function hideUserMessage(aId) {
     } ) ;
 
 }
+
+function checkClaimMessage (aId, aStatus) {
+	VocService.checkClaimMessage(aId, aStatus, {
+		callback: function (aResult) {
+			if ($('claimMessageContainer'+aId)) { $('claimMessageContainer'+aId).style.display='none'; }
+		}
+	});
+}
+
 function checkUserMessage(aId) {
 	VocService.checkMessage(aId, {
         callback: function(aName) {
