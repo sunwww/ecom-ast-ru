@@ -89,4 +89,11 @@ public class ContractReportsForm extends BaseValidatorForm{
 
 	/** Тип юрид. персоны */
 	private Long theJuridicalPersonType;
+	
+	/** contractLabel */
+	public Long getContractLabel() {return theContractLabel;}
+	public void setContractLabel(Long aContractLabel) {theContractLabel = aContractLabel;}
+
+	/** contractLabel */
+	private Long theContractLabel;
 }
