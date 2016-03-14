@@ -54,7 +54,18 @@
       	<script type="text/javascript"> 
       	onload=function(){
       		$('id').value='${param.id}' ;
+      		new dateutil.DateField($('dateStart')) ;
       		if (+$('medServiceAmount').value<1) $('medServiceAmount').value="1";
+      		HospitalMedCaseService.getServiceStreamAndMkbByMedCase('${param.id}',
+     				 {
+               callback: function(aResult) {
+            	   var str = aResult.split("@@") ;
+            	   $('serviceStream').value=str[0] ;
+            	   $('serviceStreamName').value=str[1] ;
+            	   $('idc10').value=str[2] ;
+            	   $('idc10Name').value=str[3] ;
+               
+      		
       		HospitalMedCaseService.getServiceByMedCase('${param.id}',
       				 {
                 callback: function(aResult) {
@@ -82,6 +93,7 @@
                 }
 	        	}
       		);
+               }});
         }
       	function saveService() {
       		HospitalMedCaseService.saveServiceByMedCase($('id').value
@@ -149,12 +161,13 @@
       		str=str.length>0?str.trim().substring(0,str.length-3):"";
       		$('medServices').value=str;
       	}
-      	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 
+      	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 ,dateFld-3
       	// 3. Номер node в добавленной услуге 4. Обяз.поля да-1 нет-2 
       	// 5. наим. поля в форме 6. очищать поле в форме при добавление да-1, нет-0 
   		var theFld = [['Услуга','Service',1,1,1,'medService',0],['Специалист','WF',1,3,1,'workFunctionExecute',0]
-			,['МКБ','Idc',1,5,1,'idc10',0],['Дата','Date',2,7,1,'dateStart',1],['Кол-во','Amount',2,9,1,'medServiceAmount',0]
+			,['МКБ','Idc',1,5,1,'idc10',0],['Дата','Date',3,7,1,'dateStart',1],['Кол-во','Amount',2,9,1,'medServiceAmount',0]
   			,['Поток обслуживания','ServiceStream',1,11,1,'serviceStream',0]] ;
+      	var fldIndexRow = 0;
       	function addRow (aService,aServiceName,aWF,aWFName,aIdc,aIdcName,aDate,aAmount,aServiceStream,aServiceStreamName) {
       		var table = document.getElementById('otherMedServices');
       		var row = document.createElement('TR');
@@ -163,16 +176,22 @@
       		table.appendChild(row);
       		row.appendChild(td);
       		var txt ="" ;
+      		fldIndexRow++ ;
+      		var js="" ;
       		for (var i=0;i<theFld.length;i++) {
       			var fld_i = theFld[i] ;
       			if (fld_i[2]==1) {
       				txt+=" "+fld_i[0]+": "+eval("a"+fld_i[1]+"Name")+" <input type='hidden' value='"+eval("a"+fld_i[1])+"'>"
       			} else if (fld_i[2]==2) {
       				txt+=" "+fld_i[0]+": <input type='text' value='"+eval("a"+fld_i[1])+"'>"
+      			} else if (fld_i[2]==3) {
+      				txt+=" "+fld_i[0]+": <input type='text' name='"+fld_i[1]+fldIndexRow+"' id='"+fld_i[1]+fldIndexRow+"' value='"+eval("a"+fld_i[1])+"'>"
+      				js += "new dateutil.DateField($('"+fld_i[1]+fldIndexRow+"')) ;"
       			}
       		}
       		td.innerHTML=txt ;
       		row.appendChild(tdDel);
+      		eval(js) ;
       		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherMedServices()' value='- услугу' />";
       		createOtherMedServices();
       	}
