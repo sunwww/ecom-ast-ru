@@ -57,9 +57,14 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 		statusSql += " and (cl.viewDate is not null and cl.startworkdate is null and cl.canceldate is not null and cl.finishdate is not null)";
 	} else if (typeStatus.equals("3")) {
 		statusSql += " and cl.finishdate is null and cl.canceldate is null and cl.startworkdate is not null";
-	} else if (typeStatus.equals("4")) {
+	} else if (typeStatus.equals("5")||typeStatus.equals("6")||typeStatus.equals("7")) {
 		statusSql += " and cl.finishDate is not null";
-	} else if (typeStatus.equals("5")) {
+		if (typeStatus.equals("6")) {
+			statusSql +=" and cl.completeConfirmed='1'";
+		} else if (typeStatus.equals("7")) {
+			statusSql +=" and cl.completeConfirmed='0'";
+		}
+	} else if (typeStatus.equals("4")) {
 		statusSql += " and cl.canceldate is not null";
 	}
 	if (typeUser!=null&&typeUser.equals("2")) {
@@ -105,14 +110,22 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 	    <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
 	     	<input type="radio" name="typeStatus" value="3">  В работе 
 	    </td>
+	    
 	    <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-	     	<input type="radio" name="typeStatus" value="4">  Выполненные
+	     	<input type="radio" name="typeStatus" value="4">  Отмененные
 	    </td>
+	    </msh:row><msh:row><td></td>
 	    <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-	     	<input type="radio" name="typeStatus" value="5">  Отмененные
+	     	<input type="radio" name="typeStatus" value="5">  Выполненные все
 	    </td>	        
 	    <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
-	     	<input type="radio" name="typeStatus" value="6">  Все
+	     	<input type="radio" name="typeStatus" value="6">  Выполненные (подтвержденные)
+	    </td>
+	    <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
+	     	<input type="radio" name="typeStatus" value="7">  Выполненные (На проверку!!!)
+	    </td>
+	    <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
+	     	<input type="radio" name="typeStatus" value="8">  Все
 	    </td>	        
        </msh:row>
 
