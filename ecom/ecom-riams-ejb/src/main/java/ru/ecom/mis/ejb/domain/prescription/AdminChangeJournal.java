@@ -75,4 +75,17 @@ public class AdminChangeJournal extends BaseEntity {
 	public void setAnnulRecord(String aAnnulRecord) {theAnnulRecord = aAnnulRecord;}
 	/** Текст аннулированого результат */
 	private String theAnnulRecord;
+	
+	/** Тип */
+	@Comment("Тип")
+	public String getCType() {
+		return theCType;
+	}
+
+	public void setCType(String aCType) {
+		theCType = aCType;
+	}
+
+	/** Тип */
+	private String theCType;
 }
