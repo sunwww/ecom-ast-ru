@@ -25,26 +25,27 @@ public class UserMessageTag  extends SimpleTagSupport {
 
     public void doTag() throws JspException, IOException {
         PageContext ctx = (PageContext) getJspContext() ;
+        List<ClaimMessage> claim_messages = ClaimMessage.findInRequest(ctx.getRequest()) ;
+        if(claim_messages!=null) {
+        	for (ClaimMessage message:claim_messages) {
+	            JspWriter out = getJspContext().getOut() ;
+	            out.println("<table id='claimMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
+	            out.println(" <div class='claimMessage'>") ;
+	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Убрать (заявка выполнена)</a>") ;
+	            out.println(message.getInfo()) ;
+	            out.println("<br/>") ;
+	            out.println("<u>"+message.getTitle()+"</u>") ;
+	            out.println("<br/>") ;
+	            out.println(message.getMessage()) ;
+	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Заявка выполнена</a>") ;
+	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",0)'>Заявка невыполнена</a>") ;
+	            out.println(" </div>") ;
+	            out.println("</td></tr></table>") ;
+	        }
+        }
         List<UserMessage> messages = UserMessage.findInRequest(ctx.getRequest()) ;
         if(messages!=null) {
-        	List<ClaimMessage> claim_messages = ClaimMessage.findInRequest(ctx.getRequest()) ;
-            if(messages!=null) {
-            	for (ClaimMessage message:claim_messages) {
-    	            JspWriter out = getJspContext().getOut() ;
-    	            out.println("<table id='claimMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
-    	            out.println(" <div class='claimMessage'>") ;
-    	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Убрать (заявка выполнена)</a>") ;
-    	            out.println(message.getInfo()) ;
-    	            out.println("<br/>") ;
-    	            out.println("<u>"+message.getTitle()+"</u>") ;
-    	            out.println("<br/>") ;
-    	            out.println(message.getMessage()) ;
-    	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Заявка выполнена</a>") ;
-    	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",0)'>Заявка невыполнена</a>") ;
-    	            out.println(" </div>") ;
-    	            out.println("</td></tr></table>") ;
-    	        }
-            }
+        	
         	for (UserMessage message:messages) {
 	            JspWriter out = getJspContext().getOut() ;
 	            out.println("<table id='userMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
