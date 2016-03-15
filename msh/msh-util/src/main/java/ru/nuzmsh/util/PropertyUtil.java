@@ -200,7 +200,7 @@ public class PropertyUtil {
        } else if (aOutClass.equals(Object.class)) {
     	   return aValue ;
        } else if (aInClass.equals(java.math.BigInteger.class) && aOutClass.equals(String.class)) {
-    	   return aValue.toString();
+    	   return String.valueOf(aValue);
        }
     	throw new IllegalArgumentException("Нет преобразования из "+aInClass+" в "+aOutClass+ " для значения "+aValue) ;
 
