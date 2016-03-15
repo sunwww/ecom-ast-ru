@@ -75,12 +75,12 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		sql = new StringBuilder() ;
 		
 		sql.append("insert into CustomMessage (messageTitle,messageText,recipient")
-			.append(",dispatchDate,dispatchTime,username,validityDate,messageUrl)") 
+			.append(",dispatchDate,dispatchTime,username,messageUrl)") 
 			.append("values ('").append("Аннулирование результатов исследование").append("','")
 			.append("Результаты исследования ''"+obj[2]+"'' пациента ''"+obj[1]+"'' были аннулированы сотрудником ")
 			.append(obj[2]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
 			.append(username)
-			.append("',current_date,current_time,'").append(obj[7]).append("',current_date,'")
+			.append("',current_date,current_time,'").append(obj[7]).append("','")
 			.append("entityParentView-stac_slo.do?id="+obj[0]).append("')") ;
 		System.out.println("=== "+sql.toString());
 		service.executeUpdateNativeSql(sql.toString()) ;
@@ -147,8 +147,8 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			aUsername = LoginInfo.find(aRequest.getSession(true)).getUsername();
 		}
 		if (aReason==null) {aReason="";}
-		String sql = "insert into AdminChangeJournal (prescription, medcase, createDate, createTime, createUsername, annulReason, annulWorkFunction, prescriptWorkFunction, annulRecord) " +
-				"values ("+aPrescription+", "+aMedCase+", "+aDate+", "+aTime+", '"+aUsername+"', '"+aReason+"',"+aCancelWf+", (select prescriptspecial_id from prescription where id = "+aPrescription+")" +
+		String sql = "insert into AdminChangeJournal (cType, prescription, medcase, createDate, createTime, createUsername, annulReason, annulWorkFunction, prescriptWorkFunction, annulRecord) " +
+				"values ('UN_PRESCRIPT',"+aPrescription+", "+aMedCase+", "+aDate+", "+aTime+", '"+aUsername+"', '"+aReason+"',"+aCancelWf+", (select prescriptspecial_id from prescription where id = "+aPrescription+")" +
 						",(select record from diary where medcase_id="+aMedCase+"))";	
 		System.out.println("Добавляем запись в журнал аннулирования результатов назначения "+sql);
 		wqs.executeUpdateNativeSql(sql);
@@ -396,10 +396,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			sql = new StringBuilder() ;
 			
 			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
-				.append(",dispatchDate,dispatchTime,username,validityDate,messageUrl)") 
+				.append(",dispatchDate,dispatchTime,username,messageUrl)") 
 				.append("values ('").append("Брак биоматериала").append("','")
 				.append(obj[2]).append(" пациент ").append(obj[3]).append(" услуга ").append(obj[4]).append("','").append(usernameO)
-				.append("',current_date,current_time,'").append(username).append("',current_date,'")
+				.append("',current_date,current_time,'").append(username).append("','")
 				.append("entityView-pres_prescriptList.do?id="+obj[0]).append("')") ;
 			service.executeUpdateNativeSql(sql.toString()) ;
 		}
