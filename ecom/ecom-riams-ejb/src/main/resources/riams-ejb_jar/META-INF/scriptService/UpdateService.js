@@ -8,14 +8,14 @@ function update_postgres(aCtx, aParams) {
 	default_id(aCtx,"LpuContractNosologyGroup") ;
 	default_id(aCtx,"VocMkbAdc") ;
 	default_id(aCtx,"AdminChangeJournal") ;
-	drop_index(aCtx,"kladr_kladrcode") ;
+	drop_index(aCtx,"kladr","kladr_kladrcode") ;
 	max_sequnce_default_id(aCtx,"Address2","Addressid") ;
 	return "1" ;
 }
 function max_sequnce_default_id(aCtx,aTable,aFldId) {
-	var l = aCtx.manager.createNativeQuery("select max("+aFldId+") as maxfld,count(*) as cnt from "+aTable).getResultList() ;
+	var l = aCtx.manager.createNativeQuery("select max("+aFldId+") as maxfld  from "+aTable).getResultList() ;
 	if (l.size()>0) {
-		aCtx.manager.createNativeQuery("alter sequence "+aTable.toLowerCase()+"_sequence restart with "+(l.get(0)[0]+1)).executeUpdate() ;
+		aCtx.manager.createNativeQuery("alter sequence "+aTable.toLowerCase()+"_sequence restart with "+(l.get(0)+1)).executeUpdate() ;
 	} 
 }
 function default_id(aCtx,aTable) {
@@ -23,10 +23,14 @@ function default_id(aCtx,aTable) {
 	aCtx.manager.createNativeQuery("alter table "+aTable+" alter column id set default nextval('"+aTable+"_sequence')").executeUpdate() ;
 	return "1" ;
 }
-function drop_index(aCtx,aIndex) {
+function drop_index(aCtx,aTable,aIndex) {
 	try {
-	aCtx.manager.createNativeQuery("drop index "+aIndex+"").executeUpdate() ;
+		var li = aCtx.manager.createNativeQuery("select ct.relname from pg_index i join pg_class ci on ci.oid=i.indexrelid join pg_class ct on ct.oid=i.indrelid where ct.relname='"
+					+aTable+"' and ci.relname like '"+aIndex+"'").getResultList() ;
+		if (li.size()>0) aCtx.manager.createNativeQuery("drop index "+aIndex+"").executeUpdate() ;
 	return "1" ;
-	} catch(e) {}
+	} catch(e) {
+		
+	}
 }
 
