@@ -189,13 +189,16 @@ order by veds.id,veds.name"
 		out.print("<td>") ;
 		out.println("<input type='hidden' name='examServiceType"+i+"' id='examServiceType"+i+"' value='");out.print(wqr.get2()) ;out.print("'/>") ;
 		out.println("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
-		out.print("<td>") ;out.println(wqr.get4()) ;out.print("</td>") ;
+		out.print("<td>") ;out.println(wqr.get4()) ;out.print("<input type='checkbox' hidden='true' id = 'examDefectCheckBox"+i+"'><span style='color: red' id='examDefect"+i+"'></span></td></td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='examServiceDate"+i+"' id='examServiceDate"+i+"' value='");
 		out.print(wqr.get6()!=null?wqr.get6():"");
 		out.print("'>") ;out.print("</td>") ;
 		out.print("<td>") ;out.println("<input type='checkbox' name='examIsPathology"+i+"' id='examIsPathology"+i+"' ");
 		out.print(wqr.get7()!=null?wqr.get7():"");out.print(">") ;out.print("</td>") ;
 		out.println("</tr>") ;
+		
+		
+				
 	}
 	out.println("</table>") ;
 	out.println("</td></tr>") ;
@@ -233,7 +236,7 @@ order by veds.id,veds.name"
 		out.print("<input type='hidden' name='visitServiceType"+i+"' id='visitServiceType"+i+"' value='");out.print(wqr.get2()) ;out.print("'/>") ;
 		out.print("<input type='hidden' name='visitServiceTypeName"+i+"' id='visitServiceTypeName"+i+"' value='");out.print(wqr.get3()) ;out.print("'/>") ;
 		out.print("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
-		out.print("<td>") ;out.println(wqr.get4()) ;out.print("<input type='checkbox' hidden='true' id = 'defCheckBox"+i+"'><span style='color: red' id='defect"+i+"'></span></td>") ;
+		out.print("<td>") ;out.println(wqr.get4()) ;out.print("<input type='checkbox' hidden='true' id = 'visitDefectCheckBox"+i+"'><span style='color: red' id='visitDefect"+i+"'></span></td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='visitServiceDate"+i+"' id='visitServiceDate"+i+"' value='");
 		out.print(wqr.get6()!=null?wqr.get6():"");
 		out.print("'>") ;out.print("</td>") ;
@@ -303,6 +306,10 @@ order by veds.id,veds.name"
 			for (int ii=0;ii<fldExamDate.length;ii++) {
 				out.println(" new dateutil.DateField($('"+fldExamDate[ii]+i+"')) ;") ;
 			}
+			out.println("eventutil.addEventListener($('examServiceDate"+i+"'),'click',function(){checkService('exam',"+i+");}) ;");
+			out.println("eventutil.addEventListener($('examServiceDate"+i+"'),'blur',function(){checkService('exam',"+i+");}) ;");
+			out.println("eventutil.addEventListener($('examServiceDate"+i+"'),'keyup',function(){checkService('exam',"+i+");}) ;");
+			out.println("eventutil.addEventListener($('examServiceDate"+i+"'),'change',function(){checkService('exam',"+i+");}) ;");
 		}
 		out.println("") ;
 		out.println("// script visit") ;
@@ -336,14 +343,14 @@ order by veds.id,veds.name"
 			for (int ii=0;ii<fldVisitDate.length;ii++) {
 				out.println(" new dateutil.DateField($('"+fldVisitDate[ii]+i+"')) ;") ;
 				//test
-				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'click',function(){checkService("+i+")}) ;");
-				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'blur',function(){checkService("+i+")}) ;");
-				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'keyup',function(){checkService("+i+");}) ;");
-				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'change',function(){checkService("+i+");}) ;");
-				out.println("eventutil.addEventListener($('workFunction"+i+"'),'click',function(){checkService("+i+")}) ;");
-				out.println("eventutil.addEventListener($('workFunction"+i+"'),'blur',function(){checkService("+i+");}) ;");
-				out.println("eventutil.addEventListener($('workFunction"+i+"'),'keyup',function(){checkService("+i+");}) ;");
-				out.println("eventutil.addEventListener($('workFunction"+i+"'),'change',function(){checkService("+i+");}) ;");
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'click',function(){checkService('visit',"+i+");}) ;");
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'blur',function(){checkService('visit',"+i+");}) ;");
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'keyup',function(){checkService('visit',"+i+");}) ;");
+				out.println("eventutil.addEventListener($('visitServiceDate"+i+"'),'change',function(){checkService('visit',"+i+");}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'click',function(){checkService('visit',"+i+");}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'blur',function(){checkService('visit',"+i+");}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'keyup',function(){checkService('visit',"+i+");}) ;");
+				out.println("eventutil.addEventListener($('workFunction"+i+"'),'change',function(){checkService('visit',"+i+");}) ;");
 			}
 		}
 		
@@ -377,7 +384,11 @@ order by veds.id,veds.name"
 			var isAllow = true;	
 			var cnt = $('cntVisit').value;
 			for (var i=0;i<cnt;i++) {
-				if ($('defCheckBox'+i).checked) {isAllow = false;}
+				if ($('visitDefectCheckBox'+i).checked) {isAllow = false;}
+			}
+			cnt = $('cntExam').value;
+			for (var i=0;i<cnt;i++) {
+				if ($('examDefectCheckBox'+i).checked) {isAllow = false;}
 			}
 			if (isAllow) {
 				if (subm) {
@@ -391,33 +402,33 @@ order by veds.id,veds.name"
 				}
 			}
 		}
-		function checkService (i) {
-			var date = $('visitServiceDate'+i).value;
-			var doctor = $('workFunction'+i).value;
+		function checkService (type, i) {
+			var date = $(type+'ServiceDate'+i).value;
+			var doctor = $('workFunction')?$('workFunction'+i).value:null;
 		if (date!=null&&date!='' &&date.length==10 ) {
 			if (doctor==null ||doctor=='') {doctor=0;}
 			ExtDispService.checkDispService(date, $('card').value,0,doctor,{
 				callback: function(aResult) {
 				if (aResult!=null&&aResult!=''){
 					if (aResult.startsWith("1")){
-						$('defect'+i).style.color='green';
-						$('defCheckBox'+i).checked=false;
+						$(type+'Defect'+i).style.color='green';
+						$(type+'DefectCheckBox'+i).checked=false;
 					} else if (aResult.startsWith('2')) {
-						$('defect'+i).style.color='red';
-						$('defCheckBox'+i).checked=true;
-					}
-					$('defect'+i).innerHTML=aResult.substring(1);
+						$(type+'Defect'+i).style.color='red';
+						$(type+'DefectCheckBox'+i).checked=true;
+					} 
+					$(type+'Defect'+i).innerHTML=aResult.substring(1);
 					//checkServicies();
 				} else {
-					$('defect'+i).innerHTML='';
-					$('defCheckBox'+i).checked=false;
+					$(type+'Defect'+i).innerHTML='';
+					$(type+'DefectCheckBox'+i).checked=false;
 					//checkServicies();
 				}
 				}
 			});
 		} else {
-			$('defect'+i).innerHTML='';
-			$('defCheckBox'+i).checked=false;
+			$(type+'Defect'+i).innerHTML='';
+			$(type+'DefectCheckBox'+i).checked=false;
 			//checkServicies(false);
 		}
 		}

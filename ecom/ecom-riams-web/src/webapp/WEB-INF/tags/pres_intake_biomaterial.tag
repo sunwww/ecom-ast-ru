@@ -302,6 +302,17 @@
          msh.effect.FadeEffect.pushFadeAll();
      }
 
+     function annul${name}Result(aPrescriptionId) {
+    	 var reason = prompt('Введите причину аннулирования результата');
+    	 if (reason!=null&&reason!='') {
+    		 PrescriptionService.annulPrescription(aPrescriptionId, reason 
+    	    			, { callback:function(a) {
+    	    				 alert(a);
+    	    			}
+    	    			 });	 
+    	 }
+    	 
+     }
      // Сохранение данных
      function save${name}IntakeInfo() {
      	PrescriptionService.intakeService($('${name}List').value,$('${name}Date').value, $('${name}Time').value, { 

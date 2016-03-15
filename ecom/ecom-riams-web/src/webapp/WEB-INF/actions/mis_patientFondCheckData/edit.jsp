@@ -13,14 +13,30 @@
         <msh:ifFormTypeIsCreate formName="mis_patientFondCheckDataForm">
         <msh:row>
 	        <td class="label" title="Обновлять данных пациентов (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Обновлять данные:</label></td>
-	        <td onclick="this.childNodes[1].checked='checked';">
+	        <td onclick="this.childNodes[1].checked='checked';showHideDiv('divPatientListDiv',0);">
 	        	<input type="radio" name="typePatient" value="1">  всех пациентов
-	        </td>
-	        
-	        <td onclick="this.childNodes[1].checked='checked';">
+	        </td>	        
+	        <td onclick="this.childNodes[1].checked='checked';showHideDiv('divPatientListDiv',0);">
 	        	<input type="radio" name="typePatient" value="2"> только прикрепленных к ЛПУ
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked'; showHideDiv('divPatientListDiv',1);">
+	        	<input type="radio" name="typePatient" value="3"> Конкретных пациентов
+	        </td>
         </msh:row>
+       
+        <msh:row>
+        
+        
+        	<td colspan="5">
+        	 <div id='divPatientListDiv' style='display: none'>
+        	Введите ID пациентов (через запятую)
+        	
+        		<input type='text' name='patientList' id='patientList' size="50" >
+        	</div>	
+        	</td>
+        	 
+        </msh:row>
+       
         <msh:row>
         <msh:checkBox property="needUpdatePatient" label="Автоматически обновлять данные пациента"/>
         <msh:checkBox property="needUpdateDocument" label="Автоматически обновлять данные документов"/>
@@ -188,6 +204,16 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
    
     document.forms['mis_patientFondCheckDataForm'].action="javascript:checkAllPatients()";
 	
+     function showHideDiv (aName, aStatus) {
+    	 if ($(aName)) {
+    		 if (aStatus==1) {
+    			 $(aName).style.display='block';
+    		 } else {
+    			 $(aName).style.display='none';
+    		 }
+    	 }
+    	 
+     }
 	 function checkAllPatients() {
 		 var typePat='1';
 		 var p=document.forms[0].typePatient;
@@ -198,7 +224,7 @@ order by jpfc.lastname, jpfc.firstname, jpfc.middlename
 			} 
 	    	PatientService.checkAllPatients($('needUpdatePatient').checked, 
 	    		$('needUpdateDocument').checked, $('needUpdatePolicy').checked, 
-	    		$('needUpdateAttachment').checked, typePat, {
+	    		$('needUpdateAttachment').checked, typePat, $('patientList').value, {
 	    		callback: function () {
 	    			document.location="mis_patientFondCheckList.do";
 	    		}

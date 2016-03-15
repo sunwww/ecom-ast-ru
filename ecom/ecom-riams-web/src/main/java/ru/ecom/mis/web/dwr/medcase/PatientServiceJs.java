@@ -47,9 +47,9 @@ public class PatientServiceJs {
 				, isUpdatePolicy, isUpdateAttachment);
 		
 	}
-	public String checkAllPatients(String updPatient, String updDocument, String updPolicy,String updAttachment, String aType, HttpServletRequest aRequest) throws Exception {
+	public String checkAllPatients(String updPatient, String updDocument, String updPolicy,String updAttachment, String aType, String aPatientList,  HttpServletRequest aRequest) throws Exception {
 		
-		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aType, aRequest).toString(); 
+		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aType, aPatientList, aRequest).toString(); 
 	}
 	public String checkDispAttached (String aDispTypeId, String aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
