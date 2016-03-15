@@ -37,8 +37,8 @@ public class UserMessageTag  extends SimpleTagSupport {
 	            out.println("<u>"+message.getTitle()+"</u>") ;
 	            out.println("<br/>") ;
 	            out.println(message.getMessage()) ;
-	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Заявка выполнена</a>") ;
-	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",0)'>Заявка невыполнена</a>") ;
+	            out.println(" <br><a href='javascript:void(0)' class='claimMessageYes' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Заявка выполнена</a>") ;
+	            out.println(" <br><a href='javascript:void(0)' class='claimMessageNo' title='' onclick='checkClaimMessage("+message.getId()+",0)'>Заявка невыполнена</a>") ;
 	            out.println(" </div>") ;
 	            out.println("</td></tr></table>") ;
 	        }
