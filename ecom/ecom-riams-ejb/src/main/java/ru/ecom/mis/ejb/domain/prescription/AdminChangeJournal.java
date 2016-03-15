@@ -78,14 +78,17 @@ public class AdminChangeJournal extends BaseEntity {
 	
 	/** Тип */
 	@Comment("Тип")
-	public String getCType() {
-		return theCType;
-	}
-
-	public void setCType(String aCType) {
-		theCType = aCType;
-	}
+	public String getCType() {return theCType;}
+	public void setCType(String aCType) {theCType = aCType;}
 
 	/** Тип */
 	private String theCType;
+	
+	/** Пациент */
+	@Comment("Пациент")
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {thePatient = aPatient;}
+
+	/** Пациент */
+	private Long thePatient;
 }
