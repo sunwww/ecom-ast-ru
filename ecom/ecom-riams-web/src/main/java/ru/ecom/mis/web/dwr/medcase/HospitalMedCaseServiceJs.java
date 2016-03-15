@@ -1297,6 +1297,8 @@ public class HospitalMedCaseServiceJs {
 	public String unionSloWithNextSlo(Long aSlo,HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.unionSloWithNextSlo(aSlo) ;
+		createAdminChangeMessageBySmo(aSlo, "UNION_SLO_WITH_NEXT_SLO", "Объединено СЛО со след. СЛО: "+aSlo, aRequest) ;
+
 		return "Объединены" ;
 	}
 	public String getPatientDefaultInfo(Long aPatient,String aDateFrom, String aDateTo, HttpServletRequest aRequest) throws NamingException {
@@ -1326,6 +1328,8 @@ public class HospitalMedCaseServiceJs {
 	public String deniedHospitalizatingSls(Long aMedCaseId,Long aDeniedHospitalizatingId,HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.deniedHospitalizatingSls(aMedCaseId,aDeniedHospitalizatingId) ;
+        createAdminChangeMessageBySmo(aMedCaseId, "DENIED_HOSPITALIZATING", "Оформлен отказ от госпитализации", aRequest) ;
+
 		return "Обновлены" ;
 	}
 	public String preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis,HttpServletRequest aRequest) throws Exception {
@@ -1373,17 +1377,39 @@ public class HospitalMedCaseServiceJs {
 		service.setRW(aMedCase, aRwDate, aRwNumber) ;
 		return "" ;
 	}
+	public void createAdminChangeMessageBySmo (Long aSmo, String aType, String aTextInfo
+			, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		sql.append("insert into AdminChangeJournal ( medcase, createDate, createTime")
+			.append(", createUsername, ctype,  annulRecord) ")
+			.append("values (")	.append(aSmo).append(", current_date, current_time, '")
+			.append(login)
+			.append("', '")
+			.append(aType)
+			.append("','")
+			.append(aTextInfo)
+			.append("')")
+						;	
+		service.executeUpdateNativeSql(sql.toString()) ;
+		
+	}
     public String changeStatCardNumber(String aNewStatCardNumber, Long aMedCase, HttpServletRequest aRequest) throws NamingException, JspException {
-    	System.out.println(
-    			new StringBuffer()
-    			.append("Изменение номера стат. карты: ")
-    			.append(aNewStatCardNumber)
-    			.append(" случая лечения в стационаре #")
-    			.append(aMedCase)
-    		) ;
+    	
     	boolean always = RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber", aRequest) ;
+    	IWebQueryService serviceWQR = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	Collection<WebQueryResult> l = serviceWQR.executeNativeSql("select ss.code from statisticstub ss where ss.medCase_id="+aMedCase) ;
         IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
         //return service.(aStatCardNumber, aDateStart, aEntranceTime, aPatient);
+        
+        createAdminChangeMessageBySmo(aMedCase, "CHANGE_STAT_CARD_NUMBER",new StringBuffer()
+		.append("Изменение номера стат. карты с:")
+		.append((l.isEmpty()?"-":l.iterator().next().get1()))
+		.append(" на ")
+		.append(aNewStatCardNumber)
+		.append(" случая лечения в стационаре #")
+		.append(aMedCase).toString(), aRequest) ;
         return service.getChangeStatCardNumber(aMedCase, aNewStatCardNumber,always) ;
     }
     public String getListTemperatureCurve(Long aMedCase, HttpServletRequest aRequest) throws Exception {
@@ -1405,6 +1431,8 @@ public class HospitalMedCaseServiceJs {
     
     public String deleteDischarge(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException  {
     	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
+    	createAdminChangeMessageBySmo(aMedCaseId, "HOSP_DELETE_DATA_DISCHARGE", "Удалены данные о дате выписки", aRequest) ;
+
     	return service.deleteDataDischarge(aMedCaseId) ;
     }
     

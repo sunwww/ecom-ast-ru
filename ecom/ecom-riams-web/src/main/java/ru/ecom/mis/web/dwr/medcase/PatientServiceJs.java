@@ -7,6 +7,8 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
+import com.sun.org.apache.bcel.internal.generic.ANEWARRAY;
+
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -349,10 +351,29 @@ public class PatientServiceJs {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries) ;
 	}
-	
+	public void createAdminChangeMessageByPatient (Long aSmo, String aType, String aTextInfo
+			, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		sql.append("insert into AdminChangeJournal ( patient, createDate, createTime")
+			.append(", createUsername, ctype,  annulRecord) ")
+			.append("values (")	.append(aSmo).append(", current_date, current_time, '")
+			.append(login)
+			.append("', '")
+			.append(aType)
+			.append("','")
+			.append(aTextInfo)
+			.append("')")
+						;	
+		service.executeUpdateNativeSql(sql.toString()) ;
+		
+	}
 	public void movePatientDoubleData(Long aIdNew, Long aIdOld,HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		service.movePatientDoubleData(aIdNew, aIdOld) ;
+		createAdminChangeMessageByPatient(aIdNew, "MOVE_PATIENT_DOUBLE_DATA", "Перенесены данные из персоны "+aIdOld+" в "+aIdNew, aRequest) ;
+
 	}
 	public String getDoubleByFio(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, HttpServletRequest aRequest) throws NamingException, Exception {
