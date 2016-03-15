@@ -24,7 +24,7 @@
 	<msh:form action="contract_find_person.do" defaultField="contractNumber" method="get">
 			<msh:panel>
 				<msh:row>
-					<msh:textField property="contractNumber" label="Наименование" fieldColSpan="3" horizontalFill="true"/>
+					<msh:textField property="contractNumber" label="Наименование" fieldColSpan="10" horizontalFill="true"/>
 				</msh:row>
 				        <msh:row>
 	        <td class="label" title="Договорная персона (typeContractPerson)" colspan="1"><label for="typeContractPersonName" id="typeContractPersonLabel">Договорная персона:</label></td>
@@ -125,14 +125,18 @@
 		if (typeContractPerson.equals("1"))	{
 			paramSql.append("  cp.dtype='NaturalPerson'") ;
 			StringTokenizer st = new StringTokenizer(contractNumber, " \t;,.");
-			if (st.hasMoreTokens()) {
-				fio.append(" p.lastname like '").append(st.nextToken()).append("%'");
-			}
-			if (st.hasMoreTokens()) {
-				fio.append(" and p.firstname like '").append(st.nextToken()).append("%'");
-			}
-			if (st.hasMoreTokens()) {
-				fio.append(" and p.middlename like '").append(st.nextToken()).append("%'");
+			if (request.getParameter("contractNumber").equals("")) {
+				fio.append(" p.lastname=''") ;
+			} else {
+				if (st.hasMoreTokens()) {
+					fio.append(" p.lastname like '").append(st.nextToken()).append("%'");
+				}
+				if (st.hasMoreTokens()) {
+					fio.append(" and p.firstname like '").append(st.nextToken()).append("%'");
+				}
+				if (st.hasMoreTokens()) {
+					fio.append(" and p.middlename like '").append(st.nextToken()).append("%'");
+				}
 			}
 		} else if (typeContractPerson.equals("2")) {
 			paramSql.append("  cp.dtype='JuridicalPerson'") ;
