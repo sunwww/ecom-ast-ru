@@ -229,18 +229,29 @@ public class PatientServiceBean implements IPatientService {
 	
 	public String getAddressByOkato (String aOkato, String aStreet) {
 		if (aOkato==null||aOkato.equals("")) return null;
+		if (aStreet==null||aStreet.equals("")) return null;
 		if (aOkato.length()<11) {
 			aOkato +="0000000000";
 			aOkato = aOkato.substring(0,11);
 		}
+		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
+		else if (aStreet.toUpperCase().endsWith(" ПЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
+		else if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
+		else if (aStreet.toUpperCase().endsWith(" ПРОЕЗД")) aStreet = aStreet.substring(0,aStreet.length()-6);
+		aStreet=aStreet.toUpperCase().trim() ;
+		
 		StringBuilder sql = new StringBuilder();
-		System.out.println("getAddressByOkato "+aOkato+" : "+aStreet);
+		System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
 		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode"+
-	" where k.okatd='"+aOkato+"' and upper(a.name) = '"+aStreet+"'");
-		System.out.println("==== finding by okato, sql = "+sql.toString());
-		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+	" where k.okatd='"+aOkato+"' and upper(a.name) = upper('"+aStreet+"')");
+		System.out.println("==== 2 finding by okato, sql = "+sql.toString());
+		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(10).getResultList() ;
 		if (listO.size()>0) {
-			System.out.println("==== found by okato, res = "+listO.get(0));
+			if (listO.size()>1) {
+				System.out.println("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
+				return null;
+			}
+			System.out.println("==== 3 found by okato, res = "+listO.get(0));
 			return listO.get(0).toString();
 		}
 		return null;
@@ -469,10 +480,11 @@ public class PatientServiceBean implements IPatientService {
 			int o=0;
 			List<Object[]> listZ = theManager.createNativeQuery("select pf.id" +
 					", pf.lastname, pf.firstname, pf.middlename, pf.commonnumber, pf.snils" +
-					" ,pf.documentnumber,pf.documentseries, pf.documenttype, pf.documentdateissued, documentwhomissued" +
+					" ,pf.documentnumber as f6_docnumber,pf.documentseries, pf.documenttype, pf.documentdateissued, documentwhomissued" +
 					" ,pf.lpuattached, pf.attachedtype, to_char(pf.attacheddate,'dd.MM.yyyy') as attDate " +
 					" ,pf.policyseries, pf.policynumber, to_char(pf.policydatefrom,'dd.MM.yyyy') as polFrom, to_char(pf.policydateto,'dd.MM.yyyy') as polTo, pf.companycode, to_char(pf.birthday,'dd.MM.yyyy')as birthday, pf.patient" +
 					" ,to_char(pf.checkDate,'dd.MM.yyyy') as checkDate " +
+					" ,pf.street as f22_street, pf.okato as f23_okato" +
 					" from patientfond pf where pf.id='"+aPatientFondId+"' ").getResultList();
 			if (!listZ.isEmpty()) {
 			Object[] arr = listZ.get(0);
@@ -483,7 +495,12 @@ public class PatientServiceBean implements IPatientService {
 					,aAttachedLpu=toStr(arr[11]),aAttachedType=toStr(arr[12]),aAttachedDate=toStr(arr[13])
 					,aPolicySeries=toStr(arr[14]),aPolicyNumber=toStr(arr[15]),aPolicyDateFrom=toStr(arr[16])
 					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21]);
-					Long aPatientId =toStr(arr[20])!=null?Long.valueOf(toStr(arr[20])):null; 
+			 
+			Long aPatientId =toStr(arr[20])!=null?Long.valueOf(toStr(arr[20])):null;
+			String aStreet = toStr(arr[22]), aOkato = toStr(arr[23]);
+			
+			String address = getAddressByOkato(aOkato, aStreet);
+			
 			if (needUpdatePatient) {
 				System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
 				o=1;
@@ -491,6 +508,7 @@ public class PatientServiceBean implements IPatientService {
 					str.append(prepSql("snils",aSnils));
 				}
 				str.append(prepSql((str.length()>23?", commonnumber":"commonnumber"),aRz));
+				if (address!=null) { str.append(prepSql(", address_addressid", address));}
 				patF.setIsPatientUpdate(true);
 			} else {patF.setIsPatientUpdate(false);}
 			
@@ -942,7 +960,7 @@ public class PatientServiceBean implements IPatientService {
 		insertCheckFondData(aLastname,aFirstname,aMiddlename,aBirthday,aSnils,aCommonNumber,aPolicySeries,aPolicyNumber
 				,aPolicyDateFrom,aPolicyDateTo,aUsername,aCheckType,aCompanyCode,aCompabyCodeF,aCompanyOgrn, aCompanyOkato
 				,aDocumentType,aDocumentSeries,aDocumentNumber, aKladr,aHouse,aHouseBuilding,aFlat
-				,aLpuAttached,aAttachedDate,aAttachedType,null,null,null,null,null,null,null);
+				,aLpuAttached,aAttachedDate,aAttachedType,null,null,null,null,null,null,null,null,null);
 	}
 		
 	
@@ -957,7 +975,7 @@ public class PatientServiceBean implements IPatientService {
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
 			,String aDocumentDateIssued, String aDocumentWhomIssued, String aDoctorSnils, String aCodeDepartment, String aPatientId
-			,PatientFondCheckData aCheckTime
+			,PatientFondCheckData aCheckTime, String aStreet, String aOkato
 			) throws ParseException {
 		PatientFond fond = new PatientFond() ;
 		fond.setLastname(aLastname) ;
@@ -981,6 +999,9 @@ public class PatientServiceBean implements IPatientService {
 		fond.setDocumentSeries(aDocumentSeries);
 		fond.setDocumentType(aDocumentType);
 		fond.setKladr(aKladr);
+		fond.setStreet(aStreet);
+		fond.setOkato(aOkato);
+		
 		fond.setSnils(aSnils);
 		fond.setHouse(aHouse) ;
 		fond.setHouseBuilding(aHouseBuilding);

@@ -466,4 +466,18 @@ public class PatientFond extends BaseEntity{
 	public void setIsDifference(Boolean aIsDifference) {theIsDifference = aIsDifference;}
 	/** Расхождение данных */
 	private Boolean theIsDifference;
+	
+	/** ОКАТО */
+	@Comment("ОКАТО")
+	public String getOkato() {return theOkato;}
+	public void setOkato(String aOkato) {theOkato = aOkato;}
+	/** ОКАТО */
+	private String theOkato;
+	
+	/** Улица */
+	@Comment("Улица")
+	public String getStreet() {return theStreet;}
+	public void setStreet(String aStreet) {theStreet = aStreet;}
+	/** Улица */
+	private String theStreet;
 }

@@ -48,7 +48,7 @@ public interface IPatientService {
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType, String dateDeath
 			,String aDocumentDateIssued, String aDocumentWhomIssued, String aDoctorSnils, String aCodeDepartment
-			,String aPatientId, PatientFondCheckData aCheckTime
+			,String aPatientId, PatientFondCheckData aCheckTime, String aStreet, String aOkato
 			) throws ParseException ;
 	public String getCodeByMedPolicyOmc(Long aType) ;
 	public boolean isNaturalPerson(Long aPatient) ;

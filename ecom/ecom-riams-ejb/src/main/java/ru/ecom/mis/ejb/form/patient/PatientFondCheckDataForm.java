@@ -25,6 +25,14 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 
 public class PatientFondCheckDataForm extends IdEntityForm {
     
+	/** Список пациентов для проверки */
+	@Comment("Список пациентов для проверки")
+	public String getPatientList() {return thePatientList;}
+	public void setPatientList(String aPatientList) {thePatientList = aPatientList;}
+	/** Список пациентов для проверки */
+	private String thePatientList;
+	
+	
 	/** Необходимо автоматически обновлять данные пациента */
 	@Comment("Необходимо автоматически обновлять данные пациента")
 	@Persist

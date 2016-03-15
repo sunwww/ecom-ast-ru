@@ -204,12 +204,13 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     }
 
     private void syncPatient(PatientAttachedImport aEntity, Long aPatientId, MedPolicyOmc aMedPolicy,Date aCurrentDate, boolean updateAttachment, FondImport fi) {
+    	System.out.println("=== SyncPatient, "+ aEntity+" : "+aPatientId);
     	VocIdentityCard passportType=findOrCreateIdentity(aEntity.getDocType()) ;
     	OmcOksm nat = findOrCreateNationality(aEntity.getCountry()) ;
     	boolean isNew = false ;
     	String firRecord = ""; 
     	Patient patient ;
-    	if (aPatientId==null) {
+    	if (aPatientId==null||aPatientId.equals(Long.valueOf(0))) {
     		firRecord="Создан новый пациент - "+aEntity.getLastname()+" "+aEntity.getFirstname()+" "+aEntity.getMiddlename()
     				+" д.р. "+DateFormat.formatToDate(aEntity.getBirthday())+". ";
     		isNew=true;
