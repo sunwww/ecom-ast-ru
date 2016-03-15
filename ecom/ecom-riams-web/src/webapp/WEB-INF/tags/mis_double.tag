@@ -17,7 +17,7 @@
 </style>
 
 <div id='${name}DoubleDialog' class='dialog'>
-    <h2>Внимаение возможны дубли!!!</h2>
+    <h2>Внимание, возможны дубли!!!</h2>
     <div class='rootPane'>
     <h3>${title}</h3>
 <form action="javascript:">
