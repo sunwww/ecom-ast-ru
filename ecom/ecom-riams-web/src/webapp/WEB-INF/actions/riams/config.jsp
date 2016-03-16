@@ -45,10 +45,10 @@
                      </msh:ifInRole>      
                      <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/Edit">
                            <li>
-	                        <mis:linkCsp roles='/Policy/Mis/Worker/WorkCalendar/Edit'
-	                        	 action="/calendarformgen.csp">
+	                        <msh:link roles='/Policy/Mis/Worker/WorkCalendar/Edit'
+	                        	 action="cal_workCalendar-journal.do?functionJournal=autogenerate">
                             Генератор календаря
-                        </mis:linkCsp>
+                        </msh:link>
                         </li>
                      </msh:ifInRole>
 						<li>

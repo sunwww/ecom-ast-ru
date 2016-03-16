@@ -21,7 +21,9 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-    <%String typePrint=ActionUtil.updateParameter("Report_labor","typePrint","3", request) ; 
+    <%
+    String typePrint=ActionUtil.updateParameter("Report_labor","typePrint","3", request) ; 
+    String typeSmo=ActionUtil.updateParameter("Report_labor","typeSmo","3", request) ; 
     
     %>
     
@@ -50,6 +52,16 @@
         <td onclick="this.childNodes[1].checked='checked';"  >
         	<input type="radio" name="typePrint" value="3">  все
         </td>
+      </msh:row>
+              <msh:row>
+        <td class="label" title="Поиск по типу печати (typeSmo)" colspan="1"><label for="typeSmoName" id="typeSmoLabel">Поиск назначений:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeSmo" value="1">  по дате назначения
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  >
+        	<input type="radio" name="typeSmo" value="2" >  по дате выписки
+        </td>
+        
       </msh:row>
         				    <msh:row>
                         <msh:textField property="number" label="№ назначения" />
@@ -120,6 +132,7 @@
     </form>
             <script type="text/javascript">
             checkFieldUpdate('typePrint','${typePrint}',1) ;
+            checkFieldUpdate('typeSmo','${typeSmo}',1) ;
             function checkfrm() {
             	document.forms[1].submit() ;
             }
@@ -145,6 +158,7 @@
             		
             	}
             	var print = +getCheckedRadio(document.forms[0],"typePrint");
+            	var smo = +getCheckedRadio(document.forms[0],"typeSmo");
             	if (print==1) {
             		addParam +=" and d.printDate is null" ;
             	} else if (print==2){
@@ -171,8 +185,7 @@
             <%
             if (request.getParameter("beginDate")!=null ) {
             	 StringBuilder sqlAdd = new StringBuilder() ;
-            	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
-        				, "отделение","department","ml.id", request)) ;
+            	
         		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
         				, "тип назначения","prescriptType","vpt.id", request)) ;
         		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocServiceSubType where id=:id"
@@ -201,6 +214,35 @@
         				title.append(" назначения: нераспечатанные") ;
         				sqlAdd.append(" and d.printDate is not null") ;
         			}
+        		}
+        		if (typePrint!=null) {
+        			if (typePrint.equals("1")) {
+        				title.append(" назначения: распечатанные") ;
+        				sqlAdd.append(" and d.printDate is null") ;
+        			} else if (typePrint.equals("2")) {
+        				title.append(" назначения: нераспечатанные") ;
+        				sqlAdd.append(" and d.printDate is not null") ;
+        			}
+        		}
+        		if (typeSmo!=null && typeSmo.equals("1")) {
+        			title.append(" по дате назначения") ;
+        			request.setAttribute("dateInfo"," p.transferDate = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')") ;
+        			sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
+            				, "отделение","department","ml.id", request));
+                	if (request.getParameter("department")!=null) ;
+	       		} else {
+	       			ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
+	        				, "отделение","department","ml.id", request);
+	            	if (request.getParameter("department")!=null) {
+	            		sqlAdd.append("select max(sloall.department_id) from medcase sloall where sloall.parent_id=(case when slo.dtype='HospitalMedCase' then slo.id ")
+	            				.append(request.getParameter("beginDate"))
+	            				.append(" when sls.dtype='HospitalMedCase' then sls.id else slo.id end)='")
+	            				.append(request.getParameter("department"))
+	            				.append("'");
+	            	}
+        			title.append(" по дате выписки") ;
+        			request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy' or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')") ;
+
         		}
             request.setAttribute("sqlAdd", sqlAdd.toString()) ;
             request.setAttribute("titleInfo", title.toString()) ;
@@ -244,7 +286,7 @@
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
     
-    where p.transferDate = to_date('${param.beginDate}','dd.mm.yyyy')
+    where ${dateInfo}
     and vst.code='LABSURVEY' 
     and mc.workFunctionExecute_id is not null and mc.dateStart is not null
     ${sqlAdd}

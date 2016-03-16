@@ -19,7 +19,7 @@ import ru.nuzmsh.web.struts.BaseAction;
 public class WorkCalendarAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-        long lpuId = Long.parseLong(aRequest.getParameter("lpuId")) ;
+        long lpuId = Long.parseLong(aRequest.getParameter("lpuId")!=null?aRequest.getParameter("lpuId"):"0") ;
         //Long pattern = Long.parseLong(aRequest.getParameter("pattern")) ;
         String beginDateS = aRequest.getParameter("beginDate") ;
         String finishDateS = aRequest.getParameter("finishDate") ;
@@ -27,7 +27,10 @@ public class WorkCalendarAction extends BaseAction {
         Date beginDate = DateFormat.parseSqlDate(beginDateS) ;
         Date finishDate = DateFormat.parseSqlDate(finishDateS) ;
         if (functionJournal!=null && !functionJournal.equals("")) {
-        	if  (functionJournal.equals("generate")) {
+        	if  (functionJournal.equals("autogenerate")) {
+        		service.autoGenerateCalendar() ;
+        		 return new ActionForward("/entityParentList-mis_lpu.do?id=-1&");
+        	} else if  (functionJournal.equals("generate")) {
         		serviceGenerateDo(service, lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate) ;
         	} else if (functionJournal.equals("addBusyPattern")) {
         		Long pattern = Long.parseLong(aRequest.getParameter("pattern")) ;

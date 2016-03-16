@@ -28,7 +28,11 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class WorkCalendarServiceJs {
-	
+	public String setAutogenerateByWorkCalendar(Long aWcId,Long aVal, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update WorkCalendar set autoGenerate='"+aVal+"' where id='"+aWcId+"'") ;
+		return "1" ;
+	}
 	public static String getIsServiceStreamEnabled(String aPatientId, String aServiceStreamId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;

@@ -49,6 +49,9 @@
         <msh:row>
             <td colspan="6">
                 <input type="button" value='Поиск' id="${name}Ok"  onclick="javascript:save${name}ServiceFind()"/>
+                 <msh:ifInRole roles="/Policy/Mis/MedService/AddFromPriceList">
+                <input name="find${name}Button" type="button" value='Поиск по прейскуранту'  onclick="javascript:find${name}ServiceFindByPriceList()"/>
+                </msh:ifInRole>
                 <input type="button" value='Отменить' id="${name}Cancel" onclick='javascript:cancel${name}ServiceFind()'/>
             </td>
         </msh:row>
@@ -108,7 +111,77 @@
      function cancel${name}ServiceFind() {
          the${name}ServiceFindDialog.hide() ;
      }
+     function update${name}MedServiceByPMSCreate(aPMS) {
+    	 ContractService.createMedServiceByPMS(
+				aPMS , {
+	 		     		 callback: function(aString) {
+	 		     		 	var ast = aString.split("@#@") ;
+	 		     		 	eval($('${name}JavaFunction').value+"('','"+ast[0]+"','','','"+ast[1]+"');")
+	 		     		 }
+	 		     		 }) ;
+	             
+     }
+     function find${name}ServiceFindByPriceList() {
+    	 if (${name}checkRequered('${name}Code') 
+    	     		|| ${name}checkRequered('${name}Name')
+    	     		)
+    	     		 {
+    		 ContractService.findServiceByPriceList(
+    				 $('${name}PriceList').value,$('${name}Code').value,$('${name}Name').value,"${name}PriceListDvPP"
+    	 		     			,'javascript:find${name}MedServiceByPricePosition'
+    	 		     		 ,{
+    	 		     		 callback: function(aString) {
+    	 		     		 	
+    	 		     		 	if (aString==null || aString=="") {
+    	 		     		 		alert("<h2>НЕТ ДАННЫХ!!!</h2>") ;
+    	 		     		 		edit${name}ServiceFind() ;
+    	 		     		 	} else {
+    	 		     		 		$('panel${name}').style.display="none" ;
+    	 		     		 		$('div${name}Button').style.display="none" ;
+    	 		     		 		$('${name}errorDiv').innerHTML = "<h2>СПИСОК УСЛУГ ПО ПРЕЙСКУРАНТУ!!!</h2>"
+    	 		     		 			+aString
+    	 		     		 			+'<br/><i>Выберите услугу</i><br/>'
+    	 		     		 			+'<button onclick="edit${name}ServiceFind()">Изменить данные</button>' ;
+    	 		     		 			+'<button onclick="cancel${name}ServiceFind()">Отменить</button>' ;
 
+    	 		     		 		
+    	 		     		 		return false ;
+    	 		     		 	}
+    	 		     		 }
+    	 		     		 }) ;
+    	             }
+     }
+     function find${name}MedServiceByPricePosition(aPricePosition) {
+    	 
+    		 ContractService.findMedServiceByPricePosition(
+    				 aPricePosition,"javascript:"+$('${name}JavaFunction').value
+    				 ,"javascript:update${name}MedServiceByPMSCreate"
+    	 		     			
+    	 		     		 ,{
+    	 		     		 callback: function(aString) {
+    	 		     		 	
+    	 		     		 	if (aString==null || aString=="") {
+    	 		     		 		alert("<h2>НЕТ ДАННЫХ!!!</h2>") ;
+    	 		     		 		edit${name}ServiceFind() ;
+    	 		     		 	} else {
+    	 		     		 		
+    	 		     		 		$('${name}PriceListDvPP'+aPricePosition).innerHTML = "<h2>СПИСОК СООТВЕТСТВИЙ УСЛУГ С ПРЕЙСКУРАНТОМ!!!</h2>"
+    	 		     		 			+aString
+    	 		     		 			+'<br/><i>Выберите услугу</i><br/>'
+    	 		     		 			+'<button onclick="cancel${name}ServiceFind()">Отменить</button>' ;
+
+    	 		     		 		
+    	 		     		 		return false ;
+    	 		     		 	}
+    	 		     		 }
+    	 		     		 }) ;
+    	             
+     }
+     
+     
+     
+     
+     
      // Сохранение данных
      function save${name}ServiceFind() {
      	if (${name}checkRequered('${name}Code') 

@@ -47,6 +47,7 @@ try {
 	System.out.println(""+e);
 }
 }	
+
 public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest aRequest) throws NamingException {
 	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 	StringBuilder sql = new StringBuilder() ;

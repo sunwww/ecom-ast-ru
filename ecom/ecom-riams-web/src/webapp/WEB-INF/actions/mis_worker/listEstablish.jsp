@@ -25,9 +25,12 @@
   <msh:section title="Рабочие функции">
   	<ecom:webQuery name="listPerson" nativeSql="
   	select wf.id
-  	,coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename, wf.groupName,'нет данных') as infowf
-  	, vwf.name as vwfname
-  	,wc.id as wcid ,wf.code
+  	,coalesce(wp.lastname||' '||wp.firstname||' '||wp.middlename, wf.groupName,'нет данных') as i2nfowf
+  	, vwf.name as v3wfname
+  	,wc.id as w4cid ,wf.code
+  	,case when wc.autogenerate='1' then 'автоматически генерировать' end as a6utogenerate
+  	,case when wc.autoGenerate='1' then wc.id else null end as i7sAuto 
+  	,case when wc.autoGenerate='1' then null else wc.id end as i8sNoAuto 
   	from workfunction wf 
   	left join worker w on w.id=wf.worker_id 
   	left join Patient wp on wp.id=w.person_id 
@@ -89,6 +92,9 @@
       <msh:tableColumn columnName="ФИО (Название группы)" property="2" guid="4ceb96e" />
       <msh:tableColumn columnName="Должностные обязанности" property="3"/>
       <msh:tableColumn columnName="Рабочий календарь" property="4"/>
+      <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'0'" buttonName="Снять автоматическую генерацию по календарю" buttonShortName="С" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
+      <msh:tableButton property="8" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'1'" buttonName="Установить автоматическую генерацию по календарю" buttonShortName="А" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
+      <msh:tableColumn columnName="Примечания" property="6"/>
     </msh:table>
   </msh:section>
   
@@ -98,6 +104,13 @@
   	<script type="text/javascript">
   		if ($('beginDate')) new dateutil.DateField($('beginDate')) ;
   		if ($('finishDate')) new dateutil.DateField($('finishDate')) ;
+  		function setAutogenerate(aWC,aVal) {
+  			WorkCalendarService.setAutogenerateByWorkCalendar(aWC,aVal,{
+  				callback: function(aResult) {
+  					window.location.reload() ;
+  				}
+  			});
+  		}
   		function addNotWorking(add,list) {
   			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
   			alert('Установить не рабочее время') ;

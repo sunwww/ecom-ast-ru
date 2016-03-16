@@ -134,6 +134,128 @@ public class ContractServiceJs {
 		}
 		return "" ;
 	}
+	public String createMedServiceByPMS(Long aPMS, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select pms.medService_id,ms.code,ms.name,pms.pricePosition_id")
+			.append(",(select max(ms.id) from medservice ms where ms.code=pp.code and replace(upper(ms.name),' ','')=replace(upper(pp.name),' ','') and ms.finishdate is null and ms.dtype='MedService') as msinfo")
+			.append(",(select max(ms.id) from medservice ms where ms.code='PRICELISTADD' and ms.dtype='MedServiceGroup') as msgroupinfo")
+			.append(",pp.code as ppcode,pp.name as ppname")
+			.append(" from pricemedservice pms ")
+			.append(" left join medService ms on ms.id=pms.medService_id")
+			.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+			.append(" where pms.id='").append(aPMS).append("'") ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		
+		if (list.isEmpty()) {
+			WebQueryResult ppInfo = list.iterator().next() ;
+			if (ppInfo.get4()==null) {
+				new IllegalArgumentException("НЕОПРЕДЕЛЕНА ПОЗИЦИЯ ПРЕЙСКУРАНТА ДЛЯ PRICEMEDSERVICE С ID="+aPMS) ;
+			}
+
+			if (ppInfo.get1()!=null) {
+				return new StringBuilder().append(ppInfo.get1()).append("@#@")
+						.append(ppInfo.get2()).append(" ").append(ppInfo.get3()).toString() ;
+			} else {
+				if (ppInfo.get6()==null) {
+					sql = new StringBuilder() ;
+					sql.append("insert into medservice (dtype,code,name) values (select 'MedServiceGroup','PRICELISTADD','УСЛУГИ, ДОБАВЛЕННЫЕ ИЗ ПРЕЙСКУРАНТА')") ;
+					int idMSG = service.executeUpdateNativeSql(sql.toString()) ;
+					System.out.println("insert result = "+idMSG) ;
+					sql = new StringBuilder() ;
+					sql.append("select max(id) from medservice where dtype='MedServiceGroup' and code='PRICELISTADD'") ;
+					Collection<WebQueryResult> lG = service.executeNativeSql(sql.toString()) ;
+					if (lG.isEmpty()) {
+						new IllegalArgumentException("НЕВОЗМОЖНО ОПРЕДЕЛИТЬ ГРУППУ ДЛЯ ДОБАВЛЕНИЯ УСЛУГИ С КОДОМ: PRICELISTADD") ;
+					}
+					ppInfo.set6(lG.iterator().next().get1()) ;
+					System.out.println("insert result = "+ppInfo.get6()) ;
+				}
+				list = service.executeNativeSql(sql.toString()) ;
+				if (list.isEmpty()) {
+					sql = new StringBuilder() ;
+					sql.append("insert into medservice (dtype,code,name,parent_id,startdate,isnoomc) (select 'MedService',pp.code,pp.name,'").append(ppInfo.get6()).append("',pp.datefrom,'1' from priceposition pp where pp.id='").append(ppInfo.get4()).append("')") ;
+					int idc = service.executeUpdateNativeSql(sql.toString()) ;
+					System.out.println("insert result = "+idc) ;
+					sql = new StringBuilder() ;
+					sql.append("select max(id) from medservice where dtype='MedService' and code='").append(ppInfo.get7()).append("'") ;
+					Collection<WebQueryResult> lG = service.executeNativeSql(sql.toString()) ;
+					ppInfo.set1(lG.iterator().next().get1()) ;
+					sql = new StringBuilder() ;
+					sql.append("update pricemedservice set medService_id='").append(ppInfo.get1()).append("' where id='").append(aPMS).append("'") ;
+					return createMedServiceByPMS(aPMS, aRequest) ;
+				}
+			}
+		} else {
+			new IllegalArgumentException("НЕ НАЙДЕН PRICEMEDSERVICE С ID="+aPMS) ;
+		}
+		return "" ;
+	}
+	public String findMedServiceByPricePosition( Long aPP, String aJavascript,String aJavaScriptCreate, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select pms.medService_id,ms.code,ms.name,pms.id from pricemedservice pms ")
+			.append(" left join medService ms on ms.id=pms.medService_id")
+			.append(" where pms.pricePosition_id='").append(aPP).append("'") ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		StringBuilder res = new StringBuilder() ;
+		if (list.isEmpty()) return "НЕТ ДАННЫХ" ;
+		res.append("<ll>" ) ;
+		for (WebQueryResult wqr:list) {
+			res.append("<li><a href=\"").append(wqr.get2()==null?aJavaScriptCreate:aJavascript).append("('");
+			if (wqr.get2()==null) {
+				res.append(wqr.get4()!=null?wqr.get4():"") ;
+			} else {
+				res.append("','");
+				res.append(wqr.get1()!=null?wqr.get1():"") ;
+				res.append("','");
+				//res.append(aTable1) ;
+				res.append("','");
+				//res.append(aServiceId) ;
+				res.append("','");
+				res.append(wqr.get2()).append(" ").append(wqr.get3()) ;
+			}
+			//res.append(aTable) ;
+			
+			res.append("')\">").append(wqr.get2()).append(" ").append(wqr.get3()).append("</a></li>");
+		}
+		res.append("</ll>" ) ;
+		return res.toString() ;
+		
+	}
+	public String findServiceByPriceList( Long aPriceList, String aCode, String aName, String aDivName
+			, String aJavascript, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder sql = new StringBuilder() ;
+		String addWhereSql = "" ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		sql.append("select p.id as pid,p.code as pcode,p.name as pname from PricePosition p ")
+			.append("").append("where ") ;
+		addWhereSql=" p.priceList_id='"+aPriceList+"' and " ;
+		sql.append(addWhereSql) ;
+	
+		boolean isNext = false;
+		if (aCode!=null && !aCode.equals("")) {
+			sql.append(" upper(p.code) like '%").append(aCode.toUpperCase()).append("%'") ;
+			isNext=true ;
+		}
+		if (aName!=null && !aName.equals("")) {
+			if (isNext) sql.append(" and ") ;
+			sql.append(" upper(p.name) like '%").append(aName.toUpperCase()).append("%'") ;
+		}
+		
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		StringBuilder res = new StringBuilder() ;
+		if (list.isEmpty()) return "НЕТ ДАННЫХ" ;
+		res.append("<ll>" ) ;
+		for (WebQueryResult wqr:list) {
+			res.append("<li><a href=\"").append(aJavascript).append("('");
+			res.append(wqr.get1());
+			res.append("')\">").append(wqr.get2()).append(" ").append(wqr.get3()).append("</a><div id='").append(aDivName).append(wqr.get1()).append("'></div></li>");
+		}
+		res.append("</ll>" ) ;
+		return res.toString() ;
+	}
 	public String findService(String aTable, String aServiceId, String aTable1, Long aPriceList, String aCode, String aName
 			, String aJavascript, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

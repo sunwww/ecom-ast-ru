@@ -59,6 +59,9 @@
           <msh:autoComplete property="director" label="Начальник" horizontalFill="true" fieldColSpan="3" vocName="workFunctionByDirect" parentId="mis_lpuForm.id"/>
         </msh:row>
         <msh:row>
+          <msh:autoComplete property="accessEnterOperation" label="Доступ на создание опреаций" horizontalFill="true" fieldColSpan="3" vocName="vocLpuAccessEnterOperation" parentId="mis_lpuForm.id"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="registrationInterval" label="Интервал регистр." horizontalFill="true"/>
         	<msh:checkBox property="isIntakeBioMaterial" label="В отд. осущ. забор биомат."/>
         </msh:row>
