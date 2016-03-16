@@ -467,7 +467,7 @@
       </msh:ifInRole>
       
       <msh:ifInRole roles="/Policy/Mis/Prescription/Prescript/View">
-      	<msh:section title="Лист назначний " createUrl="entityParentPrepareCreate-pres_prescriptList.do?id=${param.id}"
+      	<msh:section title="Лист назначний " createUrl="/javascript:showCreatePrescriptList('${param.id}','.do')"
       	createRoles="/Policy/Mis/Prescription/Prescript/Create" 	>
 	      	<%-- <msh:sectionTitle >Листы назначений. Добавить ЛН</msh:sectionTitle> --%>
 	      	<msh:sectionContent>

@@ -194,8 +194,8 @@
 		checkNum+=1;
 	}
 	var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
-	$('tdPreRecord').innerHTML="";
-	$('divReserve').innerHTML="";
+	if ($('tdPreRecord')) { $('tdPreRecord').innerHTML=""; }
+	if $('divReserve') { $('divReserve').innerHTML=""; }
 	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value);
 	addRows(type+":"+ar[0],1); 
 }

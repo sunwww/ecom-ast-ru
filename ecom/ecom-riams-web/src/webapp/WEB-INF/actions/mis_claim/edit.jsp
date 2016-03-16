@@ -86,7 +86,12 @@
         	</msh:row> <msh:row>
         	<msh:label property="finishTime" label="Время исполнения"/>
         	</msh:row> <msh:row>
-          	<msh:label property="finishUsername" label="Пользователь, подтвердивший исполнение" />
+          	<msh:label property="finishUsername" label="Работник, выполнивший заявку" />
+          	 <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
+          	 <msh:row>
+        <msh:textField property="creatorComment" size="50" />
+        </msh:row>
+        </msh:ifInRole>
         </msh:row>  
         
         <msh:separator label="Информация об отмене заявки" colSpan="10"></msh:separator>
@@ -97,9 +102,7 @@
         	</msh:row> <msh:row>
           	<msh:label property="cancelUsername" label="Пользователь, отменивший заявку" />
         </msh:row>  
-        <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
-        
-        </msh:ifInRole>
+       
         
         
         </msh:ifFormTypeAreViewOrEdit>

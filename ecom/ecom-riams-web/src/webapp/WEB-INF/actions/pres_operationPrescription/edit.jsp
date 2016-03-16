@@ -312,6 +312,9 @@ function deletePrescription(aMedService, aWCT) {
 		
 		$(type+'Servicies').value='';
 		$(type+'ServiciesName').value='';
+		if ($('tdPreRecord')) { $('tdPreRecord').innerHTML=""; }
+		if $('divReserve') { $('divReserve').innerHTML=""; }
+		getPreRecord() 
 		if (aFocus) $(type+'ServiciesName').focus() ;
 }
 	function hiddenInput(aType,aFld,aNum,aValue,aDefaultValue) {
@@ -365,7 +368,7 @@ function getPreRecord() {
 	  		, {
 	                 callback: function(aResult) {
 	                	 //alert(aResult) ;
-	                	 $('divReserve').innerHTML = aResult ;
+	                	 if ($('divReserve')) { $('divReserve').innerHTML = aResult ; }
 	                 }
 		        	}
 		        	); 

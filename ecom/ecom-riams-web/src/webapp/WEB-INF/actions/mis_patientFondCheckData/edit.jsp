@@ -20,7 +20,7 @@
 	        	<input type="radio" name="typePatient" value="2"> только прикрепленных к ЛПУ
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked'; showHideDiv('divPatientListDiv',1);">
-	        	<input type="radio" name="typePatient" value="3"> Конкретных пациентов
+	        	<input type="radio" name="typePatient" value="3"> конкретных пациентов
 	        </td>
         </msh:row>
        
