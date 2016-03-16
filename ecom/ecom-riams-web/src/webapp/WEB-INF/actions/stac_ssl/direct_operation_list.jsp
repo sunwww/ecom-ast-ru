@@ -78,6 +78,7 @@ case when wct.prescription is not null then  mc.id else wchb.visit_id end as med
 ,ss.code
 ,p.comments
 , case when wct.prescription is not null then 'background:#F6D8CE;color:black;' else 'background:#6495ED;color:black;' end
+,p.id as prescritionID
 from workcalendartime wct 
 left join patient patP on patP.id=wct.prepatient_id
 left join prescription p on wct.prescription=p.id
@@ -111,6 +112,7 @@ order by wcd.calendardate, wct.timefrom
             <msh:tableColumn columnName="Дата назначения" property="6"/>
             <msh:tableColumn columnName="Время назначения" property="7"/>
             <msh:tableColumn columnName="Примечание" property="10"/>
+            <msh:tableButton buttonFunction="printCheckList" buttonShortName="Печать чек-листа" buttonName="Печать чек-листа" property="12"/>
             
             
         </msh:table>
@@ -151,6 +153,11 @@ order by wcd.calendardate, wct.timefrom
     	var frm = document.forms[0] ;
     	frm.target='' ;
     	frm.action='direct_operation_list.do' ;
+    }
+    function printCheckList(id) {
+    	
+    	var url ='print-checkList.do?s=HospitalPrintService&m=printCheckList&id='+id;
+    	window.location=url;
     }
 
     </script>
