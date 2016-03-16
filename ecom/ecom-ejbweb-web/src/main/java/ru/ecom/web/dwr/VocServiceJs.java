@@ -14,6 +14,7 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
+import ru.nuzmsh.web.messages.ClaimMessage;
 import ru.nuzmsh.web.messages.UserMessage;
 
 /**
@@ -23,10 +24,15 @@ public class VocServiceJs {
     public String getNameById(HttpServletRequest aRequest, String aVocName, String aId, String aParentId) throws NamingException, VocServiceException {
         return EntityInjection.find(aRequest).getVocService().getNameById(aId, aVocName, new VocAdditional(aParentId)) ;
     }
-    public boolean checkClaimMessage (HttpServletRequest aRequest, Long aClaimId, Long aStatus) throws NamingException {
-    	String sql = "update Claim set completeConfirmed = '"+aStatus+"' where id = "+aClaimId;
+    public boolean checkClaimMessage (HttpServletRequest aRequest, Long aClaimId, Long aStatus, String aComment) throws NamingException {
+    	String commentSql = "";
+    	if (aComment!=null&&!aComment.trim().equals("")) {
+    		commentSql = " , creatorComment = '"+aComment+"' ";
+    	}
+    	String sql = "update Claim set completeConfirmed = '"+aStatus+"' "+commentSql+" where id = "+aClaimId;
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	service.executeUpdateNativeSql(sql) ;
+    	ClaimMessage.removeFromSession(aRequest,aClaimId) ;
     	return true;
   
     }

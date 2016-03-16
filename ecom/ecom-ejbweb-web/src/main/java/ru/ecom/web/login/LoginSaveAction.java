@@ -222,7 +222,7 @@ public class LoginSaveAction extends LoginExitAction {
 		    	for (WebQueryResult wqr:list1) {
 		    		Long id = ConvertSql.parseLong(wqr.get1()) ;
 			    	serviceLogin.dispatchMessage(id) ;
-			    	ClaimMessage.addMessage(aRequest,id,"Заявка от "+wqr.get3()+" выполнена",""+wqr.get2(),null) ;
+			    	ClaimMessage.addMessage(aRequest,id,"Подтверждение выполнения заявки от "+wqr.get3(),""+wqr.get2(),null) ;
 		    	}
 			}
 		}
