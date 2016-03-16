@@ -30,6 +30,13 @@
 				<br>
 				<h2 style="font-size: large;" align="center">Стационар</h2>
 				<ul style="font-size: large; list-style: none;" >
+					<li><msh:link  action="js-riams-instruction.do?id=template_change_info">
+						Работа с шаблонами протоколов
+                    </msh:link></li>
+					<li><msh:link  action="js-riams-instruction.do?id=add_template_list_prescript">
+						Добавление шаблона листа назначений
+                    </msh:link></li>
+					
 					<li><msh:link  action="js-riams-instruction.do?id=zav_send_diary">
 						Отправка дневника заведующим на редактирование (врачу)
                     </msh:link></li>
@@ -46,6 +53,9 @@
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=create_calendar">
 						Создание календаря
+                    </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=contract_plat_patient">
+						Работа с платными договорами по физическим лицам
                     </msh:link></li>
 				</ul>
 				
