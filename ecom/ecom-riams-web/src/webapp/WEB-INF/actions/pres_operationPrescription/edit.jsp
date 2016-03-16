@@ -313,7 +313,7 @@ function deletePrescription(aMedService, aWCT) {
 		$(type+'Servicies').value='';
 		$(type+'ServiciesName').value='';
 		if ($('tdPreRecord')) { $('tdPreRecord').innerHTML=""; }
-		if $('divReserve') { $('divReserve').innerHTML=""; }
+		if ($('divReserve')) { $('divReserve').innerHTML=""; }
 		getPreRecord() 
 		if (aFocus) $(type+'ServiciesName').focus() ;
 }
