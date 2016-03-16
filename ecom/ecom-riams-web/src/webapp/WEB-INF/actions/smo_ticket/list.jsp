@@ -16,7 +16,10 @@
     <tiles:put name='body' type='string'>
             
             <ecom:webQuery name="list"
-            nativeSql="select smo.id,to_char(dateFinish,'dd.mm.yyyy') as dateFinish,to_char(dateStart,'dd.mm.yyyy') as dateStart,vwf.name||' '||wp.lastname,smo.isTalk from MedCase smo
+            nativeSql="select smo.id,to_char(dateFinish,'dd.mm.yyyy') as dateFinish,to_char(dateStart,'dd.mm.yyyy') as dateStart,vwf.name||' '||wp.lastname,smo.isTalk 
+            
+            ,(select list(mkb.code) from Diagnosis d left join VocIdc10 mkb on mkb.id=d.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id where d.medcase_id=smo.id and vpd.code='1') as diag
+            from MedCase smo
 left join MedCard mc on smo.patient_id=mc.person_id
             left join WorkFunction wf on wf.id=smo.workFunctionExecute_id
             left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
@@ -25,7 +28,7 @@ left join MedCard mc on smo.patient_id=mc.person_id
             where mc.id='${param.id}'
             and smo.dtype='ShortMedCase' and mc.id=smo.medcard_id
             order by smo.dateStart"/>
-            <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
+           
         <msh:table name="list" 
         deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" editUrl="entityParentEdit-smo_ticket.do" viewUrl="entityParentView-smo_ticket.do?short=Short"
         action="entityParentView-smo_ticket.do" idField="1" noDataMessage="Не найдено">
@@ -33,19 +36,11 @@ left join MedCard mc on smo.patient_id=mc.person_id
             <msh:tableColumn columnName="Дата направления" property="2"/>
             <msh:tableColumn columnName="Дата приема" property="3"/>
             <msh:tableColumn columnName="Специалист" property="4" />
-	        <msh:tableColumn columnName="Беседа с родст." property="5"/>
+	        <msh:tableColumn columnName="Беседа с родст." property="5" role="/Policy/Mis/MisLpu/Psychiatry"/>
+	        <msh:tableColumn columnName="Диагноз" property="6" />
         </msh:table>
-            </msh:ifInRole>
-            <msh:ifNotInRole roles="/Policy/Mis/MisLpu/Psychiatry">
-        <msh:table name="list" 
-        deleteUrl="entityParentDeleteGoParentView-smo_ticket.do" editUrl="entityParentEdit-smo_ticket.do" viewUrl="entityParentView-smo_ticket.do?short=Short"
-        action="entityParentView-smo_ticket.do" idField="1" noDataMessage="Не найдено">
-            <msh:tableColumn columnName="Номер" property="1"/>
-            <msh:tableColumn columnName="Дата направления" property="2"/>
-            <msh:tableColumn columnName="Дата приема" property="3"/>
-            <msh:tableColumn columnName="Специалист" property="4" />
-         </msh:table>
-            </msh:ifNotInRole>
+            
+            
     </tiles:put>
 
 </tiles:insert>
