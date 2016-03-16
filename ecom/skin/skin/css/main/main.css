@@ -686,10 +686,10 @@ div.errorMessage, div.formInfoMessage,div.userMessage {
 
 
 div.claimMessage {
-    background-color: #4479D4 ;
-    color: white ;
+    background-color: #E0F2F7 ;
+    color: black ;
     font-weight: bold;
-    
+    min-width: 400 px;
     margin-top: 0.3em;
     padding-top: 0.3em ;
     padding-bottom: 0.3em ;

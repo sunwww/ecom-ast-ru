@@ -137,11 +137,17 @@ function hideUserMessage(aId) {
 }
 
 function checkClaimMessage (aId, aStatus) {
-	VocService.checkClaimMessage(aId, aStatus, {
-		callback: function (aResult) {
-			if ($('claimMessageContainer'+aId)) { $('claimMessageContainer'+aId).style.display='none'; }
-		}
-	});
+	var creatorComment ='';
+	if (+aStatus==0) {
+		creatorComment = prompt('Введите примечание - что именно не сделано');		
+	}
+
+		VocService.checkClaimMessage(aId, aStatus, creatorComment, {
+			callback: function (aResult) {
+				if ($('claimMessageContainer'+aId)) { $('claimMessageContainer'+aId).style.display='none'; }
+			}
+		});
+
 }
 
 function checkUserMessage(aId) {
