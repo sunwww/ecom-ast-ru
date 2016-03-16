@@ -175,4 +175,11 @@ public class Claim extends BaseEntity{
 	public void setCompleteConfirmed(Boolean aCompleteConfirmed) {theCompleteConfirmed = aCompleteConfirmed;}
 	/** Пользователь подтвердил выполнение заявки */
 	private Boolean theCompleteConfirmed;
+	
+	/** Комментарий пользователя */
+	@Comment("Комментарий пользователя")
+	public String getCreatorComment() {return theCreatorComment;}
+	public void setCreatorComment(String aCreatorComment) {theCreatorComment = aCreatorComment;}
+	/** Комментарий пользователя */
+	private String theCreatorComment;
 }

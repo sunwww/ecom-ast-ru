@@ -217,4 +217,12 @@ public class ClaimForm extends IdEntityForm{
 	/** Пользователь подтвердил выполнение */
 	private Boolean theCompleteConfirmed;
 	
+	/** Комментарий пользователя */
+	@Comment("Комментарий пользователя")
+	@Persist
+	public String getCreatorComment() {return theCreatorComment;}
+	public void setCreatorComment(String aCreatorComment) {theCreatorComment = aCreatorComment;}
+	/** Комментарий пользователя */
+	private String theCreatorComment;
+	
 }

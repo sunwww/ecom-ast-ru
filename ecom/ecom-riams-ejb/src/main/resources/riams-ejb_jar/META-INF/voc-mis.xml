@@ -191,12 +191,13 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'OPERATION'  and ms.finishDate" 
+		queryAppend="vst.code = 'OPERATION'  and ms.finishDate is null " 
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
 </voc>
+
 <voc id='serviceWorkFunction' type='NativeVocService'>
     	<NativeVocService
     			from = 'WorkFunction as wf '
