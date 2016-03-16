@@ -260,7 +260,7 @@ public class PatientServiceBean implements IPatientService {
 		StringBuilder sql = new StringBuilder() ;
 		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
 		if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
-		aStreet=aStreet.toUpperCase().replaceAll(" ", "").replaceAll("-", "").replaceAll("№", "N") ;
+		aStreet=aStreet.toUpperCase() ;
 		if (aCity!=null && aCity.contains("АСТРАХАН")) aCity="АСТРАХАНЬ" ;
 		if (aCity.endsWith(" С")
 				||aCity.endsWith(" П")
