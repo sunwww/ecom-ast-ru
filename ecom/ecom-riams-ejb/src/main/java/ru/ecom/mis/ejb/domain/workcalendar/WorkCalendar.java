@@ -72,5 +72,18 @@ public class WorkCalendar extends BaseEntity{
 
 	/** Рабочая функция */
 	private WorkFunction theWorkFunction;
+	
+	/** Автоматически генерировать */
+	@Comment("Автоматически генерировать")
+	public Boolean getAutoGenerate() {
+		return theAutoGenerate;
+	}
+
+	public void setAutoGenerate(Boolean aAutoGenerate) {
+		theAutoGenerate = aAutoGenerate;
+	}
+
+	/** Автоматически генерировать */
+	private Boolean theAutoGenerate;
 
 }

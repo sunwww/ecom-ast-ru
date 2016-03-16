@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -8,6 +10,7 @@ import ru.ecom.ejb.services.entityform.interceptors.ADynamicSecurityInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuAccessEnterOperation;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
 import ru.ecom.mis.ejb.form.lpu.interceptors.RepMisLpuChildInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -527,4 +530,12 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Короткое наименование */
 	private String theShortName;
+	/** Доступ на создание операций по отделению */
+	@Comment("Доступ на создание операций по отделению")
+	@Persist
+	public Long getAccessEnterOperation() {return theAccessEnterOperation;}
+	public void setAccessEnterOperation(Long aAccessEnterOperation) {theAccessEnterOperation = aAccessEnterOperation;}
+
+	/** Доступ на создание операций по отделению */
+	private Long theAccessEnterOperation;
 }

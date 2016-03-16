@@ -73,5 +73,8 @@ function checkPeriod(aForm,aManager) {
 		throw "Дата операции "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(operDate)+" должна быть больше или равна началу СМО "
 		+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(medCase.dateStart) ;
 	}
+	var l = aManager.createNativeQuery("select vlaeo.id from mislpu ml left join VocLpuAccessEnterOperation vlaeo on vlaeo.id=ml.AccessEnterOperation_id where ml.id='"
+				+aForm.department+"' and vlaeo.code='NOT_SURGICAL_DEPARTMENT'").getResultList() ;
+	if (l.size()>0) throw "Запрет в отделение на регистрацию что в нем проводилась операция!!!"
 	
 }

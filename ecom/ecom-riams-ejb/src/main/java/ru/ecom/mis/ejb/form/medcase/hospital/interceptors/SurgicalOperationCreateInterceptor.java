@@ -35,11 +35,15 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     				throw new IllegalStateException("Нельзя добавить хирургическую операцию в закрытый случай стационарного лечения (ССЛ) !!!") ;
     			}
     		}
-    		
     		if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
     		if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
     	} else if (parentSSL!=null && parentSSL instanceof DepartmentMedCase){
     		DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
+			if (slo.getDepartment()!=null &&slo.getDepartment().getAccessEnterOperation()!=null
+					&&slo.getDepartment().getAccessEnterOperation().getCode()!=null
+					&&slo.getDepartment().getAccessEnterOperation().getCode().equals("DENIED_IN_DEPARTMENT")) {
+				throw new IllegalStateException("Нельзя добавить хирургическую операцию по текущему отделению!!!") ;
+			}
     		if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
     		if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
     	} else  if (parentSSL!=null && parentSSL instanceof Visit){

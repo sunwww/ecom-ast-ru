@@ -6,6 +6,7 @@ import java.text.ParseException;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 
 public interface IWorkCalendarService {
+	public void autoGenerateCalendar() ;
 	public void deleteWorkCalendarTime(Long aTime) ;
 	public String deletePreRecord(String aUsername,Long aTime) ;
 	// Удалить свободные времена

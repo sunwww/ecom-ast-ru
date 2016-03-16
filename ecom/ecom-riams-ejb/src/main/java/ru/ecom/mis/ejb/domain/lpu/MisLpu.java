@@ -23,6 +23,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.diet.Diet;
 import ru.ecom.mis.ejb.domain.equipment.Equipment;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuAccessEnterOperation;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuFunction;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocMzDepType;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocPropertyAdmin;
@@ -491,4 +492,13 @@ public class MisLpu extends BaseEntity {
 
 	/** Короткое наименование */
 	private String theShortName;
+	
+	/** Доступ на создание операций по отделению */
+	@Comment("Доступ на создание операций по отделению")
+	@OneToOne
+	public VocLpuAccessEnterOperation getAccessEnterOperation() {return theAccessEnterOperation;}
+	public void setAccessEnterOperation(VocLpuAccessEnterOperation aAccessEnterOperation) {theAccessEnterOperation = aAccessEnterOperation;}
+
+	/** Доступ на создание операций по отделению */
+	private VocLpuAccessEnterOperation theAccessEnterOperation;
 }

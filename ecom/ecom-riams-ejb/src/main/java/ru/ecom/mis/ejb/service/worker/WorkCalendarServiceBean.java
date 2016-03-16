@@ -49,6 +49,18 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	
 	private final static Logger LOG = Logger.getLogger(WorkCalendarServiceBean.class);
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	public void autoGenerateCalendar() {
+		Calendar cal = Calendar.getInstance() ;
+		cal.add(Calendar.DAY_OF_MONTH, 14) ;
+		List<WorkCalendar> list = theManager
+				.createQuery("from WorkCalendar where autoGenerate='1'")
+				.getResultList() ;
+			
+			for (WorkCalendar wc:list) {
+				generateByPattern(wc,new java.sql.Date(cal.getTime().getTime())
+					,new java.sql.Date(cal.getTime().getTime())) ;
+			}
+	}
 	public void moveDate(Long aWorkFunction, Date aDateFrom, Date aDateTo) {
 		List<WorkCalendar> list = theManager
 				.createQuery("from WorkCalendar where workFunction_id=:wf")
