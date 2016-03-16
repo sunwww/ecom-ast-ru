@@ -1,5 +1,36 @@
 var map = new java.util.HashMap() ;
 
+function printCheckList (aCtx, aParams) {
+	var id = new java.lang.Long(aParams.get("id"));
+	var resultSql = "select p.id, to_char(p.planstartdate,'dd.MM.yyyy') as f1_surDate" +
+			" ,wf.code as f2_surCode" +
+			" ,ms.code||' ' ||ms.name as f3_surName" +
+			" ,pat.patientinfo as f4_patInfo" +
+			" ,ss.code as f5_statNumber" +
+			" from prescription p " +
+			" left join medservice ms on ms.id=p.medservice_id" +
+			" left join prescriptionlist pl on pl.id=p.prescriptionlist_id" +
+			" left join medcase dep on dep.id=pl.medcase_id" +
+			" left join medcase sls on sls.id=dep.parent_id" +
+			" left join statisticstub ss on ss.medcase_id=coalesce(sls.id, dep.id)" +
+			" left join patient pat on pat.id=dep.patient_id" +
+			" left join workfunction wf on wf.id=p.prescriptcabinet_id" +
+			" where p.id = " + id ;
+	var result = aCtx.manager.createNativeQuery(resultSql).getResultList();
+	if (!result.isEmpty()) {
+		var rec = result.get(0);
+		map.put("patientInfo", rec[4]);
+		map.put("statNumber", rec[5]);
+		map.put("operCode", rec[2]);
+		map.put("operDate", rec[1]);
+		map.put("operName", rec[3]);
+		return map;
+		
+	}
+	return null;
+			
+}
+
 function unNull (aStr) {
 	return aStr!=null?""+aStr:"";
 }
