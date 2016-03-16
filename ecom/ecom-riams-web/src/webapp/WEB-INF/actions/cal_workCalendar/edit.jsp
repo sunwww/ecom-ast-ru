@@ -14,7 +14,9 @@
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="workFunction" guid="105b60c0-2387-453d-a99e-837e4efceeac" />
       <msh:panel guid="panel">
-        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07" />
+        <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07" >
+        	<msh:checkBox property="autoGenerate" label="Автоматическая генерация"/>
+        </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
@@ -38,6 +40,7 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Рабочий календаря" guid="115d9e5c-3b7b-45f8-ae5e-89a86e647c65">
+      <msh:sideLink params="id" action="/entityParentEdit-cal_workCalendar" name="Изменить" roles="/Policy/Mis/Worker/WorkCalendar/Edit" guid="22cac091-1077-41a3-a5ee-83f60227caac" />
       <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-cal_workCalendar" name="Удалить" roles="/Policy/Mis/Worker/WorkCalendar/Delete" guid="22cac091-1077-41a3-a5ee-83f60227caac" />
     </msh:sideMenu>
     <msh:sideMenu title="Добавить" guid="370826ac-2b89-4b6c-a936-636b236a133c">
