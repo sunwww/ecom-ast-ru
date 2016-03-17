@@ -14,7 +14,6 @@
   <tiles:put name="title" type="string">
     <msh:title guid="helloItle-123" mainMenu="Poly">Журнал по пациентам, у которых есть открытые СПО</msh:title>
   </tiles:put>
-  <input type="button" onclick="print()" value="Печать!">
   <tiles:put name="side" type="string">
   	<tags:visit_finds currentAction="smo_journal_openSpo"/>
   </tiles:put>
