@@ -29,7 +29,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 	}
 	public static String getDiagnosis(EntityManager aManager, Long aMedCase, String aRegistrationType, String aPriority) {
     	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select d.idc10_id,mkb.code||' '||mkb.name,d.name from Diagnosis as d left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id");
+    	sql.append("select coalesce(d.idc10_id,'0'),coalesce(mkb.code||' '||mkb.name,'НЕОБХОДИМО УКАЗАТЬ КОД МКБ!!!') as mkbname,d.name from Diagnosis as d left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id");
 		sql.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id left join VocIdc10 mkb on mkb.id=d.idc10_id where d.medCase_id=").append(aMedCase)
     		.append(" and vdrt.code='").append(aRegistrationType)
     		.append("' and vpd.code='").append(aPriority).append("' order by d.id") ;
