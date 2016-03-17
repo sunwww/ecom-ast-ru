@@ -51,7 +51,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	public void autoGenerateCalendar() {
 		Calendar cal = Calendar.getInstance() ;
-		cal.add(Calendar.DAY_OF_MONTH, 14) ;
+		cal.add(Calendar.DAY_OF_MONTH, 10) ;
 		List<WorkCalendar> list = theManager
 				.createQuery("from WorkCalendar where autoGenerate='1'")
 				.getResultList() ;
