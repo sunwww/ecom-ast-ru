@@ -114,8 +114,8 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 			
 			
 		}
-		DepartmentSaveInterceptor.setDiagnosis(aManager, form.getId(), form.getComplicationDiags(), "3", "4") ;
-		DepartmentSaveInterceptor.setDiagnosis(aManager, form.getId(), form.getConcomitantDiags(), "3", "3") ;
+		DepartmentSaveInterceptor.setDiagnosis(aManager, form.getId(), form.getComplicationDiags(), "3", "4",null) ;
+		DepartmentSaveInterceptor.setDiagnosis(aManager, form.getId(), form.getConcomitantDiags(), "3", "3",null) ;
 	}
     
     public static Object getVocByCode(EntityManager aManager,String aTable, String aCode) {

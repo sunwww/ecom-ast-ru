@@ -56,7 +56,13 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		
 		
 	}
-    public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority) {
+	public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority) {
+		setDiagnosis(aManager, aMedCase, aListDiags, aRegistrationType, aPriority,null, null) ;
+	}
+	public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority, Long aIllnesPrimary) {
+		setDiagnosis(aManager, aMedCase, aListDiags, aRegistrationType, aPriority,aIllnesPrimary, null) ;
+	}
+    public static void setDiagnosis(EntityManager aManager, Long aMedCase, String aListDiags, String aRegistrationType, String aPriority, Long aIllnesPrimary, String aMkbAdc) {
     	VocDiagnosisRegistrationType vocDRT= (VocDiagnosisRegistrationType)getVocByCode(aManager,"VocDiagnosisRegistrationType",aRegistrationType);
 		VocPriorityDiagnosis vocPrior = (VocPriorityDiagnosis)getVocByCode(aManager,"VocPriorityDiagnosis",aPriority) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -69,16 +75,21 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     		if (otherServs.length>0) {
     			for (int i=0;i<otherServs.length;i++) {
     				String[] serv = otherServs[i].split("@#@") ;
-    				if (list.size()>i) {
-    					aManager.createNativeQuery("update Diagnosis set name=:name,idc10_id=:idc10 where id="+list.get(i))
-    					.setParameter("name", serv[2]) 
-    					.setParameter("idc10", Long.valueOf(serv[0])).executeUpdate() ;
-    					
+    				if (serv[0]==null||serv[0].equals("")||serv[0].equals("0")) {
+    					aManager.createNativeQuery("delete from Diagnosis where id="+list.get(i)).executeUpdate() ;
     				} else {
-    					
-    					aManager.createNativeQuery("insert into Diagnosis (name,idc10_id,medCase_id,priority_id,registrationType_id) values (:name,'"+serv[0]+"','"+aMedCase+"','"+vocPrior.getId()+"','"+vocDRT.getId()+"')")
-    					.setParameter("name", serv[2]) 
-    						.executeUpdate() ;
+	    				if (list.size()>i) {
+	    					aManager.createNativeQuery("update Diagnosis set name=:name,idc10_id=:idc10,illnesPrimary_id="+((aIllnesPrimary==null||aIllnesPrimary.intValue()==0)?"null":"'"+aIllnesPrimary+"'")+",mkbAdc=:mkbAdc where id="+list.get(i))
+	    					.setParameter("name", serv.length>2?serv[2]:"") 
+	    					.setParameter("idc10", Long.valueOf(serv[0]))
+	    					.setParameter("mkbAdc", aMkbAdc) 
+	    					.executeUpdate() ;
+	    				} else {
+	    					aManager.createNativeQuery("insert into Diagnosis (name,idc10_id,medCase_id,priority_id,registrationType_id,illnesPrimary_id,mkbAdc) values (:name,'"+serv[0]+"','"+aMedCase+"','"+vocPrior.getId()+"','"+vocDRT.getId()+"',"+((aIllnesPrimary==null||aIllnesPrimary.intValue()==0)?"null":"'"+aIllnesPrimary+"'")+",:mkbAdc)")
+	    					.setParameter("name", serv.length>2?serv[2]:"") 
+	    					.setParameter("mkbAdc", aMkbAdc) 
+	    						.executeUpdate() ;
+	    				}
     				}
     			}
     			for (int i=otherServs.length;i<list.size();i++) {
