@@ -173,9 +173,10 @@ function onSave(aForm, aEntity, aContext) {
 		aEntity.prevMedCase.transferDepartment = aEntity.department ;
 	}
 	//throw  "--"+aForm.getId() ;
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString(), "4", "1") ;
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getComplicationDiags(), "4", "4") ;
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getConcomitantDiags(), "4","3") ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getComplicationDiags(), "4", "4",null) ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getConcomitantDiags(), "4","3",null) ;
+	//throw ""+new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString() ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString(), "4", "1",aForm.clinicalActuity,aForm.mkbAdc) ;
 }
 
 // Перед удалением
