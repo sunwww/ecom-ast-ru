@@ -197,7 +197,7 @@ order by  pat.lastname    ,pat.firstname, pat.middlename
 ,to_char(pat.birthday,'dd.mm.yyyy') as b4irthday
 ,to_char(sls.datestart,'dd.mm.yyyy') as s5datestart,to_char(sls.datefinish,'dd.mm.yyyy') as s6datefinish
 
-, to_char(coalesce((select max(ct1.datereplace) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct1.datereplace<ct.datereplace and ct1.courtdecisionreplace_id in (2,4)),
+, to_char(coalesce((select max(ct1.datereplace) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct.datereplace>ct1.datereplace and ct1.courtdecisionreplace_id in (2,4)),
 (select min(ct1.decisiondate) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct1.kind_id in (2,3) )),'dd.mm.yyyy') as c7treplaceDate
 , to_char(ct.dateReplace,'dd.mm.yyyy') as c8treplaceDate
 ,(select ml.name from MedCase slo
@@ -215,9 +215,9 @@ left join vocidc10 mkb on mkb.id=diag.idc10_id where slo.parent_id=sls.id and di
 ,vpctd.name as v15pctdname
 
 ,ct.datereplace - 
-case when sls.datestart>coalesce((select max(ct1.datereplace) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct1.datereplace<ct.datereplace and ct1.courtdecisionreplace_id in (2,4)),
+case when sls.datestart>coalesce((select max(ct1.datereplace) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct.datereplace>ct1.datereplace and ct1.courtdecisionreplace_id in (2,4)),
 (select min(ct1.decisiondate) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct1.kind_id in (2,3) ))
-then  sls.datestart else coalesce((select max(ct1.datereplace) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct1.datereplace<ct.datereplace and ct1.courtdecisionreplace_id in (2,4)),
+then  sls.datestart else coalesce((select max(ct1.datereplace) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct.datereplace>ct1.datereplace and ct1.courtdecisionreplace_id in (2,4)),
 (select min(ct1.decisiondate) from compulsorytreatment ct1 where ct1.careCard_id=ct.careCard_id and ct1.ordernumber=ct.ordernumber and ct1.kind_id in (2,3) ))
  end
 as k16dpl
@@ -232,7 +232,7 @@ as k17dpl
 from compulsorytreatment ct left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id
 left join patient pat on pat.id=pcc.patient_id
 left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' 
-and (sls.datefinish is null or sls.datefinish>=ct.datereplace) and sls.datestart<ct.datereplace
+and (sls.datefinish is null or ct.datereplace>=sls.datefinish) and ct.datereplace<sls.datestart
 left join statisticstub ss on ss.id=sls.statisticstub_id
   left join mislpu oml on oml.id=sls.orderlpu_id
   left join mislpu dml on dml.id=sls.department_id
@@ -286,8 +286,76 @@ order by  pat.lastname    ,pat.firstname, pat.middlename
     </msh:sectionContent>
     </msh:section>
    
-    <% }  %>
     <% 
+    } else if (typeView!=null && (typeView.equals("1"))) {
+    ActionUtil.getValueByList("diag_typeReg_ord_sql", "diag_typeReg_ord", request) ;
+      	%>
+    
+    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
+    <ecom:webQuery nameFldSql="reestr_sql" name="journal_reestr" nativeSql="
+    select ct.id as ctid,ss.code as slsid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
+,to_char(sls.datestart,'dd.mm.yyyy') as slsdatestart, 
+(select ml.name from MedCase slo 
+left join MisLpu ml on ml.id=slo.department_id 
+where 
+slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and slo.transferDate is null 
+),oml.name as omlname
+, to_char(ct.registrationDate,'dd.mm.yyyy') as ctregistrationDate 
+,(select list(mkb.code) from diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id where diag.medcase_id=sls.id and diag.registrationtype_id=2) as mkbcode 
+,pml.name as pmlname
+,dml.name as dmlname
+,(select list(mkb.code) from diagnosis diag 
+left join medcase slo on slo.id=diag.medCase_id and slo.dtype='DepartmentMedCase' and slo.transferDate is null 
+left join vocidc10 mkb on mkb.id=diag.idc10_id where slo.parent_id=sls.id and diag.registrationtype_id=4) as mkbcode1 
+
+from compulsorytreatment ct left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id 
+left join patient pat on pat.id=pcc.patient_id 
+left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.dateFinish is null and sls.deniedhospitalizating_id is null 
+left join statisticstub ss on ss.id=sls.statisticstub_id
+  left join mislpu oml on oml.id=sls.orderlpu_id
+  left join mislpu dml on dml.id=sls.department_id
+  left join vochosptype pml on pml.id=sls.sourcehosptype_id
+where ct.datereplace is null and ct.kind_id in (2,3) 
+    ${emergencySql} ${departmentSql} ${admissionOrderSql}
+    and (select count(slo.id) from medcase slo where slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE')>1
+group by ct.id ,sls.id ,pat.lastname,pat.firstname,pat.middlename ,pat.birthday ,sls.datestart,  ct.registrationDate,ss.code
+order by  pat.lastname    ,pat.firstname, pat.middlename
+
+
+    " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    <msh:sectionTitle>
+    
+    <form action="print-stac_journal_compulsory_treatment_psych_r_1.do" method="post" target="_blank">
+    Реестр с ${param.dateBegin} по ${dateEnd}.
+    <input type='hidden' name="sqlText" id="sqlText" value="${reestr_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type="submit" value="Печать"> 
+    </form>
+    </msh:sectionTitle>
+    <msh:sectionContent>
+    <msh:table name="journal_reestr"
+    viewUrl="entityParentView-psych_compulsoryTreatment.do?short=Short" 
+     action="entityParentView-psych_compulsoryTreatment.do" idField="1" >
+      <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn columnName="№ИБ" property="2" />
+      <msh:tableColumn columnName="ФИО пациента" property="3" />
+      <msh:tableColumn columnName="Дата рождения" property="4" />
+      <msh:tableColumn columnName="МКБ напр." property="9" />
+      <msh:tableColumn columnName="МКБ клин." property="12" />
+      <msh:tableColumn columnName="Дата поступления" property="5" />
+      <msh:tableColumn columnName="Кем направлен" property="10" />
+      <msh:tableColumn columnName="Отделение поступления" property="11" />
+      <msh:tableColumn columnName="Отделение выписки или нахождения" property="6" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+
+    
+    
+    <%} 
     } else {%>
     	<i>Нет данных </i>
     	<% 

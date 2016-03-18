@@ -519,12 +519,18 @@
       	document.forms[0].action="javascript:check_diags()" ; 
       	function check_diags() {
       		var list_diag = ["complication","concomitant"] ;
+      		var isnext=true ;
       		for (var i=0;i<list_diag.length;i++) {
-      			addDiag(list_diag[i],1);
+      			isnext=addDiag(list_diag[i],1);
+      			if (!isnext) break ;
       			createOtherDiag(list_diag[i]);
       		}
-      		document.forms[0].action=old_action ;
-      		document.forms[0].submit() ;
+      		if (isnext) {
+	      		document.forms[0].action=old_action ;
+	      		document.forms[0].submit() ;
+      		} else {
+      			$('submitButton').disabled=false ;
+      		}
       	}
       	onload=function(){
       		
@@ -541,7 +547,7 @@
                   			}
                   		}
                 		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
-                        addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+");"
+                        addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+",1);"
                         
                   		var arr = $(list_diag[j]+'Diags').value.split("#@#");
                   		for (var i=0;i<arr.length;i++) {
@@ -586,9 +592,9 @@
                  			 if (confirm("Такой диагноз уже зарегистрирован. Вы хотите его заменить?")) {
                  			var node=servs[i];node.parentNode.removeChild(node);
                  		 } else {
-                  			return;
+                  			return true;
                   		 } 
-                 		} else {return;}
+                 		} else {return true;}
                     }                 
                  }
             		
@@ -604,8 +610,15 @@
       			}
       		}
             } else {
-            	if (aCheck!=1) alert("Заполнены не все поля диагноза!!");
+            	if (+aCheck!=1) {
+            		alert("Заполнены не все поля диагноза!!");
+            	} else {
+            		if (+$(aDiagType+"Mkb").value>0&&$(aDiagType+"Diagnos").length>0&&!confirm('Диагнозы, где не заполнены все данные (МКБ и наименование) сохранены не будут!!! Продолжить сохранение?')) {
+            			return false ;
+            		} 
+            	}
             }
+            return true ;
          }
         //alert(document.getElementById('othercomplicationDiagsTable').childNodes.childNodes[0].childNodes[4].value);
       	function createOtherDiag(aDiagType) {
@@ -630,7 +643,19 @@
       	// 3. Номер node в добавленной услуге 4. Обяз.поля да-1 нет-2 
       	// 5. наим. поля в форме 6. очищать поле в форме при добавление да-1, нет-0 
   		var theFld = [['Код МКБ','Mkb',1,3,1,'Mkb',1],['Наименование','Diagnos',2,8,1,'Diagnos',1]] ;
-      	function addRowDiag(aDiagType,aMkb,aMkbName,aDiagnos) {
+      	function editMkbByDiag(aDiagType,aNode) {
+      		if (+$(aDiagType+'Mkb').value==0 || confirm("Вы точно хотите продолжить? В этом случае Вы потеряете дааные еще недобавленного диагноза!")) {
+   			for (var ii=0;ii<theFld.length;ii++) {
+   				$(aDiagType+theFld[ii][5]).value=aNode.childNodes[0].childNodes[theFld[ii][3]].value;
+				if (theFld[ii][2]==1) {
+					$(aDiagType+theFld[ii][5]+'Name').value=aNode.childNodes[0].childNodes[theFld[ii][3]+1].value;
+				}
+
+   			}
+   			aNode.parentNode.removeChild(aNode) ;
+      		}
+      	}
+      	function addRowDiag(aDiagType,aMkb,aMkbName,aDiagnos,aIsLoad) {
       		var table = document.getElementById('other'+aDiagType+"DiagsTable");
       		var row = document.createElement('TR');
       		var td = document.createElement('TD');
@@ -652,9 +677,14 @@
       		if (slo_form_is_view==0) {
 	      		row.appendChild(tdDel);
 	      		tdDel.style.width='2%' ;
-	      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\""+aDiagType+"\")' value='- диагноз' />";
+	      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\""+aDiagType+"\")' value='- диагноз' />"
+	      		+ "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;editMkbByDiag(\""+aDiagType+"\",node);' value='редак.' />";
+	      		if (+aIsLoad>0 && (+aMkb==0)) {
+	      			if (+$(aDiagType+"Mkb").value==0) editMkbByDiag(aDiagType,row) ;  
+	      		}
       		}
       	}
+
 </script>
 
 <msh:ifFormTypeIsView formName="stac_sloForm">
