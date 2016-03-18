@@ -7,7 +7,8 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	if (+aForm.getWorkfunction()>0){
-	}  else {		
+	}  
+	else {		
 		var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
 		aForm.setWorkfunction(wf.getId()) ;
 	}	
