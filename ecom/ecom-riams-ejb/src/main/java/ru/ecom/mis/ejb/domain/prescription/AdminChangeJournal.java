@@ -3,9 +3,11 @@ package ru.ecom.mis.ejb.domain.prescription;
 import java.sql.Date;
 import java.sql.Time;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -71,6 +73,7 @@ public class AdminChangeJournal extends BaseEntity {
 	
 	/** Текст аннулированого результат */
 	@Comment("Текст аннулированого результат")
+	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getAnnulRecord() {return theAnnulRecord;}
 	public void setAnnulRecord(String aAnnulRecord) {theAnnulRecord = aAnnulRecord;}
 	/** Текст аннулированого результат */
