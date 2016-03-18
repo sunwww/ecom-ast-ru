@@ -172,12 +172,6 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	            	patImp.setRayon(vr) ;
 	            	if (adr==null) {
 	            		String aStreet = patImp.getStreet();
-	            		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
-	            		else if (aStreet.toUpperCase().endsWith(" ПЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
-	            		else if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
-	            		else if (aStreet.toUpperCase().endsWith(" ПРОЕЗД")) aStreet = aStreet.substring(0,aStreet.length()-6);
-	            		aStreet=aStreet.toUpperCase().trim() ;
-	            		
 	            		String adrStr = thePatientService.getAddressByOkato(patImp.getRn(), aStreet);
 	            		Long adrId = adrStr!=null?Long.valueOf(adrStr):null;
 	            		if (adrId==null) {
@@ -185,12 +179,13 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	            		}
 	            		if (adrId!=null) adr=theManager.find(Address.class, adrId) ;
 	            	}
-	            	patImp.setAddressRegistration(adr) ;
+	            	if (adr!=null) { 
+	            		patImp.setAddressRegistration(adr) ; 
+	            	}
 	                if (i%100==0) {
 	                    monitor.advice(100);
 	                    monitor.setText(i+". "+patImp.getLastname());
 	                }
-	                //System.out.println("=== before syncPatient, patImp ="+(patImp!=null?patImp.getLastname():"patIMP=null")+", pat="+(patientId1!=null?patientId1:" null"));
 	                syncPatient(patImp, patientId1, medPolicy,current_date, forceUpdateAttachment, fi) ;
 	            }
             }
@@ -259,9 +254,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	patient.setSnils(aEntity.getSnils());
     	patient.setCommonNumber(aEntity.getCommonNumber());
     	//aPatient.setBirthPlace(aEntity.getBirthPlace()) ;
-    	if (aEntity.getAddressRegistration()==null) {
-    		
-    	}
+    	
     	if (aEntity.getAddressRegistration()!=null) {
     		patient.setAddress(aEntity.getAddressRegistration());
     	} else {
