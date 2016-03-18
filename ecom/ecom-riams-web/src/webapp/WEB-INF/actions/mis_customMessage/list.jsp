@@ -10,8 +10,8 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu title="Добавить">
       <msh:sideLink roles="/Policy/Mis/CustomMessage/Create" key="ALT+N" action="/entityPrepareCreate-mis_customMessage.do" name="Создать новое" />
-      <msh:sideLink action="/default_message_update.do?emergency=1" name="Отправить Экстренное сообщение об обновлении через 10 минут" />
-      <msh:sideLink action="/default_message_update.do" name="Отправить Обычное сообщение после обновлении" />
+      <msh:sideLink roles="/Policy/Mis/CustomMessage/Create" action="/default_message_update.do?emergency=1" name="Отправить Экстренное сообщение об обновлении через 10 минут" />
+      <msh:sideLink roles="/Policy/Mis/CustomMessage/Create" action="/default_message_update.do" name="Отправить Обычное сообщение после обновлении" />
     </msh:sideMenu>
   	<msh:sideMenu title="Список сообщений">
   	  <msh:sideLink action="/js-mis_customMessage-sendMessages.do?id=-1&short=${param.short}" name="Список отправленных сообщений" />
