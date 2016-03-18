@@ -229,21 +229,48 @@ public class PatientServiceBean implements IPatientService {
 	
 	public String getAddressByOkato (String aOkato, String aStreet) {
 		if (aOkato==null||aOkato.equals("")) return null;
+		String streetType = "";
 		if (aStreet==null||aStreet.equals("")) return null;
 		if (aOkato.length()<11) {
 			aOkato +="0000000000";
 			aOkato = aOkato.substring(0,11);
 		}
-		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
-		else if (aStreet.toUpperCase().endsWith(" ПЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
-		else if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
-		else if (aStreet.toUpperCase().endsWith(" ПРОЕЗД")) aStreet = aStreet.substring(0,aStreet.length()-6);
+		if (aStreet.toUpperCase().endsWith(" УЛ")) {
+			streetType = aStreet.substring(aStreet.length()-2);
+			aStreet = aStreet.substring(0,aStreet.length()-2);
+		}
+		else if (aStreet.toUpperCase().endsWith(" ПЛ")) {
+			streetType = aStreet.substring(aStreet.length()-2);
+			aStreet = aStreet.substring(0,aStreet.length()-2);
+		}
+		else if (aStreet.toUpperCase().endsWith(" ПЕР")) {
+			streetType = aStreet.substring(aStreet.length()-3);
+			aStreet = aStreet.substring(0,aStreet.length()-3);
+		}
+		else if (aStreet.toUpperCase().endsWith(" ПРОЕЗД")) {
+			streetType = aStreet.substring(aStreet.length()-6);
+			aStreet = aStreet.substring(0,aStreet.length()-6);
+		}
+		else if (aStreet.toUpperCase().endsWith(" ПР")) {
+			streetType = "ПРОЕЗД";
+			aStreet = aStreet.substring(0,aStreet.length()-2);
+		}
+		else if (aStreet.toUpperCase().endsWith(" Ш")) {
+			streetType = aStreet.substring(aStreet.length()-1);
+			aStreet = aStreet.substring(0,aStreet.length()-1);
+		}
+		else if (aStreet.toUpperCase().endsWith(" НАБ")) {
+			streetType = aStreet.substring(aStreet.length()-3);
+			aStreet = aStreet.substring(0,aStreet.length()-3);
+		}
 		aStreet=aStreet.toUpperCase().trim() ;
-		
+		streetType = streetType.toUpperCase().trim();
 		StringBuilder sql = new StringBuilder();
 		System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
-		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode"+
+		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode" +
+				" left join addresstype at on at.id=a.type_id"+
 	" where k.okatd='"+aOkato+"' and upper(a.name) = upper('"+aStreet+"')");
+		if (!streetType.equals("")) {sql.append(" and upper(at.shortname)=upper('"+streetType+"')");}
 		System.out.println("==== 2 finding by okato, sql = "+sql.toString());
 		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(10).getResultList() ;
 		if (listO.size()>0) {
@@ -258,9 +285,6 @@ public class PatientServiceBean implements IPatientService {
 	}
 	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet, String aOkato) {
 		StringBuilder sql = new StringBuilder() ;
-		if (aStreet.toUpperCase().endsWith(" УЛ")) aStreet = aStreet.substring(0,aStreet.length()-2);
-		if (aStreet.toUpperCase().endsWith(" ПЕР")) aStreet = aStreet.substring(0,aStreet.length()-3);
-		aStreet=aStreet.toUpperCase() ;
 		if (aCity!=null && aCity.contains("АСТРАХАН")) aCity="АСТРАХАНЬ" ;
 		if (aCity.endsWith(" С")
 				||aCity.endsWith(" П")
@@ -284,7 +308,7 @@ public class PatientServiceBean implements IPatientService {
 		else if (aCity.startsWith("ПОС ")) aCity = aCity.substring(4) ;
 		
 		aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
-		System.out.println("==== All is good, OKATO = "+aOkato);
+	
 		if (aOkato!=null&&!aOkato.equals("")) {
 			String s = getAddressByOkato(aOkato, aStreet);
 			if (s!=null&&!s.equals("")) { 
@@ -338,6 +362,7 @@ public class PatientServiceBean implements IPatientService {
 		return res.toString() ;
 	}
 	private String getKladrByRayon(String aRegion, String aRayon, String aCity, String aStreet) {
+		if (aRayon==null||aRayon.equals("")) {return null;}
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		sql.append("select id, kladr from VocRayon where code='").append(aRayon).append("'" ) ;
