@@ -119,9 +119,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 	}
 	if (pat.newborn==null) {
 		if (+aForm.orderLpu>0) {
-			if (aForm.getEmergency()==null || aForm.getEmergency()) {
-				if (+aForm.orderMkb>0) {}  else {throw "Если указано поле кем направлен необходимо заполнить код МКБ направителя!!!" ;}
-			}
+			if (+aForm.orderMkb==0 && (aForm.getEmergency()!=null && !aForm.getEmergency())) {throw "Если указано поле кем направлен необходимо заполнить код МКБ направителя!!!" ;}
 		}
 	}
 	
