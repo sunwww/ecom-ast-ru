@@ -181,7 +181,10 @@ function visitNoPatient(aContext, aVisitId) {
 	} else {
 		visit.noActuality = true ;
 	}
-	if (visit.timePlan!=null) visit.timePlan.medCase = null ;
+	if (visit.timePlan!=null) {
+		visit.timePlan.medCase = null ;
+		visit.timePlan.prescription = null;
+	}
 	var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
 	.iterator().next() ;
 	/*
