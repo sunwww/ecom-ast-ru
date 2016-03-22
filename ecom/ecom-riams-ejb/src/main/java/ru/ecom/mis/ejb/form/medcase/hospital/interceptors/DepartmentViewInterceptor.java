@@ -23,6 +23,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 			form.setClinicalDiagnos(frm.getName());
 			if (frm.getIdc10()!=null) form.setClinicalMkb(frm.getIdc10()) ;
 			if (frm.getIllnesPrimary()!=null) form.setClinicalActuity(frm.getIllnesPrimary()) ;
+			if (frm.getMkbAdc()!=null) form.setMkbAdc(frm.getMkbAdc()) ;
 		}
 		form.setComplicationDiags(getDiagnosis(aContext.getEntityManager(), dep.getId(), "4","4")) ;
 		form.setConcomitantDiags(getDiagnosis(aContext.getEntityManager(), dep.getId(), "4", "3")) ;
