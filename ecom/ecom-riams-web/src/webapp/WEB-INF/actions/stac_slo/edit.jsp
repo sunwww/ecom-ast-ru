@@ -335,6 +335,7 @@
       
       left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
             	where slo.id='${param.id}' and upper(d.DTYPE)='PROTOCOL'
+            	and upper(aslo.dtype) in ('DEPARTMENTMEDCASE','HOSPITALMEDCASE')
             	order by  d.dateRegistration desc,  d.timeRegistration desc"/>
          
           <msh:tableNotEmpty name="protocols">
