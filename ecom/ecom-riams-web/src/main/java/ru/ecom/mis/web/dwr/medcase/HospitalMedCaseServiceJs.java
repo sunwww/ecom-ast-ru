@@ -29,6 +29,19 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	public String getCriminalPhoneMessageByTrauma(Long aMedCase, Long aDeathReason, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select id from VocDeathReason where id="+aDeathReason+" and code='9'") ;
+		if (l.size()>0) {
+			l.clear() ;
+			l = service.executeNativeSql("select to_char(pm.WhenDateEventOccurred,'dd.mm.yyyy'),pm.Place,substring(pm.Comment,0,200) from PhoneMessage pm where pm.dtype='CriminalPhoneMessage' and pm.medcase_id="+aMedCase) ;
+			if (l.size()>0) {
+				WebQueryResult wqr = l.iterator().next() ;
+				return wqr.get1()+"@#@"+wqr.get2()+"@#@"+wqr.get3()+"@#@";
+			}
+		}
+		return null ;
+	}
 	public String toNull (String aValue) {
 		if (aValue==null ||aValue.equals("")||aValue.trim().equals("")) return "null";
 		return aValue.trim();
