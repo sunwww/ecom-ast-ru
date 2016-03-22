@@ -14,5 +14,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Справочник категорий по случаю смерти")
 @Table(schema="SQLUser")
 public class VocDeathCategory extends VocBaseEntity {
+	/** Устарел */
+	@Comment("Устарел")
+	public Boolean getDeprecated() {return theDeprecated;}
+	public void setDeprecated(Boolean aDeprecated) {theDeprecated = aDeprecated;}
 
+	/** Устарел */
+	private Boolean theDeprecated;
 }
