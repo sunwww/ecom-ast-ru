@@ -180,7 +180,7 @@
 	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
 	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
 	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
-	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
+	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="check_diags();this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
 	                        <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
 	                        
                </td>
