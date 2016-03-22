@@ -40,18 +40,28 @@
   	<style type="text/css">
 
 
-            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel {
+            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel,#mkbAdcLabel {
                 color: blue ;
             }
-            #concomitantDiagnosLabel, #concomitantMkbLabel {
+            #concomitantDiagnosLabel, #concomitantMkbLabel, .concomitantDiags {
                 color: green ;
             }
 
-            #concludingDiagnosLabel, #concludingMkbLabel {
+            #concludingDiagnosLabel, #concludingMkbLabel, .concludingDiags {
                 color: black ;
             }
-            #complicationDiagnosLabel, #complicationMkbLabel {
+            #complicationDiagnosLabel, #complicationMkbLabel, .complicationDiags {
                 color: purple;
+            }
+            
+            #pathanatomicalDiagnosLabel, #pathanatomicalMkbLabel {
+                color: red ;
+            }
+            .otherTable {
+            	width:99% ;
+            }
+            .otherTable tr {
+            	border: 1px solid ;
             }
             
             .epicrisis {
@@ -214,18 +224,33 @@
         <msh:row>
 	        <msh:textField label="Заключительный диагноз" property="concludingDiagnos" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
+        <msh:hidden property="complicationDiags"/>
+        	<msh:hidden property="concomitantDiags"/>
+        <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
+                <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="6" horizontalFill="true"/>
+        </msh:row>
+
         <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 диаг.соп." property="concomitantMkb" fieldColSpan="3" horizontalFill="true"/>
+    	    <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="5" horizontalFill="true"/>
+    	    <td><input type="button" value="+ диагноз" onclick="addDiag('concomitant')"/></td>
+        </msh:row>
+        </msh:ifFormTypeIsNotView>
+        <tr><td colspan="7">
+        <table class="otherTable" id='otherconcomitantDiagsTable'></table>
+        </td></tr>   
+        <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">     
+        <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.осл." property="complicationMkb" fieldColSpan="6" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-    	    <msh:textField label="Диаг. сопут" property="concomitantDiagnos" fieldColSpan="3" horizontalFill="true"/>
+    	    <msh:textField label="Клин. диаг. осл." property="complicationDiagnos" fieldColSpan="5" horizontalFill="true"/>
+    	    <td><input type="button" value="+ диагноз" onclick="addDiag('complication')"/></td>
         </msh:row>
-        <msh:row>
-	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 ослож." property="complicationMkb" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
-        <msh:row>
-    	    <msh:textField label="Осложнение" property="complicationDiagnos" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
+        </msh:ifFormTypeIsNotView>
+                <msh:row><td colspan="7">
+        <table class="otherTable" id='othercomplicationDiagsTable'></table>
+        </td></msh:row>        
         <msh:ifFormTypeIsView formName="stac_sslDischargePreForm">
 	        <msh:row>
 	    	    <msh:autoComplete vocName="vocIdc10" label="МКБ-10 патанат.диаг." property="pathanatomicalMkb" fieldColSpan="3" horizontalFill="true"/>
@@ -319,6 +344,191 @@
     <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslDischargePreForm" guid="ad9ca7d1-36d7-41ac-a186-cf6fca58b389" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  <script type="text/javascript">
+  var slo_form_is_view = 0 ;
+  </script>
+  <msh:ifFormTypeIsView formName="stac_sslDischargePreForm">
+  <script type="text/javascript">
+  slo_form_is_view = 1 ;
+  </script>
+  </msh:ifFormTypeIsView>
+      	<script type="text/javascript"> 
+      	var old_action = document.forms["mainForm"].action ; 
+      	document.forms["mainForm"].action="javascript:check_diags()" ; 
+      	function check_diags() {
+      		var list_diag = ["complication","concomitant"] ;
+      		var isnext=true ;
+      		for (var i=0;i<list_diag.length;i++) {
+      			isnext=addDiag(list_diag[i],1);
+      			if (!isnext) break ;
+      			createOtherDiag(list_diag[i]);
+      		}
+      		if (isnext) {
+	      		document.forms["mainForm"].action=old_action ;
+	      		document.forms["mainForm"].submit() ;
+      		} else {
+      			$('submitButton').disabled=false ;
+      		}
+      	}
+      	onload=function(){
+      		
+      		var list_diag = ["complication","concomitant"] ;
+      		for (var j=0;j<list_diag.length;j++) {
+      			
+               		if ($(list_diag[j]+'Diags').value!='') {
+                        var addRowF="";
+                        var ind_f=0 ;
+                  		for (var i=0;i<theFld.length;i++) {
+                  			addRowF+="ar["+(ind_f++)+"],"
+                  			if (theFld[i][2]==1) {
+                  				addRowF+="ar["+(ind_f++)+"],"
+                  			}
+                  		}
+                		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+                        addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+",1);"
+                        
+                  		var arr = $(list_diag[j]+'Diags').value.split("#@#");
+                  		for (var i=0;i<arr.length;i++) {
+                  			var ar=arr[i].split("@#@") ;
+                  			//alert(addRowF);
+                              eval(addRowF) ;
+                  		}
+                  	}
+                    
+            }
+	        	
+        }
+      	
+      	function addDiag(aDiagType,aCheck) {
+            var addRowF="";
+            var isCheckReq =true ;
+      		for (var i=0;i<theFld.length;i++) {
+      			var fld_i = theFld[i] ;
+  				eval("var "+fld_i[1]+"=$('"+aDiagType+fld_i[5]+"').value;");
+      			var fld_i = theFld[i] ;addRowF+=fld_i[1]+","
+      			
+      			if (fld_i[2]==1) {
+      				eval("var "+fld_i[1]+"Name=$('"+aDiagType+fld_i[5]+"Name').value;");
+      				eval("if ("+fld_i[1]+">0) {} else {isCheckReq=false ;}") ;
+          			addRowF+=fld_i[1]+"Name," ;
+      			} else {
+      				eval("if ("+fld_i[1]+".length>0) {} else {isCheckReq=false ;}") ;
+      			}
+      		}
+    		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+            addRowF="addRowDiag('"+aDiagType+"',"+addRowF+");"
+      		
+            if (isCheckReq) {
+            	var servs = document.getElementById('other'+aDiagType+"DiagsTable").childNodes;
+                  var l = servs.length;
+                  for (var i=1; i<l;i++) {
+                	  
+                	  var isCheckDouble = (+$(aDiagType+theFld[0][5]).value 
+                			  == +servs[i].childNodes[0].childNodes[theFld[0][3]].value)?false:true ;
+                	 if (!isCheckDouble) {
+                 		 if (+aCheck!=1) {
+                 			 if (confirm("Такой диагноз уже зарегистрирован. Вы хотите его заменить?")) {
+                 			var node=servs[i];node.parentNode.removeChild(node);
+                 		 } else {
+                  			return true;
+                  		 } 
+                 		} else {return true;}
+                    }                 
+                 }
+            		
+            
+            eval(addRowF) ;
+      		for (var i=0;i<theFld.length;i++) {
+      			var fld_i = theFld[i] ;
+      			if (fld_i[6]==1) {
+	  				eval("$('"+aDiagType+fld_i[5]+"').value='';");
+	      			if (fld_i[2]==1) {
+	      				eval("$('"+aDiagType+fld_i[5]+"Name').value='';");
+	      			}
+      			}
+      		}
+            } else {
+            	if (+aCheck!=1) {
+            		alert("Заполнены не все поля диагноза!!");
+            	} else {
+            		if (+$(aDiagType+"Mkb").value>0&&$(aDiagType+"Diagnos").length>0&&!confirm('Диагнозы, где не заполнены все данные (МКБ и наименование) сохранены не будут!!! Продолжить сохранение?')) {
+            			return false ;
+            		} 
+            	}
+            }
+            return true ;
+         }
+        //alert(document.getElementById('othercomplicationDiagsTable').childNodes.childNodes[0].childNodes[4].value);
+      	function createOtherDiag(aDiagType) {
+      		var servs = document.getElementById('other'+aDiagType+"DiagsTable").childNodes;
+      		var str = ""; $(aDiagType+"Diags").value='';
+      		for (var i=0;i<servs.length;i++) {
+      			for (var ii=0;ii<theFld.length;ii++) {
+      			str+=servs[i].childNodes[0].childNodes[theFld[ii][3]].value+"@#@";
+  				if (theFld[ii][2]==1) {
+  					str+=servs[i].childNodes[0].childNodes[theFld[ii][3]+1].value+"@#@";
+  				}
+
+      			}
+      			str=str.length>0?str.trim().substring(0,str.length-3):"";
+      			str+="#@#" ;
+      		}
+      		str=str.length>0?str.trim().substring(0,str.length-3):"";
+      		$(aDiagType+"Diags").value=str;
+      	}
+      	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 
+      	// 3. Номер node в добавленной услуге 4. Обяз.поля да-1 нет-2 
+      	// 5. наим. поля в форме 6. очищать поле в форме при добавление да-1, нет-0 
+  		var theFld = [['Код МКБ','Mkb',1,3,1,'Mkb',1],['Наименование','Diagnos',2,8,1,'Diagnos',1]] ;
+      	function editMkbByDiag(aDiagType,aNode) {
+      		if (+$(aDiagType+'Mkb').value==0 || confirm("Вы точно хотите продолжить? В этом случае Вы потеряете дааные еще недобавленного диагноза!")) {
+   			for (var ii=0;ii<theFld.length;ii++) {
+   				$(aDiagType+theFld[ii][5]).value=aNode.childNodes[0].childNodes[theFld[ii][3]].value;
+				if (theFld[ii][2]==1) {
+					$(aDiagType+theFld[ii][5]+'Name').value=aNode.childNodes[0].childNodes[theFld[ii][3]+1].value;
+				}
+
+   			}
+   			aNode.parentNode.removeChild(aNode) ;
+      		}
+      	}
+      	function addRowDiag(aDiagType,aMkb,aMkbName,aDiagnos,aIsLoad) {
+      		var table = document.getElementById('other'+aDiagType+"DiagsTable");
+      		var row = document.createElement('TR');
+      		var td = document.createElement('TD');
+      		var tdDel = document.createElement('TD');
+      		table.appendChild(row);
+      		row.appendChild(td);
+      		var txt ="" ;addText="" ;
+      		if (aDiagType=="complication") {addText="ослож."} else if (aDiagType=="concomitant") {addText="сопут." ;}
+      		for (var i=0;i<theFld.length;i++) {
+      			var fld_i = theFld[i] ;
+      			if (fld_i[2]==1) {
+      				txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+": </label>"+eval("a"+fld_i[1]+"Name")+" <input type='hidden' value='"+eval("a"+fld_i[1])+"'><input type='hidden' value='"+eval("a"+fld_i[1]+"Name")+"'>"
+      			} else if (fld_i[2]==2) {
+      				txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+":  </label><input type='text' style='width:85%' value='"+eval("a"+fld_i[1])+"'>"
+      			}
+      			if (i<theFld.length-1) txt+="<br>" ; 
+      		}
+      		td.innerHTML=txt ;
+      		if (slo_form_is_view==0) {
+	      		row.appendChild(tdDel);
+	      		tdDel.style.width='2%' ;
+	      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\""+aDiagType+"\")' value='- диагноз' />"
+	      		+ "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;editMkbByDiag(\""+aDiagType+"\",node);' value='редак.' />";
+	      		if (+aIsLoad>0 && (+aMkb==0)) {
+	      			if (+$(aDiagType+"Mkb").value==0) editMkbByDiag(aDiagType,row) ;  
+	      		}
+      		}
+      	}
+</script>
+  
+  
+  
+  
+  
+  
+  
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
         	<script type="text/javascript">
         		$('outcomeName').select() ;
