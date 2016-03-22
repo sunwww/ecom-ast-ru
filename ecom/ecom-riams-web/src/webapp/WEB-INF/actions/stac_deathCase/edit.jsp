@@ -86,18 +86,7 @@
         <msh:row>
           <msh:autoComplete showId="false" vocName="vocDeathReason" hideLabel="false" property="deathReason" viewOnlyField="false" label="Смерть произошла от:" guid="9eb66c69-6860-4464-b671-48494ec2dc85" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:row>
-        	<msh:textArea property="commentReason" label="Причина смерти (ПС)" fieldColSpan="3" horizontalFill="true" rows="2"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осн. ПС" property="reasonMainMkb" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осл. ПС" property="reasonComplicationMkb" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 соп. ПС" property="reasonConcomitantMkb" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
+
         <msh:row>
           <td colspan="1" title="Адрес (deathPlaceAddressField)" class="label">
             <label id="deathPlaceAddressFieldLabel" for="deathPlaceAddressField">Адрес места смерти:</label>
@@ -108,6 +97,12 @@
         </msh:row>
         <msh:row>
         	<msh:separator label="Диагнозы" colSpan="6"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textArea property="commentReason" label="Причина смерти (ПС)" fieldColSpan="3" horizontalFill="true" rows="2"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осн. ПС" property="reasonMainMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" property="concludingActuity" horizontalFill="true" label="Характер заболевания"
@@ -125,6 +120,27 @@
         </msh:row>
         <msh:row>
         	<msh:textArea rows="3" label="Патанатомический диагноз" property="pathanatomicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осл. ПС" property="reasonComplicationMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField label="осл. ПС" property="reasonComplicationText" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 соп. ПС" property="reasonConcomitantMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField label="соп. ПС" property="reasonConcomitantText" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="competingDisease" label="Конкурирующее заболевание" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="polypathia" label="Сочетанное заболевание" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        	<msh:textField property="backgroundDisease" label="Фоновое заболевание" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Расхождения " colSpan="6"/>
@@ -233,8 +249,26 @@
   </tiles:put>
   <tiles:put name="javascript" type="string" >
           <msh:ifFormTypeIsNotView formName="stac_deathCaseForm" guid="518fe547-aed9-be2229f04ba3">
+          <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
       <script type="text/javascript">//var theBedFund = $('bedFund').value;
-       
+       try {
+    	   deathReasonAutocomplete.addOnChangeCallback(function() {
+    		   if (+$('deathReason').value>0) HospitalMedCaseService.getCriminalPhoneMessageByTrauma($('medCase').value,$('deathReason').value,{
+    				
+   	  			callback: function(aResult) {
+   	  				//alert(aResult) ;
+   	  				if (aResult!=null) {
+   	  					var sp = aResult.split("@#@") ;
+   	  					$('accidentDate').value=sp[0] ;
+   	  					$('accidentPlace').value=sp[1] ;
+   	  					$('accidentCircumstance').value=sp[2] ;
+   	  				}
+   	  				
+   	  				
+   	  			}
+   	  		}) ;
+    	   });
+       } catch(e) {}
   		try {
 	    if (pathanatomicalMkbAutocomplete) 
 	    	pathanatomicalMkbAutocomplete.addOnChangeCallback(function() {
@@ -253,9 +287,7 @@
   			}
   		}
       function isAutopsyCheck() {
-    	  if ($('postmortemBureauNumber').value!="" ||
-    	  $('postmortemBureauDate').value!="" ||
-    	  $('dateForensic').value!="") {
+    	  if ($('postmortemBureauNumber').value!="" || $('postmortemBureauDate').value!="" || $('dateForensic').value!="") {
     		  $('isAutopsy').checked="checked" ;
     	  }
       }

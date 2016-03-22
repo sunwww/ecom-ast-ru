@@ -39,6 +39,23 @@
           <msh:textField property="seriesPreCertificate" label="Серия предыдущего свидетельства" guid="b64e270a-1fa1-46e1-8a8e-d56a45f62af6" />
           <msh:textField property="numberPreCertificate" label="Номер предыдущего свидетельства" guid="94a3f5d5-2608-4616-a456-55d91d0a6b1e" />
         </msh:row>
+        <msh:row>
+        	<msh:separator label="Дополнительная информация" colSpan="4"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createDate" label="Дата создания"/>
+        	<msh:label property="createTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="createUsername" label="пользователь"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editDate" label="Дата редактирования"/>
+        	<msh:label property="editTime" label="время"/>
+        </msh:row>
+        <msh:row>
+        	<msh:label property="editUsername" label="пользователь"/>
+        </msh:row>                
         <msh:submitCancelButtonsRow colSpan="3" guid="submitCancel" />
       </msh:panel>
     </msh:form>
