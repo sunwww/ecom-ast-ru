@@ -287,7 +287,7 @@
   			}
   		}
       function isAutopsyCheck() {
-    	  if ($('postmortemBureauNumber').value!="" || $('postmortemBureauDate').value!="" || $('dateForensic').value!="") {
+    	  if ($('postmortemBureauNumber').value!="" || $('postmortemBureauDt').value!="" || $('dateForensic').value!="") {
     		  $('isAutopsy').checked="checked" ;
     	  }
       }
