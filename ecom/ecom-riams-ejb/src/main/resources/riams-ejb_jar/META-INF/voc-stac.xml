@@ -509,6 +509,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory'
                 names   = 'name'
                 queried = 'name'
+                queryAppend="(deprecated='0' or deprecated is null)"
                 />
     </voc> 
     
