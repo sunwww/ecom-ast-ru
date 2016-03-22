@@ -86,7 +86,7 @@ select slo.id,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo
       ,
 
 case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'
-      else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vht.code='ALLTIMEHOSP' then 0 else 1 end end as cntDays
+      else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end as cntDays
       ,list(''||pp.cost) as ppcost
       ,list(''||(case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'
       else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+1 end
@@ -111,7 +111,7 @@ left join medservice ms on ms.id=wfs.medservice_id
 and (pp.isvat is null or pp.isvat='0')
 where slo.parent_id='${param.id}'
  and ms.servicetype_id='${idsertypebed}' and pp.priceList_id='${priceList}'
- group by slo.id,ml.name,vbt.name,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code
+ group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
@@ -170,6 +170,7 @@ where slo.parent_id='${param.id}'
        and upper(vis.dtype)='VISIT' and ( vss.id='${serStreamId}' )
        )
         and pp.priceList_id='${priceList}'
+        and (vis.noActuality='0' or vis.noActuality is null)
         order by vis.datestart
       "/>
 
@@ -198,6 +199,7 @@ where slo.parent_id='${param.id}'
     left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where vis.patient_id='${patient_id}' and vis.datestart between to_date('${datestart}','dd.mm.yyyy')-1 and to_date('${datefinish}','dd.mm.yyyy')
        and upper(vis.dtype)='VISIT' and (vss.code='HOSPITAL' or vss.id='${serStreamId}' or vss.code='OTHER')
+       and (vis.noActuality='0' or vis.noActuality is null)
        group by vis.id,vis.datestart,ms.code,ms.name,vwf.name,wp.lastname
        having count(pp.id)=0
        order by vis.datestart
@@ -232,6 +234,7 @@ select
       and vis.datestart between to_date('${datestart}','dd.mm.yyyy') and to_date('${datefinish}','dd.mm.yyyy')
        and upper(vis.dtype)='VISIT' and upper(smc.dtype)='SERVICEMEDCASE'
         and (vss.code='HOSPITAL' or vss.id is null)
+        and (vis.noActuality='0' or vis.noActuality is null) 
        
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
