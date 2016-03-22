@@ -25,7 +25,7 @@ function onSave(aForm, aEntity, aCtx) {
 	
 }
 function onPreSave(aForm, aEntity, aCtx) {
-	if (aEntity.isAutopsy!=null &&aEntity.isAutopsy) {
+	if (aForm.isAutopsy!=null && aForm.isAutopsy.equals(java.lang.Boolean.TRUE)) {
 		var list=aCtx.manager.createNativeQuery("select dc.id from Certificate dc where dc.deathCase_id="+aForm.id+" and dc.dtype='DeathCertificate'").getResultList() ;
 		if (list.size()>0) {throw "У данного пациента оформлено свидетельство о смерти, поэтому не могло быть произведено вскрытие!!!!!!!!!!!" ;}
 	}
