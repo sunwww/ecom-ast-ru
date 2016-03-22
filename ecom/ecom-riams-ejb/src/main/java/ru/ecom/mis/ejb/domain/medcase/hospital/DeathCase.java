@@ -369,6 +369,41 @@ public class DeathCase extends BaseEntity {
 	/** Код мкб сопутсвующий */
 	private VocIdc10 theReasonConcomitantMkb;
 	
+	/** Текст мкб осложнения */
+	@Comment("Текст мкб осложнения")
+	public String getReasonComplicationText() {return theReasonComplicationText;}
+	public void setReasonComplicationText(String aReasonComplicationText) {theReasonComplicationText = aReasonComplicationText;}
+
+	/** Сопутствующий диагноз текст */
+	@Comment("Сопутствующий диагноз текст")
+	public String getReasonConcomitantText() {return theReasonConcomitantText;}
+	public void setReasonConcomitantText(String aReasonConcomitantText) {theReasonConcomitantText = aReasonConcomitantText;}
+
+	/** Конкурирующее заболевание */
+	@Comment("Конкурирующее заболевание")
+	public String getCompetingDisease() {return theCompetingDisease;}
+	public void setCompetingDisease(String aCompetingDisease) {theCompetingDisease = aCompetingDisease;}
+
+	/** Сочетанное заболевание */
+	@Comment("Сочетанное заболевание")
+	public String getPolypathia() {return thePolypathia;}
+	public void setPolypathia(String aPolypathia) {thePolypathia = aPolypathia;}
+
+	/** Фоновое заболевание */
+	@Comment("Фоновое заболевание")
+	public String getBackgroundDisease() {return theBackgroundDisease;}
+	public void setBackgroundDisease(String aBackgroundDisease) {theBackgroundDisease = aBackgroundDisease;}
+
+	/** Фоновое заболевание */
+	private String theBackgroundDisease;
+	/** Сочетанное заболевание */
+	private String thePolypathia;
+	/** Конкурирующее заболевание */
+	private String theCompetingDisease;
+	/** Сопутствующий диагноз текст */
+	private String theReasonConcomitantText;	
+	/** Текст мкб осложнения */
+	private String theReasonComplicationText;
 	/** Присутствие врача на вскрытие */
 	@Comment("Присутствие врача на вскрытие")
 	public Boolean getIsPresenceDoctorAutopsy() {return theIsPresenceDoctorAutopsy;}	
