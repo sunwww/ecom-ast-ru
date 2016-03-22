@@ -579,6 +579,7 @@ function printReestrByDay(aCtx,aParams) {
 		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
 		dateI = "dateStart" ; timeI = "entranceTime" ;
 		dateInfo="поступившим" ;
+		groupBy = "" ;
 	} else if (typeDate==2) {
 		dateI = "dateFinish" ; timeI = "dischargeTime" ;
 		dateInfo="выписанным" ;
@@ -705,7 +706,10 @@ function printReestrByDay(aCtx,aParams) {
 		    +" where m.DTYPE='HospitalMedCase' "+period+" and "+departmentFldIdSql+"='"+depId+"'"
 		    +" and m.deniedHospitalizating_id is null"
 		    
-		    +"  "+emer+pigeonHoleId+serviceStreamId+addPat+departmentFldAddSql+" order by pat.lastname,pat.firstname,pat.middlename";
+		    +"  "+emer+pigeonHoleId+serviceStreamId+addPat+departmentFldAddSql
+		    +" group by pat.lastname,pat.firstname,pat.middlename,m.id ,m.dateStart,m.entranceTime,m.dateFinish,m.dischargeTime " 
+		    +" ,pat.birthday,sc.code,m.emergency ,"+departmentFldNameSql+" ,m.entranceTime ,pat.id,pat.patientSync, ok.voc_code ,pvss.omccode,adr.kladr, vss.name "
+		    +" order by pat.lastname,pat.firstname,pat.middlename";
 			
 		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
 		var ret = new java.util.ArrayList() ;
