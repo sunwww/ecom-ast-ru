@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
