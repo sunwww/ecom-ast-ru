@@ -180,7 +180,7 @@
 	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
 	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
 	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
-	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="check_diags();this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
+	                        <input type="button" id="submitPreDischrge1" name="submitPreDischrge1" value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
 	                        <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
 	                        
                </td>
@@ -195,7 +195,7 @@
 	                        <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
 	                        <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
 	                        <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
-	                        <input type="button" value="Сохранить пред. выписку+диагноз" onclick="this.form.action='entityParentSaveGoView-stac_sslDischargePre.do';this.form.submit();"/>
+	                        <input type="button" id="submitPreDischrge2" name="submitPreDischrge2" value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
 	                        <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
                </td>
 	        </msh:row>
@@ -358,19 +358,29 @@
   </msh:ifFormTypeIsView>
       	<script type="text/javascript"> 
       	var old_action = document.forms["mainForm"].action ; 
-      	document.forms["mainForm"].action="javascript:check_diags()" ; 
-      	function check_diags() {
+      	document.forms["mainForm"].action="javascript:check_diags('')" ; 
+      	function check_diags(aPrefix) {
       		var list_diag = ["complication","concomitant"] ;
       		var isnext=true ;
+      		$('submitPreDischrge2').disabled=true ;
+  			$('submitPreDischrge1').disabled=true ;
+  			$('submitButton').disabled=true ;
       		for (var i=0;i<list_diag.length;i++) {
       			isnext=addDiag(list_diag[i],1);
       			if (!isnext) break ;
       			createOtherDiag(list_diag[i]);
       		}
       		if (isnext) {
-	      		document.forms["mainForm"].action=old_action ;
+      			if (+aPrefix>0) {
+      				document.forms["mainForm"].action='entityParentSaveGoView-stac_sslDischargePre.do';
+      			} else {
+      				document.forms["mainForm"].action=old_action ;
+    	      	}
+      			
 	      		document.forms["mainForm"].submit() ;
       		} else {
+      			$('submitPreDischrge2').disabled=false ;
+      			$('submitPreDischrge1').disabled=false ;
       			$('submitButton').disabled=false ;
       		}
       	}
