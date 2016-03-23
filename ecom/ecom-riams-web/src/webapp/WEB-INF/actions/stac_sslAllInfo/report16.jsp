@@ -2143,16 +2143,16 @@ if (date!=null && !date.equals("")) {
     		 //try{
     		WebQueryResult newWQR = new WebQueryResult();
     		WebQueryResult wqr = (WebQueryResult)f16.get(i);
-    		double cnt20Days = Double.valueOf((wqr.get19().toString())).doubleValue();
+    		double cnt20Days = Double.valueOf((wqr.get19().toString())).doubleValue();	newWQR.set20(new BigDecimal(cnt20Days).setScale(1,0));
     		double cnt17Dead = Double.valueOf(wqr.get16().toString()).doubleValue();
     		double cnt13Finished = Double.valueOf(wqr.get12().toString()).doubleValue();
     		double cnt6Entrance = Double.valueOf(wqr.get5().toString()).doubleValue();
     		double usePatients = (cnt17Dead+cnt13Finished+cnt6Entrance)/2; //Пользованные пациенты
-    		System.out.println("usePatient="+usePatients);
+    	//	System.out.println("usePatient="+usePatients);
     		double f1_actualBedCount = Double.valueOf(wqr.get20().toString()).doubleValue();	newWQR.set1(new BigDecimal(f1_actualBedCount).setScale(2,2));
     		double f2_countDays = Double.valueOf(wqr.get21().toString()).doubleValue()/12*m	;	newWQR.set2(new BigDecimal(f2_countDays).setScale(2,2));
     		double f3_countHospitals = Double.valueOf(wqr.get22().toString()).doubleValue()/12*m;			newWQR.set3(new BigDecimal(f3_countHospitals).setScale(0,2));
-    		System.out.println("countHospit = "+f3_countHospitals+" base = "+wqr.get22().toString());
+    	//	System.out.println("countHospit = "+f3_countHospitals+" base = "+wqr.get22().toString());
     		double f4_obor_plan = (f3_countHospitals/f1_actualBedCount);				newWQR.set4(new BigDecimal(f4_obor_plan).setScale(2,2));
     		double f5_obor_fact = (usePatients/f1_actualBedCount);						newWQR.set5(new BigDecimal(f5_obor_fact).setScale(2,2));
     		double f6_obor_perc = (f5_obor_fact*100/f4_obor_plan)-100;					newWQR.set6(new BigDecimal(f6_obor_perc).setScale(2, 2));
@@ -2173,7 +2173,9 @@ if (date!=null && !date.equals("")) {
     		double f16_fact_work_k = f1_actualBedCount*cnt20Days/f2_countDays;			newWQR.set16(new BigDecimal(f16_fact_work_k).setScale(2,2));
     		double f17_nowork_k = f1_actualBedCount-f16_fact_work_k; 					newWQR.set17(f17_nowork_k>0.00?(new BigDecimal(f17_nowork_k).setScale(2,2)):null);
     		 					newWQR.set18(wqr.get2());
-    		
+    		//double f19_fact_kd = null;
+    		double f20_fact_sluch = cnt13Finished+cnt17Dead;							newWQR.set21(Double.toString(f20_fact_sluch));
+    		double f21_otkl_kd_absolute = f14_aver_kd_fact-f13_aver_kd_plan;			newWQR.set22(new BigDecimal(f21_otkl_kd_absolute).setScale(2,2));
 			
 			newWQR.set10(new BigDecimal(f10_dead).setScale(2,2));
 			newWQR.set14(new BigDecimal(f14_aver_kd_fact).setScale(2,2));
@@ -2195,19 +2197,22 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn property="18" columnName="Профиль коек"/>
 	      <msh:tableColumn property="1" columnName="Факт коек"/>
 	      <msh:tableColumn property="2" columnName="План по к/д"/>
+	      <msh:tableColumn property="20" columnName="Факт по к/д"/>
+	      <msh:tableColumn property="11" columnName="% выполнения по к/д"/>
 	      <msh:tableColumn property="3" columnName="План по случ"/>
+	      <msh:tableColumn property="21" columnName="Факт по случ"/>
+	      <msh:tableColumn property="12" columnName="% выполнения по случ"/>
 	      <msh:tableColumn property="4" columnName="Оборот план"/>
 	      <msh:tableColumn property="5" columnName="Оборот факт"/>
-	      <msh:tableColumn property="6" columnName="Отклонение"/>
+	      <msh:tableColumn property="6" columnName="Отклонение, %"/>
 	      <msh:tableColumn property="7" columnName="Занятость план"/>
 	      <msh:tableColumn property="8" columnName="Занятость факт"/>
-	      <msh:tableColumn property="9" columnName="Отклонение"/>
-	      <msh:tableColumn property="10" columnName="Летальность"/>
-	      <msh:tableColumn property="11" columnName="% выполнения по к/д"/>
-	      <msh:tableColumn property="12" columnName="% выполнения по случ"/>
+	      <msh:tableColumn property="9" columnName="Отклонение, %"/>
+	      <msh:tableColumn property="10" columnName="Летальность, %"/>
 	      <msh:tableColumn property="13" columnName="Средний к/д план"/>
 	      <msh:tableColumn property="14" columnName="Средний к/д факт"/>
-	      <msh:tableColumn property="15" columnName="Отклонение"/>
+	      <msh:tableColumn property="22" columnName="Отклонение, к/д"/>
+	      <msh:tableColumn property="15" columnName="Отклонение, %"/>
 	      <msh:tableColumn property="16" columnName="Факт работало коек"/>
 	      <msh:tableColumn property="17" columnName="Не работало коек"/>
 	      </msh:table></msh:sectionContent></msh:section>
