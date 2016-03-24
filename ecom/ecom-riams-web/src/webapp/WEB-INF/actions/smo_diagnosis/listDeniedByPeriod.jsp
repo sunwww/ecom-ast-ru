@@ -43,6 +43,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;" colspan="2">
 	        	<input type="radio" name="typeMode" value="2" > по дневникам
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;" colspan="2">
+	        	<input type="radio" name="typeMode" value="3" > генерация специалистов экстр.пунктов
+	        </td>
 	        
 		</msh:row>
 
@@ -95,7 +98,7 @@
         </msh:row>
         </msh:ifInRole>
     </msh:panel>
-    <msh:panel>
+    <msh:panel styleId="pnlDefault">
         <msh:row>
         	<msh:autoComplete property="serviceStream" fieldColSpan="5"
         	label="Поток обслуживания" horizontalFill="true" vocName="vocServiceStream"/>
@@ -111,6 +114,28 @@
 	          </td>
         </msh:row>
     </msh:panel>
+    <msh:panel styleId="pnlGeneration">
+		 <msh:row>
+        	<msh:autoComplete property="department" fieldColSpan="5"
+        	label="ЛПУ" horizontalFill="true" vocName="lpu" size="100"/>
+        </msh:row>
+		<msh:row>
+			<msh:autoComplete property="vocWorkFunction" horizontalFill="true" vocName="vocWorkFunction" label="Раб.функция для генерации" fieldColSpan="5"/>
+		</msh:row>
+    <msh:autoComplete property="department" fieldColSpan="5"
+        	label="ЛПУ" horizontalFill="true" vocName="lpu" size="100"/>
+        <msh:row>
+			<msh:autoComplete property="group" horizontalFill="true" vocName="workFunctionGroup" label="Раб.функция для генерации" fieldColSpan="5"/>
+		</msh:row>
+		<msh:row>
+	        <td>
+	          <msh:ifInRole roles="/Policy/Poly/Ticket/GenerateByDenied">
+	            <input type="button" onclick="createNewSpecialist()" value="Генерировать" />
+	            </msh:ifInRole>
+	          </td>
+        </msh:row>
+    </msh:panel>
+    
     </msh:form>
     <script type="text/javascript">
     checkFieldUpdate('typeView','${typeView}',1) ;
@@ -132,9 +157,18 @@
  	   if (chk[0].checked) {
 		   showTable("pnlDepartment", true ) ;
 		   showTable("pnlDiary", false ) ;
-    	} else {
+		   showTable("pnlDefault", true ) ;
+		   showTable("pnlGeneration", false ) ;
+    	} else if (chk[1].checked){
  		   showTable("pnlDepartment", false ) ;
 		   showTable("pnlDiary", true ) ;
+		   showTable("pnlDefault", true ) ;
+		   showTable("pnlGeneration", false ) ;
+    	} else {
+    		showTable("pnlDepartment", false ) ;
+ 		   showTable("pnlDiary", false ) ;
+ 		   showTable("pnlDefault", false ) ;
+ 		   showTable("pnlGeneration", true ) ;
     	}
     }
     function showTable(aTableId, aCanShow ) {
@@ -450,6 +484,9 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
     	//frm.action='stac_groupByBedFundList.do' ;
+    }
+    function createNewSpecialist() {
+    	alert("В разработке!!!") ;
     }
     function createNewVisitByDenied() {
   		var ids = true ;

@@ -18,6 +18,10 @@
 		    <msh:row>
 				<msh:textField property="issueDate" label="Дата Выдачи"/>
 			</msh:row>
+			<msh:row>
+				<msh:autoComplete property="kindHelp" vocName="vocGuaranteeKindHelp" fieldColSpan="3" 
+					horizontalFill="true" />
+			</msh:row>
 		    <msh:row>
 					<msh:textField property="actionDate" label="Действует с"/>
 					<msh:textField property="actionDateTo" label="по"/>

@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал учета больных в соответствие с поступлением (добровольно, недобровольно)"/>
+    <msh:title guid="helloItle-123" mainMenu="Journals" title="Журнал учета больных в соответствие с поступлением (добровольно, недобровольно, а также состоящих на К или Д наблюдениях)"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   	
@@ -21,6 +21,7 @@
 	String typeDate =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeDate","1", request) ;
 	//String typeDirect =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeAdmissionOrder","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeEmergency","3", request) ;
+	String typeObservation =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeObservation","3", request) ;
 	String typeView =ActionUtil.updateParameter("Hospital_Reestr_Psych","typeView","2", request) ;
   %>
   
@@ -68,8 +69,23 @@
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typeAdmissionOrder" value="4"> согласия не требуется
         </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeAdmissionOrder" value="5"> все
+        </td>
       </msh:row>
 
+        <msh:row>
+	        <td class="label" title="Просмотр данных (typeObservation)" colspan="1"><label for="typeObservationName" id="typeObservationLabel">Состоит на:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+	        	<input type="radio" name="typeObservation" value="1">  ДН
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeObservation" value="2">   КН
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  colspan="4">
+	        	<input type="radio" name="typeObservation" value="3">   все
+	        </td>
+      </msh:row>
         <msh:row>
 	        <td class="label" title="Просмотр данных (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
@@ -115,6 +131,7 @@
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
     checkFieldUpdate('typeAdmissionOrder','${typeAdmissionOrder}',1) ;
+    checkFieldUpdate('typeObservation','${typeObservation}',1) ;
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -162,6 +179,11 @@
     	} else {
     		request.setAttribute("dateSql", "sls.dateStart") ;
     	}
+    	if (typeObservation.equals("1")) {
+    		request.setAttribute("observationSql", " and vpac.code='Д'") ;
+    	} else if (typeObservation.equals("2")) {
+    		request.setAttribute("observationSql", " and vpac.code='К'") ;
+     	}
     	if (typeAdmissionOrder==null) typeAdmissionOrder = "1" ;
     	if (typeAdmissionOrder.equals("1")) {
     		request.setAttribute("admissionOrderSql", "and (vao.code='1' or vao.code='3')") ;
@@ -193,6 +215,8 @@ vht.name as vhtname,ml.name as mlname,vao.name as vaoname
 ,list(distinct case when slo.dateFinish is not null then to_char(sls.dateFinish,'dd.mm.yyyy') ||' '||mlSlo.name 
 when (slo.datefinish is null and slo.transferdate is null) then 'сост. на тек.момент '||mlSlo.name 
 else null end) as depaDischarge
+,coalesce(vpac.code,'')||' '||coalesce(vpdg.code||' '||vpdg.name,'') as vpacvpdg
+,la.number as laname
 from medcase sls
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join Patient pat on pat.id=sls.patient_id
@@ -205,10 +229,17 @@ left join mislpu ml on ml.id=sls.department_id
 left join mislpu mlSlo on mlSlo.id=slo.department_id
 left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
 left join VocJudgment vj on vj.id=sls.judgment35_id
+
+left join PsychiatricCareCard pcc on pcc.patient_id=sls.patient_id
+left join LpuAreaPsychCareCard lapcc on lapcc.carecard_id=pcc.id and lapcc.finishDate is null and lapcc.transferDate is null
+left join LpuArea la on la.id=lapcc.lpuArea_id
+left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=lapcc.id
+left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id 
+left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id
 where sls.dtype='HospitalMedCase' and ${dateSql} between 
 to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is null
-${emergencySql} ${departmentSql} ${admissionOrderSql}
+${emergencySql} ${departmentSql} ${admissionOrderSql} ${observationSql}
 group by sls.id, ss.code,pat.lastname,pat.firstname,pat.middlename
 , pat.birthday,sls.dateStart,vht.name,ml.name,vao.name, vj.name
 order by ml.name,pat.lastname,pat.firstname,pat.middlename
@@ -240,6 +271,9 @@ order by ml.name,pat.lastname,pat.firstname,pat.middlename
       <msh:tableColumn columnName="Порядок поступления (статья)" property="9" />
       <msh:tableColumn columnName="Решение по статье 35" property="10" />
       <msh:tableColumn columnName="Отделение выписки или нахождения" property="11" />
+      <msh:tableColumn columnName="Состоит в поликлинике" property="12" />
+      <msh:tableColumn columnName="Участок" property="13" />
+
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -262,14 +296,21 @@ left join mislpu ml on ml.id=sls.department_id
 left join mislpu mlSlo on mlSlo.id=slo.department_id
 left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
 left join VocJudgment vj on vj.id=sls.judgment35_id
+left join PsychiatricCareCard pcc on pcc.patient_id=sls.patient_id
+left join LpuAreaPsychCareCard lapcc on lapcc.carecard_id=pcc.id and lapcc.finishDate is null and lapcc.transferDate is null
+left join LpuArea la on la.id=lapcc.lpuArea_id
+left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=lapcc.id
+left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id
+left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id
+
 where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
+and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by ml.id,ml.name
 order by ml.id,ml.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="swod_department"
-    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
+    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
+     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во" property="3" />
     </msh:table>
@@ -294,14 +335,21 @@ left join mislpu ml on ml.id=sls.department_id
 left join mislpu mlSlo on mlSlo.id=slo.department_id
 left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
 left join VocJudgment vj on vj.id=sls.judgment35_id
+left join PsychiatricCareCard pcc on pcc.patient_id=sls.patient_id
+left join LpuAreaPsychCareCard lapcc on lapcc.carecard_id=pcc.id and lapcc.finishDate is null and lapcc.transferDate is null
+left join LpuArea la on la.id=lapcc.lpuArea_id
+left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=lapcc.id
+left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id
+left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id
+
 where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
+and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by vj.id,vj.name
 order by vj.id,vj.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="swod_department"
-    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
+    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
+     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >
       <msh:tableColumn columnName="Решение по ст. 35" property="2" />
       <msh:tableColumn columnName="Кол-во" property="3" />
     </msh:table>
@@ -325,14 +373,21 @@ left join mislpu ml on ml.id=sls.department_id
 left join mislpu mlSlo on mlSlo.id=slo.department_id
 left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
 left join VocJudgment vj on vj.id=sls.judgment35_id
+left join PsychiatricCareCard pcc on pcc.patient_id=sls.patient_id
+left join LpuAreaPsychCareCard lapcc on lapcc.carecard_id=pcc.id and lapcc.finishDate is null and lapcc.transferDate is null
+left join LpuArea la on la.id=lapcc.lpuArea_id
+left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=lapcc.id
+left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id
+left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id
+
 where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
+and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by vao.id,vao.name
 order by vao.id,vao.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="swod_department"
-    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
+    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
+     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >
       <msh:tableColumn columnName="Порядок поступления" property="2" />
       <msh:tableColumn columnName="Кол-во" property="3" />
     </msh:table>
@@ -356,14 +411,21 @@ left join mislpu ml on ml.id=sls.department_id
 left join mislpu mlSlo on mlSlo.id=slo.department_id
 left join VocAdmissionOrder vao on vao.id=sls.admissionOrder_id
 left join VocJudgment vj on vj.id=sls.judgment35_id
+left join PsychiatricCareCard pcc on pcc.patient_id=sls.patient_id
+left join LpuAreaPsychCareCard lapcc on lapcc.carecard_id=pcc.id and lapcc.finishDate is null and lapcc.transferDate is null
+left join LpuArea la on la.id=lapcc.lpuArea_id
+left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=lapcc.id
+left join VocPsychDispensaryGroup vpdg on vpdg.id=po.dispensaryGroup_id
+left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id
+
 where sls.dtype='HospitalMedCase' and ${dateSql} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is null ${admissionOrderSql}
+and sls.deniedHospitalizating_id is null ${admissionOrderSql} ${observationSql}
 group by vht.id,vht.name
 order by vht.id,vht.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="swod_department"
-    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" 
-     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}" idField="1" >
+    viewUrl="stac_journal_direct_psych.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" 
+     action="stac_journal_direct_psych.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeView=1&typeEmergency=${typeEmergency}&typeObservation=${param.typeObservation}" idField="1" >
       <msh:tableColumn columnName="Тип напр. учр." property="2" />
       <msh:tableColumn columnName="Кол-во" property="3" />
     </msh:table>

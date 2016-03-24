@@ -34,7 +34,8 @@
           <msh:textField property="name" label="Название" horizontalFill="true" fieldColSpan="3" size="50" guid="f1d2a4ec-81ad-48bb-afe9-8983e4017245" />
         </msh:row>
          <msh:row>
-        	<msh:textField property="shortName" label="Корот. наименование" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textField property="shortName" label="Корот. наименование" fieldColSpan="1" horizontalFill="true"/>
+        	<msh:textField property="prefixForLN" label="Префикс для шаблонов ЛНТ" fieldColSpan="1" horizontalFill="true"/>
         </msh:row>
                <msh:row>
           <msh:textField property="printName" label="Название для печати" horizontalFill="true" fieldColSpan="3" size="50" />

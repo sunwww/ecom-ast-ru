@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.disability.IDisabilityService;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 
 /**
@@ -17,7 +18,18 @@ import ru.ecom.web.util.Injection;
  *
  */
 public class DisabilityServiceJs {
-	
+	public String getPrefixForLN(HttpServletRequest aRequest) throws NamingException {
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select ml.prefixForLN from secuser su left join workfunction wf on wf.secuser_id=su.id left join worker w on w.id=wf.worker_id left join mislpu ml on ml.id=w.lpu_id where su.login='").append(login).append("' and ml.prefixForLN is not null and ml.prefixForLN!=''") ;
+		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
+		if (l.isEmpty()) {
+			return "" ;
+		} else {
+			return ""+l.iterator().next().get1() ;
+		}
+	}
 	public String analyseExportLN(String aFileName, HttpServletRequest aRequest) throws NamingException {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		return service.analyseExportLN(aFileName);

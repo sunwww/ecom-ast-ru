@@ -229,6 +229,16 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
 	<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
+	<script type="text/javascript">
+	function printDoc(aTemplate) {
+  		DisabilityService.getPrefixForLN({
+    		callback: function(aResult) {
+    			document.location.href = "print-disability_"+aTemplate+aResult+".do?s=DisabilityService&m=printDocument&id=${param.id}";
+    		}
+    	}) ;
+  		
+  	}
+	</script>
   <msh:ifFormTypeIsView formName="dis_documentForm">
     <script type="text/javascript">
      if (+$('isClose').checked==true) {
@@ -353,21 +363,11 @@
         	name="workCombo" title="Бланк по совместительству" confirm="Вы действительно хотите создать документ по совместительству на основе текущего документа нетрудоспособности?" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
-      	<msh:sideLink params="id" 
-      	name="шаблон 1" key="ALT+6" 
-      	action="/print-disability_1.do?s=DisabilityService&amp;m=printDocument"/>
-      	<msh:sideLink params="id" 
-      	name="НЕЗАКРЫТЫЙ шаблон 1" key="ALT+7" 
-      	action="/print-disability_1.do?s=DisabilityService&amp;m=printDocument"/>
-      	<msh:sideLink params="id" 
-      	name="шаблон 2" key="ALT+8" 
-      	action="/print-disability_2.do?s=DisabilityService&amp;m=printDocument"/>
-      	<msh:sideLink params="id" 
-      	name="шаблон 3"  
-      	action="/print-disability_3.do?s=DisabilityService&amp;m=printDocument"/>
-      	<msh:sideLink params="id" 
-      	name="шаблон 4"  
-      	action="/print-disability_4.do?s=DisabilityService&amp;m=printDocument"/>
+      	<msh:sideLink  name="шаблон 1" key="ALT+6" action="/javascript:printDoc(1,'.do')"/>
+      	<msh:sideLink  name="НЕЗАКРЫТЫЙ шаблон 1" key="ALT+7" action="/javascript:printDoc(1,'.do')"/>
+      	<msh:sideLink  name="шаблон 2" key="ALT+8"  action="/javascript:printDoc(2,'.do')"/>
+      	<msh:sideLink  name="шаблон 3" action="/javascript:printDoc(3,'.do')"/>
+      	<msh:sideLink  name="шаблон 4" action="/javascript:printDoc(4,'.do')"/>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="c79769a2-8a1c-4c21-ab9c-b7ed71ceb99d">
         <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_record" roles="/Policy/Mis/Disability/Case/Document/Record/Create" name="Продление" guid="0634b894-60e2-4b73-acee-7bf7316a77fc" title="Продлить листок нетрудоспособности" key="CTRL+1" />
