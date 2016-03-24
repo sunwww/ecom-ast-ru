@@ -1,5 +1,5 @@
 function onPreDelete(aEntityId, aContext) {
-	aContext.manager.createNativeQuery("delete from medcase where parent_id="+aEntityId).executeUpdate() ;
+	//aContext.manager.createNativeQuery("delete from medcase where parent_id="+aEntityId).executeUpdate() ;
 }
 
 function onCreate(aForm, aEntity, aCtx) {

@@ -13,6 +13,12 @@ function onPreDelete(aEntityId, aContext) {
 		aContext.manager.createNativeQuery("delete from Diagnosis where medcase_id="+aEntityId).executeUpdate() ;
 		aContext.manager.createNativeQuery("delete from medcase where parent_id="+aEntityId).executeUpdate() ;
 		aContext.manager.createNativeQuery("delete from diary where medcase_id="+aEntityId).executeUpdate() ;
+		var  l=aContext.manager.createNativeQuery("select id,parent_id from MedCase where parent_id=(select parent_id from medcase where id="+aEntityId+") and parent_id is not null").getResultList() ;
+		if (l.size()==1) {
+			aContext.manager.createNativeQuery("update medcase set parent_id=null where id="+aEntityId).executeUpdate() ;
+			aContext.manager.createNativeQuery("delete from medcase where id="+l.get(0)[1]).executeUpdate() ;
+		}
+
 	}
 }
 
