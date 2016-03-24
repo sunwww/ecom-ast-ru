@@ -8,6 +8,8 @@ function update_postgres(aCtx, aParams) {
 	default_id(aCtx,"LpuContractNosologyGroup") ;
 	default_id(aCtx,"VocMkbAdc") ;
 	default_id(aCtx,"AdminChangeJournal") ;
+	default_id(aCtx,"VocQualityEstimationCrit") ;
+	default_id(aCtx,"VocQualityEstimationMark") ;
 	drop_index(aCtx,"kladr","kladr_kladrcode") ;
 	max_sequnce_default_id(aCtx,"Address2","Addressid") ;
 	return "1" ;
