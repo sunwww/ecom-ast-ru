@@ -531,7 +531,7 @@
 	      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\""+aDiagType+"\")' value='- диагноз' />"
 	      		+ "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;editMkbByDiag(\""+aDiagType+"\",node);' value='редак.' />";
 	      		if (+aIsLoad>0 && (+aMkb==0)) {
-	      			if (+$(aDiagType+"Mkb").value==0) editMkbByDiag(aDiagType,row) ;  
+	      			//if (+$(aDiagType+"Mkb").value==0) editMkbByDiag(aDiagType,row) ;  
 	      		}
       		}
       	}
