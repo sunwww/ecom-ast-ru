@@ -12,7 +12,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Journals">Просмотр данных по отказным пациентам без диагнозов</msh:title>
+        <msh:title mainMenu="Journals">Журнал отказов от госпитализаций пациентов без диагноза</msh:title>
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -33,10 +33,10 @@
     <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel>
 		<msh:row>
-        	<msh:separator label="Параметры поиска" colSpan="7" />
+        	<msh:separator label="Выбор режима" colSpan="7" />
 		</msh:row>
 		<msh:row>
-			<td class="label" title="Поиск по параметрам (typeMode)" colspan="1"><label for="typeModeName" id="typeModeLabel">Поиск:</label></td>
+			<td class="label" title="Режим отображения (typeMode)" colspan="1"><label for="typeModeName" id="typeModeLabel">Режим:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;">
 	        	<input type="radio" name="typeMode" value="1"> по отделению(ям)
 	        </td>
@@ -94,7 +94,7 @@
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="5"
-        	label="ЛПУ" horizontalFill="true" vocName="lpu" size="100"/>
+        	label="ЛПУ" horizontalFill="true" vocName="vocLpuHospOtdAll" size="100"/>
         </msh:row>
         </msh:ifInRole>
     </msh:panel>
@@ -115,23 +115,17 @@
         </msh:row>
     </msh:panel>
     <msh:panel styleId="pnlGeneration">
-		 <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="5"
-        	label="ЛПУ" horizontalFill="true" vocName="lpu" size="100"/>
-        </msh:row>
-		<msh:row>
-			<msh:autoComplete property="vocWorkFunction" horizontalFill="true" vocName="vocWorkFunction" label="Раб.функция для генерации" fieldColSpan="5"/>
-		</msh:row>
-    <msh:autoComplete property="department" fieldColSpan="5"
-        	label="ЛПУ" horizontalFill="true" vocName="lpu" size="100"/>
+		<msh:autoComplete property="department1" fieldColSpan="5"
+        	label="ЛПУ" horizontalFill="true" vocName="vocLpuHospOtdAll" size="100"/>
         <msh:row>
-			<msh:autoComplete property="group" horizontalFill="true" vocName="workFunctionGroup" label="Раб.функция для генерации" fieldColSpan="5"/>
+			<msh:autoComplete property="group" horizontalFill="true" vocName="funcMedServiceRoom" label="ЭКСТР. ПУНКТ" fieldColSpan="5"/>
 		</msh:row>
 		<msh:row>
+			<input type="submit" onclick="find()" value="Найти" />
 	        <td>
 	          <msh:ifInRole roles="/Policy/Poly/Ticket/GenerateByDenied">
 	            <input type="button" onclick="createNewSpecialist()" value="Генерировать" />
-	            </msh:ifInRole>
+	          </msh:ifInRole>
 	          </td>
         </msh:row>
     </msh:panel>
@@ -183,6 +177,34 @@
 	checkMode() ;
     </script>
     <%
+    if (typeMode.equals("3") && request.getParameter("department1")!=null && !request.getParameter("department1").equals("0") ) {
+    %>
+    <msh:section>
+    <msh:sectionTitle>Список соответствий сотрудников по экстренным пунктам</msh:sectionTitle>
+    <msh:sectionContent>
+    <ecom:webQuery name="datelist" nativeSql="
+    select wf.id,vwf.name, wp.lastname, list(case when wfg1.emergency='1' then wfg1.groupname else null end) from workfunction wf
+left join worker w on w.id=wf.worker_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+left join patient wp on wp.id=w.person_id
+left join worker wg on wg.person_id=w.person_id
+left join workfunction wfg on wfg.worker_id=wg.id 
+left join workfunction wfg1 on wfg1.id=wfg.group_id 
+where w.lpu_id='${param.department1}'
+group by wf.id,vwf.name,wp.lastname
+" 
+	/>
+    <msh:table name="datelist" 
+    action="entityParentView-work_personalWorkFunction.do" idField="1">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="Должность" property="2" />
+      <msh:tableColumn columnName="Фамилия специалиста" property="3" />
+      <msh:tableColumn columnName="Кабинет экст. помощи" property="4" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section> 
+    <%
+    }
     String date = (String)request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
     	String finishDate = (String)request.getParameter("dateEnd") ;
@@ -486,7 +508,8 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     	//frm.action='stac_groupByBedFundList.do' ;
     }
     function createNewSpecialist() {
-    	alert("В разработке!!!") ;
+    	window.location = 'js-smo_spo-createNewEmergencySpec.do?group='+$('group').value
+			 +"&department1="+$('department1').value ;
     }
     function createNewVisitByDenied() {
   		var ids = true ;
