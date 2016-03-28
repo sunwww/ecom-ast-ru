@@ -1,3 +1,39 @@
+function createNewEmergencySpec(aCtx,aLpu,aGroup) {
+	var sql="insert into worker (person_id,lpu_id,createusername,createdate,createtime)"
+		+" (select w.person_id"
+		+" ,(select gr.lpu_id from workfunction gr where gr.id="+aGroup+")"
+		+" ,'autogerenerate',current_date,current_time"
+		+"  from workfunction wf"
+		+" left join worker w on w.id=wf.worker_id"
+		+" left join vocworkfunction vwf on vwf.id=wf.workfunction_id"
+		+" left join patient wp on wp.id=w.person_id"
+		+" left join worker wg on wg.person_id=w.person_id"
+		+" left join workfunction wfg on wfg.worker_id=wg.id"
+		+" left join workfunction wfg1 on wfg1.id=wfg.group_id  and wfg1.id="+aGroup
+		+" where w.lpu_id="+aLpu
+		+" group by wf.id,w.person_id,vwf.name,wp.lastname"
+		+" having count(wfg1.lpu_id=wg.lpu_id)=0)";
+	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+	sql = "insert into workfunction (dtype,worker_id,group_id,workfunction_id,createusername,createdate,createtime)"
+		+" ("
+		+" select 'PersonalWorkFunction',"
+		+" (select wn.id from worker wn where wn.lpu_id=(select gr.lpu_id from workfunction gr where gr.id="+aGroup+")"
+		+"  and wn.person_id=w.person_id)"
+		+" ,(select gr.id from workfunction gr where gr.id="+aGroup+")"
+		+" ,(select gr.workfunction_id from workfunction gr where gr.id="+aGroup+"),'autogerenerate',current_date,current_time"
+		+"  from workfunction wf"
+		+" left join worker w on w.id=wf.worker_id"
+		+" left join vocworkfunction vwf on vwf.id=wf.workfunction_id"
+		+" left join patient wp on wp.id=w.person_id"
+		+" left join worker wg on wg.person_id=w.person_id"
+		+" left join workfunction wfg on wfg.worker_id=wg.id"
+		+" left join workfunction wfg1 on wfg1.id=wfg.group_id"
+		+" where w.lpu_id="+aLpu
+		+" group by wf.id,vwf.name,wp.lastname,w.person_id"
+		+" having count(wfg1.id="+aGroup+")=0)" ;
+	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
+}
+
 function deleteEmptySpo(aCtx,aParams) {
 	var sql="delete from medcase spo where"
 		+" spo.dtype='PolyclinicMedCase' and (select count(*) from MedCase v where v.parent_id=spo.id)=0"
