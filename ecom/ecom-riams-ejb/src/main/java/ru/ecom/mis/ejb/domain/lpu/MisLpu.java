@@ -501,4 +501,16 @@ public class MisLpu extends BaseEntity {
 
 	/** Доступ на создание операций по отделению */
 	private VocLpuAccessEnterOperation theAccessEnterOperation;
+	/** Префикс для шаблонов ЛН */
+	@Comment("Префикс для шаблонов ЛН")
+	public String getPrefixForLN() {
+		return thePrefixForLN;
+	}
+
+	public void setPrefixForLN(String aPrefixForLN) {
+		thePrefixForLN = aPrefixForLN;
+	}
+
+	/** Префикс для шаблонов ЛН */
+	private String thePrefixForLN;
 }

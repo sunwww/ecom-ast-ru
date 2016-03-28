@@ -538,4 +538,18 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Доступ на создание операций по отделению */
 	private Long theAccessEnterOperation;
+	
+	/** Префикс для шаблонов ЛН */
+	@Comment("Префикс для шаблонов ЛН")
+	@Persist
+	public String getPrefixForLN() {
+		return thePrefixForLN;
+	}
+
+	public void setPrefixForLN(String aPrefixForLN) {
+		thePrefixForLN = aPrefixForLN;
+	}
+
+	/** Префикс для шаблонов ЛН */
+	private String thePrefixForLN;
 }

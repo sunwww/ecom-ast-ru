@@ -11,6 +11,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
+import ru.ecom.mis.ejb.domain.contract.voc.VocGuaranteeKindHelp;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
 	 * Гарантийный документ по договору
@@ -99,4 +100,18 @@ public abstract class ContractGuarantee extends BaseEntity{
 	private Date theActionDateTo;
 	/** Дата выдачи */
 	private Date theIssueDate;
+	
+	/** Вид медицинской помощи */
+	@Comment("Вид медицинской помощи")
+	@OneToOne
+	public VocGuaranteeKindHelp getKindHelp() {
+		return theKindHelp;
+	}
+
+	public void setKindHelp(VocGuaranteeKindHelp aKindHelp) {
+		theKindHelp = aKindHelp;
+	}
+
+	/** Вид медицинской помощи */
+	private VocGuaranteeKindHelp theKindHelp;
 }

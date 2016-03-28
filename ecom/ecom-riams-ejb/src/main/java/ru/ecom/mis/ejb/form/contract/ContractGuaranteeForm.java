@@ -3,10 +3,13 @@ package ru.ecom.mis.ejb.form.contract;
 
 import java.sql.Date;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
+import ru.ecom.mis.ejb.domain.contract.voc.VocGuaranteeKindHelp;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -108,6 +111,13 @@ public class ContractGuaranteeForm extends IdEntityForm{
 	/** Без лимита */
 	private Boolean theIsNoLimit;
 	
-	
+	/** Вид медицинской помощи */
+	@Comment("Вид медицинской помощи")
+	@Persist @Required 
+	public Long getKindHelp() {return theKindHelp;}
+	public void setKindHelp(Long aKindHelp) {theKindHelp = aKindHelp;}
+
+	/** Вид медицинской помощи */
+	private Long theKindHelp;
 
 }
