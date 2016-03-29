@@ -314,7 +314,7 @@ where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate
 and sls.deniedHospitalizating_id is not null
 and sls.medicalAid='1'
  ${serviceStreamSql}
-	
+	and ml.emergencyCabinet>0
 	group by ml.id,ml.name 
 	order by ml.name" 
 	/>
