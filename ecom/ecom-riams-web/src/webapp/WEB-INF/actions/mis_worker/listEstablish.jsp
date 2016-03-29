@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Список сотрудников" guid="e51b1bad-82ba-4906-9829-7d9148b1174a" />
+    <ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Шаблоны расписания сотрудников" guid="e51b1bad-82ba-4906-9829-7d9148b1174a" />
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="360e85c3-7aa1-4a04-8c1d-a9c0a6739efa" title="Добавить">
@@ -92,8 +92,8 @@
       <msh:tableColumn columnName="ФИО (Название группы)" property="2" guid="4ceb96e" />
       <msh:tableColumn columnName="Должностные обязанности" property="3"/>
       <msh:tableColumn columnName="Рабочий календарь" property="4"/>
-      <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'0'" buttonName="Снять автоматическую генерацию по календарю" buttonShortName="С" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
-      <msh:tableButton property="8" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'1'" buttonName="Установить автоматическую генерацию по календарю" buttonShortName="А" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
+      <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'0'" buttonName="Снять автоматическую генерацию по календарю" buttonShortName="СА" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
+      <msh:tableButton property="8" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'1'" buttonName="Установить автоматическую генерацию по календарю" buttonShortName="УА" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
       <msh:tableColumn columnName="Примечания" property="6"/>
     </msh:table>
   </msh:section>
