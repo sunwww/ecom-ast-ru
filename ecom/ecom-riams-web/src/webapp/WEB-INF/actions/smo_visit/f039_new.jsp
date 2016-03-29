@@ -184,9 +184,7 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeEmergency" value="2">  Скорая помощь
 	        </td>
-        </msh:row>
-        <msh:row>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        <td onclick="this.childNodes[1].checked='checked';" >
 	        	<input type="radio" name="typeEmergency" value="3" >  Плановые
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
