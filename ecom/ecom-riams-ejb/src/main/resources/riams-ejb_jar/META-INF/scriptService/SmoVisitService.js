@@ -10,14 +10,16 @@ function createNewEmergencySpec(aCtx,aLpu,aGroup) {
 		+" left join worker wg on wg.person_id=w.person_id"
 		+" left join workfunction wfg on wfg.worker_id=wg.id"
 		+" left join workfunction wfg1 on wfg1.id=wfg.group_id  and wfg1.id="+aGroup
-		+" where w.lpu_id="+aLpu
+		+" where w.lpu_id="+aLpu+" and vwf.vocPost_id=(select vwfg.vocPost_id from workfunction gr  left join vocworkfunction vwfg on vwfg.id=gr.workFunction_id where gr.id="+aGroup+")"
+		+" and (select count(*) from worker ww where ww.lpu_id=(select gr.lpu_id from workfunction gr where gr.id="+aGroup+") and ww.person_id=w.person_id)=0"
+		+" and (wf.archival='0' or wf.archival is null)"
 		+" group by wf.id,w.person_id,vwf.name,wp.lastname"
-		+" having count(wfg1.lpu_id=wg.lpu_id)=0)";
+		+" )";
 	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 	sql = "insert into workfunction (dtype,worker_id,group_id,workfunction_id,createusername,createdate,createtime)"
 		+" ("
 		+" select 'PersonalWorkFunction',"
-		+" (select wn.id from worker wn where wn.lpu_id=(select gr.lpu_id from workfunction gr where gr.id="+aGroup+")"
+		+" (select max(wn.id) from worker wn where wn.lpu_id=(select gr.lpu_id from workfunction gr where gr.id="+aGroup+")"
 		+"  and wn.person_id=w.person_id)"
 		+" ,(select gr.id from workfunction gr where gr.id="+aGroup+")"
 		+" ,(select gr.workfunction_id from workfunction gr where gr.id="+aGroup+"),'autogerenerate',current_date,current_time"
@@ -28,9 +30,15 @@ function createNewEmergencySpec(aCtx,aLpu,aGroup) {
 		+" left join worker wg on wg.person_id=w.person_id"
 		+" left join workfunction wfg on wfg.worker_id=wg.id"
 		+" left join workfunction wfg1 on wfg1.id=wfg.group_id"
-		+" where w.lpu_id="+aLpu
+		+" where w.lpu_id="+aLpu+" and vwf.vocPost_id=(select vwfg.vocPost_id from workfunction gr left join vocworkfunction vwfg on vwfg.id=gr.workFunction_id where gr.id="+aGroup+")"
+		+" and (select count(www.id) from  worker www where www.lpu_id=(select gr.lpu_id from workfunction gr where gr.id="+aGroup+" ) and www.person_id=w.person_id)>0 "
+		+" and (select count(wfw.id) from  workfunction wfw left join worker www on www.id=wfw.worker_id "
+		+" where wfw.group_id="+aGroup+" and www.person_id=w.person_id)=0  "
+		+" and (wf.archival='0' or wf.archival is null)"
 		+" group by wf.id,vwf.name,wp.lastname,w.person_id"
-		+" having count(wfg1.id="+aGroup+")=0)" ;
+		//+" having count(wfg1.id="+aGroup+")=0)" 
+		
+		+")";
 	aCtx.manager.createNativeQuery(sql).executeUpdate() ;
 }
 
@@ -101,63 +109,7 @@ function printDirectionByPatient(aCtx,aParams) {
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
 	//var FORMAT_time = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentTime",new java.sql.Time (currentDate.getTime())) ;	
-	/*
-	var lastname = aParams.get("lastname") ;
-	var firstname = aParams.get("firstname") ;
-	var middlename = aParams.get("middlename") ;
-	var birthday = aParams.get("birthday") ;
-	var policySeries = aParams.get("policySeries");
-	var policyNumber = aParams.get("policyNumber") ;
-	var rayon = aParams.get("rayon") ;
-	var rayonName = aParams.get("rayonName") ; 
-	var sql="" ;
-	pretInfo = "" ;
-	sql.append("select wct.id as wctid,wct.prePatient_id, to_char(wcd.calendarDate,'dd.mm.yyyy'), cast(wct.timeFrom as varchar(5)), vwf.name, wp.lastname as wplastname,wp.firstname as wpfirstname,wp.middlename as wpmiddlename ") ;
-	sql.append(" ,coalesce(");
-	//sql.append("pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(p.birthday,'dd.mm.yyyy')||coalesce(' ('||pat.patientSync||')','')") ;
-	sql.append(" p.lastname||' '||p.firstname||' '||p.middlename||' '||to_char(p.birthday,'dd.mm.yyyy') ||coalesce(' ('||p.patientSync||')','')") ;
-	sql.append(",wct.prepatientInfo) as fio") ;
-	sql.append(" from WorkCalendarTime wct left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id left join WorkFunction wf on wf.id=wc.workFunction_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id left join Worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join Patient p on p.id=wct.prePatient_id left join medpolicy mp on mp.patient_id=p.id where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
-	preInfo.append(aLastname).append(" ") ;
-	if (firstname!=null && firstname!=null) {
-		sql=sql+" and p.firstname = '"+firstname.toUpperCase()+"' " ;
-		preInfo=preInfo+firstname+" " ;
-	} else {
-		preInfo=preInfo+" " ;
-	}
-	if (middlename!=null && middlename!="") {
-		sql=sql+" and p.middlename = '"+middlename.toUpperCase()+"' " ;
-		preInfo=preInfo+middlename+" ";
-	} else {
-		preInfo=preInfo+" " ;
-	}
-	if (birthday!=null && birthday!="") {
-		sql=sql+" and p.birthday=to_date('"+birthday+"','dd.mm.yyyy') " ;
-		preInfo=preInfo+birthday+" ";
-	} else {
-		preInfo=preInfo+" " ;
-	}
-	if (policySeries!=null && policySeries!="") {
-		sql=sql+" and mp.series='"+policySeries.toUpperCase()+"' " ;
-		preInfo=preInfo+policySeries.toUpperCase()+" ";
-	} else {
-		preInfo=preInfo+" " ;
-	}
-	if (policyNumber!=null && !policyNumber.equals("")) {
-		sql=sql+" and mp.polNumber='"+policyNumber.toUpperCase()+"' " ;
-		preInfo=preInfo+policyNumber.toUpperCase()+" ";
-	} else {
-		preInfo=preInfo+" " ;
-	}
-	if (rayon!=null && rayon>Long.valueOf(0)) {
-		sql=sql+" and p.rayon_id='"+rayon+"' " ;
-		preInfo=preInfo+rayonName;
-	} else {
-		preInfo=preInfo+"" ;
-	}
-	//System.out.println(preInfo) ;
-	sql=sql+"or wct.prePatientInfo = '").append(preInfo).append("') " ;
-	*/
+	
 	var sql="" ;
 	sql=sql+"select wct.id as wctid,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate, cast(wct.timeFrom as varchar(5)) as wcttimeFrom, vwf.name as vwfname, wp.lastname ||' '||wp.firstname||' '||wp.middlename as wpmiddlename " ;
 	sql=sql+" , coalesce(p.lastname ||' '||substring(p.firstname,1,1)||' '||substring(p.middlename,1,1),p1.lastname ||' '||substring(p1.firstname,1,1)||' '||substring(p1.middlename,1,1)) as fio ";
@@ -381,101 +333,115 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDepartmentPolyclinic) {
 	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
 	aDepartmentPolyclinic=256;
+	//--createNewEmergencySpec(aContext,aDepartment,aGroup);
+	var sql ;
+	if (+aDepartment>0) {
+		sql = "select id,emergencyCabinet from mislpu where id="+aDepartment ;
+	} else {
+		sql = "select id,emergencyCabinet from mislpu where emergencyCabinet>0" ;
+	}
+	var lCab = aContext.manager.createNativeQuery(sql).getResultList() ;
 	// Создание мед.карты
-	sql = "insert into Medcard (number,dateregistration,registrator,person_id)"
-		+" select p.patientSync,sls.datestart,'admin',p.id as patid"
-		+"  from MedCase sls"
-		+" left join patient p on p.id=sls.patient_id"
-		+" left join medcard mp on mp.person_id=p.id"
-		+" left join workfunction wf on wf.id=sls.ownerFunction_id"
-		+" left join worker w on w.id=wf.worker_id"
-		+" left join vocworkfunction vwf on vwf.id=wf.workFunction_id"
-		+" left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)"
-		+" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id"
-		+" left join workfunction dwf on dwf.id=diag.medicalWorker_id"
-		+" left join worker dw on dw.id=dwf.worker_id"
-		+" left join patient dwp on dwp.id=dw.person_id"
-		+" left join worker wN on Wn.person_id=dw.person_id and wN.lpu_id="+aDepartmentPolyclinic
-		+" left join workfunction wfN on wfN.worker_id=wN.id"
-		+" left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id"
-		+" left join vocidc10 mkb on mkb.id=diag.idc10_id"
-		+" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('"+aBeginDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy')"
-		+" and sls.deniedHospitalizating_id is not null"
-		+" and sls.department_id='"+aDepartment+"' and sls.medicalAid='1'"
-		+" and diag.id is not null and mp.id is null"
-		+" order by sls.dateStart,p.lastname,p.firstname,p.middlename" ;
-	aContext.manager.createNativeQuery(sql).executeUpdate() ;
-	// Список талонов
-	sql = "select sls.serviceStream_id,case when sls.emergency='1' then '1' else '0' end as emergency"
-		+" ,to_char(sls.datestart,'dd.mm.yyyy') as dateStart,sls.entranceTime,wfN.id as wfNid"
-		+" ,mp.id as medcard,sls.patient_id,coalesce(sls.hospitalization_id,'1')"
-		+" ,diag.id as diagid"
-		+" 	 from MedCase sls"
-		+" 	left join patient p on p.id=sls.patient_id"
-		+" 	left join medcard mp on mp.person_id=p.id"
-		+" 	left join workfunction wf on wf.id=sls.ownerFunction_id"
-		+" 	left join worker w on w.id=wf.worker_id"
-		+" 	left join vocworkfunction vwf on vwf.id=wf.workFunction_id"
-		+" 	left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)"
-		+" 	left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id"
-		+" 	left join workfunction dwf on dwf.id=diag.medicalWorker_id"
-		+" 	left join worker dw on dw.id=dwf.worker_id"
-		+" 	left join patient dwp on dwp.id=dw.person_id"
-		+" 	left join worker wN on Wn.person_id=dw.person_id and wN.lpu_id="+aDepartmentPolyclinic
-		+" 	left join workfunction wfN on wfN.worker_id=wN.id"
-		+" 	left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id"
-		+" 	left join vocidc10 mkb on mkb.id=diag.idc10_id"
-		+" 	where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('"+aBeginDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy')"
-		+" 	and sls.deniedHospitalizating_id is not null"
-		+" 	and sls.department_id='"+aDepartment+"' and sls.medicalAid='1'"
-		+" 	and diag.id is not null and (select count(*) from medcase t where t.patient_id=sls.patient_id and t.workFunctionExecute_id=wfN.id and t.datestart=sls.datestart and t.dtype='ShortMedCase')=0"
-		+" 	and wfN.id is not null"
-		+" 	order by sls.dateStart,p.lastname,p.firstname,p.middlename" ;
-	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
-	var visitResult = "3" ;
-	var visitReason = "2" ;
-	var workPlaceType="1" ;
-	// Обработка отказов и создание новых талонов
-	for (var i=0;i<list.size();i++) {
-		var obj = list.get(i) ;
-		// создание спо
-		sql = "insert into MedCase (dtype,createtime,createdate,username"
-			+",serviceStream_id,emergency,dateStart,dateFinish,startFunction_id,finishFunction_id,ownerFunction_id"
-			+" ,medcard_id,patient_id,noActuality"
-			+" ) values ("
-			+" 'PolyclinicMedCase',CURRENT_TIME,CURRENT_DATE,'"+username+"'"
-			+",'"+obj[0]+"','"+obj[1]+"',to_date('"+obj[2]+"','dd.mm.yyyy'),to_date('"+obj[2]+"','dd.mm.yyyy'),'"+obj[4]+"'"
-			+",'"+obj[4]+"','"+obj[4]+"','"
-			+obj[5]+"','"+obj[6]+"','0'"
-			+")" ;
+	for (var ind=0;ind<lCab.size();ind++) { 
+		aDepartment = +lCab.get(ind)[0] ;
+		group = +lCab.get(ind)[1] ;
+		//throw aDepartment+" -- "+group ;
+		if (group>0) createNewEmergencySpec(aContext,aDepartment,group);
+		sql = "insert into Medcard (number,dateregistration,registrator,person_id)"
+			+" select p.patientSync,sls.datestart,'admin',p.id as patid"
+			+"  from MedCase sls"
+			+" left join patient p on p.id=sls.patient_id"
+			+" left join medcard mp on mp.person_id=p.id"
+			+" left join workfunction wf on wf.id=sls.ownerFunction_id"
+			+" left join worker w on w.id=wf.worker_id"
+			+" left join vocworkfunction vwf on vwf.id=wf.workFunction_id"
+			+" left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)"
+			+" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id"
+			+" left join workfunction dwf on dwf.id=diag.medicalWorker_id"
+			+" left join worker dw on dw.id=dwf.worker_id"
+			+" left join patient dwp on dwp.id=dw.person_id"
+			+" left join worker wN on Wn.person_id=dw.person_id and wN.lpu_id="+aDepartmentPolyclinic
+			+" left join workfunction wfN on wfN.worker_id=wN.id"
+			+" left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id"
+			+" left join vocidc10 mkb on mkb.id=diag.idc10_id"
+			+" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('"+aBeginDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy')"
+			+" and sls.deniedHospitalizating_id is not null"
+			+" and sls.department_id='"+aDepartment+"' and sls.medicalAid='1'"
+			+" and diag.id is not null and mp.id is null"
+			+" order by sls.dateStart,p.lastname,p.firstname,p.middlename" ;
 		aContext.manager.createNativeQuery(sql).executeUpdate() ;
-		var sql = "select id from medcase where dtype='PolyclinicMedCase' and startFunction_id='"+obj[4]+"'"
+		// Список талонов
+		sql = "select sls.serviceStream_id,case when sls.emergency='1' then '1' else '0' end as emergency"
+			+" ,to_char(sls.datestart,'dd.mm.yyyy') as dateStart,sls.entranceTime,wfN.id as wfNid"
+			+" ,mp.id as medcard,sls.patient_id,coalesce(sls.hospitalization_id,'1')"
+			+" ,diag.id as diagid"
+			+" 	 from MedCase sls"
+			+" 	left join patient p on p.id=sls.patient_id"
+			+" 	left join medcard mp on mp.person_id=p.id"
+			+" 	left join workfunction wf on wf.id=sls.ownerFunction_id"
+			+" 	left join worker w on w.id=wf.worker_id"
+			+" 	left join vocworkfunction vwf on vwf.id=wf.workFunction_id"
+			+" 	left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)"
+			+" 	left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id"
+			+" 	left join workfunction dwf on dwf.id=diag.medicalWorker_id"
+			+" 	left join worker dw on dw.id=dwf.worker_id"
+			+" 	left join patient dwp on dwp.id=dw.person_id"
+			+" 	left join worker wN on Wn.person_id=dw.person_id and wN.lpu_id="+aDepartmentPolyclinic
+			+" 	left join workfunction wfN on wfN.worker_id=wN.id"
+			+" 	left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id"
+			+" 	left join vocidc10 mkb on mkb.id=diag.idc10_id"
+			+" 	where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('"+aBeginDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy')"
+			+" 	and sls.deniedHospitalizating_id is not null"
+			+" 	and sls.department_id='"+aDepartment+"' and sls.medicalAid='1'"
+			+" 	and diag.id is not null and (select count(*) from medcase t where t.patient_id=sls.patient_id and t.workFunctionExecute_id=wfN.id and t.datestart=sls.datestart and t.dtype='ShortMedCase')=0"
+			+" 	and wfN.id is not null"
+			+" 	order by sls.dateStart,p.lastname,p.firstname,p.middlename" ;
+		var list = aContext.manager.createNativeQuery(sql).getResultList() ;
+		var visitResult = "3" ;
+		var visitReason = "2" ;
+		var workPlaceType="1" ;
+		// Обработка отказов и создание новых талонов
+		for (var i=0;i<list.size();i++) {
+			var obj = list.get(i) ;
+			// создание спо
+			sql = "insert into MedCase (dtype,createtime,createdate,username"
+				+",serviceStream_id,emergency,dateStart,dateFinish,startFunction_id,finishFunction_id,ownerFunction_id"
+				+" ,medcard_id,patient_id,noActuality"
+				+" ) values ("
+				+" 'PolyclinicMedCase',CURRENT_TIME,CURRENT_DATE,'"+username+"'"
+				+",'"+obj[0]+"','"+obj[1]+"',to_date('"+obj[2]+"','dd.mm.yyyy'),to_date('"+obj[2]+"','dd.mm.yyyy'),'"+obj[4]+"'"
+				+",'"+obj[4]+"','"+obj[4]+"','"
+				+obj[5]+"','"+obj[6]+"','0'"
+				+")" ;
+			aContext.manager.createNativeQuery(sql).executeUpdate() ;
+			var sql = "select id from medcase where dtype='PolyclinicMedCase' and startFunction_id='"+obj[4]+"'"
+				+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
+			var listspo = aContext.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
+			var idspo=0 ;
+			if (listspo.size()>0) {idspo=listspo.get(0) ;}else {throw 'Проблема с определением СПО по отказу №'+obj  ;}
+			//throw ''+idspo ;
+			// создание визита
+			sql = "insert into MedCase (parent_id,dtype,createtime,createdate,username"
+				+",serviceStream_id,emergency,dateStart,timeExecute,workfunctionExecute_id"
+				+" ,medcard_id,patient_id,hospitalization_id"
+				+",visitResult_id,visitReason_id,workPlaceType_id,noActuality"
+				+" ) values ("
+				+" '"+idspo+"','ShortMedCase',CURRENT_TIME,CURRENT_DATE,'"+username+"'"
+				+",'"+obj[0]+"','"+obj[1]+"',to_date('"+obj[2]+"','dd.mm.yyyy'),'"+obj[3]+"','"+obj[4]+"'"
+				+",'"+obj[5]+"','"+obj[6]+"','"+obj[7]+"'"
+				+",'"+visitResult+"','"+visitReason+"','"+workPlaceType+"','0'"
+				+")" ;
+			aContext.manager.createNativeQuery(sql).executeUpdate() ;
+			var sql = "select id from medcase where parent_id='"+idspo+"' and dtype='ShortMedCase' and workFunctionExecute_id='"+obj[4]+"'"
 			+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
-		var listspo = aContext.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
-		var idspo=0 ;
-		if (listspo.size()>0) {idspo=listspo.get(0) ;}else {throw 'Проблема с определением СПО по отказу №'+obj  ;}
-		//throw ''+idspo ;
-		// создание визита
-		sql = "insert into MedCase (parent_id,dtype,createtime,createdate,username"
-			+",serviceStream_id,emergency,dateStart,timeExecute,workfunctionExecute_id"
-			+" ,medcard_id,patient_id,hospitalization_id"
-			+",visitResult_id,visitReason_id,workPlaceType_id,noActuality"
-			+" ) values ("
-			+" '"+idspo+"','ShortMedCase',CURRENT_TIME,CURRENT_DATE,'"+username+"'"
-			+",'"+obj[0]+"','"+obj[1]+"',to_date('"+obj[2]+"','dd.mm.yyyy'),'"+obj[3]+"','"+obj[4]+"'"
-			+",'"+obj[5]+"','"+obj[6]+"','"+obj[7]+"'"
-			+",'"+visitResult+"','"+visitReason+"','"+workPlaceType+"','0'"
-			+")" ;
-		aContext.manager.createNativeQuery(sql).executeUpdate() ;
-		var sql = "select id from medcase where parent_id='"+idspo+"' and dtype='ShortMedCase' and workFunctionExecute_id='"+obj[4]+"'"
-		+" and patient_id='"+obj[6]+"' and dateStart=to_date('"+obj[2]+"','dd.mm.yyyy')" ;
-		var listvis = aContext.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
-		var idvis=0 ;
-		if (listvis.size()>0) {idvis=listvis.get(0) ;}else {throw 'Проблема с определением визита по отказу №'+obj  ;}
-		
-		// создание диагноза
-		sql = "insert into diagnosis (patient_id,priority_id,medcase_id,idc10_id,name,illnesPrimary_id,medicalWorker_id) select patient_id,priority_id,'"+idvis+"',idc10_id,name,illnesPrimary_id,'"+obj[4]+"' from diagnosis where id="+obj[8] ;
-		aContext.manager.createNativeQuery(sql).executeUpdate() ;
+			var listvis = aContext.manager.createNativeQuery(sql).setMaxResults(1).getResultList() ;
+			var idvis=0 ;
+			if (listvis.size()>0) {idvis=listvis.get(0) ;}else {throw 'Проблема с определением визита по отказу №'+obj  ;}
+			
+			// создание диагноза
+			sql = "insert into diagnosis (patient_id,priority_id,medcase_id,idc10_id,name,illnesPrimary_id,medicalWorker_id) select patient_id,priority_id,'"+idvis+"',idc10_id,name,illnesPrimary_id,'"+obj[4]+"' from diagnosis where id="+obj[8] ;
+			aContext.manager.createNativeQuery(sql).executeUpdate() ;
+		}
 	}
 }
 /**
