@@ -10,6 +10,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.web.action.JaasUtil;
 import ru.ecom.mis.ejb.service.worker.IWorkCalendarService;
 import ru.ecom.web.util.Injection;
@@ -28,8 +29,12 @@ public class WorkCalendarAction extends BaseAction {
         Date finishDate = DateFormat.parseSqlDate(finishDateS) ;
         if (functionJournal!=null && !functionJournal.equals("")) {
         	if  (functionJournal.equals("autogenerate")) {
-        		service.autoGenerateCalendar() ;
-        		 return new ActionForward("/entityParentList-mis_lpu.do?id=-1&");
+        		Long afterDays = null;
+        		Long cntDays = null ;
+        		if (aRequest.getParameter("afterDays")!=null) afterDays=ConvertSql.parseLong(aRequest.getParameter("afterDays"));
+        		if (aRequest.getParameter("cntDays")!=null) afterDays=ConvertSql.parseLong(aRequest.getParameter("cntDays"));
+        		service.autoGenerateCalendar(afterDays,cntDays) ;
+        		 return new ActionForward("/js-mis_worker-autogenerate.do");
         	} else if  (functionJournal.equals("generate")) {
         		serviceGenerateDo(service, lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate) ;
         	} else if (functionJournal.equals("addBusyPattern")) {
