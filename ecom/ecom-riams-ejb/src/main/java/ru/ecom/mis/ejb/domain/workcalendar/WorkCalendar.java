@@ -85,5 +85,18 @@ public class WorkCalendar extends BaseEntity{
 
 	/** Автоматически генерировать */
 	private Boolean theAutoGenerate;
+	
+	/** Через сколько дней генерировать */
+	@Comment("Через сколько дней генерировать")
+	public Long getAfterDaysGenerate() {
+		return theAfterDaysGenerate;
+	}
+
+	public void setAfterDaysGenerate(Long aAfterDaysGenerate) {
+		theAfterDaysGenerate = aAfterDaysGenerate;
+	}
+
+	/** Через сколько дней генерировать */
+	private Long theAfterDaysGenerate;
 
 }

@@ -513,4 +513,11 @@ public class MisLpu extends BaseEntity {
 
 	/** Префикс для шаблонов ЛН */
 	private String thePrefixForLN;
+	/** Экстренный кабинет */
+	@Comment("Экстренный кабинет")
+	public Long getEmergencyCabinet() {return theEmergencyCabinet;}
+	public void setEmergencyCabinet(Long aEmergencyCabinet) {theEmergencyCabinet = aEmergencyCabinet;}
+
+	/** Экстренный кабинет */
+	private Long theEmergencyCabinet;
 }

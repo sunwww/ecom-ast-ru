@@ -516,7 +516,7 @@ public class MisLpuForm extends IdNameEntityForm {
 	
 	/** Код подразделения */
 	@Comment("Код подразделения")
-	@Persist @Required
+	@Persist 
 	public String getCodeDepartment() {return theCodeDepartment;}
 	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
 
@@ -552,4 +552,14 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Префикс для шаблонов ЛН */
 	private String thePrefixForLN;
+	
+	/** Экстренный кабинет */
+	@Comment("Экстренный кабинет")
+	@Persist
+	public Long getEmergencyCabinet() {return theEmergencyCabinet;}
+	public void setEmergencyCabinet(Long aEmergencyCabinet) {theEmergencyCabinet = aEmergencyCabinet;}
+
+	/** Экстренный кабинет */
+	private Long theEmergencyCabinet;
+
 }
