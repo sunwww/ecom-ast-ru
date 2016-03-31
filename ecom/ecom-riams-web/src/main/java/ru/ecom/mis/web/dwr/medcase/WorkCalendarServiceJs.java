@@ -1404,12 +1404,29 @@ public class WorkCalendarServiceJs {
 		
 	}
 	// Создать новые времена по специалисту за определенное число
-	public String getCreateNewTimesBySpecAndDate(String aDate
+	public String getCreateNewTimesBySpecAndDate(String aDateFrom
+			,String aDateTo
 			,Long aReserve
 			, Long aSpecialist, String aTimes
 			, HttpServletRequest aRequest) throws NamingException, ParseException {
+		System.out.println("generation add time by days") ;
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-		service.getCreateNewTimesBySpecAndDate(aDate, aSpecialist, aTimes,aReserve) ;
+		if (aDateTo.equals("")) aDateTo=aDateFrom ;
+		java.util.Date dFrom = DateFormat.parseDate(aDateFrom) ;
+		java.util.Date dTo = DateFormat.parseDate(aDateTo) ;
+		System.out.println("date format"+aDateFrom) ;
+		Calendar calFrom = Calendar.getInstance() ;
+		calFrom.setTime(dFrom) ;
+		System.out.println("date format"+aDateTo) ;
+		Calendar calTo = Calendar.getInstance() ;
+		calTo.setTime(dTo) ;
+		calTo.add(Calendar.DAY_OF_MONTH,1);
+		System.out.println(calFrom+"---"+calTo) ;
+		while (calTo.after(calFrom)) {
+			service.getCreateNewTimesBySpecAndDate(new java.sql.Date(calFrom.getTime().getTime()), aSpecialist, aTimes,aReserve) ;
+			calFrom.add(Calendar.DAY_OF_MONTH,1);
+			System.out.println(calFrom) ;
+		}
 		return "Созданы" ;
 	}
 	public String generateBySpecialist(Long aWorkFunction, HttpServletRequest aRequest) throws NamingException {
