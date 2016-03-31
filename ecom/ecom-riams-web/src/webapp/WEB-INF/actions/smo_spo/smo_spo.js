@@ -19,6 +19,7 @@ function closeSpo(aForm, aCtx) {
 		"/entityView-smo_spo.do?id="+id
 	) ;
 }
+
 /**
  * Открыть СПО
  */
@@ -77,6 +78,14 @@ function createNewVisitByDeniedDiary(aForm,aCtx) {
 	
 	
 	aCtx.invokeScript("SmoVisitService", "createNewVisitByDeniedDiary",vocWorkFunctions,vocWorkFunction,filterMkb,dateBegin,dateEnd) ;
+	return aCtx.createForwardRedirect("/stac_journal_denied_without_diagnosis.do") ;
+	
+}
+function createNewEmergencySpec(aForm,aCtx) {
+	var dep = aCtx.request.getParameter("department1") ;
+	var group = aCtx.request.getParameter("group") ;
+	
+	aCtx.invokeScript("SmoVisitService", "createNewEmergencySpec",dep,group) ;
 	return aCtx.createForwardRedirect("/stac_journal_denied_without_diagnosis.do") ;
 
 }
