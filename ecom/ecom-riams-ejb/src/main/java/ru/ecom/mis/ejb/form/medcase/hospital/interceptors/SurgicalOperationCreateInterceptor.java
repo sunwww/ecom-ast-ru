@@ -62,15 +62,12 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     		throw new IllegalStateException("Невозможно добавить хирургическую операцию. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
     	}
     	
-		if (parentSSL.getLpu()!=null) {
-			if (parentSSL.getLpu().getAccessEnterOperation()!=null
-					&&parentSSL.getLpu().getAccessEnterOperation().getCode()!=null
-					&&(
-							parentSSL.getLpu().getAccessEnterOperation().getCode().equals("DENIED_IN_DEPARTMENT")
-							|| parentSSL.getLpu().getAccessEnterOperation().getCode().equals("ALL_DEPARTMENT")
-					)) {
-				throw new IllegalStateException("Нельзя добавить хирургическую операцию по текущему отделению!!!") ;
-			}
+		if (parentSSL.getDepartment()!=null) {
+				List<Object[]> l = aContext.getEntityManager().createNativeQuery("select vlaeo.id from mislpu ml left join VocLpuAccessEnterOperation vlaeo on vlaeo.id=ml.AccessEnterOperation_id where ml.id='"
+							+parentSSL.getDepartment().getId()+"' and (vlaeo.code='DENIED_IN_DEPARTMENT' or vlaeo.code='ALL_DEPARTMENT')").getResultList() ;
+				if (l.size()>0) throw new IllegalStateException("Нельзя добавить хирургическую операцию по текущему отделению!!!") ;
+		}
+		if (parentSSL.getLpu()!=null) {	
 			form.setLpu(parentSSL.getLpu().getId());
 		}
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction")
