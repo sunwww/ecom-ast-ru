@@ -1,3 +1,6 @@
+function autogenerate(aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/mis_worker/listAutogenerate.jsp") ;
+}
 function archives(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/mis_worker/listArchives.jsp") ;
 }

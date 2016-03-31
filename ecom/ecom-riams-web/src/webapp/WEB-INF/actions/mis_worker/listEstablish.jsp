@@ -31,6 +31,7 @@
   	,case when wc.autogenerate='1' then 'автоматически генерировать' end as a6utogenerate
   	,case when wc.autoGenerate='1' then wc.id else null end as i7sAuto 
   	,case when wc.autoGenerate='1' then null else wc.id end as i8sNoAuto 
+  	,(select max(wcd.calendardate) from workcalendarday wcd where wcd.workcalendar_id=wc.id) as maxdate
   	from workfunction wf 
   	left join worker w on w.id=wf.worker_id 
   	left join Patient wp on wp.id=w.person_id 
@@ -95,6 +96,7 @@
       <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'0'" buttonName="Снять автоматическую генерацию по календарю" buttonShortName="СА" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
       <msh:tableButton property="8" hideIfEmpty="true" buttonFunction="setAutogenerate" addParam="'1'" buttonName="Установить автоматическую генерацию по календарю" buttonShortName="УА" role="/Policy/Mis/Worker/WorkCalendar/Edit"/>
       <msh:tableColumn columnName="Примечания" property="6"/>
+      <msh:tableColumn columnName="Последняя сгенерированная дата приема" property="9"/>
     </msh:table>
   </msh:section>
   
