@@ -129,8 +129,10 @@
     	    		}}) ;
     }
     function generate() {
+    	var dt = $('moveDate').value ;
+    	if (dt!='' && !confirm("Вы хотите времена добавить в каждый день за период "+$('date').value+"-"+dt+"?")) dt="" ;
     	WorkCalendarService.getCreateNewTimesBySpecAndDate($('date').value
-    			,$('reserveType').value, $('specialist').value, $('times').value
+    			, dt ,$('reserveType').value, $('specialist').value, $('times').value
     			, {
     	  	 callback: function(aResult) {
     				 	alert(aResult) ;
