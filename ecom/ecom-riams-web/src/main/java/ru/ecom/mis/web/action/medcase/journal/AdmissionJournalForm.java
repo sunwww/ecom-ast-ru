@@ -403,4 +403,12 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Фильтр мкб */
 	private String theFilterMkb;
+	
+	/** Рабочая группа */
+	@Comment("Рабочая группа")
+	public Long getGroup() {return theGroup;}
+	public void setGroup(Long aGroup) {theGroup = aGroup;}
+
+	/** Рабочая группа */
+	private Long theGroup;
 }
