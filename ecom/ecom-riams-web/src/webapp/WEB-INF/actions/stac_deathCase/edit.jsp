@@ -125,22 +125,22 @@
         	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осл. ПС" property="reasonComplicationMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:textField label="осл. ПС" property="reasonComplicationText" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textArea rows="3" label="осл. ПС" property="reasonComplicationText" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 соп. ПС" property="reasonConcomitantMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:textField label="соп. ПС" property="reasonConcomitantText" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textArea rows="3" label="соп. ПС" property="reasonConcomitantText" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="competingDisease" label="Конкурирующее заболевание" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textArea rows="3" property="competingDisease" label="Конкурирующее заболевание" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="polypathia" label="Сочетанное заболевание" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textArea rows="3" property="polypathia" label="Сочетанное заболевание" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="backgroundDisease" label="Фоновое заболевание" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textArea rows="3" property="backgroundDisease" label="Фоновое заболевание" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Расхождения " colSpan="6"/>
