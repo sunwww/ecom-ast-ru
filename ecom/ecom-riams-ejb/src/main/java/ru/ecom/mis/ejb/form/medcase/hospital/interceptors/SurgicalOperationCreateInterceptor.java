@@ -35,15 +35,12 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     				throw new IllegalStateException("Нельзя добавить хирургическую операцию в закрытый случай стационарного лечения (ССЛ) !!!") ;
     			}
     		}
+    		
     		if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
     		if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
     	} else if (parentSSL!=null && parentSSL instanceof DepartmentMedCase){
     		DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
-			if (slo.getDepartment()!=null &&slo.getDepartment().getAccessEnterOperation()!=null
-					&&slo.getDepartment().getAccessEnterOperation().getCode()!=null
-					&&slo.getDepartment().getAccessEnterOperation().getCode().equals("DENIED_IN_DEPARTMENT")) {
-				throw new IllegalStateException("Нельзя добавить хирургическую операцию по текущему отделению!!!") ;
-			}
+			
     		if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
     		if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
     	} else  if (parentSSL!=null && parentSSL instanceof Visit){
@@ -65,7 +62,17 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     		throw new IllegalStateException("Невозможно добавить хирургическую операцию. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
     	}
     	
-		if (parentSSL.getLpu()!=null) form.setLpu(parentSSL.getLpu().getId());
+		if (parentSSL.getLpu()!=null) {
+			if (parentSSL.getLpu().getAccessEnterOperation()!=null
+					&&parentSSL.getLpu().getAccessEnterOperation().getCode()!=null
+					&&(
+							parentSSL.getLpu().getAccessEnterOperation().getCode().equals("DENIED_IN_DEPARTMENT")
+							|| parentSSL.getLpu().getAccessEnterOperation().getCode().equals("ALL_DEPARTMENT")
+					)) {
+				throw new IllegalStateException("Нельзя добавить хирургическую операцию по текущему отделению!!!") ;
+			}
+			form.setLpu(parentSSL.getLpu().getId());
+		}
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction")
 				&&form.getDepartment()!=null&&form.getDepartment()>Long.valueOf(0)) {
     		String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
