@@ -6,7 +6,7 @@ import java.text.ParseException;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 
 public interface IWorkCalendarService {
-	public void autoGenerateCalendar() ;
+	public void autoGenerateCalendar(Long aCnt,Long aCntDayGererate) ;
 	public void deleteWorkCalendarTime(Long aTime) ;
 	public String deletePreRecord(String aUsername,Long aTime) ;
 	// Удалить свободные времена
@@ -23,7 +23,7 @@ public interface IWorkCalendarService {
 			, Long aSpecialist, Long aCountVisits
 			, String aBeginTime, String aEndTime) throws ParseException;
 	// Создать новые времена по специалисту за определенное число
-	 public void getCreateNewTimesBySpecAndDate(String aDate
+	 public void getCreateNewTimesBySpecAndDate(Date aDate
 			, Long aSpecialist, String aTimes,Long aReserveType) throws ParseException;
 	 void generateCalendarByWorkFunction(Long aWorkFunction,Date aBeginDate,Date aFinishDate) ;
 	 public void deleteCalendarDaysByWorkFunction(WorkCalendar aCalendar,  Date aDateFrom, Date aDateTo);

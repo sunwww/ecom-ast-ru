@@ -38,6 +38,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
 import ru.ecom.mis.ejb.domain.worker.JournalPatternCalendar;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.nuzmsh.util.format.DateConverter;
 import ru.nuzmsh.util.format.DateFormat;
 
 
@@ -49,17 +50,23 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	
 	private final static Logger LOG = Logger.getLogger(WorkCalendarServiceBean.class);
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	public void autoGenerateCalendar() {
-		Calendar cal = Calendar.getInstance() ;
-		cal.add(Calendar.DAY_OF_MONTH, 10) ;
+	
+	public void autoGenerateCalendar(Long aCnt,Long aCntDayGererate) {
+		
+		int days = aCntDayGererate!=null?aCntDayGererate.intValue():1 ;
 		List<WorkCalendar> list = theManager
 				.createQuery("from WorkCalendar where autoGenerate='1'")
 				.getResultList() ;
-			
-			for (WorkCalendar wc:list) {
-				generateByPattern(wc,new java.sql.Date(cal.getTime().getTime())
+		for (WorkCalendar wc:list) {
+			Calendar cal = Calendar.getInstance() ;
+			cal.add(Calendar.DAY_OF_MONTH, aCnt!=null?aCnt.intValue():wc.getAfterDaysGenerate()!=null?wc.getAfterDaysGenerate().intValue():10) ;
+			for (int i=0;i<days;i++) {
+				List<Object[]> l = theManager.createNativeQuery("select id,calendardate from workcalendarday where workcalendar_id="+wc.getId()+" and calendarDate=to_date('"+DateFormat.formatToDate(new java.sql.Date(cal.getTime().getTime()))+"','dd.mm.yyyy')").getResultList() ;
+				if (l.size()==0) generateByPattern(wc,new java.sql.Date(cal.getTime().getTime())
 					,new java.sql.Date(cal.getTime().getTime())) ;
 			}
+			cal.add(Calendar.DAY_OF_MONTH, 1) ;
+		}
 	}
 	public void moveDate(Long aWorkFunction, Date aDateFrom, Date aDateTo) {
 		List<WorkCalendar> list = theManager
@@ -520,21 +527,21 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	}
 			
 	 // Создать новые времена по специалисту за определенное число
-	 public void getCreateNewTimesBySpecAndDate(String aDate
+	 public void getCreateNewTimesBySpecAndDate(Date aDate
 			 , Long aSpecialist, String aTimes, Long aReserveType) throws ParseException {
 		 VocServiceReserveType vsrt = (aReserveType!=null && !aReserveType.equals(Long.valueOf(0)))?
 				 theManager.find(VocServiceReserveType.class, aReserveType):null ;
 		 if (aTimes!=null) {
 			 aTimes=aTimes.replace(" ", "") ;
 			 if (!aTimes.equals("")) {
-				 Date date = DateFormat.parseSqlDate(aDate) ;
+				 //Date date = DateFormat.parseSqlDate(aDate) ;
 				 String[] times = aTimes.split(",") ;
 				 List<WorkCalendar> list = theManager
 						 .createQuery("from WorkCalendar where workFunction_id=:wf")
 						 .setParameter("wf", aSpecialist).setMaxResults(1).getResultList() ;
 				 if (list.size()>0) {
 					 WorkCalendar wc = list.get(0) ;
-					 WorkCalendarDay day = createCalendarDay(wc,date) ;
+					 WorkCalendarDay day = createCalendarDay(wc,aDate) ;
 					 for (String time:times) {
 						 java.sql.Time t = DateFormat.parseSqlTime(time) ;
 						 createCalendarTime(t,vsrt, day,true) ;
