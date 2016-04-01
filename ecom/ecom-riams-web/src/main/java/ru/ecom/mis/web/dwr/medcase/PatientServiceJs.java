@@ -23,6 +23,57 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
 	
+	
+	public String showPatientCheckByFondHistory(String aPatientId, String aType, HttpServletRequest aRequest) throws NamingException {
+		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		 StringBuilder ret = new StringBuilder();
+		 try{
+			 Object[] re = service.executeNativeSqlGetObj("select lastname, firstname, middlename, birthday, commonnumber from patient where id = "+aPatientId).get(0);
+			 String whereSql ="";
+			 if (aType!=null&&aType.equals("1")) {
+				 whereSql = "pf.lastname = '"+re[0]+"' and pf.firstname = '"+re[1]+"' and middlename = '"+re[2]+"' and pf.birthday = '"+re[3]+"'";
+			 } else {
+				 whereSql = "pf.commonnumber='"+re[4]+"'";
+			 }
+			  
+			 String sql = "select pf.lastname, pf.firstname, pf.middlename, to_char(pf.birthday,'dd.MM.yyyy') as f3_birthday" +
+				 		" ,to_char(pf.checkdate,'dd.MM.yyyy') as f4_check_date, coalesce(pf.lpuattached,'') as f5, coalesce(pf.attachedtype,'') as f6" +
+				 		" ,coalesce(to_char(pf.attacheddate,'dd.MM.yyyy'),'') as f7_att_date" +
+				 		", coalesce(department,'') as f8, coalesce(doctorsnils,'') as f9" +
+				 		" from patientfond pf" +
+				 		" where " +whereSql +
+				 		" order by pf.checkdate desc limit 50";
+			 
+			 Collection <WebQueryResult> res = service.executeNativeSql(sql);
+			 if (!res.isEmpty()) {
+				 ret.append("<table border='1'>");
+				 ret.append("<tr><td>Фамилия</td><td>Имя</td><td>Отчество</td><td>ДР</td><td>Дата проверки</td><td>ЛПУ прикрепления</td><td>Тип прикрепления</td><td>Дата прикрепления</td><td>Подразделение</td><td>СНИЛС врача</td></tr>");
+				
+				 for (WebQueryResult wqr: res) {
+					 ret.append("<tr>")
+					 .append("<td>").append(wqr.get1()).append("</td>")
+					 .append("<td>").append(wqr.get2()).append("</td>")
+					 .append("<td>").append(wqr.get3()).append("</td>")
+					 .append("<td>").append(wqr.get4()).append("</td>")
+					 .append("<td>").append(wqr.get5()).append("</td>")
+					 .append("<td>").append(wqr.get6()).append("</td>")
+					 .append("<td>").append(wqr.get7()).append("</td>")
+					 .append("<td>").append(wqr.get8()).append("</td>")
+					 .append("<td>").append(wqr.get9()).append("</td>")
+					 .append("<td>").append(wqr.get10()).append("</td>")
+					 .append("</tr>");
+				}
+				 ret.append("</table>");
+				 return ret.toString();
+			 } else {
+				 return ret.toString() ;
+			 }
+		 } catch (Exception e){
+			 return ""+e;
+		 }
+		 
+	}
+	
 	public String getUserDocumentList(String aGroupName, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder ret = new StringBuilder();
 		String sql = "select ud.id, ud.name, ud.filename from VocUserDocumentGroup vudg" +

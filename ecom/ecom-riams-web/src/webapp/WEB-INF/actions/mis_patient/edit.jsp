@@ -15,6 +15,8 @@
     	<msh:link action="javascript:checkPatientByFioDr()">Проверка по ФИО+ДР</msh:link>
     	<msh:link action="javascript:checkPatientByDocument()">Проверка по документам</msh:link>
     	<msh:link action="javascript:checkPatientByCommonNumber()">Проверка по RZ</msh:link>
+    	<msh:link action="javascript:showPatientByFondHistory(1)" roles="/Policy/Mis/Patient/CheckByFond/History">Журнал проверок по ФИО</msh:link>
+    	<msh:link action="javascript:showPatientByFondHistory(2)" roles="/Policy/Mis/Patient/CheckByFond/History">Журнал проверок по RZ</msh:link>
     </msh:ifInRole>	
     
               <table>
@@ -789,6 +791,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		typeStreet="typeStreetNonresident" street="streetNonresident" zipcode="nonresidentZipcode"/>
     <tags:mis_double name='Patient' title='Существующие пациенты в базе:' rolesBan="/Policy/Mis/Patient/BanDoubleCreate" cmdAdd="document.forms[0].submitButton.disabled = false "/>
     <tags:mis_findPatientByFond name='Patient' patientField="id"/>
+    <tags:mis_showPatientCheckByFondHistory name='Patient' patientField="id"/>
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="mis_patientForm" insideJavascript="false" guid="998aa692-c1d3-4d79-bc37-cfa204fa846c">
