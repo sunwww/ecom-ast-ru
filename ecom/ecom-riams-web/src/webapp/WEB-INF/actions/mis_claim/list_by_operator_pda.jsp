@@ -31,19 +31,24 @@ if (beginDate!=null&&!beginDate.equals("")) {
 } else {
 	statusSql +=" and cl.createdate <=current_date";
 }
-	if (typeStatus==null) {
-		statusSql = " nulla";
-	} else if (typeStatus.equals("1")) {
-		statusSql += " and cl.viewDate is null";
-	} else if (typeStatus.equals("2")) {
-		statusSql += " and (cl.viewDate is not null and cl.startworkdate is null)";
-	} else if (typeStatus.equals("3")) {
-		statusSql += " and cl.finishdate is null and cl.canceldate is null and cl.startworkdate is not null";
-	} else if (typeStatus.equals("4")) {
-		statusSql += " and cl.finishDate is not null";
-	} else if (typeStatus.equals("5")) {
-		statusSql += " and cl.canceldate is not null";
+if (typeStatus==null) {
+	statusSql = " nulla";
+} else if (typeStatus.equals("1")) {
+	statusSql += " and cl.viewDate is null and cl.finishDate is null and cl.cancelDate is null and cl.startworkdate is null";
+} else if (typeStatus.equals("2")) {
+	statusSql += " and (cl.viewDate is not null and cl.startworkdate is null and cl.canceldate is null and cl.finishdate is null)";
+} else if (typeStatus.equals("3")) {
+	statusSql += " and cl.finishdate is null and cl.canceldate is null and cl.startworkdate is not null";
+} else if (typeStatus.equals("5")||typeStatus.equals("6")||typeStatus.equals("7")) {
+	statusSql += " and cl.finishDate is not null";
+	if (typeStatus.equals("6")) {
+		statusSql +=" and cl.completeConfirmed='1'";
+	} else if (typeStatus.equals("7")) {
+		statusSql +=" and cl.completeConfirmed='0'";
 	}
+} else if (typeStatus.equals("4")) {
+	statusSql += " and cl.canceldate is not null";
+}
 	//if (typeUser!=null&&typeUser.equals("2")) {
 		statusSql += " and cl.startworkusername ='"+login+"'";
 	//}
