@@ -17,7 +17,8 @@
 			"
 		queried="upper(pat.lastname) like upper(:querId) or upper(su.login) like upper(:query) "
 		parent="suu.login=:parent"
-		queryAppend="su.id is not null"
+		queryAppend="su.id is not null and (su.disable is null or su.disable='0') and (su.disabled is null or su.disabled='0') 
+		and (aallwf.archival is null or aallwf.archival='0')"
 	/>
 </voc>
 
