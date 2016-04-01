@@ -21,7 +21,6 @@ public class WorkCalendarAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
         long lpuId = Long.parseLong(aRequest.getParameter("lpuId")!=null?aRequest.getParameter("lpuId"):"0") ;
-        //Long pattern = Long.parseLong(aRequest.getParameter("pattern")) ;
         String beginDateS = aRequest.getParameter("beginDate") ;
         String finishDateS = aRequest.getParameter("finishDate") ;
         String functionJournal = aRequest.getParameter("functionJournal") ;
@@ -54,7 +53,6 @@ public class WorkCalendarAction extends BaseAction {
         		serviceMoveDateDo(service, lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate) ;
         	}
         }
-        //serviceDo(service,lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")),beginDate,finishDate,pattern);
         return new ActionForward(aMapping.findForward("success").getPath()
         		+"?id="+lpuId+"&beginDate="+beginDateS+"&finishDate="+finishDateS+"&tmp="+Math.random(), true) ;
     }
