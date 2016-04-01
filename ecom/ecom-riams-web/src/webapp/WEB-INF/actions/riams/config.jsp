@@ -46,8 +46,8 @@
                      <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/Edit">
                            <li>
 	                        <msh:link roles='/Policy/Mis/Worker/WorkCalendar/Edit'
-	                        	 action="cal_workCalendar-journal.do?functionJournal=autogenerate">
-                            Генератор календаря
+	                        	 action="js-mis_worker-autogenerate.do">
+                            Списки раб.функций, у которых установлена автогенерация
                         </msh:link>
                         </li>
                      </msh:ifInRole>

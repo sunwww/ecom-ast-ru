@@ -229,7 +229,7 @@
 						<li><msh:link  isReport="true" action="stac_journal_direct_psych.do" roles="/Policy/Mis/MedCase/Stac/Journal/AdmissionOrderByPsych">
 	                            Журнал по порядку поступления (добров., недобров.)
 	                        </msh:link></li>
-						<li><msh:link  isReport="true" action="stac_journal_compulsory_treatment_psych.do" roles="/Policy/Mis/MedCase/Stac/Journal/AdmissionOrderByPsych">
+						<li><msh:link  isReport="true" action="stac_journal_compulsory_treatment_psych.do" roles="/Policy/Mis/MedCase/Stac/Journal/CompulsoryTreatmentByPsych">
 	                            Журнал по принудительному лечению
 	                        </msh:link></li>
 						<li><msh:link  isReport="true" action="stac_report_insCompany.do" roles="/Policy/Mis/MedCase/Stac/Journal/InsuranceCompany">
