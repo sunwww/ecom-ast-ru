@@ -83,7 +83,7 @@
     	left join Omc_Oksm ok on p.nationality_id=ok.id
     	where m.DTYPE='HospitalMedCase' and m.datestart between to_date('${param.dateBegin}','dd.mm.yyyy') 
     	and to_date('${dateEnd}','dd.mm.yyyy') 
-    	and cast(m.ambulanceTreatment as int)=1 ${hospT} 
+    	and m.ambulanceTreatment='1' ${hospT} 
     	  ${add}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_ticket" action="entityParentView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
