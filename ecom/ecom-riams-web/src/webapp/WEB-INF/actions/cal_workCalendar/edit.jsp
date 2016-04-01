@@ -17,6 +17,9 @@
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07" >
         	<msh:checkBox property="autoGenerate" label="Автоматическая генерация"/>
         </msh:row>
+        <msh:row>
+        	<msh:textField property="afterDaysGenerate" label="Через сколько дней генерировать"/>
+        </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
