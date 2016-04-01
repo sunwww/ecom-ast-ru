@@ -362,8 +362,9 @@
       	function check_diags(aPrefix) {
       		var list_diag = ["complication","concomitant"] ;
       		var isnext=true ;
+      		try {
       		$('submitPreDischrge2').disabled=true ;
-  			$('submitPreDischrge1').disabled=true ;
+  			$('submitPreDischrge1').disabled=true ;}catch(e){}
   			$('submitButton').disabled=true ;
       		for (var i=0;i<list_diag.length;i++) {
       			isnext=addDiag(list_diag[i],1);
@@ -379,8 +380,8 @@
       			
 	      		document.forms["mainForm"].submit() ;
       		} else {
-      			$('submitPreDischrge2').disabled=false ;
-      			$('submitPreDischrge1').disabled=false ;
+      			try{$('submitPreDischrge2').disabled=false ;
+      			$('submitPreDischrge1').disabled=false ;}catch(e){}
       			$('submitButton').disabled=false ;
       		}
       	}
