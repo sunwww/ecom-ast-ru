@@ -91,7 +91,10 @@
        		<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipment" horizontalFill="true" label="Принтер"/>
         </msh:row>
         <msh:row>
-        <msh:autoComplete property="medicalStandard" vocName="vocMedStandard" label="Стандарт оказания мед. помощи"/>
+        <msh:autoComplete property="medicalStandard" vocName="vocMedStandard" label="Стандарт оказания мед. помощи" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+        <msh:autoComplete property="emergencyCabinet" vocName="funcMedServiceRoom" label="Экстренный кабинет" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
