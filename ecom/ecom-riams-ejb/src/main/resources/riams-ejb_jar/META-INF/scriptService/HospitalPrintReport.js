@@ -747,12 +747,20 @@ function printReport007(aCtx,aParams) {
 			var ret = new java.util.ArrayList() ;
 			var parBST = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 			var objBST = list1.get(i) ;
-			var BSTname = ""+ objBST[2];
-			var BTname = ""+ objBST[3];
-			if (BSTnameAll!="") BSTnameAll = BSTnameAll +"," ;
-			if (BTnameAll!="") BTnameAll = BTnameAll +"," ;
-			BSTnameAll = BSTnameAll +BSTname ;
-			BTnameAll = BTnameAll +BTname ;
+			var BSTname = "";
+			
+				var BSTname = ""+ objBST[2];
+				
+			
+			var BTname = ""
+			
+				var BTname = ""+ objBST[3];
+				
+			
+			if (BSTnameAll.split(""+ objBST[2])<2) {
+				if (BSTnameAll!="") BSTnameAll = BSTnameAll +"," ;
+				BSTnameAll = BSTnameAll +BSTname ;}
+			if (BTnameAll.split(""+ objBST[3])<2) {if (BTnameAll!="") BTnameAll = BTnameAll +"," ;BTnameAll = BTnameAll +BTname ;}
 			lpu = ""+objBST[4] ;
 			parBST.set1(BTname+" "+BSTname) ;
 			//j=1 ;
