@@ -258,7 +258,7 @@
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_diagnosis" name="Диагноз" title="Добавить диагноз" guid="a54c4c9e-7248-467f-8095-de4edfec868d" roles="/Policy/Mis/MedCase/Diagnosis/Create" key="ALT+5" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-vac_vaccination" name="Вакцинацию" title="Добавить вакцинацию" guid="f417958a-1816-4fe0-8592-dfe35ac19dc8" roles="/Policy/Mis/Vaccination/Create" key="ALT+6" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+7" />
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить предварительную госпитализацию" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e88" roles="/Policy/Mis/MedCase/Protocol/Create" key="ALT+10" />
          <msh:sideLink roles="/Policy/Mis/MedCase/MedService/Create" key="ALT+8" name="Услугу" params="id" 
          	action="/entityParentPrepareCreate-smo_medService" title="Добавить услугу" guid="df23d" />
 <%--         <msh:sideLink params="id" action="/js-smo_visit-addDisabilityByRedirectFromVisit" name="Нетрудоспособность" title="Добавить нетрудоспособность" guid="784c86f1-44e5-4642-ae35-b68c2abd0604" roles="/Policy/Mis/Disability/DisabilityCase/Create" key="ALT+7" /> --%>
