@@ -357,8 +357,14 @@
   </script>
   </msh:ifFormTypeIsView>
       	<script type="text/javascript"> 
-      	var old_action = document.forms["mainForm"].action ; 
-      	document.forms["mainForm"].action="javascript:check_diags('')" ; 
+      	try {
+	      	var old_action = document.forms["mainForm"].action ; 
+	      	document.forms["mainForm"].action="javascript:check_diags('')" ; 
+	      	$('submitButton').click=function () {
+	      		$('submitButton').value='Сохранение данных'; 
+	      		check_diags('') ;  
+      		}
+	    } catch(e) {}
       	function check_diags(aPrefix) {
       		var list_diag = ["complication","concomitant"] ;
       		var isnext=true ;
