@@ -173,6 +173,7 @@
        ,to_char(p.planStartDate,'dd.mm.yyyy') as f14planStartDate
    ,vst.name as vstname
     ,'<input type=''checkbox'' name=''labCheckbox'' value='''||list(''||p.id)||'''>'
+    ,list(vpt.name)
     from prescription p
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
     left join MedCase slo on slo.id=pl.medCase_id
@@ -360,6 +361,7 @@
 	      <msh:tableColumn columnName="Отчетство" property="8"/>
 	      <msh:tableColumn columnName="Дата рождения" property="9"/>
 	      <msh:tableColumn columnName="Список услуг" property="10"/>
+	      <msh:tableColumn columnName="Тип назначения" property="17"/>
 	      
 
 	    </msh:table>
