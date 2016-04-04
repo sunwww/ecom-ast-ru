@@ -9,12 +9,32 @@
     <msh:title>Сотрудники, у которых установлена автоматическая генерация</msh:title>
   </tiles:put>
   <tiles:put name="side" type="string">
-    <msh:sideMenu guid="360e85c3-7aa1-4a04-8c1d-a9c0a6739efa" >
+  <%  if (request.getParameter("noAutogenerate")!=null 
+  && request.getParameter("noAutogenerate").equals("1")) {
+	  request.setAttribute("autoG1", "selected") ;
+	  request.setAttribute("autoG2", "") ;
+  } else {
+	  request.setAttribute("autoG1", "") ;
+	  request.setAttribute("autoG2", "selected") ;
+  } %>
+    <msh:sideMenu title="Списки рабочих функций" >
+      <msh:sideLink styleId="${autoG1}" action="/js-mis_worker-autogenerate.do?noAutogenerate=1" name="Нет автогенерации" roles="/Policy/Mis/Worker/Worker/Create" />
+      <msh:sideLink styleId="${autoG2}" action="/js-mis_worker-autogenerate.do?" name="Автогенерация"  roles="/Policy/Mis/Worker/Worker/Create" />
+    </msh:sideMenu>
+    <msh:sideMenu title="Дополнительно">
       <msh:sideLink  action="/cal_workCalendar-journal.do?functionJournal=autogenerate" name="Запуск генерации" confirm="Вы точно хотите запустить автогенерацию?" roles="/Policy/Mis/Worker/Worker/Create" />
     </msh:sideMenu>
     
   </tiles:put>
   <tiles:put name="body" type="string">
+  <%
+  if (request.getParameter("noAutogenerate")!=null 
+  && request.getParameter("noAutogenerate").equals("1")) {
+	  request.setAttribute("autogenerateSql", "(wc.autogenerate='0' or wc.autogenerate is null)") ;
+  } else {
+	  request.setAttribute("autogenerateSql", "wc.autogenerate='1'") ;
+  }
+  %>
   <msh:section title="Рабочие функции">
   	<ecom:webQuery name="listPerson" nativeSql="
   	select wf.id
@@ -25,23 +45,28 @@
   	,case when wc.autoGenerate='1' then wc.id else null end as i7sAuto 
   	,case when wc.autoGenerate='1' then null else wc.id end as i8sNoAuto 
   	,(select max(wcd.calendardate) from workcalendarday wcd where wcd.workcalendar_id=wc.id) as maxdate
+  	,coalesce(ml.name,ml1.name) as mlname
   	from workfunction wf 
   	left join worker w on w.id=wf.worker_id 
   	left join Patient wp on wp.id=w.person_id 
   	left join WorkFunction gr on gr.id=wf.group_id
   	 left join WorkCalendar wc on wc.workFunction_id=wf.id  
   	 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id 
-  	 where wc.autogenerate='1'
+  	 left join MisLpu ml on ml.id=wf.lpu_id
+  	 left join MisLpu ml1 on ml1.id=w.lpu_id
+  	 where ${autogenerateSql}
 
-  	 and (wf.archival is null or cast(wf.archival as integer)=0) 
+  	 and (wf.archival is null or wf.archival='0') 
   	 and wf.group_id is null
   	 and wc.id is not null
-  	 order by wf.groupName, wp.lastname,wp.middlename,wp.firstname
+  	 order by coalesce(ml.name,ml1.name),wf.groupName, wp.lastname,wp.middlename,wp.firstname
   	 "/>
   	 
     <msh:table selection="true" viewUrl="entitySubclassShortView-work_workFunction.do" name="listPerson" action="entitySubclassView-work_workFunction.do" idField="1" guid="d20ae6f6-f534-4d56-affe-ff02d3034d32">
       <msh:tableColumn columnName="#" property="sn" guid="4797" />
       <msh:tableColumn columnName="Код" property="5" guid="4ceb96e" />
+      <msh:tableColumn columnName="Подразделение" property="10" />
+      
       <msh:tableColumn columnName="ФИО (Название группы)" property="2" guid="4ceb96e" />
       <msh:tableColumn columnName="Должностные обязанности" property="3"/>
       <msh:tableColumn columnName="Рабочий календарь" property="4"/>
