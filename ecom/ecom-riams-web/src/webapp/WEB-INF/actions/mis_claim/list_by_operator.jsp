@@ -16,14 +16,11 @@ String endDate = request.getParameter("endDate");
 String login = LoginInfo.find(request.getSession(true)).getUsername();
 String executorUserName = request.getParameter("number");
 String searchField = request.getParameter("searchField");
+String typeUserName = "cl.startWorkUserName";
 request.setAttribute("login", login);
 String statusSql = " ", orderBySql=" cl.createdate , cl.createtime";
 
-
-
-
-if (beginDate!=null&&!beginDate.equals("")) {
-	
+if (beginDate!=null&&!beginDate.equals("")) {	
 	if (typeDate.equals("1")) {typeDate="cl.createdate";}
 	else if (typeDate.equals("2")) {typeDate="cl.viewdate";}
 	else if (typeDate.equals("3")) {typeDate="cl.startworkdate";}
@@ -43,9 +40,7 @@ if (beginDate!=null&&!beginDate.equals("")) {
 	statusSql +=" and cl.createdate <=current_date";
 }
 
-if (executorUserName!=null&&!executorUserName.equals("")) {
-	statusSql +=" and cl.startWorkUserName='"+executorUserName+"'";
-}
+
 if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 	statusSql +=" and upper(cl.description) like upper('%"+searchField+"%')";
 }
@@ -58,6 +53,7 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 	} else if (typeStatus.equals("3")) {
 		statusSql += " and cl.finishdate is null and cl.canceldate is null and cl.startworkdate is not null";
 	} else if (typeStatus.equals("5")||typeStatus.equals("6")||typeStatus.equals("7")) {
+		typeUserName = "cl.finishusername";
 		statusSql += " and cl.finishDate is not null";
 		if (typeStatus.equals("6")) {
 			statusSql +=" and cl.completeConfirmed='1'";
@@ -70,6 +66,9 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 	if (typeUser!=null&&typeUser.equals("2")) {
 		statusSql += " and cl.startworkusername ='"+login+"'";
 	}
+	if (executorUserName!=null&&!executorUserName.equals("")) {
+		statusSql +=" and "+typeUserName+"='"+executorUserName+"'";
+	}	
 	request.setAttribute("statusSql", statusSql);
 	request.setAttribute("orderBySql", orderBySql);
 %>
