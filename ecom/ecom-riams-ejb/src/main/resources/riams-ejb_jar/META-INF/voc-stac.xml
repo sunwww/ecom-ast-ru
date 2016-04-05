@@ -122,7 +122,7 @@
 		    	join=""
 		    	queryAppend=""
 		    	order=""
-		    	queried=" (vst.id like cast(:querId as varchar(5)) or UPPER(vst.name) like UPPER(:query)) "
+		    	queried=" (cast(vst.id as varchar(5)) like cast(:querId as varchar(5)) or UPPER(vst.name) like UPPER(:query)) "
 		    	names = "vst.name"
 		    />
     </voc>
@@ -134,7 +134,7 @@
 		    	join=""
 		    	queryAppend=""
 		    	order=""
-		    	queried=" (ve.id like cast(:querId as varchar(5)) or UPPER(ve.name) like UPPER(:query)) "
+		    	queried=" (cast(ve.id as varchar(5)) like cast(:querId as varchar(5)) or UPPER(ve.name) like UPPER(:query)) "
 		    	names = "ve.name"
 		    />
     </voc>
