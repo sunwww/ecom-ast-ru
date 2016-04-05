@@ -188,6 +188,7 @@ select spo.id,spo.dateStart
                                 <msh:toolbar>
                                     <a href='javascript:spoClosedCurrentDate()'>Закрыть текущим числом</a>
                                     <a href='javascript:sloClosedDateLastVisit()'>Закрыть датой последнего визита</a>
+                                    
                                 </msh:toolbar>
                             </th>
                         </tr>
@@ -207,27 +208,48 @@ select spo.id,spo.dateStart
     </msh:table>
     </msh:sectionContent>
     </msh:section>
+    <form id="closeSPOForm" name="closeSPOForm" method="post" action="js-smo_spo-spoClosedDateLastVisit.do" >
+    <input type='hidden' id = 'closeSPOIds' name = 'closeSPOIds'>
+    <input type="hidden" id="department" name="department" value="${department}"/>
+    <input type="hidden" id="curator" name="curator" value="${curator}"/>
+    </form>
     <% } %>
 
   </tiles:put>
   <tiles:put type="string" name="javascript">
   	<script type="text/javascript">
-  	function spoClosedCurrentDate() {
-  		var ids = theTableArrow.getInsertedIdsAsParams("id","datelist") ;
-        if (ids) {
-            window.location = 'js-smo_spo-spoClosedCurrentDate.do?' + ids+'&curator=${curator}&department=${department}';
-        } else {
-            alert("Нет выделенных СПО");
-        }
-  	}
   	function sloClosedDateLastVisit() {
-  		var ids = theTableArrow.getInsertedIdsAsParams("id","datelist") ;
-        if (ids) {
-            window.location = 'js-smo_spo-spoClosedDateLastVisit.do?' + ids+'&curator=${curator}&department=${department}';
+  		var ids = theTableArrow.getInsertedIds("datelist") ;
+  		if (ids &&ids.length>0) {
+  			var res = "";
+  			for (var i=0; i<ids.length;i++) {
+  				if (i!=0) {res+=",";}
+  				res+=ids[i];
+  				
+  			}
+  			$('closeSPOIds').value = res;
+		
+  $('closeSPOForm').submit();
+
         } else {
             alert("Нет выделенных СПО");
         }
   	}
+  	function spoClosedCurrentDate() {
+  		var ids = theTableArrow.getInsertedIds("datelist") ;
+  		if (ids &&ids.length>0) {
+  			var res = "";
+  			for (var i=0; i<ids.length;i++) {
+  				if (i!=0) {res+=",";}
+  				res+=ids[i];
+  				
+  			}
+  			$('closeSPOIds').value = res;
+		$('closeSPOForm').action ='js-smo_spo-spoClosedCurrentDate.do'; 
+  $('closeSPOForm').submit(); 		
+  		
+  	}
+
   	</script>
   </tiles:put>
 </tiles:insert>

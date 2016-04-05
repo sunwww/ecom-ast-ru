@@ -32,9 +32,11 @@ function reopenSpo(aForm, aCtx) {
 	) ;
 }
 function spoClosedDateLastVisit(aForm, aCtx) {
-	var ids = aCtx.request.getParameterValues("id") ;
+	var method = aCtx.request.getParameter("method");
+	var ids = aCtx.request.getParameter("closeSPOIds").split(",");
 	var curator = aCtx.request.getParameter("curator") ;
 	var department = aCtx.request.getParameter("department") ;
+	
 	for (var i=0;i<ids.length;i++) {
 		try {
 			var id=ids[i] ;
@@ -46,7 +48,7 @@ function spoClosedDateLastVisit(aForm, aCtx) {
 	return aCtx.createForwardRedirect("/smo_journal_openSpo.do?department"+department+"&curator="+curator) ;
 }
 function spoClosedCurrentDate(aForm, aCtx) {
-	var ids = aCtx.request.getParameterValues("id") ;
+	var ids = aCtx.request.getParameter("closeSPOIds").split(",");
 	var curator = aCtx.request.getParameter("curator") ;
 	var department = aCtx.request.getParameter("department") ;
 	var ids = aCtx.request.getParameterValues("id") ;
