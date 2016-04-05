@@ -47,7 +47,10 @@
         PatientService.showPatientCheckByFondHistory($('${patientField}').value,""+aType,{
     		callback: function (a) {
     			if (a!=null&&a!='') {
+    				the${name}ByFondHistory.hide() ;
+    				
     			 $('${name}ByFondHistoryText').innerHTML = a ;
+    			 the${name}ByFondHistory.show() ;
     			} else {
     				$('${name}ByFondHistoryText').innerHTML = "Проверок пациента по базе ФОМС не было" ;	
     			}
