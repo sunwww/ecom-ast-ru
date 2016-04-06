@@ -16,6 +16,7 @@ import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
+import sun.awt.windows.ThemeReader;
 
 /**
  * Синхронизация типов адреса из кладр
@@ -43,12 +44,33 @@ public class AddressSync implements ISync {
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация ", results);
 
         int i = 0;
-        Iterator<Kladr> iterator = QueryIteratorUtil.iterate(Kladr.class, theEntityManager.createQuery(queryString));
-        while (iterator.hasNext()) {
-            Kladr kladr = iterator.next();
+        long id = 0;
+       while (true) {
+    	   String sql = "select id from kladr "+clause+" and id >"+id+" order by id";
+      //  Iterator<Kladr> iterator = QueryIteratorUtil.iterate(Kladr.class, theEntityManager.createQuery(queryString));
+        List <Object> kladrs = theEntityManager.createNativeQuery(sql).setMaxResults(5000).getResultList();
+        if (kladrs.isEmpty()) {
+        	System.out.println("===Импорт кладров завершен");
+        	break;
+        }
+        System.out.println("=== Импорт в процессе, размер = "+kladrs.size());
+        for (Object kl: kladrs) {
+        	System.out.println("=== All is OK"+kl);
+        	Long klId = Long.valueOf(""+kl);
+        	id = klId;
+            Kladr kladr = theEntityManager.find(Kladr.class, klId);
             String kladrCode = kladr.getKladrCode();
+            String kladrStatus = kladrCode.substring(kladrCode.length()-2);
+        	if (kladrStatus.equals("00")){
+        		System.out.println("Кладр: "+kladrCode+", Статус: действующий ("+kladrStatus+")");
+        	} else {
+        		System.out.println("Кладр: "+kladrCode+", Статус: недействующий ("+kladrStatus+")");
+        		continue;
+        	}
+            
+         
             if (i % 10 == 0 && monitor.isCancelled()) break;
-            Address address = findAddressByKladr(kladr.getKladrCode());
+            Address address = findAddressByKladr(kladrCode);
             if (address == null) {
                 address = new Address();
                 address.setKladr(kladrCode);
@@ -76,7 +98,9 @@ public class AddressSync implements ISync {
             theEntityManager.flush();
             theEntityManager.clear();
         }
-
+    }
+//Отмечаем старые (староимпортированные) КЛАДРы как недействующие
+     //   theEntityManager.createNativeQuery("update kladr set archive='1' where time!="+aContext.getImportTime().getId()).executeUpdate();
         monitor.finish(aContext.getImportTime().getId() + "");
         theEntityManager = null;
 //        if(monitor.isCancelled()) tx.rollback(); else tx.commit();

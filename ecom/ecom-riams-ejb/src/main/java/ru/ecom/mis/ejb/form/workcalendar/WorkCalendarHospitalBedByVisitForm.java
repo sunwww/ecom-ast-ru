@@ -6,6 +6,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed;
 import ru.ecom.mis.ejb.form.licence.DocumentPrepareCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
+import ru.ecom.mis.ejb.form.medcase.poly.VisitMedCaseForm;
 import ru.ecom.mis.ejb.form.workcalendar.interceptor.WorkCalendarHospitalBedCreate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -21,7 +22,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Предварительная госпитализация", nameProperties= "id"
 //, list="stac_planning_hospitalizations.do"
 , view="entityView-stac_planHospitalByVisit.do")
-@Parent(property="visit", parentForm=MedCaseForm.class)
+@Parent(property="visit", parentForm=VisitMedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(WorkCalendarHospitalBedCreate.class)

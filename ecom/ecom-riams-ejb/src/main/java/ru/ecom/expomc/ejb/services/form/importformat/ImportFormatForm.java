@@ -76,5 +76,12 @@ public class ImportFormatForm extends IdEntityForm {
 
     /** XML - конфигурации импорта */
     private String theConfig ;
-
+    
+    /** Служебный формат импорта */
+	@Comment("Служебный формат импорта")
+	@Persist
+	public Boolean getSystemFormat() {return theSystemFormat;}
+	public void setSystemFormat(Boolean aSystemFormat) {theSystemFormat = aSystemFormat;}
+	/** Служебный формат импорта */
+	private Boolean theSystemFormat;
 }

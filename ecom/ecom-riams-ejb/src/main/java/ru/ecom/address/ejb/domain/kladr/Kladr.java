@@ -33,7 +33,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 )
 })
 public class Kladr extends NoLiveBaseEntity implements Serializable, IImportData {
-    /** Идентификатор */
+    /** Архивная запись */
+	@Comment("Архивная запись")
+	public Boolean getArchive() {return theArchive;}
+	public void setArchive(Boolean aArchive) {theArchive = aArchive;}
+	/** Архивная запись */
+	private Boolean theArchive;
+	
+	/** Идентификатор */
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     public long getId() { return theId ; }
     public void setId(long aId) { theId = aId ; }

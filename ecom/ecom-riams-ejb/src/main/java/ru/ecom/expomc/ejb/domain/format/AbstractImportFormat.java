@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @SuppressWarnings("serial")
 @Entity
@@ -60,4 +61,11 @@ public class AbstractImportFormat extends BaseEntity {
     private Date theActualDateTo ;
     /** Дата с которой начинает действовать формат */
     private Date theActualDateFrom ;
+    
+    /** Служебный формат импорта */
+	@Comment("Служебный формат импорта")
+	public Boolean getSystemFormat() {return theSystemFormat;}
+	public void setSystemFormat(Boolean aSystemFormat) {theSystemFormat = aSystemFormat;}
+	/** Служебный формат импорта */
+	private Boolean theSystemFormat;
 }
