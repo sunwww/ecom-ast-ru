@@ -2151,7 +2151,7 @@ if (date!=null && !date.equals("")) {
     	//	System.out.println("usePatient="+usePatients);
     		double f1_actualBedCount = Double.valueOf(wqr.get20().toString()).doubleValue();	newWQR.set1(new BigDecimal(f1_actualBedCount).setScale(2,2));
     		double f2_countDays = Double.valueOf(wqr.get21().toString()).doubleValue()/12*m	;	newWQR.set2(new BigDecimal(f2_countDays).setScale(2,2));
-    		double f3_countHospitals = Double.valueOf(wqr.get22().toString()).doubleValue()/12*m;			newWQR.set3(new BigDecimal(f3_countHospitals).setScale(0,2));
+    		double f3_countHospitals = Double.valueOf(wqr.get22().toString()).doubleValue()/12*m;			newWQR.set3(new Long(Math.round(f3_countHospitals)));
     	//	System.out.println("countHospit = "+f3_countHospitals+" base = "+wqr.get22().toString());
     		double f4_obor_plan = (f3_countHospitals/f1_actualBedCount);				newWQR.set4(new BigDecimal(f4_obor_plan).setScale(2,2));
     		double f5_obor_fact = (usePatients/f1_actualBedCount);						newWQR.set5(new BigDecimal(f5_obor_fact).setScale(2,2));
@@ -2174,9 +2174,9 @@ if (date!=null && !date.equals("")) {
     		double f17_nowork_k = f1_actualBedCount-f16_fact_work_k; 					newWQR.set17(f17_nowork_k>0.00?(new BigDecimal(f17_nowork_k).setScale(2,2)):null);
     		 					newWQR.set18(wqr.get2());
     		//double f19_fact_kd = null;
-    		double f20_fact_sluch = cnt13Finished+cnt17Dead;							newWQR.set21(Double.toString(f20_fact_sluch));
+    		double f20_fact_sluch = cnt13Finished+cnt17Dead;							newWQR.set21(Integer.valueOf(new Double(f20_fact_sluch).intValue()));
     		double f21_otkl_kd_absolute = f14_aver_kd_fact-f13_aver_kd_plan;			newWQR.set22(new BigDecimal(f21_otkl_kd_absolute).setScale(2,2));
-			
+			double f23_ost_sdelat = f20_fact_sluch - f3_countHospitals; 				newWQR.set23(new Long(Math.round(f23_ost_sdelat)));
 			newWQR.set10(new BigDecimal(f10_dead).setScale(2,2));
 			newWQR.set14(new BigDecimal(f14_aver_kd_fact).setScale(2,2));
 			newWQR.set12(new BigDecimal(f12_perc_hosp).setScale(2,2));
@@ -2200,7 +2200,8 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn property="20" columnName="Факт по к/д"/>
 	      <msh:tableColumn property="11" columnName="% выполнения по к/д"/>
 	      <msh:tableColumn property="3" columnName="План по случ"/>
-	      <msh:tableColumn property="21" columnName="Факт по случ"/>
+	      <msh:tableColumn property="21" columnName="Факт по случ "/>
+	      <msh:tableColumn property="23" columnName="Факт по случ"/>
 	      <msh:tableColumn property="12" columnName="% выполнения по случ"/>
 	      <msh:tableColumn property="4" columnName="Оборот план"/>
 	      <msh:tableColumn property="5" columnName="Оборот факт"/>
