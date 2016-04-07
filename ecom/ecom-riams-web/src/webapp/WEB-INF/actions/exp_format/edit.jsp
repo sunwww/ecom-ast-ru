@@ -50,6 +50,9 @@
                 <msh:row>
                     <msh:checkBox property="disabled" label="Отключен"/>
                 </msh:row>
+                <msh:row>
+                    <msh:checkBox property="systemFormat" label="Системный"/>
+                </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
         </msh:form>

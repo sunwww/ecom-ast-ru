@@ -37,15 +37,25 @@
         </msh:form>
 
         <msh:ifFormTypeIsView formName="exp_importdocumentForm">
-            <msh:section title="Форматы импорта (DBF)">
-                <ecom:parentEntityListAll formName="exp_formatForm" attribute="formats"/>
-                <msh:table name="formats" action="entityParentView-exp_format.do" idField="id">
-                    <msh:tableColumn columnName="Комментарий" property="comment"/>
-                    <msh:tableColumn columnName="Дата действия с" property="actualDateFrom"/>
-                    <msh:tableColumn columnName="Дата действия по" property="actualDateTo"/>
-                    <msh:tableColumn columnName="Отключен" property="disabled"/>
-                </msh:table>
-            </msh:section>
+           <msh:section title="Форматы импорта (DBF)" >
+			<ecom:webQuery name="dbfFormat" nativeSql="
+			select id, comment, actualDateFrom, actualDateTo, disabled 
+			from efformat
+			where document_id = ${param.id} and formatprovider='0'
+			" />
+				<msh:table name="dbfFormat" action="entityParentView-exp_format.do" idField="1">
+                    <msh:tableColumn columnName="Комментарий" property="2"/>
+                    <msh:tableColumn columnName="Дата действия с" property="3"/>
+                    <msh:tableColumn columnName="Дата действия по" property="4"/>
+                    <msh:tableColumn columnName="Отключен" property="5"/>
+                    </msh:table>
+			</msh:section>
+           
+            
+          
+                
+                
+          
 
             <%-- IKO 070228 +++ --%>
             <!-- 070308 -->
