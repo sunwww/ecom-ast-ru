@@ -44,16 +44,21 @@ public class AltNamesSync implements ISync {
                 sb.append(i);
                 sb.append(" ");
                 sb.append(" ");
+                sb.append(" Заменяем устаревший код КЛАДРа "+o[0]+" на новый код "+o[1]);
               monitor.setText(sb.toString());
             }
         	id = Long.valueOf(""+o[2]);
         	
         	System.out.println(i+" Заменяем устаревший код КЛАДРа "+o[0]+" на новый код "+o[1]);
-        	String sql = "update address2 set kladr = '"+o[0]+"' where kladr = '"+o[1]+"'";
+        	String sql = "update address2 set kladr = '"+o[1]+"' where kladr = '"+o[0]+"'";
+
         	theEntityManager.createNativeQuery(sql).executeUpdate();
         }
        names.clear();
         }
+        monitor.finish(aContext.getImportTime().getId() + "");
+        System.out.println("Синхронизация AltNames завершена");
+        theEntityManager = null;
 	}
 
 }
