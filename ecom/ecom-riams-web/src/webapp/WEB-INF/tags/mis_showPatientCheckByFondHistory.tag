@@ -18,7 +18,7 @@
     <h2>Журнал проверок по базе ФОМС</h2>
     <div class='rootPane'>
     <h3>Найденные данные по базе фонда</h3>
-<form action="javascript:void(0)" id="frmFond" name="frmFond">
+<form action="javascript:void(0)" id="frmFondHistory" name="frmFondHistory">
     <msh:panel>
     
     	<msh:row>
