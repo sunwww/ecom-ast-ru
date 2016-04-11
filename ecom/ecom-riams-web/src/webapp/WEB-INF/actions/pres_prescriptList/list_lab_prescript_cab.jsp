@@ -145,7 +145,7 @@
     	sqlAdd.append(" and p.prescriptCabinet_id in (select g2wf.id from workfunction gwf left join workfunctionservice gwfs on gwfs.workfunction_id=gwf.id left join workfunctionservice g2wfs on g2wfs.medservice_id=gwfs.medservice_id left join workfunction g2wf on g2wf.id=g2wfs.workfunction_id where gwf.id='"+groupId+"') and (select count(*) from WorkFunctionService wfs left join MedService pms on pms.id=wfs.medservice_id where wfs.workfunction_id='"+groupId+"' and pms.id=ms.parent_id)>0") ;
     }
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
-			, "отделение","deparment","ml.id", request)) ;
+			, "отделение","department","ml.id", request)) ;
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
 			, "тип назначения","prescriptType","vpt.id", request)) ;
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, code||' '||name from medservice where id=:id"
