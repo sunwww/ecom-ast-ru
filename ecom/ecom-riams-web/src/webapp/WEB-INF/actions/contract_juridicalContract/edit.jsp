@@ -26,6 +26,9 @@
 					<msh:textField property="dateTo" label="Дата окончания "/>
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="contractTerm" label="Срок окончания" vocName="vocContractTerm" horizontalFill="true" size="100" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" size="100" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>

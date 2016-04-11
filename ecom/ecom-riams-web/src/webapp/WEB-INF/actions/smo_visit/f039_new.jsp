@@ -1712,8 +1712,8 @@ select
 ,count(distinct smo.patient_id) as cntPatAll 
 ,count(distinct case when (oo.voc_code='643' or oo.id is null) and (ad1.addressid is null or ad1.kladr not like '30%') then smo.patient_id else null end) as cntPatInog 
 ,count(distinct case when oo.voc_code!='643' and oo.id is not null then smo.patient_id else null end) as cntPatInostr
-,sum(smo.uet)  as sumuet
-
+,sum(coalesce(smo.uet,(select sum(smo1.uet) from medCase smo1 where smo1.parent_id=smo.id )))  as sumuet
+, as sumuet1
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
@@ -1761,6 +1761,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="Иног.пац." property="7"/>
             <msh:tableColumn isCalcAmount="true" columnName="Иностр. пац." property="8"/>
             <msh:tableColumn isCalcAmount="true" columnName="Сумма ует" property="9"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Сумма ует (услуги)" property="10"/>
         </msh:table>
     </msh:sectionContent>
 
