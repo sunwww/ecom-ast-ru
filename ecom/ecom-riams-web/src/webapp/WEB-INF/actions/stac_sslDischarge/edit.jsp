@@ -288,9 +288,7 @@
           <msh:autoComplete vocName="vocHospType" property="targetHospType" label="Куда выписан" horizontalFill="true" guid="109g-23b2-42c0-ba47-65g0747816c" />
         	<msh:autoComplete label="Итог выписки" property="resultDischarge"  horizontalFill="true" vocName="vocResultDischarge" />
         </msh:row>
-        <msh:row>
-          <msh:autoComplete vocName="vocChildBirth" property="childBirth" fieldColSpan="3" label="Тип родов" horizontalFill="true"/>
-        </msh:row>
+
         <msh:row>
           <msh:checkBox label="Провизорность" property="provisional" guid="d8588d59-3adb-4485-af94-cadecb04f82b" />
           <msh:checkBox property="rareCase" label="Редкий случай" guid="6299a6be-428f-4a095" />
@@ -596,17 +594,7 @@
   		try {
   		if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('concludingMkb','concludingDiagnos');
-	      	 	var d=getDiagnosis('concludingMkb') ;
-	      	 	if (d>='O60.0' && d<='O60.9' ||
-	      	 		d>='O80.0' && d<='O80.9' ||
-	      	 		d>='O82.0' && d<='O82.9' ||
-	      	 		d>='O84.0' && d<='O84.9') {
-	      	 		$('childBirthName').className="autocomplete horizontalFill required";
-	      	 	} else {
-	      	 		$('childBirthName').className="autocomplete horizontalFill";
-
-	      	 	}
-
+	      	 	
 	    });} catch(e) {
 	    }
   		try {
