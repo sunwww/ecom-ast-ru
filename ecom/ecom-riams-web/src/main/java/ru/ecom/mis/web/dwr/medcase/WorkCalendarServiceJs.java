@@ -1198,7 +1198,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
 		
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		String frmName = "frmTime" ;
 		if (aVocWorkFunction!=null) frmName=frmName+"_"+aVocWorkFunction ;
 		res.append("<form name='").append(frmName).append("' id='").append(frmName).append("' action='javascript:step6()'><ul class='listTimes'>") ;
