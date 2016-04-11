@@ -213,6 +213,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join vocprescripttype vpt on vpt.id=p.prescripttype_id
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
