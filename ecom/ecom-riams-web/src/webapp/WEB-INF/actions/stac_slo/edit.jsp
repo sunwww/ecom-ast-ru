@@ -285,7 +285,7 @@
         	<msh:label property="editTime" label="время"/>
           	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
+        <msh:submitCancelButtonsRow colSpan="3" functionSubmit="check_diags('') ;" />
       </msh:panel>
     </msh:form>
     
