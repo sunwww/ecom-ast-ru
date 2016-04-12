@@ -6,6 +6,7 @@
 
 	<form-beans>
 		
+		<form-bean name="expert_journalForm" type="ru.ecom.mis.web.action.medcase.journal.QualityEstimationCardJournalForm" />
 		<form-bean name="mis_userDocumentForm" type="ru.ecom.mis.ejb.form.userdocument.UserDocumentForm" />
 		<form-bean name="mis_workFunctionClaimTypeForm" type="ru.ecom.mis.ejb.form.claim.WorkFunctionClaimTypeForm" />
 		<form-bean name="mis_claimForm" type="ru.ecom.mis.ejb.form.claim.ClaimForm" />
@@ -291,6 +292,13 @@
 
 	<action-mappings>
 
+ <action path='/quality_card_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='expert_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/expert_card/journal_card.jsp" />
+        </action>
  <action path='/pda_claims' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'
