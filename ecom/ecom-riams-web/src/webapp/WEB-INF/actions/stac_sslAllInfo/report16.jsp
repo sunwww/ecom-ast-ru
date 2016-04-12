@@ -1911,12 +1911,12 @@ if (date!=null && !date.equals("")) {
 	    		
 	    		String serviceStream = (String) request.getAttribute("serviceStream") ;
 	    		String departmentBFC = "";
-	    		/* if (department!=null&&!department.equals("")) {
-	    			departmentBFC+= " and bfc.department=slo.department_id";
+	    		 if (dep!=null&&!dep.equals("")) {
+	    			departmentBFC+= " and bfc.financeSource=vfs.id";
 	    		}
 	    		if (serviceStream!=null&&!serviceStream.equals("")) {
 	    			departmentBFC+=" and bfc.financeSource=vfs.id";
-	    		} */
+	    		} 
 	    		
 	    		request.setAttribute("departmentBFC",departmentBFC);
 	    		%>
@@ -2074,7 +2074,7 @@ if (date!=null && !date.equals("")) {
 		when cast('${timeSql}' as time)>slo.entrancetime then 2 else 1 end
 	end
 	
-	) as cntDays
+	)/count(distinct bfc.id) as cntDays
 ,sum(distinct cast(bfc.actualbedcount||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f21
 ,sum(distinct cast(bfc.countdays||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f22
 ,sum(distinct cast(bfc.counthospitals||'.'||bfc.id as numeric))-sum(distinct cast('0.'||bfc.id as numeric)) as f23 
@@ -2149,37 +2149,37 @@ if (date!=null && !date.equals("")) {
     		double cnt6Entrance = Double.valueOf(wqr.get5().toString()).doubleValue();
     		double usePatients = (cnt17Dead+cnt13Finished+cnt6Entrance)/2; //Пользованные пациенты
     	//	System.out.println("usePatient="+usePatients);
-    		double f1_actualBedCount = Double.valueOf(wqr.get20().toString()).doubleValue();	newWQR.set1(new BigDecimal(f1_actualBedCount).setScale(2,2));
-    		double f2_countDays = Double.valueOf(wqr.get21().toString()).doubleValue()/12*m	;	newWQR.set2(new BigDecimal(f2_countDays).setScale(2,2));
+    		double f1_actualBedCount = Double.valueOf(wqr.get20().toString()).doubleValue();	newWQR.set1(new BigDecimal(f1_actualBedCount).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f2_countDays = Double.valueOf(wqr.get21().toString()).doubleValue()/12*m	;	newWQR.set2(new BigDecimal(f2_countDays).setScale(1,BigDecimal.ROUND_HALF_UP));
     		double f3_countHospitals = Double.valueOf(wqr.get22().toString()).doubleValue()/12*m;			newWQR.set3(new Long(Math.round(f3_countHospitals)));
     	//	System.out.println("countHospit = "+f3_countHospitals+" base = "+wqr.get22().toString());
-    		double f4_obor_plan = (f3_countHospitals/f1_actualBedCount);				newWQR.set4(new BigDecimal(f4_obor_plan).setScale(2,2));
-    		double f5_obor_fact = (usePatients/f1_actualBedCount);						newWQR.set5(new BigDecimal(f5_obor_fact).setScale(2,2));
-    		double f6_obor_perc = (f5_obor_fact*100/f4_obor_plan)-100;					newWQR.set6(new BigDecimal(f6_obor_perc).setScale(2, 2));
-    		double f7_zan_plan = f2_countDays/f1_actualBedCount;						newWQR.set7(new BigDecimal(f7_zan_plan).setScale(2, 2));
-    		double f8_zan_fact = cnt20Days/f1_actualBedCount;							newWQR.set8(new BigDecimal(f8_zan_fact).setScale(2,2));
-    		double f9_zan_perc = (f8_zan_fact*100/f7_zan_plan)-100.0;						newWQR.set9(new BigDecimal(f9_zan_perc).setScale(2,2));
+    		double f4_obor_plan = (f3_countHospitals/f1_actualBedCount);				newWQR.set4(new BigDecimal(f4_obor_plan).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f5_obor_fact = (usePatients/f1_actualBedCount);						newWQR.set5(new BigDecimal(f5_obor_fact).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f6_obor_perc = (f5_obor_fact*100/f4_obor_plan)-100;					newWQR.set6(new BigDecimal(f6_obor_perc).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f7_zan_plan = f2_countDays/f1_actualBedCount;						newWQR.set7(new BigDecimal(f7_zan_plan).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f8_zan_fact = cnt20Days/f1_actualBedCount;							newWQR.set8(new BigDecimal(f8_zan_fact).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f9_zan_perc = (f8_zan_fact*100/f7_zan_plan)-100.0;						newWQR.set9(new BigDecimal(f9_zan_perc).setScale(1,BigDecimal.ROUND_HALF_UP));
     		double f10_dead = 0.00;
-    		double f11_perc_kd = cnt20Days*100/f2_countDays;							newWQR.set11(new BigDecimal(f11_perc_kd).setScale(2,2));
+    		double f11_perc_kd = cnt20Days*100/f2_countDays;							newWQR.set11(new BigDecimal(f11_perc_kd).setScale(1,BigDecimal.ROUND_HALF_UP));
     		double f12_perc_hosp = 0.00;
-    		double f13_aver_kd_plan = Double.valueOf(wqr.get23().toString()).doubleValue();			newWQR.set13(new BigDecimal(f13_aver_kd_plan).setScale(2,2));
+    		double f13_aver_kd_plan = Double.valueOf(wqr.get23().toString()).doubleValue();			newWQR.set13(new BigDecimal(f13_aver_kd_plan).setScale(1,BigDecimal.ROUND_HALF_UP));
     		double f14_aver_kd_fact = 0.00;
     		if (!Double.isInfinite(usePatients)&&!Double.isNaN(usePatients)) {
 	   			f10_dead = cnt17Dead*100/usePatients; 
 	   			f12_perc_hosp = usePatients*100/f3_countHospitals;
 	   			f14_aver_kd_fact = cnt20Days/usePatients;
 	   		}	
-    		double f15_otkl_kd = (f14_aver_kd_fact*100/f13_aver_kd_plan)-100;			newWQR.set15(new BigDecimal(f15_otkl_kd).setScale(2,2));
-    		double f16_fact_work_k = f1_actualBedCount*cnt20Days/f2_countDays;			newWQR.set16(new BigDecimal(f16_fact_work_k).setScale(2,2));
-    		double f17_nowork_k = f1_actualBedCount-f16_fact_work_k; 					newWQR.set17(f17_nowork_k>0.00?(new BigDecimal(f17_nowork_k).setScale(2,2)):null);
+    		double f15_otkl_kd = (f14_aver_kd_fact*100/f13_aver_kd_plan)-100;			newWQR.set15(new BigDecimal(f15_otkl_kd).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f16_fact_work_k = f1_actualBedCount*cnt20Days/f2_countDays;			newWQR.set16(new BigDecimal(f16_fact_work_k).setScale(1,BigDecimal.ROUND_HALF_UP));
+    		double f17_nowork_k = f1_actualBedCount-f16_fact_work_k; 					newWQR.set17(f17_nowork_k>0.00?(new BigDecimal(f17_nowork_k).setScale(1,BigDecimal.ROUND_HALF_UP)):null);
     		 					newWQR.set18(wqr.get2());
     		//double f19_fact_kd = null;
     		double f20_fact_sluch = cnt13Finished+cnt17Dead;							newWQR.set21(Integer.valueOf(new Double(f20_fact_sluch).intValue()));
-    		double f21_otkl_kd_absolute = f14_aver_kd_fact-f13_aver_kd_plan;			newWQR.set22(new BigDecimal(f21_otkl_kd_absolute).setScale(2,2));
+    		double f21_otkl_kd_absolute = f14_aver_kd_fact-f13_aver_kd_plan;			newWQR.set22(new BigDecimal(f21_otkl_kd_absolute).setScale(1,BigDecimal.ROUND_HALF_UP));
 			double f23_ost_sdelat = f20_fact_sluch - f3_countHospitals; 				newWQR.set23(new Long(Math.round(f23_ost_sdelat)));
-			newWQR.set10(new BigDecimal(f10_dead).setScale(2,2));
-			newWQR.set14(new BigDecimal(f14_aver_kd_fact).setScale(2,2));
-			newWQR.set12(new BigDecimal(f12_perc_hosp).setScale(2,2));
+			newWQR.set10(new BigDecimal(f10_dead).setScale(1,BigDecimal.ROUND_HALF_UP));
+			newWQR.set14(new BigDecimal(f14_aver_kd_fact).setScale(1,BigDecimal.ROUND_HALF_UP));
+			newWQR.set12(new BigDecimal(f12_perc_hosp).setScale(1,BigDecimal.ROUND_HALF_UP));
 			newWQR.set19(wqr.get1());
     		newList.add(i, newWQR);
     	// } catch (Exception e) {
