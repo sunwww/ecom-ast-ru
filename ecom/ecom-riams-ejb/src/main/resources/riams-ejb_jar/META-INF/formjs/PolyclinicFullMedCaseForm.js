@@ -20,11 +20,11 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 	aEntity.setStartFunction(aEntity.getOwnerFunction());
 	aCtx.manager.persist(aEntity) ;
 	//throw ""+ aForm.getOtherTicketDates() ;
-		if (aForm.getOtherTicketDates()!=null&&aForm.getOtherTicketDates()!='') {
+		if ((aForm.getOtherTicketDates()!=null&&aForm.getOtherTicketDates()!='')||(aForm.getDateStart()!=null&&aForm.getDateStart()!='')) {
 			var otherDates = aForm.getOtherTicketDates().split(":");
 			var ddate = true;
 			var date = Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(aEntity.getDateStart());
-			//throw ""+date;
+			//throw ""+date+" - "+otherDates.length;
 			for (var i=0;i<otherDates.length;i++) {
 				if (otherDates[i].equals(date)) {
 					ddate=false;
@@ -45,6 +45,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			//throw aForm.getServiceStream()+""+servStream ;
 		if (otherDates.length>0) {
 			for (var i=0;i<otherDates.length;i++) {
+				if (""+otherDates[i]=="") {continue;}
 				var ticket = new Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase();
 				ticket.setOrderLpu(ordLpu);
 				ticket.setPatient(aEntity.getPatient());
