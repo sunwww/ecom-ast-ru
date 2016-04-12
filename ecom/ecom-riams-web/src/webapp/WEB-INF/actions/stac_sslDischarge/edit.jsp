@@ -331,7 +331,7 @@
           	<msh:label property="editUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>
         
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
+        <msh:submitCancelButtonsRow functionSubmit="check_diags('') ;" guid="submitCancel" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
       </msh:panel>
     </msh:form>
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
@@ -358,10 +358,7 @@
       	try {
 	      	var old_action = document.forms["mainForm"].action ; 
 	      	document.forms["mainForm"].action="javascript:check_diags('')" ; 
-	      	$('submitButton').click=function () {
-	      		$('submitButton').value='Сохранение данных'; 
-	      		check_diags('') ;  
-      		}
+	      	
 	    } catch(e) {}
       	function check_diags(aPrefix) {
       		var list_diag = ["complication","concomitant"] ;
