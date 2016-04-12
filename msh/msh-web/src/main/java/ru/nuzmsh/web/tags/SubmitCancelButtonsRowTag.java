@@ -20,7 +20,21 @@ import ru.nuzmsh.web.util.IdeTagHelper;
  * description="submitCancelButtonsRow"
  */
 public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
+	
+	/** Функция сохранения
+     * @jsp.attribute description="Функция сохранения"
+     * required="false"
+     * rtexprvalue="true"	 *  */
+	public String getFunctionSubmit() {
+		return theFunctionSubmit;
+	}
 
+	public void setFunctionSubmit(String aFunctionSubmit) {
+		theFunctionSubmit = aFunctionSubmit;
+	}
+
+	/** Функция сохранения */
+	private String theFunctionSubmit;
     /**
      * Количество столбцов, занимаемое кнопками
      *
@@ -208,7 +222,13 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
                 String labelIng = isTypeCreate() ? getLabelCreating() : getLabelSaving() ;
 
                 out.print(labelIng) ;
-                out.print("'; this.disabled=true;this.form.submit(); ");
+                out.print("'; this.disabled=true; ");
+                if (theFunctionSubmit!=null &&!theFunctionSubmit.equals("")) {
+                	out.print(theFunctionSubmit) ;
+                } else {
+                	out.print("this.form.submit(); ");
+                }
+                
                 if(!theDoNotDisableButtons) {
                     out.print("  ");
                 }
