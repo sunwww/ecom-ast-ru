@@ -1,5 +1,14 @@
 <vocconfig>
 
+<voc id="vocQualityEstimationKind" type="NativeVocService">
+	<NativeVocService
+	from="vocQualityEstimationKind vqek"
+	nameId="vqek.id"
+	names="vqek.name"
+	>
+	</NativeVocService>
+	</voc>
+
 <voc id="executorsByCurrentUserName" type="NativeVocService">
 	<NativeVocService
 		from="SecUser suu"
