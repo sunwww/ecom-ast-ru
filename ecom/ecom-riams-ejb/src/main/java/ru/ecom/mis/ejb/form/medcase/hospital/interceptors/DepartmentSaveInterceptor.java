@@ -76,7 +76,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     			for (int i=0;i<otherServs.length;i++) {
     				String[] serv = otherServs[i].split("@#@") ;
     				if (serv[0]==null||serv[0].equals("")||serv[0].equals("0")) {
-    					aManager.createNativeQuery("delete from Diagnosis where id="+list.get(i)).executeUpdate() ;
+    					if (list.size()>i) aManager.createNativeQuery("delete from Diagnosis where id="+list.get(i)).executeUpdate() ;
     				} else {
 	    				if (list.size()>i) {
 	    					aManager.createNativeQuery("update Diagnosis set name=:name,idc10_id=:idc10,illnesPrimary_id="+((aIllnesPrimary==null||aIllnesPrimary.intValue()==0)?"null":"'"+aIllnesPrimary+"'")+",mkbAdc=:mkbAdc where id="+list.get(i))
