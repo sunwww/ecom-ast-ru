@@ -248,7 +248,7 @@ select spo.id,spo.dateStart
 		$('closeSPOForm').action ='js-smo_spo-spoClosedCurrentDate.do'; 
   $('closeSPOForm').submit(); 		
   		
-  	}
+  	}}
 
   	</script>
   </tiles:put>
