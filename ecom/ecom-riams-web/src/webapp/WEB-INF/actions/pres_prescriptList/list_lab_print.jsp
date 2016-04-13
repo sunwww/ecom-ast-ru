@@ -23,7 +23,7 @@
     <tiles:put name='body' type='string'>
     <%
     String typePrint=ActionUtil.updateParameter("Report_labor","typePrint","3", request) ; 
-    String typeSmo=ActionUtil.updateParameter("Report_labor","typeSmo","3", request) ; 
+    String typeSmo=ActionUtil.updateParameter("Report_labor","typeSmo","2", request) ; 
     
     %>
     
@@ -87,6 +87,7 @@
    ,mc.id as f12mcid
    ,ml.name as m13lname
    ,ml.name||' '||pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as f14birthday
+   ,pat.id as p15atid 
     from prescription p
     left join MedCase mc on mc.id=p.medcase_id
     left join Diary d on d.medcase_id=mc.id
@@ -109,7 +110,7 @@
     left join MisLpu ml on ml.id=w.lpu_id
    where p.transferDate = to_date('{param.beginDate}','dd.mm.yyyy')
     and vst.code='LABSURVEY' 
-    and mc.workFunctionExecute_id is not null and mc.dateStart is not null
+    and mc.workFunctionExecute_id is not null and mc.dateStart is not null and d.id is not null
     {sqlAdd}
     order by ml.name,pat.lastname,pat.firstname,pat.middlename
     ">
@@ -120,9 +121,8 @@
     	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению ${lpu_name}'>
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService">
-	    <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
-	    <input type='hidden' name="groupField" id="groupField" value="14">
-	    <input type='hidden' name="cntColumn" id="cntColumn" value="3">
+	    <input type='hidden' name="m" id="m" value="printGroup3NativeQuery">
+	    <input type='hidden' name="groupField" id="groupField" value="12,14,13">
 	    <input type='hidden' name="updateId" id="updateId" value="1">
 	    <input type='hidden' name="updateSql" id="updateSql" value="update diary set printdate=current_date,printtime=current_time where id=':id'">
 	    <input type='hidden' name='next' id="next" value="pres_lab_print.do">
@@ -233,15 +233,14 @@
 	       		} else {
 	       			ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
 	        				, "отделение","department","ml.id", request);
-	            	if (request.getParameter("department")!=null) {
+	            	if (request.getParameter("department")!=null&&!request.getParameter("department").equals("") && !request.getParameter("department").equals("0")) {
 	            		sqlAdd.append("select max(sloall.department_id) from medcase sloall where sloall.parent_id=(case when slo.dtype='HospitalMedCase' then slo.id ")
-	            				.append(request.getParameter("beginDate"))
 	            				.append(" when sls.dtype='HospitalMedCase' then sls.id else slo.id end)='")
 	            				.append(request.getParameter("department"))
 	            				.append("'");
 	            	}
         			title.append(" по дате выписки") ;
-        			request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy' or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')") ;
+        			request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy'))") ;
 
         		}
             request.setAttribute("sqlAdd", sqlAdd.toString()) ;
