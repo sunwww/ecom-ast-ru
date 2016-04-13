@@ -6,7 +6,7 @@ function onPreCreate(aForm, aCtx) {
 
 function onPreDelete(aMedCaseId, aContext) {
 	var medCase = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase, new java.lang.Long(aMedCaseId)) ;
-	if (medCase!=null && medCase.getStatisticStub()!=null) {
+	if (medCase!=null ) {
 		var err = [
 		 "диагнозов"
 		,"СМО"
@@ -55,15 +55,15 @@ function onPreDelete(aMedCaseId, aContext) {
 		}
 		if(isErr) throw "Перед удалением необходимо удалить сведения: " + err_mes.substring(2) ;
 		var stat = medCase.statisticStub ;
-		if (stat!=null) {}
-		var restored = new Packages.ru.ecom.mis.ejb.domain.medcase.StatisticStubRestored() ;
-		restored.setCode(stat.getCode());
-		restored.setYear(stat.getYear());
-		aContext.manager.persist(restored);
-		//aContext.manager.refresh(restored);
-		medCase.statisticStub = null ;
-		aContext.manager.remove(stat) ;
-	}
+		if (stat!=null) {
+			var restored = new Packages.ru.ecom.mis.ejb.domain.medcase.StatisticStubRestored() ;
+			restored.setCode(stat.getCode());
+			restored.setYear(stat.getYear());
+			aContext.manager.persist(restored);
+			//aContext.manager.refresh(restored);
+			medCase.statisticStub = null ;
+			aContext.manager.remove(stat) ;
+		}
 	}
 	
 }
