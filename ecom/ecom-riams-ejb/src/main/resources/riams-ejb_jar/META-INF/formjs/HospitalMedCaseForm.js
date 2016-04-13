@@ -54,14 +54,16 @@ function onPreDelete(aMedCaseId, aContext) {
 			}
 		}
 		if(isErr) throw "Перед удалением необходимо удалить сведения: " + err_mes.substring(2) ;
+		var stat = medCase.statisticStub ;
+		if (stat!=null) {}
 		var restored = new Packages.ru.ecom.mis.ejb.domain.medcase.StatisticStubRestored() ;
-		restored.setCode(medCase.getStatisticStub().getCode());
-		restored.setYear(medCase.getStatisticStub().getYear());
+		restored.setCode(stat.getCode());
+		restored.setYear(stat.getYear());
 		aContext.manager.persist(restored);
 		//aContext.manager.refresh(restored);
-		var stat = medCase.statisticStub ;
 		medCase.statisticStub = null ;
 		aContext.manager.remove(stat) ;
+	}
 	}
 	
 }
