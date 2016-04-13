@@ -108,12 +108,5 @@ public abstract class StatisticStub extends BaseEntity {
 	/** Итог лечения */
 	private VocResultDischarge theResultDischarge;
 	
-	/** Тип родов */
-	@Comment("Тип родов")
-	@OneToOne
-	public VocChildBirth getChildBirth() {return theChildBirth;}
-	public void setChildBirth(VocChildBirth aChildBirth) {theChildBirth = aChildBirth;}
 
-	/** Тип родов */
-	private VocChildBirth theChildBirth;
 }
