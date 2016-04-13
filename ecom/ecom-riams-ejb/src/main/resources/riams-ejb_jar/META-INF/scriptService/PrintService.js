@@ -256,6 +256,155 @@ function printGroupNativeQuery(aCtx,aParams) {
 	current_info(aCtx) ;
 	return map ;
 }
+// Формируется массив с группировкой по 
+function printGroup3NativeQuery(aCtx,aParams) {
+	var sqlText = aParams.get("sqlText");
+	var sqlInfo = aParams.get("sqlInfo");
+	var cntBegin = 1;
+	var cntBegin2 = 1;
+	var cntBegin3 = 1;
+	var printSql = aParams.get("printSql");
+	var printId = +aParams.get("printId") ;
+	var isupdate=false ;
+	if (printSql!=null &&printSql!='') {
+		isupdate=true ;
+	}
+	var sqlColumn = aParams.get("sqlColumn");
+	var groupFieldAr = aParams.get("groupField");
+	var groupField = groupFieldAr.split(",") ;
+	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
+	var retAll = new java.util.ArrayList() ;
+	var retAll1 = new java.util.ArrayList() ;
+	var cmd="" ;
+	//throw "length."+groupField.length+"----groupFieldAr="+groupFieldAr ;
+	for (var ind=0;ind<groupField.length;ind++) {
+		cmd+="var idOld"+ind+"='' ;" ;
+		cmd+="var cntBegin"+ind+"=1 ;" ;
+		cmd+="var groupList"+ind+" = new java.util.ArrayList() ;" ;
+		cmd+="var retG"+ind+" = new java.util.ArrayList() ;" ;
+		cmd+="var ret"+ind+" = new java.util.ArrayList() ; var r"+ind+"=null;";
+	}
+	eval(cmd) ;
+	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	var par ;
+	for (var i=0; i < list.size(); i++) {
+		var obj = list.get(i) ;
+		par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+		
+		for (var j=2;j<=obj.length;j++) {
+			var val = obj[j-1] ;
+			eval("par.set"+(j)+"(val);") ;
+			if (val==null) val=0 ;
+			
+			eval("var val1=parAll.get"+j+"()") ;
+			if (val1==null) val1=0 ;
+			var val11 = new java.math.BigDecimal(''+val1) ;
+			var val12=  new java.math.BigDecimal(''+0) ;
+			try {
+				val12 =  new java.math.BigDecimal(''+val) ;
+			} catch(e) {
+				
+			}
+			var val=val12.add(val11) ;
+			eval("parAll.set"+(j)+"(val);") ;
+			
+		}
+		retAll1.add(par);
+		for (var ind=0;ind<groupField.length;ind++) {
+			eval("idNew"+ind+"=''+obj["+groupField[ind]+"] ;") ;
+		}
+		
+		
+		
+		
+		if (idOld0!=idNew0) {
+			if (idOld0!='') {
+				//throw "test "+idOld0+"="+idNew0;
+				r0 = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+				r0.set1(idOld0) ;
+				r0.set2(par) ;
+				r0.set3(groupList0) ;
+				//throw ""+r0;
+				for (var ind=1;ind<groupField.length;ind++) {
+					eval("r"+ind+" = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;");
+					eval("r"+ind+".set1(idOld"+ind+") ;");
+					eval("r"+ind+".set2(par) ;");
+					eval("r"+ind+".set3(groupList"+ind+") ;");
+					eval("ret"+ind+".add(r"+ind+") ;");
+					eval("r"+(ind-1)+".set4(retG"+ind+") ;");
+				}
+				ret0.add(r0) ;
+				
+			}
+			for (var ind=0;ind<groupField.length;ind++) {
+				eval("idOld"+ind+"=idNew"+ind+" ;") ;
+				eval("cntBegin"+ind+"=1 ;") ;
+				eval("groupList"+ind+"=new java.util.ArrayList() ; ;") ;
+				eval("retG"+ind+"=new java.util.ArrayList() ; ;") ;
+			}
+		} else {
+			var isEquals = false ;
+			for (var ind=1;ind<2;ind++) {
+				var cmd = "if (idOld"+ind+"!=idNew"+ind+"||isEquals) {"
+				+""
+				+"cntBegin"+ind+"=1 ;"
+				+"var par"+ind+" = par ;"
+				+"par"+ind+".set1(cntBegin"+ind+"++);"
+				+"r"+ind+"=new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;"
+				+"r"+ind+".set1(idOld"+ind+") ;"
+				+"r"+ind+".set2(par"+ind+") ;"
+				+"r"+ind+".set3(groupList"+ind+") ;"
+				
+				+"ret"+ind+".add(r"+ind+") ;"
+				+"retG"+ind+".add(r"+ind+") ;"
+				
+				+"idOld"+ind+"=idNew"+ind+" ;"
+				//TODO нужно добавить запись в предыд.запись и очистить массив
+				//+"r"+(ind-1)+".set4(ret"+ind+") ;"
+				+"groupList"+ind+"=new java.util.ArrayList() ;"
+				+"groupList"+ind+".add(par"+ind+") ;"
+				+"ret"+ind+"=new java.util.ArrayList() ;"
+				+"isEquals=true;"
+				+"}" ;
+				eval(cmd) ;
+			}
+		}
+		
+		par.set1(""+cntBegin) ;
+		++cntBegin ;
+		
+		if (isupdate) {
+			var print_id = printSql.replace(":id",obj[printId-1]) ; 
+			aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
+		}
+		//------groupList0.add(par) ;
+		
+		/*if (idOld1!=idNew1 ) {
+			var par1 = par ;
+			r1=new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+			par1.set1(cntBegin1);
+			r1.set1(idOld1) ;
+			r1.set2(par1) ;
+			r1.set3(groupList1) ;
+			ret1.add(r1) ;
+			cntBegin1++ ;
+			groupList1.add(par1) ;
+			idOld1=idNew1   ;
+		}*/
+		
+		
+		
+		
+	}
+	
+	map.put("list",ret0) ;
+	map.put("sqlInfo",sqlInfo) ;
+	map.put("sqlColumn",sqlColumn) ;
+	map.put("listAll",retAll) ;
+	map.put("listAll1",retAll1) ;
+	current_info(aCtx) ;
+	return map ;
+}
 function printNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
 	var sqlInfo = aParams.get("sqlInfo");
