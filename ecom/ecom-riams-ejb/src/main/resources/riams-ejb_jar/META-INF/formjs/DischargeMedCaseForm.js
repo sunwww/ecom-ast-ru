@@ -16,11 +16,11 @@ function onSave(aForm,aEntity, aCtx) {
 		aEntity.statisticStub.setResultDischarge(resultDischarge) ;
 		aCtx.manager.persist(aEntity) ;
 	}
-	if (+aForm.childBirth>0 && aEntity.statisticStub!=null) {
+	/*if (+aForm.childBirth>0 && aEntity.statisticStub!=null) {
 		var childBirth = getObject(aCtx, aForm.resultDischarge, Packages.ru.ecom.mis.ejb.domain.birth.voc.VocChildBirth);
 		aEntity.statisticStub.setChildBirth(childBirth) ;
 		aCtx.manager.persist(aEntity) ;
-	}
+	}*/
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
@@ -39,10 +39,10 @@ function onPreSave(aForm,aEntity, aCtx) {
 	
 	
 	if ((aForm.concludingMkb!=null && aForm.concludingMkb>0)&&(aForm.concludingDiagnos==null||aForm.concludingDiagnos=="")) throw "Не сформулирован заключительный диагноз!" ;
-	var d=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,aForm.concludingMkb) ;
-	if (d!=null) {d=d.code ;} else {d=""} ;
-	if ((d>='O60.0' && d<='O60.9' || d>='O80.0' && d<='O80.9' ||
-	 		d>='O82.0' && d<='O82.9' || d>='O84.0' && d<='O84.9') && +aForm.childBirth<1) throw "Необходимо указать тип родов" ;
+	//var d=aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,aForm.concludingMkb) ;
+	//if (d!=null) {d=d.code ;} else {d=""} ;
+	//if ((d>='O60.0' && d<='O60.9' || d>='O80.0' && d<='O80.9' ||
+	 //		d>='O82.0' && d<='O82.9' || d>='O84.0' && d<='O84.9') && +aForm.childBirth<1) throw "Необходимо указать тип родов" ;
 	var dateFsql = new java.sql.Date(dateFinish.getTime()) ;
 	if (!(dateFinish.getTime() > dateStart.getTime())) throw "Дата выписки должна быть больше, чем дата поступления";
 	//if ((((dateFsql.getTime()-dateCur.getTime())/1000/60/60)%24)>6) throw "Максимальная дата выписки - сегодняшняя" ;
