@@ -36,14 +36,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 public class DischargeMedCaseForm extends AdmissionMedCaseForm {
 
-	/** Тип родов */
-	@Comment("Тип родов")
-	@Persist
-	public Long getChildBirth() {return theChildBirth;}
-	public void setChildBirth(Long aChildBirth) {theChildBirth = aChildBirth;}
 
-	/** Тип родов */
-	private Long theChildBirth;
 	
 	/** Причина выписки */
 	@Comment("Причина выписки")
