@@ -89,6 +89,10 @@
 	                   		<msh:link isReport="true" action="journal_kidney.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 	                   		Отчет по ХБП</msh:link>
 	                   </li>
+	                   <li>
+	                   		<msh:link isReport="true" action="quality_card_journal.do" roles="/Policy/Mis/journal/QualityEstimationCard">
+	                   		Журнал внутреннего контроля качества</msh:link>
+	                   </li>
 					</ul>
 					</div>
 				</td>

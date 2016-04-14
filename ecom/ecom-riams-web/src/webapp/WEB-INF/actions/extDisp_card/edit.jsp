@@ -106,6 +106,13 @@
         <msh:row>
         	<msh:label property="editUsernameRender" label="пользователь"/>
         </msh:row>   
+        <msh:row>
+        	<msh:label property="exportDate" label="Дата выгрузки в федеральную систему мониторинга ДД"/>
+        </msh:row>   
+			<msh:submitCancelButtonsRow colSpan="4" />
+        <msh:row>
+        	<msh:checkBox property="isNoOmc" label="Не подавать на оплату по ОМС"/>
+        </msh:row>   
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>

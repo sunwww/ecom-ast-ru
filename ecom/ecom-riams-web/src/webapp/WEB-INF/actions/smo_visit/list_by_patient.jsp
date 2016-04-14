@@ -20,7 +20,7 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-  	<ecom:webQuery name="listByPatient" nativeSql="select mc.id||'&id='||mc.dateStart||'!'||mc.timeExecute||'!'||mc.id||'!'||coalesce(prot.id,0) as idf
+  	<ecom:webQuery  name="listByPatient" nativeSql="select mc.id||'&id1='||mc.dateStart||'!'||mc.timeExecute||'!'||mc.id||'!'||coalesce(prot.id,0) as idf
 ,mc.dateStart as datstart, 
 vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as wfExecute,
 vpd.name as vpdname ,mkb.code,ds.name as dsname,prot.record as protrecord, vr.name as vrname, vvr.name as vvrname

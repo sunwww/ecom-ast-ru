@@ -125,6 +125,7 @@
      
       <msh:ifFormTypeAreViewOrEdit formName="poly_medcardForm" guid="2a67d8c4-df82-47e4-a97e-5b3481b01a72">
         <msh:sideLink roles="/Policy/Poly/Medcard/Delete" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-poly_medcard" name="Удалить" confirm="Удалить медкарту?" guid="377c78a9-29eb-4d58-ab86-4a58431b71f1" />
+        <msh:sideLink roles="/Policy/Poly/Medcard/Delete" key="ALT+D" action="/javascript:deleteOpenTalons()" name="Удалить открытые талоны" confirm="Удалить все открытые талоны?" guid="377c78a9-29eb-4d58-ab86-4a58431b71f2" />
       </msh:ifFormTypeAreViewOrEdit>
     </msh:sideMenu>
     <msh:ifFormTypeAreViewOrEdit formName="poly_medcardForm">
@@ -150,9 +151,18 @@
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeAreViewOrEdit formName="poly_medcardForm">
   <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+  <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
   	<script type="text/javascript">
       	function goPrint() {
       		window.location = 'print-ambcard.do?s=PatientPrintService&m=printInfo&id='+$('person').value+"&tmp="+Math.random() ;
+      	}
+      	function deleteOpenTalons() {
+      		TicketService.deleteTalons ($('id').value,'',{
+      			callback: function (a) {
+      				alert (a);
+      				window.location.reload();
+      			}
+      		});
       	}
       	</script>
   </msh:ifFormTypeAreViewOrEdit>

@@ -16,6 +16,9 @@
 				<div class='menu'>
 				<h2>Работа с данными</h2>
 				<ul>
+					<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:deleteAllTalons()">
+                            Удалить все открытые талоны
+                        </msh:link></li>
 					<li><msh:link roles='/Policy/Mis/Patient' action="mis_patientFondCheckList.do">
                             Автоматическая проверка по базе ФОМС
                         </msh:link></li>
@@ -178,4 +181,18 @@
 			
 		</table>
 	</tiles:put>
+	 <tiles:put name="javascript" type="string">
+	   <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+	   <script type="text/javascript">
+	   
+	   function deleteAllTalons () {
+		   var date = prompt('Введите дату, до которой были выданы талоны','01.01.2016');
+		   if (date!=null&&date!='') {
+			   TicketService.deleteTalons('',date,{
+				   callback:function(a) {alert(a);}
+			   });
+		   }
+	   }
+	   </script>
+	   </tiles:put>
 </tiles:insert>

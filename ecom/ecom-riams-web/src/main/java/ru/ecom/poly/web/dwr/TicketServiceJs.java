@@ -25,6 +25,17 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
+	public String deleteTalons (String aMedcardId, String aDate, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
+		String sql = "delete from medcase where dtype = 'ShortMedCase' and dateStart is null";
+		if (aMedcardId!=null&&!aMedcardId.equals("")) {
+			sql +=" and medcard_id="+aMedcardId;
+		} if (aDate!=null&&!aDate.equals("")) {
+			sql +=" and createdate < to_date('"+aDate+"','dd.MM.yyyy')";
+		}
+		
+		return "Успешно удалено " + service.executeUpdateNativeSql(sql) +" талонов";
+	}
 	public String getCrossSPO(String aDate, String aPatientId, String aWorkfuntionId, HttpServletRequest aRequest) throws NamingException {
 		String result = "";
 		StringBuilder str = new StringBuilder();
