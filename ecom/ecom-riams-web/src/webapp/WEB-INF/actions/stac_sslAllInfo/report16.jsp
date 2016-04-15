@@ -1912,9 +1912,8 @@ if (date!=null && !date.equals("")) {
 	    		String serviceStream = (String) request.getAttribute("serviceStream") ;
 	    		String departmentBFC = "";
 	    		 if (dep!=null&&!dep.equals("")) {
-	    			departmentBFC+= " and bfc.financeSource=vfs.id";
-	    		}
-	    		if (serviceStream!=null&&!serviceStream.equals("")) {
+	    		//	departmentBFC+= " and bfc.financeSource=vfs.id";
+	    		} else if (serviceStream!=null&&!serviceStream.equals("")&&!serviceStream.equals("0")) {
 	    			departmentBFC+=" and bfc.financeSource=vfs.id";
 	    		} 
 	    		
