@@ -240,6 +240,19 @@ private int theExpFizGroup;
 	public void setCreateTo(String aCreateTo) {theCreateTo = aCreateTo;}
 	/** Дата создания карты по */
 	private String theCreateTo;
+	
+	/** Список карт */
+	@Comment("Список карт")
+	public String getListCards() {
+		return theListCards;
+	}
+
+	public void setListCards(String aListCards) {
+		theListCards = aListCards;
+	}
+
+	/** Список карт */
+	private String theListCards;
 }
 
 
