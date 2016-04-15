@@ -3,6 +3,10 @@
  */
 
 function onPreDelete(aId, aCtx) {
+	var startedPres = aCtx.manager.createNativeQuery("select p.id from prescription p where prescriptionlist_id = "+aId+" and p.intakedate is not null").getResultList();
+	if (startedPres.size()>0) {
+		throw "Удаление листа назначений невозможно, т.к. по некоторым назначениям произведен забор биоматериала";
+	}
 	var pres = aCtx.manager.createNativeQuery("select p.id from prescription p where prescriptionlist_id = "+aId).getResultList();
 	if (pres.size()>0) {
 		for (var i=0;i<pres.size();i++){

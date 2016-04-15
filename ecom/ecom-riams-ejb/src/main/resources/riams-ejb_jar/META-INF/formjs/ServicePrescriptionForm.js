@@ -1,5 +1,10 @@
 
 function onPreDelete(aId, aCtx) {
+	
+	var startedPres = aCtx.manager.createNativeQuery("select p.id from prescription p where id = "+aId+" and p.intakedate is not null").getResultList();
+	if (startedPres.size()>0) {
+		throw "Удаление назначения невозможно, т.к. был произведен забор биоматериала";
+	}
 		aCtx.manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+aId).executeUpdate();
 }
 
