@@ -39,6 +39,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 public class ExtDispCardForm extends IdEntityForm{
 	
+	/** Не подавать на оплату по ОМС */
+	@Comment("Не подавать на оплату по ОМС")
+	@Persist
+	public Boolean getIsNoOmc() {return theIsNoOmc;}
+	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
+	/** Не подавать на оплату по ОМС */
+	private Boolean theIsNoOmc;
+	
 	/** Дата выгрузки в федеральную систему */
 	@Comment("Дата выгрузки в федеральную систему")
 	@Persist

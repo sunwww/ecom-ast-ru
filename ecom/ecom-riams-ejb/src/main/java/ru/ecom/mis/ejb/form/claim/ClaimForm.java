@@ -25,6 +25,30 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Claim")
 public class ClaimForm extends IdEntityForm{
 	
+	/** Дата заморозки задачи */
+	@Comment("Дата заморозки задачи")
+	@Persist
+	public String getFreezeDate() {return theFreezeDate;}
+	public void setFreezeDate(String aFreezeDate) {theFreezeDate = aFreezeDate;}
+	/** Дата заморозки задачи */
+	private String theFreezeDate;
+	
+	/** Время заморозки */
+	@Comment("Время заморозки")
+	@Persist
+	public String getFreezeTime() {return theFreezeTime;}
+	public void setFreezeTime(String aFreezeTime) {theFreezeTime = aFreezeTime;}
+	/** Время заморозки */
+	private String theFreezeTime;
+	
+	/** Пользователь, заморозивший задачу */
+	@Comment("Пользователь, заморозивший задачу")
+	@Persist
+	public String getFreezeUsername() {return theFreezeUsername;}
+	public void setFreezeUsername(String aFreezeUsername) {theFreezeUsername = aFreezeUsername;}
+	/** Пользователь, заморозивший задачу */
+	private String theFreezeUsername;
+	
 	/** Создатель */
 	@Comment("Создатель")
 	@Persist

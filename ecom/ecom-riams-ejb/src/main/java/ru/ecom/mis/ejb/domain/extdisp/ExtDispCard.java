@@ -37,6 +37,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(DeleteListener.class)
 public class ExtDispCard extends BaseEntity{
 	
+	/** Не подавать на оплату по ОМС */
+	@Comment("Не подавать на оплату по ОМС")
+	public Boolean getIsNoOmc() {return theIsNoOmc;}
+	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
+	/** Не подавать на оплату по ОМС */
+	private Boolean theIsNoOmc;
+	
 	/** Дата экспорта в федеральную систему */
 	@Comment("Дата экспорта в федеральную систему")
 	public Date getExportDate() {return theExportDate;}

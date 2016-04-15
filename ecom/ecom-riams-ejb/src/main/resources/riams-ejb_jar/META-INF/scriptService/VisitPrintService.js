@@ -30,6 +30,10 @@ function printVisits(aCtx, aParams) {
 		var visId = id1.substring(indlast+1) ;
 		var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
 				, new java.lang.Long(visId))
+				if (medcase==null) {
+					//medcase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase
+					//		, new java.lang.Long(visId)) ;
+				}
 		var protocol = +protId>0?aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol
 		, new java.lang.Long(protId)):null ;
 		var mapS= new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;

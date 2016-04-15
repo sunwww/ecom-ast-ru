@@ -15,6 +15,27 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class Claim extends BaseEntity{
 
+	/** Дата заморозки задачи */
+	@Comment("Дата заморозки задачи")
+	public Date getFreezeDate() {return theFreezeDate;}
+	public void setFreezeDate(Date aFreezeDate) {theFreezeDate = aFreezeDate;}
+	/** Дата заморозки задачи */
+	private Date theFreezeDate;
+	
+	/** Время заморозки */
+	@Comment("Время заморозки")
+	public Time getFreezeTime() {return theFreezeTime;}
+	public void setFreezeTime(Time aFreezeTime) {theFreezeTime = aFreezeTime;}
+	/** Время заморозки */
+	private Time theFreezeTime;
+	
+	/** Пользователь, заморозивший задачу */
+	@Comment("Пользователь, заморозивший задачу")
+	public String getFreezeUsername() {return theFreezeUsername;}
+	public void setFreezeUsername(String aFreezeUsername) {theFreezeUsername = aFreezeUsername;}
+	/** Пользователь, заморозивший задачу */
+	private String theFreezeUsername;
+	
 	/** Создатель */
 	@Comment("Создатель")
 	public String getUsername() {return theUsername;}
