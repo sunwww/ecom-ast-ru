@@ -139,7 +139,7 @@
     	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select qec.id
 ,to_char(qec.createdate,'dd.MM.yyyy') as f1_createDate
-,vwf.name ||' '||wpat.lastname ||' ' || wpat.firstname||' '||wpat.middlename ||' '|| wml.name as f2_dep_doctor
+,vwf.name ||' '||wpat.lastname ||' ' || wpat.firstname||' '||wpat.middlename ||' '|| 	wml.name as f2_dep_doctor
 ,pat.patientinfo ||' (№'||ss.code||')' as f3_patient
 ,mkb.code as f4_diagnosis
 
