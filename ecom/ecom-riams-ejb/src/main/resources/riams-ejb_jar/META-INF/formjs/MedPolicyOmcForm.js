@@ -78,7 +78,7 @@ function checkNumSerSmo(aCtx,aForm,aSqlAdd) {
 	if (dateTo != null && (dateTo.getTime() < dateFrom.getTime())) throw "Дата окончания должна быть больше, чем дата начала";
 	
 	var policies ;
-	policies = aCtx.manager.createQuery("from MedPolicy where"
+	policies = aCtx.manager.createQuery("from MedPolicyOmc where"
 		+" series=:series and polnumber=:number and company_id=:company"+ aSqlAdd
 		)
 		.setParameter("series",series)
