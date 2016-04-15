@@ -185,7 +185,7 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
  ,cl.id||':'||vct.id as idvocid
 ,case when cl.canceldate is null and cl.finishdate is null then cl.id||':'||cl.claimtype else null end as btnCancel_Finish_StartWork
 ,case when cl.startworkdate is not null and cl.finishdate is null and cl.canceldate is null and cl.freezedate is null then cl.id||':'||cl.claimtype else null end as btnFreeze
-,cast('' as varchar) as f1
+,case when cl.finishdate is not null and cl.completeConfirmed='0' then cl.id else null end as f9_btnSendComplete
 ,case when cl.viewdate is null and cl.canceldate is null and cl.finishdate is null then cl.id||':'||cl.claimtype else null end as btnView
 , cl.phone
 ,case when cl.canceldate is not null then 'font-size:16px; background-color:#F3F781; color:black; '
@@ -243,6 +243,7 @@ order by ${orderBySql}
             <msh:tableButton hideIfEmpty="true" property="15" buttonFunction="setComment" buttonShortName="Комментарий" buttonName="Комментарий"/>
             <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
             <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFreeze" buttonShortName="Заморозить" buttonName="Заморозить"/>
+            <msh:tableButton role="/Policy/Mis/Claim/Boss" hideIfEmpty="true" property="9" buttonFunction="sendToUser" buttonShortName="Отправить пользователю на подтверждение" buttonName="Отправить пользователю на подтверждение"/>
         </msh:table>
 	</msh:section>
         <tags:mis_claimStart name="New" status="id" />
@@ -268,6 +269,13 @@ order by ${orderBySql}
 	   		chk[+aValue-1].checked='checked' ;
 	   	}
 	   }
+    function sendToUser (aId) {
+    	ClaimService.sendToUserConfirm(aId, {
+    		callback: function (a) {
+    			window.location.reload();
+    		} 
+    	});
+    }
     function setFreeze (aId) {
     	setStatus(aId, 'Freeze');
     }

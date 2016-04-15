@@ -17,7 +17,10 @@ import ru.ecom.web.util.Injection;
  *
  */
 public class ClaimServiceJs {
-
+	public static String sendToUserConfirm (String aId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		return ""+service.executeUpdateNativeSql("update claim set completeconfirmed = null where id="+aId);
+	}
 	public static String setComment (String aId, String comment, HttpServletRequest aRequest) throws NamingException {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
