@@ -129,6 +129,9 @@
 						<li><msh:link isReport="true" action="extDisp_journal_card.do" roles="/Policy/Mis/ExtDisp/Card/View">
 	                            Реестр по диспансеризации
 	                        </msh:link></li>
+						<li><msh:link isReport="true" action="extDisp_reestr_card.do" roles="/Policy/Mis/ExtDisp/Card/View">
+	                            Реестр по диспансеризации (для проверки)
+	                        </msh:link></li>
 						<li><msh:link isReport="true" action="extDisp_journal_user.do" roles="/Policy/Mis/ExtDisp/Card/View">
 	                            Свод по пользователям (по диспансеризации) 
 	                        </msh:link></li>
