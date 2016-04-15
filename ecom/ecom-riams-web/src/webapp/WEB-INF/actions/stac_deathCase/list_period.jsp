@@ -24,6 +24,7 @@
 	String typeAutopsy =ActionUtil.updateParameter("Report_DEATHCASE","typeAutopsy","3", request) ;
 	String typeOperation =ActionUtil.updateParameter("Report_DEATHCASE","typeOperation","3", request) ;
 	String typeDifference =ActionUtil.updateParameter("Report_DEATHCASE","typeDifference","3", request) ;
+	String typeCertificate =ActionUtil.updateParameter("Report_DEATHCASE","typeCertificate","3", request) ;
   
   %>
     <msh:form action="/poly_ticketsByNonredidentPatientList.do" defaultField="department" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -84,6 +85,18 @@
 	        </td>
         </msh:row>      
         <msh:row>
+	        <td class="label" title="Поиск по свидетельство о смерти (typeCertificate)" colspan="1"><label for="typeDifferenceName" id="typeDifferenceLabel">Расхождения:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeCertificate" value="1">  выдавали
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" >
+	        	<input type="radio" name="typeCertificate"  value="2">  не выдавали
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeCertificate" value="3">  параметр не учитывать
+	        </td>
+        </msh:row>      
+        <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4"
         	label="Отделение" horizontalFill="true" vocName="lpu"/>
         </msh:row>
@@ -118,6 +131,7 @@
      checkFieldUpdate('typeAutopsy','${typeAutopsy}',3) ;
      checkFieldUpdate('typeOperation','${typeOperation}',3) ;
      checkFieldUpdate('typeDifference','${typeDifference}',3) ;
+     checkFieldUpdate('typeCertificate','${typeCertificate}',3) ;
      //checkFieldUpdate('period','${period}',3) ;
      
      function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -173,6 +187,13 @@
 		} else if (typeOperation!=null && typeOperation.equals("2")) {
 			request.setAttribute("operationInfo", "не было хирургических вмешательств ") ;
 			request.setAttribute("operationSql", " and (so1.id is null and so2.id is null) ") ;
+		}
+		if (typeCertificate!=null && typeCertificate.equals("1")) {
+			request.setAttribute("certificateSql", " and c.id is not null ") ;
+			request.setAttribute("certificateInfo", " были выданы свидетельства о смерти ") ;
+		} else if (typeCertificate!=null && typeCertificate.equals("2")) {
+			request.setAttribute("certificateInfo", " нет свидетельств о смерти ") ;
+			request.setAttribute("certificateSql", " and c.id is null ") ;
 		}
 		String categoryDifference=request.getParameter("categoryDifference") ;
 		String sex=request.getParameter("sex") ;
@@ -238,6 +259,7 @@ then -1 else 0 end)
     left join VocDeathCategory vdcL on vdcL.id=dc.latrogeny_id
     left join statisticstub ss on ss.id=m.statisticstub_id 
     left join patient p on p.id=m.patient_id 
+    left join Certificate c on c.DeathCase_id=dc.id and c.dtype='DeathCertificate'
     where dc.deathDate between to_date('${param.dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
     and dmc.transferDate is null
