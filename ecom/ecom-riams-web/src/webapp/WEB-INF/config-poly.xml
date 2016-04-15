@@ -32,13 +32,13 @@
 
     <action-mappings>
         
-        <action path='/extDisp_journal_card' type='ru.ecom.web.actions.base.ForwardAction'               
+        <action path='/extDisp_reestr_card' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='extDisp_journalForm'
                 validate='true'
                 scope='session'
-                input='/WEB-INF/actions/extDisp_card/list_by_period.jsp'
+                input='/WEB-INF/actions/extDisp_card/reestr_by_period.jsp'
                 >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_period.jsp"/>
+            <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/reestr_by_period.jsp"/>
         </action>
         <action path='/mis_patient_by_age' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='extDisp_journalForm'
