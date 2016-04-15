@@ -175,6 +175,7 @@ left join ExtDispRisk edr on edr.card_id=edc.id
 left join VocExtDispRisk vedr on vedr.id=edr.dispRisk_id
 left join VocIdc10 mkb on mkb.id=edc.idcMain_id
 left join ExtDispService eds on eds.card_id=edc.id and eds.serviceDate is not null
+left join VocExtDispService veds on veds.id=eds.servicetype_id
 where edc.finishDate between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 ${sqlAppend} 
 group by edc.id,p.lastname,p.firstname,
