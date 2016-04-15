@@ -253,7 +253,7 @@ order by ${orderBySql}
     <script type='text/javascript'>
     
    
-     checkFieldUpdate('typeStatus','${typeStatus}',6) ;
+    checkFieldUpdate('typeStatus','${typeStatus}',6) ;
     checkFieldUpdate('typeUser','${typeUser}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
     
