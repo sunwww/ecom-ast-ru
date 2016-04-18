@@ -51,7 +51,6 @@ function spoClosedCurrentDate(aForm, aCtx) {
 	var ids = aCtx.request.getParameter("closeSPOIds").split(",");
 	var curator = aCtx.request.getParameter("curator") ;
 	var department = aCtx.request.getParameter("department") ;
-	var ids = aCtx.request.getParameterValues("id") ;
 	for (var i=0;i<ids.length;i++) {
 		try {
 			var id=ids[i] ;
