@@ -234,8 +234,8 @@
 	       			ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
 	        				, "отделение","department","ml.id", request);
 	            	if (request.getParameter("department")!=null&&!request.getParameter("department").equals("") && !request.getParameter("department").equals("0")) {
-	            		sqlAdd.append("select max(sloall.department_id) from medcase sloall where sloall.parent_id=(case when slo.dtype='HospitalMedCase' then slo.id ")
-	            				.append(" when sls.dtype='HospitalMedCase' then sls.id else slo.id end)='")
+	            		sqlAdd.append(" and (select max(sloall.department_id) from medcase sloall where sloall.parent_id=(case when slo.dtype='HospitalMedCase' then slo.id ")
+	            				.append(" when sls.dtype='HospitalMedCase' then sls.id else slo.id end))='")
 	            				.append(request.getParameter("department"))
 	            				.append("'");
 	            	}
