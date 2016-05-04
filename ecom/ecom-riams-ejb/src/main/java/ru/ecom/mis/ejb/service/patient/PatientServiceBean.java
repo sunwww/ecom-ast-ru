@@ -268,9 +268,9 @@ public class PatientServiceBean implements IPatientService {
 		StringBuilder sql = new StringBuilder();
 		System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
 		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode" +
-				" left join addresstype at on at.id=a.type_id"+
+				" left join addresstype atype on atype.id=a.type_id"+
 	" where k.okatd='"+aOkato+"' and upper(a.name) = upper('"+aStreet+"')");
-		if (!streetType.equals("")) {sql.append(" and upper(at.shortname)=upper('"+streetType+"')");}
+		if (!streetType.equals("")) {sql.append(" and upper(atype.shortname)=upper('"+streetType+"')");}
 		System.out.println("==== 2 finding by okato, sql = "+sql.toString());
 		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(10).getResultList() ;
 		if (listO.size()>0) {
