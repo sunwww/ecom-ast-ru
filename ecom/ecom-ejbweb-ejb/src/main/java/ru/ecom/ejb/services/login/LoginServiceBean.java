@@ -96,6 +96,7 @@ public class LoginServiceBean implements ILoginService {
     }
     public void dispatchMessage(Long aIdMessage) {
     	CustomMessage mes = theManager.find(CustomMessage.class, aIdMessage) ;
+    	if (mes==null) return;
     	long date = new java.util.Date().getTime() ;
     	mes.setDateReceipt(new Date(date)) ;
     	mes.setTimeReceipt(new Time(date)) ;
