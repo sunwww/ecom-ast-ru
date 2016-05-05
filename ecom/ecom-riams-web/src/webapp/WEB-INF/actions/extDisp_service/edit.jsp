@@ -43,9 +43,26 @@ order by veds.id,veds.name"/>
 
 ,veds.workfunctioncode  
 
-,case when max(case when eds.serviceType_id=edps.serviceType_id then eds.workfunction_id end) is not null then max(cast(eds.workfunction_id as varchar)) else  	case when (max(case when eds.serviceType_id=edps.serviceType_id then eds.id end)is null and count(wf1.id)='1') then max(cast(wf1.id as varchar)) else '' end end as edsWF  
+,case when max(case when eds.serviceType_id=edps.serviceType_id and eds.workfunction_id is not null then eds.workfunction_id end) is not null then max(cast(eds.workfunction_id as varchar)) else case when (max(case when eds.serviceType_id=edps.serviceType_id then eds.id end)is null and count(wf1.id)='1') then max(cast(wf1.id as varchar)) else '' end end as edsWF 
+, max(case when eds.serviceType_id=edps.serviceType_id and eds.workfunction_id is not null 
+	then eds.workfunction_id
+when (select count(*) from VocWorkFunction vwf2
+left join WorkFunction wf2 on wf2.workfunction_id=vwf2.id
+where vwf2.code = veds.workfunctioncode  and (wf2.archival is null or wf2.archival='0') and wf2.id is not null
+)='1' then  wf1.id
+else null
+end) as edsWF  
 
-,case when max(case when eds.serviceType_id=edps.serviceType_id then eds.workfunction_id end)is not null then max(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name) else  	case when (max(case when eds.serviceType_id=edps.serviceType_id then eds.id end)is null and count(wf1.id)='1') then max(vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename || ' '||ml1.name) else '' end end as wfname 
+,(select list(vwf3.name||' '||wp3.lastname||' '||wp3.firstname||' '||wp3.middlename) from workfunction wf3 left join worker w3 on w3.id=wf3.worker_id
+left join patient wp3 on wp3.id=w3.person_id
+left join vocworkfunction vwf3 on vwf3.id=wf3.workfunction_id
+where wf3.id=max(case when eds.serviceType_id=edps.serviceType_id and eds.workfunction_id is not null 
+	then eds.workfunction_id
+when (select count(*) from VocWorkFunction vwf2
+left join WorkFunction wf2 on wf2.workfunction_id=vwf2.id
+where vwf2.code = veds.workfunctioncode  and (wf2.archival is null or wf2.archival='0') and wf2.id is not null
+)='1' then  wf1.id
+else null end))as wfname 
 
 ,max(case when (eds.serviceType_id=edps.serviceType_id and eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10 
  	
