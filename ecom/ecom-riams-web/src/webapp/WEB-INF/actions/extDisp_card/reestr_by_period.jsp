@@ -72,7 +72,7 @@
         </msh:row>
         
       <msh:row>
-      		<msh:textArea property="listCards" label="Список кодов синх. пациента" rows="5" />
+      		<msh:textArea property="listCards" label="Список кодов синх. пациента" rows="5" fieldColSpan="5" />
       </msh:row>
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
