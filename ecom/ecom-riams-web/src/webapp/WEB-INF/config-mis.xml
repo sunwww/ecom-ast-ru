@@ -22,6 +22,7 @@
 		
 		<!-- Доп.диспансеризация -->
 		<form-bean name="mis_attachmentForm" type="ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm" />
+		<form-bean name="mis_attachmentBypassForm" type="ru.ecom.mis.web.action.bypassexport.AttachmentByLpuBypassForm" />
 		<form-bean name="extDisp_cardForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispCardForm" />
 		<form-bean name="extDisp_vocForm" type="ru.ecom.mis.ejb.form.extdisp.voc.VocExtDispForm" />
 		<form-bean name="extDisp_vocHealthGroupForm" type="ru.ecom.mis.ejb.form.extdisp.voc.VocExtDispHealthGroupForm" />
@@ -347,7 +348,7 @@
         </action>
         
 	 <action path='/mis_bypass_report' type='ru.ecom.mis.web.action.bypassexport.AttachmentByLpuBypassAction'
-                name='mis_attachmentForm'
+                name='mis_attachmentBypassForm'
                 validate='false'
                 scope="session"
                 >
