@@ -58,7 +58,13 @@
     <action-mappings>
 
         <!-- ЭКСПЕРТИЗА -->
-
+<action path='/quality_card_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='expert_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/expert_card/journal_card.jsp" />
+        </action>
         <action path="/edit-expert_estimation" type="ru.ecom.expomc.web.actions.exportformat.TestSqlAction"
                 scope="request" validate="false" name="exp_exportformatForm">
             <forward name="success" path="/WEB-INF/actions/exp_exportformat/testSql.jsp"/>
