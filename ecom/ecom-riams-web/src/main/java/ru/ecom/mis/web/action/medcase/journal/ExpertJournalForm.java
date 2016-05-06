@@ -7,6 +7,15 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 public class ExpertJournalForm extends BaseValidatorForm {
+
+	
+	/** Тип экспертизы качества */
+	@Comment("Тип экспертизы качества")
+	public Long getEstimationKind() {return theEstimationKind;}
+	public void setEstimationKind(Long aEstimationKind) {theEstimationKind = aEstimationKind;}
+	/** Тип экспертизы качества */
+	private Long theEstimationKind;
+		
 	/** Дата начала периода */
 	@Comment("Дата начала периода") 
 	@Required @DateString @DoDateString
