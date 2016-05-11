@@ -112,7 +112,6 @@ order by veds.id,veds.name
 	if (listExam!=null && !listExam.isEmpty()) {
 	} else {
 		%>
-		${getCardWorkfunctionSql}
 <ecom:webQuery name="servicePlanExam"
 nativeSql="
 select case when 0=1 then '1' else null end
