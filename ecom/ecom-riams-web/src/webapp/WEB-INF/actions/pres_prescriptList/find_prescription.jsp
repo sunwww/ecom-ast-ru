@@ -41,7 +41,7 @@
             	select 
     p.id as pid,
     case 
-    when p.cancelDate is not null then 'ОТМЕНЕНО' 
+    when p.cancelDate is not null then 'ОТМЕНЕНО: ' ||vpcr.name||' '||coalesce(p.cancelreasontext,'')
     when p.intakeDate is null then 'Назначено'
     when p.transferDate is null then 'Взят биоматериал в отделении'
     when p.prescriptCabinet_id is null then 'Передан биоматериал в лабораторию'
@@ -68,6 +68,7 @@
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
    ,case when mc.datestart is not null then p.id end as btnAnnul
     from prescription p
+    left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id
     left join MedCase mc on mc.id=p.medcase_id
     left join Diary d on d.medcase_id=mc.id
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
