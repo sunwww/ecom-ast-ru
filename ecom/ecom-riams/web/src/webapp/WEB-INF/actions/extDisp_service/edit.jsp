@@ -112,7 +112,6 @@ order by veds.id,veds.name
 	if (listExam!=null && !listExam.isEmpty()) {
 	} else {
 		%>
-		${getCardWorkfunctionSql}
 <ecom:webQuery name="servicePlanExam"
 nativeSql="
 select case when 0=1 then '1' else null end
@@ -289,7 +288,7 @@ order by veds.id,veds.name"
 		/* Диагноз  */
  		if (wqr.get9()!=null && wqr.get9().equals(cardWQR.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
 			out.print("<td title='Диагноз' class='label' colspan='1' size='10'><label id='IdcLabel' for='IdcName'>Диагноз:</label></td>"+
-					"<td colspan='1' class='Idc10'><div><input size='1' name='Idc10"+i+"' value='"+cardWQR.get5()!=null?cardWQR.get5():""+"' "+
+					"<td colspan='1' class='Idc10'><div><input size='1' name='Idc10"+i+"' value='"+(cardWQR.get5()!=null?cardWQR.get5():"")+"' "+
 			"id='Idc10"+i+"' type='hidden'><input autocomplete='off' title='Idc10' name='Idc10"+i+"Name' value='"+cardWQR.get6()+"' id='Idc10"+i+"Name'"+
 			" size='10' class='autocomplete horizontalFill' type='text'><div style='visibility: hidden; display: none;'"+
 			" id='Idc10"+i+"Div'></div></div></td>"); 
