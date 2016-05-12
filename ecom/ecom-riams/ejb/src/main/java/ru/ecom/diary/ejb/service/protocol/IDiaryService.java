@@ -16,7 +16,8 @@ public interface IDiaryService {
     public List<DiaryForm> findProtocol(long aSloId) ;
     
     public CheckNode loadParametersByMedService(long aMedServiceId) ;
+    public CheckNode loadParametersByMedService(long aMedServiceId, String aUsername) ;
     
     public void saveParametersByTemplateProtocol(long aProtocolId, long[] aAdds, long[] aRemoves) ;
-    public List<Object[]> loadParameterTableByMedService(long aTemplateId) ;
+    public List<Object[]> loadParameterTableByMedService(long aTemplateId) ; 
 }

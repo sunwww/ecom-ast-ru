@@ -50,8 +50,10 @@ public class DiaryServiceBean implements IDiaryService {
 		List<Object[]> list = theManager.createNativeQuery("select p.parameter_id,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm p left join Parameter par on par.id=p.parameter_id left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where p.template_id=:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
 		return list ;
 	 }
-
 	public CheckNode loadParametersByMedService(long aTemplateId) {
+		return loadParametersByMedService(aTemplateId, "");
+	}
+	public CheckNode loadParametersByMedService(long aTemplateId, String aUsername) {
 		TreeSet<Long> parametersSet = new TreeSet<Long>() ;
 		TemplateProtocol template = theManager.find(TemplateProtocol.class, aTemplateId) ;
 		List<Object> list = theManager.createNativeQuery("select p.parameter_id from ParameterByForm p where p.template_id=:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
@@ -59,7 +61,7 @@ public class DiaryServiceBean implements IDiaryService {
 			if (param!=null) parametersSet.add(ConvertSql.parseLong(param)) ;
 		}
 		
-		List<Object[]> rootGroups = findRootGroups() ;
+		List<Object[]> rootGroups = findRootGroups(aUsername) ;
 		
 		CheckNodeByGroup rootNode = new CheckNodeByGroup("g"+0, "/",false);
 		//System.out.println("-G-"+rootNode.getName()) ;
@@ -68,17 +70,25 @@ public class DiaryServiceBean implements IDiaryService {
 			//System.out.println("-ROOT--"+id+"-"+group[1]) ;
 			CheckNodeByGroup node = new CheckNodeByGroup("g"+id,""+group[1],false) ;
 			rootNode.getChilds().add(node);
-			addGroups(id,node,parametersSet) ;
+			addGroups(id,node,parametersSet, aUsername) ;
 			addParameters(id,node,parametersSet);
 		}
 		
 		return rootNode;
 	}
-	private List<Object[]> findRootGroups() {
-		return theManager.createNativeQuery("select id,name from ParameterGroup where parent_id is null order by name") .setMaxResults(100).getResultList();
+	private List<Object[]> findRootGroups(String aLogin) {
+		return theManager.createNativeQuery("select pg.id,pg.name from ParameterGroup pg" +
+				" left join parametergroup_secgroup pgsg on pgsg.parametergroup_id=pg.id" +
+				" left join secgroup_secuser sgsu on sgsu.secgroup_id=pgsg.secgroups_id" +
+				" left join secuser su on su.id=sgsu.secusers_id" +
+				" where pg.parent_id is null and su.login='"+aLogin+"' order by pg.name") .setMaxResults(100).getResultList();
 	}
-	private void addGroups (Long aGroup, CheckNode aNode, TreeSet<Long> aParameters) {
-		List<Object[]> listChild = theManager.createNativeQuery("select id, name from ParameterGroup where parent_id = :parent order by name").setParameter("parent", aGroup).getResultList() ;
+	private void addGroups (Long aGroup, CheckNode aNode, TreeSet<Long> aParameters, String aUsername) {
+		List<Object[]> listChild = theManager.createNativeQuery("select pg.id, pg.name from ParameterGroup pg " +
+				" left join parametergroup_secgroup pgsg on pgsg.parametergroup_id=pg.id" +
+				" left join secgroup_secuser sgsu on sgsu.secgroup_id=pgsg.secgroups_id" +
+				" left join secuser su on su.id=sgsu.secusers_id" +
+				" where pg.parent_id = :parent and su.login =:login order by name").setParameter("parent", aGroup).setParameter("login", aUsername).getResultList() ;
 		for (Object[] group: listChild) {
 			Long id = ConvertSql.parseLong(group[0]) ;
 			CheckNodeByGroup node = new CheckNodeByGroup(
@@ -86,7 +96,7 @@ public class DiaryServiceBean implements IDiaryService {
 					) ;
 			aNode.getChilds().add(node) ;
 			//System.out.println("-GR-"+aNode.getId()+"-"+node.getName()) ;
-			addGroups(id,node ,aParameters) ;
+			addGroups(id,node ,aParameters, aUsername) ;
 			addParameters(id,node,aParameters);
 		}
 	}
