@@ -1,8 +1,14 @@
 package ru.ecom.diary.ejb.form.protocol.parameter;
 
+import java.util.List;
+
+import javax.persistence.ManyToMany;
+
 import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterGroup;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
+import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -18,6 +24,16 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Diary/ParameterGroup")
 @Parent(property="parent", parentForm=ParameterGroupForm.class)
 public class ParameterGroupForm extends IdEntityForm{
+	
+	/** Доверительные группы */
+	@Comment("Доверительные группы")
+	@Persist @PersistManyToManyOneProperty(collectionGenericType = SecGroup.class)
+	public String getSecGroups() {return theSecGroups;}
+	public void setSecGroups(String aSecGroups) {theSecGroups = aSecGroups;}
+	
+	/** Доверительные группы */
+	private String theSecGroups;
+	
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist @Required
