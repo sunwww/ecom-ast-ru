@@ -1,0 +1,45 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+
+  <tiles:put name="body" type="string">
+    <!-- 
+    	  - Справочник Лек.Ср
+    	  -->
+    <msh:form  action="/entitySaveGoView-voc_drugLN.do" defaultField="code">
+      <msh:hidden guid="hiddenId" property="id" />
+      <msh:hidden guid="hiddenSaveType" property="saveType" />
+      <msh:panel guid="panel" colsWidth="5%,60%,5%,1%">
+        <msh:row>
+        	<msh:textField  label="Код" property="code" />
+        </msh:row>
+        <msh:row>
+        	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="1"/>
+        </msh:row>
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="2" />
+      </msh:panel>
+    </msh:form>
+  </tiles:put>
+  <tiles:put name="title" type="string">
+    <ecom:titleTrail guid="titleTrail-123" mainMenu="Voc" beginForm="voc_drugLNForm" />
+  </tiles:put>
+  <tiles:put name="side" type="string">
+    <msh:sideMenu title="Лек. средства">
+      <msh:sideLink roles="/Policy/Voc/VocDrugLicensedName/Edit" key="ALT+2" params="id" action="/entityEdit-voc_drugLN" name="Изменить" title="Изменить данные по Лек.Ср" />
+      <msh:sideLink roles="/Policy/Voc/VocDrugLicensedName/Delete" confirm="Удалить?" key="ALT+DEL" params="id" action="/entityDelete-voc_drugLN" name="Удалить" title="Удалить данные по Лек.Ср" />
+    </msh:sideMenu>
+    <tags:voc_menu currentAction="drugLN"/>
+  </tiles:put>
+  <tiles:put type="string" name="javascript">
+  	<msh:ifFormTypeIsCreate formName="voc_drugLNForm">
+  	<script type="text/javascript">
+  		$('name').value='${param.name}' ;
+  	</script>
+  	</msh:ifFormTypeIsCreate>
+  </tiles:put>
+  
+</tiles:insert>
+
