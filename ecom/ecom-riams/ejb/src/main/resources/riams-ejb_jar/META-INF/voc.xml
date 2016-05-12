@@ -1,0 +1,9 @@
+<vocconfig>
+    <vocFile>/META-INF/voc-exp.xml</vocFile>
+    <vocFile>/META-INF/voc-mis.xml</vocFile>
+    <vocFile>/META-INF/voc-mis-worker.xml</vocFile>
+    <vocFile>/META-INF/voc-diary.xml</vocFile>
+    <vocFile>/META-INF/voc-poly.xml</vocFile>
+    <vocFile>/META-INF/voc-stac.xml</vocFile>
+    <vocFile>/META-INF/voc-psychiatry.xml</vocFile>
+</vocconfig>
