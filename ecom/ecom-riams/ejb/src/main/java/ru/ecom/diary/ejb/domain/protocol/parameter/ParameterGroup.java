@@ -3,6 +3,7 @@ package ru.ecom.diary.ejb.domain.protocol.parameter;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -11,6 +12,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -22,6 +24,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "parent" }) })
 public class ParameterGroup extends BaseEntity {
+	
+	/** Доверительные группы */
+	@Comment("Доверительные группы")
+	@ManyToMany
+	public List<SecGroup> getSecGroups() {return theSecGroups;}
+	public void setSecGroups(List<SecGroup> aSecGroups) {theSecGroups = aSecGroups;}
+	/** Доверительные группы */
+	private List<SecGroup> theSecGroups;
 	/** Наименование */
 	@Comment("Наименование")
 	public String getName() {return theName;}
