@@ -32,21 +32,34 @@ public abstract class MedOSTest implements ITest {
 		return getCurrentDate("dd.MM.yyyy") ;
 	}
 	
-	protected void clickByXpath(String aNameElement) {
-		clickByXpath(aNameElement,4) ;
+	protected WebElement findElement(By aBy) {
+		return findElement(aBy,4,aBy.toString()) ;
 	}
-	protected void clickByXpath(String aNameElement, int aTimeOut) {
-		if (aTimeOut>0) {
-			WebElement el = driver.findElement(By.xpath(aNameElement));
+	
+	protected WebElement findElement(By aBy, int aTimeWait,String aComment) {
+		if (aTimeWait>0) {
+			WebElement el = driver.findElement(aBy);
 			if (el!=null) {
-				el.click();
+				return el;
 			} else {
 				forceWait(1);
-				clickByXpath(aNameElement, aTimeOut-1) ;
+				return findElement(aBy, aTimeWait-1,aComment) ;
 			}
-		} else {
-			new IIOException("Не найден элемент: "+aNameElement) ;
-		}
+		} 
+		new IIOException("Не найден элемент: "+aComment) ;
+		return null;
+		
+	}
+	protected WebElement findElementByXpath(String aNameElement) {
+		return findElement(By.xpath(aNameElement),4,aNameElement);
+	}
+	
+	
+	protected void clickByXpath(String aNameElement) {
+		findElement(By.xpath(aNameElement),4,aNameElement);
+	}
+	protected void clickByXpath(String aNameElement, int aTimeWait) {
+		findElement(By.xpath(aNameElement),aTimeWait,aNameElement);
 	}
 	
 	public void setDriver(WebDriver wd) { driver=wd; }
