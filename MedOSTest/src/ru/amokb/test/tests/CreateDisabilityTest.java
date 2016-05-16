@@ -24,7 +24,7 @@ public class CreateDisabilityTest extends MedOSTest {
 	public void setUp() throws Exception {
 		driver = new FirefoxDriver();
 		baseUrl = "http://192.168.7.249:8080";
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 	
 	@Test
@@ -34,31 +34,22 @@ public class CreateDisabilityTest extends MedOSTest {
 		logIn("admin");
 		String ln="СИДОРОВ", fn="ИВАН", id="311546", crd="Н28728";
 		String dat=getCurrentDate("ddMMyyyy"), dct="ВОЛОШИНА ОЛЬГА";
-		driver.findElement(By.xpath("//*/img[@alt='На главное меню']")).click();
-		forceWait(16);
-		
-		driver.findElement(By.id("lastname")).clear();
-		driver.findElement(By.id("lastname")).sendKeys(ln+" "+fn);
-		driver.findElement(By.cssSelector("input[type='submit']")).click();
-		forceWait(8);
-		
-		clickByXpath("//tr[normalize-space(@class)='list "+id+"']/td[text()='"+crd+"']");
-		
+		findElement(By.xpath("//*/img[@alt='На главное меню']"),16).click();
+		findElement(By.id("lastname")).clear();
+		findElement(By.id("lastname")).sendKeys(ln+" "+fn);
+		findElement(By.cssSelector("input[type='submit']")).click();
+		clickByXpath("//tr[normalize-space(@class)='list "+id+"']/td[text()='"+crd+"']",8);
 		clickByXpath("//*/a[contains(@title, 'нетрудоспособности')]");
-		forceWait(4);
 		clickByXpath("//*/a[contains(@href, 'entityParentPrepareCreate-dis_document')]");
-		forceWait(4);
-		inputText(driver.findElement(By.id("disabilityReasonName")), "01\b1");
-		forceWait(4);
-		driver.findElement(By.id("dateFrom")).sendKeys(dat);
-		forceWait(4);
-		inputText(driver.findElement(By.id("workFunctionName")), dct.substring(0, 8));
-		forceWait(4);
+		checkErrorMessage(1);
+		inputText(findElement(By.id("disabilityReasonName")), "01\b1");
+		findElement(By.id("dateFrom")).sendKeys(dat);
+		inputText(findElement(By.id("workFunctionName")), dct.substring(0, 8));
 		clickByXpath("//*/input[@id='submitButton']");
-		forceWait(4);
-		checkErrorMessage();
+		checkErrorMessage(1);
 		logOut();				
 		System.out.println("ЛН введён");
 		System.out.println("Тест завершен успешно");
+		
 	}
 }
