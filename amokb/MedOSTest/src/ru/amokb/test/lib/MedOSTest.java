@@ -32,34 +32,8 @@ public abstract class MedOSTest implements ITest {
 		return getCurrentDate("dd.MM.yyyy") ;
 	}
 	
-	protected WebElement findElement(By aBy) {
-		return findElement(aBy,4,aBy.toString()) ;
-	}
-	
-	protected WebElement findElement(By aBy, int aTimeWait,String aComment) {
-		if (aTimeWait>0) {
-			WebElement el = driver.findElement(aBy);
-			if (el!=null) {
-				return el;
-			} else {
-				forceWait(1);
-				return findElement(aBy, aTimeWait-1,aComment) ;
-			}
-		} 
-		new IIOException("Не найден элемент: "+aComment) ;
-		return null;
-		
-	}
-	protected WebElement findElementByXpath(String aNameElement) {
-		return findElement(By.xpath(aNameElement),4,aNameElement);
-	}
-	
-	
 	protected void clickByXpath(String aNameElement) {
-		findElement(By.xpath(aNameElement),4,aNameElement);
-	}
-	protected void clickByXpath(String aNameElement, int aTimeWait) {
-		findElement(By.xpath(aNameElement),aTimeWait,aNameElement);
+		driver.findElement(By.xpath(aNameElement)).click();
 	}
 	
 	public void setDriver(WebDriver wd) { driver=wd; }
@@ -150,7 +124,7 @@ public abstract class MedOSTest implements ITest {
 		}
 		return result;
 	}
-	// test commit!
+	
 	protected boolean editPerson(String un, String l, String f, String i, String c) {
 		boolean result=true;
 		
@@ -168,7 +142,7 @@ public abstract class MedOSTest implements ITest {
 		    
 		    if(!TFOMSVerify()) return false;
 			
-			logOut(); 
+			logOut();
 
 		    checkErrorMessage();
 		    System.out.println("Сохранён");
