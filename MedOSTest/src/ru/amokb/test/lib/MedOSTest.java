@@ -137,7 +137,7 @@ public abstract class MedOSTest implements ITest {
 		}
 		return result;
 	}
-	
+	// test commit!
 	protected boolean editPerson(String un, String l, String f, String i, String c) {
 		boolean result=true;
 		
@@ -155,7 +155,7 @@ public abstract class MedOSTest implements ITest {
 		    
 		    if(!TFOMSVerify()) return false;
 			
-			logOut();
+			logOut(); 
 
 		    checkErrorMessage();
 		    System.out.println("Сохранён");
