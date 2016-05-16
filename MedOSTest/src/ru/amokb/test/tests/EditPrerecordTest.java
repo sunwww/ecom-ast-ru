@@ -26,7 +26,7 @@ public class EditPrerecordTest extends MedOSTest {
 	}
 	
 	@Test
-	public void run () {
+	public void run ()  throws Exception{
 		System.out.println("Запуск теста: Редактирование чего-то там");
 		Date dat=new Date();
 		SimpleDateFormat sdfDy=new SimpleDateFormat("dd");

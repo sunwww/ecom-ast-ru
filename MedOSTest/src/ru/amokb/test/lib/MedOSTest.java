@@ -2,9 +2,8 @@ package ru.amokb.test.lib;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import javax.imageio.IIOException;
 
 import org.junit.After;
 import org.openqa.selenium.Alert;
@@ -32,34 +31,39 @@ public abstract class MedOSTest implements ITest {
 		return getCurrentDate("dd.MM.yyyy") ;
 	}
 	
-	protected WebElement findElement(By aBy) {
-		return findElement(aBy,4,aBy.toString()) ;
+	protected WebElement findElement(By aBy) throws Exception {
+		return findElement(aBy,4) ;
 	}
 	
-	protected WebElement findElement(By aBy, int aTimeWait,String aComment) {
+	protected WebElement findElement(By aBy, int aTimeWait) throws Exception {
+		System.out.println((new Date()).toString()+"  timeWait="+aTimeWait+" "+aBy.toString()+":");
 		if (aTimeWait>0) {
-			WebElement el = driver.findElement(aBy);
-			if (el!=null) {
+			try {
+				WebElement el = driver.findElement(aBy);
+				System.out.println("---"+(new Date()).toString()+" -- element found");
 				return el;
-			} else {
-				forceWait(1);
-				return findElement(aBy, aTimeWait-1,aComment) ;
+			} catch(Exception e) {
+				System.out.println("---"+(new Date()).toString()+" -- element not found");
+				forceWait(4);
+				return findElement(aBy, aTimeWait-1) ;
 			}
+			
 		} 
-		new IIOException("Не найден элемент: "+aComment) ;
-		return null;
+		
+		throw new org.openqa.selenium.NoSuchElementException("Не найден элемент: "+aBy.toString()) ;
+		//return null;
 		
 	}
-	protected WebElement findElementByXpath(String aNameElement) {
-		return findElement(By.xpath(aNameElement),4,aNameElement);
+	protected WebElement findElementByXpath(String aNameElement) throws Exception {
+		return findElement(By.xpath(aNameElement),4);
 	}
 	
 	
-	protected void clickByXpath(String aNameElement) {
-		findElement(By.xpath(aNameElement),4,aNameElement);
+	protected void clickByXpath(String aNameElement)  throws Exception{
+		findElement(By.xpath(aNameElement),4).click();
 	}
-	protected void clickByXpath(String aNameElement, int aTimeWait) {
-		findElement(By.xpath(aNameElement),aTimeWait,aNameElement);
+	protected void clickByXpath(String aNameElement, int aTimeWait) throws Exception {
+		findElement(By.xpath(aNameElement),aTimeWait).click();
 	}
 	
 	public void setDriver(WebDriver wd) { driver=wd; }
@@ -70,7 +74,7 @@ public abstract class MedOSTest implements ITest {
 		try{ driver.findElement(By.id("nay3a")); }catch(Exception e) {}
 	}
 	  
-	protected void hitAltDel(String text) {
+	protected void hitAltDel(String text) throws Exception {
 		//driver.findElement(By.xpath("//*/a[@id='ALT_DEL']")).click();
 		clickByXpath("//*/a[@id='ALT_DEL']");
 		/*alert=driver.switchTo().alert();
@@ -92,29 +96,36 @@ public abstract class MedOSTest implements ITest {
 		return result;
 	}
 	
-	protected boolean logIn(String n) { return logIn(n, ""); }
-	protected boolean logIn(String n, String p) {
+	protected boolean logIn(String n)  throws Exception{ return logIn(n, "",1); }
+	protected boolean logIn(String n,int aTimeOut) throws Exception { return logIn(n, "",aTimeOut); }
+	protected boolean logIn(String n, String p) throws Exception {
+		return logIn(n, p,1) ;
+	}
+	
+	protected boolean logIn(String n, String p,int aTimeOut) throws Exception {
 		boolean result=true;
 		if(p=="") p="1";
 		try {
-			driver.findElement(By.id("username")).clear();
-			driver.findElement(By.id("username")).sendKeys(n);
-			driver.findElement(By.id("password")).clear();
-			driver.findElement(By.id("password")).sendKeys(p);
-
-			/*if(driver.findElement(By.id("enter"))!=null) */driver.findElement(By.id("enter")).click();
-			checkErrorMessage();
+			WebElement username = findElement(By.id("username")) ; 
+			username.clear();
+			username.sendKeys(n);
+			WebElement password = findElement(By.id("password")) ;
+			password.clear();
+			password.sendKeys(p);
+			findElement(By.id("enter")).click();
+			checkErrorMessage(aTimeOut);
 			System.out.println("Вход под "+n);
 		} catch(Exception e) { 
 			result=false;
-			System.out.println("Ошибка входа под "+n);
 			System.out.println(e.getMessage());
+			throw new Exception("Ошибка входа под "+n);
+			
 		}
 		return result;
 	}
 	  
-	protected void alertClick() { alertClick(8); }
-	protected void alertClick(int aTimeOut) {
+	protected void alertClick() throws Exception { alertClick(8); }
+	protected void alertClick(int aTimeOut) throws Exception {
 		try {
 			forceWait(aTimeOut);
 			System.out.println("alert");
@@ -123,26 +134,21 @@ public abstract class MedOSTest implements ITest {
 			alrt.accept();
 			checkErrorMessage();
 		} catch (Exception e) {
-			 new IIOException("No more alert.");
-			 return;
+			 throw new Exception("No more alert.");
+			// return;
 		}
 	}
 	
 	protected boolean findPerson(String ln, String fn, String id, String crd) {
 		boolean result=true;
 		try {
-			//driver.findElement(By.xpath("//*/img[@alt='На главное меню']")).click();
-			//clickByXpath("//*/img[@alt='На главное меню']");
-			//forceWait(16);
 			
-			driver.findElement(By.id("lastname")).clear();
-			driver.findElement(By.id("lastname")).sendKeys(ln+" "+fn);
-			driver.findElement(By.cssSelector("input[type='submit']")).click();
-			forceWait(8);
+			WebElement lastname = findElement(By.id("lastname")) ;
+			lastname.clear();
+			lastname.sendKeys(ln+" "+fn);
+			findElement(By.cssSelector("input[type='submit']")).click();
+			clickByXpath("//tr[normalize-space(@class)='list "+id+"']/td[text()='"+crd+"']",8);
 			
-			//driver.findElement(By.xpath("//tr[normalize-space(@class)='list "+id+"']/td[text()='"+crd+"']")).click();
-			clickByXpath("//tr[normalize-space(@class)='list "+id+"']/td[text()='"+crd+"']");
-			//checkErrorMessage();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -159,8 +165,8 @@ public abstract class MedOSTest implements ITest {
 			
 			findPerson(l, f, i, c);
 			
-		    driver.findElement(By.id("ALT_2")).click();
-		    driver.findElement(By.id("submitButton")).click();
+		    findElement(By.id("ALT_2")).click();
+		    findElement(By.id("submitButton")).click();
 		    
 		    WebElement we=null;
 	    	we=driver.findElement(By.id("PatientDoubleSave")); 
@@ -181,9 +187,9 @@ public abstract class MedOSTest implements ITest {
 		return result;
 	}
 	
-	protected boolean TFOMSVerify() {
+	protected boolean TFOMSVerify() throws Exception {
 		//ТФОМС
-	    driver.findElement(By.linkText("Проверка по ФИО+ДР")).click();
+	    findElement(By.linkText("Проверка по ФИО+ДР")).click();
 	    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	    //driver.findElement(By.xpath("//input[@id='isPatientPatient']")).click();
 	    clickByXpath("//input[@id='isPatientPatient']");
@@ -210,7 +216,7 @@ public abstract class MedOSTest implements ITest {
 	    return result;
 	}
 	
-	protected boolean InsertFromTemplate() {
+	protected boolean InsertFromTemplate()  throws Exception {
 		//driver.findElement(By.xpath("//*/li[@class='liTemp'][contains(text(), 'ГАСТРОЭНТЕРОЛОГ')]")).click();
 		clickByXpath("//*/li[@class='liTemp'][contains(text(), 'ГАСТРОЭНТЕРОЛОГ')]");
 		forceWait(4);
@@ -229,11 +235,21 @@ public abstract class MedOSTest implements ITest {
 	    WebElement err = null;
 	    try {
 		    //err = driver.findElement(By.xpath("//*/div[@class='errorMessage']/a"));
-	    	err=driver.findElement(By.xpath(".//*[@id='errorMessageContainer']//*/div"));
+	    	err=findElement(By.xpath(".//*[@id='errorMessageContainer']//*/div"));
 		    if(err!=null) {
 			    //System.out.println("Error Message: "+err.getText());
 			    throw new Exception("Error Message: "+err.getText()) ;
 		    }
 	    } catch (org.openqa.selenium.NoSuchElementException e) {}
+	}
+	public void checkErrorMessage (int aTimeWait) throws Exception{
+	    WebElement err = null;
+	    try {
+		    //err = driver.findElement(By.xpath("//*/div[@class='errorMessage']/a"));
+	    	err=findElement(By.xpath(".//*[@id='errorMessageContainer']//*/div"),aTimeWait);
+		    throw new Exception("Error Message: "+err.getText()) ;
+	    } catch (org.openqa.selenium.NoSuchElementException e) {
+	    	
+	    }
 	}
 }

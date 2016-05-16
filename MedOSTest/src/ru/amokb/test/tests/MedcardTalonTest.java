@@ -25,7 +25,7 @@ public class MedcardTalonTest extends MedOSTest {
 	}
 	
 	@Test
-	public void run () {
+	public void run ()  throws Exception{
 	    //создание медкарты
 		String dctrName = "ВОЛОШИНА ОЛЬГА", dateString = new SimpleDateFormat("ddMMyyyy").format(new Date());
 		
