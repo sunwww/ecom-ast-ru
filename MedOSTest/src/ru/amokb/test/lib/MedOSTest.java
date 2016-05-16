@@ -33,7 +33,20 @@ public abstract class MedOSTest implements ITest {
 	}
 	
 	protected void clickByXpath(String aNameElement) {
-		driver.findElement(By.xpath(aNameElement)).click();
+		clickByXpath(aNameElement,4) ;
+	}
+	protected void clickByXpath(String aNameElement, int aTimeOut) {
+		if (aTimeOut>0) {
+			WebElement el = driver.findElement(By.xpath(aNameElement));
+			if (el!=null) {
+				el.click();
+			} else {
+				forceWait(1);
+				clickByXpath(aNameElement, aTimeOut-1) ;
+			}
+		} else {
+			new IIOException("Не найден элемент: "+aNameElement) ;
+		}
 	}
 	
 	public void setDriver(WebDriver wd) { driver=wd; }
