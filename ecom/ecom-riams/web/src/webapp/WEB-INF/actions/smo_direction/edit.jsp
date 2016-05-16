@@ -257,7 +257,8 @@
    	 	
    	 
    	
-   	serviceStreamAutocomplete.addOnChangeCallback(function() {
+  
+   	 serviceStreamAutocomplete.addOnChangeCallback(function() {
 	 	updateTime() ;
 	 });
       
@@ -370,6 +371,13 @@
       datePlanAutocomplete.addOnChangeCallback(function(){
     	  
     	  getPreRecord() ;
+    	  if ($('timePlan')) {
+    		  $('timePlan').value='';
+    		  }
+    	  
+    	  if ($('timePlanName')) {
+    		  $('timePlanName').value='';
+    		  }
     	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
   		}) ;
     function checkRecord(aId,aValue,aIdService,aService) {
