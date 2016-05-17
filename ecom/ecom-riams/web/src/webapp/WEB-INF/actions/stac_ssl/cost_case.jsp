@@ -33,7 +33,7 @@
   <msh:sectionTitle>Койко-дни не опред.</msh:sectionTitle>
   <msh:sectionContent>
  
-      <ecom:webQuery name="list" nativeSql="
+      <ecom:webQuery name="list" nameFldSql="list_bedroom_no" nativeSql="
 select slo.id,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo
       ,list(pp.code||' '||pp.name) as ppname
       ,
@@ -79,7 +79,7 @@ where slo.parent_id='${param.id}'
   <msh:sectionTitle>Койко-дни</msh:sectionTitle>
   <msh:sectionContent>
  
-      <ecom:webQuery name="list" nativeSql="
+      <ecom:webQuery name="list" nameFldSql="list_bedroom_yes" nativeSql="
 select slo.id,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo
       ,list(pp.code||' '||pp.name) as ppname
       ,
@@ -148,7 +148,7 @@ where slo.parent_id='${param.id}'
   </msh:sectionContent>
   <msh:sectionTitle>Диагностика</msh:sectionTitle>
   <msh:sectionContent>
-      <ecom:webQuery name="list1" nativeSql="
+      <ecom:webQuery name="list1" nameFldSql="list_diag_" nativeSql="
       select
       vis.id,vis.datestart||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
       ,pp.code||' '||pp.name as ppname

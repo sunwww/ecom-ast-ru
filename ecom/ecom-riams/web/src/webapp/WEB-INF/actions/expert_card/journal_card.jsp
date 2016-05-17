@@ -21,7 +21,7 @@
 
     <tiles:put name='body' type='string'>
     <%
-	String estimationType = request.getParameter("estimationKind");
+	String estimationKind = request.getParameter("estimationKind");
 	String dateEnd = request.getParameter("dateEnd");
 	String dateStart = request.getParameter("dateBegin");
     String typeOrder = ActionUtil.updateParameter("QualityEstimationCard","typeOrder","1", request) ;
@@ -37,6 +37,15 @@
        <msh:row>
         <msh:autoComplete property="estimationKind" vocName="vocQualityEstimationKind" label="Тип оценки качества" fieldColSpan="30" size="50" />
       </msh:row> 
+       <msh:row>
+        <msh:autoComplete property="department" vocName="lpu" label="Отделение" fieldColSpan="30" size="50" />
+      </msh:row> 
+       <msh:row>
+        <msh:autoComplete property="workFunction" vocName="workFunctionByLpu" parentAutocomplete="department" label="Врач" fieldColSpan="30" size="50" />
+      </msh:row> 
+       <msh:row>
+        <msh:autoComplete property="expert" vocName="workFunction" label="Эксперт" fieldColSpan="30" size="50" />
+      </msh:row> 
       <msh:row>
         <msh:textField property="dateBegin" />
         <msh:textField property="dateEnd" />
@@ -44,28 +53,22 @@
          <msh:row>
       <td><label>Тип отчета:</label></td>
       <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
-        	<input type="radio" name="typeReport" value="1">  Журнал внутреннего контроля
+        	<input type="radio" name="typeReport" value="1">  реестр по пациентам
         </td>
         <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
-        	<input type="radio" name="typeReport" value="2" >  Отчет о проведении контроля
+        	<input type="radio" name="typeReport" value="2" >  группировка по леч.врачу
         </td>
         <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
-        	<input type="radio" name="typeReport" value="3" >  все
+        	<input type="radio" name="typeReport" value="3" >  группировка по отделению
+        </td>
+      </msh:row>
+      <msh:row>
+      <td></td> 
+        <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
+        	<input type="radio" name="typeReport" value="4" > по показателям
         </td>
       </msh:row> 
-      <%-- 
-        <msh:row>
-      <td><label>Тип оценки качества:</label></td>
-      <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
-        	<input type="radio" name="typeEstimation" value="1">  стационар
-        </td>
-        <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
-        	<input type="radio" name="typeEstimation" value="2" >  поликлиника
-        </td>
-        <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
-        	<input type="radio" name="typeEstimation" value="3" >  все
-        </td>
-      </msh:row>--%>
+      
       <msh:row>
       <td><label>Сортировать по:</label></td>
       <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
@@ -97,7 +100,6 @@
           <script type='text/javascript'>
     
     checkFieldUpdate('typeOrder','${typeOrder}',1) ;
-  //  checkFieldUpdate('typeEstimation','${typeEstimation}',1) ;
     checkFieldUpdate('typeMarks','${typeMarks}',1) ;
     checkFieldUpdate('typeReport','${typeReport}',1) ;
     //checkFieldUpdate('typeLpu','${typeLpu}',3) ;
@@ -114,7 +116,7 @@
    }
       </script>
     	<% 
-    	String sqlAdd = "";
+    	StringBuilder sqlAdd = new StringBuilder();
     	String orderBySql = "pat.patientinfo";
     	if (dateEnd==null||dateEnd.equals("")) {
     		dateEnd = dateStart;
@@ -126,33 +128,48 @@
     		orderBySql="qec.createdate";
     	}
     	
-    	if (typeMarks!=null&&!typeMarks.equals("")) {
-    		if (typeMarks.equals("1")) {
-    			sqlAdd+=" and qe.experttype='Expert'";
-    		} else {
-    			sqlAdd+=" and qe.experttype='BranchManager'";
-    		}
-    	} 
     	
-    	request.setAttribute("finishDate", dateEnd);
-    	request.setAttribute("sqlAdd", sqlAdd);
-    	request.setAttribute("orderBySql",orderBySql);
-    	//String sql = 
     	
-    	if (dateStart!=null&&!dateStart.equals("") ) {
+    	if (dateStart!=null&&!dateStart.equals("") && estimationKind!=null &&
+    			!estimationKind.equals("")&&!estimationKind.equals("0")) {
+    		if (typeMarks!=null&&!typeMarks.equals("")) {
+        		if (typeMarks.equals("1")) {
+        			sqlAdd.append(" and qe.experttype='Expert'");
+        		} else if (typeMarks.equals("2")) {
+        			sqlAdd.append(" and qe.experttype='BranchManager'");
+        		}
+        	} 
+    		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
+        			, "отделение","department","wml.id", request));
+        	sqlAdd.append(ActionUtil.getValueInfoById("select wf.id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename from workfunction wf left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on wf.workfunction_id=vwf.id where wf.id=:id"
+        			, "врач","workFunction","qec.doctorcase_id", request));
+        	sqlAdd.append(ActionUtil.getValueInfoById("select wf.id, wp.lastname||' '||wp.firstname||' '||wp.middlename from workfunction wf left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on wf.workfunction_id=vwf.id where wf.id=:id"
+        			, "эксперт","expert","qe.expert_id", request));
+        	request.setAttribute("finishDate", dateEnd);
+        	request.setAttribute("sqlAdd", sqlAdd);
+        	request.setAttribute("orderBySql",orderBySql);
+        	StringBuilder title = new StringBuilder() ;
+        	title.append("Период ").append(dateStart).append("-").append(dateEnd).append(request.getAttribute("departmentInfo"))
+        		.append(" ").append(request.getAttribute("workFunctionInfo")) 
+        		;
+        	
+            request.setAttribute("sqlAdd", sqlAdd.toString()) ;
+            request.setAttribute("titleInfo", title.toString()) ;
     		%>
     	<ecom:webQuery name="critList" nativeSql="
     	select id,code,name from vocqualityestimationcrit where kind_id=${param.estimationKind} and parent_id is null order by code
     	"/>
     		<%
     		List critList=(List)request.getAttribute("critList") ;
-    		StringBuilder sql = new StringBuilder() ;
-    		for (int i=0;i<critList.size();i++) {
-    			WebQueryResult wqr = (WebQueryResult)critList.get(i) ;
-    			sql.append(",max(case when vqec.id = '").append(wqr.get1()).append("' then (vqem.mark) else 0 end) as f").append(i+5).append("_def1") ;
-    		}
-    		request.setAttribute("critSql", sql.toString()) ;
     		request.setAttribute("countCrit", ""+critList.size()) ;
+        	//String sql = 
+        	if (typeReport!=null&&typeReport.equals("1")) {
+        		StringBuilder sql = new StringBuilder() ;
+        		for (int i=0;i<critList.size();i++) {
+        			WebQueryResult wqr = (WebQueryResult)critList.get(i) ;
+        			sql.append(",max(case when vqec.id = '").append(wqr.get1()).append("' then (vqem.mark) else 0 end) as f").append(i+5).append("_def1") ;
+        		}
+        		request.setAttribute("critSql", sql.toString()) ;
     	%>
     	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select qec.id
@@ -186,7 +203,7 @@ order by ${orderBySql}
 "
     	/>
     	
-    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи</h2> 
+    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2> 
     	<table border="1px solid">
            <tr>
          		<th rowspan="2">#</th>
@@ -227,6 +244,206 @@ order by ${orderBySql}
          	%>
     	</table>
     	<%
+    	
+        	} else if (typeReport!=null && (typeReport.equals("2")||typeReport.equals("3"))) {
+        		StringBuilder sql = new StringBuilder() ;
+        		for (int i=0;i<critList.size();i++) {
+        			WebQueryResult wqr = (WebQueryResult)critList.get(i) ;
+        			sql.append(",round(cast(avg(case when vqec.id = '").append(wqr.get1()).append("' then vqem.mark else null end) as numeric),2) as f").append(i+5).append("_def1") ;
+        		}
+        		request.setAttribute("critSql", sql.toString()) ;
+        		if (typeReport.equals("2")) {
+        			request.setAttribute("groupBy", "wf.id,wml.name ,vwf.name,wpat.lastname, wpat.firstname,wpat.middlename") ;
+        			request.setAttribute("nameFldId", "wf.id") ;
+        			request.setAttribute("nameFld", "vwf.name ||' '||wpat.lastname ||' ' || wpat.firstname||' '||wpat.middlename ||' '|| 	wml.name") ;
+        			request.setAttribute("nameTitle", "ФИО врача/отделение") ;
+        			request.setAttribute("orderBySql", "wpat.lastname, wpat.firstname,wpat.middlename") ;
+        		} else if (typeReport.equals("3")) {
+        			request.setAttribute("groupBy", "wml.id,wml.name ") ;
+        			request.setAttribute("nameFldId", "wml.id") ;
+        			request.setAttribute("nameFld", "wml.name") ;
+        			request.setAttribute("nameTitle", "ФИО врача/отделение") ;
+        			request.setAttribute("orderBySql", "wml.name") ;
+        		}
+%>
+
+    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	nativeSql="select ${nameFldId}
+,${nameFld} as f2_dep_doctor
+,count(distinct qe.id) as f3_cntExp
+${critSql}
+,round(cast(sum (vqem.mark)/count(vqec.id) as numeric),2) as f5_average
+from qualityestimationcard qec
+left join vocidc10 mkb on mkb.id=qec.idc10_id
+left join workfunction wf on wf.id=qec.doctorcase_id
+left join worker w on w.id=wf.worker_id
+left join mislpu wml on wml.id=w.lpu_id
+left join patient wpat on wpat.id=w.person_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+left join qualityestimation qe on qe.card_id=qec.id
+left join qualityestimationcrit qecr on qecr.estimation_id=qe.id
+left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id
+left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  
+left join medcase sls on sls.id=qec.medcase_id
+left join medcase sls2 on sls2.id=sls.parent_id
+left join patient pat on pat.id=sls.patient_id
+left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)
+
+where  qec.createDate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
+and qec.kind_id='${param.estimationKind}'
+${sqlAdd}
+group by ${groupBy} 
+order by ${orderBySql}
+"
+    	/>
+    	
+    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2> 
+    	<table border="1px solid">
+           <tr>
+         		<th rowspan="2">#</th>
+         		<th rowspan="2">${nameTitle}</th>
+         		<th rowspan="2">Кол-во экспертиз</th>
+         		<th colspan="${countCrit}">Критерии оценки качества медицинской помощи (оценка в баллах от 0 до 1,0)</th>
+         		<th rowspan="2">Интегрированная оценка качества оказания мед. помощи</th>
+         	</tr>
+         	<tr>
+         	<%
+    		for (int i=0;i<critList.size();i++) {
+    			WebQueryResult wqr = (WebQueryResult)critList.get(i) ;
+    			out.print("<th>") ;out.print(wqr.get2()) ;out.print(" ") ;out.print(wqr.get3()) ;out.print("</th>") ;
+    		}
+ 	
+         	%>
+         	</tr>
+         	<%
+         	List card_list = (List) request.getAttribute("card_list") ;
+    		for (int i=0;i<card_list.size();i++) {
+    			WebQueryResult wqr = (WebQueryResult)card_list.get(i) ;
+    			out.print("<tr>") ;
+    			out.print("<td>");
+    			out.print(i+1);
+    			out.print("</td>") ;
+    			
+    			for (int j=1;j<critList.size()+4;j++) {
+    				out.print("<td>") ;
+    				Object value = PropertyUtil.getPropertyValue(wqr, ""+(j+1)) ;
+    				out.print(value) ;
+    				out.print("</td>") ;
+    			}
+    			out.print("</tr>") ;
+    		}
+ 	
+         	%>
+    	</table>
+    	<%
+    	
+        	} else if (typeReport!=null && (typeReport.equals("4"))) {
+        		%>
+            	<ecom:webQuery name="cntCards" nativeSql="
+select count(distinct qe.id) as f1_cntExp
+, count(distinct qe.id) - count(distinct case when vqem.mark='1' then null else qe.id end) as f4_cntExp
+
+from qualityestimationcard qec
+left join vocidc10 mkb on mkb.id=qec.idc10_id
+left join workfunction wf on wf.id=qec.doctorcase_id
+left join worker w on w.id=wf.worker_id
+left join mislpu wml on wml.id=w.lpu_id
+left join patient wpat on wpat.id=w.person_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+left join qualityestimation qe on qe.card_id=qec.id
+left join qualityestimationcrit qecr on qecr.estimation_id=qe.id
+left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id
+left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  
+left join medcase sls on sls.id=qec.medcase_id
+left join medcase sls2 on sls2.id=sls.parent_id
+left join patient pat on pat.id=sls.patient_id
+left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)
+
+where  qec.createDate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
+and qec.kind_id='${param.estimationKind}'
+${sqlAdd}
+            	"/>
+            		<%
+            		List cntCards=(List)request.getAttribute("cntCards") ;
+        		if (cntCards.size()>0) {
+        			WebQueryResult wqr = (WebQueryResult)cntCards.get(0) ;
+        			request.setAttribute("cntCards_del", wqr.get1()) ;
+        			request.setAttribute("cntCards_view", wqr.get1()) ;
+        			request.setAttribute("cntCards_view_no_def", wqr.get2()) ;
+        		} else {
+        			request.setAttribute("cntCards_del", "1") ;
+        			request.setAttribute("cntCards_view", "0") ;
+        			request.setAttribute("cntCards_view_no_def", "0") ;
+        		}
+%>
+
+    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	nativeSql="select vqec.id as f1_name_id
+    	,vqec.code as f2_cntExp
+    	,vqec.name as f3_name_crit
+,count(distinct case when vqem.mark='1' then null else qec.id end) as f4_cntExp
+,round(cast((100*count(distinct case when vqem.mark='1' then null else qec.id end)/'${cntCards_del}') as numeric),2) as f5_cntExp
+,round(cast(avg (vqem.mark) as numeric),2) as f6_average
+from qualityestimationcard qec
+left join vocidc10 mkb on mkb.id=qec.idc10_id
+left join workfunction wf on wf.id=qec.doctorcase_id
+left join worker w on w.id=wf.worker_id
+left join mislpu wml on wml.id=w.lpu_id
+left join patient wpat on wpat.id=w.person_id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+left join qualityestimation qe on qe.card_id=qec.id
+left join qualityestimationcrit qecr on qecr.estimation_id=qe.id
+left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id
+left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  
+left join medcase sls on sls.id=qec.medcase_id
+left join medcase sls2 on sls2.id=sls.parent_id
+left join patient pat on pat.id=sls.patient_id
+left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)
+
+where  qec.createDate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
+and qec.kind_id='${param.estimationKind}'
+${sqlAdd}
+group by vqec.id ,vqec.code,vqec.name
+order by vqec.code
+"
+    	/>
+    	
+    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2>
+    	<h3>Кол-во проведенных экспертиз: ${cntCards_view}</h3>
+    	<h3>из них без дефектов: ${cntCards_view_no_def}</h3>
+    	 
+    	<table border="1px solid">
+           <tr>
+         		<th>Код</th>
+         		<th>Наименование дефекта</th>
+         		<th>кол-во выявленных дефектов</th>
+         		<th>% от кол-ва проведенных экспертиз</th>
+         		<th>Показатель качества (в баллах)</th>
+         	</tr>
+         	<%
+         	List card_list = (List) request.getAttribute("card_list") ;
+    		for (int i=0;i<card_list.size();i++) {
+    			WebQueryResult wqr = (WebQueryResult)card_list.get(i) ;
+    			out.print("<tr>") ;
+    			out.print("<td>");
+    			out.print(i+1);
+    			out.print("</td>") ;
+    			
+    			for (int j=2;j<6;j++) {
+    				out.print("<td>") ;
+    				Object value = PropertyUtil.getPropertyValue(wqr, ""+(j+1)) ;
+    				out.print(value) ;
+    				out.print("</td>") ;
+    			}
+    			out.print("</tr>") ;
+    		}
+ 	
+         	%>
+    	</table>
+
+
+<%        		
+        	}
     	} else {
     		%>
          	<i>Выберите параметры</i>

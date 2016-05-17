@@ -11,7 +11,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-    <msh:title mainMenu="LaboratoryJournal" title="Забор биоматериала для лабораторных исследований" />
+    <msh:title mainMenu="LaboratoryJournal" title="Передача биоматериала для лабораторных исследований в лабораторию" />
    
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -24,13 +24,27 @@
   	
   	String typeIntake =ActionUtil.updateParameter("PrescriptJournalTransfer","typeIntake","1", request) ;
   	String typeTransfer =ActionUtil.updateParameter("PrescriptJournalTransfer","typeTransfer","2", request) ;
-    
+  	String typeDate =ActionUtil.updateParameter("PrescriptJournalTransfer","typeDate","1", request) ;
+
   	%>
   	  <msh:form  action="/pres_journal_intake_transfer.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
+            <msh:row>
+        <td class="label" title="Искать по дате (typeDate)"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
+        	<input type="radio" name="typeDate" value="1"> направления
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
+        	<input type="radio" name="typeDate" value="2"> забора
+        </td>
+      	<td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
+        	<input type="radio" name="typeDate" value="3"> передачи в лабораторию
+        </td>
+     </msh:row>
+      
       <msh:row>
         <td class="label" title="Забор материала (typeIntake)" colspan="1"><label for="typeIntakeame" id="typeIntakeLabel">Забор:</label></td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();">
@@ -89,6 +103,7 @@
     <script type='text/javascript'>
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
     //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
+    checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
     function checkfrm() {
     	document.forms[0].submit() ;
@@ -134,6 +149,14 @@
 	} else if (typeTransfer!=null && typeTransfer.equals("3")) {
 		sqlAdd.append(" and p.transferDate is null and p.cancelDate is not null ") ;
 	}
+    if (typeDate!=null&&typeDate.equals("1")) {
+    	request.setAttribute("dateSql", "p.planStartDate") ;
+    } else if (typeDate!=null&&typeDate.equals("2")) {
+    	request.setAttribute("dateSql", "p.intakeDate") ;
+    } else {
+    	request.setAttribute("dateSql", "p.transferDate") ;
+    }
+
 	sqlAdd.append(ActionUtil.getValueInfoById("select id, name from mislpu where id=:id"
 				, "отделение","deparment","ml.id", request)) ;
 		sqlAdd.append(ActionUtil.getValueInfoById("select id, name from vocPrescriptType where id=:id"
@@ -215,7 +238,7 @@
     left join MisLpu ml on ml.id=w.lpu_id
     left join vocprescripttype vpt on vpt.id=p.prescripttype_id
     where p.dtype='ServicePrescription'
-    and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
+    and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     and coalesce(p.department_id,w.lpu_id)='${param.department}' 
     and vst.code='LABSURVEY' 
@@ -225,7 +248,7 @@
  
     order by pat.lastname,pat.firstname,pat.middlename
     "/>
-    
+    <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
         <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19">
         <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
@@ -297,7 +320,7 @@
     left join MisLpu ml on ml.id=w.lpu_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     where p.dtype='ServicePrescription'
-    and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
+    and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     and coalesce(p.department_id,w.lpu_id)='${param.department}' 
     and vst.code='LABSURVEY' 
