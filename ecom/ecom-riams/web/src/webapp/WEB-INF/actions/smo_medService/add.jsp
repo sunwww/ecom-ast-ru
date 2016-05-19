@@ -35,7 +35,7 @@
         <table id="otherMedServices" border="1px solid">
         	
         </table>
-         <input type="button" value="Сохранить" onclick="saveService()">
+         <input type="button" value="Сохранить" onclick="this.value='Сохранение изменений ...'; this.disabled=true; saveService()" >
         
       </msh:panel>
     </form>

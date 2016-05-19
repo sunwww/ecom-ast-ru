@@ -1,3 +1,4 @@
+<%@page import="java.util.List"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -7,6 +8,15 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
+<ecom:webQuery name="cpquery" nativeSql="select cp.id from medcontract mc left join contractperson cp on cp.id=mc.customer_id where mc.id=${param.id} and cp.dtype='JuridicalPerson'"/>
+<% 
+List q = (List)request.getAttribute("cpquery") ;
+if (q.size()>0) {
+%>
+<script type="text/javascript">
+document.location.href = "entityView-contract_juridicalContract.do?id=${param.id}" ;
+</script>
+<%} %>
 		<msh:form action="/entitySaveGoView-contract_medContract.do" defaultField="contractNumber">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
