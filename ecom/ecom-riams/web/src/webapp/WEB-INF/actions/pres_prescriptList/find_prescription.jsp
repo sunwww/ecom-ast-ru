@@ -67,6 +67,7 @@
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
    ,case when mc.datestart is not null then p.id end as btnAnnul
+   ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f20dtintake
     from prescription p
     left join MedCase mc on mc.id=p.medcase_id
     left join Diary d on d.medcase_id=mc.id
@@ -105,6 +106,7 @@
 	      <msh:tableColumn columnName="Дата напр." property="11"/>
 	      <msh:tableColumn columnName="Отделение" property="15"  />
 	      <msh:tableColumn columnName="Забор" property="10"/>
+	      <msh:tableColumn columnName="Передача в лаб." property="20"/>
 	      <msh:tableColumn columnName="Код" property="4"/>
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о пациенте" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableColumn columnName="ФИО пациента" property="6"  />

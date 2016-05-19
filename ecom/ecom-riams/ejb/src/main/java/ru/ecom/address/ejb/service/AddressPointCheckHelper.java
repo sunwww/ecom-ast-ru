@@ -11,16 +11,22 @@ import java.util.TreeSet;
 public class AddressPointCheckHelper {
 
     public AddressPointCheck parsePoint(String aStr) {
-        StringBuilder houseNumber = new StringBuilder();
-        Character houseBuilding = null ;
+    	StringBuilder houseNumber = new StringBuilder();
+        StringBuilder houseBuilding = new StringBuilder();
         StringBuilder onlyChars = new StringBuilder();
+        boolean isBuilding = false ;
         for (char c : aStr.toCharArray()) {
+        	if (isBuilding) {
+        		houseBuilding.append(c) ;
+        	} else {
             if(Character.isUpperCase(c)) {
-                if(houseBuilding==null) {
-                    houseBuilding = c ;
+                if(houseBuilding.length()==0) {
+                    houseBuilding.append(c) ;
                 } else {
                     throw new IllegalArgumentException("Корпус дома обозначается только одной заглавной буквой") ;
                 }
+            }else if (c=='к') {
+            	isBuilding=true ;
             } else {
                 houseNumber.append(c) ;
                 if(!Character.isDigit(c)) {
@@ -28,11 +34,15 @@ public class AddressPointCheckHelper {
                 }
             }
         }
+      }
 
         if(onlyChars.length()>0) {
+        	
             String o = onlyChars.toString() ;
+            System.out.println("----"+o) ;
             o = checkOnlyOneOrNo(o, "влд") ;
             o = checkOnlyOneOrNo(o, "стр") ;
+            o = checkOnlyOneOrNo(o, "к") ;
             o = checkOnlyOneOrNo(o, "/") ;
             if(o.length()>0) {
                 throw new IllegalArgumentException("Не допускается ввод "+o) ;
@@ -141,7 +151,7 @@ public class AddressPointCheckHelper {
     			for(int i=from; i<=to; i++) {
     				ret.add(new AddressPointCheck(
     						houseAndBuildingPointCheck.getNumber()
-    						, houseAndBuildingPointCheck.getBuilding()
+    						, houseAndBuildingPointCheck.getBuilding().length()==0?null:houseAndBuildingPointCheck.getBuilding()
     						, String.valueOf(i)
     						)) ;
     			}

@@ -72,13 +72,14 @@ and v.dateStart is null"/>
       </msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/View">
-      <msh:section title="Исполненные визиты" guid="b5483338-a80a-45a8-881e-0f17c8e752d7">
+      <msh:section title="Доп. услуги" guid="b5483338-a80a-45a8-881e-0f17c8e752d7">
         <ecom:webQuery name="visits" nativeSql="
  select vis.id as visid, vis.dateStart as visdatestart
  ,vwf.name as vwfname 
 , pat.lastname || ' ' ||  pat.firstname || ' ' ||  pat.middlename as fio
 ,vr.name as vrname,vvr.name as vvrname,vss.name as vssname
-,list(distinct mkb.code||' '||vpd.name)
+,list(distinct mkb.code||' '||vpd.name) as mkb
+,list(ms.code||' '||ms.name) as service
 from MedCase vis
     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id
     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id   
@@ -91,6 +92,50 @@ from MedCase vis
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
     left join VocVisitResult vvr on vvr.id=vis.visitResult_id
 
+left join medservice ms on ms.id=vis.medservice_id
+where vis.parent_id='${param.id}'
+and vis.DTYPE='ServiceMedCase'    
+and vis.dateStart is not null 
+group by vis.id, vis.dateStart,vwf.name, pat.lastname,  pat.firstname,  pat.middlename
+,vr.name ,vss.name,vvr.name
+order by vis.dateStart
+        " guid="e0eb2cf2-270c-43ac-9bae-f59ec0866558" />
+        <msh:table idField="1" name="visits" viewUrl="entityShortView-smo_visit.do" action="entityParentView-smo_visit.do" guid="29d25014-7b5a-4030-846b-52223513c331">
+          <msh:tableColumn columnName="Номер" identificator="false" property="1" guid="b054f045-3162-4186-83a9-6b5cabdebc17" />
+          <msh:tableColumn columnName="Дата" property="2" guid="9a7bc699-7753-48ea-a2b5-82f2d4abb019" />
+          <msh:tableColumn columnName="Раб. функция врача" property="3" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="ФИО врача" property="4" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Цель визита" property="5" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Результат" property="6" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Поток" property="7" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Диагноз" property="8" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Услуги" property="9" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          
+        </msh:table>
+      </msh:section>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/View">
+      <msh:section title="Исполненные визиты" guid="b5483338-a80a-45a8-881e-0f17c8e752d7">
+        <ecom:webQuery name="visits" nativeSql="
+ select vis.id as visid, vis.dateStart as visdatestart
+ ,vwf.name as vwfname 
+, pat.lastname || ' ' ||  pat.firstname || ' ' ||  pat.middlename as fio
+,vr.name as vrname,vvr.name as vvrname,vss.name as vssname
+,list(distinct mkb.code||' '||vpd.name) as mkb
+,list(ms.code||' '||ms.name) as service
+from MedCase vis
+    left join WorkFunction wf on vis.workFunctionExecute_id = wf.id
+    left join VocWorkFunction vwf on vwf.id=wf.workFunction_id   
+    left join Worker w on wf.worker_id = w.id   
+    left join Patient pat on w.person_id = pat.id  
+    left join VocReason vr on vis.visitReason_id = vr.id 
+    left join VocServiceStream vss on vss.id=vis.serviceStream_id
+    left join Diagnosis diag on diag.medcase_id=vis.id
+    left join VocIdc10 mkb on mkb.id=diag.idc10_id
+    left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+    left join VocVisitResult vvr on vvr.id=vis.visitResult_id
+left join MedCase smc on smc.parent_id=vis.id and vis.dtype='ServiceMedCase'
+left join medservice ms on ms.id=smc.medservice_id
 where vis.parent_id='${param.id}'
 and vis.DTYPE='Visit'    
 and vis.dateStart is not null 
@@ -107,6 +152,7 @@ order by vis.dateStart
           <msh:tableColumn columnName="Результат" property="6" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
           <msh:tableColumn columnName="Поток" property="7" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
           <msh:tableColumn columnName="Диагноз" property="8" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Услуги" property="9" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
           
         </msh:table>
       </msh:section>
@@ -119,7 +165,8 @@ order by vis.dateStart
  ,vwf.name as vwfname 
 , pat.lastname || ' ' ||  pat.firstname || ' ' ||  pat.middlename as fio
 ,vr.name as vrname,vvr.name as vvrname,vss.name as vssname
-,list(distinct mkb.code||' '||vpd.name)
+,list(distinct mkb.code||' '||vpd.name) as mkb
+,list(ms.code||' '||ms.name) as service
 from MedCase vis
     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id
     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id   
@@ -131,6 +178,8 @@ from MedCase vis
     left join VocIdc10 mkb on mkb.id=diag.idc10_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
     left join VocVisitResult vvr on vvr.id=vis.visitResult_id
+left join MedCase smc on smc.parent_id=vis.id and vis.dtype='ServiceMedCase'
+left join medservice ms on ms.id=smc.medservice_id
 
 where vis.parent_id='${param.id}'
 and vis.DTYPE='ShortMedCase'    
@@ -148,6 +197,7 @@ order by vis.dateStart
           <msh:tableColumn columnName="Результат" property="6" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
           <msh:tableColumn columnName="Поток" property="7" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
           <msh:tableColumn columnName="Диагноз" property="8" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
+          <msh:tableColumn columnName="Услуги" property="9" guid="691dbb0c-f2e5-44ca-8746-417c3a585646" />
           
         </msh:table>
       </msh:section>
@@ -178,6 +228,11 @@ order by vis.dateStart
 		<msh:sideLink params="id" action="/js-smo_spo-reopenSpo" name="Открыть СПО" title="Открыть СПО" confirm="Открыть СПО?" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Reopen" />
 		<msh:sideLink params="id" action="/js-smo_spo-closeSpo" name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" guid="d84659f7-7ea9-4400-a11c-c83e7d5c578d" key="ALT+5" roles="/Policy/Mis/MedCase/Spo/Close" />
       	<tags:mis_choiceSpo hiddenNewSpo="1" method="unionSpos" methodGetPatientByPatient="getOpenSpoBySmo" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Объединить с другим СПО" />
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-smo_spo-cost_case.do?short=Short&id=${param.id}','.do')" name='Цена' title="Просмотр стоимости услуг"         	roles="/Policy/Mis/Contract/Journals/AnalisisMedServices" />
+            <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуги"  
+    	styleId="viewShort" action="/javascript:getDefinition('entityParentList-smo_medService.do?short=Short&id=${param.id}','.do')"  title='Мед.услуги'
+    	/>
+         
         
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="fbdebbf4-8006-4417-b7df-f23dcf298f62">

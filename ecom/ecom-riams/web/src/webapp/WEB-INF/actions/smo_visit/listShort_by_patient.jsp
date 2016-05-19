@@ -23,8 +23,12 @@
   	<ecom:webQuery name="listByPatient" nativeSql="select mc.id
 ,mc.dateStart as datstart, 
 vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as wfExecute,
-vpd.name as vpdname ,mkb.code,ds.name as dsname,prot.record as protrecord, vr.name as vrname, vvr.name as vvrname
+list(vpd.name ||' '||mkb.code||' '||ds.name) as dsname
+,list(prot.record) as protrecord, vr.name as vrname, vvr.name as vvrname
+,list(ms.code||' '||ms.name) as mslist
  from medcase mc 
+ left join medcase smc on smc.parent_id=mc.id and smc.dtype='ServiceMedCase'
+ left join medservice ms on ms.id=smc.medservice_id
 left join vocreason vr on vr.id=mc.visitreason_id
 left join vocvisitresult vvr on vvr.id = mc.visitresult_id
 left join diagnosis ds on ds.medcase_id=mc.id
@@ -35,19 +39,21 @@ left join workFunction wf on wf.id=mc.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
-where mc.patient_id='${param.id}' and (mc.DTYPE='Visit' or mc.DTYPE='ShortMedCase') and mc.dateStart is not null and (mc.noActuality is null or cast(mc.noActuality as integer)=0)
+where mc.patient_id='${param.id}' and (mc.DTYPE='Visit' or mc.DTYPE='ShortMedCase') and mc.dateStart is not null and (mc.noActuality is null or mc.noActuality='0')
+group by mc.id
+,mc.dateStart , 
+vwf.name, wp.lastname, wp.firstname,wp.middlename , vr.name , vvr.name
 order by mc.dateStart desc, mc.timeExecute desc
 "/>
     <msh:table viewUrl="entityShortView-smo_visit.do" name="listByPatient" action="entityView-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата приема" property="2" />
       <msh:tableColumn columnName="Специалист" property="3"/>
-      <msh:tableColumn columnName="Приоритет диаг." property="4"/>
-      <msh:tableColumn columnName="Код МКБ" property="5"/>
-      <msh:tableColumn columnName="Диагноз" property="6"/>
-      <msh:tableColumn columnName="Заключение" property="7" cssClass="preCell"/>
-      <msh:tableColumn columnName="Цель визита" property="8"/>
-      <msh:tableColumn columnName="Результат" property="9"/>
+      <msh:tableColumn columnName="Диагноз" property="4" role="/Policy/Mis/MedCase/Diagnosis/View"/>
+      <msh:tableColumn columnName="Услуги" property="8" role="/Policy/Mis/MedCase/MedService/View"/>
+      <msh:tableColumn columnName="Заключение" property="5" cssClass="preCell" role="/Policy/Mis/MedCase/Protocol/View"/>
+      <msh:tableColumn columnName="Цель визита" property="6"/>
+      <msh:tableColumn columnName="Результат" property="7"/>
       
     </msh:table>
   </tiles:put>

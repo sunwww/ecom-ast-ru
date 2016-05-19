@@ -100,11 +100,14 @@
 	        <td colspan="1" onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="4">  реестр по ДРУГИМ
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="5"  >  свод по отделениям
+	        <td colspan="1" onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="5">  реестр по ИНОГ.ПОЛИСАМ
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';">
-	        	<input type="radio" name="typeView" value="6">  все
+	        	<input type="radio" name="typeView" value="6"  >  свод по отделениям
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="7">  все
 	        </td>
         </msh:row>
         <msh:row>
@@ -146,7 +149,7 @@
     	} else if (typeDischargePatientIs!=null && typeDischargePatientIs.equals("2")) {
     		request.setAttribute("isDischarge", " and hmc.dateFinish is null") ;
     	} 
-    	if (view!=null && (view.equals("1") || view.equals("6"))) {
+    	if (view!=null && (view.equals("1") || view.equals("7"))) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -227,7 +230,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
     </msh:section>
     
-    <%} if (view!=null && (view.equals("2") || view.equals("6"))) {
+    <%} if (view!=null && (view.equals("2") || view.equals("7"))) {
     	%>
     
     <msh:section title="По безполисным по состоящим или направленным в отделение по ОМС+ДРУГИМ. ${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -311,7 +314,7 @@ order by coalesce(ml.name,ml1.name),vss.name,pat.lastname,pat.firstname,pat.midd
     
     </msh:section>
     
-    <%} if (view!=null && (view.equals("3") || view.equals("6"))) {
+    <%} if (view!=null && (view.equals("3") || view.equals("7"))) {
     	%>
     <msh:section>
     <msh:sectionTitle>Не была произведена проверка по базе фонда. ${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}
@@ -398,7 +401,7 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
 
     </msh:section>
         <%	}
-    if (view!=null && (view.equals("4") || view.equals("6"))) {
+    if (view!=null && (view.equals("4") || view.equals("7"))) {
     	%>
     
     <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
@@ -481,7 +484,92 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     </msh:section>
     
     <%} 
-    if (view==null || view.equals("5") || view.equals("6")) { 
+    if (view!=null && (view.equals("5") || view.equals("7"))) {
+    	%>
+    
+    <msh:section title="${infoTypePat} ${infoTypeEmergency} ${infoTypeDuration}. Период с ${param.dateBegin} по ${dateEnd}. ${infoSearch}">
+    
+    <msh:sectionContent>
+    <ecom:webQuery name="journal_hosp" nativeSql="
+    
+    select 
+    hmc.id as hospid
+    , dep.name as depname
+    , vss.name as vssname 
+    , hmc.dateStart as hospdateStart
+    , ss.code as statcard
+    , vas.name as vasname
+    , pat.lastname||' '||pat.firstname||' '||pat.middlename || ' г.р. '|| pat.birthday as pbirthday
+    , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
+    when pvss.omccode='И0' then 'ИНОГ' else '' end as typePatient
+    , case when (select count(*) from medpolicy mp where
+     mp.patient_id=pat.id and
+    mp.dtype like 'MedPolicyOmc%' and mp.actualDateFrom<=hmc.dateStart and
+    (mp.actualDateTo is null or mp.actualDateTo>=hmc.dateStart)
+    )>0 then 'Есть' else '' end  as policy
+    ,case when hmc.emergency='1' then 'Э' else 'П' end as emer
+    ,sum(
+    	  case 
+			when (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)=0 then 1 
+			when vht.code='DAYTIMEHOSP' then ((coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)+1) 
+			else (coalesce(hmc.dateFinish,CURRENT_DATE)-hmc.dateStart)
+		  end
+    	
+    	) as sum2
+    ,hmc.dateFinish as hospdateFinish
+from Medcase hmc 
+left join StatisticStub ss on ss.id=hmc.statisticStub_id 
+left join MisLpu dep on dep.id=hmc.department_id 
+left join vocservicestream vss on vss.id=hmc.servicestream_id 
+left join patient pat on pat.id=hmc.patient_id 
+left join vocAdditionStatus vas on vas.id=pat.additionStatus_id 
+left join medcase_medpolicy pol on pol.medCase_id=hmc.id
+left join medpolicy mp on mp.id=pol.policies_id
+left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
+left join VocHospType vht on vht.id=hmc.hospType_id
+left join address2 adr on adr.addressId = pat.address_addressId
+ where (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy') 
+      and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
+      and hmc.DTYPE='HospitalMedCase'
+ 
+
+and hmc.deniedHospitalizating_id is null
+and mp.dtype = 'MedPolicyOmcForeign'
+${departmentSql}
+${addPat} ${addEmergency}  ${isDischarge}
+${addDuration1}
+group by hmc.id, dep.name, vss.name, hmc.dateStart, ss.code 
+    , vas.name , pat.id , pat.lastname,pat.firstname,pat.middlename 
+    , pat.birthday ,ok.voc_code,pvss.omccode,hmc.emergency
+    ,hmc.dateFinish
+ 
+order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
+
+
+        "  />
+        <msh:table name="journal_hosp"
+        viewUrl="entitySubclassShortView-mis_medCase.do" 
+        action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="#" property="sn"/>
+            <msh:tableColumn columnName="Вид оплаты" property="3"/>
+            <msh:tableColumn columnName="Показания" property="10"/>
+            <msh:tableColumn columnName="Отделение" property="2"/>
+            <msh:tableColumn columnName="№ стат. карты" property="5"/>
+            <msh:tableColumn columnName="Дата пост." property="4"/>
+            <msh:tableColumn columnName="Дата выписки" property="12"/>
+            <msh:tableColumn columnName="К.дни" property="11"/>
+            <msh:tableColumn columnName="Тип" property="8"/>
+            <msh:tableColumn columnName="ФИО пациента" property="7"/>
+            <msh:tableColumn columnName="Наличие страх. документов" property="9"/>
+            
+        </msh:table>
+    </msh:sectionContent>
+
+    </msh:section>
+    
+    <%} 
+    if (view==null || view.equals("6") || view.equals("7")) { 
     %>
     <msh:section title="Свод">
     <msh:sectionContent>

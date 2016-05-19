@@ -30,10 +30,15 @@
     request.setAttribute("serStreamId",p.get4()) ;
   %>
   <msh:section>
+  <msh:sectionTitle>
+  <input type="button" onclick="showACCOUNTGetAccount()" value="ПРИВЯЗАТЬ К СЧЕТУ"/>
+  </msh:sectionTitle>
+  </msh:section>
+  <msh:section>
   <msh:sectionTitle>Койко-дни не опред.</msh:sectionTitle>
   <msh:sectionContent>
  
-      <ecom:webQuery name="list" nativeSql="
+      <ecom:webQuery name="list" nameFldSql="list_bedroom_no" nativeSql="
 select slo.id,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo
       ,list(pp.code||' '||pp.name) as ppname
       ,
@@ -79,7 +84,7 @@ where slo.parent_id='${param.id}'
   <msh:sectionTitle>Койко-дни</msh:sectionTitle>
   <msh:sectionContent>
  
-      <ecom:webQuery name="list" nativeSql="
+      <ecom:webQuery name="list" nameFldSql="list_bedroom_yes" nativeSql="
 select slo.id,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo
       ,list(pp.code||' '||pp.name) as ppname
       ,
@@ -146,11 +151,12 @@ where slo.parent_id='${param.id}'
       <msh:tableColumn columnName="Специалист" property="3" />
     </msh:table>
   </msh:sectionContent>
-  <msh:sectionTitle>Диагностика</msh:sectionTitle>
+  </msh:section>
+  <msh:section title="Диагностика (Визиты)" shortList="js-smo_visit-infoShortByPatient.do?short=Short&amp;id=${patient_id}">
   <msh:sectionContent>
-      <ecom:webQuery name="list1" nativeSql="
+      <ecom:webQuery name="list1" nameFldSql="list_diag_" nativeSql="
       select
-      vis.id,vis.datestart||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
+      vis.id,to_char(vis.datestart,'dd.mm.yyyy')||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
       ,pp.code||' '||pp.name as ppname
       ,pp.cost as ppcost
       from medcase vis
@@ -182,11 +188,13 @@ where slo.parent_id='${param.id}'
       <msh:tableColumn columnName="Сумма" property="4" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
+  </msh:section>
+  <msh:section>
   <msh:sectionTitle>Диагностика без соответствия</msh:sectionTitle>
   <msh:sectionContent>
       <ecom:webQuery name="list1" nativeSql="
       select
-      vis.id,vis.datestart||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
+      vis.id,to_char(vis.datestart,'dd.mm.yyyy')||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
       from medcase vis
       left join workfunction wf on wf.id=vis.workfunctionexecute_id
       left join vocworkfunction vwf on vwf.id=wf.workfunction_id
@@ -213,11 +221,13 @@ where slo.parent_id='${param.id}'
       <msh:tableColumn columnName="Сумма" property="4" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
+  </msh:section>
+  <msh:section>
   <msh:sectionTitle>Лаборатория</msh:sectionTitle>
   <msh:sectionContent>
       <ecom:webQuery name="list" nativeSql="
 select
-      vis.id,vis.datestart||' - '||ms.code||'. '||ms.name,vwf.name||' '||wp.lastname as sloinfo
+      vis.id,to_char(vis.datestart,'dd.mm.yyyy')||' - '||ms.code||'. '||ms.name,vwf.name||' '||wp.lastname as sloinfo
       ,pp.code||' '||pp.name as ppname
       ,pp.cost as ppcost
       from medcase vis
@@ -245,11 +255,13 @@ select
       <msh:tableColumn columnName="Цена" property="5" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
+  </msh:section>
+  <msh:section>
   <msh:sectionTitle>Операции</msh:sectionTitle>
   <msh:sectionContent>
       <ecom:webQuery name="list" nativeSql="
       select
-      so.id,so.operationdate||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
+      so.id,to_char(so.operationdate,'dd.mm.yyyy')||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo
       ,pp.code||' '||pp.name as ppname
       ,pp.cost as ppcost
       from SurgicalOperation so
@@ -274,11 +286,13 @@ select
       <msh:tableColumn columnName="Сумма" property="4" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
+  </msh:section>
+  <msh:section>
   <msh:sectionTitle>Анестезия</msh:sectionTitle>
   <msh:sectionContent>
       <ecom:webQuery name="listA" nativeSql="
       select
-      so.id,so.operationdate
+      so.id,to_char(so.operationdate,'dd.mm.yyyy')
       ||' - '||coalesce(vam.name,'')
       ||' - '||coalesce(va.name,'')
       ||' - '||coalesce(aso.duration,'0')
@@ -311,7 +325,8 @@ select
       <msh:tableColumn columnName="Сумма" property="4" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
-  <msh:sectionTitle>ДОП.УСЛУГИ</msh:sectionTitle>
+  </msh:section>
+  <msh:section title="ДОП.УСЛУГИ" createUrl="js-smo_medService-add.do?id=${param.id}" createRoles="/Policy/Mis/MedCase/MedService/Create">
   <msh:sectionContent>
       <ecom:webQuery name="list" nativeSql="
       select

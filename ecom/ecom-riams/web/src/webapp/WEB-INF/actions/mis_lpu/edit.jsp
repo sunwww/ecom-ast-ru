@@ -306,6 +306,7 @@
         <msh:sideLink roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Create" key="ALT+5" params="id" action="/entityParentPrepareCreate-cal_dayPattern" name="Шаблон дня календаря" title="Добавить шаблон дня календаря" guid="2f18fed4-7259-479a-97df-ff073fc4569d" />
       </msh:sideMenu>
       <msh:sideMenu title="Показать" guid="d07f7449-b875-45c6-8007-0867170d328d">
+      <msh:sideLink roles="/Policy/Mis/Patient/ViewInfoArea" action="/js-mis_lpuArea-print_lpu_by_address.do?id=${param.id}" name="Печать по адресам пациентов для выборов"/>
         <msh:sideLink params="id" roles="/Policy/Mis/MedService/View" action="/js-mis_lpu-journal_medservice" title="Список услуг по отделению" name="Услуги по отделению" />
         <msh:sideLink key="ALT+5" params="id" roles="/Policy/Mis/Licence/View" action="/entityParentList-mis_licence" title="Список лицензий" name="Лицензии" guid="c454da7d-9684-4d70-ad84-d830308e5bd4" />
         <msh:sideLink key="ALT+6" params="id" action="/js-mis_worker-all" title="Список сотрудников" name="Сотрудников" guid="92fa6023-206c-40c6-974f-155ccc7689e1" roles="/Policy/Mis/Worker/Worker/View" />

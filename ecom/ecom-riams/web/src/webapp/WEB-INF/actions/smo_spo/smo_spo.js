@@ -1,3 +1,6 @@
+function cost_case(aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_spo/cost_case.jsp") ;
+}
 /* Удалить пустые СПО */
 function deleteEmptySpo(aForm,aCtx) {
 	//try {

@@ -135,12 +135,15 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			d.setMedCase(m) ;
 			theManager.persist(d) ;
 		}
+		Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
 		//}
 		
 		JSONArray params = obj.getJSONArray("params");
 		StringBuilder sb = new StringBuilder() ;
+		sb.append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()))
+			.append(" ").append(DateFormat.formatToTime(pres.getIntakeTime())).append("\n") ;
 		for (int i = 0; i < params.length(); i++) {
-			boolean isSave = true ;
+			//boolean isSave = true ;
 			JSONObject param = (JSONObject) params.get(i);
 			FormInputProtocol fip = new FormInputProtocol() ;
 			fip.setDocProtocol(d) ;

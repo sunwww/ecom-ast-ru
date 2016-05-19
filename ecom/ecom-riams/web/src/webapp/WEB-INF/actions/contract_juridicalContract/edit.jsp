@@ -95,50 +95,22 @@
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault
 			" name="serverPerson"/>
-				<msh:table name="serverPerson" viewUrl="entityParentView-contract_account.do?short=Short" 
-				
-				printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=printDogovogByNoPrePaidServicesMedServise"
-				action="entityParentPrepareCreate-contract_accountOperationAccrual.do"
-				
+				<msh:table name="serverPerson" action="js-contract_juridicalContract-account_group_by_patient.do"
+				viewUrl="js-contract_juridicalContract-account_group_by_patient.do?short=Short"
+				printUrl="js-contract_juridicalContract-account_print.do"
 				idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Информация" property="2"/>
 					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
 					<msh:tableColumn columnName="Дата окончания" property="4"/>
-					<msh:tableColumn columnName="кол-во неопл. услуг" property="5"/>
+					<msh:tableColumn columnName="кол-во услуг" property="5"/>
 					<msh:tableColumn columnName="сумма к оплате" property="6"/>
-					<msh:tableColumn columnName="сумма к оплате с учетом скидки" property="7"/>
 				</msh:table>
 			</msh:section>
 			<msh:section>
 			<msh:sectionTitle>Оплаченные счета 
-			<a onclick="getDefinition(&quot;js-contract_juridicalContract-list_accrual_service.do?short=Short&amp;id=${param.id}&quot;,event); " href="javascript:void(0);"><img width="14" height="14" title="Просмотр списка оплаченных учлуг" alt="Просмотр списка" src="/skin/images/main/view1.png">Просмотр списка оплаченных услуг</a>
 			</msh:sectionTitle>
 			<msh:sectionContent>
-			<ecom:webQuery nativeSql="select ca.id,
-			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
-			,sp.dateFrom,sp.dateTo,ca.balanceSum, ca.reservationSum
-			from ContractAccount ca
-			left join ServedPerson sp on ca.id = sp.account_id
-			left join ContractAccountMedService cams on cams.account_id=ca.id
-			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
-			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
-			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where ca.contract_id='${param.id}' and cao.id is not null
-			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
-			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
-			" name="serverPerson"/>
-				<msh:table name="serverPerson" action="entityParentView-contract_account.do" idField="1"
-				viewUrl="entityParentView-contract_account.do?short=Short" >
-					<msh:tableColumn columnName="#" property="sn"/>
-					<msh:tableColumn columnName="Счет" property="1"/>
-					<msh:tableColumn columnName="Информация" property="2"/>
-					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
-					<msh:tableColumn columnName="Дата окончания" property="4"/>
-					<msh:tableColumn columnName="Сумма баланса" property="5"/>
-					<msh:tableColumn columnName="из них зарезер." property="6"/>
-					
-				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
 			<msh:section title="Поддоговор">

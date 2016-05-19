@@ -25,6 +25,7 @@
   	
   	String typeResult =ActionUtil.updateParameter("PrescriptJournalDoc","typeResult","1", request) ;
   	String typeCabinet =ActionUtil.updateParameter("PrescriptJournalDoc","typeCabinet","1", request) ;
+  	String typeDate =ActionUtil.updateParameter("PrescriptJournalDoc","typeDate","3", request) ;
   	String username = LoginInfo.find(request.getSession(true)).getUsername() ;
   	ActionUtil.getValueBySql("select gwf.id,gwf.groupname from workfunction gwf left join workfunction wf on wf.group_id=gwf.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'", "group_id","group_name",request) ;
   	Object groupId = request.getAttribute("group_id") ;
@@ -42,6 +43,19 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';checkfrm();" >
         	<input type="radio" name="typeCabinet" value="2"> отдел
+        </td>
+     </msh:row>
+
+      <msh:row>
+        <td class="label" title="Искать по дате (typeDate)"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
+        	<input type="radio" name="typeDate" value="1"> направления
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="1">
+        	<input type="radio" name="typeDate" value="2"> забора
+        </td>
+      	<td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
+        	<input type="radio" name="typeDate" value="3"> передачи в лабораторию
         </td>
      </msh:row>
      
@@ -92,7 +106,7 @@
     <script type='text/javascript'>
     //checkFieldUpdate('typeIntake','${typeIntake}',1) ;
     //checkFieldUpdate('typeMaterial','${typeMaterial}',1) ;
-    //checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
+    checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('typeCabinet','${typeCabinet}',1) ;
     checkFieldUpdate('typeResult','${typeResult}',1) ;
     function checkfrm() {
@@ -127,7 +141,13 @@
   		request.setAttribute("beginDate", beginDate) ;
   		request.setAttribute("endDate", endDate) ;
     StringBuilder sqlAdd = new StringBuilder() ;
-    
+    if (typeDate!=null&&typeDate.equals("1")) {
+    	request.setAttribute("dateSql", "p.planStartDate") ;
+    } else if (typeDate!=null&&typeDate.equals("2")) {
+    	request.setAttribute("dateSql", "p.intakeDate") ;
+    } else {
+    	request.setAttribute("dateSql", "p.transferDate") ;
+    }
     if (typeResult!=null && typeResult.equals("1")) {
     	sqlAdd.append(" and p.medcase_id is null and p.cancelDate is null") ;
     } else if (typeResult!=null && typeResult.equals("2")) {
@@ -159,7 +179,8 @@
 		.append(" ").append(request.getAttribute("serviceInfo")) ;
 	
     request.setAttribute("sqlAdd", sqlAdd.toString()) ;
-    out.println(sqlAdd.toString())
+    request.setAttribute("titleInfo", title.toString()) ;
+    //out.println(sqlAdd.toString()) ;
     %>
     <msh:section>
     <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
@@ -213,7 +234,7 @@
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
     where p.dtype='ServicePrescription'
-    and p.transferDate between to_date('${beginDate}','dd.mm.yyyy') 
+    and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     and vst.code='LABSURVEY' 
     and p.transferdate is not null 
@@ -231,9 +252,7 @@
     
     "/>
     
-    <msh:sectionTitle>
-
-    </msh:sectionTitle>
+    <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
     <msh:sectionContent>
 	    <msh:table name="list" action="javascript:void(0)" idField="1" >
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
