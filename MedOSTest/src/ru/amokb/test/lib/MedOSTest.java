@@ -105,7 +105,7 @@ public abstract class MedOSTest implements ITest {
 	protected boolean logIn(String n, String p,int aTimeOut) throws Exception {
 		boolean result=true;
 		if(p=="") p="1";
-		try {
+	//	try {
 			WebElement username = findElement(By.id("username")) ; 
 			username.clear();
 			username.sendKeys(n);
@@ -115,30 +115,47 @@ public abstract class MedOSTest implements ITest {
 			findElement(By.id("enter")).click();
 			checkErrorMessage(aTimeOut);
 			System.out.println("Вход под "+n);
-		} catch(Exception e) { 
-			result=false;
-			System.out.println(e.getMessage());
-			throw new Exception("Ошибка входа под "+n);
+	//	} catch(Exception e) { 
+	//		result=false;
+	//		System.out.println(e.getMessage());
+	//		throw new Exception("Ошибка входа под "+n);
 			
-		}
+	//	}
 		return result;
 	}
 	  
 	protected void alertClick() throws Exception { alertClick(8); }
 	protected void alertClick(int aTimeOut) throws Exception {
 		try {
-			forceWait(aTimeOut);
+	//		forceWait(aTimeOut);
 			System.out.println("alert");
-			Alert alrt=driver.switchTo().alert();
-			System.out.println(alrt.getText());
-			alrt.accept();
-			checkErrorMessage();
+			driver.switchTo().alert().accept();
+			//System.out.println(alrt.getText());
+			//alrt.accept();
+			checkErrorMessage(2);
 		} catch (Exception e) {
-			 throw new Exception("No more alert.");
+			e.printStackTrace();
+			 throw new Exception("No more alert: "+e.getMessage());
 			// return;
 		}
 	}
 	
+	/**
+	 * Щелкаем только по алерту с определенным текстом
+	 * @param aText - Текст, который содержится в теле алерте
+	 * @throws Exception
+	 */
+	protected void alertClickCheckText (String aText) throws Exception {
+		aText = aText.toUpperCase();
+		System.out.println("Ищем алерт с текстом: "+aText);
+		Alert a = driver.switchTo().alert();
+		if (a.getText().toUpperCase().matches(aText)) {
+			System.out.println("Алерт подходит, всё в порядке, текст: "+a.getText());	
+			a.accept();
+		} else {
+			throw new Exception("Обнаружен неизвестный алерт!!!" +a.getText());
+		}
+	}
 	protected boolean findPerson(String ln, String fn, String id, String crd) {
 		boolean result=true;
 		try {
