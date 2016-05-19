@@ -51,7 +51,24 @@ public class ContractServiceBean implements IContractService {
 			sql.append(" and ms.servicetype_id='").append(idsertypebed).append("'"); 
 			list=theManager.createNativeQuery(sql.toString()).getResultList() ;
 			if (list.isEmpty()) {
-				return null ;
+				if (list.isEmpty()) {
+					sql = new StringBuilder() ;
+					aRoomType=Long.valueOf(1);
+					sql.append("select wfs.medservice_id from workfunctionservice wfs left join medservice ms on ms.id=wfs.medservice_id " );
+					sql.append(" where wfs.lpu_id=").append(aDepartment) ;
+					sql.append(" and wfs.bedtype_id=").append(aBedType);
+					sql.append(" and wfs.bedsubtype_id=").append(aBedSubType);
+					sql.append(" and wfs.roomtype_id=").append(aRoomType);
+					sql.append(" and ms.servicetype_id='").append(idsertypebed).append("'"); 
+					list=theManager.createNativeQuery(sql.toString()).getResultList() ;
+					if (list.isEmpty()) {
+						return null ;
+					} else {
+						return ConvertSql.parseLong(list.get(0)) ;
+					}
+				} else {
+					return ConvertSql.parseLong(list.get(0)) ;
+				}
 			} else {
 				return ConvertSql.parseLong(list.get(0)) ;
 			}
