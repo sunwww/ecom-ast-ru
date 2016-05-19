@@ -174,14 +174,9 @@
     String sqlAdd = (String)request.getAttribute("sqlAdd");
 	
 
-   if (sqlAdd!=null &&date!=null && !date.equals(""))  {
+   if (sqlAdd!=null&&!sqlAdd.equals(""))  {
 	   
-    	if (date1==null ||date1.equals("")) {
-    		request.setAttribute("periodTo", date);
-    	} else {
-    		request.setAttribute("periodTo", date1) ;
-    	}
-    	
+    		
 
     %>
 <%if (typeGroup!=null && typeGroup.equals("1")) {%>
@@ -194,14 +189,18 @@
     	 ,coalesce(a.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
     	 ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end  	||case 
 when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end as f7_address
+	, list(' Уч. №'||la.number||' '||vart.name) as f8_area
     	  from LpuAttachedByDepartment lp
     	 left join Patient p on lp.patient_id=p.id
     	 left join vocsex vs on vs.id=p.sex_id
     	 left join address2 a on a.addressid=p.address_addressid
     	 left join VocAttachedType vat on lp.attachedType_id=vat.id
+    	 left join lpuarea la on la.id=lp.area_id
+    	 left join vocareatype vart on vart.id=la.type_id
+    	 left join mislpu ml on ml.id=la.lpu_id
    		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null and lp.dateto is null ${sqlAdd} 
    		group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,lp.id,lp.dateFrom,vat.name
-   		,a.fullname,p.houseNumber,p.houseBuilding,p.flatNumber
+   		,a.fullname,p.houseNumber,p.houseBuilding,p.flatNumber, ml.name, la.number
     	 order by p.lastname,p.firstname,p.middlename,p.birthday  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     
     <form action="print-bypass_journal1.do" method="post" target="_blank">
@@ -219,6 +218,7 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
 			<msh:tableColumn columnName="Имя" property="3"/>
 			<msh:tableColumn columnName="Отчетство" property="4"/>
 			<msh:tableColumn columnName="Дата рождения" property="5"/>
+			<msh:tableColumn columnName="Участок" property="9"/>
 			<msh:tableColumn columnName="Способ прикрепления" property="6"/>
 			<msh:tableColumn columnName="Дата прикрепления" property="7"/>
 			<msh:tableColumn columnName="Адрес регистрации" property="8"/>
