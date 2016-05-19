@@ -188,5 +188,83 @@ public class ContractAccountMedService extends BaseEntity{
 
 	/** Тип услуги */
 	private String theTypeService;
+	
+	/** Летальный исход */
+	@Comment("Летальный исход")
+	public Boolean getIsDeath() {
+		return theIsDeath;
+	}
 
+	public void setIsDeath(Boolean aIsDeath) {
+		theIsDeath = aIsDeath;
+	}
+
+	/** Летальный исход */
+	private Boolean theIsDeath;
+	
+	/** Полис */
+	@Comment("Полис")
+	public String getPolSeries() {return thePolSeries;}
+	public void setPolSeries(String aPolSeries) {thePolSeries = aPolSeries;}
+
+	/** Номер полиса */
+	@Comment("Номер полиса")
+	public String getPolNumber() {return thePolNumber;}
+	public void setPolNumber(String aPolNumber) {thePolNumber = aPolNumber;}
+
+	/** Номер полиса */
+	private String thePolNumber;
+	/** Полис */
+	private String thePolSeries;
+	/** Услуга внутр */
+	@Comment("Услуга внутр")
+	public Long getServiceIn() {
+		return theServiceIn;
+	}
+
+	public void setServiceIn(Long aServiceIn) {
+		theServiceIn = aServiceIn;
+	}
+
+	/** Услуга внутр */
+	private Long theServiceIn;
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	public Long getDoctor() {
+		return theDoctor;
+	}
+
+	public void setDoctor(Long aDoctor) {
+		theDoctor = aDoctor;
+	}
+
+	/** Рабочая функция */
+	private Long theDoctor;
+	
+	/** Основной СМО */
+	@Comment("Основной СМО")
+	public Long getMainParent() {
+		return theMainParent;
+	}
+
+	public void setMainParent(Long aMainParent) {
+		theMainParent = aMainParent;
+	}
+
+	/** Основной СМО */
+	private Long theMainParent;
+	
+	/** Диагноз */
+	@Comment("Диагноз")
+	public Long getDiagnosis() {
+		return theDiagnosis;
+	}
+
+	public void setDiagnosis(Long aDiagnosis) {
+		theDiagnosis = aDiagnosis;
+	}
+
+	/** Диагноз */
+	private Long theDiagnosis;
+	
 }

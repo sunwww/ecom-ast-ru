@@ -30,6 +30,7 @@ public class LpuAllValueVoc implements IAllValue {
         }
         return ret;
     }
+	
 
 	
 	//@SuppressWarnings("unchecked")
@@ -66,6 +67,7 @@ public class LpuAllValueVoc implements IAllValue {
 			//System.out.println("lpu=     ."+aAppend+lpu.getId()+"--"+lpu.getName()) ;
 		}
 	}
+	
 
 	private final MisLpuDynamicSecurity theSecurity = new MisLpuDynamicSecurity() ;
 }

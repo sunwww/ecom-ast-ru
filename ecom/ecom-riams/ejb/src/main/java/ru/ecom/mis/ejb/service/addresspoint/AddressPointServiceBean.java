@@ -660,7 +660,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     @SuppressWarnings("unchecked")
 	public void checkExists(long aLpuAreaId, Long aLpuAddressTextId, long aAddress, String aNumber, String aBuilding, String aFlat) {
-        if(!StringUtil.isNullOrEmpty(aBuilding) && StringUtil.isNullOrEmpty(aNumber)) throw new IllegalArgumentException("При вводе корпуса необходимо указать номер дома") ;
+        //if(!StringUtil.isNullOrEmpty(aBuilding) && StringUtil.isNullOrEmpty(aNumber)) throw new IllegalArgumentException("При вводе корпуса необходимо указать номер дома") ;
         QueryClauseBuilder builder = new QueryClauseBuilder();
         builder.addIsNull("houseNumber",aNumber);
         builder.addIsNull("houseBuilding",aBuilding);

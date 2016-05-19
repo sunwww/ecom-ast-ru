@@ -9,6 +9,31 @@
 	</NativeVocService>
 	</voc>
 
+<voc id="vocAccountByJuridicalPerson" type="NativeVocService">
+	<NativeVocService
+		from="ContractAccount ca"
+		nameId="ca.id"
+		order=""
+		names="ca.accountNumber||' '||CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: ' ||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY')
+				when cp.dtype='JuridicalPerson' 
+				  then coalesce(vjp.name||' ','')||case   
+					when reg.id is not null then 'Страх.комп. '
+					when lpu.id is not null then 'ЛПУ '
+					when vjp.code='SILOVIK' then 'Сил. стр-ра:'
+					else 'Юрид.лицо: ' end ||cp.name
+				END"
+		join="
+			left join MedContract mc on mc.id=ca.contract_id
+			left join contractperson cp on cp.id=mc.Customer_id
+			 left join patient p on p.id=cp.patient_id left join VocJuridicalPerson vjp on vjp.id=cp.juridicalPersonType_id
+    			left join MisLpu lpu on lpu.id=cp.lpu_id
+			left join REG_IC reg on reg.id=cp.regCompany_id
+			"
+		queried="upper(ca.accountNumber) like upper(:querId) "
+		parent=""
+		queryAppend="cp.dtype='JuridicalPerson' "
+	/>
+</voc>
 <voc id="executorsByCurrentUserName" type="NativeVocService">
 	<NativeVocService
 		from="SecUser suu"
@@ -764,7 +789,7 @@
     			queryAppend="dtype='MedService' and finishdate is null"
     			join=''
     			order=''
-    			queried = "(cast(id as varchar(10)) like :query or name like UPPER(:query) or code like UPPER(:query))"
+    			queried = "(cast(id as varchar(10)) like :query or upper(name) like UPPER(:query) or code like UPPER(:query))"
     			parentSplitCount="2"
     			 			
     	/>
