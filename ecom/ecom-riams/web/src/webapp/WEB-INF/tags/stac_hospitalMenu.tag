@@ -53,6 +53,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-stac_ssl-cost_case.do?short=Short&id=${param.id}','.do')" name='Цена' title="Просмотр стоимости услуг" 
         	roles="/Policy/Mis/Contract/Journals/AnalisisMedServices" />
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-contract_juridicalContract-account_view_by_patient.do?short=Short&id=${param.id}','.do')" name='Услуги по счету' title="Просмотр услуг по счету" 
+        	roles="/Policy/Mis/Contract/Journals/AnalisisMedServices" />
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View" 
     	name="Полиция" params="id"  
     	action='/entityParentList-stac_criminalMessages' title='Сообщения в полицию'
@@ -201,6 +203,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <msh:sideMenu title = "Добавить">
 		<msh:sideLink action = "/entityParentPrepareCreate-stac_disabilityCase" name = "Нетрудоспособность" params = "id" title = "Нетрудоспособность" roles = "/Policy/Mis/MedCase/Stac/Ssl//Disability/Disability/Create"  />
 </msh:sideMenu>
+<tags:contract_getAccount name="ACCOUNT" parentID="${param.id}"  />
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <script type="text/javascript">
   function viewOtherVisitsByPatient(d) {
