@@ -183,13 +183,17 @@
     
 	   
    <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" maxResult="1000" nativeSql="
-		select lp.id,p.lastname,p.firstname,case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,to_char(p.birthday,'dd.MM.yyyy') as birthday
-    	 ,vat.name as f5_spprik
+select lp.id, p.lastname,p.firstname, 
+		case when p.middlename='' or p.middlename='Х' or p.middlename is null then 'НЕТ' else p.middlename end as middlename,
+		to_char(p.birthday,'dd.MM.yyyy') as birthday
+    	 , vat.name as f5_spprik
     	 ,to_char(lp.dateFrom,'dd.MM.yyyy') as f6_tprik
     	 ,coalesce(a.fullname)||' ' || case when p.houseNumber is not null and p.houseNumber!='' then ' д.'||p.houseNumber else '' end 
     	 ||case when p.houseBuilding is not null and p.houseBuilding!='' then ' корп.'|| p.houseBuilding else '' end  	||case 
 when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber else '' end as f7_address
 	, list(' Уч. №'||la.number||' '||vart.name) as f8_area
+	, ml.id as f9_mlId, ml.name as f10_mlname
+	,lp.area_id as f11_laId
     	  from LpuAttachedByDepartment lp
     	 left join Patient p on lp.patient_id=p.id
     	 left join vocsex vs on vs.id=p.sex_id
@@ -199,9 +203,9 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
     	 left join vocareatype vart on vart.id=la.type_id
     	 left join mislpu ml on ml.id=la.lpu_id
    		where (p.noActuality='0' or p.noActuality is null) and p.deathDate is null and lp.dateto is null ${sqlAdd} 
-   		group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,lp.id,lp.dateFrom,vat.name
+   		group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,lp.id,lp.dateFrom, ml.id, ml.name, lp.area_id, vat.name
    		,a.fullname,p.houseNumber,p.houseBuilding,p.flatNumber, ml.name, la.number
-    	 order by p.lastname,p.firstname,p.middlename,p.birthday  " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+    	 order by p.lastname,p.firstname,p.middlename,p.birthday " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     
     <form action="print-bypass_journal1.do" method="post" target="_blank">
 Реестр прикрепленного населения за период ${param.period}-${param.periodTo}
@@ -211,6 +215,16 @@ when p.flatNumber is not null and p.flatNumber!='' then ' кв. '|| p.flatNumber
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
+    </form>
+    <form action="print-bypass_journal1.do" method="post" target="_blank">
+Реестр прикрепленного населения за период ${param.period}-${param.periodTo}
+    <input type='hidden' name="sqlText" id="sqlText" value="${journal_ticket_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Реестр прикрепленного населения за период с ${param.period} по ${param.periodTo}. Участок № ${param.areaName}. ">
+    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+    <input type='hidden' name="groupField" id="groupField" value="10,12">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printGroup3NativeQuery">
+    <input type="submit" value="Печать по ЛПУ"> 
     </form>
         <msh:table name="journal_ticket" action="entityView-mis_lpuAttachedByDepartment.do" idField="1" noDataMessage="Не найдено">
 			<msh:tableColumn columnName="#" property="sn"/>
