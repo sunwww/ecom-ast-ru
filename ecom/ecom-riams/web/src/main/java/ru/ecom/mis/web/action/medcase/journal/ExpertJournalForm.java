@@ -97,4 +97,30 @@ public class ExpertJournalForm extends BaseValidatorForm {
 
 	/** Тип ВК */
 	private Long theType;
+	
+	/** Рабочая функция */
+	@Comment("Рабочая функция")
+	public Long getWorkFunction() {
+		return theWorkFunction;
+	}
+
+	public void setWorkFunction(Long aWorkFunction) {
+		theWorkFunction = aWorkFunction;
+	}
+
+	/** Рабочая функция */
+	private Long theWorkFunction;
+	
+	/** Эксперт */
+	@Comment("Эксперт")
+	public Long getExpert() {
+		return theExpert;
+	}
+
+	public void setExpert(Long aExpert) {
+		theExpert = aExpert;
+	}
+
+	/** Эксперт */
+	private Long theExpert;
 }

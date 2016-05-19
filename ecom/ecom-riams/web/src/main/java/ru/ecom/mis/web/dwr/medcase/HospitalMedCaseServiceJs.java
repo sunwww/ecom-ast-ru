@@ -15,6 +15,7 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
+import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
@@ -134,7 +135,11 @@ public class HospitalMedCaseServiceJs {
 		}
 		return res.length()>0?res.toString().trim().substring(0,res.length()-3):"" ;
 	}
-	
+	public String setAccountBySmo(Long aSmo, Long aAccount, HttpServletRequest aRequest) throws NamingException, ParseException {
+		IContractService service = Injection.find(aRequest).getService(IContractService.class) ;
+		service.setSmoByAccount(aAccount,"HOSPITALMEDCASE",aSmo,true) ;
+		return "" ;
+	}
 	public String saveServiceByMedCase(Long aMedCase, String aServices, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
