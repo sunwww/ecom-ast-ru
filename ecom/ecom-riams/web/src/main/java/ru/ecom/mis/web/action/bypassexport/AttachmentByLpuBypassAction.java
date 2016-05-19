@@ -30,7 +30,7 @@ import ru.nuzmsh.web.struts.BaseAction;
 
 public class AttachmentByLpuBypassAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-    	AttachmentByLpuForm form =(AttachmentByLpuForm)aForm ;
+    	AttachmentByLpuBypassForm form =(AttachmentByLpuBypassForm)aForm ;
     	
     	if (form!=null ) {
     		//ActionErrors  erros = form.validate(aMapping, aRequest) ;
