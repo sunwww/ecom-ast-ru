@@ -66,6 +66,7 @@
     	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create" name="Операцию"  
     	params="id"  action='/entityParentPrepareCreate-stac_surOperation'  key='Alt+7' title="Операции"
     	/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
       </msh:sideMenu>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
       <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
