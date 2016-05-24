@@ -36,6 +36,7 @@ public class ExtDispServiceJs {
 		
 		if (aDispCardId!=null&& !aDispCardId.equals(Long.valueOf(0))){
 			if (isInDispPeriod(aDate, aDispCardId, aRequest)) {res = "1Дата услуги ("+aDate+") выходит за период диспансеризации";}
+			if (isAfterDispPeriod(aDate, aDispCardId, aRequest)) {res = "2Услуга оказана позже окончания диспансеризации";}
 		} else {
 			System.out.println("=== Пришло время проверить полис!");
 			if (!isMedPolicyExists(aPatientId,aDate,aRequest)) {
@@ -76,6 +77,21 @@ public class ExtDispServiceJs {
 		return false;
 	}
 	
+	public boolean isAfterDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		boolean ret = false;
+		String str = "select count(edc.id) from extdispcard edc" +
+				" where edc.id=" +aDispCardId+
+				" and to_date('"+aDate+"','dd.MM.yyyy') > edc.finishdate";
+		//	System.out.println("isInDispPeriod = "+str);
+		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
+		if (!wqr.isEmpty()) {
+			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+				ret = true;
+			}
+		}
+		return ret;		
+	}
 	public boolean isInDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		boolean ret = true;
