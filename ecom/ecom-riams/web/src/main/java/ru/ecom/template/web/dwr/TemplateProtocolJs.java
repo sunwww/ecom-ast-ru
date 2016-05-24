@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.ecom.web.login.LoginInfo;
@@ -17,6 +18,7 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
+import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -30,6 +32,169 @@ import javax.naming.NamingException;
  * To change this template use File | Settings | File Templates.
  */
 public class TemplateProtocolJs {
+	
+/*	public String saveParametersByProtocol (Long aSmoId,Long aProtocolId, String aParams, HttpServletRequest aRequest) throws NamingException {
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
+		
+		return service.saveParametersByProtocol(aSmoId,aProtocolId, aParams, username);
+	}*/
+	public String getTemplateDisableEdit (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
+		if (aTemplateId==null||aTemplateId.equals(Long.valueOf(0))) return "0";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		return service.executeNativeSql("select case when disableEdit is null or disableEdit = '0' then '0' else '1' end" +
+				" from templateprotocol where id = "+aTemplateId).iterator().next().get1().toString();
+	}
+	
+	public String getParameterAndPersmissionByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
+		
+		String parameters = getParameterByTemplate(aProtocolId, aTemplateId, aRequest);
+		String permission = "";
+		if (aTemplateId!=null&&!aTemplateId.equals(Long.valueOf(0))) {
+		permission = getTemplateDisableEdit(aTemplateId, aRequest);
+		}
+		return parameters+"#"+permission;
+	}
+	public String getParameterByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		Collection<WebQueryResult> lwqr = null ;
+		
+		Long wfId = Long.valueOf(0) ;
+		String wfName = "" ;
+		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+			sql.append("select p.id as p1id,p.name as p2name") ;
+			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
+			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
+			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
+			sql.append(" , p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd") ;
+			sql.append(" , p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd") ;
+			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
+			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
+			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
+			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
+			sql.append(" , case when p.type in ('3','5')  then pf.valueText") ; 
+			sql.append(" when p.type ='4' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990.'||repeat('0',cast(p.cntdecimal as int)))"); 
+			sql.append(" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') ");
+			sql.append(" when p.type='2' then ''||pf.valueVoc_id end as p19val") ;
+			sql.append(" ,vv.name as d20val4v") ;
+			sql.append(" from FormInputProtocol pf") ;
+			sql.append(" left join Diary d on pf.docProtocol_id = d.id") ;
+			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
+			sql.append(" left join userValue vv on vv.id=pf.valueVoc_id") ;
+			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
+			sql.append(" where d.id='").append(aProtocolId).append("'") ;
+			sql.append(" order by pf.position") ;
+			lwqr = service.executeNativeSql(sql.toString()) ;
+			
+		} 
+		if (lwqr==null || lwqr.isEmpty()) {
+			sql = new StringBuilder() ;
+			sql.append("select p.id as p1id,p.name as p2name") ;
+			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
+			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
+			sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
+			sql.append(" , p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd") ;
+			sql.append(" , p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd") ;
+			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
+			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
+			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
+			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
+			sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault else '' end as p19valuetextdefault") ;
+			//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
+			sql.append(" from parameterbyform pf") ;
+			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
+			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
+			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
+			sql.append(" where tp.id='").append(aTemplateId).append("'") ;
+			sql.append(" order by pf.position") ;
+			lwqr = service.executeNativeSql(sql.toString()) ;
+		} else {
+			sql = new StringBuilder() ;
+			sql.append("select mc.workFunctionexecute_id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as vwfname from diary d left join medcase mc on mc.id=d.medcase_id left join workfunction wf on wf.id=mc.workfunctionexecute_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where d.id="+aProtocolId+" and mc.workFunctionExecute_id is not null") ;
+			Collection<WebQueryResult> lwf=service.executeNativeSql(sql.toString()) ;
+			if (!lwf.isEmpty()) {
+				WebQueryResult wqr = lwf.iterator().next() ;
+				wfId = ConvertSql.parseLong(wqr.get1()) ;
+				wfName = ""+wqr.get2() ;
+			}
+		}
+			
+			
+		StringBuilder sb = new StringBuilder() ;
+		StringBuilder err = new StringBuilder() ;
+			sb.append("{");
+			sb.append("\"workFunction\":\""+wfId+"\",") ;
+			sb.append("\"workFunctionName\":\""+wfName+"\",") ;
+			/*if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
+				sb.append("\"isdoctoredit\":\"1\",") ;
+			} else {
+				sb.append("\"isdoctoredit\":\"0\",") ;
+			}*/
+			sb.append("\"params\":[") ;
+			boolean firstPassed = false ;
+			boolean firstError = false ;
+			String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
+			,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
+			,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}
+			,{"13","unitid"},{"14","unitname"}
+			,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
+			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
+			} ;
+			for(WebQueryResult wqr : lwqr) {
+				
+				StringBuilder par = new StringBuilder() ;
+				par.append("{") ;
+				boolean isFirtMethod = false ;
+				boolean isError = false ;
+				//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
+				if (String.valueOf(wqr.get4()).equals("2")) {
+					//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+					if (wqr.get15()==null) {
+						isError = true ;
+						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+					}
+				}
+				try {
+					
+					for(String[] prop : props) {
+						Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
+						String strValue = value!=null?value.toString():"";
+						
+						if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
+						par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
+						
+					}
+					
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
+				par.append("}") ;
+				if (isError) {
+					if(firstError) err.append(", ") ;else firstError=true;
+					err.append(par) ;
+				}else{
+					if(firstPassed) sb.append(", ") ;else firstPassed=true;
+					sb.append(par) ;
+				}
+			}
+			sb.append("]") ;
+			sb.append(",\"errors\":[").append(err).append("]") ;
+			sb.append(",\"template\":\"").append(aTemplateId).append("\"") ;
+			sb.append(",\"protocol\":\"").append(aProtocolId).append("\"") ;
+			sb.append("}") ;
+			return sb.toString();
+		
+	}
+	private String str(String aValue) {
+    	if (aValue.indexOf("\"")!=-1) {
+    		aValue = aValue.replaceAll("\"", "\\\\\"") ;
+    	}
+    	return aValue ;
+    }
 	
 	public String createProtocolDrForCreateParam(Long aSmoId, Long aTemplate, HttpServletRequest aRequest) {
 		return "" ;
@@ -46,7 +211,7 @@ public class TemplateProtocolJs {
 		
 	}
 	/** Получить список параметров с номерами полей по шаблону */
-	public String getParameterByTemplate(Long aIdTemp, HttpServletRequest aRequest) throws NamingException {
+	public String getParameterByTemplate000(Long aIdTemp, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		List<Object[]> list = service.executeNativeSqlGetObj("select id,name,code from VocSex") ;
 		
@@ -154,7 +319,7 @@ public class TemplateProtocolJs {
     			.append(wqr.get1()).append("')\" ondblclick=\"").append(aFunction).append("('").append(aType).append("','")
     			.append(wqr.get1()).append("')\">") ;
     			res.append(wqr.get2()) ;
-    			res.append("</li>") ;
+    			
     		}
     		res.append("</ul></td>") ;
     	} else {
@@ -165,7 +330,7 @@ public class TemplateProtocolJs {
     		if (aType!=null && aType.equals("mydiary")  && patient!=null) {
     			res.append("<h2>заключения</h2>") ;
     			sql = new StringBuilder() ;
-    			sql.append("select to_char(d.dateRegistration,'mm.yyyy'),  list(distinct " +
+    			sql.append("select to_char(d.dateRegistration,'DD.MM.YYYY'),  list(distinct " +
     					"case when m.dtype='Visit' or m.dtype='ShortMedCase' then 'Поликл.' " +
     					"when m.dtype='DepartmentMedCase' then 'СЛО' " +
     					"when m.dtype='HospitalMedCase' then 'СЛС' " +
@@ -176,8 +341,8 @@ public class TemplateProtocolJs {
     			.append(" left join Diary as d on m.id=d.medCase_id")         
     			.append(" where   m.patient_id='").append(patient)
     			.append("' and upper(d.dtype)='PROTOCOL'")
-    			.append("    group by to_char(d.dateRegistration,'yyyy.mm'),to_char(d.dateRegistration,'mm.yyyy'),d.username having upper(d.username)='").append(login.toUpperCase()).append("'") 
-    			.append("  order by to_char(d.dateRegistration,'yyyy.mm') desc") ;
+    			.append("    group by d.dateRegistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'") 
+    			.append("  order by d.dateRegistration desc") ;
     			list=null ;
     			list = service.executeNativeSql(sql.toString(),30);
         		res.append("<ul>");
@@ -347,7 +512,8 @@ public class TemplateProtocolJs {
 				res.append("</ul></td>") ;
 			}
 		} else if (aType!=null && aType.equals("my")) {
-			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile") ; 
+			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile" +
+					" ,(select count(*) from parameterByForm where template_id=tp.id) as cntInput") ; 
 			sql.append(" from TemplateProtocol tp");
 			sql.append(" left join SecUser su on tp.username=su.login");
 			sql.append(" left join templateprotocol_secgroup tg on tp.id=tg.templateprotocol_id");
@@ -391,7 +557,11 @@ public class TemplateProtocolJs {
 				.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionTemp).append("('")
 				.append(wqr.get1()).append("',1)\">") ;
 				res.append(wqr.get2()) ;
-				res.append("</li>") ;
+				//res.append("</li>") ;
+				if (wqr.get3()!=null&&!(""+wqr.get3()).equals("0")) {
+				res.append("<input type=\"button\" onclick=\"showTemplateForm('").append(wqr.get1()).append("')\" value=\"Ф\">");
+				}
+				res.append("</li>");
 			}
 			res.append("</ul></td>") ;
 		} else {
@@ -400,11 +570,10 @@ public class TemplateProtocolJs {
 			list.clear() ;
 
 			if (aType!=null && aType.equals("mydiary")  && patient!=null) {
-				res.append("<h2>заключения ").append((aParent!=null && !aParent.equals("") && !aParent.equals("0")?" от "+aParent:""))
-					.append("</h2>") ;
+				res.append("<h2>заключения</h2>") ;
 				res.append("<ul>");
 				sql = new StringBuilder() ;
-				sql.append("select d.id,  to_char(d.dateRegistration,'dd.mm.yyyy')||' '||case when m.dtype='Visit' then 'Поликл.' when m.dtype='DepartmentMedCase' then 'СЛО' when m.dtype='HospitalMedCase' then 'СЛС' when m.dtype='ServiceMedCase' then 'Услуга' when m.dtype='HospitalMedCase' then 'Приемное отделение' else '' end||' '||to_char(m.dateStart,'DD.MM.YYYY')||' '||coalesce(vwf.name,vwf1.name),m.patient_id as pid")  
+				sql.append("select d.id,  case when m.dtype='Visit' then 'Поликл.' when m.dtype='DepartmentMedCase' then 'СЛО' when m.dtype='HospitalMedCase' then 'СЛС' when m.dtype='ServiceMedCase' then 'Услуга' when m.dtype='HospitalMedCase' then 'Приемное отделение' else '' end||' '||to_char(m.dateStart,'DD.MM.YYYY')||' '||coalesce(vwf.name,vwf1.name),m.patient_id as pid")  
 					.append(" from MedCase as m")   
 					.append(" left join  Diary as d on m.id=d.medCase_id")         
 					.append(" left join WorkFunction wf1 on wf1.id=m.ownerFunction_id")        
@@ -417,8 +586,7 @@ public class TemplateProtocolJs {
 					.append(" where  m.patient_id='").append(patient).append("' and upper(d.dtype)='PROTOCOL'") ;
 					if (aParent!=null && !aParent.equals("") && !aParent.equals("0")) {
 						sql.append(" and d.dateRegistration");
-						if (aParent.equals("-1")) {sql.append(" is null ");}
-						else{sql.append("=to_date('").append(aParent).append("','mm.yyyy')");}
+						if (aParent.equals("-1")) {sql.append(" is null ");}else{sql.append("=to_date('").append(aParent).append("','dd.mm.yyyy')");}
 					}
 					sql.append(" group by d.id,vwf.name,vwf1.name,m.dtype,m.datestart,m.patient_id,d.dateregistration,d.username having upper(d.username)='").append(login.toUpperCase()).append("'  order by d.dateRegistration desc") ;
 				list=null ;

@@ -18,18 +18,22 @@ import ru.ecom.diary.ejb.service.protocol.tree.CheckNodeByGroup;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNodeByParameter;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 
 
 public class TemplateEditAction extends BaseAction{
-    public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
+   public static String getLogin (HttpServletRequest aRequest) {
+	   return  LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+   }
+	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 	    
     	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
         IWebQueryService wservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
         Long temp = getLongId(aRequest, "Идентификатор мед.услуги") ;
         Collection<WebQueryResult> l = wservice.executeNativeSql("select pf.parameter_id,p.name||' ('||case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm pf left join Parameter p on p.id=pf.parameter_id left join userDomain vd on vd.id=p.valueDomain_id left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id where pf.template_id='"+temp+"' order by pf.position") ;  
-        CheckNode root = service.loadParametersByMedService(temp) ;
+        CheckNode root = service.loadParametersByMedService(temp, getLogin(aRequest)) ;
 //        CheckNodesUtil.removeUnchecked(root);
         aRequest.setAttribute("params", root);
         aRequest.setAttribute("params_table", l) ;
@@ -40,7 +44,7 @@ public class TemplateEditAction extends BaseAction{
         IWebQueryService wservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
         Long temp = getLongId(aRequest, "Идентификатор мед.услуги") ;
         Collection<WebQueryResult> l = wservice.executeNativeSql("select pf.parameter_id,p.name||' ('||case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm pf left join Parameter p on p.id=pf.parameter_id left join userDomain vd on vd.id=p.valueDomain_id left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id where pf.template_id='"+temp+"' order by pf.position") ;  
-        CheckNode root = service.loadParametersByMedService(temp) ;
+        CheckNode root = service.loadParametersByMedService(temp, getLogin(aRequest)) ;
 //        CheckNodesUtil.removeUnchecked(root);
         aRequest.setAttribute("params", root);
         aRequest.setAttribute("params_table", l) ;

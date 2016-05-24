@@ -47,6 +47,7 @@
           <ecom:oneToManyOneAutocomplete  viewAction="entityView-secgroup.do" label="Довер. группы" vocName="secGroup" property="secGroups" colSpan="4" />
         </msh:row>
         <msh:row guid="fdcf0100-ab1c-4900-b7d6-cb08c77924b0">
+        <msh:checkBox property="disableEdit" label="Запрет на ручное изменение дневника"/>
           <msh:textField property="username" label="Пользователь" viewOnlyField="true" guid="b3fd6145-7072-4065-accc-73fc37fb20ac" />
           <msh:textField property="date" label="Дата создания" viewOnlyField="true" guid="7162d626-b2a7-4928-ab70-adb244c07d5d" />
         </msh:row>
@@ -76,6 +77,7 @@
       <msh:sideLink key="ALT+1" action="/js-temp_protocol-listTemplate" name="⇧ Список шаблонов протоколов" guid="aa1d3bc4-7c77-483b-b355-0a50f799ba47" roles="/Policy/Diary/Template/View" />
       <msh:ifFormTypeIsView formName="temp_protocolForm" guid="dd63e5e4-f81c-43f2-b50a-f12b1d8e026b">
         <msh:sideLink key="ALT+2" params="id" action="/entityEdit-temp_protocol" name="Изменить" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e97e" />
+        <msh:sideLink key="ALT+3" params="id" action="/diary_templateParamsEdit" name="Параметры" roles="/Policy/Diary/Template/Edit"/>
       </msh:ifFormTypeIsView>
       <hr />
       <msh:ifFormTypeIsView formName="temp_protocolForm" guid="458c4701-2a7c-495e-ad4c-c3326ff8c2bb">

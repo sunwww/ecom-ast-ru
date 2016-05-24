@@ -23,7 +23,13 @@
     	color: white ;
 	}
 </style>
-
+<style type="text/css">
+    #${name}IntakeInfoDialog {
+   visibility: hidden ;
+        display: none ;
+        position: absolute ;
+    }
+</style>
 <div id='${name}templateProtocolDialog' class='dialog'>
     <h2>Выбор шаблона протокола</h2>
     <div class='rootPane'>
@@ -88,13 +94,313 @@
 		</div>
 		
 </div>
+
+<div id='the${name}IntakeInfoDialog' class='dialog'>
+    <h2 id='${name}IntakeInfoTitle'>ПРИЕМ БИОМАТЕРИЛА</h2>
+    <input type='hidden' name='${name}List' id='${name}List'/>
+    <div id="${name}IntakeRootPane" class='rootPane'>
+    	
+	</div>
+</div>
 <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
+<script type='text/javascript' src='./dwr/interface/PrescriptionService.js'></script>
+
+
 <script type="text/javascript">
+var fldJson = null ;
      var theIs${name}TempProtLastFunction = "temp" ;
      var theIs${name}TempProtDialogInitialized = false ;
      var the${name}TempProtDialog = new msh.widget.Dialog($('${name}templateProtocolDialog')) ;
-
+     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('the${name}IntakeInfoDialog')) 
      // Показать
+     
+    function save${name}IntakeInfo() {
+    var rows = $('tblParamProtocol').children[0].children;
+    var text = '';
+    for (var i=0;i<rows.length;i++) {
+    	var tds = rows[i].children;
+    	for (var j=0;j<tds.length;j++) {
+    		var elements = tds[j].children;
+    		if (j!=0) text+=' ';
+    		if (elements.length==0) {
+    			if (tds[j].innerHTML.trim()!='') {
+    				text+=tds[j].innerHTML;
+    			}	
+    		} else {
+    			var el = elements[0];
+    			/* if (el.tagName=='LABEL') {
+    				text+=el.innerHTML;
+    				if (j==0) {text+=':';}
+    			} else */ 
+    				if (el.tagName=='INPUT') {
+    				if (elements[1]) {
+    					text+=tds[j-1].children[0].innerHTML+": ";
+    					text+= elements[1].children[0].value;
+    				} else {
+    					text+=el.title+": ";
+    					text+=el.value;
+    				}
+    			} else {
+    				   				
+    			}
+    		} 
+    	}
+    	text+='\n';
+    }
+    $('record').value=text;
+    save${name}Result($('medCase').value,$('id').value);
+    the${name}IntakeInfoDialog.hide();
+    $('record').disabled=false;
+   }
+    function save${name}Result(aSmoId,aProtocolId) {
+		var isError = false ;
+		for (var ind=0;ind<fldJson.params.length;ind++) {
+			var val = $('param'+fldJson.params[ind].id).value ;
+			var par = fldJson.params[ind] ; 
+			errorutil.HideError($('param'+par.idEnter)) ;
+			/*if (val=="") {
+				errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
+				isError= true ;
+			} */
+			
+			if (+par.type==2) {
+				if (+val<1) {val='0' ;} else {
+					par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
+				}
+			}
+			if (par.type=='4') {
+				val = val.replace(",",".") ;
+				val = val.replace("-",".") ;
+				var v = val.split(".") ;
+				var cntdecimal = +par.cntdecimal
+				if (val!="") {
+					if (v.length==2 && v[1].length!=cntdecimal) {
+						errorutil.ShowFieldError($('param'+par.idEnter),"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
+						isError= true ;
+					}
+					
+	  					if (cntdecimal>0 ) {
+	  						if (v.length==1) {
+	  							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+	  							isError= true ;
+	  						} else if (v.length>1 && !isNaN(v[2])) {
+	 							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+	 							isError= true ;
+							}
+	  					} else {
+	  						
+	  					}
+					}
+			}
+			
+			par.value = val ;
+			
+			
+		}
+		if (+fldJson.isdoctoredit==0) {
+			if (+$('paramWF').value==0) {
+				isError=true ;
+				errorutil.ShowFieldError($('paramWFName'),"Обязательное поле") ;
+			} else {
+				fldJson.workFunction=$('paramWF').value
+			}
+			
+		}
+		var str = JSON.stringify(fldJson);
+		//alert(str) ;
+		$('params').value = str;
+		isEditable();
+	} 
+    
+    function isEditable () {
+    	    	
+    	TemplateProtocolService.getTemplateDisableEdit($('templateProtocol').value,{
+    		callback: function (a) {
+    			if (+a==1) {    	    
+    	    		$('record').addEventListener('click', 
+    	    	  		  	function() {
+    	    					$('record').disabled=true;
+    	    					if ($('id').value!='') {	alert ('Редактирование данного протокола возможно только через форму!'); }
+    	    					showTemplateForm($('templateProtocol').value);
+    	    				//	$('record').disabled=false;
+    	    	  		  	}) ;
+    	    		$('record').addEventListener('keypress', 
+    	    	  		  	function() {
+    	    			if ($('id').value!='') {	alert ('Редактирование данного протокола возможно только через форму!'); }
+    	    					$('record').disabled=true;
+    	    					showTemplateForm($('templateProtocol').value);
+    	    				//	$('record').disabled=false;
+    	    	  		  	}) ;
+    	    	} else {
+    	    		try {
+    	    			$('record').removeEventListener('click');
+    	    			$('record').removeEventListener('keypress');
+    	    		} catch (e) {
+    	    		//	alert("E "+e.name);
+    	    		}
+    	    		
+    	    	}
+    	    }
+    		
+    	});
+    	
+    }
+    
+     function showTemplateForm(aTemplateId) {
+    		the${name}IntakeInfoDialog.show() ;
+    	    	 	//alert(aTempId) ; 
+    				TemplateProtocolService.getParameterAndPersmissionByTemplate($('id').value,aTemplateId,{
+    					callback: function (aResults) {
+    						var arr = aResults.split("#");
+    						var aResult = arr[0];
+    						var editable = arr[1];
+    					
+    						$('${name}IntakeInfoTitle').innerHTML = "ВВОД ДАННЫХ" ;
+    					      //  $('BioList').value=aSmoId;
+    					      if ($('params')&&$('params').value!=''&&$('templateProtocol').value == aTemplateId) {
+    					    	fldJson = JSON.parse($('params').value);  
+    					      }  else {
+    					      fldJson = JSON.parse(aResult) ;
+    					      }
+    					      $('templateProtocol').value = +aTemplateId;
+    					        var cnt = +fldJson.params.length ;
+    					    	
+    					        if (cnt<=0) return;
+    					        var txt = "<form><table id='tblParamProtocol'>" ;
+    					        if (+fldJson.isdoctoredit==0) {
+    					        	
+    					        	var p = "WF" ;var pid=fldJson.workFunction;var pn =fldJson.workFunctionName ;
+    					        	var param = {"id":p,"idEnter":p+"Name","valueVoc":pn,"value":pid
+    					        			,"vocname":"workFunction","vocid":""
+    					        			,"shortname":"Специалист","name":"Специалист","type":"2" ,"unitname":""
+    					        	};
+    					        	txt += ${name}getFieldTxtByParam(param) ;
+    					        	
+    					        }
+    					        for (var ind=0;ind<cnt;ind++) {
+    					        	var param = fldJson.params[ind] ;
+    					        	txt += ${name}getFieldTxtByParam(param) ;
+    					        }
+    					        txt += "</table></form>" ;
+    							
+    					       $('${name}IntakeRootPane').innerHTML =txt 
+    					       	+ "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\"save${name}IntakeInfo()\">"
+    					       	+ "<input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}IntakeInfo()\">";
+    					       	cancel${name}TemplateProtocol();
+    					       
+    					   //    	the${name}IntakeInfoDialog.show() ;
+    			             	
+    			             if (fldJson.errors.length==0) {
+    			            	 if (+fldJson.isdoctoredit==0) {
+    			            		 var p = "WF" ;var pid=fldJson.workFunction;var pn =fldJson.workFunctionName ; 
+    					        		eval("param"+p+"Autocomlete = new msh_autocomplete.Autocomplete() ;");
+    					        		eval("param"+p+"Autocomlete.setUrl('simpleVocAutocomplete/workFunction') ;");
+    					        		eval("param"+p+"Autocomlete.setIdFieldId('param"+p+"') ;");
+    					        		eval("param"+p+"Autocomlete.setNameFieldId('param"+p+"Name') ;");
+    					        		eval("param"+p+"Autocomlete.setDivId('param"+p+"Div') ;");
+    					        		eval("param"+p+"Autocomlete.setVocKey('workFunction') ;");
+    					        		eval("param"+p+"Autocomlete.setVocTitle('"+pn+"') ;");
+    					        		eval("param"+p+"Autocomlete.build() ;");
+    					        		//eval("param"+p+"Autocomlete.setParentId('"+pid+"') ;");
+    					        		$("param"+p+"Name").select() ;
+    					        		$("param"+p+"Name").focus() ;
+    					        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
+    					        		
+    			            	 }
+    					        for (var ind=0;ind<fldJson.params.length;ind++) {
+    					        	var param1 = fldJson.params[ind] ;
+    					        	
+    					        	if (ind<cnt-1) {
+    					        		var param2 = fldJson.params[ind+1] ;
+    					        		eventutil.addEnterSupport("param"+param1.idEnter,"param"+param2.idEnter) ;
+    					        	} else {
+    					        		eventutil.addEnterSupport("param"+param1.idEnter,"paramOK") ;
+    					        		
+    					        	}
+    					        	if (+param1.type==2) {
+    					        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
+    					        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
+    					        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
+    					        		eval("param"+param1.id+"Autocomlete.setNameFieldId('param"+param1.idEnter+"') ;")
+    					        		eval("param"+param1.id+"Autocomlete.setDivId('param"+param1.id+"Div') ;")
+    					        		eval("param"+param1.id+"Autocomlete.setVocKey('userValue') ;")
+    					        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
+    					        		eval("param"+param1.id+"Autocomlete.build() ;")
+    					        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
+    					        	}
+    					        } 
+    			             } else {
+    			            	var txt ="<form name='frmTemplate' id='frmTemplate'>" ;
+    			 				txt += "<a target='_blank' href='diary_templateView.do?id="+fldJson.template+"'>НЕПРАВИЛЬНО ЗАПОЛНЕНЫ ДАННЫЕ ПАРАМЕНТОВ ШАБЛОНА</a>" ;
+    			 				txt +="</form>" ;
+    			 				$('${name}IntakeRootPane').innerHTML =txt 
+    					       	+ "<input type=\"button\" value=\"ОК\" onclick=\"cancelBioIntakeInfo()\">";
+    					     }
+    			             
+    			    /*         if (+fldJson.isdoctoredit>0) {
+
+    		            		 $("param"+fldJson.params[0].idEnter).select() ;
+    				        	 $("param"+fldJson.params[0].idEnter).focus() ;
+    		           	 } else {
+    		            		 $("param"+p+"Name").select() ;
+    				        		$("param"+p+"Name").focus() ;
+    				        		$('param'+p+'Name').className="autocomplete horizontalFill required" ;
+    				        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
+    				        		
+    		            	 } */ 
+    					}
+    				}) ;
+    			
+     }
+     
+  
+     
+     function cancel${name}IntakeInfo() {
+         the${name}IntakeInfoDialog.hide() ;
+       //  the${name}TempProtDialog.show() ;
+       $('record').disabled=false;
+         msh.effect.FadeEffect.pushFadeAll();
+     }
+     function ${name}getFieldTxtByParam(aParam) {
+			var txt = "<tr>" ;
+			var type=+aParam.type;
+	        txt += "<td class=\"label\"><label id=\"param"+aParam.id+"Label\" for=\"param"+aParam.idEnter+"\" title='"+aParam.name ;
+	        if (type==1) {
+	        	txt += '(число)' ;
+	        } else if (type==3) {
+	        	txt += '(текст)' ;
+	        } else if (type==4) {
+	        	txt += '(число зн. '+aParam.cntdecimal+')' ;
+	        } else if (type==5) {
+	        	txt += '(текст с огр. '+aParam.cntdecimal+')' ;
+	        	
+	        } 
+	        txt += "'>" ;
+	        txt += aParam.shortname ;
+	        txt += "</label></td>" ;
+	        txt += "<td>" ;
+	        if (type==2) {
+		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
+	        	txt += "<div>";
+		        txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
+	        	txt += "<div id=\"param"+aParam.id+"Div\">";
+	        	txt += "<span></span>";
+		        //txt += ;
+		        txt += "</div>";
+		        txt += "</div>";
+	        } else {
+		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+		        
+	        }
+	        txt += "</td>" ;
+	        txt += "<td>" ;
+	        if (+aParam.type==4) {txt += " ("+aParam.cntdecimal+") ";}
+	        txt += aParam.unitname ;
+	        txt += "</td>" ;
+	        txt += "</tr>" ;
+			return txt ;
+		}
+     
      function show${name}TemplateProtocol() {
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}TempProtDialogInitialized) {

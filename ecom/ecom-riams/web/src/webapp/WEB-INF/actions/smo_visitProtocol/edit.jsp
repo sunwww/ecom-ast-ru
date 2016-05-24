@@ -35,7 +35,9 @@
         <msh:hidden property="time"/>
         <msh:hidden property="printDate"/>
         <msh:hidden property="printTime"/>
+        <msh:hidden property="templateProtocol"/>
         <msh:hidden property="medCase"/>
+        <msh:hidden property="params"/>
         <msh:hidden property="specialist"/>
 
             <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
@@ -148,6 +150,8 @@
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
     <script type="text/javascript">
     setTimeout(checktime,600000) ;
+    
+   
     function checktime() {
     	if (confirm('Вы хотите сохранить дневник?')) {
     		document.forms[1].action='entityParentSaveGoEdit-smo_visitProtocol.do' ;
@@ -160,6 +164,10 @@
     <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
     <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     <script type="text/javascript">
+    
+    isEditable($('id').value);
+
+    
     $('record').focus() ;
     $('record').selectionStart=$('record').value.length ;
     
@@ -214,7 +222,7 @@
     	
     	<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm"><msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     		<script type="text/javascript">
-
+    		
     		TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
     			{
                     callback: function(aString) {

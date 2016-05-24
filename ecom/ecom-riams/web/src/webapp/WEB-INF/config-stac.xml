@@ -46,13 +46,6 @@
 
 	<action-mappings>
 
-	<action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
-                name='stac_admissionJournalForm'
-                validate='false'
-                scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/list_by_period.jsp" />
-        </action>
 	<action path='/gosuslugi_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -376,7 +369,7 @@
 		    />
 		</action>
 		<action path='/stac_journalOpenByHospital'
-		    type='ru.ecom.web.actions.base.ForwardAction'
+		    type='ru.ecom.mis.web.action.medcase.journal.JournalOpenHospitalAction'
 		    >
 		    <forward name="success" redirect="false"
 		    	path='/WEB-INF/actions/stac_sslAllInfo/listOpenHospital.jsp'

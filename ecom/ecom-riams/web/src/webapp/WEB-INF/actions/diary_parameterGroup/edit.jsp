@@ -38,6 +38,9 @@
         <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4" styleId="аа">
           <msh:textField property="name" label="Наименование" size="30" guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" />
         </msh:row>
+         <msh:row guid="b9051979-4115-40c0-8d63-4fce097d9a72">
+          <ecom:oneToManyOneAutocomplete  viewAction="entityView-secgroup.do" label="Довер. группы" vocName="secGroup" property="secGroups" colSpan="4" />
+        </msh:row>
         <msh:row guid="7d0b13ea-edb9-4b01-9a7d-1831f42a28ab">
           <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
         </msh:row>
