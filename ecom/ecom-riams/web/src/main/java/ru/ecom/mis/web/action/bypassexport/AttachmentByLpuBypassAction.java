@@ -65,12 +65,10 @@ public class AttachmentByLpuBypassAction extends BaseAction {
 	    			sqlAdd.append(" and cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age) ;
 	    		}
 	    	}
-	        if (typeSex!=null&&typeSex.equals("1")) {
-	        	sqlAdd.append(" and vs.omccode='1'");
+	        if (typeSex!=null&&(typeSex.equals("1")||typeSex.equals("2"))) {
+	        	sqlAdd.append(" and vs.omccode='"+typeSex+"'");
 	        	
-	        } else if (typeSex!=null&&typeSex.equals("2")) {
-	        	sqlAdd.append(" and vs.omccode='2'");
-	        }
+	        } 
 	    	if (typeView!=null && typeView.equals("2")) {
 	        	sqlAdd.append(" and p.address_addressid is null ") ;
 	        }
@@ -107,6 +105,8 @@ public class AttachmentByLpuBypassAction extends BaseAction {
 		    		}
 	    		aRequest.setAttribute("sqlAdd", sqlAdd.toString()) ;
         
+    		} else {
+    			throw new Exception("HELLLO");
     		}
         return aMapping.findForward("success") ;
     }
