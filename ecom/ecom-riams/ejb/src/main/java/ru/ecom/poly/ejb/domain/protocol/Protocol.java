@@ -37,7 +37,21 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class Protocol extends Diary {
 
-    /** Дата регистрации талона */
+	/** Шаблон, на основе которого создано заключение */
+	@Comment("Шаблон, на основе которого создано заключение")
+	public Long getTemplateProtocol() {return theTemplateProtocol;}
+	public void setTemplateProtocol(Long aTemplateProtocol) {theTemplateProtocol = aTemplateProtocol;}
+	/** Шаблон, на основе которого создано заключение */
+	private Long theTemplateProtocol;
+	
+	/** Запрет на ручное редактирование */
+	@Comment("Запрет на ручное редактирование")
+	public Boolean getDisableEdit() {return theDisableEdit;}
+	public void setDisableEdit(Boolean aDisableEdit) {theDisableEdit = aDisableEdit;}
+	/** Запрет на ручное редактирование */
+	private Boolean theDisableEdit;
+
+	/** Дата регистрации талона */
     public Date getDateRegistration() { return theDateRegistration ; }
     public void setDateRegistration(Date aDateRegistration) { theDateRegistration = aDateRegistration ; }
 

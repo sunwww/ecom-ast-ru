@@ -38,7 +38,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @EntityListeners(DeleteListener.class)
 public class TemplateProtocol extends BaseEntity {
-    /** Заголовок */
+	
+	/** Запрет на ручное редактирование */
+	@Comment("Запрет на ручное редактирование")
+	public Boolean getDisableEdit() {return theDisableEdit;}
+	public void setDisableEdit(Boolean aDisableEdit) {theDisableEdit = aDisableEdit;}
+	/** Запрет на ручное редактирование */
+	private Boolean theDisableEdit;
+	
+	/** Заголовок */
     public String getTitle() { return theTitle ; }
     public void setTitle(String aTitle) { theTitle = aTitle ; }
 

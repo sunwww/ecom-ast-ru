@@ -47,6 +47,22 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AParentEntityFormInterceptor(ProtocolPreCreateInterceptor.class)
 )
 public class VisitProtocolForm extends ProtocolForm {
+	
+	/** Шаблон, на основе которого создано заключение */
+	@Comment("Шаблон, на основе которого создано заключение")
+	@Persist
+	public Long getTemplateProtocol() {return theTemplateProtocol;}
+	public void setTemplateProtocol(Long aTemplateProtocol) {theTemplateProtocol = aTemplateProtocol;}
+	/** Шаблон, на основе которого создано заключение */
+	private Long theTemplateProtocol;
+	
+	/** Параметры шаблона */
+	@Comment("Параметры шаблона")
+	public String getParams() {return theParams;}
+	public void setParams(String aParams) {theParams = aParams;}
+	/** Параметры шаблона */
+	private String theParams;
+
 	/** ВИзит */
 	@Comment("ВИзит")
 	@Persist

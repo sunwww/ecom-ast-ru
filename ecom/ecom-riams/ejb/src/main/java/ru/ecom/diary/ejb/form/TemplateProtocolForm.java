@@ -31,7 +31,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="medService", parentForm=MedServiceForm.class)
 public class TemplateProtocolForm  extends IdEntityForm {
 
-    /** Заголовок */
+	/** Запрет на ручное редактирование */
+	@Comment("Запрет на ручное редактирование")
+	@Persist
+	public Boolean getDisableEdit() {return theDisableEdit;}
+	public void setDisableEdit(Boolean aDisableEdit) {theDisableEdit = aDisableEdit;}
+	/** Запрет на ручное редактирование */
+	private Boolean theDisableEdit;
+	
+	/** Заголовок */
     @Persist @Comment("Заголовок") @Required
     public String getTitle() {    return theTitle ;}
     public void setTitle(String aTitle ) {  theTitle = aTitle ; }

@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.service.template;
 
+import org.json.JSONException;
+
 /**
  * Created by IntelliJ IDEA.
  * User: STkacheva
@@ -9,6 +11,7 @@ package ru.ecom.diary.ejb.service.template;
  */
 
 public interface ITemplateProtocolService {
+//	public static String saveParametersByProtocol(Long aSmoId,Long aProtocolId, String aParams, String aUsername) throws JSONException;
     public String getTextTemplate(long aId) ;
     public String getTextByProtocol(long aProtocolId) ;
     public String getNameVoc(String aClassif, long aId) ;

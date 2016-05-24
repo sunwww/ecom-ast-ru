@@ -19,7 +19,6 @@ import org.mozilla.javascript.Scriptable;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.services.script.ScriptServiceBean;
 import ru.ecom.ejb.services.script.ScriptServiceContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;

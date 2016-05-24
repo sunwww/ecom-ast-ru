@@ -44,6 +44,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)
 )
 public class ProtocolForm extends IdEntityForm {
+    /** Запрет на ручное редактирование */
+	@Comment("Запрет на ручное редактирование")
+	@Persist
+	public Boolean getDisableEdit() {return theDisableEdit;}
+	public void setDisableEdit(Boolean aDisableEdit) {theDisableEdit = aDisableEdit;}
+	/** Запрет на ручное редактирование */
+	private Boolean theDisableEdit;
+	
     /** Общая информация о протоколе */
     @Persist
     @Comment("Общая информация о протоколе")

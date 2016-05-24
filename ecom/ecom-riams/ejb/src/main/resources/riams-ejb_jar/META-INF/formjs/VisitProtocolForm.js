@@ -1,3 +1,6 @@
+function onPreDelete(aEntityId, aCtx) {
+	aCtx.manager.createNativeQuery("delete from forminputprotocol where docprotocol_id="+aEntityId).executeUpdate();
+}
 function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date() ;
 	aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
@@ -32,6 +35,15 @@ function onPreCreate(aForm, aCtx) {
 	}
 	
 }
+function onCreate(aForm, aEntity, aCtx) {
+	
+	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+	//throw ""+aForm.getMedCase()+"<>"+ aEntity.id;
+	if (aForm.getParams()!=null&&aForm.getParams()!="") {
+	Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
+	}	
+
+}
 function onPreSave(aForm,aEntity, aCtx) {
 	check(aForm,aCtx) ;
 	var date = new java.util.Date();
@@ -55,6 +67,13 @@ function onSave(aForm, aEntity, aCtx) {
 		
 		aCtx.manager.createNativeQuery("update Diary set dtype='Protocol' where id='"+aEntity.id+"'").executeUpdate() ;
 		
+	}
+	//throw ""+aForm.getParams();
+	if (aForm.getParams()!=null&&aForm.getParams()!='') {
+	//	throw "==="+aForm.getMedCase()+"<>"+aEntity.id+"<>"+aForm.getParams();
+	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+		var text = Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
+//	throw ""+text;
 	}
 }
 function check(aForm,aCtx) {
