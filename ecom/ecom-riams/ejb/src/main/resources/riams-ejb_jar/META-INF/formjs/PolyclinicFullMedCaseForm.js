@@ -30,6 +30,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 					ddate=false;
 				}
 			}
+			throw ""+aForm.getOtherTicketDates()+"<>"+date;
 			if (ddate) {
 				otherDates = (aForm.getOtherTicketDates()+":"+date).split(":");
 			}
@@ -46,6 +47,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		if (otherDates.length>0) {
 			for (var i=0;i<otherDates.length;i++) {
 				if (""+otherDates[i]=="") {continue;}
+				if (Packages.ru.nuzmsh.util.format.DateFormat.isHoliday(""+otherDates[i])) {continue;} //На всякий случай
 				var ticket = new Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase();
 				ticket.setOrderLpu(ordLpu);
 				ticket.setPatient(aEntity.getPatient());

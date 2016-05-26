@@ -1,5 +1,12 @@
 
 function onPreCreate(aForm, aCtx) {
+	
+	var isHoliday = Packages.ru.nuzmsh.util.format.DateFormat.isHoliday(aForm.dateFinish) ;
+	//throw ""+isHoliday;
+	if (isHoliday==true && (aForm.emergency==null||aForm.emergency==false)) {
+		throw "У вас стоит запрет на создание талонов на воскресенье!";
+	}
+	
 	var param = new java.util.HashMap() ;
 				param.put("obj","Ticket") ;
 				param.put("permission" ,"dateClosePeriod") ;
