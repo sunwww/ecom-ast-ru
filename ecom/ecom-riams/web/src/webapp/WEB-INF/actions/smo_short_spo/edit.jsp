@@ -121,7 +121,7 @@
           <msh:textField label="Дата начала" property="dateStart" fieldColSpan="1" /><%-- 
           <msh:textField label="Дата окончания" property="dateFinish" fieldColSpan="1"/> --%>
         
-        	<td><input type="button" value="Добавить дату" onclick="addOtherDate()"/></td>
+        	<td><input type="button" value="Добавить дату" onclick="checkIsHoliday()"/></td>
         </msh:row>
         <msh:row>
         <table id="otherDates">
@@ -324,8 +324,23 @@ order by vis.dateStart
         		}
         	}
         }
-        function addOtherDate() {
-            var otherDate = $('dateStart').value;
+        
+        function checkIsHoliday () {
+        	  var aDate = $('dateStart').value;
+        	TicketService.isHoliday(aDate, {
+        		callback: function (a) {
+        			if (+a==1) {
+        				alert ("У вас стоит запрет на создание визита в воскресенье.");
+        				return;
+        			} else {
+        				addOtherDate(aDate);
+        			}
+        		}
+        	});
+        }
+        
+        function addOtherDate(otherDate) {
+          
             if (otherDate!='') {
             TicketService.getCrossSPO(otherDate,$('patient').value,$('ownerFunction').value, {
             callback: function(aResult) {
@@ -351,6 +366,7 @@ order by vis.dateStart
             });      
             }      
          }
+
       	function createOtherDates() {
       		var dates = document.getElementById('otherDates').childNodes;
       		var str = ""; $('otherTicketDates').value='';

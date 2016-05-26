@@ -632,17 +632,19 @@
 	  				callback: function(aResult) {
 	  					if (aResult=='1') {
 	  						if (confirm("Прием приходится на воскресенье, точно создать талон?")) {
-	  			//				isExistTicket();
+	  							isExistTicket();
 		  						} else {
 	  							document.getElementById('submitButton').disabled=false;
 	  							document.getElementById('submitButton').value='Создать';
 	  							return;
 	  						}
-	  					} 
+	  					}  else {
+	  						isExistTicket();
+	  					}
 	  				}
 	  			});
   			}
-  			isExistTicket();
+  			
   		}
     	function isExistTicket() {
     		 if ($('dateStart').value!="") {
