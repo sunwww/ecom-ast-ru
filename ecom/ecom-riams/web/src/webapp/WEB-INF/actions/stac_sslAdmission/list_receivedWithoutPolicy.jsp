@@ -279,7 +279,7 @@ left join address2 adr on adr.addressId = pat.address_addressId
 
 where  (hmc.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')
       and to_date('${dateEnd}','dd.mm.yyyy') ${isPat})
-      and hmc.DTYPE='HospitalMedCase'
+      and hmc.DTYPE='HospitalMedCase' and dmc.dtype='DepartmentMedCase'
       and hmc.deniedHospitalizating_id is null  
         and (dmc.id is null or dmc.transferDate is null) 
       ${department1Sql}
