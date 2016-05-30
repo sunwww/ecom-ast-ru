@@ -63,6 +63,14 @@ public class ExtDispServiceJs {
 			if (Long.valueOf(wqr.iterator().next().get1().toString())>0) {
 				return true;
 			}
+		} else {
+			sql = "select kinsman_id from kinsman where person_id="+aPatientId;
+			wqr = service.executeNativeSql(sql);
+			if (!wqr.isEmpty()) {
+				aPatientId = Long.valueOf(wqr.iterator().next().get1().toString());
+				return isMedPolicyExists(aPatientId, aDate, aRequest);
+			}
+			
 		}
 		return false;
 	}
