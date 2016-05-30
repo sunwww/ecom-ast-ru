@@ -250,9 +250,14 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	
 	public boolean  isSLSClosed (String aId, HttpServletRequest aRequest) throws NamingException {
 		String sql = "select case when mc.dtype='HospitalMedCase' then" +
-				" case when mc.datefinish is not null and mc.dischargetime is not null then 1 else 0 end" +
+				"   case when mc.datefinish is not null and mc.dischargetime is not null then 1 else 0 end" +
 				" when mc.dtype='DepartmentMedCase' then" +
-				" case when mcP.datefinish is not null and mcP.dischargetime is not null then 1 else 0 end end" +
+				"   case when mcP.datefinish is not null and mcP.dischargetime is not null then 1 else 0 end " +
+				" when mc.dtype='PolyclinicMedCase' then " +
+				"   case when mc.datefinish is not null then 1 else 0 end " +
+				" when mc.dtype='Visit' then " +
+				"   case when mcP.datefinish is not null then 1 else 0 end " +
+				"end" +
 				" from medcase mc" +
 				" left join medcase mcP on mcP.id=mc.parent_id" +
 				" where mc.id=" + aId;
