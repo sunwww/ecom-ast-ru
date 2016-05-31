@@ -20,7 +20,17 @@ public class DateFormat {
     //private static SimpleDateFormat FORMAT_LOGIC = new SimpleDateFormat("yyyyMMdd");
     //private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH.mm");
 
-    public static String formatToLogic(Date aDate) throws ParseException {
+    public static Boolean isHoliday (String aDate) throws ParseException {
+    		Calendar cal = Calendar.getInstance();
+    		cal.setTime(parseDate(aDate));
+    		System.out.println("isHoliday: "+aDate+" : day_of_week = "+cal.get(java.util.Calendar.DAY_OF_WEEK));
+    		 if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
+    			 return true;
+    		 }
+    		return false;
+    }
+    
+	public static String formatToLogic(Date aDate) throws ParseException {
     	SimpleDateFormat FORMAT_LOGIC = new SimpleDateFormat("yyyyMMdd");
         return FORMAT_LOGIC.format(aDate) ;
     }
