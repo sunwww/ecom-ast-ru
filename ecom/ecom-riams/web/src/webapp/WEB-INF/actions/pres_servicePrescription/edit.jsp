@@ -328,15 +328,17 @@
 		var date = resultRow[3]!=""?resultRow[3]:textDate;
 		var cabinet = resultRow[4]?resultRow[4]:"";
 		var cabinetName = resultRow[5]?resultRow[5]:"";
-		
+		if (type==null||type=='') return;
 		if (type=='LABSURVEY' || type=='lab') {
 			type='lab'; num = labNum;
 		} else if (type=='DIAGNOSTIC' || type=='func') {
 			type='func'; num = funcNum; 
 		} else if (type=='surg') {
 			num = surgNum;
-		} else if (type='hosp') {
+		} else if (type=='hosp') {
 			num = hospNum;
+		} else {
+			alert('Неизвестный тип: '+type);
 		}
 		num+=1;
 	    
