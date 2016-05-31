@@ -485,7 +485,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		} else if (aPresc instanceof ServicePrescription) {
 			try {
 				ServicePrescription presNew = (ServicePrescription) aPresc;
-				if (presNew.getMedService().getFinishDate()!=null) {return "";}
+				if (presNew.getMedService().getFinishDate()!=null) {
+					System.out.println("Услуга "+presNew.getMedService().getName()+" запрещена к назначению (закрыта)");
+					return "";
+				}
 				list.setLength(0);
 				list.append("SERVICE@");
 				list.append(presNew.getMedService().getServiceType().getCode()).append(":");
