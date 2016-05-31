@@ -736,7 +736,9 @@ public class PatientServiceBean implements IPatientService {
 						sql.append(", firstname='").append(fiodr[1]).append("'") ;
 						sql.append(", middlename='").append(fiodr[2]).append("'") ;
 						sql.append(", birthday=to_date('").append(fiodr[3]).append("','dd.mm.yyyy')") ;
-						sql.append(", snils='").append(fiodr[4]).append("'") ;
+						if (fiodr[4]!=null&&!fiodr[4].trim().equals("")) {
+							sql.append(", snils='").append(fiodr[4]).append("'") ;
+						}
 						sql.append(", commonNumber='").append(fiodr[5]).append("'") ;
 						sql.append(", editDate=to_date('").append(curDate).append("','dd.mm.yyyy')") ;
 						sql.append(", editUsername='").append(aUsername).append("'") ;
@@ -1132,6 +1134,7 @@ public class PatientServiceBean implements IPatientService {
     public void movePatientDoubleData(Long aIdNew, Long aIdOld)  {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
 		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
+		if (newpat.getSex()!=oldpat.getSex()) return ;
 		if (newpat!=null && oldpat!=null) {
 			theManager.createNativeQuery("	update Patient set attachedOmcPolicy_id = null where id =:idold	").setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Award set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
