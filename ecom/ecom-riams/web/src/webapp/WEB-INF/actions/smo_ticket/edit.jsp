@@ -626,7 +626,7 @@
   		function checkIsHoliday() {
   			var v =$('emergency').checked;  			
   			if (v=='1' || v=='true') {
-  				
+  				isExistTicket();
   			} else {
 	  			TicketService.isHoliday($('dateStart').value,{
 	  				callback: function(aResult) {
