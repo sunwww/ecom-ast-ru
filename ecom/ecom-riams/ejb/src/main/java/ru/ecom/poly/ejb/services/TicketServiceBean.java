@@ -34,6 +34,7 @@ import ru.ecom.ejb.services.util.JBossConfigUtil;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.ecom.poly.ejb.form.TicketForm;
@@ -52,6 +53,27 @@ public class TicketServiceBean implements ITicketService {
 
     private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    
+    
+    public Long createMedcase (String aType) {
+    	if (aType==null) return null;
+    	if (aType.equals("Visit")) {
+    		Visit v = new Visit();
+    		theManager.persist(v);
+    		return v.getId();
+    	} else if (aType.equals("PolyclinicMedCase")) {
+    		PolyclinicMedCase v = new PolyclinicMedCase();
+    		theManager.persist(v);
+    		return v.getId();
+    	} else if (aType.equals("ShortMedCase")) {
+    		ShortMedCase v = new ShortMedCase();
+    		theManager.persist(v);
+    		return v.getId();
+    	} 
+    	else return null;
+    }
+  
+    
     public void unionSpos(Long aOldSpo,Long aNewSpo) {
     	List<ShortMedCase> list = theManager.createQuery("from ShortMedCase where parent_id="+aOldSpo).getResultList() ;
     	PolyclinicMedCase spoOld = theManager.find(PolyclinicMedCase.class, aOldSpo) ;

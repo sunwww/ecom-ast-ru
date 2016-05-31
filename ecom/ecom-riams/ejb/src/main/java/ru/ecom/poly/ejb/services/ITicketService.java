@@ -3,6 +3,8 @@ package ru.ecom.poly.ejb.services;
 import java.text.ParseException;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import ru.ecom.poly.ejb.form.TicketForm;
 
 /**
@@ -13,6 +15,9 @@ import ru.ecom.poly.ejb.form.TicketForm;
  * To change this template use File | Settings | File Templates.
  */
 public interface ITicketService {
+	
+	public Long createMedcase (String aType) ;
+	
 	// Перенос визита (короткого талона) в другое СПО
 	public void moveVisitInOtherSpo(Long aVisit,Long aNewSpo) ;
 	// Объединение СПО
