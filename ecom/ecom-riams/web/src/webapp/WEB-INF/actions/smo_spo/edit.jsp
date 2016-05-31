@@ -206,7 +206,7 @@ order by vis.dateStart
       <msh:section title="Листы назначений" guid="7dfcdgjt4d6c-f655-488c-902b-4b6486fffd58">
         <ecom:parentEntityListAll formName="pres_prescriptListForm" attribute="prescriptList" guid="97-97c2-4b57-a01e-565cc" />
         <msh:table idField="id" name="prescriptList" action="entityParentView-pres_prescriptList.do" guid="a4ce-c3ed-4995-8215-27fece">
-          <msh:tableColumn columnName="Дата заведения" property="date" guid="2e85d-971d-499e-8abd-c90480" />
+          <msh:tableColumn columnName="Дата заведения" property="createDate" guid="2e85d-971d-499e-8abd-c90480" />
           <msh:tableColumn columnName="Наименование" property="name" guid="97f9-86a6-4948-be0c-053d" />
           <msh:tableColumn columnName="Владелец" property="OwnerInfo" guid="c54-a6f3-41a5-8473-8f2e6" />
         </msh:table>
