@@ -29,20 +29,21 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
-        </msh:row>
+
       <msh:row>
         <msh:textField property="dateBegin" label="Период с" />
-        <msh:textField property="dateEnd" label="по" />
+		<msh:textField property="dateEnd" label="по" />
+      </msh:row>
+              <msh:row>
+        	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
+        </msh:row>
+        <msh:row>
+                
            <td>
             <input type="submit" value="Найти" />
      
           </td>
-      </msh:row>
+        </msh:row>
     </msh:panel>
     </msh:form>
     
@@ -66,18 +67,7 @@
    	}
    }
 			 
-    function find() {
-    	var frm = document.forms[0] ;
-    	frm.target='' ;
-    	frm.action='journal_doc_externalMedService.do' ;
-    }
-    function refresh() {
-    	var frm = document.forms[0] ;
-    	frm.target='_blank' ;
-    	frm.action='stac_report_refresh_save.do' ;
-    	
-    	
-    }
+    
     
     if ($('dateBegin').value=="") {
     	$('dateBegin').value=getCurrentDate() ;
@@ -117,56 +107,54 @@ if (type!=null&&type.equals("reestr")) {
 		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' and dc.id is null";}    
 		else if (id.equals("born2die")) {sqlAdd+=" and vlb.code='1' and dc.deathdate is not null";}    
 		else if (id.equals("die")) {sqlAdd+=" and vlb.code='2'";}    
-		
-				
 	}
  	String w = request.getParameter("weight");
 	if (w!=null&&!w.equals("")) {
-	int weight = Integer.valueOf(w).intValue();
-	
-	switch(weight) {
-	case 1: 
-		sqlAdd+=" and nb.birthweight between 500 and 749";
-		break;
-	case 2: 
-		sqlAdd+=" and nb.birthweight between 750 and 999";
-		break;
-	case 3: 
-		sqlAdd+=" and nb.birthweight between 1000 and 1499";
-		break;
-	case 4: 
-		sqlAdd+=" and nb.birthweight between 1500 and 1999";
-		break;
-	case 5: 
-		sqlAdd+=" and nb.birthweight between 2000 and 2499";
-		break;
-	case 6: 
-		sqlAdd+=" and nb.birthweight between 2500 and 2999";
-		break;
-	case 7: 
-		sqlAdd+=" and nb.birthweight between 3000 and 3499";
-		break;
-	case 8: 
-		sqlAdd+=" and nb.birthweight between 3500 and 3999";
-		break;
-	case 9: 
-		sqlAdd+=" and nb.birthweight >= 4000";
-		break;
-	case 10: 
-		sqlAdd+=" and cb.durationpregnancy <37.00 ";
-		break;
-	case 11: 
-		sqlAdd+=" and cb.durationpregnancy <28.00";
-		break;
-	case 12: 
-		sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
-		sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600)< 24";
-		break;
-	case 13: 
-		sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
-		sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) between 24 and 168";
-		break;
-	}  
+		int weight = Integer.valueOf(w).intValue();
+		
+		switch(weight) {
+		case 1: 
+			sqlAdd+=" and nb.birthweight between 500 and 749";
+			break;
+		case 2: 
+			sqlAdd+=" and nb.birthweight between 750 and 999";
+			break;
+		case 3: 
+			sqlAdd+=" and nb.birthweight between 1000 and 1499";
+			break;
+		case 4: 
+			sqlAdd+=" and nb.birthweight between 1500 and 1999";
+			break;
+		case 5: 
+			sqlAdd+=" and nb.birthweight between 2000 and 2499";
+			break;
+		case 6: 
+			sqlAdd+=" and nb.birthweight between 2500 and 2999";
+			break;
+		case 7: 
+			sqlAdd+=" and nb.birthweight between 3000 and 3499";
+			break;
+		case 8: 
+			sqlAdd+=" and nb.birthweight between 3500 and 3999";
+			break;
+		case 9: 
+			sqlAdd+=" and nb.birthweight >= 4000";
+			break;
+		case 10: 
+			sqlAdd+=" and cb.durationpregnancy <37.00 ";
+			break;
+		case 11: 
+			sqlAdd+=" and cb.durationpregnancy <28.00";
+			break;
+		case 12: 
+			sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
+			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600)< 24";
+			break;
+		case 13: 
+			sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
+			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) between 24 and 168";
+			break;
+		}  
 	}
 	
 	request.setAttribute("sqlAdd", sqlAdd);
