@@ -155,6 +155,9 @@
 						<li><msh:link isReport="true" action="preg_child_birth_report.do" roles="/Policy/Mis/Pregnancy/ChildBirth/View">
 	                            Отчет по родам
 	                        </msh:link></li>
+						<li><msh:link action="stac_report_32.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report32">
+	                            32 форма
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>			
@@ -177,9 +180,6 @@
 	                        </msh:link></li>
 						<li><msh:link isReport="true" action="stac_report_016.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report016">
 	                            016/у-02 форма
-	                        </msh:link></li>
-						<li><msh:link action="stac_report_32.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report32">
-	                            32 форма
 	                        </msh:link></li>
 						<li><msh:link action="stac_report_36.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report36">
 	                            36 форма
