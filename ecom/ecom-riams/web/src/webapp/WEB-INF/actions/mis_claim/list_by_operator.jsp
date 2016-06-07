@@ -215,7 +215,7 @@ order by ${orderBySql}
 "/>
 <msh:section>
 	<msh:tableNotEmpty name="claimList">
-	<msh:sectionTitle>${claimListSql}
+	<msh:sectionTitle>
 	<form action="print-claim_all_reestr.do" method="post" target="_blank">
     Список заявок
         <input type='hidden' name="sqlText" id="sqlText" value="${claimListSql}">
