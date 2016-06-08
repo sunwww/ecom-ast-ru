@@ -31,7 +31,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			if (medCase instanceof ExtHospitalMedCase) {}else{
 			if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/CheckPrintAllProtocol")) {
 				StringBuilder sql = new StringBuilder() ;
-				sql.append("select count(*) from diary p left join medcase m on m.id=p.medcase_id where ((m.id='"+id+"' and m.dtype='HospitalMedCase') or (m.parent_id='"+id+"' and m.dtype='DepartmentMedCase')) and p.printDate is null") ;
+				sql.append("select count(*) from diary p left join medcase m on m.id=p.medcase_id where ((m.id='"+id+"' and m.dtype='HospitalMedCase') or (m.parent_id='"+id+"' and m.dtype='DepartmentMedCase')) and p.printDate is null and p.dtype='Protocol'") ;
 				Object obj = manager
 					.createNativeQuery(sql.toString()).getSingleResult() ;
 				Long count = ConvertSql.parseLong(obj) ;

@@ -30,7 +30,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 					ddate=false;
 				}
 			}
-			throw ""+aForm.getOtherTicketDates()+"<>"+date;
+			//throw ""+aForm.getOtherTicketDates()+"<>"+date;
 			if (ddate) {
 				otherDates = (aForm.getOtherTicketDates()+":"+date).split(":");
 			}
@@ -47,7 +47,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		if (otherDates.length>0) {
 			for (var i=0;i<otherDates.length;i++) {
 				if (""+otherDates[i]=="") {continue;}
-				if (Packages.ru.nuzmsh.util.format.DateFormat.isHoliday(""+otherDates[i])) {continue;} //На всякий случай
+				if (Packages.ru.nuzmsh.util.format.DateFormat.isHoliday(""+otherDates[i]).booleanValue()) {continue;} //На всякий случай
 				var ticket = new Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase();
 				ticket.setOrderLpu(ordLpu);
 				ticket.setPatient(aEntity.getPatient());
@@ -68,10 +68,10 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 				//ticket.setIsTalk(aEntity.getIsTalk());
 				aCtx.manager.persist(ticket);
 				
-				if (aEntity.getDateStart()==null||aEntity.getDateStart()>ticket.getDateStart()){
+				if (aEntity.getDateStart()==null||aEntity.getDateStart().getTime()>ticket.getDateStart().getTime()){
 					aEntity.setDateStart(ticket.getDateStart());
 				}
-				if (aEntity.getDateFinish()==null||aEntity.getDateFinish()<ticket.getDateStart()) {
+				if (aEntity.getDateFinish()==null||aEntity.getDateFinish().getTime()<ticket.getDateStart().getTime()) {
 					aEntity.setDateFinish(ticket.getDateStart());
 				}
 				

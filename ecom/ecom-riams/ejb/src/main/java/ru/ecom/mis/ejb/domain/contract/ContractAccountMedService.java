@@ -16,6 +16,7 @@ import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 
 
 /**
@@ -86,7 +87,7 @@ public class ContractAccountMedService extends BaseEntity{
 		theCountMedService = aCountMedService;
 	}
 
-	/** Количество */
+	/** Количество */ 
 	private Integer theCountMedService;
 	
 	public BigDecimal getCost() {
@@ -267,4 +268,47 @@ public class ContractAccountMedService extends BaseEntity{
 	/** Диагноз */
 	private Long theDiagnosis;
 	
+	/** Проверино */
+	@Comment("Проверино")
+	public Boolean getIsCheck() {
+		return theIsCheck;
+	}
+
+	public void setIsCheck(Boolean aIsCheck) {
+		theIsCheck = aIsCheck;
+	}
+
+	/** Проверино */
+	private Boolean theIsCheck;
+	
+	/** Удаленная запись */
+	@Comment("Удаленная запись")
+	public Boolean getIsDelete() {return theIsDelete;}
+	public void setIsDelete(Boolean aIsDelete) {theIsDelete = aIsDelete;}
+
+	/** Удаленная запись */
+	private Boolean theIsDelete;
+	/** Отредактированная запись */
+	@Comment("Отредактированная запись")
+	public Boolean getIsEdit() {return theIsEdit;}
+	public void setIsEdit(Boolean aIsEdit) {theIsEdit = aIsEdit;}
+
+	/** Отредактированная запись */
+	private Boolean theIsEdit;
+	
+	/** Добавленная запись */
+	@Comment("Добавленная запись")
+	public Boolean getIsCreate() {return theIsCreate;}
+	public void setIsCreate(Boolean aIsCreate) {theIsCreate = aIsCreate;}
+
+	/** Добавленная запись */
+	private Boolean theIsCreate;
+	
+	/** Пациент */
+	@Comment("Пациент")
+	public Long getPatient() {return thePatient;}
+	public void setPatient(Long aPatient) {	thePatient = aPatient;}
+
+	/** Пациент */
+	private Long thePatient;
 }

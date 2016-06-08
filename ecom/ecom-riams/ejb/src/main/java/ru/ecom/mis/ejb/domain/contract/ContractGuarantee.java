@@ -12,6 +12,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.ContractPerson;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.domain.contract.voc.VocGuaranteeKindHelp;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
 	 * Гарантийный документ по договору
@@ -114,4 +115,18 @@ public abstract class ContractGuarantee extends BaseEntity{
 
 	/** Вид медицинской помощи */
 	private VocGuaranteeKindHelp theKindHelp;
+	
+	/** Палата */
+	@Comment("Палата")
+	@OneToOne
+	public VocRoomType getRoomType() {
+		return theRoomType;
+	}
+
+	public void setRoomType(VocRoomType aRoomType) {
+		theRoomType = aRoomType;
+	}
+
+	/** Палата */
+	private VocRoomType theRoomType;
 }

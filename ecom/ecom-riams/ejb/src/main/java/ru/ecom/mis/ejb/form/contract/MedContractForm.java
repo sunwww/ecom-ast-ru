@@ -1,6 +1,8 @@
 package ru.ecom.mis.ejb.form.contract;
 
 
+import java.math.BigDecimal;
+
 import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
@@ -284,4 +286,26 @@ public class MedContractForm extends IdEntityForm{
 
 	/** Срок договора */
 	private Long theContractTerm;
+	/** Скидка по умолчанию */
+	@Comment("Скидка по умолчанию")
+	@Persist
+	public String getDiscountDefault() {return theDiscountDefault;}
+	public void setDiscountDefault(String aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+
+	/** Скидка по умолчанию */
+	private String theDiscountDefault;
+	
+	/** Оплачен */
+	@Comment("Оплачен")
+	@Persist
+	public Boolean getIsFinished() {
+		return theIsFinished;
+	}
+
+	public void setIsFinished(Boolean aIsFinished) {
+		theIsFinished = aIsFinished;
+	}
+
+	/** Оплачен */
+	private Boolean theIsFinished;
 }

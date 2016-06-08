@@ -29,6 +29,8 @@ import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.expomc.ejb.services.registry.ExcelTemplateAllValueVoc;
+import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
+import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
@@ -70,13 +72,16 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
 	WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
 	WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
-	VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
+	MedCase mc = pl.getMedCase() ;
+	if (mc instanceof HospitalMedCase|| mc instanceof DepartmentMedCase) {
+		VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
+		vis.setServiceStream(vss);
+	} else {
+		vis.setServiceStream(mc.getServiceStream()) ;
+	}
 	VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
-	 
-	
-	
 	vis.setWorkPlaceType(wpt) ;
-	vis.setServiceStream(vss);
+	
 	vis.setPatient(pat);
 	vis.setCreateDate(new java.sql.Date(date));
 	vis.setCreateTime(new java.sql.Time(date));

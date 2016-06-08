@@ -376,20 +376,41 @@ function printGroup3NativeQuery(aCtx,aParams) {
 
 function printNativeQuery(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
+	var clazz = aParams.get("clazz");
 	var sqlInfo = aParams.get("sqlInfo");
+	var fieldIdUniq = +aParams.get("fieldIdUniq");
 	var cntBegin = +aParams.get("cntBegin");
 	var sqlColumn = aParams.get("sqlColumn");
+	if (clazz!=null && !clazz.equals("")) {
+		//throw clazz1+"---"+clazz2;
+		var clazz1=clazz.split(":") ;
+		eval("var cl1="+clazz1[0]) ;
+		map.put("clazz",aCtx.manager.find(cl1,java.lang.Long.valueOf(clazz1[1]))) ;
+	}
 	if (cntBegin<1) cntBegin=1 ;
 	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
 	var ret = new java.util.ArrayList() ;
 	var retAll = new java.util.ArrayList() ;
 	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
+	var oldFieldIdUniq="" ;
+	var isUniqSn = fieldIdUniq<1?false:true ;
 	for (var i=0; i < list.size(); i++) {
 		var obj = list.get(i) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-		
-		par.set1(""+cntBegin) ;
-		++cntBegin ;
+		if (isUniqSn) {
+			var newFieldIdUniq=obj[fieldIdUniq-1] ;
+			//throw oldFieldIdUniq+"--"+newFieldIdUniq ;
+			if (oldFieldIdUniq!=newFieldIdUniq) {
+				par.set1(""+cntBegin) ;
+				++cntBegin ;
+				oldFieldIdUniq=""+newFieldIdUniq;
+			} else {
+				par.set1("") ;
+			}
+		} else {
+			par.set1(""+cntBegin) ;
+			++cntBegin ;
+		}
 		for (var j=2;j<=obj.length;j++) {
 			var val = obj[j-1] ;
 			eval("par.set"+(j)+"(val);") ;

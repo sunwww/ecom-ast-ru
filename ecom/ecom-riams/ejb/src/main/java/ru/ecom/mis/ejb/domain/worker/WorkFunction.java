@@ -308,4 +308,12 @@ abstract public class WorkFunction extends BaseEntity {
 
 	/** Запрет на направление к себе */
 	private Boolean theIsNoDirectSelf;
+	
+	/** Ратация */
+	@Comment("Ратация")
+	public Boolean getIsRotation() {return theIsRotation;}
+	public void setIsRotation(Boolean aIsRotation) {theIsRotation = aIsRotation;}
+
+	/** Ратация */
+	private Boolean theIsRotation;
 }

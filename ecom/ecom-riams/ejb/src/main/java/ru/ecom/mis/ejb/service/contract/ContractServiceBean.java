@@ -24,9 +24,7 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IContractService.class)
 public class ContractServiceBean implements IContractService {
-	public static void unionServiceWithContract(String aDateFrom, String aDateTo, EntityManager aManager) {
-		
-	}
+	
 	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType) {
 
 		if (aRoomType==null) aRoomType=Long.valueOf(3);
@@ -76,7 +74,7 @@ public class ContractServiceBean implements IContractService {
 			return ConvertSql.parseLong(list.get(0)) ;
 		}
 	}
-	private Long getPriceMedService(Long aPriceList,Long aMedService) {
+	public Long getPriceMedService(Long aPriceList,Long aMedService) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select pms.id from priceposition pp " );
 		sql.append(" left join pricemedservice pms on pms.priceposition_id=pp.id " );
@@ -103,7 +101,12 @@ and (pp.isvat is null or pp.isvat='0')
 	public Long getMedContractBySmo(String aDtypeSmo, Long aIdSmo, boolean aIsRecalc) {
 		return null ;
 	}
-	public Long setSmoByAccount(Long aAccount,String aDtypeSmo, Long aIdSmo, boolean aIsRecalc) throws ParseException {
+	private boolean checkNoDoubleCAMS(Long aIdSmo, String aDtype) {
+		List<Object> l = theManager.createNativeQuery("select id from ContractAccountMedService where Smo="+aIdSmo+" and TypeService='"+aDtype+"'").getResultList() ;
+		if (l.size()>0) return false ; 
+		return true ;
+	}
+	public Long setSmoByAccount(Long aAccount,String aDtypeSmo, Long aIdSmo, boolean aDeleteServiceWithOtherAccount, boolean aPeresech) throws ParseException {
 		Long contract = null ;
 		Long diag = null ;
 		Long guarLetter = null ;
@@ -113,9 +116,11 @@ and (pp.isvat is null or pp.isvat='0')
 		Long servicestream = null ;
 		String polNumber = null ;
 		//String date = null ;
-		if (aIsRecalc) {
-			theManager.createNativeQuery("delete from ContractAccountMedService cams where mainparent="+aIdSmo).executeUpdate() ;
+		if (aDeleteServiceWithOtherAccount) {
+			theManager.createNativeQuery("delete from ContractAccountMedService cams where cams.mainparent="+aIdSmo+" and (select count(ca.id) from ContractAccount ca where cams.account_id=ca.id and ca.isfinished='1')=0").executeUpdate() ;
+			aPeresech=false ;
 		}
+		
 		ContractAccount account = theManager.find(ContractAccount.class, aAccount) ;
 		if (aDtypeSmo.equals("HOSPITALMEDCASE")) {
 			List<Object[]> l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid,mc.priceList_id as pricelist"
@@ -130,15 +135,14 @@ and (pp.isvat is null or pp.isvat='0')
 				+"    	where diag.medCase_id=sls.id"  
 				+" and vpd.code='1' and vdrt.code='4') as diag, case when vhr.code='11' then vhr.code else null end as result"
 				+",sls.serviceStream_id"
-				+" from medcase sls" 
+				+" from medcase sls"
+				+" left join contractperson cpp on cpp.patient_id=sls.patient_id " 
+				+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and mc.id="+account.getContract().getId() 
 				+" left join vochospitalizationresult vhr on vhr.id=sls.result_id"
 				+" left join Patient pat on pat.id=sls.patient_id"
 				+" left join medcase_medpolicy mpmc on mpmc.medcase_id=sls.id"
-				+" left join medpolicy mp on mp.id=mpmc.policies_id"
-				+" left join contractperson cp on cp.regcompany_id=mp.company_id"
-				+" left join contractperson cpp on cpp.patient_id=sls.patient_id"
-				+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-				+" where sls.id="+aIdSmo
+				+" left join medpolicy mp on mp.id=mpmc.policies_id "
+				+" where sls.id="+aIdSmo+" and sls.deniedHospitalizating_id is null"
 				//+" and mc.id is not null"
 				).getResultList();
 			String lastname=null; 
@@ -154,6 +158,9 @@ and (pp.isvat is null or pp.isvat='0')
 				contract = ConvertSql.parseLong(l.get(0)[1]) ;
 				if (contract==null) {
 					contract = account.getContract().getId() ;
+					priceList=account.getContract().getPriceList().getId() ;
+				} else {
+					priceList = ConvertSql.parseLong(l.get(0)[2]) ;
 				}
 				patient = ConvertSql.parseLong(l.get(0)[0]) ;
 				servicestream = ConvertSql.parseLong(l.get(0)[13]) ;
@@ -162,7 +169,7 @@ and (pp.isvat is null or pp.isvat='0')
 				if (guarLetter!=null) {
 					sp = theManager.find(ContractGuarantee.class, guarLetter);
 				}
-				priceList = ConvertSql.parseLong(l.get(0)[2]) ;
+				
 				datestart= ""+l.get(0)[4] ;
 				datefinish = ""+l.get(0)[5] ;
 				polNumber = ""+l.get(0)[6] ;
@@ -172,6 +179,10 @@ and (pp.isvat is null or pp.isvat='0')
 				birthday = DateFormat.parseSqlDate(""+l.get(0)[10]) ;
 				diag = ConvertSql.parseLong(l.get(0)[11]) ;
 				if (ConvertSql.parseLong(l.get(0)[12])!=null) isDeath=true;
+			}
+			if (contract==null) {
+				contract = account.getContract().getId() ;
+				priceList=account.getContract().getPriceList().getId() ;
 			} 
 				StringBuilder sql = new StringBuilder() ;
 				sql.append("select pat.id as patid,pat.lastname, pat.firstname,pat.middlename,pat.birthday");
@@ -191,40 +202,49 @@ and (pp.isvat is null or pp.isvat='0')
 				sql.append(" where slo.parent_id='").append(aIdSmo).append("'  and slo.dtype='DepartmentMedCase'");
 				sql.append("  group by pat.id,pat.lastname, pat.firstname,pat.middlename,pat.birthday,slo.id,ml.id,vbt.id,vbst.id,vrt.id,slo.datefinish,slo.transferdate,slo.datestart,vht.code") ;
 				List<Object[]> listSlo = theManager.createNativeQuery(sql.toString()).getResultList();
-				
+				String dtype="" ;
+				Long idsmo;
 				for (Object[] obj:listSlo) {
-					ContractAccountMedService cams = new ContractAccountMedService() ;
-					cams.setDiagnosis(diag) ;
-					cams.setIsDeath(isDeath) ;
-					cams.setMainParent(aIdSmo) ;
-					cams.setLastname(lastname) ;
-					cams.setFirstname(firstname) ;
-					cams.setMiddlename(middlename) ;
-					cams.setBirthday(birthday) ;
-					cams.setAccount(account) ;
-					cams.setTypeService("BED") ;
-					Long service = getMedService(ConvertSql.parseLong(obj[6]), ConvertSql.parseLong(obj[7]), ConvertSql.parseLong(obj[8]), ConvertSql.parseLong(obj[9]))  ;
-					if (service!=null) {
-						Long prm = getPriceMedService(priceList, service) ;
-						cams.setServiceIn(service) ;
-						PriceMedService pms = null ;
-						if (prm!=null) {
-							pms = theManager.find(PriceMedService.class, prm) ;
-							cams.setMedService(pms) ;
-							cams.setCost(pms.getPricePosition().getCost()) ;
-						}
-						
+					dtype="MEDCASE" ;
+					idsmo=ConvertSql.parseLong(obj[5]) ;
+					boolean save=true ;
+					if (!aPeresech) {
+						if (!checkNoDoubleCAMS(aIdSmo, dtype)) save=false;
 					}
-					cams.setCountMedService(ConvertSql.parseLong(obj[12]).intValue()) ;
-					cams.setDateFrom(DateFormat.parseSqlDate(""+obj[10])) ;
-					cams.setDateTo(DateFormat.parseSqlDate(""+obj[11])) ;
-					//if (guarLetter!=null) {
-						
-						cams.setGuarantee(sp) ;
-					//}
-					cams.setSmo(ConvertSql.parseLong(obj[5])) ;
-					cams.setPolNumber(polNumber) ;
-					theManager.persist(cams) ;
+					if (save) {
+						ContractAccountMedService cams = new ContractAccountMedService() ;
+						cams.setDiagnosis(diag) ;
+						cams.setIsDeath(isDeath) ;
+						cams.setMainParent(aIdSmo) ;
+						cams.setLastname(lastname) ;
+						cams.setFirstname(firstname) ;
+						cams.setMiddlename(middlename) ;
+						cams.setBirthday(birthday) ;
+						cams.setAccount(account) ;
+						cams.setTypeService(dtype) ;
+						Long service = getMedService(ConvertSql.parseLong(obj[6]), ConvertSql.parseLong(obj[7]), ConvertSql.parseLong(obj[8]), ConvertSql.parseLong(obj[9]))  ;
+						if (service!=null) {
+							Long prm = getPriceMedService(priceList, service) ;
+							cams.setServiceIn(service) ;
+							PriceMedService pms = null ;
+							if (prm!=null) {
+								pms = theManager.find(PriceMedService.class, prm) ;
+								cams.setMedService(pms) ;
+								cams.setCost(pms.getPricePosition().getCost()) ;
+							}
+							
+						}
+						cams.setCountMedService(ConvertSql.parseLong(obj[12]).intValue()) ;
+						cams.setDateFrom(DateFormat.parseSqlDate(""+obj[10])) ;
+						cams.setDateTo(DateFormat.parseSqlDate(""+obj[11])) ;
+						//if (guarLetter!=null) {
+							
+							cams.setGuarantee(sp) ;
+						//}
+						cams.setSmo(idsmo) ;
+						cams.setPolNumber(polNumber) ;
+						theManager.persist(cams) ;
+					}
 
 				}
 				sql = new StringBuilder() ;
@@ -240,33 +260,92 @@ and (pp.isvat is null or pp.isvat='0')
 				sql.append("      where  (slo.parent_id='").append(aIdSmo).append("' or slo.id='").append(aIdSmo).append("')");
 				List<Object[]> listSo=theManager.createNativeQuery(sql.toString()).getResultList() ;
 				for (Object[] obj:listSo) {
-					ContractAccountMedService cams = new ContractAccountMedService() ;
-					cams.setDiagnosis(diag) ;
-					cams.setIsDeath(isDeath) ;
-					cams.setMainParent(aIdSmo) ;
-					cams.setLastname(lastname) ;
-					cams.setFirstname(firstname) ;
-					cams.setMiddlename(middlename) ;
-					cams.setBirthday(birthday) ;
-					cams.setAccount(account) ;
-					cams.setTypeService("SURGICALOPERATION") ;
-					Long service = ConvertSql.parseLong(obj[2]) ;
-					if (service!=null) {
-						Long prm = getPriceMedService(priceList, service) ;
-						cams.setServiceIn(service) ;
-						if (prm!=null) {
-							PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
-							cams.setMedService(pms) ;
-							cams.setCost(pms.getPricePosition().getCost()) ;
-						}
+					dtype="SURGICALOPERATION" ;
+					idsmo=ConvertSql.parseLong(obj[0]) ;
+					boolean save=true ;
+					if (!aPeresech) {
+						if (!checkNoDoubleCAMS(aIdSmo, dtype)) save=false;
 					}
-					cams.setCountMedService(1) ;
-					cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
-					cams.setGuarantee(sp) ;
-					cams.setSmo(ConvertSql.parseLong(obj[0])) ;
-					cams.setPolNumber(polNumber) ;
-					cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
-					theManager.persist(cams) ;
+					if (save) {
+						ContractAccountMedService cams = new ContractAccountMedService() ;
+						cams.setDiagnosis(diag) ;
+						cams.setIsDeath(isDeath) ;
+						cams.setMainParent(aIdSmo) ;
+						cams.setLastname(lastname) ;
+						cams.setFirstname(firstname) ;
+						cams.setMiddlename(middlename) ;
+						cams.setBirthday(birthday) ;
+						cams.setAccount(account) ;
+						cams.setTypeService(dtype) ;
+						Long service = ConvertSql.parseLong(obj[2]) ;
+						if (service!=null) {
+							Long prm = getPriceMedService(priceList, service) ;
+							cams.setServiceIn(service) ;
+							if (prm!=null) {
+								PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
+								cams.setMedService(pms) ;
+								cams.setCost(pms.getPricePosition().getCost()) ;
+							}
+						}
+						cams.setCountMedService(1) ;
+						cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
+						cams.setGuarantee(sp) ;
+						cams.setSmo(idsmo) ;
+						cams.setPolNumber(polNumber) ;
+						cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
+						theManager.persist(cams) ;
+					}
+				}
+				
+				sql = new StringBuilder() ;
+				sql.append("select so.id as soid,to_char(so.operationdate,'dd.mm.yyyy') as operdate,ms.id as msid,wf.id as wfid") ;
+				sql.append("      from Anesthesia anes ") ;
+				sql.append("      left join SurgicalOperation so on anes.surgicalOperation_id=so.id") ;
+				sql.append("      left join workfunction wf on wf.id=anes.anesthesist_id") ;
+				sql.append("      left join vocworkfunction vwf on vwf.id=wf.workfunction_id");
+				sql.append("      left join worker w on w.id=wf.worker_id");
+				sql.append("      left join patient wp on wp.id=w.person_id");
+				sql.append("      left join medcase slo on slo.id=so.medcase_id");
+				sql.append("      left join vocservicestream vss on vss.id=so.servicestream_id");
+				sql.append("      left join medservice ms on ms.id=anes.medservice_id");
+				sql.append("      where  (slo.parent_id='").append(aIdSmo).append("' or slo.id='").append(aIdSmo).append("') and ms.id is not null");
+				List<Object[]> listAn=theManager.createNativeQuery(sql.toString()).getResultList() ;
+				for (Object[] obj:listAn) {
+					dtype="ANESTHESIA" ;
+					idsmo=ConvertSql.parseLong(obj[0]) ;
+					boolean save=true ;
+					if (!aPeresech) {
+						if (!checkNoDoubleCAMS(aIdSmo, dtype)) save=false;
+					}
+					if (save) {
+						ContractAccountMedService cams = new ContractAccountMedService() ;
+						cams.setDiagnosis(diag) ;
+						cams.setIsDeath(isDeath) ;
+						cams.setMainParent(aIdSmo) ;
+						cams.setLastname(lastname) ;
+						cams.setFirstname(firstname) ;
+						cams.setMiddlename(middlename) ;
+						cams.setBirthday(birthday) ;
+						cams.setAccount(account) ;
+						cams.setTypeService(dtype) ;
+						Long service = ConvertSql.parseLong(obj[2]) ;
+						if (service!=null) {
+							Long prm = getPriceMedService(priceList, service) ;
+							cams.setServiceIn(service) ;
+							if (prm!=null) {
+								PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
+								cams.setMedService(pms) ;
+								cams.setCost(pms.getPricePosition().getCost()) ;
+							}
+						}
+						cams.setCountMedService(1) ;
+						cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
+						cams.setGuarantee(sp) ;
+						cams.setSmo(idsmo) ;
+						cams.setPolNumber(polNumber) ;
+						cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
+						theManager.persist(cams) ;
+					}
 				}
 				sql = new StringBuilder() ;
 				sql.append("      select so.id as smoid,to_char(so.dateStart,'dd.mm.yyyy') as dt,ms.id as msid,wf.id as wfid from MedCase so") ;
@@ -283,34 +362,43 @@ and (pp.isvat is null or pp.isvat='0')
 				sql.append("      and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT'") ;
 				List<Object[]> listMs=theManager.createNativeQuery(sql.toString()).getResultList() ;
 				for (Object[] obj:listMs) {
-					ContractAccountMedService cams = new ContractAccountMedService() ;
-					cams.setDiagnosis(diag) ;
-					cams.setIsDeath(isDeath) ;
-					cams.setMainParent(aIdSmo) ;
-					cams.setLastname(lastname) ;
-					cams.setFirstname(firstname) ;
-					cams.setMiddlename(middlename) ;
-					cams.setBirthday(birthday) ;
-					cams.setAccount(account) ;
-					cams.setTypeService("ADDSERVICE") ;
-					Long service = ConvertSql.parseLong(obj[2]) ;
-					if (service!=null) {
-						Long prm = getPriceMedService(priceList, service) ;
-						cams.setServiceIn(service) ;
-						if (prm!=null) {
-							PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
-							cams.setMedService(pms) ;
-							cams.setCost(pms.getPricePosition().getCost()) ;
-						}
+					dtype="MEDCASE" ;
+					idsmo=ConvertSql.parseLong(obj[0]) ;
+					boolean save=true ;
+					if (!aPeresech) {
+						if (!checkNoDoubleCAMS(aIdSmo, dtype)) save=false;
 					}
-					cams.setCountMedService(1) ;
-					cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
-					cams.setGuarantee(sp) ;
-					cams.setSmo(ConvertSql.parseLong(obj[0])) ;
-					cams.setPolNumber(polNumber) ;
-					cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
-					theManager.persist(cams) ;
+					if (save) {
+						ContractAccountMedService cams = new ContractAccountMedService() ;
+						cams.setDiagnosis(diag) ;
+						cams.setIsDeath(isDeath) ;
+						cams.setMainParent(aIdSmo) ;
+						cams.setLastname(lastname) ;
+						cams.setFirstname(firstname) ;
+						cams.setMiddlename(middlename) ;
+						cams.setBirthday(birthday) ;
+						cams.setAccount(account) ;
+						cams.setTypeService(dtype) ;
+						Long service = ConvertSql.parseLong(obj[2]) ;
+						if (service!=null) {
+							Long prm = getPriceMedService(priceList, service) ;
+							cams.setServiceIn(service) ;
+							if (prm!=null) {
+								PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
+								cams.setMedService(pms) ;
+								cams.setCost(pms.getPricePosition().getCost()) ;
+							}
+						}
+						cams.setCountMedService(1) ;
+						cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
+						cams.setGuarantee(sp) ;
+						cams.setSmo(idsmo) ;
+						cams.setPolNumber(polNumber) ;
+						cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
+						theManager.persist(cams) ;
+					}
 				}
+				if (patient!=null && datestart!=null && servicestream!=null) {
 				sql = new StringBuilder() ;
 				sql.append("select vis.id as visid,to_char(vis.datestart,'dd.mm.yyyy'),ms.id as msid,wf.id as wfid") ;
 				sql.append("      from medcase vis") ;
@@ -330,33 +418,41 @@ and (pp.isvat is null or pp.isvat='0')
 				sql.append("        and (vis.noActuality='0' or vis.noActuality is null) ");
 				List<Object[]> listVis = theManager.createNativeQuery(sql.toString()).getResultList();
 				for (Object[] obj:listVis) {
-					ContractAccountMedService cams = new ContractAccountMedService() ;
-					cams.setDiagnosis(diag) ;
-					cams.setIsDeath(isDeath) ;
-					cams.setMainParent(aIdSmo) ;
-					cams.setLastname(lastname) ;
-					cams.setFirstname(firstname) ;
-					cams.setMiddlename(middlename) ;
-					cams.setBirthday(birthday) ;
-					cams.setAccount(account) ;
-					cams.setTypeService("VISSERVICE") ;
-					Long service = ConvertSql.parseLong(obj[2]) ;
-					if (service!=null) {
-						Long prm = getPriceMedService(priceList, service) ;
-						cams.setServiceIn(service) ;
-						if (prm!=null) {
-							PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
-							cams.setMedService(pms) ;
-							cams.setCost(pms.getPricePosition().getCost()) ;
-						}
+					dtype="MEDCASE" ;
+					idsmo=ConvertSql.parseLong(obj[0]) ;
+					boolean save=true ;
+					if (!aPeresech) {
+						if (!checkNoDoubleCAMS(aIdSmo, dtype)) save=false;
 					}
-					cams.setCountMedService(1) ;
-					cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
-					cams.setGuarantee(sp) ;
-					cams.setSmo(ConvertSql.parseLong(obj[0])) ;
-					cams.setPolNumber(polNumber) ;
-					cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
-					theManager.persist(cams) ;
+					if (save) {
+						ContractAccountMedService cams = new ContractAccountMedService() ;
+						cams.setDiagnosis(diag) ;
+						cams.setIsDeath(isDeath) ;
+						cams.setMainParent(aIdSmo) ;
+						cams.setLastname(lastname) ;
+						cams.setFirstname(firstname) ;
+						cams.setMiddlename(middlename) ;
+						cams.setBirthday(birthday) ;
+						cams.setAccount(account) ;
+						cams.setTypeService("MEDCASE") ;
+						Long service = ConvertSql.parseLong(obj[2]) ;
+						if (service!=null) {
+							Long prm = getPriceMedService(priceList, service) ;
+							cams.setServiceIn(service) ;
+							if (prm!=null) {
+								PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
+								cams.setMedService(pms) ;
+								cams.setCost(pms.getPricePosition().getCost()) ;
+							}
+						}
+						cams.setCountMedService(1) ;
+						cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
+						cams.setGuarantee(sp) ;
+						cams.setSmo(ConvertSql.parseLong(obj[0])) ;
+						cams.setPolNumber(polNumber) ;
+						cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
+						theManager.persist(cams) ;
+					}}
 				}
 
 				
@@ -387,7 +483,7 @@ and (pp.isvat is null or pp.isvat='0')
 					cams.setMiddlename(middlename) ;
 					cams.setBirthday(birthday) ;
 					cams.setAccount(account) ;
-					cams.setTypeService("LABSERVICE") ;
+					cams.setTypeService("MEDCASE") ;
 					Long service = ConvertSql.parseLong(obj[2]) ;
 					if (service!=null) {
 						Long prm = getPriceMedService(priceList, service) ;
@@ -409,169 +505,260 @@ and (pp.isvat is null or pp.isvat='0')
 
 				//theManager.createNativeQuery("delete from ContractMedCase where mainMedCase_id="+aIdSmo) ;
 				//theManager.createNativeQuery("insert into MainMedCase (mainmedcase,Contract,Guarantee) values ("+aIdSmo+","+contract+","+guarLetter+")") ;
-		}
-	
-			
-		/*} else if (aDtypeSmo.equals("POLYCLINICMEDCASE")) {
-			
-			List<Object[]> l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid from medcase slo" 
-					+" left join medcase sls on sls.id=slo.parent_id"
-					+" left join medcase_medpolicy mpmc on mpmc.medcase_id=sls.id"
-					+" left join medpolicy mp on mp.id=mpmc.policies_id"
+		} else if (aDtypeSmo.equals("POLYCLINICMEDCASE")||aDtypeSmo.equals("VISIT")
+				||aDtypeSmo.equals("SERVICEMEDCASE")) {
+			StringBuilder sql = new StringBuilder() ;
+			Long policy =Long.valueOf("0") ;
+			String datestart=null ;
+			String datefinish=null ;
+			String lastname=null ;
+			String firstname=null ;
+			String middlename=null ;
+			Date birthday=null ;
+			List<Object[]> l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid,mc.priceList_id as pricelist"
+					+" , (select max(cg.id) from ContractGuarantee cg where cg.contract_id=mc.id and cg.contractPerson_id=cpp.id and sls.datestart between cg.actionDate and cg.actionDateTo) as cgid"
+					+", to_char(sls.datestart,'dd.mm.yyyy') as datestart"
+					+", to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as datefinish"
+					+", max(case when mp.dtype like 'MedPolicyD%' and mp.dtype like 'MedPolicyDmc%' and sls.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date) then mp.polNumber else '' end) as polnumber"
+					+",pat.lastname, pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday"
+					+",sls.serviceStream_id"
+					+" from medcase sls" 
+					+" left join Patient pat on pat.id=sls.patient_id"
+					+" left join medpolicy mp on mp.patient_id=sls.patient_id"
 					+" left join contractperson cp on cp.regcompany_id=mp.company_id"
+					+" left join contractperson cpp on cpp.patient_id=sls.patient_id"
 					+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-					+" where slo.id="+aIdSmo+" and mc.id is not null").getResultList();
-			if (l.size()==1) {
+					+" where sls.id="+aIdSmo
+					+" group by sls.id,sls.patient_id,mc.id,mc.pricelist_id,sls.datestart,sls.datefinish" 
+					+" ,pat.lastname,pat.firstname,pat.middlename,pat.birthday,sls.serviceStream_id,cpp.id"
+					).getResultList();
+			if (l.size()>0) {
+				
 				contract = ConvertSql.parseLong(l.get(0)[1]) ;
-				patient = ConvertSql.parseLong(l.get(0)[0]) ;
-			}
-		}
-		/*} else if (aDtypeSmo.equals("DEPARTMENTMEDCASE")) {
-			List<Object[]> l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid from medcase slo" 
-					+" left join medcase sls on sls.id=slo.parent_id"
-					+" left join medcase_medpolicy mpmc on mpmc.medcase_id=sls.id"
-					+" left join medpolicy mp on mp.id=mpmc.policies_id"
-					+" left join contractperson cp on cp.regcompany_id=mp.company_id"
-					+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-					+" where slo.id="+aIdSmo+" and mc.id is not null").getResultList();
-			if (l.size()==1) {
-				contract = ConvertSql.parseLong(l.get(0)[1]) ;
-				patient = ConvertSql.parseLong(l.get(0)[0]) ;
-			}
-		} else if (aDtypeSmo.equals("SURGICALOPERATION")) {
-			List<Object[]> l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid from surgicaloperation so" 
-					+" left join medcase slo on slo.id=so.medcase_id"
-					+" left join medcase sls on sls.id=slo.parent_id"
-					+" left join medcase_medpolicy mpmc on mpmc.medcase_id=sls.id"
-					+" left join medpolicy mp on mp.id=mpmc.policies_id"
-					+" left join contractperson cp on cp.regcompany_id=mp.company_id"
-					+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-					+" where slo.id="+aIdSmo+" and mc.id is not null").getResultList();
-				if (l.size()==1) {
-					contract = ConvertSql.parseLong(l.get(0)[1]) ;
-				} else {
-					l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid from surgicaloperation so" 
-							+" left join medcase sls on sls.id=so.medcase_id"
-							+" left join medcase_medpolicy mpmc on mpmc.medcase_id=sls.id"
-							+" left join medpolicy mp on mp.id=mpmc.policies_id"
-							+" left join contractperson cp on cp.regcompany_id=mp.company_id"
-							+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-							+" where slo.id="+aIdSmo+" and mc.id is not null").getResultList();
-						if (l.size()==1) contract = ConvertSql.parseLong(l.get(0)[1]) ;
+				priceList = ConvertSql.parseLong(l.get(0)[2]) ;
+				if (contract==null) {
+					contract = account.getContract().getId() ;
+					priceList = account.getContract().getPriceList().getId() ;
 				}
+				
+				patient = ConvertSql.parseLong(l.get(0)[0]) ;
+				servicestream = ConvertSql.parseLong(l.get(0)[11]) ;
+				
+				guarLetter = ConvertSql.parseLong(l.get(0)[3]) ;
+				if (guarLetter!=null) {
+					sp = theManager.find(ContractGuarantee.class, guarLetter);
+				}
+				datestart= ""+l.get(0)[4] ;
+				datefinish = ""+l.get(0)[5] ;
+				polNumber = ""+l.get(0)[6] ;
+				lastname = ""+l.get(0)[7] ;
+				firstname = ""+l.get(0)[8] ;
+				middlename = ""+l.get(0)[9] ;
+				birthday = DateFormat.parseSqlDate(""+l.get(0)[10]) ;
+				
+			} 
+			sql = new StringBuilder() ;
+			sql.append("      select so.id as smoid,to_char(coalesce(so.dateStart,slo.datestart),'dd.mm.yyyy') as dt");
+			sql.append("	  ,ms.id as msid,coalesce(wf.id,slo.workFunctionExecute_id) as wfid ");
+			sql.append("	  ,coalesce(so.idc10_id,max(case when vpd.code='1' then d1.idc10_id else null end) )    as mkb");
+			sql.append("      from MedCase so") ;
+			sql.append("      left join VocIdc10 mkb on mkb.id=so.idc10_id");
+			sql.append("      left join workfunction wf on wf.id=so.workFunctionExecute_id");
+			sql.append("      left join vocworkfunction vwf on vwf.id=wf.workfunction_id");
+			sql.append("      left join worker w on w.id=wf.worker_id");
+			sql.append("      left join patient wp on wp.id=w.person_id");
+			sql.append("      left join medcase slo on slo.id=so.parent_id");
+			sql.append("      left join vocservicestream vss on vss.id=so.servicestream_id");
+			sql.append("      left join medservice ms on ms.id=so.medservice_id");
+			sql.append("      left join  Diagnosis d1 on d1.medcase_id=slo.id");
+			sql.append("      left join VocPriorityDiagnosis vpd on vpd.id=d1.priority_id ");
+			sql.append("      where");
+			sql.append("      (slo.parent_id='").append(aIdSmo).append("' or slo.id='").append(aIdSmo).append("' or so.id='").append(aIdSmo).append("')");
+			sql.append("      and upper(so.dtype)='SERVICEMEDCASE'") ;
+			sql.append("      and (slo.noActuality='0' or slo.noActuality is null)");
+			sql.append("      group by so.id,so.datestart,so.datefinish,slo.datestart,ms.id,wf.id,slo.workfunctionexecute_id,so.idc10_id") ;
 			
-		} else if (aDtypeSmo.equals("SERVICEMEDCASE")) {
-			List<Object[]> l = theManager.createNativeQuery("select cp.id as cpid,mc.id as mcid from medcase smc" 
-					+" left join medcase slo on slo.id=smc.parent_id"
-					+" left join medcase sls on sls.id=slo.parent_id"
-					+" left join medcase_medpolicy mpmc on mpmc.medcase_id=sls.id"
-					+" left join medpolicy mp on mp.id=mpmc.policies_id"
-					+" left join contractperson cp on cp.regcompany_id=mp.company_id"
-					+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-					+" where slo.id="+aIdSmo+" and mc.id is not null").getResultList();
-				if (l.size()==1) {
-					contract = ConvertSql.parseLong(l.get(0)[1]) ;
-				} else {
-					l = theManager.createNativeQuery("select cp.id as cpid,mc.id as mcid from medcase smc" 
-							+" left join medcase sls on sls.id=smc.medcase_id"
-							+" left join medcase_medpolicy mpmc on mpmc.medcase_id=sls.id"
-							+" left join medpolicy mp on mp.id=mpmc.policies_id"
-							+" left join contractperson cp on cp.regcompany_id=mp.company_id"
-							+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-							+" where slo.id="+aIdSmo+" and mc.id is not null").getResultList();
-					if (l.size()==1) contract = ConvertSql.parseLong(l.get(0)[1]) ;
+			List<Object[]> listMs=theManager.createNativeQuery(sql.toString()).getResultList() ;
+			
+			for (Object[] obj:listMs) {
+				diag = ConvertSql.parseLong(obj[2]) ;
+				ContractAccountMedService cams = new ContractAccountMedService() ;
+				cams.setDiagnosis(diag) ;
+				cams.setIsDeath(null) ;
+				cams.setMainParent(aIdSmo) ;
+				cams.setLastname(lastname) ;
+				cams.setFirstname(firstname) ;
+				cams.setMiddlename(middlename) ;
+				cams.setBirthday(birthday) ;
+				cams.setAccount(account) ;
+				cams.setTypeService("MEDCASE") ;
+				Long service = ConvertSql.parseLong(obj[2]) ;
+				if (service!=null) {
+					Long prm = getPriceMedService(priceList, service) ;
+					cams.setServiceIn(service) ;
+					if (prm!=null) {
+						PriceMedService pms = theManager.find(PriceMedService.class, prm) ;
+						cams.setMedService(pms) ;
+						cams.setCost(pms.getPricePosition().getCost()) ;
+					}
 				}
-		}*/
+				cams.setCountMedService(1) ;
+				cams.setDateFrom(DateFormat.parseSqlDate(""+obj[1])) ;
+				cams.setGuarantee(sp) ;
+				cams.setSmo(ConvertSql.parseLong(obj[0])) ;
+				cams.setPolNumber(polNumber) ;
+				cams.setDoctor(ConvertSql.parseLong(obj[3])) ;
+				theManager.persist(cams) ;
+			}
+
+		}
 		return contract ;
 	}
-	public void unionServiceWithContract(String aDateFrom, String aDateTo) {
-		unionServiceWithContract(aDateFrom, aDateTo, theManager) ;
+	public void unionAccountsWithContract(Long aAccount1, Long aAccount2) {
+		theManager.createNativeQuery("update ContractAccountMedService set account_id="+aAccount1+" where account_id="+aAccount2).executeUpdate() ;
+		theManager.createNativeQuery("delete ContractAccount where id="+aAccount2).executeUpdate() ;
 	}
-	public void accountCreation(long aMonitorId, String aDateFrom,String aDateTo, Long aContract, String aAccountNumber) {
+	public void accountCreation(long aMonitorId, String aDate, String aDateFrom,String aDateTo, Long aContract, String aAccountNumber
+			,boolean aIsHosp,int aIsPolyc, boolean aIsEmpty, boolean aDeleteServiceWithOtherAccount, boolean aIsPeresech) {
 		IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
 		try {
 			MedContract contract = theManager.find(MedContract.class, aContract) ;
 			ContractAccount ac = new ContractAccount() ;
 			ac.setContract(contract) ;
-			ac.setDateFrom(DateFormat.parseSqlDate(aDateFrom)) ;
-			ac.setDateTo(DateFormat.parseSqlDate(aDateTo)) ;
+			ac.setDateFrom(DateFormat.parseSqlDate(aDate)) ;
+			ac.setPeriodFrom(DateFormat.parseSqlDate(aDateFrom)) ;
+			ac.setPeriodTo(DateFormat.parseSqlDate(aDateTo)) ;
 			ac.setAccountNumber(aAccountNumber) ;
 			theManager.persist(ac) ;
+			System.out.println("isEmpty="+aIsEmpty) ;
+	        System.out.println("isHospit="+aIsHosp) ;
+	        System.out.println("isPolyc="+aIsPolyc) ;
+			if (aIsEmpty) {
+				monitor=theMonitorService.startMonitor(aMonitorId, "Создание пустого счета",1) ;
+				monitor.finish("Создан счет") ;
+				return ;
+			}
+			boolean isStart=false ;
 			StringBuilder sql = new StringBuilder() ;
 			sql.append("select mc.id as mcid,cp.id as cpid ,vss.id as vssid, rc.id as rcid,lpu.id as lpuid,mc.priceList_id as pricelist")
-				.append(" from medcontract mc")
-				.append(" left join contractperson cp on cp.id=mc.customer_id")
-				.append(" left join VocServiceStream vss on vss.id=mc.serviceStream_id")
-				.append(" left join Reg_ic rc on rc.id=cp.regcompany_id")
-				.append(" left join MisLpu lpu on lpu.id=cp.lpu_id") 
-				.append(" where mc.id=").append(aContract);
+			.append(" from medcontract mc")
+			.append(" left join contractperson cp on cp.id=mc.customer_id")
+			.append(" left join VocServiceStream vss on vss.id=mc.serviceStream_id")
+			.append(" left join Reg_ic rc on rc.id=cp.regcompany_id")
+			.append(" left join MisLpu lpu on lpu.id=cp.lpu_id") 
+			.append(" where mc.id=").append(aContract);
 			List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 			if (!list.isEmpty()) {
-				Object[] par=list.get(0) ;
-				sql = new StringBuilder() ;
-				sql.append("select mc.id as mcid,mp.id as mpid,mc.patient_id from medcase mc")
+				if (aIsHosp) {
+					Object[] par=list.get(0) ;
+					sql = new StringBuilder() ;
+					sql.append("select mc.id as mcid,mp.id as mpid,mc.patient_id from medcase mc")
 					.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=mc.id")
 					.append(" left join medpolicy mp on mp.id=mcmp.policies_id")
 					.append(" where mc.dtype='HospitalMedCase' and mc.dateFinish between to_date('")
 					.append(aDateFrom).append("','dd.mm.yyyy')")
 					.append(" and to_date('")
 					.append(aDateTo).append("','dd.mm.yyyy')") ;
-				if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
-				if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]) ;
-				if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[3]) ;
-				sql.append(" group by mc.id,mp.id,mc.patient_id") ;
-				List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
-				monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size(),listHosp.size()) ;
-				
-				for (Object[] hosp:listHosp) {
-					// Койки
+					if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
+					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]) ;
+					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[3]) ;
+					sql.append(" group by mc.id,mp.id,mc.patient_id") ;
+					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
+					if (!isStart) {
+						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size(),listHosp.size()) ;
+						isStart=true ;
+					} else {
+						monitor.setText("Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size()) ;
+					}
+					for (Object[] hosp:listHosp) {
+						Long hospId=ConvertSql.parseLong(hosp[0]) ;
+						setSmoByAccount(ac.getId(), "HOSPITALMEDCASE", hospId, aDeleteServiceWithOtherAccount,aIsPeresech) ;
+					}
+				} 
+				//обращение
+				if (aIsPolyc==1) {
+					Object[] par=list.get(0) ;
 					sql = new StringBuilder() ;
-					sql.append("select slo.id,max(pms.id) as ppcost")
-						.append(" ,coalesce(slo.datefinish,slo.transferdate),slo.datestart")
-						.append(" from medcase slo")
-						.append(" left join medcase sls on sls.id=slo.parent_id")
-						.append(" left join Vochosptype vht on vht.id=sls.hosptype_id")
-						.append(" left join statisticstub ss on ss.id=sls.statisticStub_id")
-						.append(" left join bedfund bf on bf.id=slo.bedfund_id")
-						.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id")
-						.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id")
-						.append(" left join workPlace wp on wp.id=slo.roomNumber_id")
-						.append(" left join Patient pat on pat.id=slo.patient_id")
-						.append(" left join VocRoomType vrt on vrt.id=wp.roomType_id")
-						.append(" left join mislpu ml on ml.id=slo.department_id")
-						.append(" left join workfunctionservice wfs on wfs.lpu_id=slo.department_id")
-						.append("     and bf.bedtype_id=wfs.bedtype_id and bf.bedsubtype_id=wfs.bedsubtype_id")
-						.append("     and wfs.roomType_id=wp.roomType_id")
-						.append(" left join medservice ms on ms.id=wfs.medservice_id")
-						.append(" left join pricemedservice pms on pms.medservice_id=wfs.medservice_id")
-						.append(" left join priceposition pp on pp.id=pms.priceposition_id")
-						.append(" and (pp.isvat is null or pp.isvat='0')")
-						.append(" where slo.parent_id='").append(hosp[0]).append("'")
-						.append("  and ms.servicetype_id='").append(11).append("' and pp.priceList_id='").append(par[5]).append("'")
-						.append("  group by slo.id,ml.name,vbt.name,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code") ;
-					List<Object[]> bedL= theManager.createNativeQuery(sql.toString()).getResultList() ; 
-					for (Object[] bed:bedL) {
-						//System.out.println("bed="+bed[0]+" pp="+bed[1]) ;
-						ContractAccountMedService cams = new ContractAccountMedService() ;
-						cams.setTypeService("BED") ;
-						cams.setAccount(ac) ;
-						PriceMedService pms = theManager.find(PriceMedService.class, ConvertSql.parseLong(bed[1])) ;
-						cams.setMedService(pms) ;
-						cams.setCost(pms.getPricePosition().getCost()) ;
-						cams.setCountMedService(1) ;
-						//cams.setDateFrom() ;
-						//cams.setDateTo() ;
-						ContractGuarantee sp = theManager.find(ContractGuarantee.class, hosp[3]);
-						cams.setGuarantee(sp) ;
-						//cams.setLastname() ;
-						//cams.setFirstname() ;
-						//cams.setMiddlename() ;
-						//cams.setBirthday() ;
-						cams.setSmo(ConvertSql.parseLong(bed[0])) ;
-						theManager.persist(cams) ;
+					sql.append("select mc.id as mcid")
+						.append(", max(mp.id) as mpid")
+						.append(",mc.patient_id from medcase mc")
+						.append(" left join medpolicy mp on mp.patient_id=mc.patient_id")
+						
+					.append(" where mc.dtype='PolyclinicMedCase' and mc.dateFinish between to_date('")
+					.append(aDateFrom).append("','dd.mm.yyyy')")
+					.append(" and to_date('")
+					.append(aDateTo).append("','dd.mm.yyyy')") ;
+					if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
+					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
+					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
+					sql.append(" group by mc.id,mc.patient_id") ;
+					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
+					if(!isStart){
+						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлиническим обращениям. Найдено обращений: "+listHosp.size(),listHosp.size()) ;
+						isStart=true ;
+					} else {
+						monitor.setText("Формирование счета по поликлиническим обращениям. Найдено обращений: "+listHosp.size()) ;
+					}
+					
+					for (Object[] hosp:listHosp) {
+						Long hospId=ConvertSql.parseLong(hosp[0]) ;
+						setSmoByAccount(ac.getId(), "POLYCLINICMEDCASE", hospId, aDeleteServiceWithOtherAccount,aIsPeresech) ;
+					}
+				} else if (aIsPolyc==2) {
+					Object[] par=list.get(0) ;
+					sql = new StringBuilder() ;
+					sql.append("select mc.id as mcid")
+					.append(", max(mp.id) as mpid")
+					.append(",mc.patient_id from medcase mc")
+					.append(" left join medpolicy mp on mp.patient_id=mc.patient_id")
+					.append(" where mc.dtype='Visit' and mc.dateStart between to_date('")
+					.append(aDateFrom).append("','dd.mm.yyyy')")
+					.append(" and to_date('")
+					.append(aDateTo).append("','dd.mm.yyyy')") ;
+					if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
+					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
+					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
+					sql.append(" group by mc.id,mc.patient_id,mc.datestart") ;
+					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
+					if (!isStart) {
+						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлинике визит. Найдено визитов: "+listHosp.size(),listHosp.size()) ;
+						isStart=true ;
+					} else {
+						monitor.setText("Формирование счета по поликлинике визит. Найдено визитов: "+listHosp.size()) ;
+					}
+					for (Object[] hosp:listHosp) {
+						Long hospId=ConvertSql.parseLong(hosp[0]) ;
+						setSmoByAccount(ac.getId(), "VISIT", hospId, aDeleteServiceWithOtherAccount,aIsPeresech) ;
+					}
+					
+					
+					sql = new StringBuilder() ;
+					sql.append("select mc.id as mcid")
+						.append(", max(mp.id) as mpid")
+						.append(",mc.patient_id from medcase mc left join medcase mcp on mcp.id=mc.parent_id")
+						.append(" left join medpolicy mp on mp.patient_id=mc.patient_id")
+						.append(" where mc.dtype='ServiceMedCase' and mc.dateStart between to_date('")
+						.append(aDateFrom).append("','dd.mm.yyyy')")
+						.append(" and to_date('")
+						.append(aDateTo).append("','dd.mm.yyyy') and mcp.dtype='PolyclinicMedCase'") ;
+					if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
+					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
+					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
+					sql.append(" group by mc.id,mc.patient_id,mc.datestart") ;
+					List<Object[]> listHosp1 = theManager.createNativeQuery(sql.toString()).getResultList() ;
+					if (!isStart) {
+						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлинике визит. Найдено услуг: "+listHosp.size(),listHosp.size()) ;
+						isStart=true ;
+					} else {
+						monitor.setText("Формирование счета по поликлинике визит. Найдено услуг: "+listHosp1.size()) ;
+					}
+					for (Object[] hosp:listHosp1) {
+						Long hospId=ConvertSql.parseLong(hosp[0]) ;
+						setSmoByAccount(ac.getId(), "SERVICEMEDCASE", hospId, aDeleteServiceWithOtherAccount,aIsPeresech) ;
 					}
 				}
 			}
+			
 			monitor.finish("Обработка завершена") ;
 		} catch (Exception e) {
 			monitor.error(e.getMessage(), e) ;
@@ -606,4 +793,5 @@ and (pp.isvat is null or pp.isvat='0')
 	
 	@PersistenceContext EntityManager theManager ;
 	 private @EJB ILocalMonitorService theMonitorService ;
+	
 }

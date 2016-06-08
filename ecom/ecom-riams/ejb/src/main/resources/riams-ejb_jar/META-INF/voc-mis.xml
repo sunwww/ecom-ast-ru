@@ -31,7 +31,7 @@
 			"
 		queried="upper(ca.accountNumber) like upper(:querId) "
 		parent=""
-		queryAppend="cp.dtype='JuridicalPerson' "
+		queryAppend="cp.dtype='JuridicalPerson' and (ca.isFinished='0' or ca.isFinished is null) "
 	/>
 </voc>
 <voc id="executorsByCurrentUserName" type="NativeVocService">
@@ -215,7 +215,7 @@
 	<NativeVocService
 		from="MedService ms"
 		nameId="ms.id"
-		queryAppend="vst.code = 'ANESTHESIA' and ms.finishDate" 
+		queryAppend="vst.code = 'ANESTHESIA' and ms.finishDate is null" 
 		join=" left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
@@ -483,6 +483,22 @@
 					left join MedContract MC ON MC.priceList_id = PP.priceList_id
 					left join ServedPerson SP ON SP.contract_id=MC.id
 					left join ContractAccount CA ON CA.servedPerson_id=sp.id
+				"
+                order=""
+                names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
+	    		queried=" (upper(PP.code) like upper(:query) or upper(PP.name) like upper(:query)) "
+			/>
+	</voc>
+<voc id="priceMedServiceByJuridicalContractAccout" type="NativeVocService">
+		<NativeVocService
+			from="PriceMedService PMS"
+                parent='CA.id = :parent'
+                nameId="PMS.id"
+                queryAppend=""
+                join="
+                	left join PricePosition PP ON PP.id = PMS.pricePosition_id
+					left join MedContract MC ON MC.priceList_id = PP.priceList_id
+					left join ContractAccount CA ON CA.contract_id=MC.id
 				"
                 order=""
                 names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
@@ -789,7 +805,7 @@
     			queryAppend="dtype='MedService' and finishdate is null"
     			join=''
     			order=''
-    			queried = "(cast(id as varchar(10)) like :query or upper(name) like UPPER(:query) or code like UPPER(:query))"
+    			queried = "(cast(id as varchar(10)) like :query or upper(name) like UPPER(:query) or code like UPPER(:query) or replace(code,'.','') like UPPER(:query))"
     			parentSplitCount="2"
     			 			
     	/>
@@ -1546,9 +1562,14 @@
     			from = 'WorkFunction as wf '
     			parent = ''
     			names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ' ||case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end"
-    			queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
+    			queried =" (cast(wf.id as varchar(20))= :querInd or 
+    			upper(vwf.name) like UPPER(:query) or 
+    			 (upper(p.lastname) like upper(:quer1)
+    			 and (:quer2 is null or upper(p.firstname) like upper(:quer2)) 
+    			and (:quer3 is null or upper(p.middlename) like upper(:quer3))) )"
     			queryAppend = " wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')"
     			queriedSplitCount="3"
+    			
     			order =''
     			nameId='wf.id'
     			join='left join Worker as w on w.id=wf.worker_id 

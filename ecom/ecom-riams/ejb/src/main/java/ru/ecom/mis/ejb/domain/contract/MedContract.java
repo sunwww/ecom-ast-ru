@@ -28,6 +28,7 @@ import ru.ecom.mis.ejb.domain.contract.voc.VocContractTerm;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 	/**
 	 * Медицинский договор
 	 */
@@ -327,4 +328,24 @@ public class MedContract extends BaseEntity{
 	/** Срок договора */
 	private VocContractTerm theContractTerm;
 
+	/** Скидка по умолчанию */
+	@Comment("Скидка по умолчанию")
+	public BigDecimal getDiscountDefault() {return theDiscountDefault;}
+	public void setDiscountDefault(BigDecimal aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+
+	/** Скидка по умолчанию */
+	private BigDecimal theDiscountDefault;
+
+	/** Оплачен */
+	@Comment("Оплачен")
+	public Boolean getIsFinished() {
+		return theIsFinished;
+	}
+
+	public void setIsFinished(Boolean aIsFinished) {
+		theIsFinished = aIsFinished;
+	}
+
+	/** Оплачен */
+	private Boolean theIsFinished;
 }
