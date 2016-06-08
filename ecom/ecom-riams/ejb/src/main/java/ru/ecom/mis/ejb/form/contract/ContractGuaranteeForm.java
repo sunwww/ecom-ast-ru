@@ -10,6 +10,7 @@ import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.contract.voc.VocGuaranteeKindHelp;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -119,5 +120,18 @@ public class ContractGuaranteeForm extends IdEntityForm{
 
 	/** Вид медицинской помощи */
 	private Long theKindHelp;
+	/** Палата */
+	@Comment("Палата")
+	@Persist 
+	public Long getRoomType() {
+		return theRoomType;
+	}
+
+	public void setRoomType(Long aRoomType) {
+		theRoomType = aRoomType;
+	}
+
+	/** Палата */
+	private Long theRoomType;
 
 }
