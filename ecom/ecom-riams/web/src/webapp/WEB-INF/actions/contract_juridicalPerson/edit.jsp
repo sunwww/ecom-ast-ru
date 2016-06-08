@@ -78,12 +78,14 @@
 ,(select sum(ca.balanceSum)
 			from ContractAccount ca
 			where ca.contract_id=mc.id) as sumbalance
-from MedContract mc 
+			,vcl.name as vclname
+			from MedContract mc
+			left join VocContractLabel vcl on vcl.id=mc.contractLabel_id
 left join ServedPerson sp on mc.id=contract_id left join ContractPerson cp on cp.id=sp.person_id 
 left join Patient cpp on cpp.id=cp.patient_id left join ContractAccount ca on ca.servedPerson_id=sp.id 
 left join PriceList pl on pl.id=mc.priceList_id 
 where mc.customer_id='${param.id}'
-group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name 
+group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name,vcl.name 
 order by mc.dateFrom desc
       	" maxResult="10"/>
       	<msh:table name="medContracts" viewUrl="entityView-contract_juridicalContract.do?short=Short" 
@@ -91,6 +93,7 @@ order by mc.dateFrom desc
       		<msh:tableColumn property="2" columnName="№ договора"/>
       		<msh:tableColumn property="3" columnName="Дата начала"/>
       		<msh:tableColumn property="4" columnName="Дата окончания"/>
+      		<msh:tableColumn property="7" columnName="Метка"/>
       		<msh:tableColumn property="6" columnName="Оплачено по договору"/>
       		<msh:tableColumn property="5" columnName="Прейкурант"/>
       	</msh:table>

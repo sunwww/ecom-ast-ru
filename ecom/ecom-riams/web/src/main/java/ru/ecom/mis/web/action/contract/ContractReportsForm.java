@@ -96,4 +96,16 @@ public class ContractReportsForm extends BaseValidatorForm{
 
 	/** contractLabel */
 	private Long theContractLabel;
+	
+	/** Номер счета */
+	public String getAccountNumber() {
+		return theAccountNumber;
+	}
+
+	public void setAccountNumber(String aAccountNumber) {
+		theAccountNumber = aAccountNumber;
+	}
+
+	/** Номер счета */
+	private String theAccountNumber;
 }

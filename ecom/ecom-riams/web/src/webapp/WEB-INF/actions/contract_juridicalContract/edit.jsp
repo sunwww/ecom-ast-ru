@@ -26,7 +26,8 @@
 					<msh:textField property="dateTo" label="Дата окончания "/>
 				</msh:row>
 				<msh:row>
-					<msh:autoComplete property="contractTerm" label="Срок окончания" vocName="vocContractTerm" horizontalFill="true" size="100" fieldColSpan="3"/>
+					<msh:checkBox property="isFinished" label="Закрыт"/>
+					<msh:autoComplete property="contractTerm" label="Срок окончания" vocName="vocContractTerm" horizontalFill="true" size="100" />
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" size="100" fieldColSpan="3"/>
@@ -45,7 +46,13 @@
 					<msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3"  vocName="vocServiceStream" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
+				</msh:row>
+				<msh:row>
 					<msh:textField property="limitMoney"/>
+					<msh:textField property="discountDefault"/>
+				</msh:row>
+				<msh:row>
+					<msh:checkBox property="isFinished" label="Закрыт"/>
 					<msh:checkBox property="isRequiredGuaratee" />
 				</msh:row>
 
@@ -79,38 +86,88 @@
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_juridicalContractForm">
 			<msh:section title="Счета на оплату" createRoles="" createUrl="javascript:showAccountCreationAccount()">
-			<ecom:webQuery nativeSql="select ca.id,
-			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
-			,sp.dateFrom,sp.dateTo
+			<ecom:webQuery nativeSql="select ca.id
+			,ca.accountNumber,ca.dateFrom,ca.periodFrom,ca.periodTo
 			, count(distinct case when cao.id is null then cams.id else null end) as cntMedService 
-			, sum(case when cao.id is null then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
-			, round(sum((case when cao.id is null then cams.countMedService*cams.cost else 0 end)*(100-ca.discountDefault)/100),2) as sumNoAccraulMedServiceWithDiscount 
+			, sum(case when cao.id is null then cams.countMedService*round((cams.cost*(100-coalesce(mc.discountDefault,'0'))/100),0) else 0 end) as sumNoAccraulMedService 
+			, case when ca.isFinished='1' then 'Закрыт' else null end as isfinished
+			,min(coalesce(cams.dateto,cams.datefrom)) as mindate
+			,max(coalesce(cams.dateto,cams.datefrom)) as maxdate
 			from ContractAccount ca
+			left join medcontract mc on mc.id=ca.contract_id
 			left join ServedPerson sp on ca.id = sp.account_id
 			left join ContractAccountMedService cams on cams.account_id=ca.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where ca.contract_id='${param.id}' and cao.id is null  and caos.id is null
+			where ca.contract_id='${param.id}'			and (ca.isFinished='0' or ca.isFinished is null)
+			 and cao.id is null  and caos.id is null
+			and (cams.isDelete='0' or cams.isDelete is null)
+			
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
-			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault
+			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault,mc.discountdefault			
+			,ca.accountNumber, ca.isFinished,ca.periodFrom,ca.periodTo,ca.datefrom
+			order by ca.datefrom
+
 			" name="serverPerson"/>
-				<msh:table name="serverPerson" action="js-contract_juridicalContract-account_group_by_patient.do"
+				<msh:table 
+				deleteUrl="entityParentDeleteGoParentView-contract_juridicalAccount.do" 
+				editUrl="entityEdit-contract_juridicalAccount.do" 
+				name="serverPerson" action="js-contract_juridicalContract-account_group_by_patient.do"
 				viewUrl="js-contract_juridicalContract-account_group_by_patient.do?short=Short"
 				printUrl="js-contract_juridicalContract-account_print.do"
 				idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
-					<msh:tableColumn columnName="Информация" property="2"/>
-					<msh:tableColumn columnName="Дата начала обсл." property="3"/>
-					<msh:tableColumn columnName="Дата окончания" property="4"/>
-					<msh:tableColumn columnName="кол-во услуг" property="5"/>
-					<msh:tableColumn columnName="сумма к оплате" property="6"/>
+					<msh:tableColumn columnName="Номер счета" property="2"/>
+					<msh:tableColumn columnName="от" property="3"/>
+					<msh:tableColumn columnName="Период обслуживания с" property="4"/>
+					<msh:tableColumn columnName="по" property="5"/>
+					<msh:tableColumn columnName="Кол-во услуг" property="6"/>
+					<msh:tableColumn columnName="сумма к оплате" property="7"/>
+					<msh:tableColumn columnName="Дата действия услуг с" property="9"/>
+					<msh:tableColumn columnName="по" property="10"/>
 				</msh:table>
 			</msh:section>
 			<msh:section>
-			<msh:sectionTitle>Оплаченные счета 
-			</msh:sectionTitle>
+			<msh:sectionTitle>Выставленные счета</msh:sectionTitle>
 			<msh:sectionContent>
+			<ecom:webQuery nativeSql="select ca.id
+			,ca.accountNumber,ca.dateFrom,ca.periodFrom,ca.periodTo
+			, count(distinct case when cao.id is null then cams.id else null end) as cntMedService 
+			, sum(case when cao.id is null then cams.countMedService*round((cams.cost*(100-coalesce(mc.discountDefault,'0'))/100),0) else 0 end) as sumNoAccraulMedService 
+			, case when ca.isFinished='1' then 'Закрыт' else null end as isfinished
+			,min(coalesce(cams.dateto,cams.datefrom)) as mindate
+			,max(coalesce(cams.dateto,cams.datefrom)) as maxdate
+			from ContractAccount ca
+			left join medcontract mc on mc.id=ca.contract_id
+			left join ServedPerson sp on ca.id = sp.account_id
+			left join ContractAccountMedService cams on cams.account_id=ca.id
+			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
+			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
+			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
+			where ca.contract_id='${param.id}' and ca.isFinished='1' and cao.id is null  and caos.id is null
+			and (cams.isDelete='0' or cams.isDelete is null)
+			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
+			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault,mc.discountdefault			
+			,ca.accountNumber, ca.isFinished,ca.periodFrom,ca.periodTo,ca.datefrom
+			order by ca.datefrom
+
+			" name="serverPerson"/>
+				<msh:table 
+				name="serverPerson" action="js-contract_juridicalContract-account_group_by_patient.do"
+				viewUrl="js-contract_juridicalContract-account_group_by_patient.do?short=Short"
+				printUrl="js-contract_juridicalContract-account_print.do"
+				idField="1">
+					<msh:tableColumn columnName="#" property="sn"/>
+					<msh:tableColumn columnName="Номер счета" property="2"/>
+					<msh:tableColumn columnName="от" property="3"/>
+					<msh:tableColumn columnName="Период обслуживания с" property="4"/>
+					<msh:tableColumn columnName="по" property="5"/>
+					<msh:tableColumn columnName="Кол-во услуг" property="6"/>
+					<msh:tableColumn columnName="сумма к оплате" property="7"/>
+					<msh:tableColumn columnName="Дата действия услуг с" property="9"/>
+					<msh:tableColumn columnName="по" property="10"/>
+				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
 			<msh:section title="Поддоговор">
@@ -209,8 +266,15 @@
 	<tiles:put name="javascript" type="string">
 	<msh:ifFormTypeIsView formName="contract_juridicalContractForm">
 	<script type="text/javascript">
-		function creationAccountGo(aDateFrom,aDateTo,aAccountNumber) {
-			document.location.href = "contract_accountCreationByJurPerson.do?medContart=${param.id}&dateFrom="+aDateFrom+"&dateTo="+aDateTo+"&accountNumber="+aAccountNumber ;
+		function creationAccountGo(aDateFrom,aDateTo,aAccountNumber
+				,aDate,aIsEmpty
+				,aIsPeresech,aIsHosp,aIsPolyc,aIsDelete) {
+			document.location.href = 
+				"contract_accountCreationByJurPerson.do?isPeresech=0&isEmpty="+(aIsEmpty?1:0)
+					+"&isHospital="+(aIsHosp?1:0)+"&isPolyc="+(aIsPolyc?2:0)
+					+"&isPeresech="+(aIsPeresech?1:0)+"&isDelete="+(aIsDelete?1:0)
+					+"&date="+aDate
+					+"&medContart=${param.id}&dateFrom="+aDateFrom+"&dateTo="+aDateTo+"&accountNumber="+aAccountNumber ;
 		}
 	</script>
 	</msh:ifFormTypeIsView>

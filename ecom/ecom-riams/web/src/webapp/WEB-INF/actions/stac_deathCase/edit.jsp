@@ -99,10 +99,10 @@
         	<msh:separator label="Диагнозы" colSpan="6"/>
         </msh:row>
         <msh:row>
-        	<msh:textArea property="commentReason" label="Причина смерти (ПС)" fieldColSpan="3" horizontalFill="true" rows="2"/>
+        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осн. ПС" property="reasonMainMkb" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete vocName="vocIdc10" label="МКБ-10 осн. ПС" property="reasonMainMkb" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:textArea property="commentReason" label="Причина смерти (ПС)" fieldColSpan="3" horizontalFill="true" rows="2"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" property="concludingActuity" horizontalFill="true" label="Характер заболевания"

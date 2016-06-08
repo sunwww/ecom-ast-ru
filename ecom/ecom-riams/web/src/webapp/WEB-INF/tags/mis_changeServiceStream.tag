@@ -64,7 +64,7 @@
      // Сохранение данных
      function save${name}ChangeServiceStream() {
      	if (+$('${name}ChangeServiceStream').value==0) {
-     		alert("Поле дата является обязательным") ;
+     		alert("Поле поток обслуживания является обязательным") ;
      		$("${name}ChangeServiceStreamName").focus() ;
      	}  else {
          	${service}.changeServiceStreamBySmo(

@@ -24,6 +24,7 @@
 	<tiles:put name='body' type='string' >
 	<%
 	String typeContractPerson =ActionUtil.updateParameter("ReportContractFind","typeContractPerson","1", request) ;
+	String typeContract =ActionUtil.updateParameter("ReportContractFind","typeContract","3", request) ;
 	%>
 	<msh:form action="contract_find_by_number.do" defaultField="contractNumber" method="get">
 			<msh:panel>
@@ -49,6 +50,18 @@
 	        	<input type="radio" name="typeContractPerson" value="5"> ЛПУ
 	        </td>	        
         </msh:row>
+         <msh:row>
+	        <td class="label" title="Статус договора" colspan="1"><label for="typeContractName" id="typeContractLabel">Статус договора:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';" title="">
+	        	<input type="radio" name="typeContract" value="1"> закрытые
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  title="">
+	        	<input type="radio" name="typeContract" value="2"> открытые
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';"  title="" colspan="3">
+	        	<input type="radio" name="typeContract" value="3"> не учитывать параметр
+	        </td>
+        </msh:row>
         <msh:row>
         	<msh:autoComplete property="contractLabel" fieldColSpan="10" label="Метка" 
         		vocName="vocContractLabel" horizontalFill="true"/>
@@ -60,6 +73,7 @@
 		</msh:form>
 		<script type='text/javascript'>
     checkFieldUpdate('typeContractPerson','${typeContractPerson}',1) ;
+    checkFieldUpdate('typeContract','${typeContract}',3) ;
     
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -116,6 +130,12 @@
 				paramSql.append( "  and lpu.id is not null") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' or lpu.name like '%").append(contractNumber).append("%')") ;
 			}
+			if (typeContract!=null && typeContract.equals("1")) {
+				paramSql.append(" and mc.isfinished='1'") ;
+			} else if (typeContract!=null && typeContract.equals("1")) {
+				paramSql.append(" and (mc.isfinished is null or mc.isfinished='0')") ;
+			}
+
 			paramSql.append(" and (").append(fio.toString()).append(" or mc.contractNumber='").append(contractNumber).append("')") ;
 		  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("juridicalPersonType", "cp.juridicalPersonType_id", request)) ;
 		  	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("contractLabel", "vcl.id", request)) ;
@@ -145,6 +165,8 @@
 			,mc.limitMoney ||case when mc.isRequiredGuaratee='1'
 				then ' (обязательно гарант.письмо)' else '' end as limitMoney
 			,vcl.name as vclname
+			, case when mc.isFinished='1' then 'background:#EDE;' end as isfinishedstyle
+			
 			from MedContract mc
 			left join VocContractLabel vcl on vcl.id=mc.contractLabel_id
 			left join ContractPerson cp on cp.id=mc.customer_id
@@ -159,7 +181,7 @@
 			${paramSql}
 			order by ${orderBy}
 			"/>
-				<msh:table name="childContract" action="entityParentView-contract_${prefix}Contract.do" idField="1" disableKeySupport="true">
+				<msh:table styleRow="12" name="childContract" action="entityParentView-contract_${prefix}Contract.do" idField="1" disableKeySupport="true">
 					<msh:tableColumn columnName="#" property="sn" />
 					<msh:tableColumn property="11" columnName="Метка"/>
 					<msh:tableColumn columnName="№ договора" property="2" />

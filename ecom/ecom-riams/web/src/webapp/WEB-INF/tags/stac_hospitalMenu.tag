@@ -203,7 +203,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <msh:sideMenu title = "Добавить">
 		<msh:sideLink action = "/entityParentPrepareCreate-stac_disabilityCase" name = "Нетрудоспособность" params = "id" title = "Нетрудоспособность" roles = "/Policy/Mis/MedCase/Stac/Ssl//Disability/Disability/Create"  />
 </msh:sideMenu>
-<tags:contract_getAccount name="ACCOUNT" parentID="${param.id}"  />
+<tags:contract_getAccount name="ACCOUNT"  />
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <script type="text/javascript">
   function viewOtherVisitsByPatient(d) {

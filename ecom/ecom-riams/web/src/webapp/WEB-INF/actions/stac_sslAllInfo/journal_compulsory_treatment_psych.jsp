@@ -133,7 +133,7 @@
     		request.setAttribute("emergencyInfo", ", поступивших по плановым показаниям") ;
     	} 
     	
-    	ActionUtil.setParameterFilterSql("department","(select ml.id from MedCase slo left join MisLpu ml on ml.id=slo.department_id where slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and slo.transferDate is null )", request) ;
+    	ActionUtil.setParameterFilterSql("department","dml.id", request) ;
     	if (typeAdmissionOrder==null) typeAdmissionOrder = "1" ;
     	    		
     	%>
@@ -147,33 +147,34 @@
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="reestr_sql" name="journal_reestr" nativeSql="
-    select ct.id as ctid,ss.code as slsid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
-,to_char(sls.datestart,'dd.mm.yyyy') as slsdatestart, 
-(select ml.name from MedCase slo 
-left join MisLpu ml on ml.id=slo.department_id 
-where 
-slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and slo.transferDate is null 
-),oml.name as omlname
-, to_char(ct.registrationDate,'dd.mm.yyyy') as ctregistrationDate 
-,(select list(mkb.code) from diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id where diag.medcase_id=sls.id and diag.registrationtype_id=2) as mkbcode 
-,pml.name as pmlname
-,dml.name as dmlname
+select ct.id as ctid,ss.code as slsid
+,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio 
+,to_char(pat.birthday,'dd.mm.yyyy') as birthday ,to_char(sls.datestart,'dd.mm.yyyy')||' ('||to_char(slo.datestart,'dd.mm.yyyy')||'-'||coalesce(to_char(coalesce(slo.transferdate,slo.datefinish),'dd.mm.yyyy'),'в отд.')||')' as slsdatestart
+,  Dml.name AS DMLNAME,oml.name as omlname , to_char(ct.registrationDate,'dd.mm.yyyy') as ctregistrationDate 
+,(select list(mkb.code) from diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id where diag.medcase_id=sls.id 
+and diag.registrationtype_id=2) as mkbcode ,pml.name as pmlname 
+,dml.name as dmlname 
 ,(select list(mkb.code) from diagnosis diag 
-left join medcase slo on slo.id=diag.medCase_id and slo.dtype='DepartmentMedCase' and slo.transferDate is null 
-left join vocidc10 mkb on mkb.id=diag.idc10_id where slo.parent_id=sls.id and diag.registrationtype_id=4) as mkbcode1 
-
+left join vocidc10 mkb on mkb.id=diag.idc10_id 
+where DIAG.MEDCASE_id=slo.id and diag.registrationtype_id=4) as mkbcode1
+,to_char(sls.datefinish,'dd.mm.yyyy') as datefinish  
 from compulsorytreatment ct left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id 
 left join patient pat on pat.id=pcc.patient_id 
-left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.dateFinish is null and sls.deniedhospitalizating_id is null 
-left join statisticstub ss on ss.id=sls.statisticstub_id
-  left join mislpu oml on oml.id=sls.orderlpu_id
-  left join mislpu dml on dml.id=sls.department_id
-  left join vochosptype pml on pml.id=sls.sourcehosptype_id
-where ct.datereplace is null and ct.kind_id in (2,3) 
+left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.deniedhospitalizating_id is null 
+left join MedCase slo on slo.parent_id=sls.id and UPPER(slo.dtype)='DEPARTMENTMEDCASE'   
+left join statisticstub ss on ss.id=sls.statisticstub_id 
+left join mislpu oml on oml.id=sls.orderlpu_id 
+left join mislpu dml on dml.id=slo.department_id 
+left join vochosptype pml on pml.id=sls.sourcehosptype_id 
+where (ct.REGISTRATIONdate <=to_date('${param.dateBegin}','dd.mm.yyyy')
+ AND COALESCE(ct.registrationreplacedate,CURRENT_DATE)>=to_date('${param.dateBegin}','dd.mm.yyyy')
+) and ct.kind_id in (2,3) 
+and slo.dateStart<=to_date('${param.dateBegin}','dd.mm.yyyy')
+and (slo.transferdate >= to_date('${param.dateBegin}','dd.mm.yyyy')
+or sls.datefinish>= to_date('${param.dateBegin}','dd.mm.yyyy')
+or slo.transferdate is null and slo.datefinish is null)
     ${emergencySql} ${departmentSql} ${admissionOrderSql}
-group by ct.id ,sls.id ,pat.lastname,pat.firstname,pat.middlename ,pat.birthday ,sls.datestart,  ct.registrationDate,ss.code
-order by  pat.lastname    ,pat.firstname, pat.middlename
-
+ group by ct.id ,sls.id ,pat.lastname,pat.firstname,pat.middlename ,pat.birthday ,sls.datestart, ct.registrationDate,ss.code order by pat.lastname ,pat.firstname, pat.middlename
 
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -399,43 +400,44 @@ order by  pat.lastname    ,pat.firstname, pat.middlename
     </msh:section>
     <%} else if (typeView!=null && (typeView.equals("5")||typeView.equals("6"))) {
     ActionUtil.getValueByList("diag_typeReg_ord_sql", "diag_typeReg_ord", request) ;
-    if (typeView.equals("3")) {
-    	ActionUtil.setParameterFilterSql("department","(select ml.id from MedCase slo left join MisLpu ml on ml.id=slo.department_id where slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and  ct.RegistrationReplaceDate > coalesce(slo.dateStart,current_date) and coalesce(slo.transferDate,current_date)>=ct.RegistrationReplaceDate)", request) ;
-    	
+    if (typeView.equals("5")) {
+    	ActionUtil.setParameterFilterSql("department","dml.id", request) ;
     } else {
-    	ActionUtil.setParameterFilterSql("department","(select ml.id from MedCase slo left join MisLpu ml on ml.id=slo.department_id where slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and  ct.RegistrationReplaceDate > coalesce(slo.dateStart,current_date) and coalesce(slo.transferDate,current_date)>=ct.RegistrationReplaceDate)", request) ;
+    	ActionUtil.setParameterFilterSql("department","pdml.id", request) ;
     	
     }
       	%>
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="reestr_sql" name="journal_reestr" nativeSql="
-    select ct.id as ctid,ss.code as slsid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
-,to_char(sls.datestart,'dd.mm.yyyy') as slsdatestart, 
-(select ml.name from MedCase slo 
-left join MisLpu ml on ml.id=slo.department_id 
-where 
-slo.parent_id=sls.id and upper(slo.dtype)='DEPARTMENTMEDCASE' and slo.transferDate is null 
-),oml.name as omlname
+    select ct.id as ctid,ss.code as slsid
+    ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio ,to_char(pat.birthday,'dd.mm.yyyy') as birthday
+,to_char(sls.datestart,'dd.mm.yyyy')||' ('||to_char(slo.datestart,'dd.mm.yyyy')||'-'||coalesce(to_char(coalesce(slo.transferdate,slo.datefinish),'dd.mm.yyyy'),'в отд.')||')' as slsdatestart 
+, ml.name as mlname,oml.name as omlname
 , to_char(ct.registrationDate,'dd.mm.yyyy') as ctregistrationDate 
 ,(select list(mkb.code) from diagnosis diag left join vocidc10 mkb on mkb.id=diag.idc10_id where diag.medcase_id=sls.id and diag.registrationtype_id=2) as mkbcode 
 ,pml.name as pmlname
 ,dml.name as dmlname
 ,(select list(mkb.code) from diagnosis diag 
-left join medcase slo on slo.id=diag.medCase_id and slo.dtype='DepartmentMedCase' and slo.transferDate is null 
-left join vocidc10 mkb on mkb.id=diag.idc10_id where slo.parent_id=sls.id and diag.registrationtype_id=4) as mkbcode1 
-
-from compulsorytreatment ct left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id 
+left join vocidc10 mkb on mkb.id=diag.idc10_id where slo.id=diag.medcase_id and diag.registrationtype_id=4) as mkbcode1 
+,pdml.name as pdmlcname
+from compulsorytreatment ct 
+left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id 
 left join patient pat on pat.id=pcc.patient_id 
-left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.dateFinish is null and sls.deniedhospitalizating_id is null 
+left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.deniedhospitalizating_id is null 
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' 
+left join medcase pslo on slo.prevmedcase_id=pslo.id and pslo.dtype='DepartmentMedCase' 
 left join statisticstub ss on ss.id=sls.statisticstub_id
   left join mislpu oml on oml.id=sls.orderlpu_id
-  left join mislpu dml on dml.id=sls.department_id
+  left join mislpu ml on ml.id=sls.department_id
+  left join mislpu dml on dml.id=slo.department_id
+  left join mislpu pdml on pdml.id=pslo.department_id
   left join vochosptype pml on pml.id=sls.sourcehosptype_id
-where (ct.registrationreplacedate is null or ct.datereplace>=to_date('${dateEnd}','dd.mm.yyyy')) 
-and (ct)
+where (ct.registrationdate is null or ct.registrationdate<=to_date('${dateEnd}','dd.mm.yyyy')) 
+
+and (ct.registrationreplacedate is null or ct.registrationreplacedate>=to_date('${param.dateBegin}','dd.mm.yyyy'))
 and ct.kind_id in (2,3) 
-and slo.dateStart between  to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and  slo.dateStart between  to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and slo.prevMedCase_id is not null
     ${emergencySql} ${departmentSql} ${admissionOrderSql} 
     
@@ -468,8 +470,9 @@ order by  pat.lastname    ,pat.firstname, pat.middlename
       <msh:tableColumn columnName="МКБ клин." property="12" />
       <msh:tableColumn columnName="Дата поступления" property="5" />
       <msh:tableColumn columnName="Кем направлен" property="10" />
-      <msh:tableColumn columnName="Отделение поступления" property="11" />
-      <msh:tableColumn columnName="Отделение выписки или нахождения" property="6" />
+      <msh:tableColumn columnName="Отделение поступления" property="6" />
+      <msh:tableColumn columnName="Отделение перевода из" property="13" />
+      <msh:tableColumn columnName="Отделение перевода в" property="11" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>

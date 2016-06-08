@@ -73,6 +73,7 @@
 		<!-- Договора -->
 		<form-bean name="contract_account_contractForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
 		<form-bean name="contract_accountForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountForm" />
+		<form-bean name="contract_juridicalAccountForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountJuridicalForm" />
 		<form-bean name="contract_accountOperationWriteOffForm" type="ru.ecom.mis.ejb.form.contract.OperationWriteOffForm" />
 		<form-bean name="contract_accountOperationReturnForm" type="ru.ecom.mis.ejb.form.contract.OperationReturnForm" />
 		<form-bean name="contract_accountOperationAccrualForm" type="ru.ecom.mis.ejb.form.contract.OperationAccrualForm" />
@@ -102,14 +103,11 @@
 		<form-bean name="contract_pricePositionForm" type="ru.ecom.mis.ejb.form.contract.PricePositionForm" />
 		<form-bean name="contract_servedPersonForm" type="ru.ecom.mis.ejb.form.contract.ServedPersonForm" />
 		<form-bean name="contract_accountMedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountMedServiceForm" />
+		<form-bean name="contract_juridicalAccountMedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountMedServiceJuridicalForm" />
 		<form-bean name="contract_contractAccount20MedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccount20MedServiceForm" />
 		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
-
-
-		<form-bean name="mis_encodingAccordanceForm"
-			type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
-		<form-bean name="ecom_deleteJournalForm"
-			type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
+		<form-bean name="mis_encodingAccordanceForm" type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
+		<form-bean name="ecom_deleteJournalForm" type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
 		<form-bean name="mis_kinsmanForm"
 			type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>	
 			
@@ -587,6 +585,12 @@
 			name="contract_reportsForm" validate='false' scope="session">
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_medContract/find_by_number.jsp" />
+		</action>
+		<action path='/contract_find_by_account_number'
+			type='ru.ecom.web.actions.base.ForwardAction' 
+			name="contract_reportsForm" validate='false' scope="session">
+			<forward name="success" redirect="false"
+				path="/WEB-INF/actions/contract_juridicalAccount/list_by_period.jsp" />
 		</action>
 		<action path='/contract_find_person'
 			type='ru.ecom.web.actions.base.ForwardAction' 

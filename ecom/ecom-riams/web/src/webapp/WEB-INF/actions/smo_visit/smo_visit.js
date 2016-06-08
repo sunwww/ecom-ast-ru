@@ -1,4 +1,6 @@
-function journal_diagnosis_data(aForm, aCtx) {
+function cost_case(aForm, aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_visit/cost_case.jsp") ;
+}function journal_diagnosis_data(aForm, aCtx) {
 	var request = aCtx.request ;
 	var id=request.getParameter("id").split(":") ;
 	//${mkbCode}||':${mkbLike}:${dep}:${servStream}:${fldDate}

@@ -369,14 +369,14 @@
 		    />
 		</action>
 		<action path='/stac_journalOpenByHospital'
-		    type='ru.ecom.mis.web.action.medcase.journal.JournalOpenHospitalAction'
+		    type='ru.ecom.web.actions.base.ForwardAction'
 		    >
 		    <forward name="success" redirect="false"
 		    	path='/WEB-INF/actions/stac_sslAllInfo/listOpenHospital.jsp'
 		    />
 		</action>
         <action path='/stac_journalOpenHospitalByDate' 
-        	type='ru.ecom.mis.web.action.medcase.journal.JournalOpenHospitalByDayAction'
+        	type='ru.ecom.web.actions.base.ForwardAction'
             
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/listOpenHospitalByDate.jsp" />

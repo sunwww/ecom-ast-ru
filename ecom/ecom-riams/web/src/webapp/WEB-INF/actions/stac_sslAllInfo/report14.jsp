@@ -1133,7 +1133,15 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     ,dc.DateForensic as dcDateForensic
     ,dc.postmortemBureauDt as dcpostmortemBureauDt
     ,dc.postmortemBureauNumber as dcpostmortemBureauNumber
+    
+,coalesce(max(case when sloa.datefinish is not null and (ml.isnoomc is null or ml.isnoomc='0') then ml.name else null end)
+,
+(select pml.name from medcase fslo 
+ left join medcase fpslo on fpslo.id=fslo.prevmedcase_id
+left join mislpu pml on pml.id=fpslo.department_id where fslo.parent_id=sls.id and fslo.datefinish is not null 
+and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))) as mlname
      from medcase sls
+     
     left join StatisticStub ss on ss.id=sls.statisticStub_id
     left join VocHospitalizationResult vhr on vhr.id=sls.result_id
     left join MedCase sloa on sloa.parent_id=sls.id
@@ -1144,6 +1152,9 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     left join DeathCase dc on dc.medCase_id=sls.id
     left join VocDeathCategory vdc on vdc.id=dc.categoryDifference_id
     left join VocDeathCategory vdcL on vdcL.id=dc.latrogeny_id
+    
+    left join mislpu as ml on ml.id=sloa.department_id 
+    
     where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
         and to_date('${dateEnd}','dd.mm.yyyy')
     and vrspt.id='${param.strcode}'
@@ -1211,6 +1222,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
           <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
           <msh:tableColumn columnName="Дата пат.-анат. вскрытия" property="17"/>
           <msh:tableColumn columnName="Номер пат.-анат. вскрытия" property="18"/>
+          <msh:tableColumn columnName="Отделение" property="19"/>
         </msh:table>
         </msh:sectionContent>
         </msh:section>    		

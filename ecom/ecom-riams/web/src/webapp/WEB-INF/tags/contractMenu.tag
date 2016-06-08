@@ -33,6 +33,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink styleId="medContract" 
 		action="/contract_find_by_number.do" name="мед.договоров" title="Поиск договора"
 			roles="/Policy/Mis/Contract/MedContract/View"/>
+	<msh:sideLink styleId="contract_account" 
+		action="/contract_find_by_account_number.do" name="счетов" title="Поиск счетов"
+			roles="/Policy/Mis/Contract/Journals/ContractAccount"/>
 	<msh:sideLink styleId="medServiceGroup" 
 		action="/entityList-contract_medServiceGroup" 
 		name="групп медицинских услуг" roles="/Policy/Mis/Contract/GroupRules/ContractMedServiceGroup/View"

@@ -232,8 +232,10 @@ order by vis.dateStart
             <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуги"  
     	styleId="viewShort" action="/javascript:getDefinition('entityParentList-smo_medService.do?short=Short&id=${param.id}','.do')"  title='Мед.услуги'
     	/>
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-contract_juridicalContract-account_view_by_patient.do?short=Short&id=${param.id}','.do')" name='Услуги по счету' title="Просмотр услуг по счету" 
+        	roles="/Policy/Mis/Contract/Journals/AnalisisMedServices" />        
          
-        
+        <tags:contract_getAccount name="ACCOUNT"/>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="fbdebbf4-8006-4417-b7df-f23dcf298f62">
         <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" guid="ae605283-4519-488c-9d9e-715d1978def2" /> --%>

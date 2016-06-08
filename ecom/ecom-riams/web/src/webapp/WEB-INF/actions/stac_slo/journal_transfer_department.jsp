@@ -129,6 +129,21 @@ select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ss.co
 ,to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.entranceTime as varchar(5)) as dateStartSlo
 ,ml1.name as mlSlo1,to_char(slo1.dateStart,'dd.mm.yyyy')||' '||cast(slo1.entranceTime as varchar(5)) as dateStartSlo1
 ,ml2.name as mlSlo2,to_char(slo2.dateStart,'dd.mm.yyyy')||' '||cast(slo2.entranceTime as varchar(5)) as dateStartSlo2
+,case
+            when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
+            else (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)
+          end as beds
+,case
+            when (coalesce(slo1.dateFinish,slo1.transferDate,CURRENT_DATE)-slo1.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo1.dateFinish,slo1.transferDate,CURRENT_DATE)-slo1.dateStart)+1)
+            else (coalesce(slo1.dateFinish,slo1.transferDate,CURRENT_DATE)-slo1.dateStart)
+          end as beds1
+,case
+            when (coalesce(slo2.dateFinish,slo2.transferDate,CURRENT_DATE)-slo2.dateStart)=0 then 1
+            when bf.addCaseDuration='1' then ((coalesce(slo2.dateFinish,slo2.transferDate,CURRENT_DATE)-slo2.dateStart)+1)
+            else (coalesce(slo2.dateFinish,slo2.transferDate,CURRENT_DATE)-slo2.dateStart)
+          end as beds2
 from medcase slo
 left join BedFund bf on bf.id=slo.bedFund_id
 left join MedCase sls on sls.id=slo.parent_id
@@ -173,9 +188,10 @@ order by pat.lastname
      			<th></th>
      			<th></th>
      			<th colspan="2">Приемное отделение куда направило</th>
-     			<th colspan="2">Отделение 1</th>
-     			<th colspan="2">Отделение 2</th>
-     			<th colspan="2">Отделение 3</th>
+     			<th colspan="3">Отделение 1</th>
+     			<th colspan="3">Отделение 2</th>
+     			<th colspan="3">Отделение 3</th>
+     			<th></th>
      		</tr>
      	</msh:tableNotEmpty>
       <msh:tableColumn columnName="#" property="sn" />
@@ -185,10 +201,13 @@ order by pat.lastname
       <msh:tableColumn columnName="Дата поступления" property="5" />
       <msh:tableColumn columnName="Наименование" property="6" />
       <msh:tableColumn columnName="Дата поступления" property="7" />
+      <msh:tableColumn columnName="Койко-дни" property="12" />
       <msh:tableColumn columnName="Наименование" property="8" />
       <msh:tableColumn columnName="Дата поступления" property="9" />
+      <msh:tableColumn columnName="Койко-дни" property="13" />
       <msh:tableColumn columnName="Наименование" property="10" />
       <msh:tableColumn columnName="Дата поступления" property="11" />
+      <msh:tableColumn columnName="Койко-дни" property="14" />
       </msh:table>
     </msh:sectionContent>
     </msh:section>

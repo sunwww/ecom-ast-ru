@@ -24,9 +24,22 @@
     <msh:panel>
     	<msh:row>
     		<msh:textField property="${name}AccountNumber" label="Номер счета"/>
+    		<msh:textField property="${name}Date" label="от"/>
+   		</msh:row>
+   		<msh:row>
     		<msh:textField property="${name}DateFrom" label="Дата c"/>
     		<msh:textField property="${name}DateTo" label="по"/>
     		
+    	</msh:row>
+    	<msh:row>
+    		<msh:checkBox property="${name}IsEmpty" label="Создать пустым"/>
+    		<msh:checkBox property="${name}IsDelete" label="Удалять услуги из других счетов (кроме закрытых)"/>
+    	</msh:row><msh:row>
+    		<msh:checkBox labelColSpan="3" property="${name}IsPeresech" label="Не учитывать пересечение по другим счетам"/>
+    	</msh:row>
+    	<msh:row>
+    		<msh:checkBox property="${name}IsHosp" label="Формировать данные по стационару"/>
+    		<msh:checkBox property="${name}IsPolyc" label="Формировать данные по поликлинике"/>
     	</msh:row>
     </msh:panel>
         <msh:row>
@@ -61,14 +74,19 @@
 
      // Сохранение данных
      function save${name}CreationAccount() {
-     	if ($('${name}DateFrom').value.length==0) {
+     	if ($('${name}Date').value.length==0) {
+     		alert("Поле дата является обязательным") ;
+     		$("${name}Date").focus() ;
+     	} else if ($('${name}DateFrom').value.length==0) {
      		alert("Поле дата является обязательным") ;
      		$("${name}DateFrom").focus() ;
      	} else if ($('${name}DateTo').value.length==0) {
      		alert("Поле дата является обязательным") ;
      		$("${name}DateFrom").focus() ;
      	}  else {
-	     	${functionSave}($('${name}DateFrom').value,$('${name}DateTo').value,$('${name}AccountNumber').value) ;
+	     	${functionSave}($('${name}DateFrom').value,$('${name}DateTo').value,$('${name}AccountNumber').value
+	     			,$('${name}Date').value,('${name}IsEmpty').checked,('${name}IsPeresech').checked
+	     			,$('${name}IsHosp').checked,$('${name}IsPolyc').checked,('${name}IsDelete').checked) ;
 	     	cancel${name}CreationAccount() ;
          }
      }
@@ -78,6 +96,7 @@
      	
      	new dateutil.DateField($('${name}DateFrom')) ;
      	new dateutil.DateField($('${name}DateTo')) ;
+     	new dateutil.DateField($('${name}Date')) ;
      	
      	theIs${name}CreationAccountDialogInitialized = true ;
      }

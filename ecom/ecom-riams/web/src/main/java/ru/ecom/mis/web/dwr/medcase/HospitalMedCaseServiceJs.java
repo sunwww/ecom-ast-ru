@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import javax.imageio.IIOException;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -136,8 +137,13 @@ public class HospitalMedCaseServiceJs {
 		return res.length()>0?res.toString().trim().substring(0,res.length()-3):"" ;
 	}
 	public String setAccountBySmo(Long aSmo, Long aAccount, HttpServletRequest aRequest) throws NamingException, ParseException {
+		
+		IWebQueryService serviceW = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		IContractService service = Injection.find(aRequest).getService(IContractService.class) ;
-		service.setSmoByAccount(aAccount,"HOSPITALMEDCASE",aSmo,true) ;
+		Collection<WebQueryResult> l = serviceW.executeNativeSql("select upper(mc.dtype) from medcase mc where mc.id="+aSmo) ;
+		if (l.size()==0) throw new ParseException("НЕОПРЕДЕЛЕН СМО",0) ;
+		String dtype = ""+l.iterator().next().get1() ;
+		service.setSmoByAccount(aAccount,dtype,aSmo,true,true) ;
 		return "" ;
 	}
 	public String saveServiceByMedCase(Long aMedCase, String aServices, HttpServletRequest aRequest) throws NamingException {
@@ -1395,7 +1401,7 @@ public class HospitalMedCaseServiceJs {
 		service.setRW(aMedCase, aRwDate, aRwNumber) ;
 		return "" ;
 	}
-	public void createAdminChangeMessageBySmo (Long aSmo, String aType, String aTextInfo
+	public static void createAdminChangeMessageBySmo (Long aSmo, String aType, String aTextInfo
 			, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;

@@ -1,16 +1,121 @@
 package ru.ecom.mis.web.dwr.contract;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
-
+	public String updateCAMSinAccountNew(Long aCAMS, Long aAccountNew, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("update ContractAccountMedService set account_id=").append(aAccountNew).append(" where id=").append(aCAMS) ;
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "Перенесено" ;
+	}
+	public String setPMSbyCAMS(Long aPricePosition, Long aCAMS, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select pms.id,pp.cost from pricemedservice pms left join priceposition pp on pp.id=pms.priceposition_id where pp.id=").append(aPricePosition) ;
+		List<Object[]> l = service.executeNativeSqlGetObj(sql.toString()) ;
+		if (!l.isEmpty()) {
+			
+			Object[] obj =l.get(0) ;
+			sql = new StringBuilder() ;
+			sql.append("select ca.id from contractaccount ca left join ContractAccountMedService cams on cams.account_id=ca.id where cams.id=").append(aCAMS).append(" and (ca.isfinished='1')") ;
+			if (service.executeNativeSql(sql.toString()).isEmpty()) {
+				sql = new StringBuilder() ;
+				sql.append("update ContractAccountMedService set cost='").append(obj[1]).append("', medservice_id='").append(obj[0]).append("' where id=").append(aCAMS) ;
+				service.executeUpdateNativeSql(sql.toString()) ;
+				return "Обновлено";
+			} else {
+				return "Счет закрыт" ;
+			}
+		} else {
+			return "нет соответствия с внут.мед.услугой" ;
+		}
+	}
+	public String moveNoCheckedCAMSinOtherAccount(Long aAccountOld, Long aAccountNew, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select ca.id from contractaccount ca left join ContractAccountMedService cams on cams.account_id=ca.id where cams.id=").append(aAccountNew).append(" and (ca.isfinished='1')") ;
+		if (!service.executeNativeSql(sql.toString()).isEmpty()) {return "Счет закрыт" ;}
+		sql = new StringBuilder() ;
+		sql.append("select ca.id from contractaccount ca left join ContractAccountMedService cams on cams.account_id=ca.id where cams.id=").append(aAccountOld).append(" and (ca.isfinished='1')") ;
+		if (service.executeNativeSql(sql.toString()).isEmpty()) {
+			sql = new StringBuilder() ;
+			sql.append("update ContractAccountMedService set account_id='").append(aAccountNew).append("' where account_id='").append(aAccountOld).append("' and (isCheck='0' or isCheck is null)") ;
+			service.executeUpdateNativeSql(sql.toString()) ;
+			return "Обновлено";
+		} else {
+			return "Счет закрыт" ;
+		}
+		
+	}
+	public String isChecked(Long aCAMS, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select ca.id from contractaccount ca left join ContractAccountMedService cams on cams.account_id=ca.id where cams.id=").append(aCAMS).append(" and (ca.isfinished='1')") ;
+		if (service.executeNativeSql(sql.toString()).isEmpty()) {
+			sql = new StringBuilder() ;
+			sql.append("update ContractAccountMedService set isCheck='1' where id=").append(aCAMS) ;
+			service.executeUpdateNativeSql(sql.toString()) ;
+			return "Обновлено";
+		} else {
+			return "Счет закрыт" ;
+		}
+		
+	}
+	public String isDelete(Long aCAMS, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select ca.id from contractaccount ca left join ContractAccountMedService cams on cams.account_id=ca.id where cams.id=").append(aCAMS).append(" and (ca.isfinished='1')") ;
+		if (service.executeNativeSql(sql.toString()).isEmpty()) {
+				sql = new StringBuilder() ;
+				sql.append("update ContractAccountMedService set isDelete='1' where id=").append(aCAMS) ;
+				service.executeUpdateNativeSql(sql.toString()) ;
+				return "Обновлено";
+		} else {
+				return "Счет закрыт" ;
+		}
+		
+	}
+	
+	public String updatePMSbyMSinACCOUNT(Long aAccount, Long aMS, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		IContractService serviceC = Injection.find(aRequest).getService(IContractService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+			 
+		sql = new StringBuilder() ;
+		sql.append("select ca.id,mc.priceList_id from contractaccount ca left join MedContract mc on mc.id=ca.contract_id where ca.id=").append(aAccount).append(" and (ca.isfinished='0' or ca.isfinished is null)") ;
+		List<Object[]> l = service.executeNativeSqlGetObj(sql.toString()) ; 
+		if (l.isEmpty()) {
+			sql = new StringBuilder() ;
+			Long pms=serviceC.getPriceMedService(ConvertSql.parseLong(l.get(0)[1]), aMS) ;
+			if (pms!=null) {
+				sql.append("select pms.id,pp.cost from pricemedservice pms left join priceposition pp on pp.id=pms.priceposition_id") ;
+				l = service.executeNativeSqlGetObj(sql.toString()) ;
+				Object cost = l.isEmpty()?null:l.get(0)[1];
+				sql.append("update ContractAccountMedService set cost='").append(cost).append("', medservice='").append(pms).append("' where account_id=").append(aAccount).append(" and servicein=").append(aMS) ;
+				service.executeUpdateNativeSql(sql.toString()) ;
+				return "Обновлено";
+			} else {
+				return "Нет соответствия ";
+			}
+		} else {
+			return "Счет закрыт" ;
+		}
+	}
+		
+	
+	
 	public String deleteLpuContractGroup (String aId, HttpServletRequest aRequest) throws NamingException {
 		String sql = "delete from lpucontractnosologygroup where id="+aId;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -273,7 +378,7 @@ public class ContractServiceJs {
 		
 		boolean isNext = false;
 		if (aCode!=null && !aCode.equals("")) {
-			sql.append(" p.code like '%").append(aCode.toUpperCase()).append("%'") ;
+			sql.append(" p.code like '%").append(aCode.toUpperCase()).append("%' or replace(p.code,'.','') like '%").append(aCode.toUpperCase()).append("%'") ;
 			isNext=true ;
 		}
 		if (aName!=null && !aName.equals("")) {

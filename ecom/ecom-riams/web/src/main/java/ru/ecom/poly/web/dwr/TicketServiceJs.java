@@ -293,18 +293,28 @@ public class TicketServiceJs {
 	public String moveVisitOtherSpo(Long aVisit, Long aNewSpo, HttpServletRequest aRequest) throws NamingException {
 		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
 		service.moveVisitInOtherSpo(aVisit,aNewSpo) ;
+		HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(aVisit, "MOVE_VISIT_OTHER_SPO", "Перемещен визит в другое СПО "+aNewSpo+": "+aNewSpo, aRequest) ;
 		return aVisit+"#Визит перенесен" ;
 	}
 	public String unionSpos(Long aOldSpo, Long aNewSpo, HttpServletRequest aRequest) throws NamingException {
 		ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
 		service.unionSpos(aOldSpo,aNewSpo) ;
+		HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(aNewSpo, "UNION_SPOS", "Объединены СПО "+aOldSpo+": "+aNewSpo, aRequest) ;
 		return aNewSpo+"#СПО объединены" ;
 	}
 	
 	public String changeServiceStreamBySmo(Long aSmo, Long aServiceStream, HttpServletRequest aRequest) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		service.changeServiceStreamBySmo(aSmo, aServiceStream) ;
+		HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(aSmo, "CHANGE_SERVICE_STREAM", "Изменение потока обслуживания: "+aSmo, aRequest) ;
+
 		return "Поток обслуживания изменен" ;
+	}
+	public String changeLpuBySmo(Long aSmo, Long aLpu, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update MedCase set orderlpu_id='"+aLpu+"' where id='"+aSmo+"' or parent_id='"+aSmo+"'") ;	    			
+		HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(aSmo, "CHANGE_ORDER_LPU", "Изменение ЛПУ: "+aSmo, aRequest) ;
+		return "ЛПУ изменен" ;
 	}
 
 	

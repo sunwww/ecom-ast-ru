@@ -30,6 +30,9 @@
     request.setAttribute("serStreamId",p.get4()) ;
   %>
   <msh:section>
+  <msh:sectionTitle>
+  <input type="button" onclick="showACCOUNTGetAccount('${param.id}')" value="ПРИВЯЗАТЬ К СЧЕТУ"/>
+  </msh:sectionTitle>  
   <msh:sectionTitle>Услуги</msh:sectionTitle>
   <msh:sectionContent>
       <ecom:webQuery name="list" nativeSql="

@@ -21,15 +21,25 @@ public class ContractAccountCreationAction extends BaseAction {
         final IContractService service = Injection.find(aRequest).getService(IContractService.class) ;
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
         final String accountNumber = aRequest.getParameter("accountNumber") ;
+        final String date = aRequest.getParameter("date") ;
         final String dateFrom = aRequest.getParameter("dateFrom") ;
         final String dateTo = aRequest.getParameter("dateTo") ;
         final String medContart = aRequest.getParameter("medContart") ;
+        final boolean isPeresech = aRequest.getParameter("isPeresech")==null||(aRequest.getParameter("isPeresech").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isPeresech").toUpperCase().equals("0"))?false:true ;
+        final boolean isDelete = aRequest.getParameter("isDelete")==null||(aRequest.getParameter("isDelete").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isEmpty").toUpperCase().equals("0"))?false:true ;
+        final boolean isEmpty = aRequest.getParameter("isEmpty")==null||(aRequest.getParameter("isEmpty").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isEmpty").toUpperCase().equals("0"))?false:true ;
+        final boolean isHospit = aRequest.getParameter("isHospital")==null||(aRequest.getParameter("isHospital").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isHospital").toUpperCase().equals("0"))?false:true ;
+        final int isPolyc = aRequest.getParameter("isPolyc")==null||(aRequest.getParameter("isPolyc").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isPolyc").toUpperCase().equals("0"))?0:2;
+       
         
-        
+        System.out.println("isEmpty="+isEmpty) ;
+        System.out.println("isHospit="+isHospit) ;
+        System.out.println("isPolyc="+isPolyc) ;
         final long monitorId = monitorService.createMonitor() ;
         new Thread() {
             public void run() {
-            	service.accountCreation(monitorId, dateFrom, dateTo, ConvertSql.parseLong(medContart), accountNumber) ;
+            	service.accountCreation(monitorId,date , dateFrom, dateTo, ConvertSql.parseLong(medContart), accountNumber
+            			,isHospit,isPolyc,isEmpty,isDelete,isPeresech) ;
             	new InfoMessage(aRequest, "Обработка завершена") ;
             }
         }.start() ;

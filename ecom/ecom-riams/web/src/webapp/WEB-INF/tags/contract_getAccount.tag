@@ -4,7 +4,6 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
-<%@ attribute name="parentID" required="true" description="ИД родителя" %>
 
 <style type="text/css">
     #${name}GetAccountDiaglog {
@@ -35,12 +34,17 @@
 
 </div>
 </div>
+ <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 
 <script type="text/javascript"><!--
      var theIs${name}GetAccountDiaglogInitialized = false ;
      var the${name}GetAccountDiaglog = new msh.widget.Dialog($('${name}GetAccountDiaglog')) ;
+     the${name}SMOID = 0 ;
+     the${name}Function = "set${name}Account" ;
      // Показать 
-     function show${name}GetAccount() {
+     function show${name}GetAccount(aSmo,aFunction) {
+    	 the${name}SMOID = aSmo ;
+    	 if (aFunction!=null && aFunction!="") {the${name}Function=aFunction;}
     	 // устанавливается инициализация для диалогового окна 
          if (theIs${name}GetAccountDiaglogInitialized) {
           }
@@ -58,17 +62,19 @@
     	 if (+('${name}account').value>0) {
         	 alert("Укажите счет!!");
      } else {
-  		HospitalMedCaseService.setAccountBySmo('${parentID}',$('${name}account').value,{
-			 callback: function(aResult) {
-				 alert(aResult) ;
-			 }
-		});
+    	 eval(the${name}Function+"(the${name}SMOID,$('${name}account').value)") ;
+    	 
 
        the${name}GetAccountDiaglog.hide() ;
      }
      }
      
-	function setAccount(aAccount) {
+	function set${name}Account(aSmoId,aAccount) {
+		HospitalMedCaseService.setAccountBySmo(aSmoId,aAccount,{
+			 callback: function(aResult) {
+				 alert(aResult) ;
+			 }
+		});
 	}
      // инициализация диалогового окна 
      function init${name}GetAccountDiaglog() {
