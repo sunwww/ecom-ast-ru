@@ -167,4 +167,42 @@ public class ContractAccount extends BaseEntity{
 
 	/** Номер счета */
 	private String theAccountNumber;
+	
+	/** Оплачен */
+	@Comment("Оплачен")
+	public Boolean getIsFinished() {
+		return theIsFinished;
+	}
+
+	public void setIsFinished(Boolean aIsFinished) {
+		theIsFinished = aIsFinished;
+	}
+
+	/** Оплачен */
+	private Boolean theIsFinished;
+	
+	/** Период с */
+	@Comment("Период с")
+	public Date getPeriodFrom() {
+		return thePeriodFrom;
+	}
+
+	public void setPeriodFrom(Date aPeriodFrom) {
+		thePeriodFrom = aPeriodFrom;
+	}
+	
+	/** Период по */
+	@Comment("Период по")
+	public Date getPeriodTo() {
+		return thePeriodTo;
+	}
+
+	public void setPeriodTo(Date aPeriodTo) {
+		thePeriodTo = aPeriodTo;
+	}
+
+	/** Период по */
+	private Date thePeriodTo;
+	/** Период с */
+	private Date thePeriodFrom;
 }
