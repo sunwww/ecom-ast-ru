@@ -142,10 +142,10 @@ if (type!=null&&type.equals("reestr")) {
 			break;
 		case 10: 
 			//sqlAdd+=" and cb.durationpregnancy <37.00 ";
-			sqlAdd+=" and nb.maturity_id=0 ";
+			sqlAdd+=" and vnbm.code='0' ";
 			break;
 		case 11: 
-			sqlAdd+=" and nb.maturity_id=0 and cb.durationpregnancy <28.00";
+			sqlAdd+=" and vnbm.code='0' and cb.durationpregnancy <28.00";
 			break;
 		case 12: 
 			sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
@@ -227,6 +227,7 @@ when vlb.code='1' and dc.deathdate is not null then 'born2die'
 when vlb.code='2' then 'die' end
 ) as idLld
 from newborn nb
+left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
 left join patient pat on pat.id=nb.patient_id
