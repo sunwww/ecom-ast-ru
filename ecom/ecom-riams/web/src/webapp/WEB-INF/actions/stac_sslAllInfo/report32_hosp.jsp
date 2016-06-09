@@ -141,10 +141,11 @@ if (type!=null&&type.equals("reestr")) {
 			sqlAdd+=" and nb.birthweight >= 4000";
 			break;
 		case 10: 
-			sqlAdd+=" and cb.durationpregnancy <37.00 ";
+			//sqlAdd+=" and cb.durationpregnancy <37.00 ";
+			sqlAdd+=" and nb.maturity_id=0 ";
 			break;
 		case 11: 
-			sqlAdd+=" and cb.durationpregnancy <28.00";
+			sqlAdd+=" and nb.maturity_id=0 and cb.durationpregnancy <28.00";
 			break;
 		case 12: 
 			sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
@@ -218,7 +219,7 @@ cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') a
 < 24 then nb.id end) as f14_dead24
 ,count (case when (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp),
 cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
-between 24 and 168 then nb.id end) as f15_death168
+< 168 then nb.id end) as f15_death168
 ,max(
 case 
 when vlb.code='1' and dc.id is null then 'alive' 
