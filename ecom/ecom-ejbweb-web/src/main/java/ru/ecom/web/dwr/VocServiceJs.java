@@ -24,6 +24,12 @@ public class VocServiceJs {
     public String getNameById(HttpServletRequest aRequest, String aVocName, String aId, String aParentId) throws NamingException, VocServiceException {
         return EntityInjection.find(aRequest).getVocService().getNameById(aId, aVocName, new VocAdditional(aParentId)) ;
     }
+    public String getCodeById(String aVocName, String aId, String aFldCode, HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	Collection<WebQueryResult> list = service.executeNativeSql("select "+aFldCode+" from "+aVocName+" where id='"+aId+"'") ;
+    		
+    	return list.isEmpty()?"":""+list.iterator().next().get1() ; 
+    }
     public boolean checkClaimMessage (HttpServletRequest aRequest, Long aClaimId, Long aStatus, String aComment) throws NamingException {
     	String commentSql = "";
     	if (aComment!=null&&!aComment.trim().equals("")) {
@@ -110,5 +116,46 @@ public class VocServiceJs {
     		aValue = aValue.replaceAll("\t", "\\\\t") ;
     	}
     	return aValue ;
+    }
+    
+    public String getAllValueByVocs(String aVocs,HttpServletRequest aRequest) throws NamingException {
+    	StringBuilder sb = new StringBuilder() ;
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	sb.append("{");
+		sb.append("\"vocs\":[") ;
+		
+		String[][] props = {{"1","id"},{"2","name"}} ;
+		String[] vocs = aVocs.split(",") ;
+		boolean isFistrVoc = true ;
+		for(String voc : vocs) {
+			//System.out.println("voc"+voc) ;
+			Collection<WebQueryResult> list= service.executeNativeSql("select id,name from "+voc) ;
+			if (isFistrVoc) {isFistrVoc=false ;} else {sb.append(", ");}
+			sb.append("{\"name\":\"").append(voc).append("\",\"values\":[");
+			boolean firstPassed = true ;
+			for (WebQueryResult wqr:list) {
+				
+				StringBuilder par = new StringBuilder() ;
+				par.append("{") ;
+				boolean isFirtMethod = true ;
+				try {
+					for(String[] prop : props) {
+						Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
+						String strValue = value!=null?value.toString():"";
+						if(!isFirtMethod) par.append(", ") ;else isFirtMethod=false;
+						par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
+						//System.out.println("value="+value) ;
+					}
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
+				par.append("}") ;
+				if(!firstPassed) sb.append(", ") ;else firstPassed=false;
+				sb.append(par) ;
+			}
+			sb.append("]}") ;
+		}
+		sb.append("]}") ;
+    	return sb.toString();
     }
 }
