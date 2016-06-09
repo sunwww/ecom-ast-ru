@@ -660,7 +660,7 @@ and (pp.isvat is null or pp.isvat='0')
 					.append(" and to_date('")
 					.append(aDateTo).append("','dd.mm.yyyy')") ;
 					if (par[2]!=null) sql.append(" and mc.serviceStream_id=").append(par[2]) ;
-					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]) ;
+					if (par[3]!=null) sql.append(" and and mp.company_id=").append(par[3]).append(" and mp.dtype like 'MedPolicyD%'") ;
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[3]) ;
 					sql.append(" group by mc.id,mp.id,mc.patient_id") ;
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
