@@ -155,7 +155,7 @@
 						<li><msh:link isReport="true" action="preg_child_birth_report.do" roles="/Policy/Mis/Pregnancy/ChildBirth/View">
 	                            Отчет по родам
 	                        </msh:link></li>
-						<li><msh:link action="stac_report_32.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report32">
+						<li><msh:link action="stac_report_32.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
 	                            32 форма
 	                        </msh:link></li>
 					</ul>
