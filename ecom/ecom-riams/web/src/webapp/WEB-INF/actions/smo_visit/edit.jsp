@@ -311,7 +311,7 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
-  <!-- <script type="text/javascript" src="./dwr/interface/TicketService.js"></script> -->
+  <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
   <script type="text/javascript">
   function printAgree() {
   	window.location = "print-agreement.do?s=PatientPrintService&m=printAgreement&id="+$('patient').value;
