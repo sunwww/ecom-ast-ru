@@ -303,7 +303,7 @@
         <msh:sideLink params="id" action="/print-talon_amb.do?s=VisitPrintService&amp;m=printTalon" key="ALT+9" name="Талона" title="Печать талона" guid="12dbaf61-0108-4845-86c3-cee528329b33" roles="/Policy/Mis/MedCase/Visit/PrintTalon" />
         <msh:sideLink params="id" action="/print-talon_amb_short.do?s=VisitPrintService&amp;m=printTalon"  name="Укороченного талона" title="Печать короткой версии талона" guid="1daf61-0108-4845-86c3-cs3" roles="/Policy/Mis/MedCase/Visit/PrintShortTalon" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Visit/PrintBakExp" params="id" action="/print-BakExp.do?s=VisitPrintService&amp;m=printBakExp" name="Направления на бак.исследование" guid="51g38-f936-45d0-ac70-0g66c" />
-        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" params="id" action="/print-agreement.do?s=PatientPrintService&amp;m=printAgreement" key="SHIFT+9" name="Информ. согласия на мед. вмешательство" title="Печать информационного согласия"/>
+        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View"  action="/javascript:printAgree();" key="SHIFT+9" name="Информ. согласие на мед. вмешательство" title="Печать информационного согласия"/>
         <tags:diary_parameterCreate document="документа" roles="/Policy/Mis/MedCase/Document/Internal/Create" action="doc_create_type.do?id=${param.id}" name="type" title="Документа" vocName="documentType" />
       </msh:sideMenu>
       </msh:tableNotEmpty>
@@ -311,7 +311,12 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="javascript" type="string">
-  <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+  <!-- <script type="text/javascript" src="./dwr/interface/TicketService.js"></script> -->
+  <script type="text/javascript">
+  function printAgree() {
+  	window.location = "print-agreement.do?s=PatientPrintService&m=printAgreement&id="+$('patient').value;
+  }
+  </script>
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
   
   	<script type="text/javascript">
