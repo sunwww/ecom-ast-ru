@@ -1389,7 +1389,10 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     ,dc.DateForensic as dcDateForensic
     ,dc.postmortemBureauDt as dcpostmortemBureauDt
     ,dc.postmortemBureauNumber as dcpostmortemBureauNumber
-     from medcase sls
+    ,
+pml.name as mlname
+	from medcase sls
+   
     left join StatisticStub ss on ss.id=sls.statisticStub_id
     left join VocHospitalizationResult vhr on vhr.id=sls.result_id
     left join MedCase sloa on sloa.parent_id=sls.id
@@ -1400,6 +1403,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     left join DeathCase dc on dc.medCase_id=sls.id
     left join VocDeathCategory vdc on vdc.id=dc.categoryDifference_id
     left join VocDeathCategory vdcL on vdcL.id=dc.latrogeny_id
+     left join mislpu pml on pml.id=sloa.department_id
     where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
         and to_date('${dateEnd}','dd.mm.yyyy')
     and vrspt.id='${param.strcode}'
@@ -1432,7 +1436,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     group by sls.id
     ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
     ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-    ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name
+    ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name, mlname
     order by p.lastname,p.firstname,p.middlename " />
     	    <form action="print-stac_report_14_3r.do" method="post" target="_blank">
 	    Реестр пациентов ${param.strname} по нозоологиям (умершие)
@@ -1467,6 +1471,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
           <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
           <msh:tableColumn columnName="Дата пат.-анат. вскрытия" property="17"/>
           <msh:tableColumn columnName="Номер пат.-анат. вскрытия" property="18"/>
+          <msh:tableColumn columnName="Отделение" property="19"/>
         </msh:table>
         </msh:sectionContent>
         </msh:section>    		
