@@ -1,5 +1,14 @@
 <vocconfig>
 
+<voc id="patientListType" type="NativeVocService">
+	<NativeVocService
+	from="VocPatientListType vplt"
+	nameId="vplt.id"
+	names="vplt.name"
+	>
+	</NativeVocService>
+	</voc>
+	
 <voc id="vocQualityEstimationKind" type="NativeVocService">
 	<NativeVocService
 	from="vocQualityEstimationKind vqek"
@@ -1881,6 +1890,7 @@ left join medcase smoP on smoP.owner_id=w.id "
                 entity  = 'ru.ecom.mis.ejb.domain.diet.Diet'
                 names   = 'name'
                 queried = 'name'
+                queryAppend="(isArchival is null or isArchival='0')"
         />
     </voc> 
     <voc id='parentDiet' type='EntityVocService'>

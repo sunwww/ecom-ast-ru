@@ -15,7 +15,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Операционная")
 @EntityForm
 @EntityFormPersistance(clazz = OperatingRoom.class)
-@WebTrail(comment = "Операционная", nameProperties = "groupName", view = "entityView-mis_operatingRoom.do")
+@WebTrail(comment = "Операционная", nameProperties = "groupName", view = "entityParentView-mis_operatingRoom.do")
 @Parent(property = "lpu", parentForm = MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MisLpu/OperatingRoom")
 public class OperatingRoomForm  extends GroupWorkFunctionForm {

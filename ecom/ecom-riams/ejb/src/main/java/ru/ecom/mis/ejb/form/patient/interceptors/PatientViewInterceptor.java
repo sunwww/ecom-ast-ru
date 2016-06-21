@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient.interceptors;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -7,6 +8,7 @@ import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.forms.response.FormMessage;
@@ -39,6 +41,7 @@ public class PatientViewInterceptor implements IFormInterceptor {
 				form.addMessage(new FormMessage("<font size='16'><b>Входит в список</b></font>"));
 			}
 		}
+		
 		
 	}
 	

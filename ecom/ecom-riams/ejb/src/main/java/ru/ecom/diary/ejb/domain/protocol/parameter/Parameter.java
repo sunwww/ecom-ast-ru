@@ -25,6 +25,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @EntityListeners(DeleteListener.class)
 public class Parameter extends BaseEntity{
+	
+	/** Код */
+	@Comment("Код")
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
+	/** Код */
+	private String theCode;
+
 	/** Наименование */
 	@Comment("Наименование")
 	public String getName() {return theName;}

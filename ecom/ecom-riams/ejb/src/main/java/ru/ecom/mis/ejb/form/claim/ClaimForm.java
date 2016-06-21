@@ -1,8 +1,5 @@
 package ru.ecom.mis.ejb.form.claim;
 
-import java.sql.Date;
-import java.sql.Time;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.claim.Claim;

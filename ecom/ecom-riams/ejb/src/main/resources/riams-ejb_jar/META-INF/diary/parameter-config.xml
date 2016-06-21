@@ -6,6 +6,9 @@
     		<field type='separator' label='Параметр числовой' colSpan='4'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' fieldColSpan='3' required='true'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
@@ -36,6 +39,9 @@
     		<field type='row' open='1'/>
     		<field type='separator' label='Параметр числовой с плавающей точкой' colSpan='4'/>
     		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>    	
     		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
@@ -71,6 +77,9 @@
     		<field type='separator' label='Параметр пользовательский справочник' colSpan='4'/>
     		<field type='row' open='0'/>    	
     		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
@@ -92,6 +101,9 @@
     		<field type='separator' label='Параметр текстовый' colSpan='4'/>
     		<field type='row' open='0'/>    	
     		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
@@ -111,6 +123,9 @@
     		<field type='row' open='1'/>
     		<field type='separator' label='Параметр текстовое поле с ограничением' colSpan='4'/>
     		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' required='true'/>
+    		<field type='row' open='0'/>    	
     		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>

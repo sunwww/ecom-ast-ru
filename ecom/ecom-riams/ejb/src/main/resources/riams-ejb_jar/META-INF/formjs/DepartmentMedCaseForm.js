@@ -166,15 +166,25 @@ function onPreSave(aForm,aEntity, aContext) {
 			
 			} else{
 				var param = new java.util.HashMap() ;
+				
+				param.put("obj","DischargeMedCase") ;
+				param.put("permission" ,"editAllHospitalMedCase") ;
+				param.put("id", hosp.id) ;
+				var check=aContext.serviceInvoke("WorkerService", "checkPermission", param)+"";
+				
+				if (+check==1) {
+				} else 	{			
+				
 				param.put("obj","DischargeMedCase") ;
 				param.put("permission" ,"backdate") ;
 				param.put("id", hosp.id) ;
-				var check=aContext.serviceInvoke("WorkerService", "checkPermission", param)+"";
+				check=aContext.serviceInvoke("WorkerService", "checkPermission", param)+"";
 				
 				if (+check==0) {
 					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение 24 часов.";
 					
 				}
+			}
 			}
 	}
 

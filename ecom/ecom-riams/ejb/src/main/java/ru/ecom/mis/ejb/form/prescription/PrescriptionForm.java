@@ -110,7 +110,7 @@ public class PrescriptionForm extends IdEntityForm{
 
 	/** Назначивший */
 	@Comment("Назначивший")
-	@Persist @Required
+	@Persist
 	public Long getPrescriptSpecial() {return thePrescriptSpecial;}
 	public void setPrescriptSpecial(Long aPrescriptor) {thePrescriptSpecial = aPrescriptor;	}
 

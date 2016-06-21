@@ -329,5 +329,12 @@ public class Diet extends BaseEntity{
 		theName = aName;
 	}
 	private String theName;
+	
+	/** В архиве */
+	@Comment("В архиве")
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** В архиве */
+	private Boolean theIsArchival;
 
 }

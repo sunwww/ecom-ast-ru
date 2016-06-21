@@ -40,12 +40,15 @@ function onCreate(aForm, aEntity, aCtx) {
 	,['Кол-во обвитий',1,0,'EntanglementMultiplicity',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocBirthEntanglementMultiplicity] 
 	,['Где',1,0,'WhereEntanglement',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocBirthWhereEntanglement]
 	,['Отделение',1,0,'Department',Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu]
+	,['Зрелость',1,1,'Maturity',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity]
+	,['Умер до начала родовой деятельности',6,0,'DeadBeforeLabors']
+	
 	] ;
 	if (aForm.getNewBornsInfo()!="") {
-		var childs = aForm.getNewBornsInfo().split("#@#") ;
+		var childs = aForm.getNewBornsInfo().split("@") ;
 		for (var ind = 0 ; ind<childs.length; ind++) {
 			
-			var child = childs[ind].split("@#@") ;
+			var child = childs[ind].split("#") ;
 			var newBorn = new Packages.ru.ecom.mis.ejb.domain.birth.NewBorn() ; 
 			
 			for (var j=0;j<theFld.length;j++) {
@@ -62,6 +65,19 @@ function onCreate(aForm, aEntity, aCtx) {
 					//throw ""+obj ;
 				} else if (theFld[j][1]==4) {
 					obj = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlTime(child[j]) ;
+				} else if (theFld[j][1]==6) { //boolean
+					if (child[j]!=null &&""+child[j]!="") {
+						if (child[j]=="YES") {
+							obj=true;
+						} else if (child[j]=="NO") {
+							obj=true;
+						} else {
+							throw "Значение - умер до родов или после = "+child[j];
+						}
+						
+					} else {
+						obj=null;
+					}	
 				} else {
 					obj = child[j] ;
 				}

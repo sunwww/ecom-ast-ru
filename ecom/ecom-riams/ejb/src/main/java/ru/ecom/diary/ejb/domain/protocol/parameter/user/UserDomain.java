@@ -17,6 +17,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class UserDomain extends BaseEntity{
+	
+	/** Код */
+	@Comment("Код")
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
+	/** Код */
+	private String theCode;
+	
 	/** Название */
 	@Comment("Название")
 	public String getName() {return theName;}

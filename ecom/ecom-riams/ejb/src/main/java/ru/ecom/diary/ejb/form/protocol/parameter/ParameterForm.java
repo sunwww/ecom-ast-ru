@@ -18,6 +18,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Diary/ParameterGroup/Parameter")
 @Parent(property="group", parentForm=ParameterGroupForm.class)
 public class ParameterForm extends IdEntityForm{
+	
+	/** Код */
+	@Comment("Код")
+	@Persist 
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
+	/** Код */
+	private String theCode;
+	
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist @Required

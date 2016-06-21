@@ -52,7 +52,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 	}
 )
 public class ChildBirth extends BaseEntity{
-	
+
 	/** Время начала потуг */
 	@Comment("Время начала потуг")
 	public Time getTravailStartTime() {return theTravailStartTime;}

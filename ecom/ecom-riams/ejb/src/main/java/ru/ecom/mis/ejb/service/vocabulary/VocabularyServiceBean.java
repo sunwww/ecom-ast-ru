@@ -280,6 +280,10 @@ public class VocabularyServiceBean {
     	
     }
 	
+    public String exportProtocolTemplates(long aTemplatesId) {
+    	
+    }
+    
 	public String exportVocExtDisp(long[] aVocExpDisps) throws TransformerException, ParserConfigurationException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");

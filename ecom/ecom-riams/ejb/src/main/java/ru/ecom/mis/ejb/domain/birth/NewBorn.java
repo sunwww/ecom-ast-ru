@@ -44,6 +44,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 )
 public class NewBorn extends BaseEntity{
 
+	
+	/** Умер до начала родовой деятельности */
+	@Comment("Умер до начала родовой деятельности")
+	public Boolean getDeadBeforeLabors() {return theDeadBeforeLabors;}
+	public void setDeadBeforeLabors(Boolean aDeadBeforeLabors) {theDeadBeforeLabors = aDeadBeforeLabors;}
+	/** Умер до начала родовой деятельности */
+	private Boolean theDeadBeforeLabors;
+	
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne

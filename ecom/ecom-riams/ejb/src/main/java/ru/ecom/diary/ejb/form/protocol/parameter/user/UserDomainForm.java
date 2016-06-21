@@ -16,6 +16,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Пользовательский справочник", nameProperties= "name", view="entityView-diary_userDomain.do")
 @EntityFormSecurityPrefix("/Policy/Diary/User/Domain")
 public class UserDomainForm extends IdEntityForm{
+	
+	/** Код */
+	@Comment("Код")
+	@Persist @Required
+	public String getCode() {return theCode;}
+	public void setCode(String aCode) {theCode = aCode;}
+	/** Код */
+	private String theCode;
+	
 	/** Название */
 	@Comment("Название")
 	@Persist @Required

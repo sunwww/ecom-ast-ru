@@ -40,7 +40,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AParentEntityFormInterceptor(NewBornPreCreateInterceptor.class)
 )
 public class NewBornForm extends IdEntityForm{
-
+	
+	/** Умер до начала родовой деятельности */
+	@Comment("Умер до начала родовой деятельности")
+	@Persist
+	public Boolean getDeadBeforeLabors() {return theDeadBeforeLabors;}
+	public void setDeadBeforeLabors(Boolean aDeadBeforeLabors) {theDeadBeforeLabors = aDeadBeforeLabors;}
+	/** Умер до начала родовой деятельности */
+	private Boolean theDeadBeforeLabors;
+	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist 

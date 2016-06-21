@@ -137,5 +137,13 @@ public class DietForm extends IdEntityForm{
 
 	/** Название */
 	private String theName;
+	
+	/** В архиве */
+	@Comment("В архиве")
+	@Persist
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** В архиве */
+	private Boolean theIsArchival;
 
 }

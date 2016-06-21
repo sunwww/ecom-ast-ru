@@ -90,7 +90,8 @@ function check(aForm,aCtx) {
 		
 		
 		var t = aCtx.manager.createNativeQuery("select m1.dtype,case when m1.dtype='DepartmentMedCase' and m2.dischargeTime is not null then m2.dateFinish else null end as datefinish from medcase m1 left join medcase m2 on m2.id=m1.parent_id where m1.id="+aForm.medCase).getResultList() ;
-		var hmc = aCtx.manager.createNativeQuery("select case when dtype='HospitalMedCase' or dtype='PolyclinicMedCase' then id else parent_id end from medcase where id="+aForm.medCase).getSingleResult(); 
+		var hmc = aCtx.manager.createNativeQuery("select case when dtype='HospitalMedCase' or dtype='PolyclinicMedCase' then id else parent_id end from medcase where id="+aForm.medCase).getSingleResult();
+		 
 		//throw ""+hmc;
 		if (!t.isEmpty()) {
 			var dtype=""+t.get(0)[0] ;
@@ -114,12 +115,20 @@ function check(aForm,aCtx) {
 		if (dtype=='HospitalMedCase'||dtype=='DepartmentMedCase') {
 			if (aForm.getDateRegistration()!=null && aForm.getDateRegistration()!='' && isCheck==null) {
 				if (t.get(0)[1]!=null) {
+					
 					param1.put("obj","DischargeMedCase") ;
-					param1.put("permission" ,"editAfterDischarge") ; //editAllProtocolsInSLS
+					param1.put("permission" ,"editAllHospitalMedCase") ; //editAllProtocolsInSLS
 					param1.put("id", +hmc) ;
 					isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
-					//throw +hmc ;
+					if (+isCheck==1) {
+						
+					} else {
+						param1.put("obj","DischargeMedCase") ;
+						param1.put("permission" ,"editAfterDischarge") ; //editAllProtocolsInSLS
+						param1.put("id", +hmc) ;
+						isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
 					if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование (создание) данных после выписки!!!";
+					}
 					
 				}
 				

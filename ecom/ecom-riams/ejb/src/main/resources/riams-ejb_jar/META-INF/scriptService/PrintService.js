@@ -389,6 +389,7 @@ function printNativeQuery(aCtx,aParams) {
 	}
 	if (cntBegin<1) cntBegin=1 ;
 	var list = aCtx.manager.createNativeQuery(sqlText).getResultList() ;
+	
 	var ret = new java.util.ArrayList() ;
 	var retAll = new java.util.ArrayList() ;
 	var parAll = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
@@ -398,6 +399,7 @@ function printNativeQuery(aCtx,aParams) {
 		var obj = list.get(i) ;
 		var par = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 		if (isUniqSn) {
+		//	throw "=== "+ret.size()+" true";
 			var newFieldIdUniq=obj[fieldIdUniq-1] ;
 			//throw oldFieldIdUniq+"--"+newFieldIdUniq ;
 			if (oldFieldIdUniq!=newFieldIdUniq) {
@@ -433,6 +435,7 @@ function printNativeQuery(aCtx,aParams) {
 		ret.add(par) ;
 	}
 	retAll.add(parAll) ;
+	
 	map.put("list",ret) ;
 	map.put("sqlInfo",sqlInfo) ;
 	map.put("sqlColumn",sqlColumn) ;

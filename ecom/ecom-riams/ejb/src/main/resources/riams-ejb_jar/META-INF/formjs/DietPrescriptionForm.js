@@ -16,5 +16,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+	aEntity.setPrescriptSpecial(wf) ;
 
 }
