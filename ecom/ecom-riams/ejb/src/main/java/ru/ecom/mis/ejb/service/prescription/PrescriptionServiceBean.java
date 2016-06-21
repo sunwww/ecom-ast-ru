@@ -85,6 +85,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	vis.setPatient(pat);
 	vis.setCreateDate(new java.sql.Date(date));
 	vis.setCreateTime(new java.sql.Time(date));
+	if (!aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
+		System.out.println("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
+		return null;
+	}
 	vis.setDatePlan(wct.getWorkCalendarDay());
 	vis.setNoActuality(false);
 	vis.setTimePlan(wct);
@@ -111,26 +115,32 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		JSONObject obj = new JSONObject(aParams) ;
 		String wf = String.valueOf(obj.get("workFunction"));
 		System.out.print("workfunction================"+wf);
+		
 		StringBuilder sql = new StringBuilder() ;
+		sql.append("select trim(ms.code|| ' ' ||ms.name) from prescription p " +
+				" left join medservice ms on ms.id=p.medservice_id where p.id=").append(aPrescriptId);
+		String ms=theManager.createNativeQuery(sql.toString()).getSingleResult().toString();
+		if(ms!=null&&!ms.equals("")) ms+="\n";
+		
 		Visit m = theManager.find(Visit.class, aSmoId) ;
+		 
 		if (m!=null) {
-		List<Object> l = null;
-		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
-			sql = new StringBuilder() ;
-			sql.append("select id from Diary where id=").append(aProtocolId).append(" and medCase_id=").append(aSmoId).append("") ;
-			l = theManager.createNativeQuery(sql.toString()).getResultList() ;
-			
-		}
-		if (l==null || l.isEmpty()) {
-			sql = new StringBuilder() ;
-			sql.append("select id from Diary where medCase_id=").append(aSmoId).append("") ;
-			l = theManager.createNativeQuery(sql.toString()).getResultList() ;
-		}
-		if (!l.isEmpty()) {
-			Long idD = ConvertSql.parseLong(l.get(0)) ;
-			d = theManager.find(Protocol.class, idD) ;
-			theManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id="+d.getId()).executeUpdate() ;
-		}
+			List<Object> l = null;
+			if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+				sql = new StringBuilder() ;
+				sql.append("select id from Diary where id=").append(aProtocolId).append(" and medCase_id=").append(aSmoId).append("") ;
+				l = theManager.createNativeQuery(sql.toString()).getResultList() ;
+			}
+			if (l==null || l.isEmpty()) {
+				sql = new StringBuilder() ;
+				sql.append("select id from Diary where medCase_id=").append(aSmoId).append("") ;
+				l = theManager.createNativeQuery(sql.toString()).getResultList() ;
+			}
+			if (!l.isEmpty()) {
+				Long idD = ConvertSql.parseLong(l.get(0)) ;
+				d = theManager.find(Protocol.class, idD) ;
+				theManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id="+d.getId()).executeUpdate() ;
+			}
 		} else {
 			Long smo = checkLabAnalyzed(aPrescriptId,Long.valueOf(wf),aUsername) ;
 			m = theManager.find(Visit.class, smo) ;
@@ -145,8 +155,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		
 		JSONArray params = obj.getJSONArray("params");
 		StringBuilder sb = new StringBuilder() ;
-		sb.append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()))
-			.append(" ").append(DateFormat.formatToTime(pres.getIntakeTime())).append("\n") ;
+		sb.append(ms).append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
+		sb.append(" ").append(DateFormat.formatToTime(pres.getIntakeTime())).append("\n") ;
+		sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
+		sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
 		for (int i = 0; i < params.length(); i++) {
 			//boolean isSave = true ;
 			JSONObject param = (JSONObject) params.get(i);
@@ -318,6 +330,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	
 	public String getDescription(Long aIdTemplateList) {
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
+		if (template==null) return "";
 		StringBuffer description = new StringBuffer();
 		description.append("Название шаблона: ") ; 
 		description.append(template.getName());
