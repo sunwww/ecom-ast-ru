@@ -5,10 +5,43 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import ru.nuzmsh.util.format.DateFormat;
 
 public class ConvertSql {
+	
+	public static String getDay(Object aValue) {
+		return getDatePart(aValue, "day");
+	}
+
+	public static String getYear(Object aValue) {
+		return getDatePart(aValue, "year");
+	}
+
+	public static String getMonth(Object aValue, boolean is) {
+		return getDatePart(aValue, "month");
+	}
+	public static String getDatePart(Object aValue, String aDatePart) {
+		System.out.println("=== GET DATEPART, "+aValue+" : "+aDatePart);
+		java.sql.Date date = parseDate(aValue);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		if (aDatePart.equals("day")) {
+			return ""+cal.get(Calendar.DATE);
+		} else if (aDatePart.equals("month")) {
+			if (cal.get(Calendar.MONTH)<9) {
+				return "0"+(cal.get(Calendar.MONTH)+1);
+			} else {
+				return ""+(cal.get(Calendar.MONTH)+1);
+			}
+		} else if (aDatePart.equals("year")) {
+			return ""+cal.get(Calendar.YEAR);
+		} else {
+			return ""+cal.getTime();
+		}
+	}
+	
 	public static Long parseLong(Object aValue) {
 		Long ret =null;
 		if (aValue==null) return ret ;
