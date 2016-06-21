@@ -215,8 +215,8 @@
   ,
     case 
     when p.cancelDate is not null then 'background:red' 
-    when mc.workFunctionExecute_id is not null and mc.dateStart is null  then 'background:#6CC4F0'
-    when mc.workFunctionExecute_id is null then 'background:#7AE673'
+    when mc.workFunctionExecute_id is not null and mc.dateStart is null  then 'background:#6CC4F0;color:black'
+    when mc.workFunctionExecute_id is null then 'background:#7AE673;color:black'
     else ''
     end as f19_colorcomment
     from prescription p
