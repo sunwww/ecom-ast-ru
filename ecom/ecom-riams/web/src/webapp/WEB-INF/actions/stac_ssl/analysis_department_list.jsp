@@ -106,6 +106,9 @@
         	<msh:autoComplete property="department" fieldColSpan="6" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="serviceStream" fieldColSpan="6" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
+        </msh:row>
+        <msh:row>
 	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
 	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
 		<td colspan="3">
@@ -122,6 +125,8 @@
     
     String date = (String)request.getParameter("dateBegin") ;
     String view = (String)request.getAttribute("typeView") ;
+    String depSql = "";
+    String vss1 = "";
     if (date!=null && !date.equals("") )  {
     	
     	String dateEnd = (String)request.getParameter("dateEnd") ;
@@ -132,12 +137,18 @@
 		
     	request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     	String dep = (String) request.getParameter("department") ; 
-    	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		request.setAttribute("dep", " and dmc.department_id='"+dep+"'");
-    		request.setAttribute("depOper", " and so.department_id='"+dep+"'");
-    	} else{
-    		request.setAttribute("dep", "") ;
+    	String vss = (String) request.getParameter("serviceStream") ; 
+    	
+    	if (vss!=null&&!vss.equals("")&&!vss.equals("0")) {
+    		depSql+= " and vss.id='"+vss+"'";
+    		vss1 = " and vss1.id='"+vss+"'";
     	}
+    	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
+    		depSql += " and dmc.department_id='"+dep+"'";
+    		request.setAttribute("depOper", " and so.department_id='"+dep+"'");
+    	}
+    	request.setAttribute("dep", depSql) ;
+    	request.setAttribute("vss1", vss1);
     	if (view!=null && (view.equals("11"))) {
     	%>
     
@@ -692,6 +703,7 @@ from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
 left join MisLpu dep on dep.id=dmc.department_id
+left join vocservicestream as vss on vss.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -769,6 +781,7 @@ left join VocRayon vr on vr.id=pat.rayon_id
 left join MisLpu operdep on operdep.id=so.department_id
 left join MisLpu dischdep on dischdep.id=ldmc.department_id
 left join VocHospType vht on vht.id=hmc.hospType_id
+left join vocservicestream as vss on vss.id=hmc.servicestream_id
 where ldmc.DTYPE='DepartmentMedCase' 
     and ldmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -825,9 +838,11 @@ dmc.department_id as depid,dep.name as depname
     left join patient pat1 on pat1.id=hmc1.patient_id
      left join Omc_Oksm ok1 on pat1.nationality_id=ok1.id
      left join address2 adr1 on adr1.addressId = pat1.address_addressId
+     left join vocservicestream vss1 on vss1.id=hmc1.servicestream_id
 	where hmc1.DTYPE='HospitalMedCase' 
     and hmc1.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
+    	${vss1}
     	and hmc1.department_id=dmc.department_id
     	and hmc1.deniedHospitalizating_id is null
     	) as cntAdmisPat
@@ -845,6 +860,7 @@ left join Omc_Oksm ok on pat.nationality_id=ok.id
 left join VocRayon vr on vr.id=pat.rayon_id
 left join MisLpu dep on dep.id=dmc.department_id
 left join VocHospType vht on vht.id=hmc.hospType_id
+left join vocservicestream as vss on vss.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -932,6 +948,7 @@ left join WorkFunction owf on owf.id=dmc.ownerFunction_id
 left join Worker ow on ow.id=owf.worker_id
 left join Patient owp on owp.id=ow.person_id
 left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
+left join vocservicestream as vss on vss.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -1012,6 +1029,7 @@ left join WorkFunction swf on swf.id=so.surgeon_id
 left join Worker sw on sw.id=swf.worker_id
 left join Patient swp on swp.id=sw.person_id
 left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+left join vocservicestream as vss on vss.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -1055,12 +1073,13 @@ swf.workFunction_id||':'||sw.person_id as depid
 left join MedCase dmc1 on dmc1.parent_id=hmc1.id
 left join WorkFunction wf on wf.id=dmc1.ownerFunction_id
 left join Worker w on w.id=wf.worker_id
+left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
 where hmc1.DTYPE='HospitalMedCase' 
     and hmc1.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy')
     	and sw.person_id=w.person_id
     	and swf.workFunction_id=wf.workFunction_id
-    	
+    	${vss1}
 ) as cntOwnerPat
 ,count(distinct hmc.id) as cntOperPat
 ,count(distinct case when hmc.emergency='1' then hmc.id else null end) as cntEmOperPatHosp
@@ -1084,10 +1103,11 @@ left join WorkFunction swf on swf.id=so.surgeon_id
 left join Worker sw on sw.id=swf.worker_id
 left join Patient swp on swp.id=sw.person_id
 left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
-    	
+    	${vss1}
     	and so.surgeon_id is not null
     	and dmc.dateFinish is not null
 group by swf.workFunction_id,sw.person_id,svwf.name,swp.lastname,swp.firstname,swp.middlename
@@ -1136,6 +1156,7 @@ left join WorkFunction swf on swf.id=so.surgeon_id
 left join Worker sw on sw.id=swf.worker_id
 left join Patient swp on swp.id=sw.person_id
 left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+left join vocservicestream as vss on vss.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
    and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
@@ -1183,34 +1204,41 @@ dmc.department_id,dep.name
 ,(select count(distinct hmc1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+     left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where 
  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
+  ${vss1}
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntOperPat
 
 ,(select count(distinct so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+     left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
+ ${vss1}
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntOper
 ,(select count(*) from MedCase hmc1 
     left join patient pat1 on pat1.id=hmc1.patient_id
      left join Omc_Oksm ok1 on pat1.nationality_id=ok1.id
      left join address2 adr1 on adr1.addressId = pat1.address_addressId
+     left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
 	where hmc1.DTYPE='HospitalMedCase' 
-    and hmc1.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')  
+    and hmc1.dateStart between to_date('${param.dateBegin}','dd.mm.yyyy')   
     	and to_date('${dateEnd}','dd.mm.yyyy') 
+    	${vss1} 
     	and hmc1.department_id=dmc.department_id and hmc1.deniedHospitalizating_id is null) as cntAdmisPat
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
 left join MisLpu dep on dep.id=dmc.department_id
 left join VocHospType vht on vht.id=hmc.hospType_id
+left join vocservicestream as vss on vss.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 

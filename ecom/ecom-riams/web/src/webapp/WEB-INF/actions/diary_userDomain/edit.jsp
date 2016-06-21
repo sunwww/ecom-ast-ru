@@ -37,7 +37,10 @@
         <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
           <msh:textField property="name" label="Название" size="50" guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" />
         </msh:row>
-        <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
+         <msh:row>
+          <msh:textField property="code" label="Код" />
+        </msh:row>
+        <msh:submitCancelButtonsRow colSpan="3" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>
     <msh:ifInRole roles="/Policy/Mis/MedService/View" guid="5e3d7e52-5747-4b60-aab3-f99027a64117">

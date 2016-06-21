@@ -212,6 +212,13 @@
   ,  case when mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null then mc.id||''','''||d.id else null end as j16enter
   ,d.record as d17record 
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then '0'','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j18scanc
+  ,
+    case 
+    when p.cancelDate is not null then 'background:red' 
+    when mc.workFunctionExecute_id is not null and mc.dateStart is null  then 'background:blue;color:white'
+    when mc.workFunctionExecute_id is null then 'background:yellow'
+    else ''
+    end as f19_colorcomment
     from prescription p
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     left join MedCase mc on mc.id=p.medcase_id
@@ -254,7 +261,7 @@
     
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" >
+	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" >
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ"/>
 	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="ПОдтвердить выполнение результата и ввести резальтат" buttonShortName="Ан.+Рез."/>

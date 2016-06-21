@@ -27,6 +27,9 @@
           <msh:textArea property="prescription" label="Показания к применению" horizontalFill="true" rows="30" size="1000" guid="ff362af0-d3e5-49a0-91ac-d58e4951d1b4" />
         </msh:row>
         <msh:textArea property="description" label="Описание" horizontalFill="true" rows="30" size="1000" guid="9e8e72e3-5b37-4fef-ad93-a2cb2c36fb9b" />
+        <msh:row>
+        <msh:checkBox property="isArchival" label="Не используется" />
+        </msh:row>
         <msh:submitCancelButtonsRow guid="1015eb-1c51-4f0d-ab04-0b" colSpan="2" />
       </msh:panel>
     </msh:form>

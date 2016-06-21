@@ -56,6 +56,9 @@ public class ClaimServiceJs {
 			} else if (aStatus.toUpperCase().equals("FINISH")) {
 				sql +=", finishUsername = startWorkUsername";
 			}
+			if (aStatus.toUpperCase().equals("STARTWORK")) {
+				sql +=", freezeDate = null, freezeusername = null";
+			}
 			sql+=" where id="+aId;
 			
 			return aStatus+" : "+ service.executeUpdateNativeSql(sql);

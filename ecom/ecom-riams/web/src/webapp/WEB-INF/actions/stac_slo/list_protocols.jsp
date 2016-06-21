@@ -24,13 +24,21 @@
     		List l = ActionUtil.getListObjFromNativeQuery("select sls.dtype,sls.patient_id,to_char(sls.datestart,'dd.mm.yyyy') as dat1,to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as dat2 from medcase slo left join medcase sls on sls.id=slo.parent_id where slo.id="+request.getParameter("id")+" and slo.dtype='DepartmentMedCase'", request) ;
     		if (l.size()>0) {
     			Object[] obj = (Object[])l.get(0) ;
-    			request.setAttribute("filterAdd","slo.patient_id='"+obj[1]+"' and slo.datestart between to_date('"+obj[2]+"','dd.mm.yyyy') and to_date('"+obj[3]+"','dd.mm.yyyy') and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')") ;
+    			request.setAttribute("filterAdd","slo.patient_id='"+obj[1]+"' and aslo.datestart between to_date('"+obj[2]+"','dd.mm.yyyy') and to_date('"+obj[3]+"','dd.mm.yyyy') and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')") ;
     		} else {
         		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')") ;
     		}
     		request.setAttribute("title","диагностические исследования") ;
     	} else {
-    		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"'") ;
+    		List l = ActionUtil.getListObjFromNativeQuery("select sls.dtype,sls.patient_id,to_char(sls.datestart,'dd.mm.yyyy') as dat1,to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as dat2 from medcase slo left join medcase sls on sls.id=slo.parent_id where slo.id="+request.getParameter("id")+" and slo.dtype='DepartmentMedCase'", request) ;
+    		if (l.size()>0) {
+    			Object[] obj = (Object[])l.get(0) ;
+    			request.setAttribute("filterAdd","(slo.id='"+request.getParameter("id")+"' or (slo.patient_id='"
+    		    		+obj[1]+"' and aslo.datestart between to_date('"+obj[2]+"','dd.MM.yyyy') and to_date('"+obj[3]+"','dd.MM.yyyy') and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')))") ;
+    		} else {
+    			request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"'");
+    		}
+    		
     	}
     	if (request.getParameter("service")!=null) {
     		request.setAttribute("filterAdd", "slo.patient_id='"+request.getParameter("patient")+"' and aslo.dtype='Visit' and servmc.medservice_id in ("+request.getParameter("service")+")") ;

@@ -661,7 +661,7 @@
 		<msh:autoComplete property="prescriptCabinet" vocName="funcMedServiceRoom" parentAutocomplete="medService" label="Кабинет" size='20' horizontalFill="true" />
   		</msh:row>
   		<tr>
-			<msh:autoComplete property="labDepartment" label="Место забора" vocName="departmentIntake" size='20' fieldColSpan="3" horizontalFill="true" />
+			<msh:autoComplete property="department" label="Место забора" vocName="departmentIntake" size='20' fieldColSpan="3" horizontalFill="true" />
 			</tr>
 		</msh:ifFormTypeAreViewOrEdit>
         </msh:panel>

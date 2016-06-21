@@ -163,6 +163,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	}
 	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
 		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, HttpServletRequest aRequest )throws NamingException {
+		if (aTimePlanId==null||aTimePlanId.equals(0)) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Long wf = null;
@@ -603,8 +604,12 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	}
 	public String getDescription(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
-		System.out.println("Получить описание шаблона: "+aIdTemplateList);
-		return service.getDescription(aIdTemplateList) ;
+		if (aIdTemplateList!=null&& !aIdTemplateList.equals(0)) {
+			System.out.println("Получить описание шаблона: "+aIdTemplateList);
+			return service.getDescription(aIdTemplateList) ;
+		} 
+		return "";
+		
 	}
 	public String getDefectByBiomaterial(String aPrescript, String aBiomaterialType, String aPrefixMethod,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

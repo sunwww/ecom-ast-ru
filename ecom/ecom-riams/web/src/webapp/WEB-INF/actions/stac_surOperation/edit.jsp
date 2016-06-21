@@ -44,14 +44,14 @@
         <msh:hidden property="lpu" />
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
-          <msh:textField property="numberInJournal" label="Номер протокола"  labelColSpan="2" fieldColSpan="2"/>
+          <msh:textField property="numberInJournal" label="Номер протокола"  labelColSpan="1" fieldColSpan="3"/>
         </msh:row>
-        <msh:separator label="Сведения до операции" colSpan="" guid="a7a51c30-4065-4ab85b4ade6f66" />
+        <msh:separator label="Сведения до операции" colSpan="5"  />
         <msh:row guid="132b1-2e6b-425a-a14e-1c330959">
           <msh:autoComplete property="idc10Before" label="МКБ до операции" guid="e3939-a6a1-303f14f" fieldColSpan="3" horizontalFill="true" vocName="vocIdc10" />
         </msh:row>
         </msh:ifNotInRole>
-        <msh:separator label="Сведения об операции" colSpan="" guid="a7a51c304-335b4ade6f66" />
+        <msh:separator label="Сведения об операции" colSpan="5" guid="a7a51c304-335b4ade6f66" />
  	        <msh:row guid="f7540b-4474-46c6-b162-828">
 	          <msh:textField property="operationDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
 	          <msh:textField property="operationTime" label="время" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
@@ -129,7 +129,7 @@
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">          
         
         <msh:row guid="f0851bc5-6ac2-4e6f-bfab-90593e637799">
-          <ecom:oneToManyOneAutocomplete label="Ассистенты" property="surgeonFunctions" vocName="workFunctionIsSurgical" guid="e68271bf-c384-4022-9fb6-6ba7eeedb6fe" />
+          <ecom:oneToManyOneAutocomplete colSpan="3" label="Ассистенты" property="surgeonFunctions" vocName="workFunctionIsSurgical" guid="e68271bf-c384-4022-9fb6-6ba7eeedb6fe" />
         </msh:row>
         <msh:row guid="12721-2e6b-425a-a14e-1c0298959">
           <msh:autoComplete property="operatingNurse" label="Опер. медсестра" guid="e282-9d6f-4c39-a6a1-30g2f14f" fieldColSpan="3" horizontalFill="true" vocName="workFunctionIsInstrumentNurse" />
@@ -137,9 +137,7 @@
         </msh:ifNotInRole>
 
         <msh:ifFormTypeIsCreate formName="stac_surOperationForm">
-        	<msh:row>
-        		<msh:separator label="Анестезия" colSpan="4"/>
-        	</msh:row>
+        		<msh:separator label="Анестезия" colSpan="5"/>
 	        <msh:row>
 	          <msh:autoComplete property="isAnesthesia" label="Анестезия проводилась?" horizontalFill="true" vocName="vocYesNo" fieldColSpan="3" />
 	        </msh:row>
@@ -160,15 +158,15 @@
 	        </msh:row>
         </msh:ifFormTypeIsCreate>
          <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
-        <msh:separator label="Использование специальной аппаратуры" colSpan="" guid="78d9-74f0-401c-ab10-01bdf544acd8" />
+        <msh:separator label="Использование специальной аппаратуры" colSpan="5" guid="78d9-74f0-401c-ab10-01bdf544acd8" />
 	        <msh:row guid="c065ec29-09d7-49de-adbb-516655c251c1">
 	          <msh:checkBox property="endoscopyUse" label="Эндоскопия" guid="35f35cdf-4b7e-45f7-af9f-252d656e10d7" />
 	          <msh:checkBox property="laserUse" label="Лазерная аппаратура" guid="8a4372de-f324-4206-9369-adaa25ffa23e" />
 	        </msh:row>
 	        <msh:row guid="738f9c05-0052-41af-ba25-28e72a055b1e">
-	          <msh:checkBox property="cryogenicUse" label="Криогенная аппаратура" guid="99f18eb4-ad41-4d24-8e21-5a5df64e0d07" />
+	          <msh:checkBox property="cryogenicUse" label="Криогенная аппаратура" guid="99f18eb4-ad41-4d24-8e21-5a5df64e0d07"  fieldColSpan="3"/>
 	        </msh:row>
-        <msh:separator label="Сведения после операции" colSpan="" guid="a7a51c30-4065-4ab8-ac94-335b4ade6f66" />
+        <msh:separator label="Сведения после операции" colSpan="5" guid="a7a51c30-4065-4ab8-ac94-335b4ade6f66" />
         
         <msh:row guid="ad5ec-5754-4cbd-bcb5-a592">
           <ecom:oneToManyOneAutocomplete vocName="vocComplication" colSpan="3" label="Осложнения" property="complications" guid="652c9b95-2724-4086-87f5-aefd67b01e8c" />

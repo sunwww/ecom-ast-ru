@@ -23,6 +23,25 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
 	
+	public String getIsPatientInList(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
+		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		 StringBuilder sb = new StringBuilder();
+		 String sql ="select pl.name as plName, pl.colorName as colorName, coalesce(plr.message,pl.message) as plrMessage" +
+		 		" from patientListRecord plr" +
+		 		" left join patientList pl on pl.id=plr.patientList" +
+		 		" where plr.patient="+aPatientId;
+		 Collection <WebQueryResult> res = service.executeNativeSql(sql);
+		 for (WebQueryResult wqr: res) {
+			if (sb.length()>0) {sb.append(":");}
+			sb.append("<div style='"+wqr.get2()+"'>");
+			sb.append("ВНИМАНИЕ! <br>");
+			sb.append(""+wqr.get3());
+			sb.append("</div>");
+			//sb.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3());
+		 }
+		 return sb.toString();
+	}
+	
 	
 	public String showPatientCheckByFondHistory(String aPatientId, String aType, HttpServletRequest aRequest) throws NamingException {
 		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

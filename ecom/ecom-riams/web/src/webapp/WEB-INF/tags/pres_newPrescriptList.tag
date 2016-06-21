@@ -42,6 +42,11 @@
     </tr>
     <tr>
     	<td>
+    		<input name="add" type='button' onclick="javascript:goTo('mode')" value='Добавить режим'> 
+    	</td>
+    </tr>
+    <tr>
+    	<td>
     		<input name="view" type='button' onclick="javascript:goTo('view')" value='Просмотреть назначения'> 
     	</td>
     </tr>
@@ -69,8 +74,10 @@ var isSLSClosed = true;
     	if (aValue=='service') window.location='entityParentPrepareCreate-pres_servicePrescription.do?id='+plId;
     	else if (aValue=='operation') window.location='entityParentPrepareCreate-pres_operationPrescription.do?id='+plId;
     	else if (aValue=='diet') window.location='entityParentPrepareCreate-pres_dietPrescription.do?id='+plId;
+    	else if (aValue=='mode') window.location='entityParentPrepareCreate-pres_modePrescription.do?id='+plId;
     	else if (aValue=='func') window.location='entityParentPrepareCreate-pres_diagnosticPrescription.do?id='+plId;
     	else if (aValue=='view') window.location='entityParentView-pres_prescriptList.do?id='+plId;
+    	
      }
      
    

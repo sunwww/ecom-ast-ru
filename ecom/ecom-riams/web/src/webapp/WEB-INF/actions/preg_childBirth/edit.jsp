@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -38,11 +39,18 @@
     <!-- 
     	  - Течение родов
     	  -->
+   <ecom:webQuery isReportBase="${isReportBase}" name="dead_born_sql" nativeSql="select id,name from VocLiveBorn where code='2'"/>
+   <%
+   ActionUtil.getValueByList("dead_born_sql", "dead_born", request) ;
+ 	String dead_born = (String)request.getAttribute("dead_born") ;
+ 	request.setAttribute("dead_born", dead_born);
+   %>
     <msh:form action="/entityParentSaveGoView-preg_childBirth.do" defaultField="durationPregnancy" guid="93666922-7bed-42a7-be5e-b2d52e41d39b">
       <msh:hidden property="id" guid="2821496c-bc8e-4cbe-ba14-ac9a7f019ead" />
       <msh:hidden property="medCase" guid="2104232f-62fa-4f0b-84de-7ec4b5f306b3" />
       <msh:hidden property="saveType" guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
-      <msh:hidden property="newBornsInfo" guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
+      <msh:hidden property="newBornsInfo"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
+      <input type='hidden' name='deadBorn' id="deadBorn" value='${dead_born}' guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
         <msh:row guid="4bbea36b-255f-441f-8617-35cb54eaf9d0">
           <td width="1px" />
@@ -189,10 +197,12 @@
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>
         </msh:ifFormTypeIsView>
-        <msh:submitCancelButtonsRow colSpan="3" functionSubmit="checkForm();" guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" />
+        <msh:submitCancelButtonsRow colSpan="3" functionSubmit="checkDeadBorn();" guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" />
       </msh:panel>
     </msh:form>
+     <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
     <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
+   
       <msh:ifInRole roles="/Policy/Mis/NewBorn/View" guid="187f5083-94a7-42fd-a428-7f9d4720bfd1">
         <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" guid="35b71f42-e1fc-40f2-93e5-0908ea385878" />
         <msh:tableNotEmpty name="newBorns" guid="bd28e321-5e07-4e52-95dc-9851c96a0007">
@@ -214,7 +224,9 @@
   <script type="text/javascript">
   	var isSaveNewBorns ;
   	var old_action = document.forms["mainForm"].action ; 
-  	document.forms["mainForm"].action="javascript:checkForm()" ; 
+  	
+  	//document.forms["mainForm"].action="javascript:checkForm()" ; 
+  	document.forms["mainForm"].action="javascript:checkDeadBorn()" ; 
   	
   </script>
   <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm">
@@ -303,6 +315,8 @@
 	,['Кол-во обвитий','EntanglementMultiplicity',1,11,0,'entanglementMultiplicity',0,'VocBirthEntanglementMultiplicity',1] 
 	,['Где','WhereEntanglement',1,11,0,'whereEntanglement',0,'VocBirthWhereEntanglement',1]
 	,['Отделение','Department',1,11,1,'department',0,"MisLpu where IsNewBornDep='1'",1]
+	,['Зрелость','Maturity',1,2,1,'maturity',0,'VocNewBornMaturity',1]
+	,['','DeadBeforeLabors',6,2,0,'deadBeforeLabors',0,'',1]
 	] ;
 	var vocList = "" ;
 	var vocValueList  ;
@@ -411,7 +425,33 @@
   		}
      }
     */
-  	function createOtherNewBorns() {
+  	function checkDeadBorn() {
+    	var borns = document.getElementById('otherNewBorns').childNodes;
+    	var ret = 0;
+  		for (var i=1;i<borns.length;i++) {
+  			for (var ii=0;ii<theFld.length;ii++) {
+  				
+  				var val
+	  			if (+theFld[ii][2]==1) {
+	  				val = getCheckedRadio(document.forms["mainForm"],theFld[ii][1]+(i)) ;
+	  				
+	  				if ((theFld[ii][1]=='LiveBorn') &&($('DeadBeforeLabors'+i).value==null || $('DeadBeforeLabors'+i).value=='')) {
+	  					//alert ("chDB "+theFld[ii][1] +" <==> "+$('DeadBeforeLabors'+i).value);	
+	  					if (val==$('deadBorn').value) {
+	  						ret=1;
+	  						showDeadBornCreateType(i, "Новорожденный "+i+" умер до начала родовой деятельности?");
+	  					}	  					
+	  				}
+	  			}
+  			}
+  			
+	  		
+  		}
+  		if (ret==0) {
+  		checkForm ();	
+  		}
+    }
+    function createOtherNewBorns() {
   		var borns = document.getElementById('otherNewBorns').childNodes;
   		var str = ""; $('newBornsInfo').value='';
   		for (var i=1;i<borns.length;i++) {
@@ -419,16 +459,23 @@
   				var val
 	  			if (+theFld[ii][2]==1) {
 	  				val = getCheckedRadio(document.forms["mainForm"],theFld[ii][1]+(i)) ;
+	  				/* if ((theFld[ii][1]=='LiveBorn') &&$('DeadBeforeLabors'+i).value=='') {
+	  					if (val==$('deadBorn').value) {
+	  						showDeadBornCreateType(i);
+	  						return;
+	  					}
+	  					
+	  				} */
 	  			} else {
 	  				val = $(theFld[ii][1]+(i)).value ;
 	  			}
   				if (theFld[ii][4]&&val=="") throw "Поле обязательное для заполнения: "+theFld[ii][0] ;
-	  			str+=val+"@#@";
+	  			str+=val+"#";
   			}
-  			str=str.length>0?str.trim().substring(0,str.length-3):"";
-	  		str+="#@#" ;
+  			str=str.length>0?str.trim().substring(0,str.length-1):"";
+	  		str+="@" ;
   		}
-  		str=str.length>0?str.trim().substring(0,str.length-3):"";
+  		str=str.length>0?str.trim().substring(0,str.length-1):"";
   		$('newBornsInfo').value=str;
   	}
   	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 ,dateFld-3,timeFld-4
@@ -498,6 +545,8 @@
   			} else if (fld_i[2]==4) {
   				txt+=" "+fld_i[0]+": <input type='text' size='5' name='"+fld_i[1]+idChild+"' id='"+fld_i[1]+idChild+"' value='"+eval("a"+fld_i[1])+"'>"
   				js += "new timeutil.TimeField($('"+fld_i[1]+idChild+"')) ;"
+  			} else if (fld_i[2]==6) {
+  				txt+=" "+fld_i[0]+": <input type='hidden'  name='"+fld_i[1]+idChild+"' id='"+fld_i[1]+idChild+"' value='"+eval("a"+fld_i[1])+"'>"
   			}
   		}
   		td.innerHTML=txt ;

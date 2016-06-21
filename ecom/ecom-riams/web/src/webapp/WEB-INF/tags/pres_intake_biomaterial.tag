@@ -117,8 +117,8 @@
 			}
 		}
 	    function cancel${name}InLab(aId,aReasonId,aReason) {
-	    	var reason = get${name}Reason(aReason) ;
-	    	if (reason!=null) {
+	    	aReason = get${name}Reason(aReason) ;
+	    	if (aReason!=null) {
 	    		//alert(123) ;
 	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
 		            callback: function(aResult) {

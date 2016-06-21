@@ -53,6 +53,8 @@
         <msh:row guid="43669dbf-aba5-48b7-8979-20b12d5e196b">
           <msh:autoComplete property="liveBorn" label="Родился" vocName="vocLiveBorn" fieldColSpan="1" />
         </msh:row>
+        <msh:checkBox property = "deadBeforeLabors" label="Умер до начала родовой деятельности (только для родившихся мертвыми)"/>
+        
         <msh:row guid="43669dbf-aba5-48b7-8979-20b12d5e196b">
           <msh:autoComplete property="partBodyBorn" label="Родился" vocName="vocPartBodyBorn" fieldColSpan="1" />
         </msh:row>

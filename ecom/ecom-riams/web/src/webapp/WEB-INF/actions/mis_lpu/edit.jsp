@@ -283,6 +283,25 @@
     			</msh:section>
     		</td>
   			</msh:ifInRole>
+  			       
+          <td width="15%" valign="top" colspan="3" style="padding-right: 1em">
+    			<msh:section>
+    				<msh:sectionTitle>В ЛПУ входят след. подразделения. <a href='entityParentPrepareCreate-mis_lpuGroup.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
+    				<msh:sectionContent>
+    					<ecom:webQuery name="lpuGroups" nativeSql="
+    					select lg.id, ml.name from lpuGroup lg
+						left join mislpu ml on ml.id=lg.lpu
+						where lg.groupLpu='${param.id}' order by ml.name"/>
+    					<msh:table  name="lpuGroups" hideTitle="true" action="entityParentView-mis_lpuGroup.do" idField="1">
+    						<msh:tableColumn property="1"/>
+    						<msh:tableColumn property="2"/>
+    						
+    					</msh:table>
+    				</msh:sectionContent>
+    			</msh:section>
+    		</td>
+  			
+  			
         </tr>
       </table>
     </msh:ifFormTypeIsView>

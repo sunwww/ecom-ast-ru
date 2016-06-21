@@ -24,9 +24,11 @@
           <msh:textField label="Дата начала" property="planStartDate" />
           <msh:textField label="Время" property="planStartTime" />
         </msh:row>
+        <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="pres_dietPrescriptionForm">
         <msh:row >
           <msh:autoComplete vocName="workFunction" label="Назначил" property="prescriptSpecial" horizontalFill="true" fieldColSpan="5" />
         </msh:row>
+        </msh:ifFormTypeIsView>
         <msh:row >
           <msh:textField label="Дата окончания" property="planEndDate" />
           <msh:textField label="Время" property="planEndTime" />

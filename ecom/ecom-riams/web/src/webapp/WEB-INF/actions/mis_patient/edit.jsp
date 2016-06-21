@@ -9,6 +9,7 @@
 
   <tiles:put name="body" type="string">
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="c1b89933-a744-46a8-ba32-014ac1b4fcb4">
+    <div id='patientInfoDiv'></div>
     <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     	<msh:separator label="Проверка пациента по базе фонда" colSpan="4"/>
     	<msh:link action="javascript:checkPatientBySnils()">Проверка по СНИЛСу</msh:link>
@@ -988,6 +989,20 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </script>
   </msh:ifInRole>
   <msh:ifFormTypeIsView formName="mis_patientForm">
+      <msh:ifInRole roles="/Policy/Mis/Patient/PatientList/PatientListView">
+      	<script type="text/javascript">
+      	function checkPatientInList() {
+      		PatientService.getIsPatientInList($('id').value, {
+      			callback: function(a) {
+      				if (a!=null&&a!=''){
+      				$('patientInfoDiv').innerHTML=a;
+      				}
+      			}
+      		});
+      	}
+			onload=checkPatientInList();
+		</script>
+      </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFondAttachment">
       	<script type="text/javascript">
 			onload=checkIsAttachedOrDead(0,1);

@@ -135,6 +135,7 @@ select sls.id
 	mislpu dep on dep.id=slo.department_id where slo.dtype='DepartmentMedCase' and slo.parent_id=sls.id and slo.transferdate is null) else '' end as f9_dep 
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
 ,max(case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end) as f11_isDead
+,max(vr.name) as f12_rayon
 from medcase sls 
 left join omc_frm  ot on ot.id=sls.ordertype_id
 left join medcase slo on slo.parent_id=sls.id
@@ -147,6 +148,7 @@ left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join patient p on p.id=sls.patient_id
 left join address2 adr on adr.addressid = p.address_addressid
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
+left join vocrayon vr on vr.id=p.rayon_id
 where sls.deniedhospitalizating_id is null and  sls.dtype='HospitalMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 and vpd.code='1'
@@ -173,6 +175,7 @@ order by p.lastname, p.firstname, p.middlename
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="ФИО пациента" property="2"/>            
             <msh:tableColumn columnName="Адрес проживания пациента" property="3"/>
+            <msh:tableColumn columnName="Район" property="13"/>
             <msh:tableColumn columnName="Дата рождения" property="4"/>
             <msh:tableColumn columnName="Возраст" property="5"/>
             <msh:tableColumn columnName="Доставлен машиной СМП" property="6"/>

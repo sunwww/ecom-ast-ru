@@ -65,10 +65,16 @@
     	<ecom:webQuery name="pres" nativeSql="select 
     	p.id as pid,pl.id as plid,ms.name as drname
  ,p.planStartDate,p.planEndDate
+ ,m.datestart
+,coalesce(d.record,'')
  from Prescription p 
+ 
  left join PrescriptionList pl on pl.id=p.prescriptionList_id 
  left join medservice ms on ms.id=p.medService_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id 
+ left join workcalendartime wct on wct.id=p.calendartime_id
+ left join medcase m on m.id=wct.medcase_id
+ left join diary d on d.medcase_id=m.id
  where ${field } and p.DTYPE='ServicePrescription' 
  and (vms.code='DIAGNOSTIC' or vms.code='SERVICE' or (vms.id is null and ms.id is not null)) 
  order by p.planStartDate"/>
@@ -77,7 +83,9 @@
     		<msh:table name="pres" action="entityView-pres_diagnosticPrescription.do" idField="1">
     			<msh:tableColumn property="3" columnName="Исследование"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
-    			<msh:tableColumn property="5" columnName="Дата окончания"/>
+    			<msh:tableColumn property="6" columnName="Дата исполнения услуги"/>
+    			
+    			<msh:tableColumn property="7" columnName="Результат выполнения"/>
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
@@ -89,6 +97,7 @@
  ,ml.name as mlname,vpcr.name||' '||coalesce(p.cancelReasonText,'') as fldCancel
  ,case when vpcr.id is not null then 'color:red;' else null end as stylCancel
  , case when presV.datestart is not null then coalesce(d.record, '') else '' end as lab_rests
+ ,presV.datestart
  from Prescription p 
  left join PrescriptionList pl on pl.id=p.prescriptionList_id 
  left join mislpu ml on ml.id=p.department_id
@@ -108,6 +117,7 @@
     			<msh:tableColumn property="7" columnName="Тип назначения"/>
     			<msh:tableColumn property="8" columnName="Место забора"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
+    			<msh:tableColumn property="12" columnName="Дата выполнения"/>
     			<msh:tableColumn property="5" columnName="Дата окончания"/>
     			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
     			<msh:tableColumn property="9" columnName="Причина брака"/>

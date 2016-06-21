@@ -29,6 +29,9 @@
       <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
       <msh:hidden property="group" guid="bd32944-4587-a963-a09db2b93caf" />
       <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01">
+       <msh:row guid="bb6f7393-5e65-498c-82799f6b4">
+          <msh:textField property="code" label="Код" fieldColSpan="3" />
+        </msh:row>
         <msh:row guid="bb6f7393-5e65-498c-82799f6b4">
           <msh:textField property="shortName" label="Короткое название" guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" fieldColSpan="3" />
         </msh:row>

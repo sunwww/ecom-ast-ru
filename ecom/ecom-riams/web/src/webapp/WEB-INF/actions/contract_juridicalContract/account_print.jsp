@@ -97,6 +97,7 @@ select pp.id as ppid
 			left join REG_IC reg on reg.id=cp.regCompany_id
 			left join VocIdc10 mkb on mkb.id=cams.diagnosis
 			where cams.account_id='${param.id}' and cams.medservice_id is not null
+			and (cams.isDelete='0' or cams.isDelete is null)
 			group by pp.id,pp.code , pp.name ,vpt.name,mc.discountDefault,cams.cost
 "/>
 <input type='hidden' name='sqlText' value="${sqlText}"/>
