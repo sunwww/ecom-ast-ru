@@ -80,10 +80,10 @@
     String date = request.getParameter("dateBegin") ;
     if (date!=null) {
     String dateEnd = request.getParameter("dateEnd") ;
+    if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd,request));
     //String id = (String)request.getParameter("id") ;
 
-    if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     request.setAttribute("dateBegin", date) ;
     request.setAttribute("dateEnd", dateEnd) ;
 	request.setAttribute("dateEnddd", dateEnd.substring(0,2)) ;
@@ -93,9 +93,7 @@
   //  String view = (String)request.getAttribute("typeView") ;
     String sex = request.getParameter("sex");
     String sqlAdd = "";
-    if (sex!=null&&!sex.equals("")) {
-    	sqlAdd+=" and pat.sex_id="+sex;
-    }
+    if (sex!=null&&!sex.equals("")) sqlAdd+=" and pat.sex_id="+sex;
 
     String type=request.getParameter("type");
   
