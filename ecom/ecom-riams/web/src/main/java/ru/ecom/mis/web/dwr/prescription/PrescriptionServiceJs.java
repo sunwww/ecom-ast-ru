@@ -414,6 +414,16 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		return "1" ;
 	}
 	
+	public String uncancelService(String aPrescript, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("update Prescription set cancelReason_id=null, cancelReasonText=null, cancelDate=null, ");
+		sql.append("cancelTime=null, cancelUsername=null where id in (").append(aPrescript).append(")");
+		service.executeUpdateNativeSql(sql.toString()) ;
+
+		return "1" ;
+	}
+	
 	/**Возвращает ID листа назначений, если он существует в заданном Medcase 
 	 * 
 	 * UPD 11.2015 - Если ЛН не существует, то создает его
