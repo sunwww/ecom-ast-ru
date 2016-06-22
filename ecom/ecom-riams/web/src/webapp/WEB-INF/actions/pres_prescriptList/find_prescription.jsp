@@ -64,10 +64,11 @@
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
    ,ml.name as m15lname
   ,  case when mc.dateStart is null and p.cancelDate is null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
-  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
+  ,  case when p.medCase_id is null and p.cancelDate is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
    ,case when mc.datestart is not null then p.id end as btnAnnul
    ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f20dtintake
+   ,case when p.canceldate is not null then p.id end as btnUncancel
     from prescription p
     left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id
     left join MedCase mc on mc.id=p.medcase_id
@@ -100,6 +101,7 @@
 	      <msh:tableButton property="19" buttonFunction="annulBioResult" role="/Policy/Mis/Journal/Prescription/LabSurvey/AnnulPrescription" buttonName="Аннулирование" buttonShortName="Аннулировать назначение" hideIfEmpty="true"/>
 	      <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
 	      <msh:tableButton property="17" buttonFunction="showBioIntakeCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Брак биоматериала" buttonShortName="Брак" hideIfEmpty="true"/>
+	      <msh:tableButton property="21" buttonFunction="uncancelBioIntake" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Отмена брака" buttonShortName="Отменить брак" hideIfEmpty="true"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Ход работ" property="2"  />
 	      <msh:tableButton property="14" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
