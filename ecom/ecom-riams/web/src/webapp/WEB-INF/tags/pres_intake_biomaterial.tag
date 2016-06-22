@@ -130,6 +130,13 @@
 	    		cancelBioIntakeInfo();
 	    	}	
 		}
+	    function uncancel${name}Intake(aId) {
+        	PrescriptionService.uncancelService(aId, { 
+	            callback: function(aResult) {
+	            	window.document.location.reload();
+	            }
+			});
+		}
      function show${name}IntakeCabinet(aListPrescript,aDepartment,aPrescriptType) {
     	 $('${name}IntakeInfoTitle').innerHTML = "ВЫБОР КАБИНЕТА" ;
          // устанавливается инициализация для диалогового окна
