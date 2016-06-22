@@ -101,7 +101,7 @@
 	      <msh:tableButton property="19" buttonFunction="annulBioResult" role="/Policy/Mis/Journal/Prescription/LabSurvey/AnnulPrescription" buttonName="Аннулирование" buttonShortName="Аннулировать назначение" hideIfEmpty="true"/>
 	      <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
 	      <msh:tableButton property="17" buttonFunction="showBioIntakeCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Брак биоматериала" buttonShortName="Брак" hideIfEmpty="true"/>
-	      <msh:tableButton property="21" buttonFunction="uncancelBioIntake" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Отмена брака" buttonShortName="Отменить брак" hideIfEmpty="true"/>
+	      <msh:tableButton property="21" buttonFunction="uncancelBioIntake" role="/Policy/Mis/Journal/Prescription/LabSurvey/AnnulPrescription" buttonName="Отмена брака" buttonShortName="Отменить брак" hideIfEmpty="true"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Ход работ" property="2"  />
 	      <msh:tableButton property="14" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
