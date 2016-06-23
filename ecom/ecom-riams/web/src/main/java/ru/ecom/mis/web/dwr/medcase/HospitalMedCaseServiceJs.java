@@ -247,8 +247,11 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder res = new StringBuilder();
 		String sql = "select d.id, to_char(d.dateregistration,'dd.MM.yyyy')|| ' ' ||to_char(d.timeregistration,'HH:MI') as dt," +
-			" d.record from medcase sls " +
+			" case when count (mc.id)>0 then list(mc.code||' '||mc.name) ||'<'||'br'||'/>' else '' end || d.record " +
+			" from medcase sls " +
 			" left join medcase vis on vis.patient_id=sls.patient_id" +
+			" left join medcase servmc on servmc.parent_id=vis.id"+
+			" left join medservice mc on mc.id=servmc.medservice_id" + 
 			" left join diary d on d.medcase_id= vis.id" +
 			" where sls.id="+aMedcaseId +
 			" and d.dtype='Protocol'" +
@@ -257,6 +260,7 @@ public class HospitalMedCaseServiceJs {
 			" and case when vis.dtype='Visit' and vis.parent_id!=sls.id then (select case when vwf.isNoDiagnosis='1' then '1' else '0' end from medcase v" +
 			" left join workfunction wf on wf.id=v.workfunctionexecute_id" +
 			" left join vocworkfunction vwf on vwf.id=wf.workfunction_id where v.id=vis.id) else '1' end = '1'" +
+			" group by d.id, d.dateregistration, d.timeregistration, d.record " +
 			" order by d.dateregistration desc, d.timeregistration desc";
 		Collection<WebQueryResult> wqr = service.executeNativeSql(sql);
 		if (!wqr.isEmpty()) {

@@ -34,12 +34,12 @@ public class PatientServiceJs {
 		 for (WebQueryResult wqr: res) {
 			if (sb.length()>0) {sb.append(":");}
 			sb.append("<div style='"+wqr.get2()+"'>");
-			sb.append("ВНИМАНИЕ! <br>");
 			sb.append(""+wqr.get3());
 			sb.append("</div>");
 			//sb.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3());
 		 }
 		 return sb.toString();
+		 
 	}
 	
 	
@@ -95,8 +95,8 @@ public class PatientServiceJs {
 	
 	public String getUserDocumentList(String aGroupName, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder ret = new StringBuilder();
-		String sql = "select ud.id, ud.name, ud.filename from VocUserDocumentGroup vudg" +
-				" left join userDocument ud on ud.groupType_id = vudg.id where upper(vudg.code) = upper('"+aGroupName+"')";
+		String sql = "select ud.id, ud.name, ud.filename from  userDocument ud" +
+				" left join VocUserDocumentGroup vudg on ud.groupType_id = vudg.id where upper(vudg.code) = upper('"+aGroupName+"')";
 	 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 	 Collection <WebQueryResult> res = service.executeNativeSql(sql);
 	 if (!res.isEmpty()) {

@@ -292,6 +292,13 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+ <action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/list_by_period.jsp" />
+        </action>
  <action path='/gener_ticket' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

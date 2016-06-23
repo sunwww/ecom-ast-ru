@@ -27,7 +27,7 @@
     
     %>
     
-            <msh:form action="/pres_lab_print.do" defaultField="number" method="GET">
+            <msh:form action="/pres_lab_print.do" defaultField="number" method="POST">
                 <msh:panel>
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
@@ -114,6 +114,7 @@
     left join medcase sloallBySlo on sloallBySlo.parent_id=slo.parent_id and slo.dtype='DepartmentMedCase' and sloallBySlo.dtype='DepartmentMedCase' and sloallBySlo.Transferdate is null
     left join MisLpu ml1 on ml1.id=sloall.department_id
     left join MisLpu ml2 on ml2.id=sloallBySlo.department_id
+    left join vocprescripttype vpt on vpt.id=p.prescripttype_id 
    where {dateInfo}
     and vst.code='LABSURVEY' 
     and mc.workFunctionExecute_id is not null and mc.dateStart is not null and d.id is not null
@@ -144,10 +145,12 @@
             	document.forms[1].submit() ;
             }
             function printId(aId,aDate,aFilePrefix) {
-            	var addParam = " and p.id="+aId;
+            	var addParam = " p.id="+aId;
             	$('sqlText').value = $('sql_info').value.replace('{param.beginDate}',aDate)
-            	$('sqlText').value=$('sqlText').value.replace('{sqlAdd}',addParam) ;
+            	$('sqlText').value=$('sqlText').value.replace('{sqlAdd}',"") ;
+            	$('sqlText').value=$('sqlText').value.replace('{dateInfo}',addParam).replace('{mlname}',"cast('' as varchar)").replace('{mlname}',"cast('' as varchar)") ;
             	document.forms[1].action='print-pres_lab_print_'+aFilePrefix+'.do'
+            	alert ("text = "+$('sqlText').value);
             	document.forms[1].submit() ;
             }
             function print() {
@@ -159,7 +162,7 @@
             	//if (+$("department").value>0) {addParam+=" and ml.id="+$("department").value ;}
             	if (+$("prescriptType").value>0) addParam+=" and vpt.id="+$("prescriptType").value ;
             	if (+$("serviceSubType").value>0) addParam+=" and ms.serviceSubType_id="+$("serviceSubType").value ;
-            	if (+$("patient").value>0) addParam+=" and pat.id="+$("department").value ;
+            	if (+$("patient").value>0) addParam+=" and pat.id="+$("patient").value ;
             	if ($("number").value!="") {
             		addParam+=" and p.materialId='"+$("number").value+"'" ;
             		
@@ -176,7 +179,7 @@
         			//$('groupField').value = "13,14,9,7,10" ;
 	       		} else {
 	       			mlname="coalesce(ml1.name,ml2.name)" ;
-	       			if (+$("department").value>0) {addParam+=" coalesce(sloallBySlo.department_id,sloall.department_id)='"+$("department").value+"'";
+	       			if (+$("department").value>0) {addParam+=" and coalesce(sloallBySlo.department_id,sloall.department_id)='"+$("department").value+"'";
 	            	}
         			dateInfo=" (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy') or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy'))" ;
         			//$('groupField').value = "16,14,9,7,10" ;
@@ -315,6 +318,7 @@
     left join medcase sloallBySlo on sloallBySlo.parent_id=slo.parent_id and slo.dtype='DepartmentMedCase' and sloallBySlo.dtype='DepartmentMedCase' and sloallBySlo.Transferdate is null
     left join MisLpu ml1 on ml1.id=sloall.department_id
     left join MisLpu ml2 on ml2.id=sloallBySlo.department_id
+    left join vocprescripttype vpt on vpt.id=p.prescripttype_id
     where ${dateInfo}
     and vst.code='LABSURVEY' 
     and mc.workFunctionExecute_id is not null and mc.dateStart is not null
