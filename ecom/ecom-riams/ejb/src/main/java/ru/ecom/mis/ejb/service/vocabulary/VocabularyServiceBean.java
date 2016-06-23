@@ -281,7 +281,7 @@ public class VocabularyServiceBean {
     }
 	
     public String exportProtocolTemplates(long aTemplatesId) {
-    	
+    	return "" ;
     }
     
 	public String exportVocExtDisp(long[] aVocExpDisps) throws TransformerException, ParserConfigurationException {
