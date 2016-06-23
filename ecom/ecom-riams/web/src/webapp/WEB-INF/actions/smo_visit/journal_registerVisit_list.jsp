@@ -267,6 +267,7 @@
     <input type='hidden' name="cntBegin" id="cntBegin" value="${numberInJournal}">
     <input type="submit"  onclick="this.form.action='print-journalRegistration.do'" value="Печать шаблон 1">
      <input type="submit" onclick="this.form.action='print-journalRegistration_1.do'" value="Печать шаблон 2">
+     <input type="submit" onclick="this.form.action='print-journalRegistration_2.do'" value="Печать шаблон 3">
     </form>
     	
         <msh:table viewUrl="entitySubclassShortView-mis_medCase.do" 
