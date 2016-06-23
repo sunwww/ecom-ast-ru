@@ -137,6 +137,13 @@
         	<msh:textField label="Дата" property="createDate" fieldColSpan="1" viewOnlyField="true"/>
         	<msh:textField label="Время" property="createTime" fieldColSpan="1" viewOnlyField="true"/>
         </msh:row>
+        
+        <msh:separator label="Редакция талона" colSpan="4" guid="d9a7ec35-7893-48b3-aa08-f2e04d9a9400" />
+        <msh:row>
+        	<msh:textField label="Пользователь" property="editUsername" fieldColSpan="1" viewOnlyField="true"/>
+        	<msh:textField label="Дата" property="editDate" fieldColSpan="1" viewOnlyField="true"/>
+        </msh:row>
+        
         </msh:ifFormTypeAreViewOrEdit>
 	    <msh:row>
         	<msh:textField label="Пользователь" property="username" viewOnlyField="true" />
