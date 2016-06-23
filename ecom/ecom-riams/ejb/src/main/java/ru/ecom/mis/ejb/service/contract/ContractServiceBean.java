@@ -17,6 +17,7 @@ import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.contract.ContractAccount;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
+import ru.ecom.mis.ejb.domain.contract.JuridicalPerson;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
 import ru.nuzmsh.util.format.DateFormat;
@@ -26,9 +27,16 @@ import ru.nuzmsh.util.format.DateFormat;
 public class ContractServiceBean implements IContractService {
 	
 	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType) {
-
+		return getMedService(aDepartment, aBedType, aBedSubType, aRoomType, null);
+	}
+	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType, String aCompanyType) {
+		/**
+		 *  Для силовиков по умолчанию ищем общие палаты
+		 */
+		
 		if (aRoomType==null) aRoomType=Long.valueOf(3);
 		if (aRoomType.equals(Long.valueOf(1))) aRoomType=Long.valueOf(3);
+		if (aCompanyType!=null&&aCompanyType.equals("SILOVIK")) {aRoomType=Long.valueOf(1);}
 		String idsertypebed = "11" ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select wfs.medservice_id from workfunctionservice wfs left join medservice ms on ms.id=wfs.medservice_id" );
@@ -152,9 +160,16 @@ and (pp.isvat is null or pp.isvat='0')
 			
 			Date birthday=null; 
 			String datestart=null; 
-			String datefinish=null; 
+			String datefinish=null;
+			String customerType = "";
+			
 			if (l.size()==1) {
-				
+				try {
+					JuridicalPerson jp =  (JuridicalPerson) account.getContract().getCustomer();
+					if (jp!=null&& jp.getJuridicalPersonType()!=null) {
+						customerType = jp.getJuridicalPersonType().getCode();
+					}
+				} catch (Exception e) {}
 				contract = ConvertSql.parseLong(l.get(0)[1]) ;
 				if (contract==null) {
 					contract = account.getContract().getId() ;

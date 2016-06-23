@@ -155,9 +155,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		
 		JSONArray params = obj.getJSONArray("params");
 		StringBuilder sb = new StringBuilder() ;
-		sb.append(ms).append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
+		//sb.append(ms).append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
+		sb.append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
 		sb.append(" ").append(DateFormat.formatToTime(pres.getIntakeTime())).append("\n") ;
-		sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
+		//sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
 		sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
 		for (int i = 0; i < params.length(); i++) {
 			//boolean isSave = true ;
