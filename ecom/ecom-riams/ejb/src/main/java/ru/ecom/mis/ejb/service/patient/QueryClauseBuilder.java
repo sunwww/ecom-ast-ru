@@ -74,7 +74,14 @@ public class QueryClauseBuilder {
 
     private static void setClause(Query aQuery, String aParameterName, Object aValue) {
         if(!isNullOrZeroOrEmpty(aValue)) {
-            aQuery.setParameter(aParameterName.replace(".", ""), aValue) ;
+        	String parName = aParameterName.replace(".", "") ;
+        	parName = parName.replace(",", "");
+        	parName = parName.replace("'", "");
+        	parName = parName.replace("'", "");
+        	parName = parName.replace("_", "");
+        	parName = parName.replace(")", "");
+        	parName = parName.replace("(", "");
+        	aQuery.setParameter(parName, aValue) ;
         }
     }
     
@@ -93,7 +100,14 @@ public class QueryClauseBuilder {
                     aSb.append(" = :") ;
                 }
             }
-            aSb.append(aParameterName.replace(".", "")) ;// fx
+            String parName = aParameterName.replace(".", "") ;
+        	parName = parName.replace(",", "");
+        	parName = parName.replace("'", "");
+        	parName = parName.replace("'", "");
+        	parName = parName.replace("_", "");
+        	parName = parName.replace(")", "");
+        	parName = parName.replace("(", "");
+            aSb.append(parName) ;// fx
             aSb.append(' ') ;
         } else if(aIsNullSupports) {
             if(!aSb.toString().endsWith("where")) aSb.append(" and ") ;

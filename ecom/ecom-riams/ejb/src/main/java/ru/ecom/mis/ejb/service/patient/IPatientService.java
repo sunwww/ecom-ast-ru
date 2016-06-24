@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import ru.ecom.address.ejb.domain.address.Address;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
@@ -71,7 +72,8 @@ public interface IPatientService {
 	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) throws ParseException ;
 	
-    List<PatientForm> findPatient(Long aLpuId, Long aLpuAreaId, String aLastname) ;
+    WebQueryResult findPatient(Long aLpuId, Long aLpuAreaId, String aLastname, String aYear
+    		, Boolean aNext, String aIdNext) ;
     
     public String findPatientLpuInfo(Long aAddressId, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
 

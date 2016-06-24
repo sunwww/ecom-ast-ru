@@ -29,6 +29,7 @@ import ru.ecom.alg.common.IsChild;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
@@ -1230,15 +1231,24 @@ public class PatientServiceBean implements IPatientService {
 	/**
 	 * Поиск пациента
 	 */
-	public List<PatientForm> findPatient(Long aLpuId, Long aLpuAreaId,
-			String aLastname) {
+	public WebQueryResult findPatient(Long aLpuId, Long aLpuAreaId,
+			String aLastname, String aYear, Boolean aNext, String aIdNext) {
+		WebQueryResult wqr = new WebQueryResult() ;
 		String defaultLpu = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", "-", theManager);
 		boolean isEnableLimitAreas = theSessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
 		System.out.print("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
 		System.out.print(isEnableLimitAreas) ;
 		System.out.print(theSessionContext.getCallerPrincipal().toString()) ;
-		
-		List<PatientForm> ret = new LinkedList<PatientForm>();
+		String fiIdprev=null ;
+		if (aIdNext!=null) {
+			List<Object[]> infoNext = theManager.createNativeQuery("select lastname,firstname,middlename from patient where id="+aIdNext).getResultList() ;
+			if (infoNext.size()>0) {
+				fiIdprev = ""+infoNext.get(0)[0]+"0"+infoNext.get(0)[1]+"0"+infoNext.get(0)[2]+"0"+aIdNext ;
+			}
+		}
+		List<PatientForm> ret1 = new LinkedList<PatientForm>() ;
+		List<PatientForm> ret2 = new LinkedList<PatientForm>() ;
+		List<PatientForm> ret3 = new LinkedList<PatientForm>() ;
 		StringBuilder sqlFld = new StringBuilder() ;
 		sqlFld.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
 		sqlFld.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
@@ -1296,10 +1306,26 @@ public class PatientServiceBean implements IPatientService {
 					p2.append(" and jcp.middlename like :pmiddlename ");
 					builder.addParameter("pmiddlename", st.nextToken() + "%");
 				}
+				if (aYear!=null && !aYear.equals("")) {
+					p1.append(" and to_char(p.birthday,'yyyy') = :pyear ");
+					p2.append(" and to_char(jcp.birthday,'yyyy') = :pyear ");
+					builder.addParameter("pyear", aYear);
+				}
+				if (fiIdprev!=null && !fiIdprev.equals("")) {
+					if (aNext) {
+						p1.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id > :nextid ");
+						p2.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id > :nextid ");
+					} else {
+						p1.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id < :nextid ");
+						p2.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id < :nextid ");
+					}
+					builder.addParameter("nextid", fiIdprev);
+				}
+
 				Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld)
 						.append(" from patient p ").append(sql)
-						.append(" and ").append(p1).toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname,p.firstname");
-				appendNativeToList(query, ret,null);
+						.append(" and ").append(p1).toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
+				appendNativeToList(query, ret1,null,aNext);
 				sqlFld = new StringBuilder() ;
 				sqlFld.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
 				sqlFld.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) as firstname");
@@ -1316,8 +1342,9 @@ public class PatientServiceBean implements IPatientService {
 				.append(" from JournalChangePatient jcp ")
 				.append(" left join patient p on jcp.patient_id=p.id ")
 				.append(sql)
-				.append(" and ").append(p2).append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)").toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname,p.firstname");
-				appendNativeToList(query1, ret,"Изменены персональные данные");
+				.append(" and ").append(p2).append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)").toString()," group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by  p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
+				appendNativeToList(query1, ret1,"Изменены персональные данные",aNext);
+				if (ret1.size()==0 && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
 			}
 		} else {
 			if (CAN_DEBUG) {
@@ -1369,6 +1396,21 @@ public class PatientServiceBean implements IPatientService {
 					p2.append(" and jcp.middlename like :pmiddlename ");
 					builder.addParameter("pmiddlename", st.nextToken() + "%");
 				}
+				if (aYear!=null && !aYear.equals("")) {
+					p1.append(" and to_char(p.birthday,'yyyy') = :pyear ");
+					p2.append(" and to_char(p.birthday,'yyyy') = :pyear ");
+					builder.addParameter("pyear", aYear);
+				}
+				if (fiIdprev!=null && !fiIdprev.equals("")) {
+					if (aNext) {
+						p1.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id > :nextid ");
+						p2.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id > :nextid ");
+					} else {
+						p1.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id < :nextid ");
+						p2.append(" and p.lastname||'0'||p.firstname||'0'||p.middlename||'0'||p.id < :nextid ");
+					}
+					builder.addParameter("nextid", fiIdprev);
+				}
 				//sql.append(" ((").append(p1).append(") or (").append(p2).append("))") ;
 			}
 			
@@ -1377,8 +1419,9 @@ public class PatientServiceBean implements IPatientService {
 			Query query = builder.buildNative(theManager, new StringBuilder().append(sqlFld)
 					.append(" from patient p ").append(sql)
 					.append(p1).toString(),
-					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by p.lastname,p.firstname");
-			appendNativeToList(query, ret,null);
+					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by  p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
+			appendNativeToList(query, ret1,null,aNext);
+			if (ret1.size()==0 && aIdNext!=null && !aIdNext.equals("")) return findPatient( aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null) ;
 			Query query1 = builder.buildNative(theManager, new StringBuilder().append(sqlFld1)
 					.append(" from JournalChangePatient jcp ")
 					.append(" left join patient p on jcp.patient_id=p.id ")
@@ -1387,33 +1430,36 @@ public class PatientServiceBean implements IPatientService {
 					.append(" and (jcp.lastname!=p.lastname or jcp.firstname!=p.firstname or jcp.middlename!=p.middlename)")
 					.append(" and not (").append(p1).append(")") 
 					.toString(),
-					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by p.lastname,p.firstname");
-			appendNativeToList(query1, ret,null);
+					"group by p.id,p.lastname,p.firstname,p.middlename,p.birthday ,p.patientSync, p.colorType order by  p.lastname "+(aNext?"":" desc")+",p.firstname "+(aNext?"":" desc")+",p.middlename "+(aNext?"":" desc")+",p.id "+(aNext?"":" desc"));
+			appendNativeToList(query1, ret2,null,aNext);
 	
 			
 			// поиск по полису
-			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-				appendNativeToList(findByMedCardNumber(sqlFld,aLastname), ret,null);
+			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
+				appendNativeToList(findByMedCardNumber(sqlFld,aLastname,aYear), ret3,null,true);
 			}
 			// Поиск по коду синхронизации
-			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-				appendNativeToList(findByPatientSync(sqlFld,aLastname), ret,null);
+			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
+				appendNativeToList(findByPatientSync(sqlFld,aLastname,aYear), ret3,null,true);
 			}
 			if (theSessionContext.isCallerInRole("/Policy/Mis/Patient/FindByCommonNumber") ) {
 				// Поиск по RZ
-				if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-					appendNativeToList(findByPatientRz(sqlFld,aLastname), ret,null);
+				if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
+					appendNativeToList(findByPatientRz(sqlFld,aLastname,aYear), ret3,null,true);
 				}
 			}
-			if(!StringUtil.isNullOrEmpty(aLastname) && ret.isEmpty()) {
-				appendNativeToList(findByPolicy(sqlFld,aLpuId, aLpuAreaId, aLastname), ret,null);
+			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
+				appendNativeToList(findByPolicy(sqlFld,aLpuId, aLpuAreaId, aLastname,aYear), ret3,null,true);
 			}
 		}
-		return ret;
+		wqr.set1(ret1) ;
+		wqr.set2(ret2) ;
+		wqr.set3(ret3) ;
+		return wqr;
 		
 	}
 
-	private Query findByPolicy(StringBuilder aSqlFld, Long aLpuId, Long aLpuAreaId, String aPolicyQuery) {
+	private Query findByPolicy(StringBuilder aSqlFld, Long aLpuId, Long aLpuAreaId, String aPolicyQuery,String aYear) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(aSqlFld);
@@ -1435,11 +1481,14 @@ public class PatientServiceBean implements IPatientService {
 		}
 		b.add("mp.series", series);
 		b.add("mp.polNumber", number);
-		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		if (aYear!=null && !aYear.equals("")) {
+			b.add("to_char(p.birthday,'yyyy')", aYear);
+		}
+		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
 
-	private Query findByMedCardNumber(StringBuilder aSqlFld,String aPolicyQuery) {
+	private Query findByMedCardNumber(StringBuilder aSqlFld,String aPolicyQuery,String aYear) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(aSqlFld);
@@ -1449,15 +1498,20 @@ public class PatientServiceBean implements IPatientService {
 		sql.append(" left join Mislpu ml on ml.id=att.lpu_id") ;
 		sql.append(" left join lpuarea ma on ma.id=att.area_id") ;
 		sql.append(" left join VocAttachedType vat on vat.id=att.AttachedType_id") ;
-		sql.append(" where") ;
+		sql.append(" where ") ;
 		
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
 		b.add("m.number", number);
-		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		
+		if (aYear!=null && !aYear.equals("")) {
+			b.add("to_char(p.birthday,'yyyy')", aYear);
+		}
+
+		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
-	private Query findByPatientSync(StringBuilder aSqlFld, String aPolicyQuery) {
+	private Query findByPatientSync(StringBuilder aSqlFld, String aPolicyQuery,String aYear) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(aSqlFld);
@@ -1471,11 +1525,15 @@ public class PatientServiceBean implements IPatientService {
 		//b.add("MedPolicy.patient.lpuArea_id", aLpuAreaId) ;
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
-		b.add("patientSync", number);
-		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		b.add("p.patientSync", number);
+		if (aYear!=null && !aYear.equals("")) {
+			b.add("to_char(p.birthday,'yyyy')", aYear);
+		}
+
+		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
-	private Query findByPatientRz(StringBuilder aSqlFld, String aPolicyQuery) {
+	private Query findByPatientRz(StringBuilder aSqlFld, String aPolicyQuery,String aYear) {
 		QueryClauseBuilder b = new QueryClauseBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append(aSqlFld);
@@ -1490,14 +1548,24 @@ public class PatientServiceBean implements IPatientService {
 		StringTokenizer st = new StringTokenizer(aPolicyQuery, " ") ;
 		String number = st.hasMoreTokens() ? st.nextToken() : null ;
 		b.add("commonNumber", number);
-		return b.buildNative(theManager, sql.toString(), "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
+		if (aYear!=null && !aYear.equals("")) {
+			b.add("to_char(p.birthday,'yyyy')", aYear);
+		}
+
+		return b.buildNative(theManager, sql.toString()
+				, "group by p.id, p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync, p.colorType order by p.lastname, p.firstname,p.middlename,p.id") ;//order by MedPolicy.patient.lastname, MedPolicy.patient.firstname");
 		// from MedPolicy where series = :series and 
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void appendNativeToList(Query aQuery, List<PatientForm> ret, String aAddInfo) {
+	private void appendNativeToList(Query aQuery, List<PatientForm> ret, String aAddInfo, boolean aNext) {
 		List<Object[]> list = aQuery.setMaxResults(50).getResultList();
-		for (Object[] arr : list) {
+		System.out.println("next="+aNext) ;
+		for (int i=0; i<list.size(); i++) {
+			int ind=i ;
+			if (!aNext) ind=list.size()-i-1 ;
+			System.out.println("ind="+ind) ;
+			Object[] arr = list.get(ind) ;
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());
 			if (arr.length>6 && arr[6]!=null) {
