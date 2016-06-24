@@ -34,43 +34,73 @@ function onCreate(aForm, aEntity, aCtx) {
 	,['Масса',2,1,'BirthWeight']
 	,['Рост',2,1,'BirthHeight']
 	,['Окружность головы',2,1,'HeadCircle']
-	,['Плеч',2,0,'ShouldersCircle']
-	,['Груди',2,0,'BreastCircle']
+	,['Окружность плеч',2,0,'ShouldersCircle']
+	,['Окружность груди',2,0,'BreastCircle']
 	,['Обвитие',1,1,'Entanglement',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocBirthEntanglement] 
 	,['Кол-во обвитий',1,0,'EntanglementMultiplicity',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocBirthEntanglementMultiplicity] 
-	,['Где',1,0,'WhereEntanglement',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocBirthWhereEntanglement]
-	,['Отделение',1,0,'Department',Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu]
+	,['Где обвитие',1,0,'WhereEntanglement',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocBirthWhereEntanglement]
+	,['Передан в отделение',1,0,'Department',Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu]
 	,['Зрелость',1,1,'Maturity',Packages.ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity]
 	,['Умер до начала родовой деятельности',6,0,'DeadBeforeLabors']
 	
 	] ;
 	if (aForm.getNewBornsInfo()!="") {
 		var childs = aForm.getNewBornsInfo().split("@") ;
+		var currentDate = new java.util.Date();
+		var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
+		var username = aCtx.getSessionContext().getCallerPrincipal().toString();
 		for (var ind = 0 ; ind<childs.length; ind++) {
 			
 			var child = childs[ind].split("#") ;
 			var newBorn = new Packages.ru.ecom.mis.ejb.domain.birth.NewBorn() ; 
+			var childBirthDiaryText = "Протокол рождения ребенка "+(childs.length>1?""+(ind+1):"")+"\n";
 			
 			for (var j=0;j<theFld.length;j++) {
+				var birthDate;
+				var birthTime;
 				var obj ;
 				if (child[j]=="" && theFld[j][2]==1) throw "Не все обязательные поля по новорожденному заполнены!!!: "+ theFld[j][0];
 				if (theFld[j][1]==1) {
 					obj = child[j]==""?null:aCtx.manager.find(theFld[j][4],java.lang.Long(child[j]));
+					try {
+						if (obj!=null) childBirthDiaryText +="\n"+theFld[j][0]+": "+obj.getName();
+					} catch (e) {
+					//	throw "=== EXCEPTION "+theFld[j][0]+": "+obj;
+					}
+					
 				} else if (theFld[j][1]==2) {
 					obj = child[j]==""?null:java.lang.Integer.parseInt(child[j]) ;
-				} else if (theFld[j][1]==5) {
+					childBirthDiaryText +="\n"+theFld[j][0]+": "+child[j];
+				} else if (theFld[j][1]==5) {  //Long
 					obj = child[j]==""?null:java.lang.Long.valueOf(child[j]) ;
+					try {
+						var val = aCtx.manager.find(theFld[j][4],obj);
+						if (val!=null) childBirthDiaryText +="\n"+theFld[j][0]+": "+val.getName();
+					} catch (e) {
+					//	throw "=== EXCEPTION "+theFld[j][0]+": "+val;
+					}
+					childBirthDiaryText +="\n"+theFld[j][0]+": "+obj!=null?""+obj:"";
 				} else if (theFld[j][1]==3) {
 					obj = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(child[j]) ;
+					if (theFld[j][3]=='BirthDate') {
+						birthDate = obj;
+					}
+					childBirthDiaryText +="\n"+theFld[j][0]+": "+child[j];
 					//throw ""+obj ;
 				} else if (theFld[j][1]==4) {
 					obj = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlTime(child[j]) ;
+					if (theFld[j][3]=='BirthTime') {
+						birthTime = obj;
+					}
+					childBirthDiaryText +="\n"+theFld[j][0]+": "+child[j];
 				} else if (theFld[j][1]==6) { //boolean
 					if (child[j]!=null &&""+child[j]!="") {
 						if (child[j]=="YES") {
 							obj=true;
+							childBirthDiaryText +="\n"+theFld[j][0]+": ДА";
 						} else if (child[j]=="NO") {
-							obj=true;
+							obj=false;
+							childBirthDiaryText +="\n"+theFld[j][0]+": НЕТ";
 						} else {
 							throw "Значение - умер до родов или после = "+child[j];
 						}
@@ -81,8 +111,25 @@ function onCreate(aForm, aEntity, aCtx) {
 				} else {
 					obj = child[j] ;
 				}
+				
 				eval("newBorn.set"+theFld[j][3]+"(obj)") ;
+				
 			}
+			if (childBirthDiaryText!='') {
+				var prot = new Packages.ru.ecom.poly.ejb.domain.protocol.Protocol;
+				prot.setDate(new java.sql.Date(currentDate.getTime()));
+				prot.setType (aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.voc.VocTypeProtocol,java.lang.Long(4)));
+				prot.setState (aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageState,java.lang.Long(1)));
+				prot.setTime(new java.sql.Time (currentDate.getTime()));
+				prot.setDateRegistration(birthDate);
+				prot.setTimeRegistration(birthTime?birthTime:null);
+				prot.setUsername(username);
+				prot.setMedCase(aEntity.getMedCase());
+				prot.setSpecialist(wf); 
+				prot.setRecord(childBirthDiaryText); 
+				aCtx.manager.persist(prot);
+			}
+			
 			newBorn.setChildBirth(aEntity) ;
 			var vocChild ; 
 			var addprefix="" ;
