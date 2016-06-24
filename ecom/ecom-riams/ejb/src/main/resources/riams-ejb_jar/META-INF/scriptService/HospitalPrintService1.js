@@ -230,6 +230,23 @@ function recordPolicy(policies) {
 	if (rec.equals("")) return "Полиса НЕТ";
 	return rec;
 }
+function getMedServiceNameByProtocol (aCtx, aProtocolId) {
+	var sql ="select mc.code||' '||mc.name "
+		+" from diary d" +
+		" left join MedCase vis on vis.id=d.medcase_id" +
+		" left join medcase servmc on servmc.parent_id=vis.id" +
+		" left join medservice mc on mc.id=servmc.medservice_id" +
+        " left join VocServiceType vst on vst.id=mc.serviceType_id" +
+		" where d.id='"+aProtocolId+"' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE' or vst.code='LABSURVEY') ";
+	//throw ""+sql;
+	var res =aCtx.manager.createNativeQuery(sql).getResultList();
+	if (res.size()>0) {
+		return ""+res.get(0)+"\n";
+	} else {
+		return "";
+	}
+}
+
 function printProtocols(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
@@ -275,7 +292,7 @@ function printProtocols(aCtx, aParams) {
 			mapS.setTicket(protType.isPrintAdministrator==true?java.lang.Long.valueOf(0):null) ;
 		}
 		mapS.setInfo(protocol.medCase!=null?protocol.medCase.info:"");
-		mapS.setRecord(recordMultiValue(protocol.record));
+		mapS.setRecord(recordMultiValue(getMedServiceNameByProtocol(aCtx, id)+protocol.record));
 		mapS.setEditUsername(protocol.state!=null?protocol.state.name:null) ;
 		ret.add(mapS) ;
 		
