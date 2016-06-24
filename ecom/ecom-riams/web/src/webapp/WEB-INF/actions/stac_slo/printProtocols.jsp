@@ -1,3 +1,6 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/tiles/header.jsp" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -27,24 +30,42 @@
     	} else if (stPrint!=null &&!stPrint.equals("")) {
     		request.setAttribute("dop"," and d.printDate is not null");
     	}
+    	
+    	List l = ActionUtil.getListObjFromNativeQuery("select sls.dtype,sls.patient_id,to_char(sls.datestart,'dd.mm.yyyy') as dat1,to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as dat2 from medcase slo left join medcase sls on sls.id=slo.parent_id where slo.id="+request.getParameter("id")+" and slo.dtype='DepartmentMedCase'", request) ;
+		if (l.size()>0) {
+			Object[] obj = (Object[])l.get(0) ;
+			request.setAttribute("whereSQL"," (slo.id='"+request.getParameter("id")+"' or (slo.patient_id='"
+		    		+obj[1]+"' and aslo.datestart between to_date('"+obj[2]+"','dd.MM.yyyy') and to_date('"+obj[3]+"','dd.MM.yyyy') and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')))") ;
+			
+		} else {
+			request.setAttribute("whereSQL", "slo.id='"+request.getParameter("id")+"'");
+		}
+		
+    	
+    	
+    	
     %>
         <msh:section>
             <msh:sectionTitle>Протоколы по случаю медицинского обслуживания</msh:sectionTitle>
             <msh:sectionContent>
             	<ecom:webQuery name="protocols" nativeSql="
             	select to_char(d.dateRegistration,'yyyymmdd')||'!'||cast(d.timeRegistration as varchar(5))||'!'||d.id as id
-            	, d.dateRegistration, d.timeRegistration, d.record, d.printDate 
+            	, d.dateRegistration, d.timeRegistration, case when count (mc.id)>0 then list(mc.code||' '||mc.name)||'<br>' else '' end ||' '|| d.record, d.printDate 
             	, vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
             	from MedCase slo
       left join MedCase aslo on aslo.parent_id=slo.parent_id
+      left join medcase servmc on servmc.parent_id=aslo.id
+      left join medservice mc on mc.id=servmc.medservice_id
+            left join VocServiceType vst on vst.id=mc.serviceType_id
       left join Diary as d on aslo.id=d.medCase_id
       left join WorkFunction wf on wf.id=d.specialist_id
       left join Worker w on w.id=wf.worker_id
       left join Patient pw on pw.id=w.person_id
       
       left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-            	where slo.id='${param.id}' and d.DTYPE='Protocol'
-				${dop}
+            	where ${whereSQL} and d.DTYPE='Protocol'
+				${dop} 
+				group by d.dateRegistration,d.timeRegistration,d.id,d.record,d.printDate,vwf.name, pw.lastname, pw.firstname, pw.middlename
 				order by d.dateRegistration,d.timeRegistration"/>
                 <msh:table selection="multiply" name="protocols" action="js-smo_visitProtocol-viewProtocol.do" idField="1" noDataMessage="Нет протоколов">
                     <msh:tableNotEmpty>
