@@ -34,14 +34,14 @@
         	java.util.Date date = new java.util.Date() ;
         	Calendar cal = Calendar.getInstance() ;
         	cal.setTime(date) ;
-        	cal.add(Calendar.DAY_OF_MONTH, -5) ;
+        	cal.add(Calendar.DAY_OF_MONTH, -7) ;
         	SimpleDateFormat format_1 = new SimpleDateFormat("dd.MM.yyyy") ;
         	request.setAttribute("current_5", format_1.format(cal.getTime())) ;
 		    Long department = (Long)request.getAttribute("department") ;
 		    if (department!=null && department.intValue()>0 )  {
     	%>
     <msh:section>
-    <msh:sectionTitle>Журнал выписанных пациентов из отделения  ${departmentInfo} в течение 5х дней
+    <msh:sectionTitle>Журнал выписанных пациентов из отделения  ${departmentInfo} в течение 7х дней
      <a href='stac_print_discharge.do?department=${department}&stNoPrint=selected'>Печать выписок</a>
     </msh:sectionTitle>
     <msh:sectionContent>
@@ -94,7 +94,7 @@
     <% } else {%>
     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
     <msh:section>
-    <msh:sectionTitle>Свод выписанных пациентов в отделение  ${departmentInfo} в течение 5 дней
+    <msh:sectionTitle>Свод выписанных пациентов в отделение  ${departmentInfo} в течение 7 дней
      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
     <a href='stac_journalDischargeByUserDepartment.do'>Выбрать другое отделение</a>
     </msh:ifInRole>
