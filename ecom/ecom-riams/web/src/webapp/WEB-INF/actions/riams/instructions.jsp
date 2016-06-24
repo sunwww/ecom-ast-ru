@@ -26,6 +26,9 @@
 					<li><msh:link  action="js-riams-instruction.do?id=lab_tech">
 					Рабочее место техника-лаборанта
                         </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=setup_lab">
+						Настройка модуля "Лаборатория"
+                    </msh:link></li>
 				</ul>
 				<br>
 				<h2 style="font-size: large;" align="center">Стационар</h2>
@@ -43,19 +46,26 @@
 					<li><msh:link  action="js-riams-instruction.do?id=prescript_list">
 						Создание назначений (в листе назначений)
                     </msh:link></li>
+					<li><msh:link  action="js-riams-instruction.do?id=refusal_hospitalization">
+						Оформление отказа от госпитализаций
+                    </msh:link></li>
 				</ul>
 				<br>
 				<h2 style="font-size: large;" align="center">Общее</h2>
 				<ul style="font-size: large; list-style: none;" >
 
-					<li><msh:link  action="js-riams-instruction.do?id=setup_lab">
-						Настройка модуля "Лаборатория"
+					
+					<li><msh:link  action="js-riams-instruction.do?id=lpu_setting">
+						Настройка ЛПУ (участки, коечный фонд)
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=create_calendar">
 						Создание календаря
                     </msh:link></li>
                     <li><msh:link  action="js-riams-instruction.do?id=contract_plat_patient">
 						Работа с платными договорами по физическим лицам
+                    </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=attach_population">
+						Работа с отчетом по прикрепленному населению
                     </msh:link></li>
 				</ul>
 				
