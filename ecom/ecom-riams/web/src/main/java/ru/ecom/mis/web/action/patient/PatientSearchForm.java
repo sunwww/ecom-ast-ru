@@ -2,6 +2,7 @@ package ru.ecom.mis.web.action.patient;
 
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.MaxLength;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.MinLength;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -137,4 +138,17 @@ public class PatientSearchForm extends BaseValidatorForm {
 	 * Новое свойство
 	 */
 	private String theCheckedDenied;
+	
+	/** Год */
+	@MinLength(value = 4) @MaxLength(value=4)
+	public String getYear() {
+		return theYear;
+	}
+
+	public void setYear(String aYear) {
+		theYear = aYear;
+	}
+
+	/** Год */
+	private String theYear;
 }

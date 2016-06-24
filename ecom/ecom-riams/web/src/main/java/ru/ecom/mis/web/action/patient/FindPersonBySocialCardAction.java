@@ -10,6 +10,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.medcase.IPolyclinicMedCaseService;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.util.Injection;
@@ -40,8 +41,10 @@ public class FindPersonBySocialCardAction extends BaseAction {
         } else {
             IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
 //          IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
-          aRequest.setAttribute("list"
-                  , service.findPatient(null, null,fio));
+          WebQueryResult wqr = service.findPatient(null, null,fio,null,true,null) ;
+          aRequest.setAttribute("list1" , wqr.get1());
+          aRequest.setAttribute("list2" , wqr.get2());
+          aRequest.setAttribute("list3" , wqr.get3());
         }
         //form.validate(aMapping, aRequest) ;
         return aMapping.findForward("success");
