@@ -224,7 +224,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 				callback: function (aResult) {
 					alert ("TEST="+aResult);
 					if (aResult=='1'){
-						alert("The patient already has disp with agegroup");
+						alert("Карта с выбранными типом диспансеризации и возрастной группой уже существует!");
 						document.getElementById('submitButton').disabled=false;
 						document.getElementById('submitButton').value='Создать';
 					} else { 
