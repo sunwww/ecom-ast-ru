@@ -12,13 +12,29 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.web.util.Injection;
 
-/**
- * 
- * @author VTsybulin 22.12.2014
- *
- */
+
+
 public class ExtDispServiceJs {
 	
+	
+	public String checkDisableAgeDoubles (Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest)throws NamingException 
+	{
+		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		 Long haveDis = Long.valueOf(service.executeNativeSql("select count(edc.id) " +
+		 		" from extdispcard edc " +
+		 		" left join vocextdisp vedc on vedc.id=edc.disptype_id" +
+		 		" where edc.patient_id=" +aPatientId +
+		 		" and edc.disptype_id="+aDisptypeId +
+		 		" and edc.agegroup_id="+aAgeGroup +
+		 		" and vedc.disableAgeDoubles='1' ").iterator().next().get1().toString());
+		 
+		 if(haveDis!=null&&haveDis>0)
+		 {
+			 return "1";
+			 
+		 }else return "0";
+		 
+	}
 	// Проверка услуги ДД на: выходной день, дубль со стационаром, дубль с визитом, входит в период ДД	
 	// 0 - если всё в порядке, 1 - предупреждение, 2 - запрет на создание
 	public String checkDispService (String aDate, Long aDispCardId, Long aPatientId, Long aWorkFunctionId, HttpServletRequest aRequest) throws NamingException, ParseException {
@@ -30,7 +46,7 @@ public class ExtDispServiceJs {
 				e.printStackTrace();
 			}
 			
-		}
+		}		
 		String res = "";
 		
 		
