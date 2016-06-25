@@ -164,11 +164,11 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 	<tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     <script type="text/javascript" src="./dwr/interface/ExtDispService.js"></script>
-		<msh:ifNotInRole roles="/Policy/Mis/ExtDisp/Card/IgnoreAttachmentDisp">
+		
 		<msh:ifFormTypeIsNotView formName="extDisp_cardForm">
 		<script type="text/javascript">
 		var oldaction = document.forms['extDisp_cardForm'].action ;
-		document.forms['extDisp_cardForm'].action="javascript:checkDispAttached('1')";
+		document.forms['extDisp_cardForm'].action="javascript:checkDisableAgeDoubles()";
 		
 		function checkDisp(aDate) {
 			if (aDate!=null && aDate!='' && $('workFunction').value!=null && $('workFunction').value!=0) {
@@ -217,11 +217,26 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     					
     			}
     		});
-			
     	}
+		
+		function checkDisableAgeDoubles()		{		
+			ExtDispService.checkDisableAgeDoubles($('dispType').value, $('patient').value, $('ageGroup').value, {
+				callback: function (aResult) {
+					alert ("TEST="+aResult);
+					if (aResult=='1'){
+						alert("The patient already has disp with agegroup");
+						document.getElementById('submitButton').disabled=false;
+						document.getElementById('submitButton').value='Создать';
+					} else { 
+						checkDispAttached('1');
+				}
+				}});
+		
+		
+		}
 		</script>
 		</msh:ifFormTypeIsNotView>
-		</msh:ifNotInRole>
+		
 		<script type="text/javascript">
     	function updateAge() {
     		PatientService.getAgeForDisp($('patient').value, $('finishDate').value, {
