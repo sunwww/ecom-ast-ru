@@ -34,6 +34,13 @@ public void setAttachmentPopulation(Boolean aAttachmentPopulation) {theAttachmen
 /** Оказывается только прикрепленному населению */
 private Boolean theAttachmentPopulation;
 
-/** Тип *//*
-	private String theType;*/
+
+
+/** Запрет на дублирование */
+@Comment("Запрет на дублирование")
+public Boolean getDisableAgeDoubles() {return theDisableAgeDoubles;}
+public void setDisableAgeDoubles(Boolean aDisableAgeDoubles) {theDisableAgeDoubles = aDisableAgeDoubles;}
+/** Запрет на дублирование */
+private Boolean theDisableAgeDoubles;
+
 }
