@@ -50,4 +50,13 @@ public class VocExtDispForm extends IdEntityForm {
 	public void setAttachmentPopulation(Boolean aAttachmentPopulation) {theAttachmentPopulation = aAttachmentPopulation;}
 	/** Оказывается только прикрепленному населению */
 	private Boolean theAttachmentPopulation;
+	
+
+/** Запрет на дублирование */
+@Comment("Запрет на дублирование")
+@Persist
+public Boolean getDisableAgeDoubles() {return theDisableAgeDoubles;}
+public void setDisableAgeDoubles(Boolean aDisableAgeDoubles) {theDisableAgeDoubles = aDisableAgeDoubles;}
+/** Запрет на дублирование */
+private Boolean theDisableAgeDoubles;
 }
