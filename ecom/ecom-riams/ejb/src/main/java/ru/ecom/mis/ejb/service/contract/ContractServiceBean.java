@@ -596,7 +596,7 @@ and (pp.isvat is null or pp.isvat='0')
 			List<Object[]> listMs=theManager.createNativeQuery(sql.toString()).getResultList() ;
 			
 			for (Object[] obj:listMs) {
-				diag = ConvertSql.parseLong(obj[2]) ;
+				diag = ConvertSql.parseLong(obj[4]) ;
 				ContractAccountMedService cams = new ContractAccountMedService() ;
 				cams.setDiagnosis(diag) ;
 				cams.setIsDeath(null) ;
