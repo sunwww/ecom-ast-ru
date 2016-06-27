@@ -16,4 +16,5 @@ public interface IAllValue {
     
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException ;
     void destroy() ;
+    //public Collection<VocValue> findVocValueByQuery(String aVocName, String aQuery, int aCount, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException ;
 }

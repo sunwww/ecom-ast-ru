@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 import javax.persistence.EntityManager;
 
 import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
@@ -72,4 +73,45 @@ public class EntityVocAllValue implements IAllValue {
     private final String theSortBy ;
     private final String theId ;
     private final String theNameProperties ;
+	public Collection<VocValue> findVocValueByQuery(String aVocName,
+			String aQuery, int aCount, VocAdditional aAdditional,
+			AllValueContext aContext) throws VocServiceException {
+        String query = aQuery.toUpperCase();
+        String findedId = null;
+        boolean finded=false;
+        LinkedList<VocValue> ret = new LinkedList<VocValue>();
+        if (!StringUtil.isNullOrEmpty(aQuery)) {
+            for (VocValue value : listAll(aContext)) {
+                String name = value.getName();
+                String id = value.getId();
+                if (name != null) {
+                    if (name.toUpperCase().startsWith(query)) {
+                        findedId = id;
+                        finded=true;
+                    }
+                }
+                if (findedId == null) {
+                    if (id != null) {
+                        if (id.toUpperCase().startsWith(query)) {
+                            findedId = id;
+                            finded=true;
+                        }
+                    }
+                }
+                if (name != null && name.toUpperCase().indexOf(query) > -1) {
+                    findedId = id;
+                    finded=true;
+                }
+                if (id != null && id.toUpperCase().indexOf(query) > -1) {
+                    findedId = id;
+                    finded=true;
+                }
+                if (finded) {
+                    ret.add(value);
+                    if (ret.size() > aCount) break;
+                }
+            }
+        }
+        return ret ;
+	}
 }

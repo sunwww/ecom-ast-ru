@@ -86,6 +86,8 @@ public class ScriptServiceBean  implements IScriptService {
 		return "Hello" ;
 	}
 
+	
+
 	private Object[] createArguments(Object[] aInputArguments) {
 		ScriptServiceContext ctx = new ScriptServiceContext(theManager, theContext, theEjbInjection) ;
 		Object[] args = new Object[aInputArguments.length+1] ;

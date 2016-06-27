@@ -46,37 +46,47 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     }
 
     public Collection<VocValue> findVocValueByQuery(String aVocName, String aQuery, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
-        String query = aQuery.toUpperCase();
+    	//AllValueContext ctx = new AllValueContext(
+        //		aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
+    	//return theAllValue.findVocValueByQuery(aVocName, aQuery, aCount, aAdditional, ctx) ;/*
+    	String query = aQuery.toUpperCase();
         String findedId = null;
+        boolean finded=false;
+        LinkedList<VocValue> ret = new LinkedList<VocValue>();
         if (!StringUtil.isNullOrEmpty(aQuery)) {
-            for (VocValue value : listAll(aAdditional, aContext)) {
+            for (VocValue value : listAll(aAdditional,aContext)) {
+            	finded=false ;
                 String name = value.getName();
                 String id = value.getId();
                 if (name != null) {
                     if (name.toUpperCase().startsWith(query)) {
                         findedId = id;
-                        break;
+                        finded=true;
                     }
                 }
                 if (findedId == null) {
                     if (id != null) {
                         if (id.toUpperCase().startsWith(query)) {
                             findedId = id;
-                            break;
+                            finded=true;
                         }
                     }
                 }
                 if (name != null && name.toUpperCase().indexOf(query) > -1) {
                     findedId = id;
-                    break;
+                    finded=true;
                 }
                 if (id != null && id.toUpperCase().indexOf(query) > -1) {
                     findedId = id;
-                    break;
+                    finded=true;
+                }
+                if (finded) {
+                    ret.add(value);
+                    if (ret.size() > aCount) break;
                 }
             }
         }
-        return findVocValueNext(aVocName, findedId, aCount, aAdditional, aContext);
+        return ret ;
     }
 
     public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
