@@ -82,7 +82,37 @@ public class ConvertSql {
 		
 		return null ;
 	}
-	
+	public static String getDay(java.sql.Date aDate) {
+		if (aDate==null) return "" ;
+		Calendar cal = Calendar.getInstance() ;
+		cal.setTime(aDate) ;
+		return ""+cal.get(Calendar.DAY_OF_MONTH) ;
+	}
+	public static String getYear(java.sql.Date aDate) {
+		if (aDate==null) return "" ;
+		Calendar cal = Calendar.getInstance() ;
+		cal.setTime(aDate) ;
+		return ""+cal.get(Calendar.YEAR) ;
+	}
+	public static String getMonth(java.sql.Date aDate,boolean aFullname) {
+		if (aDate==null) return "" ;
+		Calendar cal = Calendar.getInstance() ;
+		cal.setTime(aDate) ;
+		
+		if (Calendar.JANUARY==cal.get(Calendar.MONTH)) return aFullname?"Январь":"01" ; 
+		if (Calendar.FEBRUARY==cal.get(Calendar.MONTH)) return aFullname?"Февраль":"02" ; 
+		if (Calendar.MARCH==cal.get(Calendar.MONTH)) return aFullname?"Март":"03" ; 
+		if (Calendar.APRIL==cal.get(Calendar.MONTH)) return aFullname?"Апрель":"04" ; 
+		if (Calendar.MAY==cal.get(Calendar.MONTH)) return aFullname?"Май":"05" ; 
+		if (Calendar.JUNE==cal.get(Calendar.MONTH)) return aFullname?"Июнь":"06" ; 
+		if (Calendar.JULY==cal.get(Calendar.MONTH)) return aFullname?"Июль":"07" ; 
+		if (Calendar.AUGUST==cal.get(Calendar.MONTH)) return aFullname?"Август":"08" ; 
+		if (Calendar.SEPTEMBER==cal.get(Calendar.MONTH)) return aFullname?"Сентябрь":"09" ; 
+		if (Calendar.OCTOBER==cal.get(Calendar.MONTH)) return aFullname?"Октябрь":"10" ; 
+		if (Calendar.NOVEMBER==cal.get(Calendar.MONTH)) return aFullname?"Ноябрь":"11" ; 
+		if (Calendar.DECEMBER==cal.get(Calendar.MONTH)) return aFullname?"Декабрь":"12" ; 
+		return "" ;
+	}
 	public static java.sql.Date parseDate(Object aValue) {
 		if (aValue==null) return null ;
 		if (aValue instanceof java.sql.Date) {
