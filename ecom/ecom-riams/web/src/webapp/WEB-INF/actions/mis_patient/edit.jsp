@@ -48,7 +48,7 @@
       </msh:ifInRole>
       </td><td>
       <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry" guid="a7036440-353f-4667-a18e-a0da4885cdaa">
-        <msh:section title="Мед.карты (псих.помощью)" createUrl="entityParentPrepareCreate-psych_careCard.do?id=${param.id}">
+        <msh:section title="Мед.карты (псих.помощью)" createRoles="/Policy/Mis/Psychiatry/CareCard/Create" createUrl="entityParentPrepareCreate-psych_careCard.do?id=${param.id}">
 		        <ecom:webQuery name="psychCard" 
 		        nativeSql="select pcc.id,pcc.cardNumber 
 ,(select list(distinct to_char(po.startDate,'dd.mm.yyyy')||' '||vpac.code)
