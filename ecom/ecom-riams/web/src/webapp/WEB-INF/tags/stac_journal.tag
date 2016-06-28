@@ -23,7 +23,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <msh:sideMenu title="Журналы">
 	<msh:sideLink name="Список отчетов" 
 	action="/javascript:getDefinition('riams_journals.do?short=Short',null)" styleId="viewShort" />
-	<msh:sideLink name="Назначения на операцию" action="/direct_operation_list" />
+	<msh:sideLink name="Назначения на операцию" action="/direct_operation_list"
+	roles="/Policy/Mis/Prescription/Prescript/View"
+	 />
 
 	    <msh:sideMenu title="СЛС">
 	    	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 
@@ -105,10 +107,10 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		        roles="/Policy/Mis/MedCase/Stac/Journal/TrafficByPatient" key="ALT+7" 
 		        action="/stac_journalByCurator" name="Движения больных и коечного фонда" />  
 	    </msh:sideMenu>
-	    <msh:sideMenu title="Реестры">
+	    <msh:sideMenu title="Журналы">
 	    	<msh:sideLink
-	    		roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital" key="ALT+9"
-	    		action="/stac_reestrByHospital" name="По поступившим/ выбывшим из стационара за день"
+	    		roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod" key="ALT+9"
+	    		action="/stac_reestrByHospital" name="По поступившим/ выбывшим из стационара, а также отказам от госпитализаций"
 	    		styleId="stac_reestrByHospital"
 	    	/>
 	    	<msh:sideLink
