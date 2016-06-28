@@ -166,7 +166,7 @@
 					<div class='menu'>
 					<h2>Стационар</h2>
 					<ul style='list-style: none outside none; '>
-						<li><msh:link isReport="true" action="stac_journalByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
+						<li><msh:link isReport="true" action="stac_journalByHospital.do" roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
 	                            Журнал по поступившим и выбывшим стационара, а также отказам от госпитализаций 
 	                        </msh:link></li>
 						<li><msh:link action="stac_report_007.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report007">
