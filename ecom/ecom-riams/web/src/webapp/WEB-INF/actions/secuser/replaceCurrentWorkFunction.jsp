@@ -29,7 +29,7 @@ left join MisLpu ml on ml.id=w.lpu_id
 left join Worker sw on sw.person_id=w.person_id
 left join WorkFunction swf on swf.worker_id=sw.id
 left join SecUser su on su.id=swf.secUser_id
-where su.login='${username}'
+where su.login='${username}' and (wf.archival is null or wf.archival='0') 
 order by ml.name
 		"/>
 		<msh:table name="workFunc" action="js-secuser-replaceWF.do" idField="1">

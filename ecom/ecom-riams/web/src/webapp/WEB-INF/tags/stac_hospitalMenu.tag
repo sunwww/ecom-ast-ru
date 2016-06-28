@@ -31,7 +31,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	styleId="stac_ssl"/>
     <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_sslAdmission" 
     	name="Поступление &rarr;" title="Изменить информацию о поступлении" 
-    	roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Show" 
+    	roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit,/Policy/Mis/MedCase/Stac/Ssl/Admission/Show" 
     	styleId="stac_sslAdmission"/>
 
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/MedPolicy/Show" name="Полисы" params="id"  
@@ -49,7 +49,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	title="История родов" roles="/Policy/Mis/Pregnancy/History/View" styleId="preg_pregHistory" />
     	--%>
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='ВИЗИТЫ' title="Просмотр визитов по пациенту" key="ALT+4" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherDiagnosisByPatient('.do')" name='ДИАГНОЗЫ' title="Просмотр диагнозов по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Ssl/Diagnosis/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-stac_ssl-cost_case.do?short=Short&id=${param.id}','.do')" name='Цена' title="Просмотр стоимости услуг" 
         	roles="/Policy/Mis/Contract/Journals/AnalisisMedServices" />
@@ -89,7 +89,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
 
-	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View"  name="Дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ"   
+	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View"  name="Дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ"   
 		params="id"  action='/entityParentList-smo_visitProtocol' title='Список дневников специалистов'
 		styleId="smo_visitProtocol"
 		/>
@@ -97,7 +97,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
        params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы ССЛ"
        styleId="stac_diagnosis"
         />
-	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve" name="Температурных листов" 
+	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/View" name="Температурных листов" 
 	   params="id" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы" 
 	   styleId="stac_temperatureCurve" />
 
@@ -106,7 +106,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	styleId="stac_slo"
     	/>
 
-    <msh:sideLink styleId="stac_protocol" params="id" action="/printProtocolsBySLS.do?stNoPrint=selected" name="Список нераспечатанных протоколов"/>
+    <msh:sideLink styleId="stac_protocol" params="id" roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View"
+    action="/printProtocolsBySLS.do?stNoPrint=selected" name="Список нераспечатанных протоколов"
+    />
     
 </msh:sideMenu>
 
@@ -145,7 +147,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	name="Печать экс. карты" params="id"  
     	action='/print-expert_card_empty.do?m=printBilling&s=HospitalPrintService' title='Печать экс. карты'
     	/>
-     <mis:sideLinkForWoman roles="" classByObject="MedCase" id="${param.id}"
+     <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.id}"
      	action="/print-preghistory.do?s=HospitalPrintService&amp;m=printPregHistoryByMC" 
      	params="id" name="Истории родов" title="Печать истории родов"/>
 		
@@ -155,7 +157,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	
     	
     	
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show" 
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit" 
     	name="Выписка &larr;"   params="id"  action='/entityParentEdit-stac_sslDischarge'  
     	key='Alt+9' title='Выписка' styleId="stac_sslDischarge" />
 
@@ -197,7 +199,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </msh:sideMenu>
  <msh:sideMenu title="Дополнительно">
         <msh:sideLink action="/stac_sslList.do?sslid=${param.id}" name="⇧Все госпитализации пациента" title="Все госпитализации пациента" />
-        <msh:sideLink action="/mis_patients" name="Новая госпитализация" />
+        <msh:sideLink action="/mis_patients" name="Новая госпитализация" roles="/Mis/MainMenu/Patient,/Policy/Mis/MedCase/Stac/Ssl/Admission/Create"/>
 </msh:sideMenu>
 
 <msh:sideMenu title = "Добавить">

@@ -307,6 +307,13 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/gener_ticket.jsp" />
         </action>
  
+ <action path='/mis_diagnosis_by_period' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_diagnosis/list_by_period.jsp" />
+        </action>
  <action path='/pda_claims' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'

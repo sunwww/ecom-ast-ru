@@ -26,8 +26,13 @@
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      
       </msh:ifNotInRole>
-      <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
+      <msh:panel>
+      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit">
         <msh:separator label="<a href='entityParentEdit-stac_sslAdmission.do?id=${param.id}'>Приемное отделение</a>" colSpan="8" guid="af11419b-1c80-4025-be30-b7e83df06024" />
+        </msh:ifInRole>
+      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit">
+        <msh:separator label="Приемное отделение" colSpan="8" guid="af11419b-1c80-4025-be30-b7e83df06024" />
+        </msh:ifNotInRole>
        	<msh:row >
       		<td colspan="6"><div style="display: none;" id='medPolicyInformation' class="errorMessage"/></td>
       	</msh:row>        <msh:row guid="ee27ecec-c7ca-440c-abc1-1eb97022e39e">
@@ -132,7 +137,19 @@
         </msh:ifNotInRole>
         </msh:panel>
         <msh:panel colsWidth="5%,10%,5%,80%">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit">
         <msh:separator colSpan="8" label="<a href='entityParentEdit-stac_sslDischarge.do?id=${param.id}'>Выписка</a>" guid="597ac93d-a5d0-4b08-a6b1-79efee0f497a" />
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit">
+        <msh:separator colSpan="8" label="Выписка" guid="597ac93d-a5d0-4b08-a6b1-79efee0f497a" />
+        </msh:ifNotInRole>
+                <msh:row>
+	        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 закл.диаг." property="concludingMkb" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+	        <msh:textField label="Заключительный диагноз" property="concludingDiagnos" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        
         <msh:row guid="ef812a6e-c7ab-465f-8a63-25ae169ed2b2">
           <msh:autoComplete label="Результат госпитализации" property="result" horizontalFill="true" guid="63d091a8-90b9-479f-8aef-0064a789fade" vocName="vocHospitalizationResult" />
           <msh:autoComplete label="Исход" property="outcome" guid="117c2e24-87b0-4fb0-842e-5411b62b1d3e" vocName="vocHospitalizationOutcome" horizontalFill="true" />

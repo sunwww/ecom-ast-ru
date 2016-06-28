@@ -22,7 +22,8 @@
         </msh:row>
      
         <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
-           <msh:autoComplete property="categoryChild" fieldColSpan="3" label="Кат. ребенка" horizontalFill="true" vocName="vocCategoryChild" />
+        	<msh:textField property="orderNumber" fieldColSpan="1" label="№ бланка МЗ" />
+           <msh:autoComplete property="categoryChild" fieldColSpan="1" label="Кат. ребенка" horizontalFill="true" vocName="vocCategoryChild" />
         </msh:row>
      
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">

@@ -1,3 +1,5 @@
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -45,6 +47,15 @@
             </msh:form>
             
         <%  if(request.getParameter("number") != null &&request.getParameter("number").length()>0) {  %>
+        <%
+        if (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/FindOnlyTheirCard/Enable", request) 
+        		&& ! RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/FindOnlyTheirCard/Disable", request)) {
+	        String login = LoginInfo.find(request.getSession(true)).getUsername() ;
+	        request.setAttribute("curLeft", "left join MedCase slo on slo.parent_id = m.id") ;
+	        request.setAttribute("curWhere", " and slo.ownerFunction_id = (select swf.id from secuser su left join workfunction swf on swf.secuser_id=su.id where su.login='"+login+"')") ;
+	        request.setAttribute("curWhere", " and slo.department_id = (select sw.lpu_id from secuser su left join workfunction swf on swf.secuser_id=su.id left join worker sw on sw.id=swf.worker_id where su.login='"+login+"')") ;
+        }
+        %>
             <msh:section title='Результат поиска'>
             	<ecom:webQuery name="list" 
             		nativeSql="select m.id as mid,ss.year as ssyear, ss.code as sscode
@@ -63,9 +74,16 @@
             			left join Patient p on p.id=m.patient_id
             			left join MisLpu md on md.id=m.department_id
             			left join VocDeniedHospitalizating vdh on vdh.id=m.deniedHospitalizating_id
+            			${curLeft}
             			where ss.dtype='StatisticStubExist' 
             			and ${exactMatchS1}${param.number}${exactMatchS2} ${onlyYearS}
-            			
+            			${curWhere}
+            			group by m.id ,ss.year , ss.code 
+            			, m.dateFinish,m.dateStart,vht.code
+            			, p.lastname,p.firstname , p.middlename ,p.birthday
+            			, md.name ,m.emergency
+            			, vdh.name 
+            			order by ss.year,ss.code
             			"
             	/>
                 <msh:table viewUrl="entityShortView-stac_ssl.do" name="list" action="entityParentView-stac_ssl.do" idField="1" disableKeySupport="true">
