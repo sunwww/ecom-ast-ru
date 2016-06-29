@@ -158,6 +158,9 @@ function printDirectionByPatient(aCtx,aParams) {
 * Не явка пациента на прием
 */
 function visitNoPatient(aContext, aVisitId) {
+	var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
+	.iterator().next() ;
+	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
 	var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
 		, java.lang.Long.valueOf(aVisitId)) ;
 	if (visit.timeExecute==null && visit.timePlan!=null) visit.timeExecute = visit.timePlan.timeFrom ;
@@ -171,10 +174,13 @@ function visitNoPatient(aContext, aVisitId) {
 	}
 	if (visit.timePlan!=null) {
 		visit.timePlan.medCase = null ;
-		visit.timePlan.prescription = null;
+		if (visit.timePlan.prescription!=null) {
+			cancelPrescriptionByVisit(aContext, visit);
+			visit.timePlan.prescription = null;
+		}
+		
 	}
-	var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
-	.iterator().next() ;
+	
 	/*
 	if(visit.startWorker==null) {
 		visit.startWorker = aContext.serviceInvoke("WorkerService", "findLogginedWorker") ;
@@ -185,6 +191,24 @@ function visitNoPatient(aContext, aVisitId) {
 	}
 	return visit.getId();
 }
+/**
+ * Отменяем назначение при неявке пациента
+ */
+
+function cancelPrescriptionByVisit (aContext, aVisit) {
+	var cancelWfId= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList").iterator().next().id ;
+	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
+	if (aVisit.timePlan.prescription==null) return;
+	aContext.manager.createNativeQuery("update prescription set calendartime_id = null " +
+			" ,cancelreasontext='Оформлена неявка на прием', cancelusername = '"+username+"'" +
+			" ,cancelspecial_id="+cancelWfId +
+			" ,canceldate = current_date, canceltime = current_time"+
+			" ,planstarttime = '" +aVisit.timePlan.timeFrom +"'"+
+			" where calendartime_id = "+aVisit.timePlan.id).executeUpdate();
+	return;
+}
+
+
 /**
  * Закрыть СПО по визиту
  */
