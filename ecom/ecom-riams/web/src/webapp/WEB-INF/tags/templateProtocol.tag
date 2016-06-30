@@ -247,6 +247,7 @@ var fldJson = null ;
     }
     
      function showTemplateForm(aTemplateId) {
+    	 the${name}IntakeInfoDialog.hide();
     		the${name}IntakeInfoDialog.show() ;
     	    	 	//alert(aTempId) ; 
     				TemplateProtocolService.getParameterAndPersmissionByTemplate($('id').value,aTemplateId,{
