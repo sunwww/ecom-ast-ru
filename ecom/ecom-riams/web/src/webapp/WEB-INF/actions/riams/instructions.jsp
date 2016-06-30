@@ -44,7 +44,7 @@
 						Отправка дневника заведующим на редактирование (врачу)
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=prescript_list">
-						Создание назначений (в листе назначений)
+						Создание назначений (в листе назначений) (июнь 2016)
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=refusal_hospitalization">
 						Оформление отказа от госпитализаций
