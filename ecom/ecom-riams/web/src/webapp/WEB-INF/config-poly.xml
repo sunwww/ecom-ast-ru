@@ -310,6 +310,14 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/report_service.jsp"/>
         </action>
+        <action path='/visit_report_service_OFD' type='ru.ecom.poly.web.action.ticket.Report039Action'
+                name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/report_service_OFD.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/report_service_OFD.jsp"/>
+        </action>
         <action path='/smo_openSPO' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
                 scope='session' validate='true'
