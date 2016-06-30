@@ -1,5 +1,26 @@
 var map = new java.util.HashMap() ;
 
+function printProtocolTemplate (aCtx, aParams) {
+	var protocolId = new java.lang.Long(aParams.get("id"));
+	if (protocolId==null||protocolId==0) {return;}
+	var sql = "select p.id, coalesce(p.code,'_id'||p.id) as f1_code ,p.name as f2_name" +
+	 " ,case when p.type='2' then coalesce(uv.name, '') when p.type='3' then fir.valuetext when p.type='1' then ''||fir.valuebd end as f3_value" +
+	 " from diary d" +
+	 " left join forminputprotocol fir on fir.docprotocol_id=d.id" +
+	 " left join parameter p on p.id=fir.parameter_id" +
+	 " left join uservalue uv on uv.id=fir.valuevoc_id" +
+	 " where d.id ="+protocolId;
+	var result = aCtx.manager.createNativeQuery(sql).getResultList();
+	if (!result.isEmpty()) {
+		for (var i=0;i<result.size();i++) {
+			var param = result.get(i);
+			map.put(''+param[1],''+param[3]);
+			map.put(''+param[1]+'Name',param[2]);
+		}
+	}
+	return map;
+}
+
 function printCheckList (aCtx, aParams) {
 	var id = new java.lang.Long(aParams.get("id"));
 	var resultSql = "select p.id, to_char(p.planstartdate,'dd.MM.yyyy') as f1_surDate" +
@@ -52,12 +73,13 @@ function printPrescriptList(aCtx, aParams) {
 				" ,case when p.dtype='ServicePrescription' then ms.name" +
 					"  when p.dtype='DietPrescription' then diet.name" +
 					"  when p.dtype='DrugPrescription' then dr.name " +
-					"  when p.dtype='ModePrescription' then vmp.name else '' end" +
-				" ,'Частота: '||p.frequency ||' '||coalesce(vfu.name,'') as vfuname" +
-				" ,p.orderTime ||' '||coalesce(vpot.name,'') as vpotname" +
-				" ,'Дозировка: '||p.amount ||' '||coalesce(vdau.name,'') as vdauname" +
-				" ,'Продолжительность: '||p.duration ||' '||coalesce(vdu.name,'') as vduname" +
-				" ,p.comments as comments" +
+					"  when p.dtype='ModePrescription' then vmp.name else '' end as f5_presName" +
+				" ,'Частота: '||p.frequency ||' '||coalesce(vfu.name,'') as f6_vfuname" +
+				" ,p.orderTime ||' '||coalesce(vpot.name,'') as f7_vpotname" +
+				" ,'Дозировка: '||p.amount ||' '||coalesce(vdau.name,'') as f8_vdauname" +
+				" ,'Продолжительность: '||p.duration ||' '||coalesce(vdu.name,'') as f9_vduname" +
+				" ,p.comments as f10_comments" +
+				" ,vdm.name as f11_drugMethod" +
 				" from prescription p" +
 				" left join medservice ms on ms.id=p.medservice_id" +
 				" left join vocdrugclassify as dr on dr.id=p.drug_id" +
@@ -102,6 +124,9 @@ function printPrescriptList(aCtx, aParams) {
 				pp.add(startDate);
 				pp.add(cancelDate);
 				pp.add(comments);
+				pp.add(p[11]); //method
+				pp.add(p[9]); //duration
+				pp.add(p[6]); //duration
 				prescriptions.add(pp);
 				
 			}
