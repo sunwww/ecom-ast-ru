@@ -6,10 +6,11 @@
 
 	<form-beans>
 		
+		<form-bean name="temp_protocolPrintForm"	type="ru.ecom.mis.ejb.form.userdocument.TemplatePrintDocumentForm" />
 		<form-bean name="mis_lpuGroupForm"			type="ru.ecom.mis.ejb.form.lpu.LpuGroupForm" />
 		<form-bean name="mis_patientListForm"		type="ru.ecom.mis.ejb.form.patient.PatientListForm" />
 		<form-bean name="mis_patientListRecordForm"	type="ru.ecom.mis.ejb.form.patient.PatientListRecordForm" />
-		<form-bean name="mis_userDocumentForm" type="ru.ecom.mis.ejb.form.userdocument.UserDocumentForm" />
+		<form-bean name="mis_userDocumentForm" 		type="ru.ecom.mis.ejb.form.userdocument.UserDocumentForm" />
 		<form-bean name="mis_workFunctionClaimTypeForm" type="ru.ecom.mis.ejb.form.claim.WorkFunctionClaimTypeForm" />
 		<form-bean name="mis_claimForm" type="ru.ecom.mis.ejb.form.claim.ClaimForm" />
 		<form-bean name="mis_lpuDiagnosisRuleForm" type="ru.ecom.mis.ejb.form.lpu.LpuDiagnosisRuleForm" />
