@@ -57,7 +57,6 @@ public class ContractServiceBean implements IContractService {
 			sql.append(" and ms.servicetype_id='").append(idsertypebed).append("'"); 
 			list=theManager.createNativeQuery(sql.toString()).getResultList() ;
 			if (list.isEmpty()) {
-				if (list.isEmpty()) {
 					sql = new StringBuilder() ;
 					aRoomType=Long.valueOf(1);
 					sql.append("select wfs.medservice_id from workfunctionservice wfs left join medservice ms on ms.id=wfs.medservice_id " );
@@ -72,9 +71,7 @@ public class ContractServiceBean implements IContractService {
 					} else {
 						return ConvertSql.parseLong(list.get(0)) ;
 					}
-				} else {
-					return ConvertSql.parseLong(list.get(0)) ;
-				}
+				
 			} else {
 				return ConvertSql.parseLong(list.get(0)) ;
 			}
@@ -237,7 +234,7 @@ and (pp.isvat is null or pp.isvat='0')
 						cams.setBirthday(birthday) ;
 						cams.setAccount(account) ;
 						cams.setTypeService(dtype) ;
-						Long service = getMedService(ConvertSql.parseLong(obj[6]), ConvertSql.parseLong(obj[7]), ConvertSql.parseLong(obj[8]), ConvertSql.parseLong(obj[9]))  ;
+						Long service = getMedService(ConvertSql.parseLong(obj[6]), ConvertSql.parseLong(obj[7]), ConvertSql.parseLong(obj[8]), ConvertSql.parseLong(obj[9]), customerType)  ;
 						if (service!=null) {
 							Long prm = getPriceMedService(priceList, service) ;
 							cams.setServiceIn(service) ;
