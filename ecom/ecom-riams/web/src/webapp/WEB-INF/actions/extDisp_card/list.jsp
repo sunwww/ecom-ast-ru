@@ -8,7 +8,7 @@
 	</tiles:put>
 	<tiles:put name='side' type='string'>
 		<msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="/Policy/Mis/ExtDisp/Card/Create" params="id" action="/entityParentPrepareCreate-extdisp_extDispCard" title="Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)" name="Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)" />
+			<msh:sideLink key='ALT+N' roles="/Policy/Mis/ExtDisp/Card/Create" params="id" action="/entityParentPrepareCreate-extDisp_card" title="Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)" name="Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)" />
 		</msh:sideMenu>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
