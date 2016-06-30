@@ -157,7 +157,7 @@
 
     	String dep = (String)request.getParameter("department") ;
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
-    		request.setAttribute("departmentSql", " and slo.department_id="+dep) ;
+    		request.setAttribute("departmentSql", " and (slo.department_id="+dep+" or slo.department_id in (select lpu from lpugroup where grouplpu="+dep+"))") ;
     		request.setAttribute("department",dep) ;
     	} else {
     		request.setAttribute("department","0") ;
