@@ -67,6 +67,9 @@
         <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
         	<input type="radio" name="typeReport" value="4" > по показателям
         </td>
+        <td onclick="this.childNodes[1].checked='checked'"  colspan="2">
+        	<input type="radio" name="typeReport" value="5" > по эксперту
+        </td>
       </msh:row> 
       
       <msh:row>
@@ -245,7 +248,7 @@ order by ${orderBySql}
     	</table>
     	<%
     	
-        	} else if (typeReport!=null && (typeReport.equals("2")||typeReport.equals("3"))) {
+        	} else if (typeReport!=null && (typeReport.equals("2")||typeReport.equals("3")||typeReport.equals("5"))) {
         		StringBuilder sql = new StringBuilder() ;
         		for (int i=0;i<critList.size();i++) {
         			WebQueryResult wqr = (WebQueryResult)critList.get(i) ;
@@ -264,6 +267,12 @@ order by ${orderBySql}
         			request.setAttribute("nameFld", "wml.name") ;
         			request.setAttribute("nameTitle", "ФИО врача/отделение") ;
         			request.setAttribute("orderBySql", "wml.name") ;
+        		} else if (typeReport.equals("5")) { //Группировка по эксперту
+        			request.setAttribute("groupBy", "wfExp.id, vwfExp.name, patExp.lastname, patExp.firstname, patExp.middlename") ;
+        			request.setAttribute("nameFldId", " wfExp.id") ;
+        			request.setAttribute("nameFld", "vwfExp.name||' '||patExp.lastname||' '|| patExp.firstname ||' '|| patExp.middlename") ;
+        			request.setAttribute("nameTitle", "ФИО эксперта") ;
+        			request.setAttribute("orderBySql", "patExp.lastname, patExp.firstname, patExp.middlename") ;
         		}
 %>
 
@@ -281,6 +290,11 @@ left join mislpu wml on wml.id=w.lpu_id
 left join patient wpat on wpat.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 left join qualityestimation qe on qe.card_id=qec.id
+
+left join workfunction wfExp on wfExp.id=qe.expert_id
+left join worker wExp on wExp.id=wfExp.worker_id
+left join vocworkfunction vwfExp on vwfExp.id=wfExp.workfunction_id
+left join patient patExp on patExp.id=wExp.person_id
 left join qualityestimationcrit qecr on qecr.estimation_id=qe.id
 left join vocqualityestimationmark vqem on vqem.id=qecr.mark_id
 left join vocqualityestimationcrit vqec on vqec.kind_id = qec.kind_id and vqec.id=qecr.criterion_id  
@@ -296,7 +310,6 @@ group by ${groupBy}
 order by ${orderBySql}
 "
     	/>
-    	
     	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2> 
     	<table border="1px solid">
            <tr>
