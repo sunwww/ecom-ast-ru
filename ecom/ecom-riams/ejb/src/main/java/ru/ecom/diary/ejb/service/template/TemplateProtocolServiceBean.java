@@ -43,7 +43,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		String wf = String.valueOf(obj.get("workFunction"));
 		System.out.print("workfunction================"+wf);
 		StringBuilder sql = new StringBuilder() ;
-		Visit m = aManager.find(Visit.class, aSmoId) ;
+		MedCase m = aManager.find(MedCase.class, aSmoId) ;
 		if (m!=null) {
 		List<Object> l = null;
 		
@@ -105,13 +105,16 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		}
 		d.setRecord(sb.toString()) ;
 		aManager.persist(d) ;
-		if (wf!=null && !wf.equals("0")) {
-			WorkFunction wfo = aManager.find(WorkFunction.class, Long.valueOf(wf)) ;
-			m.setWorkFunctionExecute(wfo) ;
-		} else {
-			m.setWorkFunctionExecute(m.getWorkFunctionPlan()) ;
-			aManager.persist(m) ;
-		}
+			if (m instanceof Visit)  {
+				Visit vis = (Visit) m;
+				if (wf!=null && !wf.equals("0")) {
+					WorkFunction wfo = aManager.find(WorkFunction.class, Long.valueOf(wf)) ;
+					vis.setWorkFunctionExecute(wfo) ;
+				} else {
+					vis.setWorkFunctionExecute(vis.getWorkFunctionPlan()) ;
+					aManager.persist(vis) ;
+				}
+			}
 		aManager.persist(m) ;
 		return ""+d.getId() ;
 	}
