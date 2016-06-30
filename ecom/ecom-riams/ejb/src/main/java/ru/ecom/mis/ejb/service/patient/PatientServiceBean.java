@@ -1439,16 +1439,16 @@ public class PatientServiceBean implements IPatientService {
 				appendNativeToList(findByMedCardNumber(sqlFld,aLastname,aYear), ret3,null,true);
 			}
 			// Поиск по коду синхронизации
-			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
+			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty()&&ret3.isEmpty())) {
 				appendNativeToList(findByPatientSync(sqlFld,aLastname,aYear), ret3,null,true);
 			}
 			if (theSessionContext.isCallerInRole("/Policy/Mis/Patient/FindByCommonNumber") ) {
 				// Поиск по RZ
-				if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
+				if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty()&&ret3.isEmpty())) {
 					appendNativeToList(findByPatientRz(sqlFld,aLastname,aYear), ret3,null,true);
 				}
 			}
-			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty())) {
+			if(!StringUtil.isNullOrEmpty(aLastname) && (ret1.isEmpty()&&ret2.isEmpty()&&ret3.isEmpty())) {
 				appendNativeToList(findByPolicy(sqlFld,aLpuId, aLpuAreaId, aLastname,aYear), ret3,null,true);
 			}
 		}
