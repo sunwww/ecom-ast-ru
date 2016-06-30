@@ -446,7 +446,8 @@ public class TemplateProtocolJs {
 		//res.append("<tr><td colspan='3'><h2>Выбор осуществляется двойным нажатием мыши</h2></td></tr>") ;
 		res.append("<tr><td colspan='2' valign='top'>") ;
 		if (aType!=null && aType.equals("temp")) {
-			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile") ; 
+			sql.append("select tp.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || tp.title as ttile")
+			.append(" ,(select count(*) from parameterByForm where template_id=tp.id) as cntInput") ; 
 			sql.append(" from TemplateProtocol tp");
 			sql.append(" left join SecUser su on tp.username=su.login");
 			sql.append(" left join templateprotocol_secgroup tg on tp.id=tg.templateprotocol_id");
@@ -500,6 +501,9 @@ public class TemplateProtocolJs {
 					.append(wqr.get1()).append("',0)\" ondblclick=\"").append(aFunctionTemp).append("('")
 					.append(wqr.get1()).append("',1)\">") ;
 					res.append(wqr.get2()) ;
+					if (wqr.get3()!=null&&!(""+wqr.get3()).equals("0")) {
+						res.append("<input type=\"button\" onclick=\"showTemplateForm('").append(wqr.get1()).append("')\" value=\"Ф\">");
+						}
 					res.append("</li>") ;
 				}
 				res.append("</ul></td>") ;
