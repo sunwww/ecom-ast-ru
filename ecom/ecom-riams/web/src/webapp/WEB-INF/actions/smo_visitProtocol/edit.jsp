@@ -117,6 +117,7 @@
     <tags:template_new_diary name="newTemp" roles="/Policy/Diary/Template/Create" field="record" title="Создание шаблона"></tags:template_new_diary>
 
         <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
+        <tags:mis_protocolTemplateDocumentList  name="Print"/>
             <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Edit" key="ALT+2" params="id" action="/entityParentEdit-smo_visitProtocol"
                           name="Редактировать"/>
         
@@ -131,9 +132,12 @@
     
     <msh:ifFormTypeIsView formName="smo_visitProtocolForm">
     <msh:sideMenu title="Печать" >
+<%--     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol" 
+    	name="Печать дневника"   
+    	action='/javascript:printProtocol(".do")' title='Печать дневника' /> --%>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol" 
     	name="Печать дневника"   
-    	action='/javascript:printProtocol(".do")' title='Печать дневника' />
+    	action='/javascript:showPrintProtocolTemplate()' title='Печать дневника' />
     
     </msh:sideMenu>
     </msh:ifFormTypeIsView>

@@ -33,6 +33,46 @@ import javax.naming.NamingException;
  */
 public class TemplateProtocolJs {
 	
+	
+	public String getTemplateParametersList (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder ret = new StringBuilder();
+		String sql = "select p.id, coalesce(p.code,'_id'||p.id) as f1_code ,p.name as f2_name" +
+				 " from parameter p" +
+				 " left join parameterbyform pbf on pbf.parameter_id = p.id" +
+				 " where pbf.template_id ="+aTemplateId;
+		
+		Collection<WebQueryResult> res = service.executeNativeSql(sql);
+		if (!res.isEmpty()) {
+			for (WebQueryResult r: res) {
+				if (ret.length()>0) {ret.append("#");}
+				ret.append("${").append(r.get2()).append("}\t").append("Значение поля '").append(r.get3()).append("'#");
+				ret.append("${").append(r.get2()).append("Name}\t").append("Название поля '").append(r.get3()).append("'");
+				
+			}
+		}
+		
+		return ret.length()>0?ret.toString():"";
+		
+	}
+	public String getProtocolTemplatesPrintForms(Long aProtocolId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder ret = new StringBuilder();
+		String sql = "select ud.id, ud.name, ud.filename" +
+				" from userdocument ud" + 
+				" left join templateprotocol tp on tp.id = ud.template"+
+				" left join diary d on d.templateprotocol = tp.id"+
+				" where d.id="+aProtocolId;
+		Collection<WebQueryResult> res = service.executeNativeSql(sql);
+		if (!res.isEmpty()) {
+			for (WebQueryResult r: res) {
+				if (ret.length()>0) {ret.append("#");}
+				ret.append(r.get1()).append("@").append(r.get2()).append("@").append(r.get3());
+				
+			}
+		}
+		return ret.length()>0?ret.toString():"";
+	}
 /*	public String saveParametersByProtocol (Long aSmoId,Long aProtocolId, String aParams, HttpServletRequest aRequest) throws NamingException {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
@@ -41,6 +81,7 @@ public class TemplateProtocolJs {
 	}*/
 	public String getTemplateDisableEdit (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		if (aTemplateId==null||aTemplateId.equals(Long.valueOf(0))) return "0";
+		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		return service.executeNativeSql("select case when disableEdit is null or disableEdit = '0' then '0' else '1' end" +

@@ -62,6 +62,15 @@ where p.template_id=${param.id} order by p.position
         </msh:section>
         
     </msh:ifFormTypeIsView>
+      <msh:ifFormTypeIsView formName="diary_templateForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
+      <msh:section title="Печатные формы шаблона" guid="712b744d-be86-4dc1-9d3a-0ab52eb1bed9">
+        <ecom:webQuery name="protocolPrints" nativeSql="select ud.id ,ud.name,ud.fileName from userDocument ud where ud.template='${param.id}' order by ud.name" />
+        <msh:table name="protocolPrints" action="entityParentView-temp_protocolPrint.do" idField="1" noDataMessage="Нет данных" guid="123c019a-f668-4454-af88-4897d27728ab">
+          <msh:tableColumn property="2" columnName="Название шаблона для печати" guid="4d4c6566-75c9-4ef5-931c-723e88d4efbb" />
+          <msh:tableColumn property="3" columnName="Название файла" guid="f6c2e5ba-4045-4dbe-b8fb-bb5d8386e9c4" />
+        </msh:table>
+      </msh:section>
+    </msh:ifFormTypeIsView>   
 
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -74,10 +83,15 @@ where p.template_id=${param.id} order by p.position
     </msh:sideMenu>
     <msh:sideMenu title="Работа с заключением">
         <msh:sideLink key="ALT+3" params="id" action="/diary_templateParamsEdit" name="Параметры" roles="/Policy/Diary/Template/Edit"/>
+         <msh:sideLink key="ALT+4" action="/javascript:showParametersToPrint()" name="Показать параметры для печати" roles="/Policy/Diary/Template/View"/>
+    </msh:sideMenu>
+    <msh:sideMenu guid="0d13c843-c26a-4ae2-ae97-d61b44618bae" title="Добавить">
+      <msh:sideLink key="ALT+N" action="/entityParentPrepareCreate-temp_protocolPrint" params="id" name="Шаблон для печати" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Diary/Template/Create" />
     </msh:sideMenu>
     <msh:sideMenu title="Дополнительно">
             <tags:voc_menu currentAction="medService" />
     </msh:sideMenu>
+     
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Config" beginForm="diary_templateForm" guid="4399c99f-8801-4a73-b168-c25c23f8b0ba" />
@@ -96,6 +110,7 @@ where p.template_id=${param.id} order by p.position
 <script type="text/javascript" src="js/treeview.js" ></script>
 <script type="text/javascript" src="js/TaskNode.js"></script>
 <script type="text/javascript" src="js/CheckTaskNode.js"></script>
+<script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
     
         <script type="text/javascript">
             Element.addClassName($('mainMenuRoles'), "selected");
@@ -149,6 +164,28 @@ where p.template_id=${param.id} order by p.position
             %>
 
         </script>
+        <script type="text/javascript">
+      //            $('buttonShowAddress').style.display = 'none';
+      function showParametersToPrint() {
+      TemplateProtocolService.getTemplateParametersList($('id').value,{
+    	  callback: function (a) {
+    		  if (a!=null&&a!=''){
+    			  var rows = a.split("#");
+    			  a='';
+    			  for (var i=0;i<rows.length;i++) {
+    				  a+=rows[i]+'\n';
+    			  }
+    			  
+    			  alert (a);  
+    		  } else {
+    			  alert (a);
+    		  }
+    		  
+    	  }
+      });
+      }
+      
+      </script>
     </tiles:put>
 
 </tiles:insert>

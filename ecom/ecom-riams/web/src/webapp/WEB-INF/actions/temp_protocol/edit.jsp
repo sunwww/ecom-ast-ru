@@ -68,16 +68,27 @@
         </msh:table>
       </msh:section>
     </msh:ifFormTypeIsView>    
+     <msh:ifFormTypeIsView formName="temp_protocolForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
+      <msh:section title="Печатные формы шаблона" guid="712b744d-be86-4dc1-9d3a-0ab52eb1bed9">
+        <ecom:webQuery name="protocolPrints" nativeSql="select ud.id ,ud.name,ud.fileName from userDocument ud where ud.template='${param.id}' order by ud.name" />
+        <msh:table name="protocolPrints" action="entityParentView-temp_protocolPrint.do" idField="1" noDataMessage="Нет данных" guid="123c019a-f668-4454-af88-4897d27728ab">
+          <msh:tableColumn property="2" columnName="Название шаблона для печати" guid="4d4c6566-75c9-4ef5-931c-723e88d4efbb" />
+          <msh:tableColumn property="3" columnName="Название файла" guid="f6c2e5ba-4045-4dbe-b8fb-bb5d8386e9c4" />
+        </msh:table>
+      </msh:section>
+    </msh:ifFormTypeIsView>    
   </tiles:put>
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="0d13c843-c26a-4ae2-ae97-d61b44618bae" title="Добавить">
       <msh:sideLink key="ALT+N" action="/entityPrepareCreate-temp_protocol" name="Шаблон протокола" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Diary/Template/Create" />
+      <msh:sideLink key="ALT+N" action="/entityParentPrepareCreate-temp_protocolPrint" params="id" name="Шаблон для печати" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Diary/Template/Create" />
     </msh:sideMenu>
     <msh:sideMenu guid="5db0db09-9993-44cb-8477-a3fee5037b42" title="Шаблон протокола">
       <msh:sideLink key="ALT+1" action="/js-temp_protocol-listTemplate" name="⇧ Список шаблонов протоколов" guid="aa1d3bc4-7c77-483b-b355-0a50f799ba47" roles="/Policy/Diary/Template/View" />
       <msh:ifFormTypeIsView formName="temp_protocolForm" guid="dd63e5e4-f81c-43f2-b50a-f12b1d8e026b">
         <msh:sideLink key="ALT+2" params="id" action="/entityEdit-temp_protocol" name="Изменить" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e97e" />
         <msh:sideLink key="ALT+3" params="id" action="/diary_templateParamsEdit" name="Параметры" roles="/Policy/Diary/Template/Edit"/>
+        <msh:sideLink key="ALT+3" action="/javascript:showParametersToPrint()" name="Показать параметры для печати" roles="/Policy/Diary/Template/View"/>
       </msh:ifFormTypeIsView>
       <hr />
       <msh:ifFormTypeIsView formName="temp_protocolForm" guid="458c4701-2a7c-495e-ad4c-c3326ff8c2bb">
@@ -85,10 +96,33 @@
       </msh:ifFormTypeIsView>
     </msh:sideMenu>
     <tags:template_menu currentAction="protocols"/>
+    
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <msh:ifFormTypeIsView formName="temp_protocolForm" guid="4a81e464-1352-415f-9286-596451caf264">
-      <script type="text/javascript">//            $('buttonShowAddress').style.display = 'none';</script>
+    <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
+      <script type="text/javascript">
+      //            $('buttonShowAddress').style.display = 'none';
+      function showParametersToPrint() {
+      TemplateProtocolService.getTemplateParametersList($('id').value,{
+    	  callback: function (a) {
+    		  if (a!=null&&a!=''){
+    			  var rows = a.split("#");
+    			  a='';
+    			  for (var i=0;i<rows.length;i++) {
+    				  a+=rows[i]+'\n';
+    			  }
+    			  
+    			  alert (a);  
+    		  } else {
+    			  alert (a);
+    		  }
+    		  
+    	  }
+      });
+      }
+      
+      </script>
     </msh:ifFormTypeIsView>
     	<msh:ifFormTypeIsNotView formName="temp_protocolForm">
  			<script type="text/javascript">
