@@ -468,9 +468,9 @@
       </msh:ifInRole>
       
       <msh:ifInRole roles="/Policy/Mis/Prescription/Prescript/View">
-      	<msh:section title="Лист назначний " createUrl="entityParentPrepareCreate-pres_prescriptList.do?id=${param.id}"
+      	<msh:section title="Лист назначений"
       	createRoles="/Policy/Mis/Prescription/Prescript/Create" 	>
-	      	<%-- <msh:sectionTitle >Листы назначений. Добавить ЛН</msh:sectionTitle> --%>
+	      	<msh:sectionTitle ><a href="javascript:void(0)" onclick="javascript:showCreatePrescriptList(${param.id})">Добавить назначение</a></msh:sectionTitle>
 	      	<msh:sectionContent>
 	          <ecom:webQuery name="presLists" nativeSql="select pl.id as ilid
 	          ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
