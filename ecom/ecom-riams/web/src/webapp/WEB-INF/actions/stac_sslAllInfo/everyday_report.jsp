@@ -216,7 +216,8 @@
     			String denied=request.getParameter("denied") ; String emergency=request.getParameter("emergency") ;
     			String orderType=request.getParameter("orderType") ; String stream=request.getParameter("stream") ;
     			String operation=request.getParameter("operation") ; String dtype=request.getParameter("dtype" );
-    			String anesthesia=request.getParameter("anesthesia") ;
+    			String anesthesia=request.getParameter("anesthesia") ; String reanimation = request.getParameter("reanimation");
+    			String heavy = request.getParameter("heavy");
     			StringBuilder where = new StringBuilder() ;
     			
     			if (dateinfo==null) {
@@ -273,7 +274,13 @@
 		    			.toString().replaceAll("medcase", dtypeAs)); 
     				}
     				where.append(ActionUtil.setParameterFilterSql("pigeonHole", "ml.pigeonHole_id", request)) ;
-    				where.append(ActionUtil.setParameterFilterSql("department", "ml.id", request)) ;
+    				if (reanimation!=null&&!reanimation.equals("")) {
+    					where.append(ActionUtil.setParameterFilterSql("department", "prevMl.id", request)) ;
+    					where.append(" and ml.isnoomc='1'");
+    				} else {
+    					where.append(ActionUtil.setParameterFilterSql("department", "ml.id", request)) ;
+    				}
+    				
     				where.append(ActionUtil.setParameterFilterSql("serviceStream", "vss.id", request)) ;
     				if (denied!=null && denied.equals("all")) {
     					where.append(" and sls.deniedHospitalizating_id is not null") ;
@@ -340,6 +347,9 @@
     						where.append(" and (to_date('").append(date).append("','dd.mm.yyyy')-pat.birthday)<(17*355)") ;
     					}
     				}
+    				if (heavy!=null&&!heavy.equals("")) {
+    					where.append(" and vpms.code in ('3','4') and d.id = (select max(id) from diary where medcase_id=slo.id)");
+    				}
     				request.setAttribute("whereSql", where.toString()) ;
     				//request.setAttribute("groupBy", groupBy) ;
     				if (dtype.equals("DepartmentMedCase")) {
@@ -348,7 +358,11 @@
     select slo.id as sloid,to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.Entrancetime as varchar(5)) as slsdatestart,ss.code as sscode
     ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
     ,vss.name as vssname
+    ,list(coalesce(mkb.code||' '||mkb.name,'')) as diagnosis
      from MedCase slo
+     
+    left join MedCase prevSlo on prevSlo.id=slo.prevMedCase_id
+    left join mislpu prevMl on prevMl.id=prevSlo.department_id
     left join MedCase sls on sls.id=slo.parent_id
     left join StatisticStub ss on ss.id=sls.statisticStub_id
     left join Patient pat on pat.id=slo.patient_id
@@ -360,9 +374,12 @@
 	left join SurgicalOperation so on so.medcase_id=slo.id
 	left join Omc_Frm vof on vof.id=slo.orderType_id
 	left join Diary d on d.medcase_id=slo.id
+	left join vocphonemessagestate vpms on vpms.id=d.state_id
 	left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id
 	left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 	left join VocServiceStream vss on vss.id=slo.serviceStream_id
+	left join Diagnosis diag on diag.medcase_id=slo.id  and diag.priority_id=1
+	left join vocidc10 mkb on mkb.id=diag.idc10_id
 	where slo.dtype='DepartmentMedCase' and ${whereSql} 
 	group by slo.id,pat.id,pat.lastname,pat.firstname,pat.middlename,ss.code,vss.name,slo.Entrancetime,slo.dateStart
 	order by pat.lastname,pat.firstname,pat.middlename
@@ -376,6 +393,7 @@
     	<msh:tableColumn property="3" columnName="ИБ"/>
     	<msh:tableColumn property="4" columnName="ФИО"/>
     	<msh:tableColumn property="5" columnName="Поток обслуживания"/>
+    	<msh:tableColumn property="6" columnName="Основной диагноз"/>
     </msh:table>
     			<%
     				} else if (dtype.equals("SurgicalOperation")) {
@@ -738,6 +756,14 @@ and ( sls.noActuality is null or sls.noActuality='0')
     		.append(") and ") 
     		.append(ReportParamUtil.getDateTo(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", timeSql!=null?date1:date1, timeSql)) 
     		.append(" ").toString().replaceAll("medcase", "slo")); 
+    	    
+    		request.setAttribute("periodCurrentSloRean",new StringBuilder() 
+   			.append(" (coalesce(medcase.dateFinish,medcase.transferDate) is null ")
+    		.append(" or ") 
+    		.append(ReportParamUtil.getDateFrom(Boolean.FALSE, "coalesce(medcase.dateFinish,medcase.transferDate)", "coalesce(medcase.dischargeTime,medcase.transferTime)", timeSql!=null?date1:date, timeSql)) 
+    		.append(") and ") 
+    		.append(ReportParamUtil.getDateTo(Boolean.FALSE, "medcase.dateStart", "medcase.entranceTime", timeSql!=null?date1:date1, timeSql)) 
+    		.append(" ").toString().replaceAll("medcase", "sloR")); 
     		
     		request.setAttribute("periodCurrentSlo1",new StringBuilder() 
    			.append(" (medcase.dateFinish is null ")
@@ -782,12 +808,18 @@ and ( sls.noActuality is null or sls.noActuality='0')
 ,(select count(distinct so.id) from Anesthesia a left join SurgicalOperation so on so.id=a.surgicalOperation_id left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id where ${periodOperation} and w.lpu_id=ml.id) as cntAnesOper
 ,(select count(distinct so.id) from Anesthesia a left join SurgicalOperation so on so.id=a.surgicalOperation_id left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id where ${periodOperation} and w.lpu_id=ml.id and so.aspect_id='2') as cntAnesOperEmer
 ,(select count(distinct so.id) from Anesthesia a left join SurgicalOperation so on so.id=a.surgicalOperation_id left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id where ${periodOperation} and w.lpu_id=ml.id and so.aspect_id='1') as cntAnesOperPlan
+,(select count(distinct sloR.id) from medcase sloR left join medcase sloD on sloD.id=sloR.prevmedcase_id left join mislpu depR on depR.id=sloR.department_id where depR.isnoomc='1' and sloD.department_id=ml.id and ${periodCurrentSloRean}) as cntReanim
+,count(distinct case when ${periodCurrentSlo} and vpms.code in ('3','4') and d.id = (select max(id) from diary where medcase_id=slo.id)then slo.id else null end) as cntHeavyPatients
 from medcase slo
+left join diary d on d.medcase_id=slo.id
+left join vocphonemessagestate vpms on vpms.id=d.state_id
+left join medcase prevSlo on prevSlo.id=slo.prevmedcase_id
 left join VocServiceStream vss on vss.id=slo.serviceStream_id
 left join Patient pat on pat.id=slo.patient_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
 left join Address2 adr on adr.addressid=pat.address_addressid
 left join Mislpu ml on slo.department_id=ml.id
+left join Mislpu prevMl on prevSlo.department_id=prevMl.id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Omc_Oksm ok on pat.nationality_id=ok.id
 left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
@@ -866,6 +898,8 @@ order by ml.name
 						out.println(". Кол-во наркозов: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation',null)\">") ;out.println(wqr.get17());out.println("</a>") ;
 						out.println(" экстр.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=emergency',null)\">") ;out.println(wqr.get18());out.println("</a>") ;
 						out.println(" план.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=operationDate&anesthesia=1&dtype=SurgicalOperation&operation=plan',null)\">") ;out.println(wqr.get19());out.println("</a>") ;
+						out.println(" в реанимации.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent&reanimation=1',null)\">") ;out.println(wqr.get20());out.println("</a>") ;
+						out.println(" в тяжелом состоянии.: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent&heavy=1',null)\">") ;out.println(wqr.get21());out.println("</a>") ;
     					out.println("</td>") ;
     	    			out.println("</tr>") ;
     				} else {
