@@ -9,11 +9,12 @@
     <!-- 
     	  - Проба
     	  -->
-    <msh:form  action="/entitySaveGoView-mis_patientListRecord.do" defaultField="patient">
+    <msh:form  action="/entityParentSaveGoParentView-mis_patientListRecord.do" defaultField="patient">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="patientList"/>
+         <msh:hidden property="saveType"/>
       <msh:panel guid="panel">
-      <msh:autoComplete property="patient" vocName="patient" label = "Пациент" />
+      <msh:autoComplete property="patient" vocName="patient" label = "Пациент" size="50"/>
         <msh:row>
           <msh:textField property="message" label="Отображаемое сообщение" size="100"/>
         </msh:row>
@@ -23,10 +24,12 @@
 
   </tiles:put>
   <tiles:put name="title" type="string">
+  <ecom:titleTrail mainMenu="Voc" beginForm="mis_patientListRecordForm"/>
   </tiles:put>
-  <tiles:put name="side" type="string">
+  <tiles:put name="side" type="string"> <msh:sideMenu>
  <msh:sideLink key='ALT+E' params="id" action="/entityEdit-mis_patientListRecord" name="Изменить" />
- <msh:sideLink key='ALT+DEL' params="id" action="/entityDelete-mis_patientListRecord" name="Удалить" />
+ <msh:sideLink key='ALT+DEL' params="id" action="/entityParentDeleteGoParentView-mis_patientListRecord" name="Удалить" />
+ </msh:sideMenu>
   </tiles:put>
 </tiles:insert>
 

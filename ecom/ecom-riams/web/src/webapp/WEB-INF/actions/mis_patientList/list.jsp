@@ -5,12 +5,12 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">Списки пациентов</msh:title>
+        <msh:title mainMenu="Voc">Списки пациентов</msh:title>
     </tiles:put>
 
     <tiles:put name='side' type='string'>
         <msh:sideMenu>
-            <msh:sideLink key='ALT+N' params="id" action="/entityPrepareCreate-mis_patientList" name="Создать новый список" />
+            <msh:sideLink key='ALT+N'  action="/entityPrepareCreate-mis_patientList" name="Создать новый список" />
         </msh:sideMenu>
     </tiles:put>
 

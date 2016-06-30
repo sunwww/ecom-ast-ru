@@ -12,6 +12,7 @@
     <msh:form guid="formHello" action="/entitySaveGoView-mis_patientList.do" defaultField="name">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:panel guid="panel">
+         <msh:hidden property="saveType"/>
       <msh:autoComplete property="type" vocName="patientListType"/>
         <msh:row>
           <msh:textField property="name" label="Название списка" />
@@ -43,9 +44,8 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
-  
-   
-  </tiles:put>
+   <ecom:titleTrail mainMenu="Voc" beginForm="mis_patientListForm"/>
+   </tiles:put>
   <tiles:put name="side" type="string">
  <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="mis_patientListForm">
    <msh:sideMenu>
