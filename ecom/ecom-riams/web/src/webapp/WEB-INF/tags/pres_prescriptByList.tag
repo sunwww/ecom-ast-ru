@@ -67,6 +67,9 @@
  ,p.planStartDate,p.planEndDate
  ,m.datestart
 ,coalesce(d.record,'')
+, p.canceldate as canceldate
+, coalesce(p.cancelreasontext,'') as cancelText
+,case when canceldate is not null then 'color:red;' else null end as styleCancel
  from Prescription p 
  
  left join PrescriptionList pl on pl.id=p.prescriptionList_id 
@@ -80,12 +83,14 @@
  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на диагностические исследования</msh:sectionTitle>
     	<msh:sectionContent>
-    		<msh:table name="pres" action="entityView-pres_diagnosticPrescription.do" idField="1">
+    		<msh:table name="pres" action="entityView-pres_diagnosticPrescription.do" idField="1" styleRow="10">
     			<msh:tableColumn property="3" columnName="Исследование"/>
     			<msh:tableColumn property="4" columnName="Дата начала"/>
     			<msh:tableColumn property="6" columnName="Дата исполнения услуги"/>
     			
     			<msh:tableColumn property="7" columnName="Результат выполнения"/>
+    			<msh:tableColumn property="8" columnName="Дата отмены"/>
+    			<msh:tableColumn property="9" columnName="Причина отмены"/>
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
