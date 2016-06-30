@@ -157,6 +157,7 @@
 				name="serverPerson" action="js-contract_juridicalContract-account_group_by_patient.do"
 				viewUrl="js-contract_juridicalContract-account_group_by_patient.do?short=Short"
 				printUrl="js-contract_juridicalContract-account_print.do"
+				editUrl="entityEdit-contract_juridicalAccount.do" 
 				idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Номер счета" property="2"/>
