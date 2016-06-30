@@ -247,7 +247,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder res = new StringBuilder();
 		String sql = "select d.id, to_char(d.dateregistration,'dd.MM.yyyy')|| ' ' ||to_char(d.timeregistration,'HH:MI') as dt," +
-			" case when count (mc.id)>0 then list(mc.code||' '||mc.name) ||'<'||'br'||'/>' else '' end || d.record " +
+			" case when count (mc.id)>0 then list(mc.code||' '||mc.name) ||'\n' else '' end || d.record " +
 			" from medcase sls " +
 			" left join medcase vis on vis.patient_id=sls.patient_id" +
 			" left join medcase servmc on servmc.parent_id=vis.id"+
