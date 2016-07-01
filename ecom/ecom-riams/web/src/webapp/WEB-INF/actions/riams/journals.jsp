@@ -93,6 +93,9 @@
 	                   		<msh:link isReport="true" action="quality_card_journal.do" roles="/Policy/Mis/journal/QualityEstimationCard">
 	                   		Журнал внутреннего контроля качества</msh:link>
 	                   </li>
+	                        <li><msh:link  isReport="true" action="mis_diagnosis_by_period.do" roles="/Policy/Mis/Journal/DiagnosisByPeriodF">
+	                            Журнал смены диагноза по листу уточненных диагнозов F...
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>
@@ -263,6 +266,7 @@
 	                        <li><msh:link  isReport="true" action="stac_diff_diagnosis.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
 	                            Журнал расхождений диагнозов
 	                        </msh:link></li>
+	                        
 					</ul>
 					</div>
 				</td>
