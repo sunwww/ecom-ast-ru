@@ -50,7 +50,7 @@
     	} else {
     		request.setAttribute("endDate", dateEnd) ;
     	}
-    	request.setAttribute("dateBegin", date) ;
+    	request.setAttribute("beginDate", date) ;
     	%>
     		<ecom:webQuery nameFldSql="reestr_sql" name="reestr" nativeSql="
     	select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,to_char(pat.birthday,'dd.mm.yyyy') as birthday
