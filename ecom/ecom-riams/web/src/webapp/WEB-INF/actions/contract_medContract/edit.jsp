@@ -238,8 +238,9 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
     	m.id,m.dateStart as dateFrom
     	,coalesce(vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename
     	,vwf1.name||' '||wp1.lastname||' '||wp1.firstname||' '||wp1.middlename) as worker
+    	,vvr.name as vvrname
     	from medCase m
-    	
+    	left join VocVisitResult vvr on vvr.id=m.visitResult_id
     	left join VocServiceStream vss on vss.id=m.serviceStream_id
     	left join ContractPerson cp on cp.patient_id=m.patient_id
     	left join MedContract mc on cp.id=mc.customer_id
@@ -257,11 +258,12 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
     	and vss.code='CHARGED'
     	order by m.dateStart desc
     	" maxResult="5" />
-     <msh:section title="Последнее посещение <a href='print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}' target='_blank'>бегунок</a>" 
+     <msh:section title="Последние посещение <a href='print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}' target='_blank'>бегунок</a>" 
      viewRoles="/Policy/Mis/MedCase/Direction/View" shortList="js-mis_patient-viewDirection.do?id=${param.id}">
     	<msh:table name="lastVisit1" action="entitySubclassView-mis_medCase.do" idField="1">
 	    	<msh:tableColumn property="2" columnName="Дата"/>
     		<msh:tableColumn property="3" columnName="Специалист"/>
+    		<msh:tableColumn property="4" columnName="Результат"/>
     	</msh:table>
      </msh:section>
 		</msh:ifFormTypeIsView>
