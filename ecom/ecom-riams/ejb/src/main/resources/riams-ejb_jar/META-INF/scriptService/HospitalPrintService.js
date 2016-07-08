@@ -1119,9 +1119,14 @@ function printPregHistoryByMC(aCtx, aParams) {
 	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList());
 	recordPatient(medCase,aCtx);
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
+	recordChildBirth(medCase, aCtx);
+	var daysCount = Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(medCase.getDateStart(), medCase.getDateFinish(),0) ;
+	map.put("sls.daysCount",daysCount) ;
+	//map.put("err","");
 	return map ;
 	
 }
+
 function printPregHistory(aCtx, aParams) {
 	var pregHistory = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.PregnancyHistory
 		, new java.lang.Long(aParams.get("id"))) ;
@@ -1145,6 +1150,32 @@ function printPregHistory(aCtx, aParams) {
 	return map ;
 	
 }
+
+function recordChildBirth(medCase, aCtx) { //Случай рождения по СЛС
+	var childBirthId = aCtx.manager.createNativeQuery("select id from ChildBirth where medCase_id in (select id from medcase where id = :mc or parent_id=:mc)").setParameter("mc", medCase).getResultList().get(0) ;
+ 
+ if (childBirthId!=null) {
+	 var childBirth = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.ChildBirth, new java.lang.Long(+childBirthId));
+ //if (childBirths.size()>0) {
+	 map.put("childBirth", childBirth);
+	 recordNewBorns(childBirth,aCtx);
+	 
+//}
+ }
+ return map;
+}
+
+function recordNewBorns(childBirth, aCtx) { //Рождение ребенка по случаю родов
+	var newBorns = aCtx.manager.createQuery("from NewBorn where childBirth=:mc").setParameter("mc", childBirth).getResultList() ;
+	if (newBorns.size()>0) {
+		map.put("newBorns", newBorns);
+		//for (var i=0; i<newBorns.size();i++) {
+			//var newBorn = newBorns.get(i);
+		//}
+	}
+	return map;
+}
+
 
 function printNewBornHistory(aCtx, aParams){
 	var newBornHistory = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.NewBorn
@@ -1300,6 +1331,18 @@ function recordAttendant(medCase,aCtx) {
 }
 
 function recordMedCaseDefaultInfo(medCase,aCtx) {
+	if (medCase.roomNumber!=null) {
+		var txt = medCase.roomNumber.name;
+		if (medCase.roomNumber.parent!=null) {
+			txt += " ("+medCase.roomNumber.parent.name+")";
+		}
+		map.put("sls.roomNumber",txt);
+	} else {
+		map.put("sls.roomNumber","___");
+	}
+	//map.put("sls.daysCount",medCase.getDaysCount()!=null?medCase.getDaysCount():"VFKJ");
+//	var depMC = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase, new java.lang.Long(medCase.id)) ;
+	//throw "DAYS = "+depMC.getDaysCount();
 	map.put("medCase",medCase) ;
 	map.put("sls.lpu", medCase.lpu) ;
 	map.put("lpu.name",medCase.mainLpuInfo) ;
@@ -1384,6 +1427,7 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 		}
 		recordDiagnosis(aCtx,slsId,"5","1","diagnosis.postmortem.main") ;
 		recordDiagnosis(aCtx,slsId,"5","3","diagnosis.postmortem.related") ;
+		recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinical.main");
 		recordDiagnosis(aCtx,slsId,"5","4","diagnosis.postmortem.complication") ;
 		recordDisability(aCtx,slsId,"dis") ;
 		var dc =aCtx.manager.createQuery("from DeathCase where medCase_id="+medCase.id).getResultList() ;
