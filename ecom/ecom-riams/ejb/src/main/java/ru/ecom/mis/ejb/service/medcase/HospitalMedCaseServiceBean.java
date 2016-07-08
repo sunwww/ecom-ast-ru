@@ -1461,6 +1461,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (obj[1]!=null) {
 	    		if (obj[0]!=null) {
 	    			// Отд next1=current (объединять 2 отделения)
+	    			theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    			theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
@@ -1490,7 +1491,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
-	    	    	theManager.createNativeQuery("update transfusion d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[2]+"'").executeUpdate() ;
+	    	    	theManager.createNativeQuery("update transfusion d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='"+obj[1]+"') "
 	    	    			+" ,transferDate=(select transferDate from medcase where id='"+obj[1]+"')"
 	    	    			+" ,transferTime=(select transferTime from medcase where id='"+obj[1]+"')"
