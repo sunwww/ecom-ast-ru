@@ -220,7 +220,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     	}
 		
 		function checkDisableAgeDoubles()		{		
-			ExtDispService.checkDisableAgeDoubles($('dispType').value, $('patient').value, $('ageGroup').value, {
+			ExtDispService.checkDisableAgeDoubles($('id').value,$('dispType').value, $('patient').value, $('ageGroup').value, {
 				callback: function (aResult) {
 					if (aResult=='1'){
 						alert("У пациента уже существует карта с выбранной возрастной группой. Создание карты невозможно!!!");
