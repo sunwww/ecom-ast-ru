@@ -539,10 +539,11 @@ and (pp.isvat is null or pp.isvat='0')
 					+" left join medpolicy mp on mp.patient_id=sls.patient_id"
 					+" left join contractperson cp on cp.regcompany_id=mp.company_id"
 					+" left join contractperson cpp on cpp.patient_id=sls.patient_id"
-					+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id"
-					+" where sls.id="+aIdSmo
+					+" left join medcontract mc on mc.servicestream_id=sls.serviceStream_id and cp.id=mc.customer_id "
+					+" where sls.id="+aIdSmo //+ " and mc.id="+account.getContract().getId()
 					+" group by sls.id,sls.patient_id,mc.id,mc.pricelist_id,sls.datestart,sls.datefinish" 
 					+" ,pat.lastname,pat.firstname,pat.middlename,pat.birthday,sls.serviceStream_id,cpp.id"
+					+" order by cgid, polnumber desc"
 					).getResultList();
 			if (l.size()>0) {
 				
@@ -587,7 +588,7 @@ and (pp.isvat is null or pp.isvat='0')
 			sql.append("      where");
 			sql.append("      (slo.parent_id='").append(aIdSmo).append("' or slo.id='").append(aIdSmo).append("' or so.id='").append(aIdSmo).append("')");
 			sql.append("      and upper(so.dtype)='SERVICEMEDCASE'") ;
-			sql.append("      and (slo.noActuality='0' or slo.noActuality is null)");
+			sql.append("      and (slo.noActuality='0' or slo.noActuality is null) and slo.dateStart is not null");
 			sql.append("      group by so.id,so.datestart,so.datefinish,slo.datestart,ms.id,wf.id,slo.workfunctionexecute_id,so.idc10_id") ;
 			
 			List<Object[]> listMs=theManager.createNativeQuery(sql.toString()).getResultList() ;
@@ -675,6 +676,7 @@ and (pp.isvat is null or pp.isvat='0')
 					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]).append(" and mp.dtype like 'MedPolicyD%'") ;
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[3]) ;
 					sql.append(" group by mc.id,mp.id,mc.patient_id") ;
+					System.out.println("Формирование счета по стациционару. SQL = "+sql);
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
 					if (!isStart) {
 						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size(),listHosp.size()) ;
@@ -704,6 +706,7 @@ and (pp.isvat is null or pp.isvat='0')
 					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
 					sql.append(" group by mc.id,mc.patient_id") ;
+					System.out.println("Формирование счета по поликлиническим обращениям. SQL = "+sql);
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
 					if(!isStart){
 						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлиническим обращениям. Найдено обращений: "+listHosp.size(),listHosp.size()) ;
@@ -731,6 +734,7 @@ and (pp.isvat is null or pp.isvat='0')
 					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
 					sql.append(" group by mc.id,mc.patient_id,mc.datestart") ;
+					System.out.println("Формирование счета по поликлинике визит. SQL = "+sql);
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
 					if (!isStart) {
 						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлинике визит. Найдено визитов: "+listHosp.size(),listHosp.size()) ;
