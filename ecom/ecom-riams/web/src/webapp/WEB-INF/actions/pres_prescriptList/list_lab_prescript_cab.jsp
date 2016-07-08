@@ -207,11 +207,11 @@
    ,mc.id as f11mcid
    ,'js-pres_prescriptList-pres_by_6_month_patient.do?id='||pat.id as f12patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f13sls
-  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j14scanc
+  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null and p.transferdate is not null  then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j14scanc
   ,  case when mc.dateStart is null and p.medcase_id is not null and p.cancelDate is null and p.medcase_id is not null then mc.id||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j15sanaliz
   ,  case when mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null then mc.id||''','''||d.id else null end as j16enter
-  ,d.record as d17record 
-  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then '0'','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j18scanc
+  , case when p.canceldate is not null then list(coalesce(vpcr.name,'') ||' '||coalesce(p.cancelreasontext,'')) else d.record end as d17record 
+  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null and p.transferdate is not null then '0'','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j18scanc
   ,
     case 
     when p.cancelDate is not null then 'background:red' 
@@ -220,6 +220,7 @@
     else ''
     end as f19_colorcomment
     from prescription p
+    left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelreason_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
     left join MedCase mc on mc.id=p.medcase_id
     left join Diary d on d.medcase_id=mc.id

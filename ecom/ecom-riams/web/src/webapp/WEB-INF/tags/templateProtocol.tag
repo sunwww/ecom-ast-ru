@@ -216,7 +216,7 @@ var fldJson = null ;
     	    	
     	TemplateProtocolService.getTemplateDisableEdit($('templateProtocol').value,{
     		callback: function (a) {
-    			if (+a==1) {    	    
+    			if (+a==1) {
     	    		$('record').addEventListener('click', 
     	    	  		  	function() {
     	    					$('record').disabled=true;
@@ -247,6 +247,7 @@ var fldJson = null ;
     }
     
      function showTemplateForm(aTemplateId) {
+    	 the${name}TempProtDialog.hide() ;
     	 the${name}IntakeInfoDialog.hide();
     		the${name}IntakeInfoDialog.show() ;
     	    	 	//alert(aTempId) ; 

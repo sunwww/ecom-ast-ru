@@ -810,6 +810,7 @@ and ( sls.noActuality is null or sls.noActuality='0')
 ,(select count(distinct so.id) from Anesthesia a left join SurgicalOperation so on so.id=a.surgicalOperation_id left join workfunction wf on wf.id=a.anesthesist_id left join worker w on w.id=wf.worker_id where ${periodOperation} and w.lpu_id=ml.id and so.aspect_id='1') as cntAnesOperPlan
 ,(select count(distinct sloR.id) from medcase sloR left join medcase sloD on sloD.id=sloR.prevmedcase_id left join mislpu depR on depR.id=sloR.department_id where depR.isnoomc='1' and sloD.department_id=ml.id and ${periodCurrentSloRean}) as cntReanim
 ,count(distinct case when ${periodCurrentSlo} and vpms.code in ('3','4') and d.id = (select max(id) from diary where medcase_id=slo.id)then slo.id else null end) as cntHeavyPatients
+,count(distinct case when ${periodCurrentSlo} and (vss.code='BUDGET') then slo.id else null end) as cntCurrentBudget
 from medcase slo
 left join diary d on d.medcase_id=slo.id
 left join vocphonemessagestate vpms on vpms.id=d.state_id
@@ -884,6 +885,7 @@ order by ml.name
     	    			out.println("Кол-во состоящих: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent',null)\">") ;out.println(wqr.get3());out.println("</a>") ;
     					out.println(" ОМС: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent&stream=OBLIGATORYINSURANCE',null)\">") ;out.println(wqr.get4());out.println("</a>") ;
     					out.println(" внебюджет: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent&stream=-PRIVATEINSURANCE,OBLIGATORYINSURANCE,OTHER,BUDGET',null)\">") ;out.println(wqr.get5());out.println("</a>") ;
+    					out.println(" бюджет: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent&stream=BUDGET',null)\">") ;out.println(wqr.get22());out.println("</a>") ;
     					out.println(" ДМС: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent&stream=PRIVATEINSURANCE',null)\">") ;out.println(wqr.get6());out.println("</a>") ;
     					out.println(" без полиса: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateCurrent&stream=OTHER',null)\">") ;out.println(wqr.get7());out.println("</a>") ;
     					out.println(". Кол-во поступивших: <a href=\"javascript:void(0)\" onclick=\"getDefinition('stac_everyday_report.do?"+paramHref.toString()+wqr.get1()+"&dateinfo=dateStart',null)\">") ;out.println(wqr.get8());out.println("</a>") ;

@@ -39,7 +39,7 @@
  		}); 
          
      }
-     function save${name}Result(aSmoId,aPrescriptId,aProtocolId) {
+     function save${name}Result(aSmoId,aPrescriptId,aProtocolId, aTemplateId) {
 			var isError = false ;
 			for (var ind=0;ind<fldJson.params.length;ind++) {
 				var val = $('param'+fldJson.params[ind].id).value ;
@@ -95,7 +95,7 @@
 			}
 			var str = JSON.stringify(fldJson);
 			//alert(str) ;
-			if (!isError) PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, {
+			if (!isError) PrescriptionService.saveParameterByProtocol(aSmoId,aPrescriptId,aProtocolId,str, aTemplateId, {
 				callback: function (aResult) {
 					window.document.location.reload();
 				}}) ;
@@ -197,7 +197,7 @@
 				        txt += "</table></form>" ;
 						
 				       $('BioIntakeRootPane').innerHTML =txt 
-				       	+ "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\""+aFunctionSave+"("+(+aSmoId)+","+(+aPrescriptId)+","+(+aProtocolId)+")\">"
+				       	+ "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\""+aFunctionSave+"("+(+aSmoId)+","+(+aPrescriptId)+","+(+aProtocolId)+","+(+aTempId)+")\">"
 				       	+ "<input type=\"button\" value=\"Отмена\" onclick=\"cancelBioIntakeInfo()\">";
 		             	theBioIntakeInfoDialog.show() ;
 		             	//alert(aResult) ;

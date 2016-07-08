@@ -79,7 +79,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			.append(",dispatchDate,dispatchTime,username,messageUrl)") 
 			.append("values ('").append("Аннулирование результатов исследование").append("','")
 			.append("Результаты исследования ''"+obj[2]+"'' пациента ''"+obj[1]+"'' были аннулированы сотрудником ")
-			.append(obj[2]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
+			.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("','")
 			.append(username)
 			.append("',current_date,current_time,'").append(obj[7]).append("','")
 			.append("entityParentView-stac_slo.do?id="+obj[0]).append("')") ;
@@ -864,11 +864,11 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		
 		return ret.toString() ;
 	}
-	public String saveParameterByProtocol(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, HttpServletRequest aRequest) throws NamingException, JSONException {
+	public String saveParameterByProtocol(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JSONException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		
-		return service.saveLabAnalyzed(aSmoId,aPrescriptId,aProtocolId,aParams,username) ;
+		return service.saveLabAnalyzed(aSmoId,aPrescriptId,aProtocolId,aParams,username, aTemplateId) ;
 	}
 	public String checkLabControl(Long aSmoId,Long aProtocol, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

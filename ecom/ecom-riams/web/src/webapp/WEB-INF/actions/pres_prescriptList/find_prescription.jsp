@@ -63,7 +63,7 @@
    ,'entityShortView-mis_patient.do?id='||pat.id as f13patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
    ,ml.name as m15lname
-  ,  case when mc.dateStart is null and p.cancelDate is null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
+  ,  case when mc.dateStart is null and p.cancelDate is null and p.transferDate is not null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
   ,  case when p.medCase_id is null and p.cancelDate is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
    ,case when mc.datestart is not null then p.id end as btnAnnul
