@@ -49,10 +49,11 @@ select
       left join medcase smc on smc.parent_id=vis.id
       left join medservice ms on ms.id=smc.medservice_id
     left join pricemedservice pms on pms.medservice_id=smc.medservice_id
-    left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
+    left join priceposition pp on pp.id=pms.priceposition_id 
       where vis.parent_id='${param.id}'
        and upper(vis.dtype) in ('VISIT','SHORTMEDCASE') and upper(smc.dtype)='SERVICEMEDCASE'
-        and (vis.noActuality='0' or vis.noActuality is null) 
+        and (vis.noActuality='0' or vis.noActuality is null) and vis.dateStart is not null
+        and pp.priceList_id='${priceList}'
        
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
@@ -81,9 +82,9 @@ select
       left join vocservicestream vss on vss.id=so.servicestream_id
       left join medservice ms on ms.id=so.medservice_id
     left join pricemedservice pms on pms.medservice_id=so.medservice_id
-    left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
+    left join priceposition pp on pp.id=pms.priceposition_id 
       where
-      (slo.parent_id='${param.id}' or slo.id='${param.id}')
+      (slo.parent_id='${param.id}' or slo.id='${param.id}') and pp.priceList_id='${priceList}'
       and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' and upper(slo.dtype)!='SHORTMEDCASE' 
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">

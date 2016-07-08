@@ -49,10 +49,10 @@ select
       left join medcase smc on smc.parent_id=vis.id
       left join medservice ms on ms.id=smc.medservice_id
     left join pricemedservice pms on pms.medservice_id=smc.medservice_id
-    left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
+    left join priceposition pp on pp.id=pms.priceposition_id 
       where vis.id='${param.id}'
        and upper(vis.dtype) in ('VISIT','SHORTMEDCASE') and upper(smc.dtype)='SERVICEMEDCASE'
-        and (vis.noActuality='0' or vis.noActuality is null) 
+        and (vis.noActuality='0' or vis.noActuality is null) and pp.priceList_id='${priceList}'
        
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено">
