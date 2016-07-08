@@ -58,6 +58,9 @@
       <msh:row>
         <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ" />
        </msh:row>
+       <msh:row> 
+        <msh:textField  property="packetType" label="Тип пакета (для плана ДД)" />
+       </msh:row>
       <msh:row>
         <td class="label" title="Возраст  (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возраст:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -189,9 +192,13 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeRead" value="1">  xml-файл
         </td>
+       
 	    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
 	    	<input type="radio" name="typeRead" value="2">  на экране (первые 250 записей)
 	    </td>
+	     <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeRead" value="3">  xml-файл (план ДД)
+        </td>
        </msh:row>
   
        <msh:row>

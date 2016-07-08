@@ -20,6 +20,12 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	@Required
 	public String getNumberPackage() {return theNumberPackage;}
 	public void setNumberPackage(String aNumberPackage) {theNumberPackage = aNumberPackage;}
+	
+	/** Тип пакета для плана ДД */
+	@Comment("Тип пакета для плана ДД")
+	public String getPacketType() {return thePacketType;}
+	public void setPacketType(String aPacketType) {thePacketType = aPacketType;}
+	private String thePacketType;
 
 	/** Период */
 	@Comment("Период")

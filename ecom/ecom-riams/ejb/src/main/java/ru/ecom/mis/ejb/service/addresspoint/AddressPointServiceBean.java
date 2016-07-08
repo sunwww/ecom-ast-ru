@@ -56,6 +56,94 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     StringBuilder def = new StringBuilder();
     WebQueryResult result = new WebQueryResult();
+    
+    public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
+    		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
+    		, String aDateFrom, String aDateTo, String aPeriodByReestr
+    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide, String aPacketType) throws ParserConfigurationException, TransformerException {
+    	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
+    	StringBuilder filenames = new StringBuilder() ;
+    	errList.clear();
+    	if (aAge!=null) {
+    		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
+    	}
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String filename=null;
+    	StringBuilder sql = new StringBuilder() ;
+    	List<Object[]> listPat = null;
+    	String[][] props  = new String[][] {
+    				{"to_char(p.birthday,'MM')","PERIOD","p.birthday",null,"Месяц планируемого проведения ДД"},				{"case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int) - cast(to_char(p.birthday,'yyyy') as int))%3 = 0 then 'DP' else 'DO' end","TIP_DATA","p.firstname","1","Тип осмотра"}
+        			,		{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
+        	    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
+        	    	,		{"vs.omccode","W","vs.omccode","Пол"}
+        	    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
+        	    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode",null,"Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries",null,"Серия документа"}
+        	    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber",null,"Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDATE" ,"p.passportdateissued",null,"Дата выдачи документа"}
+        	    	,				{"p.commonNumber","ENP" ,"p.commonNumber",null,"ЕПН"}
+        	    	
+        	    	, {"vmpo.code","VPOLIS","vmpo.code",null,"Вид полиса"}
+        	    	, {"mp.series","SPOLIS","mp.series",null,"Серия полиса"}
+        	    	, {"mp.polnumber","NPOLIS","mp.polnumber",null,"Номер полиса"}
+        	    	, {"cast('' as varchar(1))","SMO","",null,"Реестровый номер СМО"}
+        	    	, {"cast('' as varchar(1))","IDDOKT","",null,"СНИЛС участкового врача"}
+        	    	, {"cast('' as varchar(1))","CODE_MO","",null,"Номер МО"}
+        	    	
+        	    	
+        	    } ;
+    	
+    	
+    	StringBuilder fld = new StringBuilder() ;
+    	StringBuilder fldGroup = new StringBuilder() ;
+    	for (int ind =0;ind<props.length;ind++) {
+    		String[] p=props[ind];
+    		if (ind!=0&&!p[0].equals("")) {
+    			fld.append(",") ;
+    			if (!p[2].equals("")){
+    				fldGroup.append(",");
+    			}
+    		}
+    		if (!p[0].equals("")) {
+    			fld.append(" ").append(p[0]).append(" as ").append(" fld").append(ind).append("_") ;
+    			fldGroup.append(" ").append(p[2]) ;
+    		}    		
+    		
+    	}    	 
+    		filename = "ND"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr.substring(2,4)+aPeriodByReestr.substring(5,7)+XmlUtil.namePackage(aNPackage) ;
+    		filenames.append("#").append(filename+".xml") ;
+    		sql.setLength(0);
+    		sql.append("select ").append(fld);
+    		sql.append(" ,p.id as pid, lp.id as lpid");
+            sql.append(" from LpuAttachedByDepartment lp") ;
+            sql.append(" left join patient p on lp.patient_id=p.id") ;
+            sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
+            sql.append(" left join VocSex vs on vs.id=p.sex_id") ;
+            sql.append(" left join medpolicy mp on mp.patient_id=p.id and mp.dtype='MedPolicyOmc'");
+        	sql.append(" left join vocmedpolicyomc vmpo on vmpo.id=mp.type_id");
+        
+        	sql.append(" where ") ;
+        	sql.append(" cast(to_char(p.birthday,'MM') as int) between cast(to_char(to_date('"+aDateFrom+"','dd.MM.yyyy'),'MM') as int) and cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'MM') as int) and ");
+        	sql.append(" 0 = (select count(edc.id) from extdispcard edc where edc.patient_id=p.id and cast(to_char(edc.finishdate,'yyyy') as int) = cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int)) and");
+        	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' ) and ") ;
+        	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
+        	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
+        	sql.append(" and mp.actualdateto is null");
+        	sql.append(" ").append(addSql).append(" and lp.dateto is null") ;
+        	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
+        	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+        	System.out.println("-------------------EXPORT DISP_PLAN = "+sql.toString());
+        	listPat = theManager.createNativeQuery(sql.toString())
+        			.setMaxResults(90000).getResultList() ;
+        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props, "NPR");
+    	
+    	
+    	res.set1(filenames.length()>0?filenames.substring(1):"");
+    	return res;
+    	//     	return (filenames.length()>0?filenames.substring(1):"")+(def.length()>0?"@"+def.toString():"");
+    }
+    
+    
     //Создаем lpuAttachedByDepartment у пациентов, у которых нет спец. прикреплений
     //Передаем YES - еще и обновляем поле "Страх. компания"
     public String createAttachmentFromPatient(String needUpdateIns) {
@@ -478,7 +566,11 @@ public class AddressPointServiceBean implements IAddressPointService {
     	theManager.createNativeQuery("update lpuattachedbydepartment set exportDate=to_date('"+aDate+"','dd.MM.yyyy') , defectperiod='' where id="+aAttachmentId).executeUpdate();
     }
     public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr
-    		, List<Object[]> listPat, String[][] aProps
+    		, List<Object[]> listPat, String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+    	createXml(workDir, filename, aPeriodByReestr, aNReestr, listPat, aProps, "ZAP");
+    }
+    public void createXml (String workDir, String filename, String aPeriodByReestr,String aNReestr
+    		, List<Object[]> listPat, String[][] aProps, String aZAPName
     		) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
     	
@@ -486,8 +578,14 @@ public class AddressPointServiceBean implements IAddressPointService {
     	File outFile = new File(workDir+"/"+filename+".xml") ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
  
-    	xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
-    	xmlDoc.newElement(title, "N_REESTR", aNReestr);
+    	if (aZAPName!=null&&aZAPName.equals("NPR")) { //Для планирования ДД
+    		xmlDoc.newElement(title, "VERSION", "1.0");
+    		xmlDoc.newElement(title, "DATE", aPeriodByReestr);
+    	} else {
+    		xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
+    		xmlDoc.newElement(title, "N_REESTR", aNReestr);
+    	}
+    	
     	xmlDoc.newElement(title, "FILENAME", filename);
     	int i=0 ;
     	for (Object[] pat:listPat) {
@@ -507,7 +605,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		}
     		//System.out.println("Пациент - "+pat[0]+" "+pat[1]+" "+pat[2]+": ErrorZAP="+errorZap);
     		if (errorZap==0) {
-    			Element zap = xmlDoc.newElement(root, "ZAP", null);
+    			Element zap = xmlDoc.newElement(root, aZAPName, null);
         		xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i)) ;
 	    		for(int ind=0;ind<aProps.length; ind++) {
 	    			String[] prop = aProps[ind] ; 

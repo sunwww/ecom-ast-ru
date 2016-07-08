@@ -59,6 +59,7 @@ public class AttachmentByLpuAction extends BaseAction {
         	Date curTo = DateFormat.parseDate(form.getPeriodTo()) ;
         	calTo.setTime(curTo) ;
         	SimpleDateFormat format1 = new SimpleDateFormat("yyMM") ;
+        	SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd") ;
 	    	SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy") ;
 	    	String filename = null;
 	    	String age = null ;
@@ -83,15 +84,17 @@ public class AttachmentByLpuAction extends BaseAction {
 	        } else if (typeAttachment!=null&&typeAttachment.equals("2")) {
 	        	sqlAdd.append(" and vat.code='2'") ;
 	        }
-	        if (typeChange!=null&&typeChange.equals("1")) {
-	        	sqlAdd.append(" and (lp.dateFrom between to_date('")
-	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy') or lp.dateTo between to_date('")
-	        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
-	        } else if (typeChange!=null&&typeChange.equals("2")) {
-	        	sqlAdd.append(" and (lp.dateFrom<=to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy')" +
-	        	" or (lp.dateTo is not null and lp.dateTo<=to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy')))");
-	        	//sqlAdd.append(" and (lp.dateTo is null or lp.dateTo <= to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
-	        }
+	        if (typeRead==null||!typeRead.equals("3")) { 
+		        if (typeChange!=null&&typeChange.equals("1")) {
+		        	sqlAdd.append(" and (lp.dateFrom between to_date('")
+		        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy') or lp.dateTo between to_date('")
+		        	.append(form.getPeriod()).append("','dd.mm.yyyy') and to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
+		        } else if (typeChange!=null&&typeChange.equals("2")) {
+		        	sqlAdd.append(" and (lp.dateFrom<=to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy')" +
+		        	" or (lp.dateTo is not null and lp.dateTo<=to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy')))");
+		        	//sqlAdd.append(" and (lp.dateTo is null or lp.dateTo <= to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'))") ;
+		        }
+    		}
     		if (form.getChangedDateFrom()!=null&&!form.getChangedDateFrom().equals("")) {
  	        	sqlAdd.append(" and (coalesce(lp.editDate,lp.createDate) >= to_date('").append(form.getChangedDateFrom()).append("','dd.mm.yyyy')  )") ;
  	        	
@@ -115,17 +118,23 @@ public class AttachmentByLpuAction extends BaseAction {
     			sqlAdd.append(" and lp.company_id is null ");
     		}
     		
-    		if (typeRead!=null&&typeRead.equals("1")) {
+    		if (typeRead!=null&&(typeRead.equals("1")||typeRead.equals("3"))) {
 //    			String fs = null;
     			WebQueryResult fs = new WebQueryResult();
     			boolean bNeedDivide = true;
     			if (typeDivide!=null&&typeDivide.equals("2")) {
     				bNeedDivide = false;
     			}
-    			if (typeWork.equals("1")) { 
+    			if (typeWork.equals("1")) {
+    				if (typeRead.equals("1")){
     				fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, "1");
+    				} else {
+    					fs = service.exportExtDispPlanAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    			        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format3.format(calTo.getTime()), form.getNumberReestr()
+    			        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, ""+form.getPacketType());
+    				}
     			} else {
     				StringBuilder sqlAdd1= new StringBuilder() ;
     				
@@ -140,6 +149,7 @@ public class AttachmentByLpuAction extends BaseAction {
     				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),checkLpu
     		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
     		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
+    				
     			}
 		    	
 		        if (fs!=null) {
