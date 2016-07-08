@@ -491,7 +491,6 @@
       	<msh:section>
       		<msh:sectionTitle> 
 	      		Роды <a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
-	      		<a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденному</a>
       		</msh:sectionTitle>
       		<msh:sectionContent>
 		      	<msh:table name="childBirth" action="entityParentView-preg_childBirth.do" idField="1">
