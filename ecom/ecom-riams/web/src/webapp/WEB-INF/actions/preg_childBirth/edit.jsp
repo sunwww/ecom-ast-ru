@@ -4,6 +4,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="style" type="string">
@@ -32,6 +33,10 @@
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="3f5cf55a-2ae6-4367-b9b9-1ce75e0938c4">
         <msh:sideLink params="id" action="/entityParentPrepareCreate-preg_newBorn" name="Данные о новорожденном" title="Показать данные о новорожденном" roles="/Policy/Mis/NewBorn/View" guid="49eb7931-f37b-46fd-8102-ac1b8af96472" />
+      </msh:sideMenu>
+      <msh:sideMenu title="Печать" guid="3f5cf55a-2ae6-4367-b9b9-1ce75e0938c4">
+         <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.medcase}"
+     	action="/javascript:printPregHistory()" name="Истории родов" title="Печать истории родов"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
@@ -204,12 +209,18 @@
     <msh:ifFormTypeIsView formName="preg_childBirthForm" guid="07462ced-904f-4485-895c-0107f05b5d8d">
    
       <msh:ifInRole roles="/Policy/Mis/NewBorn/View" guid="187f5083-94a7-42fd-a428-7f9d4720bfd1">
-        <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" guid="35b71f42-e1fc-40f2-93e5-0908ea385878" />
+        <%-- <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" guid="35b71f42-e1fc-40f2-93e5-0908ea385878" /> --%>
+        <ecom:webQuery name = "newBorns" nameFldSql="newBorns_sql" nativeSql="select nb.id, nb.birthDate, nb.birthTime, vs.name, pat.firstname
+         from newBorn nb left join patient pat on pat.id=nb.patient_id
+         left join vocSex vs on vs.id=pat.sex_id
+         where nb.childBirth_id='${param.id}'" />
         <msh:tableNotEmpty name="newBorns" guid="bd28e321-5e07-4e52-95dc-9851c96a0007">
           <msh:section title="Данные о новорожденных" guid="7aee16b5-d063-4868-8891-313de24ca013">
-            <msh:table name="newBorns" action="entityParentView-preg_newBorn.do" idField="id" guid="e5ff27a4-e8ae-44ef-a20f-7a6f71f42f3a">
-              <msh:tableColumn columnName="Дата рождения" property="birthDate" guid="724d2c83-221e-4a44-9144-5346fa8fefd2" />
-              <msh:tableColumn columnName="Время рождения" property="birthTime" guid="17991748-77de-4b16-8c94-740bbfa10e7a" />
+            <msh:table name="newBorns" action="entityParentView-preg_newBorn.do" idField="1" guid="e5ff27a4-e8ae-44ef-a20f-7a6f71f42f3a">
+              <msh:tableColumn columnName="Дата рождения" property="2" guid="724d2c83-221e-4a44-9144-5346fa8fefd2" />
+              <msh:tableColumn columnName="Время рождения" property="3" guid="17991748-77de-4b16-8c94-740bbfa10e7a" />
+              <msh:tableColumn columnName="Пол" property="4" guid="17991748-77de-4b16-8c94-740bbfa10e7a" />
+              <msh:tableColumn columnName="Имя" property="5" guid="17991748-77de-4b16-8c94-740bbfa10e7a" />
             </msh:table>
           </msh:section>
         </msh:tableNotEmpty>
@@ -220,6 +231,11 @@
     <ecom:titleTrail mainMenu="Patient" beginForm="preg_childBirthForm" guid="d16befe8-59da-47d9-9c54-ee0d13e97be2" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+  <script type="text/javascript">
+  function printPregHistory() {
+	  document.location='print-preghistory.do?s=HospitalPrintService&m=printPregHistoryByMC&id='+$('medCase').value;
+  }
+  </script>
   <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
   <script type="text/javascript">
   	var isSaveNewBorns ;
