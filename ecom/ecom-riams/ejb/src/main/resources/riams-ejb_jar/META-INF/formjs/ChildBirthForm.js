@@ -1,3 +1,7 @@
+function onView (aForm, aEntity, aCtx) {
+	var list = aCtx.manager.createNativeQuery ("select id from newBorn where childBirth_id="+aEntity.id).getResultList();
+	aForm.setNewBornAmount(list.size());
+}
 /**
  * Перед сохранением
  */
