@@ -109,7 +109,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 		return null ;
 	}
-	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername) throws JSONException {
+	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) throws JSONException {
 		Protocol d =null;
 		//if (aProtocolId!=null )) {
 		JSONObject obj = new JSONObject(aParams) ;
@@ -148,6 +148,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		if (d == null) {
 			d = new RoughDraft() ;
 			d.setMedCase(m) ;
+			d.setTemplateProtocol(aTemplateId);
 			theManager.persist(d) ;
 		}
 		Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
@@ -159,7 +160,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		sb.append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
 		sb.append(" ").append(DateFormat.formatToTime(pres.getIntakeTime())).append("\n") ;
 		//sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
-		sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
+		//sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
 		for (int i = 0; i < params.length(); i++) {
 			//boolean isSave = true ;
 			JSONObject param = (JSONObject) params.get(i);
