@@ -17,7 +17,7 @@ import ru.ecom.web.util.Injection;
 public class ExtDispServiceJs {
 	
 	
-	public String checkDisableAgeDoubles (Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest)throws NamingException 
+	public String checkDisableAgeDoubles (Long aDispCardId, Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest)throws NamingException 
 	{
 		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		 Long haveDis = Long.valueOf(service.executeNativeSql("select count(edc.id) " +
@@ -26,6 +26,7 @@ public class ExtDispServiceJs {
 		 		" where edc.patient_id=" +aPatientId +
 		 		" and edc.disptype_id="+aDisptypeId +
 		 		" and edc.agegroup_id="+aAgeGroup +
+		 		(aDispCardId!=null&&aDispCardId!=0?(" and edc.id!="+aDispCardId):"")+
 		 		" and vedc.disableAgeDoubles='1' ").iterator().next().get1().toString());
 		 
 		 if(haveDis!=null&&haveDis>0)
