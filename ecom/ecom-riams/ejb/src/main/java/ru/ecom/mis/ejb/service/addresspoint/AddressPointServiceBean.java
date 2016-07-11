@@ -580,7 +580,7 @@ public class AddressPointServiceBean implements IAddressPointService {
  
     	if (aZAPName!=null&&aZAPName.equals("NPR")) { //Для планирования ДД
     		xmlDoc.newElement(title, "VERSION", "1.0");
-    		xmlDoc.newElement(title, "DATE", aPeriodByReestr);
+    		xmlDoc.newElement(title, "DATA", aPeriodByReestr);
     	} else {
     		xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2,4));
     		xmlDoc.newElement(title, "N_REESTR", aNReestr);
