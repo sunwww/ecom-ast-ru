@@ -161,9 +161,11 @@ when ved.code='CHILD_PRE_SCHOOL_1' then 'ПРЕДВАРИТ'
  when ved.code='ORPH_DISP_1' then 'СИРОТЫ' 
   else ved.name end as vedname
   ,list(veds.code||' '||veds.name||' - '||to_char(eds.serviceDate,'dd.mm.yyyy')) as service
+  ,wp.lastname
 from ExtDispCard edc
 left join WorkFunction wf on wf.id=edc.workFunction_id
 left join Worker w on w.id=wf.worker_id
+left join patient wp on wp.id=w.person_id
 left join MisLpu lpu on lpu.id=w.lpu_id
 left join Patient p on p.id=edc.patient_id
 ${medcardAddJoin}
@@ -182,7 +184,7 @@ group by edc.id,p.lastname,p.firstname,
 p.middlename,p.birthday,edc.startDate ,edc.finishDate 
 ,vedag.name,vedhg.name,vedsg.name
 , edc.isObservation ,edc.isTreatment ,edc.isDiagnostics ,edc.isSpecializedCare,edc.isSanatorium 
-,mkb.code,edc.isServiceIndication,ved.name,ved.code
+,mkb.code,edc.isServiceIndication,ved.name,ved.code, wp.lastname
 order by p.lastname,p.firstname,p.middlename
 			"/>
 <msh:sectionTitle>
@@ -201,17 +203,18 @@ order by p.lastname,p.firstname,p.middlename
 				<msh:table name="reestrExtDispCard" 
 				action="entityView-extDisp_card.do" viewUrl="entityView-extDisp_card.do?short=Short"
 				idField="1">
-				<msh:tableColumn columnName="Вид диспансеризации" property="15" />
+				<msh:tableColumn columnName="Вид диспансеризации" property="16" />
 					<msh:tableColumn columnName="ФИО пациента" property="2" />
 					<msh:tableColumn columnName="Дата начала" property="3" />
 					<msh:tableColumn columnName="Дата окончания" property="4" />
+					<msh:tableColumn columnName="Врач" property="18" />
 					<msh:tableColumn columnName="Код МКБ" property="5" />
 					<msh:tableColumn columnName="Возрастная категория" property="6" />
 					<msh:tableColumn columnName="Социальная группа" property="7" />
 					<msh:tableColumn columnName="Группа здоровья" property="8" />
 					<msh:tableColumn columnName="Факторы риска" property="9" />
 					<msh:tableColumn columnName="Установлено дисп.наблюдение" property="10" />
-					<msh:tableColumn columnName="Услуги" property="16" />
+					<msh:tableColumn columnName="Услуги" property="17" />
 				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
