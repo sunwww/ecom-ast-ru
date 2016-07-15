@@ -1,4 +1,15 @@
 function onPreCreate(aForm, aCtx) {
+	
+	//Проверка на создание талона позже даты смерти пациента 
+	var pat = aCtx.manager.createQuery(" from Patient where id = :pat").setParameter("pat", aForm.getPatient()).getResultList().get(0);
+	if (pat.getDeathDate()!=null) {
+		var dateStart = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());	
+		var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
+		if (dateStart.getTime() > deathDate.getTime()) {
+			throw "Невозможно создать посещение. На дату приема пациент уже умер ("
+				+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate)+")";
+		} 
+	}
 	var param = new java.util.HashMap() ;
 				param.put("obj","ShortMedCase") ;
 				param.put("permission" ,"dateClosePeriod") ;

@@ -6,7 +6,16 @@ function onPreCreate(aForm, aCtx) {
 	if (isHoliday==true && (aForm.emergency==null||aForm.emergency==false)) {
 		throw "У вас стоит запрет на создание талонов на воскресенье!";
 	}
-	
+	//Проверка на создание талона позже даты смерти пациента 
+	var pat = aCtx.manager.createQuery(" from Patient where id = :pat").setParameter("pat", aForm.getPatient()).getResultList().get(0);
+	if (pat.getDeathDate()!=null) {
+		var dateVisit = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateFinish());
+		var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(),"yyyy-MM-dd");
+		if (dateVisit.getTime() > deathDate.getTime()) {
+			throw "Невозможно создать направление. На дату направления пациент уже умер ("
+				+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate)+")";
+		} 
+	}
 	var param = new java.util.HashMap() ;
 				param.put("obj","Ticket") ;
 				param.put("permission" ,"dateClosePeriod") ;
