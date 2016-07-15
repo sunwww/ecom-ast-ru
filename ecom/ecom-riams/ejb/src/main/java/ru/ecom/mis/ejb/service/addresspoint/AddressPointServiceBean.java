@@ -74,21 +74,23 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder sql = new StringBuilder() ;
     	List<Object[]> listPat = null;
     	String[][] props  = new String[][] {
-    				{"to_char(p.birthday,'MM')","PERIOD","p.birthday",null,"Месяц планируемого проведения ДД"},				{"case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int) - cast(to_char(p.birthday,'yyyy') as int))%3 = 0 then 'DP' else 'DO' end","TIP_DATA","p.firstname","1","Тип осмотра"}
+    				{"to_char(p.birthday,'MM')","PERIOD","p.birthday","1","Месяц планируемого проведения ДД"}
+    		//	,{"case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int) - cast(to_char(p.birthday,'yyyy') as int))%3 = 0 then 'DP' else 'DO' end","TIP_DATA","p.firstname","1","Тип осмотра"}
+    			,{" cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'), 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end)","TIP_DATA","","1","Возраст (полных лет)"}
         			,		{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}
         	    	,		{"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end","OT" ,"p.middlename",null,"Отчество"} 
         	    	,		{"vs.omccode","W","vs.omccode","Пол"}
         	    	,		{"to_char(p.birthday,'yyyy-mm-dd')","DR" ,"p.birthday","1","Дата рождение"} ,		{"p.snils","SNILS" ,"p.snils",null,"СНИЛС"}
         	    	,		{"vic.omcCode","DOCTYPE" ,"vic.omcCode",null,"Тип документа"} ,		{"p.passportSeries","DOCSER" ,"p.passportSeries",null,"Серия документа"}
-        	    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber",null,"Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDATE" ,"p.passportdateissued",null,"Дата выдачи документа"}
+        	    	,		{"p.passportNumber","DOCNUM" ,"p.passportNumber",null,"Номер паспорта"} ,		{"to_char(p.passportdateissued,'yyyy-mm-dd')","DOCDATE" ,"p.passportdateissued","1","Дата выдачи документа"}
         	    	,				{"p.commonNumber","ENP" ,"p.commonNumber",null,"ЕПН"}
         	    	
-        	    	, {"vmpo.code","VPOLIS","vmpo.code",null,"Вид полиса"}
+        	    	, {"vmpo.code","VPOLIS","vmpo.code","1","Вид полиса"}
         	    	, {"mp.series","SPOLIS","mp.series",null,"Серия полиса"}
-        	    	, {"mp.polnumber","NPOLIS","mp.polnumber",null,"Номер полиса"}
-        	    	, {"cast('' as varchar(1))","SMO","",null,"Реестровый номер СМО"}
-        	    	, {"cast('' as varchar(1))","IDDOKT","",null,"СНИЛС участкового врача"}
-        	    	, {"cast('' as varchar(1))","CODE_MO","",null,"Номер МО"}
+        	    	, {"mp.polnumber","NPOLIS","mp.polnumber","1","Номер полиса"}
+        	  //  	, {"cast('' as varchar(1))","SMO","",null,"Реестровый номер СМО"}
+        	   // 	, {"cast('' as varchar(1))","IDDOKT","",null,"СНИЛС участкового врача"}
+        	   // 	, {"cast('' as varchar(1))","CODE_MO","",null,"Номер МО"}
         	    	
         	    	
         	    } ;
@@ -110,7 +112,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		}    		
     		
     	}    	 
-    		filename = "ND"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr.substring(2,4)+aPeriodByReestr.substring(5,7)+XmlUtil.namePackage(aNPackage) ;
+    		filename = "ND"+aFilenameAddSuffix+aNReestr+"T30_"+aPeriodByReestr.substring(2,4)+aPeriodByReestr.substring(5,7)+XmlUtil.namePackage(aNPackage) ;
     		filenames.append("#").append(filename+".xml") ;
     		sql.setLength(0);
     		sql.append("select ").append(fld);
@@ -128,13 +130,33 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' ) and ") ;
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
-        	sql.append(" and mp.actualdateto is null");
+        	sql.append(" and mp.id is not null and mp.actualdateto is null");
         	sql.append(" ").append(addSql).append(" and lp.dateto is null") ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
         	System.out.println("-------------------EXPORT DISP_PLAN = "+sql.toString());
         	listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
+        	for (int i=0;i<listPat.size();i++) {
+        		Object[] o = listPat.get(i);
+        		int age = Double.valueOf( o[1].toString()).intValue();
+        		
+        		String dispType = "";
+        		/**
+        		 *  Если старше 18 лет, и возраст делится на 3 без остатка, до ДД (DP), иначе - профосмотр (DO >=18), (DF <18).
+        		 *  
+        		 */
+        		if (age>17) {
+        			dispType = "DO"; 
+        			if (age%3==0 && age>18) {        			
+        				dispType ="DP";
+        			}
+        		} else {
+        			dispType = "DF";
+        		}
+        		o[1] = dispType;
+        		listPat.set(i, o);
+        	}
         	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props, "NPR");
     	
     	
@@ -596,7 +618,12 @@ public class AddressPointServiceBean implements IAddressPointService {
     				WebQueryResult ress = new WebQueryResult();
     				ress.set1(pat[pat.length-2]);
     				ress.set2(pat[pat.length-1]);
-    				ress.set3("Пациент - "+pat[0]+" "+pat[1]+" "+pat[2]+". Неверно заполнено поле \""+prop[4]+"\" - "+pat[j]);
+    				
+    				if (aZAPName!=null&&aZAPName.equals("NPR")) {
+    					ress.set3("Пациент - "+pat[2]+" "+pat[3]+" "+pat[4]+" г.р."+pat[6]+". Неверно заполнено поле \""+prop[4]+"\" - "+pat[j]);
+    	    		} else {
+    	    			ress.set3("Пациент - "+pat[0]+" "+pat[1]+" "+pat[2]+". Неверно заполнено поле \""+prop[4]+"\" - "+pat[j]);
+    	    		}
     				errList.add(ress);
     				//def.append(pat[pat.length-2]).append(":").append(pat[pat.length-1]).append(":").append("Пациент \"")
     				//.append("\". Неверно заполнено поле ").append(prop[4]).append(" - ").append(pat[ind]).append("#");
@@ -611,8 +638,12 @@ public class AddressPointServiceBean implements IAddressPointService {
 	    			String[] prop = aProps[ind] ; 
 					xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind])) ;
 	    		}
+	    		if (aZAPName!=null&&aZAPName.equals("NPR")) {
+	    		
+	    		} else {
 	    		xmlDoc.newElement(zap, "REFREASON", "");
 	    		setExportDate(null, pat[pat.length-1].toString());
+	    		}
 	    	}
     		
     		

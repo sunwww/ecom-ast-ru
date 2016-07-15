@@ -1,5 +1,7 @@
 var map = new java.util.HashMap() ;	
 function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
+	
+	
 	var sql ="";
 	sql=sql+"	﻿update ContractAccountOperationByService caos222";
 	sql=sql+"	set medcase_id=";
