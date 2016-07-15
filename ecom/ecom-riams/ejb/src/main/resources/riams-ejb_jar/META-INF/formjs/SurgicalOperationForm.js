@@ -44,14 +44,14 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	checkPeriod(aForm,aCtx.manager) ;
+	checkPeriod(aForm,aCtx) ;
 }
 function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date();
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	//aForm.setEditTime(new java.sql.Time (date.getTime())) ;
 	aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	checkPeriod(aForm,aCtx.manager) ;
+	checkPeriod(aForm,aCtx) ;
 	if (+aForm.isAnesthesia>0) {
 		var ch = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocYesNo,aForm.isAnesthesia) ;
 		if (ch!=null && ch.code.equals("1")) {
@@ -65,7 +65,13 @@ function onPreCreate(aForm, aCtx) {
 }
 
 
-function checkPeriod(aForm,aManager) {
+function checkPeriod(aForm,aCtx) {
+	aManager = aCtx.manager ;
+	var isCreateAnyTime = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateAnyTime") ;
+	if (!isCreateAnyTime) {
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
+	        , aForm.getOperationDate(), aForm.getOperationTime());
+	}
 	var operDate = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.operationDate) ;
 	var medCase = aManager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
 			,aForm.medCase) ;
