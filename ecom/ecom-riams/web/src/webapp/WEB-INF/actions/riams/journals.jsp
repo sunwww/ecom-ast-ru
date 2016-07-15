@@ -86,6 +86,9 @@
 	                   		Отчет по направлениям на лаб. исследования (по отделениям)</msh:link>
 	                   </li>
 	                   <li>
+	                   <msh:link isReport="true" action="/pres_journal" roles="/Policy/Mis/Journal/Prescription/LabSurvey/JournalPrescript">Журнал лабораторных назначений</msh:link>
+	                   </li>
+	                   <li>
 	                   		<msh:link isReport="true" action="journal_kidney.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 	                   		Отчет по ХБП</msh:link>
 	                   </li>

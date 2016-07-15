@@ -487,15 +487,19 @@
       	</msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/View">
-      	<ecom:webQuery name="childBirth" nativeSql="select id,birthFinishDate from ChildBirth where medCase_id='${param.id}'"/>
+      	<ecom:webQuery name="childBirth" nativeSql="select cb.id,cb.birthFinishDate, count(nb.id), list(pat.firstname||' ' ||pat.middlename) from ChildBirth cb 
+      	left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id where cb.medCase_id='${param.id}' group by cb.id,cb.birthFinishDate"/>
       	<msh:section>
       		<msh:sectionTitle> 
 	      		Роды <a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
+	      		<a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденному</a>
       		</msh:sectionTitle>
       		<msh:sectionContent>
 		      	<msh:table name="childBirth" action="entityParentView-preg_childBirth.do" idField="1">
 		      		<msh:tableColumn property="sn" columnName="##"/>
 		      		<msh:tableColumn property="2" columnName="Дата окончания родов" />
+		      		<msh:tableColumn property="3" columnName="Кол-во плодов" />
+		      		<msh:tableColumn property="4" columnName="ФИО ребенка (детей)" />
 		      	</msh:table>
       		</msh:sectionContent>
       	</msh:section>

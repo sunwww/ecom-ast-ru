@@ -31,9 +31,6 @@
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-preg_childBirth" name="Изменить" roles="/Policy/Mis/Pregnancy/ChildBirth/Edit" guid="a8d1a1fa-aa31-408a-b1f6-6b9ba1ff18e8" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-preg_childBirth" name="Удалить" roles="/Policy/Mis/Pregnancy/ChildBirth/Delete" guid="91460b8b-80a7-46b3-bc95-a53cd320f687" />
       </msh:sideMenu>
-      <msh:sideMenu title="Добавить" guid="3f5cf55a-2ae6-4367-b9b9-1ce75e0938c4">
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-preg_newBorn" name="Данные о новорожденном" title="Показать данные о новорожденном" roles="/Policy/Mis/NewBorn/View" guid="49eb7931-f37b-46fd-8102-ac1b8af96472" />
-      </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="3f5cf55a-2ae6-4367-b9b9-1ce75e0938c4">
          <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.medcase}"
      	action="/javascript:printPregHistory()" name="Истории родов" title="Печать истории родов"/>
@@ -210,9 +207,9 @@
    
       <msh:ifInRole roles="/Policy/Mis/NewBorn/View" guid="187f5083-94a7-42fd-a428-7f9d4720bfd1">
         <%-- <ecom:parentEntityListAll attribute="newBorns" formName="preg_newBornForm" guid="35b71f42-e1fc-40f2-93e5-0908ea385878" /> --%>
-        <ecom:webQuery name = "newBorns" nameFldSql="newBorns_sql" nativeSql="select nb.id, nb.birthDate, nb.birthTime, vs.name, pat.firstname
+        <ecom:webQuery name = "newBorns" nameFldSql="newBorns_sql" nativeSql="select nb.id as id, nb.birthDate as bDate, nb.birthTime as bTime, vs.name as sexName, pat.firstname as patName
          from newBorn nb left join patient pat on pat.id=nb.patient_id
-         left join vocSex vs on vs.id=pat.sex_id
+         left join vocSex vs on vs.id=nb.sex_id
          where nb.childBirth_id='${param.id}'" />
         <msh:tableNotEmpty name="newBorns" guid="bd28e321-5e07-4e52-95dc-9851c96a0007">
           <msh:section title="Данные о новорожденных" guid="7aee16b5-d063-4868-8891-313de24ca013">
@@ -357,6 +354,7 @@
 	  		}
 	  		changeBorn(+$('newBornAmount').value) ;
 	 		if ($('newBornsInfo').value!='') {
+	 			alert ("Info = "+$('newBornsInfo').value);
 	               var addRowF="";
 	               var ind_f=0 ;
 	         		for (var i=0;i<theFld.length;i++) {
@@ -365,7 +363,7 @@
 	         				addRowF+="ar["+(ind_f++)+"],"
 	         			}
 	         		}
-	       		
+	       		alert ("addRF = "+addRowF);
 	         	}
 
 	    

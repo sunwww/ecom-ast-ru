@@ -35,13 +35,10 @@
         
       <msh:panel guid="6698b1a2-f6ce-4e70-85a3-0c3689e690da" colsWidth="7%,7%,4%">
       <msh:separator label="Роды" colSpan="4"/>
-        <msh:row>
-        	<msh:autoComplete vocName="childBirthByMedCase" property="childBirth" label="Роды" fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>
-          <msh:row guid="9625d712-b37d-4426-8072-de2ccf878aa4">
+         <msh:row guid="9625d712-b37d-4426-8072-de2ccf878aa4">
           	<msh:autoComplete property="child" vocName="vocNewBorn" label="Ребенок" horizontalFill="true" fieldColSpan="3"/>
           </msh:row>
-        <msh:ifFormTypeIsView formName="preg_newBornForm" guid="2211c6d9-2251-4059-b91c-780e6bf32bad">
+        <msh:ifFormTypeIsView formName="preg_neonatalNewBornForm" guid="2211c6d9-2251-4059-b91c-780e6bf32bad">
           <msh:row guid="90569cad-0d3e-4dbc-93d2-79a86a59eefe">
             <msh:autoComplete property="patient" vocName="patient" label="Персона ребенка" guid="c7d24f51-85cd-4714-83bf-84c071df9efd" fieldColSpan="3" horizontalFill="true" viewOnlyField="true" viewAction="entityView-mis_patient.do" />
           </msh:row>
@@ -77,7 +74,9 @@
           <msh:textField property="setPart" label="Вставленная часть тела" guid="af5727c6-6da3-486e-8dd0-892c32d938f7" />
           <msh:textField property="setView" label="Вид вставки" guid="21a1677c-35b9-49b6-8727-0b69c861b5a4" />
         </msh:row>
-        
+        <msh:row>
+        <msh:autoComplete property="department" vocName="vocNewBornAllDeps" label="Переведен в отделение" horizontalFill="true" fieldColSpan="3" guid="f6d7e46c-adc3-4225-810a-8fccc2c1a137" />
+        </msh:row>
         <msh:row guid="5f38a220-3e41-408b-bb66-231156b77f68">
           <msh:separator label="Пуповина" colSpan="4" guid="921f6c76-69ed-4032-9adc-d780405df2d8" />
         </msh:row>
@@ -120,6 +119,60 @@
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="3" guid="15e2342c-9373-4dec-b306-0bc21c1b603c" />
       </msh:panel>
+       <msh:ifFormTypeIsView formName="preg_neonatalNewBornForm">
+    <msh:section title="Госпитализация">
+    <ecom:webQuery name="list" nativeSql="select sls.id as f1slsid
+  ,to_char(sls.dateStart,'dd.mm.yyyy') as f2dateStart
+  ,to_char(sls.dateFinish,'dd.mm.yyyy') as f3dateFinish 
+  ,vdh.id as f4vhdid,sls.username as f5slsusername
+  ,case when sls.emergency='1' then 'да' else null end as f6emergency 
+  ,coalesce(ss.code,'')||case when vdh.id is not null then ' '||vdh.name else '' end as f7stacard 
+  ,ml.name as f8entdep,mlLast.name as f9mlLastdep 
+  ,case when vdh.id is not null then null when (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)=0 then 1 when vht.code='DAYTIMEHOSP' then ((coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart)+1) else (coalesce(sls.dateFinish,CURRENT_DATE)-sls.dateStart) end as f10countDays 
+  ,list(distinct vpd.name||' '||mkb.code) as f11diagDisch 
+  ,list(distinct vpd1.name||' '||mkb1.code) as f12diagClinic
+  ,case when vdh.id is not null then 'color: red ;' 
+  when UPPER(sls.DTYPE) ='EXTHOSPITALMEDCASE' then 'color: blue ;'
+  else '' end
+    as f13style 
+  from MedCase sls 
+  left join newborn nb on nb.patient_id=sls.patient_id
+  left join VocHospType vht on vht.id=sls.hospType_id 
+  left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id 
+  left join MedCase sloLast on sloLast.parent_id=sls.id and sloLast.dtype='DepartmentMedCase' 
+  left join StatisticStub ss on ss.id=sls.statisticStub_id 
+  left join MisLpu mlLast on mlLast.id=sloLast.department_id 
+  left join MisLpu ml on ml.id=sls.department_id	
+  left join Diagnosis diag on sls.id=diag.medCase_id	
+  left join VocIdc10 mkb on mkb.id=diag.idc10_id	
+  left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id and vdrt.code='3'	
+  left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id	
+  left join Diagnosis diag1 on sloLast.id=diag1.medCase_id	
+  left join VocIdc10 mkb1 on mkb1.id=diag1.idc10_id	
+  left join VocDiagnosisRegistrationType vdrt1 on vdrt1.id=diag1.registrationType_id and vdrt1.code='4'	
+  left join VocPriorityDiagnosis vpd1 on vpd1.id=diag1.priority_id where nb.id=${param.id} 
+  and UPPER(sls.DTYPE) IN ('HOSPITALMEDCASE','EXTHOSPITALMEDCASE') 
+  and  (sloLast.id is null or sloLast.transferDate is null) 
+   group by sls.id,sls.dtype,sls.dateStart,sls.dateFinish,vdh.id ,sls.username ,sls.emergency, ss.code,vdh.id,vdh.name ,ml.name,mlLast.name,vht.code 
+   order by sls.dateStart
+  "/>
+    <msh:table name="list" action="entitySubclassView-mis_medCase.do" 
+    viewUrl="entitySubclassView-mis_medCase.do?short=Short"
+    idField="1" styleRow="13">
+      <msh:tableColumn columnName="#" property="sn" guid="ce16c32c-9459-4673-9ce8-d6e646f969ff" />
+      <msh:tableColumn columnName="Стат.карта" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Дата поступления" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Дата выписки" property="3" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Кол-во дней" property="10" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
+      <msh:tableColumn columnName="Экстр.?" property="6" guid="e98f6bbc96" />
+      <msh:tableColumn columnName="Отделение пост." property="8" guid="8b496fc7-80e9-4beb-878b-5bfb20e98f31" />
+      <msh:tableColumn columnName="Отделение выписки (текущее)" property="9" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Диагноз клин. посл. отд." property="12" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Диагноз выписной" property="11" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
+      <msh:tableColumn columnName="Кем открыт" property="5" guid="35347247-b552-4154-a82a-ee484a1714ad" />
+    </msh:table>
+    </msh:section>
+    </msh:ifFormTypeIsView>
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">

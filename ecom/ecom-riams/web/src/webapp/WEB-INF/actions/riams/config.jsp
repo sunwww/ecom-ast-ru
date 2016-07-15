@@ -109,17 +109,6 @@
 						<li><msh:link action="entityList-secgroup.do" roles="/Policy/Jaas/SecGroup/View">
 	                            Группы
 	                        </msh:link></li>
-	                        <!-- 
-						<li><msh:link action="serviceImportPoliciesListEdit.do" roles="/Policy/Jaas/SecPolicy/Edit">
-	                            Импорт списка политик безопасности
-	                        </msh:link></li>
-	
-						<li><msh:link action="serviceImportRolesEdit.do" roles="/Policy/Jaas/SecPolicy/Edit">
-	                            Импорт из файла roles.properties
-	                        </msh:link></li>
-	                         -->
-	
-						
 						<li><msh:link action="serviceExport.do" roles="/Policy/Jaas/Activation">
 	                            Активация политик
 	                        </msh:link></li>
