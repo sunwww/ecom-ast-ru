@@ -117,6 +117,10 @@
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="bedSubType" fieldColSpan="4"
+        	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
+        </msh:row>
+        <msh:row>
 	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
 	        <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
 		<td>
@@ -218,7 +222,11 @@
     		request.setAttribute("depIsNoOmc", "") ;
     		request.setAttribute("dep", "") ;
     		request.setAttribute("dep1", "") ;
-    	}    	
+    	}    
+    	String bedSubType = request.getParameter("bedSubType");
+    	if (bedSubType!=null&&!bedSubType.equals("")&&!bedSubType.equals("0")) {
+    		request.setAttribute("bedSubTypeSql", " and vbst.id='"+bedSubType+"'");
+    	}
     	if (view!=null && view.equals("2")) { 
     %>
     <msh:section title="Свод по отделениям без учета отд., которые не входят в ОМС">
@@ -240,10 +248,12 @@
 	left join medcase pdmc on pdmc.id=dmc.prevmedcase_id
 	left join mislpu d on d.id=dmc.department_id
 	left join mislpu pd on pd.id=pdmc.department_id
+	left join bedfund bf on bf.id=dmc.bedfund_id
+	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
 	
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and hmc.dischargetime is not null
-    	${depIsNoOmc} ${addNewborn}
+    	${depIsNoOmc} ${addNewborn} ${bedSubTypeSql}
 	group by case when (d.isnoomc='1') then pd.id else d.id end , case when (d.isnoomc='1') then pd.name else d.name end 
 	
 	order by f5_percentOtdel desc , f2_lpuName
@@ -295,12 +305,14 @@
 	left join vocdiagnosisregistrationtype vdrt on vdrt.id=diag.registrationtype_id
 	left join vocprioritydiagnosis vpd on vpd.id=diag.priority_id
 	left join vocidc10 mkb on mkb.id=diag.idc10_id
+	left join bedfund bf on bf.id=dmc.bedfund_id
+	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and vdrt.code in ('5','3') and vpd.code='1' 
     and (vhr.omccode='11'
     ${cellAdd}
     	${depIsNoOmc}
-     ${addNewborn}
+     ${addNewborn} ${bedSubTypeSql}
     group by hmc.id,ss.code, pat.lastname,pat.firstname,pat.middlename
     order by pat.lastname,pat.firstname,pat.middlename"/>
         <msh:table name="journal_surOperation"
@@ -337,6 +349,8 @@ left join vochospitalizationresult vhr on vhr.id=hmc.result_id
 	left join medcase pdmc on pdmc.id=dmc.prevmedcase_id
 	left join mislpu d on d.id=dmc.department_id
 	left join mislpu pd on pd.id=pdmc.department_id
+	left join bedfund bf on bf.id=dmc.bedfund_id
+	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
 where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and hmc.datefinish is not null and hmc.dischargetime is not null 
 
     	${depIsNoOmc} ${addNewborn}
@@ -372,6 +386,8 @@ from medcase hmc
 	left join medcase pdmc on pdmc.id=dmc.prevmedcase_id
 	left join mislpu d on d.id=dmc.department_id
 	left join mislpu pd on pd.id=pdmc.department_id
+	left join bedfund bf on bf.id=dmc.bedfund_id
+	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
 	
 	where hmc.dtype='HospitalMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and hmc.dischargetime is not null
@@ -449,6 +465,8 @@ from medcase hmc
 	left join mislpu d on d.id=dmc.department_id
 	left join mislpu pd on pd.id=pdmc.department_id
 	left join vocsex vs on vs.id=pat.sex_id
+	left join bedfund bf on bf.id=dmc.bedfund_id
+	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
 	
 	where hmc.dtype='HospitalMedCase' and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and hmc.datefinish is not null and hmc.dischargetime is not null
@@ -496,6 +514,8 @@ group by vs.name, vs.id
 	left join mislpu pd on pd.id=pdmc.department_id
 	left join address2 adr on adr.addressid=pat.address_addressid
 	left join Omc_oksm ok on ok.id=pat.nationality_id
+	left join bedfund bf on bf.id=dmc.bedfund_id
+	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
 	where hmc.dtype='HospitalMedCase' and hmc.deniedhospitalizating_id is null and ${dateT} between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 	and vhr.omccode='11' and hmc.datefinish is not null and hmc.dischargetime is not null and (ok.voc_code!='643' or adr.kladr not like '30%')
     	${depIsNoOmc} ${addNewborn}

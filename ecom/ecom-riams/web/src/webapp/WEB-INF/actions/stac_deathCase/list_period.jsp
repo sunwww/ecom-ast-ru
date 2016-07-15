@@ -111,6 +111,10 @@
         	<msh:textField property="deathReason" label="Причина вскрытия" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete property="bedSubType" fieldColSpan="4"
+        	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
+        </msh:row>
+        <msh:row>
 	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
     	    <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
            <td>
@@ -208,6 +212,11 @@
     	if (categoryDifference!=null && !categoryDifference.equals("")&& !categoryDifference.equals("0")) {
     		request.setAttribute("categoryDifferenceSql", " and dc.categoryDifference_id='"+categoryDifference+"' ") ;
     	}
+    	String bedSubType = request.getParameter("bedSubType");
+    	
+    	if (bedSubType!=null&&!bedSubType.equals("")&&!bedSubType.equals("0")) {
+    		request.setAttribute("bedSubTypeSql", " and vbst.id='"+bedSubType+"'");
+    	}
     	%>
     <ecom:webQuery nameFldSql="journal_ticket_sql" name="journal_ticket" nativeSql="select
     m.id, ss.code as sscode
@@ -260,11 +269,12 @@ then -1 else 0 end)
     left join statisticstub ss on ss.id=m.statisticstub_id 
     left join patient p on p.id=m.patient_id 
     left join Certificate c on c.DeathCase_id=dc.id and c.dtype='DeathCertificate'
+    left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id
     where dc.deathDate between to_date('${param.dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
     and dmc.transferDate is null
     ${emerSql} ${autopsySql} ${differenceSql} ${operationSql}
-    ${sexSql} ${departmentSql} ${categoryDifferenceSql} ${deathReasonSql}
+    ${sexSql} ${departmentSql} ${categoryDifferenceSql} ${deathReasonSql} ${bedSubTypeSql}
     group by dc.id,m.id,p.lastname,p.firstname,p.middlename,p.birthday
     ,m.emergency,dc.deathDate,dc.deathTime,dc.commentReason
     ,ss.code  ,vdcL.name,vdcC.name,dcvpd.name
