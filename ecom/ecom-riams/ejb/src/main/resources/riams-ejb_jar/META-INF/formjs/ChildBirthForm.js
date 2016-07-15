@@ -147,8 +147,10 @@ function onCreate(aForm, aEntity, aCtx) {
 			newBorn.setChild(vch) ;
 			var motherSls = aEntity.medCase.parent;
 			var mother = motherSls.patient ;
+			//throw ""+newBorn.getLiveBorn().getCode();
+			if (newBorn.getLiveBorn().getCode()=='1'){
 			var pnb = aCtx.manager.createNativeQuery("select pnb.id from kinsman km left join patient pnb on pnb.id=km.person_id left join vockinsmanrole vkr on km.kinsmanrole_id=vkr.id where km.kinsman_id="+mother.id+" and vkr.omccode='1' and pnb.birthday=to_date('"+child[0]+"','dd.mm.yyyy') and pnb.newborn_id"+(vch!=null?"="+vch.id:" is null")).getResultList() ;
-			//throw ""+pnb.size() ;
+			throw ""+pnb.size() ;
 			var patient ;
 			if (pnb.size()>0) {
 				var lPat = aCtx.manager.createQuery("from Patient where id='"+pnb.get(0)+"'").getResultList() ;
@@ -199,7 +201,7 @@ function onCreate(aForm, aEntity, aCtx) {
 			     
 				kinsman.kinsmanRole = role.size()>0?role.get(0):null ;
 				aCtx.manager.persist(kinsman);
-				
+				throw "allOK";
 				var sls = new Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase() ;
 				sls.patient = patient ;
 				var serviceStream = aCtx.manager.createQuery("from VocServiceStream where omcCode='4'").getResultList() ;
@@ -233,9 +235,15 @@ function onCreate(aForm, aEntity, aCtx) {
 				sls.statisticStub = ss ;
 				aCtx.manager.persist(sls) ;
 			}
-			newBorn.setPatient(patient) ;
+			newBorn.setPatient(patient) ;			
+			}
+			
 			aCtx.manager.persist(newBorn) ;
 		}
 	}
 	
+}
+function onPreDelete(aId, aCtx) {
+	var obj=aCtx.manager.createNativeQuery("select count(*) from newBorn where childBirth_id='"+aId+"'").getSingleResult() ;
+	if (+obj>0) throw "Сначала нужно удалить данные по новорожденным" ;
 }

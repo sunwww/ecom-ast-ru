@@ -18,10 +18,15 @@ public class NewBornPreCreateInterceptor implements IParentFormInterceptor {
     	StringBuilder sql = new StringBuilder() ;
     	NewBornForm form = (NewBornForm) aForm ; 
     	if (form instanceof NeonatalNewBornForm) {
+    		List <Object[]> list = aContext.getEntityManager().createNativeQuery("select id from childBirth where medcase_id=:parent and pangsStartDate is not null and pangsStartTime is not null").setParameter("parent", aParentId).getResultList();
+    		if (list.size()>0) {
+    			throw new IllegalStateException("В отделении уже заполнена информация по родам, новорожденные созданы. Создание новорожденного невозможно!!") ;
+    		}
+    		
         	sql.append("select p.lastname,p.id from MedCase mc")
     		.append(" left join Patient as p on p.id = mc.patient_id")
 			.append(" where mc.id=:childBirth") ;
-        	List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql.toString())
+        	list = aContext.getEntityManager().createNativeQuery(sql.toString())
     		.setParameter("childBirth", aParentId).getResultList() ;
 	    	
     	} else {

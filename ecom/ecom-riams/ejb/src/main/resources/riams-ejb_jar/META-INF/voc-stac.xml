@@ -452,6 +452,16 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
      </voc> 
+    <voc id='vocNewBornAllDeps' type='NativeVocService'>
+        <NativeVocService
+                from="MisLpu ml"
+                names="ml.name"
+                nameId="ml.id"
+                queryAppend=" ml.isNewBornDep='1' "
+                order=""
+	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+        />
+     </voc> 
     <voc id='vocLpuHospOtdAll' type='NativeVocService'>
         <NativeVocService
                 from="MisLpu ml"

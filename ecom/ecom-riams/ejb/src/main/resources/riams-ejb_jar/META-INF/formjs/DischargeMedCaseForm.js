@@ -23,7 +23,23 @@ function onSave(aForm,aEntity, aCtx) {
 	}*/
 }
 function onPreSave(aForm,aEntity, aCtx) {
+	
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
+	
+	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy")) {
+		var slos = aCtx.manager.createNativeQuery("select id from MedCase where parent_id=:parent and DTYPE='DepartmentMedCase' and transferDate is null").setParameter("parent",aForm.id).getResultList();
+		var lastSlo = slos.size()>0?""+slos.get(0):null;
+		if (lastSlo!=null) {
+			var isPregnancyCreate = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentMedCaseCreateInterceptor.isPregnancyExists(aCtx.manager,  +lastSlo);
+			if (!isPregnancyCreate) {
+				throw "Выписка невозможна, т.к. не заполнены данные по родам!";
+			} 
+		}
+	}
+		
+	
+	
+	
 	checkAllDiagnosis (aCtx, aForm.id) ;
 	var date = new java.util.Date() ;
 	// Проверка введенных данных

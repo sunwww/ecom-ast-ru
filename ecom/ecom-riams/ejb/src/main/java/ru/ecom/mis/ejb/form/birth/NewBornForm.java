@@ -93,7 +93,7 @@ public class NewBornForm extends IdEntityForm{
 	
 	/** Окружность головы */
 	@Comment("Окружность головы")
-	@Persist
+	@Persist @Required
 	public String getHeadCircle() {return theHeadCircle;}
 	public void setHeadCircle(String aHeadCircle) {theHeadCircle = aHeadCircle;}
 	
@@ -123,13 +123,13 @@ public class NewBornForm extends IdEntityForm{
 	
 	/** Зрелость */
 	@Comment("Зрелость")
-	@Persist
+	@Persist @Required
 	public Long getMaturity() {return theMaturity;}
 	public void setMaturity(Long aMaturity) {theMaturity = aMaturity;}
 	
 	/** Родился живым */
 	@Comment("Родился живым")
-	@Persist
+	@Persist @Required
 	public Long getLiveBorn() {return theLiveBorn;}
 	public void setLiveBorn(Long aLiveBorn) {theLiveBorn = aLiveBorn;}
 	
@@ -379,7 +379,7 @@ public class NewBornForm extends IdEntityForm{
 	
 	/** Какой частью тела родился (головкой, ягодицами, ножками) */
 	@Comment("Какой частью тела родился (головкой, ягодицами, ножками)")
-	@Persist
+	@Persist @Required
 	public Long getPartBodyBorn() {return thePartBodyBorn;}
 	public void setPartBodyBorn(Long aPartBodyBorn) {thePartBodyBorn = aPartBodyBorn;}
 
@@ -388,7 +388,7 @@ public class NewBornForm extends IdEntityForm{
 	
 	/** Обвитие */
 	@Comment("Обвитие")
-	@Persist
+	@Persist @Required
 	public Long getEntanglement() {return theEntanglement;}
 	public void setEntanglement(Long aEntanglement) {theEntanglement = aEntanglement;}
 
