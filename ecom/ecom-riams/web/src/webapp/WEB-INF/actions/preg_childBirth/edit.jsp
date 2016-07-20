@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+ <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -199,7 +199,7 @@
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>
         </msh:ifFormTypeIsView>
-        <msh:submitCancelButtonsRow colSpan="3" functionSubmit="checkDeadBorn();" guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" />
+        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" />
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
@@ -239,7 +239,7 @@
   	var old_action = document.forms["mainForm"].action ; 
   	
   	//document.forms["mainForm"].action="javascript:checkForm()" ; 
-  	document.forms["mainForm"].action="javascript:checkDeadBorn()" ; 
+  	
   	
   </script>
   <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm">
@@ -249,10 +249,12 @@
   </msh:ifFormTypeAreViewOrEdit>
   <msh:ifFormTypeIsCreate formName="preg_childBirthForm">
   <script type="text/javascript">
+  document.forms["mainForm"].action="javascript:checkDeadBorn()" ;
   isSaveNewBorns=1 ;
   </script>
   </msh:ifFormTypeIsCreate>
   <script type="text/javascript">
+   
   function checkForm() {
 		if (isSaveNewBorns) {
 			try {
@@ -354,7 +356,7 @@
 	  		}
 	  		changeBorn(+$('newBornAmount').value) ;
 	 		if ($('newBornsInfo').value!='') {
-	 			alert ("Info = "+$('newBornsInfo').value);
+	 		//	alert ("Info = "+$('newBornsInfo').value);
 	               var addRowF="";
 	               var ind_f=0 ;
 	         		for (var i=0;i<theFld.length;i++) {
@@ -363,7 +365,7 @@
 	         				addRowF+="ar["+(ind_f++)+"],"
 	         			}
 	         		}
-	       		alert ("addRF = "+addRowF);
+	       	//	alert ("addRF = "+addRowF);
 	         	}
 
 	    
