@@ -19,7 +19,8 @@ function onPreSave(aForm, aEntity, aCtx) {
  * Перед сохранением
  */
 function onPreCreate(aForm, aCtx) {
-	
+	var list=aCtx.getEntityManager().createNativeQuery("select cb.id from childbirth cb where  cb.medcase_id='"+form.getMedCase()+"'").getResultList() ;
+	if (list.size()>0) throw "В отделении уже заведен случай родов!";
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
@@ -147,10 +148,9 @@ function onCreate(aForm, aEntity, aCtx) {
 			newBorn.setChild(vch) ;
 			var motherSls = aEntity.medCase.parent;
 			var mother = motherSls.patient ;
-			//throw ""+newBorn.getLiveBorn().getCode();
 			if (newBorn.getLiveBorn().getCode()=='1'){
 			var pnb = aCtx.manager.createNativeQuery("select pnb.id from kinsman km left join patient pnb on pnb.id=km.person_id left join vockinsmanrole vkr on km.kinsmanrole_id=vkr.id where km.kinsman_id="+mother.id+" and vkr.omccode='1' and pnb.birthday=to_date('"+child[0]+"','dd.mm.yyyy') and pnb.newborn_id"+(vch!=null?"="+vch.id:" is null")).getResultList() ;
-			throw ""+pnb.size() ;
+			//throw ""+pnb.size() ;
 			var patient ;
 			if (pnb.size()>0) {
 				var lPat = aCtx.manager.createQuery("from Patient where id='"+pnb.get(0)+"'").getResultList() ;
@@ -201,7 +201,6 @@ function onCreate(aForm, aEntity, aCtx) {
 			     
 				kinsman.kinsmanRole = role.size()>0?role.get(0):null ;
 				aCtx.manager.persist(kinsman);
-				throw "allOK";
 				var sls = new Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase() ;
 				sls.patient = patient ;
 				var serviceStream = aCtx.manager.createQuery("from VocServiceStream where omcCode='4'").getResultList() ;

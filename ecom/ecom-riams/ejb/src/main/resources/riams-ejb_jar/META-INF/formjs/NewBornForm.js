@@ -21,11 +21,7 @@ function onCreate(aForm, aEntity, aContext){
 	aEntity.patient = patient ;
 }
 function onSave(aForm, aEntity, aContext) {
-	aEntity.patient.lastname = aForm.lastname ;
-	aEntity.patient.firstname = aForm.firstname ;
-	aEntity.patient.middlename = aForm.middlename ;
-	aEntity.patient.birthday = aEntity.birthDate ;
-	aEntity.patient.sex = aEntity.sex ;
+	
 }
 function onPreDelete(aEntityId, aCtx) {
 	var entity = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.birth.NewBorn, new java.lang.Long(aEntityId)) ;

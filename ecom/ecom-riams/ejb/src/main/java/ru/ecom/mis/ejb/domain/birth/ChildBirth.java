@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -15,6 +16,7 @@ import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.birth.voc.VocBirthEntanglement;
 import ru.ecom.mis.ejb.domain.birth.voc.VocBirthEntanglementMultiplicity;
@@ -51,6 +53,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 		,@AIndex(properties = { "pregnancy" }) 
 	}
 )
+@EntityListeners(DeleteListener.class)
 public class ChildBirth extends BaseEntity{
 
 	/** Время начала потуг */
