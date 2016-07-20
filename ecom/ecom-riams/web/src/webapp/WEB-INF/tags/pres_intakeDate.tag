@@ -45,9 +45,9 @@
      function show${name}IntakeInfo(aListPrescript) {
          // устанавливается инициализация для диалогового окна
          $('${name}List').value=aListPrescript;
-         if (!theIs${name}IntakeInfoDialogInitialized) {
+      //   if (!theIs${name}IntakeInfoDialogInitialized) {
          	init${name}IntakeInfoDialog() ;
-          }
+       //   }
          the${name}IntakeInfoDialog.show() ;
          $("${name}Date").focus() ;
 
