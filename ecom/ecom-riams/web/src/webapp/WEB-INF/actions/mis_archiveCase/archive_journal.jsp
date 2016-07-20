@@ -10,6 +10,7 @@
     <%
   	String typeOrder =ActionUtil.updateParameter("ExtDispAction","typeOrder","1", request) ;
   	String typeDate =ActionUtil.updateParameter("ExtDispAction","typeDate","1", request) ;
+  	String typeView =ActionUtil.updateParameter("ExtDispAction","typeView","1", request) ;
     	 %>
     <msh:form guid="formHello" action="/mis_archive_journal.do" defaultField="hello">
       
@@ -47,6 +48,16 @@
 	        </td>
 	        
         </msh:row>
+        <msh:row>
+	        <td class="label" title="Отобразить (typeView)" colspan="1"><label for="typeViewName" id="typeOrderLabel">Отобразить:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="1"> Журнал переданных историй болезни
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="2"> Количество выписанных и переданных карт
+	        </td>
+	        
+        </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" labelSave="Поиск" labelSaving="Поиск..." colSpan="4" />
       </msh:panel>
     </msh:form>
@@ -59,7 +70,6 @@
 		}
 		request.setAttribute("dateStart", beginDate) ;
 		request.setAttribute("dateFinish", finishDate) ;
-		
     String dep = request.getParameter("department");
     String orderBySql  = "pat.lastname, pat.firstname, pat.middlename" ; 
     String depSql = "";
@@ -80,6 +90,9 @@
     }
     request.setAttribute("depSql",depSql);
     request.setAttribute("orderBySql",orderBySql);
+    if (typeView!=null &&typeView.equals("1")) {
+    	
+    
     %>
     
     <ecom:webQuery name = "archivesList" nativeSql="
@@ -110,13 +123,39 @@ order by ${orderBySql}
 				</msh:table>
 				</msh:sectionContent>
 			</msh:section>
-    <%} %>
+    <%}  else if (typeView!=null&&typeView.equals("2")) {
+    	%>
+    	<ecom:webQuery name="archivesList" nativeSql="select dep.name as depName
+, count(ss.id) as f2_cntAll
+, count (case when ss.archivecase is not null then ss.id else null end) as f3_cntPeredano
+from medcase sls
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.dateFinish is not null
+left join statisticstub ss on ss.medcase_id=sls.id
+left join mislpu dep on dep.id=slo.department_id
+where sls.dtype='HospitalMedCase' 
+and sls.datefinish between to_date('${dateStart}','dd.MM.yyyy') and to_date ('${dateFinish}','dd.MM.yyyy') and sls.dischargetime is not null and sls.deniedhospitalizating_id is null
+${depSql}
+group by dep.name
+order by dep.name"/>
+<msh:section>
+    <msh:sectionContent>
+				<msh:table name="archivesList" action="javascript:void()" idField="1">
+					<msh:tableColumn columnName="Отделение" property="1" />
+					<msh:tableColumn columnName="Выписано всего" property="2" />
+					<msh:tableColumn columnName="Передано историй в архив" property="3" />
+				</msh:table>
+				</msh:sectionContent>
+			</msh:section>
+    	
+    <%}}%>
   </tiles:put>
     <tiles:put name='side' type='string'> 
   <msh:sideLink key="ALT+1" params="" roles="/Policy/Mis/ArchiveCase/Create" action="/move_to_archive" name="Передача карт в архив" guid="31e83931-c7ab-4040-8f46-3306ac07cb26" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">
+  	checkFieldUpdate("typeDate",'${typeDate}',1);
+  	checkFieldUpdate("typeView",'${typeView}',1);
   	checkFieldUpdate("typeOrder",'${typeOrder}',1);
     function checkFieldUpdate(aField,aValue,aDefault) {
     	
