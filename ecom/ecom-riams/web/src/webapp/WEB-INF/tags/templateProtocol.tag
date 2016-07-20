@@ -114,7 +114,7 @@ var fldJson = null ;
      var the${name}IntakeInfoDialog = new msh.widget.Dialog($('the${name}IntakeInfoDialog')) 
      // Показать
      
-    function save${name}IntakeInfo() {
+    function save${name}Result() {
     var rows = $('tblParamProtocol').children[0].children;
     var text = '';
     for (var i=0;i<rows.length;i++) {
@@ -128,35 +128,39 @@ var fldJson = null ;
     			}	
     		} else {
     			var el = elements[0];
+    		
     			/* if (el.tagName=='LABEL') {
     				text+=el.innerHTML;
     				if (j==0) {text+=':';}
     			} else */ 
     				if (el.tagName=='INPUT') {
     				if (elements[1]) {
-    					text+=tds[j-1].children[0].innerHTML+": ";
     					text+= elements[1].children[0].value;
     				} else {
-    					text+=el.title+": ";
     					text+=el.value;
     				}
-    			} else {
-    				   				
+    			} else  if (el.tagName=='LABEL'){
+    				   text+=el.innerHTML +": ";				
     			}
     		} 
     	}
     	text+='\n';
     }
     $('record').value=text;
-    save${name}Result($('medCase').value,$('id').value);
-    the${name}IntakeInfoDialog.hide();
+
+	the${name}IntakeInfoDialog.hide();
+    
     $('record').disabled=false;
+    isEditable();
    }
-    function save${name}Result(aSmoId,aProtocolId) {
+    function save${name}IntakeInfo() {
+    	var regexp = /^[\d+.]+$/;
 		var isError = false ;
 		for (var ind=0;ind<fldJson.params.length;ind++) {
+			
 			var val = $('param'+fldJson.params[ind].id).value ;
 			var par = fldJson.params[ind] ; 
+			var err ="";
 			errorutil.HideError($('param'+par.idEnter)) ;
 			/*if (val=="") {
 				errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
@@ -168,29 +172,41 @@ var fldJson = null ;
 					par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
 				}
 			}
-			if (par.type=='4') {
+			 if (par.type=='4') {
 				val = val.replace(",",".") ;
 				val = val.replace("-",".") ;
 				var v = val.split(".") ;
 				var cntdecimal = +par.cntdecimal
+				
+				
 				if (val!="") {
+					if (!regexp.test(val)){
+						err+="Допускается ввод только чисел! " ;						
+						isError=true;
+					}
 					if (v.length==2 && v[1].length!=cntdecimal) {
-						errorutil.ShowFieldError($('param'+par.idEnter),"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
+						errorutil.ShowFieldError($('param'+par.idEnter),err+"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
 						isError= true ;
 					}
 					
 	  					if (cntdecimal>0 ) {
 	  						if (v.length==1) {
-	  							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+	  							errorutil.ShowFieldError($('param'+par.idEnter),err+"Должна быть 1 точка или запятая") ;
 	  							isError= true ;
 	  						} else if (v.length>1 && !isNaN(v[2])) {
-	 							errorutil.ShowFieldError($('param'+par.idEnter),"Должна быть 1 точка или запятая") ;
+	 							errorutil.ShowFieldError($('param'+par.idEnter),err+"Должна быть 1 точка или запятая") ;
 	 							isError= true ;
 							}
 	  					} else {
 	  						
 	  					}
 					}
+			} 
+			 if (par.type==1) {
+				if (val!='' &&!regexp.test(val)){
+					errorutil.ShowFieldError($('param'+par.idEnter),"Допускается ввод только чисел!") ;	
+					isError=true;
+				}
 			}
 			
 			par.value = val ;
@@ -209,7 +225,10 @@ var fldJson = null ;
 		var str = JSON.stringify(fldJson);
 		//alert(str) ;
 		$('params').value = str;
-		isEditable();
+		if (!isError) {
+			save${name}Result();
+			
+		}
 	} 
     
     function isEditable () {
