@@ -108,5 +108,12 @@ public abstract class StatisticStub extends BaseEntity {
 	/** Итог лечения */
 	private VocResultDischarge theResultDischarge;
 	
+	/** Номер архивного дела */
+	@Comment("Номер архивного дела")
+	public Long getArchiveCase() {return theArchiveCase;}
+	public void setArchiveCase(Long aArchiveCase) {theArchiveCase = aArchiveCase;}
+	/** Номер архивного дела */
+	private Long theArchiveCase;
+	
 
 }
