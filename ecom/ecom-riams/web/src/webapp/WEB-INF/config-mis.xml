@@ -6,6 +6,7 @@
 
 	<form-beans>
 		
+		<form-bean name="mis_archiveCaseForm"		type="ru.ecom.mis.ejb.form.archive.ArchiveCaseForm" />
 		<form-bean name="temp_protocolPrintForm"	type="ru.ecom.mis.ejb.form.userdocument.TemplatePrintDocumentForm" />
 		<form-bean name="mis_lpuGroupForm"			type="ru.ecom.mis.ejb.form.lpu.LpuGroupForm" />
 		<form-bean name="mis_patientListForm"		type="ru.ecom.mis.ejb.form.patient.PatientListForm" />
@@ -293,6 +294,20 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+ <action path='/mis_archive_journal' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_archiveCase/archive_journal.jsp" />
+        </action>
+ <action path='/move_to_archive' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_archiveCase/move_to_archive.jsp" />
+        </action>
  <action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

@@ -99,6 +99,12 @@
 	                        <li><msh:link  isReport="true" action="mis_diagnosis_by_period.do" roles="/Policy/Mis/Journal/DiagnosisByPeriodF">
 	                            Журнал смены диагноза по листу уточненных диагнозов F...
 	                        </msh:link></li>
+	                        <li><msh:link  isReport="true" action="mis_archive_journal.do" roles="/Policy/Mis/ArchiveCase/View">
+	                          Журнал переданных в архив историй болезни
+	                        </msh:link></li>
+	                        <li><msh:link  isReport="false" action="move_to_archive.do" roles="/Policy/Mis/ArchiveCase/Create">
+	                           Передача историй болезни в архив
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>

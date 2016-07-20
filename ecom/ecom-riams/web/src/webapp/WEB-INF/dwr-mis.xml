@@ -7,6 +7,10 @@
     </init>
 
     <allow>
+    <!-- Сервис для архива -->
+    <create creator="new" javascript="ArchiveService" scope="application">
+    	<param name="class" value="ru.ecom.mis.web.dwr.medcase.ArchiveServiceJs"/>
+    </create>
     <!-- Работа с заявками -->
     <create creator="new" javascript="ClaimService" scope="application">
     	<param name="class" value="ru.ecom.mis.web.dwr.claim.ClaimServiceJs"/>
