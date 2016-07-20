@@ -1486,6 +1486,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	    	theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
 	    		} else {
 	    			//
+	    			theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 	    			theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
