@@ -17,10 +17,6 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   <%
-  	//request.setAttribute("diag_typeReg_cl", "4") ;
-  	//request.setAttribute("diag_typeReg_pat", "5") ;
-  	//request.setAttribute("diag_priority_m", "1")	
-  	
   	if (request.getParameter("short")==null||request.getParameter("short").equals("")) {	
   %>
     <msh:form action="/stac_report_32.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -51,11 +47,6 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
            <script type='text/javascript'>
           
-      //     checkFieldUpdate('typeView','${typeView}',1) ;
-       //    checkFieldUpdate('typeDiagOrder','${typeDiagOrder}',1) ;
-        //   checkFieldUpdate('typeHour','${typeHour}',1) ;
-           
-
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
@@ -140,10 +131,10 @@ if (type!=null&&type.equals("reestr")) {
 			break;
 		case 10: 
 			//sqlAdd+=" and cb.durationpregnancy <37.00 ";
-			sqlAdd+=" and vnbm.code='0' ";
+			sqlAdd+=" and vnbm.code!='DONOSH' ";
 			break;
 		case 11: 
-			sqlAdd+=" and vnbm.code='0' and cb.durationpregnancy <28.00";
+			sqlAdd+=" and vnbm.code!='DONOSH' and cb.durationpregnancy<28.00";
 			break;
 		case 12: 
 			sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
@@ -163,6 +154,7 @@ if (type!=null&&type.equals("reestr")) {
 select pat.id
 ,pat.patientinfo
 from newborn nb
+left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
 left join patient pat on pat.id=nb.patient_id
@@ -210,12 +202,12 @@ end as f1_name
 ,count(case when nb.birthweight between 3000 and 3499 then nb.id else null end) as f9_3499
 ,count(case when nb.birthweight between 3500 and 3999 then nb.id else null end) as f10_3999
 ,count(case when nb.birthweight > 3999 then nb.id else null end) as f11_4000 
-,count(case when cb.durationpregnancy <37.00 then nb.id else null end) as f12_nedonos
-,count(case when cb.durationpregnancy <28.00 then nb.id else null end) as f13_nedonos_28
-,count(case when (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp),
+,count(case when vnbm.code!='DONOSH' then nb.id else null end) as f12_nedonos
+,count(case when vnbm.code!='DONOSH' and cb.durationpregnancy <28.00 then nb.id else null end) as f13_nedonos_28
+,count(case when vlb.code='1' and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp),
 cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
 < 24 then nb.id end) as f14_dead24
-,count (case when (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp),
+,count (case when vlb.code='1' and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp),
 cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
 < 168 then nb.id end) as f15_death168
 ,max(
