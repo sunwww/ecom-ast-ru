@@ -118,7 +118,7 @@
     select slo.id as slo_id, ss.code as sscode,
     pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio
     , to_char(sls.datestart, 'dd.MM.yyyy') || ' ' || cast(sls.entrancetime as varchar(5)) sls_start
-    , to_char(slo.datestart, 'dd.MM.yyyy')||'-'||to_char(coalesce(slo.transferdate,slo.datefinish), 'dd.MM.yyyy') slo_start
+    , to_char(slo.datestart, 'dd.MM.yyyy')||'-'||coalesce(to_char(coalesce(slo.transferdate,slo.datefinish), 'dd.MM.yyyy'),'') slo_start
     , to_char(cb.birthfinishdate, 'dd.MM.yyyy') cb_date
     , count(cb.id) as cntCb
     
@@ -130,7 +130,7 @@
      left join NewBorn nb on nb.childBirth_id=cb.id
      left join patient pat on pat.id=slo.patient_id
      where 
-    coalesce(slo.transferdate,slo.datefinish) between to_date('${dateBegin}','dd.mm.yyyy') 
+    slo.datestart between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
     and ml.IsMaternityWard='1'
     group by slo.id, ss.code, pat.lastname, pat.firstname, pat.middlename, pat.birthday, sls.datestart, 
