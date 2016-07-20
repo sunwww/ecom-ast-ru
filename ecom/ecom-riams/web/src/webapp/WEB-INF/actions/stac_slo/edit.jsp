@@ -491,8 +491,13 @@
       	left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id where cb.medCase_id='${param.id}' group by cb.id,cb.birthFinishDate"/>
       	<msh:section>
       		<msh:sectionTitle> 
-	      		Роды <a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
+      		
+	      		Роды 
+	      		<msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
+	      		</msh:ifInRole>
+	      		<msh:ifInRole roles="/Policy/Mis/NewBorn/Create">
 	      		<a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденному</a>
+	      		</msh:ifInRole>
       		</msh:sectionTitle>
       		<msh:sectionContent>
 		      	<msh:table name="childBirth" action="entityParentView-preg_childBirth.do" idField="1">
