@@ -17,6 +17,9 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
+<%
+String typeGroup="";
+%>
     <msh:form action="/visit_report_service_OFD.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     
     <msh:panel>
@@ -27,13 +30,29 @@
         	<msh:textField property="beginDate" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
         	<msh:textField property="finishDate" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
       </msh:row>
+        <%-- <msh:row>
+        	<msh:autoComplete property="serviceStream" vocName="vocServiceStream"
+        		horizontalFill="true" fieldColSpan="5" size="50"/>
+        </msh:row>
+        <msh:row>
+	        <td class="label" title="Группировка (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="1"> общий
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="2"> поликлиника
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="3"> стационар
+	        </td>
+	        
+        </msh:row> --%>
         <msh:row>
 	        <td></td>
 	        <td></td>
 	        <td></td>
 	        <td colspan="2" align="right">
 	        	<br><input type="button" title="Найти" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;visit_report_service_OFD.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
-	        	${personClear}
 	        </td>
         </msh:row>
        <msh:row>
@@ -46,10 +65,17 @@
     
 <%
 	if (request.getParameter("beginDate")!=null && request.getParameter("finishDate")!=null) {
+		/* ActionUtil.setParameterFilterSql("serviceStream","smo.serviceStream_id", request) ;
+    		if (typeGroup.equals("1")) {
+    		} else if (typeGroup.equals("2")) {
+    		} else if (typeGroup.equals("3")) {
+    		} */
 %>
     <msh:section>
 		<ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
-select ms.name msname, owflpu.name lpuname, count(case when (vss.code='CHARGED') then smc.id else null end) as cntCharged,
+select owflpu.name lpuname, ms.name msname, 
+count(case when (vss.code='CHARGED') then smc.id else null end) as cntCharged,
+count(case when (vss.code!='CHARGED') then smc.id else null end) as cntOthers,
 count(smc.id) as cntAll FROM MedCase smo
 left join medcase smc on smc.parent_id=smo.id and smc.dtype='ServiceMedCase'
 left join medservice ms on ms.id=smc.medservice_id
@@ -61,24 +87,26 @@ LEFT JOIN Worker ow on ow.id=owf.worker_id
 LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id 
 WHERE (smo.dtype='ShortMedCase' or smo.dtype='Visit')  
 and smo.dateStart BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
-and smc.medservice_id is not null and (smo.noActuality is null or smo.noActuality='0') and w.lpu_id='273'
+/* and smc.medservice_id is not null and (smo.noActuality is null or smo.noActuality='0') ${serviceStreamSql} */  
+and smc.medservice_id is not null and (smo.noActuality is null or smo.noActuality='0')  
+and w.lpu_id='273'
 group by ms.name, owflpu.lpufunction_id, owflpu.name
-order by owflpu.lpufunction_id, owflpu.name
+order by owflpu.name, owflpu.lpufunction_id
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
-    <form action="print-f039_stand.do" method="post" target="_blank">
-    <%-- Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo} --%>
-    Период с ${beginDate} по ${finishDate}.
+    <form action="" method="post" target="_blank">
+    Период с ${beginDate} по ${finishDate}. <%-- ${serviceStreamInfo} --%>
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table name="journal_ticket" action="visit_report_service_OFD.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_ticket" action="" idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          </msh:tableNotEmpty>  
-            <msh:tableColumn columnName="Услуги" property="1"/>            
-            <msh:tableColumn columnName="Отделения" property="2"/>
+            <msh:tableColumn columnName="Отделения" property="1"/>            
+            <msh:tableColumn columnName="Методики" property="2"/>
             <msh:tableColumn isCalcAmount="true" columnName="Платные" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Прочие" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>    	
