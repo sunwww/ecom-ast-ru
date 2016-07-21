@@ -158,7 +158,7 @@
    
     function checktime() {
     	if (confirm('Вы хотите сохранить дневник?')) {
-    		document.forms[1].action='entityParentSaveGoEdit-smo_visitProtocol.do' ;
+    		document.forms[1].action='entityParentSaveGoEdit-smo_visitProtocol.do';
     		document.forms[1].submit() ;
     	}
     }
@@ -168,12 +168,19 @@
     <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
     <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     <script type="text/javascript">
-    
+         
+    if ($('dateRegistration').value!="") {setFocusOnField('record') ;
+    	
+    	onload=function (){
+			$('record').blur()
+		    $('record').focus();
+		    $('record').selectionStart=$('record').value.length ;
+    	}
+    }
     isEditable($('id').value);
 
     
-    $('record').focus() ;
-    $('record').selectionStart=$('record').value.length ;
+
     
     </script>
     </msh:ifFormTypeIsNotView>
