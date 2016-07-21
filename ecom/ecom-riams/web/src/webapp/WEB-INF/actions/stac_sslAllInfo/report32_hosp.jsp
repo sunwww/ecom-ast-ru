@@ -190,7 +190,8 @@ ${sqlAdd}
     <ecom:webQuery isReportBase="${isReportBase}" name="Report32" nameFldSql="Report32_sql" nativeSql="
 select case 
 when vlb.code='1' and dc.id is null then 'Родился живым' 
-when vlb.code='1' and dc.deathdate is not null then 'Родился и умер'
+/*when vlb.code='1' and dc.deathdate is not null then 'Родился и умер'*/
+when vlb.code='1' and mc.result_id=6 then 'Родился и умер'
 when vlb.code='2' then 'Родился мертвым'
 end as f1_name
 , count(nb.id) as f2_cntAll
@@ -218,6 +219,7 @@ when vlb.code='1' and dc.deathdate is not null then 'born2die'
 when vlb.code='2' then 'die' end
 ) as idLld
 from newborn nb
+left join medcase mc on mc.id=nb.medcase_id
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
@@ -228,7 +230,8 @@ ${sqlAdd}
 group by 
 case 
 when vlb.code='1' and dc.id is null then 'Родился живым' 
-when vlb.code='1' and dc.deathdate is not null then 'Родился и умер'
+/*when vlb.code='1' and dc.deathdate is not null then 'Родился и умер'*/
+when vlb.code='1' and mc.result_id=6 then 'Родился и умер'
 when vlb.code='2' then 'Родился мертвым'
 end 
 
