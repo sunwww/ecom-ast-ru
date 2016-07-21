@@ -94,6 +94,7 @@ if (type!=null&&type.equals("reestr")) {
 	String id =  request.getParameter("id");
 	if (id!=null&&!id.equals("")) {
 		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' and dc.id is null";}    
+		//if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' ";}    
 		else if (id.equals("born2die")) {sqlAdd+=" and vlb.code='1' and dc.deathdate is not null";}    
 		else if (id.equals("die")) {sqlAdd+=" and vlb.code='2'";}    
 	}
