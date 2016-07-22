@@ -123,9 +123,9 @@
 						<li><msh:link isReport="true" action="visit_report_service.do" roles="/Policy/Mis/MedCase/Visit/ReportService">
 	                            Отчет по услугам
 	                        </msh:link></li>
-						<li><msh:link isReport="true" action="visit_report_service_OFD.do" roles="/Policy/Mis/MedCase/Visit/ReportService">
+						<%-- <li><msh:link isReport="true" action="visit_report_service_OFD.do" roles="/Policy/Mis/MedCase/Visit/ReportService">
 	                            Отчет по услугам ОФД
-	                        </msh:link> </li>
+	                        </msh:link> </li> --%>
 						<li><msh:link isReport="true" action="smo_journal_closeSpo.do" roles="/Policy/Mis/MedCase/Visit/CloseSpo">
 	                            Закрытые СПО
 	                        </msh:link></li>
