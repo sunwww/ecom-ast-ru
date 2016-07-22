@@ -162,7 +162,7 @@ left join patient pat on pat.id=nb.patient_id
 left join deathcase dc on dc.patient_id=nb.patient_id
 where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
-
+group by pat.id, pat.patientinfo
 " />
     <msh:sectionTitle>
     </msh:sectionTitle>
@@ -219,10 +219,10 @@ when vlb.code='1' and dc.deathdate is not null then 'born2die'
 when vlb.code='2' then 'die' end
 ) as idLld
 from newborn nb
-left join medcase mc on mc.id=nb.medcase_id
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
+left join medcase mc on mc.id=cb.medcase_id
 left join patient pat on pat.id=nb.patient_id
 left join deathcase dc on dc.patient_id=nb.patient_id
 where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
