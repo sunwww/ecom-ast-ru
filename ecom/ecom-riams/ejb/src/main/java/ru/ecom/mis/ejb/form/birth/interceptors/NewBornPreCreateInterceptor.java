@@ -23,6 +23,12 @@ public class NewBornPreCreateInterceptor implements IParentFormInterceptor {
     			throw new IllegalStateException("В отделении уже заполнена информация по родам, новорожденные созданы. Создание новорожденного невозможно!!") ;
     		}
     		
+    		list = aContext.getEntityManager().createNativeQuery("select mc.id from medcase mc left join mislpu ml on ml.id=mc.department_id" +
+    				" where mc.id=:parent and ml.isMaternityWard='1'").setParameter("parent", aParentId).getResultList();
+    		if (list.isEmpty()) {
+    			throw new IllegalStateException("Новорожденный может быть создан только в родовом отделении!"+aParentId) ;
+    		}
+    		
         	sql.append("select p.lastname,p.id from MedCase mc")
     		.append(" left join Patient as p on p.id = mc.patient_id")
 			.append(" where mc.id=:childBirth") ;
