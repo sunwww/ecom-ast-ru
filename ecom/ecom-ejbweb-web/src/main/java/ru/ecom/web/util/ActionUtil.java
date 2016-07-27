@@ -25,17 +25,17 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 public class ActionUtil {
 	
 	public static boolean isCacheCurrentLpu(HttpServletRequest aRequest) throws NamingException {// Согласен, немного неправильно, но пока работает 
-		String aLpuOmcCode = getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", "", aRequest) ;
-		if (aLpuOmcCode==null|| aLpuOmcCode.equals("")) return false;
-		String[] cacheLpuCodes = {"300043" //Лиман
-				
-		};
-		for (int i=0;i<cacheLpuCodes.length;i++) {
-			if (aLpuOmcCode.equals(cacheLpuCodes[i])) {
-				return true;
+		try {
+			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			String ver = service.executeNativeSql("select version()").iterator().next().get1().toString();
+			if (ver.toLowerCase().contains("postgres")) {
+				return false;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return false;
+		
+		return true;
 	} 
 	public static List<Object[]> getListObjFromNativeQuery(String aSql, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
