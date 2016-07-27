@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WebServices" default="all" basedir=".">
+
+    <property name="appname" value="WebService" />
+    <property name='dirname' value="ecom/WebService"/>
+
+
+
+    <target name="dist">
+        <delete dir='${libdir}/ecom/WebService' />
+        <copy overwrite="true" todir="${libdir}/ecom/WebService">
+            <fileset dir="WebContent">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+
+		<delete file='./target/${appname}.war'/>
+        <jar destfile="./target/${appname}.war">
+            <fileset dir="./WebContent">
+              
+            </fileset>
+            
+        </jar>
+
+		<delete file='./target/${appname}-src.zip'/>
+        <jar destfile="./target/${appname}-src.zip">
+            <fileset dir="./WebContent">
+              
+            </fileset>
+        </jar>
+
+        <copy overwrite="true" file="./target/${appname}.war" todir="${libdir}/ecom/WebService" />
+        <copy overwrite="true" file="./target/${appname}-src.zip" todir="${libdir}/ecom/WebService" />
+    </target>
+
+   
+
+    <target name="all" depends="dist" />
+
+</project>
