@@ -14,6 +14,7 @@ import ru.ecom.diary.ejb.service.protocol.ParameterType;
  * @author stkacheva
  */
 public interface IParameterService {
+	public String checkOrCreateCode (String aCode, String aId) ;
 	public List<ParameterType> loadParameterType()  ;
 	public ParameterPage loadParameter(ParameterForm aParameterForm, Long aId) ;
 	public ParameterPage loadParameter(ParameterForm aParameterForm, Long aId, ActionErrors aErrors) ;

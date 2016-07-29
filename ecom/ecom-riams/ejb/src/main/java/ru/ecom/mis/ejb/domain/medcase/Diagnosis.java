@@ -50,6 +50,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(DeleteListener.class)
 public class Diagnosis extends BaseEntity {
 
+	/** Выявлен атеросклероз БЦА */
+	@Comment("Выявлен атеросклероз БЦА")
+	public Boolean getIsFoundAtherosclerosis() {return theIsFoundAtherosclerosis;}
+	public void setIsFoundAtherosclerosis(Boolean aIsFoundAtherosclerosis) {theIsFoundAtherosclerosis = aIsFoundAtherosclerosis;}
+	/** Выявлен атеросклероз БЦА */
+	private Boolean theIsFoundAtherosclerosis;
+	
 	/**
 	 * Наименование
 	 */

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -53,6 +54,33 @@ import ru.nuzmsh.util.StringUtil;
 @Remote(IParameterService.class)
 @SecurityDomain("other")
 public class ParameterServiceBean implements IParameterService{
+	
+	public String checkOrCreateCode(String aCode, String aId) {
+		String retCode = "";
+		if (aCode==null||aCode.equals("")) { //Генерируем код автоматически
+			Long maxId = Long.valueOf(theManager.createNativeQuery("select max(id) from parameter").getSingleResult().toString());
+			maxId++;
+			while (true) {
+				List<Object> l = theManager.createNativeQuery("select id from parameter where code='code_"+maxId+"'").getResultList();
+				if (l.isEmpty()) {
+					retCode = "code_"+maxId;
+					break;
+				} else {
+					maxId++;
+				}
+			}
+		} else { //Проверяем указанный код на уникальность
+			Long id = Long.valueOf(theManager.createNativeQuery("select count(*) from parameter where code='"+aCode+"'" +(aId!=null&&!aId.equals("")?" and id!="+aId:"") ).getSingleResult().toString());
+			if (id>0) {
+				retCode=new Random().nextInt()+aCode;
+			} else {
+				retCode = aCode;
+			}
+		}
+		
+		return retCode;
+	}
+	
 	public Long createProtocolDrForCreateParam(Long aSmoId, Long aTemplate) {
 		MedCase smo = theManager.find(MedCase.class, aSmoId) ;
 		RoughDraft draft = new RoughDraft() ;
