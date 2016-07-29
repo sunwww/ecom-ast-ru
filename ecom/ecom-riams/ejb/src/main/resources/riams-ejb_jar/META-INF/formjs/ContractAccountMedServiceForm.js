@@ -32,13 +32,11 @@ function onView(aForm, aEntity, aContext) {
  */
 function onSave(aForm, aEntity, aContext) {
 	
-	for(i=1; i<=5000;i++){
-		if(request.getParameter("count"+i)!=null){
-		query = query + "insertmedser("+id+","+
-				i+","+
-				request.getParameter("count"+i)+"), ";}
+	var pms = aForm.getMedService();
+	if (+pms>0) {
+		var ms = aContext.manager.createNativeQuery ("select medservice_id from pricemedservice where id="+pms).getResultList().get(0);
+		if (ms!=null&&+ms>0) aEntity.setServiceIn(+ms);
 	}
-	query = query + "2";
 }
 
 
