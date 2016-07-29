@@ -362,7 +362,7 @@
                  $('medServiceName').value="";
                  $('medServiceAmount').value="1";
      	  		 $('uetT').value="";
-       		     $('orderNumber').value="" ;
+       		   //  $('orderNumber').value="" ;
             }
          }
         

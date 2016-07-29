@@ -36,6 +36,9 @@
         <msh:row guid="313f2ba2-1321-4ea9-85d8-c5b17b37f6fc">
 	          <msh:autoComplete vocName="vocPriorityDiagnosis" property="priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
           <msh:checkBox property="prophylacticExamination" label="Выявлен при профосмотре" guid="7db11bbf-480e-4be0-9e96-5d8bbcd4fcd8" />
+          </msh:row>
+          <msh:row><td></td><td></td>
+          <msh:checkBox property="isFoundAtherosclerosis" label="Выявлен атеросклероз БЦА" guid="7db11bbf-480e-4be0-9e96-5d8bbcd4fcd8" />
         </msh:row>
         <msh:row guid="61966961-9aee-416e-86d4-40be76f573d5">
           <msh:autoComplete vocName="diagnosisByDiagnosisSpo" property="diagnosisPrior" label="Предыдущий диагноз" guid="7205fe08-a2bb-42d1-8323-f6e757ba0e13" horizontalFill="true" fieldColSpan="3" viewOnlyField="true" />

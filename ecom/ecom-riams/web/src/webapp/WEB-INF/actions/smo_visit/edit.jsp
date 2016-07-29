@@ -186,8 +186,11 @@
       		when d.dtype='BaseMedicalExamination' then 'Паспорт здоровья'
       		when d.dtype='DirectionToMicrobiologAnalysis' then 'Направление на микробиологическое исследование'
       		when d.dtype='RequitDirectionDocument' then 'Акт в военкомат'
+      		when d.dtype='ExternalDocument' then coalesce(vedt.name,'Внешний документ')
       		else '-' end,d.diagnosis
-      		from Document d where d.medCase_id='${param.id}'
+      		from Document d 
+      		left join vocexternaldocumenttype vedt on vedt.id=d.type_id
+      		where d.medCase_id='${param.id}'
       		"/>
       		<msh:table name="docum" action="entitySubclassView-doc_document.do" 
       	 	 viewUrl="entitySubclassShortView-doc_document.do" idField="1" hideTitle="true">
