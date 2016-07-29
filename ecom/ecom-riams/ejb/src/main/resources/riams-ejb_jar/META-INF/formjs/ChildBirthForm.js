@@ -19,7 +19,7 @@ function onPreSave(aForm, aEntity, aCtx) {
  * Перед сохранением
  */
 function onPreCreate(aForm, aCtx) {
-	var list=aCtx.getEntityManager().createNativeQuery("select cb.id from childbirth cb where  cb.medcase_id='"+form.getMedCase()+"'").getResultList() ;
+	var list=aCtx.manager.createNativeQuery("select cb.id from childbirth cb where  cb.medcase_id='"+aForm.getMedCase()+"'").getResultList() ;
 	if (list.size()>0) throw "В отделении уже заведен случай родов!";
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
