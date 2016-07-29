@@ -44,7 +44,7 @@
 						Отправка дневника заведующим на редактирование (врачу)
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=prescript_list">
-						Создание назначений (в листе назначений) (июнь 2016)
+						Создание назначений (в листе назначений) (июль 2016)
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=refusal_hospitalization">
 						Оформление отказа от госпитализаций
@@ -66,6 +66,12 @@
                     </msh:link></li>
                     <li><msh:link  action="js-riams-instruction.do?id=attach_population">
 						Работа с отчетом по прикрепленному населению
+                    </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=claim_service">
+						Работа с заявками в отдел ИТ
+                    </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=parameterized_template">
+						Работа с параметризированными шаблонами
                     </msh:link></li>
 				</ul>
 				
