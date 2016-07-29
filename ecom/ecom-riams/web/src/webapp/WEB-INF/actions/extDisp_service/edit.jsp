@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.Collection"%>
@@ -7,6 +8,11 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
+<%
+boolean isCache = ActionUtil.isCacheCurrentLpu( request);
+
+%>
+
 	<tiles:put name="body" type="string">
 		<form action="javascript:void(0)"  id="mainForm" method="get" >
 		<input type="hidden" value="${param.id}" name="card" id="card">
@@ -32,6 +38,9 @@ and veds.id is not null
 and (veds.isVisit='0' or veds.isVisit is null)
 group by veds.id,veds.code,veds.name,veds.isVisit
 order by veds.id,veds.name"/>
+
+<% if (!isCache) { %>
+
 	<ecom:webQuery name="getServiceVisit" nameFldSql="getServiceVisitSql" nativeSql="
 		select   max( case when eds.serviceType_id=edps.serviceType_id then eds.id else null end) as serviceid 
  	, veds.id as vedsid,veds.code as vedscode,veds.name as vedsname  
@@ -95,6 +104,68 @@ group by veds.id,veds.code,veds.name
 order by veds.id,veds.name
 
 	"/>
+<%} else { %>
+
+	<ecom:webQuery name="getServiceVisit" nameFldSql="getServiceVisitSql" nativeSql="
+		select   max( case when eds.serviceType_id=edps.serviceType_id then eds.id else null end) as serviceid 
+ 	, veds.id as vedsid,veds.code as vedscode,veds.name as vedsname  
+ 	,case when veds.isVisit='1' then 'ExtDispVisit' else 'ExtDispExam' end as edsdtype 
+, to_char(max(case when eds.serviceType_id=edps.serviceType_id then eds.serviceDate else null end),'dd.mm.yyyy') as servicedate 
+,list(case when eds.serviceType_id=edps.serviceType_id then eds.recommendation else null end) as edsRecommendation 
+
+, case when count(case when eds.serviceType_id=edps.serviceType_id and eds.isEtdccSuspicion='1' then '1' else null end)>0 then 'checked' else null end 
+
+,veds.workfunctioncode  
+
+, max(case when eds.serviceType_id=edps.serviceType_id and eds.workfunction_id is not null 
+	then eds.workfunction_id
+when (select count(*) from VocWorkFunction vwf2
+left join WorkFunction wf2 on wf2.workfunction_id=vwf2.id
+where vwf2.code = veds.workfunctioncode  and (wf2.archival is null or wf2.archival='0') and wf2.id is not null
+)='1' then  wf1.id
+else null
+end) as edsWF  
+
+,(select list(vwf3.name||' '||wp3.lastname||' '||wp3.firstname||' '||wp3.middlename) from workfunction wf3 left join worker w3 on w3.id=wf3.worker_id
+left join patient wp3 on wp3.id=w3.person_id
+left join vocworkfunction vwf3 on vwf3.id=wf3.workfunction_id
+where wf3.id=eds.workfunction_id
+)as wfname 
+
+,max(case when (eds.serviceType_id=edps.serviceType_id and eds.idc10_id is not null) then cast(mkb.id as varchar) else '' end) as mkb10 
+ 	
+,max(case when (eds.serviceType_id=edps.serviceType_id and eds.idc10_id is not null) then mkb.code ||' '||mkb.name else '' end) as mkb10Name 
+from ExtDispCard edc
+left join Patient pat on pat.id=edc.patient_id
+left join ExtDispPlan edp on edp.dispType_id=edc.dispType_id
+left join ExtDispPlanService edps on edps.plan_id=edp.id
+left join extdispservice eds on eds.dtype='ExtDispVisit' and eds.card_id=edc.id
+left join VocExtDispService veds on veds.id=edps.servicetype_id
+left join WorkFunction wf on wf.id=eds.workfunction_id
+left join VocWorkFunction vwf on vwf.id= wf.workfunction_id
+left join Worker w on w.id=wf.worker_id
+left join mislpu ml on ml.id=w.lpu_id
+left join Patient wp on wp.id=w.person_id
+left join Vocidc10 mkb on mkb.id=eds.idc10_id
+left join VocWorkFunction vwf1 on vwf1.code = veds.workfunctioncode
+left join WorkFunction wf1 on wf1.workfunction_id=vwf1.id and (wf1.archival is null or wf1.archival='0')
+left join Worker w1 on w1.id=wf1.worker_id
+left join mislpu ml1 on ml1.id=w1.lpu_id
+left join Patient wp1 on wp1.id=w1.person_id
+where edc.id='${param.id}' 
+
+and (edps.sex_id=pat.sex_id or edps.sex_id is null)
+and edc.ageGroup_id=edps.ageGroup_id
+and (veds.isVisit='1')
+and veds.id is not null
+
+group by veds.id,veds.code,veds.name
+,veds.isVisit,veds.workfunctioncode
+order by veds.id,veds.name
+
+	"/>
+<%}%>
+	
 	<ecom:webQuery maxResult="1" nameFldSql ="getCardWorkfunctionSql" name="getCardWorkfunction" nativeSql="select vwf.code, wf.id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name
 	,to_char(edc.finishDate,'dd.MM.yyyy') as finishDate, edc.idcMain_id as dsId, mkb.code||' '||mkb.name as dsName
 	from extdispcard edc

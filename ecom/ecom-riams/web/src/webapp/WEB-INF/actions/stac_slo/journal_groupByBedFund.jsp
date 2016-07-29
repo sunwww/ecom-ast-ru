@@ -39,6 +39,7 @@
 	ActionUtil.setParameterFilterSql("bedSubType","bf.bedSubType_id", request) ;
 	ActionUtil.setParameterFilterSql("bedType","bf.bedType_id", request) ;
 	ActionUtil.setParameterFilterSql("additionStatus","p.additionStatus_id", request) ;
+	ActionUtil.setParameterFilterSql("sex","p.sex_id", request) ;
 
   if (shortI==null || shortI.equals("")) {
   %>
@@ -156,6 +157,10 @@
         <msh:row>
         	<msh:autoComplete property="bedSubType" fieldColSpan="6"
         	label="Тип коек" horizontalFill="true" vocName="vocBedSubType"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="sex" fieldColSpan="6"
+        	label="Пол" horizontalFill="true" vocName="vocSex"/>
         </msh:row>
         <msh:row>
         <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -331,7 +336,7 @@ left join VocSex vs on vs.id=p.sex_id
     to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')
     ${departmentSql} ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql}
     ${patientSql} ${additionStatusSql} ${result_dateSql}
-    ${policySql} 
+    ${policySql} ${sexSql}
     order by  p.lastname,p.firstname,p.middlename
         "/>
    <form action="print-stac_report_bedFund_reestr.do" method="post" target="_blank">
@@ -343,7 +348,7 @@ left join VocSex vs on vs.id=p.sex_id
     <input type="submit" value="Печать всего" onclick="this.form.action='print-stac_report_bedFund_reestr.do'"> 
     <input type="submit" value="Печать для проверки" onclick="this.form.action='print-stac_report_bedFund_reestr_inog.do'"> 
     </form>
- 
+ ${swod_by_standart_sql}
     	<msh:table name="swod_by_standart" selection="multiply" 
     	action="entityParentView-stac_slo.do" viewUrl="entityShortView-stac_slo.do" idField="1">
 		      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
@@ -391,7 +396,7 @@ left join VocSex vs on vs.id=p.sex_id
     	||${viewDateSqlId}
     	||${viewAddStatusSqlId}||${departmentSqlId}
     	||${bedTypeSqlId}||${viewServiceStreamSqlId}
-    	||${bedSubTypeSqlId}||${serviceStreamSqlId} as id
+    	||${bedSubTypeSqlId}||${serviceStreamSqlId}||${sexSqlId} as id
     	,${viewDateSql}
     	, ${viewAddStatusSql}
     	, d.name as dname
@@ -439,7 +444,7 @@ left join VocSex vs on vs.id=p.sex_id
     to_date('${dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy') 
     ${departmentSql}  ${emergencySql} ${serviceStreamSql} ${bedTypeSql} ${bedSubTypeSql} 
     ${patientSql} ${additionStatusSql} ${result_dateSql}
-    ${policySql} 
+    ${policySql} ${sexSql}
     group by  
 		m.department_id , d.name,
 		${viewDateGroup} ${viewServiceStreamGroup} ${viewAddStatusGroup} 
