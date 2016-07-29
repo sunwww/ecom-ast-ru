@@ -93,30 +93,34 @@
     </script>
 	<% 
 	String dateFrom = request.getParameter("dateFrom") ;
-	  	if (dateFrom !=null ) {
+	String contractNumber  = request.getParameter("contractNumber").toUpperCase() ;
+	String accountNumber  = request.getParameter("accountNumber").toUpperCase() ;
+	  	if (dateFrom !=null ||(contractNumber!=null&&!contractNumber.equals("")) || (accountNumber!=null&&!accountNumber.equals("")) ) {
 			StringBuilder fio = new StringBuilder() ;
 			String dateTo = request.getParameter("dateTo")!=null?request.getParameter("dateTo"):dateFrom ;
 			String prefix = "juridical" ;
 			StringBuilder paramSql= new StringBuilder() ;
 		  	StringBuilder paramHref= new StringBuilder() ;
-			String contractNumber  = request.getParameter("contractNumber").toUpperCase() ;
-			String accountNumber  = request.getParameter("accountNumber").toUpperCase() ;
+			
 			String orderBy = "mc.id" ;
-			paramSql.append("ca.dateFrom between to_date('").append(dateFrom).append("','dd.mm.yyyy') and to_date('").append(dateTo).append("','dd.mm.yyyy')") ;
+			if (dateFrom!=null&&!dateFrom.equals("")){
+				paramSql.append("ca.dateFrom between to_date('").append(dateFrom).append("','dd.mm.yyyy') and to_date('").append(dateTo).append("','dd.mm.yyyy')") ;
+			}
+			
 			if (typeContractPerson.equals("1")) {
-				paramSql.append(" and cp.dtype='JuridicalPerson'") ;
+				paramSql.append("  cp.dtype='JuridicalPerson'") ;
 				fio.append("cp.name like '%").append(contractNumber).append("%'") ;
 			} else if (typeContractPerson.equals("2")) {
-				paramSql.append( " and cp.dtype='JuridicalPerson'") ;
+				paramSql.append( "  cp.dtype='JuridicalPerson'") ;
 				paramSql.append( "  and reg.id is not null") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' or reg.name like '%").append(contractNumber).append("%')") ;
 			} else if (typeContractPerson.equals("3")) {
-				paramSql.append(" and cp.dtype='JuridicalPerson'") ;
+				paramSql.append("  cp.dtype='JuridicalPerson'") ;
 				paramSql.append("  and vjp.code='SILOVIK'") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' )") ;
 			} else if (typeContractPerson.equals("4")) {
 				orderBy = "vcl.code,lpu.name,contractNumber" ;
-				paramSql.append(" and cp.dtype='JuridicalPerson'") ;
+				paramSql.append("  cp.dtype='JuridicalPerson'") ;
 				paramSql.append( "  and lpu.id is not null") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' or lpu.name like '%").append(contractNumber).append("%')") ;
 			}
@@ -136,7 +140,7 @@
 		request.setAttribute("prefix", prefix) ;
 		request.setAttribute("orderBy", orderBy) ;
 	%>
-			<ecom:webQuery name="childContract" nativeSql="
+			<ecom:webQuery name="childContract" nameFldSql="childContract_sql" nativeSql="
 			select mc.id,mc.contractNumber as mccontractNumber
 			,coalesce(to_char(mc.dateFrom,'dd.mm.yyyy'),'')||'-'||coalesce(to_char(mc.dateTo,'dd.mm.yyyy'),'') as mcdateTo
 			,CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: ' 
