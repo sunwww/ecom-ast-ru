@@ -27,6 +27,7 @@ public class ParameterPrepareCreateAction extends AbstractEntityAction {
         Long parentId = Long.parseLong(aRequest.getParameter("id")) ;
         Long typeId = Long.parseLong(aRequest.getParameter("type")) ;
         BaseValidatorForm validatorForm = (BaseValidatorForm) aForm ;
+        IParameterService servicepar = Injection.find(aRequest).getService(IParameterService.class) ;
 
         IEntityForm loadedForm = 
     		isMap(form) 
@@ -36,8 +37,8 @@ public class ParameterPrepareCreateAction extends AbstractEntityAction {
         BeanUtils.copyProperties(aForm, loadedForm);
 
         validatorForm.setTypeCreate();
-        IParameterService servicepar = Injection.find(aRequest).getService(IParameterService.class) ;
         ParameterForm parForm = (ParameterForm) aForm ;
+        parForm.setCode(servicepar.checkOrCreateCode(parForm.getCode(),""+ parForm.getId()));
         parForm.setTypeCreate();
         parForm.setType(typeId);
         BeanUtils.copyProperties(aForm, parForm);

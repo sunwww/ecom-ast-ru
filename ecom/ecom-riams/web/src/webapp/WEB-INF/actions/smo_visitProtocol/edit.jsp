@@ -27,7 +27,7 @@
 
 <tiles:put name='body' type='string'>
     <msh:form action="entityParentSaveGoSubclassView-smo_visitProtocol.do" 
-    defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07" >
+    defaultField="dateRegistration" guid="b55hb-b971-441e-9a90-5155c07" fileTransferSupports="true" >
         <msh:hidden property="id"/>
         <msh:hidden property="saveType"/>
         <msh:hidden property="username"/>
@@ -93,7 +93,7 @@
                 	<msh:textField property="printDate" label="Дата печати" viewOnlyField="true"/>
                 	<msh:textField property="printTime" label="Время" viewOnlyField="true"/>
                 </msh:row>
-                </msh:ifFormTypeIsView>
+                </msh:ifFormTypeIsView>                
                 <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
                 <msh:row>
                     <td><input type="button" 
@@ -107,6 +107,8 @@
                 </msh:row>
             </msh:panel>
     </msh:form>
+    
+   
 	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     	<tags:templateProtocol idSmo="smo_visitProtocolForm.medCase" version="Visit" name="tmp" property="record" voc="protocolVisitByPatient"/>
     </msh:ifFormTypeIsNotView>
@@ -138,6 +140,9 @@
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol" 
     	name="Печать дневника"   
     	action='/javascript:showPrintProtocolTemplate()' title='Печать дневника' />
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintProtocol" 
+    	name="Добавить внешний документ"   
+    	action='/javascript:createExternalDocument()' title='Добавить внешний документ' />
     
     </msh:sideMenu>
     </msh:ifFormTypeIsView>
@@ -154,7 +159,7 @@
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
     <script type="text/javascript">
     setTimeout(checktime,600000) ;
-    
+   
    
     function checktime() {
     	if (confirm('Вы хотите сохранить дневник?')) {
@@ -178,9 +183,6 @@
     	}
     }
     isEditable($('id').value);
-
-    
-
     
     </script>
     </msh:ifFormTypeIsNotView>
@@ -231,9 +233,16 @@
     		</script>
     	</msh:ifFormTypeIsCreate>
     	
-    	<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm"><msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+    	<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+    	<script type="text/javascript">
+   	 function createExternalDocument() {
+	    	window.location.href = 'medcaseExternalDocument-import.do?id='+$('medCase').value;
+	    		
+	    }
+    	</script>
+    	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     		<script type="text/javascript">
-    		
+    	 
     		TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
     			{
                     callback: function(aString) {
