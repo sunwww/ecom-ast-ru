@@ -75,6 +75,8 @@ select cams.mainparent,cams.lastname||' '||cams.firstname||' '||cams.middlename
 	      />
 	      <msh:tableButton  property="20" buttonFunction="isDelete" buttonName="Удалить" buttonShortName="УДАЛ" hideIfEmpty="true" role="/Policy/Mis/Patient/View"
 	      />
+	      <msh:tableButton  property="20" buttonFunction="changeMedService" buttonName="Изменить услугу" buttonShortName="ИЗМ" hideIfEmpty="true" role="/Policy/Mis/Patient/View"
+	      />
 					<msh:tableColumn columnName="Счет" property="12" />
 					<msh:tableColumn columnName="Гаран. документ" property="13" />
 					<msh:tableColumn columnName="Фамилия" property="2" />
@@ -103,7 +105,10 @@ select cams.mainparent,cams.lastname||' '||cams.firstname||' '||cams.middlename
 	  <script type='text/javascript' src='./dwr/interface/ContractService.js'></script>
 	
 	<script type="text/javascript">
-	
+		function changeMedService(id) {
+			window.location = 'entityParentEdit-contract_accountMedService.do?id='+id;	
+		}
+		
 		function moveNoCheckedCAMSinOtherAccount(aAccountOld,aAccountNew) {
 			ContractService.moveNoCheckedCAMSinOtherAccount(
 					${param.id},aAccountNew, {

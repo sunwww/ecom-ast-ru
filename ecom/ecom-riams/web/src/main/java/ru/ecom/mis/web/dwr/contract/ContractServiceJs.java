@@ -13,6 +13,17 @@ import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
+	public String getCostByPriceMedService(String aPriceMedServiceId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String ret = "";
+		try {
+			ret = service.executeNativeSql("select pp.cost from pricemedservice pms left join priceposition pp on pp.id=pms.priceposition_id where pms.id="+aPriceMedServiceId).iterator().next().get1().toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ret;
+	}
 	public String updateCAMSinAccountNew(Long aCAMS, Long aAccountNew, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;

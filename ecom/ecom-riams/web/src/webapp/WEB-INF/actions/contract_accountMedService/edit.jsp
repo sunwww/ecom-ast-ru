@@ -18,7 +18,7 @@
 			<msh:panel>
 				<msh:row>
 					<msh:autoComplete property="medService" parentId="contract_accountMedServiceForm.account" label="Услуга" vocName="priceMedServiceByContractAccout" size="50" />
-					<msh:textField property="cost" label="Цена" viewOnlyField="true"/>
+					<msh:textField property="cost" label="Цена" />
 					<msh:textField property="countMedService" label="Кол-во"/>
 				</msh:row>
 			<msh:submitCancelButtonsRow colSpan="4" />
@@ -38,5 +38,23 @@
 			</msh:sideMenu>
 			<tags:contractMenu currentAction="medContract"/>
 		</msh:ifFormTypeAreViewOrEdit>
+	</tiles:put>
+	<tiles:put name="javascript" type="string">
+	 <script type='text/javascript' src='./dwr/interface/ContractService.js'></script>
+	<script type='text/javascript'>
+	medServiceAutocomplete.addOnChangeCallback(function() {$('cost').value='';getCost();});
+	function getCost() {
+		ContractService.getCostByPriceMedService($('medService').value,{
+			callback: function (a) {
+				if (a!=null&&a!=''){
+					$('cost').value=a;
+				//	$('costReadOnly').value=a;
+					
+				}
+			}
+			});
+		}
+	
+	</script>
 	</tiles:put>
 </tiles:insert>
