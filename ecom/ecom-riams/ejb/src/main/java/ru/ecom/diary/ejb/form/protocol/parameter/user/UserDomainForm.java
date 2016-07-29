@@ -19,7 +19,7 @@ public class UserDomainForm extends IdEntityForm{
 	
 	/** Код */
 	@Comment("Код")
-	@Persist @Required
+	@Persist 
 	public String getCode() {return theCode;}
 	public void setCode(String aCode) {theCode = aCode;}
 	/** Код */
