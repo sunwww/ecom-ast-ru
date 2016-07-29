@@ -22,16 +22,20 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property = "patient", parentForm = PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Document/External")
 public class ExternalDocumentForm extends DocumentForm {
+	
+	/** Тип родителя */
+	@Comment("Тип родителя")
+	public String getParentType() {return theParentType;}
+	public void setParentType(String aParentType) {theParentType = aParentType;}
+	/** Тип родителя */
+	private String theParentType;
+	
 	/** Ссылка на файл */
 	@Comment("Ссылка на файл")
 	@Persist
-	public String getReferenceTo() {
-		return theReferenceTo;
-	}
+	public String getReferenceTo() {return theReferenceTo;}
 
-	public void setReferenceTo(String aLinkFile) {
-		theReferenceTo = aLinkFile;
-	}
+	public void setReferenceTo(String aLinkFile) {theReferenceTo = aLinkFile;}
 	/** Ссылка на сжатый файл */
 	@Comment("Ссылка на сжатый файл")
 	@Persist

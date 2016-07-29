@@ -17,4 +17,11 @@ public class VocExternalDocumentType extends VocBaseEntity{
 
 	/** Медицинские документы */
 	private Boolean theIsMedical;
+	
+	/** В какую группу входит */
+	@Comment("В какую группу входит")
+	public String getGroupName() {return theGroupName;}
+	public void setGroupName(String aGroupName) {theGroupName = aGroupName;}
+	/** В какую группу входит */
+	private String theGroupName;
 }

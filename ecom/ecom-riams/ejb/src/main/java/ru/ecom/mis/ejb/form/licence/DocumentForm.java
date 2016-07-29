@@ -28,7 +28,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 		,DirectionDocumentForm.class ,BaseMedicalExaminationForm.class
 		,DirectionToMicrobiologAnalysisForm.class
 		,DischargeDiagnostDocumentForm.class
-		,RequitDirectionDocumentForm.class})
+		,RequitDirectionDocumentForm.class
+		,ExternalDocumentForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Document")
 public class DocumentForm extends IdEntityForm{
 

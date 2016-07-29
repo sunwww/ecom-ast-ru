@@ -1,5 +1,14 @@
 <vocconfig>
 
+<voc id="vocExternalDocumentTypeByParent" type="NativeVocService">
+	<NativeVocService
+	from="vocExternalDocumentType vedt"
+	nameId="vedt.id"
+	names="vedt.name"
+	parent="vedt.groupName =:parent"
+	>
+	</NativeVocService>
+	</voc>
 <voc id="patientListType" type="NativeVocService">
 	<NativeVocService
 	from="VocPatientListType vplt"
@@ -490,8 +499,7 @@
                 join="
                 	left join PricePosition PP ON PP.id = PMS.pricePosition_id
 					left join MedContract MC ON MC.priceList_id = PP.priceList_id
-					left join ServedPerson SP ON SP.contract_id=MC.id
-					left join ContractAccount CA ON CA.servedPerson_id=sp.id
+					left join ContractAccount CA ON CA.contract_id=mc.id
 				"
                 order=""
                 names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
