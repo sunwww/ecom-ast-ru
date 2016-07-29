@@ -11,11 +11,15 @@
   ExternalDocumentForm form = (ExternalDocumentForm) request.getAttribute("doc_externalDocumentForm");
   request.setAttribute("referenceTo", form.getReferenceTo()) ;
   request.setAttribute("referenceCompTo", form.getReferenceCompTo()) ;
+  String[] arr = form.getReferenceTo().split("\\.");
+  String ext = arr[arr.length-1];
+  //System.out.println("File="+form.getReferenceTo()+" EXT="+ext);
   %>
     <msh:form action="/entityParentSaveGoView-doc_externalDocument.do" defaultField="dateFrom" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="patient" />
+      <msh:hidden property="medCase" />
       <msh:panel>
         <msh:row>
           <msh:textArea property="comment" label="Комментарий:"
@@ -37,15 +41,27 @@
           <msh:textField viewOnlyField="true" property="editUsername" label="Польз. посл. редак.:"/>
           <msh:textField viewOnlyField="true" property="editDate" label="дата:"/>
         </msh:row>
-        <msh:row>
-        	<td colspan="6">
-        	<img alt="Загрузка изображения" src="/docmis/${referenceCompTo}" id="imgDocument" width="100%" ondblclick="this.src='/docmis/${referenceTo}'">
-        	</td>
-        	
-        </msh:row>
+        
+        
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
+     <%if (ext!=null&&ext.equals("pdf")) {%>
+        <msh:row>
+       
+        	<td colspan="6">
+        	<a href='/docmis/${referenceTo}' target="_blank" >Сохранить файл</a><br>
+        	<object><embed src="/docmis/${referenceTo}" width="700" height="500" /></object>
+        	
+        	</td>
+        	</msh:row>
+        	<%} else { %>
+        	<msh:row>
+        	<td colspan="6">
+        	<img alt="Загрузка изображения" src="/docmis/${referenceCompTo}" id="imgDocument" width="100%" ondblclick="this.src='/docmis/${referenceTo}'">
+        	</td>
+        	</msh:row>	
+        	<% } %>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Poly" beginForm="doc_externalDocumentForm" />
@@ -53,6 +69,7 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="doc_externalDocumentForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
       <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
+        <msh:sideLink key="ALT+5" action="/javascript:gotoMedCase()" name="Перейти к случаю лечения" guid="609c81cf-05e5-4e07-90b7-87b38863114c" />
         <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-doc_externalDocument" name="Изменить" roles="/Policy/Mis/MedCase/Document/External/Edit" guid="609c81cf-05e5-4e07-90b7-87b38863114c" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-doc_externalDocument" name="Удалить" roles="/Policy/Mis/MedCase/Document/External/Delete" guid="1a3265b4-cebb-4536-a471-c79003ccf548" />
       </msh:sideMenu>
@@ -61,6 +78,13 @@
   <tiles:put name="javascript" type="string">
  
   </tiles:put>
+ <tiles:put name="javascript" type="string">
+        <script type="text/javascript">
+        function gotoMedCase() {
+        	window.location = 'entitySubclassView-mis_medCase.do?id='+$('medCase').value;
+        }
+        </script>
+        </tiles:put>
   
 </tiles:insert>
 

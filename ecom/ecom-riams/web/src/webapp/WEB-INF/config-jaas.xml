@@ -130,6 +130,21 @@
             scope='request' validate="false" name="policyExportForm">
             <forward name="success" path="/WEB-INF/actions/doc_externalDocument/import.jsp"/>
         </action>
+        
+        <action path="/medcaseExternalDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
+         scope='request' validate="false" name="policyExportForm">
+            >
+            <forward name="success" path="/WEB-INF/actions/medcase_externalDocument/import.jsp"/>
+            <forward name="uploaded" path="/entityParentView-smo_visit.do"/>
+        </action>
+        
+        <action path="/templateDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
+         scope='request' validate="false" name="policyExportForm">
+            >
+            <forward name="success" path="/WEB-INF/actions/template_externalDocument/import.jsp"/>
+            <forward name="uploaded" path="/entityList-template_externalDocument.do"/>
+        </action>
+        
         <action path="/externalDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
             >
             <forward name="success" path="/WEB-INF/actions/doc_externalDocument/import.jsp"/>

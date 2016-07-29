@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -89,17 +91,37 @@ public class ExternalDocumentImportAction extends BaseAction{
     		File tmp = null ;
     		float mcomp = 1f ;
     		//System.out.println(1) ;
-    		
+    		ExportPolicyForm form = aForm!=null?(ExportPolicyForm)aForm:null ;
+    		FormFile ffile = form!=null?form.getFile():null;
+    		String parentType = form.getParentType()!=null&&!form.getParentType().equals("")?form.getParentType():"Patient";
+    		String contentType = ffile!=null?ffile.getContentType().toLowerCase(): "";
+    		System.out.println("==== TYPE="+contentType);
+    		System.out.println("==== Parent_TYPE="+parentType);
     		//System.out.println("path="+path) ;
-    		if (path!=null && !path.equals("")) {
+    		if (parentType.equals("Template")) {
+    		dirmain = service.getConfigValue("jboss.userdocument.dir","/home/user/opt/jboss-4.0.4.GAi-postgres/server/default/data");	
+    		String filePrefix="user";
+    		System.out.println("SAVE_DIR="+dirmain+"/"+filePrefix+"_"+ffile.getFileName());
+    		saveNotImage(ffile.getInputStream(), dirmain+"/"+filePrefix+"_"+ffile.getFileName());
+    		service.insertExternalDocumentByObject("Template", objectId, objectType
+    				, dirmain+"/"+filePrefix+"_"+ffile.getFileName(), dirmain+"/"+filePrefix+"_"+ffile.getFileName(), "", username) ;
+    		return aMapping.findForward("uploaded") ;
+    		} else if ((path!=null && !path.equals(""))||contentType.equals("application/pdf")) {
+    			
 	    		//System.out.println(2) ;
 	    		//mcomp = 0.25f ;
-	    		tmp = new File(dirmain+path) ;
-	    		image = ImageIO.read(tmp) ;
-	    		isDeleteTmp = true ;
-	    		isRecord = true ;
-	    		objectId= ConvertSql.parseLong(aRequest.getParameter("objectId")) ;
-	    		objectType = ConvertSql.parseLong(aRequest.getParameter("objectType")) ;
+	    		if (path!=null&& !path.equals("")){
+	    			tmp = new File(dirmain+path) ;
+		    		image = ImageIO.read(tmp) ;
+		    		isDeleteTmp = true ;
+		    		isRecord = true ;
+		    		objectId= ConvertSql.parseLong(aRequest.getParameter("objectId")) ;
+		    		objectType = ConvertSql.parseLong(aRequest.getParameter("objectType")) ;
+	    		} else {
+	    			objectId = form.getObjectId() ;
+	            	objectType = form.getType() ;
+	    		}
+	    		
         		Calendar cal = Calendar.getInstance() ;
         		cal.setTime(dat) ;
         		int year = cal.get(Calendar.YEAR) ;
@@ -117,17 +139,18 @@ public class ExternalDocumentImportAction extends BaseAction{
         		isCompress = false ;
         		System.out.println(3) ;
 	    	} else if (aForm!=null) {
-	    		ExportPolicyForm form = aForm!=null?(ExportPolicyForm)aForm:null ;
-	    		String contentType= form.getFile().getContentType() ;
+	    	//	 form = aForm!=null?(ExportPolicyForm)aForm:null ;
+	    	//	contentType= form.getFile().getContentType().toLowerCase() ;
             	image = ImageIO.read(form.getFile().getInputStream()) ;
             	objectId = form.getObjectId() ;
             	objectType = form.getType() ;
             	aRequest.setAttribute("objectId", objectId) ;
             	aRequest.setAttribute("objectType", objectType) ;
-            	if (contentType.toLowerCase().equals("image/tiff")) {
+            	if (contentType.equals("image/tiff")) {
             		//
             		
             	}
+            	
              	url_image = ""+ dat.getTime() ;
             	diradd = "tmp/"+username+"" ;
             	isCompress=true;
@@ -151,10 +174,30 @@ public class ExternalDocumentImportAction extends BaseAction{
             		//ImageIO.write(image, "jpg", new File(dirmain+diradd+".jpg")) ;
             		//ImageIO.write(image, "jpg", new File(dirmain+diradd+".jpg")) ;
 	            	//ImageIO.write(image, "TIFF", new File(dirmain+diradd+".tif")) ;
-	            	if (isRecord) {
+            		if (parentType.equals("Template")) {
+            			//saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");
+            		}
+            		else if (contentType!=null&&contentType.equals("application/pdf")) { //Сохраняем ПДФ как есть
+            			System.out.println("=== "+ffile.getFileSize()+" <>"+dirmain+"/"+diradd+".pdf");
+            			
+            				saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");
+            				System.out.println("=== DOC_TYPE= "+form.getType()+"<>"+form.getObjectId());
+            				if (form.getType()!=null) service.insertExternalDocumentByObject(parentType, form.getObjectId() , form.getType(), diradd+".pdf", diradd+".pdf", "", username) ;
+            				aRequest.setAttribute("url_image", diradd+".pdf") ;
+    		            	aRequest.setAttribute("url_image_comp", "") ;
+    		            	aRequest.setAttribute("result_image", "Обработано и записано") ;
+
+    		            	//Возвращаемся на страницу с визитов только для случая лечения
+    		            	if (parentType.equals("MedCase")) return aMapping.findForward("uploaded");
+            		} else {            		
+                		
+            		if (isRecord) {
 	            		tmp.renameTo(new File(dirmain+diradd+".jpg"));
 	            	} else {
-	            		save(image,mcomp,dirmain+diradd+".jpg",null,serviceKdl) ;
+	            	//	 else {
+	                		save(image,mcomp,dirmain+diradd+".jpg",null,serviceKdl) ;
+	                //	}
+	            		
 	            	}
 	            	//image = ImageIO.read(new File(dirmain+diradd+".jpg"));
 	            	String newName = dirmain+diradd+"-comp.jpg" ;
@@ -177,11 +220,14 @@ public class ExternalDocumentImportAction extends BaseAction{
 		            	aRequest.setAttribute("url_image", diradd+".jpg") ;
 		            	aRequest.setAttribute("url_image_comp", diradd+"-comp.jpg") ;
 	            	}
-	            	
+	    		
+	    		}
+	    		
 	            	
 	            	
 	            }catch(Exception e) {
-	            	//System.out.println(e.fillInStackTrace());
+	            //	System.out.println(e.fillInStackTrace());
+	            	e.printStackTrace();
 	            	aRequest.setAttribute("result_image", "Ошибка при сохранении") ;
 	            } 
 	            
@@ -191,6 +237,7 @@ public class ExternalDocumentImportAction extends BaseAction{
 	    	
     	} catch(Exception e) {
     		System.out.println(e);
+    		e.printStackTrace();
     		image = null ;
     		aRequest.setAttribute("result_image", "Ошибка при обработке") ;
     	}
@@ -245,7 +292,15 @@ public class ExternalDocumentImportAction extends BaseAction{
 			}
 		}
 	}
-	
+	public void saveNotImage(InputStream aInputStream, String aFileName) throws IOException  {
+		 int count = 0 ;
+	        FileOutputStream out = new FileOutputStream(aFileName);
+	        byte[] buf = new byte[8192] ;
+	        while ( (count=aInputStream.read(buf)) > 0) {
+	            out.write(buf, 0, count) ;
+	        }
+	        out.close() ;
+	}
 	
 	private void printlist(String[] aList) {
 		for(String l:aList) {

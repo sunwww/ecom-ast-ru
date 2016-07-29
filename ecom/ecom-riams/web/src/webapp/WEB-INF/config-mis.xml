@@ -50,6 +50,9 @@
 		<form-bean name="doc_dischargeForm" type="ru.ecom.mis.ejb.form.licence.DischargeDocumentForm"/>
 		<form-bean name="doc_requitDirectionForm" type="ru.ecom.mis.ejb.form.licence.RequitDirectionDocumentForm"/>
 		<form-bean name="doc_dischargeDiagForm" type="ru.ecom.mis.ejb.form.licence.DischargeDiagnostDocumentForm"/>
+		<form-bean name="template_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.TemplateExternalDocumentForm"/>
+		<form-bean name="diary_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentByMedCaseForm"/>
+		<form-bean name="medcase_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentByMedCaseForm"/>
 		<form-bean name="doc_externalDocumentForm" type="ru.ecom.mis.ejb.form.licence.ExternalDocumentForm"/>
 	    <form-bean name="cal_patternByOperRoomForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternByOperatingRoomForm" />
 	    <form-bean name="cal_patternBySpecForm" type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarPatternBySpecialistForm" />
@@ -294,6 +297,12 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+ <action path='/fileUpload' type='ru.ecom.web.actions.base.FileUploadAction'
+                name='stac_admissionJournalForm'
+                scope="request"
+                >
+            <forward name="success" path="/WEB-INF/actions/mis_archiveCase/archive_journal.jsp" />
+        </action>
  <action path='/mis_archive_journal' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

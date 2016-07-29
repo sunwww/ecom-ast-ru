@@ -6,6 +6,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 
 public class ExportPolicyForm extends BaseValidatorForm {
+	/** Тип родителя */
+	@Comment("Тип родителя")
+	public String getParentType() {return theParentType;}
+	public void setParentType(String aParentType) {theParentType = aParentType;}
+	/** Тип родителя */
+	private String theParentType;
+	
 	/** Название файла */
 	@Comment("Название файла")
 	public FormFile getFile() {return theFile;}
