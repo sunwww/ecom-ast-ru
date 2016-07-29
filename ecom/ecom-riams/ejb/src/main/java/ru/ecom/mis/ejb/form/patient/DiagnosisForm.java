@@ -24,6 +24,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 //        @AParentEntityFormInterceptor(DiagnosisPolyPreCreate.class)
 //)
 public class DiagnosisForm extends IdEntityForm {
+	
+	/** Выявлен атеросклероз БЦА */
+	@Comment("Выявлен атеросклероз БЦА")
+	@Persist
+	public Boolean getIsFoundAtherosclerosis() {return theIsFoundAtherosclerosis;}
+	public void setIsFoundAtherosclerosis(Boolean aIsFoundAtherosclerosis) {theIsFoundAtherosclerosis = aIsFoundAtherosclerosis;}
+	/** Выявлен атеросклероз БЦА */
+	private Boolean theIsFoundAtherosclerosis;
 	/** Информация по специалисту */
 	@Comment("Информация по специалисту")
 	@Persist

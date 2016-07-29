@@ -32,6 +32,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 )
 public class DiagnosisForm extends ru.ecom.mis.ejb.form.medcase.hospital.DiagnosisForm {
 	
+	/** Выявлен атеросклероз БЦА */
+	@Comment("Выявлен атеросклероз БЦА")
+	@Persist
+	public Boolean getIsFoundAtherosclerosis() {return theIsFoundAtherosclerosis;}
+	public void setIsFoundAtherosclerosis(Boolean aIsFoundAtherosclerosis) {theIsFoundAtherosclerosis = aIsFoundAtherosclerosis;}
+	/** Выявлен атеросклероз БЦА */
+	private Boolean theIsFoundAtherosclerosis;
+	
 	/** Информация по специалисту */
 	@Comment("Информация по специалисту")
 	@Persist
