@@ -37,6 +37,7 @@ import ru.ecom.jaas.ejb.domain.SoftConfig;
 import ru.ecom.jaas.ejb.service.SoftConfigServiceBean;
 import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
 import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
+import ru.ecom.mis.ejb.domain.licence.TemplateExternalDocument;
 import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
@@ -191,12 +192,18 @@ public class PatientServiceBean implements IPatientService {
 		} else if (aObject.equals("MedCase")) {
 			MedCase mc = theManager.find(MedCase.class, aObjectId) ;
 			doc.setMedCase(mc) ;
+		} else if (aObject.equals("Template")) {
+			
 		} else {
 			throw new IllegalStateException("Не определен object типа:"+aObject);
 		}
 		VocExternalDocumentType type = theManager.find(VocExternalDocumentType.class, aType) ;
 		doc.setType(type) ;
 		theManager.persist(doc) ;
+		if (aObject.equals("Template")) {
+			theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
+		}
+		
 	}
 	public String getCodeByMedPolicyOmc(Long aType) {
 		VocMedPolicyOmc type =null;
@@ -1874,6 +1881,12 @@ public class PatientServiceBean implements IPatientService {
 	private final LpuAreaDynamicSecurity theLpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
 
 	private @Resource SessionContext theSessionContext;
-	private final IsChild theIsChildUtil = new IsChild() ;  
+	private final IsChild theIsChildUtil = new IsChild() ;
+	public String getConfigValue(String aConfigName, String aDefaultValue) {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		String res =config.get(aConfigName, aDefaultValue);
+		return res ;
+		
+	}  
 
 }

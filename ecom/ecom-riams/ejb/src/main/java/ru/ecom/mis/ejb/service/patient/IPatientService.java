@@ -26,6 +26,7 @@ public interface IPatientService {
 	public PatientFondCheckData getNewPFCheckData(boolean aNeedUpdatePatient, boolean aNeedUpdateDocument, boolean aNeedUpdatePolicy, boolean aNeedUpdateAttachment); 
 	public float getImageCompress() ;
 	public String getImageDir();
+	public String getConfigValue(String aConfigName, String aDefaultValue);
 	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) ;
 	public void insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
