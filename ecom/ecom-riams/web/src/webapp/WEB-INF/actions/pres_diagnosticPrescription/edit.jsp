@@ -196,17 +196,23 @@
 	var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
 	if ($('tdPreRecord')) { $('tdPreRecord').innerHTML=""; }
 	if ($('divReserve')) { $('divReserve').innerHTML=""; }
-	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value);
-	addRows(type+":"+ar[0],1); 
+	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value, type+":"+ar[0],1);
+	
 }
 	
-function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments) {
-	
+function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments,addRowType, addRowNum) {
+	$('subm').value = 'Создание...';
+	$('subm').disabled = true;
 	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
 	PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
 	,$('surgServicies').value, {
 		callback: function(a) {
-			if (a==null) {alert("Ошибка при назначении услуги!!!");}
+			if (a==null) {
+				alert("Ошибка при назначении услуги!!! Выбранное время уже занято!");
+				
+			} else {
+				addRows(addRowType, addRowNum); 
+			}
 			getPreRecord();
 			updateTime();
 			//alert (a);
@@ -248,6 +254,8 @@ function deletePrescription(aMedService, aWCT) {
 		
 
 		function addRows(aResult,aFocus) {
+			$('subm').value = 'Создать назначение';
+			$('subm').disabled = false;
 		var resultRow = aResult.split(":");
 		/*
 		0 - ms.type
@@ -452,7 +460,7 @@ function getPreRecord() {
 				 <msh:hidden property="comments"  />
 			<msh:row>
 				<td colspan="4" align="center">        	
-	            	<input type="button" name="subm" onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
+	            	<input type="button" name="subm" id="subm"  onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
 	            </td>
 	        </msh:row>
 	        

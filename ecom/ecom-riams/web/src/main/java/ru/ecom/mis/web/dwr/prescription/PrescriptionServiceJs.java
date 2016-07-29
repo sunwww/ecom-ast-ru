@@ -166,6 +166,8 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		if (aTimePlanId==null||aTimePlanId.equals(0)) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		boolean isWCTisEmpty = wqs.executeNativeSql("select id from workcalendartime where id = "+aTimePlanId+" and medcase_id is null").isEmpty()?false:true;
+		if (!isWCTisEmpty) return null; //Не создаем направления, если время уже занято.
 		Long wf = null;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
 		try {
@@ -332,8 +334,9 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		str.append("delete from prescription where medservice_id=").append(aMedService).append(" and prescriptionlist_id=")
 			.append(aPrescriptList);
 		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")) {
-			str.append(" and calendartime_id=").append(aWorkCalendarTime) ;
-			service.executeUpdateNativeSql("update workcalendartime set prescription=null where id="+aWorkCalendarTime);
+			str.append(" and calendartime_id=").append(aWorkCalendarTime) ;			
+			service.executeUpdateNativeSql("update medcase set noactuality = '1' where id= (select medcase_id from workcalendartime where id = "+aWorkCalendarTime+")");
+			service.executeUpdateNativeSql("update workcalendartime set prescription=null, medcase_id = null where id="+aWorkCalendarTime);
 		}
 		return "Выполнено: "+service.executeUpdateNativeSql(str.toString());
 	}
@@ -348,11 +351,14 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	 * @param aDepartment - Отдел для забора биоматериала
 	 * @param aCabinet - рабочая функция для направления
 	 */
-	public String addPrescriptionToListWCT (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, String aDateStart, String aWorkCalendarTime, String aComments, HttpServletRequest aRequest) throws NamingException {
+	public String addPrescriptionToListWCT (String aPrescriptList, String aMedService,String aDepartment, String aCabinet,String dType, String aDateStart, String aWorkCalendarTime
+			, String aComments, HttpServletRequest aRequest) throws NamingException {
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		boolean isWCTisEmpty = service.executeNativeSql("select id from workcalendartime where id = "+aWorkCalendarTime+" and medcase_id is null").isEmpty()?false:true;
+		if (!isWCTisEmpty) return null; //Не создаем направления, если время уже занято.
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		String wf = null;
 		try {
