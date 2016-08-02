@@ -29,6 +29,9 @@ function onPreCreate(aForm, aCtx) {
 		throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
 	}
 	
+	
+	
+	
 }
 function onCreate(aForm, aEntity, aCtx) {
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
@@ -78,7 +81,7 @@ function onPreDelete(aMedCaseId, aContext) {
 
 function onSave(aForm,aEntity,aCtx) {
 	//aEntity.setEditTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
-	
+
 	var sql = "update MedCase set dateStart=:dateStart,entranceTime=:entranceTime,department_id=:dep, lpu_id=:lpu where parent_id=:idSLS and DTYPE='DepartmentMedCase' and prevMedCase_id is null"
 	
 	aCtx.manager.createNativeQuery(sql)
@@ -156,6 +159,17 @@ function onPreSave(aForm,aEntity, aCtx) {
 			var obj = list.get(0) ;
 			throw "Уже оформлена госпитализация за "+aForm.dateStart+" <a href='entitySubclassView-mis_medCase.do?id="+obj[0]+"'>№стат.карты "+obj[1]+"</a>" ;
 		}
+		if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo")) {
+			list = aCtx.manager.createNativeQuery("select sls.id ,ml.name from medcase sls" +
+	    			" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'" +
+	    			" left join mislpu ml on ml.id=slo.department_id" +
+	    			" where sls.id =:sls" +
+	    			" and slo.prevmedcase_id is null and "+aForm.getDepartment()+"!=slo.department_id").setParameter("sls",aForm.getId()).getResultList();
+	    	if (list.size()>0) {
+	    		throw "Уже создан случай лечение в отделении ("+list.get(0)[1]+"), изменение отделения невозможно";
+	    	}
+		} 
+		 
 	}
 	if (aEntity!=null) {
 		var date = new java.util.Date() ;
@@ -233,6 +247,5 @@ function onPreSave(aForm,aEntity, aCtx) {
 	    	}
     	}
     }
-    
        
 }
