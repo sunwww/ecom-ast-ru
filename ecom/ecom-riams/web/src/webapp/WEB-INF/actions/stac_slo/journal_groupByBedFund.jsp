@@ -348,7 +348,6 @@ left join VocSex vs on vs.id=p.sex_id
     <input type="submit" value="Печать всего" onclick="this.form.action='print-stac_report_bedFund_reestr.do'"> 
     <input type="submit" value="Печать для проверки" onclick="this.form.action='print-stac_report_bedFund_reestr_inog.do'"> 
     </form>
- ${swod_by_standart_sql}
     	<msh:table name="swod_by_standart" selection="multiply" 
     	action="entityParentView-stac_slo.do" viewUrl="entityShortView-stac_slo.do" idField="1">
 		      <msh:tableColumn columnName="#" property="sn" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
