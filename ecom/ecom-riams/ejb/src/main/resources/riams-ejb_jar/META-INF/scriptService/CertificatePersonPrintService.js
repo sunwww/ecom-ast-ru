@@ -200,7 +200,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		map.put("customer2.fio",null) ;
 		map.put("served.fio",null) ;
 		map.put("customer.addressRegistration","____________________________________________________________________________________________________________") ;
-		map.put("customer.pasportInfo","____________________________________________________________________________________________________________") ;
+		map.put("customer.passportInfo","____________________________________________________________________________________________________________") ;
 	}
 
 	return map;
@@ -293,7 +293,7 @@ function printContractByAccrual(aCtx, aParams) {
 		//throw ""+obj[4] ;
 		map.put("customer.passportInfo",getPassportInfo(customerPerson.passportType
 				,customerPerson.passportSeries,customerPerson.passportNumber
-				,customerPerson.passportDateIssue,customerPerson.passportWhomIssued)) ;
+				,customerPerson.passportDateIssued,customerPerson.passportWhomIssued)) ;
 	} else {
 		map.put("contractNumber","________") ;
 		map.put("customer1.fio",null) ;
