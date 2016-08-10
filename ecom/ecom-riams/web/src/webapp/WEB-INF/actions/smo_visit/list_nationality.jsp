@@ -501,6 +501,7 @@ end as srDaysNoCh
 ,count(distinct case when m.dtype='DepartmentMedCase' and vht.code='DAYTIMEHOSP'and vss.code='CHARGED' then m.id else null end) as hospitDnCh
 ,sum(case when m.dtype='DepartmentMedCase' and vht.code='DAYTIMEHOSP'and vss.code='CHARGED' then smo.dateFinish-smo.dateStart+1 else null end) as hospitDnDaysCh
 ,count(distinct case when m.dtype='HospitalMedCase' and m.deniedHospitalizating_id is not null then m.id else null end) as hospitDenied
+,count(distinct smo.patient_id) as CountPatient
 from medcase m
 left join medcase smo on smo.id=m.parent_id
 left join patient p on p.id=m.patient_id
@@ -556,11 +557,13 @@ ${sql_journal_swod }
                 <th colspan="7" class="rightBold">Стационарная медицинская помощь</th>
                 <th colspan="4" class="rightBold">Стационарно-замещающая медицинская помощь</th>
                 <th colspan="1" />
+                <th colspan="1" />
               </tr>
             </msh:tableNotEmpty>            
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="${groupName}" property="2"/>            
             <msh:tableColumn columnName="Общее кол-во" property="3" isCalcAmount="true"/>
+             <msh:tableColumn columnName="общее кол-во пациентов" property="20" isCalcAmount="true"/>
             <msh:tableColumn columnName="всего" property="4" isCalcAmount="true"/>
             <msh:tableColumn columnName="в т.ч. платно" property="5" isCalcAmount="true"/>
             <msh:tableColumn columnName="в т.ч. др. потоки" property="6" isCalcAmount="true"/>
@@ -577,6 +580,7 @@ ${sql_journal_swod }
             <msh:tableColumn columnName="в т.ч. платно" property="17" isCalcAmount="true"/>
             <msh:tableColumn columnName="к.дней" property="18" isCalcAmount="true"/>
             <msh:tableColumn columnName="отказы от госп." property="19" isCalcAmount="true"/> 
+           
         </msh:table>
     </msh:sectionContent>
     
