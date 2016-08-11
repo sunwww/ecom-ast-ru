@@ -17,11 +17,11 @@ function onSave(aForm, aEntity, aCtx) {
 }
 function checkCode(aEntity, aCtx, className, tableName) {
 	var addSql = "";
-	if (className==null||className=='') {
+	if (className!=null&&className!='') {
 		addSql = " and dtype='"+className+"'";
 	}
-	var list = aCtx.manager.createNativeQery("select count(*) from "+tableName+" where code='"+aEntity.getCode()+"' and id!="+aEntity.getId()+""+addSql).getSingleReslt();
-	if (list.size()>0) throw "Уже существует запись с таким кодом. Чтобы проставить код автоматически, очистите поле";
+	var cnt = aCtx.manager.createNativeQuery("select count(*) from "+tableName+" where code='"+aEntity.getCode()+"' and id!="+aEntity.getId()+""+addSql).getSingleResult();
+	if (+cnt>0) throw "Уже существует запись с таким кодом. Чтобы проставить код автоматически, очистите поле";
 }
 
 function createAutoCode (aEntity, aCtx, className, tableName) {
