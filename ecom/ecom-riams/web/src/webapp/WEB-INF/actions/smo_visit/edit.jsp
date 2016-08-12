@@ -19,6 +19,7 @@
       <msh:hidden property="username"/>
       <msh:hidden property="createDate"/>
       <msh:hidden property="infoByPolicy" />
+      <msh:hidden property="medserviceAmount" />
       <msh:hidden property="isPreRecord" />
       <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel">
@@ -68,7 +69,7 @@
           <msh:autoComplete vocName="vocDispanseryRegistration" property="dispRegistration" label="Диспансерный учет" fieldColSpan="1" horizontalFill="true" />
         </msh:row>
         <msh:row>
-          <msh:autoComplete showId="false" vocName="vocVisitResult" property="visitResult" viewOnlyField="false" label="Результат визита" guid="77a0dc57-91e5-45a8-b12e-0cdebc6475bb" fieldColSpan="1" horizontalFill="true" />
+          <msh:autoComplete showId="false" vocName="vocVisitResult" property="visitResult" viewOnlyField="false" label="Результат визита" guid="77a0dc57-91e5-45a8-b12e-0cdebc6475bb" fieldColSpan="1" horizontalFill="true"/>
 	        <msh:textField property="uet" label="Усл.един.трудоем."/>
         </msh:row>
         <msh:row>
@@ -78,7 +79,12 @@
           <msh:autoComplete vocName="vocMedCaseDefect" labelColSpan="3" property="medCaseDefect" label="Дефекты направления" horizontalFill="true" />
         </msh:row>
         <msh:row>
-	   		<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="6"/>
+	   		<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="2"/>
+	   		<%-- <msh:textField property="medserviceAmount0" label="кол-во"/> --%>
+	   		<br><td id="msAmnt" name="msAmnt">
+	   			<!-- ф-ция, собирающая строку сумм, называется getAmounts - строка 341 -->
+	   			<input type="text" id="msAmount" size='8' name="msAmount" value='1'> <input type="button" value="+" onclick="crEl('input');">
+	   		</td> 
 	    </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
 	       	<msh:row>
@@ -318,6 +324,29 @@
   <script type="text/javascript">
   function printAgree() {
   	window.location = "print-agreement.do?s=PatientPrintService&m=printAgreement&id="+$('patient').value;
+  }
+  
+  function crEl(aName) {
+  	var el=document.getElementById("msAmnt").parentElement;
+  	var s=el.innerHTML;
+  	el=el.parentElement;
+  	//alert(s);
+  	var el1=document.createElement('tr');
+  	el1.innerHTML=s;
+  	//document.forms[0].insertBefore(el, el1);
+  	//insertChild(16, el1, el);
+  	el.appendChild(el1);
+  }
+  
+  function getAmounts() {
+	  var elements=document.getElementsByName("msAmount");
+	  //alert(elements.length);
+	  var amounts='';
+	  for(var i=0; i<elements.length; i++) {
+		   if(amounts!='') amounts+=",";
+		  amounts+=elements[i].value; 
+	  }
+	  return amounts;
   }
   </script>
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
