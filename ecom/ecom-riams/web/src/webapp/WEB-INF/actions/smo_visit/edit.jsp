@@ -19,7 +19,7 @@
       <msh:hidden property="username"/>
       <msh:hidden property="createDate"/>
       <msh:hidden property="infoByPolicy" />
-      <msh:hidden property="medserviceAmount" />
+      <msh:hidden property="medserviceAmounts" />
       <msh:hidden property="isPreRecord" />
       <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel">
@@ -83,7 +83,11 @@
 	   		<%-- <msh:textField property="medserviceAmount0" label="кол-во"/> --%>
 	   		<br><td id="msAmnt" name="msAmnt">
 	   			<!-- ф-ция, собирающая строку сумм, называется getAmounts - строка 341 -->
-	   			<input type="text" id="msAmount" size='8' name="msAmount" value='1'> <input type="button" value="+" onclick="crEl('input');">
+	   			<input type="text" id="msAmount" size='8' name="msAmount" value='1'>
+	   			<input type="button" value="+" onclick="crEl('input');"> 
+	   			<%-- <msh:ifFormTypeIsNotView>
+	   				<input type="button" value="+" onclick="crEl('input');">
+	   			</msh:ifFormTypeIsNotView> --%>
 	   		</td> 
 	    </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
@@ -346,7 +350,7 @@
 		   if(amounts!='') amounts+=",";
 		  amounts+=elements[i].value; 
 	  }
-	  return amounts;
+	  $('medserviceAmounts').value=amounts;
   }
   </script>
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
@@ -398,6 +402,7 @@
   	
   	
   	function checkVisit() {
+  		getAmounts();
   		TicketService.checkHospital($('dateStart').value,$('patient').value,$('serviceStream').value
   		,{callback: function(aString) {
         	//alert(aString) ;
