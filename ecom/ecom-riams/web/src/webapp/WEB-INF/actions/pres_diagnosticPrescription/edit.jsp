@@ -407,8 +407,23 @@ function getPreRecord() {
 		$('surgCalTimeName').value = "";
 		 
 		}
+	
 				</script>
 			</msh:ifFormTypeIsNotView>
+			
+			<!--  скрипт отмены -->
+	<msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm">
+	<script type="text/javascript">
+	function cancelDiagnostic() {
+		var reason = ''+ prompt('Введите причину отмены');
+		PrescriptionService.cancelPrescription($('id').value, reason, {
+			callback:function (a) {
+				alert(a);
+			}
+		}) ;
+	}
+	</script>
+	</msh:ifFormTypeIsView>
 		</tiles:put>
 
   <tiles:put name="body" type="string">
@@ -538,6 +553,7 @@ function getPreRecord() {
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_diagnosticPrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
       <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">
+      <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/javascript:cancelDiagnostic()" name="Отменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+1"/>
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/entityParentEdit-pres_diagnosticPrescription" name="Изменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
         <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_diagnosticPrescription" name="Удалить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+DEL"/>
       </msh:sideMenu>

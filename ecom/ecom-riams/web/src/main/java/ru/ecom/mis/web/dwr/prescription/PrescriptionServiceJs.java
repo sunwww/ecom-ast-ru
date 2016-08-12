@@ -158,8 +158,34 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	public String cancelPrescription (String aId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
-		String sql = "update prescription set cancelDate = current_date, canceltime = current_time, cancelReasonText = '"+aReason+"' , cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='"+username+"') where id="+aId;
+		
+		
+		String SQL_t = "select case when  p.canceltime is null and p.intakedate is null "+ 
+					"and (mc.datestart is null) then '1' else '0' end "+
+				    "from prescription p "+
+				    "Left join workcalendartime wct on wct.id = p.calendartime_id "+
+				    "Left join medcase mc on mc.id = wct.medcase_id "+
+				    "where p.id="+aId;
+		String canCancel = wqs.executeNativeSql(SQL_t).iterator().next().get1().toString();
+
+		
+		if(canCancel.equals("1")){
+		
+		String sql="update medcase set noactuality = '1' where id = (select medcase_id from workcalendartime where id= (select calendartime_id from prescription where id = "+aId+"))";
+		wqs.executeUpdateNativeSql(sql);
+		
+		sql="update workcalendartime set medcase_id = NULL where id = (select calendartime_id from prescription where id ="+aId+")";
+		wqs.executeUpdateNativeSql(sql);
+		
+		sql = "update prescription " +
+			   "set cancelDate = current_date, " +
+			   "canceltime = current_time, " +
+			   "cancelReasonText = '"+aReason+"' ," +
+			   "cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='"+username+"') " +
+			   "where id="+aId;
+		
 		return "Назначение отменено " +wqs.executeUpdateNativeSql(sql);
+		}else return "Невозможно отменить! Уже было отменено или находится в работе";
 	}
 	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
 		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, HttpServletRequest aRequest )throws NamingException {
