@@ -115,6 +115,11 @@ public class VisitMedCaseForm extends TicketMedCaseForm {
 	/** Количество выписанных льготных рецептов */
 	private Integer thePrivilegeRecipeAmount;
 	
+	/** Количество оказанных услуг - AOI, 09.08.2016*/
+	private String theMedserviceAmounts;
+	public String getMedserviceAmounts() { return theMedserviceAmounts; }
+	public void setMedserviceAmounts(String aMedserviceAmounts) { this.theMedserviceAmounts = aMedserviceAmounts; }
+	
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
