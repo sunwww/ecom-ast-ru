@@ -18,4 +18,16 @@ public class ArchiveServiceJs {
 				
 	}
 	
+	public String getCardFromArchive (String aStatCardIds, HttpServletRequest aRequest) throws NamingException {
+		
+		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		String SQL_t = "DELETE FROM archivecase where id = (select archivecase from statisticstub where id="+aStatCardIds+")";
+		wqs.executeUpdateNativeSql(SQL_t);
+		
+		SQL_t = "update statisticstub set archivecase = null where id = "+aStatCardIds;
+		
+		return " "+wqs.executeUpdateNativeSql(SQL_t);
+	}
+	
 }
