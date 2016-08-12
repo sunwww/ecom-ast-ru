@@ -164,15 +164,19 @@ function onSave(aForm, aVisit, aCtx) {
 			  ,"objNew.setParent(aEntity)"
 			  ,"objNew.setPatient(aEntity.patient)"
 			  ,"objNew.setDateStart(aEntity.dateStart)"
+			  ,"objNew.setMedseviceAmount(+str[j)"
 			  ,"objNew.setNoActuality(false);objNew.setMedService(objS);"]
 			,"from MedCase where parent_id='"+aVisit.getId()+"' and dtype='ServiceMedCase' and medService_id"
+			, aForm.getMedserviceAmounts()
 			) ;
 	//throw "spo="+spo.dateStart + " - "+aVisit.dateStart ;
 }
 
-function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
-		 aTableSql) {
+function saveArray(aEntity,aManager, aJsonString, aClazz,aMainCmd, aAddCmd,
+		 aTableSql, aStringAmount) {
 	var obj = new Packages.org.json.JSONObject(aJsonString) ;
+	var str = aStringAmount.split(",");
+	
 	var ar = obj.getJSONArray("childs");
 	var ids = new Packages.java.lang.StringBuilder() ;
 	
