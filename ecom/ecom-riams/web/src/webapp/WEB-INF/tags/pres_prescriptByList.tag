@@ -99,8 +99,8 @@
     	p.id as pid,pl.id as plid,ms.name as drname
     	
  ,p.planStartDate,p.planEndDate,p.materialId,vpt.name as vptname
- ,ml.name as mlname,vpcr.name||' '||coalesce(p.cancelReasonText,'') as fldCancel
- ,case when vpcr.id is not null then 'color:red;' else null end as stylCancel
+ ,ml.name as mlname,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as fldCancel
+ ,case when p.canceldate is not null then 'color:red;' else null end as stylCancel
  , case when presV.datestart is not null then coalesce(d.record, '') else '' end as lab_rests
  ,presV.datestart
  from Prescription p 
