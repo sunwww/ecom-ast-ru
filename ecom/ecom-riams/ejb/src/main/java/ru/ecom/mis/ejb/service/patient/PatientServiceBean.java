@@ -179,7 +179,12 @@ public class PatientServiceBean implements IPatientService {
 		return Float.valueOf(comp) ;
 	}
 	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) {
-		ExternalDocument doc = new ExternalDocument() ;
+		ExternalDocument doc = null;
+		if (aObject.equals("Template")) {
+			doc = new TemplateExternalDocument() ;
+		} else {
+			doc = new ExternalDocument() ; 
+		}
 		doc.setReferenceTo(aReferenceTo) ;
 		doc.setReferenceCompTo(aReferenceComp) ;
 		java.util.Date date = new java.util.Date() ;
@@ -197,11 +202,18 @@ public class PatientServiceBean implements IPatientService {
 		} else {
 			throw new IllegalStateException("Не определен object типа:"+aObject);
 		}
-		VocExternalDocumentType type = theManager.find(VocExternalDocumentType.class, aType) ;
-		doc.setType(type) ;
+		if (aType!=null&&aType>0) {
+			VocExternalDocumentType type = theManager.find(VocExternalDocumentType.class, aType) ;
+			doc.setType(type) ;
+		}
 		theManager.persist(doc) ;
+		System.out.println("==== Загружаем пользовательский документ? тип = "+aObject);
 		if (aObject.equals("Template")) {
-			theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
+			
+		//	 doc = (TemplateExternalDocument) doc;
+		//	 theManager.persist(doc) ;	 
+			System.out.println("==== Загружаем пользовательский документ " + doc.getId());
+			//theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
 		}
 		
 	}
@@ -665,6 +677,9 @@ public class PatientServiceBean implements IPatientService {
 			.setParameter("code", attachedType).getResultList().isEmpty()?theManager.createQuery("from VocAttachedType where code=:code")
 			.setParameter("code", attachedType).getResultList().get(0):null);
 		System.out.println("check no create att_area === Patient = "+aPatientId+", AreaId = "+areaId);
+		if (attType==null) {
+			return "Прикрепление не создано, не распознан тип прикрепления: "+attachedType;
+		}
 		if (attachments.isEmpty()) { // Создаем новое 
 			MisLpu lpuAtt = null;
 			
