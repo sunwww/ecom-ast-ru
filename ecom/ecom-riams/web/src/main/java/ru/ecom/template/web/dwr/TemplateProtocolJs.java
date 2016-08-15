@@ -98,13 +98,23 @@ public class TemplateProtocolJs {
 		return parameters+"#"+permission;
 	}
 	public String getParameterByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
+		return getParameterByObject(aProtocolId, aTemplateId, "Template", aRequest);
+		
+	}
+	public String getParameterByObject(Long aProtocolId, Long aTemplateId, String aObjectName, HttpServletRequest aRequest) throws NamingException, JspException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		Collection<WebQueryResult> lwqr = null ;
-		
+		String fieldName = "";
+		 if (aObjectName.equals("AssessmentCard")){
+			fieldName = "pf.assessmentCard";
+		}
 		Long wfId = Long.valueOf(0) ;
 		String wfName = "" ;
 		if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+			if (aObjectName.equals("Template")) {
+				fieldName = "d.id";
+			} 
 			sql.append("select p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
 			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
@@ -120,18 +130,24 @@ public class TemplateProtocolJs {
 			sql.append(" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') ");
 			sql.append(" when p.type='2' then ''||pf.valueVoc_id end as p19val") ;
 			sql.append(" ,vv.name as d20val4v") ;
+			sql.append(" ,pg.id as f21GroupId");
+			sql.append(" ,pg.name as f22GroupIName");
 			sql.append(" from FormInputProtocol pf") ;
 			sql.append(" left join Diary d on pf.docProtocol_id = d.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join parametergroup pg on pg.id=p.group_id");
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join userValue vv on vv.id=pf.valueVoc_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where d.id='").append(aProtocolId).append("'") ;
+			sql.append(" where "+fieldName+"='").append(aProtocolId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
 			
 		} 
 		if (lwqr==null || lwqr.isEmpty()) {
+			if (aObjectName.equals("Template")) {
+				fieldName = "tp.id";
+			}
 			sql = new StringBuilder() ;
 			sql.append("select p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
@@ -145,23 +161,29 @@ public class TemplateProtocolJs {
 			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
 			sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault else '' end as p19valuetextdefault") ;
 			//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
+			
+			sql.append(" ,cast('' as varchar) as f20defvalue");
+			sql.append(" ,pg.id as f21GroupId");
+			sql.append(" ,pg.name as f22GroupIName");
 			sql.append(" from parameterbyform pf") ;
 			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+			sql.append(" left join parametergroup pg on pg.id=p.group_id");
 			sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
 			sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
-			sql.append(" where tp.id='").append(aTemplateId).append("'") ;
+			sql.append(" where "+fieldName+"='").append(aTemplateId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
 		} else {
 			sql = new StringBuilder() ;
-			sql.append("select mc.workFunctionexecute_id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as vwfname from diary d left join medcase mc on mc.id=d.medcase_id left join workfunction wf on wf.id=mc.workfunctionexecute_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where d.id="+aProtocolId+" and mc.workFunctionExecute_id is not null") ;
-			Collection<WebQueryResult> lwf=service.executeNativeSql(sql.toString()) ;
-			if (!lwf.isEmpty()) {
-				WebQueryResult wqr = lwf.iterator().next() ;
-				wfId = ConvertSql.parseLong(wqr.get1()) ;
-				wfName = ""+wqr.get2() ;
-			}
+			
+			//sql.append("select mc.workFunctionexecute_id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as vwfname from diary d left join medcase mc on mc.id=d.medcase_id left join workfunction wf on wf.id=mc.workfunctionexecute_id left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id left join vocworkfunction vwf on vwf.id=wf.workfunction_id where "+fieldName+"="+aProtocolId+" and mc.workFunctionExecute_id is not null") ;
+			//Collection<WebQueryResult> lwf=service.executeNativeSql(sql.toString()) ;
+			//if (!lwf.isEmpty()) {
+				//WebQueryResult wqr = lwf.iterator().next() ;
+				//wfId = ConvertSql.parseLong(wqr.get1()) ;
+				//wfName = ""+wqr.get2() ;
+			//}
 		}
 			
 			
@@ -184,6 +206,7 @@ public class TemplateProtocolJs {
 			,{"13","unitid"},{"14","unitname"}
 			,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
 			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
+			,{"21","groupId"}, {"22","groupName"}
 			} ;
 			for(WebQueryResult wqr : lwqr) {
 				
@@ -749,12 +772,15 @@ public class TemplateProtocolJs {
         }
     }
     public void saveParametersByMedService(long aProtocol, String aAdds, String[] aRemoves, HttpServletRequest aRequest) throws NamingException {
+    	saveParametersByMedServiceByType("template_id",aProtocol, aAdds, aRemoves, aRequest); 
+    } 
+    public void saveParametersByMedServiceByType(String aIdFieldName, long aProtocol, String aAdds, String[] aRemoves, HttpServletRequest aRequest) throws NamingException {
     	String[] ad = aAdds.split(",") ;
     	long[] adds = TemplateSaveAction.getLongs(ad);
     	long[] removes = TemplateSaveAction.getLongs(aRemoves);
     	IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService");
     	System.out.println("adds->"+aAdds+"--"+aAdds.split(",").length+" adds="+adds.length) ;
-    	service.saveParametersByTemplateProtocol(aProtocol, adds, removes) ;
+    	service.saveParametersByTemplateProtocol(aIdFieldName,aProtocol, adds, removes) ;
     }
     public Long getCountSymbolsInProtocol(long aVisit,  HttpServletRequest aRequest) throws NamingException {
     	 ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;

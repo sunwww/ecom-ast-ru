@@ -841,6 +841,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink roles="/Policy/Mis/Person/Privilege/Create" key="CTRL+6" params="id" action="/entityParentPrepareCreate-mis_privilege" name="Льготу" guid="68f67345-1b09-4942-81b1-b19180b048f6" />
         <msh:sideLink roles="/Policy/Poly/Medcard/Create" key="CTRL+7" params="id" action="/entityParentPrepareCreate-poly_medcard" name="Медицинскую карту" guid="6a1aaa44-d582-47fd-a70f-6b1a6f8d8fc8" />
         <msh:sideLink roles="/Policy/Mis/Patient/AttachedByDepartment/Create" params="id" action="/entityParentPrepareCreate-mis_lpuAttachedByDepartment" name="Специальное прикрепление" guid="9fc8edbb-dcbb-4134-b33c-f4e9ca033cfc" />
+		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_assessmentCard" name="Карту оценки"  title="Добавить карту оценки" roles="/Policy/Mis/AssessmentCard/Create" />
 		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_invalidity" name="Инвалидность"  title="Добавить инвалидность" roles="/Policy/Mis/Patient/Invalidity/Create" />
         <%-- 
         <msh:sideLink params="id" action="/entityParentPrepareCreate-work_award" name="Награду" title="Добавить награду" guid="bbdd4af8-7978-476f-a23c-618d3bbc2b6a" roles="/Policy/Mis/Worker/Award/Create" />

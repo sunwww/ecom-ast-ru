@@ -94,6 +94,11 @@
             scope='request' validate="false" name="diary_templateForm">
             <forward name="success" path="/WEB-INF/actions/diary_template/parameters.jsp"/>
         </action>
+        <action path="/mis_assessmentParamsEdit" 
+        	type='ru.ecom.diary.web.action.protocol.template.AssessmentCardTemplateEditAction'
+            scope='request' validate="false" name="mis_assessmentCardTemplateForm">
+            <forward name="success" path="/WEB-INF/actions/mis_assessmentCardTemplate/parameters.jsp"/>
+        </action>
 
         
     </action-mappings>
