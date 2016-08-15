@@ -653,6 +653,9 @@ function closeSpo(aContext, aSpoId) {
 	return aSpoId;
 }
 function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
+	return closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, null); 
+}
+function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish, aWorkFunctionClose) {
 	var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
 			+" ,vis.dateStart as mkbid"
 			+" from MedCase vis"
@@ -668,8 +671,16 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
 		listVisLastSql = listVisLastSql +"to_char(vis.dateStart,'dd.mm.yyyy')" ;
 	}
 	
-	listVisLastSql = listVisLastSql +" as dateStart, vis.workFunctionExecute_id"
-			+" from MedCase vis"
+	listVisLastSql = listVisLastSql +" as dateStart" ;
+	if (aWorkFunctionClose!=null&&+aWorkFunctionClose>0) {
+	
+		listVisLastSql = listVisLastSql +", case when vis.dateStart>"+aDateFinish+" then  vis.workFunctionExecute_id else "+aWorkFunctionClose+" end "
+	} else {
+		listVisLastSql = listVisLastSql +", vis.workFunctionExecute_id";
+	}
+	
+	
+	listVisLastSql += " from MedCase vis"
 			+"     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id"
 			+"     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
 			+"     left join Worker w on wf.worker_id = w.id"
@@ -689,9 +700,22 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
 			+" order by vis.dateStart desc, vis.timeExecute desc" ;
 	var listVisLast = aContext.manager.createNativeQuery(listVisLastSql).setMaxResults(1).getResultList() ;
 	if (listOpenVis.size()==0&&listVisLast.size()>0) {
-		var listVisFirst = aContext.manager.createNativeQuery("select vis.id as visid"
-				+" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
-				+" from MedCase vis"
+		var listVisFirstSql = "select vis.id as visid"
+				+" ,mkb.id as mkbid,";
+		if (aDateFinish!=null && aDateFinish!='') {
+			listVisFirstSql = listVisFirstSql +"case when vis.dateStart<"+aDateFinish+" then to_char(vis.dateStart,'dd.mm.yyyy') else to_char("+aDateFinish+",'dd.mm.yyyy') end as dateStart" ;
+		} else {
+			listVisFirstSql = listVisFirstSql +"to_char(vis.dateStart,'dd.mm.yyyy') as dateStart" ;
+		}
+		
+		if (aWorkFunctionClose!=null&&+aWorkFunctionClose>0) {
+			
+			listVisFirstSql = listVisFirstSql +", case when vis.dateStart<"+aDateFinish+" then  vis.workFunctionExecute_id else "+aWorkFunctionClose+" end "
+		} else {
+			listVisFirstSql = listVisFirstSql +", vis.workFunctionExecute_id";
+		}
+		
+		listVisFirstSql +=" from MedCase vis"
 				+"     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id"
 				+"     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
 				+"     left join Worker w on wf.worker_id = w.id"
@@ -708,7 +732,8 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
 				+" and (vis.noActuality='0' or vis.noActuality='1')"
 				+" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
 				+" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
-				+" order by vis.dateStart, vis.timeExecute").setMaxResults(1).getResultList() ;		
+				+" order by vis.dateStart, vis.timeExecute";
+		var listVisFirst = aContext.manager.createNativeQuery(listVisFirstSql).setMaxResults(1).getResultList() ;		
 		var visFirst = listVisFirst.get(0)[0];
 		//var visFirstO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
 		//		, java.lang.Long.valueOf(visFirst)) ;
@@ -718,6 +743,7 @@ function closeSpoWithoutDiagnosis(aContext, aSpoId, aMkbId, aDateFinish) {
 		var dateFinish = listVisLast.get(0)[2];
 		var startWF = listVisFirst.get(0)[3];
 		var finishWF = listVisLast.get(0)[3];
+		//throw "lastVisitID = "+visLast+": "+finishWF;
 		aContext.manager.createNativeQuery("update medcase set dateFinish=to_date('"+dateFinish
 				+"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
 				+"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
