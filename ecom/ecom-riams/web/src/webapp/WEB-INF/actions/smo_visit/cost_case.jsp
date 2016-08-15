@@ -35,11 +35,13 @@
   </msh:sectionTitle>  
   <msh:sectionTitle>Услуги</msh:sectionTitle>
   <msh:sectionContent>
-      <ecom:webQuery name="list" nativeSql="
+      <ecom:webQuery name="list" nameFldSql="list_sql" nativeSql="
 select
       vis.id,vis.datestart||' - '||ms.code||'. '||ms.name,vwf.name||' '||wp.lastname as sloinfo
       ,pp.code||' '||pp.name as ppname
       ,pp.cost as ppcost
+      ,coalesce(smc.medserviceAmount,1) as cntService
+      ,pp.cost * coalesce(smc.medserviceAmount,1) as ppSum
       from medcase vis
       left join workfunction wf on wf.id=vis.workfunctionexecute_id
       left join vocworkfunction vwf on vwf.id=wf.workfunction_id
@@ -59,8 +61,9 @@ select
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Наименование услуги" property="2" />
       <msh:tableColumn columnName="Исполнитель" property="3" />
-      <msh:tableColumn columnName="Кол-во" property="4" />
-      <msh:tableColumn columnName="Цена" property="5" isCalcAmount="true" />
+      <msh:tableColumn columnName="Кол-во" property="6" />
+      <msh:tableColumn columnName="Цена" property="5" />
+      <msh:tableColumn columnName="Сумма" property="7" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
   <msh:sectionTitle>ДОП.УСЛУГИ</msh:sectionTitle>
