@@ -93,8 +93,8 @@
     </script>
 	<% 
 	String dateFrom = request.getParameter("dateFrom") ;
-	String contractNumber  = request.getParameter("contractNumber").toUpperCase() ;
-	String accountNumber  = request.getParameter("accountNumber").toUpperCase() ;
+	String contractNumber  = request.getParameter("contractNumber")!=null?request.getParameter("contractNumber").toUpperCase():null ;
+	String accountNumber  = request.getParameter("accountNumber")!=null?request.getParameter("accountNumber").toUpperCase() :null;
 	  	if (dateFrom !=null ||(contractNumber!=null&&!contractNumber.equals("")) || (accountNumber!=null&&!accountNumber.equals("")) ) {
 			StringBuilder fio = new StringBuilder() ;
 			String dateTo = request.getParameter("dateTo")!=null?request.getParameter("dateTo"):dateFrom ;
