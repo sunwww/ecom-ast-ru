@@ -115,9 +115,10 @@ public class HospitalMedCaseServiceJs {
 		sql.append("select smc.medservice_id,ms.code||' '||ms.name as serviceName")
 			.append(",smc.workfunctionexecute_id,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfinfo")
 			.append(",smc.idc10_id,mkb.code||' '||mkb.name as mkb")
-			.append(",to_char(smc.datestart,'dd.mm.yyyy') as datestart,smc.medserviceAmount")
-			.append(",smc.serviceStream_id,vss.name as vssname")
+			.append(",to_char(coalesce(smc.datestart,vis.datestart),'dd.mm.yyyy') as datestart,coalesce(smc.medserviceAmount,1)")
+			.append(",coalesce(smc.serviceStream_id,vis.serviceStream_id),coalesce(vss.name, visSS.name) as vssname")
 			.append(" from medcase smc")
+			.append(" left join medcase vis on vis.id=smc.parent_id")
 			.append(" left join MedService ms on ms.id=smc.medservice_id")
 			.append(" left join WorkFunction wf on wf.id=smc.workFunctionExecute_id")
 			.append(" left join Worker w on w.id=wf.worker_id")
@@ -125,6 +126,7 @@ public class HospitalMedCaseServiceJs {
 			.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id")
 			.append(" left join VocIdc10 mkb on mkb.id=smc.idc10_id")
 			.append(" left join VocServiceStream vss on vss.id=smc.serviceStream_id")
+			.append(" left join VocServiceStream visSs on visSs.id=vis.serviceStream_id")
 			.append(" where smc.parent_id='").append(aMedCase).append("' and smc.dtype='ServiceMedCase' order by smc.id") ;
 		List<Object[]> resL = service.executeNativeSqlGetObj(sql.toString()) ;
 		for (int i=0;i<resL.size();i++) {

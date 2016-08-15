@@ -167,7 +167,7 @@ left join medservice ms on pms.medservice_id=ms.id
 where cao.operationdate
 between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
 and ppG.lpu_id in (184,180 )
-and pp.positionType_id=2
+and pp.positionType_id in (2,11)
 group by ppG.lpu_id,pp.id,pp.code,pp.name,wp.lastname,vwf.name
 order by pp.name
 
