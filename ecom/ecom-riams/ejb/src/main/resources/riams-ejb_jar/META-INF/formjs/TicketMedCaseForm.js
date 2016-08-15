@@ -156,6 +156,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		spo.setNoActuality(false) ;
 		if ((aForm.isCloseSpo!=null && aForm.isCloseSpo)||(aForm.emergency!=null && aForm.emergency)
 				||(aForm.ambulance!=null && aForm.ambulance>0)) {
+			
 			spo.setDateFinish(aEntity.getDateStart()) ;
 			spo.setFinishFunction(workFunction) ;
 		}
@@ -167,8 +168,11 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
 			try {
 				
-				aCtx.serviceInvoke("SmoVisitService", "closeSpoWithoutDiagnosis",aEntity.parent.id,aForm.getConcludingMkb(),"to_date('"+aForm.dateStart+"','dd.mm.yyyy')") ;
-			} catch(e) {}
+				aCtx.serviceInvoke("SmoVisitService", "closeSpoWithoutDiagnosis",aEntity.parent.id,aForm.getConcludingMkb(),"to_date('"+aForm.dateStart+"','dd.mm.yyyy')",aForm.workFunctionExecute) ;
+			} catch(e) {
+				throw "e="+e;
+				e.printStackTrace();
+			}
 			
 		}	
 	}
