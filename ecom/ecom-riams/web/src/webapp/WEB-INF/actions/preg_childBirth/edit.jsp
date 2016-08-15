@@ -366,6 +366,7 @@
 	         			}
 	         		}
 	       	//	alert ("addRF = "+addRowF);
+	         	    fillRows();
 	         	}
 
 	    
@@ -466,6 +467,37 @@
   		if (ret==0) {
   		checkForm ();	
   		}
+    }
+    // Заполняем данные по новорожденному, если сохранение не удалось 
+
+    function fillRows() {
+    	if ($('newBornsInfo').value !=null && $('newBornsInfo').value !='') {
+    		var borns = $('newBornsInfo').value.split('@');
+    		for (var i=0;i<borns.length;i++) {
+    			var born = borns[i].split('#');
+    			for (var ii=0;ii<theFld.length;ii++) {
+    				if (+theFld[ii][2]==1) {
+    					setCheckedRadio(theFld[ii][1]+(i+1),born[ii]);
+    				} else {    					
+    					$(theFld[ii][1]+(i+1)).value = born[ii];
+    				}
+    			}
+    		}
+    	}
+    }
+    
+    function setCheckedRadio (aField, aValue) {    	
+    	    var chk =  document.getElementsByName(aField) ;
+    	    for (var i=0;i<chk.length;i++) {
+    	    	if (chk[i].value ==+aValue) {
+    	    		chk[i].checked='checked';
+    	    	}
+    	    }
+    	    //alert ("== "+aField+" "+chk.length);
+    	   	//var aMax=chk.length ;
+    	   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
+    	   	
+    	   
     }
     function createOtherNewBorns() {
   		var borns = document.getElementById('otherNewBorns').childNodes;
