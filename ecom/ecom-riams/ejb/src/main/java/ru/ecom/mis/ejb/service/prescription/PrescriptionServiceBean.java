@@ -252,6 +252,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		vis.setCreateDate(new java.sql.Date(date)) ;
 		vis.setCreateTime(new java.sql.Time(date)) ;
 		vis.setUsername(aUsername) ;
+		vis.setNoActuality(true);
 		ServiceMedCase smc = new ServiceMedCase() ;
 		smc.setPatient(pat) ;
 		smc.setMedService(ms) ;
