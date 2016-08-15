@@ -116,6 +116,8 @@
 					  $('areaName').value=(arr[2]!=null&&arr[2]!='')?arr[3]:$('areaName').value;
 					  $('company').value=arr[4];
 					  $('companyName').value=arr[5];
+					  $('attachedType').value = arr[6];
+					  $('attachedTypeName').value = arr[7];
 					  
 				  }}
 			  });

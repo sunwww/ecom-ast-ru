@@ -46,7 +46,9 @@ public class AttachmentServiceJs {
 	public String getAreaByPatient (Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		try {
-			String sql = "select la.id as laId,la.number ||' '||vat.name as laName, lpu.id as lpuId,lpu.name as lpuName, mp.company_id, ri.name as skName from patient p " +
+			String sql = "select la.id as laId,la.number ||' '||vat.name as laName, lpu.id as lpuId,lpu.name as lpuName, mp.company_id, ri.name as skName " +
+					" ,(select id||':'||id||' '||name from vocattachedtype vott where vott.code=case when la.id is not null then '1' else '2' end) as att_info" +					
+					" from patient p " +
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
 					" 	and ((laap.housenumber is null or laap.housenumber='') or laap.housenumber=p.housenumber)" +
 					"	and ((laap.housebuilding is null or laap.housebuilding='') or laap.housebuilding=p.housebuilding)" +
@@ -70,8 +72,9 @@ public class AttachmentServiceJs {
 					,areaId = r.get1()!=null?r.get1().toString():""
 					,areaName = r.get2()!=null?r.get2().toString():""
 					,companyId = r.get5()!=null?r.get5().toString():""
-					,companyName = r.get6()!=null?r.get6().toString():"";
-				return lpuId+":"+lpuName+":"+areaId+":"+areaName+":"+companyId+":"+companyName;
+					,companyName = r.get6()!=null?r.get6().toString():""
+					,attachedType =r.get7()!=null?r.get7().toString():"";
+				return lpuId+":"+lpuName+":"+areaId+":"+areaName+":"+companyId+":"+companyName+":"+attachedType;
 			}
 		} catch (Exception e) {
 			return e.getMessage();
