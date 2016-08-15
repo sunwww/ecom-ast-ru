@@ -207,8 +207,8 @@
    ,mc.id as f11mcid
    ,'js-pres_prescriptList-pres_by_6_month_patient.do?id='||pat.id as f12patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f13sls
-  ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null and p.transferdate is not null  then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j14scanc
-  ,  case when mc.dateStart is null and p.medcase_id is not null and p.cancelDate is null and p.medcase_id is not null then mc.id||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j15sanaliz
+  ,  case when p.medCase_id is null and p.cancelDate is null and p.transferdate is not null  then replace(list(''||p.id),' ','')||''','''||coalesce(vsst.biomaterial,'-') else null end as j14scanc
+  ,  case when mc.dateStart is null and p.medcase_id is not null and p.cancelDate is null then mc.id||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j15sanaliz
   ,  case when mc.dateStart is null and p.cancelDate is null and mc.workFunctionExecute_id is not null then mc.id||''','''||d.id else null end as j16enter
   , case when p.canceldate is not null then list(coalesce(vpcr.name,'') ||' '||coalesce(p.cancelreasontext,'')) else d.record end as d17record 
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null and p.transferdate is not null then '0'','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j18scanc
@@ -265,8 +265,8 @@
 	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" >
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showBioIntakeCancel" buttonName="Брак" buttonShortName="Брак"/>
 	     <msh:tableButton property="14" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabAnalyzed" buttonName="Анализ" buttonShortName="Анализ"/>
-	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="ПОдтвердить выполнение результата и ввести резальтат" buttonShortName="Ан.+Рез."/>
-	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Ввести резальтат" buttonShortName="Рез."/>
+	     <msh:tableButton property="18" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Подтвердить выполнение результата и ввести результат" buttonShortName="Ан.+Рез."/>
+	     <msh:tableButton property="15" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="goBioService" buttonName="Ввести результат" buttonShortName="Рез."/>
 	     <msh:tableButton property="16" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="checkLabControl" buttonName="Результат заведен правильно" buttonShortName="Подт."/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Код назн." property="4"/>
