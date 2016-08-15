@@ -33,7 +33,39 @@ import javax.naming.NamingException;
  */
 public class TemplateProtocolJs {
 	
-	
+	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder res = new StringBuilder();
+		String sql = "select pg.id, pg.name,cast(sum(uv.cntBall) as decimal(11,0))" +
+				" from  parameterbyform pf" +
+				" left join parameter p on p.id=pf.parameter_id" +
+				" left join parametergroup pg on pg.id=p.group_id" +
+				" left join userdomain ud on ud.id=p.valuedomain_id " +
+				" left join uservalue uv on uv.domain_id=ud.id" +
+				" where pf.assessmentcard="+aCardTemplate+" and uv.id in ("+aParams+")" +
+				" group by pg.id, pg.name";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (!list.isEmpty()) {
+			for (WebQueryResult r: list) {
+				if (res.length()>0) {
+					res.append("@");
+				}
+				res.append(r.get1()).append("#").append(r.get2()).append("#").append(r.get3());
+			}
+		}
+		return res.toString();
+		
+	}
+	public String getParameterBallId(String aParameterId, HttpServletRequest aRequest) throws NamingException {
+		if (aParameterId==null||aParameterId.equals("")) {return "";}
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> res = service.executeNativeSql("select cast(cntBall as decimal(11,0)) from uservalue  where id = "+aParameterId);
+		if (!res.isEmpty()) {
+			return res.iterator().next().get1().toString();
+		}
+		return "";
+		
+	}
 	public String getTemplateParametersList (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder ret = new StringBuilder();
@@ -782,7 +814,7 @@ public class TemplateProtocolJs {
     	if (res1==0) {
     		
     		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    		String slsId = wqs.executeNativeSql("select mc.parent_id from diary d " +
+    		String slsId = wqs.executeNativeSql("select case when mc.dtype='HospitalMedCase' or mc.dtype='PolyclinicMedCase' then mc.id else mc.parent_id from diary d " +
     				" left join medcase mc on mc.id=d.medcase_id " +
     				" where d.id = "+aIdProt).iterator().next().get1().toString();
 
