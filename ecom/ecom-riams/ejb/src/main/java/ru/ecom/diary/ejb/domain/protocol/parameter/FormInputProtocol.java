@@ -29,6 +29,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 })
 public class FormInputProtocol extends BaseEntity{
 
+	/** Карта оценки */
+	@Comment("Карта оценки")
+	public Long getAssessmentCard() {return theAssessmentCard;}
+	public void setAssessmentCard(Long aAssessmentCard) {theAssessmentCard = aAssessmentCard;}
+	/** Карта оценки */
+	private Long theAssessmentCard;
+	
 	/** Параметр */
 	@Comment("Параметр")
 	@OneToOne

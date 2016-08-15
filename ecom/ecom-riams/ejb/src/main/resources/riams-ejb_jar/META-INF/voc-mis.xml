@@ -1,5 +1,15 @@
 <vocconfig>
 
+<voc id="vocAssessmentCard" type="NativeVocService">
+	<NativeVocService
+	from="assessmentCardTemplate act"
+	nameId="act.id"
+	names="act.name"
+	>
+	</NativeVocService>
+	</voc>
+	
+	
 <voc id="vocExternalDocumentTypeByParent" type="NativeVocService">
 	<NativeVocService
 	from="vocExternalDocumentType vedt"

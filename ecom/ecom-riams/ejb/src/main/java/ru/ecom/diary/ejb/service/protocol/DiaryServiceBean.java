@@ -54,9 +54,12 @@ public class DiaryServiceBean implements IDiaryService {
 		return loadParametersByMedService(aTemplateId, "");
 	}
 	public CheckNode loadParametersByMedService(long aTemplateId, String aUsername) {
+		return loadParametersByMedService(aTemplateId, aUsername, "p.template_id");
+	}
+	public CheckNode loadParametersByMedService(long aTemplateId, String aUsername, String aField) {
 		TreeSet<Long> parametersSet = new TreeSet<Long>() ;
 		TemplateProtocol template = theManager.find(TemplateProtocol.class, aTemplateId) ;
-		List<Object> list = theManager.createNativeQuery("select p.parameter_id from ParameterByForm p where p.template_id=:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
+		List<Object> list = theManager.createNativeQuery("select p.parameter_id from ParameterByForm p where "+aField+" =:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
 		for (Object param: list) {
 			if (param!=null) parametersSet.add(ConvertSql.parseLong(param)) ;
 		}
@@ -111,9 +114,15 @@ public class DiaryServiceBean implements IDiaryService {
 			aNode.getChilds().add(node) ;
 		}
 	}
+	public void saveParametersByTemplateProtocol( long aProtocolId, long[] aAdded, long[] aRemoved) {
+		saveParametersByTemplateProtocol(null, aProtocolId,  aAdded,aRemoved);
+	}
+	public void saveParametersByTemplateProtocol(String aIdFieldName, long aProtocolId, long[] aAdded, long[] aRemoved) {
 	
-	public void saveParametersByTemplateProtocol(long aProtocolId, long[] aAdded, long[] aRemoved) {
-		TemplateProtocol protocol = theManager.find(TemplateProtocol.class, aProtocolId) ;
+		
+		if (aIdFieldName==null||aIdFieldName.equals("")) {
+			aIdFieldName="template_id";
+		}
 		//theManager.refresh(protocol) ;
 		//System.out.println("ADDING");
 		int i=0;
@@ -124,12 +133,17 @@ public class DiaryServiceBean implements IDiaryService {
 			//if(param!=null &&!params.contains(param)) {
 			//	params.add(param) ;
 			//}
-			List<ParameterByForm> list = theManager.createQuery("from ParameterByForm where template_id='"+aProtocolId+"' and parameter_id='"+idParam+"'").getResultList() ;
+			List<ParameterByForm> list = theManager.createQuery("from ParameterByForm where "+aIdFieldName+"='"+aProtocolId+"' and parameter_id='"+idParam+"'").getResultList() ;
 			if (list.isEmpty()) {
 				Parameter param = theManager.find(Parameter.class, idParam) ;
 				ParameterByForm frm = new ParameterByForm() ;
 				frm.setParameter(param) ;
-				frm.setTemplate(protocol) ;
+				if (aIdFieldName.equals("template_id")){
+					TemplateProtocol protocol = theManager.find(TemplateProtocol.class, aProtocolId) ;
+					frm.setTemplate(protocol) ;
+				} else if (aIdFieldName.equals("assessmentCard")) {
+					frm.setAssessmentCard(aProtocolId);
+				}
 				frm.setPosition(Long.valueOf(i)) ;
 				theManager.persist(frm) ;
 			} else {
@@ -149,7 +163,7 @@ public class DiaryServiceBean implements IDiaryService {
 		//System.out.println("REMOVED");
 		for(long idParam:aRemoved) {
 			//System.out.println("removed id "+idParam);
-			theManager.createNativeQuery("delete from ParameterByForm where template_id='"+aProtocolId+"' and parameter_id='"+idParam+"'").executeUpdate() ;
+			theManager.createNativeQuery("delete from ParameterByForm where "+aIdFieldName+"='"+aProtocolId+"' and parameter_id='"+idParam+"'").executeUpdate() ;
 			//System.out.println("OK");
 		}
 		//System.out.println("Size params="+params.size());

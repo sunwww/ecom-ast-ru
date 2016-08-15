@@ -71,4 +71,11 @@ public class ParameterByForm extends BaseEntity{
 	private String theCreateUsername;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Карта оценки */
+	@Comment("Карта оценки")
+	public Long getAssessmentCard() {return theAssessmentCard;}
+	public void setAssessmentCard(Long aAssessmentCard) {theAssessmentCard = aAssessmentCard;}
+	/** Карта оценки */
+	private Long theAssessmentCard;
 }

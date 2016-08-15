@@ -17,7 +17,9 @@ public interface IDiaryService {
     
     public CheckNode loadParametersByMedService(long aMedServiceId) ;
     public CheckNode loadParametersByMedService(long aMedServiceId, String aUsername) ;
+    public CheckNode loadParametersByMedService(long aMedServiceId, String aUsername, String aField) ;
     
+    public void saveParametersByTemplateProtocol(String aIdFieldName,long aProtocolId, long[] aAdds, long[] aRemoves) ;
     public void saveParametersByTemplateProtocol(long aProtocolId, long[] aAdds, long[] aRemoves) ;
     public List<Object[]> loadParameterTableByMedService(long aTemplateId) ; 
 }
