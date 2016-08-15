@@ -79,16 +79,7 @@
           <msh:autoComplete vocName="vocMedCaseDefect" labelColSpan="3" property="medCaseDefect" label="Дефекты направления" horizontalFill="true" />
         </msh:row>
         <msh:row>
-	   		<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="2"/>
-	   		<%-- <msh:textField property="medserviceAmount0" label="кол-во"/> --%>
-	   		<br><td id="msAmnt" name="msAmnt">
-	   			<!-- ф-ция, собирающая строку сумм, называется getAmounts - строка 341 -->
-	   			<input type="text" id="msAmount" size='8' name="msAmount" value='1'>
-	   			<input type="button" value="+" onclick="crEl('input');"> 
-	   			<%-- <msh:ifFormTypeIsNotView>
-	   				<input type="button" value="+" onclick="crEl('input');">
-	   			</msh:ifFormTypeIsNotView> --%>
-	   		</td> 
+	   		<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" property="medServices" vocName="medServiceForSpec" colSpan="5"/>
 	    </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Ambulance">
 	       	<msh:row>
@@ -173,7 +164,7 @@
           </msh:table>
         </msh:section>
       </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/Create">
+      <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/View">
       	<msh:section title="Услуги" createUrl="entityParentPrepareCreate-smo_medService.do?id=${param.id}" createRoles="/Policy/Mis/MedCase/MedService/Create">
       		<ecom:webQuery name="services" nativeSql="select mc.id,ms.name,mc.medServiceAmount
       		from MedCase mc 
@@ -262,6 +253,7 @@
         	roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"
         />
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-smo_visit" name="Принять пациента" roles="/Policy/Mis/MedCase/Visit/Edit" />
+        <msh:sideLink guid="sideLinkEdit" params="id" action="/entityEdit-smo_direction" name="Редактировать направление" roles="/Policy/Mis/MedCase/Direction/Edit" />
         <msh:sideLink confirm="Вы точно хотите оформить не явку на прием" key="ALT+3" params="id" action="/js-smo_visit-noPatient" name="Оформить не явку на прием" title="Оформить не явку на прием" roles="/Policy/Mis/MedCase/Visit/Edit"/>
         <msh:sideLink params="id" action="/js-smo_visit-closeSpo" name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" guid="d84659f7-7ea9-4400-a11c-c83e7d5c578d" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Close" />
         
@@ -329,29 +321,7 @@
   function printAgree() {
   	window.location = "print-agreement.do?s=PatientPrintService&m=printAgreement&id="+$('patient').value;
   }
-  
-  function crEl(aName) {
-  	var el=document.getElementById("msAmnt").parentElement;
-  	var s=el.innerHTML;
-  	el=el.parentElement;
-  	//alert(s);
-  	var el1=document.createElement('tr');
-  	el1.innerHTML=s;
-  	//document.forms[0].insertBefore(el, el1);
-  	//insertChild(16, el1, el);
-  	el.appendChild(el1);
-  }
-  
-  function getAmounts() {
-	  var elements=document.getElementsByName("msAmount");
-	  //alert(elements.length);
-	  var amounts='';
-	  for(var i=0; i<elements.length; i++) {
-		   if(amounts!='') amounts+=",";
-		  amounts+=elements[i].value; 
-	  }
-	  $('medserviceAmounts').value=amounts;
-  }
+
   </script>
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
   
@@ -402,7 +372,6 @@
   	
   	
   	function checkVisit() {
-  		getAmounts();
   		TicketService.checkHospital($('dateStart').value,$('patient').value,$('serviceStream').value
   		,{callback: function(aString) {
         	//alert(aString) ;
