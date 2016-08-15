@@ -295,7 +295,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	aEntity.setPatient(patient.getId()) ;
     	aEntity.setMedPolicy(aMedPolicy) ;
     	
-    	theManager.merge(aEntity);
+    	theManager.persist(aEntity);
     	
     	//theManager.persist(aEntity);
     	String patientSync = new StringBuilder().append("Ф").append(patient.getId()).toString() ;
@@ -308,7 +308,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     		theManager.persist(medcard);
     	}
     	//Обновляем прикрепления
-    		if (aEntity.getLpuauto()!=null && !aEntity.getLpuauto().equals("")) {
+    		if (aEntity.getLpuauto()!=null && !aEntity.getLpuauto().equals("") &&!aEntity.getLpuauto().equals("0")) {
     		firRecord+=	thePatientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
         				, aEntity.getLpuauto(), DateFormat.formatToDate(aEntity.getLpuDateFrom()), updateAttachment, true);
     			
