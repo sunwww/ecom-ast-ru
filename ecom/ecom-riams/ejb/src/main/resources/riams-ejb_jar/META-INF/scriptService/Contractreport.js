@@ -6,7 +6,7 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 	sql=sql+"	﻿update ContractAccountOperationByService caos222";
 	sql=sql+"	set medcase_id=";
 	sql=sql+"	(";
-	sql=sql+"	select mc.id";
+	sql=sql+"	select max(mc.id)";
 	sql=sql+"	from MedCase mc";
 	sql=sql+"	left join Patient p on p.id=mc.patient_id";
 	sql=sql+"	left join ContractPerson cp on cp.patient_id=p.id";
