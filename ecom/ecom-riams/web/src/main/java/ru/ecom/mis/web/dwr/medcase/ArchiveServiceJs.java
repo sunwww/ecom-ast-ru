@@ -12,8 +12,11 @@ public class ArchiveServiceJs {
 	
 	public String putCardInArchive (String aStatCardIds, HttpServletRequest aRequest) throws NamingException {
 		IArchiveService service = Injection.find(aRequest).getService(IArchiveService.class) ;
+		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		return service.createArchiveCase(aStatCardIds, Long.valueOf(123), username);
+		String wf = wqs.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser.id where su.login = '"+username+"'").iterator().next().get1().toString();
+		return service.createArchiveCase(aStatCardIds, Long.valueOf(wf), username);
 					//err.append(service.createrArchiveCase());
 				
 	}
