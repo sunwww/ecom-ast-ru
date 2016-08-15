@@ -920,6 +920,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		.append("','dd.mm.yyyy'),timeExecute=cast('").append(formatT.format(date)).append("' as time)")
 		.append(",editUsername='").append(username).append("' ,editdate=to_date('").append(formatD.format(date))
 		.append("','dd.mm.yyyy'),edittime=cast('").append(formatT.format(date)).append("' as time)")
+		.append(", noactuality ='0'")
 		.append(" where id in (").append(aSmoId).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		sql = new StringBuilder() ;

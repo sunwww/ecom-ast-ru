@@ -26,7 +26,7 @@
     			Object[] obj = (Object[])l.get(0) ;
     			request.setAttribute("filterAdd","slo.patient_id='"+obj[1]+"' and aslo.datestart between to_date('"+obj[2]+"','dd.mm.yyyy') and to_date('"+obj[3]+"','dd.mm.yyyy') and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')") ;
     		} else {
-        		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')") ;
+        		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='Visit' ") ;
     		}
     		request.setAttribute("title","диагностические исследования") ;
     	} else {
@@ -78,7 +78,7 @@
       ,aslo.dtype='Visit',vtp.name
       ,aslo.department_id,slo.patient_id 
             	order by  d.dateRegistration desc,  d.timeRegistration desc
-            	"/>
+            	"/>${protocols_sql}
             	
                 <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
                     <msh:tableButton property="6" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Динамика исследования" buttonShortName="Дин."/>
