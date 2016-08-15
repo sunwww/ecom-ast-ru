@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.form.archive;
 import java.sql.Date;
 import java.sql.Time;
 
+import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.archive.ArchiveCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -17,7 +18,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Архивное дело")
 @WebTrail(comment = "Архивное дело", nameProperties= "id", view="entityView-mis_archiveCase.do" ,list = "entityList-mis_archiveCase.do")
 @EntityFormSecurityPrefix("/Policy/Mis/ArchiveCase")
-public class ArchiveCaseForm {
+public class ArchiveCaseForm extends IdEntityForm{
 	/** Номер стат. карты */
 	@Comment("Номер стат. карты")
 	@Persist @Required
