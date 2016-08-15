@@ -138,10 +138,10 @@ public class ExternalDocumentImportAction extends BaseAction{
         		diradd = "orig/"+typeString+"/"+year+"/"+month+"/"+day ;
         		isCompress = false ;
         		System.out.println(3) ;
-	    	} else if (aForm!=null) {
+	    	} else if (aForm!=null && ffile!=null) {
 	    	//	 form = aForm!=null?(ExportPolicyForm)aForm:null ;
 	    	//	contentType= form.getFile().getContentType().toLowerCase() ;
-            	image = ImageIO.read(form.getFile().getInputStream()) ;
+            	image = ImageIO.read(ffile.getInputStream()) ;
             	objectId = form.getObjectId() ;
             	objectType = form.getType() ;
             	aRequest.setAttribute("objectId", objectId) ;

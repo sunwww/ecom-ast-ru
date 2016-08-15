@@ -29,7 +29,7 @@
     </msh:panel>
         <msh:row>
             <td colspan="6">
-                <input type="button" name='${name}DoubleSave' style="display: none;" id='${name}DoubleSave' value='Продолжить сохранение' onclick='javascript:next${name}Double()'/>
+                <input type="button" name='${name}DoubleSave' style="display: none;" id='${name}DoubleSave' value='Продолжить сохранение' onclick='javascript:next${name}Double()'/> 
                 <input type="button" name='${name}DoubleCancel' id='${name}DoubleCancel' value='Вернуться к редактированию' onclick='javascript:cancel${name}Double()'/>
             </td>
         </msh:row>
@@ -37,8 +37,8 @@
 
 </div>
 </div>
-
-<script type="text/javascript"><!--
+<script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+<script type="text/javascript">
      var theIs${name}DoubleDialogInitialized = false ;
      var the${name}DoubleDialog = new msh.widget.Dialog($('${name}DoubleDialog')) ;
      // Показать
@@ -83,7 +83,7 @@
     				 {
     			 		callback: function(aResult) {
     			 			
-    			 			if (+aResult==0) {
+    			 			if (+aResult!=0) {
     			 	    		 $('${name}DoubleSave').style.display = 'block' ;
     			 	    		 theIs${name}DoubleDialogInitialized = true ;
     			 			} 

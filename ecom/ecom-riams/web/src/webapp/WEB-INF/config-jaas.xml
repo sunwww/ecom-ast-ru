@@ -141,8 +141,8 @@
         <action path="/templateDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
          scope='request' validate="false" name="policyExportForm">
             >
-            <forward name="success" path="/WEB-INF/actions/template_externalDocument/import.jsp"/>
-            <forward name="uploaded" path="/entityList-template_externalDocument.do"/>
+            <forward name="success"  path="/WEB-INF/actions/template_externalDocument/import.jsp"/>
+            <forward name="uploaded" path="/WEB-INF/actions/template_externalDocument/list.jsp"/>
         </action>
         
         <action path="/externalDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
