@@ -17,6 +17,7 @@ function onPreDelete(aEntityId, aContext) {
 		,"сотрудника"
 		,"псих.мед.карту"
 		,"данные о беременностях"
+		,"карты диспансеризации"
 		] ;
 		
 		//throw medCase.getId() + "  getStatisticStub()="+medCase.getStatisticStub() ;
@@ -36,6 +37,7 @@ function onPreDelete(aEntityId, aContext) {
 		+",(select count(*) from Worker as dc where dc.person_id=p.id) as v12"
 		+",(select count(*) from PsychiatricCareCard as pcc where pcc.patient_id=p.id) as v13"
 		+",(select count(*) from Pregnancy as pr where pr.patient_id=p.id) as v14"
+		+",(select count(*) from ExtDispCard as edc where edc.patient_id=p.id) as v15"
 		+" from Patient as p where p.id=:id")
 		.setParameter("id",aEntityId).getSingleResult() ;
 		var err_mes="",isErr=false ;
