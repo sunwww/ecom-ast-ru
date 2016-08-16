@@ -545,6 +545,7 @@
         		$('outcomeName').focus() ;
         	</script>
         </msh:ifInRole>
+        
      <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
      	<script type="text/javascript">
      	HospitalMedCaseService.isCanDischarge('${param.id}', {
@@ -638,6 +639,27 @@
   		}
   	</script>
   	</msh:ifFormTypeIsNotView>
+  	
+  	   <!--+++++++++++++++ Timer start+++++++++++++ -->
+    
+    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
+    <script type="text/javascript">
+    
+    setTimeout(checktime,600000);
+
+    function checktime() {
+    	if (confirm('Вы хотите сохранить выписку?')) {
+    		
+    		check_diags('');
+    	}else {setTimeout(checktime,600000); }
+    	
+    }
+    
+    </script>
+    </msh:ifNotInRole>
+   
+    
+    <!--  ++++++++++ Timer Stop!+++++++++++ -->
   </tiles:put>
 </tiles:insert>
 

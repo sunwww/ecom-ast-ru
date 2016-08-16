@@ -165,7 +165,7 @@
     	if (confirm('Вы хотите сохранить дневник?')) {
     		document.forms[1].action='entityParentSaveGoEdit-smo_visitProtocol.do';
     		document.forms[1].submit() ;
-    	}
+    	}else {setTimeout(checktime,600000); }
     }
     
     </script>
