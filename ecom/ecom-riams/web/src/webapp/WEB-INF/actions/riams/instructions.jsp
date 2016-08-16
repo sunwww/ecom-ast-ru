@@ -49,6 +49,9 @@
 					<li><msh:link  action="js-riams-instruction.do?id=refusal_hospitalization">
 						Оформление отказа от госпитализаций
                     </msh:link></li>
+					<li><msh:link  action="js-riams-instruction.do?id=disability">
+						Экспорт листков нетрудоспособности в ФСС
+                    </msh:link></li>
 				</ul>
 				<br>
 				<h2 style="font-size: large;" align="center">Общее</h2>
@@ -72,6 +75,12 @@
                     </msh:link></li>
                     <li><msh:link  action="js-riams-instruction.do?id=parameterized_template">
 						Работа с параметризированными шаблонами
+                    </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=print_form_template">
+						Печатные формы шаблонов
+                    </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=archive">
+						Архив
                     </msh:link></li>
 				</ul>
 				
