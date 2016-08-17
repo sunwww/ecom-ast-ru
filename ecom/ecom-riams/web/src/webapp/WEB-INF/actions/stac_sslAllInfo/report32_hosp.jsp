@@ -93,10 +93,10 @@
 if (type!=null&&type.equals("reestr")) {
 	String id =  request.getParameter("id");
 	if (id!=null&&!id.equals("")) {
-		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' and dc.id is null";}    
+		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' /*and dc.id is null*/ ";}    
 		//if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' ";}    
-		else if (id.equals("born2die")) {sqlAdd+=" and vlb.code='1' and dc.deathdate is not null";}    
-		else if (id.equals("die")) {sqlAdd+=" and vlb.code='2'";}    
+		else if (id.equals("born2die")) {sqlAdd+=" and vlb.code='1' and /*dc.deathdate is not null*/ mc.result_id=6 ";}    
+		else if (id.equals("die")) {sqlAdd+=" and vlb.code='2' ";}    
 	}
  	String w = request.getParameter("weight");
 	if (w!=null&&!w.equals("")) {
@@ -138,11 +138,11 @@ if (type!=null&&type.equals("reestr")) {
 			sqlAdd+=" and vnbm.code!='DONOSH' and cb.durationpregnancy<28.00";
 			break;
 		case 12: 
-			sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
+			sqlAdd+=" and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
 			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600)< 24";
 			break;
 		case 13: 
-			sqlAdd+=" and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp), ";
+			sqlAdd+=" and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
 			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) between 24 and 168";
 			break;
 		}  
@@ -159,7 +159,7 @@ left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
 left join patient pat on pat.id=nb.patient_id
-left join deathcase dc on dc.patient_id=nb.patient_id
+left join medcase mc on mc.patient_id=pat.id and mc.datestart=pat.birthday and mc.dtype='HospitalMedCase'
 where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
 group by pat.id, pat.patientinfo
@@ -189,8 +189,7 @@ group by pat.id, pat.patientinfo
     <msh:section>
     <ecom:webQuery isReportBase="${isReportBase}" name="Report32" nameFldSql="Report32_sql" nativeSql="
 select case 
-when vlb.code='1' and dc.id is null then 'Родился живым' 
-/*when vlb.code='1' and dc.deathdate is not null then 'Родился и умер'*/
+when vlb.code='1' and mc.result_id!=6 then 'Родился живым' 
 when vlb.code='1' and mc.result_id=6 then 'Родился и умер'
 when vlb.code='2' then 'Родился мертвым'
 end as f1_name
@@ -206,31 +205,29 @@ end as f1_name
 ,count(case when nb.birthweight > 3999 then nb.id else null end) as f11_4000 
 ,count(case when vnbm.code!='DONOSH' then nb.id else null end) as f12_nedonos
 ,count(case when vnbm.code!='DONOSH' and cb.durationpregnancy <28.00 then nb.id else null end) as f13_nedonos_28
-,count(case when vlb.code='1' and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp),
+,count(case when vlb.code='1' and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp),
 cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
 < 24 then nb.id end) as f14_dead24
-,count (case when vlb.code='1' and (extract(epoch from age(cast(to_char(dc.deathdate, 'yyyy-mm-dd') || ' ' || to_char(dc.deathtime, 'hh:mi:00') as timestamp),
+,count (case when vlb.code='1' and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp),
 cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
 < 168 then nb.id end) as f15_death168
 ,max(
 case 
-when vlb.code='1' and dc.id is null then 'alive' 
-when vlb.code='1' and dc.deathdate is not null then 'born2die'
+when vlb.code='1' and mc.result_id!=6 then 'alive' 
+when vlb.code='1' and mc.result_id=6 then 'born2die'
 when vlb.code='2' then 'die' end
 ) as idLld
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
-left join medcase mc on mc.id=cb.medcase_id
 left join patient pat on pat.id=nb.patient_id
-left join deathcase dc on dc.patient_id=nb.patient_id
+left join medcase mc on mc.patient_id=pat.id and mc.datestart=pat.birthday and mc.dtype='HospitalMedCase'
 where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
 group by 
 case 
-when vlb.code='1' and dc.id is null then 'Родился живым' 
-/*when vlb.code='1' and dc.deathdate is not null then 'Родился и умер'*/
+when vlb.code='1' and mc.result_id!=6 then 'Родился живым' 
 when vlb.code='1' and mc.result_id=6 then 'Родился и умер'
 when vlb.code='2' then 'Родился мертвым'
 end 
