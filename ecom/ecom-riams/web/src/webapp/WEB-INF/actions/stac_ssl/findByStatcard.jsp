@@ -58,7 +58,8 @@
         %>
             <msh:section title='Результат поиска'>
             	<ecom:webQuery name="list" 
-            		nativeSql="select m.id as mid,ss.year as ssyear, ss.code as sscode
+            		nativeSql="select m.id as mid,ss.year as ssyear, 
+            		case when (ss.archivecase is not null) then ss.code || ' (в архиве)'  else ss.code end as archiveate
             			, case 
             				when (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)=0 then 1 
             				when vht.code='DAYTIMEHOSP' then ((coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)+1) 
@@ -68,7 +69,6 @@
             			, p.lastname||' '||p.firstname ||' '|| p.middlename ||' гр.'||to_char(p.birthday,'DD.MM.YYYY') as patInfo
             			, md.name as mdname,case when cast(m.emergency as int)=1 then 'Да' else 'Нет' end  as memergency
             			, vdh.name as vdhname,m.dateStart as mdateStart,m.dateFinish as mdateFinish
-            			,case when (ss.archivecase is not null) then '+' else ' ' end as archiveate
             			 from statisticstub ss 
             			left join medcase m on m.statisticstub_id=ss.id
             			left join VocHospType vht on vht.id=m.hospType_id
@@ -98,7 +98,6 @@
 				      <msh:tableColumn columnName="Дата выписки" property="11"/>
 				      <msh:tableColumn columnName="Экстренность" property="8"/>
 				      <msh:tableColumn columnName="Отказ от госпитализации" property="9" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
-				      <msh:tableColumn columnName="В архиве" property="12" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
                 </msh:table>
                 <%-- 
                 <msh:table name="list" action="entityParentView-stac_ssl.do" idField="id" disableKeySupport="true">
@@ -110,7 +109,6 @@
 				      <msh:tableColumn columnName="Отделение" property="departmentInfo" guid="d2eebfd0-f043-4230-8d24-7ab99f0d5b45" />
 				      <msh:tableColumn columnName="Экстренность" property="emergency" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
 				      <msh:tableColumn columnName="Отказ от госпитализации" property="deniedHospitalizatingInfo" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
-				      <msh:tableColumn columnName="В архиве" property="" guid="b00c3a27-82cd-4d68-8a12-6f71bc8a7867" />
                 </msh:table>
                 --%>
             </msh:section>
