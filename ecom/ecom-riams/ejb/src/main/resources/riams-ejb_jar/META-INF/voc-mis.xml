@@ -709,6 +709,20 @@
     		queriedSplitCount="3"
         />
     </voc> 
+    
+    <voc id='medcardByPatient' type='NativeVocService'>
+        <NativeVocService
+                from  = 'medcard m'
+                parent="m.person_id=:parent"
+                nameId="m.id"
+                queryAppend=""
+                join=""
+                order=""
+                names   = "'Номер '|| m.number  "
+    		queried=" "
+    		queriedSplitCount="3"
+        />
+    </voc>
     <!-- Медконтракт -->
     <voc id='servedPerson' type='NativeVocService'>
         <NativeVocService
