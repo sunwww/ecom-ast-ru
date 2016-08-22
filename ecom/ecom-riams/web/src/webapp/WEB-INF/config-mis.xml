@@ -5,11 +5,7 @@
 <struts-config>
 
 	<form-beans>
-		
-		<form-bean name="mis_assessmentParameterForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardTemplateForm" />
-		<form-bean name="mis_assessmentCardTemplateForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardTemplateForm" />
-		<form-bean name="mis_assessmentForm"		type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentForm" />
-		<form-bean name="mis_assessmentCardForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardForm" />
+		<form-bean name="smo_stream_short_spoForm" type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicFullMedCaseForm" />
 		<form-bean name="mis_archiveCaseForm"		type="ru.ecom.mis.ejb.form.archive.ArchiveCaseForm" />
 		<form-bean name="temp_protocolPrintForm"	type="ru.ecom.mis.ejb.form.userdocument.TemplatePrintDocumentForm" />
 		<form-bean name="mis_lpuGroupForm"			type="ru.ecom.mis.ejb.form.lpu.LpuGroupForm" />
