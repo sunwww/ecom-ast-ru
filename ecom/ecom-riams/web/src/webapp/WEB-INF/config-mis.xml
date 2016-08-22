@@ -6,6 +6,7 @@
 
 	<form-beans>
 		<form-bean name="smo_stream_short_spoForm" type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicFullMedCaseForm" />
+		<form-bean name="smo_stream_ticket_spoForm" type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm" />
 		<form-bean name="mis_archiveCaseForm"		type="ru.ecom.mis.ejb.form.archive.ArchiveCaseForm" />
 		<form-bean name="temp_protocolPrintForm"	type="ru.ecom.mis.ejb.form.userdocument.TemplatePrintDocumentForm" />
 		<form-bean name="mis_lpuGroupForm"			type="ru.ecom.mis.ejb.form.lpu.LpuGroupForm" />
