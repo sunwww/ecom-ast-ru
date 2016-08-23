@@ -298,6 +298,15 @@
 	<global-forwards></global-forwards>
 
 	<action-mappings>
+	
+	 <action path='/lab_chief_report' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pres_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/lab_chief_report.jsp" />
+        </action>
+        
  <action path='/fileUpload' type='ru.ecom.web.actions.base.FileUploadAction'
                 name='stac_admissionJournalForm'
                 scope="request"

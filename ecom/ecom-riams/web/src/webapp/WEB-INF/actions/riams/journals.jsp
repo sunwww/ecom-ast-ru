@@ -86,6 +86,10 @@
 	                   		Отчет по направлениям на лаб. исследования (по отделениям)</msh:link>
 	                   </li>
 	                   <li>
+	                   		<msh:link isReport="true" action="lab_chief_report.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratory">
+	                   		Журнал заведующего лабораторией</msh:link>
+	                   </li>
+	                   <li>
 	                   <msh:link isReport="true" action="/pres_journal" roles="/Policy/Mis/Journal/Prescription/LabSurvey/JournalPrescript">Журнал лабораторных назначений</msh:link>
 	                   </li>
 	                   <li>
