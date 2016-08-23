@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import java.sql.Date;
+
 import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
@@ -12,6 +14,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
@@ -113,4 +117,22 @@ public class ContractAccountMedServiceForm extends IdEntityForm{
 
 	/** Все услуги */
 	private String theAllServicies;
+	
+	/** Дата начала */
+	@Comment("Дата начала")
+	@Persist @DateString @DoDateString
+	public String getDateFrom() {return theDateFrom;}
+	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+	/** Дата начала */
+	private String theDateFrom;
+	
+	/** Дата окончания */
+	@Comment("Дата окончания")
+	@Persist @DateString @DoDateString
+	public String getDateTo() {return theDateTo;}
+	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+	/** Дата окончания */
+	private String theDateTo;
+
+	
 }
