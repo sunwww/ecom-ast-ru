@@ -108,19 +108,19 @@
 			}
 			
 			if (typeContractPerson.equals("1")) {
-				paramSql.append("  cp.dtype='JuridicalPerson'") ;
+				paramSql.append(paramSql.length()>0?" and":"").append("  cp.dtype='JuridicalPerson'") ;
 				fio.append("cp.name like '%").append(contractNumber).append("%'") ;
 			} else if (typeContractPerson.equals("2")) {
-				paramSql.append( "  cp.dtype='JuridicalPerson'") ;
+				paramSql.append(paramSql.length()>0?" and":"").append( "  cp.dtype='JuridicalPerson'") ;
 				paramSql.append( "  and reg.id is not null") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' or reg.name like '%").append(contractNumber).append("%')") ;
 			} else if (typeContractPerson.equals("3")) {
-				paramSql.append("  cp.dtype='JuridicalPerson'") ;
+				paramSql.append(paramSql.length()>0?" and":"").append("  cp.dtype='JuridicalPerson'") ;
 				paramSql.append("  and vjp.code='SILOVIK'") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' )") ;
 			} else if (typeContractPerson.equals("4")) {
 				orderBy = "vcl.code,lpu.name,contractNumber" ;
-				paramSql.append("  cp.dtype='JuridicalPerson'") ;
+				paramSql.append(paramSql.length()>0?" and":"").append("  cp.dtype='JuridicalPerson'") ;
 				paramSql.append( "  and lpu.id is not null") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' or lpu.name like '%").append(contractNumber).append("%')") ;
 			}

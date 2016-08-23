@@ -417,6 +417,8 @@ select
       ,pp.code||' '||pp.name as ppname
       ,pp.cost as ppcost
       ,mkb.code as mkbcode
+      ,coalesce(so.medserviceamount,'1') as f6_amount
+      ,pp.cost*coalesce(so.medserviceamount,'1') as f7_sum
       from MedCase so
       left join VocIdc10 mkb on mkb.id=so.idc10_id
       left join workfunction wf on wf.id=so.workFunctionExecute_id
@@ -435,10 +437,10 @@ select
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
-      <msh:tableColumn columnName="Наименование услуги" property="1" />
-      <msh:tableColumn columnName="Кол-во" property="2" />
-      <msh:tableColumn columnName="Цена" property="3" />
-      <msh:tableColumn columnName="Сумма" property="4" isCalcAmount="true" />
+      <msh:tableColumn columnName="Наименование услуги" property="2" />
+      <msh:tableColumn columnName="Кол-во" property="6" />
+      <msh:tableColumn columnName="Цена" property="4" />
+      <msh:tableColumn columnName="Сумма" property="7" isCalcAmount="true" />
       <msh:tableColumn columnName="МКБ10" property="5" />
     </msh:table>
   </msh:sectionContent>

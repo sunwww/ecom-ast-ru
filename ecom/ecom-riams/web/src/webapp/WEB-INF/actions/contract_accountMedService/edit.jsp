@@ -21,6 +21,8 @@
 					<msh:textField property="cost" label="Цена" />
 					<msh:textField property="countMedService" label="Кол-во"/>
 				</msh:row>
+				<msh:textField property="dateFrom" label="Дата с" />
+				<msh:textField property="dateTo" label="Дата по" />
 			<msh:submitCancelButtonsRow colSpan="4" />
 			</msh:panel>
 		</msh:form>
