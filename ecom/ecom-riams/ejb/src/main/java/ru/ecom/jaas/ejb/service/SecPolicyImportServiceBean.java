@@ -174,8 +174,10 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
         return parentPolicy;
     }
 
-
     private SecPolicy createOrFindPolicy(SecPolicy aParentPolicy, String aKey) {
+    	return createOrFindPolicy( aParentPolicy, aKey, "");
+    }
+    private SecPolicy createOrFindPolicy(SecPolicy aParentPolicy, String aKey, String aComment) {
         if (aParentPolicy == null) throw new IllegalArgumentException("aParentPolicy не должен быть равен NULL");
 //        System.out.println("aParentPolicy = " + aParentPolicy.getKey());
         SecPolicy ret = null;
@@ -191,6 +193,7 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
             ret = new SecPolicy();
             ret.setParentSecPolicy(aParentPolicy);
             ret.setKey(aKey);
+            ret.setComment(aComment);
             if (theMap.containsKey(aKey)) {
                 ret.setName(theMap.get(aKey));
             } else {
@@ -210,13 +213,13 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
 
     public void standartPolicyByParent(Long aParentPolicy) {
     	SecPolicy parentpolicy = theManager.find(SecPolicy.class,aParentPolicy) ;
-    	SecPolicy view = createOrFindPolicy(parentpolicy,"View") ;
+    	SecPolicy view = createOrFindPolicy(parentpolicy,"View", "Просмотр объекта") ;
     	if (CAN_DEBUG&&view!=null) LOG.debug("Создана политика View");
-    	SecPolicy delete = createOrFindPolicy(parentpolicy,"Delete") ;
+    	SecPolicy delete = createOrFindPolicy(parentpolicy,"Delete","Удаление объекта") ;
     	if (CAN_DEBUG&&delete!=null) LOG.debug("Создана политика Delete");
-    	SecPolicy create = createOrFindPolicy(parentpolicy,"Create") ;
+    	SecPolicy create = createOrFindPolicy(parentpolicy,"Create","Создание объекта") ;
     	if (CAN_DEBUG&&create!=null) LOG.debug("Создана политика Create");
-    	SecPolicy edit = createOrFindPolicy(parentpolicy,"Edit") ;
+    	SecPolicy edit = createOrFindPolicy(parentpolicy,"Edit","Редактирование объекта") ;
     	if (CAN_DEBUG&&edit!=null) LOG.debug("Создана политика Edit");
     }
     
