@@ -99,7 +99,7 @@ public class ExternalDocumentImportAction extends BaseAction{
     		System.out.println("==== Parent_TYPE="+parentType);
     		//System.out.println("path="+path) ;
     		if (parentType.equals("Template")) {
-    		dirmain = service.getConfigValue("jboss.userdocument.dir","/home/user/opt/jboss-4.0.4.GAi-postgres/server/default/data");	
+    		dirmain = service.getConfigValue("jboss.userdocument.dir","/opt/jboss-4.0.4.GAi-postgres/server/default/data");	
     		String filePrefix="user";
     		System.out.println("SAVE_DIR="+dirmain+"/"+filePrefix+"_"+ffile.getFileName());
     		saveNotImage(ffile.getInputStream(), dirmain+"/"+filePrefix+"_"+ffile.getFileName());
