@@ -43,5 +43,12 @@ public class UserValue extends BaseEntity{
 
 	/** Кол-во баллов */
 	private BigDecimal theCntBall;
+	
+	/** Сообщение при выборе значения */
+	@Comment("Сообщение при выборе значения")
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+	/** Сообщение при выборе значения */
+	private String theComment;
 
 }
