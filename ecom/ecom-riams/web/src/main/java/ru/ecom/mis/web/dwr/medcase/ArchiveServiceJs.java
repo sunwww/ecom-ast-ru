@@ -15,7 +15,7 @@ public class ArchiveServiceJs {
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		String wf = wqs.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser.id where su.login = '"+username+"'").iterator().next().get1().toString();
+		String wf = wqs.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+username+"'").iterator().next().get1().toString();
 		return service.createArchiveCase(aStatCardIds, Long.valueOf(wf), username);
 					//err.append(service.createrArchiveCase());
 				
