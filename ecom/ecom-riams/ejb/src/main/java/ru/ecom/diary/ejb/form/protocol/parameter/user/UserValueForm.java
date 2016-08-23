@@ -45,5 +45,13 @@ public class UserValueForm extends IdEntityForm {
 
 	/** Кол-во баллов */
 	private String theCntBall;
+	
+	/** Сообщение при выборе значения */
+	@Comment("Сообщение при выборе значения")
+	@Persist
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+	/** Сообщение при выборе значения */
+	private String theComment;
 
 }
