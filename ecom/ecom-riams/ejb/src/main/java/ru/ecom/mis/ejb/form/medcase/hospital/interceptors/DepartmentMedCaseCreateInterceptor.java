@@ -13,6 +13,7 @@ import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
@@ -87,16 +88,23 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     
     public static boolean isPregnancyExists(EntityManager aManager, Long aMedCaseId) {
 		System.out.println("===== Проверяем на роды, DEP_MC_CREATE_department_id: <> "+aMedCaseId);
-		
-			String sql = "select slo.id from medcase slo left join childBirth cb on slo.id=cb.medcase_id left join mislpu dep on dep.id=slo.department_id" +
-					" where slo.id="+aMedCaseId+" and (cb.id is null or cb.pangsStartDate is null) and dep.isMaternityWard='1'";
-			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList() ;
-			System.out.println("=== РОДЫ, list.size()="+list.size());
-			if (list.size()>0) {
-				return false;
-			} else {
+		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
+		if (parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
+			String sql = "select count(cb.id) from medcase slo " +
+					" left join medcase slos on slos.parent_id=slo.parent_id and slos.dtype='DepartmentMedCase'" +
+					" left join childBirth cb on cb.medcase_id=slos.id" +
+					" where slo.id="+aMedCaseId+" and cb.pangsStartDate is not null";
+			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
+			System.out.println("=== РОДЫ, list.size()="+list.toString());
+			if (Long.valueOf(list.toString())>0) {
 				return true;
+			} else {
+				return false;
 			}
+		} else {
+			return true;
+		}
+			
 	}
     /**
      * Новый первый случай лечения в отделении
