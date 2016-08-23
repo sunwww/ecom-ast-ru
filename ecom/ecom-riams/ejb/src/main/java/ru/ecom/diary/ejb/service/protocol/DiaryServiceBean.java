@@ -84,14 +84,14 @@ public class DiaryServiceBean implements IDiaryService {
 				" left join parametergroup_secgroup pgsg on pgsg.parametergroup_id=pg.id" +
 				" left join secgroup_secuser sgsu on sgsu.secgroup_id=pgsg.secgroups_id" +
 				" left join secuser su on su.id=sgsu.secusers_id" +
-				" where pg.parent_id is null and su.login='"+aLogin+"' order by pg.name") .setMaxResults(100).getResultList();
+				" where pg.parent_id is null and su.login='"+aLogin+"' group by pg.id, pg.name order by pg.name") .setMaxResults(100).getResultList();
 	}
 	private void addGroups (Long aGroup, CheckNode aNode, TreeSet<Long> aParameters, String aUsername) {
 		List<Object[]> listChild = theManager.createNativeQuery("select pg.id, pg.name from ParameterGroup pg " +
 				" left join parametergroup_secgroup pgsg on pgsg.parametergroup_id=pg.id" +
 				" left join secgroup_secuser sgsu on sgsu.secgroup_id=pgsg.secgroups_id" +
 				" left join secuser su on su.id=sgsu.secusers_id" +
-				" where pg.parent_id = :parent and su.login =:login order by name").setParameter("parent", aGroup).setParameter("login", aUsername).getResultList() ;
+				" where pg.parent_id = :parent and su.login =:login group by pg.id, pg.name order by name").setParameter("parent", aGroup).setParameter("login", aUsername).getResultList() ;
 		for (Object[] group: listChild) {
 			Long id = ConvertSql.parseLong(group[0]) ;
 			CheckNodeByGroup node = new CheckNodeByGroup(
@@ -164,6 +164,7 @@ public class DiaryServiceBean implements IDiaryService {
 		for(long idParam:aRemoved) {
 			//System.out.println("removed id "+idParam);
 			theManager.createNativeQuery("delete from ParameterByForm where "+aIdFieldName+"='"+aProtocolId+"' and parameter_id='"+idParam+"'").executeUpdate() ;
+			
 			//System.out.println("OK");
 		}
 		//System.out.println("Size params="+params.size());
