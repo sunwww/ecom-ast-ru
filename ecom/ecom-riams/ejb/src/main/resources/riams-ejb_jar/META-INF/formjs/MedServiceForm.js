@@ -69,15 +69,13 @@ function updateParent(aId,aParent,aCtx,aStartDate,aFinishDate) {
 			if (+list[4]>0 || aFinishDate==null) {
 				aCtx.manager.createNativeQuery("update MedService set finishDate=null where id="+aParent)
 					.executeUpdate();
-			} else {
-				if (list[3]!=null && list[3].getTime()>aFinishDate.getTime()) {
-					aCtx.manager.createNativeQuery("update MedService set finishDate=:fdt where id="+aParent)
-						.setParameter("fdt",list[3]).executeUpdate();
-				} else {
-					aCtx.manager.createNativeQuery("update MedService set finishDate=:fdt where id="+aParent)
-						.setParameter("fdt",aFinishDate).executeUpdate();
-				}
-			}
+			} //else {
+			//	if (list[3]!=null && list[3].getTime()>aFinishDate.getTime()) {
+					//aCtx.manager.createNativeQuery("update MedService set finishDate=:fdt where id="+aParent).setParameter("fdt",list[3]).executeUpdate();
+		//		} else {
+				//	aCtx.manager.createNativeQuery("update MedService set finishDate=:fdt where id="+aParent).setParameter("fdt",aFinishDate).executeUpdate();
+			//	}
+		//	}
 			if (+list[0]>0) {
 				updateParent(aId,+list[0],aCtx,aStartDate,aFinishDate);
 			}
