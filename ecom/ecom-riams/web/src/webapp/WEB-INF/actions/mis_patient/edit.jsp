@@ -867,6 +867,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/entityParentList-vac_vaccinationByPatient" name="Вакцинации" title="Показать все вакцинации" guid="12d6632c-5a14-42d7-9c7e-fd5852d9a789" roles="/Policy/Mis/Vaccination/View" />
         <mis:sideLinkForWoman classByObject="Patient" id="${param.id}" params="id" action="/entityParentList-preg_pregnancy" name="Беременности" title="Показать все беременности" roles="/Policy/Mis/Pregnancy/View"/>
         <msh:sideLink params="id" action="/entityParentList-mis_kinsman" name="Родственников (представителей)"  title="Показать всех родственников (представителей)" roles="/Policy/Mis/Patient/Kinsman/View"/>
+        <msh:sideLink params="id" action="/entityParentList-mis_assessmentCard" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
         <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" 

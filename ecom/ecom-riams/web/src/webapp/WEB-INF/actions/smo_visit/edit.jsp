@@ -281,6 +281,7 @@
     	 title='Направление к другому специалисту'  />
         <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" guid="2156670f-b32c-4634-942b-2f8a4467567c" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
     	<msh:sideLink roles="/Policy/Mis/Prescription/Prescript/Create" name="Лист назначений" action="/javascript: showCreatePrescriptList('${param.id}','.do')" title="Лист назначений" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />         
+    	<msh:sideLink roles="/Policy/Mis/AssessmentCard/Create" name="Карту оценки" action="/javascript:goCreateAssessmentCard()" title="Карту оценки" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />         
     	 
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
@@ -426,7 +427,11 @@
   </script>
   <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
           <script type="text/javascript">//var theBedFund = $('bedFund').value;
-      	function goNewDirectionMine() {
+          function goCreateAssessmentCard() {
+  	  		window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value ;
+  			$('isPrintInfo').checked='checked' ;
+      }
+          function goNewDirectionMine() {
       		if (+$('parent').value>0) {
       			window.location = 'entityParentPrepareCreate-smo_direction.do?id='+$('patient').value+"&spo="+$('parent').value+"&workFunction="+$('workFunctionPlan').value+"&serviceStream="+$('serviceStream').value+"&visitReason="+$('visitReason').value+"&tmp="+Math.random() ;
       		} else {

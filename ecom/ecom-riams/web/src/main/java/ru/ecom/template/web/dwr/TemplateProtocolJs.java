@@ -34,15 +34,16 @@ import javax.naming.NamingException;
 public class TemplateProtocolJs {
 	
 	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
+		if (aParams==null||aParams.equals("")) {aParams="0";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder();
-		String sql = "select pg.id, pg.name,cast(sum(uv.cntBall) as decimal(11,0))" +
+		String sql = "select pg.id, pg.name,cast(coalesce(sum(uv.cntBall),0) as decimal(11,0))" +
 				" from  parameterbyform pf" +
 				" left join parameter p on p.id=pf.parameter_id" +
 				" left join parametergroup pg on pg.id=p.group_id" +
 				" left join userdomain ud on ud.id=p.valuedomain_id " +
-				" left join uservalue uv on uv.domain_id=ud.id" +
-				" where pf.assessmentcard="+aCardTemplate+" and uv.id in ("+aParams+")" +
+				" left join uservalue uv on uv.domain_id=ud.id and uv.id in ("+aParams+")" +
+				" where pf.assessmentcard="+aCardTemplate+
 				" group by pg.id, pg.name";
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
 		if (!list.isEmpty()) {
@@ -59,9 +60,10 @@ public class TemplateProtocolJs {
 	public String getParameterBallId(String aParameterId, HttpServletRequest aRequest) throws NamingException {
 		if (aParameterId==null||aParameterId.equals("")) {return "";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> res = service.executeNativeSql("select cast(cntBall as decimal(11,0)) from uservalue  where id = "+aParameterId);
+		Collection<WebQueryResult> res = service.executeNativeSql("select cast(cntBall as decimal(11,0)), coalesce(comment,'') from uservalue  where id = "+aParameterId);
 		if (!res.isEmpty()) {
-			return res.iterator().next().get1().toString();
+			WebQueryResult r =res.iterator().next(); 
+			return r.get1().toString()+"#"+r.get2().toString();
 		}
 		return "";
 		

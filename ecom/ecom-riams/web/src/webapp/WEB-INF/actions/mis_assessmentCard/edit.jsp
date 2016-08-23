@@ -17,18 +17,32 @@
       <msh:hidden guid="hiddenParent" property="patient" />
       <msh:hidden guid="hidden" property="params" />
       <msh:panel guid="panel">
+      
         <msh:row guid="row1">
-          <msh:autoComplete vocName="vocAssessmentCard" property="template" label="Тип карты" guid="a5-4caf-4e14-aa70-287c" horizontalFill="true" fieldColSpan="3" />
+          <msh:textField property="startDate" label="Дата приема" guid="a5-4caf-4e14-aa70-287c" horizontalFill="true" />
+        </msh:row>
+      
+      
+        <msh:row >
+          <msh:autoComplete vocName="vocAssessmentCard" property="template" label="Тип карты" guid="a5-4caf-4e14-aa70-287c" size='50' horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         
       
         <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textField property="ballSum" label="Сумма баллов" size="20" fieldColSpan="3" viewOnlyField="true" guid="e4d1b-8802-467d-b205-70" />
+          <msh:textField property="ballSum" label="Сумма баллов" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
         </msh:row>
                 <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textArea property="comment" label="Примечание" size="20" fieldColSpan="3" viewOnlyField="true" guid="e4d1b-8802-467d-b205-70" />
+          <msh:textArea property="comment" label="Описание" size="20" fieldColSpan="3" size='50' guid="e4d1b-8802-467d-b205-70" />
         </msh:row>
-        
+        <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
+        <msh:row>
+        <msh:textField property="createUsername" label="Пользователь" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
+        <msh:textField property="createDate" label="Дата создания" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
+        </msh:row>
+        <msh:row>
+        <msh:autoComplete property="workFunction" label="Создал" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
+        </msh:row>
+        </msh:ifFormTypeIsView>
       
         <msh:row guid="855de982-5baf-46f1-9f8b-f48" />
           
@@ -87,12 +101,13 @@
   
   <script type = 'text/javascript'> 
   
-  templateAutocomplete.addOnChangeCallback(function() {fillDataDiv();});
+  templateAutocomplete.addOnChangeCallback(function() {fillDataDiv();$('ballSum').value='';});
   //eventutil.addEventListener($('template'),'change',function(){fillDataDiv();}) ;
  var oldaction = document.forms['mis_assessmentCardForm'].action ;
 		document.forms['mis_assessmentCardForm'].action="javascript:saveIntakeInfo()";
   var lastGroupId=0;
   fillDataDiv ();
+  var listIds = new Array();
   function fillDataDiv () {
 	    	    	 	 if (!$('template').value>0) {return;}
 	  TemplateProtocolService.getParameterByObject($('id').value, $('template').value, 'AssessmentCard', {
@@ -101,7 +116,7 @@
 	    						var arr = aResults.split("#");
 	    						var aResult = arr[0];
 	    						var editable = arr[1];
-	    					
+	    						listIds = new Array();	    					
 	    					      //  $('BioList').value=aSmoId;
 	    					      if ($('params')&&$('params').value!='') {
 	    					    	fldJson = JSON.parse($('params').value);  
@@ -118,6 +133,7 @@
 	    					        	var param = fldJson.params[ind] ;
 	    					        	txt += getFieldTxtByParam(param) ;
 	    					        }
+	    					        txt+= createSumRow(lastGroupId);
 	    					        txt += "</table></form>" ;	    						
 	    					       $('dataField').innerHTML =txt ;
 	    					      // 	cancel${name}TemplateProtocol();
@@ -146,6 +162,8 @@
 	    					        		eval("param"+param1.id+"Autocomlete.setVocTitle('"+param1.vocname+"') ;")
 	    					        		eval("param"+param1.id+"Autocomlete.build() ;")
 	    					        		eval("param"+param1.id+"Autocomlete.setParentId('"+param1.vocid+"') ;")
+	    					        		eval("param"+param1.id+"Autocomlete.addOnChangeCallback(function(){getBall("+param1.id+") });");
+	    					        		listIds.push ("param"+param1.id);
 	    					        	}
 	    					        } 
 	    			             } else {
@@ -171,18 +189,43 @@
 	    				}) ;
 	    			
 	     }
-  
+  function createSumRow( aGroupId) {
+	  if (aGroupId>0) {
+		  return "<tr ><td colspan='3'><label style='font-size:15px;' align='center' id='Group"+aGroupId+"Sum'></label></td></tr>";
+	  }
+	  return "";
+  }
   function getFieldTxtByParam(aParam) {
 	  var txt='';
 		if (aParam.groupId!=lastGroupId) {
 			//Отспут перед след. группой 
-			txt+="<tr style='height: 14px'><td colspan='2'><label id='Group"+aParam.groupId+"Label'></label></td><td><label id='Group"+aParam.groupId+"Sum'></label></td></tr>";
-			txt+="<tr><td colspan = '2' style='font-size:20px;' align='center'>"+aParam.groupName+"</td></tr>";
+			txt +=createSumRow(lastGroupId);
+			txt+="<tr style='height: 14px'></tr>"; //<td colspan='2'><label id='Group"+aParam.groupId+"Label'></label></td><td><label id='Group"+aParam.groupId+"Sum'></label></td></tr>";
+			txt+="<tr ><td width='40px'></td><td colspan = '2' style='font-size:20px;' align='center' >"+aParam.groupName+"</td><td><label style='font-size:20px;' align='center' id='Group"+aParam.groupId+"Sums'></label></td></tr>";
 			lastGroupId =aParam.groupId; 
 		}
 		 txt += "<tr>" ;
 		var type=+aParam.type;
-      txt += "<td class=\"label\"><label id=\"param"+aParam.id+"Label\" for=\"param"+aParam.idEnter+"\" title='"+aParam.name ;
+		 txt+="<td class='label' width='40px'><label id='Param"+aParam.id+"Ball'></label></td>";
+		txt += "<td>" ;
+	      if (type==2) {
+		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
+	      	txt += "<div>";
+		        txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
+	      	txt += "<div id=\"param"+aParam.id+"Div\">";
+	      	txt += "<span></span>";
+		        //txt += ;
+		        txt += "</div>";
+		        txt += "</div>";
+	      } else {
+		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+		        
+	      }
+	      // Кол-во баллов 
+	     
+	      txt += "</td>" ;
+		
+      txt += "<td align='left' ><label id=\"param"+aParam.id+"Label\" for=\"param"+aParam.idEnter+"\" title='"+aParam.name ;
       if (type==1) {
       	txt += '(число)' ;
       } else if (type==3) {
@@ -196,23 +239,7 @@
       txt += "'>" ;
       txt += aParam.shortname ;
       txt += "</label></td>" ;
-      txt += "<td>" ;
-      if (type==2) {
-	        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
-      	txt += "<div>";
-	        txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
-      	txt += "<div id=\"param"+aParam.id+"Div\">";
-      	txt += "<span></span>";
-	        //txt += ;
-	        txt += "</div>";
-	        txt += "</div>";
-      } else {
-	        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
-	        
-      }
-      // Кол-во баллов 
-      txt+="<td class\"label\"><label id=Param"+aParam.id+"Ball\"></label></td>";
-      txt += "</td>" ;
+      
       txt += "<td>" ;
       if (+aParam.type==4) {txt += " ("+aParam.cntdecimal+") ";}
       txt += aParam.unitname ;
@@ -304,6 +331,61 @@
 			
 		}
 	} 
+  
+  function getBall (aParameterId) {
+	  if (+$('param'+aParameterId).value>0) {} else {
+		  $('Param'+aParameterId+'Ball').innerHTML ="";
+		  getSummaryBalls();
+		  return;
+		}
+	  TemplateProtocolService.getParameterBallId($('param'+aParameterId).value, {
+		 callback: function (a){
+			  if (a && a!='') {
+				  a = a.split("#");
+				  $('Param'+aParameterId+'Ball').innerHTML =a[0]+" б.";
+				  if (a[1]!=null&&a[1]!='') {
+					  alert ("ВНИМАНИЕ!!! "+a[1]);
+				  }
+			  } else {
+				  $('Param'+aParameterId+'Ball').innerHTML ="";
+			  }
+			  getSummaryBalls();
+		  }
+	  });
+	  
+  }
+  function createParams() {
+	  var str = "";
+	  for (var i=0;i<listIds.length;i++) {
+		  if (+$(listIds[i]).value>0) {
+			  if (str!='') {str+=","}
+			  str+=$(listIds[i]).value;
+		  }
+	  }
+	  return str;
+  }
+  function getSummaryBalls() {
+	  var par = createParams();
+	  if (par==''){par='0';}
+		  TemplateProtocolService.getSummaryBallsByNewCard($('template').value,par,{
+			  callback: function (a) {
+				  var rows = a.split("@");
+				  var sum = 0;
+				  for (var i=0;i<rows.length;i++) {
+					  var p = rows[i].split("#");
+					  if ($('Group'+p[0]+'Sum')) {
+						  $('Group'+p[0]+'Sum').innerHTML = "Итого баллов: "+p[2];
+					}
+					  sum+=(+p[2]);
+					  
+				  }
+				  $('ballSum').value = sum;
+				//  alert (a);
+			  }
+		  }); 
+	  
+	  
+  }
   </script>
   </msh:ifFormTypeIsNotView>
   </tiles:put>
