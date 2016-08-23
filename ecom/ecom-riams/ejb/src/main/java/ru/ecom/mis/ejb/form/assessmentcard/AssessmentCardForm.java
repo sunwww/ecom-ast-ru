@@ -13,6 +13,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 
 
 @EntityForm
@@ -79,4 +81,21 @@ public class AssessmentCardForm extends IdEntityForm{
 	public void setParams(String aParams) {theParams = aParams;}
 	/** Параметры */
 	private String theParams;
+	
+	/** Рабочая функция врача */
+	@Comment("Рабочая функция врача")
+	@Persist
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Рабочая функция врача */
+	private Long theWorkFunction;
+	
+	/** Дата приема */
+	@Comment("Дата приема")
+	@Persist 
+	@DateString @DoDateString
+	public String getStartDate() {return theStartDate;}
+	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+	/** Дата приема */
+	private String theStartDate;
 }

@@ -62,4 +62,18 @@ public class AssessmentCard extends BaseEntity {
 	private String theCreateUsername;
 	/** Дата создания */
 	private Date theCreateDate;
+	
+	/** Рабочая функция врача */
+	@Comment("Рабочая функция врача")
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Рабочая функция врача */
+	private Long theWorkFunction;
+	
+	/** Дата приема */
+	@Comment("Дата приема")
+	public Date getStartDate() {return theStartDate;}
+	public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
+	/** Дата приема */
+	private Date theStartDate;
 }
