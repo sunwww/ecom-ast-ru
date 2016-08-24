@@ -4,9 +4,12 @@ import javax.persistence.Entity;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @Entity
 public class Assessment extends VocBaseEntity{
+	
 	/** Минимальное кол-во баллов */
 	@Comment("Минимальное кол-во баллов")
 	public Integer getMinBall() {return theMinBall;}
