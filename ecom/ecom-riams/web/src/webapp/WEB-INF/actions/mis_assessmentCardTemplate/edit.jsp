@@ -59,6 +59,24 @@ where p.assessmentCard=${param.id} order by p.position
             </msh:sectionContent>
         </msh:section>
         
+                <msh:section title="Критерии оценки" viewRoles="/Policy/Diary/AssessmentCard/Edit" listUrl="mis_assessmentParamsEdit.do?id=${param.id}">
+            <msh:sectionContent>
+           
+                <ecom:webQuery name="list_assessments" nativeSql="select ass.id, ass.name, ass.minball, ass.maxball 
+					from assessment ass
+					where ass.assessmentcard = ${param.id} "/>
+                    
+   
+    <msh:table name="list_assessments" action="entityView-mis_assessment.do" idField="1">
+    	<msh:tableColumn property="sn" columnName="#"/>
+    	<msh:tableColumn property="2" columnName="Название"/>
+    	<msh:tableColumn property="3" columnName="Минимальный балл"/>
+    	<msh:tableColumn property="4" columnName="Максимальный балл"/>
+    </msh:table>
+              
+            </msh:sectionContent>
+        </msh:section>
+        
     
          </msh:ifFormTypeIsView>
       </msh:panel>
@@ -71,6 +89,7 @@ where p.assessmentCard=${param.id} order by p.position
         <msh:sideMenu>
 	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityPrepareDelete-mis_assessmentCardTemplate" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
 	        <msh:sideLink guid="sideLinkEdit" key="ALT+3" params="id" action="/mis_assessmentParamsEdit" name="Работа с параметрами" roles="/Policy/Mis/AssessmentCard" />
+	         <msh:sideLink key="ALT+M" params="id" action='/entityParentPrepareCreate-mis_assessment.do' name="Создать оценку" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
 	   </msh:sideMenu>
       </msh:ifFormTypeAreViewOrEdit>
        

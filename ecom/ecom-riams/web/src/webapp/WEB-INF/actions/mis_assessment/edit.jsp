@@ -9,53 +9,52 @@
    
     <tiles:put name='body' type='string'>
     
-        <msh:form action="entitySaveGoView-mis_claim.do" defaultField="id">
-        
-            <msh:hidden property="id"/>
-            <msh:hidden property="saveType"/>
-            <msh:panel guid="panel" colsWidth="20% 20% 15%">
-       		<input type='hidden' id='statusState'>
-        
-        <msh:ifFormTypeAreViewOrEdit formName="mis_archiveCaseForm">
-         <msh:row>
-         <msh:textField property="patient" label="Пациент" viewOnlyField="true"/>
-        </msh:row>
-          <msh:row>
-	         <msh:textField property="statNumber" label="Стат. карта" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
-          </msh:row> 
           
-	        <msh:separator label="Информация о создании заявки" colSpan="10"></msh:separator>
-     	<msh:row>
-     	<msh:row>
-	         <msh:autoComplete vocName="workFunction" size="50"  property="workfunction" label="Создал" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
-          </msh:row> 
-        	<msh:label property="createDate" label="Дата создания"/>
-        	</msh:row> <msh:row>
-        	<msh:label property="createTime" label="Время создания"/>
-        	</msh:row> <msh:row>
-          	<msh:label property="createUsername" label="Пользователь" />
-        </msh:row>   
-             
-        </msh:ifFormTypeAreViewOrEdit>
-      </msh:panel>
-      </msh:form>
-    
+        <msh:form action="/entitySaveGoView-mis_assessment.do" defaultField="name">
+        <msh:hidden property="assessmentCard"/>
+        <msh:hidden guid="hiddenSaveType" property="saveType" />
+          
+         
+         
+
+         <msh:textField property="name" label="Название" size="10"/>
+       	 <br>
+          <msh:textField property="maxBall" label="Максимальный балл" size="10"/>
+     	  <br>
+          <msh:textField property="minBall" label="Минимальный балл" size="10"/>
+         <br>
+        <msh:row guid="0489132a-531c-47bc-abfc-1528e774bbfe">
+        
+        
+      <msh:submitCancelButtonsRow colSpan="4"></msh:submitCancelButtonsRow>
+         
+         </msh:row>
+     
+      
+      
+      <msh:ifFormTypeAreViewOrEdit formName="mis_assessmentForm">
+      
+       <msh:hidden guid="hiddenId" property="id" />
+      <tiles:put name='side' type='string'>
+	  <msh:sideMenu> 
+	 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-mis_assessment.do" name="Изменить" title="Изменить"/>
+	  <msh:sideLink confirm="Удалить?" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-mis_assessment.do" name="Удалить" title="Удалить"/>
+	   
+	  </msh:sideMenu>
+	   </tiles:put>
+	  
+	   
+      </msh:ifFormTypeAreViewOrEdit>
+       </msh:form>
     </tiles:put>
 
-    <tiles:put name='side' type='string'>
-      <msh:ifFormTypeAreViewOrEdit formName="mis_archiveCaseForm">
-        <msh:sideMenu>
-	        <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityPrepareDelete-mis_archiveCase" name="Удалить" roles="/Policy/Mis/Claim/Delete" />
-	   </msh:sideMenu>
-      </msh:ifFormTypeAreViewOrEdit>
-       
-    </tiles:put>
+   
     
   
-
-    <tiles:put name='title' type='string'>
-        <ecom:titleTrail mainMenu="Patient" beginForm="mis_archiveCaseForm" />
+<!-- 
+     <tiles:put name='title' type='string'>
+        <ecom:titleTrail mainMenu="Patient" beginForm="mis_assessmentForm" />
     </tiles:put>
-
+ -->
 
 </tiles:insert>
