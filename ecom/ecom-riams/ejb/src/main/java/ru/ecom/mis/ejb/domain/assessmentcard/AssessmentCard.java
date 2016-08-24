@@ -13,6 +13,7 @@ import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.validators.MaxLength;
 
+
 @Entity
 @AIndexes({
 	@AIndex(properties="patient")
