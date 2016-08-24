@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.assessmentcard;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.assessmentcard.Assessment;
 import ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCard;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -12,14 +13,21 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
-@EntityFormPersistance(clazz= AssessmentCard.class)
+@EntityFormPersistance(clazz= Assessment.class)
 @Comment("Итоговый балл")
-@WebTrail(comment = "Итоговый балл", nameProperties= "id", view="entityParentView-mis_assessment.do" ,list = "entityParentList-mis_assessment.do")
+@WebTrail(comment = "Итоговый балл", nameProperties= "name", view="entityView-mis_assessmentCardTemplate.do" ,list = "entityList-mis_assessmentCardTemplate.do")
 @Parent(property = "assessmentCard", parentForm=AssessmentCardTemplateForm.class) 
 
 @EntityFormSecurityPrefix("/Policy/Mis/AssessmentCard")
 public class AssessmentForm extends IdEntityForm{
-
+	/** Наименование */
+	@Comment("Наименование")
+	@Persist @Required
+	public String getName() {return theName;}
+	public void setName(String aName) {theName = aName;}
+	private String theName;
+	
+	
 	/** Минимальное кол-во баллов */
 	@Comment("Минимальное кол-во баллов")
 	@Persist @Required
