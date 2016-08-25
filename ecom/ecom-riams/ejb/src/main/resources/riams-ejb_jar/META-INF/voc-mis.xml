@@ -7,9 +7,20 @@
 	names="act.name"
 	>
 	</NativeVocService>
+	</voc> 
+
+
+<voc id="VocAssessmentsByTemplate" type="NativeVocService">
+	<NativeVocService
+	from="assessment ass"
+	nameId="ass.id"
+	names="ass.name"
+	join="left join assessmentcardtemplate act on act.id = ass.assessmentcard" 
+    parent="act.id =:parent"
+	>
+	</NativeVocService>
 	</voc>
-	
-	
+
 <voc id="vocExternalDocumentTypeByParent" type="NativeVocService">
 	<NativeVocService
 	from="vocExternalDocumentType vedt"
