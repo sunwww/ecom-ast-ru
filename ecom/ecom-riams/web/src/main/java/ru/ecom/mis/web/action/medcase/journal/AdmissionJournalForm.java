@@ -411,4 +411,18 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 
 	/** Рабочая группа */
 	private Long theGroup;
+	
+	/** Тип карты оценки */
+	@Comment("Тип карты оценки")
+	public Long getAssessmentCardTemplate() {return theAssessmentCardTemplate;}
+	public void setAssessmentCardTemplate(Long aAssessmentCardTemplate) {theAssessmentCardTemplate = aAssessmentCardTemplate;}
+	/** Тип карты оценки */
+	private Long theAssessmentCardTemplate;
+	
+	/** Оценка в карте оценки */
+	@Comment("Оценка в карте оценки")
+	public Long getAssessment() {return theAssessment;}
+	public void setAssessment(Long aAssessment) {theAssessment = aAssessment;}
+	/** Оценка в карте оценки */
+	private Long theAssessment;
 }
