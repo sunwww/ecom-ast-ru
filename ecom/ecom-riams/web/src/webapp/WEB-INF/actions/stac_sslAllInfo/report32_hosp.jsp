@@ -1,4 +1,3 @@
-
 <%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -30,23 +29,29 @@
         <msh:textField property="dateBegin" label="Период с" />
 		<msh:textField property="dateEnd" label="по" />
       </msh:row>
-              <msh:row>
+      <msh:row>
         	<msh:autoComplete property="sex" fieldColSpan="4" horizontalFill="true" label="Пол" vocName="vocSex"/>
-        </msh:row>
-        <msh:row>
-                
+      </msh:row>
+      <msh:row>
            <td>
             <input type="submit" value="Найти" />
-     
           </td>
-        </msh:row>
+      </msh:row>
     </msh:panel>
     </msh:form>
     
     <% }%>
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
            <script type='text/javascript'>
-          
+       
+      	 function print() {
+      		alert ("Хрен вам, а не 'Печать списка'!");
+      	 	/* var frm = document.forms[0] ;
+      	 	frm.target='_blank' ;
+      	 	frm.action='stac_report32_print.do' ;
+      	 	frm.submit(); */
+      	 }
+       
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
@@ -87,18 +92,20 @@
     if (sex!=null&&!sex.equals("")) sqlAdd+=" and pat.sex_id="+sex;
 
     String type=request.getParameter("type");
-  
-   
     
 if (type!=null&&type.equals("reestr")) {
 	String id =  request.getParameter("id");
 	if (id!=null&&!id.equals("")) {
-		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' and mc.result_id!=6";}    
+		if (id.equals("alive")) { sqlAdd+=" and vlb.code='1' ";}    
 		else if (id.equals("born2die")) {sqlAdd+=" and vlb.code='1' and mc.result_id=6 ";}    
-		else if (id.equals("die")) {sqlAdd+=" and vlb.code='2' ";}    
+		else if (id.equals("dead")) {sqlAdd+=" and vlb.code='2' and (nb.deadbeforelabors is null or nb.deadbeforelabors='0') ";}    
+		else if (id.equals("deadbefore")) {sqlAdd+=" and vlb.code='2' and nb.deadbeforelabors='1' ";}    
+		else if (id.equals("stayalive")) {sqlAdd+=" and vlb.code='1' and (mc.result_id is null or mc.result_id!=6) ";}    
 	}
  	String w = request.getParameter("weight");
+ 
 	if (w!=null&&!w.equals("")) {
+		//request.setAttribute("weigth", w);
 		int weight = Integer.valueOf(w).intValue();
 		
 		switch(weight) {
@@ -130,47 +137,49 @@ if (type!=null&&type.equals("reestr")) {
 			sqlAdd+=" and nb.birthweight >= 4000";
 			break;
 		case 10: 
-			//sqlAdd+=" and cb.durationpregnancy <37.00 ";
 			sqlAdd+=" and vnbm.code!='DONOSH' ";
 			break;
 		case 11: 
 			sqlAdd+=" and vnbm.code!='DONOSH' and cb.durationpregnancy<28.00";
 			break;
 		case 12: 
-			sqlAdd+=" and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
+			sqlAdd+=" and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
 			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600)< 24";
 			break;
 		case 13: 
-			sqlAdd+=" and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
+			sqlAdd+=" and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
 			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) between 24 and 168";
 			break;
 		}  
 	}
 	
+ 	request.setAttribute("weigth", w);
 	request.setAttribute("sqlAdd", sqlAdd);
 	%> 
 	 <msh:section>
     <ecom:webQuery isReportBase="${isReportBase}" name="Report32_reestr" nameFldSql="Report32_reestr_sql" nativeSql="
-select pat.id
-,pat.patientinfo
+select (case when pat.id is null then mthr.id else pat.id end) pat_id
+,(case when pat.id is null then mthr.lastname || ' X ' || to_char(nb.birthdate, 'dd.mm.yyyy') else pat.patientinfo end) pat_info
+,cast('&type=reestr' as char) as fldId
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
 left join patient pat on pat.id=nb.patient_id
 left join medcase mc on mc.patient_id=pat.id and mc.datestart=pat.birthday and mc.dtype='HospitalMedCase'
-where mc.result_id is not null and nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+left join medcase mmc on mmc.id=cb.medcase_id
+left join patient mthr on mthr.id=mmc.patient_id
+where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
-group by pat.id, pat.patientinfo order by pat.patientinfo 
+group by pat_id, pat_info order by pat_info 
 " />
     <msh:sectionTitle>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="Report32_reestr" 
-     action="entityView-mis_patient.do" idField="1"     >
+    <input type="button" value="Печать списка" onclick="print()" >
+    <msh:table name="Report32_reestr" action="entityView-mis_patient.do" idField="1">
       <msh:tableColumn columnName="ID" property="1" />
       <msh:tableColumn columnName="Fam" property="2" addParam=""  />
-      
     </msh:table>
     
     </msh:sectionContent>
@@ -187,11 +196,41 @@ group by pat.id, pat.patientinfo order by pat.patientinfo
    
     <msh:section>
     <ecom:webQuery isReportBase="${isReportBase}" name="Report32" nameFldSql="Report32_sql" nativeSql="
-select case 
-when vlb.code='1' and mc.result_id=6 then 'Родился и умер'
-when vlb.code='2' then 'Родился мертвым'
-else 'Родился живым'
-end as f1_name
+select '1) Родился живым' as f1_name
+, count(nb.id) as f2_cntAll
+,count(case when nb.birthweight between 500 and 749 then nb.id else null end) as f3_749
+,count(case when nb.birthweight between 750 and 999 then nb.id else null end) as f4_999
+,count(case when nb.birthweight between 1000 and 1499 then nb.id else null end) as f5_1499
+,count(case when nb.birthweight between 1500 and 1999 then nb.id else null end) as f6_1999
+,count(case when nb.birthweight between 2000 and 2499 then nb.id else null end) as f7_2499
+,count(case when nb.birthweight between 2500 and 2999 then nb.id else null end) as f8_2999
+,count(case when nb.birthweight between 3000 and 3499 then nb.id else null end) as f9_3499
+,count(case when nb.birthweight between 3500 and 3999 then nb.id else null end) as f10_3999
+,count(case when nb.birthweight > 3999 then nb.id else null end) as f11_4000 
+,count(case when vnbm.code!='DONOSH' then nb.id else null end) as f12_nedonos
+,count(case when vnbm.code!='DONOSH' and cb.durationpregnancy <28.00 then nb.id else null end) as f13_nedonos_28
+,count(case when vlb.code='1' and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp),
+cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
+< 24 then nb.id end) as f14_dead24
+,count (case when vlb.code='1' and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp),
+cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
+between 24 and 168 then nb.id end) as f15_death168
+, 'alive' as idLld
+from newborn nb
+left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
+left join vocliveborn vlb on vlb.id=nb.liveborn_id
+left join childbirth cb on cb.id=nb.childbirth_id
+left join patient pat on pat.id=nb.patient_id
+left join medcase mc on mc.patient_id=pat.id and mc.datestart=pat.birthday and mc.dtype='HospitalMedCase'
+where vlb.code='1' and nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+${sqlAdd}
+group by f1_name, idLld
+
+union
+select case when vlb.code='1' and mc.result_id=6 then '3) Родился и умер'
+when vlb.code='2' and (nb.deadbeforelabors is null or nb.deadbeforelabors='0') then '4) Умер в родах'
+when vlb.code='2' and nb.deadbeforelabors='1' then '5) Умер до родов'
+else '2) Родился и выжил' end as f1_name
 , count(nb.id) as f2_cntAll
 ,count(case when nb.birthweight between 500 and 749 then nb.id else null end) as f3_749
 ,count(case when nb.birthweight between 750 and 999 then nb.id else null end) as f4_999
@@ -212,9 +251,10 @@ cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') a
 between 24 and 168 then nb.id end) as f15_death168
 ,max(
 case 
-when vlb.code='1' and mc.result_id!=6 then 'alive' 
-when vlb.code='1' and mc.result_id=6 then 'born2die'
-when vlb.code='2' then 'die' end
+when vlb.code='1' and mc.result_id=6 then 'born2die' 
+when vlb.code='2' and (nb.deadbeforelabors is null or nb.deadbeforelabors='0') then 'dead'
+when vlb.code='2' and nb.deadbeforelabors='1' then 'deadbefore' 
+else 'stayalive' end
 ) as idLld
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
@@ -222,14 +262,9 @@ left join vocliveborn vlb on vlb.id=nb.liveborn_id
 left join childbirth cb on cb.id=nb.childbirth_id
 left join patient pat on pat.id=nb.patient_id
 left join medcase mc on mc.patient_id=pat.id and mc.datestart=pat.birthday and mc.dtype='HospitalMedCase'
-where mc.result_id is not null and nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
-group by 
-case 
-when vlb.code='1' and mc.result_id=6 then 'Родился и умер'
-when vlb.code='2' then 'Родился мертвым'
-else 'Родился живым'
-end 
+group by f1_name order by f1_name
 
 " />
     <msh:sectionTitle>
@@ -271,6 +306,7 @@ end
     <% }
     }
     	%>
-    
+   
   </tiles:put>
+
 </tiles:insert>
