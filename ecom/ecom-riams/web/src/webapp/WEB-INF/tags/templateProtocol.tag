@@ -583,6 +583,7 @@ var fldJson = null ;
          TemplateProtocolService.getText(aId, {
              callback: function(aString) {
                  $('${name}textTemplProtocol').value = aString ;
+                 if ($('templateProtocol')) {$('templateProtocol').value = aId;}
                  if (+aOk==1) {
                 	 save${name}TemplateProtocol() ;
                 	 //$('${name}tempProtocol').value='' ;
