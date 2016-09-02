@@ -83,7 +83,7 @@
     				 {
     			 		callback: function(aResult) {
     			 			
-    			 			if (+aResult!=0) {
+    			 			if (+aResult==0) {
     			 	    		 $('${name}DoubleSave').style.display = 'block' ;
     			 	    		 theIs${name}DoubleDialogInitialized = true ;
     			 			} 

@@ -268,7 +268,7 @@
       </msh:section>
     </msh:ifFormTypeIsView>
     </msh:ifInRole>
-    <tags:mis_double name='Ticket' title='Существующие талоны в базе:' cmdAdd="document.forms[0].submitButton.disabled = false" rolesBan="/Policy/Poly/Ticket/IsNotCreateDoubleTicket;" />
+    <tags:mis_double name='Ticket' title='Существующие талоны в базе:' cmdAdd="document.forms[0].submitButton.disabled = false" rolesBan="/Policy/Poly/Ticket/IsNotCreateDoubleTicket" />
   </tiles:put>
   <tiles:put name="side" type="string">
   		<msh:sideMenu title="Дополнительно">
@@ -669,11 +669,11 @@
 				    	 TicketService.checkCreateDoubleBySpecAndDate({
                     		  callback: function(aRes) {
 	                    		  if (aRes) {
-	                    			  alert('Уже заведен талон посещения на '+$('dateStart').value+' к специалисту данному по медкарте №'+document.forms[0].medcard.value) ;
+	                    			  alert('Уже заведен талон посещения на '+$('dateStart').value+' к данному специалисту  по медкарте №'+document.forms[0].medcard.value) ;
 					    			  document.forms[0].submitButton.disabled = false ;
-	                    		  } else {
+	                    		 } else {
 	      				    		  showTicketDouble(aResult) ;
-	                    		  }
+	                    		 }
 	                    	   }
                     	  }) ;
                        } else {
