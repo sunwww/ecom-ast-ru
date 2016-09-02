@@ -137,16 +137,19 @@ function printInfoByPatient(aPatient,aCtx) {
 					}
 				}
 				var dd = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-				dd.set1(d1!=null?d1:objD[0]) ;
+				
 				if (listD.size()-1==i) {
+					dd.set1(d1!=null?d1:objD[0]) ;
+					
 					dd.set2(objD[1]) ;
 				} else {
+					dd.set1(d1!=null?d1:objD[0]) ;
 					dd.set2(d2!=null?d2:objD[1]) ;
 				}
 				dd.set3(objD[2]!=null?objD[2].split("#")[0]:null) ;
 				dd.set4(objD[2]!=null?objD[2].split("#")[1]:null) ;
 				ddList.add(dd) ;
-				d1=null;d2=null;
+				d1=objD[0] ; d2 = objD[1] ; d3 = objD[2] ;
 			} else {
 				if (d1==null) d1=objD[0] ;
 				d2 = objD[1] ; d3 = objD[2] ;
