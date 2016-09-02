@@ -353,7 +353,7 @@ public class TicketServiceJs {
         }
     	
         StringBuilder sql = new StringBuilder() ;
-        sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(coalesce(t.dateStart,t.dateFinish),'dd.mm.yyyy'),t.createTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
+        sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy') as patName ,to_char(coalesce(t.dateStart,t.dateFinish),'dd.mm.yyyy') as dates,t.createTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename as doctorInfo")
         	.append(" from MedCase as t ")
         	.append(" left join medcard as m on m.id=t.medcard_id")
 			.append(" left join patient as p on m.person_id=p.id")
