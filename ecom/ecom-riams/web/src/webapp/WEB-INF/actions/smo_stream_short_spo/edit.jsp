@@ -7,9 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <!--  -->
-    	  
-    	<!--   <form name="smo_stream_short_spoForm" action="/entitySaveGoView-smo_stream_short_spo.do" method="post" target="_blank">  -->
+    
     <msh:form method="post" guid="formHello" action="/entitySaveGoView-smo_stream_short_spo.do"  defaultField="dateStart" > 
     
       <msh:hidden guid="hiddenId" property="id" />
@@ -182,7 +180,7 @@
  <msh:ifFormTypeIsCreate formName="smo_stream_short_spoForm">
  <script type="text/javascript">
  //medcardAutomplete.addOnChangeCallback(function (){updateMedcard();});
- 
+ //alert ('hello');
  document.forms[0].target="_blank";
  self.close();
  
