@@ -244,4 +244,11 @@ public class WorkCalendarHospitalBed extends BaseEntity {
 
 	/** Откуда направление */
 	private MisLpu theOrderLpu;
+	
+	/** Показания для госпитализации */
+	@Comment("Показания для госпитализации")
+	public Long getIndicationToHosp() {return theIndicationToHosp;}
+	public void setIndicationToHosp(Long aIndicationToHosp) {theIndicationToHosp = aIndicationToHosp;}
+	/** Показания для госпитализации */
+	private Long theIndicationToHosp;
 }

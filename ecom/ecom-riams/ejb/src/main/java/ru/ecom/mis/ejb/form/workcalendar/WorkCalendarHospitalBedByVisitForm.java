@@ -28,6 +28,16 @@ import ru.nuzmsh.forms.validator.validators.Required;
         @AParentEntityFormInterceptor(WorkCalendarHospitalBedCreate.class)
 )
 public class WorkCalendarHospitalBedByVisitForm extends WorkCalendarHospitalBedForm{
+	
+
+	/** Показания для госпитализации */
+	@Comment("Показания для госпитализации")
+	@Persist
+	public Long getIndicationToHosp() {return theIndicationToHosp;}
+	public void setIndicationToHosp(Long aIndicationToHosp) {theIndicationToHosp = aIndicationToHosp;}
+	/** Показания для госпитализации */
+	private Long theIndicationToHosp;
+	
 	/** Палата */
 	@Comment("Палата")
 	@Persist 
