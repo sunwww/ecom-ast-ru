@@ -427,6 +427,8 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		service.executeUpdateNativeSql(sql.toString()) ;
 		
 		sql = new StringBuilder() ;
+		sql.append("update medcase set datestart = current_date, noactuality='1' where id in (select medcase_id from prescription where id in ("+aPrescript+"))");
+		service.executeUpdateNativeSql(sql.toString()) ;
 		List<Object[]> list = service.executeNativeSqlGetObj("select pl.id,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name from prescription p left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id where p.id='"+aPrescript+"'") ;
 		if (list.size()>0) {
 			Object[] obj = list.get(0) ;
