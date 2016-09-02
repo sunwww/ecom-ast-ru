@@ -4,12 +4,14 @@ import java.sql.Date;
 import java.sql.Time;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.disability.voc.VocInvalidity;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -31,6 +33,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 }
 )
 @Table(schema="SQLUser")
+@EntityListeners(DeleteListener.class)
 public class Invalidity extends BaseEntity{
 	 /**
 	  * Инвалид ВОВ
