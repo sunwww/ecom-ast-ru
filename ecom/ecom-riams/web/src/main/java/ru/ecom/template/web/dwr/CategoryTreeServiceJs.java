@@ -42,7 +42,7 @@ public class CategoryTreeServiceJs {
     				;fldParent="pp.parent_id";fldOrderBy="case when pp.dtype='PriceGroup' then 1 else 0 end,pp.code";
     				join=" left join pricemedservice pms on pms.priceposition_id=pp.id ";
     				whereAdd=" and (pp.dtype='PriceGroup' or pms.id is not null)" ;
-    				isOnceViewFld=" pp.dtype='PriceGroup' and pp.isOnceView" ;
+    				isOnceViewFld=" pp.dtype='PriceGroup' and pp.isOnceView='1'" ;
     				whereAdd=" and pp.priceList_id='"+aAddParam+"'  and pp.dateTo is null "+whereAdd ;
     				
     		fldIsChild = "(select count(*) from "+table+"1 where pp1.parent_id=pp.id)";
