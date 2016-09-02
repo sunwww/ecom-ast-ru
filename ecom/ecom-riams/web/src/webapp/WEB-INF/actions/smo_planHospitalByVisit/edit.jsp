@@ -67,7 +67,9 @@
         <msh:row>
         	<msh:textField property="cntDays" label="дней"/>
         </msh:row>
-
+  <msh:row>
+  	<msh:autoComplete property="indicationToHosp" vocName="vocIndicationHospital" label="Показания к госпитализации" fieldColSpan="3" horizontalFill="true"/>
+  </msh:row>
         <msh:row>
         	<msh:autoComplete property="idc10" vocName="vocIdc10" label="Код МКБ" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
