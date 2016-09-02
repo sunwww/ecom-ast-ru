@@ -4,6 +4,7 @@ function printProtocolTemplate (aCtx, aParams) {
 	var protocolId = new java.lang.Long(aParams.get("id"));
 	if (protocolId==null||protocolId==0) {return;}
 	var prot = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol, protocolId) ;
+	
 	var medCase = prot.medCase;
 	var sql = "select p.id, coalesce(p.code,'_id'||p.id) as f1_code ,p.name as f2_name" +
 	 " ,case when p.type='2' then coalesce(uv.name, '') when p.type='3' then fir.valuetext when p.type='1' then ''||fir.valuebd " +
@@ -24,6 +25,7 @@ function printProtocolTemplate (aCtx, aParams) {
 	printProtocol(aCtx, aParams);
 	recordPatient(medCase,aCtx);
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
+	map.remove("medCase.info");
 	
 	return map;
 }
@@ -1495,7 +1497,7 @@ function printConsentBySlo(aCtx,aParams) {
 	var ret = new java.util.ArrayList() ;
 	ret.add(parDep) ;
 	var ret1 = new java.util.ArrayList() ;
-	var params=[["consent",10],["direct",3],["rejection",5]] ;
+	var params=[["consent",10],["direct",3],["rejection",5], ["hystology",2]] ;
 	//throw +aParams.get("consent4") ;
 	for (var i0=0;i0<params.length;i0++) {
 		var par=params[i0] ;
