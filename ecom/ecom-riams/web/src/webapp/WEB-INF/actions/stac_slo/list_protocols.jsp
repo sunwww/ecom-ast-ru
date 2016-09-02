@@ -78,8 +78,7 @@
       ,aslo.dtype='Visit',vtp.name
       ,aslo.department_id,slo.patient_id 
             	order by  d.dateRegistration desc,  d.timeRegistration desc
-            	"/>${protocols_sql}
-            	
+            	"/>            	
                 <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
                     <msh:tableButton property="6" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Динамика исследования" buttonShortName="Дин."/>
                     <msh:tableColumn columnName="#" property="sn"/>
