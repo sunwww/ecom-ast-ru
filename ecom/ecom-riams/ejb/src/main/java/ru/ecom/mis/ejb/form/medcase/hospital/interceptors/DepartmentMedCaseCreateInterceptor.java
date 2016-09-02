@@ -80,13 +80,14 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		throw new IllegalStateException("Невозможно добавить случай лечения. Сначала надо определить  случай стационарного лечения (ССЛ)") ;
     	}
     	boolean NoCheckPregnancy = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy") ;
-    	if (!NoCheckPregnancy && !isPregnancyExists(manager, form.getPrevMedCase() )) {
+    	if (!NoCheckPregnancy && form.getPrevMedCase()!=null &&!isPregnancyExists(manager, form.getPrevMedCase() )) {
     		throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не заполнены данные по родам!");
     	} 
     }
     
     
     public static boolean isPregnancyExists(EntityManager aManager, Long aMedCaseId) {
+    	if (aMedCaseId==null) {return true;}
 		System.out.println("===== Проверяем на роды, DEP_MC_CREATE_department_id: <> "+aMedCaseId);
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
