@@ -29,6 +29,9 @@
         <msh:row guid="e3c328fa-adbc-4a2d-bcd7-ac189b052f41">
           <msh:autoComplete vocName="timeOmcLpu" property="omcCode" label="Код ФОНДА" fieldColSpan="3" horizontalFill="true" guid="947bb0fe-365f-4147-b6cb-0ed0b07c43b2" />
         </msh:row>
+        <msh:row>
+        	<msh:checkBox property="lpuLevel" label="Уровень оказания мед. помощи"/>
+        </msh:row>
 
         <msh:row guid="2df6f0d2-a60d-44a5-b64b-3aeb3f298d04">
           <msh:textField property="name" label="Название" horizontalFill="true" fieldColSpan="3" size="50" guid="f1d2a4ec-81ad-48bb-afe9-8983e4017245" />
@@ -213,10 +216,21 @@
           <td width="50%" valign="top" style="padding-right: 1em">
             <msh:ifInRole roles="/Policy/Mis/LpuArea/View" guid="f5cfaca8-9a26-4a1e-8ca9-819aeaa15ca3">
               <msh:section title="Список участков ЛПУ" guid="8250a7a7-0eda-45ce-86d1-16e43572a813">
-                <ecom:parentEntityListAll formName="mis_lpuAreaForm" attribute="areas" guid="8deb695e-26d6-41fa-aade-93bbf6e11870" />
-                <msh:table name="areas" action="entityParentView-mis_lpuArea.do" idField="id" guid="0c4751af-fab8-4406-9aaa-41551c505a4a">
-                  <msh:tableColumn columnName="Номер участка" property="number" guid="26f55aee-878d-4e4f-acc2-58cd16049353" />
-                  <msh:tableColumn columnName="Тип" property="typeName" guid="d6ed2f51-5ddf-4ea9-88f1-060418754d12" />
+                 <ecom:webQuery name="areaList" nativeSql="select la.id  
+              	,la.number as number
+				,vat.name as vatName
+				,vwf.name ||' '||wp.lastname
+				from lpuarea la
+				left join vocareatype vat on vat.id=la.type_id
+				left join workfunction wf on wf.id=la.workfunction_id
+				left join worker w on w.id=wf.worker_id
+				left join patient wp on wp.id=w.person_id
+				left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+				where la.lpu_id=${param.id} "/>
+                <msh:table name="areaList" action="entityParentView-mis_lpuArea.do" idField="1" guid="0c4751af-fab8-4406-9aaa-41551c505a4a">
+                  <msh:tableColumn columnName="Номер участка" property="2" guid="26f55aee-878d-4e4f-acc2-58cd16049353" />
+                  <msh:tableColumn columnName="Тип" property="3" guid="d6ed2f51-5ddf-4ea9-88f1-060418754d12" />
+                  <msh:tableColumn columnName="Участковый" property="4" guid="d6ed2f51-5ddf-4ea9-88f1-060418754d12" />
                 </msh:table>
               </msh:section>
               <msh:section title="Список участков подразделений ЛПУ" guid="8250a7a7-0eda-45ce-86d1-16e43572a813">
