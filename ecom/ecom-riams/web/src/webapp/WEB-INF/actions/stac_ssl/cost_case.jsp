@@ -19,7 +19,7 @@
   ,to_char(coalesce(m.datefinish,current_date),'dd.mm.yyyy') as dfinish,m.serviceStream_id as servstream from medcase m where m.id=${param.id}
   "/>
   <%
-  request.setAttribute("priceList", "3");
+  request.setAttribute("priceList", "4");
   request.setAttribute("idsertypebed","11") ;
   List l = (List)request.getAttribute("patinfoQ") ;
   if (l!=null && l.size()>0) {
