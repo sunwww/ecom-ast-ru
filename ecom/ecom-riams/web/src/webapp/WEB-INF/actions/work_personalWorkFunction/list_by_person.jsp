@@ -11,7 +11,9 @@
   <tiles:put name="body" type="string">
   	<ecom:webQuery name="list" nativeSql="
   		select wf.id as wfid,vwf.name as vwfname,su.login as sulogin,ml.name as mlname,wf.code
+  		,gwf.groupName as groupName
   		from WorkFunction wf
+  		left join workfunction gwf on gwf.id=wf.group_id
   		left join Worker w on w.id=wf.worker_id
   		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
   		left join MisLpu ml on ml.id=w.lpu_id
@@ -24,6 +26,7 @@
       <msh:tableColumn columnName="Код специалиста" property="5" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
       <msh:tableColumn columnName="Функция" property="2" guid="6682eeef-105f-43a0-be61-30a865f27972" />
       <msh:tableColumn columnName="Подразделение" property="4" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
+      <msh:tableColumn columnName="Групповая раб. функция" property="6" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
       <msh:tableColumn columnName="Вход в систему" property="3" guid="f34e1b12-3392-4978-b31f-5e54ff2e45bd" />
     </msh:table>
   </tiles:put>
