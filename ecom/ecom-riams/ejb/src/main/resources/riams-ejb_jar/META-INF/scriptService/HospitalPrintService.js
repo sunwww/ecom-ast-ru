@@ -634,9 +634,11 @@ function printReestrByDay(aCtx,aParams) {
     
     var timeSql = null, timeInfo ="",dateInfo="";
     if (typeHour==1) {
-		timeSql= "08:00" ;timeInfo="(8 часов)" ;
-	} else if (typeHour==2) {
-		timeSql= "08:00" ;timeInfo="(9 часов)" ;
+		timeSql= "07:00" ;timeInfo="(7 часов)" ;
+    } else if (typeHour==2) {
+    	timeSql= "08:00" ;timeInfo="(8 часов)" ;
+	} else if (typeHour==3) {
+		timeSql= "09:00" ;timeInfo="(9 часов)" ;
 	} 
     if (typeDate==1) {
 		//aRequest.setAttribute("dateIs"," and m.dateStart between to_date('"+form.getDateBegin()+"','dd.mm.yyyy') and to_date('"+form.getDateBegin()+"','dd.mm.yyyy') ") ;
