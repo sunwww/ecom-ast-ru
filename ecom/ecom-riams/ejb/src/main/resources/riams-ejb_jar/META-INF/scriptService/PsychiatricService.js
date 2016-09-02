@@ -206,7 +206,7 @@ function printArea(aCtx, aParams) {
 	} else {
 		invAddField=addField("invalidity",1);
 		var str1="",str="" ;
-		str=str+" and inv.dateFrom<="+dateEnd ;
+		str=str+" and inv.dateFrom<="+dateEnd+" and (inv.isOtherInvalidity is null or inv.isOtherInvalidity='0')" ;
 		if (groupInv>0) {
 			str=str+" and inv.group_id="+groupInv ;
 			var invGr = 
