@@ -64,6 +64,9 @@
 		        <msh:row>
 		            <msh:checkBox property="${name}Rejection3" label="от видов медицинских вмешательств..."/>
 		        </msh:row>
+		        <msh:row>
+		            <msh:checkBox property="${name}Hystology1" label="Направление на патологогистологическое исследование"/>
+		        </msh:row>
 		    </msh:panel>
 		        <msh:row>
 		            <td colspan="6">
@@ -110,7 +113,8 @@
 				+"&direct1="+($('${name}Direct1').checked?1:0)
 				+"&rejection1="+($('${name}Rejection1').checked?1:0)
 				+"&rejection2="+($('${name}Rejection2').checked?1:0)
-				+"&rejection3="+($('${name}Rejection3').checked?1:0);
+				+"&rejection3="+($('${name}Rejection3').checked?1:0)
+				+"&hystology1="+($('${name}Hystology1').checked?1:0);
 		cancel${name}Documents() ;
      }
      
