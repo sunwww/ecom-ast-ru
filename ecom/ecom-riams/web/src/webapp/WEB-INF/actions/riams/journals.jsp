@@ -177,9 +177,15 @@
 						<li><msh:link action="stac_report_32.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
 	                            32 форма
 	                        </msh:link></li>
+<<<<<<< .mine
+						<li><msh:link action="stac_pregnant_hosp_account.do" roles="/Policy/Mis/Pregnancy/Report/PregnantHospAccount">
+	                            Учёт случаев госпитализации беременных
+	                        </msh:link></li>
+=======
 	                    <li><msh:link isReport="true" action="mis_assessment_risk_report.do" roles="/Policy/Mis/Pregnancy/ChildBirth/View">
 	                            Отчет по рискам
 	                    </msh:link></li>
+>>>>>>> .r3413
 					</ul>
 					</div>
 				</td>			
