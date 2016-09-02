@@ -590,5 +590,13 @@ public class MisLpuForm extends IdNameEntityForm {
 
 	/** Родильное отделение */
 	private Boolean theIsMaternityWard;
+	
+	/** Уровень оказания медицинской помощи */
+	@Comment("Уровень оказания медицинской помощи")
+	@Persist
+	public Integer getLpuLevel() {return theLpuLevel;}
+	public void setLpuLevel(Integer aLpuLevel) {theLpuLevel = aLpuLevel;}
+	/** Уровень оказания медицинской помощи */
+	private Integer theLpuLevel;
 
 }
