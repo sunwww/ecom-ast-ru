@@ -5,9 +5,11 @@
 <struts-config>
 
     <form-beans>
+		<form-bean name="smo_short_spo_streamForm" type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicFullMedCaseForm" />
 
         <form-bean name="poly_medcardForm" type="ru.ecom.poly.ejb.form.MedcardForm"/>
 
+        		<form-bean name="smo_spo_ticket_streamForm" type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm" />
         <form-bean name="smo_ticketForm"      type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm" />
         <form-bean name="smo_short_ticketForm"      type="ru.ecom.mis.ejb.form.medcase.ticket.ShortTicketMedCaseForm" />
         
