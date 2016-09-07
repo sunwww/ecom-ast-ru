@@ -112,8 +112,8 @@ function onPreSave(aForm,aEntity, aCtx) {
 		cal3.setTime(dateCur) ;		
 		cal2.setTime(dateCur) ;		
 		cal1.setTime(dateFinish) ;
-		
-		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-24)) ;
+		var cntHour = +getDefaultParameterByConfig("edit_slsDischarge_after_discharge", 24, aCtx) ;
+		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-1*cntHour)) ;
 		
 		if (cal1.after(cal3)) {
 			
