@@ -145,6 +145,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
     	and m.dateStart is not null
     	order by m.dateStart desc
     	" maxResult="1" />
+    	
      <msh:section title="Последнее посещение <a href='print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}' target='_blank'>бегунок</a>" 
      viewRoles="/Policy/Mis/MedCase/Direction/View" shortList="js-mis_patient-viewDirection.do?id=${param.id}">
     	<msh:table name="lastVisit1" action="entitySubclassView-mis_medCase.do" idField="1">

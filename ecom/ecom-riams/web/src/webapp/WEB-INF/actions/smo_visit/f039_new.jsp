@@ -1,3 +1,6 @@
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="java.util.List"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
@@ -29,8 +32,24 @@
 	String typeDate =ActionUtil.updateParameter("Form039Action","typeDate","2", request) ;
 	String typeEmergency =ActionUtil.updateParameter("Form039Action","typeEmergency","4", request) ;
 	String typeDiag =ActionUtil.updateParameter("Form039Action","typeDiag","2", request) ;
+    String login = LoginInfo.find(request.getSession(true)).getUsername() ;
+    request.setAttribute("login", login) ;
 
   %>
+          <ecom:webQuery name="infoByLogin"
+        maxResult="1" nativeSql="
+        select wf.id as wfid
+        ,w.person_id as wperson
+        ,case when wf.isAdministrator='1' then '1' else null end as isAdmin
+        ,pat.lastname||' '||pat.firstname||' '||pat.middlename as patfio
+        from SecUser su
+        left join WorkFunction wf on su.id=wf.secUSer_id
+        left join Worker w on wf.worker_id=w.id
+        left join Patient pat on pat.id=w.person_id
+        where su.login='${login}'
+        "
+        />
+  
     <msh:form action="/visit_f039_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="id" id="id"/>
     <input type="hidden" name="ticketIs" id="ticketIs" value="0"/>
@@ -53,10 +72,12 @@
         	<msh:autoComplete property="additionStatus" vocName="vocAdditionStatus" 
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/ViewAll">
         <msh:row>
-        	<msh:autoComplete property="person" vocName="patient" 
+        	<msh:autoComplete property="person" vocName="patient" label="Сотрудник" 
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>
+        </msh:ifInRole>
         <msh:row>
         	<msh:autoComplete property="specialist" vocName="workFunction" 
         		horizontalFill="true" fieldColSpan="9" size="70"/>
@@ -248,7 +269,15 @@ ActionUtil.setParameterFilterSql("serviceStream","vss.id", request) ;
 ActionUtil.setParameterFilterSql("workPlaceType","vwpt.id", request) ;
 ActionUtil.setParameterFilterSql("socialStatus","pvss.id", request) ;
 ActionUtil.setParameterFilterSql("additionStatus","vas.id", request) ;
-ActionUtil.setParameterFilterSql("person","wp.id", request) ;
+if (RolesHelper.checkRoles("/Policy/Mis/MedCase/Visit/ViewAll", request)) {
+	ActionUtil.setParameterFilterSql("person","wp.id", request) ;
+} else {
+	List list= (List)request.getAttribute("infoByLogin");
+    WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
+	request.setAttribute("personSql"," and wp.id="+(wqr!=null?wqr.get2():"0")) ;	
+	request.setAttribute("personInfo",""+(wqr!=null?wqr.get4():"НЕТ СООТВЕТСТВИЯ ПОЛЬЗОВАТЕЛЯ И РАБОЧЕЙ ФУНКЦИИ")) ;
+	
+}
 ActionUtil.setParameterFilterSql("visitReason","vr.id", request) ;
 String age =null;
 SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
@@ -382,6 +411,9 @@ if (typeGroup.equals("1")) {
 		request.setAttribute("groupGroup", "vas.id,vas.name") ;
 		request.setAttribute("groupOrder", "vas.name") ;
 }
+%>
+${personInfo}
+<%
 if (typeReestr!=null && (typeReestr.equals("1"))) {
 	
 	StringBuilder sqlAppend = new StringBuilder();
@@ -418,7 +450,7 @@ if (ageR!=null) {
     	%>
     
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="5000" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select smo.id as name
 ,smo.dateStart as nameFld
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -504,6 +536,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     <msh:sectionContent>
         <msh:table
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
+         	<msh:tableButton property="1"  buttonFunction="this.style.background='blue';openPatientNewTab" buttonShortName="Н" buttonName="Открыть в НОВОЙ вкладке"/>
             <msh:tableColumn columnName="Дата посещения" property="2"/>            
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
             <msh:tableColumn columnName="Дата рождения" property="4"/>
@@ -1831,6 +1864,9 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
   		  }
   		}
   		return radioValue ;
+  	}
+  	function openPatientNewTab(aPat) {
+  		window.open("entitySubclassView-mis_medCase.do?id="+aPat) ;
   	}
   		
   	</script>

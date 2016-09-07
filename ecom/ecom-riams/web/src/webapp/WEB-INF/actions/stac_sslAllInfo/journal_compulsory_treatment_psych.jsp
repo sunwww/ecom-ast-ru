@@ -503,24 +503,42 @@ left join vocidc10 mkb on mkb.id=diag.idc10_id where slo.parent_id=sls.id and di
 ,vpct.code as v16pctcode
 from compulsorytreatment ct left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id 
 left join patient pat on pat.id=pcc.patient_id 
-left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and sls.dateFinish is null and sls.deniedhospitalizating_id is null 
+left join MedCase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' 
+and sls.dateFinish is null and sls.deniedhospitalizating_id is null 
 left join statisticstub ss on ss.id=sls.statisticstub_id
   left join mislpu oml on oml.id=sls.orderlpu_id
-  left join mislpu dml on dml.id=sls.department_id
+  left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'  
+  left join mislpu dml on dml.id=slo.department_id
   left join vochosptype pml on pml.id=sls.sourcehosptype_id
 left join vocLawCourt vlc on vlc.id=ct.lawCourt_id
 left join vocCriminalCodeArticle vcca on vcca.id=ct.crimainalCodeArticle_id
 left join vocPsychCompulsoryTreatment vpct on vpct.id=ct.kind_id
 where ct.registrationdate between  to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and (
-  (select max(ct1.decisiondate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.decisiondate>ct1.decisiondate  ) is null
-  or (select max(ct1.decisiondate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.decisiondate>ct1.decisiondate and ct1.kind_id=ct.kind_id ) is null 
-or (select max(ct1.decisiondate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.decisiondate>ct1.decisiondate)
-   != (select max(ct1.decisiondate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.decisiondate>ct1.decisiondate and ct1.kind_id=ct.kind_id )
+  (select max(ct1.registrationdate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.registrationdate>ct1.registrationdate  ) is null
+  or (select max(ct1.registrationdate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.registrationdate>ct1.registrationdate and ct1.kind_id=ct.kind_id ) is null 
+or (select max(ct1.registrationdate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.registrationdate>ct1.registrationdate)
+   != (select max(ct1.registrationdate) from compulsorytreatment ct1  where ct1.careCard_id=ct.careCard_id and ct1.OrderNumber=ct.OrderNumber and ct.registrationdate>ct1.registrationdate and ct1.kind_id=ct.kind_id )
     )
  and ct.kind_id in (2,3) 
     ${emergencySql} ${departmentSql} ${admissionOrderSql} 
-
+ and 
+ 
+ (
+ case when
+ ct.registrationdate>sls.datestart 
+ then case when
+slo.datestart
+ =(select max(slo1.datestart) 
+ from medcase slo1 where slo1.parent_id=sls.id and upper(slo1.dtype)='DEPARTMENTMEDCASE' and 
+slo1.datestart<=ct.registrationdate
+)
+ then '1' else '0' end
+ 
+else case when
+ slo.prevmedcase_id is null then '1' else '0' end
+end
+)='1'
 group by ct.id ,sls.id ,pat.lastname,pat.firstname,pat.middlename ,pat.birthday ,sls.datestart,  ct.registrationDate,ss.code
 order by  pat.lastname    ,pat.firstname, pat.middlename
 

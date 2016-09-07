@@ -1,3 +1,7 @@
+<%@page import="java.util.List"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -55,10 +59,12 @@
 	        	<input type="radio" name="typeEmergency" value="3">  все
 	        </td>
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments">
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="5"
         	label="Отделение" horizontalFill="true" vocName="lpu"/>
         </msh:row>
+        </msh:ifInRole>
         <msh:row>
           <msh:autoComplete vocName="vocBedType" property="bedType" label="Профиль коек" horizontalFill="true" fieldColSpan="5" />
         </msh:row>
@@ -98,12 +104,24 @@
     	} else {
     		request.setAttribute("dateEnd", dateEnd) ;
     	}
+        String login = LoginInfo.find(request.getSession(true)).getUsername() ;
+        request.setAttribute("login", login) ;
     	%>
   <ecom:webQuery name="diag_typeReg_cl_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='4'"/>
   <ecom:webQuery name="diag_typeReg_ord_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='2'"/>
   <ecom:webQuery name="diag_typeReg_disch_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
   <ecom:webQuery name="diag_priority_m_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='1'"/>
   <ecom:webQuery name="diag_priority_conclud_sql" nativeSql="select id,name from VocPriorityDiagnosis where code='3'"/>
+        <ecom:webQuery name="infoByLogin"
+        maxResult="1" nativeSql="
+        select wf.id,w.lpu_id,case when wf.isAdministrator='1' then '1' else null end as isAdmin
+        from SecUser su
+        left join WorkFunction wf on su.id=wf.secUSer_id
+        left join Worker w on wf.worker_id=w.id
+        
+        where su.login='${login}'
+        "
+        />
     	
     	<%
       	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
@@ -127,6 +145,12 @@
     	}
 
     	String dep = (String)request.getParameter("department") ;
+        boolean isViewAllDepartment=RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments",request) ;
+        if (!isViewAllDepartment) {
+        	List list= (List)request.getAttribute("infoByLogin");
+	        WebQueryResult wqr = list.size()>0?(WebQueryResult)list.get(0):null ;
+	        dep=""+wqr.get2() ;
+        }
     	if (dep!=null && !dep.equals("") && !dep.equals("0")) {
     		if (typeDate!=null && typeDate.equals("2")) {
         		request.setAttribute("departmentSql", " and slo.department_id="+dep) ;
@@ -135,6 +159,7 @@
         		request.setAttribute("departmentSql", " and sls.department_id="+dep) ;
         		request.setAttribute("department",dep) ;
     		}
+    		ActionUtil.getValueBySql("select id,name from mislpu where id="+dep, "depId", "infoDepartment", request);
     	} else {
     		request.setAttribute("department","0") ;
     	}
@@ -253,15 +278,7 @@
     	} else if (typeEmergency!=null && typeEmergency.equals("2")) {
     		request.setAttribute("emergencySql", " and (sls.emergency is null or sls.emergency='0') ") ;
     	} 
-    	/*	
-    	String mkbCodeP = request.getParameter("mkbcode") ;
-    		String mkbCodeA = "and mkb.code = '"+mkbCodeP+"'" ;
-    		mkbCodeA=" and mkb.code = '"+mkbCodeP+"'" ;
-    		if (!typeMKB.equals("4")) {
-    			mkbCodeA=" and mkb.code like '"+mkbCodeP+"%'" ;
-    		}
-    		request.setAttribute("mkbCodeSql",mkbCodeA) ;
-    	*/
+    	
     		%>
     		
 	<ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
@@ -342,7 +359,7 @@
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
     </form>
-	
+	${infoDepartment}
     <msh:table name="datelist" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Стат.карта" property="6" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />

@@ -46,8 +46,8 @@
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/PreRecord" name="Пред. запись" action="/js-smo_direction-preRecorded.do"/>
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/PreRecordMany" name="Пред. запись неск-ко специалистов" action="/js-smo_direction-preRecordedMany.do"/>
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/Journal" name="Журнал направленных" action="/visit_journal_direction.do"/>
-        <msh:sideLink roles="/Policy/Poly/Ticket/Create" action='/entityPrepareCreate-smo_stream_short_spo.do' name="Поточный ввод обращений" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
-        <msh:sideLink roles="/Policy/Poly/Ticket/Create" action='/entityPrepareCreate-smo_stream_ticket_spo.do' name="Поточный ввод посещений" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Create" action='/entityPrepareCreate-smo_short_spo_stream.do' name="Поточный ввод обращений" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+        <msh:sideLink roles="/Policy/Poly/Ticket/Create" action='/entityPrepareCreate-smo_spo_ticket_stream.do' name="Поточный ввод посещений" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
     
     </msh:sideMenu>
 

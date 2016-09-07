@@ -55,9 +55,9 @@
 					<li>Доработано отображение меню госпитализации по политикам безопастности
 					<msh:ifInRole roles="/Policy/Config/HelpAdmin">
 					<br>
-					для отображения дневников в госпитализации необходимо подключить роль: /Policy/Mis/MedCase/Stac/Ssl/Protocol/View
+					для отображения дневников в госпитализации необходимо подключить политику: /Policy/Mis/MedCase/Stac/Ssl/Protocol/View
 					<br>
-					для создания дневников в приемном отделение необходимо подключить роль: /Policy/Mis/MedCase/Stac/Ssl/Protocol/Create	
+					для создания дневников в приемном отделение необходимо подключить политику: /Policy/Mis/MedCase/Stac/Ssl/Protocol/Create	
 					<br>
 					ИЗМЕНЕНА ПОЛИТИКА ДЛЯ ОТЧЕТА!!! Для отображения отчета "По поступившим/ выбывшим из стационара за период" подключить роль: /Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod	
 					</msh:ifInRole>

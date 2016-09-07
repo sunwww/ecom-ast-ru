@@ -59,7 +59,7 @@
             <msh:section title='Результат поиска'>
             	<ecom:webQuery name="list" 
             		nativeSql="select m.id as mid,ss.year as ssyear, 
-            		case when (ss.archivecase is not null) then ss.code || ' (в архиве)'  else ss.code end as archiveate
+            		ss.code || case when (ss.archivecase ='0' or ss.archivecase is not null) then ' (в архиве)'  else '' end as  achiv
             			, case 
             				when (coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)=0 then 1 
             				when vht.code='DAYTIMEHOSP' then ((coalesce(m.dateFinish,CURRENT_DATE)-m.dateStart)+1) 
