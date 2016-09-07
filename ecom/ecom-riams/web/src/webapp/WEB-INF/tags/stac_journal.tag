@@ -32,7 +32,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    	key="ALT+1" styleId="stac_findSlsByStatCard"
 	    	action="/stac_findSlsByStatCard" name="Поиск по номеру стат.карты"
 	    	/>
-	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital" key="ALT+2" 
+	        <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod" key="ALT+2" 
 	        styleId="stac_journalByHospital" 
 	        action="/stac_journalByHospital" name="По стационару" />
 	        	        
@@ -109,8 +109,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	    </msh:sideMenu>
 	    <msh:sideMenu title="Журналы">
 	    	<msh:sideLink
-	    		roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod" key="ALT+9"
-	    		action="/stac_reestrByHospital" name="По поступившим/ выбывшим из стационара, а также отказам от госпитализаций"
+	    		roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital" key="ALT+9"
+	    		action="/stac_reestrByHospital" name="По поступившим/ выбывшим из стационара за день"
 	    		styleId="stac_reestrByHospital"
 	    	/>
 	    	<msh:sideLink
