@@ -14,7 +14,7 @@ function onPreDelete(aEntityId, aCtx) {
 				maxVisit.setTime(dateVisit);
 				maxVisit.add(java.util.Calendar.HOUR,24);
 				if (curDate.after(maxVisit)) {
-					throw "У Вас стоит запрет на удаление протоколов (дневников специалиста) спустя 3 суток!" ;
+					throw "У Вас стоит запрет на удаление протоколов (дневников специалиста) спустя сутки!" ;
 				}
 			}
 		} else {
