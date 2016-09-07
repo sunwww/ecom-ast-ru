@@ -840,7 +840,7 @@ public class TemplateProtocolJs {
     	long res1 =  parseLong(res);
     	if (res1==0) {
     		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    		String slsId = wqs.executeNativeSql("select case when mc.dtype='HospitalMedCase' or mc.dtype='PolyclinicMedCase' then mc.id else mc.parent_id from diary d " +
+    		String slsId = wqs.executeNativeSql("select case when mc.dtype='HospitalMedCase' or mc.dtype='PolyclinicMedCase' then mc.id else mc.parent_id end from diary d " +
     				" left join medcase mc on mc.id=d.medcase_id " +
     				" where d.id = "+aIdProt).iterator().next().get1().toString();
 
