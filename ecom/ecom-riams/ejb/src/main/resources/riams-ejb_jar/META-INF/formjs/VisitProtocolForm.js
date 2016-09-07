@@ -3,11 +3,11 @@ function onPreDelete(aEntityId, aCtx) {
 			.getResultList() ;
 		if (l.size()>0) {
 			var obj = l.get(0) ;
-			if (aCtx.getSessionContext().getCallerPrincipal().toString()!=(""+obj[0])) {
-				throw "У Вас стоит запрет на удаление протоколов (дневников специалиста) других специалистов!" ;
-			}
 			if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/DisableDeleteOnlyTheir")
 					&& aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/EnableDeleteOnlyTheir")) {
+				if (aCtx.getSessionContext().getCallerPrincipal().toString()!=(""+obj[0])) {
+					throw "У Вас стоит запрет на удаление протоколов (дневников специалиста) других специалистов!" ;
+				}
 				var curDate = java.util.Calendar.getInstance();
 				var maxVisit = java.util.Calendar.getInstance();
 				var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(obj[1],obj[2]) ;
