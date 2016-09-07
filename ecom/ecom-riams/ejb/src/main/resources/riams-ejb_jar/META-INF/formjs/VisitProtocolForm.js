@@ -1,10 +1,33 @@
 function onPreDelete(aEntityId, aCtx) {
+		var l = aCtx.manager.createNativeQuery("select username,to_char(dateRegistration,'dd.mm.yyyy') as dater,cast(timeRegistration as varchar(5)) as timer from diary where id="+aEntityId)
+			.getResultList() ;
+		if (l.size()>0) {
+			var obj = l.get(0) ;
+			if (aCtx.getSessionContext().getCallerPrincipal().toString()!=(""+obj[0])) {
+				throw "У Вас стоит запрет на удаление протоколов (дневников специалиста) других специалистов!" ;
+			}
+			if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/DisableDeleteOnlyTheir")
+					&& aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/EnableDeleteOnlyTheir")) {
+				var curDate = java.util.Calendar.getInstance();
+				var maxVisit = java.util.Calendar.getInstance();
+				var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(obj[1],obj[2]) ;
+				maxVisit.setTime(dateVisit);
+				maxVisit.add(java.util.Calendar.HOUR,24);
+				if (curDate.after(maxVisit)) {
+					throw "У Вас стоит запрет на удаление протоколов (дневников специалиста) спустя 3 суток!" ;
+				}
+			}
+		} else {
+			throw "В БД нет протокола с таким ИД!!!" ;
+		}
+	
+		
 	aCtx.manager.createNativeQuery("delete from forminputprotocol where docprotocol_id="+aEntityId).executeUpdate();
 }
 function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date() ;
 	aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
-	aForm.setUsername(aCtx.getUsername()) ;
+	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	aForm.setTime(new java.sql.Time (date.getTime())) ;
 	var wfe =aCtx.manager.createNativeQuery("select id,workFunctionExecute_id from MedCase where id = :medCase")
 		.setParameter("medCase", aForm.medCase).getResultList() ;
@@ -127,9 +150,41 @@ function check(aForm,aCtx) {
 						param1.put("permission" ,"editAfterDischarge") ; //editAllProtocolsInSLS
 						param1.put("id", +hmc) ;
 						isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
-					if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование (создание) данных после выписки!!!";
+						if (+isCheck!=1) throw "У Вас стоит ограничение на редактирование (создание) данных после выписки!!!";
 					}
 					
+				} else {
+					if (ldm.size()>0) {
+						
+					} else {
+					var curDate = java.util.Calendar.getInstance();
+					var maxVisit = java.util.Calendar.getInstance();
+					var dateVisit = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.getDateRegistration(),aForm.getTimeRegistration()) ;
+					maxVisit.setTime(dateVisit);
+					var cntHour = +getDefaultParameterByConfig("count_hour_edit_hosp_protocol", 24, aCtx) ;
+					maxVisit.add(java.util.Calendar.HOUR,cntHour);
+					if (curDate.after(maxVisit)) {
+						var param1 = new java.util.HashMap() ;
+						param1.put("obj","HospitalMedCase") ;
+						param1.put("permission" ,"editAllHospitalMedCase") ; //editAllProtocolsInSLS
+						param1.put("id", +hmc) ;
+						isCheck=aCtx.serviceInvoke("WorkerService","checkPermission",param1)+"";
+						if (+isCheck==1) {
+							
+						} else {
+							var param1 = new java.util.HashMap() ;
+							param1.put("obj","Protocol") ;
+							param1.put("permission" ,"hosp_editAfterCertainHour") ;
+							param1.put("id", +aForm.id) ;
+							isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1)+""; 
+							if (+isCheck!=1) {
+								if (ldm.size()==0) {
+									throw "У Вас стоит ограничение "+cntHour+" часов на создание (редактирование) протокола госпитализации!!!";
+								} 
+							}
+						}
+					}
+					}
 				}
 				
 			}
