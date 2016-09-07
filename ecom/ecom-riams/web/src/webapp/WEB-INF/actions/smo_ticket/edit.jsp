@@ -268,7 +268,7 @@
       </msh:section>
     </msh:ifFormTypeIsView>
     </msh:ifInRole>
-    <tags:mis_double name='Ticket' title='Существующие талоны в базе:' cmdAdd="document.forms[0].submitButton.disabled = false" rolesBan="/Policy/Poly/Ticket/SaveDoubleTicket" />
+    <tags:mis_double name='Ticket' title='Существующие талоны в базе:' cmdAdd="document.forms[0].submitButton.disabled = false"/>
   </tiles:put>
   <tiles:put name="side" type="string">
   		<msh:sideMenu title="Дополнительно">
