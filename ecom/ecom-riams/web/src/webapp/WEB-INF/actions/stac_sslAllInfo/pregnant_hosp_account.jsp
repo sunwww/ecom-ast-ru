@@ -98,9 +98,8 @@ group by vih.id, vih.name order by vih.id ${sqlAdd}
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table name="PregHospAccount" 
-     
-     action="stac_pregnant_hosp_account.do?short=Short&type=reestr&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="16"
-    cellFunction="true"  
+     action="stac_pregnant_hosp_account.do?short=Short&type=reestr&dateBegin=${dateBegin}&dateEnd=${dateEnd}"
+     idField="16" cellFunction="true"  
      >
       <msh:tableColumn columnName="Показание для госпитализации" property="1" />
       <msh:tableColumn columnName="В ЛПУ I группы" property="2" addParam=""  />
