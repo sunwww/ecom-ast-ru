@@ -302,6 +302,15 @@
 
 	<action-mappings>
 	
+	 <action path='/mis_assessment_risk_report' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_assessment/assessment_risk_report.jsp" />
+        </action>
+        
+        
 	 <action path='/lab_chief_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'
