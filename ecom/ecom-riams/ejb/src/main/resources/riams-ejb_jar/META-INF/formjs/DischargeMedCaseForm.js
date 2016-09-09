@@ -133,7 +133,14 @@ function onPreSave(aForm,aEntity, aCtx) {
 	
 
 }
-
+function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
+	l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
+	if (l.isEmpty()) {
+		return aValueDefault ;
+	} else {
+		return l.get(0)[1] ;
+	}
+}
 function checkAllDiagnosis (aCtx, aSlsId) {
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DotPrintWithoutDiagnosisInSlo")){
 		var sql = "select slo.id as sloid,ml.name||' '||to_char(slo.dateStart,'dd.mm.yyyy')||coalesce('-'||to_char(slo.transferDate,'dd.mm.yyyy'),'') as info from medcase sls "
