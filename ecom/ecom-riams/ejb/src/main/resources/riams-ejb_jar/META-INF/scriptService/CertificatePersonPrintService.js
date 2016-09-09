@@ -193,7 +193,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		map.put("customer.addressRegistration",customerPerson.addressRegistration) ;
 		map.put("customer.passportInfo",getPassportInfo(customerPerson.passportType
 				,customerPerson.passportSeries,customerPerson.passportNumber
-				,customerPerson.passportDateIssue,customerPerson.passportWhomIssued)) ;
+				,customerPerson.passportDateIssued,customerPerson.passportWhomIssued)) ;
 	} else {
 		map.put("contractNumber","________") ;
 		map.put("customer1.fio",null) ;
