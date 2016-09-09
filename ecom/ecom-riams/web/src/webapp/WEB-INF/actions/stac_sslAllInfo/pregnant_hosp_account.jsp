@@ -80,9 +80,9 @@
    
     <msh:section>
     <ecom:webQuery isReportBase="${isReportBase}" name="PregHospAccount" nameFldSql="PregHospAccount_sql" nativeSql="
-select vih.name, count(case when lpu.lpulevel=1 then wchb.id else null end) lvl1,
-count(case when lpu.lpulevel=2 then wchb.id else null end) lvl2,
-count(case when lpu.lpulevel=3 then wchb.id else null end) lvl3
+select vih.name, count(case when lpu.lpulevel='1' then wchb.id else null end) lvl1,
+count(case when lpu.lpulevel='2' then wchb.id else null end) lvl2,
+count(case when lpu.lpulevel='3' then wchb.id else null end) lvl3
 from vocindicationhospitalization vih 
 left join workcalendarhospitalbed wchb on wchb.indicationtohosp=vih.id
 left join mislpu dep on dep.id=wchb.department_id
