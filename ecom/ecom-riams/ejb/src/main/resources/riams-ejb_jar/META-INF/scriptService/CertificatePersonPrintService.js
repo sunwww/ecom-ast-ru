@@ -335,12 +335,13 @@ function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassport
 	if (aPassportType!=null) {
 		passport=aPassportType.name ;
 	}
+	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	passport=passport+" серия " ;
 	if (aPassportSeries!=null) {passport=passport+aPassportSeries ;} else {	passport=passport+"____________" ;}
 	passport=passport+" номер " ;
 	if (aPassportNumber!=null) {passport=passport+aPassportNumber ;} else {	passport=passport+"____________" ;}
 	passport=passport+" выдан " ;
-	if (aPassportDateIssue!=null) {passport=passport+aPassportDateIssue ;} else {	passport=passport+"____________" ;}
+	if (aPassportDateIssue!=null) {passport=passport+FORMAT_2.format(aPassportDateIssue) ;} else {	passport=passport+"____________" ;}
 	passport=passport+" " ;
 	if (aPassportWhomIssued!=null) {passport=passport+aPassportWhomIssued ;} else {	passport=passport+"______________________________" ;}
 	return passport ;
