@@ -1157,7 +1157,7 @@ public class PatientServiceBean implements IPatientService {
     public void movePatientDoubleData(Long aIdNew, Long aIdOld)  {
 		Patient newpat = theManager.find(Patient.class, aIdNew) ;
 		Patient oldpat = theManager.find(Patient.class, aIdOld) ;
-		if (newpat.getSex()!=oldpat.getSex()) return ;
+		if (!newpat.getSex().getOmcCode().equals(oldpat.getSex().getOmcCode())) throw new IllegalArgumentException("Нельзя данные перенести персонам разных полов!!!") ;
 		if (newpat!=null && oldpat!=null) {
 			theManager.createNativeQuery("	update Patient set attachedOmcPolicy_id = null where id =:idold	").setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("	update Award set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
