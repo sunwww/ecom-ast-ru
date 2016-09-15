@@ -22,6 +22,12 @@
     <%
     String typeReestr = request.getParameter("typeReestr") ;
     String typeHour =ActionUtil.updateParameter("mis_patient_by_age","typeHour","2", request) ;
+    
+//<AOI 14.06.2016
+    String typeDisp=ActionUtil.updateParameter("mis_patient_by_age","typeDisp","1", request) ;
+    String typeRange=ActionUtil.updateParameter("mis_patient_by_age","typeRange","1", request) ;
+//</AOI 14.06.2016    
+    
     if (typeReestr==null) {
 	  	String noViewForm = request.getParameter("noViewForm") ;
 		String typeDate =ActionUtil.updateParameter("mis_patient_by_age","typeDate","1", request) ;
@@ -38,6 +44,31 @@
       <msh:row>
         <msh:textField fieldColSpan="2" property="dateBeginYear" label="Год" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
       </msh:row>
+<!-- AOI 14.06.2016 -->
+      <msh:row><td><br></td></msh:row>
+      <msh:row>
+        <td class="label" title="Население" colspan="1"><label for="typeDispName" id="typeDispLabel">Население: </label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDisp" value="1"> всё	
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDisp" value="2"> непрошедшее диспансеризацию
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDisp" value="3"> прошедшее диспансеризацию
+        </td>
+      </msh:row>
+      <msh:row><td><br></td></msh:row>
+      <msh:row>
+        <td class="label" title="Охват" colspan="1"><label for="typeRangeName" id="typeRangeLabel">Охват: </label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeRange" value="1"> вся база персон	
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeRange" value="2"> только приписное население
+        </td>
+	  </msh:row>
+<!-- /AOI 14.06.2016 -->
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         </msh:row>
@@ -50,8 +81,12 @@
     //checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     //checkFieldUpdate('typeView','${typeView}',1) ;
     //checkFieldUpdate('typeHour','${typeHour}',3) ;
-    //checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;
+    //checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;typeDisp
     
+//<AOI 14.06.2016
+    checkFieldUpdate('typeDisp','${typeDisp}',1) ;
+    checkFieldUpdate('typeRange','${typeRange}',2) ;
+//</AOI 14.06.2016
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -93,8 +128,25 @@
     	paramHref.append("&dateBegin=").append(date);
     	request.setAttribute("paramHref", paramHref.toString()) ;
     	
+//<AOI 14.06.2016
+    	request.setAttribute("dispSql", "");
+    	if(typeDisp!=null) {
+    		StringBuilder sbDisp=new StringBuilder();
+    		if(typeDisp.equals("2")) {
+    			sbDisp.append(" and edc.id is null ");
+    		} else if(typeDisp.equals("3")) {
+    			sbDisp.append(" and edc.id is not null ");
+    		}
+    		request.setAttribute("dispSql", sbDisp.toString());
+    	}
     	
-			
+    	String range="";
+    	if(typeRange!=null) {
+    		if(typeRange.equals("2")) range=" and (lad.id is not null and lad.dateto is null) ";
+    	}
+    	request.setAttribute("rangeSQL", range);
+//</AOI 14.06.2016
+    		
 		    if (typeReestr!=null && typeReestr.equals("1")) {
     			String year=request.getParameter("year") ; String month=request.getParameter("month" );
     			StringBuilder where = new StringBuilder() ;
@@ -119,13 +171,15 @@
 	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
      from  Patient pat
      left join Address2 a on a.addressid=pat.address_addressid
-	where pat.deathDate is null ${whereSql} 
+     left join extdispcard edc on edc.patient_id=pat.id
+     left join lpuattachedbydepartment lad on lad.patient_id=pat.id
+	where pat.deathDate is null ${whereSql} ${dispSql} ${rangeSQL}
 	order by pat.lastname,pat.firstname,pat.middlename
     "/>
    <msh:section>
        <msh:sectionTitle>
     
-    	    <form action="print-mis_patient_by_age.do" method="post" target="_blank">
+    	<form action="print-mis_patient_by_age.do" method="post" target="_blank">
 	    Реестр пациентов
 	    <input type='hidden' name="sqlText" id="sqlText" value="${reestr_sql}"> 
 	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Список пациентов, рожденных ${param.month}.${param.year}  на ${param.dateBeginYear} год">
@@ -170,7 +224,9 @@ select '&dateBeginYear=${param.dateBeginYear}&year='||to_char(pat.birthday,'yyyy
 ,count(case when to_char(pat.birthday,'mm')='12' then pat.id else null end) cnt12
 ,count(*) as cntAll
 from patient pat
-where deathdate is null
+left join extdispcard edc on edc.patient_id=pat.id
+left join lpuattachedbydepartment lad on lad.patient_id=pat.id
+where deathdate is null ${dispSql} ${rangeSQL} 
 group by to_char(pat.birthday,'yyyy')
 order by to_char(pat.birthday,'yyyy') desc
 "/> 
@@ -197,8 +253,7 @@ order by to_char(pat.birthday,'yyyy') desc
     	<% }   %>
     
 		<script type="text/javascript">
-	    
-	    
+		
 		</script>
   </tiles:put>
 </tiles:insert>
