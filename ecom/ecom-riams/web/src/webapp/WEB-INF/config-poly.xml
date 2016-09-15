@@ -59,17 +59,6 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_patient/list_by_age.jsp"/>
         </action>
     
-        <!-- AOI 14.09.2016 для Камызяка - список приписных, подлежащих ДД, но ещё не проходивших-->
-        <action path='/mis_patient_by_age_for_ExtDisp' type='ru.ecom.web.actions.base.ForwardAction'               
-        		name='extDisp_journalForm'
-                validate='true'
-                scope='session'
-                input='/WEB-INF/actions/mis_patient/list_by_age_for_ExtDisp.jsp'
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_patient/list_by_age_for_ExtDisp.jsp"/>
-        </action>
-        <!-- /AOI 14.09.2016 -->
-    
         <action path='/smo_ticketsByUser' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
