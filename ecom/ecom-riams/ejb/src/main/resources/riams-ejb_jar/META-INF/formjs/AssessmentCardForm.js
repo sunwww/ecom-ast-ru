@@ -14,7 +14,7 @@ function onSave (aForm, aEntity, aCtx) {
 }
 function saveParameters (aForm, aEntity, aUsername, aCtx) {
 	var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
-	aForm.setWorkFunction (wf.getId());
+	aEntity.setWorkFunction (wf.getId());
 	Packages.ru.ecom.diary.ejb.service.assessmentcard.AssessmentCardServiceBean.saveParametersByCard(aForm.getPatient(),aEntity,aForm.getParams(), aCtx.manager);
 }
 

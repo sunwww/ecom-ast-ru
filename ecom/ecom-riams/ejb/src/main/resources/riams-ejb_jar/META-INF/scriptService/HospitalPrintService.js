@@ -7,8 +7,8 @@ function printProtocolTemplate (aCtx, aParams) {
 	
 	var medCase = prot.medCase;
 	var sql = "select p.id, coalesce(p.code,'_id'||p.id) as f1_code ,p.name as f2_name" +
-	 " ,case when p.type='2' then coalesce(uv.name, '') when p.type='3' then fir.valuetext when p.type='1' then ''||fir.valuebd " +
-	 " when p.type='4' then ''||  cast(coalesce( fir.valuebd ,0) as decimal(11,2)) end as f3_value" +
+	 " ,case when p.type='2' then coalesce(uv.name, '') when p.type='3' then coalesce(fir.valuetext,'') when p.type='1' then ''||cast(fir.valuebd as decimal (11,0)) " +
+	 " when p.type='4' then coalesce(cast(cast(fir.valuebd as decimal(11,2)) as varchar),'') end as f3_value" +
 	 " from diary d" +
 	 " left join forminputprotocol fir on fir.docprotocol_id=d.id" +
 	 " left join parameter p on p.id=fir.parameter_id" +
