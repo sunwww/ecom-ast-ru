@@ -58,7 +58,16 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
         @AEntityFormInterceptor(PatientViewInterceptor.class)
 )
 public class PatientForm extends IdEntityForm {
-    /** Стиль webtrail */
+    
+	/** Не голосует */
+	@Comment("Не голосует")
+	@Persist
+	public Boolean getNotVote() {return theNotVote;}
+	public void setNotVote(Boolean aNotVote) {theNotVote = aNotVote;}
+	/** Не голосует */
+	private Boolean theNotVote;
+	
+	/** Стиль webtrail */
 	@Comment("Стиль webtrail")
 	@Persist
 	public String getStyleInfo() {

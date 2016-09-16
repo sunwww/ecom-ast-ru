@@ -74,6 +74,14 @@ import ru.nuzmsh.util.format.DateFormat;
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
 public class Patient extends BaseEntity{
+	
+	/** Не голосует */
+	@Comment("Не голосует")
+	public Boolean getNotVote() {return theNotVote;}
+	public void setNotVote(Boolean aNotVote) {theNotVote = aNotVote;}
+	/** Не голосует */
+	private Boolean theNotVote;
+
 	@Transient
 	public String getStyleInfo() {
 		String style = "" ;
