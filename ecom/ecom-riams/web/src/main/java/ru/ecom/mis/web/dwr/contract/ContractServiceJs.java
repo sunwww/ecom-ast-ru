@@ -13,6 +13,15 @@ import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
+	public String deleteCAMS(String aIds, HttpServletRequest aRequest) throws NamingException {
+		String ret = "";
+		if (aIds!=null&&!aIds.equals("")) {
+			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			ret = "Удалено " +service.executeUpdateNativeSql("update contractaccountmedservice set isdelete='1' where id in ("+aIds+")")+" записей";
+		}
+		return ret;
+	}
+	
 	public String getCostByPriceMedService(String aPriceMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String ret = "";
