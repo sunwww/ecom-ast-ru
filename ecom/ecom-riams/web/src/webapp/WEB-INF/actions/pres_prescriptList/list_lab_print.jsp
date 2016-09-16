@@ -22,8 +22,10 @@
 
     <tiles:put name='body' type='string'>
     <%
+    ActionUtil.getValueBySql("select id,name from vochospitalizationresult  where omccode='11' ", "deathId","deathName",request) ;
     String typePrint=ActionUtil.updateParameter("Report_labor","typePrint","3", request) ; 
     String typeSmo=ActionUtil.updateParameter("Report_labor","typeSmo","2", request) ; 
+    String typeDead=ActionUtil.updateParameter("Report_labor","typeDead","1", request) ; 
     
     %>
     
@@ -41,7 +43,16 @@
         <msh:row>
         	<msh:autoComplete property="patient"  fieldColSpan="4" horizontalFill="true" label="Пациент" vocName="patient"/>
         </msh:row>
-              <msh:row>
+        <msh:row>
+        <td class="label" title="Поиск по исходу выписки (typeDead)" colspan="1"><label for="typeDeadName" id="typeDeadLabel">Печать:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeDead" value="1">  всех выписанных пациентов
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  >
+        	<input type="radio" name="typeDead" value="2">  только умерших
+        </td>
+      </msh:row>
+        <msh:row>
         <td class="label" title="Поиск по типу печати (typePrint)" colspan="1"><label for="typePrintName" id="typePrintLabel">Назначения:</label></td>
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typePrint" value="1">  распечатанные
@@ -131,8 +142,8 @@
 	    <input type='hidden' name="s" id="s" value="PrintService">
 	    <input type='hidden' name="m" id="m" value="printGroup3NativeQuery">
 	    <input type='hidden' name="groupField" id="groupField" value="13,14,10,12">
-	    <input type='hidden' name="updateId" id="updateId" value="1">
-	    <input type='hidden' name="updateSql" id="updateSql" value="update diary set printdate=current_date,printtime=current_time where id=':id'">
+	    <input type='hidden' name="printId" id="printId" value="1">
+	    <input type='hidden' name="printSql" id="printSql" value="update diary set printdate=current_date,printtime=current_time where id=':id'">
 	    <input type='hidden' name='next' id="next" value="pres_lab_print.do">
 	    <input type="submit" value="Печать текстовый" onclick="print();this.form.action='print-pres_lab_print_txt.do'"> 
 	    <input type="submit" value="Печать файл" onclick="print();this.form.action='print-pres_lab_print_odt.do';"> 
@@ -141,6 +152,7 @@
             <script type="text/javascript">
             checkFieldUpdate('typePrint','${typePrint}',1) ;
             checkFieldUpdate('typeSmo','${typeSmo}',1) ;
+            checkFieldUpdate('typeDead','${typeDead}',1) ;
             function checkfrm() {
             	document.forms[1].submit() ;
             }
@@ -159,6 +171,7 @@
                 }
             	//$('sqlText').value =  ;
             	var addParam = "";
+            	
             	//if (+$("department").value>0) {addParam+=" and ml.id="+$("department").value ;}
             	if (+$("prescriptType").value>0) addParam+=" and vpt.id="+$("prescriptType").value ;
             	if (+$("serviceSubType").value>0) addParam+=" and ms.serviceSubType_id="+$("serviceSubType").value ;
@@ -169,7 +182,10 @@
             	}
             	var print = +getCheckedRadio(document.forms[0],"typePrint");
             	var smo = +getCheckedRadio(document.forms[0],"typeSmo");
-            	
+            	var dead =+getCheckedRadio(document.forms[0],"typeDead");
+            	if (+dead==2) {
+            		addParam+=" and sls.result_id='${deathId}'";
+            	}
             	var dateInfo;
             	var mlname = "ml.name";
             	if (smo==1) {
@@ -181,14 +197,20 @@
 	       			mlname="coalesce(ml1.name,ml2.name)" ;
 	       			if (+$("department").value>0) {addParam+=" and coalesce(sloallBySlo.department_id,sloall.department_id)='"+$("department").value+"'";
 	            	}
-        			dateInfo=" (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy') or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy'))" ;
+        		//	dateInfo=" (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy') or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy'))" ;
+        			
+        			dateInfo=" (slo.dtype='HospitalMedCase' and (slo.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy')-1 and slo.dischargetime >=cast('16:00:00' as time)"+
+					" or (slo.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy') and slo.dischargetime <cast('16:00:00' as time))) "+
+					" or sls.dtype='HospitalMedCase' and (sls.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy')-1 and sls.dischargetime >=cast('16:00:00' as time) "+
+					" or sls.dateFinish = to_date('"+$("beginDate").value+"','dd.mm.yyyy') and sls.dischargetime <cast('16:00:00' as time) ))" ;   
+        			
         			//$('groupField').value = "16,14,9,7,10" ;
         		}
             	
             	if (print==1) {
-            		addParam +=" and d.printDate is null" ;
-            	} else if (print==2){
             		addParam +=" and d.printDate is not null" ;
+            	} else if (print==2){
+            		addParam +=" and d.printDate is null" ;
             	}
             	$('sqlText').value = $('sql_info').value.replace('{param.beginDate}',$('beginDate').value)
             	$('sqlText').value=$('sqlText').value.replace('{sqlAdd}',addParam) ;
@@ -236,22 +258,18 @@
             		title.append(" номер назначения: ").append(number).append("") ;
             		
             	}
-        		if (typePrint!=null) {
-        			if (typePrint.equals("1")) {
-        				title.append(" назначения: распечатанные") ;
-        				sqlAdd.append(" and d.printDate is null") ;
-        			} else if (typePrint.equals("2")) {
-        				title.append(" назначения: нераспечатанные") ;
-        				sqlAdd.append(" and d.printDate is not null") ;
-        			}
+        		System.out.println("typeDeath="+typeDead);
+        		if (typeDead!=null&&typeDead.equals("2")) {
+        			title.append(" исход: умершие");
+        			sqlAdd.append(" and vhr.omccode='11'");
         		}
         		if (typePrint!=null) {
         			if (typePrint.equals("1")) {
         				title.append(" назначения: распечатанные") ;
-        				sqlAdd.append(" and d.printDate is null") ;
+        				sqlAdd.append(" and d.printDate is not null") ;
         			} else if (typePrint.equals("2")) {
         				title.append(" назначения: нераспечатанные") ;
-        				sqlAdd.append(" and d.printDate is not null") ;
+        				sqlAdd.append(" and d.printDate is null") ;
         			}
         		}
         		if (typeSmo!=null && typeSmo.equals("1")) {
@@ -269,14 +287,19 @@
 	            				.append("'");
 	            	}
         			title.append(" по дате выписки") ;
-        			request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy'))") ;
+//        			request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') or sls.dtype='HospitalMedCase' and sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy'))") ;
+        			//Дата госпитализации = указаннное число до 4х вечера, либо пред. день после 4х вечера
+					request.setAttribute("dateInfo"," (slo.dtype='HospitalMedCase' and (slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')-1 and slo.dischargetime >=cast('16:00:00' as time)"+
+        					" or (slo.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') and slo.dischargetime <cast('16:00:00' as time))) "+
+        					" or sls.dtype='HospitalMedCase' and (sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy')-1 and sls.dischargetime >=cast('16:00:00' as time) "+
+        					" or sls.dateFinish = to_date('"+request.getParameter("beginDate")+"','dd.mm.yyyy') and sls.dischargetime <cast('16:00:00' as time) ))") ;
 
         		}
             request.setAttribute("sqlAdd", sqlAdd.toString()) ;
             request.setAttribute("titleInfo", title.toString()) ;
             %>
             <msh:section title='Результат поиска: ${titleInfo }'>
-            	<ecom:webQuery name="listPres" nativeSql="
+            	<ecom:webQuery name="listPres" nameFldSql="listPres_sql" nativeSql="
             	
    select 
     p.id||''',''${param.beginDate}' as pid
@@ -319,6 +342,7 @@
     left join MisLpu ml1 on ml1.id=sloall.department_id
     left join MisLpu ml2 on ml2.id=sloallBySlo.department_id
     left join vocprescripttype vpt on vpt.id=p.prescripttype_id
+    left join vochospitalizationresult vhr on vhr.id=sls.result_id
     where ${dateInfo}
     and vst.code='LABSURVEY' 
     and mc.workFunctionExecute_id is not null and mc.dateStart is not null
@@ -326,7 +350,7 @@
     order by pat.lastname,pat.firstname,pat.middlename
     
 "/>
-   <msh:table name="listPres" action="javascript:void(0)" idField="1">
+   <msh:table name="listPres" action="javascript:void(0)" idField="1">${listPres_sql}
    <msh:tableButton property="1" addParam="'txt'" buttonFunction="printId" buttonName="Печать в txt" buttonShortName="txt"/>
    <msh:tableButton property="1" addParam="'odt'" buttonFunction="printId" buttonName="Печать в odt" buttonShortName="odt"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
