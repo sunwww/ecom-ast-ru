@@ -497,6 +497,66 @@ public class LoginSaveAction extends LoginExitAction {
 	    	}
 	    	
     	}
+    	if (RolesHelper.checkRoles("/Policy/MainMenu/LaboratoryJournal/ChiefLabJournal", aRequest)) { //Lab chief
+    		
+    		String[][] labReports = {
+    				{"Бракованные назначения", " and p.canceldate is not null","&typeState=1"}
+    				,{"Невыполненные назначения"," and p.transferdate is not null and p.canceldate is null and p.medcase_id is null","&typeState=2"}
+    				,{"Неподтвержденные назначения"," and p.transferdate is not null and p.canceldate is null and p.medcase_id is not null and mc.datestart is null","&typeState=3"}
+    			}; 
+    		for (int i=0;i<labReports.length;i++) {
+    			String labReportSql = "select 'beginDate='||to_char(current_date-1,'dd.MM.yyyy')||'&endDate='||to_char(current_date,'dd.MM.yyyy')||'&department='||ml.id||'&typeReestr=1&typeGroup=1"+labReports[i][2]+"'" +
+    					",ml.name, count(p.id)" +
+        				" from prescription p" +
+        				" left join WorkFunction wf on wf.id=p.prescriptSpecial_id" +
+        				" left join Worker w on w.id=wf.worker_id" +
+        				" left join MisLpu ml on ml.id=w.lpu_id" +
+        				" left join medcase mc on mc.id=p.medcase_id" +
+        				" left join vocprescripttype vpt on vpt.id=p.prescripttype_id " +
+        				" where p.dtype='ServicePrescription' and p.intakedate between current_date-1  and current_date" +
+        				labReports[i][1] +
+        				" group by ml.id, ml.name" +
+        				" order by ml.name";
+    			
+    			Collection<WebQueryResult> list =service.executeNativeSql(labReportSql.toString()) ;
+    			StringBuilder ret = new StringBuilder();
+    			if (list.size()>0) {
+    				for (WebQueryResult wqr: list) {
+    					ret.append(wqr.get2()).append(": <a href='lab_chief_report.do?").append(wqr.get1()).append("'>").append(wqr.get3()).append("</a><br>");
+    				}
+    				Long id = serviceLogin.createSystemMessage(labReports[i][0], ret.toString(), aUsername) ;
+    				UserMessage.addMessage(aRequest,id,labReports[i][0],ret.toString(),"");
+    			}
+    		}
+    		String labReportSql = " select 'beginDate='||to_char(current_date-1,'dd.MM.yyyy')||'&endDate='||to_char(current_date,'dd.MM.yyyy')||'&prescriptType='||vpt.id||'&typeReestr=1&typeGroup=2' as fldId " +
+    				",vpt.name as f2_name" +
+    				" ,count (case when p.medcase_id is null then p.id else null end) as cntNotReady " +
+    				" ,count (case when p.medcase_id is not null and mc.datestart is null then p.id else null end) as cntReady" +
+    				" ,count (case when mc.datestart is not null then p.id else null end) as cntConfirmed" +
+    				" from prescription p" +
+    				" left join medcase mc on mc.id=p.medcase_id" +
+    				" left join vocprescripttype vpt on vpt.id=p.prescripttype_id" +
+    				" left join WorkFunction wf on wf.id=p.prescriptSpecial_id" +
+    				" left join Worker w on w.id=wf.worker_id" +
+    				" left join MisLpu ml on ml.id=w.lpu_id" +
+    				" where p.dtype='ServicePrescription' and p.transferdate between current_date-1" +
+    				" and current_date and p.canceldate is null " +
+    				" group by vpt.id, vpt.name";
+    		Collection<WebQueryResult> list =service.executeNativeSql(labReportSql.toString()) ;
+			StringBuilder ret = new StringBuilder();
+			if (list.size()>0) {
+				for (WebQueryResult wqr: list) {
+					ret.append(wqr.get2())
+					.append("Не выполнено: <a href='lab_chief_report.do?").append(wqr.get1()).append("&typeState=0'>").append(wqr.get3()).append("</a>")
+					.append("  Не подтвержден: <a href='lab_chief_report.do?").append(wqr.get1()).append("&typeState=1'>").append(wqr.get4()).append("</a>")
+					.append("  Выполнено: <a href='lab_chief_report.do?").append(wqr.get1()).append("&typeState=2'>").append(wqr.get5()).append("</a>")
+						
+						.append("<br>");
+				}
+				Long id = serviceLogin.createSystemMessage("Отчет по выполнению иссделований", ret.toString(), aUsername) ;
+				UserMessage.addMessage(aRequest,id,"Отчет по выполнению иссделований",ret.toString(),"");    		
+			} 
+		}
 
     }
 
