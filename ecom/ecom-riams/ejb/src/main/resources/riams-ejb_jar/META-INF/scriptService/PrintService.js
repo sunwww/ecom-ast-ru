@@ -340,7 +340,7 @@ function printGroup3NativeQuery(aCtx,aParams) {
             par.set1(""+cntBegin) ;
             ++cntBegin ;
            if (isupdate) {
-                    var print_id = printSql.replace(":id",obj[printId-1]) ;
+                    var print_id = printSql.replace(":id",""+obj[printId-1]) ;
                     aCtx.manager.createNativeQuery(print_id).executeUpdate() ;
             }
             
