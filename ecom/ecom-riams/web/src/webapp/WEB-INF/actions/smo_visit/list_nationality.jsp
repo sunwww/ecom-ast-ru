@@ -531,7 +531,7 @@ and (m.noActuality is null or m.noActuality='0') ${emergencySql}
 group by ${groupSqlId},${groupSql}
 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-${sql_journal_swod }
+
 
     <msh:sectionTitle>Период с ${param.beginDate} по ${param.finishDate}${emergencyInfo}
     <form action="print-report_categoryForeignNationals.do" method="post" target="_blank">
