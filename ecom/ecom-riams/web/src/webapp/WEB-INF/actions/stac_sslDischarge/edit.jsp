@@ -638,11 +638,7 @@
   			) ;
   		}
   	</script>
-  	</msh:ifFormTypeIsNotView>
-  	
-  	   <!--+++++++++++++++ Timer start+++++++++++++ -->
-    
-    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
+  	    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
     <script type="text/javascript">
     
     setTimeout(checktime,600000);
@@ -657,9 +653,7 @@
     
     </script>
     </msh:ifNotInRole>
-   
-    
-    <!--  ++++++++++ Timer Stop!+++++++++++ -->
+  	</msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
 
