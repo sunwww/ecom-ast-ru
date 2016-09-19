@@ -299,6 +299,9 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         <msh:row guid="050f23d4-4e9f-4c6b-8739-5fd78bdff3d0">
           <msh:checkBox property="noActuality" label="Запись на пациента не действует" fieldColSpan="3" horizontalFill="true" guid="21178d7e-7a57-4f91-95ca-22392369f761" />
         </msh:row>
+        <msh:row guid="050f23d4-4e9f-4c6b-8739-5fd78bdff3d0">
+          <msh:checkBox property="notVote" label="Не будет голосовать" fieldColSpan="3" horizontalFill="true" guid="21178d7e-7a57-4f91-95ca-22392369f761" />
+        </msh:row>
         <msh:separator colSpan="4" label="Документ, удостоверяющий личность" guid="5a353bf6-7fee-45e5-96ec-7b019182cfcb" />
         <msh:row guid="391bb191-d1f0-49d1-9e01-cc432e742118">
           <msh:autoComplete property="passportType" label="Тип" vocName="vocIdentityCard" fieldColSpan="3" horizontalFill="true" guid="42f6487b-3fd4-4c4f-8323-ee634762221d" />
@@ -1057,14 +1060,18 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		
 	}
 	function subvalue(aValue,aDel,aField) {
+		//alert ('subValue'+aValue+" : "+aField);
 		var ind = aValue.indexOf(aDel) ;
 		if (ind==-1) {
 			if ($(aField).value=="") $(aField).value=aValue ;
 			return "" ;
 		} else {
 			if ($(aField).value=="") $(aField).value=aValue.substring(0,ind) ;
+			if (aField=='sex') alert ($('sex').value);
 			return aValue.substring(ind+1) ;
+			
 		}
+	
 	}
   </script>
   </msh:ifFormTypeIsCreate>
