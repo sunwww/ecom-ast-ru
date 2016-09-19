@@ -133,14 +133,12 @@
         
         <action path="/medcaseExternalDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
          scope='request' validate="false" name="policyExportForm">
-            >
             <forward name="success" path="/WEB-INF/actions/medcase_externalDocument/import.jsp"/>
             <forward name="uploaded" path="/entityParentView-smo_visit.do"/>
         </action>
         
         <action path="/templateDocument-import" type='ru.ecom.mis.web.action.patient.ExternalDocumentImportAction'
          scope='request' validate="false" name="policyExportForm">
-            >
             <forward name="success"  path="/WEB-INF/actions/template_externalDocument/import.jsp"/>
             <forward name="uploaded" path="/WEB-INF/actions/template_externalDocument/list.jsp"/>
         </action>
