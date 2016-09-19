@@ -259,7 +259,9 @@ so.id as soid
 then -1 else 0 end)
  as age
 ,va.code as vacode,va.name as vaname
+,vsp.name as f10_vspName
 from SurgicalOperation so
+left join vocsurgicalprofile vsp on vsp.id=so.profile_id
 left join VocAbortion va on so.abortion_id=va.id
 left join ReportSetTYpeParameterType rspt on va.code=rspt.codefrom
 left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
@@ -275,7 +277,7 @@ and vrspt.id='${param.strcode}'
 and vrspt1.classname='${report}'
 group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-,va.code ,va.name
+,va.code ,va.name,vsp.name
 order by p.lastname,p.firstname,p.middlename " />
     <msh:table name="journal_surOperation" 
     viewUrl="entityShortView-stac_surOperation.do" 
@@ -287,6 +289,7 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Дата выписки" property="6"/>
       <msh:tableColumn columnName="Код аборта" property="8"/>
       <msh:tableColumn columnName="Тип аборта" property="9"/>
+      <msh:tableColumn columnName="Профиль" property="10"/>
       <msh:tableColumn columnName="ФИО пациента" property="4" />
       <msh:tableColumn columnName="Возраст" property="7" />
     </msh:table>
