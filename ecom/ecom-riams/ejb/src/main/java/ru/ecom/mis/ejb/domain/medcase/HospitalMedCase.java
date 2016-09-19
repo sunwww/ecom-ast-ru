@@ -72,10 +72,6 @@ public class HospitalMedCase extends LongMedCase {
 	//public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
 	//public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
 
-	/** Внешний идентификатор */
-	@Comment("Внешний идентификатор")
-	public String getExternalId() {return theExternalId;}
-	public void setExternalId(String aNewProperty) {theExternalId = aNewProperty;}
 
 	///** Сообщения об инфекции */
 	//@Comment("Сообщения об инфекции")
@@ -374,8 +370,6 @@ public class HospitalMedCase extends LongMedCase {
 	private VocPreAdmissionDefect thePreAdmissionDefect;
 	///** Сообщения об инфекции */
 	//private List<PhoneMessage> theMessages;
-	/** Внешний идентификатор */
-	private String theExternalId;
 
 	///** Диагнозы */
 	//private List<Diagnosis> theDiagnosis;

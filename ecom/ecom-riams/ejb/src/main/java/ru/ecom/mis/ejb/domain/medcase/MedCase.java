@@ -69,6 +69,14 @@ abstract public class MedCase extends BaseEntity {
 	public Date getDateStart() {return theDateStart;}
 	public void setDateStart(Date aNewProperty) {theDateStart = aNewProperty;}
 	
+	/** Внешний идентификатор */
+	@Comment("Внешний идентификатор")
+	public String getExternalId() {return theExternalId;}
+	public void setExternalId(String aNewProperty) {theExternalId = aNewProperty;}
+	
+	/** Внешний идентификатор */
+	private String theExternalId;
+
 	/** Дочерние СМО */
 	//@Comment("Дочерние СМО")
 	//@OneToMany(mappedBy="parent", cascade=CascadeType.ALL)

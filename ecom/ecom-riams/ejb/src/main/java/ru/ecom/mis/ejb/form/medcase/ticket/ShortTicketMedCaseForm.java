@@ -28,6 +28,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
         @AParentEntityFormInterceptor(TicketPreCreateInterceptor.class)
 )
 public class ShortTicketMedCaseForm extends ChildMedCaseForm {
+	/** Внешний идентификатор */
+	@Comment("Внешний идентификатор")
+	@Persist
+	public String getExternalId() {return theExternalId;}
+	public void setExternalId(String aNewProperty) {theExternalId = aNewProperty;}
+	
+	/** Внешний идентификатор */
+	private String theExternalId;
+
 	/** Дата направления */
 	@Comment("Дата направления")
 	@DateString @DoDateString
