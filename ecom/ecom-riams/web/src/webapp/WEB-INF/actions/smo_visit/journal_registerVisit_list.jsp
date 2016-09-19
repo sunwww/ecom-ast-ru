@@ -238,7 +238,7 @@
     	,case when t.isDirectHospital='1' then 'Да' when t.orderDate is not null then 'Да' else '' end as directHosp
     	, oml.name as omlname 
     	,vvr.name as vvrname
-    	,t.orderNumber as tordernumber
+    	,t.externalId as texternalId
     	from Medcase t  
     	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id
     	${medcardAddJoin}  
