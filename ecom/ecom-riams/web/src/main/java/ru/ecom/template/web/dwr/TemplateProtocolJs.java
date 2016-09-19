@@ -60,7 +60,7 @@ public class TemplateProtocolJs {
 	public String getParameterBallId(String aParameterId, HttpServletRequest aRequest) throws NamingException {
 		if (aParameterId==null||aParameterId.equals("")) {return "";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> res = service.executeNativeSql("select cast(cntBall as decimal(11,0)), coalesce(comment,'') from uservalue  where id = "+aParameterId);
+		Collection<WebQueryResult> res = service.executeNativeSql("select coalesce(cast(cntBall as decimal(11,0)),0) as cntBall, coalesce(comment,'') as comment from uservalue  where id = "+aParameterId);
 		if (!res.isEmpty()) {
 			WebQueryResult r =res.iterator().next(); 
 			return r.get1().toString()+"#"+r.get2().toString();
