@@ -24,6 +24,7 @@ select cams.mainparent,cams.lastname,cams.firstname,cams.middlename
 	, sum(cams.countMedService*round((cams.cost*(100-coalesce(mc.discountDefault,'0'))/100),0)) as sumNoAccraulMedService
 	,cg.LimitMoney
 	,cams.polnumber
+	,list(''||cams.id) as f10_allIds
 			from ContractAccountMedService cams
 			left join medservice ms on ms.id=cams.serviceIn
 			left join contractaccount ca on ca.id=cams.account_id
@@ -50,6 +51,7 @@ select cams.mainparent,cams.lastname,cams.firstname,cams.middlename
 				viewUrl="js-contract_juridicalContract-account_view_by_patient.do?short=Short"
 				 idField="1">
 				 <msh:tableColumn property="sn" columnName="#"/>
+				 <msh:tableButton property="10" buttonShortName="Удалить" buttonFunction="deleteCAMS"/>
 					<msh:tableColumn columnName="Фамилия" property="2" />
 					<msh:tableColumn columnName="Имя" property="3" />
 					<msh:tableColumn columnName="Отчество" property="4" />
@@ -64,6 +66,25 @@ select cams.mainparent,cams.lastname,cams.firstname,cams.middlename
 			
 
 	</tiles:put>
+	
+	    <tiles:put name="javascript" type="string">
+	    <script type='text/javascript' src='./dwr/interface/ContractService.js'></script>
+	     <script type="text/javascript">
+	     function deleteCAMS(ids) {
+	    	 if (confirm("Удалить все записи по группе?")) {
+	    		 
+	    		 ContractService.deleteCAMS(ids, {
+		    		 callback: function (a) {
+		    			 alert (a);
+		    			 window.document.location.reload();
+		    			 
+		    		 }
+		    	 }); 
+	    	 }
+	    	 
+	     }
+	     </script>
+	    </tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_accountForm" />
 	</tiles:put>
