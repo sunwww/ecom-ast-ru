@@ -160,8 +160,8 @@ public class TemplateProtocolJs {
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
 			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
 			sql.append(" , case when p.type in ('3','5')  then pf.valueText") ; 
-			sql.append(" when p.type ='4' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990.'||repeat('0',cast(p.cntdecimal as int)))"); 
-			sql.append(" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') ");
+			sql.append(" when p.type ='4' then ''||round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end)"); 
+			sql.append(" when p.type ='1' then ''||round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end) ");
 			sql.append(" when p.type='2' then ''||pf.valueVoc_id end as p19val") ;
 			sql.append(" ,vv.name as d20val4v") ;
 			sql.append(" ,pg.id as f21GroupId");
