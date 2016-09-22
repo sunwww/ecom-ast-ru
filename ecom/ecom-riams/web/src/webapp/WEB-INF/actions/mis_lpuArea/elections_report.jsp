@@ -16,16 +16,13 @@
   </tiles:put>
   <tiles:put name="body" type="string">
 <form action="print-mis_area_patient_address_primer.do" method="post" target="_blank">
-<input type="text" name = "fldDate" id = "fldDate" value = "18.09.2016">
- <input type="button" onclick="goPrint('primer_mis_area_patient_address')" value="---Печать (пример)">
  <input type="button" onclick="goPrintRegion('dao_mis_area_patient_address')" value="Печать список ДАО">
  <input type="button" onclick="goPrint('gd_mis_area_patient_address')" value="Печать список ГДРФ">
- <input type="button" onclick="goPrintNative('sved_table')" value="---Таблица список">
  <input type="button" onclick="goPrintNative('main_big_report')" value="Большая важная таблица">
 <input type='hidden' name='m' id='m' value="printGroup3NativeQuery"/>
 <input type='hidden' name='s' id='s' value="PrintService"/>
 <%
-request.setAttribute("fldDate", "18.09.2016");
+request.setAttribute("fldDate", "18.09.2016"); //Дата выборов
 %>
 <input type='hidden' name="groupField" id="groupField" value="11,2,3">
 <input type='hidden' name='sqlText' id='sqlText' value=''>
