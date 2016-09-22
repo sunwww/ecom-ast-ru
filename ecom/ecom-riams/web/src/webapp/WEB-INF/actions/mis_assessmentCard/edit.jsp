@@ -19,7 +19,7 @@
       <msh:panel guid="panel">
       
         <msh:row guid="row1">
-          <msh:textField property="startDate" label="Дата приема" guid="a5-4caf-4e14-aa70-287c" horizontalFill="true" />
+          <msh:textField property="startDate" label="Дата приема" size="10" guid="a5-4caf-4e14-aa70-287c" />
         </msh:row>
       
       
@@ -46,7 +46,7 @@
       
         <msh:row guid="855de982-5baf-46f1-9f8b-f48" />
           
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow functionSubmit="saveIntakeInfo();" guid="submitCancel" colSpan="4" />
       </msh:panel>
       <div id='dataFieldTitle'> </div>
         <div id='dataField'> </div>
@@ -103,8 +103,8 @@
   
   templateAutocomplete.addOnChangeCallback(function() {fillDataDiv();$('ballSum').value='';});
   //eventutil.addEventListener($('template'),'change',function(){fillDataDiv();}) ;
- var oldaction = document.forms['mis_assessmentCardForm'].action ;
-		document.forms['mis_assessmentCardForm'].action="javascript:saveIntakeInfo()";
+ //var oldaction = document.forms['mis_assessmentCardForm'].action ;
+		//document.forms['mis_assessmentCardForm'].action="javascript:saveIntakeInfo()";
   var lastGroupId=0;
   fillDataDiv ();
   var listIds = new Array();
@@ -326,7 +326,8 @@
 		//alert(str) ;
 		$('params').value = str;
 		if (!isError) {
-			document.forms['mis_assessmentCardForm'].action=oldaction;
+			
+			document.forms['mis_assessmentCardForm'].action='entityParentSaveGoView-mis_assessmentCard.do';
 			document.forms['mis_assessmentCardForm'].submit();
 			
 		}
