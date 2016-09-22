@@ -383,8 +383,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		boolean isWCTisEmpty = service.executeNativeSql("select id from workcalendartime where id = "+aWorkCalendarTime+" and medcase_id is null").isEmpty()?false:true;
-		if (!isWCTisEmpty) return null; //Не создаем направления, если время уже занято.
+		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")){
+			boolean isWCTisEmpty = service.executeNativeSql("select id from workcalendartime where id = "+aWorkCalendarTime+" and medcase_id is null").isEmpty()?false:true;
+			if (!isWCTisEmpty) return null; //Не создаем направления, если время уже занято.
+		}
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		String wf = null;
 		try {
