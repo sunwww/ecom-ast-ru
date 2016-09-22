@@ -1,3 +1,13 @@
+function checkBirthDate(aForm, aCtx) {
+	var sql = "select case when slo.datestart<to_date('"+aForm.getPangsStartDate()+"','dd.MM.yyyy') then '1'"+
+		" when slo.datestart=to_date('"+aForm.getPangsStartDate()+"','dd.MM.yyyy') and slo.entrancetime<=cast('"+aForm.getPangsStartTime()+":00' as time) then '1' else '0' end" +
+		" from medcase slo where slo.id="+aForm.getMedCase();
+	var res = aCtx.manager.createNativeQuery(sql).getSingleResult();
+	if (res!=null&&""+res=="1") {		
+	} else {
+		throw "Дата родов не может быть раньше даты начала СЛО!";
+	}
+}
 function onView (aForm, aEntity, aCtx) {
 	var list = aCtx.manager.createNativeQuery ("select id from newBorn where childBirth_id="+aEntity.id).getResultList();
 	aForm.setNewBornAmount(list.size());
@@ -6,6 +16,7 @@ function onView (aForm, aEntity, aCtx) {
  * Перед сохранением
  */
 function onPreSave(aForm, aEntity, aCtx) {
+	checkBirthDate(aForm, aCtx);
 	var date = new java.util.Date() ;
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(new java.sql.Time (date.getTime())) ;
@@ -19,6 +30,7 @@ function onPreSave(aForm, aEntity, aCtx) {
  * Перед сохранением
  */
 function onPreCreate(aForm, aCtx) {
+	checkBirthDate(aForm, aCtx)
 	var list=aCtx.manager.createNativeQuery("select cb.id from childbirth cb where  cb.medcase_id='"+aForm.getMedCase()+"'").getResultList() ;
 	if (list.size()>0) throw "В отделении уже заведен случай родов!";
 	var date = new java.util.Date() ;
@@ -54,13 +66,28 @@ function onCreate(aForm, aEntity, aCtx) {
 		var currentDate = new java.util.Date();
 		var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
 		var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+		var startDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.pangsStartDate,aForm.pangsStartTime);
+		
 		for (var ind = 0 ; ind<childs.length; ind++) {
 			
 			var child = childs[ind].split("#") ;
 			var newBorn = new Packages.ru.ecom.mis.ejb.domain.birth.NewBorn() ; 
 			var childBirthDiaryText = "Протокол рождения ребенка "+(childs.length>1?""+(ind+1):"")+"\n";
-			
+			var childBD = null, childBT = null;
 			for (var j=0;j<theFld.length;j++) {
+				if (childBD!=null&&childBT!=null) break;
+				if (theFld[j][3]=='BirthDate') {childBD = ""+child[j];}
+				else if (theFld[j][3]=='BirthTime') {childBT = ""+child[j];}
+			}
+			if (childBD!=null&&childBT!=null) {
+				var birthDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(childBD,childBT);
+				if (startDateTime>birthDateTime) {
+					throw "Дата рождения ребенка "+(childs.length>1?""+(ind+1):"")+"не может быть раньше даты начала родов";
+				} 
+			} 
+			for (var j=0;j<theFld.length;j++) {
+			//	throw theFld.length+"   "+child[3]+"<<"+theFld[3][1];
+				//if (j==3)("===== "+j+"<<   "+child[j]+"<<"+theFld[j][1]);
 				var birthDate;
 				var birthTime;
 				var obj ;
@@ -72,19 +99,18 @@ function onCreate(aForm, aEntity, aCtx) {
 					} catch (e) {
 					//	throw "=== EXCEPTION "+theFld[j][0]+": "+obj;
 					}
-					
 				} else if (theFld[j][1]==2) {
 					obj = child[j]==""?null:java.lang.Integer.parseInt(child[j]) ;
+				//	throw "TYPE2 obj="+obj+", val="+child[j];
 					childBirthDiaryText +="\n"+theFld[j][0]+": "+child[j];
-				} else if (theFld[j][1]==5) {  //Long
+				} else if (+theFld[j][1]==5) {  //Long
 					obj = child[j]==""?null:java.lang.Long.valueOf(child[j]) ;
 					try {
 						var val = aCtx.manager.find(theFld[j][4],obj);
 						if (val!=null) childBirthDiaryText +="\n"+theFld[j][0]+": "+val.getName();
 					} catch (e) {
-					//	throw "=== EXCEPTION "+theFld[j][0]+": "+val;
+						//throw "=== EXCEPTION "+theFld[j][0]+": "+val+"<<"+e.toString();
 					}
-					childBirthDiaryText +="\n"+theFld[j][0]+": "+obj!=null?""+obj:"";
 				} else if (theFld[j][1]==3) {
 					obj = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(child[j]) ;
 					if (theFld[j][3]=='BirthDate') {
@@ -120,6 +146,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				eval("newBorn.set"+theFld[j][3]+"(obj)") ;
 				
 			}
+			
 			if (childBirthDiaryText!='') {
 				var prot = new Packages.ru.ecom.poly.ejb.domain.protocol.Protocol;
 				prot.setDate(new java.sql.Date(currentDate.getTime()));

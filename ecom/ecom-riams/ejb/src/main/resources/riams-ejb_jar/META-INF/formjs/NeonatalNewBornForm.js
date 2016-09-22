@@ -1,4 +1,36 @@
+
+function checkChildDoubles(aForm,aEntity, aCtx) {
+	var sql="select nb.id"+
+	" from newborn nb left join vocnewborn vnb on vnb.id=nb.child_id"+
+	" where nb.medcase_id ="+aForm.getMedCase()+" and nb.id!="+aEntity.getId();
+	var error="";
+	if (aEntity.child.isPolycarpous==true) { //Если многоплодный
+		sql+=" and (vnb.ispolycarpous is null or vnb.ispolycarpous='0' or nb.child_id='"+aForm.getChild()+"')";
+		error="Невозможно создать новорожденного, т.к. создан новорожденный с таким видом, либо создан одноплодный ребенок";
+	} else {
+		error="Невозможно создать одноплодного ребенка, т.к. уже созданы новорожденные";
+	}
+	
+	var list =  aCtx.manager.createNativeQuery(sql).getResultList();
+	if (list.size()>0) {
+		throw error;
+	}
+}
+
+function checkBirthDate(aForm, aCtx) {
+	var sql = "select case when slo.datestart<to_date('"+aForm.getBirthDate()+"','dd.MM.yyyy') then '1'"+
+		" when slo.datestart=to_date('"+aForm.getBirthDate()+"','dd.MM.yyyy') and slo.entrancetime<=cast('"+aForm.getBirthTime()+":00' as time) then '1' else '0' end" +
+		" from medcase slo where slo.id="+aForm.getMedCase();
+	var res = aCtx.manager.createNativeQuery(sql).getSingleResult();
+	if (res!=null&&""+res=="1") {		
+	} else {
+		throw "Дата рождения не может быть раньше даты начала СЛО!";
+	}
+}
+
 function onCreate(aForm, aEntity, aContext){
+	checkBirthDate(aForm, aContext);
+	checkChildDoubles(aForm, aEntity,aContext);
 	// Создание персоны
 	var patient = new Packages.ru.ecom.mis.ejb.domain.patient.Patient() ;
 	var mother = aEntity.medCase.patient;
