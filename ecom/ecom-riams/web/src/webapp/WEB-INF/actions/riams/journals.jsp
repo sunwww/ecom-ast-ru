@@ -31,8 +31,8 @@
 					<li><msh:link isReport="true" roles="/Policy/Mis/Claim/Operator" action="all_claims.do">
                              Просмотр заявок
                         </msh:link></li>
-					<li><msh:link isReport="true" roles="/Policy/Mis/Claim/Operator" action="js-mis_lpuArea-elections.do">
-                             Выборы - выборы
+					<li><msh:link isReport="true" roles="/Policy/Mis/Elections" action="js-mis_lpuArea-elections.do">
+                             Отчетные формы к выборам
                         </msh:link></li>
                         
 				</ul>

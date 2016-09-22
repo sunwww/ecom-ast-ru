@@ -217,7 +217,7 @@
           	group by cb.id,cb.birthFinishDate,cb.birthFinishTime,
           	vof.name,cb.placentaHistologyOrder,vhr.name,pat.lastname,pat.firstname,pat.middlename
     		,pat.birthday,preg.orderNumber ,cons.name 
-        	,pec.notes,vms.name,pec.pregnancyFeatures
+        	,pec.notes,vms.name,pec.pregnancyFeatures,pec.previousPregnancies
     order by cb.birthFinishDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:table name="journal_reestr" viewUrl="entityParentView-preg_childBirth.do?short=Short" action="entityParentView-preg_childBirth.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
