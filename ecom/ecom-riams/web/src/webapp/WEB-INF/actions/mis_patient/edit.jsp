@@ -4,10 +4,17 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
+  <ecom:webQuery isReportBase="${isReportBase}" name="passport_sql" nativeSql="select id,name from Vocidentitycard where code='14'"/>
+   <%
+   ActionUtil.getValueByList("passport_sql", "passportRF", request) ;
+   String passportRF = (String)request.getAttribute("passportRF") ;
+   request.setAttribute("passportRF", passportRF);
+   %>
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="c1b89933-a744-46a8-ba32-014ac1b4fcb4">
     <div id='patientInfoDiv'></div>
     <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
@@ -158,8 +165,15 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         </table>
     
     </msh:ifFormTypeIsView>
+    
+<!-- !!!!!!!!!!! -->
 
-    <msh:form action="entitySaveGoView-mis_patient.do" defaultField="lastname" guid="886bd847-1725-44c0-898b-db8de7a06ade">
+
+    
+    <input id="123" class="default" value="тестильная кнопа" onclick="javascript:checkPassportSeriesAndNumber();" title="Сохранить изменения [CTRL+ENTER]" autocomplete="off" type="button">
+    
+    <msh:form action="entitySaveGoView-mis_patient.do" defaultField="lastname" guid="886bd847-1725-44c0-898b-db8de7a06ade">  
+    
       <msh:hidden guid="hiddenid123" property="id" />
       <msh:hidden property="saveType" guid="30dc954b-c5f2-49ed-b001-31042904724c" />
       <msh:hidden property="address" guid="b33c0964-6c48-4aac-9896-6d46c1065e1f" />
@@ -903,6 +917,47 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </script>
     </msh:ifInRole>
   
+  <script type="text/javascript">
+	function checkPassportSeriesAndNumber(){
+		
+		ret=true;
+		if ($('passportType').value=='${passportRF}') {
+ 			pass =  $('passportTypeName').value
+ 			const SpaceIntoDigits = /\d\d\s\d\d/g;
+ 			const Digits1 = /\d\d\d\d/g;
+ 			 passportSeries = $('passportSeries').value
+ 	         passportNumber = $('passportNumber').value
+ 			
+ 					
+ 			if( passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits))
+ 			{
+ 			
+ 			}else
+ 			{
+ 				if(passportSeries.length == 4 && passportSeries.match(Digits1))
+ 				{
+ 					var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
+ 					$('passportSeries').value = text
+ 				}else 
+ 				{
+ 					alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
+ 					ret=false;
+ 				}
+ 			}
+ 			
+ 			if(passportNumber.length == 6 && passportNumber.match(/[0-9]/g))
+ 				{
+ 				
+ 				}else 
+ 				{
+ 					alert('Неверный формат номера паспорта! \n Должно быть: "ЧЧЧЧЧЧ"!');
+ 					ret=false;
+ 				}
+		
+	}
+		return ret;
+		}
+    </script>
 
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
     <script type="text/javascript">
@@ -1107,6 +1162,13 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         	});
     	}
     	function isExistPatient() {
+    		if (!checkPassportSeriesAndNumber()) {
+    				
+    			
+    			document.getElementById('submitButton').disabled=false;
+                document.getElementById('submitButton').value='Создать';
+    			return;
+    		}
     		var checkFull = false
     		if ($('saveType').value=='1') {
     			checkFull = true ;
