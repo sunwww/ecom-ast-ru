@@ -20,8 +20,9 @@
   <tiles:put name="body" type="string">
   <%
 	//String typeDate =request.getParameter("typeDate") ;
-  String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request) ;
-  String typeDiagnosis=ActionUtil.updateParameter("BloodReport","typeDiagnosis","1", request) ;
+  String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request);
+  String typeDiagnosis=ActionUtil.updateParameter("BloodReport","typeDiagnosis","1", request);
+  String typeGroup =ActionUtil.updateParameter("BloodReport","typeGroup","2", request) ;
  
   %>
     <msh:form action="/gosuslugi_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -47,7 +48,19 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeDate" value="2" >  Дата направления
 	        </td>
-        </msh:row>   
+        </msh:row>
+        
+        <msh:row>
+        <td class="label" title="Поиск по пациентам (typeGroup)" colspan="1">
+        <label for="typeGroupName" id="typeGroupLabel">Группировать по пользователям:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeGroup" value="1"> Группировать
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeGroup" value="2"> Не группировать
+        </td>
+      </msh:row>
+           
         <msh:row> 
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         
@@ -70,15 +83,45 @@
     		
     		StringBuilder sqlAdd = new StringBuilder();
     		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;		
-    		if (typeDate.equals("1")) {
+    		if (typeDate.equals("1") ) {
     			request.setAttribute("dateSql", "wct.createdateprerecord") ;
-    		} else {
+    			}
+    		else if (typeDate.equals("2")){
     			request.setAttribute("dateSql","wcd.calendardate" ) ;
-    		}
-    		    		
+    			}
+    		
+    		
     		request.setAttribute ("appendSQL", sqlAdd.toString());
     	%>
+   
+   
     
+    
+<%if(typeGroup.equals("1")){ %> 
+    <msh:section>
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+select 
+count (wct.id) as cntAll
+, count (case when wct.medcase_id is not null then 1 else null end) as cntRemote, wct.createprerecord as who
+from workcalendartime wct
+left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
+where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+group by wct.createprerecord
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+  
+    <msh:sectionTitle>
+    </msh:sectionTitle>
+    <msh:sectionContent>
+        <msh:table
+         name="journal_ticket" action="/javascript:void()" idField="1" noDataMessage="Не найдено">
+            <msh:tableColumn columnName="Кем записано" property="3"/>
+            <msh:tableColumn columnName="Записано всего" property="1"/>            
+            <msh:tableColumn columnName="Оформлено направление" property="2"/>
+            </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    <%}%> 
+<%if(typeGroup.equals("2")){ %> 
     <msh:section>
 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select 
@@ -90,10 +133,9 @@ left join secuser su on su.login=wct.createprerecord
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
  and su.id is not null
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-    <msh:sectionTitle>
-       
-    </msh:sectionTitle>
 
+    <msh:sectionTitle>      
+    </msh:sectionTitle>
     <msh:sectionContent>
         <msh:table
          name="journal_ticket" action="/javascript:void()" idField="1" noDataMessage="Не найдено">
@@ -101,8 +143,11 @@ where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dat
             <msh:tableColumn columnName="Записано удаленными пользователями" property="2"/>
             </msh:table>
     </msh:sectionContent>
-
     </msh:section>
+    <% }%> 
+
+
+
     <% }  else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
@@ -110,6 +155,7 @@ where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dat
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">
   	checkFieldUpdate('typeDate','${typeDate}',1) ;
+  	checkFieldUpdate('typeGroup','${typeGroup}',2) ;
     
     function checkFieldUpdate(aField,aValue,aDefault) {
     	
