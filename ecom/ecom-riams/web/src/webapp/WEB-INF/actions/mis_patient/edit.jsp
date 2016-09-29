@@ -166,12 +166,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
     
     </msh:ifFormTypeIsView>
     
-<!-- !!!!!!!!!!! -->
 
-
-    
-    <input id="123" class="default" value="тестильная кнопа" onclick="javascript:checkPassportSeriesAndNumber();" title="Сохранить изменения [CTRL+ENTER]" autocomplete="off" type="button">
-    
     <msh:form action="entitySaveGoView-mis_patient.do" defaultField="lastname" guid="886bd847-1725-44c0-898b-db8de7a06ade">  
     
       <msh:hidden guid="hiddenid123" property="id" />
