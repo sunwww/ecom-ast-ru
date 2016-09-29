@@ -52,6 +52,9 @@
 	            <msh:row>
 		        	<msh:checkBox property="${name}Direct1" label="Анкета пациента для МРТ ислледования"/>
 		        </msh:row>
+		        <msh:row>
+		            <msh:checkBox property="${name}Hystology1" label="Направление на патологогистологическое исследование"/>
+		        </msh:row>
 	            <msh:row>
 		    		<msh:separator label="Отказы" colSpan="2"/>
 		    	</msh:row>
@@ -64,9 +67,7 @@
 		        <msh:row>
 		            <msh:checkBox property="${name}Rejection3" label="от видов медицинских вмешательств..."/>
 		        </msh:row>
-		        <msh:row>
-		            <msh:checkBox property="${name}Hystology1" label="Направление на патологогистологическое исследование"/>
-		        </msh:row>
+		        
 		    </msh:panel>
 		        <msh:row>
 		            <td colspan="6">
