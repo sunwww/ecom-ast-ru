@@ -223,7 +223,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			ExtDispService.checkDisableAgeDoubles($('id').value,$('dispType').value, $('patient').value, $('ageGroup').value, {
 				callback: function (aResult) {
 					if (aResult=='1'){
-						alert("У пациента уже существует карта с выбранной возрастной группой. Создание карты невозможно!!!");
+						alert("У пациента уже существует карта с выбранной возрастной группой. Создание карты невозможно!");
 						document.getElementById('submitButton').disabled=false;
 						document.getElementById('submitButton').value='Создать';
 					} else { 
@@ -234,6 +234,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		
 		}
 		</script>
+		
 		</msh:ifFormTypeIsNotView>
 		
 		<script type="text/javascript">
@@ -255,6 +256,27 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     	}
     	
 		</script>
+		
+		<script type="text/javascript">
+    	function DoDispCardNotReal() {
+
+    		if(document.getElementById('notPaid').checked==true)
+    		{ alert("Карта уже отмечена как недействительная!")} 
+    		else{
+	document.getElementById('notPaid').checked = true;
+	document.getElementById('isNoOmc').checked = true;
+	ExtDispService.DispCardNotReal($('id').value,{
+		callback: function (aResult) {
+			if(aResult=='1'){
+				alert("Карта не найдена!")}
+			else//if(aResult=='0')
+			{		
+			alert("Карта отмечена как недействительная")
+			}
+			}});
+    		}
+	}
+		</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Patient" beginForm="extDisp_cardForm" />
@@ -264,10 +286,15 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-extDisp_card" name="Изменить" title="Изменить" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 				<msh:sideLink confirm="Удалить доп.диспансеризацию?" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_card" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Delete"/>
-				
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
 				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
+			 <!--
+			   <msh:sideLink key="ALT+M" params="id" action="/javascript:DoDispCardNotReal()" name="Сделать карту недействительной" title="Сделать карту недействительной" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
+			   -->
+			   <msh:ifFormTypeIsView formName="extDisp_cardForm">
+			   <msh:sideLink key="ALT+M" params="id" action="/javascript:DoDispCardNotReal()" name="Сделать карту недействительной" title="Сделать карту недействительной" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
+			   </msh:ifFormTypeIsView>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>

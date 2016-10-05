@@ -16,6 +16,19 @@ import ru.ecom.web.util.Injection;
 
 public class ExtDispServiceJs {
 	
+	public String DispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException, ParseException {
+		
+		if(dispCardId==0 || dispCardId==null)
+		{
+		return "1";
+		}
+		else{
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		service.executeUpdateNativeSql("update extdispcard set notpaid=true ,isnoomc=true where id='"+dispCardId+"'");
+		return "0";
+		}
+		
+	}
 	
 	public String checkDisableAgeDoubles (Long aDispCardId, Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest)throws NamingException 
 	{
