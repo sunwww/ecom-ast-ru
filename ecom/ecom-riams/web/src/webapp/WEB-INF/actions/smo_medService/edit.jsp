@@ -22,6 +22,11 @@
         <msh:row guid="bb138544-81d9-4339-b3a7-cab980708336">
           <msh:textField property="dateStart" label="Дата" guid="b2d29f22-2b89-4b43-a6af-ef7c8b8c5fb3" />
           <msh:textField property="timeExecute" label="Время" guid="8d583c3f-dda1-43a9-8417-5a2d43a6cd40" />
+          
+        </msh:row>
+         <msh:row guid="bb138544-81d9-4339-b3a7-cab980708336">
+          <msh:textField property="dateFinish" label="Дата окончания" guid="b2d29f22-2b89-4b43-a6af-ef7c8b8c5fb3" />
+         
         </msh:row>
         <msh:row guid="348da311-be75-4c71-86c5-3fbf138985dc">
           <msh:autoComplete property="serviceStream" label="Поток обслуживания" vocName="vocServiceStream" guid="13482ebc-6632-411c-a30d-11315eb7410c" fieldColSpan="3" horizontalFill="true" />
@@ -116,7 +121,31 @@
 	        	}
 	        	);
     	}
-    		
+    	eventutil.addEventListener($('dateFinish'),'blur',function(){setCountByDays();}) ;
+    	function setCountByDays() {
+    		if ($('dateFinish').value!=''&&$('dateFinish').value.length==10) {
+    			var cnt="1";
+    			var startDateT = $('dateStart').value
+    			var finishDateT = $('dateFinish').value;
+    			if (startDateT==finishDateT) {}
+    			else {
+					var startDate = new Date;    			
+					var finishDate = new Date;    			
+    				
+    				startDateT=startDateT.substr(6,4)+'-'+startDateT.substr(3,2)+'-'+startDateT.substr(0,2);
+    				finishDateT=finishDateT.substr(6,4)+'-'+finishDateT.substr(3,2)+'-'+finishDateT.substr(0,2);
+    				startDate.setTime (Date.parse(startDateT));
+    				
+    				finishDate.setTime(Date.parse(finishDateT));
+    				if (finishDate.getTime() >startDate.getTime()){
+    				cnt= ""+(finishDate.getTime() - startDate.getTime()) / (1000*60*60*24);
+    				} else {
+    					cnt="0";
+    				}
+    			}
+    			$('medServiceAmount').value=cnt;
+    		}
+    	}
     	//]]>
     	</script>
     	
