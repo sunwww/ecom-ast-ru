@@ -18,14 +18,13 @@ public class ExtDispServiceJs {
 	
 	
 	public String DispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException, ParseException {
-		if(dispCardId==0 || dispCardId==null)
-		{
-		return "1";
+		if(dispCardId==null||dispCardId==0){
+			return "1";
 		}
-		else{
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		service.executeUpdateNativeSql("update extdispcard set notpaid=true ,isnoomc=true where id='"+dispCardId+"'");
-		return "0";
+		else {
+			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+			service.executeUpdateNativeSql("update extdispcard set notpaid='1' ,isnoomc='1' where id='"+dispCardId+"'");
+			return "0";
 		}
 	}
 	
