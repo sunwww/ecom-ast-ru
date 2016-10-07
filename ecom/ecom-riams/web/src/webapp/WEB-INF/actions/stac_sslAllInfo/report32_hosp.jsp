@@ -45,7 +45,7 @@
            <script type='text/javascript'>
        
       	 function print() {
-      		alert ("Хрен вам, а не 'Печать списка'!");
+      		alert ("'Печать списка' в разработке!");
       	 	/* var frm = document.forms[0] ;
       	 	frm.target='_blank' ;
       	 	frm.action='stac_report32_print.do' ;
