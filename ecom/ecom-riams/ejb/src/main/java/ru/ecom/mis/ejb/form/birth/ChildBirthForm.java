@@ -519,7 +519,7 @@ public class ChildBirthForm extends IdEntityForm {
 
 	/** Другое место родов */
 	@Comment("Другое место родов")
-	@Persist
+	@Persist @Required
 	public String getWhereBirthOccurredOther() {return theWhereBirthOccurredOther;}
 	public void setWhereBirthOccurredOther(String aWhereBirthOccurredOther) {theWhereBirthOccurredOther = aWhereBirthOccurredOther;}
 
