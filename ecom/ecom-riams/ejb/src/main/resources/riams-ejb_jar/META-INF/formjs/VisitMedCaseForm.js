@@ -137,6 +137,7 @@ function onSave(aForm, aVisit, aCtx) {
 		aVisit.timePlan.medCase = null ;
 		return ; // ничего не делаем, если не актуальный
 	}
+	var canAddToCloseSPO=aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Visit/CanAttachToCloseSPO") ;
 	if (aForm.isPreRecord!=null && aForm.isPreRecord==true) {
 		aVisit.dateStart=null ;
 		aVisit.timeExecute=null ;
@@ -155,7 +156,19 @@ function onSave(aForm, aVisit, aCtx) {
 			spo.setStartFunction(workFunction) ;
 			spo.setServiceStream(aVisit.getServiceStream()) ;
 			aVisit.setParent(spo) ;
+		} else if (aVisit.parent.dateFinish!=null &&canAddToCloseSPO) { //Добавляем визит в закрытый СПО
+			//throw "good";
+			var spo = aVisit.parent;
+			if (aVisit.dateStart<spo.dateStart) {
+				spo.setDateStart(aVisit.getDateStart());
+				spo.setStartFunction(aVisit.getWorkFunctionExecute()) ;
+			} else if (aVisit.dateStart>spo.dateFinish) {
+				spo.setDateFinish(aVisit.getDateStart());
+				spo.setFinishFunction(aVisit.getWorkFunctionExecute()) ;
+			}
+			
 		}
+		//throw "not good = "+aVisit.parent.dateFinish +"<>"+canAddToCloseSPO;
 	}
 	// Медицинские услуги
 	saveArray(aVisit, aCtx.manager,aForm.getMedServices()

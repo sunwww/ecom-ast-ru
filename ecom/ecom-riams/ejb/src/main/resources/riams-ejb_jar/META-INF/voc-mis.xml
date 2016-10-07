@@ -1594,6 +1594,27 @@
     			
     	/>
     </voc>
+    <!-- Закрытые СПО у пациента -->
+    <voc id='vocClosedSpoByPatient' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'MedCase as smc '
+    			parent = "smc.patient_id=:par1 and smc.datefinish+coalesce(:par3,30)>=to_date(:par2,'dd.MM.yyyy')"
+    			names  = "coalesce(to_char(smc.dateStart,'dd.mm.yyyy'),'нет даты начала ')||coalesce('-'||to_char(smc.dateFinish,'dd.mm.yyyy'),'')||' '||vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
+    			queried =" (cast(wf.id as varchar(20))= :querId or vwf.name like UPPER(:query) or p.lastname like UPPER(:query) )"
+    			queryAppend = " smc.dtype='PolyclinicMedCase' and smc.dateFinish is not null "
+    			order =''
+    			nameId='smc.id'
+    			join='left join WorkFunction wf on wf.id=smc.ownerFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id'
+    			parentSplitCount="3"
+    	/>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase'
+                names   = 'dateStart,dateFinish,ownerFunction.workFunctionInfo'
+                queried = 'ownerFunction.worker.person.lastname'
+            queryAppend = 'dateFinish is not null'
+                parent  = 'patient_id'
+        />
+     </voc> 
     <!-- Открытые СПО у пациента -->
     <voc id='vocOpenedSpoByPatient' type='NativeVocService'>
     	<NativeVocService
