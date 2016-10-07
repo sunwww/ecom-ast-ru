@@ -23,6 +23,7 @@ import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispSocialGroup;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -37,6 +38,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(DeleteListener.class)
 public class ExtDispCard extends BaseEntity{
 	
+	/** Источник финансирования */
+	@Comment("Источник финансирования")
+	@OneToOne
+	public VocServiceStream  getServiceStream() {return theServiceStream;}
+	public void setServiceStream(VocServiceStream  aServiceStream) {theServiceStream = aServiceStream;}
+	/** Источник финансирования */
+	private VocServiceStream  theServiceStream;
+
 	/** Не подавать на оплату по ОМС */
 	@Comment("Не подавать на оплату по ОМС")
 	public Boolean getIsNoOmc() {return theIsNoOmc;}

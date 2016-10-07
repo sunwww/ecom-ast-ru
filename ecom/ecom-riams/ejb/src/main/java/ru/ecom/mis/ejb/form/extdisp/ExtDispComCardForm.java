@@ -12,6 +12,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispSocialGroup;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.extdisp.interceptor.ExtDispCardViewInterceptor;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -29,8 +30,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @EntityForm
 @EntityFormPersistance(clazz = ExtDispCard.class)
-@Comment("Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)")
-@WebTrail(comment = "Карта учета дополнительной диспансеризации (профосмотров) (УФ N 131/у)"
+@Comment("Карта осмотра")
+@WebTrail(comment = "Карта осмотра"
 , nameProperties= "id", list="entityParentList-extDispCom_card.do", view="entityParentView-extDispCom_card.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card")
@@ -38,6 +39,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(ExtDispCardViewInterceptor.class)
 )*/
 public class ExtDispComCardForm extends IdEntityForm{
+	
+	/** Источник финансирования */
+	@Comment("Источник финансирования")
+	@Persist
+	public Long  getServiceStream() {return theServiceStream;}
+	public void setServiceStream(Long  aServiceStream) {theServiceStream = aServiceStream;}
+	/** Источник финансирования */
+	private Long  theServiceStream;
+	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
@@ -100,7 +110,7 @@ public class ExtDispComCardForm extends IdEntityForm{
 	
 	/** МКБ основного диагноза */
 	@Comment("МКБ основного диагноза")
-	
+	@Persist
 	public Long getIdcMain() {return theIdcMain;}
 	public void setIdcMain(Long aIdcMain) {theIdcMain = aIdcMain;}
 	/** МКБ основного диагноза */
@@ -109,7 +119,7 @@ public class ExtDispComCardForm extends IdEntityForm{
 	
 	/** Возрастная категория */
 	@Comment("Возрастная категория")
-	
+	@Persist
 	public Long getAgeGroup() {return theAgeGroup;}
 	public void setAgeGroup(Long aAgeGroup) {theAgeGroup = aAgeGroup;}
 

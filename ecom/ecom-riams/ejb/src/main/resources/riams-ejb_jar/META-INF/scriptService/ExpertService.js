@@ -3,6 +3,8 @@ function deleteExtDispServices(aCtx, aCard, aType) {
 	var sql = "delete from ExtDispService where dtype='"+aType+"' and card_id="+aCard;
 	aCtx.manager.createNativeQuery(sql).executeUpdate();
 }
+
+
 function createExtDispExamService(aCtx,aParams){
 //	throw ""+aParams ;
 	var param=aParams.split(":") ;
@@ -50,9 +52,9 @@ function createExtDispExamService(aCtx,aParams){
 //	}
 }
 function createExtDispVisitService(aCtx,aParams){
-	//throw "PARAMS="+aParams ;
-	var param=aParams.split(":") ;
 	
+	var param=aParams.split(":") ;
+	//throw "PARAMS="+param[6]; 
 	var card = param[0] ;
 	var cardO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.extdisp.ExtDispCard,java.lang.Long.valueOf(card)) ;
 	var id = param[1] ;
@@ -62,6 +64,7 @@ function createExtDispVisitService(aCtx,aParams){
 	var isEtdccSuspicion = param[5] ;
 	var workFunction = param[6] ;
 	var Idc10=param[7];
+	var createVisit = (param.length>9&&+param[9]==1)?1:0;
 	if (isEtdccSuspicion=="checked"||isEtdccSuspicion=="true"||isEtdccSuspicion=="on"||isEtdccSuspicion=="1") {isEtdccSuspicion=1 ;} else {isEtdccSuspicion=0;}
 	/*if (+id>0) {
 		if (serviceDate!=null && serviceDate!="") {
@@ -111,13 +114,101 @@ function createExtDispVisitService(aCtx,aParams){
 		var workFunctionO=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction,java.lang.Long.valueOf(workFunction)) ;
 		serviceO.workFunction=workFunctionO;
 		}
+		
+		
+		
 		//if (serviceO.serviceDate!=null) {
 			aCtx.manager.persist(serviceO) ;
-		//}
-			//throw "fdasf" ;
-//	}
+			
+			//Время создавать визиты
+			if (createVisit==1 && workFunction!=null && workFunction!="" && workFunction!="null"){
+					var spo = null;
+					var smc= null;
+					var pat = cardO.getPatient();
+					var sql="select id from medcase where dtype='PolyclinicMedCase' and patient_id="+cardO.patient.id+" and dateStart = to_date('"+cardO.startDate+"','yyyy-MM-dd')" +
+							"and ownerFunction_id="+cardO.workFunction.id+" and (noActuality is null or noActuality='0')";
+					
+					var spoId = aCtx.manager.createNativeQuery(sql).getResultList();
+					if (spoId.size()>0) {spoId=spoId.get(0);}
+				
+					if (+spoId>0){
+						spo=aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase,java.lang.Long.valueOf(spoId)) ;
+					} else {
+						spo = new Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase();
+						spo.setDateStart(cardO.getStartDate());
+						spo.setDateFinish(cardO.getFinishDate())
+						spo.setLpu(cardO.getLpu());
+						spo.setServiceStream(cardO.getServiceStream());
+						spo.setPatient(pat);
+						spo.setIdc10(cardO.getIdcMain());
+						spo.setOwnerFunction(cardO.getWorkFunction());
+						spo.setStartFunction(cardO.getWorkFunction());
+						spo.setFinishFunction(cardO.getWorkFunction());
+						aCtx.manager.persist(spo);
+					}
+					var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
+					
+					var smc = new Packages.ru.ecom.mis.ejb.domain.medcase.ShortMedCase();
+					smc.setParent(spo);
+					var visitResult=aCtx.manager.createQuery(" from VocVisitResult where omcCode=:par").setParameter("par","3").getSingleResult() ; //Дин. наблюдение
+					var visitReason=aCtx.manager.createQuery(" from VocReason where omcCode=:par").setParameter("par","2").getSingleResult() ; //Профосмотр
+					var visitWorkPlace=aCtx.manager.createQuery(" from VocWorkPlaceType where omcCode=:par").setParameter("par","1").getSingleResult() ; //Поликлиника
+					var visitIllnesPrimary=aCtx.manager.createQuery(" from VocIllnesPrimary where code=:par").setParameter("par","1").getSingleResult() ; //Поликлиника
+					var visitMedcard = aCtx.manager.createQuery(" from Medcard where person=:pat").setParameter("pat",cardO.patient).getResultList(); //Поликлиника
+					//var visitMedCard = null;
+					if (visitMedcard.size()>0) {
+					//	throw ">0";
+						visitMedcard = visitMedcard.get(0);
+					} else {
+						
+						visitMedcard = new Packages.ru.ecom.poly.ejb.domain.Medcard();
+						visitMedcard.setPerson(pat);
+						var cardNumber = pat.patientSync!=null&&pat.patientSync!=""?pat.patientSync:""+pat.id;
+						var cardNameListSize  =aCtx.manager.createQuery("select id from Medcard where number='"+cardNumber+"'").getResultList().size();
+						if (cardNameListSize>0){
+							while (cardNameListSize>0){
+								cardNumber="0"+cardNumber;
+								cardNameListSize  =aCtx.manager.createQuery("select id from Medcard where number='"+cardNumber+"'").getResultList().size();		
+							}
+						}
+						visitMedcard.setNumber(cardNumber);
+						visitMedcard.setRegistrator(username);
+						visitMedcard.setDateRegistration(new java.sql.Date(new java.util.Date().getTime()));
+						aCtx.manager.persist(visitMedcard);
+					}
+					smc.setDateStart(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(serviceDate));
+					smc.setUsername(username);
+					smc.setServiceStream(cardO.getServiceStream());
+					smc.setPatient(pat);
+					smc.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
+					
+					smc.setWorkFunctionExecute(serviceO.workFunction);
+					smc.setVisitResult(visitResult);
+					smc.setVisitReason(visitReason);
+					smc.setWorkPlaceType(visitWorkPlace);
+					smc.setMedcard(visitMedcard);
+					aCtx.manager.persist(smc);
+					if (serviceO.idc10!=null||cardO.idcMain!=null){
+						var vocConcomType = Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor.getVocByCode(aCtx.manager,"VocPriorityDiagnosis","1") ;
+						var diag=new Packages.ru.ecom.mis.ejb.domain.medcase.Diagnosis() ;
+						  diag.setMedCase(smc)
+						  diag.setPatient(pat)
+						  diag.setEstablishDate(smc.dateStart)
+						  diag.setIdc10(serviceO.idc10!=null?serviceO.idc10:cardO.idcMain);
+						  diag.setPriority(vocConcomType);
+						  diag.setName(serviceO.idc10!=null?serviceO.idc10.name:cardO.idcMain.name)
+						  diag.setIllnesPrimary(visitIllnesPrimary);
+						  aCtx.manager.persist(diag);
+						  
+						  
+						  
+					}
+					
+				}
 }
-
+function getCountDispServices (aCtx, aCardId) {
+	return ""+aCtx.manager.createNativeQuery("select count(id) from extDispService where card_id="+aCardId).getSingleResult();
+}
 /**
 * Поиск
 */
