@@ -1560,7 +1560,7 @@ function printConsentBySlo(aCtx,aParams) {
 	recordDiagnosis(aCtx,sloId,"4","1","diagnosis.main","DepartmentMedCase") ;
 	recordDiagnosis(aCtx,sloId,"4","3","diagnosis.related","DepartmentMedCase") ;
 	recordDiagnosis(aCtx,sloId,"4","4","diagnosis.complication","DepartmentMedCase") ;
-	
+	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase.parent).getResultList()) ;
 	return map ;
 }
 function checkAllDiagnosis (aCtx, aSlsId) {
