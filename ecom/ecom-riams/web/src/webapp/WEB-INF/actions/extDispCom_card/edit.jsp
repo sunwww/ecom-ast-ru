@@ -14,7 +14,16 @@
 					<msh:autoComplete property="lpu" label="ЛПУ" vocName="lpu" horizontalFill="true" fieldColSpan="3" />
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="serviceStream" label="Источник финансирования" vocName="vocServiceStream" horizontalFill="true" fieldColSpan="3" />
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete property="dispType" label="Тип доп. диспансеризации" vocName="extDispCom" horizontalFill="true" fieldColSpan="3"/>
+				</msh:row>
+				 <msh:row>
+					<msh:autoComplete property="idcMain" label="МКБ основного диагноза" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="ageGroup" label="Возрастная группа" vocName="vocExtDispAgeGroupByDispType" parentAutocomplete="dispType" horizontalFill="true" fieldColSpan="1"/>
 				</msh:row>
         		<msh:row>
 					<msh:textField property="startDate" label="Дата начала"/>
