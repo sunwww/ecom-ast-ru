@@ -28,7 +28,8 @@
     <msh:sideMenu guid="5db0db09-9993-44cb-8477-a3fee5037b42" title="Шаблон протокола">
       
       <msh:ifFormTypeIsView formName="temp_protocolPrintForm" guid="dd63e5e4-f81c-43f2-b50a-f12b1d8e026b">
-        <msh:sideLink key="ALT+2" params="id" action="/entityEdit-temp_protocolPrint" name="Изменить" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e97e" />
+        <msh:sideLink key="ALT+2" params="id" action="/entityEdit-temp_protocolPrint"  name="Изменить" roles="/Policy/Diary/Template/Edit" guid="05503c33-989a-45dc-ab6f-8d1be735e97e" />
+        <msh:sideLink key="ALT+D" params="id" action="/entityParentDeleteGoParentView-temp_protocolPrint" name="Удалить" roles="/Policy/Diary/Template/Delete" guid="05503c33-989a-45dc-ab6f-8d1be735557e" />
       </msh:ifFormTypeIsView>
     </msh:sideMenu>
   </tiles:put>

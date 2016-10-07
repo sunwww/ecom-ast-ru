@@ -30,6 +30,14 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class TicketServiceJs {
 	
+	public String getDefaultParameter(String aKey, String aDefaultValue, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
+		Collection <WebQueryResult> res = service.executeNativeSql("select id,keyValue from SoftConfig where upper(key)=upper('"+aKey+"')");
+		if (res.size()>0){
+			return res.iterator().next().get2().toString();
+		} 
+		return aDefaultValue;
+	}
 	public String[] getDiagnosisId (String[] diagnosis, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
 		StringBuilder sb = new StringBuilder();

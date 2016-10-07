@@ -42,6 +42,11 @@
         </msh:row>
         <msh:row guid="213e017e-0fd0-4027-a84b-96d11818c390">
           <msh:autoComplete viewAction="entityParentView-smo_spo.do" property="parent" label="СПО" guid="1daf90d8-052b-4776-809c-aedeeac116be" fieldColSpan="3" horizontalFill="true" vocName="vocOpenedSpoByPatient" parentId="smo_visitForm.patient" />
+ <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/CanAttachToCloseSPO"> 
+<td id="btnClosedSPO" style="display:none;">
+<input type='button' onclick='showListClosedSpo()' value="Прикрепить к закрытому СПО" >
+</td>
+ </msh:ifInRole>
         </msh:row>
         <msh:row guid="8171a822-87ac-4a70-9c65-dd2234890dad">
         	<msh:ifInRole roles="/Policy/Mis/MedCase/Visit/DontEditServiceStream">
@@ -245,6 +250,7 @@
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherHospitalMedCase('.do')" name='Госпитализации' title="Просмотр госпитазиций по пациенту" key="ALT+6" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Stac/Ssl/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
 
+<tags:visit_listClosedSpo name="List" title="Изменить ЛПУ направителя" />
   		</msh:sideMenu>
   	</msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_visitForm">
@@ -285,6 +291,7 @@
     	 
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
+	   	
 	   	<tags:mis_change_lpu service="TicketService" name="CSS" title="Изменить ЛПУ направителя" roles="/Policy/Mis/MedCase/Visit/ChangeOrderLpu" />
 	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
       	<tags:mis_choiceSpo method="moveVisitOtherSpo" methodGetPatientByPatient="getOpenSpoBySmo" hiddenNewSpo="0" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Перевести визит в другой СПО" />
@@ -319,6 +326,8 @@
   <tiles:put name="javascript" type="string">
   <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
   <script type="text/javascript">
+
+
   function printAgree() {
   	window.location = "print-agreement.do?s=PatientPrintService&m=printAgreement&id="+$('patient').value;
   }
@@ -327,6 +336,9 @@
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
   
   	<script type="text/javascript">
+  	if ($('parent')&&($('parent').value==null||$('parent').value==''||+$('parent').value==0)&&$('btnClosedSPO')){
+  		$('btnClosedSPO').style.display="block";
+  	}
   	var oldValue=$('dateStart').value;
   	
   	updateService() ;
