@@ -204,7 +204,7 @@
                 validate='false'
                 scope="session"
                 >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/pregnant_hosp_account.jsp" />  
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report32_hosp.jsp" />  
        </action>
         <action path='/stac_pregnant_hosp_account' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
