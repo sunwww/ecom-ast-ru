@@ -128,6 +128,7 @@ and (pp.isvat is null or pp.isvat='0')
 		
 		ContractAccount account = theManager.find(ContractAccount.class, aAccount) ;
 		if (aDtypeSmo.equals("HOSPITALMEDCASE")) {
+			System.out.println("=== ContractSBean ,account="+account.getContract().getId() +", smo="+aIdSmo);
 			List<Object[]> l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid,mc.priceList_id as pricelist"
 				+" , (select max(cg.id) from ContractGuarantee cg where cg.contract_id=mc.id and cg.contractPerson_id=cpp.id and sls.datestart between cg.actionDate and cg.actionDateTo) as cgid"
 				+", to_char(sls.datestart,'dd.mm.yyyy') as datestart"
@@ -160,7 +161,7 @@ and (pp.isvat is null or pp.isvat='0')
 			String datefinish=null;
 			String customerType = "";
 			
-			if (l.size()==1) {
+			if (l.size()>0) {
 				try {
 					JuridicalPerson jp =  (JuridicalPerson) account.getContract().getCustomer();
 					if (jp!=null&& jp.getJuridicalPersonType()!=null) {
