@@ -16,6 +16,9 @@
 				<div class='menu'>
 				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
+					<li><msh:link  action="ecom_release-201610.do">
+						 октябрь 2016 года
+                      	</msh:link></li>
 					<li><msh:link  action="ecom_release-201609.do">
 						 сентябрь 2016 года
                       	</msh:link></li>
