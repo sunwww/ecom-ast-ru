@@ -916,40 +916,47 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 	function checkPassportSeriesAndNumber(){
 		
 		ret=true;
+		pass =  $('passportTypeName').value
+			const SpaceIntoDigits = /\d\d\s\d\d/g;
+			const Digits1 = /\d\d\d\d/g;
+			 passportSeries = $('passportSeries').value
+	         passportNumber = $('passportNumber').value
+		
+		 if((passportSeries.length == 0) && (passportNumber.length==0))//((passportSeries.length==null || passportSeries.length == 0) || (passportNumber.length==null || passportNumber.length==0))
+	        	 {
+	        	 return true;
+	        	 }
+		 else{
+		 
 		if ($('passportType').value=='${passportRF}') {
- 			pass =  $('passportTypeName').value
- 			const SpaceIntoDigits = /\d\d\s\d\d/g;
- 			const Digits1 = /\d\d\d\d/g;
- 			 passportSeries = $('passportSeries').value
- 	         passportNumber = $('passportNumber').value
- 			
- 					
- 			if( passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits))
- 			{
- 			
- 			}else
- 			{
- 				if(passportSeries.length == 4 && passportSeries.match(Digits1))
- 				{
- 					var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
- 					$('passportSeries').value = text
- 				}else 
- 				{
- 					alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
- 					ret=false;
- 				}
- 			}
- 			
+
+ 	 				if(passportSeries.length == 4 && passportSeries.match(Digits1))
+ 	 				{
+ 	 					var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
+ 	 					$('passportSeries').value = text
+ 	 				}else 
+ 	 				{
+ 	 					alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
+ 	 					ret=false;
+ 	 				}
+ 	 		
+ 	         
+ 			 if(passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits))
+ 				 {
+ 				  ret=true;
+ 				 }
+ 			 
  			if(passportNumber.length == 6 && passportNumber.match(/[0-9]/g))
- 				{
- 				
- 				}else 
- 				{
- 					alert('Неверный формат номера паспорта! \n Должно быть: "ЧЧЧЧЧЧ"!');
- 					ret=false;
- 				}
+				{
+				
+				}else 
+				{
+					alert('Неверный формат номера паспорта! \n Должно быть: "ЧЧЧЧЧЧ"!');
+					ret=false;
+				}
 		
 	}
+		}
 		return ret;
 		}
     </script>
