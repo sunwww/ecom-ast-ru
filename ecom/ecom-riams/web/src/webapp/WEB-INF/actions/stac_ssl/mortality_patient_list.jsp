@@ -240,8 +240,15 @@
 	,round(cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/count (pat.id) ,2) as f5_percentOtdel
 	,cast (cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/(select case when count (smo2.patient_id)>0 then count (smo2.patient_id) else 1 end from medcase smo2 left join vochospitalizationresult vhr2 on vhr2.id=smo2.result_id where smo2.dtype='HospitalMedCase' and vhr2.omccode='11' and smo2.datefinish between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and smo2.datefinish is not null  )as numeric(9,2)) as f6_percentAll
 	,cast (cast((count(case when vhr.omccode='11' then 1 else null end)*100)as numeric(9,2))/(select case when count (smo2.patient_id)>0 then count (smo2.patient_id) else 1 end from medcase smo2 left join vochospitalizationresult vhr2 on vhr2.id=smo2.result_id where smo2.dtype='HospitalMedCase' and vhr2.omccode='11' and smo2.datefinish between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') and smo2.datefinish is not null  )as numeric(9,2)) as f6_percentAll
-	
+	,count(distinct case when dc.isAutopsy='1' then hmc.id else null end) as f7_autopsy
+,count(distinct case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then hmc.id else null end) as f8_cntRash 
+,case when count(distinct case when dc.isAutopsy='1' then hmc.id else null end)=0 
+then '0' 
+--else (cast(((count(distinct case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then hmc.id else null end))/(count(distinct case when dc.isAutopsy='1' then hmc.id else null end)))*100 as numeric(9,2)) ) end as f9_procent
+else cast(((cast((count(distinct case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null then hmc.id else null end))as float) / cast(count(distinct case when dc.isAutopsy='1' then hmc.id else null end) as float))*100) as numeric(9,2))  end
+
 	from medcase hmc 
+	left join DeathCase dc on dc.medCase_id=hmc.id 
 	left join vochospitalizationresult vhr on vhr.id=hmc.result_id
 	left join patient pat on pat.id=hmc.patient_id
 	left join medcase dmc on dmc.parent_id=hmc.id and dmc.dtype='DepartmentMedCase' and dmc.datefinish is not null
@@ -266,6 +273,9 @@
             <msh:tableColumn isCalcAmount="true" columnName="Число летальных исходов" property="4" addParam="&addCell=dead"/>
             <msh:tableColumn columnName="% летальных исходов по отделению" property="6"/>
             <msh:tableColumn columnName="%  от летальных исходов всего" property="7"/>
+            <msh:tableColumn columnName="Кол-во вскрытий" property="9"/>
+            <msh:tableColumn columnName="Кол-во расхождений" property="10"/>
+            <msh:tableColumn columnName="% расхождения" property="11"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -313,8 +323,8 @@
     ${cellAdd}
     	${depIsNoOmc}
      ${addNewborn} ${bedSubTypeSql}
-    group by hmc.id,ss.code, pat.lastname,pat.firstname,pat.middlename
-    order by pat.lastname,pat.firstname,pat.middlename"/>
+    group by hmc.id,ss.code, pat.lastname,pat.firstname,pat.middlename,pat.birthday
+    order by pat.lastname,pat.firstname,pat.middlename "/>
         <msh:table name="journal_surOperation"
         viewUrl="entityShortView-stac_ssl.do"
          action="entityView-stac_ssl.do" idField="1">
