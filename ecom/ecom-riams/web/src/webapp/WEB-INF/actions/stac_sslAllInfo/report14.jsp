@@ -1003,6 +1003,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     , count(distinct case when (dc.DateForensic is not null ) and (dc.categoryDifference_id is not null or dc.latrogeny_id is not null) then sls.id else null end) n13patforRaz
      from medcase sls
     left join DeathCase dc on dc.medCase_id=sls.id
+    left join certificate cert on cert.deathcase_id = dc.id
     left join MedCase sloa on sloa.parent_id=sls.id
     left join BedFund bf on bf.id=sloa.bedFund_id
     left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
@@ -1140,6 +1141,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
  left join medcase fpslo on fpslo.id=fslo.prevmedcase_id
 left join mislpu pml on pml.id=fpslo.department_id where fslo.parent_id=sls.id and fslo.datefinish is not null 
 and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))) as mlname
+,'№ '||cert.number ||'-'|| cert.series as certofdeath
      from medcase sls
      
     left join StatisticStub ss on ss.id=sls.statisticStub_id
@@ -1150,6 +1152,7 @@ and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
     left join DeathCase dc on dc.medCase_id=sls.id
+    left join certificate cert on cert.deathcase_id = dc.id
     left join VocDeathCategory vdc on vdc.id=dc.categoryDifference_id
     left join VocDeathCategory vdcL on vdcL.id=dc.latrogeny_id
     
@@ -1187,7 +1190,7 @@ and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))
     ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
     ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name,dc.dateforensic
     ,dc.postmortemBureauDt
-    ,dc.postmortemBureauNumber
+    ,dc.postmortemBureauNumber,cert.number, cert.series 
     order by p.lastname,p.firstname,p.middlename " />
     	    <form action="print-stac_report_14_3r.do" method="post" target="_blank">
 	    Реестр пациентов ${param.strname} по нозоологиям (умершие)
@@ -1218,6 +1221,7 @@ and fslo.dtype='DepartmentMedCase' and (pml.isnoomc is null or pml.isnoomc='0'))
           <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
           <msh:tableColumn columnName="Было вскрытие?" property="13"/>
           <msh:tableColumn columnName="Категория расхождений" property="14"/>
+          <msh:tableColumn columnName="Cвидетельство о смерти" property="20"/>
           <msh:tableColumn columnName="Неоформлен случай смерти" property="15"/>
           <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
           <msh:tableColumn columnName="Дата пат.-анат. вскрытия" property="17"/>
@@ -1361,8 +1365,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
      when (sls.dateFinish-sls.dateStart)=0 then 1 
      when bf.addCaseDuration='1' then (sls.dateFinish-sls.dateStart+1) 
      else (sls.dateFinish-sls.dateStart)
-    end
-     as cntDays
+    end as cntDays
     ,(select mkb.code from Diagnosis diag 
     left join vocidc10 mkb on mkb.id=diag.idc10_id
     left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
@@ -1389,8 +1392,8 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     ,dc.DateForensic as dcDateForensic
     ,dc.postmortemBureauDt as dcpostmortemBureauDt
     ,dc.postmortemBureauNumber as dcpostmortemBureauNumber
-    ,
-pml.name as mlname
+    ,pml.name as mlname
+    ,cert.number ||' '|| cert.series as certofdeath
 	from medcase sls
    
     left join StatisticStub ss on ss.id=sls.statisticStub_id
@@ -1401,6 +1404,7 @@ pml.name as mlname
     left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
     left join Patient p on p.id=sls.patient_id
     left join DeathCase dc on dc.medCase_id=sls.id
+    left join certificate cert on cert.deathcase_id = dc.id
     left join VocDeathCategory vdc on vdc.id=dc.categoryDifference_id
     left join VocDeathCategory vdcL on vdcL.id=dc.latrogeny_id
      left join mislpu pml on pml.id=sloa.department_id
@@ -1432,7 +1436,6 @@ pml.name as mlname
     )
     ) between rspt.codefrom and rspt.codeto
     and (sls.dateStart=sls.dateFinish or sls.dateFinish-sls.dateStart=1 and sls.dischargetime<sls.entrancetime)
- 
     group by sls.id
     ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
     ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
@@ -1467,11 +1470,13 @@ pml.name as mlname
           <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
           <msh:tableColumn columnName="Было вскрытие?" property="13"/>
           <msh:tableColumn columnName="Категория расхождений" property="14"/>
+          <msh:tableColumn columnName="Cвидетельство о смерти" property="20"/>
           <msh:tableColumn columnName="Неоформлен случай смерти" property="15"/>
           <msh:tableColumn columnName="Дата суд-мед. эксп" property="16"/>
           <msh:tableColumn columnName="Дата пат.-анат. вскрытия" property="17"/>
           <msh:tableColumn columnName="Номер пат.-анат. вскрытия" property="18"/>
           <msh:tableColumn columnName="Отделение" property="19"/>
+         
         </msh:table>
         </msh:sectionContent>
         </msh:section>    		
