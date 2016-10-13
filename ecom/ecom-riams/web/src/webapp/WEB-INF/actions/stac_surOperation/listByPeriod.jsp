@@ -301,8 +301,8 @@
     <ecom:webQuery name="journal_surOperation" nativeSql="
     select '${departmentSql} ${specSql}:'||to_char(${typeDateSql},'dd.mm.yyyy')||':'||to_char(${typeDateSql},'dd.mm.yyyy')
     ,to_char(${typeDateSql},'dd.mm.yyyy')
-    , count(so.id) as cntOper
-    , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    , count(distinct so.id) as cntOper
+    , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
      from SurgicalOperation so 
      left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
@@ -329,8 +329,8 @@
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':'||so.medservice_id as id
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
-    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
-    , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt 
+    , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
     
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -364,8 +364,8 @@ order by ${order1} p.lastname,p.firstname,p.middlename ${order2}" guid="4a720225
     <ecom:webQuery name="journal_surOperationBySpec"  nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||':'||so.medservice_id||':'||so.department_id as id
     ,dep.name as depname
-    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt
-    , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt
+    , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
      
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -396,8 +396,8 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||''||'::'||so.department_id as id
     ,dep.name as depname
-    ,count(*) as cnt 
-        , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    ,count(distinct so.id) as cnt 
+        , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
     
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -425,9 +425,9 @@ order by dep.name
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}::'||so.medservice_id as id
-    , vo.code as vocode, vo.name as voname,vo.complexity,count(*) as cnt 
-        , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
-        , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+    , vo.code as vocode, vo.name as voname,vo.complexity,count(distinct so.id) as cnt 
+        , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+        , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
     
     from SurgicalOperation so
      
@@ -463,8 +463,9 @@ order by vo.name" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <ecom:webQuery name="journal_surOperationBySpec" nativeSql="select 
     '${departmentSql} ${specSql}:'||'${dateBegin}:${dateEnd}:'||so.surgeon_id||':' as id
     ,vwf.name||' '||p.lastname||' '|| p.firstname||' '|| p.middlename as doctor
-   ,vo.complexity,count(*) as cnt 
-       , count(case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
+   ,vo.complexity
+   	,count(distinct so.id) as cnt 
+       , count(distinct case when so.endoscopyUse='1' then so.id else null end) as cntEndoscopyUse
    
     from SurgicalOperation so
 left join medservice vo on vo.id=so.medService_id
@@ -528,7 +529,7 @@ order by ${order1} dep.name ${order2}" guid="4a720225-8d94-4b47-bef3-4dbbe79eec7
     if (view!=null&&view.equals("8")) {
     %>
 	    <ecom:webQuery name="journal_surOperation1" nameFldSql="journal_surOperation1_sql" nativeSql="select so.id as id
-	    ,coalesce(to_char(${typeDateSql},'DD.MM.YYYY')||' '||to_char(so.operationTime,'HH24:MI')||' - '||to_char(${typeDateSql}To,'DD.MM.YYYY')||' '||to_char(so.operationTimeTo,'HH24:MI'),to_char(${typeDateSql},'DD.MM.YYYY')) as operDate
+	    ,coalesce(to_char(so.operationDate,'DD.MM.YYYY')||' '||cast(so.operationTime as varchar(5))||' - '||to_char(so.operationDateTo,'DD.MM.YYYY')||' '||cast(so.operationTimeTo as varchar(5)),to_char(${typeDateSql},'DD.MM.YYYY')) as operDate
 	    , vo.name as voname
 	    ,(select list(' '||vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename) from SurgicalOperation_WorkFunction sowf left join WorkFunction wf on wf.id=sowf.surgeonFunctions_id left join Worker w on w.id=wf.worker_id left join Patient wp on wp.id=w.person_id left join vocworkFunction vwf on vwf.id=wf.workFunction_id where sowf.SurgicalOperation_id=so.id ) as surgOper 
 	    ,p.lastname||' '||p.firstname||' '||p.middlename ||' гр '||to_char(p.birthday,'DD.MM.YYYY') as patientInfo,
