@@ -72,35 +72,30 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Качество верхних вод */
 	@Comment("Качество верхних вод")
 	@Persist
-	@Required
 	public String getUpperWatersQuality() {return theUpperWatersQuality;}
 	public void setUpperWatersQuality(String aUpperWatersQuality) {theUpperWatersQuality = aUpperWatersQuality;}
 	
 	/** Качество нижних вод */
 	@Comment("Качество нижних вод")
 	@Persist
-	@Required
 	public String getDownWatersQuality() {return theDownWatersQuality;}
 	public void setDownWatersQuality(String aDownWatersQuality) {theDownWatersQuality = aDownWatersQuality;}
 
 	/** Количество верхних вод (мл) */
 	@Comment("Количество верхних вод (мл)")
 	@Persist
-	@Required
 	public Integer getUpperWatersAmount() {return theUpperWatersAmount;}
 	public void setUpperWatersAmount(Integer aUpperWatersAmount) {theUpperWatersAmount = aUpperWatersAmount;}
 
 	/** Количество нижних вод (мл) */
 	@Comment("Количество нижних вод (мл)")
 	@Persist
-	@Required
 	public Integer getDownWatersAmount() {return theDownWatersAmount;}
 	public void setDownWatersAmount(Integer aDownWatersAmount) {theDownWatersAmount = aDownWatersAmount;}
 	
 	/** Преждевременность отхождения вод */
 	@Comment("Преждевременность отхождения вод")
 	@Persist
-	@Required
 	public Long getWatersPrematurity() {return theWatersPrematurity;}
 	public void setWatersPrematurity(Long aWatersPrematurity) {theWatersPrematurity = aWatersPrematurity;}
 
@@ -108,7 +103,6 @@ public class ChildBirthForm extends IdEntityForm {
 	@Comment("Время отхождения вод")
 	@Persist 
 	@TimeString @DoTimeString
-	@Required
 	public String getWatersTime() {return theWatersTime;}
 	public void setWatersTime(String aWatersTime) {theWatersTime = aWatersTime;}
 
@@ -116,7 +110,6 @@ public class ChildBirthForm extends IdEntityForm {
 	@Comment("Дата отхождения вод")
 	@Persist 
 	@DateString @DoDateString
-	@Required
 	public String getWatersDate() {return theWatersDate;}
 	public void setWatersDate(String aWatersDate) {theWatersDate = aWatersDate;}
 
@@ -227,7 +220,6 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Кто исследовал плаценту */
 	@Comment("Кто исследовал плаценту")
 	@Persist
-	@Required
 	public Long getPlacentaInspector() {return thePlacentaInspector;}
 	public void setPlacentaInspector(Long aPlacentaInspector) {thePlacentaInspector = aPlacentaInspector;}
 	
@@ -294,7 +286,6 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Направление плаценты на гистологию */
 	@Comment("Направление плаценты на гистологию")
 	@Persist
-	@Required
 	public Boolean getPlacentaHistologyOrder() {return thePlacentaHistologyOrder;}
 	public void setPlacentaHistologyOrder(Boolean aPlacentaHistologyOrder) {thePlacentaHistologyOrder = aPlacentaHistologyOrder;}
 	
@@ -307,7 +298,6 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Гистология плаценты */
 	@Comment("Гистология плаценты")
 	@Persist
-	@Required
 	public Long getHistology() {return theHistology;}
 	public void setHistology(Long aHistology) {theHistology = aHistology;}
 
@@ -422,7 +412,7 @@ public class ChildBirthForm extends IdEntityForm {
 	public String getCreateTime() {return theCreateTime;}
 	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
 	/** Время редактрования */
-	@Comment("Время редактрования")
+	@Comment("Время редактирования")
 	@TimeString @DoTimeString @Persist
 	public String getEditTime() {return theEditTime;}
 	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
@@ -551,7 +541,6 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Ребенка принял */
 	@Comment("Ребенка принял")
 	@Persist
-	@Required
 	public Long getChildTook() {return theChildTook;}
 	public void setChildTook(Long aChildTook) {theChildTook = aChildTook;}
 
