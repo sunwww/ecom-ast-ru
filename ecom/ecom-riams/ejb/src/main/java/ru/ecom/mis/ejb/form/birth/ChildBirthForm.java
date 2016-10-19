@@ -39,14 +39,12 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Вес */
 	@Comment("Вес")
 	@Persist 
-	@Required
 	public String getWeight() {return theWeight;}
 	public void setWeight(String aBirthWeight) {theWeight = aBirthWeight;}
 	
 	/** Рост */
 	@Comment("Рост")
 	@Persist 
-	@Required
 	public String getHeight() {return theHeight;}
 	public void setHeight(String aHeight) {theHeight = aHeight;}
 	
@@ -59,7 +57,6 @@ public class ChildBirthForm extends IdEntityForm {
 	@Comment("Время начала потуг")
 	@Persist 
 	@TimeString @DoTimeString
-	@Required
 	public String getTravailStartTime() {return theTravailStartTime;}
 	public void setTravailStartTime(String aTravailStartTime) {theTravailStartTime = aTravailStartTime;}
 	
@@ -67,7 +64,6 @@ public class ChildBirthForm extends IdEntityForm {
 	@Comment("Дата начала потуг")
 	@Persist 
 	@DateString @DoDateString
-	@Required
 	public String getTravailStartDate() {return theTravailStartDate;}
 	public void setTravailStartDate(String aTravailStartDate) {theTravailStartDate = aTravailStartDate;}
 
@@ -118,36 +114,35 @@ public class ChildBirthForm extends IdEntityForm {
 
 	/** Время начала схваток */
 	@Comment("Время начала схваток")
-	@Persist @Required
+	@Persist
 	@TimeString @DoTimeString
+	@Required
 	public String getPangsStartTime() {return thePangsStartTime;}
 	public void setPangsStartTime(String aPangsStartTime) {thePangsStartTime = aPangsStartTime;}
 	
 	/** Дата начала схваток */
 	@Comment("Дата начала схваток")
-	@Persist @Required
+	@Persist
 	@DateString @DoDateString
+	@Required
 	public String getPangsStartDate() {return thePangsStartDate;}
 	public void setPangsStartDate(String aPangsStartDate) {thePangsStartDate = aPangsStartDate;}
 	
 	/** Отделение плаценты */
 	@Comment("Отделение плаценты")
 	@Persist
-	@Required
 	public Long getPlacentaSeparation() {return thePlacentaSeparation;}
 	public void setPlacentaSeparation(Long aPlacentaSeparation) {thePlacentaSeparation = aPlacentaSeparation;}
 	
 	/** Размеры плаценты */
 	@Comment("Размеры плаценты")
 	@Persist
-	@Required
 	public String getPlacentaSize() {return thePlacentaSize;}
 	public void setPlacentaSize(String aPlacentaSize) {thePlacentaSize = aPlacentaSize;}
 	
 	/** Целостность плаценты */
 	@Comment("Целостность плаценты")
 	@Persist
-	@Required
 	public Long getPlacentaIntegrity() {return thePlacentaIntegrity;}
 	public void setPlacentaIntegrity(Long aPlacentaIntegrity) {thePlacentaIntegrity = aPlacentaIntegrity;}
 	
@@ -160,14 +155,12 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Масса плаценты (гр) */
 	@Comment("Масса плаценты (гр)")
 	@Persist
-	@Required
 	public Integer getPlacentaWeight() {return thePlacentaWeight;}
 	public void setPlacentaWeight(Integer aPlacentaWeight) {thePlacentaWeight = aPlacentaWeight;}
 	
 	/** Целостность оболочек */
 	@Comment("Целостность оболочек")
 	@Persist
-	@Required
 	public Long getMembranesIntegrity() {return theMembranesIntegrity;}
 	public void setMembranesIntegrity(Long aMembranesIntegrity) {theMembranesIntegrity = aMembranesIntegrity;}
 	
@@ -180,28 +173,24 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Объем кровопотери (мл) */
 	@Comment("Объем кровопотери (мл)")
 	@Persist
-	@Required
 	public Integer getHemorrhageVolume() {return theHemorrhageVolume;}
 	public void setHemorrhageVolume(Integer aHemorrhageVolume) {theHemorrhageVolume = aHemorrhageVolume;}
 	
 	/** Продолжительность 1 периода (час) */
 	@Comment("Продолжительность 1 периода (час)")
 	@Persist
-	@Required
 	public String getPeriod1Duration() {return thePeriod1Duration;}
 	public void setPeriod1Duration(String aPeriod1Duration) {thePeriod1Duration = aPeriod1Duration;}
 	
 	/** Продолжительность 2 периода (час) */
 	@Comment("Продолжительность 2 периода (час)")
 	@Persist
-	@Required
 	public String getPeriod2Duration() {return thePeriod2Duration;}
 	public void setPeriod2Duration(String aPeriod2Duration) {thePeriod2Duration = aPeriod2Duration;}
 	
 	/** Продолжительность 3 периода (час) */
 	@Comment("Продолжительность 3 периода (час)")
 	@Persist
-	@Required
 	public String getPeriod3Duration() {return thePeriod3Duration;}
 	public void setPeriod3Duration(String aPeriod3Duration) {thePeriod3Duration = aPeriod3Duration;}
 	
@@ -531,7 +520,6 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Послед выделился через (мин) */
 	@Comment("Послед выделился через (мин)")
 	@Persist
-	@Required
 	public Long getPlacentaMinute() {return thePlacentaMinute;}
 	public void setPlacentaMinute(Long aPlacentaMinute) {thePlacentaMinute = aPlacentaMinute;}
 
@@ -588,7 +576,6 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Дата полного открытия */
 	@Comment("Дата полного открытия")
 	@Persist @DateString @DoDateString 
-	@Required
 	public String getFullOpenDate() {return theFullOpenDate;}
 	public void setFullOpenDate(String aFullOpenDate) {theFullOpenDate = aFullOpenDate;}
 
@@ -597,7 +584,6 @@ public class ChildBirthForm extends IdEntityForm {
 	/** Время полного открытия */
 	@Comment("Время полного открытия")
 	@Persist @TimeString @DoTimeString 
-	@Required
 	public String getFullOpenTime() {return theFullOpenTime;}
 	public void setFullOpenTime(String aFullOpenTime) {theFullOpenTime = aFullOpenTime;}
 
