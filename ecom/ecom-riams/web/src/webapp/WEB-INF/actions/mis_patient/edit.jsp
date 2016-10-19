@@ -930,21 +930,24 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		 
 		if ($('passportType').value=='${passportRF}') {
 
+			 if(passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits))
+				 {
+				  ret=true;
+				 }else{
+			 
  	 				if(passportSeries.length == 4 && passportSeries.match(Digits1))
  	 				{
  	 					var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
  	 					$('passportSeries').value = text
+ 	 					ret=true;
  	 				}else 
  	 				{
  	 					alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
  	 					ret=false;
  	 				}
- 	 		
+				 }
  	         
- 			 if(passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits))
- 				 {
- 				  ret=true;
- 				 }
+ 			
  			 
  			if(passportNumber.length == 6 && passportNumber.match(/[0-9]/g))
 				{
