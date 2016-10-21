@@ -37,6 +37,12 @@ public class AttachmentByLpuBypassAction extends BaseAction {
     	//	System.out.println(erros) ;
     		String dateFrom =form.getPeriod();
     		String dateTo = form.getPeriodTo();
+    		//<AOI 21.10.2016
+    		if((dateTo==null)||(dateTo.equals(""))) {
+    			SimpleDateFormat sdf=new SimpleDateFormat("dd.MM.yyyy");
+    			dateTo=sdf.format(new Date());
+    		}
+    		//</AOI 21.10.2016
     		
     		//IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
     		String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
@@ -62,7 +68,7 @@ public class AttachmentByLpuBypassAction extends BaseAction {
 		    		age = ">=18" ;
 		    	}
 	    		if (typeAge.equals("1")||typeAge.equals("2")) {
-	    			sqlAdd.append(" and cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age) ;
+	    			sqlAdd.append(" and cast(to_char(to_date('").append(dateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(dateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(dateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age) ;
 	    		}
 	    	}
 	        if (typeSex!=null&&(typeSex.equals("1")||typeSex.equals("2"))) {
