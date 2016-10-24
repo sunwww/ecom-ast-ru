@@ -317,11 +317,11 @@ abstract public class WorkFunction extends BaseEntity {
 	/** Ротация */
 	private Boolean theIsRotation;
 	
-	/** Не синхронизировать с П-7 */
-	@Comment("Не синхронизировать с Парус-7")
-	public Boolean getNoP7Sync() {return theNoP7Sync;}
-	public void setNoP7Sync(Boolean aNoP7Sync) {theNoP7Sync = aNoP7Sync;}
-
-	/** Не синхронизировать с П-7 */
-	private Boolean theNoP7Sync;
+	/** Не синхронизировать с ПАРУСом */
+	@Comment("Не синхронизировать с ПАРУСом")
+	public Boolean getIsNoP7Sync() {return theIsNoP7Sync;}
+	public void setIsNoP7Sync(Boolean aIsNoP7Sync) {theIsNoP7Sync = aIsNoP7Sync;}
+	/** Не синхронизировать с ПАРУСом */
+	private Boolean theIsNoP7Sync;
+	
 }
