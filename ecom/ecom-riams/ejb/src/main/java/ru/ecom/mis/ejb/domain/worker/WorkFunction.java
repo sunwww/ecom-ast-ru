@@ -309,11 +309,19 @@ abstract public class WorkFunction extends BaseEntity {
 	/** Запрет на направление к себе */
 	private Boolean theIsNoDirectSelf;
 	
-	/** Ратация */
-	@Comment("Ратация")
+	/** Ротация */
+	@Comment("Ротация")
 	public Boolean getIsRotation() {return theIsRotation;}
 	public void setIsRotation(Boolean aIsRotation) {theIsRotation = aIsRotation;}
 
-	/** Ратация */
+	/** Ротация */
 	private Boolean theIsRotation;
+	
+	/** Не синхронизировать с П-7 */
+	@Comment("Не синхронизировать с Парус-7")
+	public Boolean getNoP7Sync() {return theNoP7Sync;}
+	public void setNoP7Sync(Boolean aNoP7Sync) {theNoP7Sync = aNoP7Sync;}
+
+	/** Не синхронизировать с П-7 */
+	private Boolean theNoP7Sync;
 }
