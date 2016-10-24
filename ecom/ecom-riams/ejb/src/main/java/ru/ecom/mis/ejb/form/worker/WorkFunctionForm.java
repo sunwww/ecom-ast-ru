@@ -262,5 +262,13 @@ public class WorkFunctionForm extends IdEntityForm{
 
 	/** Ратация */
 	private Boolean theIsRotation;
+	
+	/** Не синхронизировать с П-7 */
+	@Comment("Не синхронизировать с Парус-7")
+	public Boolean getNoP7Sync() {return theNoP7Sync;}
+	public void setNoP7Sync(Boolean aNoP7Sync) {theNoP7Sync = aNoP7Sync;}
+
+	/** Не синхронизировать с П-7 */
+	private Boolean theNoP7Sync;
 }
 
