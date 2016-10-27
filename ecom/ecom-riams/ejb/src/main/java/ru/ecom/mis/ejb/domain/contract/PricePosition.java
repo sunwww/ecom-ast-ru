@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -17,6 +18,7 @@ import ru.ecom.mis.ejb.domain.contract.PriceList;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
 import ru.ecom.mis.ejb.domain.contract.voc.VocPositionType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.forms.validator.validators.MaxLength;
 
 	/**
 	 * Позиция прейскуранта  
@@ -202,4 +204,14 @@ public class PricePosition extends BaseEntity{
 	 * НДС
 	 */
 	private BigDecimal theCostVat;
+	
+	/** Примечание для печати */
+	@Comment("Примечание для печати")
+	@Column(length= 1000)
+	public String getPrintComment() {return thePrintComment;}
+	public void setPrintComment(String aPrintComment) {thePrintComment = aPrintComment;}
+
+	/** Примечание для печати */
+	private String thePrintComment;
+
 	}

@@ -187,4 +187,13 @@ public class PricePositionForm extends IdEntityForm{
 	 * Цена
 	 */
 	private String theCostVat;
+	
+	/** Примечание для печати */
+	@Comment("Примечание для печати")
+	@Persist
+	public String getPrintComment() {return thePrintComment;}
+	public void setPrintComment(String aPrintComment) {thePrintComment = aPrintComment;}
+
+	/** Примечание для печати */
+	private String thePrintComment;
 }
