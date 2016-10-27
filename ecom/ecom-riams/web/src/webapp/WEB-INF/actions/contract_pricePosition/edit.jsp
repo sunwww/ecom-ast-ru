@@ -42,6 +42,9 @@
 				<msh:row>
 					<msh:textArea rows="3" fieldColSpan="3" property="comment" label="Подготовка к исследованию" horizontalFill="true"/>
 				</msh:row>
+				<msh:row>
+					<msh:textArea rows="3" fieldColSpan="3" property="printComment" label="Комментарий для печати" horizontalFill="true"/>
+				</msh:row>
 								        <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
