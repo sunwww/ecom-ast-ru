@@ -107,7 +107,7 @@ function getGroup(aCtx,aPriceList,aParent) {
 }
 function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var pid = aParams.get("id");
-	var sqlQuery ="select cams.id, pp.code,pp.name,cams.cost,cams.countMedService" 
+	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
 		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService"
 		+"  ,round((cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as costDisc" 
 		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as sumNoAccraulMedServiceDisc"
@@ -119,7 +119,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
 		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null"
-		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,ca.discountDefault";
+		+"		group by  cams.id, pp.code, pp.name, pp.printComment , cams.countMedService,cams.cost,ca.discountDefault";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	var discount = 0, allcost1=0, allcost=0 ;
@@ -207,7 +207,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 }
 function printContractByAccrual(aCtx, aParams) {
 	var pid = aParams.get("id");
-	var sqlQuery ="select cams.id, pp.code,pp.name,cams.cost,cams.countMedService" 
+	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
 		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService"
 		+"  ,round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc" 
 		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc"
@@ -220,7 +220,7 @@ function printContractByAccrual(aCtx, aParams) {
 		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
 		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
 		+"		where cao.id='"+pid+"'"
-		+"		group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,cao.discount";
+		+"		group by  cams.id, pp.code, pp.name,pp.printComment , cams.countMedService,cams.cost,cao.discount";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	
