@@ -23,6 +23,9 @@
         	<msh:checkBox property="isIgnore" label="Не учитывать при суммирование" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
+        	<msh:checkBox property="isNeedComment" label="При выборе заполнять примечание" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField label="Наименование" property="name" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>

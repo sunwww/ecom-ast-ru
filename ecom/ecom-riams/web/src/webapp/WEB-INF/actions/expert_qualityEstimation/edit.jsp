@@ -56,6 +56,7 @@
     </msh:sideMenu>
     
     <tags:expert_menu currentAction="expert_card"/>
+    <tags:expert_enterCritComment name="Enter"/>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <div id='loadJavascriptCriterion'></div>
@@ -116,7 +117,7 @@
 							eval("criterion"+ii+"Autocomplete.setVocTitle('Оценка зав.отд.')") ;
 							eval("criterion"+ii+"Autocomplete.build() ");
 							eval("criterion"+ii+"Autocomplete.setParentId('"+$('criterion'+ii+'P').value+"')") ;
-							eval("criterion"+ii+"Autocomplete.addOnChangeCallback(function() {updateCriterions()  })") ;
+							eval("criterion"+ii+"Autocomplete.addOnChangeCallback(function() { checkCommentNeeded('criterion"+ii+"'); })") ;
 	  					}
 					}
 					if (firstFld!="") {
@@ -127,11 +128,27 @@
 					}
 					
 	  			}
+	  			function checkCommentNeeded(aCriterion) {
+	  				var aMarkId = $(aCriterion).value;
+	  				if (+aMarkId>0){
+	  					QualityEstimationService.checkIsCommentNeed(aMarkId,{
+	  						callback: function (a){
+	  							if (+a==1){
+	  								 showEnterCritComment(aCriterion); 
+	  								//
+	  							} else {
+	  								updateCriterions() ;
+	  							}
+	  						}
+	  					});
+	  				}
+	  				
+	  			}
 	  			function updateCriterions() {
 	  				var rez ="" ;
 	  				
 	  				for (var i=0;i<cntCrit; i++) {
-	  					if ($("criterion"+(i+1)) && $("criterion"+(i+1)).value!="") rez=rez+"#"+$("criterion"+(i+1)+"P").value+":"+$("criterion"+(i+1)).value ;
+	  					if ($("criterion"+(i+1)) && $("criterion"+(i+1)).value!="") rez=rez+"#"+$("criterion"+(i+1)+"P").value+":"+$("criterion"+(i+1)).value +":"+($("criterion"+(i+1)+"Comment").value);
 	  				}
 	  				$('criterions').value=rez.length>0?rez.substring(1) :"";
 	  			}

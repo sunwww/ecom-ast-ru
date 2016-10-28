@@ -170,7 +170,7 @@
         		StringBuilder sql = new StringBuilder() ;
         		for (int i=0;i<critList.size();i++) {
         			WebQueryResult wqr = (WebQueryResult)critList.get(i) ;
-        			sql.append(",max(case when vqec.id = '").append(wqr.get1()).append("' then (vqem.mark) else 0 end) as f").append(i+5).append("_def1") ;
+        			sql.append(",max(case when vqec.id = '").append(wqr.get1()).append("' then (vqem.mark||' '||coalesce(qecr.comment,'')) else ''||0 end) as f").append(i+5).append("_def1") ;
         		}
         		request.setAttribute("critSql", sql.toString()) ;
     	%>

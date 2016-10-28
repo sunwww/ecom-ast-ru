@@ -1,17 +1,29 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import java.util.Collection;
 import java.util.List;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.expert.IQualityEstimationService;
 import ru.ecom.mis.ejb.service.expert.QualityEstimationRow;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class QualityEstimationServiceJs {
+	public Long checkIsCommentNeed(Long aMarkId, HttpServletRequest aRequest ) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;	
+		String sql = "select case when vqem.isNeedComment='1' then 1 else 0 end from vocQualityEstimationMark vqem where id="+aMarkId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		if (list.size()>0){
+			return Long.valueOf(list.iterator().next().get1().toString());
+		} else return 0L;
+	}
+	
 	public Boolean ableCreate(String aTypeSpecialist, HttpServletRequest aRequest) throws JspException {
 		return RolesHelper.checkRoles(" /Policy/Mis/MedCase/QualityEstimationCard/QualityEstimation/Create,/Policy/Mis/MedCase/QualityEstimationCard/QualityEstimation/"+aTypeSpecialist, aRequest) ;
 	}
@@ -73,6 +85,15 @@ public class QualityEstimationServiceJs {
 	public String getInfoBySlo(Long aSmo, Long aSlo, HttpServletRequest aRequest) throws Exception {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
+		if (aSlo==null||aSlo.equals(Long.valueOf(0))||aSlo.equals(aSmo)){
+			sql.append("select id, id from medcase slo where parent_id="+aSmo+" and dtype='DepartmentMedCase'  order by datestart desc");
+			List<Object[]> slos = service.executeNativeSqlGetObj(sql.toString()) ;
+			if (slos.size()>0){
+				aSlo = Long.valueOf(slos.get(0)[0].toString());
+			}
+			sql.setLength(0);
+		}
+		
 		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("' group by smo.dtype") ;
 		List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
 		if (list.size()>0) {
