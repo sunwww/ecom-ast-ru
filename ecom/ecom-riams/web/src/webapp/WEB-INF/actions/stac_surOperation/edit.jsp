@@ -91,18 +91,20 @@
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         	<msh:hidden property="surgeonFunctions"/>
         	<msh:hidden property="complications"/>
-        	<msh:hidden property="profile"/>
+        	
         	<msh:hidden property="operatingNurse"/>
-        	<msh:hidden property="method"/>
+        	
         	<msh:hidden property="operationText"/>
         	<msh:hidden property="aspect"/>
         	<msh:hidden property="technology"/>
         </msh:ifInRole>
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
+        
+        
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
           <msh:autoComplete property="method" label="Метод" guid="e22-9d6a1-302f14f" horizontalFill="true" vocName="vocOperationMethod" />
         </msh:row>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="ca8a7727-42ac-4c64-8e52-23d4f84dfe43">
           <msh:textArea rows="6" hideLabel="false" property="operationText" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол операции" />
         </msh:row>
@@ -312,6 +314,18 @@
 	        	}
 	        	);
     	}
+    	
+    	function setEndoscopyUse(){
+    		HospitalMedCaseService.checkIsEndoscopyMethod($('method').value,{
+    			callback: function (a){
+    				if (+a==1){
+    					$('endoscopyUse').checked=true;
+    				} else {
+    					$('endoscopyUse').checked=false;
+    				}
+    			}
+    		});
+    	}
     		
     	//]]>
     	</script>
@@ -384,7 +398,11 @@
   	 departmentAutocomplete.addOnChangeCallback(function() {
   		changeParentMedService() ;
   		});
-  	changeParentMedService() ;
+  	 
+  	methodAutocomplete.addOnChangeCallback(function() {
+  		setEndoscopyUse() ;
+  		});
+  	 changeParentMedService() ;
   	</script>
     </msh:ifFormTypeIsNotView>
     <msh:ifFormTypeIsCreate formName="stac_surOperationForm">
@@ -416,12 +434,12 @@
     </script>
             <style type="text/css">
             #anesthesiaLabel,#anaesthetistLabel, #isAnesthesiaLabel
-            , #anesthesiaTypeLabel,#anaesthetistLabel, #isAnesthesiaTypeLabel,#anesthesiaDurationLabel
+            , #anesthesiaTypeLabel,#anaesthetistLabel, #isAnesthesiaTypeLabel,#anesthesiaDurationLabel,#methodName,#profileName
              {
                 color: blue ;
             }
             #isAnesthesiaName,#anaesthetistName, #anesthesiaName,#anesthesiaDuration
-            , #anesthesiaTypeName {
+            , #anesthesiaTypeName,#methodName,#profileName {
                 background-color:#FFFFA0;
             }
         </style>
