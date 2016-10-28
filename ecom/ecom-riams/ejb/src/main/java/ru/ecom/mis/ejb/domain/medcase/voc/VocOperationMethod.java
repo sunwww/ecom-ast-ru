@@ -11,4 +11,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Метод операции: эндоскопический, открытый")
 public class VocOperationMethod extends VocBaseEntity {
 
+	/** С использованием эндоскопии */
+	@Comment("С использованием эндоскопии")
+	public Boolean getEndoscopyUse() {return theEndoscopyUse;}
+	public void setEndoscopyUse(Boolean aEndoscopyUse) {theEndoscopyUse = aEndoscopyUse;}
+	/** С использованием эндоскопии */
+	private Boolean theEndoscopyUse;
 }

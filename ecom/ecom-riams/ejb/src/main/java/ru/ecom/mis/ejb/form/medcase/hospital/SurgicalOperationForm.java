@@ -258,7 +258,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Профиль */
 	@Comment("Профиль")
-	@Persist @Required
+	@Persist
 	public Long getProfile() {return theProfile;}
 	public void setProfile(Long aProfile) {theProfile = aProfile;}
 
@@ -283,7 +283,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	
 	/** Метод операции */
 	@Comment("Метод операции")
-	@Persist @Required	
+	@Persist
 	public Long getMethod() {return theMethod;}
 	public void setMethod(Long aMethod) {theMethod = aMethod;}
 
