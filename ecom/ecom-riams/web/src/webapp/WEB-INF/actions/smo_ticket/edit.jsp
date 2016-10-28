@@ -682,6 +682,7 @@
                      		        	//alert(aString) ;
                      		            if (aString!=null) {
                      		            	alert("Человек находился в больнице "+aString+" по ОМС его оформить за этот период нельзя!!!") ;
+                     		            	document.forms[0].submitButton.disabled = false ;
                      		            } else {
                                     	   	TicketService.saveSession($('dateStart').value,$('workFunctionExecute').value
                                     	   			,$('workFunctionExecuteName').value,$('medServices').value,$('emergency').checked, {
