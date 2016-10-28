@@ -295,7 +295,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	aEntity.setPatient(patient.getId()) ;
     	aEntity.setMedPolicy(aMedPolicy) ;
     	
-    	theManager.persist(aEntity);
+    	theManager.merge(aEntity);
     	
     	//theManager.persist(aEntity);
     	String patientSync = new StringBuilder().append("Ф").append(patient.getId()).toString() ;
