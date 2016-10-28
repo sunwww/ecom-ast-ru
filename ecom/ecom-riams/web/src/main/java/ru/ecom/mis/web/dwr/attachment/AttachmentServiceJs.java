@@ -51,7 +51,7 @@ public class AttachmentServiceJs {
 					" from patient p " +
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
 					" 	and ((laap.housenumber is null or laap.housenumber='') or laap.housenumber=p.housenumber)" +
-					"	and ((laap.housebuilding is null or laap.housebuilding='') or laap.housebuilding=p.housebuilding)" +
+					"   and (((laap.housebuilding is null or laap.housebuilding='')and (p.housebuilding is null or p.housebuilding='')) or laap.housebuilding=p.housebuilding)" +
 					" left join lpuareaaddresstext lat on lat.id=laap.lpuareaaddresstext_id" +
 					" left join lpuarea la on la.id=lat.area_id " +
 					" left join vocareatype vat on vat.id=la.type_id" +
