@@ -57,6 +57,7 @@ public class PrintAction extends BaseAction {
 		Collection<WebQueryResult> list = service1.executeNativeSql(sql.toString(),1);
 		String print = "no" ;
 		boolean isTxtFile = false ;
+		
 		WebQueryResult printMain = null ;
         if (list.size()>0) {
         	printMain = list.iterator().next() ;
@@ -80,6 +81,22 @@ public class PrintAction extends BaseAction {
         	if (printMain.get1()!=null) print = ""+printMain.get1() ;
         	if (printMain.get3()!=null) isTxtFile = true ;
 		}
+		String printTxtFirst = aRequest.getParameter("printTxtFirst") ;
+		if (printTxtFirst!=null&&printTxtFirst.equals("1")){
+		//	System.out.println("all feel good");
+			isTxtFile = true ;
+		} else if (printTxtFirst!=null&&printTxtFirst.equals("0")) {
+		//	System.out.println("all feel good no matrix");
+			isTxtFile = false ;
+		}
+		// start
+		//if (aRequest.getParameter("printTxt")!=null&&aRequest.getParameter("printTxt").equals("1")) {
+			//throw "txt good"
+		//	isTxtFile=true;
+		//} else {
+		//	isTxtFile=false;
+		//}
+		// end
 		//System.out.println("print="+printMain.get2()) ;
         while (en.hasMoreElements()) {
         	String key = (String) en.nextElement();
@@ -93,6 +110,7 @@ public class PrintAction extends BaseAction {
 //            System.out.println("aRequest.getParameter(key) = " + aRequest.getParameter(key));
         }
         //Map<String,Object> values =  ;
+        System.out.println("txtFirst = "+isTxtFile );
         String filename = service.print(new StringBuilder().append(print).append("-").append(login).toString()
         		,isTxtFile,reportKey,
         		serviceScr,servJs, methodJs, map) ;

@@ -116,36 +116,36 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
 <msh:sideMenu title="Печать">
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard3" 
-    	name="Печать стат. карты в формате А3" params="id"  
-    	action='/print-statcard.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать истории болезни'
+    	name="Печать стат. карты в формате А3"  
+    	action='/javascript:initSelectPrinter("print-statcard.do?m=printStatCardInfo&s=HospitalPrintService&id=${param.id}")' title='Печать истории болезни'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard" 
-    	name="Печать стат. карты в формате А4" params="id"  
-    	action='/print-statcard_four.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать истории болезни формат А4'
+    	name="Печать стат. карты в формате А4" 
+    	action='/javascript:initSelectPrinter("print-statcard_four.do?m=printStatCardInfo&s=HospitalPrintService&id=${param.id}")' title='Печать истории болезни формат А4'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/AddressSheetByHospital" 
-    	name="Печать адресных листков (прибытия и убытия)"  params="id"  
-    	action='/print-listAddressHospital.do?m=printAddressSheetByHospital&s=HospitalPrintService' title='Печать адресных листков'
+    	name="Печать адресных листков (прибытия и убытия)"    
+    	action='/javascript:initSelectPrinter("print-listAddressHospital.do?m=printAddressSheetByHospital&s=HospitalPrintService&id=${param.id}")' title='Печать адресных листков'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066" 
-    	name="Печать стат.карты выбывшего из стационара" params="id"  
-    	action='/print-066.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
+    	name="Печать стат.карты выбывшего из стационара"  
+    	action='/javascript:initSelectPrinter("print-066.do?m=printStatCardInfo&s=HospitalPrintService&id=${param.id}")' title='Печать стат.карты выбывшего из стационара'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard066All" 
-    	name="Печать стат.карты выбывшего из стационара" params="id"  
-    	action='/print-066_all.do?m=printStatCardInfo&s=HospitalPrintService&check=1' title='Печать стат.карты выбывшего из стационара'
+    	name="Печать стат.карты выбывшего из стационара"   
+    	action='/javascript:initSelectPrinter("print-066_all.do?m=printStatCardInfo&s=HospitalPrintService&check=1&id=${param.id}")' title='Печать стат.карты выбывшего из стационара'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintStatCard033" 
-    	name="Печать истории болезни и стат.карты выбывшего из стационара" params="id"  
-    	action='/print-003.do?m=printStatCardInfo&s=HospitalPrintService' title='Печать стат.карты выбывшего из стационара'
+    	name="Печать истории болезни и стат.карты выбывшего из стационара" 
+    	action='/javascript:initSelectPrinter("print-003.do?m=printStatCardInfo&s=HospitalPrintService&id=${param.id}")' title='Печать стат.карты выбывшего из стационара'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
-    	name="Печать выписки" params="id"  
-    	action='/print-discharge_hospital.do?m=printBilling&s=HospitalPrintService' title='Печать выписки'
+    	name="Печать выписки"   
+    	action='/javascript:initSelectPrinter("print-discharge_hospital.do?m=printBilling&s=HospitalPrintService&id=${param.id}")' title='Печать выписки'
     	/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/PrintDischarge" 
-    	name="Печать экс. карты" params="id"  
-    	action='/print-expert_card_empty.do?m=printBilling&s=HospitalPrintService' title='Печать экс. карты'
+    	name="Печать экс. карты"  
+    	action='/javascript:initSelectPrinter("print-expert_card_empty.do?m=printBilling&s=HospitalPrintService&id=${param.id}")' title='Печать экс. карты'
     	/>
      <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.id}"
      	action="/print-preghistory.do?s=HospitalPrintService&amp;m=printPregHistoryByMC" 
@@ -185,6 +185,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	<tags:stac_deniedHospitalizating name="DH" title="Оформить отказ больного" roles="/Policy/Mis/MedCase/Stac/Ssl/DeniedHospitalizatingSls" />
     	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
 		<tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
+		<tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
 </msh:sideMenu>
 <msh:sideMenu title="Перейти">
 	    <msh:sideLink 
