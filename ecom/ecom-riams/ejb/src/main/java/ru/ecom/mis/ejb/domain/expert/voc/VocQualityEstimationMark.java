@@ -66,4 +66,11 @@ private String theFullname;
   * Критерий оценки качества
   */
  private VocQualityEstimationCrit theCriterion;
+ 
+ /** Обязательно указывать примечание */
+@Comment("Обязательно указывать примечание")
+public Boolean getIsNeedComment() {return theIsNeedComment;}
+public void setIsNeedComment(Boolean aIsNeedComment) {theIsNeedComment = aIsNeedComment;}
+/** Обязательно указывать примечание */
+private Boolean theIsNeedComment;
 }

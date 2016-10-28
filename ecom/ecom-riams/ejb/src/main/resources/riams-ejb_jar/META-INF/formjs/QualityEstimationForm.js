@@ -20,6 +20,8 @@ function onCreate(aForm, aEntity, aContext){
 			qec.setMark(mark) ;
 			qec.setCriterion(mark.criterion) ;
 			qec.setEstimation(aEntity) ;
+			if (param.length>2&&(""+param[2]!="")) { qec.setComment(param[2]);}
+			
 			aContext.manager.persist(qec) ;
 			critsMap.put(+mark.criterion.id,(mark.isIgnore!=null&&mark.isIgnore.equals(java.lang.Boolean.TRUE))?null:mark.mark) ;
 			//aContext.manager.createNativeQuery("insert into QualityEstimationCrit (estimation_id,mark_id) values ('"+id+"','"+param[1]+"')").executeUpdate() ;

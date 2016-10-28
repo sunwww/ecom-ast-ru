@@ -74,4 +74,12 @@ public class VocQualityEstimationMarkForm extends IdEntityForm{
 		private String theName;
 		 /** Критерий оценки качества */
 		 private Long theCriterion;
+		 
+		 /** Обязательно указывать примечание */
+		 @Comment("Обязательно указывать примечание")
+		 @Persist
+		 public Boolean getIsNeedComment() {return theIsNeedComment;}
+		 public void setIsNeedComment(Boolean aIsNeedComment) {theIsNeedComment = aIsNeedComment;}
+		 /** Обязательно указывать примечание */
+		 private Boolean theIsNeedComment;
 }

@@ -323,7 +323,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 for (int i=0;i<list.size();i++) {
 				 Object[] row = list.get(i) ;
 				 table.append("<tr>") ;
-				 table.append("<td align='left'>").append(row[1]).append("-").append(row[2]).append("</td>") ;
+				 table.append("<td align='left'>").append(row[1]).append("-").append(row[2]).append("<input type='hidden' id='criterion"+cntPart+"Comment'></td>") ;			//HEREEREERER
 				 table.append("<td valign='top' align='right'>").append(cntPart++).append(".</td>") ;
 
 					 

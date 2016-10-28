@@ -61,4 +61,11 @@ public class QualityEstimationCrit extends BaseEntity{
 	
 	/** Оценка */
 	private BigDecimal theMarkTransient;
+	
+	/** Замечание */
+	@Comment("Замечание")
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+	/** Замечание */
+	private String theComment;
 }
