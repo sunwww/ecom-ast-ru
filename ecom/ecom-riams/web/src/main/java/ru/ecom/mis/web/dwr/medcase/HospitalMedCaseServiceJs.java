@@ -31,6 +31,13 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+	public Long checkIsEndoscopyMethod (Long aMethodId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select case when endoscopyUse='1' then '1' else '0' end from VocOperationMethod where id="+aMethodId) ;
+		if (l.size()>0){
+			return Long.valueOf(l.iterator().next().get1().toString());
+		} else return Long.valueOf(0);
+	} 
 	public String getCriminalPhoneMessageByTrauma(Long aMedCase, Long aDeathReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select id from VocDeathReason where id="+aDeathReason+" and code='9'") ;
