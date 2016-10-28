@@ -37,7 +37,7 @@ public class ExtDispServiceJs {
 		 		" where edc.patient_id=" +aPatientId +
 		 		" and edc.disptype_id="+aDisptypeId +
 		 		" and edc.agegroup_id="+aAgeGroup +
-		 		" and edc.notpaid is null or edc.notpaid='0'"+
+		 		" and (edc.notpaid is null or edc.notpaid='0')"+
 		 		(aDispCardId!=null&&aDispCardId!=0?(" and edc.id!="+aDispCardId):"")+
 		 		" and vedc.disableAgeDoubles='1' ").iterator().next().get1().toString());
 		 
