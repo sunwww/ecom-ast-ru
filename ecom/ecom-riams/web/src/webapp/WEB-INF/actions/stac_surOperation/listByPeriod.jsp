@@ -228,15 +228,18 @@
     } else if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("2")) {
     	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
     }
-    
-    /* String typeAnaesthesUseSql=""; 
-    if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("1")) {
-    	typeAnaesthesUseSql=" and so.AnaesthesUse='1'" ;
-    } else if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("2")) {
-    	typeAnaesthesUseSql= "and (so.AnaesthesUse='0' or so.AnaesthesUse is null)" ;
-    } */
-
     request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
+    
+    /* <AOI 28.10.2016 для  Захарова по анестезиологическим пособиям */
+    String typeAnaesthesUseSql=""; 
+    if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("1")) {
+    	typeAnaesthesUseSql=" and an.id is not null " ;
+    } else if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("2")) {
+    	typeAnaesthesUseSql= " and an.id is null " ;
+    }
+    request.setAttribute("typeAnaesthesUseSql", typeAnaesthesUseSql) ;
+    /* < AOI 28.10.2016 */ 
+
 	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
 	if (typeEmergency.equals("1")) {
 		if (typeDate!=null && typeDate.equals("2")) {
@@ -332,9 +335,10 @@
      left join MedCase slo on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
      left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
      left join MedCase slsHosp on slsHosp.id=so.medCase_id and slsHosp.dtype='HospitalMedCase'
+     left join anesthesia an on an.surgicaloperation_id=so.id
      where 
     ${typeDateSql}  between to_date('${dateBegin}','dd.mm.yyyy') 
-    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql}
+    and to_date('${dateEnd}','dd.mm.yyyy') ${department} ${spec} ${typeEndoscopyUseSql} ${typeEmergencySql} ${serviceStreamSql} ${typeAnaesthesUseSql} 
     
     group by ${typeDateSql} 
     order by ${typeDateSql}" />
