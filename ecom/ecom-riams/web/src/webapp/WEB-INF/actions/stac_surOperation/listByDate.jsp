@@ -30,14 +30,40 @@
 	  	request.setAttribute("department", " and so.department_id='"+ids[5]+"'") ;
   	}
   	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
+  	
   	String typeEmergency=ActionUtil.updateParameter("SurgicalOperation","typeEmergency","3", request) ;
-  	String typeDateSql = "so.operationDate" ;
+  	
+    String typeEndoscopyUse = ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
+    String typeAnaesthesUse = ActionUtil.updateParameter("SurgicalOperation","typeAnaesthesUse","3", request) ;
+  	
+    String typeDateSql = "so.operationDate" ;
 	if (typeDate!=null && typeDate.equals("2")) {
 		typeDateSql = "sls.dateFinish" ;
 	} else if (typeDate!=null && typeDate.equals("3")) {
 		typeDateSql = "slsHosp.dateFinish" ;
 	} 
 	request.setAttribute("typeDateSql", typeDateSql);
+	
+	/* <AOI 31.10.2016 Почему-то этого не было*/
+    String typeEndoscopyUseSql=""; 
+    if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("1")) {
+    	typeEndoscopyUseSql=" and so.endoscopyUse='1'" ;
+    } else if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("2")) {
+    	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
+    }
+    request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
+    /* </ AOI 31.10.2016 */ 
+    
+    /* <AOI 31.10.2016 для  Захарова по анестезиологическим пособиям */
+    String typeAnaesthesUseSql=""; 
+    if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("1")) {
+    	typeAnaesthesUseSql=" and an.id is not null " ;
+    } else if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("2")) {
+    	typeAnaesthesUseSql= " and an.id is null " ;
+    }
+    request.setAttribute("typeAnaesthesUseSql", typeAnaesthesUseSql) ;
+    /* </ AOI 31.10.2016 */ 
+
 	if (typeEmergency.equals("1")) {
 		if (typeDate!=null && typeDate.equals("2")) {
 			request.setAttribute("typeEmergencySql", " and sls.emergency='1'") ;
@@ -55,8 +81,8 @@
     	} else {
     		request.setAttribute("typeEmergencySql", " and (slo.datestart is not null and (sls.emergency='0' or sls.emergency is null) or slo.datestart is null and (slsHosp.emergency='0' or slsHosp.emergency is null))") ;
     	}
-		
 	}
+	
 	ActionUtil.setParameterFilterSql("serviceStream", "so.serviceStream_id", request) ;
     
   %>
@@ -81,6 +107,7 @@
 	     ,svwf.name||' '||swp.lastname||' '||swp.firstname||' '||swp.middlename as surinfo
 	     from SurgicalOperation so
 
+	    left join anesthesia an on an.surgicaloperation_id=so.id
 	    left join WorkFunction swf on swf.id=so.surgeon_id
 	    left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
 	    left join Worker sw on sw.id=swf.worker_id
@@ -98,7 +125,7 @@
 	        between to_date('${beginDate}','dd.mm.yyyy')
 	          and to_date('${endDate}','dd.mm.yyyy') 
 	          ${department} ${spec} ${medService}
-	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql}
+	           ${addParamSql} ${serviceStreamSql} ${typeEmergencySql} ${typeEndoscopyUseSql} ${typeAnaesthesUseSql}
 	          order by p.lastname,p.firstname,p.middlename
 	        " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 	        
