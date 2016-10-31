@@ -19,6 +19,7 @@
   <% 
   
   String typeEndoscopyUse = ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
+  String typeAnaesthesUse = ActionUtil.updateParameter("SurgicalOperation","typeAnaesthesUse","3", request) ;
   String typeEmergency = ActionUtil.updateParameter("SurgicalOperation","typeEmergency","3", request) ;
   if (request.getParameter("short")==null) {
 	  //ActionUtil.updateParameter("SurgicalOperation","typeEndoscopyUse","3", request) ;
@@ -111,7 +112,21 @@
         <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
         	<input type="radio" name="typeEndoscopyUse" value="3">  все
         </td>
-      </msh:row>      	
+      </msh:row>
+<!-- <AOI 28.10.2016 для  Захарова по анестезиологическим пособиям -->
+      <msh:row>
+        <td class="label" title="Поиск по анестезии (typeAnaesthesUse)" colspan="1"><label for="typeAnaesthesUseName" id="typeAnaesthesUseLabel">Операции с испол.:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeAnaesthesUse" value="1"> анестезии
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeAnaesthesUse" value="2" > без анестезии
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';"  colspan="2">
+        	<input type="radio" name="typeAnaesthesUse" value="3"> все
+        </td>
+      </msh:row>
+<!-- </AOI 28.10.2016 -->
       </msh:row>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
@@ -142,6 +157,7 @@
     checkFieldUpdate('typeHour','${typeHour}',3) ;--%>
     checkFieldUpdate('typeEmergency','${typeEmergency}',3) ;
     checkFieldUpdate('typeEndoscopyUse','${typeEndoscopyUse}',3) ;
+    checkFieldUpdate('typeAnaesthesUse','${typeAnaesthesUse}',3) ;
     checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeOrder','${typeOrder}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
@@ -205,12 +221,21 @@
     ActionUtil.setParameterFilterSql("serviceStream", "so.serviceStream_id", request) ;
     String view = (String)request.getAttribute("typeView") ;
     String typeOrder = (String)request.getAttribute("typeOrder") ;
+    
     String typeEndoscopyUseSql=""; 
     if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("1")) {
     	typeEndoscopyUseSql=" and so.endoscopyUse='1'" ;
     } else if (typeEndoscopyUse!=null && typeEndoscopyUse.equals("2")) {
     	typeEndoscopyUseSql= "and (so.endoscopyUse='0' or so.endoscopyUse is null)" ;
     }
+    
+    /* String typeAnaesthesUseSql=""; 
+    if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("1")) {
+    	typeAnaesthesUseSql=" and so.AnaesthesUse='1'" ;
+    } else if (typeAnaesthesUse!=null && typeAnaesthesUse.equals("2")) {
+    	typeAnaesthesUseSql= "and (so.AnaesthesUse='0' or so.AnaesthesUse is null)" ;
+    } */
+
     request.setAttribute("typeEndoscopyUseSql", typeEndoscopyUseSql) ;
 	String typeDate=ActionUtil.updateParameter("SurgicalOperation","typeDate","1", request) ;
 	if (typeEmergency.equals("1")) {
