@@ -1,7 +1,8 @@
 <%@ tag pageEncoding="utf8" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 
-<%@ attribute name="name" required="true" description="Название поля Address" %>
+
+<%@ attribute name="name" required="true" description="Название поля" %>
 <%@ attribute name="roles" required="true" description="Роль для выбора способа печати" %>
 
 
@@ -42,12 +43,12 @@
 </div>
 </div>
 
-<script src='./dwr/interface/AddressService.js' type="text/javascript"></script>
 <msh:ifInRole roles="${roles}">
    
 <script type="text/javascript">
-function init${name}Printer(aPath) {
+function init${name}Printer(aPath, needNext) {
 	the${name}Path = aPath;
+	the${name}NeedNext = needNext;
 	show${name}Printer();
 }
 </script>
@@ -58,7 +59,7 @@ function init${name}Printer(aPath) {
 	<script type="text/javascript">
 	function init${name}Printer(aPath) {
 		the${name}Path = aPath;
-		print${name}Print()
+		print${name}Print();
     }
 	</script>
 </msh:ifNotInRole>
@@ -69,8 +70,12 @@ function init${name}Printer(aPath) {
     var the${name}selectPrinter = new msh.widget.Dialog($('${name}selectPrinter')) ;
     
    var the${name}Path;
+   var the${name}NeedNext;
     function print${name}Txt(){
-    	the${name}Path+="&printTxtFirst=1&next="+document.location.href;
+    	the${name}Path+="&printTxtFirst=1";
+    	if (the${name}NeedNext&&+the${name}NeedNext>0){
+    		the${name}Path+="&next="+(document.location.href.replace("?","__"));
+    	}
     	print${name}Print();
     }
     function print${name}NoTxt(){

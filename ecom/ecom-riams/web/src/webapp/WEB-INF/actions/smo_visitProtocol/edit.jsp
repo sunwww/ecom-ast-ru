@@ -108,7 +108,7 @@
             </msh:panel>
     </msh:form>
     
-   
+   <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
 	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     	<tags:templateProtocol idSmo="smo_visitProtocolForm.medCase" version="Visit" name="tmp" property="record" voc="protocolVisitByPatient"/>
     </msh:ifFormTypeIsNotView>

@@ -140,7 +140,7 @@ order by d.dateRegistration,d.timeRegistration
     }
     %>
 
-
+<tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
     </tiles:put>
 
     <tiles:put name="javascript" type="string">
@@ -148,8 +148,12 @@ order by d.dateRegistration,d.timeRegistration
             function printProtocols(aFile) {
             	var ids = theTableArrow.getInsertedIdsAsParams("id","protocols") ;
             	if(ids) {
+            		
             		//alert(ids) ;
-            		window.location = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
+            		//window.location = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
+            		var p = 'print-'+aFile+'.do?multy=1&m=printProtocols&s=HospitalPrintService1&'+ids ;
+            		initSelectPrinter(p,0);
+            		
             		
             	} else {
             		alert("Нет выделенных протоколов");

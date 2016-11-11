@@ -8,11 +8,14 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUtils;
 
 import org.apache.ecs.xhtml.area;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import com.google.gwt.http.client.Request;
 
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.print.IPrintService;
@@ -110,18 +113,25 @@ public class PrintAction extends BaseAction {
 //            System.out.println("aRequest.getParameter(key) = " + aRequest.getParameter(key));
         }
         //Map<String,Object> values =  ;
-        System.out.println("txtFirst = "+isTxtFile );
+       // System.out.println("=====MAP "+map);
         String filename = service.print(new StringBuilder().append(print).append("-").append(login).toString()
         		,isTxtFile,reportKey,
         		serviceScr,servJs, methodJs, map) ;
         
         String next = aRequest.getParameter("next") ;
-        if (next!=null && !next.equals("") &&filename.toLowerCase().contains(".txt")) {
+        if ((next!=null && !next.equals("")||(printTxtFirst!=null&&(printTxtFirst.equals("1")||printTxtFirst.equals("0")))) && filename.toLowerCase().contains(".txt")) {
         	IKdlDiaryService serviceKdl = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
         	String path=serviceKdl.getDir("tomcat.data.rtf","/opt/tomcat/webapps/rtf") ;
+        	
         	if (print!=null && !print.equals("no")) {run("lp -d "+print+" "+path+"/"+filename) ;}
         	new InfoMessage(aRequest, "Документ отправлен в очередь на печать") ;
-        	return new ActionForward(next.replace("__", "?"),true);
+        	if ((printTxtFirst!=null&&(printTxtFirst.equals("1")||printTxtFirst.equals("0")))&&(next==null||next.equals(""))) {
+        		return new ActionForward(null, true);
+        	} else {
+        		return new ActionForward(next.replace("__", "?"),true);
+        		
+        	}
+        	
         } else {
         	return new ActionForward("../rtf/"+filename,true);
         }
