@@ -49,6 +49,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';"  title="поиск по юридическим лицам: ЛПУ">
 	        	<input type="radio" name="typeContractPerson" value="5"> ЛПУ
 	        </td>	        
+	        <td onclick="this.childNodes[1].checked='checked';"  title="поиск по юридическим лицам: ЛПУ">
+	        	<input type="radio" name="typeContractPerson" value="6"> Обслуживаемое физ. лицо
+	        </td>	        
         </msh:row>
          <msh:row>
 	        <td class="label" title="Статус договора" colspan="1"><label for="typeContractName" id="typeContractLabel">Статус договора:</label></td>
@@ -129,6 +132,27 @@
 				paramSql.append(" cp.dtype='JuridicalPerson'") ;
 				paramSql.append( "  and lpu.id is not null") ;
 				fio.append("(cp.name like '%").append(contractNumber).append("%' or lpu.name like '%").append(contractNumber).append("%')") ;
+			} else if (typeContractPerson.equals("6")) {
+				paramSql.append("  cp.dtype='NaturalPerson'") ;
+				StringTokenizer st = new StringTokenizer(contractNumber, " \t;,.");
+				if (request.getParameter("contractNumber").equals("")) {
+					fio.append(" p1.lastname=''") ;
+				} else {
+					if (st.hasMoreTokens()) {
+						fio.append(" p1.lastname like '").append(st.nextToken()).append("%'");
+					}
+					if (st.hasMoreTokens()) {
+						fio.append(" and p1.firstname like '").append(st.nextToken()).append("%'");
+					}
+					if (st.hasMoreTokens()) {
+						fio.append(" and p1.middlename like '").append(st.nextToken()).append("%'");
+					}
+				}
+				
+				String leftJoinSql = " left join servedperson sp on sp.contract_id=mc.id"+
+						 " left join ContractPerson cp1 on cp1.id=sp.person_id"+
+						 " left join patient p1 on p1.id=cp1.patient_id";	 
+				request.setAttribute("leftJoin",leftJoinSql);
 			}
 			if (typeContract!=null && typeContract.equals("1")) {
 				paramSql.append(" and mc.isfinished='1'") ;
@@ -177,6 +201,7 @@
 			left join VocContractRulesProcessing vcrp on vcrp.id=mc.rulesProcessing_id
 			left join PriceList pl on pl.id=mc.priceList_id
 			left join VocJuridicalPerson vjp on vjp.id=cp.juridicalPersonType_id
+			${leftJoin}
 			where  
 			${paramSql}
 			order by ${orderBy}
