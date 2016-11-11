@@ -571,7 +571,7 @@ ul.listTimes li.first {
   			
   		}
   		function deleteTime(aTime,aDirect) {
-  			
+  			if (confirm("Хотите удалить предварительную запись?")) {
   			WorkCalendarService.deletePreRecord(
   					aTime,
 					
@@ -599,6 +599,7 @@ ul.listTimes li.first {
 							}
 						}
      			 }) ;
+  			}
   		}
   		function step6Finish(aTime) {
   			var patInfo = $('lastname').value+"#"
