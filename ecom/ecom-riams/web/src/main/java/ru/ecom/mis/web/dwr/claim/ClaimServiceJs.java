@@ -54,9 +54,9 @@ public class ClaimServiceJs {
 				sql+=", "+aStatus+"Username='"+aUsername+"'";
 						
 			} else if (aStatus.toUpperCase().equals("FINISH")) {
-				sql +=", finishUsername = startWorkUsername";
+				sql +=", finishUsername = startWorkUsername, canceldate=null, cancelusername=null";
 			}
-			if (aStatus.toUpperCase().equals("STARTWORK")) {
+			if (!aStatus.toUpperCase().equals("FREEZE")) {
 				sql +=", freezeDate = null, freezeusername = null";
 			}
 			sql+=" where id="+aId;
