@@ -319,5 +319,19 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 
 	/** Доп.код мкб */
 	private String theMkbAdc;
+	
+	/** Диета */
+	@Comment("Диета")
+	public Long getDiet() {return theDiet;}
+	public void setDiet(Long aDiet) {theDiet = aDiet;}
+	/** Диета */
+	private Long theDiet;
+	
+	/** Режим */
+	@Comment("Режим")
+	public Long getMode() {return theMode;}
+	public void setMode(Long aMode) {theMode = aMode;}
+	/** Режим */
+	private Long theMode;
 
 }

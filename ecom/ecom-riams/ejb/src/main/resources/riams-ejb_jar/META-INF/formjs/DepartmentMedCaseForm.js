@@ -189,9 +189,60 @@ function onPreSave(aForm,aEntity, aContext) {
 	}
 
 }
-
+function checkPrescriptionList(aForm, aEntity, aCtx) {
+	var currentDate = new java.sql.Date(new java.util.Date().getTime()) ;
+	var currentTime = new java.sql.Time (currentDate.getTime());
+	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
+	var list = aCtx.manager.createNativeQuery("select id from prescriptionList pl where pl.medCase_id="+aEntity.id).getResultList();
+	var pl = null;
+	if (list.size()>0) {
+		var id = +list.get(0);
+		pl = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList, new java.lang.Long(id));
+	} else {
+		pl = Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList();
+		pl.setMedCase(aEntity);
+		pl.setCreateUsername(username);
+		pl.setCreateDate(currentDate);
+		pl.setCreateTime(currentTime);
+		pl.setWorkFunction(aEntity.ownerFunction);
+		aCtx.manager.persist(pl);
+		
+	}
+	if (+aForm.mode>0){
+		var mode = new Packages.ru.ecom.mis.ejb.domain.prescription.ModePrescription();
+		mode.setModePrescription(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocModePrescription, aForm.mode));
+		mode.setPrescriptionList(pl);
+		mode.setPlanStartDate(aEntity.dateStart);
+		mode.setPlanStartTime(aEntity.entranceTime);
+		mode.setCreateDate(currentDate);
+		mode.setCreateTime(currentTime);
+		mode.setCreateUsername(username);
+		aCtx.manager.persist(mode);
+		
+	} else {
+		throw "Не указан режим!";
+	}
+	if (+aForm.diet>0){
+		var diet = new Packages.ru.ecom.mis.ejb.domain.prescription.DietPrescription();
+		diet.setDiet(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.diet.Diet, aForm.diet));
+		diet.setPrescriptionList(pl);
+		diet.setPlanStartDate(aEntity.dateStart);
+		diet.setPlanStartTime(aEntity.entranceTime);
+		diet.setCreateDate(currentDate);
+		diet.setCreateTime(currentTime);
+		diet.setCreateUsername(username);
+		aCtx.manager.persist(diet);
+		
+	} else {
+		throw "Не указана диета!";
+	}
+}
 //При сохранении
 function onCreate(aForm, aEntity, aContext) {
+	if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList")) {
+		checkPrescriptionList(aForm, aEntity, aContext);
+	}
+	
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	onSave(aForm, aEntity, aContext) ;
 }
