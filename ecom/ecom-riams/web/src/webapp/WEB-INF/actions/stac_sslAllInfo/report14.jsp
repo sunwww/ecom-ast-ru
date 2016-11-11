@@ -803,9 +803,9 @@ order by p.lastname,p.firstname,p.middlename " />
     <msh:section>
     ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="report14swod" nameFldSql="report14swod_sql" nativeSql="
     select vrspt.id||'&strcode='||vrspt.id,vrspt.name,vrspt.strCode,vrspt.code 
-,count(sls.id) as cntNoDeath
-,count(case when sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
-,count(case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then sls.id else null end) as cntNoDeathEmerSk
+,count(distinct sls.id) as cntNoDeath
+,count(distinct case when sls.emergency='1' then sls.id else null end) as cntNoDeathEmer
+,count(distinct case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then sls.id else null end) as cntNoDeathEmerSk
 ,sum(
 case 
  when (sls.dateFinish-sls.dateStart)=0 then 1 
