@@ -277,20 +277,20 @@ order by ${orderBySql}
     	});
     }
     function setFreeze (aId) {
-    	setStatus(aId, 'Freeze');
+    	setStatus(aId, 'Freeze',0);
     }
     function setView (aId) {
-    	setStatus(aId, 'View');
+    	setStatus(aId, 'View',1);
     }
     
     function setFinish (aId) {
-    	setStatus(aId, 'Finish');
+    	setStatus(aId, 'Finish',1);
     }
     function setCancel (aId) {
-    	setStatus(aId, 'Cancel');
+    	setStatus(aId, 'Cancel',1);
     }
     function setStartWork(aId) {
-    	setStatus(aId, 'StartWork')
+    	setStatus(aId, 'StartWork',1)
     }
     function setComment (aIds) {
     	var arr = aIds.split(':');
@@ -304,14 +304,14 @@ order by ${orderBySql}
 	    	});
     	}
     }
-    function setStatus(aIds, aStatus) {
+    function setStatus(aIds, aStatus, aSelectName) {
     	var arr = aIds.split(':');
     	$('NewClaimId').value = ''+arr[0];
     	if (arr.length>1) {
     		$('NewClaimType').value = ''+arr[1];
     	}
     	$('NewClaimStatus').value = aStatus;
-    	showNewClaimStart();
+    	showNewClaimStart(aSelectName);
     }
     function checkfrm() {
     	document.forms[0].submit() ;

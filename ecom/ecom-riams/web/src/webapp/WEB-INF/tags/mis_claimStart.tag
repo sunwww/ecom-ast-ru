@@ -52,7 +52,14 @@
      //executorsByCurrentUserName 
      var the${name}ClaimStartDialog = new msh.widget.Dialog($('${name}ClaimStartDialog')) ;
      // Показать
-     function show${name}ClaimStart() {
+     function show${name}ClaimStart(aSelectName) {
+    	 if (aSelectName==0) {
+    		 $('${name}Executor').value="";
+    		 $('${name}ExecutorName').value="";
+    		 $('${name}ExecutorName').disabled=true;
+    	 } else {
+    		 $('${name}ExecutorName').disabled=false;
+    	 }
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}ClaimStartDialogInitialized) {
          	init${name}ClaimStartDialog() ;
