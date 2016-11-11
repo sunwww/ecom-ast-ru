@@ -301,9 +301,27 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
 		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeurMark")
-
+		.append(",")
+		.append(" (select list(''||qecd.defect) from qualityestimationcritdefect qecd ")
+		.append(" left join qualityestimationcrit qecBM on qecBM.id=qecd.criterion")
+		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
+		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='BranchManager') as branchManagerMarkDefect")
+		.append(",")
+		.append(" (select list(''||qecd.defect) from qualityestimationcritdefect qecd ")
+		.append(" left join qualityestimationcrit qecBM on qecBM.id=qecd.criterion")
+		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
+		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Expert') as expertMarkDefect")
+		.append(",")
+		.append(" (select list(''||qecd.defect) from qualityestimationcritdefect qecd ")
+		.append(" left join qualityestimationcrit qecBM on qecBM.id=qecd.criterion")
+		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
+		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeurMarkDefect")
 		.append(" from VocQualityEstimationCrit vqec")
 		.append(" where vqec.kind_id='").append(aKind).append("'  order by vqec.code") ;
+		System.out.println("shortRow="+sql.toString());
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {
 			 table.append("<table border=1 width=90%>")  ;
@@ -321,10 +339,19 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 table.append("</tr>") ;
 			 int cntPart =1 ;
 			 for (int i=0;i<list.size();i++) {
+				 String defects = "";
 				 Object[] row = list.get(i) ;
+				 if (aTypeSpecialist.equals("BranchManager")){
+					 defects = ""+row[9];
+				 } else if (aTypeSpecialist.equals("Expert")) {
+					 defects = ""+row[10];
+				 } else if (aTypeSpecialist.equals("Coeur")) {
+					 defects = ""+row[11];
+				 }
+				 
 				 table.append("<tr>") ;
-				 table.append("<td align='left'>").append(row[1]).append("-").append(row[2]).append("<input type='hidden' id='criterion"+cntPart+"Comment'></td>") ;			//HEREEREERER
-				 table.append("<td valign='top' align='right'>").append(cntPart++).append(".</td>") ;
+				 table.append("<td align='left'>").append(row[1]).append("-").append(row[2]).append("</td>") ;			//HERE
+				 table.append("<td valign='top' align='right'>").append(cntPart++).append("<input type='hidden' id='criterion"+(cntPart-1)+"Comment' value='"+defects+"'></td>") ;
 
 					 
 			 
@@ -334,6 +361,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 //Expert - эксперт
 				 //Coeur - КЭР
 				 Object valMark = row [3] ;
+				
 				 if (aReplaceValue &&!aView && aTypeSpecialist.equals("BranchManager")) {
 					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
 					 //log(String.valueOf(cntPart-1)+":"+valMark) ;
@@ -361,6 +389,9 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	}
 	
 	private StringBuilder recordExpertShort(Object aCriterionId, Object aValueMark, Object aValueMarkId,  int aCntPart,int aCntSection, String aSpecActual, String aTypeSpecialist, boolean aView) {
+		return recordExpertShort( aCriterionId,  aValueMark,  aValueMarkId,   aCntPart, aCntSection,  aSpecActual,  aTypeSpecialist, aView,null);
+	}
+	private StringBuilder recordExpertShort(Object aCriterionId, Object aValueMark, Object aValueMarkId,  int aCntPart,int aCntSection, String aSpecActual, String aTypeSpecialist, boolean aView, String aDefects) {
 		StringBuilder ret = new StringBuilder() ;
 		if (!aView && aTypeSpecialist.equals(aSpecActual)) {
 			 
@@ -379,7 +410,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 ret.append(AutoCompleteField.getField(vocName,property, label, value,parentId, fieldColSpan, size
 					 , horizontalFill, required, Boolean.FALSE,null,String.valueOf(1)));
 			 //javaScript.append(AutoCompleteField.getJavaScript(false,vocName, property,propertyNext,label)) ;
-			 
+			// System.out.println("1 recordExpertShot, ret="+ret);
 		 } else {
 			 ret.append("<td align='center'>");
 			 if (aValueMark==null) {
@@ -387,7 +418,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 } else {
 				 ret.append(aValueMark) ;
 			 }
-			 ret.append("</td>") ;
+			// ret.append("<input type='hidden' id='criterion"+aCntPart+"Comment'></td>") ;
+			 //System.out.println("2 recordExpertShot, ret="+ret);
 		 }
 		return ret ;
 	}

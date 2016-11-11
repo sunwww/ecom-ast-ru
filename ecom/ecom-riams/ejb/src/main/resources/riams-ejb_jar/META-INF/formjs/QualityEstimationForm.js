@@ -20,9 +20,19 @@ function onCreate(aForm, aEntity, aContext){
 			qec.setMark(mark) ;
 			qec.setCriterion(mark.criterion) ;
 			qec.setEstimation(aEntity) ;
-			if (param.length>2&&(""+param[2]!="")) { qec.setComment(param[2]);}
+			
 			
 			aContext.manager.persist(qec) ;
+			if (param.length>2&&(""+param[2]!="")) { //Проставляем дефекты 
+				var defects = (""+param[2]).split(",");
+				
+				for (var j=0;j<defects.length;j++) {
+					var def = new Packages.ru.ecom.mis.ejb.domain.expert.QualityEstimationCritDefect();
+					def.setCriterion(qec.id);
+					def.setDefect(+defects[j]);
+					aContext.manager.persist(def) ;
+				}
+			}
 			critsMap.put(+mark.criterion.id,(mark.isIgnore!=null&&mark.isIgnore.equals(java.lang.Boolean.TRUE))?null:mark.mark) ;
 			//aContext.manager.createNativeQuery("insert into QualityEstimationCrit (estimation_id,mark_id) values ('"+id+"','"+param[1]+"')").executeUpdate() ;
 		}
@@ -76,8 +86,7 @@ function saveParentCriterion(aList,aEntity,aContext) {
 				sumBD = new java.math.BigDecimal(sumCr) ;
 				sumBD = sumBD.divide(cntBD,2,java.math.BigDecimal.ROUND_HALF_UP) ;
 				qec.setMarkTransient(sumBD) ;
-				critsMap.put(+crit.id,sumBD.doubleValue()) ;
-				
+				critsMap.put(+crit.id,sumBD.doubleValue()) ;				
 			} else {
 				qec.setMarkTransient(new java.math.BigDecimal(0)) ;
 				critsMap.put(+crit.id,null) ;
@@ -89,6 +98,7 @@ function saveParentCriterion(aList,aEntity,aContext) {
 }
 function onSave(aForm, aEntity, aContext){
 	var id=aForm.id ;
+	aContext.manager.createNativeQuery("delete from QualityEstimationCritDefect qecd where criterion in (select id from QualityEstimationCrit qec where qec.estimation_id='"+id+"')").executeUpdate() ;
 	aContext.manager.createNativeQuery("delete from QualityEstimationCrit where estimation_id='"+id+"'").executeUpdate() ;
 	onCreate(aForm, aEntity, aContext) ;
 	
