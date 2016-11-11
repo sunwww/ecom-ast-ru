@@ -309,6 +309,7 @@
     	params="id"  action='/javascript:getDefinition("entityParentList-stac_surOperation.do?short=Short&id=${param.id}", null);'  title='Операции'
     	styleId="viewShort"
     	/>
+    	<msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByPatient('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
       </msh:sideMenu>
       <msh:tableNotEmpty name="info_print_list">
       <msh:sideMenu title="Печать" guid="cdf02c63-67bc-4542-a68d-38398f5059bd">
@@ -326,7 +327,6 @@
   <tiles:put name="javascript" type="string">
   <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
   <script type="text/javascript">
-
 
   function printAgree() {
   	window.location = "print-agreement.do?s=PatientPrintService&m=printAgreement&id="+$('patient').value;
@@ -499,6 +499,9 @@
   }
   function viewExtMedDocumentByPatient(d) {
 	  getDefinition("js-doc_externalDocument-infoMedShortByPatient.do?short=Short&id="+$('patient').value, null);
+  }
+  function viewAssessmentCardsByPatient(d) {
+	  getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
   }
   </script>
 

@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
     <ecom:titleTrail beginForm="mis_patientForm" guid="helloItle-123" mainMenu="Patient" title="Пациент" />
@@ -19,12 +19,15 @@
   from assessmentCard ac 
   left join assessmentcardtemplate act on act.id=ac.template
   where ac.patient=${param.id} order by ac.startDate desc"/> 
+  <msh:section createRoles="/Policy/Mis/AssessmentCard/Create" createUrl="entityParentPrepareCreate-mis_assessmentCard.do?id=${param.id}"
+		title="Карты оценки">
     <msh:table name="cardList" action="entityParentView-mis_assessmentCard.do" idField="1" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
       
       <msh:tableColumn columnName="Название" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
       <msh:tableColumn columnName="Дата приема" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
       <msh:tableColumn columnName="Сумма баллов" property="4" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
     </msh:table>
+    </msh:section>
   </tiles:put>
 </tiles:insert>
 
