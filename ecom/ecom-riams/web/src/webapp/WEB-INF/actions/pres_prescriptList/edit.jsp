@@ -1091,6 +1091,7 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
+    <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
     <tags:dir_medService name="1" table="MEDSERVICE" title="Услуги" functionAdd="prepare1Row" addParam="id" />
     <tags:enter_date name="2" functionSave="prepare1RowByDate"/>
     <msh:ifFormTypeIsView formName="pres_prescriptListForm" guid="770fc32b-aee3-426b-9aba-6f6af9de6c9d">
@@ -1126,7 +1127,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="9793b3d9-bf76-4b96-b4c5-300b97c01753">
         <%-- <msh:sideLink action="/js-pres_prescriptList-print" name="Листа назначений" params="id" guid="503861b9-a4ed-4098-97aa-4c89b8a977bb" /> --%>
-        <msh:sideLink action="/print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList" name="Листа назначений" params="id" guid="503861b9-a4ed-4098-97aa-4c89b8a977bb" />
+        <msh:sideLink action='/javascript:initSelectPrinter("print-prescriptList_1.do?s=HospitalPrintService&m=printPrescriptList&id=${param.id}",1)' name="Листа назначений" guid="503861b9-a4ed-4098-97aa-4c89b8a977bb" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>

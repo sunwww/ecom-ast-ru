@@ -143,6 +143,10 @@
       <msh:hidden property="transferTime"/>
       <msh:hidden property="transferDepartment"/>
       <msh:hidden property="targetHospType"/>
+      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList">
+      <msh:hidden property="diet"/>
+      <msh:hidden property="mode"/>
+      </msh:ifNotInRole>
       <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="5%,5%,5%,75%,5%,5%">
       <msh:ifFormTypeAreViewOrEdit formName="stac_sloForm">
       	<msh:row >
@@ -188,6 +192,14 @@
         	<msh:checkBox label="Провизорность" property="provisional" guid="dh88d59-3adb-4485-af94-cahb04f82b" />
         	<msh:checkBox label="Экстренно" property="emergency" guid="dhcahb04f82b" />
         </msh:row>
+        <msh:ifFormTypeIsCreate formName="stac_sloForm" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList">
+        <msh:row>
+        <msh:autoComplete property="diet" vocName="Diet" />
+        <msh:autoComplete property="mode" vocName="vocModePrescription"  fieldColSpan="2"/>
+        </msh:row>
+        </msh:ifInRole>
+        </msh:ifFormTypeIsCreate>
         <msh:row guid="1d32ce64-883b-4be9-8db1-a421709f4470">
           <msh:autoComplete vocName="workFunctionByLpu" parentId="stac_sloForm.department" property="ownerFunction" label="Лечащий врач" fieldColSpan="6" horizontalFill="true" guid="968469ce-dd95-40f4-af14-deef6cd3e4f3" viewAction="entitySubclassView-work_workFunction.do" size="30" />
         </msh:row>
@@ -762,6 +774,12 @@
 	</msh:ifFormTypeIsView>  
     <msh:ifFormTypeIsNotView formName="stac_sloForm" guid="518fe547-aed9-be2229f04ba3">
       <script type="text/javascript">//var theBedFund = $('bedFund').value;
+      if ($('dietName')) {
+    	  $('dietName').style="color: blue ; background-color:#FFFFA0;";
+      }
+      if ($('modeName')) {
+    	  $('modeName').style="color: blue ; background-color:#FFFFA0;";
+      }
       if (+$('prevMedCase').value==0) {
     	  $('serviceStreamName').select() ;
     	  $('serviceStreamName').focus() ;
