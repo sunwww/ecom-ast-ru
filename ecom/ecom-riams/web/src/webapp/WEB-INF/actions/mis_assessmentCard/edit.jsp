@@ -1,6 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@page import="java.util.List"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="ru.ecom.ejb.services.query.IWebQueryService"%>
+<%@page import="java.util.Collection"%>
+<%@page import="ru.ecom.web.util.Injection"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -55,30 +58,85 @@
       if (id!=null&&!id.equals("")) {
     	  
        %>
-       <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
-      <ecom:webQuery name="parameterList" nameFldSql="parameterList_sql" nativeSql="select p.id
+      
+       <ecom:webQuery name="groupList" nativeSql="select distinct pg.id
 	,pg.name as f2_groupName
-	,p.name as f3_parName, p.shortname as f4_parShortName 
-	,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' then fip.valuetext when p.type='2' then uv.name else 'WFT '||p.type end as f5_value
-	,uv.cntball as f6_ball
 	from assessmentCard ac 
 	left join forminputprotocol fip on fip.assessmentCard=ac.id
 	left join parameter p on p.id=fip.parameter_id
 	left join parametergroup pg on pg.id=p.group_id
-	left join uservalue uv on uv.id=valuevoc_id
-	where ac.id='${param.id}'
-	" />
+	where ac.id='${param.id}'" />
 	
-	<msh:table name="parameterList" action="/javascript:void()" idField="1">
-					<msh:tableColumn columnName="#" property="sn"/>
-					<msh:tableColumn columnName="Группа" property="2"/>
-					<msh:tableColumn columnName="Показатель" property="3"/>
-					<msh:tableColumn columnName="Значение" property="5"/>
-					<msh:tableColumn columnName="Баллы" property="6" isCalcAmount="true"/>
-				</msh:table>
+	<%
+	List groupList = (List) request.getAttribute("groupList");
+	if (!groupList.isEmpty()){
+		
+		out.print("<table border='1'>");
+		out.print("<th>Название</th><th>Значение параметра</th><th>Кол-во баллов</th>");
+		IWebQueryService service = (IWebQueryService) Injection.find(request,null).getService(IWebQueryService.class) ;
+		for (int i=0;i<groupList.size();i++) {
+			WebQueryResult r = (WebQueryResult) groupList.get(i);
+			out.print("<tr><td colspan='3'><b>"+r.get2()+"</b></td>");
+			String sql = "select p.id "+
+					" ,p.name as f3_parName, p.shortname as f4_parShortName"+ 
+					" ,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' then fip.valuetext when p.type='2' then uv.name else 'WFT '||p.type end as f5_value"+
+					" ,uv.cntball as f6_ball"+
+					" from assessmentCard ac "+
+					" left join forminputprotocol fip on fip.assessmentCard=ac.id"+
+					" left join parameter p on p.id=fip.parameter_id"+
+					" left join uservalue uv on uv.id=valuevoc_id"+
+					" where ac.id='"+request.getParameter("id")+"' and p.group_id="+r.get1();
+					List rows = (List)service.executeNativeSql(sql);
+					if (!rows.isEmpty()) {
+						for (int j=0;j<rows.size();j++) {
+							WebQueryResult tds = (WebQueryResult) rows.get(j);
+							out.print("<tr>");
+							out.print("<td>"+tds.get2()+"</td>");
+							out.print("<td>"+(tds.get4()!=null?tds.get4():"")+"</td>");
+							out.print("<td>"+(tds.get5()!=null?tds.get5():"")+"</td>");
+							out.print("</tr>");
+							
+						}
+					}
+					out.print("</tr>");
+					
+			
+		}
+		out.print("</table>");
+	}
+	%>
+	
+
+				 <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
 				</msh:ifFormTypeIsView>
 				<%} %>
     </msh:form>
+      <form action="print-assessment_card.do" method="post" target="_blank">
+                <input type="hidden" name="SSsqlText" id="SSsqlText" value="select p.id as pid
+		 ,pg.id as pgId
+		 ,pg.name as f2_groupName
+		 ,p.name as f3_parName, p.shortname as f4_parShortName
+		 ,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' then fip.valuetext when p.type='2' then uv.name else 'WFT '||p.type end as f5_value
+		 ,uv.cntball as f6_ball
+		 ,(select sum( case when p1.group_id=p.group_id then uv1.cntBall else null end)
+			 from forminputprotocol fip1
+			 left join parameter p1 on p1.id=fip1.parameter_id
+			 left join uservalue uv1 on uv1.id=fip1.valuevoc_id
+			 where  fip1.assessmentCard=ac.id 	)
+		 from assessmentCard ac
+		 left join forminputprotocol fip on fip.assessmentCard=ac.id
+		 left join parameter p on p.id=fip.parameter_id
+		 left join parametergroup pg on pg.id=p.group_id
+		 left join uservalue uv on uv.id=fip.valuevoc_id
+		 where ac.id='${param.id}'"/> 
+                
+    	    <input type='hidden' name="sqlInfo" id="sqlInfo" value='Список пациентов за ${beginDate}-${endDate} по отделению '>
+	    <input type='hidden' name="id" id="id" value="${param.id}">
+	    <input type='hidden' name="s" id="s" value="PrintService">
+	    <input type='hidden' name="m" id="m" value="printAssessmentCard">
+	    <input type='hidden' name="SSgroupField" id="SSgroupField" value="2,1">
+                           
+    </form>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Lpu" beginForm="mis_assessmentCardForm" />
@@ -88,6 +146,7 @@
     <msh:sideMenu guid="sideMenu-123">
       <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/BedFund/Edit" />
       <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/BedFund/Delete" />
+      <msh:sideLink guid="sideLinkDelete" key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/BedFund/Delete" />
     </msh:sideMenu>
     
     <msh:sideMenu title="Перейти" guid="sideMenu-123">
@@ -96,6 +155,14 @@
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name = 'javascript' type='string'>
+  <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
+  <script type = 'text/javascript'>
+  function printCard() {
+  document.forms[1].submit();
+		//window.document.location="print-ass_card1.do?s=PrintService&m=printAssessmentCard&id=${param.id}&groupFields="+groupFields+"&sqlText"+sql;
+  }
+  </script>
+  </msh:ifFormTypeIsView>
   <msh:ifFormTypeIsNotView formName="mis_assessmentCardForm">
   <script type="text/javascript" src="./dwr/interface/TemplateProtocolService.js"></script>
   
