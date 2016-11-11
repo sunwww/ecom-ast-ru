@@ -15,13 +15,33 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class QualityEstimationServiceJs {
-	public Long checkIsCommentNeed(Long aMarkId, HttpServletRequest aRequest ) throws NamingException {
+	
+	public String getDefectsByCriterion(Long aCriterion, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;	
-		String sql = "select case when vqem.isNeedComment='1' then 1 else 0 end from vocQualityEstimationMark vqem where id="+aMarkId;
+		String sql = "select id, name from vocQualityEstimationCritDefect vqect where criterion="+aCriterion;
+		StringBuilder ret = new StringBuilder(); 
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		for (WebQueryResult r: list){
+			if (ret.length()>0){ ret.append("#");}
+			ret.append(""+r.get1()+":"+r.get2());
+		}
+		
+		
+		return ret.length()>0?ret.toString():"";
+	}
+	
+	public String checkIsCommentNeed(Long aMarkId, HttpServletRequest aRequest ) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;	
+		String sql = "select case when vqem.isNeedComment='1' then 1 else 0 end, vqem.criterion_id from vocQualityEstimationMark vqem where id="+aMarkId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
 		if (list.size()>0){
-			return Long.valueOf(list.iterator().next().get1().toString());
-		} else return 0L;
+			WebQueryResult r =list.iterator().next();
+			if (r.get1().toString().equals("1")){
+				return "1@"+getDefectsByCriterion(Long.valueOf(r.get2().toString()), aRequest);
+			}
+			
+			return r.get1().toString();
+		} else return "0";
 	}
 	
 	public Boolean ableCreate(String aTypeSpecialist, HttpServletRequest aRequest) throws JspException {

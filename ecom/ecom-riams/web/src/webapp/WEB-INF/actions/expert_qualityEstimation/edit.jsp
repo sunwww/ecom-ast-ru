@@ -128,15 +128,19 @@
 					}
 					
 	  			}
+					
+					
 	  			function checkCommentNeeded(aCriterion) {
 	  				var aMarkId = $(aCriterion).value;
 	  				if (+aMarkId>0){
 	  					QualityEstimationService.checkIsCommentNeed(aMarkId,{
-	  						callback: function (a){
+	  						callback: function (res){
+	  							var a = +res.split("@")[0];
 	  							if (+a==1){
-	  								 showEnterCritComment(aCriterion); 
-	  								//
+	  								 showEnterCritComment(res.split("@")[1], aCriterion); 
+	  								
 	  							} else {
+	  								$(aCriterion+'Comment').value="";
 	  								updateCriterions() ;
 	  							}
 	  						}

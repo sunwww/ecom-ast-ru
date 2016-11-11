@@ -22,7 +22,11 @@
 <form action="javascript:void(0)">
     <msh:row>
     <td>
-    <textarea id="commentText" name="commentText"  rows="5" > </textarea><br>
+    	<div id='defectDiv' style="display: block">
+    	<table id="defect${name}Tbl"  >
+    		
+    	</table>
+    	</div>
     </td>
     </msh:row>
         <msh:row>
@@ -31,6 +35,7 @@
                 <input type="button" value='Сохранить' onclick='javascript:save${name}CritComment()'/>
                 <input type="button" value='Отмена' onclick='javascript:cancel${name}CritComment()'/>
             </td>
+            
         </msh:row>
 </form>
 
@@ -38,38 +43,89 @@
 </div>
 
 <script type="text/javascript">
-     var mark ;
+     var the${name}Mark ;
      var the${name}CritCommentDialog = new msh.widget.Dialog($('${name}CritCommentDialog')) ;
    
      function save${name}CritComment() {
-    	 var txt = $('commentText').value;
-    	 if (txt.trim()==""){
-    		 alert ("Введите текст");
-    		 return;
-    	 }
-    //	 if ($("criterion"+mark+"Comment")){
-    		 $(mark+"Comment").value = txt.trim();
-    		 updateCriterions() ;
+    	 var ${name}Defects = "";
+    	 var cntChecked =0;
+    	 var rows = $('defect${name}Tbl').children;
+    	 for (var i=0;i<rows.length;i++){
+    		 var chk = rows[i].children[0].children[0].children[0];
+    		// alert (chk);
+    		
+    		 if (chk.checked==true) {
+    			 cntChecked++;
+    			 if (${name}Defects.length>0){
+    				 ${name}Defects+=",";
+    			 }
+    				 ${name}Defects+=chk.id;
+    		 }
     		 
-    //	 }
+    		 $(the${name}Mark+'Comment').value = ${name}Defects;
+    	 }
+    	 if (cntChecked==0) {
+			 alert ("Выбирите причину снижения оценки!");
+			 return;
+		 }
     	 the${name}CritCommentDialog.hide() ;
+    	 updateCriterions();
      }
      
      
      // Отмена
      function cancel${name}CritComment() {
-    	 if ($(mark)){
-    		 $(mark).value="";
-        	 $(mark+'Name').value=""; 
-    	 }
-    	 
+    	 if ($(the${name}Mark)){
+    		 $(the${name}Mark).value="";
+        	 $(the${name}Mark+'Name').value=""; 
+    	 }    	 
          the${name}CritCommentDialog.hide() ;
      }
 
      // инициализация диалогового окна
-     function show${name}CritComment(aMark) {
-    	 mark = aMark;
+     function show${name}CritComment(res, mark) {
+    	 the${name}Mark=mark;
+    			 if (""+res!=""){
+    					 cleanDiv();
+    					 var rows = res.split("#");
+    					 for (var i=0;i<rows.length;i++){
+    						 createRow(rows[i],i);
+    					 }
+    					 showDiv();
+    				 }
+    			 
+    		 
+    	 
+    	 
          the${name}CritCommentDialog.show() ;
+     }
+     function cleanDiv(){
+    	 $('defectDiv').innerHTML="";
+    	 $('defectDiv').innerHTML="<table id=\"defect${name}Tbl\"></table>";
+ 		
+     	
+     }
+
+     function showDiv(){
+    	 $('defectDiv').style.display="block";
+     }
+     function createRow(aData,cnt){
+    	 var tds = aData.split(":");
+    	 var row = "<tr><td>"
+    	 row +="<input type='checkbox' name='chkDefect' id='"+tds[0]+"' value='"+tds[1]+"'";
+    	 
+    	 if ($(the${name}Mark+'Comment').value!="") {
+    		 var defs = $(the${name}Mark+'Comment').value.split (",");
+    		 for (var i=0;i<defs.length;i++) {
+    			 if (+(""+defs[i].trim())==+tds[0]) {
+    				 row +=" checked='checked'";
+    			 }
+    		 }
+    	 }
+    	 row+=">"+tds[1]+"<br></td></tr>";
+    	// alert("el"+$("defect${name}Tbl"));
+    	 $('defect${name}Tbl').innerHTML +=row;
+    		 
      }
 </script>
 </msh:ifInRole>
