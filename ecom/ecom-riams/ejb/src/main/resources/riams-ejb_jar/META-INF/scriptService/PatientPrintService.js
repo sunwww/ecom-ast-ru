@@ -1,4 +1,5 @@
 
+
 function printInfoPatientByMedcase(aCtx, aParams) {
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
 			, new java.lang.Long(aParams.get("id"))) ;

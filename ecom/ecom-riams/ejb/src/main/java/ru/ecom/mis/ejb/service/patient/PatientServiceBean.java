@@ -1065,7 +1065,7 @@ public class PatientServiceBean implements IPatientService {
 		fond.setDoctorSnils(aDoctorSnils);
 		fond.setDepartment(aCodeDepartment);
 		//Patient pat = null;
-		if (aPatientId!=null&&aPatientId!=""&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
+		if (aPatientId!=null&&!aPatientId.equals("")&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
 			//pat = theManager.find(Patient.class, Long.valueOf(aPatientId));
 			fond.setPatient(Long.valueOf(aPatientId));
 		}
@@ -1073,7 +1073,7 @@ public class PatientServiceBean implements IPatientService {
 			fond.setCheckTime(aCheckTime);
 		}
 		theManager.persist(fond) ;
-		if (aPatientId!=null&&aPatientId!=""&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
+		if (aPatientId!=null&&!aPatientId.equals("")&&!Long.valueOf(aPatientId).equals(Long.valueOf(0))) {
 			fond.setIsDifference(needUpdatePatient(Long.valueOf(aPatientId), fond.getId()));
 			theManager.persist(fond) ;
 		}

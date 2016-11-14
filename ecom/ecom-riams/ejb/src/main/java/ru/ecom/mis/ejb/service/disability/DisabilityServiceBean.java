@@ -672,7 +672,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				
 				statement = dbh.createStatement();
 				ResultSet rsRecord = statement.executeQuery(record.toString()+ln_id+"' order by datefrom");
-				
+				statement.close();
 				 int i=0;
 				 String returnDate = null;
 				// String lpuName = null, lpuAddress=null, lpuOgrn=null;

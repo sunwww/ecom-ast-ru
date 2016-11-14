@@ -33,7 +33,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 		
 		String statCardNumber = form.getStatCardNumber() ;
 		String stubCode = medCase.getStatisticStub()!=null?medCase.getStatisticStub().getCode():null;
-		if (statCardNumber!=null && statCardNumber!="" && (id>Long.valueOf(0))
+		if (statCardNumber!=null && !statCardNumber.equals("") && (id>Long.valueOf(0))
 				&& stubCode!=null&&!stubCode.equals(statCardNumber)
 				) {
 			

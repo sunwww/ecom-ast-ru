@@ -180,6 +180,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					sb.append(param.get("name")).append(": ") ;
 					sb.append(value).append(" ") ;
 					sb.append(param.get("unitname")).append(" ") ;
+					//start Добавление отображения референтных интервалов
+					//sb.append("Реф. инт: ").append(p.getNormMinimumBD()).append(" <> ").append(p.getNormMaximumBD());
+					//end
 				}
 				//пользовательский справочник
 			} else if (type.equals("2")) {

@@ -19,6 +19,11 @@ function onPreDelete(aEntityId, aContext) {
 			aContext.manager.createNativeQuery("delete from medcase where id="+l.get(0)[1]).executeUpdate() ;
 		}
 
+	} else {
+		var  l=aContext.manager.createNativeQuery("select id,parent_id from MedCase where parent_id="+aEntityId).getResultList() ;
+		if (l.size()>0) {
+			throw "Невозможно удалить визит, т.к. у визиту прекреплены услуги! Для удаления необходимо отметить визит как недействительный";
+		}
 	}
 }
 

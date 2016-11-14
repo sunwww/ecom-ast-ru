@@ -1355,7 +1355,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		MisLpu department = theManager.find(MisLpu.class, aDepartment) ;
 		for (int i = 0; i < obj.length; i++) {
 			String jsId = obj[i];
-			if (jsId!=null && jsId!="" || jsId=="0") {
+			if (jsId!=null && !jsId.equals("") || jsId.equals("0")) {
 				//System.out.println("    id="+jsonId) ;
 				
 				Long jsonId=java.lang.Long.valueOf(jsId) ;

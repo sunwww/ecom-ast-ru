@@ -310,7 +310,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				commentAdd(vocDocumentParameter.getName());
 				commentAdd(": "+documentParameter.getValue());
 				commentAdd(" "+vocDocumentParameter.getDimension());
-				if (norm!="") commentAdd(" ("+norm+") ");
+				if (!norm.equals("")) commentAdd(" ("+norm+") ");
 				commentNewLine();
 			}
 		}
@@ -372,10 +372,10 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		try {
 			String message ;
 			message = variable+": "+(value==null?"":value);
-			if (type == "D") {
+			if (type.equals("D")) {
 				message = message + " ("+((java.util.Date) DateFormat.parseDate(value, "yyyy-MM-dd"))+")";
 			}
-			if (type == "T") {
+			if (type.equals("T")) {
 				message = message + " ("+((java.sql.Time) DateFormat.parseSqlTime(value)+")");
 			}
 

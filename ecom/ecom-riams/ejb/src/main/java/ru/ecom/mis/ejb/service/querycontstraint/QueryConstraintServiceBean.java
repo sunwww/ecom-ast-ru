@@ -21,12 +21,12 @@ public class QueryConstraintServiceBean implements IQueryConstraintService {
 	
 	public	Boolean isConstrainted(String aKey) {
 		Boolean result = false;
-		if(aKey.toLowerCase()=="patient") {
+		if(aKey.toLowerCase().equals("patient")) {
             result = theContext.isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck") ? false : true ;
-        } else if (aKey.toLowerCase()=="mislpu") {
+        } else if (aKey.toLowerCase().equals("mislpu")) {
         	result = true;
         	}
-        	else if (aKey.toLowerCase()=="privilege") {
+        	else if (aKey.toLowerCase().equals("privilege")) {
         		result = true;
         		}
         		else result =  false;
