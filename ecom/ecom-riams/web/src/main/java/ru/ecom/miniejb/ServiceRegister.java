@@ -120,6 +120,7 @@ public class ServiceRegister {
             while ((line = in.readLine()) != null) {
                 if (!StringUtil.isNullOrEmpty(line)) register(loader.loadClass(line));
             }
+            in.close();
         } finally {
             resourceIn.close();
         }

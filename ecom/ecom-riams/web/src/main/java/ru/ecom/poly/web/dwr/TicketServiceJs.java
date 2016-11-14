@@ -179,8 +179,8 @@ public class TicketServiceJs {
 		
 		StringBuilder res = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
-		StringBuilder sql1 = new StringBuilder() ;
-		sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id="+aWorkFunction) ;
+		//StringBuilder sql1 = new StringBuilder() ;
+	//	sql1.append("select wf.workFunction_id as vwfid,wf.id as wfid from WorkFunction wf where wf.id="+aWorkFunction) ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		sql.append("    select") ; 
 		sql.append(" count(distinct case when spo.dateStart is null then spo.id else null end) as cntPatient0") ;
@@ -223,7 +223,7 @@ public class TicketServiceJs {
 			.append(" left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id")
 			.append(" where spo.patient_id='").append(aPatient).append("'")
 			.append(" and spo.DTYPE='PolyclinicMedCase' and spo.dateFinish is null and (spo.noActuality='0' or spo.noActuality is null) and ovwf.id='")
-			.append(obj1.get1()).append("'")
+			.append(obj1!=null?obj1.get1():"").append("'")
 			.append(" group by  spo.id,spo.dateStart,spo.dateFinish,ovwf.name,owp.lastname,owp.firstname,owp.middlename")
 			.append(" order by spo.dateStart desc") ;
 		

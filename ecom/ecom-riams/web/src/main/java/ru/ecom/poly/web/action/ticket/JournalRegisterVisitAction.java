@@ -15,6 +15,7 @@ public class JournalRegisterVisitAction extends BaseAction {
 
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 		JournalBySpecialistForm form = (JournalBySpecialistForm)aRequest.getSession().getAttribute("poly_journalBySpecForm");
+		if (form!=null) {
 		String args =form.getBeginDate()+":"+form.getFinishDate()
 		+":"+form.getSpecialist()+":"+form.getRayon()+":"+form.getPrimaryInYear() +":" +form.getNumberInJournal() +":";
 		aRequest.setAttribute("beginDate", form.getBeginDate()) ;
@@ -34,7 +35,7 @@ public class JournalRegisterVisitAction extends BaseAction {
 		}
 		args=args+":"+form.getWorkFunction() ;
 		aRequest.setAttribute("func", form.getWorkFunction()) ;
-		if (form!=null) {
+		
 			IScriptService script = Injection.find(aRequest).getService(IScriptService.class) ; 
 			aRequest.setAttribute("listRegisterVisit",script.invoke("TicketService","journalRegisterVisitByMap", 
 				new Object[]{args})) ;

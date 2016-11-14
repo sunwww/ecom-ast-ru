@@ -755,7 +755,7 @@ public class FondWebService {
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getHouseBuilding().equals(hb)?"":" bgcolor='yellow'"):"").append(">").append(hb).append("</td>");
         		sb.append("<td").append(aPatFrm!=null?(aPatFrm.getFlatNumber().equals(fn)?"":" bgcolor='yellow'"):"").append(">").append(fn).append("</td>");
             	sb.append("</tr>") ;
-            	if (isStart=true) {
+            	if (isStart) {
         			kladr=kl; house=hn; houseBuilding=hb; flat =fn;
         			isStart=false ;
         		}

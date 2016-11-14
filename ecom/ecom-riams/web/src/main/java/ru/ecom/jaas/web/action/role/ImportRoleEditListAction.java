@@ -62,7 +62,11 @@ public class ImportRoleEditListAction extends BaseAction{
 	            	System.out.println(e);
 	            } 
 	            finally {
-	                in.close();
+	                try{
+	                	in.close();
+	                } catch(Exception e) {
+	                	e.printStackTrace();
+	                }
 	            }
 	    	}
 	    	

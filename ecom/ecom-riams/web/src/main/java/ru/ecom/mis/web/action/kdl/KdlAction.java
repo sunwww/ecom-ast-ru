@@ -119,10 +119,10 @@ public class KdlAction extends BaseAction {
 		try {
 			String message ;
 			message = variable+": "+(value==null?"":value);
-			if (type == "D") {
+			if (type.equals("D")) {
 				message = message + " ("+((java.util.Date) DateFormat.parseDate(value, "yyyy-MM-dd"))+")";
 			}
-			if (type == "T") {
+			if (type.equals("T")) {
 				message = message + " ("+((java.sql.Time) DateFormat.parseSqlTime(value)+")");
 			}
 

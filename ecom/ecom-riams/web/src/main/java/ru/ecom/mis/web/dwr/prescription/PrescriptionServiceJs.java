@@ -596,7 +596,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				String date = param.length>1&&param[1]!=null ? param[1]: "";
 				String cabID = param.length>2&&param[2]!=null? param[2] : null;
 				String departmentID = param.length>3&&param[3]!=null? param[3] : null;
-				if (msID!=null && msID!=""){
+				if (msID!=null && !msID.equals("")){
 					sqlMS.setLength(0);
 					sqlMS.append("select vst.code, ms.id, ms.code ||' ' ||ms.name from medservice ms ")
 					.append("left join vocservicetype vst on vst.id=ms.servicetype_id ")

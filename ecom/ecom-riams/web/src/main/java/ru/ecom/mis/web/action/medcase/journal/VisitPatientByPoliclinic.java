@@ -54,8 +54,8 @@ public class VisitPatientByPoliclinic  extends BaseAction {
 		} else {
 			view =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeView","2", aRequest) ;
 			//date =ActionUtil.updateParameter("VisitPatientByPoliclinic","typeDate","2", aRequest) ;
-			aRequest.setAttribute("beginDate", form.getBeginDate()) ;
-			aRequest.setAttribute("finishDate", form.getFinishDate()) ;
+			aRequest.setAttribute("beginDate","");// form.getBeginDate()) ;
+			aRequest.setAttribute("finishDate", "");//form.getFinishDate()) ;
 		}
 		
 		

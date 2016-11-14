@@ -48,6 +48,11 @@ public class ServiceGenUsersAction extends BaseAction {
         		
         	}
         }
+        try {
+        	in.close();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
         return aMapping.findForward("success") ;
     }
     
