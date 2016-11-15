@@ -219,7 +219,6 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 		//System.out.println(12) ;
 		String m = aMethod.getName();
 		return m.equals("getClass") || m.equals("getSaveType")
-				|| m.equals("getSaveType")
 				|| m.equals("isTypeCreate")
 				|| m.equals("isViewOnly")
 				|| m.equals("getDisabledFieldsIterator")
