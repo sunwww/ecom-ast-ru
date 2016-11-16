@@ -18,7 +18,7 @@ public class ExtDispServiceJs {
 	
 	
 	public String DispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException, ParseException {
-		if(dispCardId==null||dispCardId==0){
+		if(dispCardId==null||dispCardId.equals(Long.valueOf(0))){
 			return "1";
 		}
 		else {
