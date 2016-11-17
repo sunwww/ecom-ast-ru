@@ -144,9 +144,9 @@
   <tiles:put name="side" type="string">
   <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
     <msh:sideMenu guid="sideMenu-123">
-      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/BedFund/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/BedFund/Delete" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/BedFund/Delete" />
+      <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
+      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
+      <msh:sideLink guid="sideLinkDelete" key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
     </msh:sideMenu>
     
     <msh:sideMenu title="Перейти" guid="sideMenu-123">
