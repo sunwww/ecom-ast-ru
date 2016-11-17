@@ -261,12 +261,13 @@ function printAssessmentCard (aCtx, aParams) {
 	var assCard = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCard, new java.lang.Long(aParams.get("id")));
 	var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient, assCard.patient);
 	var wf = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, assCard.workFunction);
-	
-	
+	var cardType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCardTemplate, assCard.template);
+	map.put("cardName", cardType.name);
 	map.put("cardDate", assCard.startDate);
 	map.put("doctorFIO", wf.worker.person);
 	map.put("workFunction", wf.workFunction.name);
 	map.put("cardBallSum", assCard.ballSum);
+	map.put("cardComment",assCard.comment);
 	map.put("pat", patient);
 	
 	var sql = "select p.id as pid" +
