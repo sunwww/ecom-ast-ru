@@ -311,7 +311,7 @@
     and os.id is not null  ${emergencySql} ${patientSql} 
     group by  m.id,hmc.id,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,d.name, vbst.id,vbst.name,
     vss.id,vss.name,os.id,os.code,os.name,vhr.code,hmc.dateStart,hmc.dateFinish,m.dateStart,m.dateFinish,m.transferDate,bf.addCaseDuration
-    order by  vss.name,vbst.name,os.code
+    order by  p.lastname, p.firstname, p.middlename,vss.name,vbst.name,os.code
     	"/>
     	    <form action="print-stac_report_standart_reestr.do" method="post" target="_blank">
     Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}
