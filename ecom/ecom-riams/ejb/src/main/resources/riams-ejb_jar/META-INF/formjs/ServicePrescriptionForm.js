@@ -5,6 +5,21 @@ function onPreDelete(aId, aCtx) {
 	if (startedPres.size()>0) {
 		throw "Удаление назначения невозможно, т.к. был произведен забор биоматериала";
 	}
+	//При удалении назначения, если не оформлен визит, удаляем его. Если оформлен - не удаляем назначение
+	startedPres = aCtx.manager.createNativeQuery("select case when vis.datestart is not null then 1 else 0 end as pid, vis.id as visit,p.calendartime_id as cal " +
+			" from prescription p " +
+			" left join medcase vis on vis.timeplan_id=p.calendartime_id" +
+			" where p.id="+aId ).getResultList();
+	if (startedPres.size()>0){
+		var ids = startedPres.get(0);
+		if (+ids[0]>0) {
+			throw "По данному направлению был произведен прием, удаление невозможно!";
+		} else {
+			aCtx.manager.createNativeQuery("update workcalendartime set medcase_id=null where id="+ids[2]).executeUpdate();
+			aCtx.manager.createNativeQuery("delete from medcase where parent_id="+ids[1]+"  or (id='"+ids[1]+"' and datestart is null)").executeUpdate();
+		}
+		
+	} 
 		aCtx.manager.createNativeQuery("update workcalendartime set prescription=null where prescription="+aId).executeUpdate();
 }
 
