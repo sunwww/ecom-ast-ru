@@ -212,6 +212,7 @@ function checkPrescriptionList(aForm, aEntity, aCtx) {
 		var mode = new Packages.ru.ecom.mis.ejb.domain.prescription.ModePrescription();
 		mode.setModePrescription(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocModePrescription, aForm.mode));
 		mode.setPrescriptionList(pl);
+		mode.setPrescriptSpecial(aEntity.ownerFunction);
 		mode.setPlanStartDate(aEntity.dateStart);
 		mode.setPlanStartTime(aEntity.entranceTime);
 		mode.setCreateDate(currentDate);
@@ -226,6 +227,7 @@ function checkPrescriptionList(aForm, aEntity, aCtx) {
 		var diet = new Packages.ru.ecom.mis.ejb.domain.prescription.DietPrescription();
 		diet.setDiet(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.diet.Diet, aForm.diet));
 		diet.setPrescriptionList(pl);
+		diet.setPrescriptSpecial(aEntity.ownerFunction);
 		diet.setPlanStartDate(aEntity.dateStart);
 		diet.setPlanStartTime(aEntity.entranceTime);
 		diet.setCreateDate(currentDate);
