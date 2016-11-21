@@ -196,7 +196,7 @@
     , p.materialId||' ('||vsst.code||')' as f4material
     ,coalesce(vsst.name,'---') as f5vsstname
     ,pat.lastname ||' '||pat.firstname||' '||pat.middlename ||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as f6birthday
-   , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name as f7medServicies
+   , ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||' <b>'||coalesce(vpt.shortname,vpt.name)||'</b>' as f7medServicies
    ,wp.lastname||' '||wp.firstname||' '||wp.middlename as f8fioworker
    ,iwp.lastname||' '||iwp.firstname||' '||iwp.middlename as f9intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f10dtintake
@@ -291,7 +291,7 @@
     ,coalesce(vsst.name,'---') as f5vsstname
     ,pat.lastname as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
-   ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies
+   ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||' <b>'||coalesce(vpt.shortname,'')||'</b>' else null end) as f10medServicies
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
