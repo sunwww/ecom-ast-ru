@@ -16,5 +16,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocPrescriptType extends VocBaseEntity {
+	/** Сокращенное название */
+	@Comment("Сокращенное название")
+	public String getShortName() {return theShortName;}
+	public void setShortName(String aShortName) {theShortName = aShortName;}
+	/** Сокращенное название */
+	private String theShortName;
 
 }
