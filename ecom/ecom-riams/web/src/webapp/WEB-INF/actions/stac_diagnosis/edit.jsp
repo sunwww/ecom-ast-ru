@@ -31,6 +31,9 @@
         <msh:row guid="fb31a065-5f7f-4b11-b1b5-0f336254b9fd">
           <msh:textArea property="name" label="Наименование" guid="c0a86a5e-34ff-46f3-984b-5ecbd2749760" fieldColSpan="5" rows="2" horizontalFill="true" />
         </msh:row>
+        <msh:row guid="fb31a065-5f7f-4b11-b1b5-0f336254b9fd">
+        	<msh:autoComplete vocName="vocIdc10" property="backgroundDisease" label="Фоновое заболевание" guid="e36df3bf-fe77-4096-a082-51016fc2baad" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
         <msh:ifFormTypeIsView formName="stac_diagnosisForm">
 	        <msh:row>
 	          <msh:autoComplete vocName="vocAcuityDiagnosis" property="acuity" label="Острота" guid="21cf4876-83b6-457c-be68-f186d986c130" horizontalFill="true" />

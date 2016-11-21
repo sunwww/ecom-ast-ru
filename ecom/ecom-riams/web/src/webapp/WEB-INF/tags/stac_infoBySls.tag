@@ -193,7 +193,10 @@
          select Diagnosis.id as did, VocDiagnosisRegistrationType.name as vdrtname
          ,Diagnosis.establishDate as establishDate
          ,Diagnosis.name as dname,VocIdc10.code as mkbcode
-         ,VocPriorityDiagnosis.name as vpdname  from Diagnosis
+         ,VocPriorityDiagnosis.name as vpdname  
+         ,mkbB.code||' ' ||mkbB.name as backgroundName
+         from Diagnosis
+         left join VocIdc10 mkbB on mkbB.id=Diagnosis.backgroundDisease_id
          left outer join VocDiagnosisRegistrationType on Diagnosis.registrationType_id = VocDiagnosisRegistrationType.id 
          left outer join VocPriorityDiagnosis on Diagnosis.priority_id = VocPriorityDiagnosis.id
          left outer join VocIdc10     on Diagnosis.idc10_id = VocIdc10.id
@@ -207,6 +210,7 @@
             <msh:tableColumn columnName="Дата" property="3" guid="718ec416-3543-4f8d-89cd-b24aa8177377" />
             <msh:tableColumn columnName="Наименование" property="4" guid="2a519337-384d-4695-9d19-72dd7e02936c" />
             <msh:tableColumn columnName="Код МКБ" property="5" guid="150732a8-0a5a-4ac3-bbbb-9ff669be37a6" />
+            <msh:tableColumn columnName="Фоновое заболевание" property="7" guid="150732a8-0a5a-4ac3-bbbb-9ff669be37a6" />
           </msh:table>
         </msh:section>
       </msh:ifInRole>
