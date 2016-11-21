@@ -1,9 +1,7 @@
 package ru.ecom.mis.ejb.service.sync.lpuattachment;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -17,10 +15,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.jdom.Document;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import bsh.StringUtil;
 
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -85,9 +81,9 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 		try{
 			String req = "Select id from LpuAttachedByDepartment where patient_id="+aPatientId+" and "+aDateType+" =to_date('"+aDate+"','yyyy-MM-dd') and attachedType_id=(select id from vocattachedtype where code='"+aMethod+"') ";
 		//System.out.println("REQ==="+req);
-			Object list = theManager.createNativeQuery(req).getSingleResult();
-		if (list!=null) {
-			lpu = theManager.find(LpuAttachedByDepartment.class, Long.valueOf(list.toString()));
+			List<Object> list = theManager.createNativeQuery(req).getResultList();
+		if (list.size()>0) {
+			lpu = theManager.find(LpuAttachedByDepartment.class, Long.valueOf(list.get(0).toString()));
 		} 
 					
 		
@@ -177,7 +173,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 		LpuAttachedByDepartment attachment;
 		LpuAttachmentFomcDefect defect;
 		SimpleDateFormat formatOutput = new SimpleDateFormat("dd.MM.yyyy");
-			Date current_date=new Date(new java.util.Date().getTime()) ;
+			//Date current_date=new Date(new java.util.Date().getTime()) ;
 			monitor = theMonitorService.startMonitor(aMonitorId, "Импорт дефектов прикрепленного населения", getCount(aTimeId));
 			try{
 			Query query = theManager.createQuery("from LpuAttachmentFomcDefect lafd where time = :time").setParameter("time", aTimeId);
