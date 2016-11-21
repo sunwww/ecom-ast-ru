@@ -138,30 +138,7 @@
  				showcheckPrescTypes();
  			}	
 	}	
-	function changePrescriptionType() {
-		 writeServicesToList('lab');
-			$('labServicies').value="";
-			$('labServiciesName').value="";
-			if (labList.length>0) {
-				 removeRows('lab');
-				PrescriptionService.getPresLabTypes(labList, $('prescriptType').value,{
-					callback: function(aResult) {
-						if (aResult) {
-	       					var resultList = aResult.split('#');
-	       					if (resultList.length>0) {
-	       						for (var i=0; i<resultList.length;i++) {
-	       							var resultRow = resultList[i].split(':');
-	       							if (resultRow[0]!="" && resultRow[0]!=null)
-	       								{
-	       								addRow(resultList[i]);
-	       								}
-	       						}
-	       					}
-	       				}
-					}
-				});
-			}
-	}
+
 	function checkDoubles () {
 		labList="";
 		if ($('labServicies')) {
@@ -204,7 +181,9 @@
 	
 
 	}
+	
 	function changePrescriptionType() {
+		labServiciesAutocomplete.setParentId($('prescriptType').value);
 		 writeServicesToList('lab');
 			$('labServicies').value="";
 			$('labServiciesName').value="";
@@ -217,10 +196,9 @@
 	       					if (resultList.length>0) {
 	       						for (var i=0; i<resultList.length;i++) {
 	       							var resultRow = resultList[i].split(':');
-	       							if (resultRow[0]!="" && resultRow[0]!=null)
-	       								{
-	       								addRow(resultList[i]);
-	       								}
+	       							if (resultRow[0]!=null&&resultRow[0]!=""){
+	       								addRows(resultList[i],0);
+	       							}
 	       						}
 	       					}
 	       				}
@@ -228,6 +206,7 @@
 				});
 			}
 	}
+	
 	function removeRows(type) {
 		var rType;
 		if (type=='lab') {rType=labNum; labNum=0;}
@@ -603,8 +582,6 @@
         </msh:row>
      </msh:ifFormTypeIsView>
 
-        
-        <!-- --------------------------------------------------Начало блока "Лабораторные анализы" ------ -->
         <msh:ifFormTypeIsCreate formName="pres_servicePrescriptionForm">
 
         <msh:row>
@@ -641,8 +618,7 @@
     		
 
         </msh:row>
-        <!-- --------------------------------------------------Конец блока "Лабораторные анализы" ------ -->
-        
+
         </msh:ifFormTypeIsCreate>
          <msh:ifFormTypeAreViewOrEdit formName="pres_servicePrescriptionForm">
          <msh:row>

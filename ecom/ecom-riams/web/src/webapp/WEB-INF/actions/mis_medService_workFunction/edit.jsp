@@ -52,7 +52,7 @@
           <msh:autoComplete vocName="vocRoomType" property="roomType" label="Уровень палат" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="prescriptType" vocName="vocPrescriptType" fieldColSpan="3" horizontalFill="true" label="Тип назначения"/>
+        	<msh:autoComplete property="prescriptType" vocName="vocPrescriptType" fieldColSpan="3" horizontalFill="true" label="Не назначать при типе назначения"/>
         </msh:row>
         <msh:row>
         	<msh:checkBox property="noActiveByPrescript" fieldColSpan="3" label="Не отображать в назначениях"/>

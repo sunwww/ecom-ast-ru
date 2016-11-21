@@ -360,9 +360,17 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		str.append("delete from prescription where medservice_id=").append(aMedService).append(" and prescriptionlist_id=")
 			.append(aPrescriptList);
 		if (aWorkCalendarTime!=null&&!aWorkCalendarTime.equals("")) {
-			str.append(" and calendartime_id=").append(aWorkCalendarTime) ;			
-			service.executeUpdateNativeSql("update medcase set noactuality = '1' where id= (select medcase_id from workcalendartime where id = "+aWorkCalendarTime+")");
+			str.append(" and calendartime_id=").append(aWorkCalendarTime) ;		
+			String medcase_id = null;
+			try {
+				medcase_id= service.executeNativeSql("select medcase_id from workcalendartime where id = "+aWorkCalendarTime).iterator().next().get1().toString();
+			} catch (Exception e) {
+			}
 			service.executeUpdateNativeSql("update workcalendartime set prescription=null, medcase_id = null where id="+aWorkCalendarTime);
+			if (medcase_id!=null){
+				service.executeUpdateNativeSql("delete from medcase where parent_id= "+medcase_id+" or (id="+medcase_id+" and datestart is null)");
+			}
+			
 		}
 		return "Выполнено: "+service.executeUpdateNativeSql(str.toString());
 	}
@@ -570,8 +578,8 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	 * На входе берем список исследований в формате ID:date:cabinet#
 	 */
 	public String getPresLabTypes(String aPresIDs, HttpServletRequest aRequest) throws NamingException {
-		System.out.println(aPresIDs);
-		return getPresLabTypes(aPresIDs, 0,aRequest);
+		//System.out.println(aPresIDs);
+		return getPresLabTypes(aPresIDs, Long.valueOf(0),aRequest);
 	}
 	
 	
@@ -579,10 +587,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	 * Проверяем полученные исследования на соответствие типу листа назначения 
 	 * и возвращаем те, которые соответствуют типу ЛН.
 	 */
-	public String getPresLabTypes(String aPresIDs, int aPrescriptListType, HttpServletRequest aRequest) throws NamingException {
+	public String getPresLabTypes(String aPresIDs, Long aPrescriptListType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		aPresIDs = aPresIDs.substring(0,aPresIDs.length()-1); // Обрезаем #
-		System.out.println("    presIds="+aPresIDs) ;
+		//System.out.println("    presIds="+aPresIDs) ;
 		StringBuilder sqlMS = new StringBuilder() ;
 		StringBuilder sqlCab = new StringBuilder();
 		StringBuilder res = new StringBuilder() ;
@@ -592,10 +600,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				String[] param = labListArr[i].split(":");
 			//	System.out.println("For="+i+" data ID= "+param[0]);
 			//	System.out.println("For="+i+" RES "+res.toString());
-				String msID = param.length>0&&param[0]!=null? param[0] : null;
+				String msID = param.length>0? param[0] : null;
 				String date = param.length>1&&param[1]!=null ? param[1]: "";
-				String cabID = param.length>2&&param[2]!=null? param[2] : null;
-				String departmentID = param.length>3&&param[3]!=null? param[3] : null;
+				String cabID = param.length>2? param[2] : null;
+				String departmentID = param.length>3? param[3] : null;
 				if (msID!=null && !msID.equals("")){
 					sqlMS.setLength(0);
 					sqlMS.append("select vst.code, ms.id, ms.code ||' ' ||ms.name from medservice ms ")
@@ -608,7 +616,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 					sqlMS.append(" left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id");
 					sqlMS.append(" left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id='");
 					sqlMS.append(aPrescriptListType).append("' ");
-					sqlMS.append(" and mss.dtype='MedService' and vsts.code='LABSURVEY')");
+					sqlMS.append(" and mss.id=ms.id and mss.dtype='MedService' and vsts.code='LABSURVEY')");
 	
 					}
 					
@@ -797,10 +805,24 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		return service.getPrescriptionTypes(isEmergency) ;
 	}
 	
-	public String getLabListFromTemplate(Long aIdTemplateList, HttpServletRequest aRequest) throws NamingException {
+	public String getLabListFromTemplate(Long aIdTemplateList, Long aPrescriptTypeId, HttpServletRequest aRequest) throws NamingException {
 		
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
-		return service.getLabListFromTemplate(aIdTemplateList) ;
+		StringBuilder sb = new StringBuilder();
+		String ret =service.getLabListFromTemplate(aIdTemplateList) ;
+		String[] arr = ret.split("#");
+		for (int i=0;i<arr.length;i++){
+			String[] row = arr[i].split(":");
+			if (row.length>1){
+				sb.append(row[1]).append("#");;
+			}
+		}
+		if (sb.length()>0){
+			//System.out.println("===== SB "+sb.toString());
+			return getPresLabTypes(sb.toString(),aPrescriptTypeId,aRequest);
+		}
+		return "";
+		
 	}
 	
 	public String savePrescription(Long aIdParent,Long aIdTemplateList, Long aFlag, HttpServletRequest aRequest) throws NamingException {

@@ -105,9 +105,10 @@
     	,vbt.name as vbtname,vbst.name as vbstname
     	,vrt.name as vrtname
     	,case when wf.dtype='GroupWorkFunction' then wf.groupname else vwfP.name||' '|| wp.lastname||' '||wp.firstname||' '||wp.middlename end as wfName
+    	,coalesce(vpt.shortname, vpt.name) as prescriptName
     	
     	from WorkFunctionService wfs
-    	
+    	left join vocPrescriptType vpt on vpt.id=wfs.prescripttype_id
     	left join MisLpu lpu on lpu.id=wfs.lpu_id 
     	left join VocWorkFunction vwf on vwf.id=wfs.vocWorkFunction_id 
      	 left join VocBedType vbt on vbt.id=wfs.bedType_id
@@ -130,6 +131,7 @@
             <msh:tableColumn property="4" columnName="Профиль коек" />
             <msh:tableColumn property="5" columnName="Тип коек" />
             <msh:tableColumn property="6" columnName="Уровень палат" />
+            <msh:tableColumn property="8" columnName="запр. тип назначения" />
         </msh:table>
     	
     	</msh:section>
