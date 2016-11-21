@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -9,7 +7,6 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DiagnosisPreCreateInterceptor;
-import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -38,6 +35,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
         @AParentEntityFormInterceptor(DiagnosisPreCreateInterceptor.class)
 )
 public class DiagnosisForm extends IdEntityForm {
+	
+	/** Фоновое заболевание */
+	@Comment("Фоновое заболевание")
+	@Persist
+	public Long getBackgroundDisease() {return theBackgroundDisease;}
+	public void setBackgroundDisease(Long aBackgroundDisease) {theBackgroundDisease = aBackgroundDisease;}
+	/** Фоновое заболевание */
+	private Long theBackgroundDisease;
 	
 	/** Выявлен атеросклероз БЦА */
 	@Comment("Выявлен атеросклероз БЦА")

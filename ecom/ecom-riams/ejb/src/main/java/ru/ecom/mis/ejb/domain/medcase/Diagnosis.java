@@ -50,6 +50,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(DeleteListener.class)
 public class Diagnosis extends BaseEntity {
 
+	/** Фоновое заболевание */
+	@Comment("Фоновое заболевание")
+	@OneToOne
+	public VocIdc10 getBackgroundDisease() {return theBackgroundDisease;}
+	public void setBackgroundDisease(VocIdc10 aBackgroundDisease) {theBackgroundDisease = aBackgroundDisease;}
+	/** Фоновое заболевание */
+	private VocIdc10 theBackgroundDisease;
+
 	/** Выявлен атеросклероз БЦА */
 	@Comment("Выявлен атеросклероз БЦА")
 	public Boolean getIsFoundAtherosclerosis() {return theIsFoundAtherosclerosis;}
