@@ -29,7 +29,7 @@ public class UserMessageTag  extends SimpleTagSupport {
         if(claim_messages!=null) {
         	for (ClaimMessage message:claim_messages) {
 	            JspWriter out = getJspContext().getOut() ;
-	            out.println("<table id='claimMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
+	            out.println("<table id='claimMessageContainer"+message.getId()+"' class='claimMessageContainer' style='margin-left: 4em'><tr><td>");
 	            out.println(" <div class='claimMessage'>") ;
 	            out.println(" <a href='javascript:void(0)' class='claimMessageClose' title='' onclick='checkClaimMessage("+message.getId()+",1)'>Убрать (заявка выполнена)</a>") ;
 	            out.println(message.getInfo()) ;
@@ -49,9 +49,10 @@ public class UserMessageTag  extends SimpleTagSupport {
         	
         	for (UserMessage message:messages) {
 	            JspWriter out = getJspContext().getOut() ;
-	            out.println("<table id='userMessageContainer"+message.getId()+"' style='margin-left: 4em'><tr><td>");
+	            out.println("<table id='userMessageContainer"+message.getId()+"' class='userMessageContainer' style='margin-left: 4em'><tr><td>");
 	            out.println(" <div class='userMessage'>") ;
 	            out.println(" <a href='javascript:void(0)' class='userMessageClose' title='Убрать сообщение' onclick='checkUserMessage("+message.getId()+")'>Убрать</a>") ;
+	            out.println(" <a href='javascript:void(0)' class='userMessageCloseAll' title='Убрать все сообщения' onclick='checkAllMessages(\"userMessageContainer\")'>Убрать все сообщения</a>") ;
 	            out.println(message.getInfo()) ;
 	            out.println("<br/>") ;
 	            out.println("<u>"+message.getTitle()+"</u>") ;
