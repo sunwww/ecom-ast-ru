@@ -84,9 +84,15 @@
           	</msh:ifFormTypeIsNotView>
         </msh:row>
         <mis:ifPatientIsWoman classByObject="MedCase" idObject="${medcase}">
-	        <msh:row>
-	        	<msh:autoComplete property="abortion" vocName="vocAbortion" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
-	        </msh:row>
+         
+        <msh:row>
+        <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
+        <msh:autoComplete property="method" label="Метод" guid="e22-9d6a1-302f14f" horizontalFill="true" vocName="vocOperationMethod" />
+        </msh:row>
+        
+        <msh:row guid="1221-2e6b-425a-a14e-1c02959">
+   		<msh:autoComplete property="abortion" vocName="vocAbortationByProfile" parentAutocomplete="profile" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
+       	</msh:row>
         </mis:ifPatientIsWoman>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         	<msh:hidden property="surgeonFunctions"/>
@@ -100,10 +106,7 @@
         </msh:ifInRole>
         
         
-        <msh:row guid="1221-2e6b-425a-a14e-1c02959">
-          <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
-          <msh:autoComplete property="method" label="Метод" guid="e22-9d6a1-302f14f" horizontalFill="true" vocName="vocOperationMethod" />
-        </msh:row>
+      
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
         <msh:row guid="ca8a7727-42ac-4c64-8e52-23d4f84dfe43">
           <msh:textArea rows="6" hideLabel="false" property="operationText" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол операции" />
