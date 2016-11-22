@@ -26,7 +26,7 @@ public class ProtocolSaveInterceptor implements IFormInterceptor {
     	List<WorkFunction> listwf =  aContext.getEntityManager().createQuery("from WorkFunction where secUser.login = :login")
 		.setParameter("login", username).getResultList() ;
 		if (listwf.size()==0) {
-			new IllegalArgumentException(
+			throw new IllegalArgumentException(
 					"Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)"
 					);
 		} else {

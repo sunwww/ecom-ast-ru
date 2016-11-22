@@ -147,7 +147,7 @@ public class AddressPointCheckHelper {
     			to = Integer.parseInt(st.nextToken()) ;
                 if(to-from>1000) throw new IllegalArgumentException("Слишком большой диапазон квартир. Максимум - 1000") ;
                 if(to<from) throw new IllegalArgumentException("Правая часть диапазона квартир не должна быть меньше левой") ;
-                if(to==from) throw new IllegalArgumentException("Правая часть диапазона квартир не должна быть равна левой") ;
+                if(to.equals(from)) throw new IllegalArgumentException("Правая часть диапазона квартир не должна быть равна левой") ;
     			for(int i=from; i<=to; i++) {
     				ret.add(new AddressPointCheck(
     						houseAndBuildingPointCheck.getNumber()
@@ -175,7 +175,7 @@ public class AddressPointCheckHelper {
                 to = Integer.parseInt(st.nextToken()) ;
                 if(to-from>1000) throw new IllegalArgumentException("Слишком большой диапазон домов. Максимум - 1000") ;
                 if(to<from) throw new IllegalArgumentException("Правая часть диапазона не должна быть меньше левой") ;
-                if(to==from) throw new IllegalArgumentException("Правая часть диапазона не должна быть равна левой") ;
+                if(to.equals(from)) throw new IllegalArgumentException("Правая часть диапазона не должна быть равна левой") ;
                 for(int i=from; i<=to; i++) {
 
                     boolean canAdd = true ;
