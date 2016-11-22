@@ -188,7 +188,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}else return "Невозможно отменить! Уже было отменено или находится в работе";
 	}
 	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
-		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, HttpServletRequest aRequest )throws NamingException {
+		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId,Long aCountDays, HttpServletRequest aRequest )throws NamingException {
 		if (aTimePlanId==null||aTimePlanId.equals(Long.valueOf(0))) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -202,9 +202,16 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			e.printStackTrace(); 
 			throw new IllegalDataException(e.toString());
 		}
-		 
-		String visit = service.createNewDirectionFromPrescription(aPrescriptListId, aWorkFunctionPlanId
-			,aDatePlanId, aTimePlanId, aMedServiceId, username, wf);
+		String visit = null;
+		if (aCountDays!=null&&aCountDays>Long.valueOf(0)) {
+			/**TODO */
+		} else {
+			visit = service.createNewDirectionFromPrescription(aPrescriptListId, aWorkFunctionPlanId
+					,aDatePlanId, aTimePlanId, aMedServiceId, username, wf);
+		}
+		
+		
+		
 		
 		
 		return visit;
@@ -554,7 +561,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	//	req.append("group by p.medservice_id, labName ");
 		//req.append("having count(p.id)>1 ");
 	//	System.out.println("--------------------getDuplicatePrescriptions Request is = "+req.toString());
-		Collection<WebQueryResult> list = service.executeNativeSql(req.toString().toString()) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(req.toString()) ;
 	//	System.out.println("-------------in PS - start working!!!");
 		StringBuilder res = new StringBuilder();
 		if (list.size()>0) {

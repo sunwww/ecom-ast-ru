@@ -205,7 +205,7 @@ function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, 
 	$('subm').disabled = true;
 	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
 	PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
-	,$('surgServicies').value, {
+	,$('surgServicies').value, $('countDays').value) {
 		callback: function(a) {
 			if (a==null) {
 				alert("Ошибка при назначении услуги!!! Выбранное время уже занято!");
@@ -435,6 +435,10 @@ function getPreRecord() {
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
+        <msh:hidden property="countDays"/>
+      </msh:ifNotInRole>
+		
       <msh:panel guid="panel" colsWidth="3">  
          <msh:row guid="203a1bdd-8e88-4683-ad11-34692e44b66d">
           <msh:autoComplete property="prescriptSpecial" label="Назначил" size="100" vocName="workFunction" guid="c53e6f53-cc1b-44ec-967b-dc6ef09134fc" fieldColSpan="3" viewOnlyField="true" horizontalFill="true"  />
@@ -469,6 +473,10 @@ function getPreRecord() {
 				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
     			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
     		</msh:row>
+    		 <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
+         <msh:row> 
+        <msh:textField property="countDays"  label="Кол-во дней записи" />
+        </msh:row></msh:ifInRole>
     		<msh:row>
     			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>

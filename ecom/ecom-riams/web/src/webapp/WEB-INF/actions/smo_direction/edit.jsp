@@ -16,6 +16,9 @@
       <msh:hidden property="saveType" />
       <msh:hidden property="patient" />
       <msh:hidden property="infoByPolicy" />
+      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
+        <msh:hidden property="countDays"/>
+      </msh:ifNotInRole>
       <msh:panel guid="panel" colsWidth="10%, 10%, 10%">
             	<msh:row>
       		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"/></td>
@@ -43,9 +46,13 @@
         </msh:row>
         <msh:row guid="row1">
           <msh:autoComplete vocName="vocWorkCalendarDayByWorkFunction" property="datePlan" label="Направлен на дату" guid="d7f4bef5-0f84-4d3c-b7d9-b7c7c5d51907" horizontalFill="true" parentAutocomplete="workFunctionPlan" />
-          <msh:autoComplete vocName="vocWorkCalendarTimeWorkCalendarDay" property="timePlan" label="Время" guid="1d6b9712-62cc-4c67-a2d8-77bfef298ff3" parentAutocomplete="datePlan" 
-          />
+          <msh:autoComplete vocName="vocWorkCalendarTimeWorkCalendarDay" property="timePlan" label="Время" guid="1d6b9712-62cc-4c67-a2d8-77bfef298ff3" parentAutocomplete="datePlan" />
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
+         <msh:row> 
+        <msh:textField property="countDays"  label="Кол-во дней записи" />
+        </msh:row>
+        </msh:ifInRole>
         <msh:row>
         	<ecom:oneToManyOneAutocomplete viewAction="entityView-mis_medService.do" label="Мед. услуги" 
 	   		property="medServices" vocName="medServiceForSpec" colSpan="6" />
