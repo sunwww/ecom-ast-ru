@@ -1,4 +1,17 @@
 <vocconfig>
+	<voc id="vocAbortationByProfile" type="NativeVocService">
+			<NativeVocService
+			    	from="Surgicalprofileabortation as spa "
+			    	parent='spa.surgicalprofile =:parent'
+			    	nameId="va.id"
+			    	join="left join vocabortion va on va.id=spa.abortation"
+			    	queryAppend=""
+			    	order=""
+			    	queried=""
+			    	names = "va.name"
+			/>
+		</voc>
+	
 	<voc id="slsByPregnancy" type="NativeVocService">
 		<NativeVocService
 		    	from=" MedCase as sls "

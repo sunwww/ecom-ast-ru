@@ -85,7 +85,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	vis.setPatient(pat);
 	vis.setCreateDate(new java.sql.Date(date));
 	vis.setCreateTime(new java.sql.Time(date));
-	if (!aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
+	if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
 		System.out.println("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
 		return null;
 	}
