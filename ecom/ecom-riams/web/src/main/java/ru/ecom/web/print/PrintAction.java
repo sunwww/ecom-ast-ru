@@ -123,7 +123,7 @@ public class PrintAction extends BaseAction {
         	IKdlDiaryService serviceKdl = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
         	String path=serviceKdl.getDir("tomcat.data.rtf","/opt/tomcat/webapps/rtf") ;
         	
-        	if (print!=null && !print.equals("no")) {run("lp -d "+print+" "+path+"/"+filename) ;}
+        	if (!print.equals("no")) {run("lp -d "+print+" "+path+"/"+filename) ;}
         	new InfoMessage(aRequest, "Документ отправлен в очередь на печать") ;
         	if ((printTxtFirst!=null&&(printTxtFirst.equals("1")||printTxtFirst.equals("0")))&&(next==null||next.equals(""))) {
         		return new ActionForward(null, true);

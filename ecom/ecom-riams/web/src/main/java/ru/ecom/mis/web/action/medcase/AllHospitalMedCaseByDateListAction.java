@@ -28,12 +28,13 @@ public class AllHospitalMedCaseByDateListAction extends ListAction {
 
 	        String ssl_id = aRequest.getParameter("sslid") ;
 	        String date = aRequest.getParameter("id") ;
-	        String dateSearch = aRequest.getParameter("dateSearch") ;
+	     //   String dateSearch = aRequest.getParameter("dateSearch") ;
 	        Long id ;
 	        long sslId = -1 ;
 	        System.out.println("sslid="+ssl_id) ;
 	        if (!StringUtil.isNullOrEmpty(ssl_id)){
-	        	sslId=Long.valueOf(ssl_id);
+	        	//sslId=Long.valueOf(ssl_id);
+	        	sslId = Long.parseLong(ssl_id);
 	        	IHospitalMedCaseService service = (IHospitalMedCaseService)Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 	        	id = service.getPatient(sslId) ;
 	        	System.out.println("date = "+date) ;

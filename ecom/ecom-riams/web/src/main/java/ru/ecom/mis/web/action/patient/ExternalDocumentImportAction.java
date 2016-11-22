@@ -92,7 +92,7 @@ public class ExternalDocumentImportAction extends BaseAction{
     		float mcomp = 1f ;
     		//System.out.println(1) ;
     		ExportPolicyForm form = aForm!=null?(ExportPolicyForm)aForm:null ;
-    		FormFile ffile = form!=null?form.getFile():null;
+    		FormFile ffile = form!=null?form.getFile():null; 
     		String parentType = form.getParentType()!=null&&!form.getParentType().equals("")?form.getParentType():"Patient";
     		String contentType = ffile!=null?ffile.getContentType().toLowerCase(): "";
     		System.out.println("==== TYPE="+contentType);
@@ -130,7 +130,7 @@ public class ExternalDocumentImportAction extends BaseAction{
         		IWebQueryService wqservice = Injection.find(aRequest).getService(IWebQueryService.class) ;
         		String typeString = "unknown" ;
         		String sql = "select id,code from VocExternalDocumentType where id='"+objectType+"'" ;
-        		Collection<WebQueryResult> list1 = wqservice.executeNativeSql(sql.toString(),1) ;
+        		Collection<WebQueryResult> list1 = wqservice.executeNativeSql(sql,1) ;
         		if (list1.size()>0) {
         			WebQueryResult wqr = list1.iterator().next() ;
         			if (wqr.get2()!=null && !wqr.get2().equals("")) typeString=String.valueOf(wqr.get2()) ;
@@ -146,10 +146,10 @@ public class ExternalDocumentImportAction extends BaseAction{
             	objectType = form.getType() ;
             	aRequest.setAttribute("objectId", objectId) ;
             	aRequest.setAttribute("objectType", objectType) ;
-            	if (contentType.equals("image/tiff")) {
+            	/*if (contentType.equals("image/tiff")) {
             		//
             		
-            	}
+            	}*/
             	
              	url_image = ""+ dat.getTime() ;
             	diradd = "tmp/"+username+"" ;
@@ -166,7 +166,9 @@ public class ExternalDocumentImportAction extends BaseAction{
 	    			//image = Scalr.resize(image, image.getWidth()/2,image.getHeight()/2) ;
 	            	File file = new File(dirmain+diradd) ;
             		if (!file.exists()) {
+            			try {
             			file.mkdirs() ;
+            			}catch (Exception e){}
             		}
             		 
             		//save(image, dirmain+"proba/");
@@ -180,7 +182,7 @@ public class ExternalDocumentImportAction extends BaseAction{
             		else if (contentType!=null&&contentType.equals("application/pdf")) { //Сохраняем ПДФ как есть
             			System.out.println("=== "+ffile.getFileSize()+" <>"+dirmain+"/"+diradd+".pdf");
             			
-            				saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");
+            			saveNotImage(ffile.getInputStream(),dirmain+"/"+diradd+".pdf");
             				System.out.println("=== DOC_TYPE= "+form.getType()+"<>"+form.getObjectId());
             				if (form.getType()!=null) service.insertExternalDocumentByObject(parentType, form.getObjectId() , form.getType(), diradd+".pdf", diradd+".pdf", "", username) ;
             				aRequest.setAttribute("url_image", diradd+".pdf") ;
@@ -300,6 +302,7 @@ public class ExternalDocumentImportAction extends BaseAction{
 	            out.write(buf, 0, count) ;
 	        }
 	        out.close() ;
+	        aInputStream.close();
 	}
 	
 	private void printlist(String[] aList) {

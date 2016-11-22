@@ -81,8 +81,8 @@ public class TicketServiceJs {
 	public String generateTalons (String aWorkFunctionIds,String aDateFrom, String aDateTo, String times, Long serviceStream, Long workplace
 			, Long visitReason, Long visitResult, String diagnosis, Long concludingActuity
 			, Long recordCount, String aAgeFrom, String aAgeTo, String aSexId, String aLpu, HttpServletRequest aRequest) throws ParseException, NamingException {
-		Date startDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateFrom);
-		Date finishDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateTo);
+		//Date startDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateFrom);
+		//Date finishDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateTo);
 		return "";
 	}
 	
@@ -475,14 +475,14 @@ public class TicketServiceJs {
 		aDatePlan = aDatePlan.trim() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select id,code from VocServiceStream where id='"+aServiceStream+"' and code='OBLIGATORYINSURANCE'" ;
-		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString(),1) ;
+		Collection<WebQueryResult> list1 = service.executeNativeSql(sql,1) ;
 		if (list1.size()>0) {
 			sql = "SELECT mp.id,mp.dtype " 
 	                +"FROM MedPolicy mp left join Medcard mc on mp.patient_id=mc.person_id left join Patient pat on pat.id=mc.person_id where mc.id='"+aMedcardId+"' "
 	                +"AND ((mp.actualDateFrom<=to_date('"+aDatePlan+"','dd.mm.yyyy') and (mp.actualDateTo is null or mp.actualDateTo>=to_date('"+aDatePlan+"','dd.mm.yyyy')) "
 	                +"and mp.DTYPE like 'MedPolicyOmc%') or pat.deathdate<= to_date('"+aDatePlan+"','dd.mm.yyyy'))" ;
 			//System.out.println(sql) ;
-			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
+			Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
 			if (list.size()==0) return "1" ;
 			if (list.size()>1) return "2" ;
 		}

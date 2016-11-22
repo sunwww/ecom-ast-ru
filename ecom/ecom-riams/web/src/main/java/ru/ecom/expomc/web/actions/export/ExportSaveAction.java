@@ -30,9 +30,9 @@ public class ExportSaveAction extends BaseAction {
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
         final IJbossGetFileService fileService = Injection.find(aRequest).getService(IJbossGetFileService.class) ;
 
-        final long monitorId = monitorService.createMonitor() ;
+        //final long mкonitorId = monitorService.createMonitor() ;
         final long fileId = fileService.register() ;
-        
+        final long monitorId = monitorService.createMonitor();
         final ExportForm form = (ExportForm) aForm ;
         new Thread() {
             public void run() {

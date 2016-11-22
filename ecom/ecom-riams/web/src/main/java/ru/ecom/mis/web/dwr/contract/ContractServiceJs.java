@@ -275,7 +275,7 @@ public class ContractServiceJs {
 		if (list.isEmpty()) {
 			WebQueryResult ppInfo = list.iterator().next() ;
 			if (ppInfo.get4()==null) {
-				new IllegalArgumentException("НЕОПРЕДЕЛЕНА ПОЗИЦИЯ ПРЕЙСКУРАНТА ДЛЯ PRICEMEDSERVICE С ID="+aPMS) ;
+				throw new IllegalArgumentException("НЕОПРЕДЕЛЕНА ПОЗИЦИЯ ПРЕЙСКУРАНТА ДЛЯ PRICEMEDSERVICE С ID="+aPMS) ;
 			}
 
 			if (ppInfo.get1()!=null) {
@@ -291,7 +291,7 @@ public class ContractServiceJs {
 					sql.append("select max(id) from medservice where dtype='MedServiceGroup' and code='PRICELISTADD'") ;
 					Collection<WebQueryResult> lG = service.executeNativeSql(sql.toString()) ;
 					if (lG.isEmpty()) {
-						new IllegalArgumentException("НЕВОЗМОЖНО ОПРЕДЕЛИТЬ ГРУППУ ДЛЯ ДОБАВЛЕНИЯ УСЛУГИ С КОДОМ: PRICELISTADD") ;
+						throw new IllegalArgumentException("НЕВОЗМОЖНО ОПРЕДЕЛИТЬ ГРУППУ ДЛЯ ДОБАВЛЕНИЯ УСЛУГИ С КОДОМ: PRICELISTADD") ;
 					}
 					ppInfo.set6(lG.iterator().next().get1()) ;
 					System.out.println("insert result = "+ppInfo.get6()) ;
@@ -312,7 +312,7 @@ public class ContractServiceJs {
 				}
 			}
 		} else {
-			new IllegalArgumentException("НЕ НАЙДЕН PRICEMEDSERVICE С ID="+aPMS) ;
+			throw new IllegalArgumentException("НЕ НАЙДЕН PRICEMEDSERVICE С ID="+aPMS) ;
 		}
 		return "" ;
 	}

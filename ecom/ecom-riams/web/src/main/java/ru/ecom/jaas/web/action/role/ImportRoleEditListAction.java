@@ -21,7 +21,7 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 public class ImportRoleEditListAction extends BaseAction{
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-    	StringBuilder ret = new StringBuilder() ;
+    	//StringBuilder ret = new StringBuilder() ;
     	ISecService service = (ISecService) Injection.find(aRequest).getService("SecService");
     	List<PolicyForm> list = new LinkedList<PolicyForm> () ;
     	try {

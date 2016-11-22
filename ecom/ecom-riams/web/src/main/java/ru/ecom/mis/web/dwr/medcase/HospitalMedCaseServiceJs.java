@@ -158,7 +158,7 @@ public class HospitalMedCaseServiceJs {
 	public String saveServiceByMedCase(Long aMedCase, String aServices, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		StringBuilder res = new StringBuilder() ;
+		//StringBuilder res = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
 		service.executeUpdateNativeSql("delete from medcase where parent_id="+aMedCase+" and dtype='ServiceMedCase'");
 		if (aServices!=null&&!aServices.equals("")) {
@@ -524,7 +524,7 @@ public class HospitalMedCaseServiceJs {
 	public static String getDataByReferencePrintNotOnlyOMS(Long aMedCase,String aType, boolean aIsUrl, String aSqlAdd, HttpServletRequest aRequest) throws Exception {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		ISoftConfigService sservice = Injection.find(aRequest).getService(ISoftConfigService.class) ;
+		//ISoftConfigService sservice = Injection.find(aRequest).getService(ISoftConfigService.class) ;
 		//StringBuilder url = new StringBuilder() ;
 		String code_page = ""+getDefaultParameterByConfig("code_csp_page", "CP1251", aRequest) ;
 		String address_lpu = ""+getDefaultParameterByConfig("address_lpu", "_______________________________________________________", aRequest) ;
@@ -533,9 +533,9 @@ public class HospitalMedCaseServiceJs {
 		//url.append(aRequest.getServerName()) ;
 		Object csp_port=getDefaultParameterByConfig("csp_post", "57772", aRequest) ;
 		
-		if (aRequest.getServerPort()>1000) {
+		/*if (aRequest.getServerPort()>1000) {
 			//url.append(!csp_port.equals("")?(":"+csp_port):"").append(aRequest.getServerPort()) ;
-		}
+		}*/
 		String cspurl = new StringBuilder().append("expert").append(!csp_port.equals("")?(":"+csp_port):"")
 				.append("/csp/").append(getDefaultParameterByConfig("data_base_namespace", "riams", aRequest)).toString() ;
 		StringBuilder href = new StringBuilder() ;
@@ -587,7 +587,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" where sls.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and sls.dischargeTime is not null") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
-			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
+			if (l.isEmpty()) throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ПО ВЫПИСАННЫМ ОМС БОЛЬНЫМ!!!") ;
 			WebQueryResult wqr = l.iterator().next() ;
 			href.append(param("BirthDate",wqr.get3())) ;
 			href.append(param("Lpu",wqr.get5())) ;
@@ -788,7 +788,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=coalesce(vis.dateStart,wcd.calendardate,vis.datefinish) and coalesce(mp.actualdateto,vis.datestart,wcd.calendardate,vis.datefinish)>=coalesce(vis.datestart,wcd.calendardate,vis.datefinish) and mp.dtype like 'MedPolicyOm%'") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
-			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
+			if (l.isEmpty()) throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
 			WebQueryResult wqr = l.iterator().next() ;
 			href.append(param("BirthDate",wqr.get3())) ;
 			
@@ -964,7 +964,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
-			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
+			if (l.isEmpty()) throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
 			WebQueryResult wqr = l.iterator().next() ;
 			href.append(param("BirthDate",wqr.get3())) ;
 			
@@ -1124,7 +1124,7 @@ public class HospitalMedCaseServiceJs {
 			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and (spo.dateFinish is not null or vis.emergency='1') and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql(sql.toString(),1) ;
-			if (l.isEmpty()) new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
+			if (l.isEmpty()) throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
 			WebQueryResult wqr = l.iterator().next() ;
 			href.append(param("BirthDate",wqr.get3())) ;
 			
@@ -1259,7 +1259,7 @@ public class HospitalMedCaseServiceJs {
 			href.append("AddDispHealthGroup=").append("") ;
 			
 			Collection<WebQueryResult> l = service.executeNativeSql("select to_char(sls.dateStart,'yyyymmdd') as datestart,to_char(sls.dateFinish,'yyyymmdd') as dateFinish from MedCase sls where sls.id="+aMedCase) ;
-			WebQueryResult wqr = l.iterator().next() ;
+			//WebQueryResult wqr = l.iterator().next() ;
 			href.append("AdmissionDate=").append("") ;
 			href.append("BedDays=").append("") ;
 			href.append("BirthDate=").append("") ;

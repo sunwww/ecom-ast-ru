@@ -310,8 +310,8 @@ public class TemplateProtocolJs {
 	}
 	/** Получить список параметров с номерами полей по шаблону */
 	public String getParameterByTemplate000(Long aIdTemp, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		List<Object[]> list = service.executeNativeSqlGetObj("select id,name,code from VocSex") ;
+		//IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		//List<Object[]> list = service.executeNativeSqlGetObj("select id,name,code from VocSex") ;
 		
 		return "";
 	}
@@ -320,7 +320,7 @@ public class TemplateProtocolJs {
 			return "" ;
 		} else {
 			ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;
-			return service.getTextTemplate(Long.valueOf(aId)) ;
+			return service.getTextTemplate(Long.parseLong(aId)) ;
 		}
 	}
 	public String getTextExternal(String aId, HttpServletRequest aRequest) throws NamingException {
@@ -339,7 +339,7 @@ public class TemplateProtocolJs {
             return "" ;
         } else {
         	IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-        	return service.getDischargeEpicrisis(Long.valueOf(aId)) ;
+        	return service.getDischargeEpicrisis(Long.parseLong(aId)) ;
         }
     }
     public String listCategProtocolsByUsername(String aSmoId,String aType, String aFunction,HttpServletRequest aRequest) throws NamingException, JspException {
@@ -626,7 +626,7 @@ public class TemplateProtocolJs {
 			
 			String name_cat = "" ; 
 			if (aParent==null) aParent="0" ;
-			if (aParent!=null && !aParent.equals("") && !aParent.equals("0")) {
+			if (!aParent.equals("") && !aParent.equals("0")) {
 				sql.append(" and tptc.categories_id");
 				if (aParent.equals("-1")) {
 					name_cat="без категории" ;
@@ -650,7 +650,7 @@ public class TemplateProtocolJs {
 			name_cat = name_cat+"<input type='text' id='fldSearch"+aFunctionProt+"' name='fldSearch"+aFunctionProt+"' value='"+(aSearchText!=null?aSearchText:"")+"'>" ;
 			name_cat = name_cat+"<input  type='submit' value='Поиск' onclick='"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
 			name_cat = name_cat+"</form>" ;
-			res.append("<h2>Список своих шаблонов").append(name_cat!=null&&!name_cat.equals("")?" КАТЕГОРИИ: "+name_cat:"").append(" </h2>") ;
+			res.append("<h2>Список своих шаблонов").append(" КАТЕГОРИИ: "+name_cat).append(" </h2>") ;
 			res.append("</td>") ;
 			res.append("</tr><tr><td colspan='2' valign='top'>") ;
 			res.append("<ul>");
@@ -802,7 +802,7 @@ public class TemplateProtocolJs {
             return "" ;
         } else {
             ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;
-            return service.getTextByProtocol(Long.valueOf(aId)) ;
+            return service.getTextByProtocol(Long.parseLong(aId)) ;
         }
     }
     public void saveParametersByMedService(long aProtocol, String aAdds, String[] aRemoves, HttpServletRequest aRequest) throws NamingException {

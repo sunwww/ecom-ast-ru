@@ -36,7 +36,8 @@ public class AllHospitalMedCasesListAction extends ListAction {
         System.out.println("sslid="+ssl_id) ;
         IHospitalMedCaseService service = (IHospitalMedCaseService)Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
         if (!StringUtil.isNullOrEmpty(ssl_id)){
-        	sslId=Long.valueOf(ssl_id);
+        	//sslId=Long.valueOf(ssl_id);
+        	sslId=Long.parseLong(ssl_id);
         	
         	id = service.getPatient(sslId) ;
         	System.out.println("patientid = "+idString) ;

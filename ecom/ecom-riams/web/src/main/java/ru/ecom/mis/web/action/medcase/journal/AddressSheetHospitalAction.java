@@ -17,7 +17,7 @@ public class AddressSheetHospitalAction extends BaseAction {
         form.validate(aMapping, aRequest) ;
         String typeDate =ActionUtil.updateParameter("AddressSheetHospital","typeDate","1", aRequest) ;
         String typeStatus =ActionUtil.updateParameter("AddressSheetHospital","typeStatus","1", aRequest) ;
-        String typeView =ActionUtil.updateParameter("AddressSheetHospital","typeView","1", aRequest) ;
+      //  String typeView =ActionUtil.updateParameter("AddressSheetHospital","typeView","1", aRequest) ;
         if (typeDate!=null && typeDate.equals("2")) {
         	aRequest.setAttribute("dateSearch","dateFinish") ;
         	aRequest.setAttribute("infoSearch"," Поиск по дате выписки") ;

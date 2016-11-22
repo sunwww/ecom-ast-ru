@@ -79,7 +79,7 @@ public class ImportRoleAction extends BaseAction{
             	System.out.println(e.getMessage());
             } 
             finally {
-                in.close();
+             if(in!=null) in.close();
             }
             in.close() ;
     	} else {

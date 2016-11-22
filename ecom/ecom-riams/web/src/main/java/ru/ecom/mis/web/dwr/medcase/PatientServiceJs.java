@@ -220,9 +220,11 @@ public class PatientServiceJs {
 			int sb1 = age.indexOf(".") ;
 			int sb2 = age.indexOf(".",sb1+1) ;
 			
-			int yearDif = Integer.valueOf(age.substring(0,sb1)).intValue() ;
+			//int yearDif = Integer.valueOf(age.substring(0,sb1)).intValue() ;
+			int yearDif = Integer.parseInt(age.substring(0,sb1)) ;
 			System.out.println("yearDif:"+yearDif) ;
-			int monthDif = Integer.valueOf(age.substring(sb1+1, sb2)).intValue() ;
+			//int monthDif = Integer.valueOf(age.substring(sb1+1, sb2)).intValue();
+			int monthDif = Integer.parseInt(age.substring(sb1+1, sb2));
 			System.out.println("monthDif:"+monthDif) ;
 			//int dayDif =  Integer.valueOf(age.substring(sb2+1)).intValue() ;
 			if (yearDif==2){
@@ -247,8 +249,10 @@ public class PatientServiceJs {
 			//} else if(yearDif<18) {
 			//	return ""+yearDif ;
 			} else {
-				int year1=Integer.valueOf(birthDayS.substring(6)).intValue() ;
-				int year2=Integer.valueOf(aFinishDate.substring(6)).intValue() ;
+			//int year1=Integer.valueOf(birthDayS.substring(6)).intValue() ;
+			//int year2=Integer.valueOf(aFinishDate.substring(6)).intValue() ;
+				int year1=Integer.parseInt(birthDayS.substring(6)) ;
+				int year2=Integer.parseInt(aFinishDate.substring(6)) ;
 				if (year2<20) year2=year2+2000 ;
 				if (year2<100) year2=year2+1900 ;
 				System.out.println("year1="+year1) ;

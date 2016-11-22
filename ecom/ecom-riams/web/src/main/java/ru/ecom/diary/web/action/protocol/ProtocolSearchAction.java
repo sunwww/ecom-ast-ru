@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ProtocolSearchAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         IDiaryService service = Injection.find(aRequest).getService(IDiaryService.class) ;
-        IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
+        //IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
             aRequest.getSession(true).setAttribute("protocolSearchResult", service.findProtocol(1));
         return aMapping.findForward("success") ;
     }

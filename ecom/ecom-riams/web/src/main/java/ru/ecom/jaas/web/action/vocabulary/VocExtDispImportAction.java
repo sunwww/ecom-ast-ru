@@ -54,7 +54,7 @@ public class VocExtDispImportAction extends BaseAction {
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
                 System.out.println(new StringBuilder().append("		root=").append(parConfigElement).toString());
-                Long i =Long.valueOf(1) ;
+               // Long i =Long.valueOf(1) ;
                 for (Object o : parConfigElement.getChildren()) {
                     Element parElement = (Element) o;
                     if("services".equals(parElement.getName())) {
@@ -171,7 +171,7 @@ public class VocExtDispImportAction extends BaseAction {
             	System.out.println(e.getMessage());
             } 
             finally {
-                in.close();
+               if(in!=null) in.close();
             }
             in.close() ;
     	} else {

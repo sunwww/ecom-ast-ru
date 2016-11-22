@@ -37,11 +37,11 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 		theManager.addTld(ru.ecom.web.tags.EntityWebTrailTag.class, "ecom");
 		theJspFileHelper = new JspFileHelper();
 
-		try {
+		/*try {
 			Properties prop = new Properties();
 		} catch (Exception e) {
 
-		}
+		}*/
 		theJspFileHelper
 				.setWorkspaceDir(new File("/home/esinev/workspace/ecom"));
 	}

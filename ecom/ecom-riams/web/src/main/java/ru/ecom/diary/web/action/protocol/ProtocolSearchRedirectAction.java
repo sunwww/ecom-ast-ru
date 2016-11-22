@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ProtocolSearchRedirectAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         IDiaryService service = Injection.find(aRequest).getService(IDiaryService.class) ;
-        IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
+     //   IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
 //            aRequest.getSession(true).setAttribute("protocolSearchResult", service.findProtocol(1));
         aRequest.setAttribute("list",service.findProtocol(1));
 //        aRequest.setAttribute("list",new ArrayList());

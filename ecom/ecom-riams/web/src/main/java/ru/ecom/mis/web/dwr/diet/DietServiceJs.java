@@ -38,7 +38,7 @@ public class DietServiceJs {
 		if (aFlag==1) {
 			return savePrescriptExists(aIdTemplate,aIdParent, service) ;
 		}
-		if (aFlag==2) {
+		/*if (aFlag==2) {
 			
 			Date date;
 			//try {
@@ -48,7 +48,7 @@ public class DietServiceJs {
 				//return "Ошибка при создании меню-заказов. Неправильная дата: "+aDate ;
 				
 			//}
-		}
+		}*/
 		if (aFlag==3) return saveMenuTempNew(aIdTemplate, service) ;
 		return "" ;
 		

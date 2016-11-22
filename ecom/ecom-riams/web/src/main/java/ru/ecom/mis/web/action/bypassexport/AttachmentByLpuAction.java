@@ -51,7 +51,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
     		String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
     		boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
-    		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+    		//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
     		Calendar cal = Calendar.getInstance() ;
         	Calendar calTo = Calendar.getInstance() ;
@@ -61,7 +61,7 @@ public class AttachmentByLpuAction extends BaseAction {
         	SimpleDateFormat format1 = new SimpleDateFormat("yyMM") ;
         	SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd") ;
 	    	SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy") ;
-	    	String filename = null;
+	    	//String filename = null;
 	    	String age = null ;
 	    	String prefix="" ;
 	    	StringBuilder sqlAdd=new StringBuilder() ;

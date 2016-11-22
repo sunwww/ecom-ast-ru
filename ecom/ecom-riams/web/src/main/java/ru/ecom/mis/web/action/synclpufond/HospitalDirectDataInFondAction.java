@@ -42,7 +42,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     			) {
     		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
 	    	String typeView = ActionUtil.updateParameter("HospitalDirectDataInFond","typeView","1", aRequest) ; 
-	    	SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+	    	//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		SimpleDateFormat format_n = new SimpleDateFormat("yyyy-MM-dd") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
     		Calendar cal = Calendar.getInstance() ;
@@ -128,11 +128,11 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     		if (errorFile!=null && !errorFile.equals("") && !errorFile.equals("null")) {
     			form.setFilenameError("<a href='../rtf/"+errorFile+"'>"+errorFile+"</a>") ;
     		}
-    	} else if (typeMode!=null && typeMode.equals("3")) {
+    	} /*else if (typeMode!=null && typeMode.equals("3")) {
     		
     	} else if (typeMode!=null && typeMode.equals("4")) {
     		
-    	}
+    	}*/
         return aMapping.findForward("success") ;
     }
     private void update(HttpServletRequest aRequest) throws NamingException {

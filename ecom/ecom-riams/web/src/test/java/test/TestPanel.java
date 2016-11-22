@@ -122,7 +122,7 @@ public class TestPanel extends JPanel {
     
     private void renderDownscaleTest(Graphics g) {
         int w = getWidth();
-        int h = getHeight();
+     //   int h = getHeight();
         int numBoxes = dnDescs.length;
         int boxw = dnNewWidth + 10;
         int boxh = boxw + 30;
@@ -149,7 +149,7 @@ public class TestPanel extends JPanel {
     
     private void renderUpscaleTest(Graphics g) {
         int w = getWidth();
-        int h = getHeight();
+       // int h = getHeight();
         int numBoxes = upDescs.length;
         int boxw = upNewWidth + 10;
         int boxh = boxw + 30;

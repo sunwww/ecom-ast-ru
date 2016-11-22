@@ -117,7 +117,7 @@ public class FondWebService {
 		return getInfoByPatient(aRequest, aPatFrm,soap,rz);
 	}
 	public static Object checkPatientByCommonNumber(HttpServletRequest aRequest, PatientForm aPatFrm, String aCommonNumber) throws Exception  {
-		String result = null ;
+		//String result = null ;
 		WSLocator service = new WSLocator() ;
         service.setWS_MES_SERVERSoapPortEndpointAddress("http://"+theAddress+"/ws/WS.WSDL");
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
@@ -232,7 +232,7 @@ public class FondWebService {
 			String snils = null;
 			String attachedDate = null; String attachedType = null; String attachedLpu = null;
 			String doctorSnils=null; String codeDepartment=null;
-			String c = null;
+			//String c = null;
 			String dateDeath = null;
 			//String commonNumber;
 			in = new ByteArrayInputStream(result.getBytes());
@@ -242,7 +242,7 @@ public class FondWebService {
 			List<Element> list_cur = root.getChildren("cur1");
 			StringBuilder fiodr = new StringBuilder();
 			StringBuilder policy = new StringBuilder();
-			StringBuilder docs = new StringBuilder();
+			//StringBuilder docs = new StringBuilder();
 			boolean isStart = true ;
 			for (Element e:list_cur) {
 				//F:I:O:DR:RZ:DEAD:SNILS:DATEPRIK:SP_PRIK:LPU:SSD:KODPODR
@@ -391,17 +391,17 @@ public class FondWebService {
 			for (Element el:list_cur) {
 				//System.out.println(result);
 				sb.append("<tr>") ;
-				String ac = "" ;
+				//String ac = "" ;
 				String hn = el.getChildText("house") ;
 				String hb = el.getChildText("section") ;
 				String fn = el.getChildText("apartment") ;
 				String kl = el.getChildText("street_gni") ;
-				String r = el.getChildText("rayon") ; 
-				String sity = el.getChildText("sity") ;
+				//String r = el.getChildText("rayon") ; 
+				//String sity = el.getChildText("sity") ;
 				street = el.getChildText("street");
-				String streetT = el.getChildText("street_t");
-				String provance = el.getChildText("province") ;
-				String index = el.getChildText("ssity") ;
+				//String streetT = el.getChildText("street_t");
+				//String provance = el.getChildText("province") ;
+				//String index = el.getChildText("ssity") ;
 				okato = el.getChildText("region");
 				kladr=kl; house=hn; houseBuilding=hb; flat =fn;
 					

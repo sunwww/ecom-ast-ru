@@ -20,7 +20,7 @@ public class QualityEstimationServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;	
 		String sql = "select id, name from vocQualityEstimationCritDefect vqect where criterion="+aCriterion;
 		StringBuilder ret = new StringBuilder(); 
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql) ;
 		for (WebQueryResult r: list){
 			if (ret.length()>0){ ret.append("#");}
 			ret.append(""+r.get1()+":"+r.get2());
@@ -33,7 +33,7 @@ public class QualityEstimationServiceJs {
 	public String checkIsCommentNeed(Long aMarkId, HttpServletRequest aRequest ) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;	
 		String sql = "select case when vqem.isNeedComment='1' then 1 else 0 end, vqem.criterion_id from vocQualityEstimationMark vqem where id="+aMarkId;
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql) ;
 		if (list.size()>0){
 			WebQueryResult r =list.iterator().next();
 			if (r.get1().toString().equals("1")){
@@ -207,9 +207,9 @@ public class QualityEstimationServiceJs {
 					return ret.toString() ;
 				}
 					// Поликлинический случай лечения
-			} else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")) {
+			} /*else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")) {
 				
-			}
+			}*/
 		}
 		
 		return null ;

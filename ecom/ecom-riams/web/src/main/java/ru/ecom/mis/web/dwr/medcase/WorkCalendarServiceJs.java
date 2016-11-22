@@ -92,7 +92,7 @@ public class WorkCalendarServiceJs {
 	                +"FROM MedPolicy where patient_id='"+aPatientId+"' "
 	                +"AND actualDateFrom<=to_date('"+aDatePlan+"','dd.mm.yyyy') and (actualDateTo is null or actualDateTo>=to_date('"+aDatePlan+"','dd.mm.yyyy')) "
 	                +"and DTYPE like 'MedPolicyOmc%'" ;
-			Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1) ;
+			Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
 			if (list.size()==0) return "1" ;
 			if (list.size()>1) return "2" ;
 		}
@@ -975,12 +975,12 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<form name='frmDate' id='frmDate' action='javascript:step5()'>") ;
-		int month= Integer.valueOf(aMonth) ;
+		int month= Integer.parseInt(aMonth) ;
 		res.append("<span class = 'spanNavigMonth'>") ;
 		if (month==1) {
 			res.append("<a href=\"javascript:step4(")
 			.append(aWorkCalendar).append(",'").append(getMonth(12,false))
-			.append("','").append(Integer.valueOf(aYear)-1);
+			.append("','").append(Integer.parseInt(aYear)-1);
 			if (aVocWorkFunction!=null) res.append("','").append(aVocWorkFunction);
 			res.append("');\">")
 			.append("<-")
@@ -999,7 +999,7 @@ public class WorkCalendarServiceJs {
 		if (month==12) {
 			res.append(" <a href=\"javascript:step4(")
 			.append(aWorkCalendar).append(",'").append(getMonth(1,false))
-			.append("','").append(Integer.valueOf(aYear)+1);
+			.append("','").append(Integer.parseInt(aYear)+1);
 			if (aVocWorkFunction!=null) res.append("','").append(aVocWorkFunction);
 			res.append("');\">")
 			//.append("").append(getMonth(1,true))
@@ -1016,7 +1016,7 @@ public class WorkCalendarServiceJs {
 		}
 		res.append("</span>") ;
 		Calendar cal = Calendar.getInstance() ;
-		cal.set(Calendar.YEAR, Integer.valueOf(aYear)) ;
+		cal.set(Calendar.YEAR, Integer.parseInt(aYear)) ;
 		month-- ;
 		cal.set(Calendar.MONTH, month) ;
 		cal.set(Calendar.DATE, 1) ;
@@ -1046,7 +1046,8 @@ public class WorkCalendarServiceJs {
 		res.append("<tr>") ;
 		res.append(getFreeDay(0, week, false,1)) ;
 		for (WebQueryResult wqr:list) {
-			oldday = Integer.valueOf(""+wqr.get3()) ;
+			//oldday = Integer.valueOf(""+wqr.get3()) ;
+			oldday = Integer.parseInt(""+wqr.get3()) ;
 			res.append(getFreeDay(day, oldday, true,week)) ;
 			week = (week+oldday-day)%7 ;
 			if (week==0) week = 7 ;
@@ -1054,7 +1055,8 @@ public class WorkCalendarServiceJs {
 			if (week>7) {
 				res.append("</tr><tr>") ;
 			}
-			boolean isBusy = Integer.valueOf(""+wqr.get4())==0?true:false ;
+		//	boolean isBusy = Integer.valueOf(""+wqr.get4())==0?true:false ;
+			boolean isBusy = Integer.parseInt(""+wqr.get4())==0?true:false ;
 			res.append("<td id='tdDay").append(wqr.get3()).append("'");
 			//if (true) {
 				res.append("onclick=\"step5(this,'").append(aWorkCalendar).append("','").append(wqr.get1())
@@ -1203,11 +1205,13 @@ public class WorkCalendarServiceJs {
 		if (aVocWorkFunction!=null) frmName=frmName+"_"+aVocWorkFunction ;
 		res.append("<form name='").append(frmName).append("' id='").append(frmName).append("' action='javascript:step6()'><ul class='listTimes'>") ;
 		int cntLi = 1 ;
-		int row = list.size()/cntLi ;
+		
+		/*But it is not used!
+		 * int row = list.size()/cntLi ;
 		if (list.size()%cntLi>0) {
 			row ++ ;
 		}
-		//System.out.println("row="+row) ;
+		System.out.println("row="+row);*/
 		int i=0 ;
 		boolean first =false;
 		
@@ -1216,7 +1220,7 @@ public class WorkCalendarServiceJs {
 			if (i==1) res.append("<li class='liList'><ul class='ulTime'>") ;
 			boolean info=true ;
 			boolean reserve = false ;
-			int pre = Integer.valueOf(""+wqr.get3());
+			int pre = Integer.parseInt(""+wqr.get3());
 			if (pre==1) {
 				if (isRemoteUser && wqr.get18()!=null && !(""+wqr.get18()).equals("")) info=false ;
 			} else {
@@ -1245,7 +1249,7 @@ public class WorkCalendarServiceJs {
 			} else if (pre==2) {
 				if (!info) {
 					res.append("<li id='liTimeBusyForRemoteUser' >") 
-					.append(wqr.get2()) .append(" ") ;
+					.append(wqr.get2()).append(" ") ;
 					res.append("ЗАНЯТО").append("") ;
 				} else {
 					if (wqr.get4()!=null) {
@@ -1538,7 +1542,7 @@ public class WorkCalendarServiceJs {
 		Long idspec = null ;
 		String spec = "" ;
 		StringBuilder tr  = new StringBuilder() ;
-		SimpleDateFormat FORMAT_1 = new SimpleDateFormat("dd.MM.yyyy");
+		//SimpleDateFormat FORMAT_1 = new SimpleDateFormat("dd.MM.yyyy");
 		//SimpleDateFormat FORMAT_2 = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat FORMAT_2 = new SimpleDateFormat("dd.MM.yyyy");
 		calnext.setTime(dateStart) ;

@@ -49,7 +49,7 @@ public class ImportPolicyAction extends BaseAction {
         	System.out.println(e.getMessage());
         } 
         finally {
-            in.close();
+        	if(in!=null) in.close();
         }
         
         final long monitorId = monitorService.createMonitor() ;

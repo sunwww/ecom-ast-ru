@@ -66,7 +66,13 @@ public class KdlAction extends BaseAction {
 		    		}
 			    }
 		}
-	    if (!aRootDir)	aDir.delete();
+	    if (!aRootDir)	
+	    {
+	    	try {
+	    	aDir.delete();
+	    	}catch (Exception e) 
+	    	{}
+	    }
 	}
 	public String getKdlDir() {
 		//EjbEcomConfig config = EjbEcomConfig.getInstance() ;
@@ -84,14 +90,14 @@ public class KdlAction extends BaseAction {
 		//EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		String workDir = theService.getDir("kdl.errordir", "/opt/kdl/testError");
 		System.out.println(workDir) ;
-		return workDir ;
+		return workDir ;  //Ex?
 	}
 	public void setPermissions(File aFile){
 		run("chmod -R 777 "+aFile.getAbsolutePath());
 	}
 	private void moveFileTo(File aSourceFile, File aTargetDir){
 		if (!aTargetDir.exists()) {
-			aTargetDir.mkdirs();
+			aTargetDir.mkdirs();  //Ex?
 			setPermissions(aTargetDir);
 		}
 		File newFile = new File(aTargetDir, aSourceFile.getName());

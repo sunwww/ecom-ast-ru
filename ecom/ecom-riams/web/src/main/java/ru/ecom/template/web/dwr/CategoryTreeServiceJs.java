@@ -25,7 +25,7 @@ public class CategoryTreeServiceJs {
             return "" ;
         } else {
             ICategoryTreeService service = Injection.find(aRequest).getService(ICategoryTreeService.class) ;
-            return service.getClazz(Long.valueOf(aIdClassif)) ;
+            return service.getClazz(Long.parseLong(aIdClassif)) ;
 //            return "Mkb" ;
         }
     }

@@ -89,7 +89,8 @@ public class ExtDispServiceJs {
 		Collection <WebQueryResult> wqr = service.executeNativeSql(sql);
 	//	System.out.println("=== Check policy sql = "+sql);
 		if (!wqr.isEmpty()) {
-			if (Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			//if (Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			if (Long.parseLong(wqr.iterator().next().get1().toString())>0) {
 				return true;
 			}
 		} else {
@@ -123,7 +124,8 @@ public class ExtDispServiceJs {
 		//	System.out.println("isInDispPeriod = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
 		if (!wqr.isEmpty()) {
-			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
 				ret = true;
 			}
 		}
@@ -138,7 +140,8 @@ public class ExtDispServiceJs {
 	//	System.out.println("isInDispPeriod = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
 		if (!wqr.isEmpty()) {
-			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
 				ret = false;
 			}
 		}
@@ -153,7 +156,8 @@ public class ExtDispServiceJs {
 	//	System.out.println("existDoublesStac = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
 		if (!wqr.isEmpty()) {
-			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
 				ret = true;
 			}
 		}
@@ -170,7 +174,8 @@ public class ExtDispServiceJs {
 	//	System.out.println("existDoublesVisit = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
 		if (!wqr.isEmpty()) {
-			if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+		//	if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
+			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
 				ret = true;
 			}
 		}

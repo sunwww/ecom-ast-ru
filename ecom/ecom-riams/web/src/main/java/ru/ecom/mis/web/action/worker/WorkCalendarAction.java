@@ -73,10 +73,10 @@ public class WorkCalendarAction extends BaseAction {
     	}
     }
     void serviceDeleteNoAppearanceDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate) {
-    	for (long func:aFunctions) {
+    	/*for (long func:aFunctions) {
     		//TODO доделать удаление не явок
     		//aService.deleteEmptyCalendarDays(func, aBeginDate, aFinishDate);
-    	}
+    	}*/
     }
     void serviceGenerateDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate) {
     	for (long func:aFunctions) {

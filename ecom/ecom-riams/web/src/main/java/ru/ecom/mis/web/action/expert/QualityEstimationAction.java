@@ -15,8 +15,8 @@ import ru.nuzmsh.web.struts.BaseAction;
 public class QualityEstimationAction  extends BaseAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-        String type = aRequest.getParameter("type") ;
-        String id =aRequest.getParameter("id") ;
+      //  String type = aRequest.getParameter("type") ;
+    //    String id =aRequest.getParameter("id") ;
         
     	//IExpertService service = Injection.find(aRequest).getService(IExpertService.class);
         //aRequest.setAttribute("list", service.findDocumentBySeriesAndNumber(form.getNumberTicket() ));

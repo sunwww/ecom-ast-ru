@@ -21,7 +21,9 @@ public class ContractAccountMedServiceSaveAction extends BaseAction {
 		IContractService service = Injection.find(aRequest).getService(IContractService.class) ;
 		String idS ;
 		idS = aRequest.getParameter("id");
-		int cntRec = Integer.valueOf(aRequest.getParameter("cnt"));
+		
+		 //cntRec = Integer.valueOf(aRequest.getParameter("cnt"));
+		 int cntRec = Integer.parseInt(aRequest.getParameter("cnt"));
 		System.out.println("----cnt="+ cntRec) ;
 		Long account = ConvertSql.parseLong(idS) ;
 		for(int i=1; i<=cntRec;i++){
@@ -40,11 +42,11 @@ public class ContractAccountMedServiceSaveAction extends BaseAction {
 					System.out.println("---add account="+account+"----service="+ priceMedService+"----cnt="+ cnt+"---cost="+ cost) ;
 					service.addMedServiceByAccount(account, priceMedService, cnt, cost, oldid) ;
 				}
-			} else {
+			} /*else {
 				if (oldid!=null && oldid>Long.valueOf(0)) {
 					//Удаление услуги
 				}
-			}
+			}*/
 		}
 		
 		return aMapping.findForward(SUCCESS);

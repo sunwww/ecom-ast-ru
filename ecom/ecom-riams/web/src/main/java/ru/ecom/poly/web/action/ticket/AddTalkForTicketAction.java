@@ -14,7 +14,7 @@ public class AddTalkForTicketAction extends BaseAction {
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-		long id = Long.valueOf(aRequest.getParameter("id")) ;
+		long id = Long.parseLong(aRequest.getParameter("id")) ;
 		return ForwardUtil.createIdRedirectForward(aMapping.findForward("success"), id);
 	}
 
