@@ -646,7 +646,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					rowLpuLn.addContent(new Element("HOSPITAL_BREACH_DT").addContent(rs_breach.getString("date")));
 					break;
 				}
-				
+				rs_breach.close();
 				
 				//МСЭ
 				String mseResult = rs.getString("mseResult");
@@ -672,7 +672,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				
 				statement = dbh.createStatement();
 				ResultSet rsRecord = statement.executeQuery(record.toString()+ln_id+"' order by datefrom");
-				statement.close();
+				
 				 int i=0;
 				 String returnDate = null;
 				// String lpuName = null, lpuAddress=null, lpuOgrn=null;
@@ -702,6 +702,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					}
 					returnDate = dateTo;
 					}
+				rsRecord.close();
 				
 				if (lpuName!=null) {
 					rowLpuLn.addContent(rowLpuLn.indexOf(lnDate)+1,new Element("LPU_OGRN").addContent(lpuOgrn));
@@ -764,6 +765,8 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				rowSet.addContent(rowRow);
 			rightNum++;
 				}
+			rs.close();
+			statement.close();
 			dbh.close();
 			System.out.println("Всего записей = " + numAll);
 			System.out.println("Верных записей = " + rightNum);
@@ -861,7 +864,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	for (Object[] obj:list) {
     		String str = "" ;
     		Long dcase = ConvertSql.parseLong(obj[0]) ;
-    		if (dcase!=dcaseold) {
+    		if (!dcase.equals(dcaseold)) {
     			dcaseold=dcase ;
     		
     		String mkb = ""+obj[1] ;
