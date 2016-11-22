@@ -62,11 +62,63 @@ function createOrSave(aForm, aVisit, aCtx) {
 	aCtx.manager.persist(aVisit) ;
 }
 
+function checkCountDays(aForm,aCtx, aVisit)
+{
+	var countDays = aForm.countDays;
+	
+		var wctId = aCtx.manager.createNativeQuery("select wct.id,wcd.calendardate from workcalendartime wct1"
+		+" left join workcalendarday wcd1 on wct1.workcalendarday_id = wcd1.id"
+		+" left join workcalendarday wcd on wcd.workcalendar_id = wcd1.workcalendar_id"
+		+" left join workcalendartime wct on wct.workcalendarday_id=wcd.id  and wct.timefrom=wct1.timefrom"
+		+" where wct1.id='"+aForm.timePlan+"' "
+		+" and wcd.calendardate BETWEEN  wcd1.calendardate+1 and  wcd1.calendardate+"+(countDays-1)
+		+" and wct.medcase_id is null"
+		+" and wct.prescription is null"
+		+" and wct.prepatient_id is null"
+		+" and wct.prepatientinfo is null").getResultList();
+		
+		for(var i=0;i<wctId.size();i++)
+		{
+			var wct= aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime, new java.lang.Long(wctId.get(i)[0]))  ;
+		var visit= new Packages.ru.ecom.mis.ejb.domain.medcase.Visit();
+		visit.setCreateDate(aVisit.getCreateDate());
+		visit.setTimePlan(wct);
+		visit.setDatePlan(wct.getWorkCalendarDay());
+		visit.setEmergency(aVisit.getEmergency());
+		visit.setVisitReason(aVisit.getVisitReason());
+		visit.setKinsman(aVisit.getKinsman());
+		visit.setParent(aVisit.getParent());
+		visit.setPatient(aVisit.getPatient());
+		visit.setWorkFunctionPlan(aVisit.getWorkFunctionPlan());
+		visit.setWorkPlaceType(aVisit.getWorkPlaceType());
+		aCtx.manager.persist(visit);
+		wct.setMedCase(visit);
+		aCtx.manager.persist(wct);
+		saveArray(visit, aCtx.manager,aForm.getMedServices()
+				,Packages.ru.ecom.mis.ejb.domain.medcase.MedService
+				,[]
+				,["var objNew=new Packages.ru.ecom.mis.ejb.domain.medcase.ServiceMedCase() ;"
+				  ,"objNew.setParent(aEntity)"
+				  ,"objNew.setPatient(aEntity.patient)"
+				  ,"objNew.setDateStart(aEntity.dateStart)"
+				  ,"objNew.setNoActuality(false);objNew.setMedService(objS);"]
+				,"from MedCase where parent_id='"+visit.getId()+"' and dtype='ServiceMedCase' and medService_id"
+				) ;
+		
+		
+		}
+	
+}
 function onCreate(aForm, aVisit, aCtx) {
+	if (aForm.countDays != null && +aForm.countDays>0){
+		checkCountDays(aForm, aCtx, aVisit);
+		}
+	
 	//checks(aVisit) ;
 	if(aVisit.timePlan.medCase!=null) throw "На это время уже есть направление: "+ aVisit.timePlan.medCase.id;
 	if(aVisit.parent!=null&&aVisit.parent.dateFinish!=null) aVisit.dateFinish=null ;
 
+	//---
 	createOrSave(aForm, aVisit, aCtx) ;
 }
 

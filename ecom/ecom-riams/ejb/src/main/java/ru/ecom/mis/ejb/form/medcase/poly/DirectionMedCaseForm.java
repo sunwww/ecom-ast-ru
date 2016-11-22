@@ -34,7 +34,16 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AViewInterceptors(
 		@AEntityFormInterceptor(DirectionViewInterceptor.class)
 )
+
 public class DirectionMedCaseForm extends TicketMedCaseForm {
+	
+	/** Количество записей  */
+	@Comment("Количество записей")
+	public Long getCountDays() {return theCountDays; }
+	public void setCountDays(Long aCountDays) {theCountDays = aCountDays;	}
+	
+	private Long theCountDays;
+	
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")
 	@Persist

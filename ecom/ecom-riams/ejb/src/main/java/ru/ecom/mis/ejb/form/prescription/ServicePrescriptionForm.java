@@ -28,6 +28,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/ServicePrescription")
 public class ServicePrescriptionForm extends PrescriptionForm{
 	
+	/** количество дней */
+	@Comment("количество дней")
+	public Long getCountDays() {return theCountDays;}
+	public void setCountDays(Long aCountDays) {theCountDays = aCountDays;}
+	/** количество дней */
+	private Long theCountDays;
+	
 	/** Назначивший */
 	@Comment("Назначивший")
 	@Persist 
