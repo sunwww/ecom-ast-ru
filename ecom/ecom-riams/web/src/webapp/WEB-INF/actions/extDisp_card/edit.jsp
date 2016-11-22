@@ -263,13 +263,13 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     		if(document.getElementById('notPaid').checked==true)
     		{ alert("Карта уже отмечена как недействительная!")} 
     		else{
-	document.getElementById('notPaid').checked = true;
-	document.getElementById('isNoOmc').checked = true;
-	ExtDispService.DispCardNotReal($('id').value,{
+		document.getElementById('notPaid').checked = true;
+		document.getElementById('isNoOmc').checked = true;
+		ExtDispService.DispCardNotReal($('id').value,{
 		callback: function (aResult) {
 			if(aResult=='1'){
 				alert("Карта не найдена!")}
-			else//if(aResult=='0')
+			else
 			{		
 			alert("Карта отмечена как недействительная")
 			}
@@ -289,12 +289,9 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
 				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
-			 <!--
+			<msh:ifFormTypeIsView formName="extDisp_cardForm">
 			   <msh:sideLink key="ALT+M" params="id" action="/javascript:DoDispCardNotReal()" name="Сделать карту недействительной" title="Сделать карту недействительной" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
-			   -->
-			   <msh:ifFormTypeIsView formName="extDisp_cardForm">
-			   <msh:sideLink key="ALT+M" params="id" action="/javascript:DoDispCardNotReal()" name="Сделать карту недействительной" title="Сделать карту недействительной" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
-			   </msh:ifFormTypeIsView>
+			</msh:ifFormTypeIsView>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
 	</tiles:put>
