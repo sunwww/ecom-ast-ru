@@ -149,7 +149,15 @@ function checkClaimMessage (aId, aStatus) {
 		});
 
 }
+function checkAllMessages(aName) {
+	var msg = document.getElementsByClassName(aName);
+	for (var i=0; i<msg.length;i++){
+		var id = msg[i].id.substring(aName.length);
+		checkUserMessage(id);
 
+	}
+	
+}
 function checkUserMessage(aId) {
 	VocService.checkMessage(aId, {
         callback: function(aName) {

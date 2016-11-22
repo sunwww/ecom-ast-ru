@@ -664,6 +664,12 @@ a.userMessageClose {
 	right: 0.2em ;
 	color: blue ;
 }
+a.userMessageCloseAll {
+	position: absolute ;
+	top: 1.2em ;
+	right: 0.2em ;
+	color: blue ;
+}
 a.claimMessageClose {
 	position: absolute ;
 	top: 0.2em ;
