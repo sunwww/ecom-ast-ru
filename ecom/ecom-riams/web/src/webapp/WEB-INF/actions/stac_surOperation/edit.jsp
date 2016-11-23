@@ -319,17 +319,18 @@
     	}
     	
     	function setEndoscopyUse(){
-    		HospitalMedCaseService.checkIsEndoscopyMethod($('method').value,{
-    			callback: function (a){
-    				if (+a==1){
-    					$('endoscopyUse').checked=true;
-    				} else {
-    					$('endoscopyUse').checked=false;
-    				}
-    			}
-    		});
+    		if ($('endoscopyUse')){
+	    		HospitalMedCaseService.checkIsEndoscopyMethod($('method').value,{
+	    			callback: function (a){
+	    				if (+a==1){
+	    					$('endoscopyUse').checked=true;
+	    				} else {
+	    					$('endoscopyUse').checked=false;
+	    				}
+	    			}
+	    		});
+    		}
     	}
-    		
     	//]]>
     	</script>
     	
