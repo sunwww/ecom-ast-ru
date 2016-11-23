@@ -205,7 +205,7 @@ function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, 
 	$('subm').disabled = true;
 	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
 	PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
-	,$('surgServicies').value, $('countDays').value) {
+	,$('surgServicies').value, $('countDays').value, {
 		callback: function(a) {
 			if (a==null) {
 				alert("Ошибка при назначении услуги!!! Выбранное время уже занято!");
@@ -213,6 +213,7 @@ function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, 
 			} else {
 				addRows(addRowType, addRowNum); 
 			}
+			
 			getPreRecord();
 			updateTime();
 			//alert (a);
@@ -473,10 +474,11 @@ function getPreRecord() {
 				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
     			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
     		</msh:row>
-    		 <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
-         <msh:row> 
+    	<msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
+        <msh:row> 
         <msh:textField property="countDays"  label="Кол-во дней записи" />
-        </msh:row></msh:ifInRole>
+        </msh:row>
+        </msh:ifInRole>
     		<msh:row>
     			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>

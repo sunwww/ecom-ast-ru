@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.prescription;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -189,6 +190,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	}
 	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
 		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId,Long aCountDays, HttpServletRequest aRequest )throws NamingException {
+		System.out.println("===== PZ = "+aCountDays);
 		if (aTimePlanId==null||aTimePlanId.equals(Long.valueOf(0))) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -204,7 +206,30 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		String visit = null;
 		if (aCountDays!=null&&aCountDays>Long.valueOf(0)) {
-			/**TODO */
+			//System.out.println("===== PZ = "+aCountDays);
+			Collection<WebQueryResult > l = wqs.executeNativeSql("select wct.id as f1,wcd.id as f2 from workcalendartime wct1"
+					+" left join workcalendarday wcd1 on wct1.workcalendarday_id = wcd1.id"
+					+" left join workcalendarday wcd on wcd.workcalendar_id = wcd1.workcalendar_id"
+					+" left join workcalendartime wct on wct.workcalendarday_id=wcd.id  and wct.timefrom=wct1.timefrom"
+					+" where wct1.id='"+aTimePlanId+"' "
+					+" and wcd.calendardate BETWEEN  wcd1.calendardate and  wcd1.calendardate+"+aCountDays
+					+" and wct.medcase_id is null"
+					+" and wct.prescription is null"
+					+" and wct.prepatient_id is null"
+					+" and wct.prepatientinfo is null");
+			
+			
+			 for(WebQueryResult  r : l) {
+				// System.out.println("===== II = ");
+				 aTimePlanId = Long.parseLong(r.get1().toString());
+				 aDatePlanId = Long.parseLong(r.get2().toString());
+				 
+				 visit = service.createNewDirectionFromPrescription(aPrescriptListId, aWorkFunctionPlanId
+							,aDatePlanId, aTimePlanId, aMedServiceId, username, wf);
+			}
+			
+			
+				
 		} else {
 			visit = service.createNewDirectionFromPrescription(aPrescriptListId, aWorkFunctionPlanId
 					,aDatePlanId, aTimePlanId, aMedServiceId, username, wf);
