@@ -371,7 +371,7 @@ public class TicketServiceJs {
 			.append(" left join patient as wp on wp.id = w.person_id")
 			.append(" where t.dtype='ShortMedCase' and t.medcard_id='").append(aMedcard)
 			.append("' and t.workFunctionExecute_id='").append(aSpec)
-			.append("' and coalesce(t.dateStart,t.dateFinish)=to_date('").append(aDate).append("','dd.mm.yyyy') and (t.istalk is null or t.istalk='0')") ;
+			.append("' and t.dateStart=to_date('").append(aDate).append("','dd.mm.yyyy') and (t.istalk is null or t.istalk='0') and (t.emergency is null or t.emergency='0') ") ;
         
         if (aId!=null) sql.append(" and t.id!=").append(aId);
         
