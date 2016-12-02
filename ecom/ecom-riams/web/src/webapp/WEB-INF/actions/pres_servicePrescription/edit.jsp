@@ -30,7 +30,7 @@
 		var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
 		if ($('labDate')) $('labDate').value=newTextDate;
 		if ($('planStartDate')) $('planStartDate').value=newTextDate;
-		
+		textDate = newTextDate;
 		for (var i=1;i<=labNum;i++) {
 				if ($('labDate'+i)) { 
 					$('labDate'+i).value=newTextDate;
