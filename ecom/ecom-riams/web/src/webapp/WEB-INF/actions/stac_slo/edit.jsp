@@ -837,13 +837,13 @@
       	 function updateLpuAndDate() {
       		 //var serviceStream=+$('serviceStream').value ;
            	$('lpuAndDate').value = (+$('department').value) +"#"+(+$('serviceStream').value)+"#" +$('dateStart').value;
-          	lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
+          	//lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
       	 	//alert("lpuAndDate"+$('lpuAndDate').value) ;
       	 	lpuDate = (+$('department').value) +"#"+$('dateStart').value ;
       	 	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	 	serviceStreamAutocomplete.setParentId(lpuDate) ;
       	 	//var id = $('bedFund').value ;
-      	 	//bedFundAutocomplete.setVocId(id);
+      	 	//bedFundAutocomplete.setVocId(id); 
       	 }
       	 function updateBedFund() {
       		HospitalMedCaseService.getDefaultBedFundBySlo($('parent').value
@@ -874,6 +874,9 @@
     	      			roomNumberAutocomplete.setParentId($('department').value) ;
     	      			$('roomNumber').value='0' ;
     	      			$('roomNumberName').value='' ;
+    	      			$('ownerFunction').value="0";
+    	      			$('ownerFunctionName').value="";
+    	      			
     	      		} catch(e) {}
     	      		var oldid = $('serviceStream').value ;
     	      		updateLpuAndDate() ;
