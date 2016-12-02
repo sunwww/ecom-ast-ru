@@ -15,8 +15,10 @@ function onPreDelete(aId, aCtx) {
 		if (+ids[0]>0) {
 			throw "По данному направлению был произведен прием, удаление невозможно!";
 		} else {
+			if (+ids[2]>0){
 			aCtx.manager.createNativeQuery("update workcalendartime set medcase_id=null where id="+ids[2]).executeUpdate();
 			aCtx.manager.createNativeQuery("delete from medcase where parent_id="+ids[1]+"  or (id='"+ids[1]+"' and datestart is null)").executeUpdate();
+			}
 		}
 		
 	} 
