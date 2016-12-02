@@ -56,7 +56,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeView" value="2"> Количество выписанных и переданных карт
 	        </td>
-	        
+	           <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="3"> Журнал НЕпереданных историй болезни
+	        </td>
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" labelSave="Поиск" labelSaving="Поиск..." colSpan="4" />
       </msh:panel>
@@ -147,7 +149,35 @@ order by dep.name"/>
 				</msh:sectionContent>
 			</msh:section>
     	
-    <%}}%>
+    <%} else if (typeView!=null&&typeView.equals("3")){ %>
+    	 <ecom:webQuery name = "archivesList" nativeSql="
+    select ss.id as ssid, sls.id as slsid, ss.code as code, pat.patientinfo as pat
+    , to_char (sls.dateStart,'dd.MM.yyyy') as dateStart, to_char (sls.dateFinish,'dd.MM.yyyy') as dateFinish
+    , to_char(ac.createDate,'dd.MM.yyyy') as transfedDate
+    ,dep.name as department
+from medcase sls
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.dateFinish is not null
+left join statisticstub ss on ss.medcase_id=sls.id
+left join mislpu dep on dep.id=slo.department_id
+where sls.dtype='HospitalMedCase' and ss.archivecase is null
+
+and  ${typeDateSql} between to_date('${dateStart}','dd.MM.yyyy') and to_date('${dateFinish}','dd.MM.yyyy') 
+${depSql}
+order by ${orderBySql}
+    " />
+    <msh:section>
+    <msh:sectionContent>
+				<msh:table name="archivesList" action="javascript:void()" idField="1">
+					<msh:tableColumn columnName="Номер ИБ" property="3" />
+					<msh:tableColumn columnName="ФИО пациента" property="4" />
+					<msh:tableColumn columnName="Отделение" property="8" />
+					<msh:tableColumn columnName="Дата начала госпитализации" property="5" />
+					<msh:tableColumn columnName="Дата окончания госпитализации" property="6" />
+					<msh:tableColumn columnName="Дата передачи в архив" property="7" />
+				</msh:table>
+				</msh:sectionContent>
+			</msh:section>
+    <% }}%>
   </tiles:put>
     <tiles:put name='side' type='string'> 
   <msh:sideLink key="ALT+1" params="" roles="/Policy/Mis/ArchiveCase/Create" action="/move_to_archive" name="Передача карт в архив" guid="31e83931-c7ab-4040-8f46-3306ac07cb26" />
