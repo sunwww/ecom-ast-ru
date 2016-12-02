@@ -380,10 +380,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		boolean isEmergency =false ;
 		
 		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss") ;
-		String sqlquery = "select case when mc.dtype='HospitalMedCase' then mc.datestart || '-' || mc.entrancetime " +
-				" else mcs.datestart || '-' || mcs.entrancetime end as datetime, " +
-				" case when mc.dtype='HospitalMedCase' then case when mc.emergency='1' then '1' else null end else " +
-				" case when mc.emergency='1' then '1' else null end end " +
+		String sqlquery = "select mc.datestart || '-' || mc.entrancetime as datetime " +
+				" ,case when mc.emergency='1' then '1' when mcs.emergency='1' then '1' else null end as caseEmergency " +
 				" from medCase mc " +
 				" left join medcase mcs on mcs.id = mc.parent_id ";
 				
@@ -420,7 +418,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	
 	public String getLabListFromTemplate(Long aIdTemplateList) {
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
-		System.out.println("======= getLabList, tmpl = "+template );
+		//System.out.println("======= getLabList, tmpl = "+template );
 		StringBuilder labList = new StringBuilder();
 		for (Prescription presc: template.getPrescriptions()) {
 			labList.append(getPrescriptionInfo(presc));
