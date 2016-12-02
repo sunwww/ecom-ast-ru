@@ -124,7 +124,9 @@
     <%
     
     String date = (String)request.getParameter("dateBegin") ;
-    String view = (String)request.getAttribute("typeView") ;
+    String view = (String)request.getParameter("typeView") ;
+    request.setAttribute("typeView", view);
+   
     String depSql = "";
     String vss1 = "";
     if (date!=null && !date.equals("") )  {

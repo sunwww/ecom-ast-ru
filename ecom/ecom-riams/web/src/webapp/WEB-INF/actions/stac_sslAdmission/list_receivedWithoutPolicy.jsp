@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
@@ -125,13 +126,28 @@
     </msh:form>
     
     <%
+    
     String date = (String)request.getParameter("dateBegin") ;
+    String view = ActionUtil.updateParameter("ExtDispAction","typeView","1", request) ;
+    String typeDischargePatientIs = ActionUtil.updateParameter("ExtDispAction","typeDischargePatientIs","1", request) ; 
+	String typePatientIs = ActionUtil.updateParameter("ExtDispAction","typePatientIs","1", request) ;
+	//String typePatientIs = (String) request.getAttribute("typePatientIs") ;
+	//out.print("<H1>PATIENT_IS="+typePatientIs+"</H1>");
+	
+	//out.print("<H1>PATIENT_IS="+"</H1>");
+	String typeDuration = ActionUtil.updateParameter("ExtDispAction","typeDuration","1", request) ;
+	String typeEmergency = ActionUtil.updateParameter("ExtDispAction","typeEmergency","1", request) ;
+	request.setAttribute("typeView", view);
+	request.setAttribute("typePatientIs", typePatientIs);
+	request.setAttribute("typeDuration", typeDuration);
+	request.setAttribute("typeEmergency", typeEmergency);
     if (date!=null && !date.equals(""))  {
     	String dateEnd = (String)request.getParameter("dateEnd") ;
-    	String view = (String)request.getAttribute("typeView") ;
-    	String typeDischargePatientIs = (String)request.getAttribute("typeDischargePatientIs") ;
-    	String typePatientIs = (String)request.getAttribute("typePatientIs") ;
+    	 
+    	 
+    	
     	String department = request.getParameter("department") ;
+    	
     	if (department!=null && !department.equals("")) {
     		request.setAttribute("departmentSql", " and hmc.department_id="+department) ;
     		request.setAttribute("department1Sql", " and case when dmc.id is not null then ml1.id else ml.id end="+department) ;

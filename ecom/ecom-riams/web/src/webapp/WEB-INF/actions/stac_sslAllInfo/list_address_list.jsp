@@ -116,9 +116,11 @@
     <%
     String date = (String)request.getParameter("dateBegin") ;
     String dateEnd = (String)request.getParameter("dateEnd") ;
-    String typeDate = (String)request.getAttribute("typeDate") ;
-    String typeView = (String) request.getAttribute("typeView") ;
+    //String typeDate = (String)request.getAttribute("typeDate") ;
+    //String typeView = (String) request.getAttribute("typeView") ;
     String typeCntDays =ActionUtil.updateParameter("AddressSheetHospital","typeCntDays","2", request) ;
+    String typeView =ActionUtil.updateParameter("AddressSheetHospital","typeView","2", request) ;
+    String typeDate =ActionUtil.updateParameter("AddressSheetHospital","typeDate","2", request) ;
     
     if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
     String dateEndR = (String)request.getAttribute("dateEnd") ;

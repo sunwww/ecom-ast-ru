@@ -16,6 +16,7 @@
   <tiles:put name="body" type="string">
   <%  	
   String typeAge=ActionUtil.updateParameter("Report_journalByHosp","typeAge","10", request) ;
+  String view=ActionUtil.updateParameter("Report_journalByHosp","typeView","1", request) ;
  
  %>
    <ecom:webQuery name="sex_woman_sql" nativeSql="select id,name from VocSex where omccode='2'"/>
@@ -301,7 +302,7 @@
       	}
     	
     	
-    	String view = (String)request.getAttribute("typeView") ;
+    	//String view = (String)request.getAttribute("typeView") ;
     	String pigeonHole1="" ;
     	String pigeonHole="" ;
     	String pHole = request.getParameter("pigeonHole") ;

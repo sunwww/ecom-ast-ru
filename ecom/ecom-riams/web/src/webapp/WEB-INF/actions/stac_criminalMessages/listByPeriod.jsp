@@ -17,6 +17,8 @@
   <tiles:put name="body" type="string">
   <%
   String typeAge=ActionUtil.updateParameter("Report_criminal","typeAge","3", request) ;
+  String view=ActionUtil.updateParameter("Report_criminal","typeView1","1", request) ;
+ // request.setAttribute(arg0, arg1)
   String typeDuration=ActionUtil.updateParameter("Report_criminal","typeDuration","4", request) ;
   if (request.getParameter("short")==null) {
   %>
@@ -249,7 +251,8 @@
     	} else {
     		request.setAttribute("dateEnd", date1) ;
     	}
-    	String view = (String)request.getAttribute("typeView1") ;
+    	//String view = (String)request.getParameter("typeView1") ;
+    	//out.print("view="+view);
     	String pigeonHole1="" ;
     	String pigeonHole="" ;
     	String pHole = request.getParameter("pigeonHole") ;
