@@ -244,7 +244,7 @@ order by ${orderBySql}
             <msh:tableButton hideIfEmpty="true" property="7" buttonFunction="setFinish" buttonShortName="Выполнено" buttonName="Выполнено"/>
             <msh:tableButton hideIfEmpty="true" property="8" buttonFunction="setFreeze" buttonShortName="Заморозить" buttonName="Заморозить"/>
             <msh:tableButton role="/Policy/Mis/Claim/Boss" hideIfEmpty="true" property="9" buttonFunction="sendToUser" buttonShortName="Отправить пользователю на подтверждение" buttonName="Отправить пользователю на подтверждение"/>
-        </msh:table>
+        </msh:table>${claimListSql}
 	</msh:section>
         <tags:mis_claimStart name="New" status="id" />
     </tiles:put>

@@ -51,7 +51,7 @@
 		dtypeSql="t.dtype='ShortMedCase'" ;
 	}
 	String medcard = form.getMedcard() ;
-
+	String selectAdd = "";
 	String sql = "where "+dtypeSql;
 	if (medcard!=null&&!medcard.equals("")&&medcard.length()>1) {
 		
@@ -97,6 +97,10 @@
 	if (form.getVisitReason()!=null && (form.getVisitReason().intValue()>0)) {
 		sql = sql+" and t.visitReason_id='"+form.getVisitReason()+"'" ;
 	}
+	if (form.getWorkPlaceType()!=null&&form.getWorkPlaceType().intValue()>0) {
+		sql+=" and t.workPlaceType_id='"+form.getWorkPlaceType()+"'";
+		selectAdd +=" ,vic.name as f18_lpassportType, p.passportseries, p.passportnumber,  p.snils ,to_char(t.dateStart,'dd.MM.yyyy') as dateStart_1, coalesce(cast(t.timeExecute as varchar(5)),'') as visitTime ";
+	}
 	String isTalkSql = "" ;
 	if (typeIsTalk.equals("1")) {
 		isTalkSql = " and t.isTalk='1'" ;
@@ -119,6 +123,7 @@
 	sql = sql+ageSql.toString() ;
 	request.setAttribute("sql", sql) ;
 	request.setAttribute("order", order) ;
+	request.setAttribute("selectAdd", selectAdd);
   %>
     <msh:form action="/smo_journalRegisterVisit_list.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
@@ -158,6 +163,10 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="additionStatus" vocName="vocAdditionStatus" 
+        		horizontalFill="true" fieldColSpan="9" size="70"/>
+        </msh:row>        
+        <msh:row>
+        	<msh:autoComplete property="workPlaceType" vocName="vocWorkPlaceType" 
         		horizontalFill="true" fieldColSpan="9" size="70"/>
         </msh:row>        
         <msh:row>
@@ -239,6 +248,7 @@
     	, oml.name as omlname 
     	,vvr.name as vvrname
     	,t.externalId as texternalId
+    	${selectAdd}
     	from Medcase t  
     	left join patient p on p.id=t.patient_id  left join vocrayon vr on vr.id=p.rayon_id
     	${medcardAddJoin}  
@@ -253,6 +263,7 @@
     	left join VocServiceStream vss on vss.id=t.serviceStream_id
     	left join MisLpu oml on oml.id=t.orderLpu_id
     	left join VocReason vvr on t.visitReason_id=vvr.id
+    	left join vocIdentityCard vic on vic.id=p.passporttype_id
     	${sql} 
 		and (t.noActuality is null or t.noActuality='0') order by ${order}
     	
@@ -269,6 +280,7 @@
     <input type="submit"  onclick="this.form.action='print-journalRegistration.do'" value="Печать шаблон 1">
      <input type="submit" onclick="this.form.action='print-journalRegistration_1.do'" value="Печать шаблон 2">
      <input type="submit" onclick="this.form.action='print-journalRegistration_2.do'" value="Печать шаблон 3">
+     <input type="submit" onclick="this.form.action='print-journalRegistration_2.do'" value="Печать шаблон 4(скор. помощь)">
     </form>
     	
         <msh:table viewUrl="entitySubclassShortView-mis_medCase.do" 
