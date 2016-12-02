@@ -105,7 +105,7 @@
             <msh:sideLink params="" styleId="mainMenuLpu" action="/entityParentList-mis_lpu.do?id=-1" name="ЛПУ"
                           title="Список ЛПУ" roles="/Policy/MainMenu/MisLpu"/>
 
-            <msh:sideLink params="" key="SHIFT+CTRL+0" styleId="mainMenuPatient" action="/mis_patientSearch.do" name="Персона"
+            <msh:sideLink params="" styleId="mainMenuPatient" action="/mis_patientSearch.do" name="Персона"
                           title="Персоны" roles="/Policy/MainMenu/Patient"/>
 
             <msh:sideLink params="" styleId="mainMenuPoly" action="/js-smo_visit-findPolyAdmissions.do" name="Рабочий календарь"

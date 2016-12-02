@@ -79,14 +79,19 @@
      		PrescriptionService.getLabListFromTemplate(
      			$('${name}templatePrescription').value ,$('prescriptType').value, {
      				callback: function(aLabList) {
-     					the${name}TempPrescriptionDialog.hide() ;
-     					if (aLabList!=null&&aLabList!=""){
-     						var row = aLabList.aplit("#");
-     						for (var i=0;i<row.length;i++){
-     							addRow(row[i],0);
-     						}
-     					}
-     				}
+  						the${name}TempPrescriptionDialog.hide() ;
+  						if (aLabList!="" && aLabList!=null){
+  							var resultList = aLabList.split('#');
+	       					if (resultList.length>0) {
+	       						for (var i=0; i<resultList.length;i++) {
+	       							var resultRow = resultList[i].split(':');
+	       							if (resultRow[0]!=null&&resultRow[0]!=""){
+	       								addRows(resultList[i],0);
+	       							}
+	       						}
+	       					}
+  						}
+  						}
      			}
      		);
      	}
