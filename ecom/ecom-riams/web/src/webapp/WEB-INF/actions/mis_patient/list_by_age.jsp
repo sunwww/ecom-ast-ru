@@ -23,10 +23,9 @@
     String typeReestr = request.getParameter("typeReestr") ;
     String typeHour =ActionUtil.updateParameter("mis_patient_by_age","typeHour","2", request) ;
     
-//<AOI 14.06.2016
     String typeDisp=ActionUtil.updateParameter("mis_patient_by_age","typeDisp","1", request) ;
     String typeRange=ActionUtil.updateParameter("mis_patient_by_age","typeRange","1", request) ;
-//</AOI 14.06.2016    
+    String typeGroup=ActionUtil.updateParameter("mis_patient_by_age","typeGroup","1", request) ;
     
     if (typeReestr==null) {
 	  	String noViewForm = request.getParameter("noViewForm") ;
@@ -44,7 +43,7 @@
       <msh:row>
         <msh:textField fieldColSpan="2" property="dateBeginYear" label="Год" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
       </msh:row>
-<!-- AOI 14.06.2016 -->
+
       <msh:row><td><br></td></msh:row>
       <msh:row>
         <td class="label" title="Население" colspan="1"><label for="typeDispName" id="typeDispLabel">Население: </label></td>
@@ -68,7 +67,25 @@
         	<input type="radio" name="typeRange" value="2"> только приписное население
         </td>
 	  </msh:row>
-<!-- /AOI 14.06.2016 -->
+	   <msh:row>
+        <td class="label" title="Группировка" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка: </label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeGroup" value="1"> Группировать по году рождения
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeGroup" value="2"> Не группировать
+        </td>
+	  </msh:row>
+	 <msh:row>
+		  <msh:autoComplete fieldColSpan="5" property="lpu" label="ЛПУ" horizontalFill="true"
+		                              vocName="lpu" size="50"/>
+	 </msh:row>
+	 <msh:row styleId='rowLpuArea'>
+	       <msh:autoComplete fieldColSpan="5" property="area" label="Участок" horizontalFill="true"
+	                      parentAutocomplete="lpu" vocName="lpuAreaWithParent"/>
+	</msh:row>	
+	  
+
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
         </msh:row>
@@ -86,6 +103,7 @@
 //<AOI 14.06.2016
     checkFieldUpdate('typeDisp','${typeDisp}',1) ;
     checkFieldUpdate('typeRange','${typeRange}',2) ;
+    checkFieldUpdate('typeGroup','${typeGroup}',1) ;
 //</AOI 14.06.2016
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
@@ -130,29 +148,45 @@
     	
 //<AOI 14.06.2016
     	request.setAttribute("dispSql", "");
+    	StringBuilder sbDisp=new StringBuilder();
     	if(typeDisp!=null) {
-    		StringBuilder sbDisp=new StringBuilder();
+    		
     		if(typeDisp.equals("2")) {
     			sbDisp.append(" and edc.id is null ");
     		} else if(typeDisp.equals("3")) {
     			sbDisp.append(" and edc.id is not null ");
     		}
-    		request.setAttribute("dispSql", sbDisp.toString());
+    		
     	}
     	
-    	String range="";
-    	if(typeRange!=null) {
-    		if(typeRange.equals("2")) range=" and (lad.id is not null and lad.dateto is null) ";
+    	
+    	if(typeRange!=null&&typeRange.equals("2")) {
+   			String lpu = request.getParameter("lpu"); 
+  			String area = request.getParameter("area");
+   			if (lpu!=null&&!lpu.equals("")&&!lpu.equals("0")) {
+   				sbDisp.append(" and la.lpu_id="+lpu);
+   				}
+   			if (area!=null&&!area.equals("")&&!area.equals("0")) {
+   				sbDisp.append(" and la.id="+area);
+   			}
+   			sbDisp.append(" and (lad.id is not null and lad.dateto is null) ");
     	}
-    	request.setAttribute("rangeSQL", range);
+    	if (typeGroup!=null&&typeGroup.equals("1")) {
+    		request.setAttribute("groupBySql", "group by to_char(pat.birthday,'yyyy') order by to_char(pat.birthday,'yyyy') desc ");
+    		request.setAttribute("selectSql", "'&dateBeginYear="+date+"&year='||to_char(pat.birthday,'yyyy') as id,"+date+"-cast(to_char(pat.birthday,'yyyy') as int) as year");
+    	} else {
+    		request.setAttribute("groupBySql", "");
+    		request.setAttribute("selectSql", "cast('&dateBeginYear="+date+"' as varchar) as id,cast('Все возраста' as varchar) as year");
+    	}
+    	//request.setAttribute("rangeSQL", range);
 //</AOI 14.06.2016
-    		
+    		request.setAttribute("dispSql", sbDisp.toString());
 		    if (typeReestr!=null && typeReestr.equals("1")) {
     			String year=request.getParameter("year") ; String month=request.getParameter("month" );
     			StringBuilder where = new StringBuilder() ;
     			String dtype="Patient" ;
     			if (year!=null) {
-    				where.append(" and to_char(pat.birthday,'yyyy')='").append(year).append("'") ;
+    				where.append(" and to_char(pat.birthday,'yyyy')='").append(year).append("'") ;	
     			}
     			if (month!=null) {
     				where.append(" and to_char(pat.birthday,'mm')='").append(month).append("'") ;
@@ -169,11 +203,14 @@
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
 	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
+     ,la.number
      from  Patient pat
+     
      left join Address2 a on a.addressid=pat.address_addressid
      left join extdispcard edc on edc.patient_id=pat.id
      left join lpuattachedbydepartment lad on lad.patient_id=pat.id
-	where pat.deathDate is null ${whereSql} ${dispSql} ${rangeSQL}
+     left join lpuarea la on la.id=lad.area_id
+	where pat.deathDate is null ${whereSql} ${dispSql} 
 	order by pat.lastname,pat.firstname,pat.middlename
     "/>
    <msh:section>
@@ -200,6 +237,7 @@
     	<msh:tableColumn property="5" columnName="Дата рождения"/>
     	<msh:tableColumn property="6" columnName="Адрес"/>
     	<msh:tableColumn property="7" columnName="Доп. диспансеризации за ${param.dateBeginYear}"/>
+    	<msh:tableColumn property="8" columnName="Номер участка"/>
     </msh:table>
     </msh:sectionContent>
    </msh:section> 			
@@ -208,8 +246,8 @@
     				} else {
 %>
 <ecom:webQuery name="swod" nativeSql="
-select '&dateBeginYear=${param.dateBeginYear}&year='||to_char(pat.birthday,'yyyy') as id
-,${param.dateBeginYear}-cast(to_char(pat.birthday,'yyyy') as int) as year
+select 
+${selectSql} 
 ,count(case when to_char(pat.birthday,'mm')='01' then pat.id else null end) cnt01
 ,count(case when to_char(pat.birthday,'mm')='02' then pat.id else null end) cnt02
 ,count(case when to_char(pat.birthday,'mm')='03' then pat.id else null end) cnt03
@@ -226,9 +264,10 @@ select '&dateBeginYear=${param.dateBeginYear}&year='||to_char(pat.birthday,'yyyy
 from patient pat
 left join extdispcard edc on edc.patient_id=pat.id
 left join lpuattachedbydepartment lad on lad.patient_id=pat.id
-where deathdate is null ${dispSql} ${rangeSQL} 
-group by to_char(pat.birthday,'yyyy')
-order by to_char(pat.birthday,'yyyy') desc
+left join lpuarea la on la.id=lad.area_id
+where deathdate is null ${dispSql} 
+${groupBySql}
+
 "/> 
 <msh:table name="swod" action="mis_patient_by_age.do?typeReestr=1" idField="1" cellFunction="true">
 	<msh:tableColumn property="2" columnName="Возраст" addParam=""/>

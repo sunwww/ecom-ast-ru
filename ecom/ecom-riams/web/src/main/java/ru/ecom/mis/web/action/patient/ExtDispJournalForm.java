@@ -8,6 +8,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 
 public class ExtDispJournalForm extends BaseValidatorForm {
 
+	/** Участок */
+	@Comment("Участок")
+	public Long getArea() {return theArea;}
+	public void setArea(Long aArea) {theArea = aArea;}
+
+	/** Участок */
+	private Long theArea;
 	
 	/** Дата начала периода */
 	@Comment("Дата начала периода")
