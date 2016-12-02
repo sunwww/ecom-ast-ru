@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -5,6 +6,13 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
+
+	<%
+	String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1/", request);
+	request.setAttribute("fssProxyService", fssProxyService);
+	
+	
+	%>
 
   <tiles:put name="body" type="string">
     <!-- 
@@ -14,6 +22,7 @@
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="disabilityCase" />
+      <input type='hidden' name='fssServerAddress' id='fssServerAddress' value = '${fssProxyService}'>
       <msh:panel>
         <msh:row>
           <msh:autoComplete vocName="mainLpu" property="anotherLpu" label="Другое лечебное учреждение" guid="c431085f-265a-4c8b5babeff" fieldColSpan="3" horizontalFill="true" />
@@ -230,6 +239,12 @@
   <tiles:put name="javascript" type="string">
 	<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 	<script type="text/javascript">
+	function exportDocument() {
+		if (+$('id').value>0){
+			document.location.href=""+$('fssServerAddress').value+"/SetLnData?id="+$('id').value;
+		}
+		
+	}
 	function printDoc(aTemplate) {
   		DisabilityService.getPrefixForLN({
     		callback: function(aResult) {
@@ -361,6 +376,7 @@
         	name="duplicate" title="Дубликат (испорчен)" confirm="Вы действительно хотите создать дубликат текущего документа нетрудоспособности?" />
         <tags:dis_workComboDocument roles="/Policy/Mis/Disability/Case/Document/Create" key="ALT+5" 
         	name="workCombo" title="Бланк по совместительству" confirm="Вы действительно хотите создать документ по совместительству на основе текущего документа нетрудоспособности?" />
+        	
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink  name="шаблон 1" key="ALT+6" action="/javascript:printDoc(1,'.do')"/>
@@ -373,9 +389,12 @@
         <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_record" roles="/Policy/Mis/Disability/Case/Document/Record/Create" name="Продление" guid="0634b894-60e2-4b73-acee-7bf7316a77fc" title="Продлить листок нетрудоспособности" key="CTRL+1" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_regimeViolation" roles="/Policy/Mis/Disability/Case/Document/RegimeViolationRecord/Create" name="Нарушение режима" guid="d9a0ba4a-a68a-4f48-8492-767e911bce80" title="Добавить запись о нарушении режима" key="CTRL+2" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_medSocCommission" roles="/Policy/Mis/Disability/Case/Document/MedSocCommission/Create" name="МСЭК" title="Добавить решение медико-социальной экспертной комиссии" guid="4e09fb92-851a-4547-a12d-c384f63e31cd" key="CTRL+3" />
-        
-        
       </msh:sideMenu>
+      <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/ExportDocument">
+      <msh:sideMenu  title="Экспортировать" guid="c79769a2-8a1c-4c21-ab9c-b7ed71ceb99d">
+      <msh:sideLink  name="документ" action="/javascript:exportDocument()"/>
+      </msh:sideMenu>
+      </msh:ifInRole>
     </msh:ifFormTypeIsView>
   </tiles:put>
 </tiles:insert>
