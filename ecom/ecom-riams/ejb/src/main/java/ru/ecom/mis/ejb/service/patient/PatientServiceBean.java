@@ -246,7 +246,21 @@ public class PatientServiceBean implements IPatientService {
 	private String getAddressByKladr(String aKladr,String aRegion,String aRayon, String aCity, String aStreet) {
 		return getAddressByKladr(aKladr, aRegion, aRayon, aCity, aStreet,null);
 	}
-	
+	private String checkStreet (String aStreet) { //Обрабатываем случаи несоответствия данных адреса ФОМС адресам КЛАДР
+		aStreet = aStreet.toUpperCase();
+		String [][] streetList = {
+				{"Н.ОСТРОВСКОГО ул","Николая Островского ул"}
+				,{"В.Комарова ул","Космонавта В.Комарова ул"}
+				};
+			for (int i=0;i<streetList.length;i++) {
+				if (streetList[i][0].toUpperCase().equals(aStreet)) {
+					aStreet = streetList[i][1].toUpperCase();
+					break;
+				}
+			}
+		
+		return aStreet;
+	}
 	public String getAddressByOkato (String aOkato, String aStreet) {
 		if (aOkato==null||aOkato.equals("")) return null;
 		String streetType = "";
@@ -255,6 +269,7 @@ public class PatientServiceBean implements IPatientService {
 			aOkato +="0000000000";
 			aOkato = aOkato.substring(0,11);
 		}
+		aStreet = checkStreet(aStreet.trim());
 		if (aStreet.toUpperCase().endsWith(" УЛ")) {
 			streetType = aStreet.substring(aStreet.length()-2);
 			aStreet = aStreet.substring(0,aStreet.length()-2);
