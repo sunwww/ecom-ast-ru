@@ -1,5 +1,32 @@
 <vocconfig>
+<!--  Справочник дефектов КИЛИ -->
+<voc id='vocKiliDefect' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocKiliDefect'
+                names   = 'name'
+                queried = 'name'
+        />
+    </voc> 
 
+<!--  Справочник профилей КИЛИ -->
+<voc id='vocKiliProfile' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile'
+                names   = 'name'
+                queried = 'name'
+        />
+    </voc> 
+    
+<!--  Справочник решений КИЛИ -->
+<voc id="vocKiliConclusion" type="NativeVocService">
+	<NativeVocService
+	from="vocKiliConclusion vkc"
+	nameId="vkc.id"
+	names="vkc.name"
+	>
+	</NativeVocService>
+	</voc> 
+	
 <voc id="vocIndicationHospital" type="NativeVocService">
 	<NativeVocService
 	from="vocIndicationHospitalization vih"
@@ -17,7 +44,6 @@
 	>
 	</NativeVocService>
 	</voc> 
-
 
 <voc id="VocAssessmentsByTemplate" type="NativeVocService">
 	<NativeVocService

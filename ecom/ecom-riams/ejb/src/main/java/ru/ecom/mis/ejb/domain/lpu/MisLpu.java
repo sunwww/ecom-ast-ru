@@ -29,6 +29,7 @@ import ru.ecom.mis.ejb.domain.lpu.voc.VocMzDepType;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocPropertyAdmin;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocSubordination;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocWorkPlaceLevel;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.medstandard.MedicalStandard;
 import ru.ecom.mis.ejb.domain.worker.Staff;
@@ -553,4 +554,12 @@ public class MisLpu extends BaseEntity {
 	public void setLpuLevel(Integer aLpuLevel) {theLpuLevel = aLpuLevel;}
 	/** Уровень оказания медицинской помощи */
 	private Integer theLpuLevel;
+
+	/** Профиль КИЛИ */
+	@Comment("Профиль КИЛИ")
+	@ManyToOne
+	public VocKiliProfile getKiliProfile() {return theKiliProfile;}
+	public void setKiliProfile(VocKiliProfile aKiliProfile) {theKiliProfile = aKiliProfile;}
+	/** Профиль КИЛИ */
+	private VocKiliProfile theKiliProfile;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
@@ -11,6 +12,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuAccessEnterOperation;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
 import ru.ecom.mis.ejb.form.lpu.interceptors.RepMisLpuChildInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -598,5 +600,16 @@ public class MisLpuForm extends IdNameEntityForm {
 	public void setLpuLevel(Integer aLpuLevel) {theLpuLevel = aLpuLevel;}
 	/** Уровень оказания медицинской помощи */
 	private Integer theLpuLevel;
+	
+
+	/** Профиль КИЛИ */
+	@Comment("Профиль КИЛИ")
+	@Persist
+	public Long getKiliProfile() {return theKiliProfile;}
+	public void setKiliProfile(Long aKiliProfile) {theKiliProfile = aKiliProfile;}
+	/** Профиль КИЛИ */
+	private Long theKiliProfile;
+	
+
 
 }

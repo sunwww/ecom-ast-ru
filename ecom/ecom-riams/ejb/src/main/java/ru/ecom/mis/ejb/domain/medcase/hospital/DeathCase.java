@@ -18,6 +18,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKili;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAfterPregnance;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence;
@@ -42,6 +43,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @Table(schema="SQLUser")
 public class DeathCase extends BaseEntity {
+	
+	/** Протоколы КИЛИ */
+	@Comment("Протоколы КИЛИ")
+	@OneToMany(mappedBy = "deathCase", cascade = CascadeType.ALL)
+	public List<ProtocolKili> getKiliProtocols() {return theKiliProtocols;}
+	public void setKiliProtocols(List<ProtocolKili> aKiliProtocols) {theKiliProtocols = aKiliProtocols;}
+	/** Протоколы КИЛИ */
+	private List<ProtocolKili> theKiliProtocols;
+
 	/** Мед. случай */
 	@Comment("Мед. случай")
 	@OneToOne
