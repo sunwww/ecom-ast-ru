@@ -6,6 +6,9 @@
 
 	<form-beans>
 
+		<form-bean name="mis_protocolKiliForm"	type="ru.ecom.mis.ejb.form.medcase.kili.ProtocolKiliForm" />
+		<form-bean name="voc_kiliProfileForm"	type="ru.ecom.mis.ejb.form.medcase.voc.VocKiliProfileForm" />
+		<form-bean name="voc_kiliConclusionForm"	type="ru.ecom.mis.ejb.form.medcase.voc.VocKiliConclusionForm" />
 		<form-bean name="mis_assessmentCardTemplateForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardTemplateForm" />
 		<form-bean name="mis_assessmentForm"		type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentForm" />
 		<form-bean name="mis_assessmentCardForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardForm" />
@@ -390,6 +393,14 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/listDifferentDiagnosis.jsp" />
+        </action>
+        
+        <action path='/protocolReport' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/mis_protocolKili/protocolReport.jsp" />
         </action>
 	    
 	    <action path='/mis_mortality_report' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'

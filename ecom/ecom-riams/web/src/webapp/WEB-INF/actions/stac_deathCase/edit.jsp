@@ -42,6 +42,7 @@
       <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc9" title="Добавить">
         <msh:sideLink roles="/Policy/Mis/MedCase/DeathCase/Reason/Create" name="Причину смерти" params="id" action="/entityParentPrepareCreate-stac_deathReason" title="Добавить причину смерти" guid="11cc057f-b309-4193-9d22-199373cfd28d" />
         <msh:sideLink roles="/Policy/Mis/Certificate/Death/Create" name="Свидетельство о смерти" params="id" action="/entityParentPrepareCreate-stac_deathCertificate" title="Добавить свидетельство о смерти" guid="11cc0-b309-4193-9d22-199373cfd28d" />
+        <msh:sideLink roles="/Policy/Mis/MedCase/ProtocolKili/Create" name="Протокол КИЛИ" params="id" action="/entityParentPrepareCreate-mis_protocolKili" title="Добавить протокол КИЛИ" guid="11cc0-b309-4193-9d22-199373cfd28d" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
@@ -238,6 +239,15 @@
             <msh:tableColumn columnName="Серия" property="series" guid="b5fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
             <msh:tableColumn columnName="Номер" property="number" guid="bfe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
           </msh:table>
+        </msh:section>
+      </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/Certificate/Death/View" guid="b0ceb3e4-a6a2-41fa-be6b-ea222196a33d">
+        <msh:section title="КИЛИ о смерти" guid="1f214-8ea0-4b66-a0f3-62713c1">
+          <ecom:parentEntityListAll formName="mis_protocolKiliForm" attribute="deathKilis" guid="302c-7369-4ec7-a67c-882abcf" />
+           <msh:table name="deathKilis" action="entityParentView-mis_protocolKili.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d916">
+            <msh:tableColumn columnName="Дата выдачи" property="createDate" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
+            <msh:tableColumn columnName="Номер протокола" property="protocolNumber" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
+            </msh:table>  
         </msh:section>
       </msh:ifInRole>
     </msh:ifFormTypeIsView>

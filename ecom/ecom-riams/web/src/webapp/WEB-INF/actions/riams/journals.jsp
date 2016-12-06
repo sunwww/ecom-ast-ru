@@ -289,6 +289,9 @@
 	                        <li><msh:link  isReport="true" action="stac_diff_diagnosis.do" roles="/Policy/Mis/MedCase/Stac/Journal/Report14">
 	                            Журнал расхождений диагнозов
 	                        </msh:link></li>
+	                        <li><msh:link  isReport="true" action="protocolReport.do" roles="/Policy/Mis/MedCase/Stac/Journal/ProtocolKili">
+	                            Отчет по КИЛИ
+	                        </msh:link></li>
 	                        
 					</ul>
 					</div>

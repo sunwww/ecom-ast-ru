@@ -100,6 +100,9 @@
         <msh:autoComplete property="emergencyCabinet" vocName="funcMedServiceRoom" label="Экстренный кабинет" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        <msh:autoComplete property="kiliProfile" vocName="vocKiliProfile" label="Профиль КИЛИ" fieldColSpan="3" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:checkBox property="isNewBornDep" label="Отд. новорожденных"/>
         	<msh:checkBox property="isMaternityWard" label="Родильное отделение"/>
         </msh:row>

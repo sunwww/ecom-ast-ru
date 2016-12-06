@@ -17,7 +17,8 @@
 				<h2>Что появилось нового в ПО "МедОС"?</h2>
 				<ul>
 					<li><msh:link  action="ecom_release-201612.do">
-					декабрь</msh:link></li>
+						декабрь 2016 года
+						</msh:link></li>
 					<li><msh:link  action="ecom_release-201611.do">
 						 ноябрь 2016 года
                       	</msh:link></li>
