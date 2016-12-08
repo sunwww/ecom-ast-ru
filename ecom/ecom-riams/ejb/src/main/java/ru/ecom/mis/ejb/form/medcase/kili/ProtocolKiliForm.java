@@ -41,13 +41,15 @@ public class ProtocolKiliForm extends IdEntityForm {
 	/** ID протокола */
 	private Long theIDProtocol;
 	
-	/** Профиль */
+	/** Профиль 
 	@Comment("Профиль")
 	@Persist @Required
 	public Long getProfile() {return theProfile;}
 	public void setProfile(Long aProfile) {theProfile = aProfile;}
-	/** Профиль */
+	*/
+	/** Профиль 
 	private Long theProfile;
+	*/
 	
 	/** Случай смерти */
 	@Comment("Случай смерти")

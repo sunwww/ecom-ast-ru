@@ -1,4 +1,33 @@
 /**
+ * Перед редактированием
+ */
+function onPreSave(aForm, aEntity, aContext) {
+//var day_limit = aContext.manager.createNativeQuery("select keyvalue from softconfig  where key='KILI_EDIT_CNTDAYS'");
+/*
+var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear();
+
+var str = "2013/01/14";
+var p = str.split("/");
+var date_protocol = new Date(p[0],p[1],p[2]);
+
+var diffDays = parseInt((today - date_protocol) / (1000 * 60 * 60 * 24)); 
+if (diffDays>3)
+System.out.println("Access denied!");
+else
+System.out.println("Access granted!");
+	var getCurDate = new Date(); 
+	var getKiliDate = aCtx.manager.createNativeQuery("select createdate from protocolkili where deathcase_id=" + aForm.deathcase);
+	if 
+	updateAddress(aForm) ;
+	changeData(aForm,aEntity,aContext);
+	*/
+//throw day_limit;
+}
+
+/**
  * Перед созданием
  */
 
@@ -56,13 +85,8 @@ function saveData(aForm, aEntity, aCtx) {
 	 */
 	
 	var temp = aForm.getDefectSaveList().split("##");
-	var cle;
-	for(var j=0;j<temp.length;j++)
-		{
-			cle += temp[j];
-		}
-	//throw(defects[0]) ;
 	
+	//throw(defects[0]) ;
 	if (defects.length > 0){
 		for (var i=0;i<defects.length;i++) {
 			var separator = defects[i].split("@@") ;
@@ -74,6 +98,7 @@ function saveData(aForm, aEntity, aCtx) {
 				def = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKiliDefect,new java.lang.Long(defId));
 			}
 			var vocDefect = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocKiliDefect, new java.lang.Long(separator[1])) ;
+			//def.setProfile(aForm);
 			def.setProtocol(aEntity);
 			def.setDefect(vocDefect);
 			def.setIsDefectFound (separator[2]=='1'?true:false);
