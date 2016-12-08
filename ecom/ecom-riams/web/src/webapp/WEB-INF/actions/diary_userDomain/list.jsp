@@ -11,8 +11,19 @@
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityView-diary_userDomain.do" idField="id" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
-      <msh:tableColumn columnName="Название" property="name" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+  <ecom:webQuery name="list" 
+  nativeSql="
+  select ud.id,ud.code,ud.name,list(ul.name) as listValue from UserDomain ud
+left join UserValue ul on ul.domain_id=ud.id
+group by ud.id,ud.code,ud.name
+order by ud.name
+  "
+  />
+    <msh:table name="list" action="entityView-diary_userDomain.do" idField="1"
+	editUrl="entityEdit-diary_userDomain.do">
+      <msh:tableColumn columnName="Код" property="2" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Название" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
+      <msh:tableColumn columnName="Значения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
     </msh:table>
   </tiles:put>
   <tiles:put name="side" type="string">

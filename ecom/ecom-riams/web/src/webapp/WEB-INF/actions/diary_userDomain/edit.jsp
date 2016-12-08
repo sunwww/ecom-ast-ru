@@ -33,7 +33,7 @@
     <msh:form action="/entitySaveGoView-diary_userDomain.do" defaultField="name" guid="be2c889f-ed1d-4a2b-9cda-9127e9d94885">
       <msh:hidden property="id" guid="d10f460a-e434-45a5-90f0-b0a7aed00ec6" />
       <msh:hidden property="saveType" guid="bd322f07-c944-4587-a963-a09db2b93caf" />
-      <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" colsWidth="20% 30%">
+      <msh:panel guid="d1cd0310-bf53-4ce1-9dd5-06388b51ec01" >
         <msh:row guid="bb6f7393-5e65-498c-8279-b849d7e9f6b4">
           <msh:textField property="name" label="Название" size="50" guid="b87e9cee-cf5d-43bc-b50d-1911d5e87e40" horizontalFill="true" />
         </msh:row>
@@ -47,7 +47,8 @@
       <msh:ifFormTypeIsView formName="diary_userDomainForm" guid="9f1dd6a4-a7b7-43e7-b205-85730bba6968">
         <msh:section title="Значения справочника" createUrl="entityParentPrepareCreate-diary_userValue.do?id=${param.id}">
           <ecom:parentEntityListAll attribute="values" formName="diary_userValueForm" guid="values" />
-          <msh:table name="values" action="entityParentView-diary_userValue.do" idField="id" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
+          <msh:table name="values" action="entityParentView-diary_userValue.do" 
+          idField="id" deleteUrl="entityParentDeleteGoParentView-diary_userValue.do" editUrl="entityParentEdit-diary_userValue.do" >
             <msh:tableColumn property="name" columnName="Значение" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
             <msh:tableColumn property="cntBall" columnName="Балл" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
           </msh:table>
