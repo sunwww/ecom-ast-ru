@@ -53,6 +53,25 @@
             <msh:tableColumn property="cntBall" columnName="Балл" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
           </msh:table>
         </msh:section>
+                  <ecom:webQuery name="parameters" nativeSql="select p.id,p.name
+         ,case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='6' then 'Пользовательский справочник (множественный выбор): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end as typeinfo
+         ,vmu.name as vmuname
+         ,p.code
+          from parameter p 
+          left join userDomain vd on vd.id=p.valueDomain_id 
+          left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id
+          where p.valueDomain_id=${param.id} order by p.name"/>
+          <msh:tableNotEmpty name="parameters">
+        <msh:section title="Список параметров, где используется справочник">
+          <msh:table name="parameters" action="diary_parameterView.do" idField="1" guid="16cdff99-8997-eebc80ecc49c">
+          	<msh:tableColumn property="5" columnName="Код"/>
+            <msh:tableColumn property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
+            <msh:tableColumn property="3" columnName="Тип" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
+            <msh:tableColumn property="4" columnName="Ед.изм" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
+          </msh:table>
+          </msh:section>
+        </msh:tableNotEmpty>
+        
       </msh:ifFormTypeIsView>
     </msh:ifInRole>
   </tiles:put>
