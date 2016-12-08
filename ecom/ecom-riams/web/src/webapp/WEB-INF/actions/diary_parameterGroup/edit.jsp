@@ -64,18 +64,33 @@
          <ecom:webQuery name="parameters" nativeSql="select p.id,p.name
          ,case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end as typeinfo
          ,vmu.name as vmuname
+         ,case when p.type='2' then vd.id else null end as vdid
+         ,p.code
           from parameter p 
           left join userDomain vd on vd.id=p.valueDomain_id 
           left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id
           where p.group_id=${param.id} order by p.name"/>
           <msh:table name="parameters" action="diary_parameterView.do" idField="1" guid="16cdff99-8997-eebc80ecc49c">
+          	<msh:tableColumn property="6" columnName="Код"/>
             <msh:tableColumn property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
+          	<msh:tableButton property="5" buttonFunction="viewDomain" buttonShortName="ПН" buttonName="Просмотр справочника в новом окне (для редактирования)" hideIfEmpty="true"/>
+          	<msh:tableButton property="5" buttonFunction="viewShortDomain" buttonShortName="П" buttonName="Просмотр справочника" hideIfEmpty="true"/>
             <msh:tableColumn property="3" columnName="Тип" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
             <msh:tableColumn property="4" columnName="Ед.изм" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
           </msh:table>
         </msh:section>
       </msh:ifFormTypeIsView>
     </msh:ifInRole>
+  </tiles:put>
+  <tiles:put name="javascript" type="string">
+  <script type="text/javascript">
+  function viewDomain(aId) {
+  		window.open("entityView-diary_userDomain.do?id="+aId) ;
+  	}
+  function viewShortDomain(aId) {
+	  getDefinition("entityView-diary_userDomain.do?short=Short&id="+aId)
+  }
+  </script>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Config" beginForm="diary_parameterGroupForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
