@@ -12,17 +12,12 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 <tiles:put name="style" type="string">
         <style type="text/css">
-
             #createDateLabel, #createTimeLabel,
             #createUsernameLabel,#editDateLabel,
             #editTimeLabel,#editUsernameLabel {
                  font-weight: bold;}
-            
-            #profileName{
-            size: 60}
         </style>
         </tiles:put>
-        
   <tiles:put name="body" type="string">
 
   <msh:ifFormTypeIsNotView formName="mis_protocolKiliForm">		<!-- Начало формы, которая не является формой просмотра записей -->
@@ -33,6 +28,12 @@
  	left join protocolkilidefect pkd on vkd.id=pkd.defect_id and pkd.protocol_id=${param.id}"/>
 	<ecom:webQuery name="GetIDProtocol" nativeSql="SELECT pk.id as protocolID
 	FROM ProtocolKili pk WHERE pk.deathcase_id=${param.id}"/>
+	
+	<ecom:webQuery name="GetProfileByID" nameFldSql="GetProfileByID_sql" nativeSql="SELECT mlpu.name FROM deathcase dc 
+LEFT JOIN medcase mc ON mc.id = dc.medcase_id 
+LEFT JOIN mislpu mlpu ON  mlpu.id = mc.department_id 
+WHERE dc.id = ${param.id}"/>
+ 
   </msh:ifFormTypeIsNotView>
   
   <!--
@@ -40,7 +41,8 @@
 
   out.print("<input type ='hidden' id='IDProtocol' value='"+ IDProtocol.get(0) +"'>");
   -->
-<%	
+<%
+	
 	 StringBuilder temp = new StringBuilder();
 	 List listDefect = (List)request.getAttribute("defectList"); 
 	 if (listDefect!= null && !listDefect.isEmpty()) {//аттрибутом является запрос (webQuery) с именем DefectFound
@@ -69,7 +71,9 @@
 	<msh:hidden property="defectSaveList" guid="0a37e6e5-4875-4dae-a226-50fba9990881" />
 	<msh:panel guid="04fd7a8f-37bc-4492-996b-5778911d56cc">
 	
-	<!-- <msh:row><msh:autoComplete property="profile" vocName="vocKiliProfile" fieldColSpan="4" size="60"/></msh:row> -->
+	<!--
+	<msh:row><msh:autoComplete property="profile" vocName="vocKiliProfile" fieldColSpan="4" size="60"/></msh:row>
+	-->
 	<msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d"><msh:textField property="protocolNumber" label="Номер протокола"/></msh:row>
 	<msh:row><msh:textField property="protocolDate"/></msh:row>
 	<msh:row><msh:autoComplete property="conclusion" vocName="vocKiliConclusion" fieldColSpan="4" size="60"/></msh:row>
@@ -134,7 +138,7 @@
   
 
 <tiles:put name="javascript" type="string">
-	<!-- Скрикпт отображения текстового поля соседнего с чек-боксом -->
+	<!-- Скрипт отображения текстового поля соседнего с чек-боксом -->
 	<script type="text/javascript">
 	function setDefectFound(i){
 	
@@ -181,4 +185,3 @@
 	</script>
 </tiles:put>
 </tiles:insert>
-
