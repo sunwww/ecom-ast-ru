@@ -245,7 +245,7 @@
         <msh:section title="КИЛИ о смерти" guid="1f214-8ea0-4b66-a0f3-62713c1">
           <ecom:parentEntityListAll formName="mis_protocolKiliForm" attribute="deathKilis" guid="302c-7369-4ec7-a67c-882abcf" />
            <msh:table name="deathKilis" action="entityParentView-mis_protocolKili.do" idField="id" guid="b621e361-1e0b-4ebd-9f58-b7d916">
-            <msh:tableColumn columnName="Дата выдачи" property="createDate" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
+            <msh:tableColumn columnName="Дата протокола" property="protocolDate" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
             <msh:tableColumn columnName="Номер протокола" property="protocolNumber" guid="b85fe4-b1cb-4320-aa85-014d26" cssClass="preCell" />
             </msh:table>  
         </msh:section>

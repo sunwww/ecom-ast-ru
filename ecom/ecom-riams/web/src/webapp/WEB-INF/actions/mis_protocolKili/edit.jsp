@@ -11,12 +11,6 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 <tiles:put name="style" type="string">
-        <style type="text/css">
-            #createDateLabel, #createTimeLabel,
-            #createUsernameLabel,#editDateLabel,
-            #editTimeLabel,#editUsernameLabel {
-                 font-weight: bold;}
-        </style>
         </tiles:put>
   <tiles:put name="body" type="string">
 
@@ -63,18 +57,14 @@ WHERE dc.id = ${param.id}"/>
 	 }
 %>
   
-<msh:form guid="123" action="entityParentSaveGoView-mis_protocolKili.do" defaultField="profile">
+<msh:form guid="123" action="entityParentSaveGoView-mis_protocolKili.do" defaultField="protocolDate">
 	<msh:hidden property="id" guid="67476bdd-7eb2-4eac-8512-9476a6e2d5ad" />
 	<msh:hidden property="deathCase" guid="67476bdd-7eb2-4eac-8512-9476a6e2d5ad" />
-	<!-- <msh:hidden property="parent" guid="67476bdd-7eb2-4eac-8512-9476a6e2d5ad" /> -->
 	<msh:hidden property="saveType" guid="0a37e6e5-4875-4dae-a226-50fba9990881" />
 	<msh:hidden property="defectSaveList" guid="0a37e6e5-4875-4dae-a226-50fba9990881" />
 	<msh:panel guid="04fd7a8f-37bc-4492-996b-5778911d56cc">
 	
-	<!--
-	<msh:row><msh:autoComplete property="profile" vocName="vocKiliProfile" fieldColSpan="4" size="60"/></msh:row>
-	-->
-	<msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d"><msh:textField property="protocolNumber" label="Номер протокола"/></msh:row>
+		<msh:row guid="1e6e2aa0-b434-4025-b877-58993d9b320d"><msh:textField property="protocolNumber" label="Номер протокола"/></msh:row>
 	<msh:row><msh:textField property="protocolDate"/></msh:row>
 	<msh:row><msh:autoComplete property="conclusion" vocName="vocKiliConclusion" fieldColSpan="4" size="60"/></msh:row>
         
@@ -125,7 +115,7 @@ WHERE dc.id = ${param.id}"/>
 	<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-mis_protocolKili" name="Изменить" guid="175cf029-eaae-47a2-8ad7-0486fcbea707" roles="/Policy/Mis/MedCase/ProtocolKili/Edit" />
 	<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-mis_protocolKili" name="Удалить" confirm="Удалить протокол?" guid="bed2b91a-84fc-4a8b-9cb1-0a83d94fd2de" roles="/Policy/Mis/MedCase/ProtocolKili/Delete" />
 	</msh:ifFormTypeIsView>
-	</msh:sideMenu>
+	</msh:sideMenu> 
 <!-- 
 <msh:ifFormTypeIsView formName="mis_protocolKiliForm" guid="b0b5c1a9-5459-43b9-9030-ba0177a24cbd">
 </msh:ifFormTypeIsView>

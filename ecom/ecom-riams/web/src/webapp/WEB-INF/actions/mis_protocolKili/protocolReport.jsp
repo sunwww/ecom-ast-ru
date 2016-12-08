@@ -17,6 +17,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   <% String shor = request.getParameter("short");
+  String typeDate = ActionUtil.updateParameter("GroupByBedFund","typeDate","2", request);
   if (shor==null|| shor.equals("")){
   %>
      <msh:form action="/protocolReport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -25,9 +26,24 @@
         <msh:separator label="Параметры поиска" colSpan="7" />
         </msh:row><msh:row>
         <msh:textField property="dateBegin" label="Период с" />
-        <msh:textField property="dateEnd" label="по" /></msh:row>
+        <msh:textField property="dateEnd" label="по" />
+        </msh:row><msh:row>
+        <msh:autoComplete property="department" fieldColSpan="5"
+        	label="Профиль" horizontalFill="true" vocName="vocKiliProfile"/>
+        </msh:row>
+        <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDate" value="1">  поступления
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDate" value="2">  выписки
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDate" value="3">  перевода
+        </td>
+        </msh:row>
         <msh:row>
-         
             <td><input type="submit" value="Найти" /></td>
       </msh:row>
           </msh:panel>
@@ -39,12 +55,26 @@
  
   <%
   String isReestr = request.getParameter("reestr");
-  //String department = (String) request.getParameter("department");
+    //String department = (String) request.getParameter("department");
   //String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
+  	
+  	String department = (String)request.getParameter("department") ;
+    	if (department!=null && !department.equals("") && !department.equals("0")) {
+    		request.setAttribute("departmentSql", " and vkp.id = "+department) ;
+    	} 
+    	String fldDate = "sls.dateFinish" ;
+    	if (typeDate!=null) {
+    		if (typeDate.equals("1")) {fldDate="sls.dateStart" ;} 
+    		else if (typeDate.equals("2")) {fldDate = "sls.dateFinish" ;}
+    		else if (typeDate.equals("3")) {fldDate="sls.transferDate" ;}
+    	}
+    	request.setAttribute("fldDate",fldDate) ;
+    //profileFilter += request.getParameter("department");
 	String startDate = (String) request.getParameter("dateBegin"); //Получаем значение текстового поля с первой датой
 	String finishDate = (String) request.getParameter("dateEnd");	//Получаем значение текстового поля со второй датой
 	request.setAttribute("dateBegin", startDate);
 	request.setAttribute("dateEnd", finishDate);
+	
   //String clinicalMkbName = "ml.name || '<br> '|| mkb2.code||' ' ||mkb2.name";
 	String addSql = "";
 	
@@ -84,10 +114,11 @@ left join deathcase dc on dc.medcase_id=sls.id
 left join protocolkili pk on pk.deathcase_id=dc.id
 left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
-WHERE sls.dtype='HospitalMedCase' and sls.datefinish ${addSql} 
+WHERE sls.dtype='HospitalMedCase' and ${fldDate} ${addSql} 
 and slo.dtype='DepartmentMedCase'  
-and slo.datefinish is not null and vhr.code='11' 
-and sls.deniedhospitalizating_id is null and vkp.id=${param.id} ${addParam}
+and sls.datefinish is not null and vhr.code='11' 
+and sls.deniedhospitalizating_id is null and vkp.id=${param.id} ${addParam} 
+GROUP BY sls.id, pat.patientinfo, dc.id, pk.id
 "/>
     <msh:section>
     <msh:sectionContent>
@@ -117,9 +148,9 @@ left join deathcase dc on dc.medcase_id=sls.id
 left join protocolkili pk on pk.deathcase_id=dc.id
 left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
-WHERE sls.dtype='HospitalMedCase' and sls.datefinish ${addSql} and slo.dtype='DepartmentMedCase'  and vhr.code='11' 
+WHERE sls.dtype='HospitalMedCase' and ${fldDate} ${addSql} and slo.dtype='DepartmentMedCase'  and vhr.code='11' 
 and sls.deniedhospitalizating_id is null
-
+${departmentSql}
 GROUP BY vkp.id, vkp.name
  
 
