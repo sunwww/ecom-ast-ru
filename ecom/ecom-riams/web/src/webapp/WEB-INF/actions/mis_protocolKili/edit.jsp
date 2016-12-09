@@ -69,13 +69,14 @@ WHERE dc.id = ${param.id}"/>
 	<msh:row><msh:autoComplete property="conclusion" vocName="vocKiliConclusion" fieldColSpan="4" size="60"/></msh:row>
         
 <msh:ifFormTypeIsView formName="mis_protocolKiliForm">
+
 	<msh:section title="Обследования" >
 	<ecom:webQuery name="defectList" nativeSql="select pkd.id as pkdId, pkd.defecttext, case when pkd.isdefectfound='1' then '+' else '-' end 
 	, vkd.id as vkdId, vkd.name
 		from Vockilidefect vkd
 		left join protocolkilidefect pkd on vkd.id=pkd.defect_id and pkd.protocol_id=${param.id}"/>
 	<!-- Вывод информации о дефектах в протоколе КИЛИ -->
-	<msh:table name="defectList" action="js-extDisp_service-edit.do" idField="1">
+	<msh:table name="defectList" action="javascript:void(0)" idField="1">
 		<msh:tableColumn columnName="Тип дефекта" property="5"/>
 		<msh:tableColumn columnName="Выявлено?" property="3"/>
 		<msh:tableColumn columnName="Дефект" property="2"/>
@@ -110,12 +111,16 @@ WHERE dc.id = ${param.id}"/>
 	
 	
 <tiles:put name="side" type="string">
-	<msh:sideMenu title="Сотрудник" guid="8709feb9-c102-4a0f-8bb5-3404cf624927">
+	<msh:sideMenu title="Протокол КИЛИ" guid="8709feb9-c102-4a0f-8bb5-3404cf624927">
 	<msh:ifFormTypeIsView formName="mis_protocolKiliForm" guid="e4a7c0d3-c936-4947-a202-2c14949a8567">
 	<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-mis_protocolKili" name="Изменить" guid="175cf029-eaae-47a2-8ad7-0486fcbea707" roles="/Policy/Mis/MedCase/ProtocolKili/Edit" />
 	<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-mis_protocolKili" name="Удалить" confirm="Удалить протокол?" guid="bed2b91a-84fc-4a8b-9cb1-0a83d94fd2de" roles="/Policy/Mis/MedCase/ProtocolKili/Delete" />
 	</msh:ifFormTypeIsView>
 	</msh:sideMenu> 
+		<msh:sideMenu title="Печать">
+      	<msh:sideLink key="CTRL+2" params="id" action="/print-KiliProtocol.do?m=printKiliProtocol&s=HospitalPrintService" name="Протокол КИЛИ"/>
+      </msh:sideMenu>
+	
 <!-- 
 <msh:ifFormTypeIsView formName="mis_protocolKiliForm" guid="b0b5c1a9-5459-43b9-9030-ba0177a24cbd">
 </msh:ifFormTypeIsView>

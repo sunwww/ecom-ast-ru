@@ -39,21 +39,20 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="2">  выписки
         </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="3">  перевода
-        </td>
         </msh:row>
         <msh:row>
             <td><input type="submit" value="Найти" /></td>
       </msh:row>
           </msh:panel>
 </msh:form>
+
 <%} %>
  <ecom:webQuery name="diag_typeReg_vip_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
  <ecom:webQuery name="diag_typeReg_klin_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='4'"/>
  <ecom:webQuery name="diag_mainPriority_sql" nativeSql="select id,name from VocPrimaryDiagnosis where code='1'"/>
  
   <%
+  
   String isReestr = request.getParameter("reestr");
     //String department = (String) request.getParameter("department");
   //String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
@@ -66,7 +65,6 @@
     	if (typeDate!=null) {
     		if (typeDate.equals("1")) {fldDate="sls.dateStart" ;} 
     		else if (typeDate.equals("2")) {fldDate = "sls.dateFinish" ;}
-    		else if (typeDate.equals("3")) {fldDate="sls.transferDate" ;}
     	}
     	request.setAttribute("fldDate",fldDate) ;
     //profileFilter += request.getParameter("department");
@@ -74,7 +72,6 @@
 	String finishDate = (String) request.getParameter("dateEnd");	//Получаем значение текстового поля со второй датой
 	request.setAttribute("dateBegin", startDate);
 	request.setAttribute("dateEnd", finishDate);
-	
   //String clinicalMkbName = "ml.name || '<br> '|| mkb2.code||' ' ||mkb2.name";
 	String addSql = "";
 	
@@ -96,6 +93,16 @@
 		} else if (addParam!=null&&addParam.equals("2")) {
 			addParam = " and pk.id is not null";
 		}
+	
+	String id = request.getParameter("id");
+	String isParamNull;
+	if (id==null|| id.equals("null"))	{
+		isParamNull = "IS ";
+	} else {
+		isParamNull = " = ";
+		
+	}
+	request.setAttribute("isParamNull", isParamNull);
 		request.setAttribute("addParam", addParam!=null?addParam:"");
 		%> 
 		<ecom:webQuery name="showProfile" nameFldSql="showProfile_sql" nativeSql="
@@ -117,9 +124,20 @@ left join vochospitalizationresult vhr on vhr.id=sls.result_id
 WHERE sls.dtype='HospitalMedCase' and ${fldDate} ${addSql} 
 and slo.dtype='DepartmentMedCase'  
 and sls.datefinish is not null and vhr.code='11' 
-and sls.deniedhospitalizating_id is null and vkp.id=${param.id} ${addParam} 
+and sls.deniedhospitalizating_id is null and vkp.id ${isParamNull} ${param.id} ${addParam} 
 GROUP BY sls.id, pat.patientinfo, dc.id, pk.id
 "/>
+	<form action="print-kiliReport2.do" method="post" target="_blank">
+    Период с ${dateBegin} по ${dateEnd}. 
+    ${datelist_sql}
+    <input type='hidden' name="sqlText" id="sqlText" value="${showProfile_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${dateBegin} по ${dateEnd}.">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="date1" id="date1" value="${dateBegin}">
+    <input type='hidden' name="date2" id="date2" value="${dateEnd}">
+    <input type="submit" value="Печать"> 
+    </form>
     <msh:section>
     <msh:sectionContent>
     <msh:table name="showProfile" idField="1" action="entityParentView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c"> 
@@ -130,14 +148,14 @@ GROUP BY sls.id, pat.patientinfo, dc.id, pk.id
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-		
+		   
 		<%
 	} else {
 	 	
  %>
 
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
-SELECT vkp.id, vkp.name, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk
+SELECT  vkp.id, vkp.name, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk
 from medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null
 left join mislpu dep on dep.id=slo.department_id
@@ -157,7 +175,6 @@ GROUP BY vkp.id, vkp.name
 
 " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
 
-
         <msh:section>
     <msh:sectionContent>
     <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
@@ -168,7 +185,16 @@ GROUP BY vkp.id, vkp.name
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    
+    <form action="print-kiliReport.do" method="post" target="_blank">
+    Период с ${dateBegin} по ${dateEnd}. 
+    <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}"> 
+    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${dateBegin} по ${dateEnd}.">
+    <input type='hidden' name="s" id="s" value="PrintService">
+    <input type='hidden' name="m" id="m" value="printNativeQuery">
+    <input type='hidden' name="date1" id="date1" value="${dateBegin}">
+    <input type='hidden' name="date2" id="date2" value="${dateEnd}">
+    <input type="submit" value="Печать"> 
+    </form>
   <% } %>
 
   <script type='text/javascript'>
