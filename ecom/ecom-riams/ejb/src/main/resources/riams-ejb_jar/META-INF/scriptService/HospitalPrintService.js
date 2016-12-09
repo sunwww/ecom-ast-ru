@@ -1,4 +1,44 @@
 var map = new java.util.HashMap() ;
+/* Печать протокола КИЛИ */
+function printKiliProtocol (aCtx, aParams) {
+	var id = new java.lang.Long(aParams.get("id"));
+	var kili = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKili, new java.lang.Long(aParams.get("id"))) ;
+	var pat = kili.deathCase.medCase.patient;
+	var sql = "select vkc.id, vkc.name from vocKiliConclusion vkc, protocolkili pk where pk.id =" +id;
+	map.put("pat", pat);
+	map.put("kili", kili);
+	var result = aCtx.manager.createNativeQuery(sql).getResultList();
+	if(!result.isEmpty()) {
+			var conclusion = result.get(0);
+			map.put("conclusion", conclusion[1]);
+		}
+	var getDefects = "select vkd.name, case when pkd.isdefectfound='1' then 'Да' else 'Нет' end" +
+			", pkd.defecttext "+ 
+ " from protocolkilidefect pkd" +
+ " left join vockilidefect vkd on vkd.id=pkd.defect_id " +
+ " where pkd.protocol_id = " +id +
+ "ORDER BY vkd.name";
+	var resultDef = aCtx.manager.createNativeQuery(getDefects).getResultList();
+	var showDefects = new java.util.ArrayList();
+	if(!resultDef.isEmpty()) {
+		for (var i=0; i<resultDef.size();i++)
+			{
+			var p = resultDef.get(i);
+			var pp = new java.util.ArrayList();
+			var id = p[0];
+			var name = p[1]; 
+			var isFound = p[2];
+			var text = p[3];
+			pp.add(id);
+			pp.add(name);
+			pp.add(isFound);
+			pp.add(text);
+			showDefects.add(pp);
+			}
+	}
+	map.put("showDefects", showDefects); 
+	return map;
+}
 
 function printProtocolTemplate (aCtx, aParams) {
 	var protocolId = new java.lang.Long(aParams.get("id"));
@@ -29,7 +69,6 @@ function printProtocolTemplate (aCtx, aParams) {
 	
 	return map;
 }
-
 function printCheckList (aCtx, aParams) {
 	var id = new java.lang.Long(aParams.get("id"));
 	var resultSql = "select p.id, to_char(p.planstartdate,'dd.MM.yyyy') as f1_surDate" +
@@ -60,7 +99,6 @@ function printCheckList (aCtx, aParams) {
 	return null;
 			
 }
-
 function unNull (aStr) {
 	return aStr!=null?""+aStr:"";
 }
@@ -517,7 +555,6 @@ function printCoveringLetterByDay(aCtx,aParams) {
 	map.put("listDep",ret) ;
 	return map ;
 }
-
 function printReestrByDay(aCtx,aParams) {
 	var ids = aParams.get("id") ;
 	var id = ids.split(":") ;
@@ -872,7 +909,6 @@ function printAddressSheetByHospital(aCtx, aParams) {
 	map.put("list",ret) ;
 	return map ;
 }
-
 function printAddressSheetArrival(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var spec = aParams.get("spec") ;
@@ -1015,7 +1051,6 @@ function saveInfoByPatient(aPatient,aComplicationDate,aDischargeDate,aSn,aFormat
 	return obj ;
 
 }
-
 function printMedServicies(aCtx, aParams) {
 	var ids1 = aParams.get("id") ;
 	var ids = ids1.split(",") ;
@@ -1048,7 +1083,6 @@ function printMedServicies(aCtx, aParams) {
 	map.put("medServicies",ret) ;
 	return map ;
 }
-
 function printSurOperation(aCtx,aParams) {
 	var surOperation = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.SurgicalOperation
 		, new java.lang.Long(aParams.get("id"))) ;
