@@ -1,15 +1,13 @@
 package ru.ecom.mis.ejb.form.medstandard;
 
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medstandard.MedicalStandard;
 
-import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
@@ -57,4 +55,11 @@ public class MedicalStandardForm extends IdEntityForm {
 	public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
 	/** Дата окончания действия */
 	private String theFinishDate;
+	
+	/** Родительский стандарт */
+	@Comment("Родительский стандарт")
+	public Long getParent() {return theParent;}
+	public void setParent(Long aParent) {theParent = aParent;}
+	/** Родительский стандарт */
+	private Long theParent;
 }

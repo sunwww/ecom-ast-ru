@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -38,5 +39,13 @@ public class MedicalStandard extends VocBaseEntity {
 	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
 	/** Дата окончания действия */
 	private Date theFinishDate;
+	
+	/** Родительский стандарт */
+	@Comment("Родительский стандарт")
+	@OneToOne
+	public MedicalStandard getParent() {return theParent;}
+	public void setParent(MedicalStandard aParent) {theParent = aParent;}
+	/** Родительский стандарт */
+	private MedicalStandard theParent;
 	
 }
