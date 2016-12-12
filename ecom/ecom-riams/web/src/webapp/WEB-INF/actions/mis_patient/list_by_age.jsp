@@ -100,11 +100,9 @@
     //checkFieldUpdate('typeHour','${typeHour}',3) ;
     //checkFieldUpdate('typeDepartment','${typeDepartment}',1) ;typeDisp
     
-//<AOI 14.06.2016
     checkFieldUpdate('typeDisp','${typeDisp}',1) ;
     checkFieldUpdate('typeRange','${typeRange}',2) ;
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
-//</AOI 14.06.2016
   
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -146,7 +144,6 @@
     	paramHref.append("&dateBegin=").append(date);
     	request.setAttribute("paramHref", paramHref.toString()) ;
     	
-//<AOI 14.06.2016
     	request.setAttribute("dispSql", "");
     	StringBuilder sbDisp=new StringBuilder();
     	if(typeDisp!=null) {
@@ -154,7 +151,7 @@
     		if(typeDisp.equals("2")) {
     			sbDisp.append(" and edc.id is null ");
     		} else if(typeDisp.equals("3")) {
-    			sbDisp.append(" and edc.id is not null ");
+    			sbDisp.append(" and edc.id is not null and to_char(edc.FinishDate,'yyyy')='"+date+"' ");
     		}
     		
     	}
@@ -198,7 +195,7 @@
     			%>
     			
     <ecom:webQuery name="reestr" nameFldSql="reestr_sql" nativeSql="
-    select pat.id
+    select distinct pat.id
     ,pat.lastname,pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
@@ -207,7 +204,7 @@
      from  Patient pat
      
      left join Address2 a on a.addressid=pat.address_addressid
-     left join extdispcard edc on edc.patient_id=pat.id
+     left join extdispcard edc on edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}' 
      left join lpuattachedbydepartment lad on lad.patient_id=pat.id
      left join lpuarea la on la.id=lad.area_id
 	where pat.deathDate is null ${whereSql} ${dispSql} 
@@ -245,27 +242,27 @@
     				}
     				} else {
 %>
-<ecom:webQuery name="swod" nativeSql="
+<ecom:webQuery name="swod" nameFldSql="swod_sql" nativeSql="
 select 
 ${selectSql} 
-,count(case when to_char(pat.birthday,'mm')='01' then pat.id else null end) cnt01
-,count(case when to_char(pat.birthday,'mm')='02' then pat.id else null end) cnt02
-,count(case when to_char(pat.birthday,'mm')='03' then pat.id else null end) cnt03
-,count(case when to_char(pat.birthday,'mm')='04' then pat.id else null end) cnt04
-,count(case when to_char(pat.birthday,'mm')='05' then pat.id else null end) cnt05
-,count(case when to_char(pat.birthday,'mm')='06' then pat.id else null end) cnt06
-,count(case when to_char(pat.birthday,'mm')='07' then pat.id else null end) cnt07
-,count(case when to_char(pat.birthday,'mm')='08' then pat.id else null end) cnt08
-,count(case when to_char(pat.birthday,'mm')='09' then pat.id else null end) cnt09
-,count(case when to_char(pat.birthday,'mm')='10' then pat.id else null end) cnt10
-,count(case when to_char(pat.birthday,'mm')='11' then pat.id else null end) cnt11
-,count(case when to_char(pat.birthday,'mm')='12' then pat.id else null end) cnt12
-,count(*) as cntAll
+,count(distinct case when to_char(pat.birthday,'mm')='01' then pat.id else null end) cnt01
+,count(distinct case when to_char(pat.birthday,'mm')='02' then pat.id else null end) cnt02
+,count(distinct case when to_char(pat.birthday,'mm')='03' then pat.id else null end) cnt03
+,count(distinct case when to_char(pat.birthday,'mm')='04' then pat.id else null end) cnt04
+,count(distinct case when to_char(pat.birthday,'mm')='05' then pat.id else null end) cnt05
+,count(distinct case when to_char(pat.birthday,'mm')='06' then pat.id else null end) cnt06
+,count(distinct case when to_char(pat.birthday,'mm')='07' then pat.id else null end) cnt07
+,count(distinct case when to_char(pat.birthday,'mm')='08' then pat.id else null end) cnt08
+,count(distinct case when to_char(pat.birthday,'mm')='09' then pat.id else null end) cnt09
+,count(distinct case when to_char(pat.birthday,'mm')='10' then pat.id else null end) cnt10
+,count(distinct case when to_char(pat.birthday,'mm')='11' then pat.id else null end) cnt11
+,count(distinct case when to_char(pat.birthday,'mm')='12' then pat.id else null end) cnt12
+,count(distinct pat.id) as cntAll
 from patient pat
-left join extdispcard edc on edc.patient_id=pat.id
+left join extdispcard edc on edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}'
 left join lpuattachedbydepartment lad on lad.patient_id=pat.id
 left join lpuarea la on la.id=lad.area_id
-where deathdate is null ${dispSql} 
+where pat.deathdate is null ${dispSql} 
 ${groupBySql}
 
 "/> 
