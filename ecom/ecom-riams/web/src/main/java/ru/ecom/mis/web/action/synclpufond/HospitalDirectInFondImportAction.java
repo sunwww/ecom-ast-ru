@@ -2,38 +2,30 @@ package ru.ecom.mis.web.action.synclpufond;
 
 import java.io.File;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.jboss.system.InterceptorServiceMBean;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
-import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.xml.XmlUtil;
 import ru.ecom.jaas.web.action.service.ServiceImportRolesForm;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
-import ru.ecom.mis.ejb.service.vocabulary.IVocabularyService;
 import ru.ecom.report.util.XmlDocument;
 import ru.ecom.web.actions.monitor.MonitorActionForward;
 import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
 
 public class HospitalDirectInFondImportAction extends BaseAction {
@@ -41,16 +33,16 @@ public class HospitalDirectInFondImportAction extends BaseAction {
     	IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
     	final IHospitalMedCaseService service = (IHospitalMedCaseService) Injection.find(aRequest).getService(IHospitalMedCaseService.class);
     	final List<WebQueryResult> list = new LinkedList<WebQueryResult>() ;
-    	//final List<WebQueryResult> listError = new LinkedList<WebQueryResult>() ;
+    	final List<WebQueryResult> listError = new LinkedList<WebQueryResult>() ;
     	
     	final String typeImport = ActionUtil.updateParameter("HospitalDirectDataInFond","typeImport","1", aRequest) ;
-    	//String typeView=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView","1", aRequest) ;
-    	//String typeView1=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView1","1", aRequest) ;
-    	//String typeDate=ActionUtil.updateParameter("HospitalDirectDataInFond","typeDate","1", aRequest) ;
+    	String typeView=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView","1", aRequest) ;
+    	String typeView1=ActionUtil.updateParameter("HospitalDirectDataInFond","typeView1","1", aRequest) ;
+    	String typeDate=ActionUtil.updateParameter("HospitalDirectDataInFond","typeDate","1", aRequest) ;
     	//aRequest.setAttribute("HospitalDirectDataInFond"+"."+"typeMode", "4" );
-    	//String typeMode=ActionUtil.updateParameter("HospitalDirectDataInFond","typeMode","1", aRequest) ;
-    	//String typeEmergency=ActionUtil.updateParameter("HospitalDirectDataInFond","typeEmergency","1", aRequest) ;
-    	//String typeLpu=ActionUtil.updateParameter("HospitalDirectDataInFond","typeLpu","1", aRequest) ;
+    	String typeMode=ActionUtil.updateParameter("HospitalDirectDataInFond","typeMode","1", aRequest) ;
+    	String typeEmergency=ActionUtil.updateParameter("HospitalDirectDataInFond","typeEmergency","1", aRequest) ;
+    	String typeLpu=ActionUtil.updateParameter("HospitalDirectDataInFond","typeLpu","1", aRequest) ;
     	
     	String type =null;
     	boolean isErrorFile = false ;
@@ -70,7 +62,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
                	org.w3c.dom.Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
                 Element parConfigElement = doc.getRootElement();
                 //System.out.println(new StringBuilder().append("		root=").append(parConfigElement).toString());
-               // Long i =Long.valueOf(1) ;
+                Long i =Long.valueOf(1) ;
                 for (Object o : parConfigElement.getChildren()) {
                     Element parEl = (Element) o;
                     if ("ZGLV".equals(parEl.getName())) {

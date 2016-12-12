@@ -24,7 +24,7 @@ public class ReestrByHospitalMedCaseAction  extends BaseAction {
     	String typeDate =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDate","1", aRequest) ;
 		String typeEmergency =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeEmergency","3", aRequest) ;
 		String typeHour =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeHour","3", aRequest) ;
-	//	String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", aRequest) ;
+		String typeView =ActionUtil.updateParameter("ReestrByHospitalMedCase","typeView","1", aRequest) ;
 	  	String typeDepartment=ActionUtil.updateParameter("ReestrByHospitalMedCase","typeDepartment","1", aRequest) ;
 	 	String typePat=ActionUtil.updateParameter("ReestrByHospitalMedCase","typePatient","4", aRequest) ;
 		
