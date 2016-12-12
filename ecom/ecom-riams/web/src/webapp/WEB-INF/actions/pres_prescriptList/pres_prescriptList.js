@@ -13,3 +13,6 @@ function journal_by_control(aForm, aCtx) {
 function pres_by_6_month_patient(aForm,aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/pres_prescriptList/list_lab_prescript_6_month_patient.jsp?short=Short&id="+aCtx.request.getParameter("id")) ;
 }
+function report4385(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/pres_prescriptList/report4385.jsp") ;
+}

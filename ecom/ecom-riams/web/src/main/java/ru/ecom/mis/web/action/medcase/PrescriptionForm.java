@@ -74,4 +74,11 @@ public class PrescriptionForm extends BaseValidatorForm {
 
 	/** Пациент */
 	private Long thePatient;
+	
+	/** Диагноз */
+	@Comment("Диагноз")
+	public Long getDiagnosis() {return theDiagnosis;}
+	public void setDiagnosis(Long aDiagnosis) {theDiagnosis = aDiagnosis;}
+	/** Диагноз */
+	private Long theDiagnosis;
 }
