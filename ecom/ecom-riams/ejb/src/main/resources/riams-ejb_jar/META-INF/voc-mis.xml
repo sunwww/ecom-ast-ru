@@ -1,5 +1,14 @@
 <vocconfig>
-<!--  Справочник дефектов КИЛИ -->
+<!--  Справочник значений по пользовательскому справочнику -->
+<voc id='vocUserValueByDomain' type='NativeVocService'>
+       <NativeVocService
+	from="userValue uv"
+	nameId="uv.id"
+	names="uv.name"
+	parent="uv.domain_id=:parent"
+	>
+	</NativeVocService>
+    </voc> 
 <voc id='vocKiliDefect' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocKiliDefect'
