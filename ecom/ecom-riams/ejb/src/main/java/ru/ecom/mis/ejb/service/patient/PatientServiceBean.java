@@ -207,12 +207,12 @@ public class PatientServiceBean implements IPatientService {
 			doc.setType(type) ;
 		}
 		theManager.persist(doc) ;
-		System.out.println("==== Загружаем пользовательский документ? тип = "+aObject);
+		//System.out.println("==== Загружаем пользовательский документ? тип = "+aObject);
 		if (aObject.equals("Template")) {
 			
 		//	 doc = (TemplateExternalDocument) doc;
 		//	 theManager.persist(doc) ;	 
-			System.out.println("==== Загружаем пользовательский документ " + doc.getId());
+			//System.out.println("==== Загружаем пользовательский документ " + doc.getId());
 			//theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
 		}
 		
@@ -535,7 +535,7 @@ public class PatientServiceBean implements IPatientService {
 		try{
 		if (needUpdateAttachment||needUpdateDocuments||needUpdatePatient||needUpdatePolicy) {
 			StringBuilder str = new StringBuilder();
-			String curDate = DateFormat.formatToDate(new java.util.Date()) ;
+			//String curDate = DateFormat.formatToDate(new java.util.Date()) ;
 			str.append("update Patient p set ");
 			int o=0;
 			List<Object[]> listZ = theManager.createNativeQuery("select pf.id" +
@@ -544,7 +544,7 @@ public class PatientServiceBean implements IPatientService {
 					" ,pf.lpuattached, pf.attachedtype, to_char(pf.attacheddate,'dd.MM.yyyy') as attDate " +
 					" ,pf.policyseries, pf.policynumber, to_char(pf.policydatefrom,'dd.MM.yyyy') as polFrom, to_char(pf.policydateto,'dd.MM.yyyy') as polTo, pf.companycode, to_char(pf.birthday,'dd.MM.yyyy')as birthday, pf.patient" +
 					" ,to_char(pf.checkDate,'dd.MM.yyyy') as checkDate " +
-					" ,pf.street as f22_street, pf.okato as f23_okato" +
+					" ,pf.street as f22_street, pf.okato as f23_okato, pf.doctorsnils as f24_docsnils" +
 					" from patientfond pf where pf.id='"+aPatientFondId+"' ").getResultList();
 			if (!listZ.isEmpty()) {
 			Object[] arr = listZ.get(0);
@@ -554,7 +554,8 @@ public class PatientServiceBean implements IPatientService {
 					,aDocDateIssued = toStr(arr[9]), aDocWhomIssued =toStr(arr[10])
 					,aAttachedLpu=toStr(arr[11]),aAttachedType=toStr(arr[12]),aAttachedDate=toStr(arr[13])
 					,aPolicySeries=toStr(arr[14]),aPolicyNumber=toStr(arr[15]),aPolicyDateFrom=toStr(arr[16])
-					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21]);
+					,aPolicyDateTo=toStr(arr[17]),aCompany=toStr(arr[18]), aBirthday=toStr(arr[19]), aCheckDate = toStr(arr[21])
+					, doctorSnils = toStr(arr[24]);
 			 
 			Long aPatientId =toStr(arr[20])!=null?Long.valueOf(toStr(arr[20])):null;
 			String aStreet = toStr(arr[22]), aOkato = toStr(arr[23]);
@@ -601,7 +602,7 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
 				//System.out.println("++++ UPDATE ATTACHMENT! = "+aLastname + " "+ aFirstname);
-				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate,true, false);
+				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate, doctorSnils,true, false);
 				patF.setIsAttachmentUpdate((s!=null&&s.length()>0)?true:false);
 				
 			} else {patF.setIsAttachmentUpdate(false);}
@@ -631,7 +632,8 @@ public class PatientServiceBean implements IPatientService {
 		
 		
 	}
-	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate
+	
+	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, String aDoctorSnils
 			, boolean ignoreType, boolean updateEditDate) {
 		if (aCompany==null || aCompany.equals("") || aLpu==null || aLpu.equals("")) {
 			System.out.println("======= company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
@@ -646,22 +648,19 @@ public class PatientServiceBean implements IPatientService {
 		RegInsuranceCompany insCompany =null; 
 		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where omcCode = :code and (deprecated is null or deprecated='0')")
 				.setParameter("code", aCompany).getResultList(); 
-		if (companies.isEmpty()) {
-			companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where smoCode = :code and (deprecated is null or deprecated='0')")
-					.setParameter("code", aCompany).getResultList(); 
-		}
+		
 		if (!companies.isEmpty()) {
 			insCompany=companies.get(0);
 		}
 		
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
 	//	System.out.println("====-----------Создаем прикрепления!!");
-		Object obj =null;
+		List<Object> obj =null;
 		Long areaId = null;
 		LpuArea la = null;
 		if (attachedType!=null&&attachedType.equals("1")){
 			try { 
-				obj = theManager.createNativeQuery("select max(la.id) from patient p" +
+				obj = theManager.createNativeQuery("select la.id from patient p" +
 			
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
 					" left join lpuareaaddresstext laat on laat.id=laap.lpuareaaddresstext_id" +
@@ -670,7 +669,7 @@ public class PatientServiceBean implements IPatientService {
 					" where p.id=" +aPatientId +
 					" and (laap.housenumber is null or laap.housenumber='' or laap.housenumber=p.housenumber )" +
 					" and (((p.housebuilding is null or p.housebuilding='') and (laap.housebuilding is null or laap.housebuilding='')) or laap.housebuilding=p.housebuilding)" +
-					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getSingleResult();
+					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getResultList();
 				
 			//	System.out.println("==== ATT= laID = "+obj.toString());
 			} catch (NoResultException e) {
@@ -679,12 +678,29 @@ public class PatientServiceBean implements IPatientService {
 				e.printStackTrace();
 			}		
 			
-			if (obj!=null&&Long.valueOf(obj.toString())!=0) {
-				areaId=Long.valueOf(obj.toString());
+			if (obj!=null&&obj.size()>0) {
+				areaId=Long.parseLong(obj.get(0).toString());
 				la = theManager.find(LpuArea.class, areaId);
 			}
 		}
-		
+		if (la==null){ //Если не нашли подходящий участок по адресу, ищем участок по СНИЛС врача
+			obj = theManager.createNativeQuery("select la.id" +
+					" from lpuarea la" +
+					" left join workfunction wf on wf.id=la.workfunction_id" +
+					" left join worker w on w.id=wf.worker_id" +
+					" left join patient wpat on wpat.id=w.person_id" +
+					" where wpat.snils='"+aDoctorSnils.trim()+"'").getResultList();
+			System.out.println("===="+obj.size()+"<>"+obj.get(0));
+			if (obj!=null&&obj.size()>0) {
+				System.out.println("==1=="+obj.size()+"<>"+obj.get(0));
+				areaId=Long.parseLong(obj.get(0).toString());
+				System.out.println("==2=="+obj.size()+"<>"+obj.get(0));
+				la = theManager.find(LpuArea.class, areaId);
+				System.out.println("==3== END IF "+la.getId());
+			}
+			System.out.println("==== END IF ");
+			
+		}
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
 			.setParameter("pat", aPatientId).getResultList();
 			
@@ -699,8 +715,7 @@ public class PatientServiceBean implements IPatientService {
 			MisLpu lpuAtt = null;
 			
 			if (la!=null) {
-				Long l = Long.valueOf(theManager.createNativeQuery("select lpu_id from lpuarea where id="+areaId).getResultList().get(0).toString());
-				lpuAtt = (MisLpu) theManager.find(MisLpu.class, l);
+				lpuAtt = la.getLpu();
 			} else {
 				Long l = Long.valueOf(theManager.createNativeQuery("select keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0).toString());
 				lpuAtt = (MisLpu) theManager.find(MisLpu.class, l);
@@ -715,8 +730,14 @@ public class PatientServiceBean implements IPatientService {
 					att.setCompany(insCompany);
 					att.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
 					att.setCreateUsername("fond_check");
-					System.out.println("=== Почему же не проставляется участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
-					if (la!=null) {att.setArea(la);}
+					
+					if (la!=null) {
+						System.out.println("=== участок найден? Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+						att.setArea(la);
+					} else {
+						//Debug
+						System.out.println("=== Почему же не найден участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+					}
 					theManager.persist(att);
 				} catch (ParseException e) {
 					System.out.println("Дата не распознана "+attachedDate);
@@ -804,23 +825,7 @@ public class PatientServiceBean implements IPatientService {
 				}				
 				
 			}
-			if (aIsAttachment){
-				if (fiodr.length>7 && fiodr[7]!=null&&!fiodr[7].equals("")) { //Импорт данных прикрепления
-					String aCompany = null;
-					if (aPolicy!=null&&!aPolicy.equals("")) {
-						String[] policies = aPolicy.split("&");
-						for (String policy: policies) {
-							String[] policyInfo = policy.split("#");
-							if (policyInfo[6].equals("1")) {
-								 aCompany = policyInfo[0];
-								break;								
-							}
-						}
-					}
-					updateOrCreateAttachment(aPatientId, aCompany, fiodr[7], fiodr[8], fiodr[9],false, false);
-				
-			}
-		}
+		
 			
 		}
 		if (aDocument!=null &&!aDocument.equals("") &&aIsDocument) {
@@ -872,6 +877,28 @@ public class PatientServiceBean implements IPatientService {
 			sql.append(" where id='").append(aPatientId).append("'") ;
 			theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 		}
+		if (aIsAttachment){
+			if (fiodr.length>7 && fiodr[7]!=null&&!fiodr[7].equals("")) { //Импорт данных прикрепления
+				String doctorSnils = null;
+				if (fiodr.length>10&&!(""+fiodr[10]).equals("")) {
+					doctorSnils=""+fiodr[10];
+				}
+				String aCompany = null;
+				if (aPolicy!=null&&!aPolicy.equals("")) {
+					String[] policies = aPolicy.split("&");
+					for (String policy: policies) {
+						String[] policyInfo = policy.split("#");
+						if (policyInfo[6].equals("1")) {
+							 aCompany = policyInfo[0];
+							break;								
+						}
+					}
+				}
+				updateOrCreateAttachment(aPatientId, aCompany, fiodr[7], fiodr[8], fiodr[9],doctorSnils, false, false);
+			
+		}
+	}
+		
 		if (aPolicy!=null && !aPolicy.equals("") &&aIsPolicy) {
 			String[] pols = aPolicy.split("&") ;
 			
@@ -1917,6 +1944,8 @@ public class PatientServiceBean implements IPatientService {
 		String res =config.get(aConfigName, aDefaultValue);
 		return res ;
 		
-	}  
+	}
+
+ 
 
 }
