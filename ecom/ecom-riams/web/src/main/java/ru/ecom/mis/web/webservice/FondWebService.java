@@ -503,6 +503,7 @@ public class FondWebService {
             	String attDate = upDate(e.getChildText("date_prik"));
             	String attType = e.getChildText("sp_prik");
             	String attLpu = e.getChildText("lpu");
+            	doctorSnils = e.getChildText("ssd");
             	sb.append("<td>").append("<input  onclick=\"patientcheck('patient')\" type='radio'")
             	.append(isStart?" checked='true'":"") 
             	.append(" name='fondFiodr' id='fondFiodr' value='")
@@ -510,7 +511,7 @@ public class FondWebService {
     			.append(o).append("#").append(dr).append("#")
     			.append(ss!=null&&!ss.toLowerCase().trim().equals("null")?ss:"").append("#").append(aRz).append("#")
     			.append(dateDeath).append("#")
-    			.append(attLpu).append("#").append(attType).append("#").append(attDate).append("#")
+    			.append(attLpu).append("#").append(attType).append("#").append(attDate).append("#").append(doctorSnils)
     			.append("'/>").append("</td>") ;
            	
             	sb.append("<td").append("").append(">").append(aRz).append("</td>") ;
