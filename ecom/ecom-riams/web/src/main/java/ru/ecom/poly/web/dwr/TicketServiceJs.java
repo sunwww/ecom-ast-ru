@@ -101,7 +101,7 @@ public class TicketServiceJs {
 		String result = "";
 		StringBuilder str = new StringBuilder();
 		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService((Class)IWebQueryService.class);
-		str.append("select spo.id, to_char(spo.datestart,'dd.MM.yyyy') as dstart,to_char(spo.datefinish,'dd.MM.yyyy') as dfinish from medcase spo where spo.dtype='PolyclinicMedCase' and spo.datefinish is not null").append(" and spo.patient_id=").append(aPatientId).append(" and spo.ownerfunction_id=").append(aWorkfuntionId).append(" and spo.datestart<=to_date('").append(aDate).append("','dd.MM.yyyy')").append(" and spo.datefinish >=to_date('").append(aDate).append("','dd.MM.yyyy')");
+		str.append("select spo.id, to_char(spo.datestart,'dd.MM.yyyy') as dstart,to_char(spo.datefinish,'dd.MM.yyyy') as dfinish from medcase spo where spo.dtype='PolyclinicMedCase' and spo.datefinish is not null").append(" and spo.patient_id=(select person_id from medcard where id=").append(aPatientId).append(") and spo.ownerfunction_id=").append(aWorkfuntionId).append(" and spo.datestart<=to_date('").append(aDate).append("','dd.MM.yyyy')").append(" and spo.datefinish >=to_date('").append(aDate).append("','dd.MM.yyyy')");
 		Collection res = service.executeNativeSql(str.toString(), Integer.valueOf(1));
 		if (!res.isEmpty()) {
 			WebQueryResult r = (WebQueryResult)res.iterator().next();
@@ -351,6 +351,27 @@ public class TicketServiceJs {
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.medServices", aMedServices) ;
 		aRequest.getSession(true).setAttribute("TicketService.Ticket.emergency", aEmergency?"1":"0") ;
 		return "Сохранено" ;
+	}
+	public String canICreateTicket(Long aId, Long aMedcard, Long aSpec, String aDate, Long aMedcardId, HttpServletRequest aRequest) throws Exception {
+		String ret = "";
+		if (isHoliday(aDate).equals("1")) {
+			ret = "<br><ol><li>Визит приходится на выходной день, создание визита невозможно</li></ol><br>";
+		} else {
+			//String patientId = 
+			String crossSPO = getCrossSPO(aDate, ""+aMedcardId, ""+aSpec, aRequest) ;
+			if (crossSPO!=null&&!crossSPO.equals("")){
+				ret = crossSPO;
+			} else {
+				crossSPO = findDoubleBySpecAndDate(aId, aMedcard, aSpec, aDate, aRequest);
+				if (crossSPO!=null&&!crossSPO.equals("")) {
+					ret = crossSPO; 
+				}
+			}
+		}
+		
+		
+		return ret;
+		
 	}
 	public String findDoubleBySpecAndDate(Long aId, Long aMedcard, Long aSpec, String aDate, HttpServletRequest aRequest) throws NamingException, Exception {
 		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class) ;
