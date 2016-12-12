@@ -29,7 +29,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		String typeSuicide = ActionUtil.updateParameter("PsychCareCardByArea","typeSuicide","1", aRequest) ;
 		String typeCare = ActionUtil.updateParameter("PsychCareCardByArea","typeCare","1", aRequest) ;
 		String typeAddress = ActionUtil.updateParameter("PsychCareCardByArea","typeAddress","1", aRequest) ;
-		//String typeDiag = ActionUtil.updateParameter("PsychCareCardByArea","typeDiag","1", aRequest) ;
+		String typeDiag = ActionUtil.updateParameter("PsychCareCardByArea","typeDiag","1", aRequest) ;
 		String style = "" ;
 		AreaReportForm form = (AreaReportForm)aForm ;
 		String addressAdd="" ;
