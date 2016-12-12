@@ -74,6 +74,7 @@ order by d.dateRegistration,d.timeRegistration
     } else {
     	String stNoPrint = request.getParameter("stNoPrint") ;
     	String stPrint = request.getParameter("stPrint") ;
+    	String type = request.getParameter("type");
     	if (stNoPrint!=null &&!stNoPrint.equals("")) {
     		request.setAttribute("dop"," and d.printDate is null");
     	} else if (stPrint!=null &&!stPrint.equals("")) {
@@ -82,17 +83,34 @@ order by d.dateRegistration,d.timeRegistration
     	
     	List l = ActionUtil.getListObjFromNativeQuery("select sls.dtype,sls.patient_id,to_char(sls.datestart,'dd.mm.yyyy') as dat1,to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as dat2 from medcase slo left join medcase sls on sls.id=slo.parent_id where slo.id="+request.getParameter("id")+" and slo.dtype='DepartmentMedCase'", request) ;
 		if (l.size()>0) {
-			Object[] obj = (Object[])l.get(0) ;
-			request.setAttribute("whereSQL"," (slo.id='"+request.getParameter("id")+"' or (slo.patient_id='"
+			if (type!=null&&!type.equals("")&&!type.equals("0"))  {
+				if (type.equals("1")) {
+					request.setAttribute("whereSQL", "slo.id='"+request.getParameter("id")+"'");
+					request.setAttribute("title",": Дневники") ;
+				} else if (type.equals("2")) { //lab
+					request.setAttribute("title",": Лабораторные исследования") ;
+					request.setAttribute("whereSQL","slo.id='"+request.getParameter("id")+"' and aslo.dtype='Visit' and vst.code='LABSURVEY'") ;
+				} else if (type.equals("3")) {
+		    			Object[] obj = (Object[])l.get(0) ;
+		    			request.setAttribute("whereSQL","slo.patient_id='"+obj[1]+"' and aslo.datestart between to_date('"+obj[2]+"','dd.mm.yyyy') and to_date('"+obj[3]+"','dd.mm.yyyy') and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')") ;
+		    		
+		    		request.setAttribute("title",": Диагностические исследования") ;
+				}
+			} else {
+				Object[] obj = (Object[])l.get(0) ;
+				request.setAttribute("whereSQL"," (slo.id='"+request.getParameter("id")+"' or (slo.patient_id='"
 		    		+obj[1]+"' and aslo.datestart between to_date('"+obj[2]+"','dd.MM.yyyy') and to_date('"+obj[3]+"','dd.MM.yyyy') and aslo.dtype='Visit' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE')))") ;
+			}
 			
 		} else {
 			request.setAttribute("whereSQL", "slo.id='"+request.getParameter("id")+"'");
+			request.setAttribute("title",": Диагностические исследования") ;
 		}
+
 		
 %>
         <msh:section>
-            <msh:sectionTitle>Протоколы по случаю медицинского обслуживания</msh:sectionTitle>
+            <msh:sectionTitle>Протоколы по случаю медицинского обслуживания${title}</msh:sectionTitle>
             <msh:sectionContent>
             	<ecom:webQuery name="protocols" nativeSql="
             	select to_char(d.dateRegistration,'yyyymmdd')||'!'||cast(d.timeRegistration as varchar(5))||'!'||d.id as id

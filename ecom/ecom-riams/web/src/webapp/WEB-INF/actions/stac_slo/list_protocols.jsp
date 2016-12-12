@@ -51,7 +51,7 @@
 			request.setAttribute("department","0");
 		}
     	
-    %>
+    %><a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stAll=selected&type=${param.type}'>Печать: ${title}</a>
             	<ecom:webQuery nameFldSql="protocols_sql" name="protocols"  nativeSql="select d.id as did, to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration
             	,case when count (mc.id)>0 then list(mc.code||' '||mc.name) ||'<'||'br'||'/>' else '' end || d.record 
       ||'<'||'br'||'/>'|| vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
