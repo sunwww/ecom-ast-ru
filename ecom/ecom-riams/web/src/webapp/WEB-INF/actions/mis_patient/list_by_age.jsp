@@ -196,14 +196,19 @@
     			
     <ecom:webQuery name="reestr" nameFldSql="reestr_sql" nativeSql="
     select distinct pat.id
-    ,pat.lastname,pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
+    ,pat.lastname,pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday
+    ,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
 	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
      ,la.number
+         ,coalesce(a2.fullname)||' ' || case when pat.houseNumber is not null and pat.realhouseNumber!='' then ' д.'||pat.realhouseNumber else '' end 
+	 ||case when pat.realhouseBuilding is not null and pat.realhouseBuilding!='' then ' корп.'|| pat.realhouseBuilding else '' end 
+	||case when pat.realflatNumber is not null and pat.realflatNumber!='' then ' кв. '|| pat.realflatNumber else '' end as address_real
      from  Patient pat
      
      left join Address2 a on a.addressid=pat.address_addressid
+     left join Address2 a2 on a2.addressid=pat.realaddress_addressid
      left join extdispcard edc on edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}' 
      left join lpuattachedbydepartment lad on lad.patient_id=pat.id
      left join lpuarea la on la.id=lad.area_id
@@ -235,6 +240,7 @@
     	<msh:tableColumn property="6" columnName="Адрес"/>
     	<msh:tableColumn property="7" columnName="Доп. диспансеризации за ${param.dateBeginYear}"/>
     	<msh:tableColumn property="8" columnName="Номер участка"/>
+    	<msh:tableColumn property="9" columnName="Адрес проживания"/>
     </msh:table>
     </msh:sectionContent>
    </msh:section> 			
