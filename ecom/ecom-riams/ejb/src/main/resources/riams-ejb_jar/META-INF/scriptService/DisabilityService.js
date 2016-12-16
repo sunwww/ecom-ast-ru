@@ -254,11 +254,20 @@ function printDocument(aCtx, aParams) {
 	recordChar(pat.lastname,28,"doc.lastname") ;
 	recordChar(pat.firstname,28,"doc.firstname") ;
 	recordChar(+pat.middlename.length()>1?pat.middlename:"",28,"doc.middlename") ;
-	recordDate(pat.birthday,"pat.birthday") ;
+	recordDate(pat.birthday,"pat.birthday");
+	
+	recordFullDate(pat.birthday, "pat.birthdayF");
+	recordDateWithDots(pat.birthday, "pat.birthdayWithDots");
+	
 	recordCode(pat.sex!=null?pat.sex.omcCode:"",2,"pat.sex" );
 	recordChar(doc.job,29,"pat.work.org.name") ;
 	
 	recordChar(doc.disabilityReason!=null?doc.disabilityReason.codeF:"",2,"doc.reason.code") ;
+	
+	
+	//(doc.disabilityReason.name,1,"doc_reason_name");//
+	map.put("doc.reason.name",doc.disabilityReason.name);//
+
 	recordChar(doc.disabilityReason2!=null?doc.disabilityReason2.code:"",3,"doc.reason2.code") ;
 	recordChar(doc.disabilityReasonChange!=null?doc.disabilityReasonChange.codeF:"",2,"doc.reasonChange.code") ;
 	recordBoolean(cas.placementService,"pat.placementService") ;
@@ -272,9 +281,22 @@ function printDocument(aCtx, aParams) {
 	recordCode(cas.earlyPregnancyRegistration!=null&&cas.earlyPregnancyRegistration==true?1:2,2,"pat.earlyPregnancyRegistration") ;
 	
 	recordDate(doc.hospitalizedFrom,"doc.hospitalizedFrom");
+	recordFullDate(doc.hospitalizedFrom,"doc.hospitalizedFromFull");
 	recordDate(doc.hospitalizedTo,"doc.hospitalizedTo");
+	recordFullDate(doc.hospitalizedTo,"doc.hospitalizedToFull");
+	
+	
+	if(doc.hospitalizedFrom!=null) //throw "123".length
+		{ 
+		//map.put("doc.reason.name",doc.disabilityReason.name);
+		recordChar("амбулаторных","амбулаторных".length,"doc.StacOrAmb");
+		}else recordChar("стационарных","стационарных".length,"doc.StacOrAmb");
+	
 	recordChar(doc.hospitalizedNumber,10,"pat.card.number") ;
 	recordDate(doc.issueDate,"doc.issueDate");
+	recordFullDate(doc.issueDate,"doc.issueDateFull");
+	
+	
 	
 	var duplicate = aCtx.manager.createNativeQuery("select dd.id,vds.code from DisabilityDocument dd left join VocDisabilityStatus vds on vds.id=dd.status_id where dd.duplicate_id="+id).setMaxResults(1).getResultList() ;
 	if (duplicate.size()>0 && +duplicate.get(0)[1]==2) {
@@ -325,6 +347,7 @@ function printDocument(aCtx, aParams) {
 		if (rec==null) {
 			recordDate(null,"doc.record"+i+".dateFrom") ;
 			recordDate(null,"doc.record"+i+".dateTo") ;
+			recordFullDate(null,"doc.record"+i+".dateToFull");
 			recordChar("",9,"doc.record"+i+".doctor.post") ;
 			recordChar("",14,"doc.record"+i+".doctor.fio") ;
 			recordChar("",9,"doc.record"+i+".doctorAdd.post") ;
@@ -334,6 +357,7 @@ function printDocument(aCtx, aParams) {
 			lastDate=rec.dateTo ;
 			recordDate(rec.dateFrom,"doc.record"+i+".dateFrom") ;
 			recordDate(rec.dateTo,"doc.record"+i+".dateTo") ;
+			recordFullDate(rec.dateTo,"doc.record"+i+".dateToFull");
 			var wf=rec.workFunction ;
 			var wfAdd=rec.workFunctionAdd ;
 			var vwf=wf!=null?wf.workFunction:null ;
@@ -496,6 +520,7 @@ function recordBoolean(aValue,aKey) {
 }
 function recordChar(aStr,aCnt,aKey) {
 	if (aStr==null) aStr="" ;
+	map.put (aKey, aStr);
 	aStr=(""+aStr).toUpperCase() ;
 	//aStr=aStr;
 	for (var i=0;i<aStr.length; i++) {
@@ -506,6 +531,7 @@ function recordChar(aStr,aCnt,aKey) {
 	}
 }
 function recordCode(aCode,aCnt,aKey) {
+
 	for (var i=1 ; i<=aCnt; i++) {
 		if (+aCode==i) {
 			map.put(aKey+i,"V") ;
@@ -515,10 +541,44 @@ function recordCode(aCode,aCnt,aKey) {
 	}
 }
 function recordDate(aDate,aKey) {
+	
 	var FORMAT_0 = new java.text.SimpleDateFormat("ddMMyyyy") ;
 	var date = aDate==null?"":""+FORMAT_0.format(aDate);
-	//var date = "12345678" ;
-	recordChar(date,8,aKey) ;
+	
+	//throw "throw: "+date+" "+date.length;
+	recordChar(date,date.length,aKey);
+}
+
+function recordDateWithDots(aDate,aKey) {
+	
+	var FORMAT_0 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	var date = aDate==null?"":""+FORMAT_0.format(aDate);
+	
+	//throw "throw: "+date+" "+date.length;
+	recordChar(date,date.length,aKey);
+}
+
+function recordFullDate(aDate,aKey){
+	
+	var FORMAT_0 = new java.text.SimpleDateFormat("dd") ;
+	var date = aDate==null?"":"\""+FORMAT_0.format(aDate)+"\"";
+	
+	FORMAT_0 = new java.text.SimpleDateFormat("MM");
+	var date2 = aDate==null?"":""+FORMAT_0.format(aDate);
+	var countMounth = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+	var namesMounths = ["января", "февраля", "марта", "апреля","мая","июня","июля","авгусат","сентября","октября","ноября","декабря"];
+
+	for(var i=0;i<12;i++){
+		if(countMounth[i]==date2){
+			date+=" "+namesMounths[i];
+			break;
+		}
+	}
+	FORMAT_0 = new java.text.SimpleDateFormat("yyyy");
+	date += aDate==null?"":" "+FORMAT_0.format(aDate);
+	
+	//throw "throw: "+date+" "+date.length;
+	recordChar(date,date.length,aKey);
 }
 /**
  * Список DisabilityCase по пациенту
