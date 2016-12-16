@@ -4,39 +4,113 @@ function printKiliProtocol (aCtx, aParams) {
 	var id = new java.lang.Long(aParams.get("id"));
 	var kili = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKili, new java.lang.Long(aParams.get("id"))) ;
 	var pat = kili.deathCase.medCase.patient;
-	var sql = "select vkc.id, vkc.name from vocKiliConclusion vkc, protocolkili pk where pk.id =" +id;
 	map.put("pat", pat);
 	map.put("kili", kili);
-	var result = aCtx.manager.createNativeQuery(sql).getResultList();
-	if(!result.isEmpty()) {
-			var conclusion = result.get(0);
-			map.put("conclusion", conclusion[1]);
-		}
-	var getDefects = "select vkd.name, case when pkd.isdefectfound='1' then 'Да' else 'Нет' end" +
-			", pkd.defecttext "+ 
- " from protocolkilidefect pkd" +
- " left join vockilidefect vkd on vkd.id=pkd.defect_id " +
- " where pkd.protocol_id = " +id +
- "ORDER BY vkd.name";
-	var resultDef = aCtx.manager.createNativeQuery(getDefects).getResultList();
-	var showDefects = new java.util.ArrayList();
-	if(!resultDef.isEmpty()) {
-		for (var i=0; i<resultDef.size();i++)
-			{
-			var p = resultDef.get(i);
+	//Номер протокола
+	//var takeProtocolNumberQ = "select pk.protocolNumber from protocolKili pk where pk.id = " + id;
+	//var takeProtocolNumber = aCtx.manager.createNativeQuery(takeProtocolNumberQ).getSingleResult();
+	//map.put("protocolNumber", takeProtocolNumber);
+	
+	var patList = "select pat.lastname||' '||pat.firstname||' '||pat.middlename patFio, pat.birthday, mlp.name as mlpname, sls.datestart, "+
+	"sls.datefinish, pk.id as pkid, stt.code, pat.id as patid " +
+	",vwf.name as vwfname, wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as docFio" +
+	",list(case when vpd.code='1' and vdrt.code='3' then mkb.code|| ' '|| dia.name end )as diagOSN" +
+	",list(case when vpd.code='3' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as diagSOP" +
+	",list(case when vpd.code='4' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as diagOSL" +
+	",list(case when vpd.code='1' and vdrt.code='5' then mkb.code|| ' '||dia.name end) as diagOSLPat" +
+	",dth.reasoncomplicationtext, dth.reasonconcomitanttext" +
+	" from protocolKili pk "+
+	" left join deathcase dth on dth.id = pk.deathcase_id "+
+	" left join patient pat on pat.id = dth.patient_id "+
+	" left join medcase sls on dth.medcase_id = sls.id " +
+	" left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null" +
+	" left join workfunction wf on wf.id=slo.ownerfunction_id" +
+	" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+	" left join worker w on w.id=wf.worker_id" +
+	" left join patient wpat on wpat.id=w.person_id"+
+	" left join mislpu mlp on slo.department_id = mlp.id "+
+	" left join statisticstub stt on sls.statisticstub_id = stt.id " +
+	" left join diagnosis dia on sls.id = dia.medcase_id" +
+	" left join vocidc10 mkb on mkb.id=dia.idc10_id" +
+	" left join vocdiagnosisregistrationtype vdrt on vdrt.id=dia.registrationtype_id" +
+	" left join vocprioritydiagnosis vpd on vpd.id=dia.priority_id"+
+	" where pk.protocolnumber = '"+kili.protocolNumber+"' and pk.protocolDate = ('"+kili.protocolDate+"') " +
+	" group by pat.lastname||' '||pat.firstname||' '||pat.middlename, pat.birthday, mlp.name, sls.datestart,"+
+	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename";
+	var resultPatList = aCtx.manager.createNativeQuery(patList).getResultList();
+	var showPat = new java.util.ArrayList();
+	if(!resultPatList.isEmpty()) {
+		for (var i=0; i<resultPatList.size();i++){
+			var p = resultPatList.get(i);
 			var pp = new java.util.ArrayList();
-			var id = p[0];
-			var name = p[1]; 
-			var isFound = p[2];
-			var text = p[3];
-			pp.add(id);
-			pp.add(name);
-			pp.add(isFound);
-			pp.add(text);
-			showDefects.add(pp);
+			var fio = p[0];
+			var bth = p[1];
+			var dept = p[2];
+			var srtdate = p[3];
+			var fnsdate = p[4];
+			var pkId = p[5];
+			var stat = p[6];
+			var patId = p[7];
+			var docTitul = p[8];
+			var docFio = p[9];
+			var diagOSN = p[10];
+			var diagOSL = p[11];
+			var diagSOP = p[12];
+			var diagOSLPat = p[13];
+			var OSLPat = p[14];
+			var SOPPat = p[15];
+			
+			pp.add(fio);//0
+			pp.add(bth);//1
+			pp.add(stat);//2
+			pp.add(dept);//3
+			pp.add(srtdate);//4
+			pp.add(fnsdate);//5
+			pp.add(diagOSN);//6
+			pp.add(diagOSL);//7
+			pp.add(diagSOP);//8
+			pp.add(diagOSLPat);//9
+			pp.add(OSLPat);//10
+			pp.add(SOPPat);//11
+			pp.add(docTitul);//12
+			pp.add(docFio);//13
+			
+			var conclusionQ = "select vkc.name from protocolkili pk left join vocKiliConclusion vkc on vkc.id = pk.conclusion_id where pk.id =" +pkId;
+			var concResult = aCtx.manager.createNativeQuery(conclusionQ).getSingleResult();
+			
+			//pp.add(concResult);//14
+			
+			var getDefects = "select vkd.name, case when pkd.isdefectfound='1' then ' ' else ' Нет' end" +
+										", pkd.defecttext "+ 
+							 " from protocolkilidefect pkd" +
+							 " left join vockilidefect vkd on vkd.id=pkd.defect_id " +
+							 " where pkd.protocol_id = " +pkId +
+							 " ORDER BY vkd.name";
+			var resultDef = aCtx.manager.createNativeQuery(getDefects).getResultList();
+			var showDefects = new java.util.ArrayList();
+			if(!resultDef.isEmpty()) {
+				for (var j=0; j<resultDef.size();j++){
+					var p1 = resultDef.get(j);
+					var pp1 = new java.util.ArrayList();
+					var id = p1[0];
+					var name = p1[1]; 
+					var isFound = p1[2];
+					//var text = p1[3];
+					pp.add(id);
+					pp.add(name);
+					pp.add(isFound);
+					//pp1.add(text);
+					showDefects.add(pp);
+					}
+			}
+			//pp.add(showDefects);//6
+			showPat.add(pp);
 			}
 	}
-	map.put("showDefects", showDefects); 
+	map.put("showPat", showPat); 
+	
+	
+	
 	return map;
 }
 
