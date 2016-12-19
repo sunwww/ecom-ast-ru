@@ -37,7 +37,7 @@
 						Работа с шаблонами протоколов
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=add_template_list_prescript">
-						Добавление шаблона листа назначений
+						Добавление шаблона листа назначений					
                     </msh:link></li>
 					
 					<li><msh:link  action="js-riams-instruction.do?id=zav_send_diary">
@@ -51,6 +51,12 @@
                     </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=disability">
 						Экспорт листков нетрудоспособности в ФСС
+                    </msh:link></li>
+                     <li><msh:link  action="js-riams-instruction.do?id=disablility-eln">
+						Экспорт листков нетрудоспособности в ФСС (ЭЛН)
+                    </msh:link></li>
+                    <li><msh:link  action="js-riams-instruction.do?id=prototcol-kili">
+						Комиссия исследования летальных исходов
                     </msh:link></li>
 				</ul>
 				<br>
