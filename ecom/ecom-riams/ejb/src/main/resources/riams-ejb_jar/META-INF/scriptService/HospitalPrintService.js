@@ -18,7 +18,7 @@ function printKiliProtocol (aCtx, aParams) {
 	",list(case when vpd.code='3' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as diagSOP" +
 	",list(case when vpd.code='4' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as diagOSL" +
 	",list(case when vpd.code='1' and vdrt.code='5' then mkb.code|| ' '||dia.name end) as diagOSLPat" +
-	",dth.reasoncomplicationtext, dth.reasonconcomitanttext" +
+	",dth.reasoncomplicationtext, dth.reasonconcomitanttext, (case when dth.commentcategory like '' then 'Имеется совпадение диагнозов' else dth.commentcategory end) as com" +
 	" from protocolKili pk "+
 	" left join deathcase dth on dth.id = pk.deathcase_id "+
 	" left join patient pat on pat.id = dth.patient_id "+
@@ -36,7 +36,7 @@ function printKiliProtocol (aCtx, aParams) {
 	" left join vocprioritydiagnosis vpd on vpd.id=dia.priority_id"+
 	" where pk.protocolnumber = '"+kili.protocolNumber+"' and pk.protocolDate = ('"+kili.protocolDate+"') " +
 	" group by pat.lastname||' '||pat.firstname||' '||pat.middlename, pat.birthday, mlp.name, sls.datestart,"+
-	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename";
+	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory";
 	var resultPatList = aCtx.manager.createNativeQuery(patList).getResultList();
 	var showPat = new java.util.ArrayList();
 	if(!resultPatList.isEmpty()) {
@@ -59,7 +59,7 @@ function printKiliProtocol (aCtx, aParams) {
 			var diagOSLPat = p[13];
 			var OSLPat = p[14];
 			var SOPPat = p[15];
-			
+			var comment = p[16];
 			pp.add(fio);//0
 			pp.add(bth);//1
 			pp.add(stat);//2
@@ -103,6 +103,7 @@ function printKiliProtocol (aCtx, aParams) {
 					showDefects.add(pp);
 					}
 			}
+			pp.add(comment);
 			//pp.add(showDefects);//6
 			showPat.add(pp);
 			}
