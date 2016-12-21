@@ -155,7 +155,9 @@ GROUP BY sls.id, pat.patientinfo, dc.id, pk.id
  %>
 
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
-SELECT  vkp.id, vkp.name, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk
+SELECT  vkp.id, vkp.name, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
+,count(pk.id)*100/ count(sls.id)  as persDead
+,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase
 from medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null
 left join mislpu dep on dep.id=slo.department_id
@@ -182,6 +184,8 @@ GROUP BY vkp.id, vkp.name
       <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
       <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
+      <msh:tableColumn columnName="% от умерших" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="% от оформленных" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -216,4 +220,3 @@ GROUP BY vkp.id, vkp.name
 
   
 </tiles:insert>
-
