@@ -22,7 +22,6 @@
  	left join protocolkilidefect pkd on vkd.id=pkd.defect_id and pkd.protocol_id=${param.id}"/>
 	<ecom:webQuery name="GetIDProtocol" nativeSql="SELECT pk.id as protocolID
 	FROM ProtocolKili pk WHERE pk.deathcase_id=${param.id}"/>
-	
 	<ecom:webQuery name="GetProfileByID" nameFldSql="GetProfileByID_sql" nativeSql="SELECT mlpu.name FROM deathcase dc 
 LEFT JOIN medcase mc ON mc.id = dc.medcase_id 
 LEFT JOIN mislpu mlpu ON  mlpu.id = mc.department_id 
@@ -158,7 +157,10 @@ WHERE dc.id = ${param.id}"/>
 			  for (var i=0;i<$('defectListSize').value;i++) {
 				  str +="" +$('defect'+i).value;
 				  str +="@@"+ $('vocDefect'+i).value;
-				  
+				  if ($('chkDefect'+i).checked && ($('defectText'+i)).value.length == 0){
+					  alert("Заполните поле отмеченного дефекта!");
+					  break;
+				  }
 				  if (!$('chkDefect'+i).checked){
 					  str +="@@0";
 					  str +="@@''";
