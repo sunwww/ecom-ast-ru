@@ -121,14 +121,17 @@ function printProtocolTemplate (aCtx, aParams) {
 	var prot = aCtx.manager.find(Packages.ru.ecom.poly.ejb.domain.protocol.Protocol, protocolId) ;
 	
 	var medCase = prot.medCase;
-	var sql = "select p.id, coalesce(p.code,'_id'||p.id) as f1_code ,p.name as f2_name" +
-	 " ,case when p.type='2' then coalesce(uv.name, '') when p.type='3' then coalesce(fir.valuetext,'') when p.type='1' then ''||cast(fir.valuebd as decimal (11,0)) " +
-	 " when p.type='4' then coalesce(cast(cast(fir.valuebd as decimal(11,2)) as varchar),'') end as f3_value" +
-	 " from diary d" +
-	 " left join forminputprotocol fir on fir.docprotocol_id=d.id" +
-	 " left join parameter p on p.id=fir.parameter_id" +
-	 " left join uservalue uv on uv.id=fir.valuevoc_id" +
-	 " where d.id ="+protocolId;
+	var sql = "select p.id, coalesce(p.code,'_id'||p.id) as f1_code ,p.name as f2_name" 
+	+" ,case when p.type='2' then coalesce(uv.name, '')"
+	+" when p.type='7' then coalesce(uv.name, '')||' '||coalesce(fir.valuetext,'') when p.type='6' then fir.valuetext when p.type='3' then fir.valuetext "
+	+" when p.type='1' then ''||round(fir.valueBD,0) " 
+	+" when p.type='4' then replace(case when fir.valuetext is null or fir.valuetext='' then ''||round(fir.valueBD,cast(p.cntdecimal as int)) else fir.valuetext end,'.',',')"
+	+" end as f3_value" 
+	+" from diary d" 
+	+" left join forminputprotocol fir on fir.docprotocol_id=d.id" 
+	+" left join parameter p on p.id=fir.parameter_id" 
+	+" left join uservalue uv on uv.id=fir.valuevoc_id" 
+	+" where d.id ="+protocolId;
 	var result = aCtx.manager.createNativeQuery(sql).getResultList();
 	if (!result.isEmpty()) {
 		for (var i=0;i<result.size();i++) {
