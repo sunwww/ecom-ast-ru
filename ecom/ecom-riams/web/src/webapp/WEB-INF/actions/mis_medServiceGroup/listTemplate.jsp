@@ -14,7 +14,7 @@
   <ecom:webQuery name="list" nativeSql="
   select ms.id,ms1.name,ms.code,ms.name,ms.shortname,ms.additioncode,tp.title
 ,(select
-list(distinct case when +pf.position>9 then '' else '0' end || pf.position||'. '||p.name||' - '||case when p.type='1' then 'числ' when p.type='2' then 'спр' when p.type='3' then 'текст' when p.type='4' then 'число зн.'||p.cntdecimal when p.type='5' then 'текст с огр' end
+list(distinct case when +pf.position>9 then '' else '0' end || pf.position||'. '||p.name||' - '||case when p.type='1' then 'числ' when p.type='2' then 'спр' when p.type='6' then 'спр (мн.)' when p.type='7' then 'спр (текст)' when p.type='3' then 'текст' when p.type='4' then 'число зн.'||p.cntdecimal when p.type='5' then 'текст с огр' end
 ||'<'||'br/>'
 ) as txtParam
 from parameterbyform pf
