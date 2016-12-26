@@ -96,7 +96,7 @@
 </div>
 
 <div id='the${name}IntakeInfoDialog' class='dialog'>
-    <h2 id='${name}IntakeInfoTitle'>ПРИЕМ БИОМАТЕРИЛА</h2>
+    <h2 id='${name}IntakeInfoTitle'>ВВОД ДАННЫХ</h2>
     <input type='hidden' name='${name}List' id='${name}List'/>
     <div id="${name}IntakeRootPane" class='rootPane'>
     	
@@ -117,62 +117,76 @@ var fldJson = null ;
     function save${name}Result() {
     var rows = $('tblParamProtocol').children[0].children;
     var text = '';
-    for (var i=0;i<rows.length;i++) {
-    	var tds = rows[i].children;
-    	for (var j=0;j<tds.length;j++) {
-    		var elements = tds[j].children;
-    		if (j!=0) text+=' ';
-    		if (elements.length==0) {
-    			if (tds[j].innerHTML.trim()!='') {
-    				text+=tds[j].innerHTML;
-    			}	
-    		} else {
-    			var el = elements[0];
-    		
-    			/* if (el.tagName=='LABEL') {
-    				text+=el.innerHTML;
-    				if (j==0) {text+=':';}
-    			} else */ 
-    				if (el.tagName=='INPUT') {
-    				if (elements[1]) {
-    					text+= elements[1].children[0].value;
-    				} else {
-    					text+=el.value;
-    				}
-    			} else  if (el.tagName=='LABEL'){
-    				   text+=el.innerHTML +": ";				
-    			}
-    		} 
-    	}
+
+    for (var ind=0;ind<fldJson.params.length;ind++) {
+    	var par = fldJson.params[ind] ;
+    	text += par.name +": ";
+    	if (+par.type==2|| +par.type==6||+par.type==7) {
+			text += par.valueVoc ;
+		} else {
+			text += par.value ;
+		} 
+    	if (+par.type==7) {
+			text += " "+par.addValue ;
+		}
+    	
     	text+='\n';
     }
     $('record').value=text;
-
 	the${name}IntakeInfoDialog.hide();
     
     $('record').disabled=false;
     isEditable();
    }
     function save${name}IntakeInfo() {
+ 	   $('btnEditProt1').style.display='inline' ;
+	   $('btnEditProt2').style.display='inline' ;
+
     	var regexp = /^[\d+.]+$/;
 		var isError = false ;
 		for (var ind=0;ind<fldJson.params.length;ind++) {
 			
-			var val = $('param'+fldJson.params[ind].id).value ;
-			var par = fldJson.params[ind] ; 
+			var val ;
+			
+			var par = fldJson.params[ind] ;
+			par.valueVoc = "" ;
+			if (par.type==6) {
+				val="" ;
+			} else {
+				val = $('param'+fldJson.params[ind].id).value ;
+				
+			}
 			var err ="";
+			try{
 			errorutil.HideError($('param'+par.idEnter)) ;
+			}catch(e){}
 			/*if (val=="") {
 				errorutil.ShowFieldError($('param'+par.idEnter),"Пустое значение") ;
 				isError= true ;
 			} */
 			
 			if (+par.type==2) {
-				if (+val<1) {val='0' ;} else {
-					par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
+				if (+val<1) {val='0' ;par.valueVoc="";} else {
+					par.valueVoc = $('param'+par.id+'Name').value ;
 				}
-			}
-			 if (par.type=='4') {
+			} else if (+par.type==6) {
+				for (var indVal=0;indVal<par.voc.length-1;indVal++) {
+					var v = par.voc[indVal] ;
+					if ($('param'+par.id+"_"+v.id).checked) {
+						val = val + ","+$('param'+par.id+"_"+v.id).value ;
+						par.valueVoc += ", "+$('param'+par.id+"_"+v.id+'Span').innerHTML.trim() ;
+						v.checked='1';
+					} else {
+						v.checked='0';
+					}
+				}
+				if (val.length>0) {val+="," ;par.valueVoc=par.valueVoc.substring(2);}
+			} else if (+par.type==7) {
+				if (+val<1) {val='0' ;} else {
+					par.valueVoc = $('param'+par.id+'Name').value ;
+				}
+				par.addValue= $('param'+par.id+'AddValue').value ;
+			} else if (par.type=='4') {
 				val = val.replace(",",".") ;
 				val = val.replace("-",".") ;
 				var v = val.split(".") ;
@@ -201,9 +215,9 @@ var fldJson = null ;
 	  						
 	  					}
 					}
-			} 
-			 if (par.type==1) {
+			} else if (par.type==1) {
 				if (val!='' &&!regexp.test(val)){
+					
 					errorutil.ShowFieldError($('param'+par.idEnter),"Допускается ввод только чисел!") ;	
 					isError=true;
 				}
@@ -216,6 +230,7 @@ var fldJson = null ;
 		if (+fldJson.isdoctoredit==0) {
 			if (+$('paramWF').value==0) {
 				isError=true ;
+				alert("paramWF") ;
 				errorutil.ShowFieldError($('paramWFName'),"Обязательное поле") ;
 			} else {
 				fldJson.workFunction=$('paramWF').value
@@ -235,21 +250,29 @@ var fldJson = null ;
     	    	
     	TemplateProtocolService.getTemplateDisableEdit($('templateProtocol').value,{
     		callback: function (a) {
+    			
     			if (+a==1) {
-    	    		$('record').addEventListener('click', 
+    				eventutil.addEventListener($('record'),eventutil.EVENT_CLICK, 
     	    	  		  	function() {
+    	    			
     	    					$('record').disabled=true;
-    	    					if ($('id').value!='') {	alert ('Редактирование данного протокола возможно только через форму!'); }
+    	    					if ($('id').value!='') {
+    	    						//alert ('Редактирование данного протокола возможно только через форму!'); 
+    	    					}
     	    					showTemplateForm($('templateProtocol').value);
     	    				//	$('record').disabled=false;
     	    	  		  	}) ;
-    	    		$('record').addEventListener('keypress', 
+    	    		/*
+    				eventutil.addEventListener($('record'),eventutil.EVENT_KEY_PRESS, 
     	    	  		  	function() {
-    	    			if ($('id').value!='') {	alert ('Редактирование данного протокола возможно только через форму!'); }
+    	    			if ($('id').value!='') {	
+    	    				//alert ('Редактирование данного протокола возможно только через форму!'); 
+    	    			}
     	    					$('record').disabled=true;
     	    					showTemplateForm($('templateProtocol').value);
     	    				//	$('record').disabled=false;
-    	    	  		  	}) ;
+    	    	  		  	}) ;*/
+    				
     	    	} else {
     	    		try {
     	    			$('record').removeEventListener('click');
@@ -267,9 +290,11 @@ var fldJson = null ;
     
      function showTemplateForm(aTemplateId) {
     	 the${name}TempProtDialog.hide() ;
-    	 the${name}IntakeInfoDialog.hide();
+    	    	 	//alert(aTempId) ;
+    	    	 	    	 the${name}IntakeInfoDialog.hide();
     		the${name}IntakeInfoDialog.show() ;
-    	    	 	//alert(aTempId) ; 
+		       $('${name}IntakeRootPane').innerHTML ="Загрузка..." ;
+
     				TemplateProtocolService.getParameterAndPersmissionByTemplate($('id').value,aTemplateId,{
     					callback: function (aResults) {
     						var arr = aResults.split("#");
@@ -307,6 +332,9 @@ var fldJson = null ;
     					       $('${name}IntakeRootPane').innerHTML =txt 
     					       	+ "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\"save${name}IntakeInfo()\">"
     					       	+ "<input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}IntakeInfo()\">";
+    					    	 the${name}IntakeInfoDialog.hide();
+    					    		the${name}IntakeInfoDialog.show() ;
+
     					       	cancel${name}TemplateProtocol();
     					       
     					   //    	the${name}IntakeInfoDialog.show() ;
@@ -327,18 +355,35 @@ var fldJson = null ;
     					        		$("param"+p+"Name").focus() ;
     					        		eventutil.addEnterSupport("param"+p+"Name","param"+fldJson.params[0].idEnter) ;
     					        		
+    			            	 } else {
+    			            		 $("param"+fldJson.params[0].idEnter).select() ;
+ 					        		$("param"+fldJson.params[0].idEnter).focus() ;
     			            	 }
     					        for (var ind=0;ind<fldJson.params.length;ind++) {
+    					        	 
     					        	var param1 = fldJson.params[ind] ;
-    					        	
+    					        	idEnter = param1.idEnter ;
+					        		if (+param1.type==7) {
+					        			eventutil.addEnterSupport("param"+param1.idEnter,"param"+param1.idEnter.substring(0,param1.idEnter.length-4)+"AddValue") ;
+					        			param1.idEnter=param1.idEnter.substring(0,param1.idEnter.length-4)+"AddValue";
+					        		} else if (+param1.type==6) {
+					        			for (var iparam=1;iparam<param1.voc.length-0;iparam++) {
+					        				var next=param1.idEnter.substring(0,param1.idEnter.indexOf("_"))+"_"+param1.voc[iparam].id ;
+					        				eventutil.addEnterSupport("param"+param1.idEnter,"param"+next) ;
+					        				param1.idEnter=next ;
+					        			}
+					        		} 
+
     					        	if (ind<cnt-1) {
     					        		var param2 = fldJson.params[ind+1] ;
+    					        		
     					        		eventutil.addEnterSupport("param"+param1.idEnter,"param"+param2.idEnter) ;
     					        	} else {
     					        		eventutil.addEnterSupport("param"+param1.idEnter,"paramOK") ;
     					        		
     					        	}
-    					        	if (+param1.type==2) {
+    					        	param1.idEnter=idEnter ;
+    					        	if (+param1.type==2||+param1.type==7) {
     					        		eval("param"+param1.id+"Autocomlete = new msh_autocomplete.Autocomplete() ;")
     					        		eval("param"+param1.id+"Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;")
     					        		eval("param"+param1.id+"Autocomlete.setIdFieldId('param"+param1.id+"') ;")
@@ -409,6 +454,24 @@ var fldJson = null ;
 		        //txt += ;
 		        txt += "</div>";
 		        txt += "</div>";
+	        } else if (type==7) {
+		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"hidden\" value=\""+aParam.value+"\" title=\"\" autocomplete=\"\">";
+	        	txt += "<div>";
+		        txt += "<input id=\"param"+aParam.idEnter+"\" name=\"param"+aParam.idEnter+"\" type=\"text\" value=\""+aParam.valueVoc+"\" title=\""+aParam.vocname+"\" class=\"autocomplete horizontalFill\" autocomplete=\"on\">";
+	        	txt += "<div id=\"param"+aParam.id+"Div\">";
+	        	txt += "<span></span>";
+		        //txt += ;
+		        txt += "</div>";
+		        txt += "</div>";
+		        txt += "<input id=\"param"+aParam.id+"AddValue\" name=\"param"+aParam.id+"AddValue\" type=\"text\" value=\""+aParam.addValue+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+		        
+	        } else if (type==6) {
+	        	for (var iparam=0;iparam<aParam.voc.length-0;iparam++) {
+	        		var v = aParam.voc[iparam] ;
+	        		var idEnterParam=aParam.idEnter.substring(0,aParam.idEnter.indexOf("_"))+"_"+v.id ;
+    				txt += "<input id=\"param"+idEnterParam+"\" name=\"param"+idEnterParam+"\" type=\"checkbox\" value=\""+v.id+"\" "+((+v.checked)>0?"checked":"")+" title=\"\" autocomplete=\"\">";
+    				txt += "<span id=\"param"+idEnterParam+"Span\" name=\"param"+idEnterParam+"Span\" onclick=\"$('param"+idEnterParam+"').click()\">"+v.name+" </span>";
+	        	}
 	        } else {
 		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
 		        
