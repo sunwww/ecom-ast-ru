@@ -60,6 +60,15 @@
                 		<msh:autoComplete property="state" fieldColSpan="3" label="Состояние больного" horizontalFill="true"
                 		vocName="vocPhoneMessageState"/>
 	                </msh:row>
+                <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+                <msh:row>
+                    <td colspan="3" align="right">
+                        <input type="button" style="display:none" name="btnEditProt2" id="btnEditProt2" value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);"/>
+                        <input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
+                        <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
+                    </td>
+                </msh:row>
+                </msh:ifFormTypeIsNotView>
                 <msh:row>
                     <msh:textArea property="record" label="Текст:"
                                       size="100" rows="25" fieldColSpan="8"  guid="b6ehb-b971-441e-9a90-519c07" />
@@ -69,6 +78,7 @@
                 <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
                 <msh:row>
                     <td colspan="3" align="right">
+                        <input type="button" style="display:none" name="btnEditProt1" id="btnEditProt1" value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);"/>
                         <input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
                         <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
                     </td>
@@ -159,7 +169,10 @@
     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
     <script type="text/javascript">
     setTimeout(checktime,600000) ;
-   
+   if ($('templateProtocol').value>0) {
+	   $('btnEditProt1').style.display='inline' ;
+	   $('btnEditProt2').style.display='inline' ;
+   }
    
     function checktime() {
     	if (confirm('Вы хотите сохранить дневник?')) {
