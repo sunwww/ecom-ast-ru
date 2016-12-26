@@ -121,7 +121,15 @@ public class TemplateProtocolJs {
 		return service.executeNativeSql("select case when disableEdit is null or disableEdit = '0' then '0' else '1' end" +
 				" from templateprotocol where id = "+aTemplateId).iterator().next().get1().toString();
 	}
-	
+	public String changeTypeByParameter(Long aParam, Long aType, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("update Parameter set type='").append(aType).append("' where id='").append(aParam).append("'") ;
+		service.executeUpdateNativeSql(sql.toString()) ;
+		
+		return "" ;
+	}
 	public String getParameterAndPersmissionByTemplate(Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {
 		
 		String parameters = getParameterByTemplate(aProtocolId, aTemplateId, aRequest);
@@ -149,6 +157,7 @@ public class TemplateProtocolJs {
 			if (aObjectName.equals("Template")) {
 				fieldName = "d.id";
 			} 
+			//TODO TYPE6+7
 			sql.append("select p.id as p1id,p.name as p2name") ;
 			sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
 			sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
@@ -158,14 +167,17 @@ public class TemplateProtocolJs {
 			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
 			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
-			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
+			sql.append(" , ''||p.id||case when  p.type in ('2','7') then 'Name'  when p.type='6' then '_'||(select min(uv.id) from uservalue uv where uv.domain_id=vd.id) else '' end as p18enterid") ;
 			sql.append(" , case when p.type in ('3','5')  then pf.valueText") ; 
-			sql.append(" when p.type ='4' then ''||round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end)"); 
-			sql.append(" when p.type ='1' then ''||round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end) ");
+			sql.append(" when p.type ='4' then case when pf.valuetext is null or pf.valuetext='' then replace(''||round(pf.valueBD,cast(p.cntdecimal as int)),'.',',') else pf.valuetext end"); 
+			sql.append(" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') ");
+			sql.append(" when p.type ='6' then pf.ListValues ");
+			sql.append(" when p.type ='7' then ''||pf.valueVoc_id ");
 			sql.append(" when p.type='2' then ''||pf.valueVoc_id end as p19val") ;
 			sql.append(" ,vv.name as d20val4v") ;
 			sql.append(" ,pg.id as f21GroupId");
 			sql.append(" ,pg.name as f22GroupIName");
+			sql.append(" ,case when p.type='7' then pf.valueText else '' end as f23AddVal");
 			sql.append(" from FormInputProtocol pf") ;
 			sql.append(" left join Diary d on pf.docProtocol_id = d.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
@@ -192,13 +204,14 @@ public class TemplateProtocolJs {
 			sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
 			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
-			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
+			sql.append(" , ''||p.id||case when p.type in ('2','7') then 'Name' when p.type='6' then '_'||(select min(uv.id) from uservalue uv where uv.domain_id=vd.id) else '' end as p18enterid") ;
 			sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault else '' end as p19valuetextdefault") ;
 			//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
 			
 			sql.append(" ,cast('' as varchar) as f20defvalue");
 			sql.append(" ,pg.id as f21GroupId");
 			sql.append(" ,pg.name as f22GroupIName");
+			sql.append(" ,case when p.type='7' then p.valueTextDefault else '' end as f23AddVal");
 			sql.append(" from parameterbyform pf") ;
 			sql.append(" left join templateprotocol tp on pf.template_id = tp.id") ;
 			sql.append(" left join parameter p on p.id=pf.parameter_id") ;
@@ -240,7 +253,7 @@ public class TemplateProtocolJs {
 			,{"13","unitid"},{"14","unitname"}
 			,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
 			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
-			,{"21","groupId"}, {"22","groupName"}
+			,{"21","groupId"}, {"22","groupName"},{"23","addValue"}
 			} ;
 			for(WebQueryResult wqr : lwqr) {
 				
@@ -249,15 +262,16 @@ public class TemplateProtocolJs {
 				boolean isFirtMethod = false ;
 				boolean isError = false ;
 				//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
-				if (String.valueOf(wqr.get4()).equals("2")) {
+				String parType =String.valueOf(wqr.get4()); 
+				String vocId = String.valueOf(wqr.get15()) ;
+				if (parType.equals("2")||parType.equals("6")||parType.equals("7")) {
 					//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
-					if (wqr.get15()==null) {
+					if (vocId==null||vocId.equals("")) {
 						isError = true ;
 						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
 					}
 				}
 				try {
-					
 					for(String[] prop : props) {
 						Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
 						String strValue = value!=null?value.toString():"";
@@ -265,6 +279,26 @@ public class TemplateProtocolJs {
 						if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
 						par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
 						
+					}
+					
+					if (parType.equals("6")) {
+						par.append(",\"voc\":[");
+						StringBuilder sqlVoc = new StringBuilder() ;
+						sqlVoc.append("select id,name from UserValue where domain_id=").append(vocId).append(" order by id") ;
+						List<Object[]> vocVals = service.executeNativeSqlGetObj(sqlVoc.toString()) ;
+						boolean isFirtMethodVoc = false ;
+						String valList = ""+(wqr.get19()!=null?wqr.get19():""); 
+						for (Object[]vocVal:vocVals) {
+							if(isFirtMethodVoc) par.append(", ") ;else isFirtMethodVoc=true;
+							par.append("{\"id\":\"").append(str(""+vocVal[0])).append("\"") ;
+							par.append(",\"name\":\"").append(str(""+vocVal[1])).append("\"") ;
+							par.append(",\"checked\":\"").append(valList.indexOf(","+vocVal[0]+",")>-1?"1":"0").append("\"") ;
+							par.append("}") ;
+						}
+						par.append("]") ;
+					} else {
+						par.append(",\"voc\":[{");
+						par.append("}]") ;
 					}
 					
 				} catch (Exception e) {
@@ -650,7 +684,7 @@ public class TemplateProtocolJs {
 			name_cat = name_cat+"<input type='text' id='fldSearch"+aFunctionProt+"' name='fldSearch"+aFunctionProt+"' value='"+(aSearchText!=null?aSearchText:"")+"'>" ;
 			name_cat = name_cat+"<input  type='submit' value='Поиск' onclick='"+aFunctionProt+"Search(\""+aType+"\",\""+aParent+"\")'>" ;
 			name_cat = name_cat+"</form>" ;
-			res.append("<h2>Список своих шаблонов").append(" КАТЕГОРИИ: "+name_cat).append(" </h2>") ;
+			res.append("<h2>Список своих шаблонов").append(name_cat!=null&&!name_cat.equals("")?" КАТЕГОРИИ: "+name_cat:"---").append(" </h2>") ;
 			res.append("</td>") ;
 			res.append("</tr><tr><td colspan='2' valign='top'>") ;
 			res.append("<ul>");
