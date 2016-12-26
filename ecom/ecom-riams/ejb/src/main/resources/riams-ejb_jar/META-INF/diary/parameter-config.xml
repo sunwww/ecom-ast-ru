@@ -34,7 +34,7 @@
     		<field type='row' open='0'/>
     	</fields>
 	</parameter>
-    <parameter id='4' type='String' name='Числовой с плавающей точкой' >
+    <parameter id='4' type='String' name='Числовой с плавающей точкой'  >
     	<fields>
     		<field type='row' open='1'/>
     		<field type='separator' label='Параметр числовой с плавающей точкой' colSpan='4'/>
@@ -75,6 +75,54 @@
     	<fields>
     		<field type='row' open='1'/>
     		<field type='separator' label='Параметр пользовательский справочник' colSpan='4'/>
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' />
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
+    		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='name' type='textField' label='Полное название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>    
+    		<field property='measureUnit' type='autoComplete' label='Ед.измерения'
+    			vocName='vocMeasureUnit' horizontalFill='true'/>
+    		<field type='row' open='0'/>		
+    		<field type='row' open='1'/>
+    		<field property='valueDomain' type='autoComplete' label='Справочник'
+    			vocName='valueDomain' horizontalFill='true' viewUrl='entityView-diary_userDomain.do?short=Short'/>
+    		<field type='row' open='0'/>
+    	</fields>
+	</parameter>
+	<parameter id='6' type='VocUser' name='Пользовательский справочник (множественный выбор)' >
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field type='separator' label='Параметр пользовательский справочник (множественный выбор)' colSpan='4'/>
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
+    		<field property='code' type='textField' label='Код' fieldColSpan='3' />
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
+    		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>
+    		<field property='name' type='textField' label='Полное название' size='50' required='true'/>
+    		<field type='row' open='0'/>
+    		<field type='row' open='1'/>    
+    		<field property='measureUnit' type='autoComplete' label='Ед.измерения'
+    			vocName='vocMeasureUnit' horizontalFill='true'/>
+    		<field type='row' open='0'/>		
+    		<field type='row' open='1'/>
+    		<field property='valueDomain' type='autoComplete' label='Справочник'
+    			vocName='valueDomain' horizontalFill='true' viewUrl='entityView-diary_userDomain.do?short=Short'/>
+    		<field type='row' open='0'/>
+    	</fields>
+	</parameter>
+	<parameter id='7' type='VocUser' name='Пользовательский справочник с текстовым полем' >
+    	<fields>
+    		<field type='row' open='1'/>
+    		<field type='separator' label='Параметр пользовательский справочник (с текстовым полем)' colSpan='4'/>
     		<field type='row' open='0'/>    	
     		<field type='row' open='1'/>
     		<field property='code' type='textField' label='Код' fieldColSpan='3' />
