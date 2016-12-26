@@ -40,13 +40,16 @@
 
 </div>
 </div>
-<script type='text/javascript' src='./dwr/interface/DietService.js'></script>
+<script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
+
 <script type="text/javascript"><!--
      var theIs${name}CreateParameterDialogInitialized = false ;
      var the${name}CreateParameterDialog = new msh.widget.Dialog($('${name}CreateParameterDialog')) ;
+     var the${name}IdChangeTypeParameter = "" ;
 
      // Показать
-     function show${name}CreateType() {
+     function show${name}CreateType(aId) {
+    	 the${name}IdChangeTypeParameter = aId?aId:"" ;
          // устанавливается инициализация для диалогового окна
          if (!theIs${name}CreateParameterDialogInitialized) {
          	init${name}CreateParameterDialog() ;
@@ -66,8 +69,17 @@
      	if ($('${name}Type').value==0) {
      		alert("Не выбран тип параметра") ;
      	} else {
-     		//TODO доделать
-     		window.location.href='${action}&${name}='+$('${name}Type').value ;
+     		if (the${name}IdChangeTypeParameter>0) {
+     			TemplateProtocolService.changeTypeByParameter(the${name}IdChangeTypeParameter,$('${name}Type').value, {
+   	    		 callback: function(aResult) {
+   	    			 alert("Тип изменен") ;
+   	    			cancel${name}CreateType() ;
+   	    			window.location.reload() ;
+   	    		 }
+   	    	 }) ;
+     		} else {
+     			window.location.href='${action}&${name}='+$('${name}Type').value+"&typeChange="+the${name}IdChangeTypeParameter ;
+     		}
          }
      }
 
