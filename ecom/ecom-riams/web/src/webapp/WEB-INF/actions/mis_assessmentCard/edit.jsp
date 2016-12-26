@@ -79,7 +79,8 @@
 			out.print("<tr><td colspan='3'><b>"+r.get2()+"</b></td>");
 			String sql = "select p.id "+
 					" ,p.name as f3_parName, p.shortname as f4_parShortName"+ 
-					" ,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' then fip.valuetext when p.type='2' then uv.name else 'WFT '||p.type end as f5_value"+
+					" ,case when p.type = '4' then cast (fip.valuebd  as varchar) when p.type='3' then fip.valuetext" 
+					+" when p.type='6' then fip.valuetext  when p.type='7' then coalesce(uv.name, '')||' '||coalesce(fip.valuetext,'') when p.type='2' then uv.name else 'WFT '||p.type end as f5_value"+
 					" ,uv.cntball as f6_ball"+
 					" from assessmentCard ac "+
 					" left join forminputprotocol fip on fip.assessmentCard=ac.id"+
