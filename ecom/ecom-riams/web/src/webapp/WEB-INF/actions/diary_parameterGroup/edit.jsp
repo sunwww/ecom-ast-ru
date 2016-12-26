@@ -62,15 +62,17 @@
       <msh:ifFormTypeIsView formName="diary_parameterGroupForm" guid="9f1dd6a4-a7b7-43e7-b6968">
         <msh:section title="Список параметров" guid="e681be03-dea7-4bce-56" createRoles="/Policy/Diary/ParameterGroup/Parameter/Create" createUrl="javascript:showtypeCreateType()"> 
          <ecom:webQuery name="parameters" nativeSql="select p.id,p.name
-         ,case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end as typeinfo
+         ,case when p.type='1' then 'Числовой' when p.type='4' then 'Числовой с плавающей точкой зн.'||p.cntDecimal when p.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='7' then 'Пользовательский справочник (с текстом): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='6' then 'Пользовательский справочник (множественный выбор): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when p.type='3' then 'Текстовое поле' when p.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end as typeinfo
          ,vmu.name as vmuname
-         ,case when p.type='2' then vd.id else null end as vdid
+         ,case when p.type='2' or p.type='6' or p.type='7' then vd.id else null end as vdid
          ,p.code
           from parameter p 
           left join userDomain vd on vd.id=p.valueDomain_id 
           left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id
           where p.group_id=${param.id} order by p.name"/>
-          <msh:table name="parameters" action="diary_parameterView.do" idField="1" guid="16cdff99-8997-eebc80ecc49c">
+          <msh:table name="parameters" action="diary_parameterView.do"
+           idField="1" editUrl="diary_parameterEdit.do">
+           <msh:tableButton property="1" buttonFunction="editType" buttonName="Изменить тип" buttonShortName="ИТ" role="/Policy/Diary/ParameterGroup/Parameter/EditType"/>
           	<msh:tableColumn property="6" columnName="Код"/>
             <msh:tableColumn property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a1f" />
           	<msh:tableButton property="5" buttonFunction="viewDomain" buttonShortName="ПН" buttonName="Просмотр справочника в новом окне (для редактирования)" hideIfEmpty="true"/>
@@ -84,6 +86,9 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <script type="text/javascript">
+  function editType(aId) {
+	  showtypeCreateType(aId) ;
+  }
   function viewDomain(aId) {
   		window.open("entityView-diary_userDomain.do?id="+aId) ;
   	}

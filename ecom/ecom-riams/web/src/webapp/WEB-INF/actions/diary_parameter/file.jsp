@@ -51,20 +51,46 @@ where p.parameter_id=${param.id} order by p.position
     "
     />
     <msh:table name="list_template" action="entityParentView-diary_template.do" idField="1">
+    	<msh:tableButton property="1" buttonFunction="goNewOpen" buttonName="o" buttonShortName="o" addParam="'entityParentView-diary_template.do'"/>
     	<msh:tableColumn property="2" columnName="Шаблон"/>
     	<msh:tableColumn property="4" columnName="Категория"/>
     	<msh:tableColumn property="5" columnName="Наименование услуги"/>
     </msh:table>
     </msh:section>
+    
+          <ecom:webQuery nativeSql="
+          select uv.id , uv.name, uv.cntBall from UserValue uv
+          left join userdomain ud on ud.id=uv.domain_id
+          left join parameter p on p.ValueDomain_id=ud.id
+          where p.id=${param.id }
+          " name="values" />
+    
+    <msh:tableNotEmpty name="values"><msh:section title="Значения справочника" >
+          <msh:table name="values" action="entityParentView-diary_userValue.do" 
+          idField="1" deleteUrl="entityParentDeleteGoParentView-diary_userValue.do" editUrl="entityParentEdit-diary_userValue.do" >
+            <msh:tableColumn property="2" columnName="Значение" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
+            <msh:tableColumn property="3" columnName="Балл" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
+          </msh:table>
+        </msh:section></msh:tableNotEmpty>
     </msh:ifFormTypeIsView>
+    
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Config" beginForm="diary_parameterForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
     <msh:ifFormTypeIsNotView formName="diary_parameterForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
-      <script type="text/javascript">${paramscript}</script>
+      <script type="text/javascript">${paramscript}
+      
+      </script>
     </msh:ifFormTypeIsNotView>
+    <msh:ifFormTypeIsView formName="diary_parameterForm">
+    <script type="text/javascript">${paramscript}
+      function goNewOpen(aId,aUrl) {
+    	  window.open( aUrl+"?id="+aId) ;
+      }
+      </script>
+    </msh:ifFormTypeIsView>
   </tiles:put>
 </tiles:insert>
 

@@ -39,7 +39,13 @@
                 </td> <td style="vertical-align: top;">
                 <ecom:webQuery name="list_par_temp" nativeSql="select p.parameter_id
 ,gr.name as grname
-,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'')
+,par.name||' ('||case when par.type='1' then 'Числовой' 
+when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal 
+when par.type ='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') 
+when par.type ='6' then 'Пользовательский справочник (множественный выбор): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') 
+when par.type ='7' then 'Пользовательский справочник (с текстовым полем): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') 
+when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением'
+ else 'неизвестный' end||') - '||coalesce(vmu.name,'')
 ,par.valueTextDefault 
 from ParameterByForm p 
 left join Parameter par on par.id=p.parameter_id 
