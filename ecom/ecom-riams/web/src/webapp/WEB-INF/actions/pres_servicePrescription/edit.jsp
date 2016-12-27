@@ -297,9 +297,9 @@
 		0 - ms.type
 		1 - ms.ID 2 - ms. code+name
 		3 - date
-		4 - cabinetcode           5 - cabinetname
-		6 - departmentintakecode  7 - departmentintakename (for lab)
-		8 - timecode              9 - timename (for func)
+		4 - cabinetID           5 - cabinetName
+		6 - departmentIntakeID  7 - departmentIntakeName (for lab)
+		8 - timeID              9 - timeName (for func)
 		*/
 		var type = resultRow[0];
 		var id = resultRow[1]; 
@@ -307,8 +307,14 @@
 		var date = resultRow[3]!=""?resultRow[3]:textDate;
 		var cabinet = resultRow[4]?resultRow[4]:"";
 		var cabinetName = resultRow[5]?resultRow[5]:"";
+		var department = resultRow[6]?resultRow[6]:"";
+		var departmentName = resultRow[7]?resultRow[7]:"";
 		if (type==null||type=='') return;
 		if (type=='LABSURVEY' || type=='lab') {
+			if (department=='') {
+				department = $('labDepartment').value;
+				departmentName=$('labDepartmentName').value;
+			}
 			type='lab'; num = labNum;
 		} else if (type=='DIAGNOSTIC' || type=='func') {
 			type='func'; num = funcNum; 
@@ -335,14 +341,14 @@
 	    // Наполняем ячейки 
 	    //var dt2="<input id='"+type+"Cabinet"+num+"' name='"+type+"Cabinet"+num+"' value='"+cabinet+"' type='hidden'  />";
 	    
-	  	td1.innerHTML = textInput("Дата",type,"Date",num,resultRow[3],date,10) ;
-	    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
+	  	td1.innerHTML = textInput("Дата",type,"Date",num,date,date,10) ;
+	    td2.innerHTML = hiddenInput(type,"Service",num,id,"")+spanTag("Исследование",name,"");
 	   	if (type=="lab") {
-	   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
+	   		td2.innerHTML += hiddenInput(type,"Department",num,department,"")+spanTag("Место забора",departmentName,"") ;
 	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,cabinet,"");
 	   		labNum = num;
 	   	} else if (type=="func"){
-		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
+		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,cabinet,"")+spanTag("Кабинет",cabinetName,"");
 	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
 	   		funcNum = num;
 	   		$(type+'Cabinet').value='';

@@ -1630,8 +1630,23 @@
             queryAppend = 'medCase_id is null'
         />
      </voc> -->
+      <voc id='vocWorkCalendarTimeWorkCalendarDayAndPatient' type='NativeVocService'>
+    	<NativeVocService  
+
+    			from = 'WorkCalendarTime as wct '
+    			parent = " wct.workCalendarDay_id = :par1 and (mc.patient_id= :par2 or ( wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null))"
+    			names  = " cast(wct.timeFrom as varchar(5)) "
+    			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
+    			order =''
+    			nameId='wct.id'
+    			join=' left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id
+    			left join MedCase mc on mc.id=wct.medCase_id'
+    			parentSplitCount="2"
+    	/>
+    </voc>
+    
      <voc id='vocWorkCalendarTimeWorkCalendarDay' type='NativeVocService'>
-    	<NativeVocService
+    	<NativeVocService  
     			from = 'WorkCalendarTime as wct '
     			parent = " wct.workCalendarDay_id = :parent "
     			names  = " cast(wct.timeFrom as varchar(5)) "

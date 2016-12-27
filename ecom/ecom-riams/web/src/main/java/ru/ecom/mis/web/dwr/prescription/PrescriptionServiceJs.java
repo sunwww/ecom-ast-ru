@@ -196,7 +196,10 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		if (aTimePlanId==null||aTimePlanId.equals(Long.valueOf(0))) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		boolean isWCTisEmpty = wqs.executeNativeSql("select id from workcalendartime where id = "+aTimePlanId+" and medcase_id is null").isEmpty()?false:true;
+		
+		String aPresId = String.valueOf(aPrescriptListId);
+		Long patienId = getPatientIdByPrescriptionList(aPresId,aRequest);
+		boolean isWCTisEmpty = wqs.executeNativeSql("select wct.id from workcalendartime wct left join medcase mc on mc.id =wct.medcase_id  where wct.id = "+aTimePlanId+" and (wct.medcase_id is null or mc.patient_id ="+patienId+" ) ").isEmpty()?false:true;
 		if (!isWCTisEmpty) return null; //Не создаем направления, если время уже занято.
 		Long wf = null;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
@@ -542,6 +545,22 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			return isPrescriptListExists(aMedcase, aRequest);
 		}
 		return plId;
+	}
+	
+	
+	public Long getPatientIdByPrescriptionList(String aPrescList, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String req = "select mc.patient_id from prescriptionList pl "+
+"left join medcase mc on mc.id = pl.medcase_id "+
+"where pl.id = '"+aPrescList+"' ";
+		Collection<WebQueryResult> list = service.executeNativeSql(req,1) ;
+		if (!list.isEmpty()) {
+			WebQueryResult obj = list.iterator().next() ; 
+		//	System.out.println("res.get1 ================================ "+obj.get1());
+				return ConvertSql.parseLong(obj.get1());
+			
+		} 
+		return Long.valueOf(0);
 	}
 	/**
 	 * Поиск СЛО по ИД листа назначения

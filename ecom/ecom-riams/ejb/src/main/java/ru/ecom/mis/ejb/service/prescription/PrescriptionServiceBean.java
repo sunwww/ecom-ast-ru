@@ -66,36 +66,44 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		MedService sms = theManager.find(MedService.class, aMedServiceId);
 	if (sms!=null) {
 		long date = new java.util.Date().getTime() ;
-		Visit vis = new Visit();
+	
 	PrescriptList pl = theManager.find(PrescriptList.class, aPrescriptionListId);
 	Patient pat = pl.getMedCase().getPatient();
 	WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
 	WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
 	WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
-	MedCase mc = pl.getMedCase() ;
-	if (mc instanceof HospitalMedCase|| mc instanceof DepartmentMedCase) {
-		VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
-		vis.setServiceStream(vss);
+	Visit vis;
+	if (wct.getMedCase()!=null) {
+		vis = (Visit) wct.getMedCase();
 	} else {
-		vis.setServiceStream(mc.getServiceStream()) ;
+		vis = new Visit();
+		MedCase mc = pl.getMedCase() ;
+		if (mc instanceof HospitalMedCase|| mc instanceof DepartmentMedCase) {
+			VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
+			vis.setServiceStream(vss);
+		} else {
+			vis.setServiceStream(mc.getServiceStream()) ;
+		}
+		VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
+		vis.setWorkPlaceType(wpt) ;
+		
+		vis.setPatient(pat);
+		vis.setCreateDate(new java.sql.Date(date));
+		vis.setCreateTime(new java.sql.Time(date));
+		if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
+			System.out.println("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
+			return null;
+		}
+		vis.setDatePlan(wct.getWorkCalendarDay());
+		vis.setNoActuality(false);
+		vis.setTimePlan(wct);
+		vis.setWorkFunctionPlan(wfp);
+		vis.setOrderWorkFunction(wfo);
+		vis.setUsername(aUsername);
+		theManager.persist(vis);
 	}
-	VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
-	vis.setWorkPlaceType(wpt) ;
 	
-	vis.setPatient(pat);
-	vis.setCreateDate(new java.sql.Date(date));
-	vis.setCreateTime(new java.sql.Time(date));
-	if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
-		System.out.println("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
-		return null;
-	}
-	vis.setDatePlan(wct.getWorkCalendarDay());
-	vis.setNoActuality(false);
-	vis.setTimePlan(wct);
-	vis.setWorkFunctionPlan(wfp);
-	vis.setOrderWorkFunction(wfo);
-	vis.setUsername(aUsername);
-	theManager.persist(vis);
+	
 	
 	ServiceMedCase smc = new ServiceMedCase();
 	smc.setParent(vis);

@@ -12,13 +12,15 @@
 	<msh:ifFormTypeIsNotView formName="pres_diagnosticPrescriptionForm">
 	<script type="text/javascript">
 	
+	
 	var currentDate = new Date;
 	var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
 	var textMonth = currentDate.getMonth()+1;
 	var textMonth = textMonth<10?'0'+textMonth:textMonth;
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
-
+	
+	
 	function checkRecord(aId,aValue,aIdService,aService) {
     	$('surgCalTime').value = aId; 
     	$('surgCalTimeName').value = aValue ;
@@ -143,7 +145,7 @@
 		}
 		return false ;
 	}
-
+//TODO !! 
 	function prepareLabRow(type) {
  	var fldList,reqList =[];
 	 if (type=='surg') {
@@ -156,9 +158,8 @@
 		fldList = [['Servicies',1],['ServiciesName',1],['CalDateName',1],['Cabinet',1]
 		,['CabinetName',1],['',1],['',1],['CalTime',1],['CalTimeName',1],['',1]
 	] ;
-	
 	}
-	 
+	
 	if (checkError(error)) return ;
 	var typeDate = new Date();
 	var l = $(type+'CalDateName').value;
@@ -196,6 +197,10 @@
 	var ar = getArrayByFld(type,"", fldList, reqList, "", -1) ;
 	if ($('tdPreRecord')) { $('tdPreRecord').innerHTML=""; }
 	if ($('divReserve')) { $('divReserve').innerHTML=""; }
+	
+	
+	
+	//alert("ALERT!!"+$('Servicies').value);
 	addPrescription($(type+'Servicies').value,'',$(type+'Cabinet').value,$(type+'CalDateName').value,$(type+'CalTime').value,$('comments').value, type+":"+ar[0],1);
 	
 }
@@ -334,11 +339,27 @@ function deletePrescription(aMedService, aWCT) {
 		  $('surgCalTime').value="" ;
 		  $('surgCalTimeName').value="" ;
   	  	  getPreRecord() ;
+  	  	  
+  	  	  //alert("==="+$('surgCabinet').value+"#"+$('person').value);
+  	  	 
+  	  	  
+
   	 });
 	surgCabinetAutocomplete.addOnChangeCallback(function(){
 		updateDefaultDate() ;
 	}) ;
+	function getPatientId() {
 	
+		PrescriptionService.getPatientIdByPrescriptionList($('prescriptionList').value,
+				{
+			callback:function(aResult){
+				$('person').value = aResult;
+				//alert($('person').value);
+			}
+			
+		});
+	}
+	getPatientId();
 function getPreRecord() {
   		
   		if ($('tdPreRecord')) {
@@ -369,6 +390,7 @@ function getPreRecord() {
 	
 	function updateTime() {
    		if (+$('surgCalDate').value>0 ) {
+   			surgCalTimeAutocomplete.setParentId($('surgCalDate').value+"#"+$('person').value);
    			WorkCalendarService.getReserveByDateAndServiceByPrescriptionList($('surgCalDate').value,$('prescriptionList').value
 	    			  
 	  		, {
@@ -435,7 +457,7 @@ function getPreRecord() {
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
-      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" />
+      <msh:hidden property="labList" guid="ac31e2ce-8059-482b-b138-b441c42e4472" /> <input type="hidden" name="person" id="person"> 
        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
         <msh:hidden property="countDays"/>
       </msh:ifNotInRole>
@@ -472,17 +494,19 @@ function getPreRecord() {
 			</msh:row>
 			<msh:row>
 				 <msh:autoComplete property="surgCalDate" parentAutocomplete="surgCabinet" vocName="vocWorkCalendarDayByWorkFunction" label="Дата" size="10" fieldColSpan="1" />
-    			 <msh:autoComplete property="surgCalTime" parentAutocomplete="surgCalDate" label="Время" vocName="vocWorkCalendarTimeWorkCalendarDay" fieldColSpan="1" />
+    			 <msh:autoComplete property="surgCalTime"  label="Время" vocName="vocWorkCalendarTimeWorkCalendarDayAndPatient" fieldColSpan="1" />
     		</msh:row>
     	<msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
         <msh:row> 
         <msh:textField property="countDays"  label="Кол-во дней записи" />
         </msh:row>
         </msh:ifInRole>
-    		<msh:row>
+        
+          <msh:row>
     			<msh:autoComplete parentAutocomplete="surgCabinet" property="surgServicies" label="Исследование" vocName="funcMedService"  horizontalFill="true" size="90" fieldColSpan="4" />
     		 </msh:row>
-				 <msh:hidden property="comments"  />
+
+			<msh:hidden property="comments"  />
 			<msh:row>
 				<td colspan="4" align="center">        	
 	            	<input type="button" name="subm" id="subm"  onclick="prepareLabRow('surg');" value="Создать назначение" tabindex="4" />
