@@ -6,8 +6,9 @@
 
 	<form-beans>
 
-		<form-bean name="mis_protocolKiliForm"	type="ru.ecom.mis.ejb.form.medcase.kili.ProtocolKiliForm" />
-		<form-bean name="voc_kiliProfileForm"	type="ru.ecom.mis.ejb.form.medcase.voc.VocKiliProfileForm" />
+		<form-bean name="diet_journalForm"			type="ru.ecom.mis.web.action.diet.DietJournalForm" />
+		<form-bean name="mis_protocolKiliForm"		type="ru.ecom.mis.ejb.form.medcase.kili.ProtocolKiliForm" />
+		<form-bean name="voc_kiliProfileForm"		type="ru.ecom.mis.ejb.form.medcase.voc.VocKiliProfileForm" />
 		<form-bean name="voc_kiliConclusionForm"	type="ru.ecom.mis.ejb.form.medcase.voc.VocKiliConclusionForm" />
 		<form-bean name="mis_assessmentCardTemplateForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardTemplateForm" />
 		<form-bean name="mis_assessmentForm"		type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentForm" />
@@ -305,6 +306,13 @@
 
 	<action-mappings>
 	
+	 <action path='/diet_dietJournal' type='ru.ecom.mis.web.action.diet.DietJournalAction'
+                name='diet_journalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/diet_diet/list_diet_prescriptions.jsp" />
+        </action>
 	 <action path='/pres_report4385' type='ru.ecom.mis.web.action.medcase.journal.LabReport4385Action'
                 name='pres_journalForm'
                 validate='false'

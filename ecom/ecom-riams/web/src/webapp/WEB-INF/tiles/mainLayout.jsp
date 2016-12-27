@@ -125,10 +125,10 @@
             <msh:sideLink params="" isReport="true" styleId="mainMenuJournals"
             			name="Отчеты" roles="/Policy/MainMenu/Journals" title="Отчеты" 
             			action="/riams_journals.do"/>
-<%--            <msh:sideLink params="" styleId="mainMenuDiet" 
+           <msh:sideLink params="" styleId="mainMenuDiet" 
             			  action="/entityParentList-diet_diet.do?id=0" name="Диетпитание"
                           roles="/Policy/MainMenu/Diet" title="Диетпитание"/>
- --%>
+
             <msh:sideLink params="" styleId="mainMenuTemplate" action="/entityList-diary_template.do" name="Шаблоны"
                           title="Шаблоны" roles="/Policy/MainMenu/Template"/>
 
