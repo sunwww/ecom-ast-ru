@@ -10,6 +10,18 @@
 <%@page import="ru.ecom.ejb.services.query.IWebQueryService"%>
 <%@page import="java.util.Collection"%>
 
+<style>
+h2 {display:none;}
+@media print {
+h2 {display:inline;}
+img,div#copyright,h1,ul#ideModeMainMenu, div#ideModeMainMenuClose {display:none;}
+input#beginDate{display:inline;}
+div.x-box-mc{display:none;}
+div#header{display:none;}
+}
+</style>
+<h2> Сводные  сведения по  наличию  больных, состоящих  на  питании <br></h2>
+<h2>на <%= request.getParameter("beginDate") %></h2>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
@@ -68,6 +80,9 @@
        //    checkFieldUpdate('typeService','${typeService}',1) ;
 
   </script>
+  <br>
+  
+  <h2>Составила: медицинская  сестра  диетическая___________________ Шеф-повар______________ </h2>
   </tiles:put>
 </tiles:insert>
 
