@@ -26,6 +26,22 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/Equipment")
 public class MedicalEquipmentForm extends EquipmentForm {
 
+	/** Количество */
+	@Comment("Количество")
+	@Persist
+	public Float getAmount() {return theAmount;}
+	public void setAmount(Float aAmount) {theAmount = aAmount;}
+	/** Количество */
+	private Float theAmount;
+
+	/** ИД в системе Парус */
+	@Comment("ИД в системе Парус")
+	@Persist
+	public String getParusCode() {return theParusCode;}
+	public void setParusCode(String aParusCode) {theParusCode = aParusCode;}
+	/** ИД в системе Парус */
+	private String theParusCode;
+	
 	/** Группа бухгалтерии */
 	@Comment("Группа бухгалтерии")
 	@Persist

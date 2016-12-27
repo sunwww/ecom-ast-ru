@@ -9,6 +9,33 @@
 	>
 	</NativeVocService>
     </voc> 
+    <voc id='vocEquipmentTypeByLpu' type='NativeVocService'>
+       <NativeVocService
+	from="vocTypeEquip vte"
+	nameId="vte.id"
+	names="vte.name"
+	join="left join medicalequipmentposition mep on mep.equipmenttype_id=vte.id
+		left join medicalstandard ms on ms.id=mep.standard_id
+		left join mislpu ml on ml.medicalstandard_id=ms.id"
+	parent="ml.id=:parent"
+	>
+	</NativeVocService>
+    </voc> 
+    
+<voc id='vocEquipmentType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.equipment.voc.VocTypeEquip'
+                names   = 'name'
+                queried = 'name'
+        />
+    </voc> 
+<voc id='vocMedicalStandard' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.mis.ejb.domain.medstandard.MedicalStandard'
+                names   = 'name'
+                queried = 'name'
+        />
+    </voc> 
 <voc id='vocKiliDefect' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocKiliDefect'

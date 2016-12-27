@@ -26,6 +26,20 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Медицинское оборудование")
 @Table(schema="SQLUser")
 public class MedicalEquipment extends Equipment {
+	
+	/** Количество */
+	@Comment("Количество")
+	public Float getAmount() {return theAmount;}
+	public void setAmount(Float aAmount) {theAmount = aAmount;}
+	/** Количество */
+	private Float theAmount;
+
+	/** ИД в системе Парус */
+	@Comment("ИД в системе Парус")
+	public String getParusCode() {return theParusCode;}
+	public void setParusCode(String aParusCode) {theParusCode = aParusCode;}
+	/** ИД в системе Парус */
+	private String theParusCode;
 
 	/** Группа бухгалтерии */
 	@Comment("Группа бухгалтерии")
