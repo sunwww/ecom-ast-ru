@@ -69,7 +69,11 @@
      	}  else {
      		PrescriptionService.intakeService($('${name}List').value,$('${name}Date').value, $('${name}Time').value, { 
 	            callback: function(aResult) {
-	            	window.document.location.reload();
+	            	if (aResult=="1") {
+	            		window.document.location.reload();
+	            	} else {
+	            		alert ("Ошибка: "+aResult);
+	            	}
 	            }
 			}); 
 	     	

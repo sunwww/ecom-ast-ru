@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.prescription;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 /**
@@ -782,10 +784,15 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		return "1" ;
 	}
-	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException {
+	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
-		/*java.util.Date date = new java.util.Date() ;
+		java.util.Date currentDate = new java.util.Date() ; 
+		java.util.Date intakeDate = DateFormat.parseDate(aDate+aTime, "dd.MM.yyyyHH:mm");
+		if (intakeDate.getTime()>currentDate.getTime()) {
+			return "Дата забора не может быть больше текущей даты!";
+		} 
+		/*
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("hh:mm") ;*/
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -794,7 +801,9 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		if (!specL.isEmpty()) {
 			spec = ConvertSql.parseLong(specL.iterator().next().get1()) ;
 		}
-		if (spec==null) new IllegalDataException("У пользователя "+username+" нет соответствия с рабочей функцией") ;
+		if (spec==null) {
+			return "У пользователя "+username+" нет соответствия с рабочей функцией" ;
+		}
 		sql.append("update Prescription set intakeDate=to_date('").append(aDate).append("','dd.mm.yyyy'),intakeTime=cast('").append(aTime).append("' as time)")
 			.append(",intakeUsername='").append(username).append("' ")
 			.append(",intakeSpecial_id='").append(spec).append("' ")
