@@ -8,6 +8,9 @@
 
     <allow>
 
+        <create creator="new" javascript="EquipmentService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.lpu.EquipmentServiceJs"/>
+        </create>
         <create creator="new" javascript="KeyWordService" scope="application">
             <param name="class" value="ru.ecom.template.web.dwr.KeyWordServiceJs"/>
         </create>

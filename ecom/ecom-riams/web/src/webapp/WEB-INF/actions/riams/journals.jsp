@@ -42,6 +42,10 @@
 					<div class='menu'>
 					<h2>Общие</h2>
 					<ul style='list-style: none outside none; '>
+						<li><msh:sideLink name="Список оборудования за отделением" action="/js-mis_medicalEquipment-listByDep"
+									roles="/Policy/Mis/Prescription/Prescript/View"
+	 										/></li>
+	 
 						<li><msh:link action="journal_vaccination.do" roles="/Policy/Mis/Journal/Vaccination">
 	                            Журнал прививок
 	                        </msh:link></li>

@@ -26,6 +26,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink name="Назначения на операцию" action="/direct_operation_list"
 	roles="/Policy/Mis/Prescription/Prescript/View"
 	 />
+	<msh:sideLink name="Оборудование за отделением" action="/js-mis_medicalEquipment-listByDep"
+	
+	 />
 
 	    <msh:sideMenu title="СЛС">
 	    	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 

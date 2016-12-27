@@ -14,6 +14,9 @@
              <msh:row>
                     <msh:textField property="groupName" label='Группа бухгалтерии' horizontalFill="true" fieldColSpan="4"/>
                 </msh:row>
+             <msh:row>
+                    <msh:textField property="parusCode" label='Код синхронизации с Парусом' horizontalFill="true" />
+                </msh:row>
                 <msh:row>
                     <msh:autoComplete property="lpu" label='Подразделение' vocName="vocLpuHospOtdAll" horizontalFill="true" fieldColSpan="4"/>
                 </msh:row>
@@ -29,6 +32,9 @@
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="marka" label='Марка' vocName="vocMarka" horizontalFill="true" fieldColSpan="4"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="amount" label='Количество' vocName="vocMarka" horizontalFill="true" fieldColSpan="4"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="createYear" label="Год выпуска" size="50"/>
