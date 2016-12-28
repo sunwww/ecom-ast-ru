@@ -74,6 +74,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			if (type.equals("1")||type.equals("4")) {
 				if (!StringUtil.isNullOrEmpty(value)) {
 					fip.setValueBD(new BigDecimal(value)) ;
+					fip.setValueText(value) ;
 					if (sb.length()>0) sb.append("\n") ;
 					sb.append(param.get("name")).append(": ") ;
 					sb.append(value).append(" ") ;
@@ -90,11 +91,35 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					sb.append(param.get("valueVoc")).append(" ") ;
 					sb.append(param.get("unitname")).append(" ") ;
 				}
+				//пользовательский справочник (множественный выбор)
+			} else if (type.equals("6")) {
+				String id = String.valueOf(param.get("value")) ;
+				if (id!=null && !id.trim().equals(",") && !id.trim().equals(",,") && !id.trim().equals("")) {
+					fip.setValueText(String.valueOf(param.get("valueVoc"))) ;
+					fip.setListValues(id) ;
+					if (sb.length()>0) sb.append("\n") ;
+					sb.append(param.get("name")).append(": ") ;
+					sb.append(param.get("unitname")).append(" ") ;
+					sb.append(fip.getValueText()) ;
+				}
+				//пользовательский справочник (текст)
+			} else if (type.equals("7")) {
+				Long id = ConvertSql.parseLong(value) ;
+				if (id!=null && !id.equals(Long.valueOf(0))) {
+					UserValue uv = aManager.find(UserValue.class, id) ;
+					fip.setValueVoc(uv) ;
+					fip.setValueText(String.valueOf(param.get("addValue"))) ;
+					if (sb.length()>0) sb.append("\n") ;
+					sb.append(param.get("name")).append(": ") ;
+					sb.append(param.get("valueVoc")).append(" ") ;
+					sb.append(param.get("unitname")).append(" ") ;
+					sb.append(param.get("addValue")).append(" ") ;
+				}
 				//3-текстовый
 				//5-текстовый с ограничением
 			} else if (type.equals("3")||type.equals("5")) {
 				if (!StringUtil.isNullOrEmpty(value)) {
-					fip.setValueText(String.valueOf(value)) ;
+					fip.setValueText(value) ;
 					if (sb.length()>0) sb.append("\n") ;
 					sb.append(param.get("name")).append(": ") ;
 					sb.append(value).append(" ") ;
