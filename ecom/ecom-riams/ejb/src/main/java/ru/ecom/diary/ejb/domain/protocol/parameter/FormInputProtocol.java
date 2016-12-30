@@ -87,4 +87,17 @@ public class FormInputProtocol extends BaseEntity{
 
 	/** l */
 	private BigDecimal theValueBD;
+	
+	/** Список значений для множественного выбора */
+	@Comment("Список значений для множественного выбора")
+	public String getListValues() {
+		return theListValues;
+	}
+
+	public void setListValues(String aListValues) {
+		theListValues = aListValues;
+	}
+
+	/** Список значений для множественного выбора */
+	private String theListValues;
 }
