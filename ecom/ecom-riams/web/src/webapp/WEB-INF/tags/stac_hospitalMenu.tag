@@ -109,6 +109,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink styleId="stac_protocol" params="id" roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View"
     action="/printProtocolsBySLS.do?stNoPrint=selected" name="Список нераспечатанных протоколов"
     />
+              <msh:sideLink roles="/Policy/Mis/Document/Flow/View" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&medcase=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
+
     
 </msh:sideMenu>
 
