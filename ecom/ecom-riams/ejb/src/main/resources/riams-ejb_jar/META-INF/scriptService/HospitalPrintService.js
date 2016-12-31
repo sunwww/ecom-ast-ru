@@ -2008,7 +2008,7 @@ function printProtocol (aCtx,aParams){
 	map.put("prot.date",protocol.dateRegistration);
 	map.put("prot.time",protocol.timeRegistration);
 	//Возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
-	if (medCase.patient!=null) {
+	if (medCase.patient!=null&&protocol.dateRegistration!=null) {
 		getAge("prot.age",medCase.patient.birthday,protocol.dateRegistration,aCtx.manager) ;
 	} else {
 		map.put("prot.age","") ;
