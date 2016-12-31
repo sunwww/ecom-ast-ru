@@ -473,7 +473,7 @@ var fldJson = null ;
     				txt += "<span id=\"param"+idEnterParam+"Span\" name=\"param"+idEnterParam+"Span\" onclick=\"$('param"+idEnterParam+"').click()\">"+v.name+" </span>";
 	        	}
 	        } else {
-		        txt += "<input id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
+		        txt += "<input size=\"80\" id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
 		        
 	        }
 	        txt += "</td>" ;
