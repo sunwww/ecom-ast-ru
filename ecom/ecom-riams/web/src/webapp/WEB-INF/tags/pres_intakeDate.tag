@@ -4,6 +4,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="service" required="true" description="Название" %>
+<%@ attribute name="method" required="true" description="Название" %>
 
 <msh:ifInRole roles="${roles}">
 
@@ -67,7 +69,7 @@
      		alert("Поле время является обязательным") ;
      		$("${name}Time").focus() ;
      	}  else {
-     		PrescriptionService.intakeService($('${name}List').value,$('${name}Date').value, $('${name}Time').value, { 
+     		${service}.${method}($('${name}List').value,$('${name}Date').value, $('${name}Time').value, { 
 	            callback: function(aResult) {
 	            	if (aResult=="1") {
 	            		window.document.location.reload();
@@ -90,7 +92,7 @@
  		var textYear =currentDate.getFullYear();
  		var textMinute = currentDate.getMinutes() ;
  		var textHour = currentDate.getHours() ;
- 		PrescriptionService.intakeService($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
+ 		${service}.${method}($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
       			,(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute)
   				, { 
 	            callback: function(aResult) {
