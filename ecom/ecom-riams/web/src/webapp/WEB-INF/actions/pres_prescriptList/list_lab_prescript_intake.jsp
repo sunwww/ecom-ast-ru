@@ -39,7 +39,7 @@
   		request.setAttribute("beginDate", beginDate) ;
   		request.setAttribute("endDate", endDate) ;
   	%>
-  	<tags:pres_intakeDate name="Biomat"/>
+  	<tags:pres_intakeDate name="Biomat" service="PrescriptionService" method="intakeService"/>
   	  <msh:form action="/pres_journal_intake.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
