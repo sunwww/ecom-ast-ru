@@ -9,6 +9,16 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
+<style>
+h2 {display:none;}
+@media print {
+h2 {display:inline;}
+img,div#copyright,h1,ul#ideModeMainMenu, div#ideModeMainMenuClose {display:none;}
+input#beginDate{display:inline;}
+div.x-box-mc{display:none;}
+div#header{display:none;}
+}
+</style>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
     <tiles:put name='title' type='string'>
