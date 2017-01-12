@@ -149,7 +149,7 @@ order by d.dateRegistration,d.timeRegistration
                     <msh:tableColumn columnName="Специалист" property="6"/>
                     <msh:tableColumn columnName="Протокол" property="4" cssClass="preCell"/>
                     <msh:tableColumn columnName="Дата печати" property="5"/>
-                </msh:table>${protocols_sql}
+                </msh:table>
             </msh:sectionContent>
         </msh:section>
 
