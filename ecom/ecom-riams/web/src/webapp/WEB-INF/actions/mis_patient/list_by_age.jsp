@@ -26,6 +26,7 @@
     String typeDisp=ActionUtil.updateParameter("mis_patient_by_age","typeDisp","1", request) ;
     String typeRange=ActionUtil.updateParameter("mis_patient_by_age","typeRange","1", request) ;
     String typeGroup=ActionUtil.updateParameter("mis_patient_by_age","typeGroup","1", request) ;
+    String typeSex=ActionUtil.updateParameter("mis_patient_by_age","typeSex","1", request) ;
     
     if (typeReestr==null) {
 	  	String noViewForm = request.getParameter("noViewForm") ;
@@ -55,6 +56,18 @@
         </td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDisp" value="3"> прошедшее диспансеризацию
+        </td>
+      </msh:row>
+      <msh:row>
+       <td class="label" title="Пол" colspan="1"><label for="typeSexName" id="typeSexLabel">Пол: </label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeSex" value="1"> все	
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeSex" value="2"> М
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeSex" value="3"> Ж
         </td>
       </msh:row>
       <msh:row><td><br></td></msh:row>
@@ -103,7 +116,7 @@
     checkFieldUpdate('typeDisp','${typeDisp}',1) ;
     checkFieldUpdate('typeRange','${typeRange}',2) ;
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
-  
+    checkFieldUpdate('typeSex','${typeSex}',1) ;
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
    	var aMax=chk.length ;
@@ -115,7 +128,7 @@
    	}
    }
 
-    if ($('dateBegin').value=="") {
+    if ($('dateBegin')&&$('dateBegin').value=="") {
     	var dt = new Date() ;
     	dt.setDate(dt.getDate()-1);
     	$('dateBegin').value=format2day(dt.getDate())+"."+format2day(dt.getMonth()+1)+"."+dt.getFullYear() ;
@@ -142,6 +155,7 @@
     	String serviceStream=request.getParameter("serviceStream");
     	paramHref.append("&serviceStream=").append(serviceStream!=null?serviceStream:"");
     	paramHref.append("&dateBegin=").append(date);
+    	paramHref.append("&typeSex=").append(typeSex);
     	request.setAttribute("paramHref", paramHref.toString()) ;
     	
     	request.setAttribute("dispSql", "");
@@ -174,6 +188,11 @@
     	} else {
     		request.setAttribute("groupBySql", "");
     		request.setAttribute("selectSql", "cast('&dateBeginYear="+date+"' as varchar) as id,cast('Все возраста' as varchar) as year");
+    	}
+    	if (typeSex!=null&&typeSex.equals("2")) {
+    		sbDisp.append(" and vs.omccode='1'");
+    	} else if (typeSex!=null&&typeSex.equals("3")){
+    		sbDisp.append(" and vs.omccode='2'");
     	}
     	//request.setAttribute("rangeSQL", range);
 //</AOI 14.06.2016
@@ -212,6 +231,7 @@
      left join extdispcard edc on edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}' 
      left join lpuattachedbydepartment lad on lad.patient_id=pat.id
      left join lpuarea la on la.id=lad.area_id
+     left join vocSex vs on vs.id=pat.sex_id
 	where pat.deathDate is null ${whereSql} ${dispSql} 
 	order by pat.lastname,pat.firstname,pat.middlename
     "/>
@@ -268,11 +288,12 @@ from patient pat
 left join extdispcard edc on edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}'
 left join lpuattachedbydepartment lad on lad.patient_id=pat.id
 left join lpuarea la on la.id=lad.area_id
+left join vocsex vs on vs.id=pat.sex_id
 where pat.deathdate is null ${dispSql} 
 ${groupBySql}
 
 "/> 
-<msh:table name="swod" action="mis_patient_by_age.do?typeReestr=1" idField="1" cellFunction="true">
+<msh:table name="swod" action="mis_patient_by_age.do?typeReestr=1&lpu=${param.lpu}&area=${param.area}" idField="1" cellFunction="true">
 	<msh:tableColumn property="2" columnName="Возраст" addParam=""/>
 	<msh:tableColumn property="3" columnName="Январь" addParam="&month=01"/>
 	<msh:tableColumn property="4" columnName="Февраль" addParam="&month=02"/>
