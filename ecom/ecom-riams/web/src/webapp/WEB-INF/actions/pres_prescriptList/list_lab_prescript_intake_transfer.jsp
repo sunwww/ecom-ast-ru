@@ -417,7 +417,6 @@
   	        	
   	        	PrescriptionService.checkTransferService( list, { 
   		            callback: function(aResult) {
-  		           	alert ("list"+list);
   		           	var tmpList = list.split(":");
   		           	var presList = "";
   		           	var serviceList = "";
@@ -426,11 +425,8 @@
   		           		if (serviceList!="") {serviceList+=",";}
   		           		presList+=tmpList[i].split("#")[2];
   		           		serviceList +=tmpList[i].split("#")[3];
-  		           	}
-  		           //	alert ("sd: "+presList+"<>"+serviceList);
   		            	PrescriptionService.setDefaultDiary(presList,serviceList, {
   		            		callback: function (a) {
-  		            			alert ("asd"+a);
   		            			window.document.location.reload();
   		            		}
   		            	});
@@ -462,20 +458,15 @@
   	    function cancelInLab(aId,aReasonId,aReason) {
   	    	var reason = getReason(aReason) ;
   	    	if (reason!=null) {
-  	    		//alert(123) ;
   	        	PrescriptionService.cancelService( aId,aReasonId,aReason, { 
   		            callback: function(aResult) {
   		            	window.document.location.reload();
   		            }
   				});
   	    	} else {
-  	    		//alert(321) ;
   	    		cancelBioIntakeInfo();
   	    	}	
   		}
-  	    function testt() {
-  	    	//PrescriptionService.setDefaultDiary()
-  	    }
   	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  prescriptTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
