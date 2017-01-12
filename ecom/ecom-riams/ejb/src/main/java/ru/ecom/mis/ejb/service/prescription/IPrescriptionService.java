@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.service.prescription;
 
+import java.text.ParseException;
+
 import org.json.JSONException;
 
 
@@ -8,6 +10,8 @@ import org.json.JSONException;
  * @author STkacheva
  */
 public interface IPrescriptionService {
+	public void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpec ) throws ParseException ;
+	public Long clonePrescription(Long aPrescriptionId, Long aMedServiceId, Long aWorkFunctionId, String aCreateUsername) ;
 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction) ;
 	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) throws JSONException  ;
 	public Long createTempPrescriptList(String aName,String aComment,String aCategories,String aSecGroups) ;
