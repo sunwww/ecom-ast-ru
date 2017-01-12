@@ -21,14 +21,13 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setPrescriptSpecial(wf) ;
 	
 	var modes = aCtx.manager.createNativeQuery("select p.id from prescription p where p.prescriptionList_id="+aForm.prescriptionList+" and p.dtype='ModePrescription' and p.planEndDate is null").getResultList();
-	if (modes.size()>0) { // Отмечаем остальные диеты как оконченные
+	if (modes.size()>0) { // Отмечаем остальные режимы как оконченные
 		for (var i=0;i<modes.size();i++) {
 			var id = new java.lang.Long(""+modes.get(i));
-		//	throw "id="+id;
 			var mode = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.ModePrescription,id) ;
 			mode.setPlanEndDate(aEntity.getPlanStartDate());
 			mode.setPlanEndTime(aEntity.getPlanStartTime());
 			aCtx.manager.persist(mode);
 		}
-
+	}
 }
