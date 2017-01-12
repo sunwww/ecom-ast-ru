@@ -18,6 +18,11 @@ function checkChildDoubles(aForm,aEntity, aCtx) {
 }
 
 function checkBirthDate(aForm, aCtx) {
+	var currentDate = new java.util.Date();
+	var birthDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.birthDate,aForm.birthTime);
+	if (birthDateTime.getTime()>currentDate.getTime()) {
+		throw "Дата рождения не может быть позднее текущей даты!";
+	}
 	var sql = "select case when slo.datestart<to_date('"+aForm.getBirthDate()+"','dd.MM.yyyy') then '1'"+
 		" when slo.datestart=to_date('"+aForm.getBirthDate()+"','dd.MM.yyyy') and slo.entrancetime<=cast('"+aForm.getBirthTime()+":00' as time) then '1' else '0' end" +
 		" from medcase slo where slo.id="+aForm.getMedCase();
