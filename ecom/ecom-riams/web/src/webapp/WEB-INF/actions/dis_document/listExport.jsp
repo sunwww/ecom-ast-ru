@@ -1,9 +1,15 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-
+<%
+	String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1", request);
+	request.setAttribute("fssProxyService", fssProxyService);
+	
+	
+	%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
@@ -15,6 +21,7 @@
   <tiles:put name="body" type="string">
     <msh:form action="/dis_documentExport.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
+    <input type='hidden' name='fssServerAddress' id='fssServerAddress' value = '${fssProxyService}'>
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
@@ -107,7 +114,8 @@
         <td colspan="3"><label>Экспорт данных в ФСС:</label>
             <input type="button" onclick="exportLNByDate()" value="Экспорт" />
           </td>
-         
+         <td><input type='button' onclick ="exportDocumentsByDate()" value="Экспорт всех ЭЛН за текущий день(новый вариант, тест)" />
+         </td>
        	 </tr><tr>
           <td id='aViewTD' style="display: none">
        		Файл <span id='aView'></span>
@@ -194,6 +202,9 @@
     var noActuality = document.forms[0].noActuality ;
     
     checkFieldUpdate('typeDate','${typeDate}',2) ;
+    function exportDocumentsByDate() {
+			document.location.href=""+$('fssServerAddress').value+"/SetLnDataPack?datefrom=";
+		}
     
 	function getCheckBoxValue (aField) {
 		var chk = document.getElementsByName(aField);

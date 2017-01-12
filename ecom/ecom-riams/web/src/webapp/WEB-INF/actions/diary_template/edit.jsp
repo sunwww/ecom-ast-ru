@@ -22,6 +22,9 @@
         <msh:row guid="d40cb3bf-d3e7-4544-a6ca-9db18a786f47">
           <msh:textField property="title" label="Заголовок шаблона" horizontalFill="true" guid="83e6d295-6ea7-4010-8845-c1f694f8fc2d" fieldColSpan="3" />
         </msh:row>
+        <msh:row guid="d40cb3bf-d3e7-4544-a6ca-9db18a786f47">
+          <msh:checkBox property="createDiaryByDefault" label="Создавать заключения автоматически при приеме в лабораторию"/>
+        </msh:row>
         <msh:row guid="fdcf0100-ab1c-4900-b7d6-cb08c77924b0">
           <msh:textField property="username" label="Пользователь" viewOnlyField="true" guid="b3fd6145-7072-4065-accc-73fc37fb20ac" />
           <msh:textField property="date" label="Дата создания" viewOnlyField="true" guid="7162d626-b2a7-4928-ab70-adb244c07d5d" />
@@ -46,11 +49,12 @@ when par.type ='6' then 'Пользовательский справочник (
 when par.type ='7' then 'Пользовательский справочник (с текстовым полем): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') 
 when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением'
  else 'неизвестный' end||') - '||coalesce(vmu.name,'')
-,par.valueTextDefault 
+,case when par.type='2' then coalesce(uv.name, '') else par.valueTextDefault end as f4_defaultValue 
 from ParameterByForm p 
 left join Parameter par on par.id=p.parameter_id 
 left join ParameterGroup gr on gr.id=par.group_id
 left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id
+left join userValue uv on uv.domain_id=vd.id and uv.useByDefault='1'
 where p.template_id=${param.id} order by p.position
                 "/>
                     <msh:section title="Порядок">

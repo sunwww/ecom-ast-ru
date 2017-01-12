@@ -41,6 +41,9 @@
         <msh:row>
           <msh:textField property="comment" label="Сообщение при выборе значения из справочника" size="50"  />
         </msh:row>
+        <msh:row>
+          <msh:checkBox property="useByDefault" label="Использовать по умолчанию"/>
+        </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" guid="6bece8ec-9b93-4faf-b729-851f1447d54f" />
       </msh:panel>
     </msh:form>

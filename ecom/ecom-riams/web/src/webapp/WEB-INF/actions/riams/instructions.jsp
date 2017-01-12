@@ -64,6 +64,9 @@
 				<ul style="font-size: large; list-style: none;" >
 
 					
+					<li><msh:link  action="js-riams-instruction.do?id=medtechnic">
+						Указание типа мед. оборудования
+                    </msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=lpu_setting">
 						Настройка ЛПУ (участки, коечный фонд)
                     </msh:link></li>

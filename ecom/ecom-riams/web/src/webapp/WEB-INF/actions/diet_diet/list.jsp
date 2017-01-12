@@ -17,6 +17,7 @@
       <msh:sideLink roles="/Policy/Mis/Dish/View" action="/entityList-diet_dish" name="Справочник блюд" guid="c2b93e08-54ba-45b3-ad9c-59ee145c7922" />
       <msh:sideLink roles="/Policy/Mis/InvalidFood/VocFoodStuff/View" action="/diet_foodStuffs" name="Справочник продуктов питания" title="Показать справочник продуктов питания" guid="3597-f85c-4e87-b447-4124027e2e4e" />
       <msh:sideLink action="/entityList-diet_mealMenuTemplate" name="Шаблоны-меню" title="Просмотр списка шаблонов меню" guid="87e557d5-a9c3-427e-9afc-b42214cb77e5" />
+      <msh:sideLink action="/diet_dietJournal.do" name="Журнал назначенных диет" title="Просмотр журнала назначенных диет" guid="87e557d5-a9c3-427e-9afc-b42214cb77e0" />
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">

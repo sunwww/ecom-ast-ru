@@ -414,12 +414,30 @@
   	    		list += val ;
   	    	}
   	        if (list!=null) {
-  	        	//alert(list) ;
+  	        	
   	        	PrescriptionService.checkTransferService( list, { 
   		            callback: function(aResult) {
-  		            	window.document.location.reload();
+  		           	alert ("list"+list);
+  		           	var tmpList = list.split(":");
+  		           	var presList = "";
+  		           	var serviceList = "";
+  		           	for (var i=0;i<tmpList.length;i++) {
+  		           		if (presList!="") {presList+=",";}
+  		           		if (serviceList!="") {serviceList+=",";}
+  		           		presList+=tmpList[i].split("#")[2];
+  		           		serviceList +=tmpList[i].split("#")[3];
+  		           	}
+  		           //	alert ("sd: "+presList+"<>"+serviceList);
+  		            	PrescriptionService.setDefaultDiary(presList,serviceList, {
+  		            		callback: function (a) {
+  		            			alert ("asd"+a);
+  		            			window.document.location.reload();
+  		            		}
+  		            	});
+  		            	
   		            }
   				});
+  	        	
   	        } else {
   	            alert("Нет выделенных пациентов");
   	        }
@@ -455,6 +473,9 @@
   	    		cancelBioIntakeInfo();
   	    	}	
   		}
+  	    function testt() {
+  	    	//PrescriptionService.setDefaultDiary()
+  	    }
   	  serviceSubTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  departmentAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;
   	  prescriptTypeAutocomplete.addOnChangeCallback(function() {checkfrm()}) ;

@@ -104,8 +104,8 @@
         	label="ЛПУ" horizontalFill="true" vocName="lpu"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="spec" fieldColSpan="5"
-        	label="Специалист" horizontalFill="true" vocName="workFunctionByDirect"/>
+<%--         	<msh:autoComplete property="spec" fieldColSpan="5" label="Специалист" horizontalFill="true" vocName="workFunctionByDirect"/> --%>
+        	<msh:autoComplete property="spec" fieldColSpan="5" label="Специалист" horizontalFill="true" vocName="workFunction"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="workFunction" fieldColSpan="1"

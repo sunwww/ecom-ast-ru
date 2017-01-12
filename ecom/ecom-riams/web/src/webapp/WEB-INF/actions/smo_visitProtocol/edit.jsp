@@ -207,7 +207,8 @@
     		{
         callback: function(prefix) {
         	if (prefix==null) prefix="" ;
-        	window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
+        	initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1)
+        	//window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
             
          }
      }

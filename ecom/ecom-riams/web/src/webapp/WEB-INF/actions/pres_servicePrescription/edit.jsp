@@ -17,25 +17,28 @@
 	var textMonth = textMonth<10?'0'+textMonth:textMonth;
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
+	var canChangeDate = false;
 	
 	function changeDate(days) {
-		var l = $('labDate')?$('labDate').value:$('planStartDate').value;
-		l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
-		currentDate.setTime (Date.parse(l));
-		currentDate.setDate(currentDate.getDate()+days);
-		var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
-		var newTextMonth = currentDate.getMonth()+1;
-		var newTextMonth = newTextMonth<10?'0'+newTextMonth:newTextMonth;
-		var newTextYear =currentDate.getFullYear();
-		var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
-		if ($('labDate')) $('labDate').value=newTextDate;
-		if ($('planStartDate')) $('planStartDate').value=newTextDate;
-		textDate = newTextDate;
-		for (var i=1;i<=labNum;i++) {
-				if ($('labDate'+i)) { 
-					$('labDate'+i).value=newTextDate;
+		if (canChangeDate){
+			var l = $('labDate')?$('labDate').value:$('planStartDate').value;
+			l=l.substr(6,4)+'-'+l.substr(3,2)+'-'+l.substr(0,2);
+			currentDate.setTime (Date.parse(l));
+			currentDate.setDate(currentDate.getDate()+days);
+			var newTextDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
+			var newTextMonth = currentDate.getMonth()+1;
+			var newTextMonth = newTextMonth<10?'0'+newTextMonth:newTextMonth;
+			var newTextYear =currentDate.getFullYear();
+			var newTextDate = newTextDay+'.'+newTextMonth+'.'+newTextYear;
+			if ($('labDate')) $('labDate').value=newTextDate;
+			if ($('planStartDate')) $('planStartDate').value=newTextDate;
+			textDate = newTextDate;
+			for (var i=1;i<=labNum;i++) {
+					if ($('labDate'+i)) { 
+						$('labDate'+i).value=newTextDate;
+					}
 				}
-			}
+		}
 	}
 	//Заполняем ЛН данными из шаблона (не удаляя существующие назначения). 
 	function fillFormFromTemplate(aData) {
@@ -58,7 +61,11 @@
   		
   		$('labServicies').value=aId ;
   		$('labServiciesName').value=aName ;
-  		show2EnterDate() 		
+  		if (canChangeDate){
+  			show2EnterDate();
+  		} else {
+  			prepare1RowByDate($('labDate').value);
+  		} 		
   	}
 	function prepare1RowByDate(aDate) {
 		$('labDate').value=aDate ;
@@ -367,7 +374,7 @@
 		return "<input id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='hidden' />"
 	}
 	function textInput(aLabel,aType,aFld,aNum,aValue,aDefaultValue,aSize) {
-		return "<span>"+aLabel+"</span><input "+(+aSize>0?"size="+aSize:"")+" id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='text' />"
+		return "<span>"+aLabel+"</span><input "+(+aSize>0?"size="+aSize:"")+" id='"+aType+aFld+aNum+"' name='"+aType+aFld+aNum+"' value='"+(aValue==null||aValue==""?aDefaultValue:aValue)+"' type='text'"+(aFld=="Date"&&!canChangeDate?"disabled":"")+" />"
 	}
 	function spanTag(aText,aValue,aDefaultValue) {
 		return "<span>"+aText+": <b>"+(aValue!=null&&aValue!=""?aValue.trim():aDefaultValue.trim())+"</b></span>. " ;
@@ -428,7 +435,7 @@
 	    var dt2="<input id='"+type+"Cabinet"+num+"' value='"+$(type+'Cabinet').value+"' type='hidden' name='"+type+"Cabinet"+num+"' horizontalFill='true' size='1' readonly='true' />";
 	    var dt4 = "<input id='"+type+"Department"+num+"' value='"+$(type+'Department').value+"' type='hidden' name='"+type+"Department"+num+"' horizontalFill='true' size='1' readonly='true' />";
 	    td2.innerHTML = dt+"<span>"+$(type+'ServiciesName').value+"</span>" ;
-	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10' />";
+	  	td1.innerHTML = "<span>Дата: </span><input id='"+type+"Date"+num+"' name='"+type+"Date"+num+"' label='Дата' value='"+$(type+'Date').value+"' size = '10'"+(!canChangeDate?"disabled":"")+" />";
 	   	//td2.innerHTML += dt2+"<span>. Кабинет: "+$(type+'CabinetName').value+"</span>" ;
 	   	td3.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);' value='-' />";
 	   	new dateutil.DateField($(type+'Date'+num));

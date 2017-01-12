@@ -2,6 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
@@ -139,6 +140,7 @@
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>
+    <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Disability" beginForm="expert_kerForm" />
@@ -158,9 +160,10 @@
     
     </msh:sideMenu>
     <msh:sideMenu title="Печать" >
-        <msh:sideLink params="id" action="/print-directVK.do?s=HospitalPrintService&amp;m=printDirectVK"  
+        <msh:sideLink action='/javascript:initSelectPrinter("print-directVK.do?s=HospitalPrintService&amp;m=printDirectVK&id=${param.id}",1)'
         	name="Направления" title="Печать направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
-        <msh:sideLink params="id" action="/print-directVKresult.do?s=HospitalPrintService&amp;m=printDirectVK"  
+        <msh:sideLink
+        action='/javascript:initSelectPrinter("print-directVKresult.do?s=HospitalPrintService&amp;m=printDirectVK&id=${param.id}",1)'  
         	name="Протокола" title="Печать протокола направления на ВК" roles="/Policy/Mis/MedCase/ClinicExpertCard/Direct/PrintDirect" />
     </msh:sideMenu>    
 	<msh:sideMenu title="Журналы по КЭР">

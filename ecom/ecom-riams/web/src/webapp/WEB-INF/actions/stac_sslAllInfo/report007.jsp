@@ -312,8 +312,8 @@ if (date!=null && !date.equals("")) {
 	      " />
 	    <msh:table name="journal_priem" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="#" property="sn" />
-	      <msh:tableColumn property="2" columnName="ФИО пациента"/>
-	      <msh:tableColumn property="3" columnName="№СК"/>
+	      <msh:tableColumn property="2" columnName="№ ИБ"/>
+	      <msh:tableColumn property="3" columnName="ФИО пациента"/>
 	      <msh:tableColumn columnName="профиль коек" property="4" />
 	      <msh:tableColumn columnName="поток обслуживания" property="5" />
 	      <msh:tableColumn isCalcAmount="true" columnName="Состоит на начало истекших суток" property="6" />

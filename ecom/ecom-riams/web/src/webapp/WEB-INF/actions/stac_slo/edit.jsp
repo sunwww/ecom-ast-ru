@@ -825,6 +825,9 @@
       	
       	if (bedFundAutocomplete) bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.addOnChangeCallback(function() {
+      			$('bedFund').value="";
+      			$('bedFundName').value="";
+      			
       			$('kindHighCare').value = "" ;
       	 		$('kindHighCareName').value = "" ;
       	 		kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;

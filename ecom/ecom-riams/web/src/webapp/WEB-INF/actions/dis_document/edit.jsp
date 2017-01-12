@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
 	<%
-	String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1/", request);
+	String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1", request);
 	request.setAttribute("fssProxyService", fssProxyService);
 	
 	

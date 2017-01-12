@@ -12,7 +12,7 @@
         <ecom:titleTrail mainMenu="Patient"  beginForm="mis_medCaseForm" title="Список протоколов"/>
     </tiles:put>
 
-    <tiles:put name='side' type='string'>
+    <tiles:put name='side' type='string' >
         <msh:sideMenu>
             <msh:sideLink key='ALT+1' action="/entitySubclassView-mis_medCase.do?"
                           name="Текущий случай медицинского обслуживания" params="id,medcase"/>
@@ -112,7 +112,7 @@ order by d.dateRegistration,d.timeRegistration
         <msh:section>
             <msh:sectionTitle>Протоколы по случаю медицинского обслуживания${title}</msh:sectionTitle>
             <msh:sectionContent>
-            	<ecom:webQuery name="protocols" nativeSql="
+            	<ecom:webQuery name="protocols" nameFldSql="protocols_sql" nativeSql="
             	select to_char(d.dateRegistration,'yyyymmdd')||'!'||cast(d.timeRegistration as varchar(5))||'!'||d.id as id
             	, d.dateRegistration, d.timeRegistration, case when count (mc.id)>0 then list(mc.code||' '||mc.name)||'<br>' else '' end ||' '|| d.record, d.printDate 
             	, vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
@@ -149,7 +149,7 @@ order by d.dateRegistration,d.timeRegistration
                     <msh:tableColumn columnName="Специалист" property="6"/>
                     <msh:tableColumn columnName="Протокол" property="4" cssClass="preCell"/>
                     <msh:tableColumn columnName="Дата печати" property="5"/>
-                </msh:table>
+                </msh:table>${protocols_sql}
             </msh:sectionContent>
         </msh:section>
 

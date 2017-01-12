@@ -273,7 +273,7 @@
       //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
       document.forms[0].action = 'javascript:isExistTicket()';
-      if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
+     // if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
       function isExistTicket() {
  		 if (!$('emergency').checked) {
  			 WorkCalendarService.checkPolicyByPatient($('patient').value,

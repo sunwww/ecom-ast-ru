@@ -32,7 +32,7 @@
             </msh:ifFormTypeIsView>
             <hr/>
             <msh:ifFormTypeAreViewOrEdit formName="mis_medicalEquipmentPositionForm">
-                <msh:sideLink key='ALT+DEL' params="id" action="/entityDelete-mis_medicalEquipmentPosition" name="Удалить" confirm="Удалить?"/>
+                <msh:sideLink key='ALT+DEL' params="id" action="/entityParentDeleteGoParentView-mis_medicalEquipmentPosition" name="Удалить" confirm="Удалить?"/>
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>
     </tiles:put>

@@ -102,6 +102,7 @@
     </msh:panel>
     </msh:form>
       	<tags:pres_intake_biomaterial name="Bio" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
+      	<tags:pres_labDoctorPrescription name="LabDoctor" />
     
     <script type='text/javascript'>
     //checkFieldUpdate('typeIntake','${typeIntake}',1) ;
@@ -109,6 +110,7 @@
     checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('typeCabinet','${typeCabinet}',1) ;
     checkFieldUpdate('typeResult','${typeResult}',1) ;
+    
     function checkfrm() {
     	document.forms[0].submit() ;
     }
@@ -219,6 +221,7 @@
     when mc.workFunctionExecute_id is null then 'background:#7AE673;color:black'
     else ''
     end as f19_colorcomment
+    ,case when p.canceldate is null and (p.medcase_id is null or mc.datestart is null) then p.id else null end as f20_prescriptionLabDoctorButton
     from prescription p
     left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelreason_id
     left join VocPrescriptType vpt on vpt.id=p.prescriptType_id
@@ -279,6 +282,8 @@
 	      <msh:tableColumn columnName="Прием в лабораторию" property="9"/>
 	      <msh:tableColumn columnName="Исследование" property="6"/>
 	      <msh:tableColumn columnName ="Назначил" property="7"/>
+	      <msh:tableButton property="20" hideIfEmpty="true" role="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory" buttonFunction="showLabDoctorDirMedService" buttonName="Добавить анализ" buttonShortName="Доб.А"/>
+	      
 	    </msh:table>
 	    <script type="text/javascript">
 	    
