@@ -22,5 +22,12 @@ public class VocPrescriptType extends VocBaseEntity {
 	public void setShortName(String aShortName) {theShortName = aShortName;}
 	/** Сокращенное название */
 	private String theShortName;
+	
+	/** Назначения с указанным типом можно назначать только на текущий день */
+	@Comment("Назначения с указанным типом можно назначать только на текущий день")
+	public Boolean getIsOnlyCurrentDate() {return theIsOnlyCurrentDate;}
+	public void setIsOnlyCurrentDate(Boolean aIsOnlyCurrentDate) {theIsOnlyCurrentDate = aIsOnlyCurrentDate;}
+	/** Назначения с указанным типом можно назначать только на текущий день */
+	private Boolean theIsOnlyCurrentDate;
 
 }
