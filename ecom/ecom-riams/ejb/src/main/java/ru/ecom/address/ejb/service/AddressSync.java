@@ -53,17 +53,15 @@ public class AddressSync implements ISync {
         	System.out.println("===Импорт кладров завершен");
         	break;
         }
-        System.out.println("=== Импорт в процессе, размер = "+kladrs.size());
+      //  System.out.println("=== Импорт в процессе, размер = "+kladrs.size());
         for (Object kl: kladrs) {
-        	System.out.println("=== All is OK"+kl);
+      //  	System.out.println("=== All is OK"+kl);
         	Long klId = Long.valueOf(""+kl);
         	id = klId;
             Kladr kladr = theEntityManager.find(Kladr.class, klId);
             String kladrCode = kladr.getKladrCode();
             String kladrStatus = kladrCode.substring(kladrCode.length()-2);
-        	if (kladrStatus.equals("00")){
-        		System.out.println("Кладр: "+kladrCode+", Статус: действующий ("+kladrStatus+")");
-        	} else {
+        	if (!kladrStatus.equals("00")){
         		System.out.println("Кладр: "+kladrCode+", Статус: недействующий ("+kladrStatus+")");
         		continue;
         	}
