@@ -545,8 +545,8 @@ public class DisabilityServiceBean implements IDisabilityService  {
 					Date bithday1 = new Date(format.parse(serv1_birthday).getTime());
 					Date dateFrom1 = new Date(format.parse(startDate).getTime());
 					String age1 = ru.nuzmsh.util.date.AgeUtil.calculateAge(bithday1,dateFrom1);
-					System.out.println("----------------------------------------------------");
-					System.out.println("birthday1="+bithday1+", dateFrom="+dateFrom1+", age1="+age1);
+					//System.out.println("----------------------------------------------------");
+					//System.out.println("birthday1="+bithday1+", dateFrom="+dateFrom1+", age1="+age1);
 					int age_ind1 = age1.indexOf(".") ;
 					int age_ind2 = age1.indexOf(".",age_ind1+1) ; 
 					String age1_ye=age1.substring(0,age_ind1) ;
@@ -659,10 +659,15 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				List<Object[]> mseList = theManager.createNativeQuery(mseSql).getResultList();
 				if (!mseList.isEmpty()) {
 					for (Object[] o: mseList) {
-						rowLpuLn.addContent(new Element("MSE_DT1").addContent(o[0].toString()));
-						rowLpuLn.addContent(new Element("MSE_DT2").addContent(o[1].toString()));
-						rowLpuLn.addContent(new Element("MSE_DT3").addContent(o[2].toString()));
-						rowLpuLn.addContent(new Element("MSE_INVALID_GROUP").addContent(o[3].toString()));						
+						if (o[3]==null||o[3].equals("")||o[3].equals("null")) {
+							defect.append(ln).append(":").append(ln_id).append(":ELN-999 - При указании инвалидости должна быть заполнена группа инвалидности!!!").append(":")
+							.append(patId).append(":").append(patInfo).append("#");
+							continue;
+						}
+						rowLpuLn.addContent(new Element("MSE_DT1").addContent(toStr(o[0])));
+						rowLpuLn.addContent(new Element("MSE_DT2").addContent(toStr(o[1])));
+						rowLpuLn.addContent(new Element("MSE_DT3").addContent(toStr(o[2])));
+						rowLpuLn.addContent(new Element("MSE_INVALID_GROUP").addContent(toStr(o[3])));						
 					}					
 				} else if (mseResult!=null&&(mseResult.equals("32")||mseResult.equals("33"))) {
 					defect.append(ln).append(":").append(ln_id).append(":ELN-087 - При указании инвалидости должны быть заполнены поля МСЭ!!!").append(":")
@@ -798,6 +803,12 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			}
 		
 		}
+    public String toStr (Object obj) {
+    	if (obj==null) {
+    		return "";
+    	}
+    	return obj.toString();
+    }
     
 	public static String createNewFile(Element rootElement, String aSocCode, String aPacketNumber) {
 		try 
