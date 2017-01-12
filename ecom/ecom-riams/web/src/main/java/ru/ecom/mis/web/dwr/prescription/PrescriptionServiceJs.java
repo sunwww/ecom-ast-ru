@@ -29,6 +29,7 @@ import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+import sun.awt.windows.ThemeReader;
 
 /**
  * Сервис назначений
@@ -36,6 +37,26 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  */
 public class PrescriptionServiceJs {
 
+	public Long duplicatePrescription(Long aPrescriptionId, Long aMedServiceId, HttpServletRequest aRequest) throws NamingException {
+		if (aPrescriptionId!=null&&aPrescriptionId>0) {
+			IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			IPrescriptionService psb = Injection.find(aRequest).getService(IPrescriptionService.class);
+			String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
+			
+			/*			String wf = wqs.executeNativeSql("select vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename " +
+								"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
+								"left join vocworkfunction vwf on vwf.id=wf.workfunction_id left join worker w on w.id=wf.worker_id " +
+								"left join patient wpat on wpat.id=w.person_id where su.login='"+login+"'").iterator().next().get1().toString();
+			*/			String workFunction = wqs.executeNativeSql("select wf.id " +
+								"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
+								"where su.login='"+login+"'").iterator().next().get1().toString();
+			Long newId = psb.clonePrescription(aPrescriptionId, aMedServiceId, Long.parseLong(workFunction), login) ;
+			System.out.println("===== RET="+newId);
+			return newId;
+		}
+		
+		return null;
+	}
 	// 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, 
 //Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, 
 //String aUsername, Long aOrderWorkFunction) {
@@ -803,8 +824,131 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		return "1" ;
 	}
+	public String setDefaultDiary(String aPrescriptions, String aServices, HttpServletRequest aRequest) throws JSONException, NamingException, JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder();
+		StringBuilder sb = new StringBuilder() ;
+		StringBuilder err = new StringBuilder() ;
+		sql.append("select pres.id as pid, ms.id as msid, tp.id as templateId" +
+			" from prescription pres" +
+			" left join medservice ms on ms.id=pres.medservice_id" +
+			" left join templateprotocol tp on tp.medservice_id=ms.id" +
+			" where pres.id in ("+aPrescriptions+") and ms.id in ("+aServices+") and tp.createDiaryByDefault='1'");
+	//	System.out.println("=== SQL 1= "+sql);
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		if (!list.isEmpty()) {
+			String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+			Long workFunctionId = null;
+			Collection<WebQueryResult> wf = service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'") ;
+			if ( wf.isEmpty()) {
+				return null ;
+			}
+			workFunctionId = ConvertSql.parseLong(wf.iterator().next().get1()) ;
+			for (WebQueryResult res: list) {
+				Long pid = Long.parseLong(res.get1().toString());
+				String msid = res.get2().toString();
+				Long templateId = Long.parseLong(res.get3().toString());
+						
+				sql = new StringBuilder() ;
+				sql.append("select p.id as p1id,p.name as p2name") ;
+				sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
+				sql.append(" , p.minimum as p5minimum, p.normminimum as p6normminimum") ;
+				sql.append(" , p.maximum as p7maximum, p.normmaximum as p8normmaximum") ;
+				sql.append(" , p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd") ;
+				sql.append(" , p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd") ;
+				sql.append(" , vmu.id as v13muid,vmu.name as v14muname") ;
+				sql.append(" , vd.id as v15did,vd.name as v16dname") ;
+				sql.append(" ,p.cntdecimal as p17cntdecimal") ;
+				sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
+				sql.append(" , case when p.type in ('3','5')  then p.valueTextDefault when p.type='2' and uv.useByDefault='1' then ''||uv.id else '' end as p19valuetextdefault") ;
+				sql.append(" ,case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc");
+				//sql.append(", null as d18val1v,null as d19val2v,null as d20val3v,null as d21val4v") ;
+				sql.append(" from prescription pres"); //parameterbyform pf
+				sql.append(" left join templateprotocol tp on tp.medservice_id=pres.medservice_id") ;
+				sql.append(" left join parameterbyform pf on pf.template_id = tp.id") ;
+				sql.append(" left join parameter p on p.id=pf.parameter_id") ;
+				sql.append(" left join userDomain vd on vd.id=p.valueDomain_id") ;
+				sql.append(" left join userValue uv on uv.domain_id=vd.id and uv.useByDefault='1'");
+				sql.append(" left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id") ;
+				sql.append(" where pres.id='"+pid+"' and tp.medservice_id='").append(msid).append("' and tp.id='"+templateId+"' ") ;
+				sql.append(" order by pf.position") ;
+			//	System.out.println("=== SQL 2= "+sql);
+				Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
+				
+				sb.setLength(0);
+				sb.append("{");
+				sb.append("\"workFunction\":\""+workFunctionId+"\",") ;
+				sb.append("\"workFunctionName\":\""+"\",") ;
+				if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
+					sb.append("\"isdoctoredit\":\"1\",") ;
+				} else {
+					sb.append("\"isdoctoredit\":\"0\",") ;
+				}
+				sb.append("\"params\":[") ;
+				boolean firstPassed = false ;
+				boolean firstError = false ;
+				String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
+				,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
+				,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}
+				,{"13","unitid"},{"14","unitname"}
+				,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
+				,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
+				} ;
+				for(WebQueryResult wqr : lwqr) {
+					
+					StringBuilder par = new StringBuilder() ;
+					par.append("{") ;
+					boolean isFirtMethod = false ;
+					boolean isError = false ;
+					//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
+					if (String.valueOf(wqr.get4()).equals("2")) {
+						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+						if (wqr.get15()==null) {
+							isError = true ;
+							//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+						}
+					}
+					try {
+						
+						for(String[] prop : props) {
+							Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
+							String strValue = value!=null?value.toString():"";
+							
+							if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
+							par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
+							
+						}
+						
+					} catch (Exception e) {
+						throw new IllegalStateException(e);
+					}
+					par.append("}") ;
+					if (isError) {
+						if(firstError) err.append(", ") ;else firstError=true;
+						err.append(par) ;
+					}else{
+						if(firstPassed) sb.append(", ") ;else firstPassed=true;
+						sb.append(par) ;
+					}
+				}
+				sb.append("]") ;
+				sb.append(",\"errors\":[").append(err).append("]") ;
+				sb.append(",\"template\":\"").append(templateId).append("\"") ;
+				sb.append(",\"protocol\":\"").append("\"") ;
+				sb.append("}") ;
+			//	System.out.println("==== JSSON= "+sb);
+				 saveParameterByProtocol(Long.valueOf(0), pid, Long.valueOf(0), sb.toString(), templateId, aRequest);
+				// System.out.println("==== SS="+ss);
+				}
+			}
+			
+				
+		return sb.toString();		
+	}
+	
 	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		IPrescriptionService service2 = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		java.util.Date currentDate = new java.util.Date() ; 
 		java.util.Date intakeDate = DateFormat.parseDate(aDate+aTime, "dd.MM.yyyyHH:mm");
@@ -823,11 +967,20 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		if (spec==null) {
 			return "У пользователя "+username+" нет соответствия с рабочей функцией" ;
 		}
+		
+		
+		
+		
 		sql.append("update Prescription set intakeDate=to_date('").append(aDate).append("','dd.mm.yyyy'),intakeTime=cast('").append(aTime).append("' as time)")
 			.append(",intakeUsername='").append(username).append("' ")
 			.append(",intakeSpecial_id='").append(spec).append("' ")
 			.append(" where id in (").append(aListPrescript).append(")");
-		service.executeUpdateNativeSql(sql.toString()) ;
+		//service.executeUpdateNativeSql(sql.toString()) ;
+		System.out.println("==> "+aListPrescript+"<>"+aDate+"<>"+aTime+"<>"+username+"<>"+spec);
+		service2.setPatientDateNumber(aListPrescript,aDate,aTime,username,spec);
+
+		System.out.println("+++4");
+		
 		return "1" ;
 	}
 	public String receptionIntakeService(String aListPrescript,HttpServletRequest aRequest) throws NamingException {
@@ -982,10 +1135,11 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		
 		return ret.toString() ;
 	}
+	//public String 
 	public String saveParameterByProtocol(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JSONException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		
+		System.out.println("=== DEBUG 1");
 		return service.saveLabAnalyzed(aSmoId,aPrescriptId,aProtocolId,aParams,username, aTemplateId) ;
 	}
 	public String checkLabControl(Long aSmoId,Long aProtocol, HttpServletRequest aRequest) throws NamingException {

@@ -36,6 +36,7 @@
      function show${name}PrescTypes() {
     	 // устанавливается инициализация для диалогового окна 
          if (!theIs${name}PrescTypesDialogInitialized) {
+        	 if ($('labDate')) {$('labDate').disabled=false;}
          	init${name}PrescTypesDialog() ;
          	 the${name}PrescTypesDialog.show() ;
           } else {
@@ -53,8 +54,19 @@
     	
         the${name}PrescTypesDialog.hide() ;
      }
+    
+     function disableEnableDate(i) {
+    	 if (i==1) {
+    		 canChangeDate = false;
+    		 if ($('labDate')) {$('labDate').disabled=true;}
+    	 } else {
+    		 canChangeDate = true;
+    		 if ($('labDate')) {$('labDate').disabled=false;}
+    	 }
+    	 
+     }
      
-	function setType(typeID, typeName) {
+	function setType(typeID, typeName, isOnlyCurrentDate) {
 		if ($('prescriptType').value==typeID) {
 			
 		} else {
@@ -62,6 +74,12 @@
 			$('prescriptTypeName').value = typeName;
 			$('prescriptTypeName').disabled='true';
 			changePrescriptionType();
+			disableEnableDate(isOnlyCurrentDate);
+			if (isOnlyCurrentDate==1) {
+				
+			} else {
+				canChangeDate = true;
+			}
 		}
 		the${name}PrescTypesDialog.hide() ;
 	}
@@ -80,7 +98,8 @@
 								var param = presTypes[i].split(":");
 								var tID = param[0];
 								var tName = param[1];
-								var radio = "<td id='tdPresType"+i+"'  onclick='this.childNodes[0].checked=\"checked\";setType("+tID+",\""+tName+"\");'>";
+								var onlyCurrentDate = param[2];
+								var radio = "<td id='tdPresType"+i+"'  onclick='this.childNodes[0].checked=\"checked\";setType("+tID+",\""+tName+"\","+onlyCurrentDate+");'>";
 								radio +="<input type='radio' id = 'presType"+i+"' name='presType' value='"+tID+"' onclick=''>"+tName+"</td>";
 								tbody.appendChild(row);
 								row.innerHTML=radio;

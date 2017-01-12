@@ -398,7 +398,7 @@ public class ContractServiceJs {
 		
 		boolean isNext = false;
 		if (aCode!=null && !aCode.equals("")) {
-			sql.append(" p.code like '%").append(aCode.toUpperCase()).append("%' or replace(p.code,'.','') like '%").append(aCode.toUpperCase()).append("%'") ;
+			sql.append(" (p.code like '%").append(aCode.toUpperCase()).append("%' or replace(p.code,'.','') like '%").append(aCode.toUpperCase()).append("%')") ;
 			isNext=true ;
 		}
 		if (aName!=null && !aName.equals("")) {

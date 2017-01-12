@@ -9,6 +9,7 @@
 
 <msh:sideLink roles="${roles}" name="${title}" action=" javascript:show${name}Documents('.do') " 
 	 />
+	 <tags:stac_selectPrinter  name="Select" roles="/Policy/Config/SelectPrinter" />
 <style type="text/css">
     #${name}DocumentsPrint {
         visibility: hidden ;
@@ -103,7 +104,9 @@
 
      // Сохранение данных
      function save${name}Documents() {
-		window.location = 'print-stac_documents.do?s=HospitalPrintService&m=printConsentBySlo&id=${medCase}&consent1='
+  
+//		window.location = 'print-stac_documents.do?s=HospitalPrintService&m=printConsentBySlo&id=${medCase}&consent1='
+		  	 initSelectPrinter('print-stac_documents.do?s=HospitalPrintService&m=printConsentBySlo&id=${medCase}&consent1='
 				+($('${name}Consent1').checked?1:0)
 				+"&consent2="+($('${name}Consent2').checked?1:0)
 				+"&consent3="+($('${name}Consent3').checked?1:0)
@@ -115,7 +118,7 @@
 				+"&rejection1="+($('${name}Rejection1').checked?1:0)
 				+"&rejection2="+($('${name}Rejection2').checked?1:0)
 				+"&rejection3="+($('${name}Rejection3').checked?1:0)
-				+"&hystology1="+($('${name}Hystology1').checked?1:0);
+				+"&hystology1="+($('${name}Hystology1').checked?1:0),1);
 		cancel${name}Documents() ;
      }
      
