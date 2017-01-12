@@ -46,6 +46,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 	@AEntityFormInterceptor(MedServiceSaveInterceptor.class)
 })
 public class MedServiceForm extends IdEntityForm  {
+	
+	/** Может назначаться врачом лаборатории */
+	@Comment("Может назначаться врачом лаборатории")
+	@Persist
+	public Boolean getIsForLabDoctor() {return theIsForLabDoctor;}
+	public void setIsForLabDoctor(Boolean aIsForLabDoctor) {theIsForLabDoctor = aIsForLabDoctor;}
+	/** Может назначаться врачом лаборатории */
+	private Boolean theIsForLabDoctor;
 	/** Справочная услуга */
 	@Comment("Справочная услуга")
 	@Persist

@@ -41,6 +41,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 @Table(schema="SQLUser")
 public class MedService extends BaseEntity{
 	
+	/** Может назначаться врачом лаборатории */
+	@Comment("Может назначаться врачом лаборатории")
+	public Boolean getIsForLabDoctor() {return theIsForLabDoctor;}
+	public void setIsForLabDoctor(Boolean aIsForLabDoctor) {theIsForLabDoctor = aIsForLabDoctor;}
+	/** Может назначаться врачом лаборатории */
+	private Boolean theIsForLabDoctor;
+	
+	
 	/** Справочная услуга */
 	@Comment("Справочная услуга")
 	@OneToOne
