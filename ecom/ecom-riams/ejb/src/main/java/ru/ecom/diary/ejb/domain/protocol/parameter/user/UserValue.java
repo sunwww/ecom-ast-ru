@@ -20,6 +20,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "domain","name" }) })
 public class UserValue extends BaseEntity{
+	
+	/** Использовать значение по умолчанию */
+	@Comment("Использовать значение по умолчанию")
+	public Boolean getUseByDefault() {return theUseByDefault;}
+	public void setUseByDefault(Boolean aUseByDefault) {theUseByDefault = aUseByDefault;}
+	/** Использовать значение по умолчанию */
+	private Boolean theUseByDefault;
+
 	/** Значение */
 	@Comment("Значение")
 	public String getName() {return theName;}

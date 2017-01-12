@@ -25,6 +25,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @EntityListeners(DeleteListener.class)
 public class ParameterByForm extends BaseEntity{
+	
+	/** Использовать значение параметра по умолчанию */
+	@Comment("Использовать значение параметра по умолчанию")
+	public Boolean getUseDefaultValue() {return theUseDefaultValue;}
+	public void setUseDefaultValue(Boolean aUseDefaultValue) {theUseDefaultValue = aUseDefaultValue;}
+	/** Использовать значение параметра по умолчанию */
+	private Boolean theUseDefaultValue;
+	
 	/** Параметр */
 	@Comment("Параметр")
 	@OneToOne

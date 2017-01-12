@@ -79,12 +79,13 @@ function onCreate(aForm, aEntity, aCtx) {
 					} else {
 						adMedService=new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription() ;
 					}
-					if (medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
+					//Перенесли время создания кода биоматериала на момент забора крови
+					/* *if (medService.serviceType.code.equals("LABSURVEY")&&par2!=null) {
 						var key =""+pat.id+"#"+par2;
 						matId = Packages.ru.ecom.mis.ejb.service.prescription.PrescriptionServiceBean.getPatientDateNumber(labMap, key, pat.id, par2, aCtx.manager); 
 						labMap.put(key, matId);
 						
-					}
+					}*/
 					adMedService.setPrescriptionList(aEntity.getPrescriptionList()) ; // ?
 					adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial()) ;
 					adMedService.setMedService(medService) ;

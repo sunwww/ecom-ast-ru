@@ -20,6 +20,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Diary/User/Domain/Value")
 @Parent(property="domain", parentForm=UserDomainForm.class)
 public class UserValueForm extends IdEntityForm {
+	
+	/** Использовать значение по умолчанию */
+	@Comment("Использовать значение по умолчанию")
+	@Persist
+	public Boolean getUseByDefault() {return theUseByDefault;}
+	public void setUseByDefault(Boolean aUseByDefault) {theUseByDefault = aUseByDefault;}
+	/** Использовать значение по умолчанию */
+	private Boolean theUseByDefault;
+	
 	/** Значение */
 	@Comment("Значение")
 	@Persist @Required

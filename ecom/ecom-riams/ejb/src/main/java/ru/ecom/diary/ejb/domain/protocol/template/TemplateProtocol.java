@@ -39,6 +39,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(DeleteListener.class)
 public class TemplateProtocol extends BaseEntity {
 	
+	/** Создавать дневник по умолчанию при приеме в лабораторию */
+	@Comment("Создавать дневник по умолчанию при приеме в лабораторию")
+	public Boolean getCreateDiaryByDefault() {return theCreateDiaryByDefault;}
+	public void setCreateDiaryByDefault(Boolean aCreateDiaryByDefault) {theCreateDiaryByDefault = aCreateDiaryByDefault;}
+	/** Создавать дневник по умолчанию при приеме в лабораторию */
+	private Boolean theCreateDiaryByDefault;
+	
 	/** Запрет на ручное редактирование */
 	@Comment("Запрет на ручное редактирование")
 	public Boolean getDisableEdit() {return theDisableEdit;}

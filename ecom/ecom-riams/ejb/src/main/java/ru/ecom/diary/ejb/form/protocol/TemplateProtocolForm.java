@@ -21,6 +21,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Diary/Template")
 @Parent(property="medService", parentForm=MedServiceForm.class)
 public class TemplateProtocolForm extends IdEntityForm{
+	
+	/** Создавать дневник по умолчанию при приеме в лабораторию */
+	@Comment("Создавать дневник по умолчанию при приеме в лабораторию")
+	@Persist
+	public Boolean getCreateDiaryByDefault() {return theCreateDiaryByDefault;}
+	public void setCreateDiaryByDefault(Boolean aCreateDiaryByDefault) {theCreateDiaryByDefault = aCreateDiaryByDefault;}
+	/** Создавать дневник по умолчанию при приеме в лабораторию */
+	private Boolean theCreateDiaryByDefault;
+	
 	/** Заголовок */
 	@Comment("Заголовок")
 	@Persist @Required
