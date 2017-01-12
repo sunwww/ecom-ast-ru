@@ -67,6 +67,7 @@ function onCreate(aForm, aEntity, aCtx) {
 		var wf = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction") ;
 		var username = aCtx.getSessionContext().getCallerPrincipal().toString();
 		var startDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.pangsStartDate,aForm.pangsStartTime);
+		var finishDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.birthFinishDate,aForm.birthFinishTime);
 		
 		for (var ind = 0 ; ind<childs.length; ind++) {
 			
@@ -82,8 +83,14 @@ function onCreate(aForm, aEntity, aCtx) {
 			if (childBD!=null&&childBT!=null) {
 				var birthDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(childBD,childBT);
 				if (startDateTime>birthDateTime) {
-					throw "Дата рождения ребенка "+(childs.length>1?""+(ind+1):"")+"не может быть раньше даты начала родов";
-				} 
+					throw "Дата рождения ребенка "+(childs.length>1?""+(ind+1):"")+"не может быть раньше даты начала родов!";
+				} else if (startDateTime.getTime()>currentDate.getTime()) {
+					throw "Дата начала родов не может быть позднее текущей даты!";
+				} else if (birthDateTime.getTime()>currentDate.getTime()) {
+					throw "Дата рождения ребенка "+(childs.length>1?""+(ind+1):"")+"не может быть позднее текущей даты!";
+				} else if (finishDateTime.getTime()>currentDate.getTime()) {
+					throw "Дата окончания родов не может быть позднее текущей даты!";
+				}
 			} 
 			for (var j=0;j<theFld.length;j++) {
 			//	throw theFld.length+"   "+child[3]+"<<"+theFld[3][1];
