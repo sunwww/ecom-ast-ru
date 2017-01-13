@@ -358,6 +358,7 @@
          			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=1&short=Page',1,'divprotocolslo${param.id}')">Дневники</button>
          			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=2&short=Page',1,'divprotocolslo${param.id}')">Лаб.исслед.</button>
          			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=3&short=Page',1,'divprotocolslo${param.id}')">Диаг.исслед.</button>
+         			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=4&short=Page',1,'divprotocolslo${param.id}')">Заголовки</button>
          			<button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&short=Page',1,'divprotocolslo${param.id}')">Все</button>
          			</td>
          		</tr>
