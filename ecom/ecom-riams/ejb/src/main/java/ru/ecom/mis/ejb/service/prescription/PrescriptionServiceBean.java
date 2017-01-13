@@ -337,23 +337,27 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 	
 	public void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpecId ) throws ParseException {
-		String[] prescriptionIds = aPrescriptions.split(":");
+		SimpleDateFormat sdfIn =new SimpleDateFormat("dd.MM.yyyy") ;
+		SimpleDateFormat sdfOut =new SimpleDateFormat("yyyy-MM-dd") ;
+		aDate = sdfOut.format(sdfIn.parse(aDate));
+		String[] prescriptionIds = aPrescriptions.split(",");
 		String aKey = "";
 		String matId = null;
 		HashMap<java.lang.String, java.lang.String> aLabMap =  new HashMap<String, String>() ;
 		for (int i=0;i<prescriptionIds.length;i++) {
-			Long presId = Long.parseLong(prescriptionIds[i]);
+			Long presId = Long.parseLong(prescriptionIds[i].trim());
 			ServicePrescription p = theManager.find(ServicePrescription.class, presId);
-			if (p!=null &&p.getMedService().getServiceType().getCode().equals("LABSURVEY")&&aDate!=null&&!aDate.equals("")) {
+//			if (p!=null &&p.getMedService().getServiceType().getCode().equals("LABSURVEY")&&aDate!=null&&!aDate.equals("")) {
+			if (p!=null &&aDate!=null&&!aDate.equals("")) {
 				Long aPatientId =p.getPrescriptionList().getMedCase().getPatient().getId(); 
 				aKey = ""+aPatientId+"#"+aDate;
 				matId = getPatientDateNumber(aLabMap, aKey, aPatientId, aDate, theManager);
 				aLabMap.put(aKey, matId);
-				p.setIntakeDate(DateFormat.parseSqlDate(aDate));
-				p.setIntakeTime(DateFormat.parseSqlTime(aTime));
+			//	p.setIntakeDate(DateFormat.parseSqlDate(aDate));
+			//	p.setIntakeTime(DateFormat.parseSqlTime(aTime));
 				p.setMaterialId(matId);
-				p.setIntakeUsername(aUsername);
-				p.setIntakeSpecial(theManager.find(WorkFunction.class, aSpecId));
+			//	p.setIntakeUsername(aUsername);
+			//	p.setIntakeSpecial(theManager.find(WorkFunction.class, aSpecId));
 				theManager.persist(p);
 			} 		
 		}
