@@ -945,8 +945,12 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				
 		return sb.toString();		
 	}
-	
 	public String intakeService(String aListPrescript,String aDate,String aTime,HttpServletRequest aRequest) throws NamingException, ParseException {
+		return intakeServiceWithBarcode(aListPrescript, aDate, aTime, null, aRequest);
+				
+	}
+	
+	public String intakeServiceWithBarcode(String aListPrescript,String aDate,String aTime, String aBarcode, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		IPrescriptionService service2 = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		StringBuilder sql = new StringBuilder() ;
@@ -973,13 +977,15 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		
 		sql.append("update Prescription set intakeDate=to_date('").append(aDate).append("','dd.mm.yyyy'),intakeTime=cast('").append(aTime).append("' as time)")
 			.append(",intakeUsername='").append(username).append("' ")
-			.append(",intakeSpecial_id='").append(spec).append("' ")
-			.append(" where id in (").append(aListPrescript).append(")");
-		//service.executeUpdateNativeSql(sql.toString()) ;
-		System.out.println("==> "+aListPrescript+"<>"+aDate+"<>"+aTime+"<>"+username+"<>"+spec);
+			.append(",intakeSpecial_id='").append(spec).append("' ");
+		if (aBarcode!=null&&!aBarcode.equals("")) {
+			sql.append(",barcodeNumber='").append(aBarcode).append("' ");
+		}
+			sql.append(" where id in (").append(aListPrescript).append(")");
+		service.executeUpdateNativeSql(sql.toString()) ;
 		service2.setPatientDateNumber(aListPrescript,aDate,aTime,username,spec);
 
-		System.out.println("+++4");
+		
 		
 		return "1" ;
 	}

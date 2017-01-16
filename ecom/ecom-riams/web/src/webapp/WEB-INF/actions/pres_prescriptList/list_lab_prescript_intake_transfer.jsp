@@ -297,7 +297,7 @@
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
        ,coalesce(wfCab.groupName)||' '||to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f14dttransfer
        ,to_char(p.cancelDate,'dd.mm.yyyy')||' '||cast(p.cancelTime as varchar(5)) as f15dtcancel
-  
+  , case when p.barcodeNumber is not null then 'ШК №'||p.barcodeNumber end as f16_barcode
     from prescription p
     
     left join PrescriptionList pl on pl.id=p.prescriptionList_id
@@ -352,7 +352,7 @@
           </msh:tableNotEmpty>
           <msh:tableButton hideIfEmpty="true" property="2" buttonFunction="showBioIntakeCancel" buttonName="Осуществлен брак" buttonShortName="Брак" role="/Policy/Mis/Journal/Prescription/LabSurvey/IsCheckTransfer"/>
           
-	      <msh:tableColumn columnName="#" property="sn"  />
+	      <msh:tableColumn columnName="#" property="sn" />
 	      <msh:tableColumn columnName="Код назн." property="4"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="Метка биоматериала" property="5"/>
@@ -364,8 +364,6 @@
 	      <msh:tableColumn columnName="Дата и время приема в лабораторию" property="14"/>
 	      <msh:tableColumn columnName="Дата и время отбраковки" property="15"/>
 	      <msh:tableColumn columnName="Список услуг" property="10"/>
-	      
-
 	    </msh:table>
 	    <script type="text/javascript">
 	    
@@ -415,7 +413,7 @@
   	    	}
   	        if (list!=null) {
   	        	
-  	        	PrescriptionService.checkTransferService( list, { 
+  	        	PrescriptionService.checkTransferService( list, {
   		            callback: function(aResult) {
   		           	var tmpList = list.split(":");
   		           	var presList = "";
@@ -425,11 +423,12 @@
   		           		if (serviceList!="") {serviceList+=",";}
   		           		presList+=tmpList[i].split("#")[2];
   		           		serviceList +=tmpList[i].split("#")[3];
-  		            	PrescriptionService.setDefaultDiary(presList,serviceList, {
-  		            		callback: function (a) {
-  		            			window.document.location.reload();
-  		            		}
-  		            	});
+  		           	}
+  		            PrescriptionService.setDefaultDiary(presList,serviceList, {
+  		            	callback: function (a) {
+  		            		window.document.location.reload();
+  		            	}
+  		            });
   		            	
   		            }
   				});
