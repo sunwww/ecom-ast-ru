@@ -336,7 +336,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		return temp.getId() ;
 	}
 	
-	public void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpecId ) throws ParseException {
+	public void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpecId) throws ParseException {
 		SimpleDateFormat sdfIn =new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat sdfOut =new SimpleDateFormat("yyyy-MM-dd") ;
 		aDate = sdfOut.format(sdfIn.parse(aDate));
@@ -356,6 +356,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			//	p.setIntakeDate(DateFormat.parseSqlDate(aDate));
 			//	p.setIntakeTime(DateFormat.parseSqlTime(aTime));
 				p.setMaterialId(matId);
+			//	if (aBarcode!=null&&!aBarcode.equals("")){
+			//		p.setBarcodeNumber(aBarcode);
+			//	}
 			//	p.setIntakeUsername(aUsername);
 			//	p.setIntakeSpecial(theManager.find(WorkFunction.class, aSpecId));
 				theManager.persist(p);

@@ -28,6 +28,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/ServicePrescription")
 public class ServicePrescriptionForm extends PrescriptionForm{
 	
+	/** Номер штрих-кода */
+	@Comment("Номер штрих-кода")
+	@Persist
+	public String getBarcodeNumber() {return theBarcodeNumber;}
+	public void setBarcodeNumber(String aBarcodeNumber) {theBarcodeNumber = aBarcodeNumber;}
+	/** Номер штрих-кода */
+	private String theBarcodeNumber;
+	
 	/** количество дней */
 	@Comment("количество дней")
 	public Long getCountDays() {return theCountDays;}

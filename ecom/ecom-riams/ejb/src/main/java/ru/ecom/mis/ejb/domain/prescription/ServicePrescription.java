@@ -20,6 +20,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class ServicePrescription extends Prescription{
 	
+	/** Номер штрих-кода */
+	@Comment("Номер штрих-кода")
+	public String getBarcodeNumber() {return theBarcodeNumber;}
+	public void setBarcodeNumber(String aBarcodeNumber) {theBarcodeNumber = aBarcodeNumber;}
+	/** Номер штрих-кода */
+	private String theBarcodeNumber;
+	
 	/** Медицинская услуга */
 	@Comment("Медицинская услуга")
 	@OneToOne
