@@ -1462,8 +1462,31 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		if (obj[0]!=null) {
 	    			// Отд next1=current (объединять 2 отделения)
 	    			theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
-	    			theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
-	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    			
+	    			//Копирование листа назначениея в объединяемое
+	    			//theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    			//Закрытие диет и Режимов из объединяемого.Копирование назначений из листа назначения объединяемого СЛО и затем его удаление.
+	    			
+	    			theManager.createNativeQuery("update prescription " +
+	    					"set planEndDate=planStartDate, planEndTime=planStartTime " +
+	    					"where (dtype='DietPrescription' or dtype='ModePrescription') " +
+	    					"and prescriptionlist_id = (select id from prescriptionlist where medcase_id = '"+obj[1]+"')").executeUpdate();
+	    			theManager.createNativeQuery("update prescription " +
+	    	    			"set prescriptionlist_id = (select id from prescriptionlist where medcase_id = '"+obj[1]+"') " +
+	    	    			"where prescriptionlist_id in (select id from prescriptionlist where medcase_id = '"+obj[2]+"')").executeUpdate();
+	    			theManager.createNativeQuery("delete from prescriptionlist where medcase_id ='"+obj[2]+"'").executeUpdate();
+	    			
+	    			
+	    			theManager.createNativeQuery("update prescription " +
+	    					"set planEndDate=planStartDate, planEndTime=planStartTime " +
+	    					"where (dtype='DietPrescription' or dtype='ModePrescription') " +
+	    					"and prescriptionlist_id = (select id from prescriptionlist where medcase_id = '"+aSlo+"')").executeUpdate();
+	    			theManager.createNativeQuery("update prescription " +
+	    	    			"set prescriptionlist_id = (select id from prescriptionlist where medcase_id = '"+aSlo+"') " +
+	    	    			"where prescriptionlist_id in (select id from prescriptionlist where medcase_id = '"+obj[1]+"')").executeUpdate();
+	    			theManager.createNativeQuery("delete from prescriptionlist where medcase_id ='"+obj[1]+"'").executeUpdate();
+	    			
+	    			theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
@@ -1487,7 +1510,19 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		} else {
 	    			//
 	    			theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
-	    			theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    		
+	    			//theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    			
+	    			theManager.createNativeQuery("update prescription " +
+	    					"set planEndDate=planStartDate, planEndTime=planStartTime " +
+	    					"where (dtype='DietPrescription' or dtype='ModePrescription') " +
+	    					"and prescriptionlist_id = (select id from prescriptionlist where medcase_id = '"+aSlo+"')").executeUpdate();
+	    			theManager.createNativeQuery("update prescription " +
+	    	    			"set prescriptionlist_id = (select id from prescriptionlist where medcase_id = '"+aSlo+"') " +
+	    	    			"where prescriptionlist_id in (select id from prescriptionlist where medcase_id = '"+obj[1]+"')").executeUpdate();
+	    			theManager.createNativeQuery("delete from prescriptionlist where medcase_id ='"+obj[1]+"'").executeUpdate();
+	    			
+	    	    	
 	    	    	theManager.createNativeQuery("update diary d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update diagnosis d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    	    	theManager.createNativeQuery("update SurgicalOperation d set medcase_id='"+aSlo+"' where d.medCase_id='"+obj[1]+"'").executeUpdate() ;
