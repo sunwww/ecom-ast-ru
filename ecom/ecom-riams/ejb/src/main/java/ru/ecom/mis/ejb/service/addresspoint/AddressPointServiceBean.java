@@ -157,7 +157,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         		o[1] = dispType;
         		listPat.set(i, o);
         	}
-        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props, "NPR");
+        	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props, "PERSON");
     	
     	
     	res.set1(filenames.length()>0?filenames.substring(1):"");
