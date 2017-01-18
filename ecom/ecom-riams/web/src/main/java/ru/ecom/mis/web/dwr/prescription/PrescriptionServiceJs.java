@@ -36,6 +36,42 @@ import sun.awt.windows.ThemeReader;
  * @author STkacheva
  */
 public class PrescriptionServiceJs {
+	
+	public String checkTransferServiceBarcode(String aBarcodeNumber, HttpServletRequest aRequest) throws NamingException, JSONException, JspException {
+		if (aBarcodeNumber!=null&&!aBarcodeNumber.equals("")) {
+			IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
+			StringBuilder sql = new StringBuilder();
+			sql.append("select gwf.id as labCabinet , msGr.id as groupId, replace(list(''||p.id),' ','') as prescIds, replace(list(''||ms.id),' ','')as medServIds" +
+					", p.transferdate as transferDate")
+			.append(" from prescription p")
+			.append(" left join medservice ms on ms.id=p.medservice_id")
+			.append(" left join medservice msGr on msGr.id=ms.parent_id")
+			.append(" left join workfunctionservice wfs on wfs.medservice_id=msGr.id")
+			.append(" left join workfunction gwf on gwf.id=wfs.workfunction_id")
+			.append(" where p.barcodeNumber='"+aBarcodeNumber.trim()+"' and gwf.isDefaultLabCabinet='1'")
+			.append(" group by gwf.id, msGr.id, p.transferDate");
+			Collection<WebQueryResult > list = wqs.executeNativeSql(sql.toString());
+			if (list.isEmpty()) {
+				return "Ошибка! Не удается принять исследования, нет кабинета для приема.";
+			} else if(list.size()>1) {
+				return "Ошибка! Не удается принять исследования, слишком много кабинетов для приема ("+list.size()+")!";
+			} else {
+				WebQueryResult r = list.iterator().next();
+				if (r.get5()!=null&&!r.get5().toString().equals("")) {
+					return "Пробирка с штрих-кодом №"+aBarcodeNumber+" уже передана в лабораторию!";
+				}
+				String pres = r.get3().toString();
+				String services = r.get4().toString();
+				String prescriptionList = r.get2().toString()+"#"+r.get1().toString()+"#"+pres+"#"+services;
+				checkTransferService(prescriptionList, aRequest);
+				setDefaultDiary(pres, services, aRequest);
+				return "1";
+			}
+
+			
+		}
+		return null;
+	}
 
 	public Long duplicatePrescription(Long aPrescriptionId, Long aMedServiceId, HttpServletRequest aRequest) throws NamingException {
 		if (aPrescriptionId!=null&&aPrescriptionId>0) {
@@ -1249,11 +1285,11 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			sb.append("{");
 			sb.append("\"workFunction\":\""+wfId+"\",") ;
 			sb.append("\"workFunctionName\":\""+wfName+"\",") ;
-			if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
+	//		if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
 				sb.append("\"isdoctoredit\":\"1\",") ;
-			} else {
-				sb.append("\"isdoctoredit\":\"0\",") ;
-			}
+	//		} else {
+	//			sb.append("\"isdoctoredit\":\"0\",") ;
+	//		}
 			sb.append("\"params\":[") ;
 			boolean firstPassed = false ;
 			boolean firstError = false ;

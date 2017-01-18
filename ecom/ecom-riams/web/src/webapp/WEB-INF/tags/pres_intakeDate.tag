@@ -27,6 +27,7 @@
     		<input type="hidden" id="${name}List" name="${name}List" />
     		<msh:textField property="${name}Date" label="Дата"/>
     		<msh:textField property="${name}Time" label="Время"/>
+    		<msh:textField property="${name}Barcode" label="Штрих-код"/>
     	</msh:row>
     </msh:panel>
         <msh:row>
@@ -69,17 +70,27 @@
      		alert("Поле время является обязательным") ;
      		$("${name}Time").focus() ;
      	}  else {
-     		${service}.${method}($('${name}List').value,$('${name}Date').value, $('${name}Time').value, { 
-	            callback: function(aResult) {
-	            	if (aResult=="1") {
-	            		window.document.location.reload();
-	            	} else {
-	            		alert ("Ошибка: "+aResult);
-	            	}
-	            }
-			}); 
-	     	
-
+     		if ($('${name}Barcode') && $('${name}Barcode').value!='' ) {
+     			${service}.${method}WithBarcode($('${name}List').value,$('${name}Date').value, $('${name}Time').value, $('${name}Barcode').value, { 
+    	            callback: function(aResult) {
+    	            	if (aResult=="1") {
+    	            		window.document.location.reload();
+    	            	} else {
+    	            		alert ("Ошибка: "+aResult);
+    	            	}
+    	            }
+    			}); 
+     		} else {
+     			${service}.${method}($('${name}List').value,$('${name}Date').value, $('${name}Time').value, { 
+		            callback: function(aResult) {
+		            	if (aResult=="1") {
+		            		window.document.location.reload();
+		            	} else {
+		            		alert ("Ошибка: "+aResult);
+		            	}
+		            }
+				}); 
+     		}
          }
      }
      
@@ -92,13 +103,16 @@
  		var textYear =currentDate.getFullYear();
  		var textMinute = currentDate.getMinutes() ;
  		var textHour = currentDate.getHours() ;
- 		${service}.${method}($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
-      			,(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute)
-  				, { 
-	            callback: function(aResult) {
-	            	window.document.location.reload();
-	            }
-			});
+ 		$('${name}Date').value = textDay+'.'+textMonth+'.'+textYear;
+ 		$('${name}Time').value = (textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute);
+ 		show${name}IntakeInfo(aListPrescript);
+ 	//	${service}.${method}($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
+     // 			,(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute)
+  	//			, { 
+	 //           callback: function(aResult) {
+	  //          	window.document.location.reload();
+	   //         }
+	//		});
     	 
      }
      // инициализация диалогового окна

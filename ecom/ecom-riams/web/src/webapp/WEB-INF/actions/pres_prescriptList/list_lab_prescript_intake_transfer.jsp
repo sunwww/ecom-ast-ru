@@ -343,7 +343,7 @@
             <tr>
               <th colspan="15">
                 <msh:toolbar>
-
+<input type='button' onclick='javascript:transferByBarcode()' value='enterBarcode'>
                   <a href="javascript:transferInLab()">Переданы в лабораторию</a>
                 </msh:toolbar>
               </th>
@@ -384,7 +384,20 @@
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
   	<script type="text/javascript">
-  		
+  		function transferByBarcode() {
+  			aBarcodeNumber = prompt('enter barcode');
+  			if (aBarcodeNumber!=null&&aBarcodeNumber!=''){
+  				PrescriptionService.checkTransferServiceBarcode(aBarcodeNumber, {
+  	  				callback: function(a) {
+  	  					if (+a==1) {
+  	  						
+  	  					} else {
+  	  						alert (a);
+  	  					}
+  	  				}
+  	  			});
+  			}
+  		}
   	    function transferInLab(aPrescript) {
   	    	if (typeof aPrescript=="undefined") {
   	    		var ids = theTableArrow.getInsertedIdsAsParams("","list") ;
