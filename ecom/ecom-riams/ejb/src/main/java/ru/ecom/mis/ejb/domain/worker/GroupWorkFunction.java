@@ -24,6 +24,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 })
 public class GroupWorkFunction extends WorkFunction {
 	
+	/** Направлять анализы по умолчанию в этот кабинет */
+	@Comment("Направлять анализы по умолчанию в этот кабинет")
+	public Boolean getIsDefaultLabCabinet() {return theIsDefaultLabCabinet;}
+	public void setIsDefaultLabCabinet(Boolean aIsDefaultLabCabinet) {theIsDefaultLabCabinet = aIsDefaultLabCabinet;}
+	/** Направлять анализы по умолчанию в этот кабинет */
+	private Boolean theIsDefaultLabCabinet;
+	
 	/** Есть обслуживающий персонал */
 	@Comment("Есть обслуживающий персонал")
 	public Boolean getHasServiceStuff() {return theHasServiceStuff;}

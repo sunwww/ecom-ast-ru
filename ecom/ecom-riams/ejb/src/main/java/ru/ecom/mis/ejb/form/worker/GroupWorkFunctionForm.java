@@ -21,6 +21,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 
 public class GroupWorkFunctionForm extends WorkFunctionForm {
 	
+	/** Направлять анализы по умолчанию в этот кабинет */
+	@Comment("Направлять анализы по умолчанию в этот кабинет")
+	@Persist
+	public Boolean getIsDefaultLabCabinet() {return theIsDefaultLabCabinet;}
+	public void setIsDefaultLabCabinet(Boolean aIsDefaultLabCabinet) {theIsDefaultLabCabinet = aIsDefaultLabCabinet;}
+	/** Направлять анализы по умолчанию в этот кабинет */
+	private Boolean theIsDefaultLabCabinet;
+	
 	/** Есть обслуживающий персонал */
 	@Comment("Есть обслуживающий персонал")
 	@Persist

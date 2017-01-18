@@ -662,10 +662,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				list.setName(template.getName()) ;
 			}
 			
-			System.out.println("================ CLASS PrescriptionList = "+template.getClass().toString());
+			//System.out.println("================ CLASS PrescriptionList = "+template.getClass().toString());
 			if (template.getClass().toString().equals("PrescriptListTemplate")) {
 				 template = (PrescriptListTemplate) template;
-				System.out.println("================ IF HAPPENS CLASS PrescriptionList = "+template.getClass().toString());	
+			//	System.out.println("================ IF HAPPENS CLASS PrescriptionList = "+template.getClass().toString());	
 				List<TemplateCategory> tempCategList = new ArrayList<TemplateCategory>() ;
 				PrescriptListTemplate template2 = (PrescriptListTemplate) template;
 				for (TemplateCategory tempCateg:template2.getCategories()) {
