@@ -283,14 +283,16 @@ function printDocument(aCtx, aParams) {
 	recordDate(doc.hospitalizedFrom,"doc.hospitalizedFrom");
 	recordFullDate(doc.hospitalizedFrom,"doc.hospitalizedFromFull");
 	recordDate(doc.hospitalizedTo,"doc.hospitalizedTo");
-	recordFullDate(doc.hospitalizedTo,"doc.hospitalizedToFull");
+	recordFullDate(doc.hospitalizedTo,"doc.hospitalizedToFull");	
 	
-	
-	if(doc.hospitalizedFrom!=null) //throw "123".length
-		{ 
+	if(doc.hospitalizedFrom!=null) { 
 		//map.put("doc.reason.name",doc.disabilityReason.name);
+		recordChar("стационарных","стационарных".length,"doc.StacOrAmb");
+	}
+	else {
 		recordChar("амбулаторных","амбулаторных".length,"doc.StacOrAmb");
-		}else recordChar("стационарных","стационарных".length,"doc.StacOrAmb");
+		
+	}
 	
 	recordChar(doc.hospitalizedNumber,10,"pat.card.number") ;
 	recordDate(doc.issueDate,"doc.issueDate");
@@ -376,6 +378,7 @@ function printDocument(aCtx, aParams) {
 		}
 	}
 	recordChar(doc.mainWorkDocumentNumber,12,"doc.maindoc.number") ;
+	map.put("doc.documentNumber", doc.number);
 	var closeReason = doc.closeReason ;
 	var closeReasonCode = closeReason!=null? closeReason.code:"0" ;
 	var closeReasonCodeF = +(closeReason!=null? closeReason.codeF:"0") ;
@@ -405,6 +408,7 @@ function printDocument(aCtx, aParams) {
 			}
 		} else {
 			recordDate(dateClose,"doc.endDate") ;
+			recordFullDate(dateClose,"doc.endDateFull") ;
 			recordDate(null,"doc.otherEnd.date") ;
 			recordChar("",2,"doc.otherEnd.code") ;
 		}
