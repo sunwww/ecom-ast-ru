@@ -31,6 +31,10 @@ public class DietJournalAction extends BaseAction {
 		    //	String leftJoinSql = "";
 		    	StringBuilder leftJoinAdd = new StringBuilder();
 		        String department = ""+form.getDepartment();
+		        String typeView = aRequest.getParameter("typeView");
+		        if (typeView!=null&&typeView.equals("2")) {
+		        	sqlAdd.append(" and p.planStartDate = to_date('"+dateFrom+"','dd.MM.yyyy') and p.planStartTime>=cast ('12:00:00' as time) ");
+		        }
 		    	if (department!=null&&!department.equals("")&&!department.equals("0")) {
 		    		sqlAdd.append(" and slo.department_id="+department);
 		    	}
@@ -46,7 +50,7 @@ public class DietJournalAction extends BaseAction {
 			    		" left join diet d on d.id=p.diet_id" +
 			    		" left join prescriptionList pl on pl.id=p.prescriptionList_id" +
 		    			" left join medcase slo  on slo.id=pl.medcase_id" +
-			    		" where to_date('"+dateFrom+"','dd.MM.yyyy') between p.planStartDate and coalesce(p.planEndDate, current_date) and p.dtype='DietPrescription' and p.diet_id is not null"+sqlAdd+ 
+			    		" where to_date('"+dateFrom+"','dd.MM.yyyy') between p.planStartDate and coalesce(p.planEndDate, current_date) and (p.planEndTime is null or p.planEndTime>=current_time) and p.dtype='DietPrescription' and p.diet_id is not null"+sqlAdd+ 
 			    		" group by d.id, d.name order by d.name";
 	    	    System.out.println("=== DietList = "+tmpSql);
 			    List<Object[]> dietList = service.executeNativeSqlGetObj(tmpSql);
@@ -77,7 +81,7 @@ public class DietJournalAction extends BaseAction {
 			    			" left join medcase slo  on slo.id=pl.medcase_id" +
 			    			" left join mislpu dep on dep.id=slo.department_id")
 			    		.append(leftJoinAdd)
-			    		.append(" where p.dtype='DietPrescription' and to_date('"+dateFrom+"','dd.MM.yyyy') between p.planStartDate and coalesce(p.planEndDate, current_date) ").append(sqlAdd)
+			    		.append(" where p.dtype='DietPrescription' and to_date('"+dateFrom+"','dd.MM.yyyy') between p.planStartDate and coalesce(p.planEndDate, current_date) and (p.planEndTime is null or p.planEndTime>=current_time) ").append(sqlAdd)
 			    		.append("group by dep.id, dep.name order by dep.name");
 			    	System.out.println("=== SQL = "+sql);
 			    	List<Object[]> resultList = service.executeNativeSqlGetObj(sql.toString());

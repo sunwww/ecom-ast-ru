@@ -37,6 +37,7 @@ div#header{display:none;}
   <%
   String typeState =ActionUtil.updateParameter("PrescriptJournal","typeState","3", request) ;
   String typeGroup =ActionUtil.updateParameter("PrescriptJournal","typeGroup","1", request) ;
+  String typeView =ActionUtil.updateParameter("PrescriptJournal","typeView","1", request) ;
   String typeReestr =request.getParameter("typeReestr") ;
   if (request.getParameter("short")==null ||request.getParameter("short").equals(""))  {
 	 %>
@@ -46,12 +47,23 @@ div#header{display:none;}
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" />
       </msh:row>
-	
+	 <msh:row>
+	        <td class="label" title="Отображать (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отображать:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="1">  Всех пациентов
+	        </td>
+	        
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeView" value="2"> Поступивших после 12 часов
+	        </td>
+	       
+        </msh:row>
+        
         <msh:row>
-        	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
+        	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu" size="50"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="diet"  fieldColSpan="4" horizontalFill="true" label="Диета" vocName="Diet"/>
+        	<msh:autoComplete property="diet"  fieldColSpan="4" horizontalFill="true" label="Диета" vocName="Diet"  size="50"/>
         </msh:row>
         
       <msh:row>
@@ -71,9 +83,18 @@ div#header{display:none;}
     	out.print(request.getAttribute("tableList"));
      } %>
     <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/
-           <script type='text/javascript'>
-       //    checkFieldUpdate('typeIntake','${typeIntake}',1) ;
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
+    <script type='text/javascript'>
+    function checkFieldUpdate(aField,aValue,aDefault) {
+    	eval('var chk =  document.forms[0].'+aField) ;
+    	var max = chk.length ;
+    	if ((+aValue)>max) {
+    		chk[+aDefault-1].checked='checked' ;
+    	} else {
+    		chk[+aValue-1].checked='checked' ;
+    	}
+    }
+           checkFieldUpdate('typeView','${typeView}',1) ;
          //  checkFieldUpdate('typeGroup','${typeGroup}',1) ;
 //           checkFieldUpdate('typeState','${typeState}',1) ;
         //   checkFieldUpdate('typeTransfer','${typeTransfer}',1) ;
