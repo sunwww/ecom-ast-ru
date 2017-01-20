@@ -52,7 +52,8 @@
          	init${name}IntakeInfoDialog() ;
        //   }
          the${name}IntakeInfoDialog.show() ;
-         $("${name}Date").focus() ;
+         //$("${name}Date").focus() ;
+     	$("${name}Barcode").focus();
 
      }
 
@@ -131,6 +132,8 @@
      	theIs${name}IntakeInfoDialogInitialized = true ;
      	 eventutil.addEnterSupport('${name}Date', '${name}Time') ;
      	 eventutil.addEnterSupport( '${name}Time','${name}butOK') ;
+     	// ('${name}Barcode').focus();
+     
 
      }
 </script>

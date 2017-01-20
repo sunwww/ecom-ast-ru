@@ -52,9 +52,9 @@ public class PrescriptionServiceJs {
 			.append(" group by gwf.id, msGr.id, p.transferDate");
 			Collection<WebQueryResult > list = wqs.executeNativeSql(sql.toString());
 			if (list.isEmpty()) {
-				return "Ошибка! Не удается принять исследования, нет кабинета для приема.";
+				return "Ошибка! Не удается принять исследования, не найден штрих код или нет кабинета для приема.";
 			} else if(list.size()>1) {
-				return "Ошибка! Не удается принять исследования, слишком много кабинетов для приема ("+list.size()+")!";
+				return "Ошибка! Не удается принять исследования, не найден штрих код или слишком много кабинетов для приема ("+list.size()+")!";
 			} else {
 				WebQueryResult r = list.iterator().next();
 				if (r.get5()!=null&&!r.get5().toString().equals("")) {
@@ -63,13 +63,48 @@ public class PrescriptionServiceJs {
 				String pres = r.get3().toString();
 				String services = r.get4().toString();
 				String prescriptionList = r.get2().toString()+"#"+r.get1().toString()+"#"+pres+"#"+services;
+				
 				checkTransferService(prescriptionList, aRequest);
 				setDefaultDiary(pres, services, aRequest);
+				if(checkTransferService(prescriptionList, aRequest)=="1"){
+					
+					StringBuilder sql2 = new StringBuilder();
+					sql2.append("select coalesce(vsst.name,'---') as f5vsstname"+
+					" ,coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed"+
+					" ,pat.lastname ||' '|| pat.firstname ||' '|| pat.middlename as fio"+
+					" ,to_char(pat.birthday,'dd.mm.yyyy') ||' г.р.' as f9birthday"+
+					" ,list(case when vst.code='LABSURVEY' " +
+					" then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||coalesce(vpt.shortname,'') else null end) as f10medServicies"+
+					" from prescription p"+
+					" left join medservice ms on ms.id=p.medservice_id"+
+					" left join medservice msGr on msGr.id=ms.parent_id"+
+					" left join workfunctionservice wfs on wfs.medservice_id=msGr.id"+
+					" left join workfunction gwf on gwf.id=wfs.workfunction_id"+
+					" left join PrescriptionList pl on pl.id=p.prescriptionList_id"+
+					" left join MedCase slo on slo.id=pl.medCase_id"+
+					" left join MedCase sls on sls.id=slo.parent_id"+
+					" left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id"+
+					" left join StatisticStub ssSls on ssSls.id=sls.statisticstub_id"+
+					" left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id"+
+					" left join Patient pat on pat.id=slo.patient_id"+
+					" left join VocServiceType vst on vst.id=ms.serviceType_id"+
+					" left join VocPrescriptType vpt on vpt.id=p.prescriptType_id"+
+					" where p.barcodeNumber='"+aBarcodeNumber.trim()+"' and gwf.isDefaultLabCabinet='1'"+
+					" group by gwf.id, msGr.id, p.transferDate,ssSls.code,ssslo.code,pl.medCase_id,vsst.name,"+
+					" pat.lastname,pat.firstname,pat.middlename,pat.birthday");
+					Collection<WebQueryResult > list2 = wqs.executeNativeSql(sql2.toString());
+					WebQueryResult re = list2.iterator().next();
+					String ret="";
+					ret ="Передано!\n"+re.get1().toString()+"\n"+
+					"№ ИБ: "+re.get2().toString()+
+					"\n"+re.get3().toString()+" "+re.get4().toString()+"\n"+re.get5().toString();
+					return ret;
+				}
+				
 				return "1";
 			}
-
-			
 		}
+		
 		return null;
 	}
 

@@ -99,6 +99,7 @@
     </msh:panel>
     </msh:form>
       	<tags:pres_intake_biomaterial name="Bio" role="/Policy/Mis/Journal/Prescription/LabSurvey/IsCheckTransfer"/>
+      	<tags:pres_transferByBarcode name="Barcode" />
     
     <script type='text/javascript'>
     checkFieldUpdate('typeIntake','${typeIntake}',1) ;
@@ -343,7 +344,7 @@
             <tr>
               <th colspan="15">
                 <msh:toolbar>
-<input type='button' onclick='javascript:transferByBarcode()' value='enterBarcode'>
+<input type='button' onclick='javascript: showBarcodeIntakeInfo()' value='Приём биоматериала по штрих-коду'>
                   <a href="javascript:transferInLab()">Переданы в лабораторию</a>
                 </msh:toolbar>
               </th>
@@ -384,19 +385,8 @@
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
   	<script type="text/javascript">
-  		function transferByBarcode() {
-  			aBarcodeNumber = prompt('enter barcode');
-  			if (aBarcodeNumber!=null&&aBarcodeNumber!=''){
-  				PrescriptionService.checkTransferServiceBarcode(aBarcodeNumber, {
-  	  				callback: function(a) {
-  	  					if (+a==1) {
-  	  						
-  	  					} else {
-  	  						alert (a);
-  	  					}
-  	  				}
-  	  			});
-  			}
+  		function transferByBarcode() {alert("");
+  			
   		}
   	    function transferInLab(aPrescript) {
   	    	if (typeof aPrescript=="undefined") {
