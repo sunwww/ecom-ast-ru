@@ -131,7 +131,8 @@
 		$('${name}Time').value=(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute);
      	theIs${name}IntakeInfoDialogInitialized = true ;
      	 eventutil.addEnterSupport('${name}Date', '${name}Time') ;
-     	 eventutil.addEnterSupport( '${name}Time','${name}butOK') ;
+     	 eventutil.addEnterSupport( '${name}Time','${name}Barcode') ;
+     	eventutil.addEnterSupport( '${name}Barcode','${name}butOK') ;
      	// ('${name}Barcode').focus();
      
 
