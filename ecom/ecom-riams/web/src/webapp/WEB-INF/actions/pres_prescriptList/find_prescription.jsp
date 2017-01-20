@@ -69,6 +69,7 @@
    ,case when mc.datestart is not null then p.id end as btnAnnul
    ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f20dtintake
    ,case when p.canceldate is not null then p.id end as btnUncancel
+   ,p.barcodenumber
     from prescription p
     left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id
     left join MedCase mc on mc.id=p.medcase_id
@@ -104,7 +105,7 @@
 	      <msh:tableButton property="21" buttonFunction="uncancelBioIntake" role="/Policy/Mis/Journal/Prescription/LabSurvey/AnnulPrescription" buttonName="Отмена брака" buttonShortName="Отменить брак" hideIfEmpty="true"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
 	      <msh:tableColumn columnName="Ход работ" property="2"  />
-	      <msh:tableButton property="14" buttonFunction="getDefinition" buttonName="Печать штрих-кода" buttonShortName="Ш" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
+	      <msh:tableButton property="22" buttonFunction="printBarcode" buttonName="Печать штрих-кода" buttonShortName="Ш" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableButton property="14" buttonFunction="getDefinition" buttonName="Просмотр данных о госпитализации" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableColumn columnName="ИБ" property="3"  />
 	      <msh:tableColumn columnName="Дата напр." property="11"/>
@@ -136,6 +137,11 @@
 			var textMonth = textMonth<10?'0'+textMonth:textMonth;
 			var textYear =currentDate.getFullYear();
 			$('dateFrom').value=textDay+'.'+textMonth+'.'+textYear;
+    	}
+    	
+    	function printBarcode(id)
+    	{
+    		window.location = "print-barcodeList.do?s=PrintService&m=printBarcodeByPrescription&barcode="+id;
     	}
   	</script>
   

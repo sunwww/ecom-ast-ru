@@ -1,5 +1,64 @@
 var map = new java.util.HashMap() ;
 
+function printBarcodeByPrescription(aCtx, aParams){
+	var barcode = aParams.get("barcode");
+	var bar = toBarcode(barcode);
+	//throw bar;
+	recordChar(bar,12,"barcode.barcode") ;
+	//map.put(bar,"barcode.barcode");
+	//map.put(bar,"barcode");
+	return map;
+}
+
+function toBarcode(barcode)
+{
+	var one = parseInt(barcode.slice(0, 1));
+	var two = parseInt(barcode.slice(1, 2));
+	var three = parseInt(barcode.slice(2, 3));
+	var four = parseInt(barcode.slice(3, 4));
+	var five = parseInt(barcode.slice(4, 5));
+	var six = parseInt(barcode.slice(5, 6));
+	var seven = parseInt(barcode.slice(6, 7));
+	
+	
+	var numbers =  ["0","1","2","3","4","5","6","7","8","9"];
+	var chars =["a","b","c","d","e","f","g","h","i","j"];
+	var controlSum = 10- parseInt(String((((one+three+five+seven)*3 + two+four+six))).substr(-1));
+	if(controlSum==10)controlSum=0;
+	var inta =[five,six,seven,controlSum];
+	
+	for(var i=0;i<inta.length;i++){
+		for(var j=0;j<numbers.length;j++)
+			{
+			if(inta[i]==numbers[j]){
+				inta[i]=chars[j];
+				break;
+			}
+		}
+	}
+	
+	//inta[0] = "123";
+	//throw inta[0];
+	//recordChar(barcode+"",28,"barcode.barcode") ;
+
+	var resultString = "!"+one+two+three+four+"-"+inta[0]+inta[1]+inta[2]+inta[3]+"!";
+	return resultString;
+	//throw resultString;
+	
+}
+function recordChar(aStr,aCnt,aKey) {
+	if (aStr==null) aStr="" ;
+	map.put (aKey, aStr);
+	aStr=(""+aStr).toUpperCase() ;
+	//aStr=aStr;
+	for (var i=0;i<aStr.length; i++) {
+		map.put(aKey+(i+1),aStr.substring(i,i+1)) ;
+	}
+	for (var i=aStr.length+1 ; i<=aCnt; i++) {
+		map.put(aKey+(i),"") ;
+	}
+}
+
 function printNativeQuery_date(aCtx,aParams) {
 	var sqlText = aParams.get("sqlText");
 	var sqlInfo = aParams.get("sqlInfo");
