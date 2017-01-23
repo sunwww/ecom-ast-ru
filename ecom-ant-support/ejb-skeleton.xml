@@ -25,6 +25,7 @@
         <include name="json/json.jar"/>
         <include name="jxl/jxl.jar"/>
         <include name="apache-poi/poi-2.5-final-20040302.jar"/>
+	    <include name="itextpdf-5.5.10.jar"/>
 	    <include name="rhino/js.jar"/>
 	    <include name="asm/asm-3.0.jar"/>
 	
