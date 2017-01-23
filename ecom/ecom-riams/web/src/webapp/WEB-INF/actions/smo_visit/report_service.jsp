@@ -441,7 +441,9 @@ then -1 else 0 end)>=60 then smc.id else null end) as cntAll60
 ,count(case when (vss.code='DOGOVOR') then smc.id else null end) as cntdogovor
 ,count(case when (vss.code='HOSPITAL') then smc.id else null end) as cnthospital
 ,count(case when (vss.code='OTHER') then smc.id else null end) as cntother
-,count(DISTINCT p.id) as patid
+,count(DISTINCT p.id) as f16_patid
+,count(distinct (case when vss.code!='HOSPITAL' then p.id end)) as f_17cntPolyclinicPatients 
+,count(distinct (case when vss.code='HOSPITAL' then p.id end)) as f_18cntStacPatients 
 FROM MedCase smo
 left join medcase smc on smc.parent_id=smo.id and smc.dtype='ServiceMedCase'
 left join medservice ms on ms.id=smc.medservice_id
@@ -479,7 +481,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
     <input type='hidden' name="s" id="s" value="PrintService">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
     <input type="submit" value="Печать"> 
-    </form>
+    </form>${journal_ticket_sql}
     </msh:sectionTitle>
     <msh:sectionContent>
   
@@ -492,14 +494,18 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
          		<th></th>
          		<th></th>
          		<th></th>
+         		<th></th>
+         		<th></th>
          		<th colspan="4">Услуги</th>
          		<th colspan="7">Услуги по видам оплаты</th>
          	</tr>
          </msh:tableNotEmpty>  
             <msh:tableColumn columnName="${groupName}" property="2"/>            
-            <msh:tableColumn columnName="Услуги" property="3"/>2000443712452
+            <msh:tableColumn columnName="Услуги" property="3"/>
            
              <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во пациентов" property="16"/>
+             <msh:tableColumn isCalcAmount="true" columnName="Пациенты в стац" property="17"/>
+             <msh:tableColumn isCalcAmount="true" columnName="Пациенты в пол-ке" property="18"/>
             <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во" property="4"/>
            
             <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5"/>
@@ -551,7 +557,6 @@ then -1 else 0 end)>=60 then 1 else null end) as cntAll60
 ,count(case when (vss.code='DOGOVOR') then smc.id else null end) as cntdogovor
 ,count(case when (vss.code='HOSPITAL') then smc.id else null end) as cnthospital
 ,count(case when (vss.code='OTHER') then smc.id else null end) as cntother
-
 FROM MedCase smo
 left join medcase smc on smc.parent_id=smo.id and smc.dtype='ServiceMedCase'
 left join medservice ms on ms.id=smc.medservice_id
