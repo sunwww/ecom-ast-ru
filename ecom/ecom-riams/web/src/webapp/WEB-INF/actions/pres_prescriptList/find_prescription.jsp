@@ -92,7 +92,7 @@
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
     left join vocPrescriptType vpt on vpt.id=p.prescripttype_id
-    where p.planStartDate = to_date('${param.dateFrom}','dd.mm.yyyy')
+    where p.intakeDate = to_date('${param.dateFrom}','dd.mm.yyyy')
     and p.materialId='${param.number}'
     and vst.code='LABSURVEY' 
     order by pat.lastname,pat.firstname,pat.middlename
