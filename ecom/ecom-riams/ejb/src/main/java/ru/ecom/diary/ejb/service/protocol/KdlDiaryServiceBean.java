@@ -46,32 +46,28 @@ import java.io.*;
 import java.util.*;
 import com.itextpdf.text.pdf.parser.RenderFilter;
 
-
-class parsed_info_gematReportG{public String[] paramName;public String[] resultValue;public String[] measureUnit;public String[] nomRange;}
-
 @Stateless
 @Remote(IKdlDiaryService.class)
-public class KdlDiaryServiceBean {
-	
-	public static List<List<String>> ls2d = new ArrayList<List<String>>();
+public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
 	
 	public String checkPdf() throws IOException, DocumentException, NoSuchFieldException, IllegalAccessException{
 		System.out.println("==== Запускаем функцию проверки наличия PDF ====");
 		/**Перечень директорий*/
-		String homeDirectory = "/opt/tomcat";
-        String pdfDirectory = homeDirectory + "/parse_pdf/";
-        String txtDirectory = homeDirectory + "/parse_txt/";
-        String archDirectory = homeDirectory + "/parse_archive/";
+		String homeDirectory  =  getDir("jboss.labPdfDocumentDir","/opt/labPdf"); //= "C:\\Users\\vtsybulin\\workspace\\pdfParser\\pdf";
+        String pdfDirectory = homeDirectory + "\\parse_pdf\\";
+        String txtDirectory = homeDirectory + "\\parse_txt\\";
+        String archDirectory = homeDirectory + "\\parse_archive\\";
         /**Сперва должны получить список всех файлов в формате pdf*/
-        List<String> fileList = new Vector<String>();
-        parsed_info_gematReportG pdf_container = new parsed_info_gematReportG();
+        File[] fileList =getFiles(pdfDirectory);
+        ParsedPdfInfoResult pdf_container = new ParsedPdfInfoResult();
+        if (fileList!=null){
+        	
         
-        getFiles(pdfDirectory, fileList);
-        for (int i = 0; i < fileList.size(); i++){
-            File file = new File(pdfDirectory + fileList.get(i));
-            file.getParentFile().mkdirs();
-            String t = fileList.get(i).toString();
-            String[] temp_container = t.split("\\.");
+        for (int i = 0; i < fileList.length; i++){
+        	File file = fileList[i];        	
+        	String fileName = file.getName();        
+            file.getParentFile().mkdirs();           
+            String[] temp_container = fileName.split("\\.");
             Character t1 = 'g';
             if (t1.equals(temp_container[0].substring(temp_container[0].length() - 1))) {
                 System.out.println("+true");
@@ -81,20 +77,25 @@ public class KdlDiaryServiceBean {
             System.out.println("last character: " +
                     temp_container[0].substring(temp_container[0].length() - 1));
 
-            if (new String("1000014.pdf").equals(fileList.get(i))) {
-                pdf_container.paramName = fillColumn(pdf_container.paramName, 30, 560, 100, 770, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
-                pdf_container.resultValue = fillColumn(pdf_container.paramName, 190, 560, 210, 770, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
-                pdf_container.measureUnit = fillColumn(pdf_container.paramName, 215, 560, 250, 770, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
-                pdf_container.nomRange = fillColumn(pdf_container.paramName, 255, 560, 340, 770, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
-                String fileName = fileList.get(i).substring(0, fileList.get(i).length() - 4);
+       //     if ((true)) {
+                pdf_container.paramName = fillColumn(pdf_container.paramName, 30, 560, 100, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+                pdf_container.resultValue = fillColumn(pdf_container.paramName, 190, 560, 210, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+                pdf_container.measureUnit = fillColumn(pdf_container.paramName, 215, 560, 250, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+                pdf_container.nomRange = fillColumn(pdf_container.paramName, 255, 560, 340, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+                moveFile(pdfDirectory, archDirectory, fileName);
+                
+              //  String fileName = t.substring(0, t.length() - 4);
+                System.out.println("File = "+ fileName);
                 for (int j = 0; j < pdf_container.paramName.length; j++) {
                     try {
-                        System.out.println(j + ") " + pdf_container.paramName[j] + "     " + pdf_container.resultValue[j] + "     " + pdf_container.measureUnit[j] + "     " + pdf_container.nomRange[j]);
+                        System.out.println(j + ") " + chk(j,pdf_container.paramName) + "     " + chk(j,pdf_container.resultValue) + "     " + chk(j,pdf_container.measureUnit) + "     " + chk(j,pdf_container.nomRange));
                     } catch (Exception e) {
+                    	e.printStackTrace();
                         System.out.println(e);
                     }
                 }
-            } /*else {
+       //     } 
+                /*else {
                 pdf_container.paramName = fillColumn(pdf_container.paramName, 20, 550, 70, 730, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
                 String[] temp = fillColumn(pdf_container.paramName, 280, 550, 370, 730, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
                 pdf_container.paramName = concat (pdf_container.paramName, temp);
@@ -123,9 +124,16 @@ public class KdlDiaryServiceBean {
                 }
             }*/
         }
+        }
 		return null;
 	}
-	
+	public static String chk(int i, String[] arr) {
+		if (arr.length>(i)) {
+			return arr[i];
+		} else {
+			return "";
+		}
+	}
 	public static String[] fillColumn(String[] cont, int x1, int x2, int y1, int y2, String pdf, String txt) throws IOException {
         PdfReader reader = new PdfReader(pdf);
         PrintWriter out = new PrintWriter(new FileOutputStream(txt));
@@ -136,6 +144,7 @@ public class KdlDiaryServiceBean {
             strategy = new FilteredTextRenderListener(
                     new LocationTextExtractionStrategy(), filter);
             String temp = PdfTextExtractor.getTextFromPage(reader, i, strategy);
+            out.println(temp);
             cont = temp.split("\n");
         }
         out.flush();
@@ -155,9 +164,9 @@ public class KdlDiaryServiceBean {
 	/**Перемещение файла из одной директории в другую*/
     public static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
         try {
-            final File myFile = new File(pdfDirectory + fileName + ".pdf");
-            if (myFile.renameTo(new File(archDirectory + fileName + ".pdf"))) {
-                System.out.println("Файл "+ fileName + " успешно перенесен из директории" + pdfDirectory + " в директорию " + archDirectory);
+            final File myFile = new File(pdfDirectory + fileName );
+            if (myFile.renameTo(new File(archDirectory + fileName))) {
+                System.out.println("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
             }
             else{
                  System.out.println("Файл не был перенесен!");
@@ -168,7 +177,7 @@ public class KdlDiaryServiceBean {
         
     }
 	
-	public void parse(String pdf, String txt) throws IOException {
+	public void pardse(String pdf, String txt) throws IOException {
         PdfReader reader = new PdfReader(pdf);
         StringBuilder text = new StringBuilder();
         FileOutputStream fos = new FileOutputStream(txt);
@@ -193,29 +202,27 @@ public class KdlDiaryServiceBean {
     }
 	
 	/** Вывод всех файлов в папке */
-    public static List<String> getFiles(String path, List<String>fileList) {
+   public static File[] getFiles(String path) {
     	try{
         File dir = new File(path);
+        System.out.println(dir.exists());
         File[] files = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.toLowerCase().endsWith(".pdf");
             }});
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].isFile()) {
-                fileList.add(i, files[i].getName());
-            } else if (files[i].isDirectory()) {
-                fileList.add(i, files[i].getName());
-            }}
+        
+        return files;
     	}
     	catch(Exception e)
     	{
     		System.out.println("Директория не обнаружена. Проверьте правильность.");
+    		e.printStackTrace();
+    		return null;
     	}
-        return fileList;
+       
     }
 	
-	public static boolean checkIsExist(String filePath, boolean resultExist)
-    {
+	public static boolean checkIsExist(String filePath, boolean resultExist)    {
         File f = new File(filePath);
         if(f.exists() && !f.isDirectory()) {
             System.out.println("Файл существует.");
