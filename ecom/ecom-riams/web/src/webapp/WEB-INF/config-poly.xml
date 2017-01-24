@@ -343,6 +343,16 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_visits.jsp"/>
         </action>
+        
+        <action path='/journal_nationality_new' type='ru.ecom.web.actions.base.ForwardAction'               
+        		name='poly_journalBySpecForm'
+                validate='true'
+                scope='session'
+                input='/WEB-INF/actions/smo_visit/list_nationality_new.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality_new.jsp"/>
+        </action>
+        
         <action path='/journal_nationality_smo' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='poly_journalBySpecForm'
                 validate='true'
@@ -351,6 +361,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/list_nationality.jsp"/>
         </action>
+        
         <action path='/journal_nationality_ukraine' type='ru.ecom.web.actions.base.ForwardAction'               
         		name='poly_journalBySpecForm'
                 validate='true'

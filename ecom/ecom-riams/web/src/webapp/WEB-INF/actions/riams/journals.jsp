@@ -55,6 +55,9 @@
 						<li><msh:link action="journal_serviceMedCase.do" roles="/Policy/Mis/Journal/MedService">
 	                            Журнал услуг
 	                        </msh:link></li>
+	                    <li><msh:link isReport="true" action="journal_nationality_new.do" roles="/Policy/Mis/MedCase/Visit/ReportNationality">
+	                            Журнал обращений с группировкой по гражданству (Приказ №47р от 19.01.2017)
+	                        </msh:link></li>
 						<li><msh:link isReport="true" action="journal_nationality_smo.do" roles="/Policy/Mis/MedCase/Visit/ReportNationality">
 	                            Журнал обращений с группировкой по гражданству (475-Пр)
 	                        </msh:link></li>
