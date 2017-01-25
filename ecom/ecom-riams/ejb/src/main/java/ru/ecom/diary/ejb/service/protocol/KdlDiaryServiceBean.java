@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,9 +40,6 @@ import com.itextpdf.text.pdf.parser.FilteredTextRenderListener;
 import com.itextpdf.text.pdf.parser.LocationTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.RegionTextRenderFilter;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.*;
 import java.util.*;
 import com.itextpdf.text.pdf.parser.RenderFilter;
@@ -50,6 +48,16 @@ import com.itextpdf.text.pdf.parser.RenderFilter;
 @Remote(IKdlDiaryService.class)
 public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
 	
+	public ParsedPdfInfo getPdfInfoByBarcode( List<ParsedPdfInfo> list,String aBarcode) {
+		if (list!=null&&!list.isEmpty()) {
+			for (ParsedPdfInfo p: list) {
+				if (p.getBarcode().equals(aBarcode)) {
+					return p;
+				}
+			}
+		}
+		return new ParsedPdfInfo();
+	}
 	public String checkPdf() throws IOException, DocumentException, NoSuchFieldException, IllegalAccessException{
 		System.out.println("==== Запускаем функцию проверки наличия PDF ====");
 		/**Перечень директорий*/
@@ -59,7 +67,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         String archDirectory = homeDirectory + "\\parse_archive\\";
         /**Сперва должны получить список всех файлов в формате pdf*/
         File[] fileList =getFiles(pdfDirectory);
-        ParsedPdfInfoResult pdf_container = new ParsedPdfInfoResult();
+        List<ParsedPdfInfo> resultList = new ArrayList<ParsedPdfInfo>();
         if (fileList!=null){
         	
         
@@ -76,25 +84,50 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
             }
             System.out.println("last character: " +
                     temp_container[0].substring(temp_container[0].length() - 1));
-
-       //     if ((true)) {
-                pdf_container.paramName = fillColumn(pdf_container.paramName, 30, 560, 100, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
-                pdf_container.resultValue = fillColumn(pdf_container.paramName, 190, 560, 210, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
-                pdf_container.measureUnit = fillColumn(pdf_container.paramName, 215, 560, 250, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
-                pdf_container.nomRange = fillColumn(pdf_container.paramName, 255, 560, 340, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+            String typeFile = "100014";	
+            if (typeFile.equals("100014")) {
+            	/*TODO
+            	 * Находим штрих-код. 
+            	 */
+            	String barCode = ""; 
+            	
+            	ParsedPdfInfo ppi = getPdfInfoByBarcode(resultList, barCode); //Создаем или находим объект, хранящий все анализы по одному штрих-коду
+            	List <ParsedPdfInfoResult> res = new ArrayList<ParsedPdfInfoResult>();
+            	while (true) {
+            		//Находим конкретный анализ, помещаем его в ParsedPdfInfoResult
+            		
+            		/* TODO
+            		 * Для каждой строчки создаем свой ParsedPdfInfoResult
+            		 */
+            		ParsedPdfInfoResult ppir = new ParsedPdfInfoResult();
+            		ppir.setCode("aCode");
+            		ppir.setValue("aValue");
+            		ppir.setMeasurementUnit("aMeasurementUnit");
+            		ppir.setRefInterval("aRefInterval");
+            		
+            	//	 pdf_container.paramName = fillColumn(pdf_container.paramName, 30, 560, 100, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+                 //    pdf_container.resultValue = fillColumn(pdf_container.paramName, 190, 560, 210, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+                  //   pdf_container.measureUnit = fillColumn(pdf_container.paramName, 215, 560, 250, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+                   //  pdf_container.nomRange = fillColumn(pdf_container.paramName, 255, 560, 340, 770, pdfDirectory + fileName, txtDirectory +  fileName.substring(0, fileName.length() - 4) + ".txt");
+            		res.add(ppir);
+            		break;
+            	}
+            	
+               
                 moveFile(pdfDirectory, archDirectory, fileName);
                 
+                ppi.setResults(res);
               //  String fileName = t.substring(0, t.length() - 4);
-                System.out.println("File = "+ fileName);
-                for (int j = 0; j < pdf_container.paramName.length; j++) {
+             //   System.out.println("File = "+ fileName);
+               /* for (int j = 0; j < pdf_container.paramName.length; j++) {
                     try {
                         System.out.println(j + ") " + chk(j,pdf_container.paramName) + "     " + chk(j,pdf_container.resultValue) + "     " + chk(j,pdf_container.measureUnit) + "     " + chk(j,pdf_container.nomRange));
                     } catch (Exception e) {
                     	e.printStackTrace();
                         System.out.println(e);
                     }
-                }
-       //     } 
+                }*/
+            } 
                 /*else {
                 pdf_container.paramName = fillColumn(pdf_container.paramName, 20, 550, 70, 730, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
                 String[] temp = fillColumn(pdf_container.paramName, 280, 550, 370, 730, pdfDirectory + fileList.get(i), txtDirectory + (String) fileList.get(i).substring(0, fileList.get(i).length() - 4) + ".txt");
@@ -123,6 +156,11 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
                     }
                 }
             }*/
+            
+            /* TODO
+             *  Вот тут вызываем функцию Руслана, которая создает дневниковые записи. 
+             *  callRuslanFunction(res); 
+             */
         }
         }
 		return null;
@@ -177,7 +215,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         
     }
 	
-	public void pardse(String pdf, String txt) throws IOException {
+/*	public void pardse(String pdf, String txt) throws IOException {
         PdfReader reader = new PdfReader(pdf);
         StringBuilder text = new StringBuilder();
         FileOutputStream fos = new FileOutputStream(txt);
@@ -199,7 +237,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         fos.flush();
         fos.close();
         reader.close();
-    }
+    }*/
 	
 	/** Вывод всех файлов в папке */
    public static File[] getFiles(String path) {
