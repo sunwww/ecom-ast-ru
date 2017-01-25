@@ -1,4 +1,4 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@ page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -16,8 +16,10 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
-  <% String shor = request.getParameter("short");
+  <%
+  String shor = request.getParameter("short");
   String typeDate = ActionUtil.updateParameter("GroupByBedFund","typeDate","2", request);
+  String typeSearch = ActionUtil.updateParameter("GroupByBedFund", "typeSearch", "2", request);
   if (shor==null|| shor.equals("")){
   %>
      <msh:form action="/protocolReport.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -31,7 +33,7 @@
         <msh:autoComplete property="department" fieldColSpan="5"
         	label="Профиль" horizontalFill="true" vocName="vocKiliProfile"/>
         </msh:row>
-        <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <%-- <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="1">  поступления
@@ -39,7 +41,22 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeDate" value="2">  выписки
         </td>
+        </msh:row> --%>
+        
+        <!-- Свод по отделениям/протоколам -->
+        <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+        <td class="label" title="Поиск по дате  (typeSearch)" colspan="1"><label for="typeSearchName" id="typeSearchLabel">Отобразить:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeSearch" value="1">  свод по отделениям
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeSearch" value="2">  свод по профилям
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeSearch" value="3">  свод по протоколам
+        </td>
         </msh:row>
+
         <msh:row>
             <td><input type="submit" value="Найти" /></td>
       </msh:row>
@@ -47,12 +64,11 @@
 </msh:form>
 
 <%} %>
- <ecom:webQuery name="diag_typeReg_vip_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
+ <ecom:webQuery name="diag_typeReg_vip_sql"	 nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
  <ecom:webQuery name="diag_typeReg_klin_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='4'"/>
  <ecom:webQuery name="diag_mainPriority_sql" nativeSql="select id,name from VocPrimaryDiagnosis where code='1'"/>
  
   <%
-  
   String isReestr = request.getParameter("reestr");
     //String department = (String) request.getParameter("department");
   //String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
@@ -61,11 +77,29 @@
     	if (department!=null && !department.equals("") && !department.equals("0")) {
     		request.setAttribute("departmentSql", " and vkp.id = "+department) ;
     	} 
+    	String fldSearch = "" ;
+    	String groupBySql = "" ;
+    	if (typeSearch!=null) {
+    		if (typeSearch.equals("1")) {
+    			fldSearch=" ORDER BY depName" ;
+    			groupBySql = "'&depIdParam='||case when dep.isnoomc='1' then depPrev.id else dep.id end, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
+    			//groupBySql = "'&dep='||case when dep.isnoomc='1' then depPrev.id else dep.id end as depId, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
+    		} else if (typeSearch.equals("2")) {
+    			fldSearch = " ORDER BY vkp.name" ;
+    			groupBySql = "'&profile='||vkp.id, vkp.name";
+    		} else if (typeSearch.equals("3")) {
+    			fldSearch = " ORDER BY vkp.name" ;
+    			groupBySql = "vkp.id , '&protocol='||vkp.name"; //as depId
+    		}
+    	}
+    	request.setAttribute("fldSearch",fldSearch) ;
+    	request.setAttribute("groupBySql",groupBySql) ;
+
     	String fldDate = "sls.dateFinish" ;
-    	if (typeDate!=null) {
+    	/* if (typeDate!=null) {
     		if (typeDate.equals("1")) {fldDate="sls.dateStart" ;} 
     		else if (typeDate.equals("2")) {fldDate = "sls.dateFinish" ;}
-    	}
+    	} */
     	request.setAttribute("fldDate",fldDate) ;
     //profileFilter += request.getParameter("department");
 	String startDate = (String) request.getParameter("dateBegin"); //Получаем значение текстового поля с первой датой
@@ -105,28 +139,7 @@
 	request.setAttribute("isParamNull", isParamNull);
 		request.setAttribute("addParam", addParam!=null?addParam:"");
 		%> 
-		<ecom:webQuery name="showProfile" nameFldSql="showProfile_sql" nativeSql="
-SELECT sls.id, pat.patientinfo, sls.datefinish
-, case when dc.id is null then 'НЕТ' else 'ДА' end as dc
-, case when pk.id is null then 'НЕТ' else '№ '|| pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy') end as pk
-from medcase sls
-
-left join medcase slo on slo.parent_id=sls.id 
-left join patient pat on pat.id = sls.patient_id
-left join mislpu dep on dep.id=slo.department_id
-left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id
-left join mislpu depPrev on depPrev.id=sloPrev.department_id
-
-left join deathcase dc on dc.medcase_id=sls.id
-left join protocolkili pk on pk.deathcase_id=dc.id
-left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
-left join vochospitalizationresult vhr on vhr.id=sls.result_id
-WHERE sls.dtype='HospitalMedCase' and ${fldDate} ${addSql} 
-and slo.dtype='DepartmentMedCase'  
-and sls.datefinish is not null and vhr.code='11' 
-and sls.deniedhospitalizating_id is null and vkp.id ${isParamNull} ${param.id} ${addParam} 
-GROUP BY sls.id, pat.patientinfo, dc.id, pk.id
-"/>
+		${showProfile_sql}
 	<form action="print-kiliReport2.do" method="post" target="_blank">
     Период с ${dateBegin} по ${dateEnd}. 
     ${datelist_sql}
@@ -138,26 +151,18 @@ GROUP BY sls.id, pat.patientinfo, dc.id, pk.id
     <input type='hidden' name="date2" id="date2" value="${dateEnd}">
     <input type="submit" value="Печать"> 
     </form>
-    <msh:section>
-    <msh:sectionContent>
-    <msh:table name="showProfile" idField="1" action="entityParentView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c"> 
-      <msh:tableColumn columnName="Пациент" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Дата смерти" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Случай смерти" property="4" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Протокол КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-    </msh:table>
-    </msh:sectionContent>
-    </msh:section>
+    
 		   
 		<%
-	} else {
-	 	
+	}
+	if ((isReestr==null||!isReestr.equals("1"))&&  typeSearch.equals("1")||typeSearch.equals("2")||typeSearch.equals("3")){
  %>
-
+ 
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
-SELECT  vkp.id, vkp.name, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
+SELECT ${groupBySql} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
 ,count(pk.id)*100/ count(sls.id)  as persDead
 ,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase
+
 from medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null
 left join mislpu dep on dep.id=slo.department_id
@@ -165,22 +170,28 @@ left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id
 left join mislpu depPrev on depPrev.id=sloPrev.department_id
 
 left join deathcase dc on dc.medcase_id=sls.id
-left join protocolkili pk on pk.deathcase_id=dc.id
-left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
+	left join protocolkili pk on pk.deathcase_id=dc.id
+	left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
 WHERE sls.dtype='HospitalMedCase' and ${fldDate} ${addSql} and slo.dtype='DepartmentMedCase'  and vhr.code='11' 
 and sls.deniedhospitalizating_id is null
 ${departmentSql}
-GROUP BY vkp.id, vkp.name
- 
-
-
+GROUP BY ${groupBySql}
+ ${fldSearch}
 " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
 
+
+
+   
+<%
+	}
+	if (isReestr==null||!isReestr.equals("1")) {
+	if (typeSearch.equals("1")){
+%>
         <msh:section>
     <msh:sectionContent>
     <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-      <msh:tableColumn columnName="Наименование профиля" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Наименование отделения" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
       <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
@@ -199,10 +210,140 @@ GROUP BY vkp.id, vkp.name
     <input type='hidden' name="date2" id="date2" value="${dateEnd}">
     <input type="submit" value="Печать"> 
     </form>
-  <% } %>
+  <%}
+ else if (typeSearch.equals("2")){
+	  %> 
+	  <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+      <msh:tableColumn columnName="Наименование профиля" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
+      <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
+      <msh:tableColumn columnName="% от умерших" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="% от оформленных" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+    </msh:table>
+		  <%
+  } else if (typeSearch.equals("3")){
+	%>  
+	<ecom:webQuery name="showProfile" nameFldSql="showProfile_sql" nativeSql="
+select
+pk.protocolnumber
+,'№'||pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy')
+,pk.protocolDate
+,count(pat.id)
+,vkp.name
+,'&protocolNumber='||pk.protocolnumber||'&protocolDate='||to_char(pk.protocoldate,'dd.MM.yyyy') as fldId
+from protocolKili pk 
+left join deathcase dth on dth.id = pk.deathcase_id
+left join medcase med on med.id = dth.medcase_id
+left join patient pat on med.patient_id = pat.id
+left join mislpu dep on dep.id=med.department_id
+left join vockiliprofile vkp on vkp.id= dep.kiliprofile_id
+where pk.protocolDate ${addSql}
+group by pk.protocolNumber, pk.protocolDate, vkp.id
+ORDER BY cast(pk.protocolNumber as int)
+"/> 
+<!-- and vkp.id ${isParamNull} ${param.id} ${addParam} -->
+	  <msh:section>
+    <msh:sectionContent>
+    <msh:table cellFunction="true" name="showProfile" idField="6" noDataMessage="Не найдено" 
+    action="protocolReport.do?typeSearch=3&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c"> 
+      <msh:tableColumn columnName="Протокол КИЛИ" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Дата протокола" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Пациентов" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+      <msh:tableColumn columnName="Профиль" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+	
+  <%}
+	}  else if (isReestr.equals("1")){
+	  
+	  String sqlJoin = "";
+	  String sqlWhere = "";
+	  String value = "";
+	  String addDate = "";
+	  String addSelect = "";
+	  /* if (pp!=null)
+			  sqlAdd = " and pp.number="+pp; */
+			  
+			  if (typeSearch.equals("1")) {
+				  addSelect = "select med.id, pat.lastname||' '||pat.firstname,  pk.protocolNumber ";
+				 
+				  sqlJoin = "left join mislpu dep on dep.id = med.department_id left join vockiliprofile vkp on vkp.id = dep.kiliprofile_id";
+				  value = request.getParameter("depIdParam");
+				  sqlWhere = " dep.id = " + value;
+				  addDate = " and med.dateFinish ";
+			  }
+			  if (typeSearch.equals("2")) {
+				  addSelect = "select med.id, pat.lastname||' '||pat.firstname,  pk.protocolNumber ";
+				  
+				  sqlJoin = "left join mislpu dep on dep.id = med.department_id left join vockiliprofile vkp on vkp.id = dep.kiliprofile_id";
+				  value = request.getParameter("profile");
+				  sqlWhere = " vkp.id = " + value ;
+				  addDate = " and med.dateFinish ";
+			  }
+			  if (typeSearch.equals("3")) {
+					addSelect = "select med.id, pat.lastname||' '||pat.firstname as patName,  '№ '||pk.protocolNumber||' от '||pk.protocoldate as info";
+					addDate = " and pk.protocoldate ";
+					value = request.getParameter("protocolNumber");
+					 sqlWhere = " pk.protocolNumber = '" + value + "'";
+					
+			  }			  
+	  request.setAttribute("addSelect", addSelect);
+	  request.setAttribute("sqlJoin", sqlJoin);
+	  request.setAttribute("sqlWhere", sqlWhere);
+	  request.setAttribute("value", value);
+	  
+	  
+		
+	  if (startDate!=null&&!startDate.equals("")) {
+		  if (finishDate!=null&&!finishDate.equals("")) {
+			  addDate+="between to_date('"+startDate+"','dd.MM.yyyy') and to_date('"+finishDate+"','dd.MM.yyyy')";
+		  } else {
+			  addDate += " and >=to_date('"+startDate+"','dd.MM.yyyy')";
+		  }
+	  } else {
+		  addDate +="between current_date and current_date";
+	  }
+		request.setAttribute("addDate", addDate);
+  //out.print("AAAAA="+value);
+%>
+<ecom:webQuery name="calc_reestr" nameFldSql="calc_reestr_sql" nativeSql="
+${addSelect} from protocolKili pk
+left join deathcase dth on dth.id= pk.deathcase_id
+left join medcase med on med.id = dth.medcase_id
+left join patient pat on pat.id = med.patient_id
+${sqlJoin}
+where ${sqlWhere}  ${addDate}
+
+
+"/>
+<%--
+${sqlJoin}
+where ${sqlWhere} ${value} ${addDate}
+--%> 
+<!-- 
+	  <msh:table name="calc_reestr" idField="1" cellFunction="true" action="protocolReport.do?short=Short&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}&protocolNumber=${pp}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+      <msh:tableColumn columnName="Пациент" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="Номер протокола" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+    </msh:table>${param.protocolNumber}
+ -->
+ <msh:section>
+    <msh:sectionContent>
+ <msh:table name="calc_reestr"
+     action="entityView-protocolReport.do" idField="1">
+      <msh:tableColumn columnName="Пациент" property="2" />
+      <msh:tableColumn columnName="Номер протокола" property="3" />
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section> 
+  
+<%
+  }%>
 
   <script type='text/javascript'>
   checkFieldUpdate('typeDate','${typeDate}',2) ;
+  checkFieldUpdate('typeSearch','${typeSearch}',2) ;
 
    function checkFieldUpdate(aField,aValue,aDefaultValue) {
    	eval('var chk =  document.forms[0].'+aField) ;
@@ -218,5 +359,5 @@ GROUP BY vkp.id, vkp.name
   </tiles:put>
 
 
-  
-</tiles:insert>
+
+</tiles:insert> 
