@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +14,10 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.util.timeout.TimeoutFactory;
 import org.json.JSONArray;
@@ -26,8 +29,13 @@ import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
+import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
+import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfoResult;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.query.WebQueryServiceBean;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.expomc.ejb.services.registry.ExcelTemplateAllValueVoc;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
@@ -53,6 +61,7 @@ import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.worker.WorkerServiceBean;
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
 import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
+import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import sun.awt.windows.ThemeReader;
@@ -64,6 +73,160 @@ import sun.awt.windows.ThemeReader;
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
 	
+	
+	public String setDefaultDiaryCycle(List<ParsedPdfInfo> parsedPdfInfos) throws JSONException
+	{
+		for (int i = 0; i < parsedPdfInfos.size(); i++) {
+		    setDefaultDiary(parsedPdfInfos.get(i));
+		}
+		return "0";
+	}
+	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) throws JSONException
+	{
+		//ParsedPdfInfo parsedPdfInfo = doObject();
+		
+		WebQueryServiceBean  service = new WebQueryServiceBean() ;
+		StringBuilder sql = new StringBuilder();
+		StringBuilder sb = new StringBuilder() ;
+		StringBuilder err = new StringBuilder() ;
+		sql.append("select pres.id as pid, ms.id as msid, tp.id as templateId" +
+			" from prescription pres" +
+			" left join medservice ms on ms.id=pres.medservice_id" +
+			" left join templateprotocol tp on tp.medservice_id=ms.id" +
+			" where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"' tp.createDiaryByDefault='1'");
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		if (!list.isEmpty()) {
+			String username = "LabRobot";
+			
+			Long workFunctionId = null;
+			Collection<WebQueryResult> wf = service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'") ;
+			if ( wf.isEmpty()) {
+				return null ;
+			}
+			workFunctionId = ConvertSql.parseLong(wf.iterator().next().get1()) ;
+			for (WebQueryResult res: list) {
+				Long pid = Long.parseLong(res.get1().toString());
+				String msid = res.get2().toString();
+				Long templateId = Long.parseLong(res.get3().toString());
+						
+				sql = new StringBuilder() ;
+				sql.append("select p.id as p1id,p.name as p2name"+
+				", p.shortname as p3shortname,p.type as p4type"+
+				", p.minimum as p5minimum, p.normminimum as p6normminimum"+
+				", p.maximum as p7maximum, p.normmaximum as p8normmaximum"+
+				", p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd"+
+				", p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd"+
+				", vmu.id as v13muid,vmu.name as v14muname"+
+				", vd.id as v15did,vd.name as v16dname"+
+				", p.cntdecimal as p17cntdecimal"+
+				", ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid "+
+				//", case when p.type in ('3','5')  then p.valueTextDefault when p.type='2' and uv.useByDefault='1' then ''||uv.id " +
+				//" when p.type='INTEGER' then " +
+				", " +CreateSQLQuerty(parsedPdfInfo)+" as p19valuetextdefault "+
+				",case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc "+
+				"from prescription pres "+
+				"left join templateprotocol tp on tp.medservice_id=pres.medservice_id "+
+				"left join parameterbyform pf on pf.template_id = tp.id "+
+				"left join parameter p on p.id=pf.parameter_id "+
+				"left join userDomain vd on vd.id=p.valueDomain_id "+
+				"left join userValue uv on uv.domain_id=vd.id and uv.useByDefault='1' "+
+				"left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id "+
+				"where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"'"+
+				"order by pf.position");
+			
+				Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
+
+				sb.setLength(0);
+				sb.append("{");
+				sb.append("\"workFunction\":\""+workFunctionId+"\",") ;
+				sb.append("\"workFunctionName\":\""+"\",") ;
+			//	if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
+					sb.append("\"isdoctoredit\":\"1\",") ;
+			//	} else {
+			//		sb.append("\"isdoctoredit\":\"0\",") ;
+		//		}
+				sb.append("\"params\":[") ;
+				boolean firstPassed = false ;
+				boolean firstError = false ;
+				String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
+				,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
+				,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}
+				,{"13","unitid"},{"14","unitname"}
+				,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
+				,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
+				} ;
+				for(WebQueryResult wqr : lwqr) {
+					
+					StringBuilder par = new StringBuilder() ;
+					par.append("{") ;
+					boolean isFirtMethod = false ;
+					boolean isError = false ;
+					//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
+					if (String.valueOf(wqr.get4()).equals("2")) {
+						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+						if (wqr.get15()==null) {
+							isError = true ;
+							//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+						}
+					}
+					try {
+						
+						for(String[] prop : props) {
+							Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
+							String strValue = value!=null?value.toString():"";
+							
+							if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
+							par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
+							
+						}
+						
+					} catch (Exception e) {
+						throw new IllegalStateException(e);
+					}
+					par.append("}") ;
+					if (isError) {
+						if(firstError) err.append(", ") ;else firstError=true;
+						err.append(par) ;
+					}else{
+						if(firstPassed) sb.append(", ") ;else firstPassed=true;
+						sb.append(par) ;
+					}
+				}
+				sb.append("]") ;
+				sb.append(",\"errors\":[").append(err).append("]") ;
+				sb.append(",\"template\":\"").append(templateId).append("\"") ;
+				sb.append(",\"protocol\":\"").append("\"") ;
+				sb.append("}") ;
+			//	System.out.println("==== JSSON= "+sb);
+				 
+				 saveLabAnalyzed(Long.valueOf(0),pid,Long.valueOf(0),sb.toString(),username, templateId) ;
+				// System.out.println("==== SS="+ss);
+				}
+			}
+		return sb.toString();			
+	}
+	
+	 private String CreateSQLQuerty (ParsedPdfInfo parsedPdfInfo)
+	    {
+	        int size = parsedPdfInfo.getResults().size();
+	        String s = "";
+	        for (int i = 0; i < size; i++) {
+
+	            s+=" case when p.externalcode='"+parsedPdfInfo.getResults().get(i).getCode()+
+	               "' then '"+parsedPdfInfo.getResults().get(i).getValue()+"' end";
+	            if((i+1)<size) s+=" ||' '||";
+	            //System.out.println(parsedPdfInfoResults.size());
+	        }
+	        return s;
+	    }
+	 
+	private String str(String aValue) {
+    	if (aValue.indexOf("\"")!=-1) {
+    		aValue = aValue.replaceAll("\"", "\\\\\"") ;
+    	}
+    	return aValue ;
+    }
+	//-------------
 	public Long clonePrescription(Long aPrescriptionId, Long aMedServiceId, Long aWorkFunctionId, String aCreateUsername) {
 		ServicePrescription p = theManager.find(ServicePrescription.class, aPrescriptionId);
 		
