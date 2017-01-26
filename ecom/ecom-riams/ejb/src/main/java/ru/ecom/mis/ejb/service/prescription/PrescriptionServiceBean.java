@@ -388,7 +388,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					"left join PrescriptionList pl on pl.id=p.prescriptionList_id " +
 					"left join medcase mc on mc.id=pl.medCase_id " +
 					"where mc.patient_id='"+aPatientId+"' " +
-							"and p.planStartDate=to_date('"+aDate+"','yyyy-mm-dd') and p.materialId is not null " +
+							"and p.intakeDate=to_date('"+aDate+"','yyyy-mm-dd') and p.materialId is not null " +
 									"and p.canceldate is null " +
 									"and p.materialId!='' order by p.materialId desc ";
 			System.out.println(req);
