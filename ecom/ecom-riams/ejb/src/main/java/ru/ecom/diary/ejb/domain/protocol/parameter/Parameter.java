@@ -26,6 +26,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(DeleteListener.class)
 public class Parameter extends BaseEntity{
 	
+	/** Внешний код */
+	@Comment("Внешний код")
+	public String getExternalCode() {return theExternalCode;}
+	public void setExternalCode(String aExternalCode) {theExternalCode = aExternalCode;}
+	/** Внешний код */
+	private String theExternalCode;
+
 	/** Код */
 	@Comment("Код")
 	public String getCode() {return theCode;}

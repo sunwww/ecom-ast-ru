@@ -19,6 +19,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="group", parentForm=ParameterGroupForm.class)
 public class ParameterForm extends IdEntityForm{
 	
+	/** Внешний код */
+	@Comment("Внешний код")
+	@Persist
+	public String getExternalCode() {return theExternalCode;}
+	public void setExternalCode(String aExternalCode) {theExternalCode = aExternalCode;}
+	/** Внешний код */
+	private String theExternalCode;
+	
 	/** Код */
 	@Comment("Код")
 	@Persist 

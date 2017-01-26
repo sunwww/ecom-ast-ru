@@ -7,7 +7,10 @@
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
     		<field property='code' type='textField' label='Код' fieldColSpan='3'/>
-    		<field type='row' open='0'/>    	
+    		<field type='row' open='0'/>   
+    		<field type='row' open='1'/>
+    		<field property='externalCode' type='textField' label='Код для анализатора' fieldColSpan='3' />
+    		<field type='row' open='0'/>    	 	
     		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' fieldColSpan='3' required='true'/>
     		<field type='row' open='0'/>
@@ -41,7 +44,10 @@
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
     		<field property='code' type='textField' label='Код' fieldColSpan='3' />
-    		<field type='row' open='0'/>    	
+    		<field type='row' open='0'/>   
+    		<field type='row' open='1'/>
+    		<field property='externalCode' type='textField' label='Код для анализатора' fieldColSpan='3' />
+    		<field type='row' open='0'/>    	 	
     		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
@@ -149,6 +155,9 @@
     		<field type='separator' label='Параметр текстовый' colSpan='4'/>
     		<field type='row' open='0'/>    	
     		<field type='row' open='1'/>
+    		<field property='externalCode' type='textField' label='Код для анализатора' fieldColSpan='3' />
+    		<field type='row' open='0'/>    	
+    		<field type='row' open='1'/>
     		<field property='code' type='textField' label='Код' fieldColSpan='3' />
     		<field type='row' open='0'/>    	
     		<field type='row' open='1'/>
@@ -173,7 +182,10 @@
     		<field type='row' open='0'/>
     		<field type='row' open='1'/>
     		<field property='code' type='textField' label='Код' fieldColSpan='3' />
-    		<field type='row' open='0'/>    	
+    		<field type='row' open='0'/>   
+    		<field type='row' open='1'/>
+    		<field property='externalCode' type='textField' label='Код для анализатора' fieldColSpan='3' />
+    		<field type='row' open='0'/>    	 	
     		<field type='row' open='1'/>
     		<field property='shortName' type='textField' label='Короткое название' size='50' required='true'/>
     		<field type='row' open='0'/>
