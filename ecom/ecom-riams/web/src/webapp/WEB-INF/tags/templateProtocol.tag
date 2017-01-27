@@ -469,8 +469,8 @@ var fldJson = null ;
 	        	for (var iparam=0;iparam<aParam.voc.length-0;iparam++) {
 	        		var v = aParam.voc[iparam] ;
 	        		var idEnterParam=aParam.idEnter.substring(0,aParam.idEnter.indexOf("_"))+"_"+v.id ;
-    				txt += "<input id=\"param"+idEnterParam+"\" name=\"param"+idEnterParam+"\" type=\"checkbox\" value=\""+v.id+"\" "+((+v.checked)>0?"checked":"")+" title=\"\" autocomplete=\"\">";
-    				txt += "<span id=\"param"+idEnterParam+"Span\" name=\"param"+idEnterParam+"Span\" onclick=\"$('param"+idEnterParam+"').click()\">"+v.name+" </span>";
+    				txt += "<div><input id=\"param"+idEnterParam+"\" name=\"param"+idEnterParam+"\" type=\"checkbox\" value=\""+v.id+"\" "+((+v.checked)>0?"checked":"")+" title=\"\" autocomplete=\"\">";
+    				txt += "<span id=\"param"+idEnterParam+"Span\" name=\"param"+idEnterParam+"Span\" onclick=\"$('param"+idEnterParam+"').click()\">"+v.name+" </span></div>";
 	        	}
 	        } else {
 		        txt += "<input size=\"80\" id=\"param"+aParam.id+"\" name=\"param"+aParam.id+"\" type=\"text\" value=\""+aParam.value+"\" title=\""+aParam.name+"\" autocomplete=\"off\">";
