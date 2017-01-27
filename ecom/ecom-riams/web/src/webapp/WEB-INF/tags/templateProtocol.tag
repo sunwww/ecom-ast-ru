@@ -170,7 +170,7 @@ var fldJson = null ;
 					par.valueVoc = $('param'+par.id+'Name').value ;
 				}
 			} else if (+par.type==6) {
-				for (var indVal=0;indVal<par.voc.length-1;indVal++) {
+				for (var indVal=0;indVal<par.voc.length;indVal++) {
 					var v = par.voc[indVal] ;
 					if ($('param'+par.id+"_"+v.id).checked) {
 						val = val + ","+$('param'+par.id+"_"+v.id).value ;
