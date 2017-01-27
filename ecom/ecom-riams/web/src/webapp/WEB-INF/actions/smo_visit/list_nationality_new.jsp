@@ -54,20 +54,17 @@
     </msh:panel>
     </msh:form>
     <% if (typePatient.equals("1")) {
-    	request.setAttribute("groupSql", "coalesce(p.nationality_id,0),vn.name");
-    	request.setAttribute("change", "and (vn.id is not null and vn.voc_code!='643')");
-    	request.setAttribute("change2", " ");
-    	request.setAttribute("change3", "vn.name as vnname");
-    	request.setAttribute("change4", "vn.name");
+    	
+    	request.setAttribute("groupSql", " and (oo.id is not null and oo.voc_code!='643') group by oo.name order by oo.name");
+		request.setAttribute("change", "oo.name as vnname");
+		request.setAttribute("address", "");
     	request.setAttribute("names", "Страна, где зарегистрирован гражданин");
     	
 	} else if (typePatient.equals("2")) {
 	
-		request.setAttribute("groupSql", "coalesce(a.region_addressid,0),ar.name");
-		request.setAttribute("change", "and ar.name != 'Астраханская'");
-		request.setAttribute("change2", "left join Address2 ar on ar.addressid=a.region_addressid");
-		request.setAttribute("change3", "ar.name as vnname");
-		request.setAttribute("change4", "ar.name");
+		request.setAttribute("groupSql", " and ar.name != 'Астраханская' group by ar.name order by ar.name");
+		request.setAttribute("change", "ar.name as vnname");
+		request.setAttribute("address", " left join address2 a on a.addressid=p.address_addressid left join Address2 ar on ar.addressid=a.region_addressid");
 		request.setAttribute("names", "Cубъект РФ, где зарегистрирован гражданин");
 		
 	}
@@ -75,34 +72,34 @@
     
     <msh:section>
 <ecom:webQuery nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
-select ${change3}
-,count(distinct case when spo.dateStart=spo.dateFinish and vss.code='OBLIGATORYINSURANCE' then spo.id else null end) as visitOMC
-,count(distinct case when spo.dateStart=spo.dateFinish and vss.code='BUDGET' then spo.id else null end) as visitBUDGET
-,count(distinct case when spo.dateStart=spo.dateFinish and vss.code='CHARGED' then spo.id else null end) as visitPATIENT
-,count(distinct case when spo.dateStart!=spo.dateFinish and vss.code='OBLIGATORYINSURANCE' then spo.id else null end) as treatmentOMC
-,count(distinct case when spo.dateStart!=spo.dateFinish and vss.code='BUDGET' then spo.id else null end) as treatmentBUDGET
-,count(distinct case when spo.dateStart!=spo.dateFinish and vss.code='CHARGED' then spo.id else null end) as treatmentPATIENT
-,count(distinct case when m.dtype='DepartmentMedCase' and vbs.code='1' and m.deniedHospitalizating_id is null and vss.code='OBLIGATORYINSURANCE' then m.id else null end) as hospOMC
-,count(distinct case when m.dtype='DepartmentMedCase' and vbs.code='1' and m.deniedHospitalizating_id is null and vss.code='BUDGET' then m.id else null end) as hospBUDGET
-,count(distinct case when m.dtype='DepartmentMedCase' and vbs.code='1' and m.deniedHospitalizating_id is null and vss.code='CHARGED' then m.id else null end) as hospPATIENT
-,count(distinct case when m.dtype='DepartmentMedCase' and vbs.code='2' and m.deniedHospitalizating_id is null and vss.code='OBLIGATORYINSURANCE' then m.id else null end) as hospOMC
-,count(distinct case when m.dtype='DepartmentMedCase' and vbs.code='2' and m.deniedHospitalizating_id is null and vss.code='BUDGET' then m.id else null end) as hospBUDGET
-,count(distinct case when m.dtype='DepartmentMedCase' and vbs.code='2' and m.deniedHospitalizating_id is null and vss.code='CHARGED' then m.id else null end) as hospPATIENT
+select ${change}
+,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='OBLIGATORYINSURANCE'  then m.id end) as visitOMC
+,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='BUDGET' then m.id else null end) as visitBUDGET
+,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='CHARGED' then m.id else null end) as visitPATIENT
+,count(distinct case when m.dtype='PolyclinicMedCase' and (m.dateStart!=m.dateFinish or m.dateFinish is null) and vss.code='OBLIGATORYINSURANCE' then m.id else null end) as treatmentOMC
+,count(distinct case when m.dtype='PolyclinicMedCase' and (m.dateStart!=m.dateFinish or m.dateFinish is null) and vss.code='BUDGET' then m.id else null end) as treatmentBUDGET
+,count(distinct case when m.dtype='PolyclinicMedCase' and (m.dateStart!=m.dateFinish or m.dateFinish is null) and vss.code='CHARGED' then m.id else null end) as treatmentPATIENT
+,count(distinct case when m.dtype='HospitalMedCase' and vss.code='OBLIGATORYINSURANCE' and vbs.code='1'  then m.id else null end) as statOMC
+,count(distinct case when m.dtype='HospitalMedCase' and vss.code='BUDGET' and vbs.code='1' then m.id else null end) as statBudget
+,count(distinct case when m.dtype='HospitalMedCase' and vss.code='CHARGED' and vbs.code='1' then m.id else null end) as statPatient
+,count(distinct case when m.dtype='HospitalMedCase' and vss.code='OBLIGATORYINSURANCE' and vbs.code='2'  then m.id else null end) as daystatOMC
+,count(distinct case when m.dtype='HospitalMedCase' and vss.code='BUDGET' and vbs.code='2' then m.id else null end) as daystatBudget
+,count(distinct case when m.dtype='HospitalMedCase' and vss.code='CHARGED' and vbs.code='2' then  m.id else null end) as daystatPatient
 ,0,0
 from medcase m
-left join MedCase spo on spo.id=m.parent_id
-left join VocServiceStream vss on vss.id=spo.serviceStream_id
-left join patient p on p.id=m.patient_id
-left join address2 a on a.addressid=p.address_addressid
-${change2}
-left join bedfund bf on bf.id = m.bedfund_id
-left join vocbedsubtype vbs on vbs.id = bf.bedsubtype_id
-left join Omc_Oksm vn on vn.id=p.nationality_id
+left join medcase smo on smo.parent_id = m.id  
+left join VocServiceStream vss on vss.id=m.serviceStream_id 
+left join Patient p on p.id=m.patient_id
+${address}
+left join Omc_Oksm oo on oo.id=p.nationality_id 
+left join bedfund bf on bf.id = smo.bedfund_id
+left join vocbedsubtype vbs on vbs.id = bf.bedsubtype_id 
 where m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
-${change}
-and (m.noActuality is null or m.noActuality='0') 
-group by ${groupSql}
-order by ${change4}"
+AND case when m.dtype = 'HospitalMedCase' then case when m.deniedHospitalizating_id is not null then '0' else '1' end else '1' end = '1'
+and (smo.dtype in ('Visit', 'ShortMedCase') or smo.dtype='DepartmentMedCase' and smo.transferDate is null)
+and m.dtype in ('HospitalMedCase', 'PolyclinicMedCase')
+and vss.code in ('OBLIGATORYINSURANCE', 'BUDGET', 'CHARGED')
+${groupSql}"
 /> 
 
     
