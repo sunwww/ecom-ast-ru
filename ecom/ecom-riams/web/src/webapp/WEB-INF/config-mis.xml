@@ -306,6 +306,13 @@
 
 	<action-mappings>
 	
+	 <action path='/lab_checkImportPDF' type='ru.ecom.mis.web.action.kdl.ImportPdfAction'
+                name='diet_journalForm'
+                validate='false'
+                scope="request"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/riams/config.jsp" />
+        </action>
 	 <action path='/diet_dietJournal' type='ru.ecom.mis.web.action.diet.DietJournalAction'
                 name='diet_journalForm'
                 validate='false'
@@ -417,6 +424,14 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_protocolKili/protocolReport.jsp" />
+        </action>
+        
+        <action path='/parsePdf' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/document_parsePdf/parsePdf.jsp" />
         </action>
 	    
 	    <action path='/mis_mortality_report' type='ru.ecom.mis.web.action.medcase.ResultPatientListAction'
