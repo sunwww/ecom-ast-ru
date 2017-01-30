@@ -76,13 +76,15 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	
 	public String setDefaultDiaryCycle(List<ParsedPdfInfo> parsedPdfInfos) throws JSONException
 	{
+		System.out.println("Start setDefaultDiaryCycle");
 		for (int i = 0; i < parsedPdfInfos.size(); i++) {
 		    setDefaultDiary(parsedPdfInfos.get(i));
 		}
+		System.out.println("Finish setDefaultDiaryCycle");
 		return "0";
 	}
-	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) throws JSONException
-	{
+	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) throws JSONException	{
+		System.out.println("Start setDefaultDiary");
 		//ParsedPdfInfo parsedPdfInfo = doObject();
 		
 		WebQueryServiceBean  service = new WebQueryServiceBean() ;
@@ -96,6 +98,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			" where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"' tp.createDiaryByDefault='1'");
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		if (!list.isEmpty()) {
+			System.out.println("List is not empty");
 			String username = "LabRobot";
 			
 			Long workFunctionId = null;
