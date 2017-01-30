@@ -16,6 +16,9 @@
 				<div class='menu'>
 				<h2>Работа с данными</h2>
 				<ul>
+					<li><msh:link roles='/Policy/Mis/Patient' action="lab_checkImportPDF.do">
+                            TEST check pdf
+                        </msh:link></li>
 					<li><msh:link roles='/Policy/Mis/Patient' action="templateDocument-import.do">
                             Загрузить файл
                         </msh:link></li>
