@@ -504,8 +504,8 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn columnName="Услуги" property="3"/>
            
              <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во пациентов" property="16"/>
-             <msh:tableColumn isCalcAmount="true" columnName="Пациенты в стац" property="17"/>
-             <msh:tableColumn isCalcAmount="true" columnName="Пациенты в пол-ке" property="18"/>
+             <msh:tableColumn isCalcAmount="true" columnName="Пациенты в пол-ке" property="17"/>
+             <msh:tableColumn isCalcAmount="true" columnName="Пациенты в стац" property="18"/>
             <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во" property="4"/>
            
             <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5"/>

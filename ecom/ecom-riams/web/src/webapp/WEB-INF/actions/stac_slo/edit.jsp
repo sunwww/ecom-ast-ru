@@ -67,6 +67,8 @@
     	params="id"  action='/entityParentPrepareCreate-stac_surOperation'  key='Alt+7' title="Операции"
     	/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
+      	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/Create" name="Случай ВМП" action="/entityParentPrepareCreate-stac_vmpCase" params="id" title="Добавить случай ВМП"/>
+      	
       </msh:sideMenu>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
       <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
@@ -81,6 +83,7 @@
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневники специалистов" params="id" action="/entityParentList-smo_visitProtocol" title="Показать все дневники специалиста" guid="d43123-45ca-43cc-826d-bc85" />
         <msh:sideLink name="Температурные листы" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы" guid="df23-45ca-43cc-826d-5hf5dd" params="id" />
         <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Услуги" styleId="viewShort"  action="/javascript:getDefinition('entityParentList-smo_medService.do?short=Short&id=${param.id}')" title="Показать все услуги" guid="df23-45a26d-5hfd" />
+        <msh:sideLink name="Случаи ВМП" action="/entityParentList-stac_vmpCase" title="Показать все случаи ВМП" guid="df23-45ca-43cc-826d-5hf5dd" roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/View" params="id" />
         
         <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/View" name="Переливание"     
     	params="id"  action='/entityParentList-trans_transfusion'  key='Alt+8' 
@@ -142,6 +145,8 @@
       <msh:hidden property="transferDate"/>
       <msh:hidden property="transferTime"/>
       <msh:hidden property="transferDepartment"/>
+      <msh:hidden property="kindHighCare"/>
+      <msh:hidden property="methodHighCare"/>
       <msh:hidden property="targetHospType"/>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Slo/ForceCreatePrescriptionList">
       <msh:hidden property="diet"/>
@@ -216,12 +221,8 @@
         <msh:hidden property="omcStandart"/>
         <msh:hidden property="omcStandartExpert"/>
         </msh:ifNotInRole>
-        <msh:row>
-        	<msh:autoComplete property="kindHighCare" fieldColSpan="6" label="Вид ВМП" horizontalFill="true" vocName="vocKindHighCare"/>
-        </msh:row>
-        <msh:row>
-        	<msh:autoComplete property="methodHighCare" parentAutocomplete="kindHighCare" fieldColSpan="6" label="Метод ВМП" horizontalFill="true" vocName="vocMethodHighCare"/>
-        </msh:row>
+       
+      
         <msh:row>
         	<msh:autoComplete vocName="vocIllnesPrimary" fieldColSpan="6" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"/>
         </msh:row>
@@ -819,7 +820,7 @@
       	lpuDate = (+$('department').value) +"#"+$('dateStart').value  ;
       	bedFundAutocomplete.setParentId($('lpuAndDate').value) ;
       	serviceStreamAutocomplete.setParentId(lpuDate) ;
-      	kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
+      	//kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
       	//bedFundAutocomplete.setVocId(theBedFund);
       	//alert(departmentAutocomplete) ;
       	//transferDepartmentAutocomplete.setParentId($('lpu').value) ;
@@ -829,9 +830,9 @@
       			$('bedFund').value="";
       			$('bedFundName').value="";
       			
-      			$('kindHighCare').value = "" ;
-      	 		$('kindHighCareName').value = "" ;
-      	 		kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
+      			//$('kindHighCare').value = "" ;
+      	 		//$('kindHighCareName').value = "" ;
+      	 		//kindHighCareAutocomplete.setParentId(+$('serviceStream').value) ;
       	 	
       	 	updateLpuAndDate() ;
       	 	updateBedFund() ;
@@ -888,11 +889,11 @@
     	      		updateBedFund() ;
     	      		
     	      	 	var newid = $('serviceStream').value ;
-    	      	 	if (oldid!=newid) {
-    	      	 		$('kindHighCare').value = "" ;
-    	      	 		$('kindHighCareName').value = "" ;
-    	      	 		kindHighCareAutocomplete.setParentId(+newid) ;
-    	      	 	}
+    	      	 //	if (oldid!=newid) {
+    	      	 //		$('kindHighCare').value = "" ;
+    	      	 //		$('kindHighCareName').value = "" ;
+    	      	 //		kindHighCareAutocomplete.setParentId(+newid) ;
+    	      	 //	}
     	      	 });
           	} catch (e) {
           	}

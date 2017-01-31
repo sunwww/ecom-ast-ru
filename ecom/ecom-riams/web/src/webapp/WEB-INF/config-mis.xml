@@ -6,6 +6,7 @@
 
 	<form-beans>
 
+		<form-bean name="stac_vmpCaseForm"			type="ru.ecom.mis.ejb.form.medcase.hospital.HitechMedicalCaseForm" />
 		<form-bean name="diet_journalForm"			type="ru.ecom.mis.web.action.diet.DietJournalForm" />
 		<form-bean name="mis_protocolKiliForm"		type="ru.ecom.mis.ejb.form.medcase.kili.ProtocolKiliForm" />
 		<form-bean name="voc_kiliProfileForm"		type="ru.ecom.mis.ejb.form.medcase.voc.VocKiliProfileForm" />
