@@ -63,6 +63,15 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	}
 	
 	public void checkPdf() throws IOException, NoSuchFieldException, IllegalAccessException, JSONException {
+		int[][] templateGEM = new int[][]{{30, 560, 100, 770},
+                {190, 560, 210, 770},
+                {215, 560, 250, 770},
+                {255, 560, 340, 770}};
+		int[][] templateBio = new int[][]{{30, 300, 100, 730},
+                {190, 300, 105, 730},
+                {255, 300, 200, 730},
+                {270, 300, 330, 730}};
+		int[][] fillArray = new int[4][4];
 		System.out.println("==== Запускаем функцию проверки наличия PDF ====");
 		//**Перечень директорий*//*
 		String homeDirectory  =  getDir("jboss.labPdfDocumentDir","/opt/tomcat"); //= "C:\\Users\\vtsybulin\\workspace\\pdfParser\\pdf";
@@ -72,14 +81,9 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         String archDirectory = homeDirectory + "/parse_archive/";
         System.out.println("Ищу файлы в папке " + pdfDirectory);
         /**Сперва должны получить список всех файлов в формате pdf*/
-        File[] fileList = getFiles(pdfDirectory);
-        
+        File[] fileList = getFiles(pdfDirectory);       
         if (fileList!=null&&fileList.length>0){
         	System.out.println("В массиве имеются файлы!");
-	
-	
-        	
-        
         for (int i = 0; i < fileList.length; i++){
         	List<ParsedPdfInfo> resultList = new ArrayList<ParsedPdfInfo>();
         	//resultList = new ArrayList<ParsedPdfInfo>();
@@ -96,24 +100,43 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
             }
             System.out.println("last character: " +
                     temp_container[0].substring(temp_container[0].length() - 1));
-            String typeFile = "100014";	
+            String typeFile = "100014";
+            
+            String[] typesName = {"gem", "bio"}; //массив с названиями типов отчетов
+            int reportType = 0; //порядковый номер отчета из массива
+            String currentType = "";
+            currentType = determineHead(pdfDirectory + fileList[i].getName());
+            System.out.println("Файл относится к шаблону " + currentType);
+            
+            if (currentType == typesName[0]){
+            	for(int q1 = 0; q1 < 4; q1++){
+            		for(int q2 = 0; q2 < 4; q2++){
+            			fillArray[q1][q2] = templateGEM[q1][q2];}}
+            	reportType = 1;}
+            	
+            
+            if (currentType == typesName[1]){
+            	for(int q1 = 0; q1 < 4; q1++){
+            		for(int q2 = 0; q2 < 4; q2++){
+            			fillArray[q1][q2] = templateBio[q1][q2];}}
+            	reportType = 2;}
+            	
             if (typeFile.equals("100014")) {
-//            	TODO
-//            	 * Находим штрих-код. 
-//            	 
-            	String barCode = ""; 
-            	barCode = getBarCode(pdfDirectory+fileName);
+            	String header = "";
+            	String barCode = "";
+            	if (reportType == 1){
+            		barCode = getBarCode(pdfDirectory+fileName);}
             	ParsedPdfInfo ppi = getPdfInfoByBarcode(resultList, barCode); //Создаем или находим объект, хранящий все анализы по одному штрих-коду
             	List <ParsedPdfInfoResult> res = new ArrayList<ParsedPdfInfoResult>();
             	try{
             		String[] paramName = null;
-            		paramName = fillColumn(paramName, 30, 560, 100, 770, pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+            		paramName = fillColumn(paramName, fillArray[0][0], fillArray[0][1], fillArray[0][2], fillArray[0][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
             		String[] resultValue = null;
-            		resultValue = fillColumn(paramName, 190, 560, 210, 770, pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+            		resultValue = fillColumn(paramName, fillArray[1][0], fillArray[1][1], fillArray[1][2], fillArray[1][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
             		String[] measureUnit = null;
-            		measureUnit = fillColumn(paramName, 215, 560, 250, 770, pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+            		measureUnit = fillColumn(paramName, fillArray[2][0], fillArray[2][1], fillArray[2][2], fillArray[2][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
             		String[] nomRange = null; 
-            		nomRange = fillColumn(paramName, 255, 560, 340, 770, pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+            		nomRange = fillColumn(paramName, fillArray[3][0], fillArray[3][1], fillArray[3][2], fillArray[3][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
                     fileName = fileList[i].getName().substring(0, fileList[i].getName().length() - 4);
                     for (int j = 0; j < paramName.length; j++) {
                             ParsedPdfInfoResult ppir = new ParsedPdfInfoResult();
@@ -128,24 +151,70 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
                     	System.out.println("Исключение в цикле while");
                     	}
                 moveFile(pdfDirectory, archDirectory, fileName + ".pdf");
-                ppi.setBarcode(barCode);
+                if (reportType == 1){
+                ppi.setBarcode(barCode);}
+                if (reportType == 2){
+                	for (int t = 0; t < res.size(); t++){
+                		barCode = res.get(t).getValue();
+                		System.out.println("===DEBUG=== " + barCode);
+                		ppi.setBarcode(barCode);
+                	}
+                }
                 ppi.setResults(res);
            resultList.add(ppi);
-                	}            
-            System.out.println("Выводим строку №7");
-            System.out.println(resultList.get(6).getResults().get(0));
-            System.out.println(resultList.get(6).getResults().get(1));
-            System.out.println(resultList.get(6).getResults().get(2));
-            System.out.println(resultList.get(6).getResults().get(3));
+                	}
+            System.out.println("===DEBUG=== Выводим строку №7");
+            System.out.println(resultList.get(0).getResults().get(6).getCode());
+            System.out.println(resultList.get(0).getResults().get(6).getValue());
+            System.out.println(resultList.get(0).getResults().get(6).getMeasurementUnit());
+            System.out.println(resultList.get(0).getResults().get(6).getRefInterval());
+            System.out.println("===DEBUG=== Вывод кодов");
+            for(int z = 0; z < resultList.size(); z++)
+            {
+            	System.out.println(resultList.get(0).getBarcode());
+            }
             System.out.println("Запускаем функцию по заполнению дневника");
             PrescriptionServiceBean service = new PrescriptionServiceBean();
             service.setDefaultDiaryCycle(resultList);
             	}
         }       
         else{
-        	System.out.println("В массиве нет файлов!");
-        }
+        	System.out.println("В массиве нет файлов!");}
 }
+	
+	
+	public static String determineHead(String pdf) throws IOException {
+        String head = "";
+        String[] types = {"гематологическом", "биохимического"};
+        String[] typesName = {"gem", "bio"};
+        PdfReader reader = new PdfReader(pdf);
+        StringBuilder text = new StringBuilder();
+        Rectangle rect = new Rectangle(0, 0, 1000, 1000);
+        RenderFilter filter = new RegionTextRenderFilter(rect);
+        TextExtractionStrategy strategy;
+        for (int page = 1; page <= reader.getNumberOfPages(); page++) {
+            strategy = new FilteredTextRenderListener(
+                    new LocationTextExtractionStrategy(), filter);
+            String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
+
+            for (int i = 0; i < types.length; i++)
+            {
+                int positionTemp = currentText.indexOf(types[i]);
+                if (positionTemp!=-1){
+                    head = typesName[i];
+                    System.out.println("DETECTED PATTERN " + types[i] + " IN FILE " + pdf);
+                    return head;
+                }
+                else{
+                    System.out.println("NOT DETECTED");
+                }
+
+            }
+        }
+        reader.close();
+        return head;
+    }
+	
 	public static String getBarCode(String pdf) throws IOException {
         String barcode = "";
         PdfReader reader = new PdfReader(pdf);
