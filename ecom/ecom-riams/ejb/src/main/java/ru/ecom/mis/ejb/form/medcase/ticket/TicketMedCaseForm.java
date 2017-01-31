@@ -320,5 +320,22 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 
 	/** УЕТ */
 	private String theUetT;
+	
+	/** Время получения вызова СМП */
+	@Comment("Время получения вызова СМП")
+	@TimeString @DoTimeString
+	public String getCallReceiveTime() {return theCallReceiveTime;}
+	public void setCallReceiveTime(String aCallReceiveTime) {theCallReceiveTime = aCallReceiveTime;}
+	/** Время получения вызова СМП */
+	private String theCallReceiveTime;
+
+	/** Время прибытия бригады СМП */
+	@Comment("Время прибытия бригады СМП")
+	@TimeString @DoTimeString
+	public String getArrivalTime() {return theArrivalTime;}
+	public void setArrivalTime(String aArrivalTime) {theArrivalTime = aArrivalTime;}
+	/** Время прибытия бригады СМП */
+	private String theArrivalTime;
+	
 }
 

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.ambulance;
 
+import java.sql.Time;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -29,4 +31,18 @@ public class AmbulanceCard extends BaseEntity {
 
 	/** СМО */
 	private MedCase theMedCase;
+	
+	/** Время получения вызова СМП */
+	@Comment("Время получения вызова СМП")
+	public Time getCallReceiveTime() {return theCallReceiveTime;}
+	public void setCallReceiveTime(Time aCallReceiveTime) {theCallReceiveTime = aCallReceiveTime;}
+	/** Время получения вызова СМП */
+	private Time theCallReceiveTime;
+	
+	/** Время прибытия бригады до места назначения */
+	@Comment("Время прибытия бригады до места назначения")
+	public Time getArrivalTime() {return theArrivalTime;}
+	public void setArrivalTime(Time aArrivalTime) {theArrivalTime = aArrivalTime;}
+	/** Время прибытия бригады до места назначения */
+	private Time theArrivalTime;
 }

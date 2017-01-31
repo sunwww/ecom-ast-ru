@@ -73,6 +73,7 @@ function onPreDelete(aId, aCtx) {
 	
 }
 
+
 /**
  * При создании
  */
@@ -154,6 +155,8 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		var ambCard = new Packages.ru.ecom.mis.ejb.domain.ambulance.AmbulanceCard() ;
 		ambCard.setMedCase(aEntity) ;
 		ambCard.setNumberCard(aForm.ambulanceCard) ;
+		ambCard.setCallReceiveTime(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlTime(aForm.getCallReceiveTime()));
+		ambCard.setArrivalTime(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlTime(aForm.getArrivalTime()));
 		aCtx.manager.persist(ambCard) ;
 	}
 	if(aEntity.parent==null) {

@@ -50,9 +50,11 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 					,new StringBuilder().append("parent_id='").append(aIdEntity).append("'").append(" and dtype='ServiceMedCase'").toString()
 				)) ;*/
 			form.setMedServices(getMedServiceArray(form, manager)) ;
-			List<Object[]> listac = manager.createNativeQuery("select id,numbercard from ambulanceCard where medcase_id="+aIdEntity).getResultList() ;
+			List<Object[]> listac = manager.createNativeQuery("select id,numbercard, cast(callReceiveTime as char(5)) as receiveTime, cast(arrivalTime as char(5)) as arrivalTime from ambulanceCard where medcase_id="+aIdEntity).getResultList() ;
 			if (!listac.isEmpty()) {
 				form.setAmbulanceCard(""+listac.get(0)[1]) ;
+				form.setCallReceiveTime(""+listac.get(0)[2]);
+				form.setArrivalTime(""+listac.get(0)[3]);
 			}
 		}
     	List<Object[]> list =aContext.getEntityManager().createNativeQuery("select pat.categoryChild_id,mc.id from medcase mc left join patient pat on pat.id=mc.patient_id where mc.id='"+aIdEntity+"'")
