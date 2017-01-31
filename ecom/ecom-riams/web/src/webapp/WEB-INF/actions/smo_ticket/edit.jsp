@@ -102,6 +102,10 @@
 	        	<msh:autoComplete vocName="vocAmbulance" property="ambulance" label="Бригада СП" horizontalFill="true" />
 	        	<msh:autoComplete vocName="vocVisitOutcome" property="visitOutcome" label="Исход СП" horizontalFill="true" />
 	        </msh:row>
+	        <msh:row>
+	        	<msh:textField property="callReceiveTime" label="Время получения вызова СМП"/>
+	        	<msh:textField property="arrivalTime" label="Время прибытия бригады до места назначения"/>
+	        </msh:row>
         </msh:ifInRole>
         <msh:row>
         <msh:ifFormTypeIsNotView formName="smo_ticketForm">
