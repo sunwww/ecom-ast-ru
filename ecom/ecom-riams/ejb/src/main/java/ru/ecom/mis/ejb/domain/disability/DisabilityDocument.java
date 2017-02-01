@@ -214,9 +214,18 @@ public class DisabilityDocument extends BaseEntity{
 	@Comment("Дата начала")
 	@Transient
 	public Date getDateFrom() {
-		return getDisabilityRecords().isEmpty() 
-		? null 
-		: getDisabilityRecords().get(0).getDateFrom(); 
+		if (getDisabilityRecords().isEmpty()) {
+			return null;
+		} else {
+			Date dateFrom = null;
+			for (DisabilityRecord dr:getDisabilityRecords()) {
+				if (dateFrom ==null||dateFrom.getTime()>dr.getDateFrom().getTime()) {
+					dateFrom = dr.getDateFrom();
+				}
+			}
+			return dateFrom;
+		}
+		 
 	}
 
 
@@ -224,9 +233,19 @@ public class DisabilityDocument extends BaseEntity{
 	@Comment("Дата окончания")
 	@Transient
 	public Date getDateTo() {
-		return getDisabilityRecords().isEmpty() 
-			? null 
-			: getDisabilityRecords().get(getDisabilityRecords().size()-1).getDateTo(); 
+		if (getDisabilityRecords().isEmpty()) {
+			return null;
+		} else {
+			Date dateFrom = null;
+			Date dateTo = null;
+			for (DisabilityRecord dr:getDisabilityRecords()) {
+				if (dateFrom ==null||dateFrom.getTime()<dr.getDateFrom().getTime()) {
+					dateFrom = dr.getDateFrom();
+					dateTo = dr.getDateTo();
+				}
+			}
+			return dateTo;
+		}
 	}
 	/** Первичность (текст) */
 	@Transient
