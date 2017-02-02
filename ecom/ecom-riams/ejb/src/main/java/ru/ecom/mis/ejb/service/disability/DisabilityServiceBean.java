@@ -982,7 +982,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	}
     	
     	VocDisabilityStatus stat = theManager.find(VocDisabilityStatus.class, aReasonId) ;
-    	DisabilityDocument newDoc = copyDocument(doc, aSeries, aNumber,new java.sql.Date(new java.util.Date().getTime()),aWorkFunction2) ;
+    	DisabilityDocument newDoc = copyDocument(doc, aSeries, aNumber,new java.sql.Date(new java.util.Date().getTime()),aWorkFunction2, true) ;
     	if (aJob!=null && !aJob.equals("")) {
     		aJob = aJob.trim().toUpperCase() ;
     		newDoc.setJob(aJob) ;
@@ -1031,8 +1031,11 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	theManager.persist(newDoc) ;
     	return newDoc.getId() ;
     }
-    
     private DisabilityDocument copyDocument(DisabilityDocument aDocument, String aSeries, String aNumber,Date aIssuedDate,Long aWorkFunction2) {
+    	return copyDocument( aDocument,  aSeries,  aNumber, aIssuedDate, aWorkFunction2, false);
+    }
+    
+    private DisabilityDocument copyDocument(DisabilityDocument aDocument, String aSeries, String aNumber,Date aIssuedDate,Long aWorkFunction2, boolean isDuplicate) {
     	WorkFunction wf2 = aWorkFunction2!=null?theManager.find(WorkFunction.class,aWorkFunction2):null ;
     	DisabilityDocument newDoc = new DisabilityDocument() ;
     	newDoc.setAnotherLpu(aDocument.getAnotherLpu()) ;
@@ -1087,9 +1090,17 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	//newDoc.set(doc.get) ;
     	//newDoc.set(doc.get) ;
     	List<DisabilityRecord> list1 = new ArrayList<DisabilityRecord>() ;
+    	Date startRecordDate = null;
+    	Date finishRecordDate = null;
     	for (int i=0;i<aDocument.getDisabilityRecords().size();i++) {
     		DisabilityRecord old = aDocument.getDisabilityRecords().get(i) ;
     		DisabilityRecord record = new DisabilityRecord() ;
+    		if (startRecordDate==null||startRecordDate.getTime()>old.getDateFrom().getTime()) {
+    			startRecordDate = old.getDateFrom();
+    		}
+    		if (finishRecordDate ==null||finishRecordDate.getTime()<old.getDateTo().getTime()) {
+    			finishRecordDate = old.getDateTo();
+    		}
     		record.setDateFrom(old.getDateFrom()) ;
     		record.setDateTo(old.getDateTo()) ;
     		record.setDisabilityDocument(newDoc) ;
@@ -1117,6 +1128,15 @@ public class DisabilityServiceBean implements IDisabilityService  {
     		//record.set(old.get) ;
     		list2.add(record) ;
     	}
+    	if (isDuplicate) {
+	    	if (!list1.isEmpty()) {
+	    		DisabilityRecord record = list1.get(0);
+	    		record.setDateFrom(startRecordDate);
+	    		record.setDateTo(finishRecordDate);
+	    		list1.clear();
+	    		list1.add(record);
+	    	}
+    	} 
     	newDoc.setDisabilityRecords(list1) ;
     	newDoc.setRegimeViolationRecords(list2) ;
     	theManager.persist(newDoc) ;
