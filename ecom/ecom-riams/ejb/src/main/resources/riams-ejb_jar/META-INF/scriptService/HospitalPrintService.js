@@ -1,29 +1,39 @@
 var map = new java.util.HashMap() ;
 /* Печать протокола КИЛИ */
 function printKiliProtocol (aCtx, aParams) {
-	var id = new java.lang.Long(aParams.get("id"));
-	var kili = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKili, new java.lang.Long(aParams.get("id"))) ;
-	var pat = kili.deathCase.medCase.patient;
-	map.put("pat", pat);
-	map.put("kili", kili);
-	//Номер протокола
-	//var takeProtocolNumberQ = "select pk.protocolNumber from protocolKili pk where pk.id = " + id;
-	//var takeProtocolNumber = aCtx.manager.createNativeQuery(takeProtocolNumberQ).getSingleResult();
-	//map.put("protocolNumber", takeProtocolNumber);
+	//var id = new java.lang.Long(aParams.get("id"));
+	var protocolNumber = new java.lang.Long(aParams.get("protocolNumber"));
+	var protocolDate = new java.lang.String(aParams.get("protocolDate"));
+	var profileName = "";
+	//var profileName = new java.lang.String(aParams.get("profileName"));
+
+	//var kili = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKili, new java.lang.Long(aParams.get("id"))) ;
+	//var pat = kili.deathCase.medCase.patient;
+	//map.put("pat", pat);
+	
+	
+	
+	map.put("protocolNumber", protocolNumber);
+	map.put("protocolDate", protocolDate);
+	
 	
 	var patList = "select pat.lastname||' '||pat.firstname||' '||pat.middlename patFio, pat.birthday, mlp.name as mlpname, sls.datestart, "+
 	"sls.datefinish, pk.id as pkid, stt.code, pat.id as patid " +
-	",vwf.name as vwfname, wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as docFio" +
+	",vwf.name as vwfname, case when  mlp.isnoomc='1' then  wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename else wpat.lastname||' '||wpat.firstname||' '||wpat.middlename end as docFio" +
 	",list(case when vpd.code='1' and vdrt.code='3' then mkb.code|| ' '|| dia.name end )as diagOSN" +
 	",list(case when vpd.code='3' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as diagSOP" +
 	",list(case when vpd.code='4' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as diagOSL" +
 	",list(case when vpd.code='1' and vdrt.code='5' then mkb.code|| ' '||dia.name end) as diagOSLPat" +
 	",dth.reasoncomplicationtext, dth.reasonconcomitanttext, (case when dth.commentcategory like '' then 'Имеется совпадение диагнозов' else dth.commentcategory end) as com" +
+	", pk.protocolNumber, pk.protocolDate, case when mlp.isnoomc='1' then depPrev.kiliprofile_id else mlp.kiliprofile_id end as profileId  "+
+	", case when mlp.isnoomc='1' then vkp.name else vkp2.name end as vkpName, vkc.name as kiliConclusion "+
 	" from protocolKili pk "+
 	" left join deathcase dth on dth.id = pk.deathcase_id "+
 	" left join patient pat on pat.id = dth.patient_id "+
 	" left join medcase sls on dth.medcase_id = sls.id " +
 	" left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null" +
+	" left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id "+
+	" left join mislpu depPrev on depPrev.id=sloPrev.department_id "+ 
 	" left join workfunction wf on wf.id=slo.ownerfunction_id" +
 	" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
 	" left join worker w on w.id=wf.worker_id" +
@@ -33,33 +43,44 @@ function printKiliProtocol (aCtx, aParams) {
 	" left join diagnosis dia on sls.id = dia.medcase_id" +
 	" left join vocidc10 mkb on mkb.id=dia.idc10_id" +
 	" left join vocdiagnosisregistrationtype vdrt on vdrt.id=dia.registrationtype_id" +
-	" left join vocprioritydiagnosis vpd on vpd.id=dia.priority_id"+
-	" where pk.protocolnumber = '"+kili.protocolNumber+"' and pk.protocolDate = ('"+kili.protocolDate+"') " +
+	" left join vocprioritydiagnosis vpd on vpd.id=dia.priority_id "+
+	" left join workfunction wf2 on wf2.id=sloPrev.ownerfunction_id "+ 
+	" left join vocworkfunction vwf2 on vwf2.id=wf2.workfunction_id "+
+	" left join worker w2 on w2.id=wf2.worker_id "+
+	" left join vockiliprofile vkp on vkp.id = depPrev.kiliprofile_id "+
+	" left join vockiliprofile vkp2 on vkp2.id = mlp.kiliprofile_id "+
+	" left join patient wpat2 on wpat2.id=w2.person_id "+ 
+	" left join vockiliconclusion vkc on vkc.id = pk.conclusion_id "+
+	" where pk.protocolnumber = '"+protocolNumber+"' and pk.protocolDate = to_date('"+protocolDate+"','dd.MM.yyyy') " +
 	" group by pat.lastname||' '||pat.firstname||' '||pat.middlename, pat.birthday, mlp.name, sls.datestart,"+
-	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory";
+	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory, mlp.isnoomc,depPrev.name,docFio, depPrev.kiliprofile_id, mlp.kiliprofile_id, vkp.name, vkp2.name, vkc.name" +
+	" order by docFio";
 	var resultPatList = aCtx.manager.createNativeQuery(patList).getResultList();
 	var showPat = new java.util.ArrayList();
 	if(!resultPatList.isEmpty()) {
 		for (var i=0; i<resultPatList.size();i++){
 			var p = resultPatList.get(i);
 			var pp = new java.util.ArrayList();
-			var fio = p[0];
-			var bth = p[1];
-			var dept = p[2];
-			var srtdate = p[3];
-			var fnsdate = p[4];
+			var fio = p[0];//0
+			var bth = p[1];//1
+			var dept = p[2];//3
+			var srtdate = p[3];//4
+			var fnsdate = p[4];//5
 			var pkId = p[5];
-			var stat = p[6];
+			var stat = p[6];//2
 			var patId = p[7];
-			var docTitul = p[8];
-			var docFio = p[9];
-			var diagOSN = p[10];
-			var diagOSL = p[11];
-			var diagSOP = p[12];
-			var diagOSLPat = p[13];
-			var OSLPat = p[14];
-			var SOPPat = p[15];
+			var docTitul = p[8];//12
+			var docFio = p[9];//13
+			var diagOSN = p[10];//6
+			var diagOSL = p[11];//7
+			var diagSOP = p[12];//8
+			var diagOSLPat = p[13];//9
+			var OSLPat = p[14];//10
+			var SOPPat = p[15];//11
 			var comment = p[16];
+			profileName = p[20];
+			var conclusion = p[21];
+			
 			pp.add(fio);//0
 			pp.add(bth);//1
 			pp.add(stat);//2
@@ -104,12 +125,13 @@ function printKiliProtocol (aCtx, aParams) {
 					}
 			}
 			pp.add(comment);
+			pp.add(conclusion);
 			//pp.add(showDefects);//6
 			showPat.add(pp);
 			}
 	}
 	map.put("showPat", showPat); 
-	
+	map.put("profileName", profileName);
 	
 	
 	return map;
