@@ -312,4 +312,12 @@ public class ExtDispCardForm extends IdEntityForm{
 	private String theEditDate;
 	/** Дата создания */
 	private String theCreateDate;
+	
+	
+	/** Основной диагноз установлен впервые */
+	@Comment("Основной диагноз установлен впервые")
+	@Persist
+	public Boolean getIsDiagnosisSetFirstTime(){return theIsDiagnosisSetFirstTime;}
+	public void setIsDiagnosisSetFirstTime(Boolean aIsDiagnosisSetFirstTime){theIsDiagnosisSetFirstTime = aIsDiagnosisSetFirstTime;}
+	private Boolean theIsDiagnosisSetFirstTime ;
 }

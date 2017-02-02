@@ -292,4 +292,11 @@ public class ExtDispCard extends BaseEntity{
 	private Date theEditDate;
 	/** Дата создания */
 	private Date theCreateDate;
+
+	
+	/** Основной диагноз установлен впервые */
+	@Comment("Основной диагноз установлен впервые")
+	public Boolean getIsDiagnosisSetFirstTime(){return theIsDiagnosisSetFirstTime;}
+	public void setIsDiagnosisSetFirstTime(Boolean aIsDiagnosisSetFirstTime){theIsDiagnosisSetFirstTime = aIsDiagnosisSetFirstTime;}
+	private Boolean theIsDiagnosisSetFirstTime ;
 }
