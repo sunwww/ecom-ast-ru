@@ -76,7 +76,7 @@ public class LabReport4385Action extends BaseAction {
 	    		" left join forminputprotocol fip on fip.docprotocol_id=d.id" +
 		    	" left join parameter par on par.id=fip.parameter_id" +
 		    	" left join uservalue uv on uv.id=fip.valuevoc_id" +
-		    	" where p.medservice_id=4385 and par.valuedomain_id=79" +sqlAdd.toString() +
+		    	" where p.medservice_id=4385 and par.valuedomain_id=79 and uv.id is not null " +sqlAdd.toString() +
 		    	" group by uv.id, uv.name order by uv.name");
 		    		
 		    List<Object[]> RISList = service.executeNativeSqlGetObj("select id, name from uservalue where domain_id= '60' ");

@@ -403,9 +403,12 @@
   		changeParentMedService() ;
   		});
   	 
-  	methodAutocomplete.addOnChangeCallback(function() {
-  		setEndoscopyUse() ;
-  		});
+  	try {
+  		methodAutocomplete.addOnChangeCallback(function() {
+  	  		setEndoscopyUse() ;
+  	  		});
+  	} catch(e) {}
+  	 
   	 changeParentMedService() ;
   	</script>
     </msh:ifFormTypeIsNotView>
