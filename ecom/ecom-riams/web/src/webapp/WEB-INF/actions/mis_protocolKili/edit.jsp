@@ -84,6 +84,10 @@ WHERE dc.id = ${param.id}"/>
 </msh:ifFormTypeIsView>
   	${tableHTML}
   	
+  	<msh:row>
+<msh:textField property="protocolComment" size="50"/>
+	</msh:row>
+  	
 	<msh:row><msh:separator label="Дополнительная информация" colSpan="4"/>
 	</msh:row>
 	<table>
@@ -116,20 +120,12 @@ WHERE dc.id = ${param.id}"/>
 	<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-mis_protocolKili" name="Удалить" confirm="Удалить протокол?" guid="bed2b91a-84fc-4a8b-9cb1-0a83d94fd2de" roles="/Policy/Mis/MedCase/ProtocolKili/Delete" />
 	</msh:ifFormTypeIsView>
 	</msh:sideMenu> 
-		<msh:sideMenu title="Печать">
-      	<msh:sideLink key="CTRL+2" params="id" action="/print-KiliProtocol.do?m=printKiliProtocol&s=HospitalPrintService" name="Протокол КИЛИ"/>
-      </msh:sideMenu>
-	
-<!-- 
-<msh:ifFormTypeIsView formName="mis_protocolKiliForm" guid="b0b5c1a9-5459-43b9-9030-ba0177a24cbd">
-</msh:ifFormTypeIsView>
- -->
+		
 </tiles:put>
 
 <tiles:put name="title" type="string">
 	<ecom:titleTrail mainMenu="Lpu" beginForm="mis_protocolKiliForm" guid="049dd53d-f3b2-495a-bfec-be41a32d7a27" />
 </tiles:put>
-  
 
 <tiles:put name="javascript" type="string">
 	<!-- Скрипт отображения текстового поля соседнего с чек-боксом -->
