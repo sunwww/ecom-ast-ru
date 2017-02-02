@@ -45,6 +45,10 @@
 			<param name="class" value="ru.ecom.mis.web.dwr.medcase.PatientServiceJs"/>
 		</create>
 		
+		<create creator="new" javascript="AppointmentService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.extdisp.AppointmentServiceJs"/>
+		</create>
+		
     </allow>
 
     <signatures>

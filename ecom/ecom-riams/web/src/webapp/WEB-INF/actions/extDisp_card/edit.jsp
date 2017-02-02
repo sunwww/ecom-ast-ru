@@ -47,8 +47,11 @@
 					<msh:autoComplete property="idcMain" label="МКБ основного диагноза" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
-					<msh:checkBox property="onDeparture" label="На выезде"/>
+					<msh:checkBox property="isDiagnosisSetFirstTime" label="Диагноз установлен впервые"/>
 					<msh:checkBox property="hospitalized" label="Госпитализирован"/>
+				</msh:row>
+					<msh:row>
+					<msh:checkBox property="onDeparture" label="На выезде"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="healthGroup" label="Группа здоровья" parentAutocomplete="dispType" vocName="vocExtDispHealthGroupByDispType" horizontalFill="true" fieldColSpan="3"/>
@@ -158,6 +161,31 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 					<msh:tableColumn columnName="Диагноз" property="7"/>
 				</msh:table>
 				*Подозрение на ранее перенесенное нарушение мозгового кровообращения
+			</msh:section>
+			
+			<msh:section title="Назначения" >
+			<ecom:webQuery name="examQuery" nativeSql="
+			select ea.id as id, vapp.name as ap,vf.name as name, vks.name as workfunk,vkmh.name as appoint,vbt.name as wer 
+		    from extdispappointment ea
+			left join vocworkfunction vf on vf.id = ea.workfunction_id
+			left join VocExtDispAppointment vapp on vapp.id = ea.appointment_id
+			left join VocKindSurvey vks on vks.id=ea.kindsurvey_id
+			left join VocKindMedHelp vkmh on vkmh.id=ea.kindmedhelp_id
+			left join VocBedType vbt on vbt.id = ea.bedtype_id
+			left join extdispcard dc on dc.id = ea.dispcard_id
+			where dc.id=${param.id}"/>
+			
+			
+				<msh:table name="examQuery" action="entityView-extDisp_appointment.do" idField="1">
+			
+					<msh:tableColumn columnName="Назначение" property="2" />
+					<msh:tableColumn columnName="Специальность врача" property="3"/>
+					<msh:tableColumn columnName="Вид обследования" property="4"/>
+					<msh:tableColumn columnName="Профиль мед.помощи" property="5"/>
+					<msh:tableColumn columnName="Профиль койки" property="6"/>
+					
+					
+				</msh:table>
 			</msh:section>
 		</msh:ifFormTypeIsView>
 	</tiles:put>
@@ -277,6 +305,13 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     		}
 	}
 		</script>
+		<script type="text/javascript">
+    	function CheckHealthGroup() {
+    		if(document.getElementById('healthGroupReadOnly').value>2){
+				document.location.replace("entityParentPrepareCreate-extDisp_appointment.do?id="+document.getElementById('id').value);
+			}else alert('Можно добавить только для группы здоровья 3');
+		}
+		</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Patient" beginForm="extDisp_cardForm" />
@@ -288,6 +323,8 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 				<msh:sideLink confirm="Удалить доп.диспансеризацию?" key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-extDisp_card" name="Удалить" title="Удалить" roles="/Policy/Mis/ExtDisp/Card/Delete"/>
 			</msh:sideMenu>
 			<msh:sideMenu title="Добавить" >
+			
+				<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-extDisp_appointment.do" name="Назначение" title="Назначение" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 			<msh:ifFormTypeIsView formName="extDisp_cardForm">
 			   <msh:sideLink key="ALT+M" params="id" action="/javascript:DoDispCardNotReal()" name="Сделать карту недействительной" title="Сделать карту недействительной" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
