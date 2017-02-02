@@ -1,8 +1,12 @@
 package ru.ecom.mis.ejb.service.prescription;
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 
 import org.json.JSONException;
+
+import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
 
 
 /**
@@ -10,6 +14,10 @@ import org.json.JSONException;
  * @author STkacheva
  */
 public interface IPrescriptionService {
+	
+	public ParsedPdfInfo getPdfInfoByBarcode(List<ParsedPdfInfo> list,String aBarcode);
+	public void checkPdf() throws IOException, NoSuchFieldException, IllegalAccessException, JSONException;
+	
 	public void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpec ) throws ParseException ;
 	public Long clonePrescription(Long aPrescriptionId, Long aMedServiceId, Long aWorkFunctionId, String aCreateUsername) ;
 	public String createNewDirectionFromPrescription(Long aPrescriptionListId, Long aWorkFunctionPlanId, Long aDatePlanId, Long aTimePlanId, Long aMedServiceId, String aUsername, Long aOrderWorkFunction) ;

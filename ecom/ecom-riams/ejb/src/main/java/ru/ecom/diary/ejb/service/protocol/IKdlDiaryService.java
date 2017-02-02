@@ -10,5 +10,4 @@ public interface IKdlDiaryService {
 	public void parseFile(String aUri) throws Exception;
 	public String getDir(String aKey, String aDefaultDir) ;
 	public String run(String Command) ;
-	public void checkPdf() throws IOException, NoSuchFieldException, IllegalAccessException, JSONException ;
-}
+	}

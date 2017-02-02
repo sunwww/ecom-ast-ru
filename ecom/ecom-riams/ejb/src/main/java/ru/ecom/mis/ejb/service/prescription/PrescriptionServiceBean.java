@@ -1,5 +1,11 @@
 package ru.ecom.mis.ejb.service.prescription;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.EJB;
@@ -14,30 +21,35 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-
-import org.jboss.util.timeout.TimeoutFactory;
+import javax.persistence.Query;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ru.ecom.diary.ejb.domain.Diary;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.FilteredTextRenderListener;
+import com.itextpdf.text.pdf.parser.LocationTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.itextpdf.text.pdf.parser.RegionTextRenderFilter;
+import com.itextpdf.text.pdf.parser.RenderFilter;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
+
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfoResult;
+//import ru.ecom.diary.ejb.service.protocol.PrescriptionServiceBean;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.query.WebQueryServiceBean;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.expomc.ejb.services.registry.ExcelTemplateAllValueVoc;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
@@ -54,7 +66,6 @@ import ru.ecom.mis.ejb.domain.prescription.PrescriptList;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
 import ru.ecom.mis.ejb.domain.prescription.Prescription;
 import ru.ecom.mis.ejb.domain.prescription.ServicePrescription;
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -64,7 +75,6 @@ import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
-import sun.awt.windows.ThemeReader;
 /**
  * Сервис для работы с назначениями
  * @author STkacheva
@@ -73,45 +83,349 @@ import sun.awt.windows.ThemeReader;
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
 	
+	//region "Parsing PDF"
+	public ParsedPdfInfo getPdfInfoByBarcode( List<ParsedPdfInfo> list,String aBarcode) {
+		if (list!=null&&!list.isEmpty()) {
+			for (ParsedPdfInfo p: list) {
+				if (p.getBarcode().equals(aBarcode)) {
+					return p;
+				}
+			}
+		}
+		return new ParsedPdfInfo();
+	}
 	
+	public void checkPdf() throws IOException, NoSuchFieldException, IllegalAccessException, JSONException {
+		int[][] templateGEM = new int[][]{{30, 560, 100, 770},
+                {190, 560, 210, 770},
+                {215, 560, 250, 770},
+                {255, 560, 340, 770}};
+		int[][] templateBio = new int[][]{{30, 300, 100, 730},
+                {190, 300, 105, 730},
+                {255, 300, 200, 730},
+                {270, 300, 330, 730}};
+		int[][] fillArray = new int[4][4];
+		System.out.println("==== Запускаем функцию проверки наличия PDF ====");
+		//**Перечень директорий*//*
+		String homeDirectory  =  getDir("jboss.labPdfDocumentDir","/opt/tomcat"); //= "C:\\Users\\vtsybulin\\workspace\\pdfParser\\pdf";
+        //String homeDirectory = "/home/user/opt/tomcat";
+		String pdfDirectory = homeDirectory + "/parse_pdf/";
+        String txtDirectory = homeDirectory + "/parse_txt/";
+        String archDirectory = homeDirectory + "/parse_archive/";
+        System.out.println("Ищу файлы в папке " + pdfDirectory);
+        /**Сперва должны получить список всех файлов в формате pdf*/
+        File[] fileList = getFiles(pdfDirectory);       
+        if (fileList!=null&&fileList.length>0){
+        	System.out.println("В массиве имеются файлы!");
+        for (int i = 0; i < fileList.length; i++){
+        	List<ParsedPdfInfo> resultList = new ArrayList<ParsedPdfInfo>();
+        	//resultList = new ArrayList<ParsedPdfInfo>();
+         //   ParsedPdfInfo result = new ParsedPdfInfo();
+        	File file = fileList[i];        	
+        	String fileName = file.getName();        
+            file.getParentFile().mkdirs();           
+            String[] temp_container = fileName.split("\\.");
+            Character t1 = 'g';
+            if (t1.equals(temp_container[0].substring(temp_container[0].length() - 1))) {
+                System.out.println("+true");
+            } else {
+                System.out.println("+false");
+            }
+            System.out.println("last character: " +
+                    temp_container[0].substring(temp_container[0].length() - 1));
+            String typeFile = "100014";
+            
+            String[] typesName = {"gem", "bio"}; //массив с названиями типов отчетов
+            int reportType = 0; //порядковый номер отчета из массива
+            String currentType = "";
+            currentType = determineHead(pdfDirectory + fileList[i].getName());
+            System.out.println("Файл относится к шаблону " + currentType);
+            
+            if (currentType == typesName[0]){
+            	for(int q1 = 0; q1 < 4; q1++){
+            		for(int q2 = 0; q2 < 4; q2++){
+            			fillArray[q1][q2] = templateGEM[q1][q2];}}
+            	reportType = 1;}
+            	
+            
+            if (currentType == typesName[1]){
+            	for(int q1 = 0; q1 < 4; q1++){
+            		for(int q2 = 0; q2 < 4; q2++){
+            			fillArray[q1][q2] = templateBio[q1][q2];}}
+            	reportType = 2;}
+            	
+            if (typeFile.equals("100014")) {
+            	String header = "";
+            	String barCode = "";
+            	if (reportType == 1){
+            		barCode = getBarCode(pdfDirectory+fileName);}
+            	ParsedPdfInfo ppi = getPdfInfoByBarcode(resultList, barCode); //Создаем или находим объект, хранящий все анализы по одному штрих-коду
+            	List <ParsedPdfInfoResult> res = new ArrayList<ParsedPdfInfoResult>();
+            	try{
+            		String[] paramName = null;
+            		paramName = fillColumn(paramName, fillArray[0][0], fillArray[0][1], fillArray[0][2], fillArray[0][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+            		String[] resultValue = null;
+            		resultValue = fillColumn(paramName, fillArray[1][0], fillArray[1][1], fillArray[1][2], fillArray[1][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+            		String[] measureUnit = null;
+            		measureUnit = fillColumn(paramName, fillArray[2][0], fillArray[2][1], fillArray[2][2], fillArray[2][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+            		String[] nomRange = null; 
+            		nomRange = fillColumn(paramName, fillArray[3][0], fillArray[3][1], fillArray[3][2], fillArray[3][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
+                    fileName = fileList[i].getName().substring(0, fileList[i].getName().length() - 4);
+                    for (int j = 0; j < paramName.length; j++) {
+                            ParsedPdfInfoResult ppir = new ParsedPdfInfoResult();
+                            ppir.setCode(chk(j, paramName));
+                            ppir.setValue(chk(j, resultValue));
+                            ppir.setMeasurementUnit(chk(j, measureUnit));
+                            ppir.setRefInterval(chk(j, nomRange));
+                            res.add(ppir);
+                    }
+            	} catch(Exception e){
+            		e.printStackTrace();
+                    	System.out.println("Исключение в цикле while");
+                    	}
+                moveFile(pdfDirectory, archDirectory, fileName + ".pdf");
+                if (reportType == 1){
+                ppi.setBarcode(barCode);}
+                if (reportType == 2){
+                	for (int t = 0; t < res.size(); t++){
+                		barCode = res.get(t).getValue();
+                		System.out.println("===DEBUG=== " + barCode);
+                		ppi.setBarcode(barCode);
+                	}
+                }
+                ppi.setResults(res);
+           resultList.add(ppi);
+                	}
+            System.out.println("===DEBUG=== Выводим строку №7");
+            System.out.println(resultList.get(0).getResults().get(6).getCode());
+            System.out.println(resultList.get(0).getResults().get(6).getValue());
+            System.out.println(resultList.get(0).getResults().get(6).getMeasurementUnit());
+            System.out.println(resultList.get(0).getResults().get(6).getRefInterval());
+            System.out.println("===DEBUG=== Вывод кодов");
+            for(int z = 0; z < resultList.size(); z++)
+            {
+            	System.out.println(resultList.get(0).getBarcode());
+            }
+            System.out.println("Запускаем функцию по заполнению дневника");
+           // PrescriptionServiceBean service = new PrescriptionServiceBean();
+            setDefaultDiaryCycle(resultList);
+            	}
+        }       
+        else{
+        	System.out.println("В массиве нет файлов!");}
+		}
+	
+	public static String determineHead(String pdf) throws IOException {
+        String head = "";
+        String[] types = {"гематологическом", "биохимического"};
+        String[] typesName = {"gem", "bio"};
+        PdfReader reader = new PdfReader(pdf);
+        StringBuilder text = new StringBuilder();
+        Rectangle rect = new Rectangle(0, 0, 1000, 1000);
+        RenderFilter filter = new RegionTextRenderFilter(rect);
+        TextExtractionStrategy strategy;
+        for (int page = 1; page <= reader.getNumberOfPages(); page++) {
+            strategy = new FilteredTextRenderListener(
+                    new LocationTextExtractionStrategy(), filter);
+            String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
+
+            for (int i = 0; i < types.length; i++)
+            {
+                int positionTemp = currentText.indexOf(types[i]);
+                if (positionTemp!=-1){
+                    head = typesName[i];
+                    System.out.println("DETECTED PATTERN " + types[i] + " IN FILE " + pdf);
+                    return head;
+                }
+                else{
+                    System.out.println("NOT DETECTED");
+                }
+            }
+        }
+        reader.close();
+        return head;
+    }
+	
+	public static String getBarCode(String pdf) throws IOException {
+        String barcode = "";
+        PdfReader reader = new PdfReader(pdf);
+        StringBuilder text = new StringBuilder();
+        Rectangle rect = new Rectangle(0, 0, 1000, 1000);
+        RenderFilter filter = new RegionTextRenderFilter(rect);
+        TextExtractionStrategy strategy;
+        for (int page = 1; page <= reader.getNumberOfPages(); page++) {
+            strategy = new FilteredTextRenderListener(
+                    new LocationTextExtractionStrategy(), filter);
+            String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
+            barcode = "Код пробы: ";
+            int position = currentText.indexOf(barcode);
+            barcode = currentText.substring(position+11, 172);
+            System.out.println(barcode);
+        }
+        reader.close();
+        return  barcode;
+    }
+	
+	public static String chk(int i, String[] arr) {
+		if (arr.length>(i)) {
+			return arr[i];
+		} else {
+			return "";
+		}
+	}
+	public static String[] fillColumn(String[] cont, int x1, int x2, int y1, int y2, String pdf, String txt) throws IOException {
+        PdfReader reader = new PdfReader(pdf);
+        PrintWriter out = new PrintWriter(new FileOutputStream(txt));
+        Rectangle rect = new Rectangle(x1, x2, y1, y2);
+        RenderFilter filter = new RegionTextRenderFilter(rect);
+        TextExtractionStrategy strategy;
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            strategy = new FilteredTextRenderListener(
+                    new LocationTextExtractionStrategy(), filter);
+            String temp = PdfTextExtractor.getTextFromPage(reader, i, strategy);
+            out.println(temp);
+            cont = temp.split("\n");
+        }
+        out.flush();
+        out.close();
+        reader.close();
+        return cont;
+    }
+	
+	public static String[] concat(String[] a, String[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+        String[] c = new String[aLen+bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
+    }
+	
+	/**Перемещение файла из одной директории в другую*/
+    public static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
+        try {
+            final File myFile = new File(pdfDirectory + fileName );
+            if (myFile.renameTo(new File(archDirectory + fileName))) {
+                System.out.println("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
+            }
+            else{
+                 System.out.println("Файл не был перенесен!");
+                }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/** Вывод всех файлов в папке */
+    public static File[] getFiles(String path) {
+     	try{
+         File dir = new File(path);
+         System.out.println(dir.exists());
+         File[] files = dir.listFiles(new FilenameFilter() {
+             public boolean accept(File dir, String name) {
+                 return name.toLowerCase().endsWith(".pdf");
+             }});
+         
+         return files;
+     	}
+     	catch(Exception e)
+     	{
+     		System.out.println("Директория не обнаружена. Проверьте правильность.");
+     		e.printStackTrace();
+     		return null;
+     	}
+     }
+	
+    public static boolean checkIsExist(String filePath, boolean resultExist)    {
+        File f = new File(filePath);
+        if(f.exists() && !f.isDirectory()) {
+            System.out.println("Файл существует.");
+            resultExist = true;
+        } else {
+            System.out.println("Файл не существует.");
+            resultExist = false;
+        }
+        return resultExist;
+    }
+	
+	
+	public String getDir(String aKey, String aDefaultValue) {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		return config.get(aKey, aDefaultValue) ;
+	}
+
+	//endregion
+	
+	
+	//region "Robot"
 	public String setDefaultDiaryCycle(List<ParsedPdfInfo> parsedPdfInfos) throws JSONException
 	{
 		System.out.println("Start setDefaultDiaryCycle");
+		System.out.println("РАЗМЕР ЛИСТА"+parsedPdfInfos.size());
+		System.out.println("barcode= "+parsedPdfInfos.get(0).getBarcode());
+		System.out.println("код= "+parsedPdfInfos.get(0).getResults().get(0).getCode());
+		
 		for (int i = 0; i < parsedPdfInfos.size(); i++) {
-		    setDefaultDiary(parsedPdfInfos.get(i));
+			
+			ParsedPdfInfo parsedPdfInfo = parsedPdfInfos.get(i);
+		    setDefaultDiary(parsedPdfInfo);
 		}
 		System.out.println("Finish setDefaultDiaryCycle");
 		return "0";
 	}
+	
 	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) throws JSONException	{
 		System.out.println("Start setDefaultDiary");
 		//ParsedPdfInfo parsedPdfInfo = doObject();
 		
 		WebQueryServiceBean  service = new WebQueryServiceBean() ;
-		StringBuilder sql = new StringBuilder();
+		
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
-		sql.append("select pres.id as pid, ms.id as msid, tp.id as templateId" +
-			" from prescription pres" +
-			" left join medservice ms on ms.id=pres.medservice_id" +
-			" left join templateprotocol tp on tp.medservice_id=ms.id" +
-			" where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"' tp.createDiaryByDefault='1'");
-		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+		StringBuilder sql = new StringBuilder() ;
+		
+		
+		System.out.println("Количество элементов в parsedPdfInfo.getResults= "+parsedPdfInfo.getResults().size());
+		String SqlAdd="";
+		for(int i=0;i<parsedPdfInfo.getResults().size();i++)
+		{
+			SqlAdd += "'"+parsedPdfInfo.getResults().get(i).getCode()+"'";
+			if((i+1)<parsedPdfInfo.getResults().size()){SqlAdd+=",";}
+		}
+		
+		System.out.println("Начинаю 1 запрос");
+		
+			
+		 sql.append("select pres.id as pid, ms.id as msid, max(tp.id) as templateId "+
+					"from prescription pres "+
+					"left join medservice ms on ms.id=pres.medservice_id "+
+					"left join templateprotocol tp on tp.medservice_id=ms.id "+
+					"left join parameterbyform pf on pf.template_id = tp.id "+
+					"left join parameter p on p.id=pf.parameter_id "+
+		        	"where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"' "+
+					"and p.externalcode in("+SqlAdd+") "+
+					"group by pres.id,ms.id");
+		
+		System.out.println(sql);
+
+		
+		Collection<WebQueryResult> list = executeNativeSql(sql.toString(), theManager);
+		System.out.println(list.size());
+		System.out.println("запрос 1 окончен");
+		
 		if (!list.isEmpty()) {
 			System.out.println("List is not empty");
 			String username = "LabRobot";
 			
-			Long workFunctionId = null;
-			Collection<WebQueryResult> wf = service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'") ;
-			if ( wf.isEmpty()) {
-				return null ;
-			}
-			workFunctionId = ConvertSql.parseLong(wf.iterator().next().get1()) ;
+	
 			for (WebQueryResult res: list) {
+				
+				try{
+					
+				System.out.println("incycle");
 				Long pid = Long.parseLong(res.get1().toString());
 				String msid = res.get2().toString();
 				Long templateId = Long.parseLong(res.get3().toString());
-						
 				sql = new StringBuilder() ;
 				sql.append("select p.id as p1id,p.name as p2name"+
 				", p.shortname as p3shortname,p.type as p4type"+
@@ -123,8 +437,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				", vd.id as v15did,vd.name as v16dname"+
 				", p.cntdecimal as p17cntdecimal"+
 				", ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid "+
-				//", case when p.type in ('3','5')  then p.valueTextDefault when p.type='2' and uv.useByDefault='1' then ''||uv.id " +
-				//" when p.type='INTEGER' then " +
 				", " +CreateSQLQuerty(parsedPdfInfo)+" as p19valuetextdefault "+
 				",case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc "+
 				"from prescription pres "+
@@ -137,17 +449,16 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				"where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"'"+
 				"order by pf.position");
 			
-				Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
+				System.out.println("Начинаю 2 запрос");
+				
+				Collection<WebQueryResult> lwqr = executeNativeSql(sql.toString(), theManager);
 
+				System.out.println("Запрос 2 окончен");
 				sb.setLength(0);
 				sb.append("{");
-				sb.append("\"workFunction\":\""+workFunctionId+"\",") ;
+				sb.append("\"workFunction\":\"0\",") ;
 				sb.append("\"workFunctionName\":\""+"\",") ;
-			//	if (RolesHelper.checkRoles("/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory", aRequest)) {
-					sb.append("\"isdoctoredit\":\"1\",") ;
-			//	} else {
-			//		sb.append("\"isdoctoredit\":\"0\",") ;
-		//		}
+				sb.append("\"isdoctoredit\":\"1\",") ;
 				sb.append("\"params\":[") ;
 				boolean firstPassed = false ;
 				boolean firstError = false ;
@@ -200,11 +511,17 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				sb.append(",\"template\":\"").append(templateId).append("\"") ;
 				sb.append(",\"protocol\":\"").append("\"") ;
 				sb.append("}") ;
-			//	System.out.println("==== JSSON= "+sb);
+				
+			    System.out.println("==== JSSON= "+sb.toString());
 				 
-				 saveLabAnalyzed(Long.valueOf(0),pid,Long.valueOf(0),sb.toString(),username, templateId) ;
-				// System.out.println("==== SS="+ss);
+			    //PrescriptionServiceBean psb = new PrescriptionServiceBean();
+			    saveLabAnalyzed(Long.valueOf(0),pid,Long.valueOf(0),sb.toString(),username, templateId) ;
+			//	saveLabAnalyzed
+				
+				
+				}catch(Exception e){ e.printStackTrace();} 
 				}
+			System.out.println("Finish setDefaultDiary");
 			}
 		return sb.toString();			
 	}
@@ -212,15 +529,18 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 private String CreateSQLQuerty (ParsedPdfInfo parsedPdfInfo)
 	    {
 	        int size = parsedPdfInfo.getResults().size();
-	        String s = "";
-	        for (int i = 0; i < size; i++) {
+	        StringBuilder s = new StringBuilder();
+	        s.append("case");
+	       List<ParsedPdfInfoResult> r = parsedPdfInfo.getResults(); 
+	        for (ParsedPdfInfoResult p: r) {
 
-	            s+=" case when p.externalcode='"+parsedPdfInfo.getResults().get(i).getCode()+
-	               "' then '"+parsedPdfInfo.getResults().get(i).getValue()+"' end";
-	            if((i+1)<size) s+=" ||' '||";
+	            s.append(" when p.externalcode='"+p.getCode()+
+	               "' then '"+p.getValue()+"' ");
+	            //if((i+1)<size) s+=" ||' '||";
 	            //System.out.println(parsedPdfInfoResults.size());
 	        }
-	        return s;
+	        s.append(" end");
+	        return s.toString();
 	    }
 	 
 	private String str(String aValue) {
@@ -229,6 +549,55 @@ public class PrescriptionServiceBean implements IPrescriptionService {
     	}
     	return aValue ;
     }
+	
+private Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult, EntityManager aManager) {
+		
+		return executeQuery(aManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")),aMaxResult,theManager) ;
+	}
+private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager aManager) {
+		
+		return executeNativeSql(aQuery,null,aManager) ;
+	}
+	
+	private Collection<WebQueryResult> executeQuery(Query aQuery,Integer aMaxResult, EntityManager aManager) {
+
+	List<Object> list ;
+
+	if (aMaxResult!=null) {
+		list= aQuery.setMaxResults(aMaxResult).getResultList() ;
+	} else {
+		list= aQuery.getResultList() ;
+	}
+	
+	LinkedList<WebQueryResult> ret = new LinkedList<WebQueryResult>() ;
+	long i = 0 ;
+	Class<WebQueryResult> clazz = WebQueryResult.class ;
+	Class<Object> obj_clazz =Object.class ;
+	for (Object rowL : list) {
+		
+		WebQueryResult result = new WebQueryResult() ;
+		if (rowL instanceof Object[]) {
+			
+			Object[] row = (Object[])rowL ;
+			for (int ii =0 ;ii<row.length&&ii<27;ii++) {
+				try {
+					Method ejbSetterMethod = clazz.getMethod("set"+(ii+1), obj_clazz);
+					ejbSetterMethod.invoke(result, row[ii]) ;
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+			}
+		} else {
+			result.set1(rowL) ;
+		}
+		
+		result.setSn(++i) ;
+		ret.add(result) ;
+	}
+	return ret ;
+	}
+	
+	
 	//-------------
 	public Long clonePrescription(Long aPrescriptionId, Long aMedServiceId, Long aWorkFunctionId, String aCreateUsername) {
 		ServicePrescription p = theManager.find(ServicePrescription.class, aPrescriptionId);
