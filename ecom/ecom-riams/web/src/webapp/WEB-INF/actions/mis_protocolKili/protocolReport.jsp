@@ -138,20 +138,11 @@
 	}
 	request.setAttribute("isParamNull", isParamNull);
 	request.setAttribute("addParam", addParam!=null?addParam:"");
-		%> 
-	<form action="print-KiliProtocol.do" method="post" target="_blank">
-    Период с ${dateBegin} по ${dateEnd}.
-    <input type='hidden' name="s" id="s" value="HospitalPrintService">
-    <input type='hidden' name="protocolNumber" id="protocolNumber" value="${param.protocolNumber}">
-    <input type='hidden' name="protocolDate" id="protocolDate" value="${param.protocolDate}">
-    <input type='hidden' name="m" id="m" value="printKiliProtocol">
-    <input type="submit" value="Печать"> 
-    </form>
-		<%
+	
 	}
 	if ((isReestr==null||!isReestr.equals("1"))&&  typeSearch.equals("1")||typeSearch.equals("2")||typeSearch.equals("3")){
  %>
- 
+
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
 SELECT ${groupBySql} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
 ,count(pk.id)*100/ count(sls.id)  as persDead
@@ -174,9 +165,6 @@ GROUP BY ${groupBySql}
  ${fldSearch}
 " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
 
-
-
-   
 <%
 	}
 	if (isReestr==null||!isReestr.equals("1")) {
@@ -207,7 +195,11 @@ GROUP BY ${groupBySql}
     </msh:table>
 		  <%
   } else if (typeSearch.equals("3")){
+	  
 	%>  	
+	
+    
+    
 	<ecom:webQuery name="showProfile" nameFldSql="showProfile_sql" nativeSql="
 select
 pk.protocolnumber
@@ -319,9 +311,16 @@ ${addSelect}
 ${addFrom} 
 ${sqlJoin}
 ${sqlWhere}  ${addDate}
-
-
 "/>
+
+<form action="print-KiliProtocol.do" method="post" target="_blank">
+    Период с ${dateBegin} по ${dateEnd}.
+    <input type='hidden' name="s" id="s" value="HospitalPrintService">
+    <input type='hidden' name="protocolNumber" id="protocolNumber" value="${param.protocolNumber}">
+    <input type='hidden' name="protocolDate" id="protocolDate" value="${param.protocolDate}">
+    <input type='hidden' name="m" id="m" value="printKiliProtocol">
+    <input type="submit" value="Печать"> 
+    </form>
 
  <msh:section>
     <msh:sectionContent>
@@ -335,7 +334,6 @@ ${sqlWhere}  ${addDate}
     
 <%
   }%>
-
 
   <script type='text/javascript'>
   checkFieldUpdate('typeSearch','${typeSearch}',1) ;
