@@ -11,11 +11,8 @@ function printKiliProtocol (aCtx, aParams) {
 	//var pat = kili.deathCase.medCase.patient;
 	//map.put("pat", pat);
 	
-	
-	
 	map.put("protocolNumber", protocolNumber);
 	map.put("protocolDate", protocolDate);
-	
 	
 	var patList = "select pat.lastname||' '||pat.firstname||' '||pat.middlename patFio, pat.birthday, mlp.name as mlpname, sls.datestart, "+
 	"sls.datefinish, pk.id as pkid, stt.code, pat.id as patid " +
@@ -105,17 +102,21 @@ function printKiliProtocol (aCtx, aParams) {
 										", pkd.defecttext "+ 
 							 " from protocolkilidefect pkd" +
 							 " left join vockilidefect vkd on vkd.id=pkd.defect_id " +
-							 " where pkd.protocol_id = " +pkId +
+							 " where pkd.protocol_id = " + pkId +
 							 " ORDER BY vkd.name";
 			var resultDef = aCtx.manager.createNativeQuery(getDefects).getResultList();
 			var showDefects = new java.util.ArrayList();
 			if(!resultDef.isEmpty()) {
 				for (var j=0; j<resultDef.size();j++){
 					var p1 = resultDef.get(j);
-					var pp1 = new java.util.ArrayList();
+					//var pp1 = new java.util.ArrayList();
 					var id = p1[0];
 					var name = p1[1]; 
 					var isFound = p1[2];
+					if (isFound == "undefined"){
+						isFound = "";
+						name = " Нет";
+					}
 					//var text = p1[3];
 					pp.add(id);
 					pp.add(name);
