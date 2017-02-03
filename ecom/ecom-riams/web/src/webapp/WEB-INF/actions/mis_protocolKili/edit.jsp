@@ -148,13 +148,15 @@ WHERE dc.id = ${param.id}"/>
 		//alert($('protocolID').value);
 		//alert($('deathCase').value);
 		var str = "";
+		var ret = 1;
 		if ($('defectListSize')) {
 			  
 			  for (var i=0;i<$('defectListSize').value;i++) {
 				  str +="" +$('defect'+i).value;
 				  str +="@@"+ $('vocDefect'+i).value;
-				  if ($('chkDefect'+i).checked && ($('defectText'+i)).value.length == 0){
+				  if ($('chkDefect'+i).checked && ($('defectText'+i)).value.trim()== ""){
 					  alert("Заполните поле отмеченного дефекта!");
+					  ret = 0;
 					  break;
 				  }
 				  if (!$('chkDefect'+i).checked){
@@ -171,9 +173,15 @@ WHERE dc.id = ${param.id}"/>
 			  }
 		  }
 		  //var str = "1:" + $('def_type') + "#2:" + $('def_detected') + "#3:" + $('def_text');
-		  $('defectSaveList').value = str!=''?str.substring(0, str.length-2):'';
-		  document.forms["mainForm"].action="entityParentSaveGoView-mis_protocolKili.do" ;
-		  document.forms["mainForm"].submit() ;
+		  if (ret == 1){
+			  $('defectSaveList').value = str!=''?str.substring(0, str.length-2):'';
+			  document.forms["mainForm"].action="entityParentSaveGoView-mis_protocolKili.do" ;
+			  document.forms["mainForm"].submit() ;  
+		  }
+		  else {
+			  document.forms["mainForm"].submitButton.disabled = false ;
+		  }
+		  
 	}
 	</script>
 </tiles:put>
