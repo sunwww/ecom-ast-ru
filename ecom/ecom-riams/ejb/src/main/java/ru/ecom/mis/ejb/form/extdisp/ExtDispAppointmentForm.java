@@ -36,13 +36,6 @@ public class ExtDispAppointmentForm extends IdEntityForm{
 	public void setAppointment(Long aAppointment){theAppointment = aAppointment;}
 	private Long theAppointment ;
 	
-	/** Специальнось врача */
-	@Comment("Специальнось врача")
-	@Persist
-	public Long getWorkFunction(){return theWorkFunction ;}
-	public void setWorkFunction (Long aWorkFunction ){theWorkFunction  = aWorkFunction ;}
-	private Long theWorkFunction;
-	
 	/** Вид обследования */
 	@Comment("Вид обследования")
 	@Persist
@@ -50,19 +43,12 @@ public class ExtDispAppointmentForm extends IdEntityForm{
 	public void setKindSurvey(Long aKindSurvey){theKindSurvey = aKindSurvey;}
 	private Long theKindSurvey;
 	
-	/** Профиль мед. помощи */
-	@Comment("Профиль мед. помощи")
+	/** Профиль */
+	@Comment("Профиль")
 	@Persist
-	public Long getKindMedHelp(){return theKindMedHelp;}
-	public void setKindMedHelp(Long aKindMedHelp){theKindMedHelp = aKindMedHelp;}
-	private Long theKindMedHelp ;
-	
-	/** Профиль коек */
-	@Comment("Профиль коек")
-	@Persist
-	public Long getBedType(){return theBedType;}
-	public void setBedType(Long aBedType){theBedType = aBedType;}
-	private Long theBedType ;
+	public Long getProfile(){return theProfile;}
+	public void setProfile(Long aProfile){theProfile = aProfile;}
+	private Long theProfile ;
 	
 	/** Дисп. карта */
 	@Comment("Дисп. карта")
@@ -70,5 +56,5 @@ public class ExtDispAppointmentForm extends IdEntityForm{
 	public Long getDispCard(){return theDispCard;}
 	public void setDispCard(Long aDispCard){theDispCard = aDispCard;}
 	private Long theDispCard;
-	
+
 }

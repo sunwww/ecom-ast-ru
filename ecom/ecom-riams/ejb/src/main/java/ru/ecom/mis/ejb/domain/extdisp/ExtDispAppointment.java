@@ -11,6 +11,7 @@ import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAppointment;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocKindMedHelp;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocKindSurvey;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
+import ru.ecom.mis.ejb.domain.worker.voc.VocOmcDepType;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -28,33 +29,19 @@ public class ExtDispAppointment extends BaseEntity{
 		public void setAppointment(VocExtDispAppointment aAppointment){theAppointment = aAppointment;}
 		private VocExtDispAppointment theAppointment ;
 		
-		/** Специальнось врача */
-		@Comment("Специальнось врача")
-		@OneToOne
-		public VocWorkFunction getWorkFunction(){return theWorkFunction ;}
-		public void setWorkFunction (VocWorkFunction aWorkFunction ){theWorkFunction  = aWorkFunction ;}
-		private VocWorkFunction theWorkFunction;
-		
 		/** Вид обследования */
 		@Comment("Вид обследования")
 		@OneToOne
 		public VocKindSurvey getKindSurvey(){return theKindSurvey;}
 		public void setKindSurvey(VocKindSurvey aKindSurvey){theKindSurvey = aKindSurvey;}
 		private VocKindSurvey theKindSurvey;
-			
-		/** Профиль мед. помощи */
-		@Comment("Профиль мед. помощи")
-		@OneToOne
-		public VocKindMedHelp getKindMedHelp(){return theKindMedHelp;}
-		public void setKindMedHelp(VocKindMedHelp aKindMedHelp){theKindMedHelp = aKindMedHelp;}
-		private VocKindMedHelp theKindMedHelp ;
 		
-		/** Профиль коек */
-		@Comment("Профиль коек")
+		/** Профиль */
+		@Comment("Профиль")
 		@OneToOne
-		public VocBedType getBedType(){return theBedType;}
-		public void setBedType(VocBedType aBedType){theBedType = aBedType;}
-		private VocBedType theBedType ;
+		public VocOmcDepType getProfile(){return theProfile;}
+		public void setProfile(VocOmcDepType aProfile){theProfile = aProfile;}
+		private VocOmcDepType theProfile ;
 		
 		/** Дисп. карта */
 		@Comment("Дисп. карта")
@@ -62,6 +49,5 @@ public class ExtDispAppointment extends BaseEntity{
 		public ExtDispCard getDispCard(){return theDispCard;}
 		public void setDispCard(ExtDispCard aDispCard){theDispCard = aDispCard;}
 		private ExtDispCard theDispCard ;
-
-
+		
 }

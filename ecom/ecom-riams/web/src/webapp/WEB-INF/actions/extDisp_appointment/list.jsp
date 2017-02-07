@@ -21,23 +21,18 @@
 	<msh:section createRoles="/Policy/Mis/ExtDisp/Card/Create" createUrl="entityParentPrepareCreate-extDisp_appointment.do?id=${param.id}"
 		title="Список назначений">
 		<ecom:webQuery name="list" nativeSql="
-		select ea.id as id, vapp.name as ap,vf.name as name, vks.name as workfunk,vkmh.name as appoint,vbt.name as wer 
-		    from extdispappointment ea
-			left join vocworkfunction vf on vf.id = ea.workfunction_id
+		select ea.id as id, vapp.name as appoint, vodt.name as profile, vks.name as survay 
+			from extdispappointment ea
+			left join VocOmcDepType vodt on vodt.id = ea.profile_id
 			left join VocExtDispAppointment vapp on vapp.id = ea.appointment_id
 			left join VocKindSurvey vks on vks.id=ea.kindsurvey_id
-			left join VocKindMedHelp vkmh on vkmh.id=ea.kindmedhelp_id
-			left join VocBedType vbt on vbt.id = ea.bedtype_id
 			left join extdispcard dc on dc.id = ea.dispcard_id
-			where dc.id=${param.id}
-		"/>
+			where dc.id=${param.id}"/>
 		<msh:table name="list" action="entityView-extDisp_appointment.do" idField="1" >
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="Назначение" property="2" />
-			<msh:tableColumn columnName="Специальность врача" property="3"/>
+			<msh:tableColumn columnName="Профиль" property="3"/>
 			<msh:tableColumn columnName="Вид обследования" property="4"/>
-			<msh:tableColumn columnName="Профиль мед.помощи" property="5"/>
-			<msh:tableColumn columnName="Профиль койки" property="6"/>
 		</msh:table>
 	</msh:section>
 </tiles:put>
