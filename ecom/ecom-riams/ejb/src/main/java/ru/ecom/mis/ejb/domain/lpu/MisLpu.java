@@ -562,4 +562,11 @@ public class MisLpu extends BaseEntity {
 	public void setKiliProfile(VocKiliProfile aKiliProfile) {theKiliProfile = aKiliProfile;}
 	/** Профиль КИЛИ */
 	private VocKiliProfile theKiliProfile;
+	
+	/** В архиве */
+	@Comment("В архиве")
+	public Boolean getIsArchive() {return theIsArchive;}
+	public void setIsArchive(Boolean aIsArchive) {theIsArchive = aIsArchive;}
+	/** В архиве */
+	private Boolean theIsArchive;
 }

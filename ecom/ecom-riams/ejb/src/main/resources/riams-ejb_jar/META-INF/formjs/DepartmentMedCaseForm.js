@@ -73,9 +73,7 @@ function onPreSave(aForm,aEntity, aContext) {
 			
 		aContext.manager.createNativeQuery("update prescription p set planEndDate =to_date(:endDate,'dd.MM.yyyy'), planEndTime=cast(:endTime as time) where p.prescriptionList_id in (select id from prescriptionList where medcase_id=:prev) " +
 		"and p.dtype in ('DietPrescription', 'ModePrescription') and p.planEndDate is null").setParameter("endDate", aForm.dateStart).setParameter("endTime", aForm.entranceTime).setParameter("prev", prev.id).executeUpdate();
-		
-		//Отмечаем лист назначений, открытый в пред. СЛО как закрытый
-//		aContext.manager.createNativeQuery("update prescriptionList pl set planEndDate =to_date(:endDate,'dd.MM.yyyy'), planEndTime=cast(:endTime as time) where p.prescriptionList_id=(select id from prescriptionList where medcase_id=:prev) and p.dtype in ('DietPrescription', 'ModePrescription') and p.planEndDate is null").setParameter("endDate", aForm.dateStart).setParameter("endTime", aForm.entranceTime).setParameter("prev", prev.id).executeUpdate();
+
 	} else {
 		if (+hosp.department.id != (+aForm.department)) {
 			throw "Отделение, в которое направили в приемном отделении, должно совпадать с отделением поступления!";

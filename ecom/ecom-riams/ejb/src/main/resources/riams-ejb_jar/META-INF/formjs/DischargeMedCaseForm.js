@@ -4,6 +4,17 @@ function onPreCreate(aForm, aCtx) {
 function getObject(aCtx,aId,aClazz) {
 	return (aId==null||aId=='0'||aId=='')?null:aCtx.manager.find(aClazz, aId) ;
 }
+function closePrescriptions(aForm,aContext) {
+	var ids = aContext.manager.createNativeQuery("select list (''||pl.id) from prescriptionlist pl where medcase_id in (select id from medcase where parent_id=:sls and dtype='DepartmentMedCase')").setParameter("sls",aForm.id ).getSingleResult();
+	if (ids!=null&&""+ids!="") {
+		aContext.manager.createNativeQuery("update prescription p set planEndDate =to_date(:endDate,'dd.MM.yyyy'), planEndTime=cast(:endTime as time)" +
+				" where p.prescriptionList_id in ("+ids+") and p.dtype in ('DietPrescription', 'ModePrescription') and p.planEndDate is null")
+				.setParameter("endDate", aForm.dateFinish).setParameter("endTime", aForm.dischargeTime).executeUpdate();
+	}
+	
+
+	
+}
 function onSave(aForm,aEntity, aCtx) {
 	Packages.ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean.saveDischargeEpicrisisByCase(aEntity,aForm.getDischargeEpicrisis(),aCtx.manager) ;
 	if (+aForm.reasonDischarge>0 && aEntity.statisticStub!=null) {
@@ -21,6 +32,7 @@ function onSave(aForm,aEntity, aCtx) {
 		aEntity.statisticStub.setChildBirth(childBirth) ;
 		aCtx.manager.persist(aEntity) ;
 	}*/
+	closePrescriptions(aForm, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	

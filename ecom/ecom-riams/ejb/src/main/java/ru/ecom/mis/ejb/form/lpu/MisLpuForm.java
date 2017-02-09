@@ -610,6 +610,12 @@ public class MisLpuForm extends IdNameEntityForm {
 	/** Профиль КИЛИ */
 	private Long theKiliProfile;
 	
-
+	/** В архиве */
+	@Comment("В архиве")
+	@Persist
+	public Boolean getIsArchive() {return theIsArchive;}
+	public void setIsArchive(Boolean aIsArchive) {theIsArchive = aIsArchive;}
+	/** В архиве */
+	private Boolean theIsArchive;
 
 }
