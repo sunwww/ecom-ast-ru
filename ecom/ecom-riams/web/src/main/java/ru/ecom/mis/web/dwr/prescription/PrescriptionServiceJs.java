@@ -1100,18 +1100,21 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		StringBuilder sb = new StringBuilder();
 		String ret =service.getLabListFromTemplate(aIdTemplateList) ;
-		String[] arr = ret.split("#");
-		for (int i=0;i<arr.length;i++){
-			String[] row = arr[i].split(":");
-			if (row.length>1){
-				sb.append(row[1]).append("#");;
+		if (aPrescriptTypeId!=null&&aPrescriptTypeId!=0) {
+			String[] arr = ret.split("#");
+			for (int i=0;i<arr.length;i++){
+				String[] row = arr[i].split(":");
+				if (row.length>1){
+					sb.append(row[1]).append("#");;
+				}
+			}
+			if (sb.length()>0){
+				//System.out.println("===== SB "+sb.toString());
+				return getPresLabTypes(sb.toString(),aPrescriptTypeId,aRequest);
 			}
 		}
-		if (sb.length()>0){
-			//System.out.println("===== SB "+sb.toString());
-			return getPresLabTypes(sb.toString(),aPrescriptTypeId,aRequest);
-		}
-		return "";
+		
+		return ret;
 		
 	}
 	

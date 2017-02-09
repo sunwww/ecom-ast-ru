@@ -107,6 +107,9 @@
         	<msh:checkBox property="isMaternityWard" label="Родильное отделение"/>
         </msh:row>
         <msh:row>
+        	<msh:checkBox property="isArchive" label="Не используется (в архиве)"/>
+        </msh:row>
+        <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>
         <msh:row>

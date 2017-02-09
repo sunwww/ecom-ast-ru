@@ -49,7 +49,8 @@ when par.type ='6' then 'Пользовательский справочник (
 when par.type ='7' then 'Пользовательский справочник (с текстовым полем): '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') 
 when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением'
  else 'неизвестный' end||') - '||coalesce(vmu.name,'')
-,case when par.type='2' then coalesce(uv.name, '') else par.valueTextDefault end as f4_defaultValue 
+,case when par.type='2' then coalesce(uv.name, '') else par.valueTextDefault end as f4_defaultValue
+, coalesce(par.externalCode, '') as labCode 
 from ParameterByForm p 
 left join Parameter par on par.id=p.parameter_id 
 left join ParameterGroup gr on gr.id=par.group_id
@@ -64,6 +65,8 @@ where p.template_id=${param.id} order by p.position
     	<msh:tableColumn property="2" columnName="Категория"/>
     	<msh:tableColumn property="3" columnName="Параметр"/>
     	<msh:tableColumn property="4" columnName="Значение по умолчанию"/>
+    	<msh:tableColumn property="5" columnName="Код лаб. анализатора"/>
+    	<msh:tableButton buttonFunction="editParameter" property="1" buttonShortName="Ред" buttonName="Редактировать параметр"/>
     </msh:table>
     </msh:section>
                 </td>
@@ -123,6 +126,9 @@ where p.template_id=${param.id} order by p.position
 <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
     
         <script type="text/javascript">
+        function editParameter(parId) {
+        	window.location = "diary_parameterEdit.do?id="+parId;
+        }
             Element.addClassName($('mainMenuRoles'), "selected");
 
         <%

@@ -53,7 +53,7 @@
           				);
           		} 
            	if ($('id').value!=null&&$('id').value>0) {
-           		PrescriptionService.getLabListFromTemplate($('id').value,{
+           		PrescriptionService.getLabListFromTemplate($('id').value,null,{
            			callback: function(aResult) {
            				fillFormFromTemplate(aResult);
            			}

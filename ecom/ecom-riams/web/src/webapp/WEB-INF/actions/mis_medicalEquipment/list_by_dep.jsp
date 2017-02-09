@@ -10,7 +10,7 @@
 	, "depId", "depName", request);
 String sqlAdd = "";
 String filter = request.getParameter("filter");
-out.print("filter="+filter);
+
 if (filter!=null&&filter.equals("empty")) {
 	sqlAdd = " and e.typeEquip_id is null";
 } else if (filter!=null&&filter.equals("notEmpty")) {

@@ -49,6 +49,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="нозологических групп" roles="/Policy/Mis/Contract/GroupRules/ContractNosologyGroup/View"
 		title="Список нозологических групп по договорам"
 		/>
+	<msh:sideLink styleId="attorneyGroup" 
+		action="/entityList-work_attorney" 
+		name="доверенностей" roles="/Policy/Mis/Worker/Attorney/View"
+		title="Список доверенностей"
+		/>
 
 		
 </msh:sideMenu>

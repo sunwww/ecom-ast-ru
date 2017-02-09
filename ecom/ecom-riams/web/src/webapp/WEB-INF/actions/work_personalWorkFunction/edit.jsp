@@ -36,6 +36,9 @@
           <msh:checkBox property="archival" label="Архив" />
         </msh:row>
         <msh:row>
+           <msh:autoComplete vocName="vocAttorney" property="attorney" label="Использует доверенность" guid="8754e635-11ce-4c73-b398-4479988fd60d" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+        <msh:row>
         	<msh:checkBox property="isSurgical" label="Оперирующий"/>
         	<msh:checkBox property="isInstrumentNurse" label="Опер.сестра"/>
         </msh:row>
