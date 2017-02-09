@@ -3,9 +3,7 @@ package ru.ecom.mis.ejb.form.worker;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.lpu.OperatingRoom;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
 import ru.ecom.mis.ejb.form.lpu.OperatingRoomForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -270,5 +268,14 @@ public class WorkFunctionForm extends IdEntityForm{
 	public void setIsNoP7Sync(Boolean aIsNoP7Sync) {theIsNoP7Sync = aIsNoP7Sync;}
 	/** Не синхронизировать с ПАРУСом */
 	private Boolean theIsNoP7Sync;
+	
+	/** Доверенность */
+	@Comment("Доверенность")
+	@Persist
+	public Long getAttorney() {return theAttorney;}
+	public void setAttorney(Long aAttorney) {theAttorney = aAttorney;}
+	/** Доверенность */
+	private Long theAttorney;
+	
 }
 

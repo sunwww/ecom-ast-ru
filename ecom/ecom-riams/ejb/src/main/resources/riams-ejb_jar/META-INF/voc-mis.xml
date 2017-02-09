@@ -1,4 +1,28 @@
 <vocconfig>
+<!--  Список доверенностей -->
+<voc id='vocAttorney' type='NativeVocService'>
+       <NativeVocService
+	from="attorney uv"
+	nameId="uv.id"
+	names="'№ '||uv.attorneynumber||' от '||to_char(uv.attorneyStartDate,'dd.MM.yyyy')||' '||pat.lastname"
+	queryAppend="(uv.isArchive is null or uv.isArchive='0')"
+	join="left join patient pat on pat.id=uv.person_id"
+	>
+	</NativeVocService>
+    </voc> 
+    
+<!--  Справочник типов доверенностей -->
+<voc id='vocAttorneyType' type='NativeVocService'>
+       <NativeVocService
+	from="vocAttorneyType uv"
+	nameId="uv.id"
+	names="uv.name"
+	queryAppend="(uv.isArchival is null or uv.isArchival='0')"
+	>
+	</NativeVocService>
+    </voc> 
+    
+    
 <!--  Справочник значений по пользовательскому справочнику -->
 <voc id='vocUserValueByDomain' type='NativeVocService'>
        <NativeVocService
@@ -1070,7 +1094,7 @@
                 entity  = 'ru.ecom.mis.ejb.domain.lpu.MisLpu'
                 names   = 'omcCode,name'
                 queried = 'name'
-            queryAppend = 'parent_id is null'
+            queryAppend = "parent_id is null and (isArchive is null or isArchive='0') "
        queryConvertType = "UPPER_CASE"                
                 />
     </voc>

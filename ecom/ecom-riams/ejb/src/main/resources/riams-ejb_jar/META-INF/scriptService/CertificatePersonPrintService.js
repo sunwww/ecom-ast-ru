@@ -152,7 +152,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	.getResultList() ;
 	map.put("login",list.size()>0?list.get(0):login) ;
 	map.put("accountNumber",pid) ;
-	
+	printAttorney(aCtx);
 	
 	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'')) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||coalesce(cpp1.middlename,'')) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id" 
 		+",mc.id as mcid,max(ca.DiscountDefault) as DiscountDefault"
@@ -205,6 +205,40 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 
 	return map;
 }
+function printAttorney (aCtx) {
+	//Доверенности
+	var att_exeName = "";
+	var att_exeAltName = "";
+	var att_exeShortName = "";
+	var att_number = "";
+	var att_dateFrom = "";
+	var att_altName = "";
+	var login = aCtx.getSessionContext().getCallerPrincipal().toString() ;
+	var sqlAttorneySql  = "select pat.lastname ||' '||pat.firstname ||' '||pat.middlename as f0, att.attorneyNumber as f1_number, to_char(att.attorneyStartDate,'dd.MM.yyyy') as f2_date" +
+			" ,att.altPersonInfo as f3_altExecutorName ,pat.lastname||' '||substring(pat.firstname,1,1)||'.'||substring(pat.middlename,1,1)||'.' as f4_shortExecutorName" +
+			" ,vat.altName as f5 " +
+			" from attorney att" +
+			" left join patient pat on pat.id=att.person_id" +
+			" left join vocattorneytype vat on vat.id=att.type_id" +
+			" where att.id=coalesce ((select attorney_id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+login+"'),(select max(id) from attorney where isDefault='1'))";
+	var list_attorney =aCtx.manager.createNativeQuery(sqlAttorneySql).getResultList();
+	if (list_attorney.size()>0) {
+		var p = list_attorney.get(0);
+		att_exeName = ""+p[0];
+		var att_exeAltName = ""+p[3];
+		var att_exeShortName = ""+p[4];
+		var att_number = ""+p[1];
+		var att_dateFrom = ""+p[2];
+		var att_altName = ""+p[5];
+	}
+	map.put("executorFullName",att_exeName);
+	map.put("executorAltFullName", att_exeAltName);
+	map.put("executorShortName", att_exeShortName);
+	map.put("attorneyNumber",att_number);
+	map.put("attorneyDateFrom",att_dateFrom);
+	map.put("attorneyTypeAltName",att_altName);
+	
+}
 function printContractByAccrual(aCtx, aParams) {
 	var pid = aParams.get("id");
 	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
@@ -254,7 +288,7 @@ function printContractByAccrual(aCtx, aParams) {
 		.getResultList() ;
 	map.put("login",list.size()>0?list.get(0):login) ;
 	
-	
+	printAttorney(aCtx) ;
 	var sqlQuery1 ="select mc.contractNumber,list(distinct cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'')) as cpplastname,list(distinct cpp1.lastname||' '||cpp1.firstname||' '||coalesce(cpp1.middlename,'')) as cpp1lastname,min(cpp.id) as cppid, min(cpp1.id) as mincpp1id"+
 	",mc.id as mcid,max(ca.DiscountDefault) as DiscountDefault" 
 		+"		from MedContract mc "

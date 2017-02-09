@@ -324,4 +324,12 @@ abstract public class WorkFunction extends BaseEntity {
 	/** Не синхронизировать с ПАРУСом */
 	private Boolean theIsNoP7Sync;
 	
+	/** Доверенность */
+	@Comment("Доверенность")
+	@OneToOne
+	public Attorney getAttorney() {return theAttorney;}
+	public void setAttorney(Attorney aAttorney) {theAttorney = aAttorney;}
+	/** Доверенность */
+	private Attorney theAttorney;
+	
 }
