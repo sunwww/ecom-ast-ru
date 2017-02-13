@@ -109,4 +109,11 @@ public String getEditUsername() {return theEditUsername;}
 public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 /** Редактирование пользователя */
 private String theEditUsername;
+
+/** Примечание */
+@Comment("Примечание")
+public String getProtocolComment() {return theProtocolComment;}
+public void setProtocolComment(String aProtocolComment) {theProtocolComment = aProtocolComment;}
+/** Примечание */
+private String theProtocolComment;
 }

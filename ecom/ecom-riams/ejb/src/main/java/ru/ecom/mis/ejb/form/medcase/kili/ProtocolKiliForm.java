@@ -135,4 +135,12 @@ public class ProtocolKiliForm extends IdEntityForm {
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 	/** Редактирование пользователем */
 	private String theEditUsername;
+	
+	/** Примечание */
+	@Comment("Примечание") 
+	@Persist
+	public String getProtocolComment() {return theProtocolComment;}
+	public void setProtocolComment(String aProtocolComment) {theProtocolComment = aProtocolComment;}
+	/** Примечание */
+	private String theProtocolComment;
 }
