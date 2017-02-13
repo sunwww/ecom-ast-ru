@@ -67,7 +67,6 @@
  <ecom:webQuery name="diag_typeReg_vip_sql"	 nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
  <ecom:webQuery name="diag_typeReg_klin_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='4'"/>
  <ecom:webQuery name="diag_mainPriority_sql" nativeSql="select id,name from VocPrimaryDiagnosis where code='1'"/>
- 
   <%
   String isReestr = request.getParameter("reestr");
     //String department = (String) request.getParameter("department");
@@ -79,22 +78,27 @@
     	} 
     	String fldSearch = "" ;
     	String groupBySql = "" ;
+    	String selectSql = "" ;
     	if (typeSearch!=null) {
     		if (typeSearch.equals("1")) {
     			fldSearch=" ORDER BY depName" ;
     			groupBySql = "'&depIdParam='||case when dep.isnoomc='1' then depPrev.id else dep.id end, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
+    			selectSql = "'&depIdParam='||case when dep.isnoomc='1' then depPrev.id else dep.id end, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
     			//groupBySql = "'&dep='||case when dep.isnoomc='1' then depPrev.id else dep.id end as depId, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
     		} else if (typeSearch.equals("2")) {
     			fldSearch = " ORDER BY vkp.name" ;
     			groupBySql = "'&profile='||vkp.id, vkp.name";
+    			selectSql = "'&profile='||vkp.id, coalesce(vkp.name,'РЕАНИМАЦИЯ?')";    			
     		} else if (typeSearch.equals("3")) {
     			fldSearch = " ORDER BY vkp.name" ;
-    			groupBySql = "vkp.id , '&protocol='||vkp.name"; //as depId
+    			groupBySql = "vkp.id , '&protocol='||vkp.name";
+    			selectSql = "vkp.id , '&protocol='||vkp.name";
     		}
     	}
     	request.setAttribute("fldSearch",fldSearch) ;
     	request.setAttribute("groupBySql",groupBySql) ;
-
+    	request.setAttribute("selectSql",selectSql) ;
+		
     	String fldDate = "sls.dateFinish" ;
     	/* if (typeDate!=null) {
     		if (typeDate.equals("1")) {fldDate="sls.dateStart" ;} 
@@ -130,7 +134,7 @@
 	
 	String id = request.getParameter("id");
 	String isParamNull;
-	if (id==null|| id.equals("null"))	{
+	if (id==null|| id.equals("'null'"))	{
 		isParamNull = "IS ";
 	} else {
 		isParamNull = " = ";
@@ -142,9 +146,8 @@
 	}
 	if ((isReestr==null||!isReestr.equals("1"))&&  typeSearch.equals("1")||typeSearch.equals("2")||typeSearch.equals("3")){
  %>
-
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
-SELECT ${groupBySql} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
+SELECT ${selectSql} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
 ,count(pk.id)*100/ count(sls.id)  as persDead
 ,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase
 
@@ -164,7 +167,7 @@ ${departmentSql}
 GROUP BY ${groupBySql}
  ${fldSearch}
 " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-
+${datelist_sql}
 <%
 	}
 	if (isReestr==null||!isReestr.equals("1")) {
@@ -242,7 +245,7 @@ ORDER BY cast(pk.protocolNumber as int)
 	  String addFrom = "";
 	  
 			  if (typeSearch.equals("1")) {
-				 addSelect = "SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename, 'Протокол №'||pk.protocolNumber||' от '||pk.protocoldate as protocolField ";
+				 addSelect = "SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename, 'Протокол №'||pk.protocolNumber||' от '||pk.protocoldate as protocolField, sts.code, sls.dateStart ";
 				 addFrom = " FROM medcase sls "+
 					"left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null "+ 
 					"left join mislpu dep on dep.id=slo.department_id "+ 
@@ -252,7 +255,8 @@ ORDER BY cast(pk.protocolNumber as int)
 					"left join protocolkili pk on pk.deathcase_id=dc.id "+ 
 					"left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end "+ 
 					"left join vochospitalizationresult vhr on vhr.id=sls.result_id "+
-					"left join patient pat on sls.patient_id = pat.id ";
+					"left join patient pat on sls.patient_id = pat.id "+
+					"left join statisticstub sts on sls.id = sts.medcase_id";
 				  value = request.getParameter("depIdParam");
 				  sqlWhere = " where vhr.code='11' "+ 
 						  "AND sls.deniedhospitalizating_id is null "+
@@ -261,7 +265,7 @@ ORDER BY cast(pk.protocolNumber as int)
 				  addDate = " and sls.dateFinish ";
 			  }
 			  if (typeSearch.equals("2")) {
-				  addSelect = "SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename, 'Протокол №'||pk.protocolNumber||' от '||pk.protocoldate as protocolField ";
+				  addSelect = "SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename, 'Протокол №'||pk.protocolNumber||' от '||pk.protocoldate as protocolField, sts.code, sls.dateStart ";
 				  addFrom = " from medcase sls "+
 				  		"left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null "+ 
 						  "left join mislpu dep on dep.id=slo.department_id "+ 
@@ -271,7 +275,8 @@ ORDER BY cast(pk.protocolNumber as int)
 						  "left join protocolkili pk on pk.deathcase_id=dc.id "+ 
 						  "left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end "+ 
 						  "left join vochospitalizationresult vhr on vhr.id=sls.result_id "+
-						  "left join patient pat on sls.patient_id = pat.id ";
+						  "left join patient pat on sls.patient_id = pat.id "+
+						  "left join statisticstub sts on sls.id = sts.medcase_id";
 				  value = request.getParameter("profile");
 				  sqlWhere = " where vhr.code='11' "+ 
 						  "AND sls.deniedhospitalizating_id is null "+
@@ -280,11 +285,12 @@ ORDER BY cast(pk.protocolNumber as int)
 				  addDate = " and sls.dateFinish ";
 			  }
 			  if (typeSearch.equals("3")) {
-					addSelect = "select pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename as patName, '№ '||pk.protocolNumber||' от '||pk.protocoldate as info ";
+					addSelect = "select pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename as patName, '№ '||pk.protocolNumber||' от '||pk.protocoldate as info, sts.code, sls.dateStart ";
 					addFrom = " from protocolKili pk "+
 							"left join deathcase dth on dth.id = pk.deathcase_id "+
 							"left join medcase sls on sls.id = dth.medcase_id "+
-							"left join patient pat on pat.id =  sls.patient_id";
+							"left join patient pat on pat.id =  sls.patient_id "+
+							"left join statisticstub sts on sls.id = sts.medcase_id";
 					value = request.getParameter("protocolNumber");
 					sqlWhere = " where pk.protocolNumber = '" + value + "'";
 					addDate = " and pk.protocoldate ";
@@ -313,6 +319,11 @@ ${sqlJoin}
 ${sqlWhere}  ${addDate}
 "/>
 
+${addSelect} 
+${addFrom} 
+${sqlJoin}
+${sqlWhere}  ${addDate}
+
 <form action="print-KiliProtocol.do" method="post" target="_blank">
     Период с ${dateBegin} по ${dateEnd}.
     <input type='hidden' name="s" id="s" value="HospitalPrintService">
@@ -323,33 +334,34 @@ ${sqlWhere}  ${addDate}
     </form>
 
  <msh:section>
-    <msh:sectionContent>
+    <msh:sectionContent> 
  <msh:table name="calc_reestr"
      action="entityView-mis_patient.do" idField="1">
       <msh:tableColumn columnName="Пациент" property="2" />
       <msh:tableColumn columnName="Номер протокола" property="3" />
+      <msh:tableColumn columnName="Номер истории" property="4" />
+      <msh:tableColumn columnName="Дата поступления" property="5" />
     </msh:table>
     </msh:sectionContent>
     </msh:section> 
     
-<%
-  }%>
+<% } %>
 
   <script type='text/javascript'>
   checkFieldUpdate('typeSearch','${typeSearch}',1) ;
 
-   function checkFieldUpdate(aField,aValue,aDefaultValue) {
-   	eval('var chk =  document.forms[0].'+aField) ;
-   	var aMax=chk.length ;
-   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
-   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
-   		chk[+aDefaultValue-1].checked='checked' ;
-   	} else {
-   		chk[+aValue-1].checked='checked' ;
-   	}
-   }
-   </script>    
-  </tiles:put>
+function checkFieldUpdate(aField,aValue,aDefaultValue) {
+	eval('var chk =  document.forms[0].'+aField) ;
+	var aMax=chk.length ;
+	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
+	if ((+aValue)==0 || (+aValue)>(+aMax)) {
+		chk[+aDefaultValue-1].checked='checked' ;
+	} else {
+		chk[+aValue-1].checked='checked' ;
+	}
+}
+</script>    
+</tiles:put>
 
 
 
