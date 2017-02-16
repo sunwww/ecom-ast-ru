@@ -433,4 +433,11 @@ abstract public class MedCase extends BaseEntity {
 	private VocMethodHighCare theMethodHighCare;
 	/** Вид ВМП */
 	private VocKindHighCare theKindHighCare;
+	
+	/** Услуга оплачена */
+	@Comment("Услуга оплачена")
+	public Boolean getIsPaid() {return theIsPaid;}
+	public void setIsPaid(Boolean aIsPaid) {theIsPaid = aIsPaid;}
+	/** Услуга оплачена */
+	private Boolean theIsPaid;
 }

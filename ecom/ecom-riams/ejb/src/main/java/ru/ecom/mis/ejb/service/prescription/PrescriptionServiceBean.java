@@ -82,7 +82,15 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
-	
+	public void sout(Object o) {sout(0,o);}
+	public void sout(int debug, Object o) {
+		if (debug==1) {
+			System.out.println("===== Лаборатория: "+o.toString());
+		} else {
+			System.out.println(o.toString());
+		}
+		
+	}
 	//region "Parsing PDF"
 	public ParsedPdfInfo getPdfInfoByBarcode( List<ParsedPdfInfo> list,String aBarcode) {
 		if (list!=null&&!list.isEmpty()) {
@@ -96,69 +104,79 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 	
 	public void checkPdf() throws IOException, NoSuchFieldException, IllegalAccessException, JSONException {
-		int[][] templateGEM = new int[][]{{30, 560, 100, 770},
-                {190, 560, 210, 770},
-                {215, 560, 250, 770},
-                {255, 560, 340, 770}};
+		int[][] templateGEM = new int[][]{{30, 560, 100, 770}, //AnalyseCode
+                {190, 560, 210, 770}, //value
+                {215, 560, 250, 770}, //unit
+                {255, 560, 340, 770}}; //interval
 		int[][] templateBio = new int[][]{{30, 300, 100, 730},
                 {190, 300, 105, 730},
                 {255, 300, 200, 730},
                 {270, 300, 330, 730}};
 		int[][] fillArray = new int[4][4];
-		System.out.println("==== Запускаем функцию проверки наличия PDF ====");
+		sout(1,"==== Запускаем функцию проверки наличия PDF ====");
 		//**Перечень директорий*//*
 		String homeDirectory  =  getDir("jboss.labPdfDocumentDir","/opt/tomcat"); //= "C:\\Users\\vtsybulin\\workspace\\pdfParser\\pdf";
         //String homeDirectory = "/home/user/opt/tomcat";
 		String pdfDirectory = homeDirectory + "/parse_pdf/";
         String txtDirectory = homeDirectory + "/parse_txt/";
         String archDirectory = homeDirectory + "/parse_archive/";
-        System.out.println("Ищу файлы в папке " + pdfDirectory);
+       sout("Ищу файлы в папке " + pdfDirectory);
         /**Сперва должны получить список всех файлов в формате pdf*/
         File[] fileList = getFiles(pdfDirectory);       
         if (fileList!=null&&fileList.length>0){
-        	System.out.println("В массиве имеются файлы!");
-        for (int i = 0; i < fileList.length; i++){
-        	List<ParsedPdfInfo> resultList = new ArrayList<ParsedPdfInfo>();
+        	sout("В массиве имеются файлы!");
+        	for (int i = 0; i < fileList.length; i++){
+        		List<ParsedPdfInfo> resultList = new ArrayList<ParsedPdfInfo>();
         	//resultList = new ArrayList<ParsedPdfInfo>();
          //   ParsedPdfInfo result = new ParsedPdfInfo();
         	File file = fileList[i];        	
         	String fileName = file.getName();        
             file.getParentFile().mkdirs();           
             String[] temp_container = fileName.split("\\.");
-            Character t1 = 'g';
-            if (t1.equals(temp_container[0].substring(temp_container[0].length() - 1))) {
+          //  Character t1 = 'g';
+      /*      if (t1.equals(temp_container[0].substring(temp_container[0].length() - 1))) {
                 System.out.println("+true");
             } else {
                 System.out.println("+false");
-            }
+            }*/
             System.out.println("last character: " +
                     temp_container[0].substring(temp_container[0].length() - 1));
             String typeFile = "100014";
             
             String[] typesName = {"gem", "bio"}; //массив с названиями типов отчетов
             int reportType = 0; //порядковый номер отчета из массива
-            String currentType = "";
-            currentType = determineHead(pdfDirectory + fileList[i].getName());
-            System.out.println("Файл относится к шаблону " + currentType);
-            
-            if (currentType == typesName[0]){
+            String currentType = determineHead(pdfDirectory + fileList[i].getName());
+            if (currentType==null) {
+            	sout(1,"не удалось распознать тип файла "+pdfDirectory + fileList[i].getName());
+            	return;
+            }
+
+            sout(1,"Файл относится к шаблону " + currentType);
+            if (currentType.equals(typesName[0])){
+            	for (int q1 = 0; q1 < 4; q1++){
+            		for (int q2 = 0; q2 < 4; q2++){
+            			fillArray[q1][q2] = templateGEM[q1][q2];
+            		}
+            	}
+            	reportType = 1;
+            } else if (currentType.equals(typesName[1])){
             	for(int q1 = 0; q1 < 4; q1++){
             		for(int q2 = 0; q2 < 4; q2++){
-            			fillArray[q1][q2] = templateGEM[q1][q2];}}
-            	reportType = 1;}
-            	
-            
-            if (currentType == typesName[1]){
-            	for(int q1 = 0; q1 < 4; q1++){
-            		for(int q2 = 0; q2 < 4; q2++){
-            			fillArray[q1][q2] = templateBio[q1][q2];}}
-            	reportType = 2;}
-            	
+            			fillArray[q1][q2] = templateBio[q1][q2];
+            		}
+            	}
+            	reportType = 2;
+            }
+            if (reportType==0) {
+            	sout(1,"Не удалось определить вид файла");
+            }	
+            sout(1,"Запускаем парсинг");
             if (typeFile.equals("100014")) {
-            	String header = "";
+            	//String header = "";
             	String barCode = "";
             	if (reportType == 1){
-            		barCode = getBarCode(pdfDirectory+fileName);}
+            		barCode = getBarCode(pdfDirectory+fileName);
+            	}
             	ParsedPdfInfo ppi = getPdfInfoByBarcode(resultList, barCode); //Создаем или находим объект, хранящий все анализы по одному штрих-коду
             	List <ParsedPdfInfoResult> res = new ArrayList<ParsedPdfInfoResult>();
             	try{
@@ -181,46 +199,42 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                     }
             	} catch(Exception e){
             		e.printStackTrace();
-                    	System.out.println("Исключение в цикле while");
-                    	}
+                    	sout(1,"Исключение в цикле while");
+                }
                 moveFile(pdfDirectory, archDirectory, fileName + ".pdf");
                 if (reportType == 1){
-                ppi.setBarcode(barCode);}
-                if (reportType == 2){
+                	ppi.setBarcode(barCode);
+                } else if (reportType == 2){
                 	for (int t = 0; t < res.size(); t++){
                 		barCode = res.get(t).getValue();
-                		System.out.println("===DEBUG=== " + barCode);
+                		sout(1," barcode=" + barCode);
                 		ppi.setBarcode(barCode);
                 	}
                 }
                 ppi.setResults(res);
-           resultList.add(ppi);
-                	}
-            System.out.println("===DEBUG=== Выводим строку №7");
-            System.out.println(resultList.get(0).getResults().get(6).getCode());
-            System.out.println(resultList.get(0).getResults().get(6).getValue());
-            System.out.println(resultList.get(0).getResults().get(6).getMeasurementUnit());
-            System.out.println(resultList.get(0).getResults().get(6).getRefInterval());
-            System.out.println("===DEBUG=== Вывод кодов");
-            for(int z = 0; z < resultList.size(); z++)
-            {
-            	System.out.println(resultList.get(0).getBarcode());
+                resultList.add(ppi);
             }
-            System.out.println("Запускаем функцию по заполнению дневника");
+            sout(1,"===DEBUG=== Выводим строку №7");
+            
+            sout(1,"===DEBUG=== Вывод кодов");
+          //  for(int z = 0; z < resultList.size(); z++){
+           // 	System.out.println(resultList.get(0).getBarcode());
+            //}
+            sout(1,"Запускаем функцию по заполнению дневника");
            // PrescriptionServiceBean service = new PrescriptionServiceBean();
             setDefaultDiaryCycle(resultList);
-            	}
-        }       
-        else{
-        	System.out.println("В массиве нет файлов!");}
-		}
+            }
+        } else {
+        	sout(1,"В массиве нет файлов!");
+        }
+	}
 	
 	public static String determineHead(String pdf) throws IOException {
-        String head = "";
+        String head = null;
         String[] types = {"гематологическом", "биохимического"};
         String[] typesName = {"gem", "bio"};
         PdfReader reader = new PdfReader(pdf);
-        StringBuilder text = new StringBuilder();
+      //  StringBuilder text = new StringBuilder();
         Rectangle rect = new Rectangle(0, 0, 1000, 1000);
         RenderFilter filter = new RegionTextRenderFilter(rect);
         TextExtractionStrategy strategy;
@@ -229,15 +243,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                     new LocationTextExtractionStrategy(), filter);
             String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
 
-            for (int i = 0; i < types.length; i++)
-            {
+            for (int i = 0; i < types.length; i++) {
                 int positionTemp = currentText.indexOf(types[i]);
                 if (positionTemp!=-1){
                     head = typesName[i];
                     System.out.println("DETECTED PATTERN " + types[i] + " IN FILE " + pdf);
                     return head;
-                }
-                else{
+                } else{
                     System.out.println("NOT DETECTED");
                 }
             }
@@ -246,23 +258,30 @@ public class PrescriptionServiceBean implements IPrescriptionService {
         return head;
     }
 	
-	public static String getBarCode(String pdf) throws IOException {
-        String barcode = "";
-        PdfReader reader = new PdfReader(pdf);
-        StringBuilder text = new StringBuilder();
-        Rectangle rect = new Rectangle(0, 0, 1000, 1000);
-        RenderFilter filter = new RegionTextRenderFilter(rect);
-        TextExtractionStrategy strategy;
-        for (int page = 1; page <= reader.getNumberOfPages(); page++) {
-            strategy = new FilteredTextRenderListener(
-                    new LocationTextExtractionStrategy(), filter);
-            String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
-            barcode = "Код пробы: ";
-            int position = currentText.indexOf(barcode);
-            barcode = currentText.substring(position+11, 172);
-            System.out.println(barcode);
+	public  String getBarCode(String pdf) {
+		int barcodeLength = 8;
+		String barcode = null;
+		try {
+        	
+            PdfReader reader = new PdfReader(pdf);
+            Rectangle rect = new Rectangle(0, 0, 1000, 1000);
+            RenderFilter filter = new RegionTextRenderFilter(rect);
+            TextExtractionStrategy strategy;
+            for (int page = 1; page <= reader.getNumberOfPages(); page++) {
+                strategy = new FilteredTextRenderListener(
+                        new LocationTextExtractionStrategy(), filter);
+                String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
+                barcode = "Код пробы: ";
+                int position = currentText.indexOf(barcode);
+               // sout(1,"Text="+currentText+", Позиция штрих-кода = "+position);
+                barcode = currentText.substring((position+11), (position+11)+barcodeLength);
+                System.out.println("=== Лаборатория:  штрих-код :"+barcode);
+            }
+            reader.close();
+        } catch (Exception e) {
+        	sout(1,"Ошибка парсинга номера штрих-кода");
+        	e.printStackTrace();
         }
-        reader.close();
         return  barcode;
     }
 	
@@ -278,10 +297,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
         PrintWriter out = new PrintWriter(new FileOutputStream(txt));
         Rectangle rect = new Rectangle(x1, x2, y1, y2);
         RenderFilter filter = new RegionTextRenderFilter(rect);
-        TextExtractionStrategy strategy;
+        TextExtractionStrategy strategy= new FilteredTextRenderListener(new LocationTextExtractionStrategy(), filter);
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            strategy = new FilteredTextRenderListener(
-                    new LocationTextExtractionStrategy(), filter);
             String temp = PdfTextExtractor.getTextFromPage(reader, i, strategy);
             out.println(temp);
             cont = temp.split("\n");

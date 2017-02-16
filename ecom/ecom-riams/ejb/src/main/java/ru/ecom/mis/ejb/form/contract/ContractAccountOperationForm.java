@@ -1,9 +1,12 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
+import ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -25,6 +28,18 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses({OperationAccrualForm.class,OperationReservationForm.class
 	,OperationReturnForm.class,OperationWriteOffForm.class})
 public class ContractAccountOperationForm extends IdEntityForm{
+	/**
+	 * Тип операции
+	 */
+	@Comment("Тип операции")
+	
+	public Long getType() {return theType;}
+	public void setType(Long aType) {theType = aType;}
+	/**
+	 * Тип операции
+	 */
+	private Long theType;
+	
 	/** Договорной счет */
 	@Comment("Договорной счет")
 	@Persist
