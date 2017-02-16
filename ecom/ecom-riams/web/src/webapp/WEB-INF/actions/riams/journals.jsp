@@ -299,6 +299,9 @@
 	                        <li><msh:link  isReport="true" action="protocolReport.do" roles="/Policy/Mis/MedCase/Stac/Journal/ProtocolKili">
 	                            Отчет по КИЛИ
 	                        </msh:link></li>
+	                        <li><msh:link  isReport="true" action="pres_report4385.do" roles="/Policy/Mis/MedCase/Stac/Journal/ReportForOlesya">
+	                            Отчет по антибиотикорезистентности
+	                        </msh:link></li>
 	                        
 					</ul>
 					</div>

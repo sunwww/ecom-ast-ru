@@ -18,6 +18,7 @@
   <tiles:put name="body" type="string">
   <%
   String shor = request.getParameter("short");
+  
   String typeDate = ActionUtil.updateParameter("GroupByBedFund","typeDate","2", request);
   String typeSearch = ActionUtil.updateParameter("GroupByBedFund", "typeSearch", "2", request);
   if (shor==null|| shor.equals("")){
@@ -32,18 +33,7 @@
         </msh:row><msh:row>
         <msh:autoComplete property="department" fieldColSpan="5"
         	label="Профиль" horizontalFill="true" vocName="vocKiliProfile"/>
-        </msh:row>
-        <%-- <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-        <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="1">  поступления
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeDate" value="2">  выписки
-        </td>
-        </msh:row> --%>
-        
-        <!-- Свод по отделениям/протоколам -->
+        </msh:row>  <!-- Свод по отделениям/протоколам -->
         <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по дате  (typeSearch)" colspan="1"><label for="typeSearchName" id="typeSearchLabel">Отобразить:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -63,90 +53,70 @@
           </msh:panel>
 </msh:form>
 
-<%} %>
- <ecom:webQuery name="diag_typeReg_vip_sql"	 nativeSql="select id,name from VocDiagnosisRegistrationType where code='3'"/>
- <ecom:webQuery name="diag_typeReg_klin_sql" nativeSql="select id,name from VocDiagnosisRegistrationType where code='4'"/>
- <ecom:webQuery name="diag_mainPriority_sql" nativeSql="select id,name from VocPrimaryDiagnosis where code='1'"/>
-  <%
+<%}
+  
   String isReestr = request.getParameter("reestr");
-    //String department = (String) request.getParameter("department");
-  //String typeDate=ActionUtil.updateParameter("Report14","typeDate","2", request) ;
-  	
-  	String department = (String)request.getParameter("department") ;
-    	if (department!=null && !department.equals("") && !department.equals("0")) {
-    		request.setAttribute("departmentSql", " and vkp.id = "+department) ;
+  	String addSql = "";
+  	String profile = (String)request.getParameter("department") ; //Это не отделение, как можно подумать, а профиль КИЛИ
+  	String department = request.getParameter("dep") ;
+  	String startDate = (String) request.getParameter("dateBegin");
+	String finishDate = (String) request.getParameter("dateEnd");
+	if (startDate!=null&&!startDate.equals("")) {
+	request.setAttribute("dateBegin", startDate);
+	request.setAttribute("dateEnd", finishDate);
+    	if (profile!=null && !profile.equals("") && !profile.equals("0")) {
+    		addSql+=" and vkp.id = "+profile ;
     	} 
-    	String fldSearch = "" ;
+    	String orderBySql = "" ;
     	String groupBySql = "" ;
     	String selectSql = "" ;
+    	String typeDateSql="sls.dateFinish";
+    	String tableName = "";
     	if (typeSearch!=null) {
     		if (typeSearch.equals("1")) {
-    			fldSearch=" ORDER BY depName" ;
-    			groupBySql = "'&depIdParam='||case when dep.isnoomc='1' then depPrev.id else dep.id end, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
-    			selectSql = "'&depIdParam='||case when dep.isnoomc='1' then depPrev.id else dep.id end, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
-    			//groupBySql = "'&dep='||case when dep.isnoomc='1' then depPrev.id else dep.id end as depId, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
-    		} else if (typeSearch.equals("2")) {
-    			fldSearch = " ORDER BY vkp.name" ;
-    			groupBySql = "'&profile='||vkp.id, vkp.name";
-    			selectSql = "'&profile='||vkp.id, coalesce(vkp.name,'РЕАНИМАЦИЯ?')";    			
+    			tableName = "Наименование отделения";
+    			orderBySql=" ORDER BY depName" ;
+    			groupBySql = "case when dep.isnoomc='1' then depPrev.id else dep.id end, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
+    			selectSql = "'&dep='||case when dep.isnoomc='1' then depPrev.id else dep.id end, case when dep.isnoomc='1' then depPrev.name else dep.name end ";
+    		} else if (typeSearch.equals("2")) { //поиск по
+    			tableName = "Наименование профиля";
+    			orderBySql = " ORDER BY vkp.name" ;
+    			groupBySql = "vkp.id, vkp.name";
+    			selectSql = "'&profile='||coalesce(vkp.id,0), coalesce(vkp.name,'РЕАНИМАЦИЯ?')";    			
     		} else if (typeSearch.equals("3")) {
-    			fldSearch = " ORDER BY vkp.name" ;
-    			groupBySql = "vkp.id , '&protocol='||vkp.name";
-    			selectSql = "vkp.id , '&protocol='||vkp.name";
+    			orderBySql = " ORDER BY vkp.name" ;
+    			groupBySql = "vkp.id , vkp.name";
+    			selectSql = "'&profile='||vkp.id||'&protocolNumber='||pk.protocolNumber||'&protocolDate='||to_char(pk.protocolDate,'dd.MM.yyyy') , '&protocol='||vkp.name";
+    			typeDateSql="pk.protocolDate";
     		}
     	}
-    	request.setAttribute("fldSearch",fldSearch) ;
+    	request.setAttribute("tableName", tableName);
+    	request.setAttribute("orderBySql",orderBySql) ;
     	request.setAttribute("groupBySql",groupBySql) ;
     	request.setAttribute("selectSql",selectSql) ;
 		
-    	String fldDate = "sls.dateFinish" ;
-    	/* if (typeDate!=null) {
-    		if (typeDate.equals("1")) {fldDate="sls.dateStart" ;} 
-    		else if (typeDate.equals("2")) {fldDate = "sls.dateFinish" ;}
-    	} */
-    	request.setAttribute("fldDate",fldDate) ;
-    //profileFilter += request.getParameter("department");
-	String startDate = (String) request.getParameter("dateBegin"); //Получаем значение текстового поля с первой датой
-	String finishDate = (String) request.getParameter("dateEnd");	//Получаем значение текстового поля со второй датой
-	request.setAttribute("dateBegin", startDate);
-	request.setAttribute("dateEnd", finishDate);
-  //String clinicalMkbName = "ml.name || '<br> '|| mkb2.code||' ' ||mkb2.name";
-	String addSql = "";
+	
+	
 	
   if (startDate!=null&&!startDate.equals("")) {
-	  if (finishDate!=null&&!finishDate.equals("")) {
-		  addSql+="between to_date('"+startDate+"','dd.MM.yyyy') and to_date('"+finishDate+"','dd.MM.yyyy')";
-	  } else {
-		  addSql += " and >=to_date('"+startDate+"','dd.MM.yyyy')";
+	  if (addSql.length()==0) {
+		  addSql+=" and ";
 	  }
-  } else {
-	  addSql +="between current_date and current_date";
-  }
+	  addSql+=typeDateSql;
+	  if (finishDate==null||finishDate.equals("")) {
+		  finishDate = startDate;
+	  }
+	  addSql+=" between to_date('"+startDate+"','dd.MM.yyyy') and to_date('"+finishDate+"','dd.MM.yyyy')";
+	  
+  } 
 	request.setAttribute("addSql", addSql);
 //	out.print("<H1>"+rees)
-	if (isReestr!=null&&isReestr.equals("1")) {
-		String addParam = request.getParameter("addParam");
-		if (addParam!=null&&addParam.equals("1")) {
-			addParam = " and dc.id is not null";
-		} else if (addParam!=null&&addParam.equals("2")) {
-			addParam = " and pk.id is not null";
-		}
-	
-	String id = request.getParameter("id");
-	String isParamNull;
-	if (id==null|| id.equals("'null'"))	{
-		isParamNull = "IS ";
-	} else {
-		isParamNull = " = ";
-		
-	}
-	request.setAttribute("isParamNull", isParamNull);
-	request.setAttribute("addParam", addParam!=null?addParam:"");
-	
-	}
-	if ((isReestr==null||!isReestr.equals("1"))&&  typeSearch.equals("1")||typeSearch.equals("2")||typeSearch.equals("3")){
- %>
-    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
+
+	if (isReestr==null||isReestr.equals("")||isReestr.equals("0")){
+ 
+		if (typeSearch.equals("1")||typeSearch.equals("2")){
+%>
+ <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
 SELECT ${selectSql} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
 ,count(pk.id)*100/ count(sls.id)  as persDead
 ,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase
@@ -161,22 +131,16 @@ left join deathcase dc on dc.medcase_id=sls.id
 	left join protocolkili pk on pk.deathcase_id=dc.id
 	left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
-WHERE sls.dtype='HospitalMedCase' and ${fldDate} ${addSql} and slo.dtype='DepartmentMedCase'  and vhr.code='11' 
+WHERE sls.dtype='HospitalMedCase' ${addSql} and slo.dtype='DepartmentMedCase'  and vhr.code='11' 
 and sls.deniedhospitalizating_id is null
-${departmentSql}
+
 GROUP BY ${groupBySql}
- ${fldSearch}
+ ${orderBySql}
 " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
-${datelist_sql}
-<%
-	}
-	if (isReestr==null||!isReestr.equals("1")) {
-	if (typeSearch.equals("1")){
-%>
         <msh:section>
     <msh:sectionContent>
     <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-      <msh:tableColumn columnName="Наименование отделения" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+      <msh:tableColumn columnName="${tableName}" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
       <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
@@ -185,40 +149,27 @@ ${datelist_sql}
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-  <%}
- else if (typeSearch.equals("2")){
-	  %> 
-	  <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
-      <msh:tableColumn columnName="Наименование профиля" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
-      <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
-      <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
-      <msh:tableColumn columnName="% от умерших" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-      <msh:tableColumn columnName="% от оформленных" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-    </msh:table>
-		  <%
-  } else if (typeSearch.equals("3")){
-	  
+  <%} else if (typeSearch.equals("3")){	  
 	%>  	
-	
-    
-    
 	<ecom:webQuery name="showProfile" nameFldSql="showProfile_sql" nativeSql="
 select
 pk.protocolnumber
-,'№'||pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy')
+,'№'||pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as f2
 ,pk.protocolDate
-,count(pat.id)
-,vkp.name
-,'&protocolNumber='||pk.protocolnumber||'&protocolDate='||to_char(pk.protocoldate,'dd.MM.yyyy') as fldId
+,count(pat.id) as cntPat
+,coalesce(vkp.name,'Не определен профиль') as profileName
+,'&protocolNumber='||pk.protocolnumber||'&protocolDate='||to_char(pk.protocoldate,'dd.MM.yyyy')||'&profile='||'' as fldId
 ,'&profileName='||vkp.name as profileName
 from protocolKili pk 
 left join deathcase dth on dth.id = pk.deathcase_id
-left join medcase med on med.id = dth.medcase_id
-left join patient pat on med.patient_id = pat.id
-left join mislpu dep on dep.id=med.department_id
-left join vockiliprofile vkp on vkp.id= dep.kiliprofile_id
-where pk.protocolDate ${addSql}
+left join medcase sls on sls.id = dth.medcase_id
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.transferdate is null
+left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id 
+left join patient pat on sls.patient_id = pat.id
+left join mislpu dep on dep.id=slo.department_id
+left join mislpu depPrev on depPrev.id=sloPrev.department_id
+left join vockiliprofile vkp on vkp.id= case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
+where pk.id is not null ${addSql}
 group by pk.protocolNumber, pk.protocolDate, vkp.id
 ORDER BY cast(pk.protocolNumber as int)
 "/>
@@ -236,100 +187,80 @@ ORDER BY cast(pk.protocolNumber as int)
     </msh:section>
   <%}
 	}  else if (isReestr.equals("1")){
-	  String profileName = "";
-	  String sqlJoin = "";
-	  String sqlWhere = "";
-	  String value = "";
-	  String addDate = "";
-	  String addSelect = "";
-	  String addFrom = "";
+		String printS = "HospitalPrintService";
+		String printM = "printKiliProtocol";
+		String printFileName = "KiliProtocol";
+		String sqlAdd = "";
+		profile = request.getParameter("profile");
+		String addParam = request.getParameter("addParam");
+	if (addParam!=null&&addParam.equals("1")) {
+		sqlAdd += " and dc.id is not null";
+	} else if (addParam!=null&&addParam.equals("2")) {
+		sqlAdd += " and pk.id is not null";
+	}
+	
+	//request.setAttribute("addParam", addParam!=null?addParam:"");
+	
+	String protocolDate = request.getParameter("protocolDate");
+	String protocolNumber = request.getParameter("protocolNumber");
+	
+	if (typeSearch!=null&&typeSearch.equals("3")) { //Поиск по протоколу
+	
+	} else {	  
+			sqlAdd+=" and sls.dateFinish between to_date('"+startDate+"','dd.MM.yyyy') and to_date('"+finishDate+"','dd.MM.yyyy')";
+			printS = "PrintService";
+			printM = "printNativeQuery";
+			printFileName = "kiliReport";
+	}
+	
+	if (protocolDate!=null&&!protocolDate.equals("")) {
+		sqlAdd += " and pk.protocolDate = to_date('"+protocolDate+"','dd.MM.yyyy')";
+	}
+	if (protocolNumber!=null&&!protocolNumber.equals("")) {
+	  sqlAdd +=" and pk.protocolNumber='"+protocolNumber+"'";
+	}
+	if (profile!=null&&!profile.equals("")) {
+		if (profile.equals("0")) {
+			sqlAdd +=" and vkp.id is null";
+		} else {
+			sqlAdd +=" and vkp.id="+profile;
+		}
+	   
+	} 
+	  if (department!=null&&!department.equals("")) {
+		  sqlAdd +=" and case when dep.isnoomc='1' then depPrev.id else dep.id end = '"+department+"'";
+	  }	
 	  
-			  if (typeSearch.equals("1")) {
-				 addSelect = "SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename, 'Протокол №'||pk.protocolNumber||' от '||pk.protocoldate as protocolField, sts.code, sls.dateStart ";
-				 addFrom = " FROM medcase sls "+
-					"left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null "+ 
-					"left join mislpu dep on dep.id=slo.department_id "+ 
-					"left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id "+ 
-					"left join mislpu depPrev on depPrev.id=sloPrev.department_id "+
-					"left join deathcase dc on dc.medcase_id=sls.id "+
-					"left join protocolkili pk on pk.deathcase_id=dc.id "+ 
-					"left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end "+ 
-					"left join vochospitalizationresult vhr on vhr.id=sls.result_id "+
-					"left join patient pat on sls.patient_id = pat.id "+
-					"left join statisticstub sts on sls.id = sts.medcase_id";
-				  value = request.getParameter("depIdParam");
-				  sqlWhere = " where vhr.code='11' "+ 
-						  "AND sls.deniedhospitalizating_id is null "+
-						  "AND slo.dtype='DepartmentMedCase' "+
-						  "and case when dep.isnoomc='1' then depPrev.id = '" + value +"' else dep.id = '" + value +"' end ";
-				  addDate = " and sls.dateFinish ";
-			  }
-			  if (typeSearch.equals("2")) {
-				  addSelect = "SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename, 'Протокол №'||pk.protocolNumber||' от '||pk.protocoldate as protocolField, sts.code, sls.dateStart ";
-				  addFrom = " from medcase sls "+
-				  		"left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null "+ 
-						  "left join mislpu dep on dep.id=slo.department_id "+ 
-						  "left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id "+ 
-						  "left join mislpu depPrev on depPrev.id=sloPrev.department_id "+
-						  "left join deathcase dc on dc.medcase_id=sls.id "+
-						  "left join protocolkili pk on pk.deathcase_id=dc.id "+ 
-						  "left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end "+ 
-						  "left join vochospitalizationresult vhr on vhr.id=sls.result_id "+
-						  "left join patient pat on sls.patient_id = pat.id "+
-						  "left join statisticstub sts on sls.id = sts.medcase_id";
-				  value = request.getParameter("profile");
-				  sqlWhere = " where vhr.code='11' "+ 
-						  "AND sls.deniedhospitalizating_id is null "+
-						  "AND slo.dtype='DepartmentMedCase' "+
-						  "and vkp.id = '" + value + "' ";
-				  addDate = " and sls.dateFinish ";
-			  }
-			  if (typeSearch.equals("3")) {
-					addSelect = "select pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename as patName, '№ '||pk.protocolNumber||' от '||pk.protocoldate as info, sts.code, sls.dateStart ";
-					addFrom = " from protocolKili pk "+
-							"left join deathcase dth on dth.id = pk.deathcase_id "+
-							"left join medcase sls on sls.id = dth.medcase_id "+
-							"left join patient pat on pat.id =  sls.patient_id "+
-							"left join statisticstub sts on sls.id = sts.medcase_id";
-					value = request.getParameter("protocolNumber");
-					sqlWhere = " where pk.protocolNumber = '" + value + "'";
-					addDate = " and pk.protocoldate ";
-			  }
-	  request.setAttribute("addSelect", addSelect);
-	  request.setAttribute("sqlJoin", sqlJoin);
-	  request.setAttribute("sqlWhere", sqlWhere);
-	  request.setAttribute("value", value);
-	  request.setAttribute("addFrom", addFrom);
-	  
-	  if (startDate!=null&&!startDate.equals("")) {
-		  if (finishDate!=null&&!finishDate.equals("")) {
-			  addDate+="between to_date('"+startDate+"','dd.MM.yyyy') and to_date('"+finishDate+"','dd.MM.yyyy')";
-		  } else {
-			  addDate += " and >=to_date('"+startDate+"','dd.MM.yyyy')";
-		  }
-	  } else {
-		  addDate +="between current_date and current_date";
-	  }
-		request.setAttribute("addDate", addDate);
+		request.setAttribute("sqlAdd", sqlAdd);
+		request.setAttribute("printM", printM);
+		request.setAttribute("printS", printS);
+		request.setAttribute("printFileName", printFileName);
 %>
 <ecom:webQuery name="calc_reestr" nameFldSql="calc_reestr_sql" nativeSql="
-${addSelect} 
-${addFrom} 
-${sqlJoin}
-${sqlWhere}  ${addDate}
-"/>
+SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.MM.yyyy') as f1_fio, 'Протокол №'||pk.protocolNumber||' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as protocolField, sts.code
+, to_char(sls.dateFinish,'dd.MM.yyyy') as dateFinish 
+  FROM medcase sls 
+	left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null and slo.dtype='DepartmentMedCase'  
+	left join mislpu dep on dep.id=slo.department_id 
+	left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id 
+	left join mislpu depPrev on depPrev.id=sloPrev.department_id
+	left join deathcase dc on dc.medcase_id=sls.id
+	left join protocolkili pk on pk.deathcase_id=dc.id 
+	left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end 
+	left join vochospitalizationresult vhr on vhr.id=sls.result_id
+	left join patient pat on sls.patient_id = pat.id
+	left join statisticstub sts on sls.id = sts.medcase_id
+   where vhr.code='11' AND sls.deniedhospitalizating_id is null 
+		  ${sqlAdd}
+"/>${calc_reestr_sql}
 
-${addSelect} 
-${addFrom} 
-${sqlJoin}
-${sqlWhere}  ${addDate}
-
-<form action="print-KiliProtocol.do" method="post" target="_blank">
+<form action="print-${printFileName}.do" method="post" target="_blank">
     Период с ${dateBegin} по ${dateEnd}.
-    <input type='hidden' name="s" id="s" value="HospitalPrintService">
+    <input type='hidden' name="s" id="s" value="${printS}">
+    <input type='hidden' name="sqlText" id="sqlText" value="${calc_reestr_sql}">
     <input type='hidden' name="protocolNumber" id="protocolNumber" value="${param.protocolNumber}">
     <input type='hidden' name="protocolDate" id="protocolDate" value="${param.protocolDate}">
-    <input type='hidden' name="m" id="m" value="printKiliProtocol">
+    <input type='hidden' name="m" id="m" value="${printM}">
     <input type="submit" value="Печать"> 
     </form>
 
@@ -340,12 +271,16 @@ ${sqlWhere}  ${addDate}
       <msh:tableColumn columnName="Пациент" property="2" />
       <msh:tableColumn columnName="Номер протокола" property="3" />
       <msh:tableColumn columnName="Номер истории" property="4" />
-      <msh:tableColumn columnName="Дата поступления" property="5" />
+      <msh:tableColumn columnName="Дата смерти" property="5" />
     </msh:table>
     </msh:sectionContent>
     </msh:section> 
     
-<% } %>
+<% } 
+	} else {
+		out.print("Выберите период");
+	}
+%>
 
   <script type='text/javascript'>
   checkFieldUpdate('typeSearch','${typeSearch}',1) ;

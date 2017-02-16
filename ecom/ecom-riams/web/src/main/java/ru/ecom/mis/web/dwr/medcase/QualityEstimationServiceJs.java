@@ -70,7 +70,8 @@ public class QualityEstimationServiceJs {
 		sql.append("select p.id,p.lastname||' '||p.firstname||' '||p.middlename,")
 			.append(" case  ")
 			.append(" when smo.dtype='DepartmentMedCase' then case when psmo.statisticstub_id is null then 'нет №стат.карты' else ss1.code end ")
-			.append(" when smo.dtype='HospitalMedCase' then case when smo.statisticstub_id is null then p.patientSync else ss.code end");
+			.append(" when smo.dtype='HospitalMedCase' then case when smo.statisticstub_id is null then p.patientSync else ss.code end")
+			.append(" when smo.dtype='Visit' then p.patientSync ");
 		sql.append(" else ''||smo.id end")  
 			.append(", case  ")
 			.append(" when smo.dtype='HospitalMedCase' and smo.deniedHospitalizating_id is null ")
@@ -113,13 +114,16 @@ public class QualityEstimationServiceJs {
 			}
 			sql.setLength(0);
 		}
+		String kindCode = null;
 		
 		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("' group by smo.dtype") ;
 		List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
 		if (list.size()>0) {
 			String dtype=list.get(0)[0].toString() ;
 			//Стационар
+			StringBuilder ret = new StringBuilder() ;
 			if (dtype!=null && dtype.equals("HOSPITALMEDCASE")) {
+				kindCode="1";
 				sql = new StringBuilder() ;
 				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
 					.append(" ,mkb.id as mkbid,mkb.code as mkbcode,mkb.name as mkbname,diag.name as diagname,mkb1.id as mkb1id,mkb1.code as mkb1code,mkb1.name as mkb1name,diag1.name as diag1name")
@@ -143,7 +147,7 @@ public class QualityEstimationServiceJs {
 				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
 				if (list.size()>0) {
-					StringBuilder ret = new StringBuilder() ;
+					
 					Object[] row = list.get(0) ;
 					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
 					if (row[2]!=null) {
@@ -160,10 +164,11 @@ public class QualityEstimationServiceJs {
 						
 					}
 					ret.append("#").append(row[10]!=null?row[10]:"").append("#").append(row[11]!=null?row[11]:"") ;
-					return ret.toString() ;
+					
 				}
 				//Случай лечения в отделении
 			} else if (dtype!=null && dtype.equals("DEPARTMENTMEDCASE")){
+				kindCode="1";
 				sql = new StringBuilder() ;
 				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
 					.append(" ,mkb.id as mkbid,mkb.code as mkbcode,mkb.name as mkbname,diag.name as diagname,mkb1.id as mkb1id,mkb1.code as mkb1code,mkb1.name as mkb1name,diag1.name as diag1name")
@@ -187,7 +192,6 @@ public class QualityEstimationServiceJs {
 				;
 				list = service.executeNativeSqlGetObj(sql.toString()) ;
 				if (list.size()>0) {
-					StringBuilder ret = new StringBuilder() ;
 					Object[] row = list.get(0) ;
 					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
 					if (row[2]!=null) {
@@ -204,13 +208,65 @@ public class QualityEstimationServiceJs {
 						
 					}
 					ret.append("#").append(row[10]!=null?row[10]:"").append("#").append(row[11]!=null?row[11]:"") ;
-					return ret.toString() ;
+					
 				}
 					// Поликлинический случай лечения
-			} /*else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")) {
-				
-			}*/
+			} else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")) {
+				kindCode="2";
+				/**
+				 * TODO 
+				 * Доделать
+				 */
+				ret.append("######");
+			} else if (dtype!=null&& dtype.equals("VISIT")) {
+				//start
+				kindCode="2";
+				sql = new StringBuilder() ;
+				sql.append("select wf.id as wfid,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename")
+					.append(" ,mkb.id as mkbid,mkb.code as mkbcode,mkb.name as mkbname,diag.name as diagname")
+					.append(",dep.id as depid,dep.name as depname")
+					.append(" from medcase vis") 
+					.append(" left join diagnosis diag on diag.medcase_id=vis.id")
+					.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id and vdrt.code='4'")
+					.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id and vpd.code='1'")
+					.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id")
+					.append(" left join workfunction wf on wf.id=vis.workFunctionExecute_id")
+					.append(" left join vocworkFunction vwf on vwf.id=wf.workFunction_id")
+					.append(" left join worker w on w.id = wf.worker_id")
+					.append(" left join MisLpu dep on dep.id = w.lpu_id")
+					.append(" left join patient wp on wp.id=w.person_id")
+					.append(" where vis.id='").append(aSlo).append("'") ;
+				;
+				list = service.executeNativeSqlGetObj(sql.toString()) ;
+				if (list.size()>0) {
+					
+					Object[] row = list.get(0) ;
+					ret.append(row[0]!=null?row[0]:"").append("#").append(row[1]!=null?row[1]:"").append("#") ;
+					if (row[2]!=null) {
+						ret.append(row[2])
+							.append("#").append(row[3]!=null?row[3]:"").append(" ")
+							.append(row[4]!=null?row[4]:"").append("#")
+							.append(row[5]!=null?row[5]:"") ;
+						
+					} else {
+						ret.append("# #") ;
+						
+					}
+					ret.append("#").append(row[6]!=null?row[6]:"").append("#").append(row[7]!=null?row[7]:"") ;
+					
+				//finish
+			}
 		}
+			sql.setLength(0);
+			sql.append("select id, name, code from vocqualityestimationkind where code='"+kindCode+"'");
+			list = service.executeNativeSqlGetObj(sql.toString());
+			if (list.size()>0) {
+				Object[] o = list.get(0);
+				ret.append("#").append(o[0]!=null?o[0]:"").append("#").append(o[1]!=null?o[1]:"");
+			}
+			
+			return ret!=null?ret.toString():null;
+			}
 		
 		return null ;
 	}

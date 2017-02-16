@@ -152,7 +152,7 @@
 							     		  $('patient').value = rows[0] ;
 							     		  $('patientReadOnly').value = rows[1] ;
 							     		  $('cardNumber').value = rows[2] ;
-							     		  $('cardNumberReadOnly').value = rows[3] ;
+							     		  $('cardNumberReadOnly').value = rows[2] ;
 							     		  
 							     	} else {
 							     		  $('patient').value = "" ;
@@ -172,20 +172,25 @@
 							 callback: function(aRow) {
 							     	//alert(aRow) ;
 							     	if (aRow!=null) {
-							     		  var ind1,ind2,ind3,ind4,ind5,ind6 ;
-							     		  ind1=aRow.indexOf('#') ;
-							     		  ind2=aRow.indexOf('#',ind1+1) ;
-							     		  ind3=aRow.indexOf('#',ind2+1) ;
-							     		  ind4=aRow.indexOf('#',ind3+1) ;
-							     		  ind5=aRow.indexOf('#',ind4+1) ;
-							     		  ind6=aRow.indexOf('#',ind5+1) ;
-							     		  $('doctorCase').value = aRow.substring(0,ind1) ;
-							     		  $('doctorCaseReadOnly').value = aRow.substring(ind1+1,ind2) ;
-							     		  $('idc10').value = aRow.substring(ind2+1,ind3) ;
-							     		  $('idc10ReadOnly').value = aRow.substring(ind3+1,ind4) ;
-							     		  $('diagnosis').value = aRow.substring(ind4+1,ind5) ;$('diagnosisReadOnly').value = aRow.substring(ind4+1,ind5) ;
-							     		  $('department').value = aRow.substring(ind5+1,ind6) ;
-							     		  $('departmentReadOnly').value = aRow.substring(ind6+1) ;
+							     		var res = aRow.split("#");
+							     		  //var ind1,ind2,ind3,ind4,ind5,ind6 ;
+							     		  //ind1=aRow.indexOf('#') ;
+							     		  //ind2=aRow.indexOf('#',ind1+1) ;
+							     		  //ind3=aRow.indexOf('#',ind2+1) ;
+							     		  //ind4=aRow.indexOf('#',ind3+1) ;
+							     		  //ind5=aRow.indexOf('#',ind4+1) ;
+							     		  //ind6=aRow.indexOf('#',ind5+1) ;
+							     		  $('doctorCase').value = res[0]
+							     		  $('doctorCaseReadOnly').value = res[1] ;
+							     		  $('idc10').value = res[2];
+							     		  $('idc10ReadOnly').value = res[3];
+							     		  $('diagnosis').value = res[4] ;$('diagnosisReadOnly').value =res[4];
+							     		  $('department').value =res[5] ;
+							     		  $('departmentReadOnly').value = res[6] ;
+							     		  if (res.length>7) {
+							     			  $('kind').value=res[7];
+							     			  $('kindName').value=res[8];
+							     		  }
 							     		  
 							     	} else {
 							     		  $('doctorCase').value = "" ;$('doctorCaseReadOnly').value = "" ;
