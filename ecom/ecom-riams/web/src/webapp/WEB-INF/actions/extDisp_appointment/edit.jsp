@@ -57,7 +57,7 @@
 		function updateAppointment() {
 			AppointmentService.getCodeForVocExtDispAppointment($('appointment').value, {
 			callback: function(aResult) {
-					alert(aResult);//$('ageReadOnly').value=aResult ;
+				//	alert(aResult);//$('ageReadOnly').value=aResult ;
 				/*	disableAutoComplites()
 					disableCase(aResult);*/
 			}});
