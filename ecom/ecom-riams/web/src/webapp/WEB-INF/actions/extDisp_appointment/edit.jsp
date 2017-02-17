@@ -14,24 +14,17 @@
 			<msh:hidden property="dispCard" />
 			
 			<msh:panel colsWidth="1%,1%,1%,97%">
+			
 			<msh:row>
 			<msh:autoComplete property="appointment" label="Назначение" vocName="vocExtDispAppointment"  size="100" fieldColSpan="3"/>
 			</msh:row>
-			<!--  if 1 or 2 -->
-			<msh:row>
-			<msh:autoComplete property="workFunction" label="Специальность врача" vocName="workFunction" size="100" fieldColSpan="3" />
-			</msh:row>
-			<!--  if 3 -->
+			
 			<msh:row>
 			<msh:autoComplete property="kindSurvey" label="Вид обследования" vocName="vocKindSurvey" size="100" fieldColSpan="3"  />
 			</msh:row>
-			<!--  if 4 or 5 -->
+
 			<msh:row>
-			<msh:autoComplete property="kindMedHelp" label="Профиль мед.помощи" vocName="vocKindMedHelp" size="100" fieldColSpan="3" />
-			</msh:row>
-			<!--  if 6 -->
-			<msh:row>
-			<msh:autoComplete property="bedType" label="Тип койки" vocName="bedFundByDepAndStreamAndDate" size="100" fieldColSpan="3" />
+			<msh:autoComplete property="profile" label="Профиль мед.помощи" vocName="vocOmcDepType" size="100" fieldColSpan="3" />
 			</msh:row>
 
 		  </msh:panel>
@@ -60,17 +53,17 @@
 		<script type="text/javascript" src="./dwr/interface/AppointmentService.js"></script>
 		<script type="text/javascript"> 
 
-		disableAutoComplites();
+		//disableAutoComplites();
 		function updateAppointment() {
 			AppointmentService.getCodeForVocExtDispAppointment($('appointment').value, {
 			callback: function(aResult) {
-					//alert(aResult);//$('ageReadOnly').value=aResult ;
-					disableAutoComplites()
-					disableCase(aResult);
+					alert(aResult);//$('ageReadOnly').value=aResult ;
+				/*	disableAutoComplites()
+					disableCase(aResult);*/
 			}});
 		}
 	
-	function disableAutoComplites(){
+	/*function disableAutoComplites(){
 
 		$('workFunctionName').disabled=true;
 		$('workFunctionName').value="";
@@ -115,10 +108,10 @@
 			  $('bedTypeName').className="required";
 			    break;
 		}
-	}
+	}*/
 	
 		appointmentAutocomplete.addOnChangeCallback(function(){updateAppointment();}); 
-</script>
+		</script>
 		</tiles:put>
 	
 	
