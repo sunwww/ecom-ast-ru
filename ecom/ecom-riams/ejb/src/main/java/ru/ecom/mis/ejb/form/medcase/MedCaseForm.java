@@ -299,5 +299,13 @@ public class MedCaseForm extends IdEntityForm {
 
 	/** Время редактирования */
 	private String theEditTime;
+	
+	/** Услуга оплачена */
+	@Comment("Услуга оплачена")
+	@Persist
+	public Boolean getIsPaid() {return theIsPaid;}
+	public void setIsPaid(Boolean aIsPaid) {theIsPaid = aIsPaid;}
+	/** Услуга оплачена */
+	private Boolean theIsPaid;
 }
 

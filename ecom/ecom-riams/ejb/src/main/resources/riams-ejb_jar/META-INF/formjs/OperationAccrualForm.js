@@ -66,8 +66,17 @@ function onCreate(aForm, aEntity, aCtx) {
 		aEntity.account.setBalanceSum(new java.math.BigDecimal(balSum)) ;
 		aEntity.account.setReservationSum(new java.math.BigDecimal(balSum)) ;		
 	}
+	setMedCasesPaid(aEntity, aCtx);
 }
 function onPreDelete(aId, aCtx) {
 	aCtx.manager.createNativeQuery("﻿delete from contractaccountoperationbyservice where AccountOperation_id='"+aId+"'").executeUpdate() ;
 }
 
+function setMedCasesPaid(aEntity, aCtx) {
+	var contractId = aEntity.account.contract.id;
+	var accountId = aEntity.account.id;
+	//Отмечаем все направления как оплаченные
+	var sql = "update medcase m set isPaid='1' where m.patient_id in (select cp.patient_id from contractperson cp left join servedperson sp on sp.person_id=cp.id where sp.account_id="+accountId+" and sp.contract_id="+contractId+") and m.dtype='Visit' and m.dateStart is null and m.isPaid='0'";
+	//throw "sql="+sql;
+	aCtx.manager.createNativeQuery(sql).executeUpdate();
+}

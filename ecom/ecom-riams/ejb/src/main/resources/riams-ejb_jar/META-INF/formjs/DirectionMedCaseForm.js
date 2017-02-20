@@ -60,6 +60,7 @@ function createOrSave(aForm, aVisit, aCtx) {
 			,"from MedCase where parent_id='"+aVisit.getId()+"' and dtype='ServiceMedCase' and medService_id"
 			) ;
 	aCtx.manager.persist(aVisit) ;
+	setNotPaid(aForm, aVisit, aCtx)
 }
 
 function checkCountDays(aForm,aCtx, aVisit)
@@ -120,6 +121,11 @@ function onCreate(aForm, aVisit, aCtx) {
 
 	//---
 	createOrSave(aForm, aVisit, aCtx) ;
+}
+function setNotPaid(aForm, aEntity, aCtx) {
+	if (aEntity.serviceStream.code=="CHARGED"&&aEntity.isPaid==null) {
+		aEntity.setIsPaid(false);
+	}
 }
 
 function onPreCreate(aForm, aCtx) {
