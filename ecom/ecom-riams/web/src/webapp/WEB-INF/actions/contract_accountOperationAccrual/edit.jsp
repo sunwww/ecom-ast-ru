@@ -23,6 +23,8 @@
 			<msh:panel colsWidth="10%,10%,10%,10%">
 				<msh:row>
 					<msh:textField viewOnlyField="true" property="cost" label="Стоимость"/>
+					
+				
 					<msh:textField property="discount" label="Скидка"/>
 					<td align="left" ">
 						<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
@@ -38,6 +40,12 @@
 				<msh:row>
 					<td align="left" colspan="5">К оплате: <span id='costInfo'></<span></td>
 				</msh:row>
+				<msh:row><td colspan="4">
+					Получено от клиента   <input type="text" id="cashCount" name="cashCount">
+				</td></msh:row>
+				<msh:row><td colspan="4">
+					Сдача <span style="font-size:20px;" id="cashGiveBackCount"></span>
+				</td></msh:row>
 				</msh:ifFormTypeIsCreate>
 				<ecom:webQuery name="sumCost" nativeSql="
 							select sum(CAMS.countMedService*CAMS.cost) as sumaccrual,list(''||cams.id) as lstid ,min(ca.discountDefault) as discount   
@@ -144,9 +152,30 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			var cost = +$('cost').value ;
 			var discount = +$('discount').value ;
 			$('costInfo').innerHTML=cost*(100-discount)/100 ;
+			getGiveBack ();
 		}
 		    eventutil.addEventListener($('discount'),'change',function(){getCostInfo() ;});
             eventutil.addEventListener($('discount'),'keyup',function(){getCostInfo() ;});
+            eventutil.addEventListener($('cashCount'),'keyup',function(){getGiveBack () ;});
+           
+            function getGiveBack (){
+           var cash = +$('cashCount').value;
+           var totalPrice = +$('costInfo').innerHTML;
+           var giveBack = cash-totalPrice;
+           if (cash&& cash>0) {
+        	   try {
+        		   if (giveBack>0) {
+        			   $('cashGiveBackCount').innerHTML ="<b> "+ (cash-totalPrice) +" руб</b>";   
+        		   } else {
+        			   $('cashGiveBackCount').innerHTML ="<b> Нужно больше денег!</b>";
+        		   }
+           		
+           	} catch (e) {
+           		$('cashGiveBackCount').innerHTML ="Непонятное число";
+           	}
+           } 
+            	
+            }
 
 		
 		</script>
