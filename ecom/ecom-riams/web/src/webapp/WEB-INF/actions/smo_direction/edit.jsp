@@ -114,6 +114,9 @@
           <msh:autoComplete parentId="smo_directionForm.patient" viewAction="entitySubclassView-mis_medCase.do" vocName="vocOpenedSpoByPatient" property="parent"  label="СПО" guid="5c46703a-e901-4c07-9426-10bc2ca3f5df" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
+        <msh:checkBox property="isPaid"/>
+        </msh:row>
+        <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>
         </msh:panel>
