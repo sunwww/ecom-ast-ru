@@ -482,9 +482,12 @@ else '' end as vssname
 ,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename||' ('||owflpu.name||')' as owfinfo
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename||' ('||lpu.name||')' as wfinfo
 ,coalesce(smo.uet,(select sum(smo1.uet) from medCase smo1 where smo1.parent_id=smo.id )) as uet
+,la.number
 FROM MedCase smo  
 left join MedCase spo on spo.id=smo.parent_id
 LEFT JOIN Patient p ON p.id=smo.patient_id 
+left join lpuattachedbydepartment latt on  latt.patient_id = p.id
+left join lpuarea la on la.id =  latt.area_id
 left join VocAdditionStatus vas on vas.id=p.additionStatus_id
 LEFT JOIN Address2 ad1 on ad1.addressId=p.address_addressId 
 LEFT JOIN VocReason vr on vr.id=smo.visitReason_id 
@@ -514,7 +517,7 @@ ${specialistSql} ${is039Sql} ${workFunctionSql} ${lpuSql}
 ${orderLpuSql} ${serviceStreamSql} ${visitReasonSql} ${workPlaceTypeSql} 
 ${additionStatusSql} ${socialStatusSql}
 ${personSql}  and smo.dateStart is not null ${emergencySql} ${ageSql} ${appendSQL}
-group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
+group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name,la.number
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
 ,vwf.name,wp.lastname,wp.firstname,wp.middlename,lpu.name,smo.uet
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
@@ -541,6 +544,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
             <msh:tableColumn columnName="Дата рождения" property="4"/>
             <msh:tableColumn columnName="Возраст" property="5"/>
+            <msh:tableColumn columnName="№ участка" property="16"/>
             <msh:tableColumn columnName="Житель" property="6"/>
             <msh:tableColumn columnName="цель визита" property="7"/>
             <msh:tableColumn columnName="место" property="8"/>
