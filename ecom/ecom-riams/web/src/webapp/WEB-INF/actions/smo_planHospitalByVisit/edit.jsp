@@ -364,7 +364,7 @@
      			}
      		}) ;
       	 });
-
+  		bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
       		</script>  
   </msh:ifFormTypeIsNotView>
   </tiles:put>
