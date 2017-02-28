@@ -546,7 +546,9 @@
 	      		check_diags('') ;  
       		}
 	    } catch(e) {}
-	    
+	    function trim(aStr) {
+		return aStr.replace(/|\s+|\s+$/gm,'') ;
+	    }
       	function check_diags() {
       		var list_diag = ["complication","concomitant"] ;
       		var isnext=true ;
@@ -576,7 +578,7 @@
                   				addRowF+="ar["+(ind_f++)+"],"
                   			}
                   		}
-                		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+                		addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
                         addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+",1);"
                         
                   		var arr = $(list_diag[j]+'Diags').value.split("#@#");
@@ -607,7 +609,7 @@
       				eval("if ("+fld_i[1]+".length>0) {} else {isCheckReq=false ;}") ;
       			}
       		}
-    		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+    		addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
             addRowF="addRowDiag('"+aDiagType+"',"+addRowF+");"
       		
             if (isCheckReq) {
@@ -662,10 +664,10 @@
       					str+=servs[i].childNodes[0].childNodes[theFld[ii][3]+1].value+"@#@";
       				}
       			}
-      			str=str.length>0?str.trim().substring(0,str.length-3):"";
+      			str=str.length>0?trim(str).substring(0,str.length-3):"";
       			str+="#@#" ;
       		}
-      		str=str.length>0?str.trim().substring(0,str.length-3):"";
+      		str=str.length>0?trim(str).substring(0,str.length-3):"";
       		$(aDiagType+"Diags").value=str;
       		
       	}
