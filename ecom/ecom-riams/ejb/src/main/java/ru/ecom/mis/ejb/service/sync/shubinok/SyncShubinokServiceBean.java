@@ -199,7 +199,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     }
 
     private void syncPatient(PatientAttachedImport aEntity, Long aPatientId, MedPolicyOmc aMedPolicy,Date aCurrentDate, boolean updateAttachment, FondImport fi) {
-    	System.out.println("=== SyncPatient, "+ aEntity+" : "+aPatientId);
+   // 	System.out.println("=== SyncPatient, "+ aEntity+" : "+aPatientId);
     	VocIdentityCard passportType=findOrCreateIdentity(aEntity.getDocType()) ;
     	OmcOksm nat = findOrCreateNationality(aEntity.getCountry()) ;
     	boolean isNew = false ;
@@ -309,7 +309,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	}
     	//Обновляем прикрепления
     		if (aEntity.getLpuauto()!=null && !aEntity.getLpuauto().equals("") &&!aEntity.getLpuauto().equals("0")) {
-    		firRecord+=	thePatientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
+    			System.out.println("SyncShubinok, update_attachment "+aPatientId);
+    			firRecord+=	thePatientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
         				, aEntity.getLpuauto(), DateFormat.formatToDate(aEntity.getLpuDateFrom()), aEntity.getDoctorSnils(), updateAttachment, true);
     			
         	}
