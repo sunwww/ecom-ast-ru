@@ -217,11 +217,11 @@
     		//request.setAttribute("bedTypeSqlId", "'&bedType='||bf.bedType_id");
     	}
     	
-    	if (typeStandart!=null && typeStandart.equals("1")) {
+    //	if (typeStandart!=null && typeStandart.equals("1")) {
     		request.setAttribute("fldStandart", "kindHighCare_id") ;
-    	} else {
-    		request.setAttribute("fldStandart", "kindHighCare_id") ;
-    	}
+    //	} else {
+    //		request.setAttribute("fldStandart", "kindHighCare_id") ;
+    //	}
     	if (typeDate!=null && typeDate.equals("1")) {
     		request.setAttribute("dateSql","dateStart") ;
     	} else if (typeDate!=null && typeDate.equals("2")) {
@@ -288,7 +288,8 @@
     	
     	,case when vhr.code='11' then 'Да' else null end as deathCase
     from MedCase as m 
-    left join vocKindHighCare os on os.id=m.${fldStandart}
+    left join hitechmedicalcase himc on himc.medcase_id=m.id
+    left join vocKindHighCare os on os.id=coalesce(himc.kind_id,m.${fldStandart})
     left join Diagnosis diag on diag.medcase_id=m.id
     left join VocIdc10 mkb on mkb.id=diag.idc10_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -386,7 +387,8 @@
     	and (vdrt.code='3' or vdrt.code='4') and vpd.code='1'
     	),'не указан')) as diag  
     from MedCase as m 
-    left join vocKindHighCare os on os.id=m.${fldStandart}
+    left join hitechmedicalcase himc on himc.medcase_id=m.id
+    left join vocKindHighCare os on os.id=coalesce(himc.kind_id,m.${fldStandart})
     left join MedCase as hmc on hmc.id=m.parent_id 
     left join VocHospitalizationResult vhr on vhr.id=hmc.result_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
