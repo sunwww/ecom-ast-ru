@@ -355,6 +355,10 @@
   </script>
   </msh:ifFormTypeIsView>
       	<script type="text/javascript"> 
+	    function trim(aStr) {
+			return aStr.replace(/|\s+|\s+$/gm,'') ;
+		    }
+
       	try {
 	      	var old_action = document.forms["mainForm"].action ; 
 	      	document.forms["mainForm"].action="javascript:check_diags('')" ; 
@@ -400,7 +404,7 @@
                   				addRowF+="ar["+(ind_f++)+"],"
                   			}
                   		}
-                		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+                		addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
                         addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+",1);"
                         
                   		var arr = $(list_diag[j]+'Diags').value.split("#@#");
@@ -431,7 +435,7 @@
       				eval("if ("+fld_i[1]+".length>0) {} else {isCheckReq=false ;}") ;
       			}
       		}
-    		addRowF=addRowF.length>0?addRowF.trim().substring(0,addRowF.length-1):"";
+    		addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
             addRowF="addRowDiag('"+aDiagType+"',"+addRowF+");"
       		
             if (isCheckReq) {
@@ -486,10 +490,10 @@
   				}
 
       			}
-      			str=str.length>0?str.trim().substring(0,str.length-3):"";
+      			str=str.length>0?trim(str).substring(0,str.length-3):"";
       			str+="#@#" ;
       		}
-      		str=str.length>0?str.trim().substring(0,str.length-3):"";
+      		str=str.length>0?trim(str).substring(0,str.length-3):"";
       		$(aDiagType+"Diags").value=str;
       	}
       	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 
