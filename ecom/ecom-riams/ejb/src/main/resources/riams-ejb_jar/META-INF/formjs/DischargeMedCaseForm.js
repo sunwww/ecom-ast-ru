@@ -5,11 +5,15 @@ function getObject(aCtx,aId,aClazz) {
 	return (aId==null||aId=='0'||aId=='')?null:aCtx.manager.find(aClazz, aId) ;
 }
 function closePrescriptions(aForm,aContext) {
-	var ids = aContext.manager.createNativeQuery("select list (''||pl.id) from prescriptionlist pl where medcase_id in (select id from medcase where parent_id=:sls and dtype='DepartmentMedCase')").setParameter("sls",aForm.id ).getSingleResult();
-	if (ids!=null&&""+ids!="") {
-		aContext.manager.createNativeQuery("update prescription p set planEndDate =to_date(:endDate,'dd.MM.yyyy'), planEndTime=cast(:endTime as time)" +
-				" where p.prescriptionList_id in ("+ids+") and p.dtype in ('DietPrescription', 'ModePrescription') and p.planEndDate is null")
-				.setParameter("endDate", aForm.dateFinish).setParameter("endTime", aForm.dischargeTime).executeUpdate();
+	var ids = aContext.manager.createNativeQuery("select list (''||pl.id) from prescriptionlist pl where medcase_id in (select id from medcase where parent_id=:sls and dtype='DepartmentMedCase')").setParameter("sls",aForm.id ).getResultList();
+	if (ids!=null&&ids.size()>0) {
+		var idss = ids.get(0);
+		if (idss!=null&&idss!="") {
+			aContext.manager.createNativeQuery("update prescription p set planEndDate =to_date(:endDate,'dd.MM.yyyy'), planEndTime=cast(:endTime as time)" +
+					" where p.prescriptionList_id in ("+idss+") and p.dtype in ('DietPrescription', 'ModePrescription') and p.planEndDate is null")
+					.setParameter("endDate", aForm.dateFinish).setParameter("endTime", aForm.dischargeTime).executeUpdate();
+		}
+		
 	}
 	
 
