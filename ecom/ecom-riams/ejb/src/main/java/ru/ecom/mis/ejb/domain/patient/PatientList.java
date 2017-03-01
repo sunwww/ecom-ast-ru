@@ -29,6 +29,29 @@ public class PatientList extends BaseEntity{
 	/** Цвет сообщения */
 	private String theColorName;
 	
+	
+	/** Цвет текста */
+	@Comment("Цвет текста")
+	public String getColorText() {return theColorText;}
+	public void setColorText(String aColorText) {theColorText = aColorText;}
+
+	
+	/** Отображать цвет при поиске */
+	@Comment("Отображать цвет при поиске")
+	public Boolean getIsViewWhenSeaching() {return theIsViewWhenSeaching;}
+	public void setIsViewWhenSeaching(Boolean aIsViewWhenSeaching) {theIsViewWhenSeaching = aIsViewWhenSeaching;}
+
+	/** Отображать цвет в WebTrail */
+	@Comment("Отображать цвет в WebTrail")
+	public Boolean getIsViewInWebTrail() {return theIsViewInWebTrail;}
+	public void setIsViewInWebTrail(Boolean aIsViewInWebTrail) {theIsViewInWebTrail = aIsViewInWebTrail;}
+
+	/** Отображать цвет в WebTrail */
+	private Boolean theIsViewInWebTrail;
+	/** Отображать цвет при поиске */
+	private Boolean theIsViewWhenSeaching;
+	/** Цвет текста */
+	private String theColorText;
 	/** Сообщение */
 	@Comment("Сообщение")
 	public String getMessage() {return theMessage;}
