@@ -50,4 +50,30 @@ public class PatientListForm extends IdEntityForm {
 	/** Сообщение */
 	private String theMessage;
 	
+	/** Цвет текста */
+	@Comment("Цвет текста")
+	@Persist
+	public String getColorText() {return theColorText;}
+	public void setColorText(String aColorText) {theColorText = aColorText;}
+
+	
+	/** Отображать цвет при поиске */
+	@Comment("Отображать цвет при поиске")
+	@Persist
+	public Boolean getIsViewWhenSeaching() {return theIsViewWhenSeaching;}
+	public void setIsViewWhenSeaching(Boolean aIsViewWhenSeaching) {theIsViewWhenSeaching = aIsViewWhenSeaching;}
+
+	/** Отображать цвет в WebTrail */
+	@Comment("Отображать цвет в WebTrail")
+	@Persist
+	public Boolean getIsViewInWebTrail() {return theIsViewInWebTrail;}
+	public void setIsViewInWebTrail(Boolean aIsViewInWebTrail) {theIsViewInWebTrail = aIsViewInWebTrail;}
+
+	/** Отображать цвет в WebTrail */
+	private Boolean theIsViewInWebTrail;
+	/** Отображать цвет при поиске */
+	private Boolean theIsViewWhenSeaching;
+	/** Цвет текста */
+	private String theColorText;
+	
 }
