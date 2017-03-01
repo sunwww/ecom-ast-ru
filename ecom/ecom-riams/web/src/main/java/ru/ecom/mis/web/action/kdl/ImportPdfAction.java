@@ -22,7 +22,8 @@ public class ImportPdfAction extends BaseAction {
 		System.out.println("==== приступаем к работе = ");
 		theService = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		try{
-		 theService.checkPdf();
+		 //theService.checkPdf();
+		 theService.checkXmlFiles();
 		} catch (Exception e){
 			
 		}
