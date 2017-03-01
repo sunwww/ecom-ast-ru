@@ -24,9 +24,18 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfReader;
@@ -75,301 +84,153 @@ import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
-/**
- * Сервис для работы с назначениями
- * @author STkacheva
- */
+
+
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
+	
 	public void sout(Object o) {sout(0,o);}
+	
 	public void sout(int debug, Object o) {
 		if (debug==1) {
 			System.out.println("===== Лаборатория: "+o.toString());
 		} else {
 			System.out.println(o.toString());
 		}
+	}
+	
+	
+	public void checkXmlFiles() throws JSONException, ParserConfigurationException, SAXException, IOException
+	{
+		sout(1,"==== Начинаю поиск ====");
 		
-	}
-	//region "Parsing PDF"
-	public ParsedPdfInfo getPdfInfoByBarcode( List<ParsedPdfInfo> list,String aBarcode) {
-		if (list!=null&&!list.isEmpty()) {
-			for (ParsedPdfInfo p: list) {
-				if (p.getBarcode().equals(aBarcode)) {
-					return p;
-				}
-			}
-		}
-		return new ParsedPdfInfo();
-	}
-	
-	public void checkPdf() throws IOException, NoSuchFieldException, IllegalAccessException, JSONException {
-		int[][] templateGEM = new int[][]{{30, 560, 100, 770}, //AnalyseCode
-                {190, 560, 210, 770}, //value
-                {215, 560, 250, 770}, //unit
-                {255, 560, 340, 770}}; //interval
-		int[][] templateBio = new int[][]{{30, 300, 100, 730},
-                {190, 300, 105, 730},
-                {255, 300, 200, 730},
-                {270, 300, 330, 730}};
-		int[][] fillArray = new int[4][4];
-		sout(1,"==== Запускаем функцию проверки наличия PDF ====");
-		//**Перечень директорий*//*
-		String homeDirectory  =  getDir("jboss.labPdfDocumentDir","/opt/tomcat"); //= "C:\\Users\\vtsybulin\\workspace\\pdfParser\\pdf";
-        //String homeDirectory = "/home/user/opt/tomcat";
-		String pdfDirectory = homeDirectory + "/parse_pdf/";
-        String txtDirectory = homeDirectory + "/parse_txt/";
-        String archDirectory = homeDirectory + "/parse_archive/";
-       sout("Ищу файлы в папке " + pdfDirectory);
-        /**Сперва должны получить список всех файлов в формате pdf*/
-        File[] fileList = getFiles(pdfDirectory);       
-        if (fileList!=null&&fileList.length>0){
-        	sout("В массиве имеются файлы!");
-        	for (int i = 0; i < fileList.length; i++){
-        		List<ParsedPdfInfo> resultList = new ArrayList<ParsedPdfInfo>();
-        	//resultList = new ArrayList<ParsedPdfInfo>();
-         //   ParsedPdfInfo result = new ParsedPdfInfo();
-        	File file = fileList[i];        	
-        	String fileName = file.getName();        
-            file.getParentFile().mkdirs();           
-            String[] temp_container = fileName.split("\\.");
-          //  Character t1 = 'g';
-      /*      if (t1.equals(temp_container[0].substring(temp_container[0].length() - 1))) {
-                System.out.println("+true");
-            } else {
-                System.out.println("+false");
-            }*/
-            System.out.println("last character: " +
-                    temp_container[0].substring(temp_container[0].length() - 1));
-            String typeFile = "100014";
-            
-            String[] typesName = {"gem", "bio"}; //массив с названиями типов отчетов
-            int reportType = 0; //порядковый номер отчета из массива
-            String currentType = determineHead(pdfDirectory + fileList[i].getName());
-            if (currentType==null) {
-            	sout(1,"не удалось распознать тип файла "+pdfDirectory + fileList[i].getName());
-            	return;
-            }
-
-            sout(1,"Файл относится к шаблону " + currentType);
-            if (currentType.equals(typesName[0])){
-            	for (int q1 = 0; q1 < 4; q1++){
-            		for (int q2 = 0; q2 < 4; q2++){
-            			fillArray[q1][q2] = templateGEM[q1][q2];
-            		}
-            	}
-            	reportType = 1;
-            } else if (currentType.equals(typesName[1])){
-            	for(int q1 = 0; q1 < 4; q1++){
-            		for(int q2 = 0; q2 < 4; q2++){
-            			fillArray[q1][q2] = templateBio[q1][q2];
-            		}
-            	}
-            	reportType = 2;
-            }
-            if (reportType==0) {
-            	sout(1,"Не удалось определить вид файла");
-            }	
-            sout(1,"Запускаем парсинг");
-            if (typeFile.equals("100014")) {
-            	//String header = "";
-            	String barCode = "";
-            	if (reportType == 1){
-            		barCode = getBarCode(pdfDirectory+fileName);
-            	}
-            	ParsedPdfInfo ppi = getPdfInfoByBarcode(resultList, barCode); //Создаем или находим объект, хранящий все анализы по одному штрих-коду
-            	List <ParsedPdfInfoResult> res = new ArrayList<ParsedPdfInfoResult>();
-            	try{
-            		String[] paramName = null;
-            		paramName = fillColumn(paramName, fillArray[0][0], fillArray[0][1], fillArray[0][2], fillArray[0][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
-            		String[] resultValue = null;
-            		resultValue = fillColumn(paramName, fillArray[1][0], fillArray[1][1], fillArray[1][2], fillArray[1][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
-            		String[] measureUnit = null;
-            		measureUnit = fillColumn(paramName, fillArray[2][0], fillArray[2][1], fillArray[2][2], fillArray[2][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
-            		String[] nomRange = null; 
-            		nomRange = fillColumn(paramName, fillArray[3][0], fillArray[3][1], fillArray[3][2], fillArray[3][3], pdfDirectory + fileList[i].getName(), txtDirectory + (String) fileList[i].getName().substring(0, fileList[i].getName().length() - 4) + ".txt");
-                    fileName = fileList[i].getName().substring(0, fileList[i].getName().length() - 4);
-                    for (int j = 0; j < paramName.length; j++) {
-                            ParsedPdfInfoResult ppir = new ParsedPdfInfoResult();
-                            ppir.setCode(chk(j, paramName));
-                            ppir.setValue(chk(j, resultValue));
-                            ppir.setMeasurementUnit(chk(j, measureUnit));
-                            ppir.setRefInterval(chk(j, nomRange));
-                            res.add(ppir);
-                    }
-            	} catch(Exception e){
-            		e.printStackTrace();
-                    	sout(1,"Исключение в цикле while");
-                }
-                moveFile(pdfDirectory, archDirectory, fileName + ".pdf");
-                if (reportType == 1){
-                	ppi.setBarcode(barCode);
-                } else if (reportType == 2){
-                	for (int t = 0; t < res.size(); t++){
-                		barCode = res.get(t).getValue();
-                		sout(1," barcode=" + barCode);
-                		ppi.setBarcode(barCode);
-                	}
-                }
-                ppi.setResults(res);
-                resultList.add(ppi);
-            }
-            sout(1,"===DEBUG=== Выводим строку №7");
-            
-            sout(1,"===DEBUG=== Вывод кодов");
-          //  for(int z = 0; z < resultList.size(); z++){
-           // 	System.out.println(resultList.get(0).getBarcode());
-            //}
-            sout(1,"Запускаем функцию по заполнению дневника");
-           // PrescriptionServiceBean service = new PrescriptionServiceBean();
-            setDefaultDiaryCycle(resultList);
-            }
-        } else {
-        	sout(1,"В массиве нет файлов!");
-        }
-	}
-	
-	public static String determineHead(String pdf) throws IOException {
-        String head = null;
-        String[] types = {"гематологическом", "биохимического"};
-        String[] typesName = {"gem", "bio"};
-        PdfReader reader = new PdfReader(pdf);
-      //  StringBuilder text = new StringBuilder();
-        Rectangle rect = new Rectangle(0, 0, 1000, 1000);
-        RenderFilter filter = new RegionTextRenderFilter(rect);
-        TextExtractionStrategy strategy;
-        for (int page = 1; page <= reader.getNumberOfPages(); page++) {
-            strategy = new FilteredTextRenderListener(
-                    new LocationTextExtractionStrategy(), filter);
-            String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
-
-            for (int i = 0; i < types.length; i++) {
-                int positionTemp = currentText.indexOf(types[i]);
-                if (positionTemp!=-1){
-                    head = typesName[i];
-                    System.out.println("DETECTED PATTERN " + types[i] + " IN FILE " + pdf);
-                    return head;
-                } else{
-                    System.out.println("NOT DETECTED");
-                }
-            }
-        }
-        reader.close();
-        return head;
-    }
-	
-	public  String getBarCode(String pdf) {
-		int barcodeLength = 8;
-		String barcode = null;
-		try {
+		String homeDirectory  =  getDir("jboss.lab.xmldir","/opt/lab/");
+		String xmlDirectory = homeDirectory + "/xml/";
+        String xmlArchDirectory = homeDirectory + "/archive/";
+        
+        sout("Ищу файлы в папке :" + xmlDirectory);
+        
+        File[] fileList = getFiles(xmlDirectory);
+        
+        if (fileList!=null&&fileList.length>0)
+	    {
+        	sout("Найдено "+fileList.length+" файлов");
         	
-            PdfReader reader = new PdfReader(pdf);
-            Rectangle rect = new Rectangle(0, 0, 1000, 1000);
-            RenderFilter filter = new RegionTextRenderFilter(rect);
-            TextExtractionStrategy strategy;
-            for (int page = 1; page <= reader.getNumberOfPages(); page++) {
-                strategy = new FilteredTextRenderListener(
-                        new LocationTextExtractionStrategy(), filter);
-                String currentText = PdfTextExtractor.getTextFromPage(reader, page, strategy);
-                barcode = "Код пробы: ";
-                int position = currentText.indexOf(barcode);
-               // sout(1,"Text="+currentText+", Позиция штрих-кода = "+position);
-                barcode = currentText.substring((position+11), (position+11)+barcodeLength);
-                System.out.println("=== Лаборатория:  штрих-код :"+barcode);
-            }
-            reader.close();
-        } catch (Exception e) {
-        	sout(1,"Ошибка парсинга номера штрих-кода");
-        	e.printStackTrace();
-        }
-        return  barcode;
-    }
-	
-	public static String chk(int i, String[] arr) {
-		if (arr.length>(i)) {
-			return arr[i];
-		} else {
-			return "";
-		}
+        	for (int i = 0; i < fileList.length; i++)
+        	{
+        		File file = fileList[i];        	
+	        	String fileName = file.getName(); 
+	        	
+	        	String[] expansions = fileName.split("\\.");
+	        
+	        	if(expansions[1].equals("xml"))
+	        	{
+	        		sout("Файл "+fileName+" - верный формат" );
+	        		sout("baracode: "+ReadXML(xmlDirectory+fileName).get(0).getBarcode());
+	        		sout("Code: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getCode());
+	        		sout("Value: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getValue());
+	        		
+	        		setDefaultDiaryCycle(ReadXML(xmlDirectory+fileName));
+	        		moveFile(xmlDirectory,xmlArchDirectory,fileName);
+	        	}
+        	}
+	    }
 	}
-	public static String[] fillColumn(String[] cont, int x1, int x2, int y1, int y2, String pdf, String txt) throws IOException {
-        PdfReader reader = new PdfReader(pdf);
-        PrintWriter out = new PrintWriter(new FileOutputStream(txt));
-        Rectangle rect = new Rectangle(x1, x2, y1, y2);
-        RenderFilter filter = new RegionTextRenderFilter(rect);
-        TextExtractionStrategy strategy= new FilteredTextRenderListener(new LocationTextExtractionStrategy(), filter);
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            String temp = PdfTextExtractor.getTextFromPage(reader, i, strategy);
-            out.println(temp);
-            cont = temp.split("\n");
-        }
-        out.flush();
-        out.close();
-        reader.close();
-        return cont;
-    }
 	
-	public static String[] concat(String[] a, String[] b) {
-        int aLen = a.length;
-        int bLen = b.length;
-        String[] c = new String[aLen+bLen];
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-        return c;
-    }
-	
-	/**Перемещение файла из одной директории в другую*/
-    public static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
-        try {
-            final File myFile = new File(pdfDirectory + fileName );
-            if (myFile.renameTo(new File(archDirectory + fileName))) {
-                System.out.println("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
+	public static List<ParsedPdfInfo> ReadXML(String namefile) throws ParserConfigurationException, SAXException, IOException
+	{
+		ParsedPdfInfo parsedPdfInfo = new ParsedPdfInfo();
+		List<ParsedPdfInfoResult> parsedPdfInfoResults = new ArrayList<ParsedPdfInfoResult>();
+        List<ParsedPdfInfo>parsedPdfInfos = new ArrayList<ParsedPdfInfo>();
+        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        f.setValidating(false);
+        DocumentBuilder builder = null;
+        
+        
+            builder = f.newDocumentBuilder();
+            Document doc = builder.parse(new File(namefile));
+            NodeList nodeList = doc.getElementsByTagName("Message");
+        
+            for (int i = 0; i < nodeList.getLength(); i++) {
+            	 parsedPdfInfo = new ParsedPdfInfo();
+
+                 Node node = nodeList.item(i);
+                 if (Node.ELEMENT_NODE == node.getNodeType()) {
+                     Element element = (Element) node;
+
+                     parsedPdfInfo.setBarcode(element.getElementsByTagName("Barcode").item(i).getTextContent());
+
+                     for (int j = 0; j < element.getElementsByTagName("Name").getLength(); j++) {
+
+                         ParsedPdfInfoResult parsedPdfInfoResult = new ParsedPdfInfoResult();
+                         parsedPdfInfoResult.setCode(element.getElementsByTagName("Name").item(j).getTextContent());
+                         parsedPdfInfoResult.setValue(element.getElementsByTagName("Result").item(j).getTextContent());
+                         parsedPdfInfoResults.add(parsedPdfInfoResult);
+                     }
+                     parsedPdfInfo.setResults(parsedPdfInfoResults);
+                 }
+                 parsedPdfInfos.add(parsedPdfInfo);
             }
-            else{
-                 System.out.println("Файл не был перенесен!");
-                }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/** Вывод всех файлов в папке */
-    public static File[] getFiles(String path) {
-     	try{
-         File dir = new File(path);
-         System.out.println(dir.exists());
-         File[] files = dir.listFiles(new FilenameFilter() {
-             public boolean accept(File dir, String name) {
-                 return name.toLowerCase().endsWith(".pdf");
-             }});
-         
-         return files;
-     	}
-     	catch(Exception e)
-     	{
-     		System.out.println("Директория не обнаружена. Проверьте правильность.");
-     		e.printStackTrace();
-     		return null;
-     	}
-     }
-	
-    public static boolean checkIsExist(String filePath, boolean resultExist)    {
-        File f = new File(filePath);
-        if(f.exists() && !f.isDirectory()) {
-            System.out.println("Файл существует.");
-            resultExist = true;
-        } else {
-            System.out.println("Файл не существует.");
-            resultExist = false;
-        }
-        return resultExist;
-    }
-	
+            
+            return parsedPdfInfos;
+	}
 	
 	public String getDir(String aKey, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		return config.get(aKey, aDefaultValue) ;
 	}
+	
+	/** Вывод всех файлов в папке */
+	    public static File[] getFiles(String path) {
+	     	try{
+	         File dir = new File(path);
+	         System.out.println(dir.exists());
+	         File[] files = dir.listFiles(new FilenameFilter() {
+	             public boolean accept(File dir, String name) {
+	                 return name.toLowerCase().endsWith(".xml");
+	             }});
+	         
+	         return files;
+	     	}
+	     	catch(Exception e)
+	     	{
+	     		System.out.println("Директория не обнаружена. Проверьте правильность.");
+	     		e.printStackTrace();
+	     		return null;
+	     	}
+	     }
+	    
+		
+	    public static boolean checkIsExist(String filePath, boolean resultExist)    {
+	        File f = new File(filePath);
+	        if(f.exists() && !f.isDirectory()) {
+	            System.out.println("Файл существует.");
+	            resultExist = true;
+	        } else {
+	            System.out.println("Файл не существует.");
+	            resultExist = false;
+	        }
+	        return resultExist;
+	    }
+	    
+	    public static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
+	        try {
+	            final File myFile = new File(pdfDirectory + fileName );
+	            if (myFile.renameTo(new File(archDirectory + fileName))) {
+	                System.out.println("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
+	            }
+	            else{
+	                 System.out.println("Файл не был перенесен!");
+	                }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	
+	    
+	
+
 
 	//endregion
 	
@@ -1315,6 +1176,17 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 	    EntityManager theManager ;
 	    @Resource
 		SessionContext theContext ;
+		public ParsedPdfInfo getPdfInfoByBarcode(List<ParsedPdfInfo> list,
+				String aBarcode) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void checkPdf() throws IOException, NoSuchFieldException,
+				IllegalAccessException, JSONException {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}	
 
