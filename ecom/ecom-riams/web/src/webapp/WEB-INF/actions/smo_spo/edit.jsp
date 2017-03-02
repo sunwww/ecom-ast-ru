@@ -134,7 +134,7 @@ from MedCase vis
     left join VocIdc10 mkb on mkb.id=diag.idc10_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
     left join VocVisitResult vvr on vvr.id=vis.visitResult_id
-left join MedCase smc on smc.parent_id=vis.id and vis.dtype='ServiceMedCase'
+left join MedCase smc on smc.parent_id=vis.id
 left join medservice ms on ms.id=smc.medservice_id
 where vis.parent_id='${param.id}'
 and vis.DTYPE='Visit'    
@@ -178,7 +178,7 @@ from MedCase vis
     left join VocIdc10 mkb on mkb.id=diag.idc10_id
     left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
     left join VocVisitResult vvr on vvr.id=vis.visitResult_id
-left join MedCase smc on smc.parent_id=vis.id and vis.dtype='ServiceMedCase'
+left join MedCase smc on smc.parent_id=vis.id 
 left join medservice ms on ms.id=smc.medservice_id
 
 where vis.parent_id='${param.id}'
