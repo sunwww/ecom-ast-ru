@@ -15,7 +15,7 @@ public @interface WebTrail {
     String[] nameProperties() ;
     String view() ;
     String list() default "";
-    String style() default "";
+    String[] listStyle() default {} ;
     String shortView() default "";
     String shortList() default "";
     String listComment() default "Список" ;

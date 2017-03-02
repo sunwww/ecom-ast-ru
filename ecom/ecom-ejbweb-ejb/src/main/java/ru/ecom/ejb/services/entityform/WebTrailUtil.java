@@ -33,8 +33,10 @@ public class WebTrailUtil {
     public static String[] getPropertiesName(Class aClass) {
     	return findWebTrail(aClass).nameProperties() ;
     }
-    public static String getStyle(Class aClass) {
-    	return findWebTrail(aClass).style() ;
+    
+    public static String[] getListStyle(Class aClass) {
+    	String[] res = findWebTrail(aClass).listStyle() ;
+    	return res!=null&&res.length>0?res:null ;
     }
 
 }
