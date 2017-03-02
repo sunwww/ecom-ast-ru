@@ -550,7 +550,7 @@ function recordDate(aDate,aKey) {
 	var date = aDate==null?"":""+FORMAT_0.format(aDate);
 	
 	//throw "throw: "+date+" "+date.length;
-	recordChar(date,date.length,aKey);
+	recordChar(date,8,aKey);
 }
 
 function recordDateWithDots(aDate,aKey) {
@@ -559,7 +559,7 @@ function recordDateWithDots(aDate,aKey) {
 	var date = aDate==null?"":""+FORMAT_0.format(aDate);
 	
 	//throw "throw: "+date+" "+date.length;
-	recordChar(date,date.length,aKey);
+	recordChar(date,10,aKey);
 }
 
 function recordFullDate(aDate,aKey){
