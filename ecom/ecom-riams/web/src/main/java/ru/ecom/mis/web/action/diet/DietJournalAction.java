@@ -63,14 +63,17 @@ public class DietJournalAction extends BaseAction {
 			    	int k=3;
 			    	table.append("<table class='tabview cell' border='1'><tr><th>ИД</th><th>Отделение/Название диеты</th>");
 			    	tableBottom.append("<tr><td colspan='2'><b>ВСЕГО:</b></td>");
+			    	int sum = 0;
 			    	for (Object[] o: dietList) { 
 			    		table.append("<th colspan='1'>"+o[1]+"</th>");
 			    		tableBottom.append("<td>"+o[2]+"</td>");
 			    		//Формируем строку для основного запроса
 			    		selectAdd.append(", count(case when p.diet_id='"+o[0]+"' then p.id else null end) as cnt_"+k);			    		
 			    		k++;
+			    		sum +=Integer.parseInt(""+o[2]);
 			    		}
 			    	table.append("<th colspan='1'>ВСЕГО:</th>");
+			    	tableBottom.append("<td><b>").append(sum).append("</b></td>");
 			    	tableBottom.append("</tr>");
 			    	table.append("</tr>");	
 			    	//А вот и пришло время основного запроса
