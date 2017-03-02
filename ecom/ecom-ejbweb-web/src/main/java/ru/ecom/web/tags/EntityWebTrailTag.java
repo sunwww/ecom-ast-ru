@@ -3,6 +3,7 @@ package ru.ecom.web.tags;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -22,10 +23,13 @@ import ru.ecom.ejb.services.entityform.ParentUtil;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.WebTrailUtil;
 import ru.ecom.ejb.services.entityform.map.MapClassLoader;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.web.actions.entity.AbstractEntityAction;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.EntityInjection;
+import ru.ecom.web.util.Injection;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.util.PropertyUtil;
@@ -72,6 +76,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             PageContext ctx = (PageContext) getJspContext() ;
             HttpServletRequest request = (HttpServletRequest) ctx.getRequest() ;
             IParentEntityFormService service = EntityInjection.find(request).getParentEntityFormService();
+            IWebQueryService wservice = Injection.find(request).getService(IWebQueryService.class);
             
             out.write("<div class='titleTrail'>\n") ;
             
@@ -104,8 +109,9 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             //loader.setMapClassLoader(request);
             MapClassLoader loader = new MapClassLoader(Thread.currentThread().getContextClassLoader()) ; 
             JavaScriptContext js = JavaScriptContext.getContext((PageContext) getJspContext(), this);
+            
             String username = LoginInfo.find(request.getSession(true)).getUsername() ;
-            print(service, sb, sbTitle, type, id, true, createState, false, loader, request, js,username) ;
+            print(service, sb, sbTitle, type, id, true, createState, false, loader, request, js,username,wservice) ;
             //loader.unsetMapClassLoader();
             
             out.println(sb) ;
@@ -137,7 +143,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
 
     private void print(IParentEntityFormService aService, StringBuilder aSb, StringBuilder aSbTitle, String aClazzName
             , Object aId, boolean aFirst, boolean aCreateState, boolean aSecond, ClassLoader aLoader
-            , HttpServletRequest aRequest,JavaScriptContext js,String aUsername) throws NoSuchMethodException, IllegalAccessException, EntityFormException, ParseException, InvocationTargetException, IOException, ClassNotFoundException, InstantiationException {
+            , HttpServletRequest aRequest,JavaScriptContext js,String aUsername,IWebQueryService aWebService) throws NoSuchMethodException, IllegalAccessException, EntityFormException, ParseException, InvocationTargetException, IOException, ClassNotFoundException, InstantiationException {
 
     	if (CAN_DEBUG) {
     		LOG.debug("print() [ aSb = " + aSb+", \n\taSbTitle="+aSbTitle+", \n\taClassName="+aClazzName+", \n\taId="+aId
@@ -163,7 +169,8 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         
     	
         String[] propertyNames = WebTrailUtil.getPropertiesName(aClazz) ;
-        String style = WebTrailUtil.getStyle(aClazz) ;
+        String[] listStyle = WebTrailUtil.getListStyle(aClazz);
+        
         WebTrail webTrail = (WebTrail) aClazz.getAnnotation(WebTrail.class) ;
         String comment = webTrail.comment() ;
         
@@ -182,9 +189,10 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         StringBuilder sb = new StringBuilder();
         StringBuilder sbTitle = new StringBuilder();
         String entityName = aFirst && aCreateState ? "Создание" : getEntityName(aService, aClazzName, aId, propertyNames, aLoader) ;
-        String sbStyle = aCreateState||style==null||style.equals("") ? "" : getEntityName(aService, aClazzName, aId, style.split(","), aLoader) ;
+        String sbStyle = (aFirst && aCreateState||listStyle==null) ? "" : getStyle(aId, listStyle,aWebService) ;
         if (CAN_DEBUG)
 			LOG.debug("    print: entityName = " + entityName); 
+        
 
         printLi(sb, sbTitle, entityName , comment, aId, webTrail.view(),webTrail.shortView(), aFirst, aSecond,sbStyle);
         
@@ -232,7 +240,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
                     printList(aSb, webTrail.listComment(), parentId, webTrail.list(),webTrail.shortList());
                 }
 
-                print(aService, aSb, aSbTitle, parentClass.getName(), parentId, false, aCreateState, aFirst, aLoader, aRequest, js,aUsername); // FIXME MapClassLoader
+                print(aService, aSb, aSbTitle, parentClass.getName(), parentId, false, aCreateState, aFirst, aLoader, aRequest, js,aUsername,aWebService); // FIXME MapClassLoader
             }
         }
     }
@@ -278,7 +286,21 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     		return aSourceForm;
     	}
     }
-    
+    private String getStyle(Object aId,String[] aListStyle,IWebQueryService aWebService) {
+    	StringBuilder sb = new StringBuilder() ;
+    	if (aListStyle!=null && aListStyle.length>0) {
+    		StringBuilder st = new StringBuilder() ;
+    		for (String s: aListStyle) {
+    			Collection<WebQueryResult> list = aWebService.executeNativeSql(s.replaceAll(":id", ""+aId)) ;
+    			if (!list.isEmpty()) {
+    				Object obj=list.iterator().next().get1() ;
+    				if (obj!=null)st.append(obj).append(";") ;
+    			}
+    		}
+    		if (st.length()>0) sb.append("").append(st).append("") ;
+    	}
+    	return sb.toString() ;
+    }
     private void printLi(StringBuilder aSb, StringBuilder aSbTitle, String aValue, String aComment, Object aId, String aDefaultViewAction
     		, String aDefaultShortAction
             , boolean aFirst, boolean aSecond, String aSbStyle) throws IOException {
@@ -289,7 +311,9 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         if(firstIsLink) {
         	//TODO делаем
             aSb.append("<a ") ;
-            if (aSbStyle!=null && !aSbStyle.equals("")) aSb.append("style ='").append(aSbStyle).append(";text-decoration:underline;'") ;
+            if (aSbStyle!=null && !aSbStyle.equals("")) {
+            	aSb.append("style ='").append(aSbStyle).append(";text-decoration:underline;'") ;
+            } 
             aSb.append(" href='") ;
             aSb.append(aDefaultViewAction) ;
             if (aDefaultViewAction.indexOf("?")<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}
