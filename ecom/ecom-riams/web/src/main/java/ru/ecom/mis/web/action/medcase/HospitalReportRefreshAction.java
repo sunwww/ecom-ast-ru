@@ -33,13 +33,10 @@ public class HospitalReportRefreshAction extends BaseAction {
         final AdmissionJournalForm form = (AdmissionJournalForm) aForm;
         final IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
-<<<<<<< .mine
         System.out.println(form.getRefreshType()) ;
-        if (form!=null && form.getDateBegin()!=null && form.getDateBegin()!=null
-        		&& form.getDateEnd()!=null && form.getDateEnd()!=null) {
-=======
-        if (form!=null && form.getDateBegin()!=null  && form.getDateEnd()!=null) {
->>>>>>> .r3747
+        if (form!=null && form.getDateBegin()!=null && !form.getDateBegin().equals("")
+        		&& form.getDateEnd()!=null && !form.getDateEnd().equals("")) {
+
         	final long monitorId = monitorService.createMonitor() ;
 	        new Thread() {
 	            public void run() {
