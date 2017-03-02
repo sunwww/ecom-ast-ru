@@ -121,144 +121,169 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	try {
     		monitor = theMonitorService.startMonitor(aMonitorId, "Обработка данных", 100);
     		monitor.advice(20) ;
-	    	
-	    	int size = aList.size()/80 ;
-	    	
-	    	for (int i=0;i<aList.size();i++) {
-	    		WebQueryResult wqr=aList.get(i) ;
-	    		if (monitor.isCancelled()) {
-	                throw new IllegalMonitorStateException("Прервано пользователем");
-	            }
-	    		//Object id = null ;
-	    		if (wqr.get1()!=null) {
-	    			List<Object> lf = theManager.createNativeQuery("select id from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
-	    			//HospitalDataFond hdf ;
-	    			Object id = null ;
-	    			if (!lf.isEmpty()) {
-	    				id=lf.get(0) ;
-			    	}
-	    			StringBuilder sql1 = new StringBuilder() ;
-	    			StringBuilder sql2 = new StringBuilder() ;
-	    			// create
-	    			if (id==null) {
-	    				sql1.append("insert into HospitalDataFond (") ;
-	    				if (wqr.get1()!=null) {sql1.append("numberFond,") ; sql2.append("'").append(wqr.get1()).append("',") ;}
-	    				if (wqr.get2()!=null) {sql1.append("directDate,") ; sql2.append("to_date('").append(wqr.get2()).append("','yyyy-mm-dd'),") ;}
-	    				if (wqr.get3()!=null) {sql1.append("formHelp,") ; sql2.append("'").append(wqr.get3()).append("',") ;}
-	    				if (wqr.get4()!=null) {sql1.append("OrderLpuCode,") ; sql2.append("'").append(wqr.get4()).append("',") ;}
-	    				if (wqr.get5()!=null) {sql1.append("DirectLpuCode,") ; sql2.append("'").append(wqr.get5()).append("',") ;}
-	    				if (wqr.get6()!=null) {sql1.append("TypePolicy,") ; sql2.append("'").append(wqr.get6()).append("',") ;}
-	    				if (wqr.get7()!=null) {sql1.append("SeriesPolicy,") ; sql2.append("'").append(wqr.get7()).append("',") ;}
-	    				if (wqr.get8()!=null) {sql1.append("NumberPolicy,") ; sql2.append("'").append(wqr.get8()).append("',") ;}
-	    				if (wqr.get9()!=null) {sql1.append("Smo,") ; sql2.append("'").append(wqr.get9()).append("',") ;}
-	    				if (wqr.get10()!=null) {sql1.append("SmoOgrn,") ; sql2.append("'").append(wqr.get10()).append("',") ;}
-	    				if (wqr.get11()!=null) {sql1.append("SmoOkato,") ; sql2.append("'").append(wqr.get11()).append("',") ;}
-	    				if (wqr.get12()!=null) {sql1.append("SmoName,") ; sql2.append("'").append(wqr.get12()).append("',") ;}
-	    				if (wqr.get13()!=null) {sql1.append("Lastname,") ; sql2.append("'").append(wqr.get13()).append("',") ;}
-	    				sql1.append("Firstname,") ; sql2.append("'").append(wqr.get14()!=null?wqr.get14():"").append("',") ;
-	    				sql1.append("Middlename,") ; sql2.append("'").append(wqr.get15()!=null?wqr.get15():"").append("',") ;
-			    		if (wqr.get16()!=null) {
-			    			String sex = ""+wqr.get16() ;
-		    				if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
-			    			List<Object> l = theManager.createNativeQuery("select id from VocSex where omcCode='"+sex+"'").setMaxResults(1).getResultList() ;
-			    			if (!l.isEmpty()) {sql1.append("sex_id,") ; sql2.append("'").append(l.get(0)).append("',") ;} ;
-			    		}
-			    		if (wqr.get17()!=null) {sql1.append("Birthday,") ; sql2.append("to_date('").append(wqr.get17()).append("','yyyy-mm-dd'),") ;}
-			    		if (wqr.get18()!=null) {sql1.append("Phone,") ; sql2.append("'").append(wqr.get18()).append("',") ;}
-			    		if (wqr.get19()!=null) {sql1.append("Diagnosis,") ; sql2.append("'").append(wqr.get19()).append("',") ;}
-			    		if (wqr.get20()!=null) {sql1.append("Profile,") ; sql2.append("'").append(wqr.get20()).append("',") ;}
-	    				if (wqr.get21()!=null) {sql1.append("Snils,") ; sql2.append("'").append(wqr.get21()).append("',") ;}
-	    				if (wqr.get22()!=null) {sql1.append("PreHospDate,") ; sql2.append("to_date('").append(wqr.get22()).append("','yyyy-mm-dd'),") ;}
-	    				if (wqr.get23()!=null) {sql1.append("HospDate,") ; sql2.append("to_date('").append(wqr.get23()).append("','yyyy-mm-dd'),") ;}
-	    				if (wqr.get24()!=null) {sql1.append("StatCard,") ; sql2.append("'").append(wqr.get24()).append("',") ;}
-	    				if (wqr.get25()!=null) {sql1.append("HospTime,") ; sql2.append("'").append(wqr.get25()).append("',") ;}
-	    				if (wqr.get26()!=null) {sql1.append("HospDischargeDate,") ; sql2.append("to_date('").append(wqr.get26()).append("','yyyy-mm-dd'),") ;}
-	    				if (wqr.get27()!=null) {sql1.append("ForChild,") ; sql2.append("'").append(wqr.get27()).append("',") ;}
-			    		if (wqr.get28()!=null) {sql1.append("BedSubType,") ; sql2.append("'").append(wqr.get28()).append("',") ;}
-			    		
-	    				if (aFileType.equals("N1")) {
-			    			sql1.append("IsTable1") ; sql2.append("'1'") ;
-			    		} else if (aFileType.equals("N2")) {
-			    			sql1.append("IsTable2,") ; sql2.append("'1',") ;
-			    			sql1.append("deniedhospital,") ; sql2.append("null,") ;
-			    			sql1.append("IsTable4,") ; sql2.append("null,") ;
-			    			sql1.append("IsTable5") ; sql2.append("null") ;
-			    		} else if (aFileType.equals("N3")) {
-			    			sql1.append("IsTable3") ; sql2.append("'1'") ;
-			    		} else if (aFileType.equals("N4")) {
-			    			sql1.append("IsTable4") ; sql2.append("'1'") ;
-			    		} else if (aFileType.equals("N5")) {
-			    			sql1.append("IsTable5") ; sql2.append("'1'") ;
-			    		}
-			    		sql1.append(") values (").append(sql2).append(")") ;
-			    		//update
-	    			} else {
-	    				sql1.append("update HospitalDataFond set ") ;
-	    				if (wqr.get2()!=null) {sql1.append("directDate").append("=").append("to_date('").append(wqr.get2()).append("','yyyy-mm-dd')").append(",") ;}
-	    				if (wqr.get3()!=null) {sql1.append("formHelp") .append("=").append("'").append(wqr.get3()).append("'").append(",") ;}
-	    				if (wqr.get4()!=null) {sql1.append("OrderLpuCode") .append("=").append("'").append(wqr.get4()).append("'").append(",") ;}
-	    				if (wqr.get5()!=null) {sql1.append("DirectLpuCode") .append("=").append("'").append(wqr.get5()).append("'").append(",") ;}
-	    				if (wqr.get6()!=null) {sql1.append("TypePolicy") .append("=").append("'").append(wqr.get6()).append("'").append(",") ;}
-	    				if (wqr.get7()!=null) {sql1.append("SeriesPolicy") .append("=").append("'").append(wqr.get7()).append("'").append(",") ;}
-	    				if (wqr.get8()!=null) {sql1.append("NumberPolicy") .append("=").append("'").append(wqr.get8()).append("'").append(",") ;}
-	    				if (wqr.get9()!=null) {sql1.append("Smo") .append("=").append("'").append(wqr.get9()).append("'").append(",") ;}
-	    				if (wqr.get10()!=null) {sql1.append("SmoOgrn") .append("=").append("'").append(wqr.get10()).append("'").append(",") ;}
-	    				if (wqr.get11()!=null) {sql1.append("SmoOkato") .append("=").append("'").append(wqr.get11()).append("'").append(",") ;}
-	    				if (wqr.get12()!=null) {sql1.append("SmoName") .append("=").append("'").append(wqr.get12()).append("'").append(",") ;}
-	    				if (wqr.get13()!=null) {sql1.append("Lastname") .append("=").append("'").append(wqr.get13()).append("'").append(",") ;}
-	    				if (wqr.get14()!=null) {sql1.append("Firstname") .append("=").append("'").append(wqr.get14()).append("'").append(",") ;}
-	    				if (wqr.get15()!=null) {sql1.append("Middlename") .append("=").append("'").append(wqr.get15()).append("'").append(",") ;}
-			    		if (wqr.get16()!=null) {
-			    			String sex = ""+wqr.get16() ;
-		    				if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
-			    			List<Object> l = theManager.createNativeQuery("select id from VocSex where omcCode='"+sex+"'").setMaxResults(1).getResultList() ;
-			    			if (!l.isEmpty()) {sql1.append("sex_id") .append("=").append("'").append(l.get(0)).append("'").append(",") ;} ;
-			    		}
-			    		if (wqr.get17()!=null) {sql1.append("Birthday").append("=").append("to_date('").append(wqr.get17()).append("','yyyy-mm-dd')").append(",") ;}
-			    		if (wqr.get18()!=null) {sql1.append("Phone").append("=").append("'").append(wqr.get18()).append("'").append(",") ;}
-			    		if (wqr.get19()!=null) {sql1.append("Diagnosis").append("=").append("'").append(wqr.get19()).append("'").append(",") ;}
-			    		if (wqr.get20()!=null) {sql1.append("Profile").append("=").append("'").append(wqr.get20()).append("'").append(",") ;}
-	    				if (wqr.get21()!=null) {sql1.append("Snils").append("=").append("'").append(wqr.get21()).append("'").append(",") ;}
-	    				if (wqr.get22()!=null) {sql1.append("PreHospDate").append("=").append("to_date('").append(wqr.get22()).append("','yyyy-mm-dd')").append(",") ;}
-	    				if (wqr.get23()!=null) {sql1.append("HospDate").append("=").append("to_date('").append(wqr.get23()).append("','yyyy-mm-dd')").append(",") ;}
-	    				if (wqr.get24()!=null) {sql1.append("StatCard").append("=").append("'").append(wqr.get24()).append("'").append(",") ;}
-	    				if (wqr.get25()!=null) {sql1.append("HospTime").append("=").append("cast('").append(wqr.get25()).append("' as time)").append(",") ;}
-			    		if (wqr.get26()!=null) {sql1.append("HospDischargeDate").append("=").append("to_date('").append(wqr.get26()).append("','yyyy-mm-dd')").append(",") ;}
-			    		if (aFileType.equals("N1")) {
-			    			sql1.append("IsTable1").append("=").append("'1'") ;
-			    		} else if (aFileType.equals("N2")) {
-			    			sql1.append("IsTable2").append("=").append("'1',") ;
-			    			sql1.append("deniedhospital").append("=").append("null,") ;
-			    			sql1.append("IsTable4").append("=").append("null,") ;
-			    			sql1.append("IsTable5").append("=").append("null") ;
-			    		} else if (aFileType.equals("N3")) {
-			    			sql1.append("IsTable3").append("=").append("'1'") ;
-			    		} else if (aFileType.equals("N4")) {
-			    			sql1.append("IsTable4").append("=").append("'1'") ;
-			    		} else if (aFileType.equals("N5")) {
-			    			sql1.append("IsTable5").append("=").append("'1'") ;
-			    		}
-			    		sql1.append(" where id=").append(id) ;
-	    			}
-	    			//try {
-	    				//System.out.println("sql="+sql1) ;
-	    				theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
-	    			//}catch(Exception e) {
-	    			//	e.printStackTrace() ;
-	    			//	if (id==null) {
-	    					//theManager.createNativeQuery("alter table hospitaldatafond alter column id set default nextval('hospitaldatafond_sequence')").executeUpdate() ;
-	    					//theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
-	    			//	}
-	    			//}
-	    		}
-	    		if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
-	    		if(size>0&&i%size==0) monitor.advice(1);
-
-	            if (i % 300 == 0) {
-	              monitor.setText("Импортировано " + i);
-	          }
-	    	}
-	    	monitor.finish("");
+    		
+    		int size = aList.size()/80 ;
+    		
+    		for (int i=0;i<aList.size();i++) {
+    			WebQueryResult wqr=aList.get(i) ;
+    			if (monitor.isCancelled()) {
+    				throw new IllegalMonitorStateException("Прервано пользователем");
+    			}
+    			//Object id = null ;
+    			if (wqr.get1()!=null) {
+    				List<Object> lf = theManager.createNativeQuery("select id from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
+    				//HospitalDataFond hdf ;
+    				Object id = null ;
+    				if (!lf.isEmpty()) {
+    					id=lf.get(0) ;
+    				}
+    				StringBuilder sql1 = new StringBuilder() ;
+    				StringBuilder sql2 = new StringBuilder() ;
+    				// create
+    				if (id==null) {
+    					sql1.append("insert into HospitalDataFond (") ;
+    					if (wqr.get1()!=null) {sql1.append("numberFond,") ; sql2.append("'").append(wqr.get1()).append("',") ;}
+    					if (wqr.get2()!=null) {sql1.append("directDate,") ; sql2.append("to_date('").append(wqr.get2()).append("','yyyy-mm-dd'),") ;}
+    					if (wqr.get3()!=null) {sql1.append("formHelp,") ; sql2.append("'").append(wqr.get3()).append("',") ;}
+    					if (wqr.get4()!=null) {sql1.append("OrderLpuCode,") ; sql2.append("'").append(wqr.get4()).append("',") ;}
+    					if (wqr.get5()!=null) {sql1.append("DirectLpuCode,") ; sql2.append("'").append(wqr.get5()).append("',") ;}
+    					if (wqr.get6()!=null) {sql1.append("TypePolicy,") ; sql2.append("'").append(wqr.get6()).append("',") ;}
+    					if (wqr.get7()!=null) {sql1.append("SeriesPolicy,") ; sql2.append("'").append(wqr.get7()).append("',") ;}
+    					if (wqr.get8()!=null) {sql1.append("NumberPolicy,") ; sql2.append("'").append(wqr.get8()).append("',") ;}
+    					if (wqr.get9()!=null) {sql1.append("Smo,") ; sql2.append("'").append(wqr.get9()).append("',") ;}
+    					if (wqr.get10()!=null) {sql1.append("SmoOgrn,") ; sql2.append("'").append(wqr.get10()).append("',") ;}
+    					if (wqr.get11()!=null) {sql1.append("SmoOkato,") ; sql2.append("'").append(wqr.get11()).append("',") ;}
+    					if (wqr.get12()!=null) {sql1.append("SmoName,") ; sql2.append("'").append(wqr.get12()).append("',") ;}
+    					if (wqr.get13()!=null) {sql1.append("Lastname,") ; sql2.append("'").append(wqr.get13()).append("',") ;}
+    					sql1.append("Firstname,") ; sql2.append("'").append(wqr.get14()!=null?wqr.get14():"").append("',") ;
+    					sql1.append("Middlename,") ; sql2.append("'").append(wqr.get15()!=null?wqr.get15():"").append("',") ;
+    					if (wqr.get16()!=null) {
+    						String sex = ""+wqr.get16() ;
+    						if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
+    						List<Object> l = theManager.createNativeQuery("select id from VocSex where omcCode='"+sex+"'").setMaxResults(1).getResultList() ;
+    						if (!l.isEmpty()) {sql1.append("sex_id,") ; sql2.append("'").append(l.get(0)).append("',") ;} ;
+    					}
+    					if (wqr.get17()!=null) {sql1.append("Birthday,") ; sql2.append("to_date('").append(wqr.get17()).append("','yyyy-mm-dd'),") ;}
+    					if (wqr.get18()!=null) {sql1.append("Phone,") ; sql2.append("'").append(wqr.get18()).append("',") ;}
+    					if (wqr.get19()!=null) {sql1.append("Diagnosis,") ; sql2.append("'").append(wqr.get19()).append("',") ;}
+    					if (wqr.get20()!=null) {sql1.append("Profile,") ; sql2.append("'").append(wqr.get20()).append("',") ;}
+    					if (wqr.get21()!=null) {sql1.append("Snils,") ; sql2.append("'").append(wqr.get21()).append("',") ;}
+    					if (wqr.get22()!=null) {sql1.append("PreHospDate,") ; sql2.append("to_date('").append(wqr.get22()).append("','yyyy-mm-dd'),") ;}
+    					if (wqr.get23()!=null) {sql1.append("HospDate,") ; sql2.append("to_date('").append(wqr.get23()).append("','yyyy-mm-dd'),") ;}
+    					if (wqr.get24()!=null) {sql1.append("StatCard,") ; sql2.append("'").append(wqr.get24()).append("',") ;}
+    					if (wqr.get25()!=null) {sql1.append("HospTime,") ; sql2.append("'").append(wqr.get25()).append("',") ;}
+    					if (wqr.get26()!=null) {sql1.append("HospDischargeDate,") ; sql2.append("to_date('").append(wqr.get26()).append("','yyyy-mm-dd'),") ;}
+    					if (wqr.get27()!=null) {sql1.append("ForChild,") ; sql2.append("'").append(wqr.get27()).append("',") ;}
+    					if (wqr.get28()!=null) {sql1.append("BedSubType,") ; sql2.append("'").append(wqr.get28()).append("',") ;}
+    					
+    					if (aFileType.equals("N1")) {
+    						sql1.append("IsTable1") ; sql2.append("'1'") ;
+    					} else if (aFileType.equals("N2")) {
+    						sql1.append("IsTable2,") ; sql2.append("'1',") ;
+    						sql1.append("deniedhospital,") ; sql2.append("null,") ;
+    						sql1.append("IsTable4,") ; sql2.append("null,") ;
+    						sql1.append("IsTable5") ; sql2.append("null") ;
+    					} else if (aFileType.equals("N3")) {
+    						sql1.append("IsTable3") ; sql2.append("'1'") ;
+    					} else if (aFileType.equals("N4")) {
+    						sql1.append("IsTable4") ; sql2.append("'1'") ;
+    					} else if (aFileType.equals("N5")) {
+    						sql1.append("IsTable5") ; sql2.append("'1'") ;
+    					}
+    					sql1.append(") values (").append(sql2).append(")") ;
+    					//update
+    				} else {
+    					sql1.append("update HospitalDataFond set ") ;
+    					if (wqr.get2()!=null) {sql1.append("directDate").append("=").append("to_date('").append(wqr.get2()).append("','yyyy-mm-dd')").append(",") ;}
+    					if (wqr.get3()!=null) {sql1.append("formHelp") .append("=").append("'").append(wqr.get3()).append("'").append(",") ;}
+    					if (wqr.get4()!=null) {sql1.append("OrderLpuCode") .append("=").append("'").append(wqr.get4()).append("'").append(",") ;}
+    					if (wqr.get5()!=null) {sql1.append("DirectLpuCode") .append("=").append("'").append(wqr.get5()).append("'").append(",") ;}
+    					if (wqr.get6()!=null) {sql1.append("TypePolicy") .append("=").append("'").append(wqr.get6()).append("'").append(",") ;}
+    					if (wqr.get7()!=null) {sql1.append("SeriesPolicy") .append("=").append("'").append(wqr.get7()).append("'").append(",") ;}
+    					if (wqr.get8()!=null) {sql1.append("NumberPolicy") .append("=").append("'").append(wqr.get8()).append("'").append(",") ;}
+    					if (wqr.get9()!=null) {sql1.append("Smo") .append("=").append("'").append(wqr.get9()).append("'").append(",") ;}
+    					if (wqr.get10()!=null) {sql1.append("SmoOgrn") .append("=").append("'").append(wqr.get10()).append("'").append(",") ;}
+    					if (wqr.get11()!=null) {sql1.append("SmoOkato") .append("=").append("'").append(wqr.get11()).append("'").append(",") ;}
+    					if (wqr.get12()!=null) {sql1.append("SmoName") .append("=").append("'").append(wqr.get12()).append("'").append(",") ;}
+    					if (wqr.get13()!=null) {sql1.append("Lastname") .append("=").append("'").append(wqr.get13()).append("'").append(",") ;}
+    					if (wqr.get14()!=null) {sql1.append("Firstname") .append("=").append("'").append(wqr.get14()).append("'").append(",") ;}
+    					if (wqr.get15()!=null) {sql1.append("Middlename") .append("=").append("'").append(wqr.get15()).append("'").append(",") ;}
+    					if (wqr.get16()!=null) {
+    						String sex = ""+wqr.get16() ;
+    						if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
+    						List<Object> l = theManager.createNativeQuery("select id from VocSex where omcCode='"+sex+"'").setMaxResults(1).getResultList() ;
+    						if (!l.isEmpty()) {sql1.append("sex_id") .append("=").append("'").append(l.get(0)).append("'").append(",") ;} ;
+    					}
+    					if (wqr.get17()!=null) {sql1.append("Birthday").append("=").append("to_date('").append(wqr.get17()).append("','yyyy-mm-dd')").append(",") ;}
+    					if (wqr.get18()!=null) {sql1.append("Phone").append("=").append("'").append(wqr.get18()).append("'").append(",") ;}
+    					if (wqr.get19()!=null) {sql1.append("Diagnosis").append("=").append("'").append(wqr.get19()).append("'").append(",") ;}
+    					if (wqr.get20()!=null) {sql1.append("Profile").append("=").append("'").append(wqr.get20()).append("'").append(",") ;}
+    					if (wqr.get21()!=null) {sql1.append("Snils").append("=").append("'").append(wqr.get21()).append("'").append(",") ;}
+    					if (wqr.get22()!=null) {sql1.append("PreHospDate").append("=").append("to_date('").append(wqr.get22()).append("','yyyy-mm-dd')").append(",") ;}
+    					if (wqr.get23()!=null) {sql1.append("HospDate").append("=").append("to_date('").append(wqr.get23()).append("','yyyy-mm-dd')").append(",") ;}
+    					if (wqr.get24()!=null) {sql1.append("StatCard").append("=").append("'").append(wqr.get24()).append("'").append(",") ;}
+    					if (wqr.get25()!=null) {sql1.append("HospTime").append("=").append("cast('").append(wqr.get25()).append("' as time)").append(",") ;}
+    					if (wqr.get26()!=null) {sql1.append("HospDischargeDate").append("=").append("to_date('").append(wqr.get26()).append("','yyyy-mm-dd')").append(",") ;}
+    					if (aFileType.equals("N1")) {
+    						sql1.append("IsTable1").append("=").append("'1'") ;
+    					} else if (aFileType.equals("N2")) {
+    						sql1.append("IsTable2").append("=").append("'1',") ;
+    						sql1.append("deniedhospital").append("=").append("null,") ;
+    						sql1.append("IsTable4").append("=").append("null,") ;
+    						sql1.append("IsTable5").append("=").append("null") ;
+    					} else if (aFileType.equals("N3")) {
+    						sql1.append("IsTable3").append("=").append("'1'") ;
+    					} else if (aFileType.equals("N4")) {
+    						sql1.append("IsTable4").append("=").append("'1'") ;
+    					} else if (aFileType.equals("N5")) {
+    						sql1.append("IsTable5").append("=").append("'1'") ;
+    					}
+    					sql1.append(" where id=").append(id) ;
+    				}
+    				//try {
+    				//System.out.println("sql="+sql1) ;
+    				theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
+    				//}catch(Exception e) {
+    				//	e.printStackTrace() ;
+    				//	if (id==null) {
+    				//theManager.createNativeQuery("alter table hospitaldatafond alter column id set default nextval('hospitaldatafond_sequence')").executeUpdate() ;
+    				//theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
+    				//	}
+    				//}
+    			}
+    			if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
+    			if(size>0&&i%size==0) monitor.advice(1);
+    			
+    			if (i % 300 == 0) {
+    				monitor.setText("Импортировано " + i);
+    			}
+    		}
+    		monitor.finish("");
+    	} catch (Exception e) {
+    		if(monitor!=null) monitor.setText(e+"");
+    		throw new IllegalStateException(e) ;
+    	}
+    	return "" ;
+    }
+    public String importDataFondForDBF(long aMonitorId) {
+    	IMonitor monitor = null;
+    	try {
+    		monitor = theMonitorService.startMonitor(aMonitorId, "Обработка данных", 100);
+    		List<Object[]> lf = theManager.createNativeQuery("select id,fio from HospitalDataFond where fio is not null and lastname is null").setMaxResults(1).getResultList() ;
+    		
+    		for (Object[] obj:lf) {
+    			String[] fio = new StringBuilder().append(obj).toString().split(")")[1].split(" ") ;
+    			String birthday = new StringBuilder().append(obj).toString().split(")")[1].replaceAll(")", "").trim() ;
+    			theManager.createNativeQuery(new StringBuilder()
+	    			.append("update hospitaldatafond set withoutHosp='1',lastname='").append(fio[0])
+	    			.append("',firstname='").append(fio[1])
+	    			.append("',middlename='").append(fio.length>2?fio[2]:"") 
+	    			.append("',birthday=to_date('").append(birthday).append("','dd.mm.yyyy')")
+	    			.append(" where id=").append(obj[0]) 
+	    			.toString()).executeUpdate() ;
+    		}
+			monitor.advice(50) ;
+	    	monitor.finish("") ;
     	} catch (Exception e) {
             if(monitor!=null) monitor.setText(e+"");
             throw new IllegalStateException(e) ;
@@ -1244,7 +1269,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and sls.emergency='1' and slo.prevMedCase_id is null");
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER')") ;
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
     	sql.append(" and mkb.code is not null and (hdf.id is not null and (hdf.numberfond is null or hdf.numberfond='') or hdf.id is null)") ;
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
