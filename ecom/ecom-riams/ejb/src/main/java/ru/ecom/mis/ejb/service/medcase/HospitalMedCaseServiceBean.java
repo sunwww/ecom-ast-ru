@@ -1235,11 +1235,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as o5ossmocode");
     	sql.append(" , ri.ogrn as o6grnSmo");
     	sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as o7katoSmo");
-    	sql.append(" ,p.lastname as l8astname");
-    	sql.append(" ,p.firstname as f9irstname");
-    	sql.append(" ,p.middlename as m10iddlename");
+    	sql.append(" ,coalesce(p1.lastname,p.lastname) as l8astname");
+    	sql.append(" ,coalesce(p1.firstname,p.firstname) as f9irstname");
+    	sql.append(" ,coalesce(p1.middlename,p.middlename) as m10iddlename");
     	sql.append(" ,vs.omcCode as v11somccode");
-    	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as b12irthday");
+    	sql.append(" ,to_char(coalesce(p1.birthday,p.birthday),'yyyy-mm-dd') as b12irthday");
     	sql.append(" ,vbt.codeF as v13btomccode");
     	sql.append(" ,ss.code as s14scode");
     	sql.append(" ,mkb.code as m15kbcode");
@@ -1258,7 +1258,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
     	
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
-    	sql.append(" left join Patient p on p.id=mp.patient_id");
+    	sql.append(" left join Patient p on p.id=sls.patient_id");
+    	sql.append(" left join Patient p1 on p1.id=mp.patient_id");
     	sql.append(" left join VocSex vs on vs.id=p.sex_id");
     	sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
     	sql.append(" left join diagnosis diag on diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4'");
