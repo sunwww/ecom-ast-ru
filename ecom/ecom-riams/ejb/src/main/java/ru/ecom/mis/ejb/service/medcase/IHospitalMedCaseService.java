@@ -23,7 +23,9 @@ import ru.ecom.poly.ejb.services.GroupByDate;
 public interface IHospitalMedCaseService {
 	public String getDischargeEpicrisis(long aMedCaseId) ;
 	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) ;
+	public String importDataFondForDBF(long aMonitorId) ;
 	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
+	public void refreshCompTreatmentReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
 	public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
 			throws ParserConfigurationException, TransformerException;
 	public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
