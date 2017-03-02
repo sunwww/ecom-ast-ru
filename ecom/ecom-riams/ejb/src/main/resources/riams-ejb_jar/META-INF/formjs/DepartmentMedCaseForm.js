@@ -71,8 +71,9 @@ function onPreSave(aForm,aEntity, aContext) {
 		transferIs = true ;
 		//Отмечаем режимы и диеты как окончанные			
 			
-		aContext.manager.createNativeQuery("update prescription p set planEndDate =to_date(:endDate,'dd.MM.yyyy'), planEndTime=cast(:endTime as time) where p.prescriptionList_id in (select id from prescriptionList where medcase_id=:prev) " +
-		"and p.dtype in ('DietPrescription', 'ModePrescription') and p.planEndDate is null").setParameter("endDate", aForm.dateStart).setParameter("endTime", aForm.entranceTime).setParameter("prev", prev.id).executeUpdate();
+		aContext.manager.createNativeQuery("update prescription p set planEndDate =to_date('"+aForm.dateStart+"','dd.MM.yyyy'), planEndTime=cast('"+aForm.entranceTime
+					+"' as time) where p.prescriptionList_id in (select id from prescriptionList where medcase_id='"+prev.id+"') " +
+		"and p.dtype in ('DietPrescription', 'ModePrescription') and p.planEndDate is null").executeUpdate();
 
 	} else {
 		if (+hosp.department.id != (+aForm.department)) {
