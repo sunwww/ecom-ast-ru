@@ -425,4 +425,30 @@ public class AdmissionJournalForm extends BaseValidatorForm{
 	public void setAssessment(Long aAssessment) {theAssessment = aAssessment;}
 	/** Оценка в карте оценки */
 	private Long theAssessment;
+	
+	/** Тип обновления */
+	@Comment("Тип обновления")
+	public String getRefreshType() {
+		return theRefreshType;
+	}
+
+	public void setRefreshType(String aRefreshType) {
+		theRefreshType = aRefreshType;
+	}
+
+	/** Тип обновления */
+	private String theRefreshType;
+	
+	/** Тип */
+	@Comment("Тип")
+	public Long getType() {
+		return theType;
+	}
+
+	public void setType(Long aType) {
+		theType = aType;
+	}
+
+	/** Тип */
+	private Long theType;
 }
