@@ -116,4 +116,30 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 	public void setImportFormat(Long aImportFormat) {theImportFormat = aImportFormat;}
 	/** Формат импорта прик. населения */
 	private Long theImportFormat;
+	
+	/** Номер направления */
+	@Comment("Номер направления")
+	public String getNumberDirect() {
+		return theNumberDirect;
+	}
+
+	public void setNumberDirect(String aNumberDirect) {
+		theNumberDirect = aNumberDirect;
+	}
+
+	/** Номер направления */
+	private String theNumberDirect;
+	
+	/** Информация о пациенте */
+	@Comment("Информация о пациенте")
+	public String getPatientInfo() {
+		return thePatientInfo;
+	}
+
+	public void setPatientInfo(String aPatientInfo) {
+		thePatientInfo = aPatientInfo;
+	}
+
+	/** Информация о пациенте */
+	private String thePatientInfo;
 }
