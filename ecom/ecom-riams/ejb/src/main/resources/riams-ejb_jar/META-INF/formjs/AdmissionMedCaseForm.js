@@ -113,6 +113,8 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (aForm.supplyOrderNumber!=null&&aForm.supplyOrderNumber!="") throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (+aForm.preAdmissionTime>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (pat.newborn==null) {
+			if (aForm.orderDate ==null || aForm.orderDate.equals("")) {throw aForm.orderDate+"При плановой госпитализации необходимо заполнять поле Дата направления!!!" ;}
+			if (+aForm.orderMkb>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Код МКБ направителя!!!" ;}
 			if (+aForm.orderLpu>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Кем направлен!!!" ;}
 			if (+aForm.sourceHospType>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Тип направившего ЛПУ!!!" ;}
 		}
@@ -159,7 +161,10 @@ function onPreSave(aForm,aEntity, aCtx) {
 			var obj = list.get(0) ;
 			throw "Уже оформлена госпитализация за "+aForm.dateStart+" <a href='entitySubclassView-mis_medCase.do?id="+obj[0]+"'>№стат.карты "+obj[1]+"</a>" ;
 		}
-		if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo")) {
+		if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo")||
+				aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/EditDepartment")){
+			
+		}else {
 			list = aCtx.manager.createNativeQuery("select sls.id ,ml.name from medcase sls" +
 	    			" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'" +
 	    			" left join mislpu ml on ml.id=slo.department_id" +
