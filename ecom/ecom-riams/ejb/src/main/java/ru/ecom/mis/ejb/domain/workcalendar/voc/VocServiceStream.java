@@ -18,6 +18,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocServiceStream extends VocIdNameOmcCode {
+	
+	/** Необходимо подтверждение оплаты */
+	@Comment("Необходимо подтверждение оплаты")
+	public Boolean getIsPaidConfirmation() {return theIsPaidConfirmation;}
+	public void setIsPaidConfirmation(Boolean aIsPaidConfirmation) {theIsPaidConfirmation = aIsPaidConfirmation;}
+	/** Необходимо подтверждение оплаты */
+	private Boolean theIsPaidConfirmation;
+
 	/** Источник финансирования */
 	@Comment("Источник финансирования")
 	public String getFinanceSource() {return theFinanceSource;}

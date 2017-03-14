@@ -307,5 +307,14 @@ public class MedCaseForm extends IdEntityForm {
 	public void setIsPaid(Boolean aIsPaid) {theIsPaid = aIsPaid;}
 	/** Услуга оплачена */
 	private Boolean theIsPaid;
+	
+
+	/** Гарантийное письмо */
+	@Comment("Гарантийное письмо")
+	@Persist
+	public Long getGuarantee() {return theGuarantee;}
+	public void setGuarantee(Long aGuarantee) {theGuarantee = aGuarantee;}
+	/** Гарантийное письмо */
+	private Long theGuarantee;
 }
 

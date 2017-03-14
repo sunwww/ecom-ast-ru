@@ -92,4 +92,12 @@ public class PriceListForm extends IdEntityForm{
 
 	/** Справочник типов цен (информация) */
 	private String theVocPriceInfo;
+	
+	/** Используется по умолчанию */
+	@Comment("Используется по умолчанию")
+	@Persist
+	public Boolean getIsDefault() {return theIsDefault;}
+	public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
+	/** Используется по умолчанию */
+	private Boolean theIsDefault;
 }

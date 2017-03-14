@@ -98,4 +98,12 @@ public class PriceList extends BaseEntity{
 	public String getVocPriceInfo() {
 		return theVocPrice!=null? theVocPrice.getName() : "" ;
 	}
+	
+	/** Используется по умолчанию */
+	@Comment("Используется по умолчанию")
+	public Boolean getIsDefault() {return theIsDefault;}
+	public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
+	/** Используется по умолчанию */
+	private Boolean theIsDefault;
+
 }

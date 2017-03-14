@@ -172,13 +172,14 @@ function visitNoPatient(aContext, aVisitId) {
 	} else {
 		visit.noActuality = true ;
 	}
+	
 	if (visit.timePlan!=null) {
 		visit.timePlan.medCase = null ;
 		if (visit.timePlan.prescription!=null) {
 			cancelPrescriptionByVisit(aContext, visit);
 			visit.timePlan.prescription = null;
 		}
-		
+		visit.timePlan = null;
 	}
 	
 	/*

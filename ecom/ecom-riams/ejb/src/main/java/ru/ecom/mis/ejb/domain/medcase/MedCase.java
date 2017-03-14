@@ -21,6 +21,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
+import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication;
@@ -440,4 +441,12 @@ abstract public class MedCase extends BaseEntity {
 	public void setIsPaid(Boolean aIsPaid) {theIsPaid = aIsPaid;}
 	/** Услуга оплачена */
 	private Boolean theIsPaid;
+	
+	/** Гарантийное письмо */
+	@Comment("Гарантийное письмо")
+	@OneToOne
+	public ContractGuarantee getGuarantee() {return theGuarantee;}
+	public void setGuarantee(ContractGuarantee aGuarantee) {theGuarantee = aGuarantee;}
+	/** Гарантийное письмо */
+	private ContractGuarantee theGuarantee;
 }

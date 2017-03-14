@@ -1,4 +1,29 @@
 <vocconfig>
+
+<!--  Справочник НДС  -->
+<voc id='vocVat' type='NativeVocService'>
+       <NativeVocService
+	from="vocvat vv"
+	nameId="vv.id"
+	names="vv.name"
+	>
+	</NativeVocService>
+    </voc> 
+    
+<!--  Список гарантийных писем по потоку обслуживания  -->
+<voc id='guaranteeByPatient' type='NativeVocService'>
+       <NativeVocService
+	from="contractguarantee cg"
+	nameId="cg.id"
+	names="'№ '||cg.numberDoc ||' от '||to_char(cg.issuedate,'dd.MM.yyyy')||' (Договор №'||mc.contractNumber||')'"
+	join="left join medcontract mc on mc.id=cg.contract_id
+	 		left join contractperson cp on cp.id=cg.contractperson_id"
+	parent="cp.patient_id=:parent"
+	>
+	</NativeVocService>
+    </voc> 
+
+
 <!--  Список доверенностей -->
 <voc id='vocAttorney' type='NativeVocService'>
        <NativeVocService

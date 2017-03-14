@@ -109,13 +109,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		String xmlDirectory = homeDirectory + "/xml/";
         String xmlArchDirectory = homeDirectory + "/archive/";
         
-        sout("Ищу файлы в папке :" + xmlDirectory);
+        sout(1,"Ищу файлы в папке :" + xmlDirectory);
         
         File[] fileList = getFiles(xmlDirectory);
         
         if (fileList!=null&&fileList.length>0)
 	    {
-        	sout("Найдено "+fileList.length+" файлов");
+        	sout(1,"Найдено "+fileList.length+" файлов");
         	
         	for (int i = 0; i < fileList.length; i++)
         	{
@@ -126,15 +126,17 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        
 	        	if(expansions[1].equals("xml"))
 	        	{
-	        		sout("Файл "+fileName+" - верный формат" );
-	        		sout("baracode: "+ReadXML(xmlDirectory+fileName).get(0).getBarcode());
-	        		sout("Code: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getCode());
-	        		sout("Value: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getValue());
+	        		sout(1,"Файл "+fileName+" - верный формат" );
+	        		sout(1,"baracode: "+ReadXML(xmlDirectory+fileName).get(0).getBarcode());
+	        		sout(1,"Code: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getCode());
+	        		sout(1,"Value: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getValue());
 	        		
 	        		setDefaultDiaryCycle(ReadXML(xmlDirectory+fileName));
 	        		moveFile(xmlDirectory,xmlArchDirectory,fileName);
 	        	}
         	}
+	    } else {
+	    	sout(1,"Файлов не найдено, заканчиваем...");
 	    }
 	}
 	
@@ -238,23 +240,25 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	//region "Robot"
 	public String setDefaultDiaryCycle(List<ParsedPdfInfo> parsedPdfInfos) throws JSONException
 	{
-		System.out.println("Start setDefaultDiaryCycle");
-		System.out.println("РАЗМЕР ЛИСТА"+parsedPdfInfos.size());
-		System.out.println("barcode= "+parsedPdfInfos.get(0).getBarcode());
-		System.out.println("код= "+parsedPdfInfos.get(0).getResults().get(0).getCode());
+		sout(1,"Start setDefaultDiaryCycle");
+		sout(1,"РАЗМЕР ЛИСТА"+parsedPdfInfos.size());
+		sout(1,"barcode= "+parsedPdfInfos.get(0).getBarcode());
+		sout(1,"код= "+parsedPdfInfos.get(0).getResults().get(0).getCode());
 		
 		for (int i = 0; i < parsedPdfInfos.size(); i++) {
 			
 			ParsedPdfInfo parsedPdfInfo = parsedPdfInfos.get(i);
 		    setDefaultDiary(parsedPdfInfo);
 		}
-		System.out.println("Finish setDefaultDiaryCycle");
+		sout(1,"Finish setDefaultDiaryCycle");
 		return "0";
 	}
 	
 	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) throws JSONException	{
-		System.out.println("Start setDefaultDiary");
+		sout(1,"Start setDefaultDiary");
 		//ParsedPdfInfo parsedPdfInfo = doObject();
+		if (parsedPdfInfo!=null&&parsedPdfInfo.getBarcode()!=null&&!parsedPdfInfo.getBarcode().trim().equals("")) {
+			
 		
 		WebQueryServiceBean  service = new WebQueryServiceBean() ;
 		
@@ -263,18 +267,17 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		StringBuilder sql = new StringBuilder() ;
 		
 		
-		System.out.println("Количество элементов в parsedPdfInfo.getResults= "+parsedPdfInfo.getResults().size());
+		sout(1,"Количество элементов в parsedPdfInfo.getResults= "+parsedPdfInfo.getResults().size());
 		String SqlAdd="";
-		for(int i=0;i<parsedPdfInfo.getResults().size();i++)
-		{
+		for(int i=0;i<parsedPdfInfo.getResults().size();i++) {
 			SqlAdd += "'"+parsedPdfInfo.getResults().get(i).getCode()+"'";
-			if((i+1)<parsedPdfInfo.getResults().size()){SqlAdd+=",";}
+			if((i+1)<parsedPdfInfo.getResults().size()){
+				SqlAdd+=",";
+			}
 		}
 		
-		System.out.println("Начинаю 1 запрос");
-		
-			
-		 sql.append("select pres.id as pid, ms.id as msid, max(tp.id) as templateId "+
+		sout(1,"Начинаю 1 запрос");
+		sql.append("select pres.id as pid, ms.id as msid, max(tp.id) as templateId "+
 					"from prescription pres "+
 					"left join medservice ms on ms.id=pres.medservice_id "+
 					"left join templateprotocol tp on tp.medservice_id=ms.id "+
@@ -284,97 +287,92 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					"and p.externalcode in("+SqlAdd+") "+
 					"group by pres.id,ms.id");
 		
-		System.out.println(sql);
+		 sout(1,sql);
 
 		
 		Collection<WebQueryResult> list = executeNativeSql(sql.toString(), theManager);
-		System.out.println(list.size());
-		System.out.println("запрос 1 окончен");
+		//System.out.println(list.size());
+		sout(1,"запрос 1 окончен, размер = "+list.size());
 		
 		if (!list.isEmpty()) {
-			System.out.println("List is not empty");
+			sout(1,"List is not empty");
 			String username = "LabRobot";
 			
 	
 			for (WebQueryResult res: list) {
+				try {
+					sout(1," setDefaultDiary incycle");
+					Long pid = Long.parseLong(res.get1().toString());
+				//	String msid = res.get2().toString();
+					Long templateId = Long.parseLong(res.get3().toString());
+					sql = new StringBuilder() ;
+					sql.append("select p.id as p1id,p.name as p2name"+
+					", p.shortname as p3shortname,p.type as p4type"+
+					", p.minimum as p5minimum, p.normminimum as p6normminimum"+
+					", p.maximum as p7maximum, p.normmaximum as p8normmaximum"+
+					", p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd"+
+					", p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd"+
+					", vmu.id as v13muid,vmu.name as v14muname"+
+					", vd.id as v15did,vd.name as v16dname"+
+					", p.cntdecimal as p17cntdecimal"+
+					", ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid "+
+					", " +CreateSQLQuerty(parsedPdfInfo)+" as p19valuetextdefault "+
+					",case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc "+
+					"from prescription pres "+
+					"left join templateprotocol tp on tp.medservice_id=pres.medservice_id "+
+					"left join parameterbyform pf on pf.template_id = tp.id "+
+					"left join parameter p on p.id=pf.parameter_id "+
+					"left join userDomain vd on vd.id=p.valueDomain_id "+
+					"left join userValue uv on uv.domain_id=vd.id and uv.useByDefault='1' "+
+					"left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id "+
+					"where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"'"+
+					"order by pf.position");
 				
-				try{
+					sout(1,"Начинаю 2 запрос - формирование json с результатами");
 					
-				System.out.println("incycle");
-				Long pid = Long.parseLong(res.get1().toString());
-				String msid = res.get2().toString();
-				Long templateId = Long.parseLong(res.get3().toString());
-				sql = new StringBuilder() ;
-				sql.append("select p.id as p1id,p.name as p2name"+
-				", p.shortname as p3shortname,p.type as p4type"+
-				", p.minimum as p5minimum, p.normminimum as p6normminimum"+
-				", p.maximum as p7maximum, p.normmaximum as p8normmaximum"+
-				", p.minimumbd as p9minimumbd, p.normminimumbd as p10normminimumbd"+
-				", p.maximumbd as p11maximumbd, p.normmaximumbd as p12normmaximumbd"+
-				", vmu.id as v13muid,vmu.name as v14muname"+
-				", vd.id as v15did,vd.name as v16dname"+
-				", p.cntdecimal as p17cntdecimal"+
-				", ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid "+
-				", " +CreateSQLQuerty(parsedPdfInfo)+" as p19valuetextdefault "+
-				",case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc "+
-				"from prescription pres "+
-				"left join templateprotocol tp on tp.medservice_id=pres.medservice_id "+
-				"left join parameterbyform pf on pf.template_id = tp.id "+
-				"left join parameter p on p.id=pf.parameter_id "+
-				"left join userDomain vd on vd.id=p.valueDomain_id "+
-				"left join userValue uv on uv.domain_id=vd.id and uv.useByDefault='1' "+
-				"left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id "+
-				"where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"'"+
-				"order by pf.position");
-			
-				System.out.println("Начинаю 2 запрос");
-				
-				Collection<WebQueryResult> lwqr = executeNativeSql(sql.toString(), theManager);
-
-				System.out.println("Запрос 2 окончен");
-				sb.setLength(0);
-				sb.append("{");
-				sb.append("\"workFunction\":\"0\",") ;
-				sb.append("\"workFunctionName\":\""+"\",") ;
-				sb.append("\"isdoctoredit\":\"1\",") ;
-				sb.append("\"params\":[") ;
-				boolean firstPassed = false ;
-				boolean firstError = false ;
-				String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
-				,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
-				,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}
-				,{"13","unitid"},{"14","unitname"}
-				,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
-				,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
-				} ;
-				for(WebQueryResult wqr : lwqr) {
-					
-					StringBuilder par = new StringBuilder() ;
-					par.append("{") ;
-					boolean isFirtMethod = false ;
-					boolean isError = false ;
-					//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
-					if (String.valueOf(wqr.get4()).equals("2")) {
-						//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
-						if (wqr.get15()==null) {
-							isError = true ;
+					Collection<WebQueryResult> lwqr = executeNativeSql(sql.toString(), theManager);
+	
+					sb.setLength(0);
+					sb.append("{");
+					sb.append("\"workFunction\":\"0\",") ;
+					sb.append("\"workFunctionName\":\""+"\",") ;
+					sb.append("\"isdoctoredit\":\"1\",") ;
+					sb.append("\"params\":[") ;
+					boolean firstPassed = false ;
+					boolean firstError = false ;
+					String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
+					,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
+					,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}
+					,{"13","unitid"},{"14","unitname"}
+					,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
+					,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
+					} ;
+					for(WebQueryResult wqr : lwqr) {
+						StringBuilder par = new StringBuilder() ;
+						par.append("{") ;
+						boolean isFirtMethod = false ;
+						boolean isError = false ;
+						//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
+						if (String.valueOf(wqr.get4()).equals("2")) {
 							//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+							if (wqr.get15()==null) {
+								isError = true ;
+								//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
+							}
 						}
-					}
-					try {
-						
-						for(String[] prop : props) {
-							Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
-							String strValue = value!=null?value.toString():"";
+						try {
+							for(String[] prop : props) {
+								Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
+								String strValue = value!=null?value.toString():"";
+								
+								if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
+								par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
+								
+							}
 							
-							if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
-							par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
-							
+						} catch (Exception e) {
+							throw new IllegalStateException(e);
 						}
-						
-					} catch (Exception e) {
-						throw new IllegalStateException(e);
-					}
 					par.append("}") ;
 					if (isError) {
 						if(firstError) err.append(", ") ;else firstError=true;
@@ -390,18 +388,26 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				sb.append(",\"protocol\":\"").append("\"") ;
 				sb.append("}") ;
 				
-			    System.out.println("==== JSSON= "+sb.toString());
+			    sout(1,"==== JSSON= "+sb.toString());
 				 
-			    //PrescriptionServiceBean psb = new PrescriptionServiceBean();
 			    saveLabAnalyzed(Long.valueOf(0),pid,Long.valueOf(0),sb.toString(),username, templateId) ;
-			//	saveLabAnalyzed
 				
-				
-				}catch(Exception e){ e.printStackTrace();} 
-				}
-			System.out.println("Finish setDefaultDiary");
+				}catch(Exception e){
+					e.printStackTrace();
+				} 
 			}
-		return sb.toString();			
+		
+			
+			}
+
+		sout(1,"Finish setDefaultDiary");
+		return sb.toString();
+		
+		} else {
+			sout(1, "Штрих код пустой, либо это нет");
+			return null;
+		}
+				
 	}
 	
 	 private String CreateSQLQuerty (ParsedPdfInfo parsedPdfInfo)

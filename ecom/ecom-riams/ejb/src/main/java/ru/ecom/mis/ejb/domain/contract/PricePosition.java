@@ -17,6 +17,7 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.contract.PriceList;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
 import ru.ecom.mis.ejb.domain.contract.voc.VocPositionType;
+import ru.ecom.mis.ejb.domain.contract.voc.VocVat;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.validators.MaxLength;
 
@@ -213,5 +214,13 @@ public class PricePosition extends BaseEntity{
 
 	/** Примечание для печати */
 	private String thePrintComment;
+	
+	/** Ставка налога */
+	@Comment("Ставка налога")
+	@OneToOne
+	public VocVat getTax() {return theTax;}
+	public void setTax(VocVat aTax) {theTax = aTax;}
+	/** Ставка налога */
+	private VocVat theTax;
 
 	}

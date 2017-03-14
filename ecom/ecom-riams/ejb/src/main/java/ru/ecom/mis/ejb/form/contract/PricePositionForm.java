@@ -1,7 +1,10 @@
 package ru.ecom.mis.ejb.form.contract;
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.PricePosition;
+import ru.ecom.mis.ejb.domain.contract.voc.VocVat;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -196,4 +199,13 @@ public class PricePositionForm extends IdEntityForm{
 
 	/** Примечание для печати */
 	private String thePrintComment;
+	
+	/** Ставка налога */
+	@Comment("Ставка налога")
+	@Persist
+	public Long getTax() {return theTax;}
+	public void setTax(Long aTax) {theTax = aTax;}
+	/** Ставка налога */
+	private Long theTax;
+	
 }

@@ -123,9 +123,9 @@ function onCreate(aForm, aVisit, aCtx) {
 	createOrSave(aForm, aVisit, aCtx) ;
 }
 function setNotPaid(aForm, aEntity, aCtx) {
-	if (aEntity.serviceStream.code=="CHARGED"&&aEntity.isPaid==null) {
-		aEntity.setIsPaid(false);
-	}
+		if (aEntity.serviceStream.isPaidConfirmation&&aEntity.isPaid==null) {
+			aEntity.setIsPaid(false);
+		}
 }
 
 function onPreCreate(aForm, aCtx) {
