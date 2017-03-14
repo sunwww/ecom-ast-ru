@@ -1,10 +1,16 @@
 package ru.ecom.mis.web.dwr.contract;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -13,6 +19,139 @@ import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.util.Injection;
 
 public class ContractServiceJs {
+	
+public String createJsonByAccout(Long aAccountId,Long aDiscont, HttpServletRequest aRequest) {
+	try {		
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		
+		String discontSql = "cams.cost";
+		if (aDiscont!=null&&aDiscont>0) {
+			discontSql = "round(cams.cost*(100-"+aDiscont+")/100,2)";
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("select pp.id, pp.code as f2_code, pp.name as f3_name, cams.countmedservice as f4_count, cast("+discontSql+" as varchar) as f5_cost, cast("+discontSql+"*cams.countmedservice as varchar) as f6_sum")
+			.append(",case when pp.isVat='1' then 'Ставка налога НДС '||coalesce(vv.taxrate,0) ||'%' end as f7_taxName") 
+			.append(",case when pp.isVat='1' then cast(round("+discontSql+"*cams.countmedservice*vv.taxrate/100,2) as varchar) end as f8_taxSum")
+			.append(" from contractaccount  ca")
+			.append(" left join contractaccountmedservice cams on cams.account_id=ca.id")
+			.append(" left join pricemedservice pms on pms.id=cams.medservice_id")
+			.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+			.append(" left join vocvat vv on vv.id=pp.tax_id")
+			.append(" where ca.id=").append(aAccountId);
+		List<Object[]> l = service.executeNativeSqlGetObj(sb.toString());
+		//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
+		if (!l.isEmpty()) {
+			System.out.println("not empty");
+			Double totalSum = 0.00;
+			Double taxSum = 0.00;
+			JSONObject root = new JSONObject();
+			JSONArray arr = new JSONArray();
+			for (Object[] r: l) {
+				
+				Double sum = Double.valueOf(r[5].toString());
+				Double tax = Double.valueOf(r[7]!=null?r[7].toString():"0.00");
+				totalSum+=sum;
+				taxSum+=tax;
+				JSONObject record = new JSONObject();
+				record.put("code", r[1]);
+				record.put("name", r[2]);
+				record.put("count", r[3]);
+				record.put("price", r[4].toString());
+				record.put("sum", r[5].toString());
+				record.put("taxName", r[6]!=null?r[6]:"");
+				record.put("taxSum", r[7]!=null?r[7].toString():"");
+				
+				arr.put(record);
+			}
+			root.put("pos", arr);
+			root.put("totalsum", new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+			root.put("taxsum", new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+			return root.toString();
+		} else {
+			return "---";
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+		return e.getMessage();
+	}
+	//return "nulll";
+	
+}
+	/**
+	 * Проверяем, нужно ли гарантийное письмо для выбранного потока обслуживания. Если нужно - находим. 
+	 * @param aPatient
+	 * @param aServiceStreamId
+	 * @param aDate
+	 * @param aDatePlanId
+	 * @param aMedhelpType
+	 * @param aRequest
+	 * @return
+	 * @throws NamingException
+	 */
+	public String checkIfDogovorIsNeeded (String aPatient, String aServiceStreamId, String aDate, String aDatePlanId,String aMedhelpType, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l = service.executeNativeSql("select id from vocserviceStream where id="+aServiceStreamId+" and isCalcDogovor='1'");
+		if (!l.isEmpty()) {
+			if (aMedhelpType!=null&& aMedhelpType.equals("POLYCLINIC")) {
+				aMedhelpType = "AMB";
+			} else if (aMedhelpType!=null&&aMedhelpType.equals("HOSPITAL")) {
+				aMedhelpType = "PLAN_HOSP";
+			} else {
+				return "0Неизвестный тип помощи";
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("select cg.id as id,cg.numberdoc, to_char(cg.issueDate,'dd.MM.yyyy') as guarDate, mc.contractnumber as contractNumber")
+			.append(",cg.limitMoney, mc.pricelist_id as price")
+			.append(" from contractguarantee  cg")
+			.append(" left join contractperson cp on cp.id=cg.contractperson_id")
+			.append(" left join medpolicy mp on mp.patient_id=cp.patient_id")
+			.append(" left join medcontract mc on mc.id=cg.contract_id")
+			.append(" left join contractperson cpCustomer on cpCustomer.id=mc.customer_id")
+			.append(" left join vocguaranteekindhelp vgkh on vgkh.id=cg.kindhelp_id")
+			.append(" where mc.servicestream_id='"+aServiceStreamId+"'") 
+			.append(" and (cg.contractperson_id is null or cp.patient_id='"+aPatient+"') and vgkh.code='"+aMedhelpType+"'");
+			if (aDate!=null&&!aDate.equals("")) {
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=to_date('"+aDate+"','dd.MM.yyyy'))");
+			} else if (aDatePlanId!=null&&!aDatePlanId.equals("")){
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=(select calendardate from workcalendarday where id='"+aDatePlanId+"'))");
+			} else {
+				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=current_date)");
+			}
+			sb.append(" and case when cpCustomer.regcompany_id is not null and mp.company_id=cpCustomer.regcompany_id then 1 else 0 end = 1");
+		//	System.out.println("=== Ищем гар. письмо по пациенту. sql="+sb.toString());
+			l = service.executeNativeSql(sb.toString());
+			if (!l.isEmpty()) {
+				WebQueryResult r = l.iterator().next();
+				float limit  = Float.parseFloat(r.get5().toString());
+				String priceListId = r.get6().toString();
+				String guaranteeId = r.get1().toString();
+				l = service.executeNativeSql("select list(''||id) from medcase where guarantee_id="+guaranteeId);
+				float spent = 0;
+				if (l.size()>0) {
+					String limitSql = "select sum(pp.cost) from medcase smc " +
+							" left join medservice ms on ms.id=smc.medservice_id" +
+							" left join pricemedservice pms on pms.medservice_id=smc.medservice_id" +
+							" left join priceposition pp on pp.id=pms.priceposition_id" +
+							" where smc.dtype='ServiceMedCase' and smc.parent_id in ("+l.iterator().next().get1()+") and pp.pricelist_id ="+priceListId;
+					l = service.executeNativeSql(limitSql);
+					spent= !l.isEmpty()?Float.parseFloat(l.iterator().next().get1().toString()):0;
+					
+				}
+				
+				sb.setLength(0);
+				sb.append(guaranteeId) //id письма
+				.append("|гар. письмо № ").append(r.get2()) //номер письма
+				.append(" от ").append(r.get3()) //Дата письма
+				.append(" Остаток средств: "+(limit - spent)+" руб. (Договор №").append(r.get4()).append(")");
+				return "1"+sb.toString();
+			} else {
+				return "0Не найдено гарантийное письмо";
+			}
+		}
+		
+		return null;
+	}
 	public String deleteCAMS(String aIds, HttpServletRequest aRequest) throws NamingException {
 		String ret = "";
 		if (aIds!=null&&!aIds.equals("")) {

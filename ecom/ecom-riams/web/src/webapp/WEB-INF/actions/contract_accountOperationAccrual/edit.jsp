@@ -94,7 +94,7 @@
 					<msh:textField property="editUsername" label="Пользователь"/>
 				</msh:row>
 				</msh:ifFormTypeIsView>
-				
+				<input type='button' value='createJson' onclick='createJson()'>
 			<msh:submitCancelButtonsRow colSpan="3" />
 			</msh:panel>
 		</msh:form>
@@ -142,12 +142,21 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			</msh:section>
 			</msh:ifInRole>
 		</msh:ifFormTypeIsView>
+		
 		<script type="text/javascript">
 			var createType=0 ;
 		</script>
 		<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
+		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
 		<script type="text/javascript">
 		createType=1;
+		function createJson() {
+			ContractService.createJsonByAccout($('account').value,$('discount').value, {
+				callback: function (a) {
+					alert ("res= "+a);
+				}
+			});
+		}
 		function getCostInfo() {
 			var cost = +$('cost').value ;
 			var discount = +$('discount').value ;
