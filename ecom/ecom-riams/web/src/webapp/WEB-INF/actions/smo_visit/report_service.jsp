@@ -115,6 +115,9 @@
         	<td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="11">по отделению направителя  
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="12">по направившим ЛПУ 
+	        </td>
         </msh:row>
         <msh:row>
 	        <td class="label" title="Трудоспособный возраст считать с (typeAgeWork)" colspan="1"><label for="typeAgeWorkName" id="typeAgeWorkLabel">Трудоспособный возраст с:</label></td>
@@ -320,6 +323,13 @@
        			request.setAttribute("groupName", "отделение направ. специалиста") ;
        			request.setAttribute("groupGroup", "owflpu.id,owflpu.name") ;
        			request.setAttribute("groupOrder", "owflpu.name") ;
+    		} else if (typeGroup.equals("12")) {
+    			// По направившем ЛПУ
+       			request.setAttribute("groupSql", "ext.name") ;
+       			request.setAttribute("groupSqlId", "'&directLpuByOWF='||owflpu.id") ;
+       			request.setAttribute("groupName", "направившее ЛПУ") ;
+       			request.setAttribute("groupGroup", "ext.name,owflpu.id,owflpu.name") ;
+       			request.setAttribute("groupOrder", "owflpu.name") ;
     		}
     		if (typeReestr!=null && (typeReestr.equals("1"))) {
     	%>
@@ -381,7 +391,8 @@ LEFT JOIN WorkFunction owf on owf.id=smo.orderWorkFunction_id
 LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
 LEFT JOIN Worker ow on ow.id=owf.worker_id 
 left join mislpu owflpu on owflpu.id=ow.lpu_id
-LEFT JOIN Patient owp on owp.id=ow.person_id 
+LEFT JOIN Patient owp on owp.id=ow.person_id
+LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
@@ -406,6 +417,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
             <msh:tableColumn columnName="услуга" property="11"/>
             <msh:tableColumn columnName="напр. ЛПУ" property="12"/>
             <msh:tableColumn columnName="напр. внутр." property="13"/>
+            <msh:tableColumn columnName="направившее ЛПУ" property="14"/>
         </msh:table>
     </msh:sectionContent>
 
@@ -464,6 +476,7 @@ LEFT JOIN WorkFunction owf on owf.id=smo.orderWorkFunction_id
 LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
 LEFT JOIN Worker ow on ow.id=owf.worker_id 
 LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id 
+Left join Mislpu ext on ext.id = smo.orderlpu_id 
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and smc.medservice_id is not null
@@ -578,6 +591,7 @@ LEFT JOIN WorkFunction owf on owf.id=smo.orderWorkFunction_id
 LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id 
 LEFT JOIN Worker ow on ow.id=owf.worker_id 
 LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id 
+Left join Mislpu ext on ext.id = smo.orderlpu_id 
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and smc.medservice_id is not null
