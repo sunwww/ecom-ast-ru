@@ -36,6 +36,9 @@
 					<msh:checkBox property="isVat" label="учитывается НДС по услуге" fieldColSpan="3"/>
 				</msh:row>
 				<msh:row>
+				<msh:autoComplete property="tax" vocName="vocVat"/>
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete vocName="vocPositionType" property="positionType"  
 					label="Тип услуги" fieldColSpan="3" horizontalFill="true"/>
 				</msh:row>

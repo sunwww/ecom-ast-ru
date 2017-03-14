@@ -29,6 +29,13 @@
         <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
           <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" viewOnlyField="false" label="Поток обслуживания" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
+        
+        <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
+        <div id='aGuaranteeBlockDiv'>
+          <msh:autoComplete  vocName="guaranteeByPatient" parentId="smo_directionForm.patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+        </div>
+        </msh:row>
+        
         <tr>
           <td class="separator" colspan="4">
             <div class="h3">
@@ -197,6 +204,7 @@
   <tiles:put name="javascript" type="string">
   	<msh:ifFormTypeIsView formName="smo_directionForm">
   	<script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+  	
         <script type="text/javascript">//var theBedFund = $('bedFund').value;
         
         function printReference(aFormat) {
@@ -247,6 +255,7 @@
     	</script>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="0cfa71af-92f6-432b-b592-483a2c92429d">
+    <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
       <script type="text/javascript">
       
    	 function updateTime() {
@@ -270,6 +279,7 @@
   
    	 serviceStreamAutocomplete.addOnChangeCallback(function() {
 	 	updateTime() ;
+	 	checkIfDogovorNeeded() ;
 	 });
       
       //new dateutil.DateField($('datePlanName'));
@@ -503,6 +513,38 @@
   			updateTime() ;
   		}
 	}
+  	function hideGuaranteeDiv(hide) {
+  		if (hide) {
+  			$('aGuaranteeBlockDiv').style="display: none;";
+  		} else {
+  			$('aGuaranteeBlockDiv').style="display: block;";
+  		}
+  	}
+  	hideGuaranteeDiv(true);
+  	function checkIfDogovorNeeded() {
+  		if (+$('serviceStream').value>0) {
+  			ContractService.checkIfDogovorIsNeeded($('patient').value, $('serviceStream').value, null,$('datePlan').value,'POLYCLINIC', {
+  	  			callback: function (res) {
+  	  				if (res!=null&&res!='') {
+  	  					if (res.startsWith("0")) {
+  	  						alert ("Ошибка: "+res.substring(1));
+  	  					} else {
+  	  						var arr = res.substring(1).split("|");
+  	  						$('guarantee').value = arr[0];
+  	  						$('guaranteeName').value = arr[1];
+  	  						$('guaranteeName').disabled=true;
+  	  						
+  	  					}
+  	  					hideGuaranteeDiv(false);
+  							 
+  	  				} else {
+  	  					hideGuaranteeDiv(true);
+  	  				}
+  	  			}
+  	  		});
+  		}
+  		
+  	}
   		</script>
     </msh:ifFormTypeIsNotView>
   </tiles:put>

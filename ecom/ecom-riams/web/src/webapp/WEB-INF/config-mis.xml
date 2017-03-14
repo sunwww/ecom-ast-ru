@@ -309,6 +309,14 @@
 
 	<action-mappings>
 	
+	 <action path='/contract_list_quarantee_by_period' type='ru.ecom.web.actions.base.ForwardAction'
+                name='contract_reportsForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/contract_guaranteeLetter/list_by_period.jsp" />
+        </action>
+        
 	 <action path='/lab_checkImportPDF' type='ru.ecom.mis.web.action.kdl.ImportPdfAction'
                 name='diet_journalForm'
                 validate='false'

@@ -5,6 +5,13 @@ import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 
 public class ContractReportsForm extends BaseValidatorForm{
+	
+	/** Гарантийное письмо (номер */
+	public String getGuaranteeNumber() {return theGuaranteeNumber;}
+	public void setGuaranteeNumber(String aGuaranteeNumber) {theGuaranteeNumber = aGuaranteeNumber;}
+	/** Гарантийное письмо (номер */
+	private String theGuaranteeNumber;
+
 	/** dateto */
 	@DateString @DoDateString
 	public String getDateTo() {return theDateTo;}

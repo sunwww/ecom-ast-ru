@@ -77,12 +77,6 @@
         <msh:row guid="1221-2e6b-425a-a14e-1c02959">
           <msh:autoComplete property="medService" label="Операция (услуга)" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceOperation" />
 	        </msh:row>
-	        <msh:row>
-          <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
-          	<td></td>
-          	<td><input type="button" value="Выбрать из списка всех операций" onclick="showServiceChangeServiceFind(0,'MedServiceOperation','MedService')"></td>
-          	</msh:ifFormTypeIsNotView>
-        </msh:row>
         <mis:ifPatientIsWoman classByObject="MedCase" idObject="${medcase}">
          
         <msh:row>

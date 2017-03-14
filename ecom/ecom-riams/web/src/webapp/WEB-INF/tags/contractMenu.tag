@@ -98,4 +98,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="Анализ услуг прейскуранта" roles="/Policy/Mis/Contract/Journals/AnalisisPriceServices"
 		title="Анализ услуг прейскуранта"
 		/>
+	<msh:sideLink styleId="analisisPriceServices"
+		action="/contract_list_quarantee_by_period.do" 
+		name="Отчет по остаткам по гар. письмам" roles="/Policy/Mis/Contract/Journals/AnalisisPriceServices"
+		title="Отчет по остаткам по гар. письмам"
+		/>
 </msh:sideMenu>
