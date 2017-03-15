@@ -1,25 +1,117 @@
 package ru.ecom.mis.web.dwr.contract;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.RoundingMode; 
+import java.net.URL; 
 import java.util.Collection;
 import java.util.List;
 
 import javax.naming.NamingException;
+import java.net.HttpURLConnection;
 import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.json.JSONArray; 
 import org.json.JSONObject;
+
 
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.contract.IContractService;
-import ru.ecom.web.util.Injection;
-
+import ru.ecom.web.util.Injection; 
 public class ContractServiceJs {
 	
+	
+	
+private void makeHttpPostRequest(String data) throws IOException {
+	//method by milamesher 15.03.2017
+	//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
+	URL url = new URL("http://192.168.4.151:6789/print/toSFPrinter/"); 
+	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+    connection.setDoInput(true);
+    connection.setDoOutput(true);
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Accept", "application/json");
+    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+    writer.write(data);
+    writer.close();
+    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    StringBuffer answerString = new StringBuffer();
+    String line;
+    while ((line = br.readLine()) != null) {
+    	answerString.append(line);
+    }
+    br.close();
+    connection.disconnect();
+}
+
+//method by milamesher 15.03.2017
+//отправляет на принтер команду печатать x-отчёт
+public String printXReport() { 
+	try {
+		makeHttpPostRequest("{\n"+
+		        "\"function\":\"printXReport\",\n"+
+		        "\"pos\":\n"+
+		        "[\n"+
+		        "{\"code\":\"A16.18.013\",\"sum\":\"0.00\",\"price\":\"0.00\",\"taxName\":\"\",\"taxSum\":\"\",\"count\":1,\"name\":\"Закрытие колостомы\"}]\n"+
+		        "\n"+
+		        ",\"totalPaymentSum\":\"0.00\"\n"+
+		        ",\"totalTaxSum\":\"0.00\"\n"+
+		        ",\"totalRefundSum\":\"0.00\"}");
+	}
+	catch (Exception e) {
+		e.printStackTrace();
+		return e.getMessage();
+	}
+	return "---";
+}
+
+//method by milamesher 15.03.2017
+//отправляет на принтер команду печатать z-отчёт
+public String printZReport() { 
+	try {
+		makeHttpPostRequest("{\n"+
+		        "\"function\":\"printZReport\",\n"+
+		        "\"pos\":\n"+
+		        "[\n"+
+		        "{\"code\":\"A16.18.013\",\"sum\":\"0.00\",\"price\":\"0.00\",\"taxName\":\"\",\"taxSum\":\"\",\"count\":1,\"name\":\"Закрытие колостомы\"}]\n"+
+		        "\n"+
+		        ",\"totalPaymentSum\":\"0.00\"\n"+
+		        ",\"totalTaxSum\":\"0.00\"\n"+
+		        ",\"totalRefundSum\":\"0.00\"}");
+	}
+	catch (Exception e) {
+		e.printStackTrace();
+		return e.getMessage();
+	}
+	return "---";
+}
+
+//method by milamesher 15.03.2017
+//отправляет на принтер команду возврата (пока 3 копейки, чтобы продемонстрировать отказ возврата)
+public String printKkmReturn0() { 
+	try {
+		makeHttpPostRequest("{\n"+
+		        "\"function\":\"makeRefund\",\n"+
+		        "\"pos\":\n"+
+		        "[\n"+
+		        "{\"code\":\"A16.18.013\",\"sum\":\"0.00\",\"price\":\"0.00\",\"taxName\":\"\",\"taxSum\":\"\",\"count\":1,\"name\":\"Закрытие колостомы\"}]\n"+
+		        "\n"+
+		        ",\"totalPaymentSum\":\"0.00\"\n"+
+		        ",\"totalTaxSum\":\"0.00\"\n"+
+		        ",\"totalRefundSum\":\"0.03\"}");
+	}
+	catch (Exception e) {
+		e.printStackTrace();
+		return e.getMessage();
+	}
+	return "---";
+}
 public String createJsonByAccout(Long aAccountId,Long aDiscont, HttpServletRequest aRequest) {
 	try {		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -45,6 +137,7 @@ public String createJsonByAccout(Long aAccountId,Long aDiscont, HttpServletReque
 			Double totalSum = 0.00;
 			Double taxSum = 0.00;
 			JSONObject root = new JSONObject();
+			root.put("function", "makePayment"); 
 			JSONArray arr = new JSONArray();
 			for (Object[] r: l) {
 				
@@ -56,16 +149,21 @@ public String createJsonByAccout(Long aAccountId,Long aDiscont, HttpServletReque
 				record.put("code", r[1]);
 				record.put("name", r[2]);
 				record.put("count", r[3]);
-				record.put("price", r[4].toString());
-				record.put("sum", r[5].toString());
+				//record.put("price", r[4].toString());
+				//record.put("sum", r[5].toString());
+				record.put("price", 0);
+				record.put("sum", 0);
 				record.put("taxName", r[6]!=null?r[6]:"");
 				record.put("taxSum", r[7]!=null?r[7].toString():"");
 				
 				arr.put(record);
 			}
-			root.put("pos", arr);
-			root.put("totalsum", new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
-			root.put("taxsum", new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+			//root.put("totalsum", new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+			root.put("pos", arr) ;
+			root.put("totalPaymentSum", 0) ;
+			root.put("totalTaxSum", new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+			root.put("totalRefundSum", 0) ;
+			makeHttpPostRequest(root.toString());
 			return root.toString();
 		} else {
 			return "---";
