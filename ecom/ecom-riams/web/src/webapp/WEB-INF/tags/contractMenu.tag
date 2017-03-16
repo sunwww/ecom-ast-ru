@@ -104,3 +104,28 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		title="Отчет по остаткам по гар. письмам"
 		/>
 </msh:sideMenu>
+<msh:sideMenu title="Работа с ККМ">
+<msh:sideLink styleId="analisisPriceServices"
+		action="/javascript:printKKMReport('Z')" 
+		name="Распечатать Z отчет" roles="/Policy/Config/KKMWork"
+		title="Распечатать Z отчет"
+		/>
+<msh:sideLink styleId="analisisPriceServices"
+		action="/javascript:printKKMReport('X')" 
+		name="Распечатать X отчет" roles="/Policy/Config/KKMWork"
+		title="Распечатать X отчет"
+		/>		
+
+</msh:sideMenu>
+<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
+<script type="text/javascript">
+function printKKMReport(type) {
+	if (confirm("Распечатать "+type+" отчет?")) {
+		ContractService.sendKKMRequest("print"+type+"Report", null,null, {
+			callback: function (a) {
+				alert (""+a);
+			}
+		});
+	}
+}
+</script>

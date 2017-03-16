@@ -61,7 +61,7 @@
       <msh:ifFormTypeIsView formName="mis_medServiceGroupForm">
      <msh:ifInRole roles="/Policy/Mis/MedService/VocWorkFunction/View">
     	<msh:section createRoles="/Policy/Mis/MedService/VocWorkFunction/Create"
-    		createUrl="entityParentPrepareCreate-mis_medServiceGroup_workFunction.do?id=${param.id}"
+    		createUrl="entityParentPrepareCreate-mis_medService_workFunction.do?id=${param.id}"
     		title="Прикрепление к рабочим функциям по отделениям" >
     	<ecom:webQuery name="workFunc" nativeSql="
     	select wfs.id as wfsid,vwf.name as vwfname,lpu.name as lpuname
@@ -84,9 +84,9 @@
     	where wfs.medService_id='${param.id}'
     	"/>
   		<msh:table selection="true" name="workFunc" 
-  		action="entityParentView-mis_medServiceGroup_workFunction.do"
-  		editUrl="entityParentEdit-mis_medServiceGroup_workFunction.do" disableKeySupport="true"
-  		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medServiceGroup_workFunction.do">
+  		action="entityParentView-mis_medService_workFunction.do"
+  		editUrl="entityParentEdit-mis_medService_workFunction.do" disableKeySupport="true"
+  		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medService_workFunction.do">
             <msh:tableColumn property="2" columnName="Рабочая функция"  />
             <msh:tableColumn property="7" columnName="Специалист (групповая функция)"  />
             <msh:tableColumn property="3" columnName="ЛПУ" />

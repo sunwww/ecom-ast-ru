@@ -94,7 +94,6 @@
 					<msh:textField property="editUsername" label="Пользователь"/>
 				</msh:row>
 				</msh:ifFormTypeIsView>
-				<input type='button' value='createJson' onclick='createJson()'>
 			<msh:submitCancelButtonsRow colSpan="3" />
 			</msh:panel>
 		</msh:form>
@@ -125,7 +124,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 				 idField="1">
 					 <msh:tableNotEmpty>
 				 <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation">
-					 	<a href="js-contract_medContract-issueRefund.do?id=${param.id}">Оформить возврат всей суммы</a>
+					 	<a href="javascript:void()" onclick="javascript:makeKKMPaymentOrRefund('makeRefund')">Оформить возврат всей суммы</a>
 				 </msh:ifInRole>
 					 </msh:tableNotEmpty>
 					<msh:tableColumn columnName="Код" property="2" />
@@ -142,21 +141,39 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			</msh:section>
 			</msh:ifInRole>
 		</msh:ifFormTypeIsView>
-		
-		<script type="text/javascript">
-			var createType=0 ;
-		</script>
-		<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
 		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
 		<script type="text/javascript">
+			var createType=0 ;
+			var oldaction = "";
+			function makeKKMPaymentOrRefund(aFunction) {
+				ContractService.sendKKMRequest(aFunction, $('account').value,$('discount').value, {
+					callback: function (a) {
+						if (a!=null&&a!="") {
+							alert (""+a);
+						}
+						if (aFunction=="makePayment") {
+							alert ("pay");
+							document.forms['contract_accountOperationAccrualForm'].action=oldaction ;
+							document.forms['contract_accountOperationAccrualForm'].submit();
+						}else {
+							alert ("ref");
+							window.location = "js-contract_medContract-issueRefund.do?id=${param.id}";
+						}
+						
+						
+					}
+				});
+				
+			}
+			
+		</script>
+		<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
+		
+		<script type="text/javascript">
+		oldaction = document.forms['contract_accountOperationAccrualForm'].action ;
+		document.forms['contract_accountOperationAccrualForm'].action="javascript:makeKKMPaymentOrRefund('makePayment')";
 		createType=1;
-		function createJson() {
-			ContractService.createJsonByAccout($('account').value,$('discount').value, {
-				callback: function (a) {
-					alert ("res= "+a);
-				}
-			});
-		}
+	
 		function getCostInfo() {
 			var cost = +$('cost').value ;
 			var discount = +$('discount').value ;

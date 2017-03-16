@@ -13,7 +13,11 @@ import java.util.List;
 import javax.naming.NamingException;
 import java.net.HttpURLConnection;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+
+import org.apache.ecs.xhtml.a;
 import org.json.JSONArray; 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -22,102 +26,109 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.util.Injection; 
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 public class ContractServiceJs {
 	
 	
 	
-private void makeHttpPostRequest(String data) throws IOException {
-	//method by milamesher 15.03.2017
-	//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
-	URL url = new URL("http://192.168.4.151:6789/print/toSFPrinter/"); 
-	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws IOException, NamingException {
+	
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l = service.executeNativeSql("select keyvalue from  softconfig where key='KKM_WEB_SERVER'");
+		if (!l.isEmpty()) {
+			String address = l.iterator().next().get1().toString();
+			System.out.println("KKM_server = "+address);
+			//method by milamesher 15.03.2017
+			//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
+			URL url = new URL(address); 
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-    connection.setDoInput(true);
-    connection.setDoOutput(true);
-    connection.setRequestMethod("POST");
-    connection.setRequestProperty("Accept", "application/json");
-    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-    writer.write(data);
-    writer.close();
-    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    StringBuffer answerString = new StringBuffer();
-    String line;
-    while ((line = br.readLine()) != null) {
-    	answerString.append(line);
-    }
-    br.close();
-    connection.disconnect();
-}
+		    connection.setDoInput(true);
+		    connection.setDoOutput(true);
+		    connection.setRequestMethod("POST");
+		    connection.setRequestProperty("Accept", "application/json");
+		    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+		    writer.write(data);
+		    writer.close();
+		    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		 //   StringBuffer answerString = new StringBuffer();
+		 //   String line;
+		 //   while ((line = br.readLine()) != null) {
+		 //   	answerString.append(line);
+		 //   }
+		    br.close();
+		    connection.disconnect();
+		}
+		
+	}
 
-//method by milamesher 15.03.2017
-//отправляет на принтер команду печатать x-отчёт
-public String printXReport() { 
-	try {
-		makeHttpPostRequest("{\n"+
-		        "\"function\":\"printXReport\",\n"+
-		        "\"pos\":\n"+
-		        "[\n"+
-		        "{\"code\":\"A16.18.013\",\"sum\":\"0.00\",\"price\":\"0.00\",\"taxName\":\"\",\"taxSum\":\"\",\"count\":1,\"name\":\"Закрытие колостомы\"}]\n"+
-		        "\n"+
-		        ",\"totalPaymentSum\":\"0.00\"\n"+
-		        ",\"totalTaxSum\":\"0.00\"\n"+
-		        ",\"totalRefundSum\":\"0.00\"}");
-	}
-	catch (Exception e) {
-		e.printStackTrace();
-		return e.getMessage();
-	}
-	return "---";
-}
+
 
 //method by milamesher 15.03.2017
 //отправляет на принтер команду печатать z-отчёт
-public String printZReport() { 
+public JSONObject makeKKMEmptyJson () {
 	try {
-		makeHttpPostRequest("{\n"+
-		        "\"function\":\"printZReport\",\n"+
-		        "\"pos\":\n"+
-		        "[\n"+
-		        "{\"code\":\"A16.18.013\",\"sum\":\"0.00\",\"price\":\"0.00\",\"taxName\":\"\",\"taxSum\":\"\",\"count\":1,\"name\":\"Закрытие колостомы\"}]\n"+
-		        "\n"+
-		        ",\"totalPaymentSum\":\"0.00\"\n"+
-		        ",\"totalTaxSum\":\"0.00\"\n"+
-		        ",\"totalRefundSum\":\"0.00\"}");
-	}
-	catch (Exception e) {
+		JSONObject root = new JSONObject();
+		//root.put("function", "");
+		root.put("totalPaymentSum", 0) ;
+		root.put("totalTaxSum", 0) ;
+		root.put("totalRefundSum", 0) ;
+		//JSONObject par = new JSONObject();
+		return root;
+	} catch (Exception e) {
 		e.printStackTrace();
-		return e.getMessage();
+		return null;
 	}
-	return "---";
+	
+}
+
+//Печать K, Z отчета
+public String printKKMReport(String aType, HttpServletRequest aRequest) {
+	if (aType!=null&&(aType.equals("Z")||aType.equals("X"))) {
+		try {
+			JSONObject root = makeKKMEmptyJson();
+			if (root!=null) {
+				root.put("function", "print"+aType+"Report");
+				makeHttpPostRequest(root.toString(),aRequest);
+				return root.toString()+"<>"+ aType+" отчет успешно отправлен на печать";
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		
+	} 
+	return "Неизвестный тип отчета";
 }
 
 //method by milamesher 15.03.2017
 //отправляет на принтер команду возврата (пока 3 копейки, чтобы продемонстрировать отказ возврата)
-public String printKkmReturn0() { 
-	try {
-		makeHttpPostRequest("{\n"+
-		        "\"function\":\"makeRefund\",\n"+
-		        "\"pos\":\n"+
-		        "[\n"+
-		        "{\"code\":\"A16.18.013\",\"sum\":\"0.00\",\"price\":\"0.00\",\"taxName\":\"\",\"taxSum\":\"\",\"count\":1,\"name\":\"Закрытие колостомы\"}]\n"+
-		        "\n"+
-		        ",\"totalPaymentSum\":\"0.00\"\n"+
-		        ",\"totalTaxSum\":\"0.00\"\n"+
-		        ",\"totalRefundSum\":\"0.03\"}");
+
+public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, HttpServletRequest aRequest) throws JspException {
+	if (RolesHelper.checkRoles(" /Policy/Config/KKMWork", aRequest)) {
+	if (aFunction!=null &&aFunction.equals("makePayment")) {
+		return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, aRequest);
+	} else if (aFunction!=null&&aFunction.equals("makeRefund")) {
+		return makeKKMPaymentOrRefund(aAccountId, aDiscont, true,aRequest);
+	} else if (aFunction!=null&&aFunction.equals("printZReport")){
+		return printKKMReport("Z", aRequest);
+	} else if (aFunction!=null&&aFunction.equals("printXReport")){
+		return printKKMReport("X",aRequest);
 	}
-	catch (Exception e) {
-		e.printStackTrace();
-		return e.getMessage();
+	return "Неизвестная функция";
+	} else {
+		return "Нет прав для работы с ККМ";
 	}
-	return "---";
 }
-public String createJsonByAccout(Long aAccountId,Long aDiscont, HttpServletRequest aRequest) {
+public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,HttpServletRequest aRequest) {
 	try {		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String discontSql = "cams.cost";
-		if (aDiscont!=null&&aDiscont>0) {
+		if (aDiscont!=null&&!aDiscont.equals("")) {
+			System.out.println("=== Send KKM, discont = "+aDiscont);
 			discontSql = "round(cams.cost*(100-"+aDiscont+")/100,2)";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -137,7 +148,7 @@ public String createJsonByAccout(Long aAccountId,Long aDiscont, HttpServletReque
 			Double totalSum = 0.00;
 			Double taxSum = 0.00;
 			JSONObject root = new JSONObject();
-			root.put("function", "makePayment"); 
+			root.put("function", isRefund?"makeRefund":"makePayment"); 
 			JSONArray arr = new JSONArray();
 			for (Object[] r: l) {
 				
@@ -149,31 +160,33 @@ public String createJsonByAccout(Long aAccountId,Long aDiscont, HttpServletReque
 				record.put("code", r[1]);
 				record.put("name", r[2]);
 				record.put("count", r[3]);
-				//record.put("price", r[4].toString());
-				//record.put("sum", r[5].toString());
-				record.put("price", 0);
-				record.put("sum", 0);
+				record.put("price", r[4].toString());
+				record.put("sum", r[5].toString());
+			//	record.put("price", 0);
+			//	record.put("sum", 0);
 				record.put("taxName", r[6]!=null?r[6]:"");
 				record.put("taxSum", r[7]!=null?r[7].toString():"");
 				
 				arr.put(record);
 			}
-			//root.put("totalsum", new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
-			root.put("pos", arr) ;
-			root.put("totalPaymentSum", 0) ;
-			root.put("totalTaxSum", new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
-			root.put("totalRefundSum", 0) ;
-			makeHttpPostRequest(root.toString());
-			return root.toString();
+			if (isRefund) {
+				root.put("totalRefundSum", totalSum) ;
+			} else {
+				
+				root.put("pos", arr) ;
+				root.put("totalPaymentSum", totalSum) ;
+				root.put("totalTaxSum", new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+				
+			}
+			makeHttpPostRequest(root.toString(), aRequest);
+			return root.toString()+"Чек отправлен на печать";
 		} else {
-			return "---";
+			return "Произошла ошибка, обратитесь к программистам";
 		}
 	} catch (Exception e) {
 		e.printStackTrace();
 		return e.getMessage();
 	}
-	//return "nulll";
-	
 }
 	/**
 	 * Проверяем, нужно ли гарантийное письмо для выбранного потока обслуживания. Если нужно - находим. 
