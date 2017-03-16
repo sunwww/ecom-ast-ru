@@ -27,16 +27,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="medService", parentForm= MedServiceForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedService/VocWorkFunction")
 public class WorkFunctionServiceForm extends IdEntityForm {
-	
-	
-	/** Передавать лаб. назначения автоматически в этот кабинет  */
-	@Comment("Передавать лаб. назначения автоматически в этот кабинет ")
-	@Persist
-	public Boolean getTransferByDefault() {return theTransferByDefault;}
-	public void setTransferByDefault(Boolean aTransferByDefault) {theTransferByDefault = aTransferByDefault;}
-	/** Передавать лаб. назначения автоматически в этот кабинет  */
-	private Boolean theTransferByDefault;
-	
+		
 	/** Специалист (группа) */
 	@Comment("Специалист (группа)")
 	@Persist
