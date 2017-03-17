@@ -136,6 +136,8 @@ select sls.id
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
 ,max(case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end) as f11_isDead
 ,max(vr.name) as f12_rayon
+,case when ms.code='A16.10.006' or ms.code='A06.10.006.1' then '+' else '-' end 
+,case when ms.code='A16.12.028.017' or ms.code='A16.12.004.009' or ms.code='A16.12.004.008' then '+' else '-' end 
 from medcase sls 
 left join omc_frm  ot on ot.id=sls.ordertype_id
 left join medcase slo on slo.parent_id=sls.id
@@ -149,12 +151,14 @@ left join patient p on p.id=sls.patient_id
 left join address2 adr on adr.addressid = p.address_addressid
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
 left join vocrayon vr on vr.id=p.rayon_id
+left join surgicaloperation sop on sop.medcase_id=slo.id
+left join medservice ms on ms.id=sop.medservice_id
 where sls.deniedhospitalizating_id is null and  sls.dtype='HospitalMedCase'
 and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 and vpd.code='1'
 and vbst.code='1'
  ${appendSQL} 
-group by sls.id, p.lastname, p.firstname, p.middlename, p.birthday, sls.datestart, sls.datefinish, mkb.code 
+group by sls.id, p.lastname, p.firstname, p.middlename, p.birthday, sls.datestart, sls.datefinish, mkb.code, ms.code 
 order by p.lastname, p.firstname, p.middlename 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>
@@ -185,6 +189,8 @@ order by p.lastname, p.firstname, p.middlename
             <msh:tableColumn columnName="Отделение стационара" property="10"/>
             <msh:tableColumn columnName="Продолжает лечиться" property="11"/>
             <msh:tableColumn columnName="Умер?" property="12"/>
+            <msh:tableColumn columnName="Проводилась коронография" property="14"/>
+            <msh:tableColumn columnName="Проводилось стентирование" property="15"/>
         </msh:table>
     </msh:sectionContent>
 
