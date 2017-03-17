@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.domain.medcase.hospital;
 import java.sql.Date;
 import java.sql.Time;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -10,17 +11,19 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizatingFond;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 
 @Comment("Госпитализации данные фонда")
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "hospitalMedCase" }) 
 ,@AIndex(properties = { "numberFond" })})
-public class HospitalDataFond extends BaseEntity {
+public class HospitalDataFond extends BaseEntity  implements IImportData {
 
 	/** Направление */
 	@Comment("Направление")
@@ -374,4 +377,49 @@ public class HospitalDataFond extends BaseEntity {
 	/** Дата импорта */
 	private Date theDateImport1;
 	
+	/** Тип помощи дн круг */
+	@Comment("Тип помощи дн круг")
+	public String getBedSubType() {
+		return theBedSubType;
+	}
+
+	public void setBedSubType(String aBedSubType) {
+		theBedSubType = aBedSubType;
+	}
+
+	/** Тип помощи дн круг */
+	private String theBedSubType;
+	
+	/** Детский профиль */
+	@Comment("Детский профиль")
+	public String getForChild() {return theForChild;}
+	public void setForChild(String aForChild) {theForChild = aForChild;}
+
+	/** Детский профиль */
+	private String theForChild;
+	
+	/** Без госпитализаций */
+	@Comment("Без госпитализаций")
+	public Boolean getWithoutHosp() {return theWithoutHosp;}
+	public void setWithoutHosp(Boolean aWithoutHosp) {theWithoutHosp = aWithoutHosp;}
+
+	/** Без госпитализаций */
+	private Boolean theWithoutHosp;
+
+    /** Время импорта */
+    @Column(name="voc_time")
+    public long getTime() { return theTime ; }
+    public void setTime(long aTime) { theTime = aTime ; }
+
+
+    /** Время импорта */
+    private long theTime ;
+    
+    /** Фамилия имя отчетство */
+	@Comment("Фамилия имя отчетство")
+	public String getFio() {return theFio;}
+	public void setFio(String aFio) {theFio = aFio;	}
+
+	/** Фамилия имя отчетство */
+	private String theFio;
 }
