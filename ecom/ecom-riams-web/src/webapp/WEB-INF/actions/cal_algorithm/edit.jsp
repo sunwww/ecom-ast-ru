@@ -28,7 +28,7 @@
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-workcalendar_workCalendarAlgorithm" name="Изменить" title="Изменить" roles=""/>
 				<msh:sideLink key="ALT+DEL" params="id" action="/entityParentDelete-workcalendar_workCalendarAlgorithm" name="Удалить" title="Удалить" roles=""/>
 			</msh:sideMenu>
-			<!-- just test! -->
+			<!-- just test!!! -->
 			<msh:sideMenu title="Добавить" >
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>
