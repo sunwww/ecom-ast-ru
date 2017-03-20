@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.service.medcase;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +26,9 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
+import org.jdom.Document;
 import org.jdom.IllegalDataException;
+import org.jdom.input.SAXBuilder;
 import org.w3c.dom.Element;
 
 import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
@@ -116,10 +119,146 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aMedCaseId) ;
     	return saveDischargeEpicrisisByCase(medCase, aDischargeEpicrisis, aManager) ; 
     }
+    private String getText(org.jdom.Element aEl, String aParameter) {
+    	return aEl!=null?
+    			(aEl.getChild(aParameter)!=null && !aEl.getChild(aParameter).getText().trim().equals("")?(aEl.getChild(aParameter).getText().trim()):null)
+    			:
+    				null ;
+    }
+    private String getChildText(org.jdom.Element aEl, String aParameter) {
+    	StringBuilder ret = new StringBuilder() ;
+    	if (aEl!=null &&( aEl.getChild(aParameter)!=null) ) { 
+    		for (org.jdom.Element e : (List<org.jdom.Element>) aEl.getChild(aParameter).getChildren() ) {
+    			ret.append(", ").append(e.getName()).append(" ").append(e.getText()) ;
+    		}
+    	}
+    	return ret.substring(2) ;
+    }
+    private String getDate(org.jdom.Element aEl,String aParameter) {
+    		String value=getText(aEl,aParameter) ;
+    		if (value==null) return null ;
+    		if (value instanceof String) {
+        		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd") ;
+    			long l = 0 ;
+    			
+    			try {
+    				l=f.parse(value).getTime() ;
+    			} catch(Exception e) {
+    				e.printStackTrace() ;
+            		//String aFormat1 =  ;
+        			f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss") ;
+    				try {
+    					l=f.parse(value).getTime() ;
+    				
+	    			} catch(Exception e1) {
+	    				e1.printStackTrace() ;
+	    				return null ;
+	    			}
+    			}
+    			return f.format(l) ;
+    		}
+    		return null ;
+    	
+    }
+    private Object getTime(org.jdom.Element aEl,String aParameter) {
+    	String value=getText(aEl,aParameter) ;
+    	try {
+    		return value==null || value.equals("")?null:value ;
+    	} catch (Exception e) {
+    		e.printStackTrace() ;
+    		return null ;
+    	}
+    }
+
+    
+    public String importFileDataFond(long aMonitorId, String aFilename) throws Exception {
+    	File f = new File(aFilename) ;
+    	InputStream in = null;
+    	String type =null;
+    	boolean isErrorFile = false ;
+    	final String filename ;
+    	String contentType = null ;
+    	String filenameError = null ;
+    	List<WebQueryResult> list = new LinkedList<WebQueryResult>() ;
+
+        try {
+        	org.jdom.Document doc = new SAXBuilder().build(f);
+           	XmlDocument xmlDocError = new XmlDocument() ;
+           	org.w3c.dom.Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
+            org.jdom.Element parConfigElement = doc.getRootElement();
+            //System.out.println(new StringBuilder().append("		root=").append(parConfigElement).toString());
+            Long i =Long.valueOf(1) ; int ind=0 ;
+            for (Object o : parConfigElement.getChildren()) {
+                org.jdom.Element parEl = (org.jdom.Element) o;
+                if ("ZGLV".equals(parEl.getName())) {
+                	type = parEl.getChild("FILENAME").getText().trim().toUpperCase().substring(0,2) ;
+                	System.out.println("type-------------"+type) ;
+                } else if("NPR".equals(parEl.getName())) {
+                	//System.out.println("parel=="+parEl.getChildren("REFREASON")) ;
+                	if (parEl.getChildren("REFREASON").isEmpty()) {
+                		//System.out.println("par===el=="+parEl.getChildren("REFREASON")) ;
+                    	WebQueryResult wqr = new WebQueryResult() ;
+                    	wqr.set1(getText(parEl,"N_NPR")) ;
+                    	wqr.set2(getDate(parEl,"D_NPR")) ;
+                    	wqr.set3(getText(parEl,"FOR_POM")) ;
+                    	wqr.set4(getText(parEl,"NCODE_MO")) ;
+                    	wqr.set5(getText(parEl,"DCODE_MO")) ;
+                    	wqr.set6(getText(parEl,"VPOLIS")) ;
+                    	wqr.set7(getText(parEl,"SPOLIS")) ;
+                    	wqr.set8(getText(parEl,"NPOLIS")) ;
+                    	wqr.set9(getText(parEl,"SMO")) ;
+                    	wqr.set10(getText(parEl,"SMO_OGRN")) ;
+                    	wqr.set11(getText(parEl,"SMO_OK")) ;
+                    	wqr.set12(getText(parEl,"SMO_NAM")) ;
+                    	wqr.set13(getText(parEl,"FAM")) ;
+                    	wqr.set14(getText(parEl,"IM")) ;
+                    	wqr.set15(getText(parEl,"OT")) ;
+                    	wqr.set16(getText(parEl,"W")) ;
+                    	wqr.set17(getDate(parEl,"DR")) ;
+                    	wqr.set18(getText(parEl,"CT")) ;
+                    	wqr.set19(getText(parEl,"DS1")) ;
+                    	wqr.set20(getText(parEl,"PROFIL")) ;
+                    	wqr.set21(getText(parEl,"IDDOKT")) ;
+                    	if (type.equals("N1")) {
+                    		wqr.set22(getDate(parEl,"DATE_1")) ;
+                    	} else {
+                    		wqr.set23(getDate(parEl,"DATE_1")) ;
+                    	}
+                    	wqr.set24(getText(parEl,"NHISTORY")) ;
+                    	wqr.set25(getTime(parEl,"TIME_1")) ;
+                    	wqr.set26(getDate(parEl,"DATE_2")) ;
+                    	wqr.set27(getText(parEl,"DET")) ;
+                    	wqr.set28(getText(parEl,"USL_OK")) ;
+                    	if (wqr.get1()!=null && !(""+wqr.get1()).equals("")){
+                    		list.add(wqr) ;
+                    	}
+                	} else {
+                		isErrorFile = true ;
+                		org.w3c.dom.Element zap = xmlDocError.newElement(root_error, "NPR", null);
+                		String[] flds ={"N_NPR","D_NPR","FOR_POM","NCODE_MO","DCODE_MO"
+                				,"VPOLIS","SPOLIS","NPOLIS","SMO","SMO_OGRN","SMO_OK"
+                				,"SMO_NAM","FAM","IM","OT","W","DR","CT","DS1"
+                				,"PROFIL","IDDOKT","DATE_1","NHISTORY","TIME_1","DATE_2"
+                		} ;
+                		for (String fld:flds) {
+                			XmlUtil.recordElementInDocumentXml(xmlDocError,zap,fld,getText(parEl,fld),true,"") ;
+                		}
+                		String fld = "REFREASON" ;
+                		XmlUtil.recordElementInDocumentXml(xmlDocError,zap,fld,getChildText(parEl,fld),true,"") ;
+                	}
+                }
+            }
+        } catch (Exception e) {
+        	
+        }
+        
+        
+    	return null ;
+    }
     public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
     	IMonitor monitor = null;
     	try {
-    		monitor = theMonitorService.startMonitor(aMonitorId, "Обработка данных", 100);
+    		monitor = theMonitorService.getMonitor(aMonitorId);
     		monitor.advice(20) ;
     		
     		int size = aList.size()/80 ;
@@ -175,7 +314,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     					if (wqr.get26()!=null) {sql1.append("HospDischargeDate,") ; sql2.append("to_date('").append(wqr.get26()).append("','yyyy-mm-dd'),") ;}
     					if (wqr.get27()!=null) {sql1.append("ForChild,") ; sql2.append("'").append(wqr.get27()).append("',") ;}
     					if (wqr.get28()!=null) {sql1.append("BedSubType,") ; sql2.append("'").append(wqr.get28()).append("',") ;}
-    					
+    					sql1.append("Voc_time,") ; sql2.append("'0',") ;
     					if (aFileType.equals("N1")) {
     						sql1.append("IsTable1") ; sql2.append("'1'") ;
     					} else if (aFileType.equals("N2")) {
@@ -258,12 +397,38 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     				monitor.setText("Импортировано " + i);
     			}
     		}
-    		monitor.finish("");
+    		//monitor.finish("");
     	} catch (Exception e) {
     		if(monitor!=null) monitor.setText(e+"");
     		throw new IllegalStateException(e) ;
     	}
     	return "" ;
+    }
+    public void addMonitor(long aMonitorId, int aInt) {
+    	IMonitor monitor = null;
+    	try {
+    		monitor = theMonitorService.getMonitor(aMonitorId) ;
+    		monitor.advice(aInt) ;
+    	}catch (Exception e) {
+    		
+    	}
+    }
+    public void finishMonitor(long aMonitorId) {
+    	IMonitor monitor = null;
+    	try {
+    		monitor = theMonitorService.getMonitor(aMonitorId) ;
+    		monitor.finish("") ;
+    	}catch (Exception e) {
+    		
+    	}
+    }
+    public void startMonitor(long aMonitorId) {
+    	IMonitor monitor = null;
+    	try {
+    		monitor = theMonitorService.startMonitor(aMonitorId, "Обработка данных", 100);
+    	}catch (Exception e) {
+    		
+    	}
     }
     public String importDataFondForDBF(long aMonitorId) {
     	IMonitor monitor = null;
@@ -742,8 +907,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		}
     	return fileExpList ;
     }
+    
     public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
+    	
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -751,6 +918,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	
+    	String workAddDir =config.get("data.dir.order263.out", null);
+    	
     	
     	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
     	WebQueryResult res = new WebQueryResult() ;
@@ -762,6 +932,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
     	Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
+    	
     	sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate");
     	sql.append(" ,cast('1' as varchar(1)) as f1orPom");
     	sql.append(" ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l2puSent");
@@ -785,7 +956,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(", wchb.visit_id as v20isit");
     	sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
     	sql.append(", cast('0' as varchar(1)) as f22det"); //TODO доделать обработку по детям
-    	
     	sql.append(" from WorkCalendarHospitalBed wchb");
     	sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
     	sql.append(" left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id");
@@ -826,6 +996,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		if (!checkHospitalDataFond(obj[10],obj[11],obj[12],obj[14],obj[19],obj[17],obj[20])) {
 	    			Element zap = xmlDoc.newElement(root, "NPR", null);
 	    			recordN1(xmlDoc, zap, obj, false) ;
+	    			
 		    	} else {
 		    		Element zapExist = xmlDocExist.newElement(root_exist, "NPR", null);
 		    		i_exist.add(recordN1(xmlDocExist, zapExist, obj,true)) ;
@@ -836,21 +1007,59 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		
 	    	}
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
     	if (!i_exist.isEmpty()) {
-    		res.set2(filename+"_exist.xml") ;
+    		res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
     		res.set4(i_exist) ;
-    		XmlUtil.saveXmlDocument(xmlDocExist,new File(workDir+"/"+filename+"_exist.xml")) ;
+    		XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("/exist_").append(filename).append(".xml").toString())) ;
     	}
     	if (!i_error.isEmpty()) {
-    		res.set3(filename+"_error.xml") ;
+    		res.set3("error_"+filename+".xml") ;
     		res.set5(i_error) ;
-    		XmlUtil.saveXmlDocument(xmlDocError,new File(workDir+"/"+filename+"_error.xml")) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
     	return res;
     }
     
+    private WebQueryResult recordN3(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
+    	XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[2],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[3],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[4],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO",obj[5],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OGRN",obj[6],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OK",obj[7],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_NAM",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[8],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[9],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[10],false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[11],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[12],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"USL_OK",obj[17],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DET",obj[18],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[13],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NHISTORY",obj[14],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[15],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+		WebQueryResult res = null ;
+    	if (aIsCreateWQR) {
+    		res= new WebQueryResult() ;
+    		res.set1(obj[0]) ;res.set2(obj[1]) ;res.set3(obj[2]) ;res.set4(obj[3]) ;res.set5(obj[4]) ;
+    		res.set6(obj[5]) ;res.set7(obj[6]) ;res.set8(obj[7]) ;res.set9(obj[8]) ;res.set10(obj[9]) ;
+    		res.set11(obj[10]) ;res.set12(obj[11]) ;res.set13(obj[12]) ;res.set14(obj[13]) ;res.set15(obj[14]) ;
+    		res.set16(obj[15]) ;res.set17(obj[16]) ;res.set18(obj[17]) ;res.set19(obj[18]) ;
+    		//res.set20(obj[21]);res.set21(obj[22]);
+    	}
+    	return res ;
+    }
     private WebQueryResult recordN2(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
     	
     	XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[18],true,"") ;
@@ -949,6 +1158,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	if (aObj[15]==null) return false ;
     	return true ;
     }
+    private boolean checkN3(Object[] aObj) {
+    	if (aObj[4]==null) return false ;
+    	if (aObj[8]==null) return false ;
+    	if (aObj[13]==null) return false ;
+    	if (aObj[15]==null) return false ;
+    	return true ;
+    }
     private boolean checkHospitalDataFond(Object aLastname, Object aFirstname,Object aMiddlename
     		, Object aBirthday, Object aPreDate, Object aProfile, Object aDirectMedCase) {
     	StringBuilder fld = new StringBuilder() ;
@@ -987,6 +1203,120 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	
     }
+    public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    		throws ParserConfigurationException, TransformerException {
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
+    	WebQueryResult res = new WebQueryResult() ;
+    	
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	XmlDocument xmlDocError = new XmlDocument() ;
+    	XmlDocument xmlDocExist = new XmlDocument() ;
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
+    	Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
+    	int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+    	
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append("select to_char(sls.dateStart,'yyyy-mm-dd') as f0datestart");
+    	sql.append(" ,cast(sls.entranceTime as varchar(5)) as f1entrancetime");
+    	sql.append(" ,vmc.code as f2medpolicytype");
+    	sql.append(" ,mp.series as f3mpseries");
+    	sql.append(" , mp.polnumber as f4polnumber");
+    	sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as f5oossmocode");
+    	sql.append(" , ri.ogrn as f6ogrnSmo");
+    	sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as f7okatoSmo");
+    	sql.append(" ,p.lastname as f8lastname");
+    	sql.append(" ,p.firstname as f9firstname");
+    	sql.append(" ,p.middlename as f10middlename");
+    	sql.append(" ,vs.omcCode as f11vsomccode");
+    	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as f12birthday");
+    	sql.append(" ,vbt.codeF as f13vbtomccode");
+    	sql.append(" ,ss.code as f14sscode");
+    	sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
+    	sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
+    	sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
+    	sql.append(" ,cast('0' as varchar(1)) as f18numberfond") ;
+    	sql.append(" ,to_char(sls.orderDate,'yyyy-mm-dd') as f19directDate") ;
+    	sql.append(" ,cast('1' as varchar(1))  as f20pokaz");
+    	sql.append(" ,case when vbst.code='3' then '2' else vbst.code end as f21vbtomccode");
+    	sql.append(" ,case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as f22vbtomccode");
+    	
+    	sql.append("  from medcase sls");
+    	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
+    	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
+    	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
+    	sql.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
+    	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
+    	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
+    	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
+    	sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
+    	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
+    	sql.append(" left join mislpu olpu on olpu.id=sls.orderlpu_id");
+    	sql.append(" left join mislpu oplpu on oplpu.id=olpu.parent_id");
+    	
+    	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
+    	sql.append(" left join Patient p on p.id=sls.patient_id");
+    	sql.append(" left join VocSex vs on vs.id=p.sex_id");
+    	sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
+    	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
+    	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+    	sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
+    	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
+    	sql.append(" and sls.deniedHospitalizating_id is null and slo.prevMedCase_id is null");
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')  and (sls.emergency is null or sls.emergency='0')") ;
+    	sql.append(" and coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef)!='").append(aLpu).append("'") ;
+    	sql.append(" and hdf.id is null and (hdf.numberfond is null or hdf.numberfond='')") ;
+    	sql.append(" and (hdf.istable3 is null or hdf.istable3='0')") ;
+    	sql.append(" and (hdf.istable2 is null or hdf.istable2='0')") ;
+    	sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
+    	sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
+    	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
+    	
+    	List<Object[]> list = theManager.createNativeQuery(sql.toString())
+    			.setMaxResults(70000).getResultList() ;
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	Element title_error = xmlDocError.newElement(root_error, "ZGLV", null);
+    	Element title_exist = xmlDocExist.newElement(root_exist, "ZGLV", null);
+    	xmlDoc.newElement(title, "VERSION", "1.0");
+    	xmlDoc.newElement(title, "DATA", aDateFrom);xmlDocExist.newElement(title_exist, "DATA", aDateFrom);xmlDocError.newElement(title_error, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	//int i=0 ;
+    	for (Object[] obj:list) {
+    		if (checkN2(obj)) {
+    			Element zap = xmlDoc.newElement(root, "NPR", null);
+    			recordN2(xmlDoc, zap, obj, false) ;
+    		} else {
+    			Element zapError = xmlDocError.newElement(root_error, "NPR", null);
+    			i_error.add(recordN2(xmlDocError, zapError, obj,true)) ;
+    			
+    		}
+    	}
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
+    	if (!i_exist.isEmpty()) {
+    		res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
+    		res.set4(i_exist) ;
+    		XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("exist_").append(filename).append(".xml").toString())) ;
+    	}
+    	if (!i_error.isEmpty()) {
+    		res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
+    		res.set5(i_error) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("error_").append(filename).append(".xml").toString())) ;
+    	}
+    	res.set1(filename+".xml") ;
+    	return res;
+    }
     public WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
@@ -996,8 +1326,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =config.get("data.dir.order263.out", null);
     	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
-    	File outFile = new File(workDir+"/"+filename+".xml") ;
     	WebQueryResult res = new WebQueryResult() ;
 
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -1084,15 +1414,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    	}
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
     	if (!i_exist.isEmpty()) {
-    		res.set2(filename+"_exist.xml") ;
+    		res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
     		res.set4(i_exist) ;
-    		XmlUtil.saveXmlDocument(xmlDocExist,new File(workDir+"/"+filename+"_exist.xml")) ;
+    		XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("/exist_").append(filename).append(".xml").toString())) ;
     	}
     	if (!i_error.isEmpty()) {
-    		res.set3(filename+"_error.xml") ;
+    		res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
     		res.set5(i_error) ;
-    		XmlUtil.saveXmlDocument(xmlDocError,new File(workDir+"/"+filename+"_error.xml")) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
     	return res;
@@ -1104,6 +1437,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =config.get("data.dir.order263.out", null);
+    	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
@@ -1127,11 +1462,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as oossmocode");
     	sql.append(" , ri.ogrn as ogrnSmo");
     	sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as okatoSmo");
-    	sql.append(" ,coalesce(p1.lastname,p.lastname) as lastname");
-    	sql.append(" ,coalesce(p1.firstname,p.firstname) as firstname");
-    	sql.append(" ,coalesce(p1.middlename,p.middlename) as middlename");
-    	sql.append(" ,coalesce(vs1.omcCode,vs.omcCode) as vsomccode");
-    	sql.append(" ,coalesce(to_char(p1.birthday,'yyyy-mm-dd'),to_char(p.birthday,'yyyy-mm-dd')) as birthday");
+    	sql.append(" ,p.lastname as lastname");
+    	sql.append(" ,p.firstname as firstname");
+    	sql.append(" ,p.middlename as middlename");
+    	sql.append(" ,vs.omcCode as vsomccode");
+    	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as birthday");
     	sql.append(" ,case when p.phone is null or p.phone='' then '*' else p.phone end as phonepatient");
     	sql.append(" ,mkb.code as mkbcode");
     	sql.append(" ,vbt.codeF as vbtcodef");
@@ -1150,12 +1485,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
     	sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
     	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
+    	sql.append(" left join mislpu olpu on olpu.id=sls.orderlpu_id");
+    	sql.append(" left join mislpu oplpu on oplpu.id=olpu.parent_id");
     	
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
     	sql.append(" left join Patient p on p.id=sls.patient_id");
-    	sql.append(" left join Patient p1 on p1.id=mp.patient_id");
     	sql.append(" left join VocSex vs on vs.id=p.sex_id");
-    	sql.append(" left join VocSex vs1 on vs1.id=p1.sex_id");
     	sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
     	sql.append(" left join diagnosis diag on diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4'");
     	sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
@@ -1165,8 +1500,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
     	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
     	sql.append(" and sls.deniedHospitalizating_id is null and (sls.emergency is null or sls.emergency='0') and slo.prevMedCase_id is null");
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')  and (sls.emergency is null or sls.emergency='0')") ;
     	sql.append(" and mkb.code is not null and (hdf.id is null)") ;
+    	sql.append(" and coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef)='").append(aLpu).append("'") ;
     	
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
@@ -1195,16 +1531,19 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		
 	    	}
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
     	if (!i_exist.isEmpty()) {
-    		res.set2(filename+"_exist.xml") ;
+    		res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
     		res.set4(i_exist) ;
-    		XmlUtil.saveXmlDocument(xmlDocExist,new File(workDir+"/"+filename+"_exist.xml")) ;
+    		XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("exist_").append(filename).append(".xml").toString())) ;
     	}
     	if (!i_error.isEmpty()) {
-    		res.set3(filename+"_error.xml") ;
+    		res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
     		res.set5(i_error) ;
-    		XmlUtil.saveXmlDocument(xmlDocError,new File(workDir+"/"+filename+"_error.xml")) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
     	return res;
@@ -1217,15 +1556,20 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =config.get("data.dir.order263.out", null);
+    	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	}
     	String filename = getTitleFile("3",aLpu,aPeriodByReestr,aNPackage) ; ;
     	
-    	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
+    	XmlDocument xmlDocError = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
+    	//int i=0 ;
+    	List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select to_char(sls.dateStart,'yyyy-mm-dd') as d0atestart");
     	sql.append(" ,cast(sls.entranceTime as varchar(5)) as e1ntrancetime");
@@ -1235,11 +1579,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as o5ossmocode");
     	sql.append(" , ri.ogrn as o6grnSmo");
     	sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as o7katoSmo");
-    	sql.append(" ,coalesce(p1.lastname,p.lastname) as l8astname");
-    	sql.append(" ,coalesce(p1.firstname,p.firstname) as f9irstname");
-    	sql.append(" ,coalesce(p1.middlename,p.middlename) as m10iddlename");
+    	sql.append(" ,p.lastname as l8astname");
+    	sql.append(" ,p.firstname as f9irstname");
+    	sql.append(" ,p.middlename as m10iddlename");
     	sql.append(" ,vs.omcCode as v11somccode");
-    	sql.append(" ,to_char(coalesce(p1.birthday,p.birthday),'yyyy-mm-dd') as b12irthday");
+    	sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as b12irthday");
     	sql.append(" ,vbt.codeF as v13btomccode");
     	sql.append(" ,ss.code as s14scode");
     	sql.append(" ,mkb.code as m15kbcode");
@@ -1259,7 +1603,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	
     	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
     	sql.append(" left join Patient p on p.id=sls.patient_id");
-    	sql.append(" left join Patient p1 on p1.id=mp.patient_id");
     	sql.append(" left join VocSex vs on vs.id=p.sex_id");
     	sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
     	sql.append(" left join diagnosis diag on diag.medcase_id=slo.id and diag.priority_id='1' and diag.registrationType_id = '4'");
@@ -1275,40 +1618,30 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
     	
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
-    			.setMaxResults(70000).getResultList() ;
+    			.setMaxResults(10000).getResultList() ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
     	xmlDoc.newElement(title, "VERSION", "1.0");
     	xmlDoc.newElement(title, "DATA", aDateFrom);
     	xmlDoc.newElement(title, "FILENAME", filename);
-    	int i=0 ;
     	for (Object[] obj:list) {
-    		Element zap = xmlDoc.newElement(root, "NPR", null);
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[16],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATE_1",obj[0],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"TIME_1",XmlUtil.formatTime(obj[1]),true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[2],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[3],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NPOLIS",obj[4],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO",obj[5],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OGRN",obj[6],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_OK",obj[7],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SMO_NAM",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FAM",obj[8],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"IM",obj[9],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"OT",obj[10],false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"W",obj[11],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DR",obj[12],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"USL_OK",obj[17],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DET",obj[18],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[13],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PODR",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NHISTORY",obj[14],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DS1",obj[15],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
+    		if (checkN3(obj)) {
+    			Element zap = xmlDoc.newElement(root, "NPR", null);
+    			recordN3(xmlDoc, zap, obj, false) ;
+	    	} else {
+	    		Element zapError = xmlDocError.newElement(root_error, "NPR", null);
+	    		i_error.add(recordN3(xmlDocError, zapError, obj,true)) ;
+	    	}
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
     	res.set1(filename+".xml") ;
+    	
+    	if (!i_error.isEmpty()) {
+    		res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
+    		res.set5(i_error) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
+    	}
     	return res;
     }
     
@@ -1318,13 +1651,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =config.get("data.dir.order263.out", null);
+    	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	}
     	String filename = getTitleFile("4",aLpu,aPeriodByReestr,aNPackage) ; ;
     	
-    	File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
@@ -1358,7 +1692,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PRNPR",obj[3],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
     	return filename+".xml";
     }
     public String exportN4b(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
@@ -1448,13 +1783,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =config.get("data.dir.order263.out", null);
+    	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	}
     	String filename = getTitleFile("5",aLpu,aPeriodByReestr,aNPackage) ;
     	
-    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	//File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
@@ -1534,7 +1871,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NHISTORY",obj[19],true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"REFREASON",null,false,"") ;
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
     	return filename+".xml";
     }
     public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
@@ -1543,13 +1881,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =config.get("data.dir.order263.out", null);
+    	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	}
     	String filename = getTitleFile("6",aLpu,aPeriodByReestr,aNPackage) ;
     	
-    	File outFile = new File(workDir+"/"+filename+".xml") ;
+    	//File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
@@ -1606,7 +1946,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         		XmlUtil.recordElementInDocumentXml(xmlDoc,obsmo,"SMOKD",0,true,"") ;
     		}*/
     	}
-    	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
     	return filename+".xml";
     }
     public void createNewDiary(String aTitle, String aText, String aUsername) {

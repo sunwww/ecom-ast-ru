@@ -21,7 +21,12 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+    public void finishMonitor(long aMonitorId) ;
+    public void startMonitor(long aMonitorId) ;
+    public void addMonitor(long aMonitorId, int aInt) ;
+
 	public String getDischargeEpicrisis(long aMedCaseId) ;
+	public String importFileDataFond(long aMonitorId, String aFilename) throws Exception ;
 	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) ;
 	public String importDataFondForDBF(long aMonitorId) ;
 	public void refreshReportByPeriod(String aEntranceDate,String aDischargeDate,long aIdMonitor) ;
@@ -38,6 +43,8 @@ public interface IHospitalMedCaseService {
 	public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) throws ParserConfigurationException, TransformerException;
 	public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage)  throws ParserConfigurationException, TransformerException;
 	public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage)  throws ParserConfigurationException, TransformerException;
+	public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    		throws ParserConfigurationException, TransformerException ;
 	public void createNewDiary(String aTitle, String aText, String aUsername) ;
 	public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) ;
 	public void removeDataFromParameterConfig(Long aDepartment, String aIds) ;
