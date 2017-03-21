@@ -74,7 +74,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder sql = new StringBuilder() ;
     	List<Object[]> listPat = null;
     	String[][] props  = new String[][] {
-    				{"to_char(p.birthday,'MM')","PERIOD","p.birthday","1","Месяц планируемого проведения ДД"}
+    				{"ltrim(to_char(p.birthday,'MM'),'0')","PERIOD","p.birthday","1","Месяц планируемого проведения ДД"}
     		//	,{"case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int) - cast(to_char(p.birthday,'yyyy') as int))%3 = 0 then 'DP' else 'DO' end","TIP_DATA","p.firstname","1","Тип осмотра"}
     			,{" cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'), 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end)","TIP_DATA","","1","Возраст (полных лет)"}
         			,		{"p.lastname","FAM","p.lastname","1","Фамилия"},				{"p.firstname","IM","p.firstname","1","Имя"}

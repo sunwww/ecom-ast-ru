@@ -565,24 +565,34 @@ function recordDateWithDots(aDate,aKey) {
 function recordFullDate(aDate,aKey){
 	
 	var FORMAT_0 = new java.text.SimpleDateFormat("dd") ;
-	var date = aDate==null?"":"\""+FORMAT_0.format(aDate)+"\"";
+	var date = aDate==null?"":FORMAT_0.format(aDate);
 	
 	FORMAT_0 = new java.text.SimpleDateFormat("MM");
 	var date2 = aDate==null?"":""+FORMAT_0.format(aDate);
 	var countMounth = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+	var namesDays = ["","первое","второе","третье","четвертое","пятое","шестое","седьмое","восьмое","девятое","десятое","одиннадцатое","двенадцатое",
+	                     "тринадцатое","четырнадцатое","пятнадцатое","шестнадцатое","семьнадцатое","восемьнадцатое","девятнадцатое","двадцатое","двадцать первое","двадцать второе"
+	                     ,"двадцать третье","двадцать четвертое","двадцать пятое","двадцать шестое","двадцать седьмое","двадцать восьмое","двадцать девятое","тридцатое","тридцать первое","тридцать второе"];
 	var namesMounths = ["января", "февраля", "марта", "апреля","мая","июня","июля","авгусат","сентября","октября","ноября","декабря"];
 
+	var fullDate = "";
+	fullDate+=""+namesDays[(+date)];
+	date=date!=""?"\""+date+"\"":"";
 	for(var i=0;i<12;i++){
 		if(countMounth[i]==date2){
 			date+=" "+namesMounths[i];
+			fullDate+=" "+namesMounths[i];
 			break;
 		}
 	}
+	
 	FORMAT_0 = new java.text.SimpleDateFormat("yyyy");
 	date += aDate==null?"":" "+FORMAT_0.format(aDate);
+	fullDate += aDate==null?"":" "+FORMAT_0.format(aDate);
 	
-	//throw "throw: "+date+" "+date.length;
+	//throw "throw: "+fullDate+" "+date.length+" key = "+aKey;
 	recordChar(date,date.length,aKey);
+	recordChar(fullDate,date.length,aKey+"Full");
 }
 /**
  * Список DisabilityCase по пациенту

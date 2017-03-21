@@ -1,5 +1,7 @@
 package ru.ecom.poly.ejb.form.interceptors;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -7,6 +9,8 @@ import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.form.medcase.VisitProtocolForm;
 
 public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 
@@ -21,6 +25,15 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
    	    				);
    		 }
    	 }
+		String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
+    	VisitProtocolForm form = (VisitProtocolForm )aForm;
+    	List<WorkFunction> listwf =  aContext.getEntityManager().createQuery("from WorkFunction where secUser.login = :login")
+		.setParameter("login", username).getResultList() ;
+		if (listwf.size()==0) {
+			
+		} else {
+			form.setSpecialist(listwf.get(0).getId()) ;
+		}
 		//MedcardForm form = (MedcardForm) aForm ;
 		//String next = EjbInjection.getInstance().getLocalService(ISequenceService.class).startUseNextValue("medcard");
 		//form.setNumber(next);

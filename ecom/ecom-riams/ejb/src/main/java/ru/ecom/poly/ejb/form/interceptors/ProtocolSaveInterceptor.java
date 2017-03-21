@@ -27,7 +27,7 @@ public class ProtocolSaveInterceptor implements IFormInterceptor {
 		.setParameter("login", username).getResultList() ;
 		if (listwf.size()==0) {
 			throw new IllegalArgumentException(
-					"Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)"
+					"Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между рабочей функцией и пользователем (WorkFunction и SecUser)"
 					);
 		} else {
 			protocol.setSpecialist(listwf.get(0)) ;

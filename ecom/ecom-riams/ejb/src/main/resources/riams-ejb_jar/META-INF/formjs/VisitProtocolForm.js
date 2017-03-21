@@ -65,7 +65,37 @@ function onCreate(aForm, aEntity, aCtx) {
 	if (aForm.getParams()!=null&&aForm.getParams()!="") {
 	Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
 	}	
-
+	createServiceMedCase(aForm, aEntity, aCtx);
+	
+}
+function createServiceMedCase(aForm, aEntity, aCtx) {
+	if (aForm.medService!==null&&+aForm.medService>0) {
+		var smc = null;
+		if (aEntity.serviceMedCase!=null) {
+		//	throw "ggod:";
+			smc = aEntity.getServiceMedCase();
+		} else {
+			smc = new Packages.ru.ecom.mis.ejb.domain.medcase.ServiceMedCase() ;
+		}
+	//throw "spec = "+aEntity.specialist;
+	//username, createdate, noactuality,parent_id, patient_id,workfunctionexecute_id, medservice_id , createtime,
+	var medService =  aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService, aForm.medService) ;
+		smc.setMedService(medService)
+		smc.setParent(aEntity.medCase);
+	smc.setPatient(aEntity.medCase.patient);
+	smc.setDateStart(aEntity.dateRegistration);
+	smc.setTimeExecute(aEntity.timeRegistration);
+	smc.setWorkFunctionExecute(aEntity.specialist);
+	smc.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+	aCtx.manager.persist(smc);
+	aEntity.serviceMedCase = smc;
+	
+	} else if (aEntity.serviceMedCase!=null) { //Если услуга пустая, а сервисмедкейс есть, удаляем сервис медкейс
+		var smc = aEntity.getServiceMedCase();
+		aEntity.serviceMedCase = null;
+		aCtx.manager.persist(aEntity);
+		aCtx.manager.remove(smc); 
+	}
 }
 function onPreSave(aForm,aEntity, aCtx) {
 	check(aForm,aCtx) ;
@@ -98,6 +128,7 @@ function onSave(aForm, aEntity, aCtx) {
 		var text = Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
 //	throw ""+text;
 	}
+	createServiceMedCase(aForm, aEntity, aCtx);
 }
 function check(aForm,aCtx) {
 	

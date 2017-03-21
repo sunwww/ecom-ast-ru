@@ -84,6 +84,7 @@ import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+import sun.awt.windows.ThemeReader;
 
 
 @Stateless
@@ -127,11 +128,16 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        	if(expansions[1].equals("xml"))
 	        	{
 	        		sout(1,"Файл "+fileName+" - верный формат" );
-	        		sout(1,"baracode: "+ReadXML(xmlDirectory+fileName).get(0).getBarcode());
-	        		sout(1,"Code: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getCode());
-	        		sout(1,"Value: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getValue());
+	        		List<ParsedPdfInfo> l = ReadXML(xmlDirectory+fileName);
+	        		if (!l.isEmpty()) {
+	        			ParsedPdfInfo p = l.get(0);
+	        			sout(1,"baracode: "+p.getBarcode());
+		        		sout(1,"Code: "+(p.getResults()!=null&&!p.getResults().isEmpty()?p.getResults().get(0).getCode():"Нет кода"));
+		        		sout(1,"Value: "+(p.getResults()!=null&&!p.getResults().isEmpty()?p.getResults().get(0).getValue():"Нет значения"));
+	        		}
 	        		
-	        		setDefaultDiaryCycle(ReadXML(xmlDirectory+fileName));
+	        		
+	        		setDefaultDiaryCycle(l);
 	        		moveFile(xmlDirectory,xmlArchDirectory,fileName);
 	        	}
         	}
@@ -701,6 +707,7 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			aWorkFunctionId = ConvertSql.parseLong(wf.get(0)) ;
 		}
 		System.out.println("=== DEBUG noMedCase");
+		
 		if (list.isEmpty()) return null ;
 		Object[] objs = list.get(0) ;
 		Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;
