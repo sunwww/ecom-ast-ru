@@ -49,6 +49,10 @@
 			<param name="class" value="ru.ecom.mis.web.dwr.extdisp.AppointmentServiceJs"/>
 		</create>
 		
+		<create creator="new" javascript="CalculateService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.calculator.CalculateServiceJs"/>
+		</create>
+		
     </allow>
 
     <signatures>
