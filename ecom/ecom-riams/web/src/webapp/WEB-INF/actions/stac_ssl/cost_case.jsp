@@ -152,7 +152,12 @@ where slo.parent_id='${param.id}'
       <ecom:webQuery name="list1" nativeSql="
       select
       d.id,to_char(d.dateRegistration,'dd.mm.yyyy'),vwf.name||' '||wp.lastname as sloinfo
+      ,pp.code||' '||pp.name as ppname
+      ,pp.cost as ppcost
       from Diary d
+      left join medcase smc on smc.id=d.servicemedcase_id
+      left join pricemedservice pms on pms.medservice_id=smc.medservice_id
+      left join priceposition pp on pp.id=pms.priceposition_id 
       left join workfunction wf on wf.id=d.specialist_id
       left join vocworkfunction vwf on vwf.id=wf.workfunction_id
       left join worker w on w.id=wf.worker_id
@@ -160,6 +165,7 @@ where slo.parent_id='${param.id}'
       left join medcase slo on slo.id=d.medcase_id
       where
       (slo.parent_id='${param.id}' and upper(slo.dtype)='DEPARTMENTMEDCASE' and w.lpu_id!=slo.department_id or slo.id='${param.id}')
+      and (pp.pricelist_id='${priceList}' or d.servicemedcase_id is null)
        
       "/>
 
@@ -168,6 +174,8 @@ where slo.parent_id='${param.id}'
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="Дата" property="2" />
       <msh:tableColumn columnName="Специалист" property="3" />
+      <msh:tableColumn columnName="Услуга" property="4" />
+      <msh:tableColumn columnName="Сумма" property="5" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
   </msh:section>
@@ -402,9 +410,9 @@ select
       "/>
     <msh:table name="listA" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
-      <msh:tableColumn columnName="Наименование услуги" property="1" />
-      <msh:tableColumn columnName="Кол-во" property="2" />
-      <msh:tableColumn columnName="Цена" property="3" />
+      <msh:tableColumn columnName="Операция" property="2" />
+      <msh:tableColumn columnName="Наименование услуги" property="3" />
+      <msh:tableColumn columnName="Цена" property="4" />
       <msh:tableColumn columnName="Сумма" property="4" isCalcAmount="true" />
     </msh:table>
   </msh:sectionContent>
