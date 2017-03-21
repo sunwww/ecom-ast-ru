@@ -71,9 +71,9 @@ public JSONObject makeKKMEmptyJson () {
 	try {
 		JSONObject root = new JSONObject();
 		//root.put("function", "");
-		root.put("totalPaymentSum", 0) ;
-		root.put("totalTaxSum", 0) ;
-		root.put("totalRefundSum", 0) ;
+	//	root.put("totalPaymentSum", 0) ;
+	//	root.put("totalTaxSum", 0) ;
+	//	root.put("totalRefundSum", 0) ;
 		//JSONObject par = new JSONObject();
 		return root;
 	} catch (Exception e) {
