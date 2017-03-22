@@ -37,15 +37,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.FilteredTextRenderListener;
-import com.itextpdf.text.pdf.parser.LocationTextExtractionStrategy;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
-import com.itextpdf.text.pdf.parser.RegionTextRenderFilter;
-import com.itextpdf.text.pdf.parser.RenderFilter;
-import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
-
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
@@ -56,7 +47,6 @@ import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfoResult;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.query.WebQueryServiceBean;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
@@ -258,10 +248,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		sout(1,"Start setDefaultDiary");
 		//ParsedPdfInfo parsedPdfInfo = doObject();
 		if (parsedPdfInfo!=null&&parsedPdfInfo.getBarcode()!=null&&!parsedPdfInfo.getBarcode().trim().equals("")) {
-			
-		
-		WebQueryServiceBean  service = new WebQueryServiceBean() ;
-		
+				
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
 		StringBuilder sql = new StringBuilder() ;
