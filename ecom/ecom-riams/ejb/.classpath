@@ -43,7 +43,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ecom-riams-ejb"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/itext"/>
-	<classpathentry kind="lib" path="/home/user/opt/lib/itext/itextpdf-5.5.10.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
