@@ -258,9 +258,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
     	IMonitor monitor = null;
     	try {
-    		monitor = theMonitorService.getMonitor(aMonitorId);
-    		monitor.advice(20) ;
+    		System.out.println("start importDataFond");
     		
+    		monitor = theMonitorService.startMonitor(aMonitorId, "ImportFondMonitor", aList.size());
+    		monitor.advice(20) ;
+    		System.out.println("start importDataFond");
     		int size = aList.size()/80 ;
     		
     		for (int i=0;i<aList.size();i++) {
@@ -390,15 +392,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     				//	}
     				//}
     			}
-    			if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
+    			if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(i+" ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
     			if(size>0&&i%size==0) monitor.advice(1);
     			
     			if (i % 300 == 0) {
     				monitor.setText("Импортировано " + i);
     			}
     		}
-    		//monitor.finish("");
+    		System.out.println("==== Закончили импорт!");
+    		monitor.finish("");
     	} catch (Exception e) {
+    		e.printStackTrace();
     		if(monitor!=null) monitor.setText(e+"");
     		throw new IllegalStateException(e) ;
     	}
@@ -679,6 +683,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		}
     		monitor.finish("");
     	} catch (Exception e) {
+    		e.printStackTrace();
     		if(monitor!=null) monitor.setText(e+"");
     		throw new IllegalStateException(e) ;
     	}
