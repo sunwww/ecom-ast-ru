@@ -13,11 +13,14 @@ import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
 import ru.ecom.poly.ejb.domain.voc.VocTypeProtocol;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,6 +40,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 public class Protocol extends Diary {
 
+	/** Медицинская услуга */
+	@Comment("Медицинская услуга")
+	@OneToOne
+	public ServiceMedCase getServiceMedCase() {return theServiceMedCase;}
+	public void setServiceMedCase(ServiceMedCase aServiceMedCase) {theServiceMedCase = aServiceMedCase;}
+	/** Медицинская услуга */
+	private ServiceMedCase theServiceMedCase;
+	
 	/** Шаблон, на основе которого создано заключение */
 	@Comment("Шаблон, на основе которого создано заключение")
 	public Long getTemplateProtocol() {return theTemplateProtocol;}

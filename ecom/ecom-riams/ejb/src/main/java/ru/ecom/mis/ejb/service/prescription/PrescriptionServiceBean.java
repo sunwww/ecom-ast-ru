@@ -1,10 +1,8 @@
 package ru.ecom.mis.ejb.service.prescription;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -37,26 +35,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.FilteredTextRenderListener;
-import com.itextpdf.text.pdf.parser.LocationTextExtractionStrategy;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
-import com.itextpdf.text.pdf.parser.RegionTextRenderFilter;
-import com.itextpdf.text.pdf.parser.RenderFilter;
-import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
-
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfoResult;
-//import ru.ecom.diary.ejb.service.protocol.PrescriptionServiceBean;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.query.WebQueryServiceBean;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
@@ -127,11 +114,16 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        	if(expansions[1].equals("xml"))
 	        	{
 	        		sout(1,"Файл "+fileName+" - верный формат" );
-	        		sout(1,"baracode: "+ReadXML(xmlDirectory+fileName).get(0).getBarcode());
-	        		sout(1,"Code: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getCode());
-	        		sout(1,"Value: "+ReadXML(xmlDirectory+fileName).get(0).getResults().get(0).getValue());
+	        		List<ParsedPdfInfo> l = ReadXML(xmlDirectory+fileName);
+	        		if (!l.isEmpty()) {
+	        			ParsedPdfInfo p = l.get(0);
+	        			sout(1,"baracode: "+p.getBarcode());
+		        		sout(1,"Code: "+(p.getResults()!=null&&!p.getResults().isEmpty()?p.getResults().get(0).getCode():"Нет кода"));
+		        		sout(1,"Value: "+(p.getResults()!=null&&!p.getResults().isEmpty()?p.getResults().get(0).getValue():"Нет значения"));
+	        		}
 	        		
-	        		setDefaultDiaryCycle(ReadXML(xmlDirectory+fileName));
+	        		
+	        		setDefaultDiaryCycle(l);
 	        		moveFile(xmlDirectory,xmlArchDirectory,fileName);
 	        	}
         	}
@@ -258,9 +250,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		sout(1,"Start setDefaultDiary");
 		//ParsedPdfInfo parsedPdfInfo = doObject();
 		if (parsedPdfInfo!=null&&parsedPdfInfo.getBarcode()!=null&&!parsedPdfInfo.getBarcode().trim().equals("")) {
-			
-		
-		WebQueryServiceBean  service = new WebQueryServiceBean() ;
 		
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
@@ -701,6 +690,7 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			aWorkFunctionId = ConvertSql.parseLong(wf.get(0)) ;
 		}
 		System.out.println("=== DEBUG noMedCase");
+		
 		if (list.isEmpty()) return null ;
 		Object[] objs = list.get(0) ;
 		Prescription pres = theManager.find(Prescription.class, aPrescriptId) ;

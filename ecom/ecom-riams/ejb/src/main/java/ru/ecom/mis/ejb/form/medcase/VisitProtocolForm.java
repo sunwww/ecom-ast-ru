@@ -1,17 +1,13 @@
 package ru.ecom.mis.ejb.form.medcase;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageState;
-import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
+import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
+import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentViewInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolPreCreateInterceptor;
-import ru.ecom.poly.ejb.form.interceptors.ProtocolSaveInterceptor;
+import ru.ecom.poly.ejb.form.interceptors.ProtocolViewInterceptor;
 import ru.ecom.poly.ejb.form.protocol.ProtocolForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -43,11 +39,21 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)
 )
 */
+@AViewInterceptors (
+		@AEntityFormInterceptor(ProtocolViewInterceptor.class)
+)
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ProtocolPreCreateInterceptor.class)
 )
 public class VisitProtocolForm extends ProtocolForm {
 	
+	/** Медицинская услуга */
+	@Comment("Медицинская услуга")
+	public Long getMedService() {return theMedService;}
+	public void setMedService(Long aMedService) {theMedService = aMedService;}
+	/** Медицинская услуга */
+	private Long theMedService;
+
 	/** Шаблон, на основе которого создано заключение */
 	@Comment("Шаблон, на основе которого создано заключение")
 	@Persist

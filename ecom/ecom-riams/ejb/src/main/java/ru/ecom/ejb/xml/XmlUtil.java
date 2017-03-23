@@ -35,6 +35,7 @@ public class XmlUtil {
 	public static void saveXmlDocument(XmlDocument aXmlDocument,File aOutFile) throws TransformerFactoryConfigurationError, TransformerException {
 		Transformer tr = TransformerFactory.newInstance().newTransformer() ;
 		tr.setOutputProperty(OutputKeys.ENCODING, "cp1251") ;
+		tr.setOutputProperty(OutputKeys.INDENT,"yes");
 		StreamResult sr = new StreamResult(aOutFile) ;
 		tr.transform(new DOMSource(aXmlDocument.getDocument()), sr) ;
 	}

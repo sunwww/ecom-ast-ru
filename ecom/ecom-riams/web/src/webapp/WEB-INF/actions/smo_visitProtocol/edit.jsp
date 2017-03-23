@@ -60,6 +60,9 @@
                 		<msh:autoComplete property="state" fieldColSpan="3" label="Состояние больного" horizontalFill="true"
                 		vocName="vocPhoneMessageState"/>
 	                </msh:row>
+	                <msh:row>
+	                <msh:autoComplete property="medService" fieldColSpan="3" horizontalFill="true" vocName="medServiceForSpec"/>
+	                </msh:row>
                 <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
                 <msh:row>
                     <td colspan="3" align="right">
@@ -196,12 +199,12 @@
     	}
     }
     isEditable($('id').value);
-    
     </script>
     </msh:ifFormTypeIsNotView>
     </msh:ifFormTypeAreViewOrEdit>
     </msh:ifFormTypeIsNotView>
     <script type="text/javascript">
+
     function printProtocol() {
     	HospitalMedCaseService.getPrefixByProtocol(${param.id},
     		{
@@ -218,6 +221,13 @@
     </script>
     	<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
     	<script type="text/javascript">
+
+        function setMedServiceParent() {
+        	medServiceAutocomplete.setParentId($('specialist').value+"#"+$('dateRegistration').value);
+        }
+        eventutil.addEventListener($('dateRegistration'),"change", function (){alert ("test");setMedServiceParent();});
+        setMedServiceParent();
+        
     	var isChangeSizeEpicrisis=1 ;
 		function changeSizeEpicrisis() {
 			if (isChangeSizeEpicrisis==1) {

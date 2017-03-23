@@ -182,14 +182,14 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 			map.put("served.fio",null) ;
 		} else {
 			map.put("customer1.fio",null) ;
-			map.put("customer2.fio",obj[1]) ;
-			map.put("served.fio",obj[2]) ;
+			map.put("customer2.fio",obj[2]) ;
+			map.put("served.fio",obj[1]) ;
 			servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
 		}
 		customerPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[4])) ;
 		map.put("customerPerson",customerPerson) ;
 		map.put("servedPerson",servedPerson) ;
-		//throw ""+obj[4] ;
+		//throw ""+obj[4] ;l
 		map.put("customer.addressRegistration",customerPerson.addressRegistration) ;
 		map.put("customer.passportInfo",getPassportInfo(customerPerson.passportType
 				,customerPerson.passportSeries,customerPerson.passportNumber
