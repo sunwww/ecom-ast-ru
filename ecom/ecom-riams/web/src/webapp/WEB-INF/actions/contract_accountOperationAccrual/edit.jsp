@@ -146,23 +146,22 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			var createType=0 ;
 			var oldaction = "";
 			function makeKKMPaymentOrRefund(aFunction) {
-				ContractService.sendKKMRequest(aFunction, $('account').value,$('discount').value, {
+				ContractService.sendKKMRequest(aFunction, $('account').value,$('discount').value
+						, {
 					callback: function (a) {
 						if (a!=null&&a!="") {
 							alert (""+a);
 						}
 						if (aFunction=="makePayment") {
-							alert ("pay");
-							document.forms['contract_accountOperationAccrualForm'].action=oldaction ;
-							document.forms['contract_accountOperationAccrualForm'].submit();
-						}else {
-							alert ("ref");
-							window.location = "js-contract_medContract-issueRefund.do?id=${param.id}";
-						}
-						
-						
+					document.forms['contract_accountOperationAccrualForm'].action=oldaction ;
+					document.forms['contract_accountOperationAccrualForm'].submit();
+				}else {
+					window.location = "js-contract_medContract-issueRefund.do?id=${param.id}";
+				}		
 					}
-				});
+				}
+				);
+				
 				
 			}
 			

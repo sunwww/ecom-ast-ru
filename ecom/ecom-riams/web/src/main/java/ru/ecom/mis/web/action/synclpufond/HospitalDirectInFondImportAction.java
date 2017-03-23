@@ -139,11 +139,11 @@ public class HospitalDirectInFondImportAction extends BaseAction {
         final String fileErrorF= filenameError!=null?filenameError:"" ;
         
         final long monitorId = monitorService.createMonitor() ;
-    	final String typeId = type ;
+        final String typeId = type ;
     	if (!list.isEmpty()&&(typeImport.equals("1")||typeImport.equals("2"))) {
         new Thread() {
             public void run() {
-            	System.out.println("typeId-------------"+typeId) ;
+            	System.out.println(" importDataFond typeId-------------"+typeId+"<>monitorId="+monitorId+"<>list="+list.size()) ;
             	service.importDataFond(monitorId,typeId, list) ;
             	
             }

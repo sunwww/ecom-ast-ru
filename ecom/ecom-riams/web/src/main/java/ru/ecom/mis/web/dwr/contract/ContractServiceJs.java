@@ -37,6 +37,7 @@ private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throw
 		Collection<WebQueryResult> l = service.executeNativeSql("select keyvalue from  softconfig where key='KKM_WEB_SERVER'");
 		if (!l.isEmpty()) {
 			String address = l.iterator().next().get1().toString();
+			System.out.println("===Send to KKM. Data = "+data);
 			System.out.println("KKM_server = "+address);
 			//method by milamesher 15.03.2017
 			//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
@@ -91,7 +92,7 @@ public String printKKMReport(String aType, HttpServletRequest aRequest) {
 			if (root!=null) {
 				root.put("function", "print"+aType+"Report");
 				makeHttpPostRequest(root.toString(),aRequest);
-				return root.toString()+"<>"+ aType+" отчет успешно отправлен на печать";
+				return  aType+" отчет успешно отправлен на печать";
 			}
 		}
 		catch (Exception e) {
@@ -144,7 +145,7 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 		List<Object[]> l = service.executeNativeSqlGetObj(sb.toString());
 		//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 		if (!l.isEmpty()) {
-			System.out.println("not empty");
+		//	System.out.println("not empty");
 			Double totalSum = 0.00;
 			Double taxSum = 0.00;
 			JSONObject root = new JSONObject();
@@ -164,8 +165,11 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 				record.put("sum", r[5].toString());
 			//	record.put("price", 0);
 			//	record.put("sum", 0);
-				record.put("taxName", r[6]!=null?r[6]:"");
-				record.put("taxSum", r[7]!=null?r[7].toString():"");
+				if (r[6]!=null&&!(""+r[6]).equals("")) {
+					record.put("taxName", "");
+					record.put("taxSum", r[7]!=null?r[7].toString():"");
+				}
+				
 				
 				arr.put(record);
 			}
@@ -174,12 +178,15 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 			} else {
 				
 				root.put("pos", arr) ;
-				root.put("totalPaymentSum", totalSum) ;
-				root.put("totalTaxSum", new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+				root.put("totalPaymentSum", ""+totalSum+"") ;
+				if (taxSum>0) {
+					root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()+"") ;
+				}
+				
 				
 			}
 			makeHttpPostRequest(root.toString(), aRequest);
-			return root.toString()+"Чек отправлен на печать";
+			return "Чек отправлен на печать";
 		} else {
 			return "Произошла ошибка, обратитесь к программистам";
 		}

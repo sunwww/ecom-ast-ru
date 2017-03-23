@@ -188,6 +188,33 @@
         </msh:section>
         --%>
       </msh:ifInRole>
+      
+     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/View">
+          <ecom:webQuery name="hitechCases" nameFldSql="hitechCases_sql" nativeSql="select himc.id
+          ,to_char(himc.ticketDate,'dd.mm.yyyy') as f2_ticketDate
+          ,to_char(himc.planHospDate,'dd.mm.yyyy') as f3_planHospDate
+          ,vkhc.code ||' '||vkhc.name as f4_kind
+          ,vmhc.code ||' '||vmhc.name as f5_method
+          from medcase slo
+          left join HitechMedicalCase himc on  himc.medCase_id = slo.id
+          left join vocKindHighCare vkhc on vkhc.id=coalesce(himc.kind_id, slo.kindhighcare_id)
+          left join vocMethodHighCare vmhc on vmhc.id=coalesce(himc.method_id, slo.methodhighcare_id)
+          where  
+          slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase' and vkhc.id is not null
+          order by himc.ticketDate
+          "/>
+	    <msh:section title="Случаи ВМП (включая случаи в СЛО) ">
+	    	<msh:table
+	    	editUrl="entityParentEdit-stac_vmpCase.do"  
+	    	name="hitechCases" action="entityParentView-stac_vmpCase.do" idField="1">
+	    		<msh:tableColumn columnName="#" property="sn"/>
+	    		<msh:tableColumn columnName="Дата направления" property="2"/>
+	    		<msh:tableColumn columnName="Дата предварительной госпитализации" property="3"/>
+	    		<msh:tableColumn columnName="Вид" property="4"/>
+	    		<msh:tableColumn columnName="Метод" property="5"/>
+	    	</msh:table>
+	    </msh:section>
+    </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" guid="4cc62e2b-bf2a-4839-8bab-481886e8e721">
          <ecom:webQuery name="diags" nativeSql="
          select Diagnosis.id as did, VocDiagnosisRegistrationType.name as vdrtname
