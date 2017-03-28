@@ -145,8 +145,9 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 		<script type="text/javascript">
 			var createType=0 ;
 			var oldaction = "";
+			
 			function makeKKMPaymentOrRefund(aFunction) {
-				ContractService.sendKKMRequest(aFunction, $('account').value,$('discount').value
+				ContractService.sendKKMRequest(aFunction, $('account').value,$('discount').value, $('isPaymentTerminal').checked
 						, {
 					callback: function (a) {
 						if (a!=null&&a!="") {
