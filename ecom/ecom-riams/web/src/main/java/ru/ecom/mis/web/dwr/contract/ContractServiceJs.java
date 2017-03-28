@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.xhtml.a;
+import org.apache.log4j.Logger;
 import org.json.JSONArray; 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,19 +27,23 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.util.Injection; 
+
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+
 public class ContractServiceJs {
 	
-	
+	public static Logger log = Logger.getLogger(ContractServiceJs.class);
 	
 private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws IOException, NamingException {
 	
+		log.info("===Send to KKM. Data = "+data);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select keyvalue from  softconfig where key='KKM_WEB_SERVER'");
 		if (!l.isEmpty()) {
 			String address = l.iterator().next().get1().toString();
-			System.out.println("===Send to KKM. Data = "+data);
-			System.out.println("KKM_server = "+address);
+			
+			log.info("KKM_server = "+address);
 			//method by milamesher 15.03.2017
 			//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
 			URL url = new URL(address); 
@@ -60,6 +65,8 @@ private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throw
 		 //   }
 		    br.close();
 		    connection.disconnect();
+		} else {
+			log.error("Нет настройки 'KKM_WEB_SERVER', работа с ККМ невозможна");
 		}
 		
 	}
@@ -107,12 +114,12 @@ public String printKKMReport(String aType, HttpServletRequest aRequest) {
 //method by milamesher 15.03.2017
 //отправляет на принтер команду возврата (пока 3 копейки, чтобы продемонстрировать отказ возврата)
 
-public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, HttpServletRequest aRequest) throws JspException {
+public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, HttpServletRequest aRequest) throws JspException {
 	if (RolesHelper.checkRoles(" /Policy/Config/KKMWork", aRequest)) {
 	if (aFunction!=null &&aFunction.equals("makePayment")) {
-		return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, aRequest);
+		return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aRequest);
 	} else if (aFunction!=null&&aFunction.equals("makeRefund")) {
-		return makeKKMPaymentOrRefund(aAccountId, aDiscont, true,aRequest);
+		return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment, aRequest);
 	} else if (aFunction!=null&&aFunction.equals("printZReport")){
 		return printKKMReport("Z", aRequest);
 	} else if (aFunction!=null&&aFunction.equals("printXReport")){
@@ -123,13 +130,13 @@ public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont,
 		return "Нет прав для работы с ККМ";
 	}
 }
-public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,HttpServletRequest aRequest) {
+public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, HttpServletRequest aRequest) {
 	try {		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String discontSql = "cams.cost";
 		if (aDiscont!=null&&!aDiscont.equals("")) {
-			System.out.println("=== Send KKM, discont = "+aDiscont);
+			log.info("=== Send KKM, discont = "+aDiscont);
 			discontSql = "round(cams.cost*(100-"+aDiscont+")/100,2)";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -169,14 +176,12 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 					record.put("taxName", "");
 					record.put("taxSum", r[7]!=null?r[7].toString():"");
 				}
-				
-				
 				arr.put(record);
 			}
 			if (isRefund) {
 				root.put("totalRefundSum", totalSum) ;
 			} else {
-				
+				root.put("isTerminalPayment", isTerminalPayment);
 				root.put("pos", arr) ;
 				root.put("totalPaymentSum", ""+totalSum+"") ;
 				if (taxSum>0) {
