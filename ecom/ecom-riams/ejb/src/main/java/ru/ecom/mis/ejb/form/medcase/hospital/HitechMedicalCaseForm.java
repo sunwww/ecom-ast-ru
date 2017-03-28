@@ -16,6 +16,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 
 @Comment("Случай оказания ВМП")
@@ -40,7 +41,7 @@ public class HitechMedicalCaseForm extends IdEntityForm{
 	
 	/** Вид ВМП */
 	@Comment("Вид ВМП")
-	@Persist
+	@Persist @Required
 	public Long  getKind() {return theKind;}
 	public void setKind(Long  aKind) {theKind = aKind;}
 	/** Вид ВМП */
@@ -48,7 +49,7 @@ public class HitechMedicalCaseForm extends IdEntityForm{
 	
 	/** Метод ВМП */
 	@Comment("Метод ВМП")
-	@Persist
+	@Persist @Required
 	public Long  getMethod() {return theMethod;}
 	public void setMethod(Long  aMethod) {theMethod = aMethod;}
 	/** Метод ВМП */
