@@ -76,6 +76,10 @@
         <msh:row guid="f2aba5-68fb-4ccc-9982-7b44a147">
           <msh:autoComplete vocName="vocHospType" property="sourceHospType" label="Тип направившего ЛПУ" fieldColSpan="3" horizontalFill="true" guid="1064-23b2-42c0-ba47-65847816c" />
         </msh:row>
+         <msh:row guid="544d70a3-19bf-4793-af89-fc135837">
+          <msh:textField property="orderNumber" label="№ напр" guid="51e5754c-2356-4ef6-91b2-9634893cc329" />
+          <msh:textField property="orderDate" label="Дата" guid="3e74c0ff-d603-4923-b207-b4ce0d665841" />
+        </msh:row>
         <msh:row guid="36c67c6c-b817-4863-835d-0c37bcc96d19">
           <msh:autoComplete property="orderMkb" label="Код МКБ направителя" guid="d956d424-ffa2-4874-ae98-7a26fcc6a49d" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
