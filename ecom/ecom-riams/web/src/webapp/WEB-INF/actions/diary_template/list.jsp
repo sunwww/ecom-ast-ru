@@ -53,15 +53,11 @@
     	<msh:section listUrl="entityList-voc_documentParameter.do" title="Параметры для внешней лаборатории">
     	</msh:section>
     </msh:ifInRole>
-    
-    
-    <ecom:loginName/>
+ 
     <%
     String username = LoginInfo.find(request.getSession()).getUsername();
     request.setAttribute("username", username);
 	%>
-
-    <input type="text" value="${username}">
     <msh:ifInRole roles="/Policy/Mis/Calc/Calculator"> 
     <ecom:webQuery name="calcs" nativeSql="select id, name,comment from calculator where username= '${username}' "/>
       	<msh:section  createRoles="/Policy/Mis/Calc/Calculator" createUrl="entityPrepareCreate-calc_calculator.do" title="Калькуляторы">
