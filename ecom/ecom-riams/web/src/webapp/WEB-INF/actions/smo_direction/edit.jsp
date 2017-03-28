@@ -29,11 +29,9 @@
         <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
           <msh:autoComplete showId="false" vocName="vocServiceStream" property="serviceStream" viewOnlyField="false" label="Поток обслуживания" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        
-        <msh:row guid="de2d6415-7834-4d4a-934b-c4740cb28b6c">
-        <div id='aGuaranteeBlockDiv'>
+       
+        <msh:row>
           <msh:autoComplete  vocName="guaranteeByPatient" parentId="smo_directionForm.patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
-        </div>
         </msh:row>
         
         <tr>
@@ -514,11 +512,7 @@
   		}
 	}
   	function hideGuaranteeDiv(hide) {
-  		if (hide) {
-  			$('aGuaranteeBlockDiv').style="display: none;";
-  		} else {
-  			$('aGuaranteeBlockDiv').style="display: block;";
-  		}
+  		
   	}
   	hideGuaranteeDiv(true);
   	function checkIfDogovorNeeded() {
@@ -532,14 +526,11 @@
   	  						var arr = res.substring(1).split("|");
   	  						$('guarantee').value = arr[0];
   	  						$('guaranteeName').value = arr[1];
-  	  						$('guaranteeName').disabled=true;
-  	  						
-  	  					}
-  	  					hideGuaranteeDiv(false);
-  							 
+  	  					}	 
   	  				} else {
-  	  					hideGuaranteeDiv(true);
+  	  				
   	  				}
+  	  			$('guaranteeName').disabled=true;
   	  			}
   	  		});
   		}
