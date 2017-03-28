@@ -138,7 +138,7 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function onSave(aForm, aVisit, aCtx) {
-	if(true==aVisit.getNoActuality()) {
+	if(true==aVisit.getNoActuality()&&aVisit.timePlan!=null) {
 		aVisit.timePlan.medCase = null ;
 		return ; // ничего не делаем, если не актуальный
 	}
