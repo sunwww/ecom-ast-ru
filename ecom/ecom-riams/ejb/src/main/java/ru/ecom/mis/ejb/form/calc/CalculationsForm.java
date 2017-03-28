@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.calc;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.mis.ejb.domain.calc.Calculations;
 import ru.ecom.mis.ejb.domain.calc.Calculator;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -12,7 +13,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 
 @EntityForm
-@EntityFormPersistance(clazz = Calculator.class)
+@EntityFormPersistance(clazz = Calculations.class)
 @Comment("Форма калькуляции")
 @WebTrail(comment = "Форма калькуляции"
 , nameProperties= "id", list="entityParentList-calculations.do", view="entityParentView-calc_calculations.do")

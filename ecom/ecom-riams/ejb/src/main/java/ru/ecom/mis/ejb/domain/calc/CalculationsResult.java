@@ -7,7 +7,6 @@ import javax.persistence.Table;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -23,9 +22,9 @@ public class CalculationsResult extends BaseEntity{
         /** СЛО */
 	@Comment("СЛО")
 	@OneToOne
-	public DepartmentMedCase getDepartmentMedCase(){return theDepartmentMedCase;}
-	public void setDepartmentMedCase(DepartmentMedCase aDepartmentMedCase){theDepartmentMedCase = aDepartmentMedCase;}
-	private DepartmentMedCase theDepartmentMedCase;
+	public MedCase getDepartmentMedCase(){return theDepartmentMedCase;}
+	public void setDepartmentMedCase(MedCase aDepartmentMedCase){theDepartmentMedCase = aDepartmentMedCase;}
+	private MedCase theDepartmentMedCase;
     
         /** Калькулятор */
         @Comment("Калькулятор")

@@ -34,9 +34,9 @@ public class Calculations extends BaseEntity{
 	
 	/** Порядок */
 	@Comment("Порядок")
-	public Integer getOrderus() {return theOrderus;}
-	public void setOrderus(Integer aOrderus) {theOrderus = aOrderus;}
-	private Integer theOrderus;
+	public Long getOrderus() {return theOrderus;}
+	public void setOrderus(Long aOrderus) {theOrderus = aOrderus;}
+	private Long theOrderus;
 	
 	/** Значение */
 	@Comment("Значение")
