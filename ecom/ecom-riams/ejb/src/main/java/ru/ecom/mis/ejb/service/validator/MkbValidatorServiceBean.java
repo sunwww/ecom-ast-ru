@@ -36,7 +36,7 @@ public class MkbValidatorServiceBean  implements IMkbValidatorService{
 					.append(" where ")
 					.append(aField)
 					.append(" like '").append(mkb).append("%' and ").append(aField)
-					.append(" != '").append(mkb).append("'");
+					.append(" != '").append(mkb).append("' and (noActuality is null or noActuality='0') ");
 			}
 		} 
 		if (sql.length()==0) {
@@ -44,7 +44,7 @@ public class MkbValidatorServiceBean  implements IMkbValidatorService{
 			.append(aClass)
 			.append(" where ")
 			.append(aField)
-			.append(" like '").append(mkb).append(".%'");
+			.append(" like '").append(mkb).append(".%' and (noActuality is null or noActuality='0') ");
 		}
 		Object cntUtoch = (Object) theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 		if (cntUtoch!=null && ConvertSql.parseLong(cntUtoch).intValue()>0) return false ;

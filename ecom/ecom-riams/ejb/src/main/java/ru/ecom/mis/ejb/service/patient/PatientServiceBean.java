@@ -1326,7 +1326,7 @@ public class PatientServiceBean implements IPatientService {
 		List<PatientForm> ret3 = new LinkedList<PatientForm>() ;
 		StringBuilder sqlFld = new StringBuilder() ;
 		sqlFld.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday") ;
-		sqlFld.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
+		sqlFld.append(" ,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType ") ;
 		sqlFld.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
 		sqlFld.append(" ,list(case when att.dateto is null then ma.number else null end) as areaname") ;
 		sqlFld.append(" ,(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
@@ -1342,7 +1342,7 @@ public class PatientServiceBean implements IPatientService {
 			QueryClauseBuilder builder = new QueryClauseBuilder();
 			StringBuilder sql = new StringBuilder() ;
 			sqlFld = new StringBuilder() ;
-			sqlFld.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType");
+			sqlFld.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType");
 			sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
 			sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
 			sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
@@ -1404,7 +1404,7 @@ public class PatientServiceBean implements IPatientService {
 				sqlFld = new StringBuilder() ;
 				sqlFld.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
 				sqlFld.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) as firstname");
-				sqlFld.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename,p.birthday,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType");
+				sqlFld.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename,p.birthday,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType");
 				sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
 				sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
 				sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
@@ -1432,7 +1432,7 @@ public class PatientServiceBean implements IPatientService {
 			sqlFld1.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) firstname");
 			sqlFld1.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename");
 			sqlFld1.append(" ,p.birthday") ;
-			sqlFld1.append(" ,p.patientSync,case when p.colorType='1' then p.ColorType else null end as ColorType ") ;
+			sqlFld1.append(" ,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType ") ;
 			sqlFld1.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname") ;
 			sqlFld1.append(" ,list(case when att.dateto is null then ma.number else null end) as areaname") ;
 			sqlFld1.append(" ,(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||") ;
@@ -1644,9 +1644,9 @@ public class PatientServiceBean implements IPatientService {
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());
 			if (arr.length>6 && arr[6]!=null) {
-				f.setLastname(new StringBuilder().append("<font color='red'>").append(arr[1]).append("</font>").toString());
-				f.setFirstname(new StringBuilder().append("<font color='red'>").append(arr[2]).append("</font>").toString());
-				f.setMiddlename(new StringBuilder().append("<font color='red'>").append(arr[3]).append("</font>").toString());
+				f.setLastname(new StringBuilder().append("<font color='").append(arr[6]).append("'>").append(arr[1]).append("</font>").toString());
+				f.setFirstname(new StringBuilder().append("<font color='").append(arr[6]).append("'>").append(arr[2]).append("</font>").toString());
+				f.setMiddlename(new StringBuilder().append("<font color='").append(arr[6]).append("'>").append(arr[3]).append("</font>").toString());
 				if(arr[4]!=null) {
 					f.setBirthday(DateFormat.formatToDate((java.util.Date) arr[4])) ;
 				}

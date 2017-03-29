@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychDeathReason;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychObservationReason;
@@ -370,4 +371,17 @@ public class PsychiatricCareCard extends BaseEntity{
  private String theRegistrator;
  /** Дата заведения карты */
  private Date theDateRegistration;
+ 	/** ЛПУ */
+	@Comment("ЛПУ")
+	@OneToOne
+	public MisLpu getLpu() {
+		return theLpu;
+	}
+
+	public void setLpu(MisLpu aLpu) {
+		theLpu = aLpu;
+	}
+
+	/** ЛПУ */
+	private MisLpu theLpu;
 }

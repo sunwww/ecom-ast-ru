@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychLeftMessage;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychSuicideNature;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  /**
@@ -101,4 +102,18 @@ public class Suicide extends BaseEntity{
 	
 	/** Дата регистрации */
 	private Date theRegistrationDate;
-}
+
+	/** Оставил сообщение */
+	@OneToOne
+	public VocPsychLeftMessage getLeftMessage() {
+		return theLeftMessage;
+	}
+
+	public void setLeftMessage(VocPsychLeftMessage aLeftMessage) {
+		theLeftMessage = aLeftMessage;
+	}
+
+	/** Оставил сообщение */
+	private VocPsychLeftMessage theLeftMessage;
+
+ }

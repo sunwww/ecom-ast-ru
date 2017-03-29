@@ -5,7 +5,6 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.psychiatry.LpuAreaPsychCareCard;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.AdmissionPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.psychiatry.interceptor.LpuAreaPsychPreCreateInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -208,4 +207,17 @@ public class LpuAreaPsychCareCardForm extends IdEntityForm {
 	private String theOldFinishDate;
 	/** old date start */
 	private String theOldStartDate;
+	
+	@Comment("Др.место перевода")
+	@Persist
+	public Long getOtherPlaceTransfer() {
+		return theOtherPlaceTransfer;
+	}
+
+	public void setOtherPlaceTransfer(Long aOtherPlaceTransfer) {
+		theOtherPlaceTransfer = aOtherPlaceTransfer;
+	}
+
+	/** Др.место перевода */
+	private Long theOtherPlaceTransfer;
 }

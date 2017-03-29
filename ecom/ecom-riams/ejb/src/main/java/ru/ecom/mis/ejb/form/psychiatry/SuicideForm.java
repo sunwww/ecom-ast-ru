@@ -105,5 +105,19 @@ public class SuicideForm extends IdEntityForm {
 	
 	/** Дата регистрации */
 	private String theRegistrationDate;
+	
+	/** Оставил сообщение */
+	@Comment("Оставил сообщение")
+	@Persist
+	public Long getLeftMessage() {
+		return theLeftMessage;
+	}
+
+	public void setLeftMessage(Long aLeftMessage) {
+		theLeftMessage = aLeftMessage;
+	}
+
+	/** Оставил сообщение */
+	private Long theLeftMessage;
 
 }

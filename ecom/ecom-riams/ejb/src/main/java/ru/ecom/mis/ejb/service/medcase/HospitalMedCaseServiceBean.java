@@ -23,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
@@ -847,13 +848,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String filename = "N"+aReestr+"M"+aLpu+"T30_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     	return filename ;
     }
-    public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
-    	WebQueryResult[] fileExpList = {exportN2(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    	WebQueryResult[] fileExpList = {exportN2(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
+    			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
     			,new WebQueryResult()
     	};
     	
@@ -878,13 +879,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	return fileExpList ;
     }
-    public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
-    	String[] fileExpList = {exportN4(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN5(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    	String[] fileExpList = {exportN4(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
+    			, exportN5(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
     			,""
     	};
     	
@@ -908,7 +909,44 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	return fileExpList ;
     }
     
-    public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN0(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage
+    		, String aVidN, boolean aSaveInFolder) throws TransformerFactoryConfigurationError, TransformerException, ParserConfigurationException {
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
+    	
+    	
+    	String filename = getTitleFile("0",aLpu,aPeriodByReestr,aNPackage) ;
+    	WebQueryResult res = new WebQueryResult() ;
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	xmlDoc.newElement(title, "VERSION", "1.0");
+    	xmlDoc.newElement(title, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	xmlDoc.newElement(title, "VID_N", aVidN);
+    	
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
+    	return res;
+	}
+    public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aIsPolyc, boolean aIsHospital, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
@@ -919,7 +957,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
     	
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	
     	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
@@ -933,7 +971,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
     	
-    	sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate");
+    	if (!aIsPolyc&&aIsHospital) {
+    		sql.append(" select to_char(mc.datefinish,'yyyy-MM-dd') as w0chbcreatedate");
+    	} else if (aIsPolyc&&!aIsHospital) {
+    		sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate");
+    	} else if (aIsPolyc&&aIsHospital) {
+    		sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate");
+    	}
     	sql.append(" ,cast('1' as varchar(1)) as f1orPom");
     	sql.append(" ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l2puSent");
     	sql.append(" ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as l3puDirect");
@@ -955,7 +999,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,wchb.dateFrom as w19chbdatefrom");
     	sql.append(", wchb.visit_id as v20isit");
     	sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
-    	sql.append(", cast('0' as varchar(1)) as f22det"); //TODO доделать обработку по детям
+    	sql.append(", cast(case when cast(to_char(p.birthday,'yyyy') as int)-cast(to_char(current_date,'yyyy') as int)>=18 then '0' else '1' end) as varchar(1)) as f22det"); //TODO доделать обработку по детям
     	sql.append(" from WorkCalendarHospitalBed wchb");
     	sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
     	sql.append(" left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id");
@@ -963,14 +1007,25 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocSex vs on vs.id=p.sex_id");
     	sql.append(" left join VocServiceStream vss on vss.id=wchb.serviceStream_id");
     	sql.append(" left join MedCase mc on mc.id=wchb.visit_id");
-    	sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
+    	if (!aIsPolyc&&aIsHospital) {
+    		sql.append(" left join medcase_medpolicy mcp on mcp.medcase_id=mc.id ");
+        	sql.append(" left join medpolicy mp on mp.id=mcp.policies_id");
+        	sql.append(" left join WorkFunction wf on wf.id=wchb.workFunction_id");
+    	} else if (aIsPolyc&&!aIsHospital) {
+    		sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
+        	sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
+    	} else if (aIsPolyc&&aIsHospital) {
+    		sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
+        	sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
+    	}
+    	
     	sql.append(" left join VocIdc10 mkb on mkb.id=wchb.idc10_id");
     	sql.append(" left join MisLpu ml on ml.id=wchb.department_id");
     	sql.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
     	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
     	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
     	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
-    	sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
+    	
     	sql.append(" left join Worker w on w.id=wf.worker_id");
     	sql.append(" left join Patient wp on wp.id=w.person_id");
     	sql.append(" left join mislpu lpu on lpu.id=w.lpu_id");
@@ -980,6 +1035,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" where wchb.visit_id is not null");
     	sql.append(" and wchb.createDate between to_date('").append(aDateFrom).append("','yyyy-MM-dd') and to_date('").append(aDateTo).append("','yyyy-MM-dd')");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER') and wchb.visit_id is not null");
+    	if (aIsPolyc&&aIsHospital) {
+    	} else if (aIsPolyc&&!aIsHospital) {
+    		sql.append(" and upper(mc.dtype) = 'VISIT'") ;
+    	} else if (!aIsPolyc&&aIsHospital) {
+    		sql.append(" and upper(mc.dtype) = 'HOSPITALMEDCASE'") ;
+    	}
     	sql.append(" order by p.lastname,p.firstname,p.middlename");
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
     			.setMaxResults(70000).getResultList() ;
@@ -1022,6 +1083,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
     
@@ -1159,6 +1229,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	return true ;
     }
     private boolean checkN3(Object[] aObj) {
+    	if (aObj[2]==null) return false ;
     	if (aObj[4]==null) return false ;
     	if (aObj[8]==null) return false ;
     	if (aObj[13]==null) return false ;
@@ -1203,7 +1274,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	
     }
-    public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -1211,7 +1282,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	workDir = aSaveInFolder?config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") :null;
     	String workAddDir =config.get("data.dir.order263.out", null);
     	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
     	WebQueryResult res = new WebQueryResult() ;
@@ -1315,9 +1386,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
-    public WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -1326,7 +1406,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
     	WebQueryResult res = new WebQueryResult() ;
 
@@ -1415,6 +1495,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
+    	
     	if (!i_exist.isEmpty()) {
     		res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
     		res.set4(i_exist) ;
@@ -1428,16 +1509,33 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
-    public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	WebQueryResult res = new WebQueryResult() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1546,17 +1644,26 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
     
-    public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	WebQueryResult res = new WebQueryResult() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1642,16 +1749,25 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
     
-    public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1694,6 +1810,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return filename+".xml";
     }
     public String exportN4b(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
@@ -1777,13 +1902,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";
     }
-    public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1873,15 +1998,24 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return filename+".xml";
     }
-    public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     			throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1948,6 +2082,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return filename+".xml";
     }
     public void createNewDiary(String aTitle, String aText, String aUsername) {
