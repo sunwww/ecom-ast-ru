@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.action.synclpufond;
 
 import java.io.File;
+
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -20,19 +22,25 @@ import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.xml.XmlUtil;
+import ru.ecom.expomc.ejb.services.form.importformat.IImportFormatService;
+import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
 import ru.ecom.jaas.web.action.service.ServiceImportRolesForm;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
+import ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm;
 import ru.ecom.report.util.XmlDocument;
 import ru.ecom.web.actions.monitor.MonitorActionForward;
 import ru.ecom.web.util.ActionUtil;
+import ru.ecom.web.util.FileUploadUtil;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
 
 public class HospitalDirectInFondImportAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, final HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
     	IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
     	final IHospitalMedCaseService service = (IHospitalMedCaseService) Injection.find(aRequest).getService(IHospitalMedCaseService.class);
-    	final List<WebQueryResult> list = new LinkedList<WebQueryResult>() ;
+    	List<WebQueryResult> list = new LinkedList<WebQueryResult>() ;
+    	final List<List> listFrom = new LinkedList<List>() ;
     	final List<WebQueryResult> listError = new LinkedList<WebQueryResult>() ;
     	
     	final String typeImport = ActionUtil.updateParameter("HospitalDirectDataInFond","typeImport","1", aRequest) ;
@@ -46,15 +54,22 @@ public class HospitalDirectInFondImportAction extends BaseAction {
     	
     	String type =null;
     	boolean isErrorFile = false ;
-    	String filename ;
+    	final String filename ;
+    	String contentType = null ;
     	String filenameError = null ;
          if (aForm!=null ) {
         	 
         	ServiceImportRolesForm form = (ServiceImportRolesForm)aForm ;
-        	if (form.getFile()!=null && form.getFile().getContentType()!=null) {
+        	if (form.getFile()!=null ) {
+        		contentType = form.getFile().getContentType() ;
+        	} else {
+        		contentType=null ;
+        	}
+        	if (contentType!=null&& contentType.toUpperCase().contains("XML")) {
         		filename=form.getFile().getFileName() ;
+        		
         	InputStream in = null;
-    		System.out.println("file="+form.getFile().getContentType()+" "+form.getFile().getInputStream()) ;
+    		System.out.println("file="+contentType) ;
             try {
             	in =form.getFile().getInputStream() ;
                	Document doc = new SAXBuilder().build(in);
@@ -62,7 +77,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
                	org.w3c.dom.Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
                 Element parConfigElement = doc.getRootElement();
                 //System.out.println(new StringBuilder().append("		root=").append(parConfigElement).toString());
-                Long i =Long.valueOf(1) ;
+                Long i =Long.valueOf(1) ; int ind=0 ;
                 for (Object o : parConfigElement.getChildren()) {
                     Element parEl = (Element) o;
                     if ("ZGLV".equals(parEl.getName())) {
@@ -102,7 +117,18 @@ public class HospitalDirectInFondImportAction extends BaseAction {
 	                    	wqr.set24(getText(parEl,"NHISTORY")) ;
 	                    	wqr.set25(getTime(parEl,"TIME_1")) ;
 	                    	wqr.set26(getDate(parEl,"DATE_2")) ;
-	                    	if (wqr.get1()!=null && !(""+wqr.get1()).equals(""))list.add(wqr) ;
+	                    	wqr.set27(getText(parEl,"DET")) ;
+	                    	wqr.set28(getText(parEl,"USL_OK")) ;
+	                    	if (wqr.get1()!=null && !(""+wqr.get1()).equals("")){
+	                    		list.add(wqr) ;
+	                    		ind++ ;
+	                    		if (ind>=70) {
+	                    			listFrom.add(list) ;
+	                    			System.out.println("Создается массив "+list.get(0).get1());
+	                    			list = new LinkedList<WebQueryResult>() ;
+	                    			ind=0 ;
+	                    		}
+	                    	}
                     	} else {
                     		isErrorFile = true ;
                     		org.w3c.dom.Element zap = xmlDocError.newElement(root_error, "NPR", null);
@@ -119,6 +145,9 @@ public class HospitalDirectInFondImportAction extends BaseAction {
                     	}
                     }
                 }
+        		if (ind>0) {
+        			listFrom.add(list) ;
+        		}
                 if (isErrorFile) {
                 	IKdlDiaryService serviceKdl = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
                 	String workDir=serviceKdl.getDir("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
@@ -134,17 +163,68 @@ public class HospitalDirectInFondImportAction extends BaseAction {
             finally {
                 if (in!=null) in.close();
             }
+        	} else if (contentType!=null&& contentType.toUpperCase().contains("DBF")) {
+        		//final AttachmentByLpuForm form =(AttachmentByLpuForm)aForm ;
+            	final long fileId = 0;
+            	 //IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+        	     
+            	final long monitorId = monitorService.createMonitor();
+               // System.out.println("00000000000 = 01");
+            	if (form!=null ) {
+            	//	System.out.println("00000000000 = 02");	
+            		FormFile formFile = form.getFile();
+            	
+            		if (formFile!=null&&!formFile.equals("")) {
+            	//		System.out.println("00000000000 = 03");
+            	//		System.out.println("FormFile="+formFile.getFileSize());
+            			final IImportFormatService serviceI = Injection.find(aRequest).getService(IImportFormatService.class);
+            			 final String originalFileName = form.getFile().getFileName(); 
+            		     final String tempFileName = FileUploadUtil.writeFile(formFile) ;
+            	//	     System.out.println("HELLOOOO "+tempFileName);
+            		    
+            		     final ImportFileForm timeForm = new ImportFileForm();
+            		        timeForm.setActualDateFrom(DateFormat.formatToDate(new java.util.Date()));
+            		        timeForm.setActualDateTo(DateFormat.formatToDate(new java.util.Date()));
+            		        timeForm.setImportFormat(form.getImportFormat());
+            		        timeForm.setComment("AUTOIMPORT, Дата импорта = "+DateFormat.formatToDate(new java.util.Date()));
+            		        
+            		    //   new Thread() {
+            		    //       public synchronized void run() {
+            		                try {
+            		                	serviceI.importFile(monitorId,fileId , tempFileName, originalFileName, timeForm);
+            		                   } catch (Exception e) {
+            		                	   e.printStackTrace();
+            		                    throw new IllegalStateException(e) ;
+            		                }
+            		     //       }
+
+            		    //    }.start();
+            		        aRequest.setAttribute("impResult", "Файл успешно проимпортирован!");
+            		} 
+            	}
         	}
     	} 
         final String fileErrorF= filenameError!=null?filenameError:"" ;
         
         final long monitorId = monitorService.createMonitor() ;
     	final String typeId = type ;
+    	final String contentTypeF = contentType ;
+    	
     	if (!list.isEmpty()&&(typeImport.equals("1")||typeImport.equals("2"))) {
         new Thread() {
             public void run() {
             	System.out.println("typeId-------------"+typeId) ;
-            	service.importDataFond(monitorId,typeId, list) ;
+            	if (contentTypeF!=null&& contentTypeF.toUpperCase().contains("DBF")) {
+            		service.importDataFondForDBF(monitorId) ;
+            	} else {
+            		service.startMonitor(monitorId) ;
+            		for (List<WebQueryResult> list:listFrom) {
+            			System.out.println("Обработано "+list.get(0).get1());
+            			service.importDataFond(monitorId,typeId, list) ;
+            			service.addMonitor(monitorId, 10) ;
+            		}
+            		service.finishMonitor(monitorId) ;
+            	}
             	
             }
         }.start() ;

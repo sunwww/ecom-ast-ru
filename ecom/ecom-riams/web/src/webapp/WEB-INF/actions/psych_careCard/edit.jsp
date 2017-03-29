@@ -44,6 +44,7 @@
       <msh:panel guid="683d43fa-e645-4910-b9bd-5463c6f0f301">
         <msh:row guid="2de726bc-2350-403d-ae49-c4e75091a2ad">
           <msh:textField property="cardNumber" label="Номер карты" guid="75c0b483-8a7b-49ae-a468-1145a3150545" />
+          <msh:autoComplete property="lpu" horizontalFill="true" size="50" label="ЛПУ" vocName="mainLpu"/>
         </msh:row>
         <msh:row guid="9a12d78d-7956-406c-b453-45f4394c6c46">
           <msh:checkBox property="firstTimeDiseased" label="Впервые в жизни заболевший" guid="fc6dda3a-0acb-48de-ae14-dcc5bffbc022" />
@@ -266,7 +267,11 @@
    			</msh:sectionTitle>
    			<msh:sectionContent>
 	    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.lastRevisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid
-	    		,i.incapable,i.nextRevisionDate, viwp.name as viwpname,i.withoutExam from invalidity i left join vocInvalidWorkPlace viwp on viwp.id=i.workPlace_id left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id left join PsychiatricCareCard card on card.id=${param.id} where card.patient_id=i.patient_id and (mkb.code is null or mkb.code like 'F%' )" name="invalidities"/>
+	    		,i.incapable,i.nextRevisionDate, viwp.name as viwpname,i.withoutExam from invalidity i 
+	    		left join vocInvalidWorkPlace viwp on viwp.id=i.workPlace_id 
+	    		left join VocInvalidity vi on vi.id=i.group_id 
+	    		left join vocidc10 mkb on mkb.id=i.idc10_id 
+	    		left join PsychiatricCareCard card on card.id=${param.id} where card.patient_id=i.patient_id and (mkb.code is null or mkb.code like 'F%' )" name="invalidities"/>
 	    		<msh:table name="invalidities" action="entityParentView-mis_invalidity.do" idField="1">
 	    			<msh:tableColumn property="sn" columnName="#"/>
 	    			<msh:tableColumn property="6" columnName="Группа инвалидности"/>
@@ -406,6 +411,19 @@
               <msh:tableColumn property="notes" columnName="Описание" />
             </msh:table>
           </msh:sectionContent>
+        </msh:section>
+        <msh:section title="Талоны по суицидальным попыткам">
+        <ecom:webQuery name="listds" nativeSql="select s.id,s.suicideDate
+  	from SuicideMessage s
+  	left join PsychiatricCareCard card on card.patient_id=s.patient_id where card.id=${param.id}
+  	
+  	order by s.suicideDate
+  	"/>
+    <msh:table name="listds" action="entityParentView-psych_suicideMessage.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+              <msh:tableColumn property="sn" columnName="#"/>
+              <msh:tableColumn property="1" columnName="ИД"/>
+              <msh:tableColumn property="2" columnName="Дата суицида"/>
+    </msh:table>
         </msh:section>
         </td>
       </msh:ifInRole>

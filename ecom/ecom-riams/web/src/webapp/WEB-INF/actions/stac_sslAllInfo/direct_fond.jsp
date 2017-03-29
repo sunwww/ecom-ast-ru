@@ -1,3 +1,5 @@
+<%@page import="ru.ecom.mis.web.action.synclpufond.HospitalDirectFondImportFromDirAction"%>
+<%@page import="ru.ecom.mis.web.action.synclpufond.HospitalDirectInFondImportAction"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -22,6 +24,8 @@
 	String typeEmergency=ActionUtil.updateParameter("HospitalDirectDataInFond","typeEmergency","3", request) ;
 	String typeLpu=ActionUtil.updateParameter("HospitalDirectDataInFond","typeLpu","3", request) ;
 	String typeImport=ActionUtil.updateParameter("HospitalDirectDataInFond","typeImport","1", request) ;
+	request.setAttribute("typeLoad", "1") ;
+	String typeLoad="1" ;
   %>
   
     <msh:form action="/stac_direct_in_fond.do" defaultField="lpu" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -52,6 +56,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="2">
 	        	<input type="radio" name="typeMode" value="3"> Работа с данными
 	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';checkMode()" colspan="2">
+	        	<input type="radio" name="typeMode" value="4"> Поиск по номеру
+	        </td>
 
       </msh:row>
       </msh:panel>
@@ -60,9 +67,20 @@
            <td colspan="11">
             <input type="submit" value="Обновить соответствия по направлениям" />
           </td>
+          
       </msh:row>
             </msh:panel>
       <msh:panel styleId="exportXml">
+      <msh:row styleId="rowLoad">
+      	<td class="label" title="Тип xml  (typeLoad)" colspan="1"><label for="typeLoadName" id="typeLoadLabel">Сохранять в папку ДЛЯ VIPNET:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeLoad" value="1"> не сохранять (еще нужно просмотреть)
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeLoad" value="2"> сохранять для отправки
+        </td>
+	   
+      </msh:row>
       <msh:row>
         <td class="label" title="Тип xml  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Тип xml:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -99,6 +117,21 @@
         <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="9">  N4 + N5 таблицы
         </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="10">  N1 для переводов по стационару
+        </td>
+       </msh:row>
+      <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="11"> (N0) для выгрузки N1
+        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="12"> (N0) для выгрузки N2
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="13"> (N0) для выгрузки N5
+	        </td>
        </msh:row>
        <msh:row>
        	<msh:hidden property="filename"/>
@@ -187,6 +220,17 @@
       </msh:row>
           </msh:panel>
           
+          <msh:panel styleId="findByNumber">
+             <msh:row>
+             	<msh:textField property="numberDirect"/>
+             </msh:row>
+             <msh:row>
+           <td colspan="11">
+            <input type="submit" value="Отобразить данные" />
+          </td>
+      </msh:row>
+          </msh:panel>
+          
     </msh:form>
     
        <msh:form action="stac_direct_in_fond_import.do"  defaultField="isClear" fileTransferSupports="true">
@@ -201,13 +245,17 @@
         	<input type="radio" name="typeImport" value="2">  не обновлять
         </td>
       </msh:row>   
+	<msh:row>
+      <msh:autoComplete property="importFormat" vocName="hospitalDataFondFormats" fieldColSpan="50" size="50"/>
+      </msh:row>
 			                <msh:row>
-			                    <td>Файл *.xml</td>
+			                    <td>Файл *.xml (dbf)</td>
 			                    <td colspan="15">
 			                        <input type="file" name="file" id="file" size="50" value="" onchange="">
 			                        <input type="button" name="run_import" value="Импорт"  onclick="this.form.submit()" />
 			                    </td>
 			                </msh:row>
+			                
 			                	       <msh:row>
        	<td colspan="4">
        		Файл <span id='aViewImportError'></span>
@@ -218,6 +266,14 @@
 			            </msh:panel>
 			        </msh:form>
 	<tags:hosp_263 name="Diag"></tags:hosp_263>
+      <% 
+      String dir = HospitalDirectFondImportFromDirAction.getOutFolderBy263(request) ;
+      if (dir==null) { %>
+      <script type="text/javascript">
+      $('rowLoad').style.display="none" ;
+      </script>
+      <% } %>
+      
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
       <script type="text/javascript">
       checkFieldUpdate('typeLpu','${typeLpu}',1,0) ;
@@ -227,6 +283,12 @@
       checkFieldUpdate('typeDate','${typeDate}',1,0) ;
       checkFieldUpdate('typeMode','${typeMode}',1,0) ;
       checkFieldUpdate('typeImport','${typeImport}',1,1) ;
+      checkFieldUpdate('typeLoad','${typeLoad}',1,0) ;
+      
+      
+      function showHDF(aId) {
+    	  getDefinition("entityView-stac_dataFond.do?short=Short&id="+aId, null); 
+      }
       function checkFieldUpdate(aField,aValue,aDefaultValue,aFrm) {
     	   	eval('var chk =  document.forms[aFrm].'+aField) ;
     	   	var aMax=chk.length ;
@@ -247,22 +309,32 @@
 		   showTable("importXml", false ) ; 
 		   showTable("workData", false ) ; 
 		   showTable("updateData", false ) ; 
+		   showTable("findByNumber", false ) ; 
 		   
 	   } else if (chk[1].checked) {
 		   showTable("exportXml", false ) ; 
 		   showTable("importXml", true ) ; 
 		   showTable("workData", false ) ; 
 		   showTable("updateData", false ) ; 
+		   showTable("findByNumber", false ) ; 
 	   } else if (chk[2].checked){
 		   showTable("exportXml", false ) ; 
 		   showTable("importXml", false ) ; 
 		   showTable("workData", true ) ; 
 		   showTable("updateData", false ) ; 
+		   showTable("findByNumber", false ) ; 
+	   } else if (chk[3].checked){
+		   showTable("exportXml", false ) ; 
+		   showTable("importXml", false ) ; 
+		   showTable("workData", false ) ; 
+		   showTable("updateData", false ) ; 
+		   showTable("findByNumber", true ) ; 
 	   } else {
 		   showTable("exportXml", false ) ; 
 		   showTable("importXml", false ) ; 
 		   showTable("workData", false ) ; 
 		   showTable("updateData", true ) ; 
+		   showTable("findByNumber", false ) ; 
 	   }
    }
    function showTable(aTableId, aCanShow ) {
@@ -376,7 +448,65 @@
 	</msh:table>
 	
 	<% }
-	} else if (typeMode!=null && typeMode.equals("3") && isCkeck) {%>
+	} else if (typeMode!=null && typeMode.equals("4") && isCkeck
+			&&request.getParameter("numberDirect")!=null&&!request.getParameter("numberDirect").equals("")) {
+		String[] sss = request.getParameter("numberDirect").trim().toUpperCase().split(" ") ;
+			request.setAttribute("lastname",sss[0]) ;
+ 			request.setAttribute("firstname",sss.length>1?sss[1]:"") ;
+ 			request.setAttribute("middlename",sss.length>2?sss[2]:"") ;
+
+	%>
+	
+	НАПРАВЛЕНИЕ по номеру:${param.numberDirect} 
+		<ecom:webQuery name="table1" nativeSql="
+	select hdf.id
+	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
+	||hdf.numberfond||'<'||'/'||'span'||'>' as f2numberfond
+	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
+	||hdf.lastname||' '||hdf.firstname||' '||coalesce(hdf.middlename,'')||'<'||'/'||'span'||'>' as f3io
+	
+	,hdf.birthday,hdf.formHelp
+,hdf.profile,hdf.prehospdate,hdf.hospdate,hdf.directdate,hdf.snils as f10snils
+,hdf.phone,hdf.diagnosis
+,hdf.orderlpucode
+,hdf.directlpucode
+,hdf.statcard as f15
+,hdf.deniedHospital
+,hdf.id||''','''||coalesce(''||hdf.deniedHospital,'') as idden
+,hdf.id||''','''||to_char(coalesce(hdf.prehospdate,hdf.hospdate),'dd.mm.yyyy')||''','''||hdf.lastname||''','''||hdf.firstname||''','''||coalesce(hdf.middlename,'')
+	||''','''||to_char(hdf.birthday,'dd.mm.yyyy')||''',''1'','''||coalesce(hdf.deniedHospital,0) as idforsls
+
+from HospitalDataFond hdf
+where (hdf.numberfond='${param.numberDirect}' or upper(hdf.lastname) like '${lastname}%' and upper(hdf.firstname) like '${firstname}%' and upper(hdf.middlename) like '${middlename}%')
+order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
+	"/>
+		<msh:table name="table1" action=" javascript:void(0)" idField="1">
+			<msh:tableButton property="1" buttonFunction="showHDF" buttonName="Просмотр информации о направление" buttonShortName="Инф."/>
+			<msh:tableButton property="1" buttonFunction="deleteHDF" buttonName="Удалить направление" buttonShortName="Удалить"/>
+			<msh:tableColumn property="sn" columnName="#"/>
+			<msh:tableColumn property="2" columnName="<a href='javascript:alert(\"lpu\")'>Напр. ЛПУ</a>"/>
+			<msh:tableColumn property="3" columnName="№ИБ"/>
+			<msh:tableColumn property="4" columnName="<a href='javascript:alert(\"pat\")'>ФИО пациента</a>"/>
+			<msh:tableColumn property="5" columnName="Дата рождения"/>
+			<msh:tableColumn property="6" columnName="Показания"/>
+			<msh:tableColumn property="7" columnName="Дата госп."/>
+			<msh:tableColumn property="8" columnName="Дата выписки"/>
+			<msh:tableColumn property="9" columnName="Отделение"/>
+			<msh:tableColumn property="10" columnName="<a href='javascript:alert(\"prof\")'>Профиль коек</a>"/>
+			<msh:tableColumn property="11" columnName="Поток обслуживания"/>
+			<msh:tableColumn property="12" columnName="Диагноз"/>
+		</msh:table>
+	
+	
+	
+	
+	
+	
+	
+	<%
+	} else if (typeMode!=null && typeMode.equals("3") && isCkeck) {
+	
+	%>
 	<%     if (typeView1!=null && (typeView1.equals("1") || typeView1.equals("2")||typeView1.equals("3"))) {
 		
 		%>
@@ -490,6 +620,7 @@ order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
 			<a href='javascript:void(0)' onclick="deleteTableHDFEmpty(3)">Удалить госпитализированных (еще не выписанным)</a>
 		</msh:sectionTitle>
 		<msh:table name="table2" action=" javascript:void(0)" idField="1">
+			<msh:tableButton property="1" buttonFunction="showHDF" buttonName="Просмотр информации о направление" buttonShortName="Инф."/>
 			<msh:tableButton property="18" buttonFunction="showDiag263sls" buttonName="Установить соответствие с неопределенной госпитализацией" buttonShortName="СЛС"/>
 			<msh:tableButton property="17" buttonFunction="showDiag263denied" buttonName="Установить отказ" buttonShortName="Отказ"/>
 			<msh:tableButton property="1" buttonFunction="deleteHDF" buttonName="Удалить направление" buttonShortName="Удалить"/>

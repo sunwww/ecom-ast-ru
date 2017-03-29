@@ -16,6 +16,9 @@
       
       <msh:panel>
         <msh:row>
+        	<msh:autoComplete property="leftMessage" label="Передел сообщение" horizontalFill="true" fieldColSpan="3" vocName="vocPsychLeftMessage"/>
+        </msh:row>
+        <msh:row>
         	<msh:textField property="fulfilmentDate" label="Дата совершения"/>
         	<msh:textField property="registrationDate" label="Дата регистрации"/>
         </msh:row>

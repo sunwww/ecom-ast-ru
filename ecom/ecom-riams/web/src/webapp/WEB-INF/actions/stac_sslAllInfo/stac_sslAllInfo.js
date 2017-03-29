@@ -1,3 +1,6 @@
+function list_fond_direct_by_sls(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/stac_sslAllInfo/list_fond_direct_by_sls.jsp") ;
+}
 function report007(aForm,aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/stac_sslAllInfo/report007.jsp") ;
 }

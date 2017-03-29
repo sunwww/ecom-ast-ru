@@ -57,7 +57,7 @@
       <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry" guid="a7036440-353f-4667-a18e-a0da4885cdaa">
         <msh:section title="Мед.карты (псих.помощью)" createRoles="/Policy/Mis/Psychiatry/CareCard/Create" createUrl="entityParentPrepareCreate-psych_careCard.do?id=${param.id}">
 		        <ecom:webQuery name="psychCard" 
-		        nativeSql="select pcc.id,pcc.cardNumber 
+		        nativeSql="select pcc.id,pcc.cardNumber ||' ('||lpu.shortname||')'
 ,(select list(distinct to_char(po.startDate,'dd.mm.yyyy')||' '||vpac.code)
 from PsychiaticObservation po 
 left join VocPsychAmbulatoryCare vpac on vpac.id=po.ambulatoryCare_id 
@@ -101,7 +101,9 @@ LEFT JOIN VOCDIAGNOSISREGISTRATIONTYPE VDRT1 ON VDRT1.ID=D1.REGISTRATIONTYPE_ID
 where mc1.patient_id=pcc.patient_id  and vpd1.code='1' and vdrt1.code='3' and upper(mc1.dtype)='HOSPITALMEDCASE' )
 as diag_hosp
 
-from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
+from PsychiatricCareCard pcc 
+left join mislpu lpu on lpu.id=pcc.lpu_id
+where pcc.patient_id='${param.id}'
 		         "
 		         />
 		         
@@ -816,6 +818,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:ifFormTypeAreViewOrEdit formName="mis_patientForm" guid="6c8ddaec-6990-410d-8e58-1780385ef2d3">
           <msh:sideLink roles="/Policy/Mis/Patient/Delete" key="ALT+DEL" params="id" action="/entityDelete-mis_patient" name="Удалить" confirm="Удалить персону?" guid="3322c218-9d9b-4996-9ba9-7d5bef9d0b00" />
           <msh:sideLink roles="/Policy/Mis/Patient/View" styleId="viewShort" action="/javascript:getDefinition('js-mis_patient-viewChange.do?id=${param.id}&short=Short')" name="Изменения ПД" title="Изменения персональных данных" />
+          <msh:sideLink roles="/Policy/Mis/Document/Flow/ViewByPatient" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&patient=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
@@ -871,8 +874,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/js-smo_visit-infoByPatient" name="Информация по визитам" title="Показать информацию посещений по пациенту" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
         <msh:sideLink params="id" action="/entityParentList-mis_medPolicy" name="Полисы" title="Показать все полисы" roles="/Policy/Mis/MedPolicy/View"/>
 <%-- <msh:sideLink params="id" action="/js-dis_case-listByPatient" name="Нетрудоспособности" title="Показать все случаи нетрудоспособности" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/DisabilityCase/View" /> --%>        
-        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-dis_case.do?id=${param.id}&short=Short')" name="Нетрудосп." 
-        title="Показать все случаи нетрудоспособности по пациенту" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/Case/View" />
+
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-dis_case.do?id=${param.id}&short=Short')" name="Нетрудосп." title="Показать все случаи нетрудоспособности по пациенту" guid="c06bc0ce-868d-4c9c-b75a-2ff72b205d92" roles="/Policy/Mis/Disability/Case/View" />
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-psych_suicideMessage.do?id=${param.id}&short=Short')" name="Суициды" title="Показать все сообщения о суициде" roles="/Policy/Mis/Psychiatry/CareCard/SuicideMessage/View" />
         
         <msh:sideLink params="id" action="/js-smo_diagnosis-infoByPatient" name="Диагнозы" title="Показать все диагнозы" guid="68b36632-8d07-4a87-b469-6695694b2bab" roles="/Policy/Mis/MedCase/Diagnosis/View" />
         <msh:sideLink params="id" action="/entityParentList-vac_vaccinationByPatient" name="Вакцинации" title="Показать все вакцинации" guid="12d6632c-5a14-42d7-9c7e-fd5852d9a789" roles="/Policy/Mis/Vaccination/View" />

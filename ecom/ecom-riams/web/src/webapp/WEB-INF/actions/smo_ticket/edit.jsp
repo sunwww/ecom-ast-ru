@@ -272,6 +272,28 @@
       </msh:section>
     </msh:ifFormTypeIsView>
     </msh:ifInRole>
+          <msh:ifInRole roles="/Policy/Mis/MedCase/Document/Internal/View">
+      	<msh:section title="Документы">
+      		<ecom:webQuery name="docum" nativeSql="select d.id as did,d.history
+      		, case when d.dtype='DirectionDocument' then 'Направление' 
+      		when d.dtype='DischargeDocument' then 'Выписка'
+      		when d.dtype='DischargeDiagnostDocument' then 'Выписка диагностическая'
+      		when d.dtype='BaseMedicalExamination' then 'Паспорт здоровья'
+      		when d.dtype='DirectionToMicrobiologAnalysis' then 'Направление на микробиологическое исследование'
+      		when d.dtype='RequitDirectionDocument' then 'Акт в военкомат'
+      		when d.dtype='ExternalDocument' then coalesce(vedt.name,'Внешний документ')
+      		else '-' end,d.diagnosis
+      		from Document d 
+      		left join vocexternaldocumenttype vedt on vedt.id=d.type_id
+      		where d.medCase_id='${param.id}'
+      		"/>
+      		<msh:table name="docum" action="entitySubclassView-doc_document.do" 
+      	 	 viewUrl="entitySubclassShortView-doc_document.do" idField="1" hideTitle="true">
+      			<msh:tableColumn property="3"/>
+      		</msh:table>
+      	</msh:section>
+      </msh:ifInRole>
+    
     <tags:mis_double name='Ticket' title='Существующие талоны в базе:' cmdAdd="document.forms[0].submitButton.disabled = false"/>
   </tiles:put>
   <tiles:put name="side" type="string">
@@ -294,7 +316,8 @@
         </msh:ifFormTypeAreViewOrEdit>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="3d94cf79-f341-469e-863e-5e28bd16aabe">
-        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить протокол" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Create" key="ALT+7" />
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_planHospitalByVisit" name="Предварительную госпитализацию" title="Добавить планирование госпитализации" guid="2209b5f9-4b4f-4ed5-b825-b66f2ac57e87" roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/Create" key="ALT+7" />
+        <msh:sideLink params="id" action="/entityParentPrepareCreate-doc_discharge" name="Выписку" title="Добавить выписку" roles="/Policy/Mis/MedCase/Document/Internal/Discharge/Create" />
         <msh:sideLink roles="/Policy/Poly/PrescriptionBlank/Create" key="CTRL+2" params="id" action="/entityParentPrepareCreate-poly_prescriptionBlank" name="Рецептурный бланк" guid="09e47fdd-298c-4230-9916-2b9a15abee56" title="Добавить рецептурный бланк" />
         <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Create" key="CTRL+3" params="id" action="/entityParentPrepareCreate-smo_visitProtocol" name="Заключение" guid="b5ae64d7-16da-4307-998b-9214fa4a600f" title="Добавить протокол" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create" key="CTRL+4" 

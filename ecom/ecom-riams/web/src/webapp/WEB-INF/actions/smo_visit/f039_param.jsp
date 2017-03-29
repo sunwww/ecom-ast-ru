@@ -958,7 +958,9 @@ select
 ,count(case when ag.isHome='1' and (ag.isVillage='1') then 1 else null end) as cntHomeV 
 ,count(case when (ag.isIllness='1' or ag.isCons='1') and ag.isHome='1' then 1 else null end) as cntIllnesHome 
 ,count(case when (ag.isHome='1') and ag.age between 0 and 17 then 1 else null end) as cntHome17
-,count(case when (ag.isIllness='1' or ag.isCons='1') and ag.isHome='1' and ag.age between 0 and 17 then 1 else null end) as cntIllnesHome17 
+,count(case when (ag.isIllness='1' or ag.isCons='1') and ag.isHome='1' and ag.age between 0 and 17 then 1 else null end) as cntIllnesHome17
+,count(case when (ag.isIllness='1' or ag.isCons='1') and ag.isHome='1' and (ag.isVillage='1') then 1 else null end) as c19ntIllnesHomeVill 
+ 
 FROM AggregatePolyMedCase ag  
 left join MedCase spo on spo.id=ag.spo
 LEFT JOIN Patient p ON p.id=ag.patient 
@@ -1019,6 +1021,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="Всего" property="14"/>
             <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="15"/>
             <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний с.ж." property="19"/>
             <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17" property="17"/>
             <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 по поводу заболеваний" property="18"/>
                     </msh:table>
@@ -1038,27 +1041,27 @@ select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
-,count(case when ag.isPolyclinic='1' then 1 else null end) as cntAllPoly
-,count(case when ag.isPolyclinic='1' and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntAll17
-,count(case when ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntAllPolyV 
+,count(case when ag.isPolyclinic='1' then 1 else null end) as c3ntAllPoly
+,count(case when ag.isPolyclinic='1' and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c4ntAll17
+,count(case when ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c5ntAllPolyV 
 
-,count(case when ag.isIllness='1' and ag.isPolyclinic='1' then 1 else null end) as cntIllness 
-,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and (ag.isVillage='1') then 1 else null end) as cntIllnessV 
-,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and ag.age between ${typeAgeWorkId} and case when ag.isWomen='1' then 54 else 59 end then 1 else null end) as cntIllnesOld
-,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntIllnes17 
-,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and (ag.isVillage='1') and ag.age >= case when ag.isWomen='1' then 54 else 59 end then 1 else null end) as cntIllnessV 
+,count(case when ag.isIllness='1' and ag.isPolyclinic='1' then 1 else null end) as c6ntIllness 
+,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and (ag.isVillage='1') then 1 else null end) as c7ntIllnessV 
+,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and ag.age between ${typeAgeWorkId} and case when ag.isWomen='1' then 54 else 59 end then 1 else null end) as c8ntIllnesOld
+,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c9ntIllnes17 
+,count(case when ag.isIllness='1' and ag.isPolyclinic='1' and (ag.isVillage='1') and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c10ntIllnessV 
 
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' then 1 else null end) as cntCons 
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age between ${typeAgeWorkId} and case when ag.isWomen='1' then 54 else 59 end then 1 else null end) as cntConsOld
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntCons17 
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntConsV 
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' then 1 else null end) as c11ntCons 
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age between ${typeAgeWorkId} and case when ag.isWomen='1' then 54 else 59 end then 1 else null end) as c12ntConsOld
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c13ntCons17 
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c14ntConsV 
 
-,count(case when (ag.isHome='1') then 1 else null end) as cntHome 
-,count(case when (ag.isIllness='1' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as cntIllnesHome 
-,count(case  when (ag.isHome='1') and ag.age >= case when ag.isWomen='1' then 55 else 60 end  then 1 else null end) as cntHome17
-,count(case when (ag.isHome='1') and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntHomeV 
-,count(case when (ag.isIllness='1' or ag.isCons='1') and (ag.isHome='1') and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntIllnesHome17 
-,count(case when (ag.isIllness='1' or ag.isCons='1') AND (ag.isHome='1') and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as cntHomeIllnesV 
+,count(case when (ag.isHome='1') then 1 else null end) as c15ntHome 
+,count(case when (ag.isIllness='1' or vr.code='CONSULTATION') and (vwpt.code='HOME' or vwpt.code='HOMEACTIVE') then 1 else null end) as c16ntIllnesHome 
+,count(case  when (ag.isHome='1') and ag.age >= case when ag.isWomen='1' then 55 else 60 end  then 1 else null end) as c17ntHome17
+,count(case when (ag.isHome='1') and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c18ntHomeV 
+,count(case when (ag.isIllness='1' or ag.isCons='1') and (ag.isHome='1') and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c19ntIllnesHome17 
+,count(case when (ag.isIllness='1' or ag.isCons='1') AND (ag.isHome='1') and (ag.isVillage='1')  and ag.age >= case when ag.isWomen='1' then 55 else 60 end then 1 else null end) as c20ntHomeIllnesV 
 
 
 FROM AggregatePolyMedCase ag  
@@ -1141,27 +1144,28 @@ select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 
-,count(case when ag.isPolyclinic='1' then 1 else null end) as cntAllPoly
-,count(case when ag.isPolyclinic='1' and ag.age <= 17 then 1 else null end) as cntAll17
-,count(case when ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as cntAllPolyV 
+,count(case when ag.isPolyclinic='1' then 1 else null end) as c3ntAllPoly
+,count(case when ag.isPolyclinic='1' and ag.age <= 17 then 1 else null end) as c4ntAll17
+,count(case when ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as c5ntAllPolyV 
 
-,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' then 1  else null end) as cntIllness 
-,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and (ag.isVillage='1') then 1 else null end) as cntIllnessV 
-,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and ag.age <=14 then 1 else null end) as cntIllnesOld
-,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and ag.age <= 17 then 1 else null end) as cntIllnes17 
-,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and (ag.isVillage='1') and ag.age <=17 then 1 else null end) as cntIllnessV 
+,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' then 1  else null end) as c6ntIllness 
+,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and (ag.isVillage='1') then 1 else null end) as c7ntIllnessV 
+,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and ag.age <=14 then 1 else null end) as c8ntIllnesOld
+,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and ag.age <= 17 then 1 else null end) as c9ntIllnes17 
+,count(case when (vr.code='ILLNESS') and ag.isPolyclinic='1' and (ag.isVillage='1') and ag.age <=17 then 1 else null end) as c10ntIllnessV 
 
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' then 1 else null end) as cntCons 
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age <= 14 then 1 else null end) as cntConsOld
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age <= 17 then 1 else null end) as cntCons17 
-,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as cntConsV 
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' then 1 else null end) as c11ntCons 
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age <= 14 then 1 else null end) as c12ntConsOld
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and ag.age <= 17 then 1 else null end) as c13ntCons17 
+,count(case when (ag.isCons='1') and ag.isPolyclinic='1' and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as c14ntConsV 
 
-,count(case when (ag.isHome='1') then 1 else null end) as cntHome 
-,count(case when (ag.isIllness='1' or ag.isCons='1') and (ag.isHome='1') then 1 else null end) as cntIllnesHome 
-,count(case when (ag.isHome='1') and ag.age <=17 then 1 else null end) as cntHome17
-,count(case when (ag.isHome='1') and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as cntHomeV 
-,count(case when (ag.isIllness='1' or ag.isCons='1') AND (ag.isHome='1') and ag.age <= 17 then 1 else null end) as cntIllnesHome17 
-,count(case when (ag.isIllness='1' or ag.isCons='1') AND (ag.isHome='1') and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as cntHomeIllnesV 
+,count(case when (ag.isHome='1') then 1 else null end) as c15ntHome 
+,count(case when (ag.isIllness='1' or ag.isCons='1') and (ag.isHome='1') then 1 else null end) as c16ntIllnesHome 
+,count(case when (ag.isHome='1') and ag.age <=17 then 1 else null end) as c17ntHome17
+,count(case when (ag.isHome='1') and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as c18ntHomeV 
+,count(case when (ag.isIllness='1' or ag.isCons='1') AND (ag.isHome='1') and ag.age <= 17 then 1 else null end) as c19ntIllnesHome17 
+,count(case when (ag.isIllness='1' or ag.isCons='1') AND (ag.isHome='1') and (ag.isVillage='1')  and ag.age <= 17 then 1 else null end) as c20ntHomeIllnesV 
+,count(case when (ag.isIllness='1' or ag.isCons='1') and (ag.isHome='1') and (ag.isVillage='1') then 1 else null end) as c21ntIllnesHome 
 
 
 FROM AggregatePolyMedCase ag  
@@ -1207,7 +1211,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
          		<th colspan="3">Число посещений (в поликлинику)</th>
          		<th colspan="5">Из посещ. в пол-ку сделано по поводу заболеваний</th>
          		<th colspan="4">Из посещ. в пол-ку сделано по поводу консультаций</th>
-         		<th colspan="6">Число посещ. врачами на дому</th>
+         		<th colspan="7">Число посещ. врачами на дому</th>
          	</tr>
          </msh:tableNotEmpty>
             <msh:tableColumn columnName="${groupName}" property="2"/>            
@@ -1224,10 +1228,11 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
             <msh:tableColumn isCalcAmount="true" columnName="0-17" property="13"/>
             <msh:tableColumn isCalcAmount="true" columnName="0-17 с.ж." property="14"/>
             <msh:tableColumn isCalcAmount="true" columnName="Всего" property="15"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заболеваний" property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего по поводу заб." property="16"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="21"/>
             <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17" property="17"/>
             <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="18"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 по поводу заболеваний" property="19"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из всего 0-17 по поводу заб." property="19"/>
             <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="20"/>
         </msh:table>
     </msh:sectionContent>

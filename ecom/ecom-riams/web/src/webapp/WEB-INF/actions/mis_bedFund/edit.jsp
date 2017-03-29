@@ -51,6 +51,9 @@
           <msh:textField property="dateFinish" label="Дата окончания актуальности" guid="e1b-8802-467d-b205-75765" />
           <msh:textField property="timeFinish" label="Время окончания актуальности" guid="e4d1b-8802-467d-b205-757876" />
         </msh:row>
+        <msh:row>
+        	<msh:textField property="snilsDoctorDirect263"/>
+        </msh:row>
         <msh:row guid="855de982-5baf-46f1-9f8b-f48" />
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>

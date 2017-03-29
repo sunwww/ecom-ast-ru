@@ -139,7 +139,18 @@
         </msh:row>
         <msh:row>
         	<td></td>
-        	<msh:autoComplete property="natureSuicide" vocName="vocPsychSuicideNature" fieldColSpan="3" horizontalFill="true"/>
+        	<msh:autoComplete property="natureSuicide" label="Вид суицида" vocName="vocSuicideMesType" fieldColSpan="3" horizontalFill="true"/>
+      <msh:row>
+      <td></td>
+        <td class="label" title="Просмотр данных (typeDateSuicide)" colspan="1"><label for="typeDateSuicideName" id="typeDateSuicideLabel">Поиск по дате:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeDateSuicide" value="1"> дате суицида
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeDateSuicide" value="2"> дате регистрации в ОКПБ
+        </td>
+
+       </msh:row>
         </msh:row>
         <msh:row styleId="rwDel">
         	<msh:autoComplete property="lpuArea" vocName="lpuArea" fieldColSpan="5" horizontalFill="true" label="Участок"/>
@@ -205,6 +216,7 @@
      checkFieldUpdate('typeCare','${typeCare}',4) ;
      checkFieldUpdate('typeDiag','${typeDiag}',1) ;
      checkFieldUpdate('typeAddress','${typeAddress}',1) ;
+     checkFieldUpdate('typeDateSuicide','${typeDateSuicide}',1) ;
      function checkFieldUpdate(aField,aValue,aDefault) {
      	
      	eval('var chk =  document.forms[0].'+aField) ;
@@ -308,8 +320,8 @@ as age
    left join VocCriminalCodeArticle vcca on vcca.id=ct.crimainalCodeArticle_id
    left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=area.id
    ${groupDopJoin}
-   left join Suicide sui on sui.careCard_id=pcc.id
-   left join VocPsychSuicideNature vpsn on vpsn.id=sui.nature_id
+   left join SuicideMessage sui on sui.patient_id=p.id
+   left join VocSuicideMesType vpsn on vpsn.id=sui.type_id
    left join VocPsychObservationReason vpor on vpor.id=area.observationReason_id
    left join VocPsychTransferReason vptr on vptr.id=area.transferReason_id
    left join VocPsychStrikeOffReason vpsor on vpsor.id=area.stikeOffReason_id

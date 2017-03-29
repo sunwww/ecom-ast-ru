@@ -2,6 +2,7 @@ package ru.ecom.mis.web.dwr.medcase;
 
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,242 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class PatientServiceJs {
-	
+	public String getPatients(String aLastname, String aFirstname, String aMiddlename
+			, String aYear, HttpServletRequest aRequest) throws NamingException {
+		if (new StringBuilder().append(aLastname!=null?aLastname:"").append(aFirstname!=null?aFirstname:"")
+				.append(aMiddlename!=null?aMiddlename:"").length()<4)  return "введите данные для поиска" ;
+		StringBuilder sql = new StringBuilder() ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		sql.append("select p.id,p.patientSync,p.lastname,p.firstname,p.middlename,to_char(p.birthday,'dd.mm.yyyy') from patient p left join medpolicy mp on mp.patient_id=p.id where p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
+		if (aFirstname!=null && !aFirstname.equals("")) {
+			sql.append(" and p.firstname like '").append(aFirstname.toUpperCase()).append("%' ") ;
+		}
+		if (aMiddlename!=null && !aMiddlename.equals("")) {
+			sql.append(" and p.middlename like '").append(aMiddlename.toUpperCase()).append("%' ") ;
+		}
+		if (aYear!=null && !aYear.equals("")) {
+			sql.append(" and to_char(p.birthday,'yyyy')='").append(aYear).append("' ") ;
+		}
+		
+		sql.append(" group by p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday") ;
+		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),20);
+		StringBuilder res = new StringBuilder() ;
+		res.append("<ul id='listPatients'>") ;
+		boolean isFirst = false ;
+		for (WebQueryResult wqr:list) {
+			
+			StringBuilder s = new StringBuilder().append(wqr.get1()).append("#").append(wqr.get3()).append(" ").append(wqr.get4())
+					.append(" ").append(wqr.get5()).append(" г.р. ").append(wqr.get6()) ;
+			res.append("<li ondblclick=\"this.childNodes[1].checked='checked';checkPatient('").append(s).append("');\" onclick=\"this.childNodes[1].checked='checked';checkPatient('").append(s).append("')\">") ;
+			res.append(" <input class='radio' type='radio' name='rdPatient' id='rdPatient' ") ;
+			if (isFirst) {
+				res.append(" checked='true' ") ;
+				isFirst=false ;
+			}
+			res.append(" value='").append(s).append("'>") ;
+			res.append(wqr.get2()) ;
+			res.append(" ").append(wqr.get3()) ;
+			res.append(" ").append(wqr.get4()) ;
+			res.append(" ").append(wqr.get5()) ;
+			res.append(" ").append(wqr.get6()) ;
+			if (wqr.get1()!=null) {
+				res.append("<a onclick='getDefinition(\"entityShortView-mis_patient.do?id=")
+					.append(wqr.get1()).append("\", event); return false ;' ondblclick='javascript:goToPage(\"entityView-mis_patient.do\",\"")
+					.append(wqr.get1()).append("\")'><img src=\"/skin/images/main/view1.png\" alt=\"Просмотр записи\" title=\"Просмотр записи\" height=\"16\" width=\"16\"></a>") ;
+				
+			}
+			res.append("</li>") ;
+		}
+		res.append("</ul>") ;
+		
+		return res.toString() ;
+	}
+	public String getFlowDocumentByPatient(Long aPatientId, Long aMedCase, Long aMedcard, String aTypeis, Long aViewType, HttpServletRequest aRequest) throws NamingException, JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder str = new StringBuilder() ;
+		StringBuilder sql = new StringBuilder() ;
+		
+		if (aViewType.equals(Long.valueOf(1))) str.append(" Список документов на отправку по пациенту:") ;
+		else if (aViewType.equals(Long.valueOf(2))) str.append(" Список отправленных документов по пациенту:") ;
+		else if (aViewType.equals(Long.valueOf(3))) str.append(" Список документов по пациенту:") ;
+		sql.append(" select fd.id as fdid");
+		sql.append(",pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio");
+		sql.append(",to_char(fd.createdate,'dd.mm.yyyy') as createdate ,coalesce('ИБ№'||ss.code,'МК№'||mc.number,'') as infodoc");
+		sql.append(" ,vfdt.name as vfdtname,vfdp1.name as vfdp1name,vfdp2.name as vfdp2name,fd.createusername") ;
+		sql.append(" from FlowDocument fd ");
+		sql.append(" left join medcase sls on sls.id=fd.medcase ");
+		sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ");
+		sql.append(" left join medcard mc on mc.id=fd.medcard ");
+		sql.append(" left join patient pat on pat.id=fd.patient ");
+		sql.append(" left join VocFlowDocumentType vfdt on vfdt.id=fd.type_id ");
+		sql.append(" left join VocFlowDocmentPlace vfdp1 on vfdp1.id=fd.placeFrom_id ");
+		sql.append(" left join VocFlowDocmentPlace vfdp2 on vfdp2.id=fd.placeTo_id ");
+		sql.append("where fd.patient='").append(aPatientId).append("'") ;
+		if (aTypeis!=null && !aTypeis.equals("")) sql.append(" and fd.type_id in (").append(aTypeis).append(")") ;
+		boolean isDelete = false ;
+		if (aViewType.equals(Long.valueOf(1))) {
+			sql.append(" and fd.postedDate is null") ;
+			//System.out.print("----"+isDelete) ;
+			if (RolesHelper.checkRoles("/Policy/Mis/Document/Flow/Delete", aRequest)) {
+				isDelete = true ;
+			}
+		} else if (aViewType.equals(Long.valueOf(2))) sql.append(" and fd.postedDate is not null") ;
+		else if (aViewType.equals(Long.valueOf(3))) sql.append(" ") ;
+		//System.out.print(isDelete) ;
+		if (aPatientId==null || aPatientId.equals(Long.valueOf(0))) return "НЕ УКАЗАН ПАЦИЕНТ!!!" ;
+		sql.append(" order by vfdt.name") ;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString()) ;
+		if (list.isEmpty()) {
+			str.append("НЕТ ДАННЫХ!!!");
+		} 
+		int i=0 ;
+		for (WebQueryResult wqr:list) {
+			i++ ;
+			if (i==1) {
+				str.append(wqr.get2()) ;
+				str.append("<table class='tabview sel tableArrow' border='1'><tr>") ;
+				if (isDelete) {
+					str.append("<th>&nbsp;</th>") ;
+				}
+				str.append("<th>#</th>") ;
+				str.append("<th>Дата</th>") ;
+				str.append("<th>ИБ/МК</th>") ;
+				str.append("<th>Вид</th>") ;
+				str.append("<th>Отправлено из</th>") ;
+				str.append("<th>Отправлено в</th>") ;
+				str.append("<th>Пользователь</th>") ;
+				str.append("</tr>");
+			}
+			str.append("<tr>") ;
+			if (isDelete) str.append("<td><button onclick='deleteFlowDoc(\"").append(wqr.get1()).append("\")'>Удалить</button></td>");
+			str.append("<td>").append(i).append("</td>") ;
+			str.append("<td>").append(wqr.get3()).append("</td>") ;
+			str.append("<td>").append(wqr.get4()).append("</td>") ;
+			str.append("<td>").append(wqr.get5()).append("</td>") ;
+			str.append("<td>").append(wqr.get6()).append("</td>") ;
+			str.append("<td>").append(wqr.get7()).append("</td>") ;
+			str.append("<td>").append(wqr.get8()).append("</td>") ;
+			str.append("</tr>");
+		}
+		if (!list.isEmpty()) {
+			str.append("</table>");
+		}
+		return str.toString() ;
+	}
+	public String deleteDataByFlowDoc(Long aId, Long aStatusUpdate,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		if (aStatusUpdate.intValue()==1||aStatusUpdate.intValue()==2) {
+			String type="receipt"; if (aStatusUpdate.intValue()==1) type="posted";
+			sql.append("update flowdocument set ").append(type).append("Date=null");
+			sql.append(",").append(type).append("Time=null");
+			sql.append(",").append(type).append("Username=null");
+		} else {
+			sql.append("delete from flowdocument") ;
+		}
+		sql.append(" where id =").append(aId).append("") ;
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "обновлено" ;
+	}
+	public String updatePostedDateByFlowDoc(String aIds, String aDate, String aTime, HttpServletRequest aRequest) throws NamingException {
+		return updateFlowDocumentByPatient(aIds,aDate,aTime,Long.valueOf(1),aRequest) ;
+	}
+	public String updateReceitDateByFlowDoc(String aIds, String aDate, String aTime, HttpServletRequest aRequest) throws NamingException {
+		return updateFlowDocumentByPatient(aIds,aDate,aTime,Long.valueOf(2),aRequest) ;
+	}
+	public String updateFlowDocumentByPatient(String aIds, String aDate, String aTime, Long aStatusUpdate, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		StringBuilder sql = new StringBuilder() ;
+		String type="receipt"; if (aStatusUpdate.intValue()==1) type="posted";
+		sql.append("update flowdocument set ").append(type).append("Date=to_date('")
+			.append(aDate).append("','dd.mm.yyyy')");
+		sql.append(",").append(type).append("Time='").append(aTime).append("'");
+		sql.append(",").append(type).append("Username='").append(username).append("'");
+		sql.append("where id in (").append(aIds).append(") and ").append(type).append("Date is null") ;
+		service.executeUpdateNativeSql(sql.toString()) ;
+		return "1" ;
+	}
+	public String createFlowDocumentByPatient(Long aPlaceFrom, Long aPlaceTo
+			, Long aPatientId, Long aMedCase, Long aMedcard, String aTypeis
+			, HttpServletRequest aRequest) throws NamingException, JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		StringBuilder sqlCheck = new StringBuilder() ;
+		StringBuilder sql = new StringBuilder() ;
+		StringBuilder sql1 = new StringBuilder() ;
+		String[] typeis = aTypeis.split(",") ;
+		System.out.println(aTypeis);
+		boolean isCreate=true ;
+		for (String type:typeis) {
+			sql = new StringBuilder() ;
+			sqlCheck = new StringBuilder() ;
+			sql1 = new StringBuilder() ;
+			if (aPlaceTo!=null && !aPlaceTo.equals(Long.valueOf(0))) {
+				sql1.append("select case when v.isTracking='1' then '1' else null end as istracking,v.type,case when v.homePlaceCode=(select vfdt.code from VocFlowDocmentPlace vfdt where vfdt.id='").append(aPlaceTo).append("') then null else '1' end as home from VocFlowDocumentType v where v.id=").append(type);
+				List<Object[]> l = service.executeNativeSqlGetObj(sql1.toString()) ;
+				String t = "" ;boolean istracksql=false;boolean istrack=false;
+				if (l.size()>0) {
+					t = ""+l.get(0)[1] ;
+					if (l.get(0)[0]!=null) {
+						sql1=new StringBuilder() ;
+						sql1.append("update flowdocument set istracking=null where patient='").append(aPatientId).append("' and type_id='").append(type).append("'") ;
+						if (t.equals("HOSP")) { if (aMedCase!=null && !aMedCase.equals(Long.valueOf(0))) {istracksql=true ;sql1.append(" and medcase='").append(aMedCase).append("'");} else sql1.append("") ;}
+						if (t.equals("POLYC")) {if (aMedcard!=null && !aMedcard.equals(Long.valueOf(0))) {istracksql=true ;sql1.append(" and medcard='").append(aMedcard).append("'");} else sql1.append("") ;}
+						
+						if (l.get(0)[2]!=null&&istracksql) {istrack=true;}
+					}
+				}
+				sqlCheck.append("select id from flowdocument where patient='").append(aPatientId).append("' and type_id='").append(type).append("'") ;
+				sql.append("insert into flowdocument (placeFrom_id,placeTo_id,patient,isTracking");
+				if (t.equals("HOSP")) sql.append(",medCase");
+				if (t.equals("POLYC")) sql.append(",medcard");
+				sql.append(",type_id,createdate,createtime,createusername) values (");
+				isCreate=true ;
+				if (aPlaceFrom!=null && !aPlaceFrom.equals(Long.valueOf(0))) {
+					sql.append("'").append(aPlaceFrom).append("'");
+					sqlCheck.append(" and placeFrom_id='").append(aPlaceFrom).append("'");
+				} else isCreate=false ;
+				
+				sql.append(","); if (aPlaceTo!=null && !aPlaceTo.equals(Long.valueOf(0))) {
+					sql.append("'").append(aPlaceTo).append("'");
+					sqlCheck.append(" and placeTo_id='").append(aPlaceTo).append("'");
+				} else isCreate=false ;
+				sql.append(","); if (aPatientId!=null && !aPatientId.equals(Long.valueOf(0))) sql.append("'").append(aPatientId).append("'"); else isCreate=false ;
+				sql.append(","); if (istrack) sql.append("'1'"); else sql.append("null") ;
+				if (t.equals("HOSP")) { if (aMedCase!=null && !aMedCase.equals(Long.valueOf(0))) {
+					sql.append(",'").append(aMedCase).append("'");
+					sqlCheck.append(" and medCase='").append(aMedCase).append("'");
+				} else sql.append(",null") ;}
+				if (t.equals("POLYC")) {if (aMedcard!=null && !aMedcard.equals(Long.valueOf(0))) {
+					sql.append(",'").append(aMedcard).append("'");
+					sqlCheck.append(" and medcard='").append(aMedcard).append("'");
+				} else sql.append(",null") ;}
+				
+				sql.append(","); if (type!=null && !type.equals("0")&&!type.equals("")) sql.append("'").append(type).append("'"); else isCreate=false ;
+				sql.append(",current_date,current_time,'").append(username).append("')") ;
+				//System.out.println(sql.toString()) ;
+				
+				if (isCreate) {
+					if (!service.executeNativeSql(sqlCheck.append(" and receiptDate is null").toString()).isEmpty()) isCreate=false ;
+					if (isCreate) {
+						if (istracksql) {
+							service.executeUpdateNativeSql(sql1.toString()) ;
+						}
+						service.executeUpdateNativeSql(sql.toString()) ;
+					}
+				}
+			} else {isCreate=false;}
+			
+		}
+		if (isCreate) {
+			return getFlowDocumentByPatient(aPatientId, aMedCase, aMedcard, aTypeis, Long.valueOf(1), aRequest) ;
+		} else {
+			return "<b>НЕ ЗАПОЛНЕНЫ ВСЕ ОБЯЗАТЕЛЬНЫЕ ПОЛЯ!!!</b><br>"+getFlowDocumentByPatient(aPatientId, aMedCase, aMedcard, aTypeis, Long.valueOf(1), aRequest) ;
+		}
+		 
+	}
 	public String getIsPatientInList(Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		 StringBuilder sb = new StringBuilder();
