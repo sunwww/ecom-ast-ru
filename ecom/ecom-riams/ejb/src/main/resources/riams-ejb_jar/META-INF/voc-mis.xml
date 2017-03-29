@@ -1,5 +1,18 @@
 <vocconfig>
 
+
+
+<!--  Справочник калькуляторы -->
+<voc id='vocCalculator' type='NativeVocService'>
+       <NativeVocService
+	from="calculator c"
+	nameId="c.id"
+	names="c.name"
+	>
+	</NativeVocService>
+    </voc> 
+    
+    
 <!--  Справочник НДС  -->
 <voc id='vocVat' type='NativeVocService'>
        <NativeVocService

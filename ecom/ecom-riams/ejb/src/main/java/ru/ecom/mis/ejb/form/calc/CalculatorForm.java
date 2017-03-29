@@ -16,7 +16,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Форма калькулятора"
 , nameProperties= "id", list="entityParentList-calculator.do", view="entityParentView-calc_calculator.do")
 //@Parent(property="dispCard", parentForm=ExtDispCardForm.class)
-@EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card")
+@EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculator")
 public class CalculatorForm extends IdEntityForm{
 
 	/** Название */
