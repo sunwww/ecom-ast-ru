@@ -578,6 +578,13 @@
                 >
             <forward name="success" redirect="false" path="/stac_direct_in_fond.do" />
         </action>
+        <action path='/stac_direct_in_fond_import_dir' type='ru.ecom.mis.web.action.synclpufond.HospitalDirectFondImportFromDirAction'
+                name='serviceImportRolesForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/stac_direct_in_fond.do" />
+        </action>
         <action path='/stac_direct_in_fond' type='ru.ecom.mis.web.action.synclpufond.HospitalDirectDataInFondAction'
                 name='mis_attachmentForm'
                 validate='false'
