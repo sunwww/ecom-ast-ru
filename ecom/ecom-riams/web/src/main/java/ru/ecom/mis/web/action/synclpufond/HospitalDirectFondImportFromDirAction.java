@@ -25,46 +25,58 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 			HttpServletRequest aRequest, HttpServletResponse aResponse)
 			throws Exception {
 		IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
-    	theService = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
+		theService = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
+		theHospService = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		final long monitorId = monitorService.createMonitor() ;
         new Thread() {
             public void run() {
+            	
             	theHospService.startMonitor(monitorId) ;
-            	getFiles(monitorId);
+            	try {
+					getFiles(monitorId);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             	theHospService.finishMonitor(monitorId) ;
             }
         }.start() ;
 		return aMapping.findForward("success");
 	}
-	public void getFiles(long aMonitorId) {
-		theDirName = getOrder263Dir();
+	public void getFiles(long aMonitorId) throws Exception {
+		theDirName = getOrder263InDir();
 		theArcDirName = getOrder263ArcDir();
 		theErrorDirName = getOrder263ErrorDir();
+		System.out.println(theDirName) ;
 		parseDir(theDirName, theArcDirName, false,aMonitorId);
 	}
 
-	public void parseDir(String dirName, String arcDirName, Boolean aRootDir,long aMonitorId){
+	public void parseDir(String dirName, String arcDirName, Boolean aRootDir,long aMonitorId) throws Exception{
 		File dir = new File(dirName);
 		theWorkDirName = dir.getName();
 		theWorkArcDir = new File(theArcDirName, theWorkDirName);
 		theWorkErrorDir = new File(theErrorDirName, theWorkDirName);
 		setPermissions(dir);
-		
+		System.out.println("1 этап") ;
 		parseDir(dir, aRootDir, aMonitorId);
 	}
-	public void parseDir(File aDir, Boolean aRootDir, long aMonitorId){
+	public void parseDir(File aDir, Boolean aRootDir, long aMonitorId) throws Exception{
 
 		File targetDir = null;
 
 		File[] files=aDir.listFiles();
+		System.out.println(aDir) ;
 		if (files == null) {
 		} else {
 		    for (File file:files) {
 		    	if(file.isDirectory()==false){
+		    		System.out.println(file.getAbsolutePath()) ;
 		    		targetDir = theWorkArcDir;
+		    		System.out.println(targetDir) ;
 		    		try {
 			    		theHospService.importFileDataFond(aMonitorId,file.getAbsolutePath());
 			    	} catch (Exception e) {
+			    		e.printStackTrace();
 			    		targetDir = theWorkErrorDir;
 			    	}
 		    		moveFileTo(file, targetDir);
@@ -72,7 +84,6 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 		    			theWorkDirName = file.getName();
 		    			theWorkArcDir = new File(theArcDirName, theWorkDirName);
 		    			theWorkErrorDir = new File(theErrorDirName, theWorkDirName);
-		    			//parseDir(file, false,aMonitorId);
 		    		}
 			    }
 		}
@@ -93,17 +104,17 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 		if (aIdDirectFond!=null)service.executeUpdateNativeSql("update hospitaldatafond set hospitalmedcase_id=null where id="+aIdDirectFond) ;
 		return ""; 
 	}
-	public String getOrder263Dir() {
+	public String getOrder263InDir() {
 		String workDir =theService.getDir("data.dir.order263.in", null);
-		return workDir!=null?new StringBuilder().append(workDir).append("/in").toString():null ;
+		return workDir!=null?new StringBuilder().append(workDir).toString():null ;
 	}
 	public String getOrder263ArcDir() {
 		String workDir =theService.getDir("data.dir.order263.arc", null);
-		return workDir!=null?new StringBuilder().append(workDir).append("/arc").toString():null ;
+		return workDir!=null?new StringBuilder().append(workDir).toString():null ;
 	}
 	public String getOrder263ErrorDir() {
 		String workDir = theService.getDir("data.dir.order263.err", null);
-		return workDir!=null?new StringBuilder().append(workDir).append("/err").toString():null ;
+		return workDir!=null?new StringBuilder().append(workDir).toString():null ;
 	}
 	public void setPermissions(File aFile){
 		run("chmod -R 777 "+aFile.getAbsolutePath());
@@ -118,13 +129,12 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 	}
 	public String run(String Command){
 		try{
-		Runtime.getRuntime().exec(Command);
-		return("0");
-		}
-		catch (Exception e){
-		System.out.println("Error running command: " + Command +
-		"\n" + e.getMessage());
-		return(e.getMessage());
+			Runtime.getRuntime().exec(Command);
+			return("0");
+		} catch (Exception e){
+			System.out.println("Error running command: " + Command +
+			"\n" + e.getMessage());
+			return(e.getMessage());
 		}
 	} 
 	IKdlDiaryService theService; 
