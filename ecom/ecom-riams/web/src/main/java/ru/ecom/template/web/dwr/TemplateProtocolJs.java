@@ -454,7 +454,7 @@ public class TemplateProtocolJs {
     			
     		}
     		res.append("</ul></td>") ;
-    	} else {
+    	} else if (aSmoId!=null && !aSmoId.equals("") && !aSmoId.equals("0")){
     		list = service.executeNativeSql("select mc.id,mc.patient_id from medcase mc where mc.id="+aSmoId,1);
     		if (list.size()>0) patient = ConvertSql.parseLong(list.iterator().next().get2()) ;
     		list.clear() ;
