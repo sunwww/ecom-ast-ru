@@ -392,7 +392,6 @@ LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
 LEFT JOIN Worker ow on ow.id=owf.worker_id 
 left join mislpu owflpu on owflpu.id=ow.lpu_id
 LEFT JOIN Patient owp on owp.id=ow.person_id
-LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
