@@ -113,7 +113,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 		if (aForm.supplyOrderNumber!=null&&aForm.supplyOrderNumber!="") throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (+aForm.preAdmissionTime>0) throw "При плановой госпитализации раздел доставлен не заполняется" ;
 		if (pat.newborn==null) {
-			if (aForm.orderDate ==null || aForm.orderDate.equals("")) {throw aForm.orderDate+"При плановой госпитализации необходимо заполнять поле Дата направления!!!" ;}
+		//	if (aForm.orderDate ==null || aForm.orderDate.equals("")) {throw aForm.orderDate+"При плановой госпитализации необходимо заполнять поле Дата направления!!!" ;}
 			if (+aForm.orderMkb>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Код МКБ направителя!!!" ;}
 			if (+aForm.orderLpu>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Кем направлен!!!" ;}
 			if (+aForm.sourceHospType>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Тип направившего ЛПУ!!!" ;}
