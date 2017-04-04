@@ -85,7 +85,6 @@
 					</tr>
 					<tr>
 						<td style="padding-left: 20px; padding-top: 20px;"> 
-						<input id="cancel" type="button" value="asd" onclick="test()"/> 
 						<input id="cancel" type="button" value="Отмена" onclick="goBack()"/> 
 						<input disabled id="calculate" type="button" value="Рассчитать" onclick="calculating()"/> 
 						<input disabled id="calcandsave" type="button" value="Рассчитать и сохранить" onclick="CreateRes()" />
@@ -94,8 +93,6 @@
 				</table>
 			</div>
 			</msh:ifFormTypeIsNotView>
-			
-			
 		</msh:form>
 	</tiles:put>
 	<!-- Scripts -->
@@ -125,7 +122,7 @@ var resultofcalc;
 	
 	GetAndParseJson();
 	
-	
+	//Cоздание элементов на основе json
 	function createObjects() {
 
 		var size = result.length;
@@ -194,11 +191,13 @@ var resultofcalc;
 		var visibleResult = document.querySelector('#result.result');
 		visibleResult.value = invisibleResult.value;
 	}
+	
+	//Эвент для выадающего списка. При активации элемента получаем JSON
 	calculatorAutocomplete.addOnChangeCallback(function() {
 		GetAndParseJson();
 	});
 
-
+	//Вычисление
 	function calculating() {
 		var T = "";
 		for ( var i = 0; i < global; i++) {
@@ -213,7 +212,7 @@ var resultofcalc;
 
 
 
-
+	//Получение пола по id случая
 	function getGender(glob) {
 
 		CalculateService.getGender(DepartmentId.value, {
@@ -235,7 +234,7 @@ var resultofcalc;
 		});
 	}
 
-
+	//получение возраста(полных лет) по id случая
 	function getAge(glob) {
 		CalculateService.getAge(DepartmentId.value, {
 			callback : function(aResult) {
@@ -246,12 +245,13 @@ var resultofcalc;
 		});
 	}
 
-
+	//Создание результата
 	function CreateRes() {
 		calculating();
+		var res = document.querySelector('#result.result');
 		if (!isEmpty()) {
 			CalculateService.SetCalculateResultCreate(DepartmentId.value,
-					result, calculator.value, {
+					res.value, calculator.value, {
 						callback : function(aResult) {
 							//alert("Сохранено!");
 							goBack();
