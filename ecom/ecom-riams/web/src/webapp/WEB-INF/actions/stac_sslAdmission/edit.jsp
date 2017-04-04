@@ -42,6 +42,10 @@
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      
       </msh:ifNotInRole>
+      <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <msh:hidden property="guarantee"/>
+      </msh:ifNotInRole>
+     
 
       <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
         <msh:separator label="Приемное отделение" colSpan="9" guid="af11419b-1c80-4025-be30-b7e83df06024" />
@@ -87,6 +91,11 @@
           <msh:autoComplete vocName="vocHospType" property="hospType" label="Тип тек. стационара" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p16c" />
           <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p8g16c" />
         </msh:row>
+         <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <msh:row>
+          <msh:autoComplete  vocName="guaranteeByPatient" parentId="smo_directionForm.patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+      </msh:ifInRole>
         <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
           <msh:autoComplete property="pediculosis" vocName="vocPediculosis" label="Педикулез" horizontalFill="true" guid="30c4f14a-0fa4-4b5b-9c13-4ecfca6000f6" />
           <msh:autoComplete property="deniedHospitalizating" label="Причина отказа от госп." vocName="vocDeniedHospitalizating" horizontalFill="true" fieldColSpan="1" guid="f1dab596-6c7d-4cb4-848b-71b62bd6bf3a" />
@@ -298,8 +307,38 @@
     	</msh:ifInRole>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
-    
+      <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
+      <script type="text/javascript">
+       	function checkIfDogovorNeeded() {
+  		if (+$('serviceStream').value>0&&$('guaranteeName')) {
+  			ContractService.checkIfDogovorIsNeeded($('patient').value, $('serviceStream').value, $('dateStart').value,null,'HOSPITAL', {
+  	  			callback: function (res) {
+  	  				if (res!=null&&res!='') {
+  	  					if (res.startsWith("0")) {
+  	  						alert ("Ошибка: "+res.substring(1));
+  	  					} else {
+  	  						var arr = res.substring(1).split("|");
+  	  						$('guarantee').value = arr[0];
+  	  						$('guaranteeName').value = arr[1];
+  	  					}	 
+  	  				} else {
+  	  				
+  	  				}
+  	  			$('guaranteeName').disabled=true;
+  	  			}
+  	  		});
+  		}
+  		
+  	}
+       	</script>
+      </msh:ifInRole>
+      <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <script type="text/javascript"> function checkIfDogovorNeeded() {}
+      </script>
+      </msh:ifNotInRole>
     <script type="text/javascript">
+    serviceStreamAutocomplete.addOnChangeCallback(function(){checkIfDogovorNeeded();});
 		try{	
 		    if (orderMkbAutocomplete) orderMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('orderMkb','orderDiagnos');

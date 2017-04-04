@@ -32,6 +32,9 @@
       <msh:hidden property="rwDate" guid="9438b469-d5b6-4d11-8dc9-91a551e2f2d1" />
       <msh:hidden property="rwNumber" guid="70e2513e-0d2e-48fd-9d08-3e83415755f9" />
       <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
+       <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <msh:hidden property="guarantee"/>
+      </msh:ifNotInRole>
       <msh:hidden property="rareCase"/>
       <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
         <msh:separator label="Приемное отделение" colSpan="9" guid="af11419b-1c80-4025-be30-b7e83df06024" />
@@ -51,6 +54,11 @@
         <msh:row guid="f2haba5-68fb-4ccc-9982-7b4480cmca147">
           <msh:autoComplete vocName="vocServiceStream"  property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p8g16c" />
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      	<msh:row>
+          <msh:autoComplete  vocName="guaranteeByPatient" parentId="smo_directionForm.patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+      </msh:ifInRole>
         <msh:row>
         	<msh:autoComplete property="kinsman" label="Представитель (иног.)" 
         	parentId="stac_sslAdmissionShortForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
@@ -188,8 +196,38 @@
     	</msh:ifInRole>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionShortForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
+    <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
+      <script type="text/javascript">
+       	function checkIfDogovorNeeded() {
+  		if (+$('serviceStream').value>0&&$('guaranteeName')) {
+  			ContractService.checkIfDogovorIsNeeded($('patient').value, $('serviceStream').value, $('dateStart').value,null,'HOSPITAL', {
+  	  			callback: function (res) {
+  	  				if (res!=null&&res!='') {
+  	  					if (res.startsWith("0")) {
+  	  						alert ("Ошибка: "+res.substring(1));
+  	  					} else {
+  	  						var arr = res.substring(1).split("|");
+  	  						$('guarantee').value = arr[0];
+  	  						$('guaranteeName').value = arr[1];
+  	  					}	 
+  	  				} else {
+  	  				
+  	  				}
+  	  			$('guaranteeName').disabled=true;
+  	  			}
+  	  		});
+  		}
+  		
+  	}
+       	</script>
+      </msh:ifInRole>
+      <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <script type="text/javascript"> function checkIfDogovorNeeded() {}
+      </script>
+      </msh:ifNotInRole>
       <script type="text/javascript">// при отказе в госпитализации ставим признак "Амбулаторное лечение"
-      
+      serviceStreamAutocomplete.addOnChangeCallback(function(){checkIfDogovorNeeded();});
 		try{	
 		    if (orderMkbAutocomplete) orderMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('orderMkb','orderDiagnos');

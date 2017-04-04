@@ -116,13 +116,14 @@
       <msh:hidden property="deniedHospitalizating"/>
       <msh:hidden property="ambulanceTreatment"/>
       <msh:hidden property="username"/>
-        <msh:hidden property="judgment35"/>
-        <msh:hidden property="admissionOrder"/>
-        <msh:hidden property="lawCourtDesicionDate"/>
-        <msh:hidden property="psychReason"/>
-       <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
-       	<msh:hidden property="hotelServices"/>
-       </msh:ifNotInRole>
+      <msh:hidden property="judgment35"/>
+      <msh:hidden property="admissionOrder"/>
+      <msh:hidden property="lawCourtDesicionDate"/>
+      <msh:hidden property="psychReason"/>
+      <msh:hidden property="guarantee"/>
+      <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
+       <msh:hidden property="hotelServices"/>
+      </msh:ifNotInRole>
               <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
               	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
               		<msh:hidden property="dischargeEpicrisis"/>
