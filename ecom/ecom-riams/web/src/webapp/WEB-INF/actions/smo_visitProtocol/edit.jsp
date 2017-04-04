@@ -273,7 +273,7 @@
         function setMedServiceParent() {
         	medServiceAutocomplete.setParentId($('specialist').value+"#"+$('dateRegistration').value);
         }
-        eventutil.addEventListener($('dateRegistration'),"change", function (){alert ("test");setMedServiceParent();});
+        eventutil.addEventListener($('dateRegistration'),"change", function (){setMedServiceParent();});
         setMedServiceParent();
         
     	var isChangeSizeEpicrisis=1 ;
