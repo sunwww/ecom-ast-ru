@@ -13,6 +13,9 @@
 	flush="true">
 	<tiles:put name="style" type="string">
 		<style type="text/css">
+		.hide {
+    display: none;
+}
 .protocols {
 	left: 0px;
 	width: 99%;
@@ -52,10 +55,8 @@
 			</msh:ifFormTypeIsView>
 			<msh:panel colsWidth="1%,1%,1%,1%,1%,1%,65%">
 				<msh:row>
-					<msh:textField label="Дата" property="dateRegistration"
-						fieldColSpan="1" guid="b58ehb-b971-441e-9a90-58019c07" />
-					<msh:textField label="Время" property="timeRegistration"
-						fieldColSpan="1" guid="b3hb-b971-441e-9a90-8019c07" />
+					<msh:textField label="Дата" property="dateRegistration" fieldColSpan="1"/>
+					<msh:textField label="Время" property="timeRegistration"fieldColSpan="1"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="type" fieldColSpan="3"
@@ -77,11 +78,17 @@
 				</msh:row>
 				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 					<msh:row>
-						<td colspan="3" align="right"><input type="button" style="display: none" name="btnEditProt2" id="btnEditProt2"
-							value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" /> <input
-							type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId.value,1)" /> <input
-							type="button" value="Шаблон" onClick="showtmpTemplateProtocol()" />
-							<input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()"></td>
+						<td colspan="3" align="right">
+						<input type="button" style="display: none" name="btnEditProt2" id="btnEditProt2"
+							value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" /> 
+							
+							<input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId.value,1)"/>
+
+							<input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
+							<input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
+							
+							
+						</td>
 					</msh:row>
 				</msh:ifFormTypeIsNotView>
 				<msh:row>
@@ -92,15 +99,11 @@
 
 				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 					<msh:row>
-						<td colspan="3" align="right"><input type="button"
-							style="display: none" name="btnEditProt1" id="btnEditProt1"
-							value="Редактировать параметры"
-							onClick="showTemplateForm($('templateProtocol').value);" /> <input
-							type="button" value="Шаблон" onClick="showtmpTemplateProtocol()" />
-							<input type="button" id="changeSizeEpicrisisButton"
-							value="Увеличить" onclick="changeSizeEpicrisis()"></td>
-						<tags:keyWord name="record" service="KeyWordService"
-							methodService="getDecryption" />
+						<td colspan="3" align="right"><input type="button" style="display: none" name="btnEditProt1" id="btnEditProt1" 
+						value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" /> 
+						<input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
+						<input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()"></td>
+						<tags:keyWord name="record" service="KeyWordService" methodService="getDecryption" />
 					</msh:row>
 				</msh:ifFormTypeIsNotView>
 				<msh:row>
@@ -301,6 +304,9 @@
 		<script type="text/javascript">
 	   // getCountDiary();
 	   // function getCountDiary() {
+		   
+		   var btn = document.querySelector('#SKNF');
+		   btn.className = "";
 		   flag=1;
 			CalculateService.getCountDiary(medCaseId.value, {
 				callback : function(aResult) {
@@ -367,9 +373,5 @@
     		})
     		</script>
 		</msh:ifFormTypeIsNotView>
-
-
-
-
 	</tiles:put>
 </tiles:insert>
