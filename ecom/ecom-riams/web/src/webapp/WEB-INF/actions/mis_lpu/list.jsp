@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
-
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -18,12 +19,38 @@
         <msh:sideLink roles="/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment" action="/entityList-mis_copyingEquipment" name="Копировальное оборудование" title="Показать сведения по копировальному оборудованию" guid="27fe8bc3-ae8d-4e8b-88f2-d23a337f614b" />
         </msh:sideMenu>
     </tiles:put>
-
-    <tiles:put name='body' type='string' >
-        <msh:table name="list" action="entityView-mis_lpu.do" idField="id">
-            <msh:tableColumn columnName="Код" property="id" />
-            <msh:tableColumn columnName="Код ОМС" property="omcCode" />
-            <msh:tableColumn columnName="Наименование ЛПУ" property="name" />
+     <tiles:put name='body' type='string' >
+    <%
+    String defaultLpuId = ActionUtil.getDefaultParameterByConfig("DEFAULT_LPU", "", request);
+    if (defaultLpuId!=null&&!defaultLpuId.equals("")) {
+    	request.setAttribute("defaultLpuId",defaultLpuId);
+    	%>
+    	Текущее ЛПУ: 
+     <ecom:webQuery name="defaultLpu" nameFldSql="defaultLpu_sql" nativeSql="select id, omcCode, name from mislpu where id=${defaultLpuId}" />
+        <msh:table name="defaultLpu" action="entityView-mis_lpu.do" idField="1">
+            <msh:tableColumn columnName="Код" property="1" />
+            <msh:tableColumn columnName="Код ОМС" property="2" />
+            <msh:tableColumn columnName="Наименование ЛПУ" property="3" />
+        </msh:table>	
+    	
+    	<%
+    }
+    String id = request.getParameter("id");
+    	if (id!=null||id.equals("-1")) {
+    		request.setAttribute("idSql", " is null");
+    	} else {
+    		request.setAttribute("idSql", " ="+id);
+    	}
+    
+    %>
+ 
+   
+    <ecom:webQuery name="lpus" nameFldSql="lpus_sql" nativeSql="select id, omcCode, name from mislpu where parent_id${idSql}" />
+        ЛПУ в системе
+        <msh:table name="lpus" action="entityView-mis_lpu.do" idField="1">
+            <msh:tableColumn columnName="Код" property="1" />
+            <msh:tableColumn columnName="Код ОМС" property="2" />
+            <msh:tableColumn columnName="Наименование ЛПУ" property="3" />
         </msh:table>
     </tiles:put>
 
