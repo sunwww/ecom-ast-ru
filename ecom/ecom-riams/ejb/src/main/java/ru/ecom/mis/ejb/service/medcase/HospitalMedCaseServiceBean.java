@@ -249,6 +249,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 	}
                 }
             }
+            importDataFond(aMonitorId, type,list) ;
         } catch (Exception e) {
         	
         }
@@ -258,10 +259,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     }
     public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
     	IMonitor monitor = null;
+    	System.out.print("Save data") ;
     	try {
+    		try{
     		monitor = theMonitorService.getMonitor(aMonitorId);
     		monitor.advice(20) ;
-    		
+    		}catch(Exception e) {
+    			e.fillInStackTrace() ;
+    		}
     		int size = aList.size()/80 ;
     		
     		for (int i=0;i<aList.size();i++) {
@@ -269,6 +274,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			if (monitor.isCancelled()) {
     				throw new IllegalMonitorStateException("Прервано пользователем");
     			}
+    			System.out.println("Save data="+i) ;
     			//Object id = null ;
     			if (wqr.get1()!=null) {
     				List<Object> lf = theManager.createNativeQuery("select id from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
@@ -539,9 +545,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		    	sql3.append(" ,list(distinct case when vdrt.code='2' then mkb.code else null end) as f9orderDiag") ;
     		    	sql3.append(" ,list(distinct case when vdrt.code='3' and vpd.code='1' then mkb.code else null end) as f10dischargeDiag") ;
     		    	sql3.append(" ,case when vhr.code='11' then cast('1' as int) else null end as f11isDeath") ;
-    		    	
+    		    	sql3.append(" , case when sls.dateFinish is not null then cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f12ageDischarge") ;
+    		    	sql3.append(" , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f13ageEntranceSls") ;
+    		    	sql3.append(" , cast(to_char(mc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(mc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(mc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f14ageEntranceSlo") ;
+    		    	sql.append(" , case when coalesce(mc.transferDate,mc.dateFinish) is not null then cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish), 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f15ageDischarge") ;
+    		    	sql3.append(" , pat.birthday as f16birthday") ;
     				sql3.append(" from medcase mc") ;
     				sql3.append(" left join medcase sls on mc.parent_id=sls.id") ;
+    				sql3.append(" left join patient pat on mc.patient_id=sls.patient_id") ;
     		    	sql3.append(" left join bedfund bf on bf.id=mc.bedfund_id") ;
     		    	sql3.append(" left join vocbedsubtype vbst on bf.bedsubtype_id=vbst.id") ;
     		    	sql3.append(" left join mislpu ml on ml.id=mc.department_id") ;
@@ -566,7 +577,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		    	sql3.append(" ,sls.admissionOrder_id,vhr.code") ;
     		    	sql3.append(" ,mc.department_id") ;
     		    	sql3.append(" ,sls.serviceStream_id,bf.bedType_id,bf.bedSubType_id") ;
-    		    	sql3.append(" ,mc.entranceTime, mc.dischargeTime,sls.emergency,vht.code,mc.transferTime,vhtHosp.id,vbst.code,sls.datefinish,sls.datestart,mc.parent_id ") ;
+    		    	sql3.append(" ,mc.entranceTime, mc.dischargeTime,sls.emergency,vht.code,mc.transferTime,vhtHosp.id,vbst.code,sls.datefinish,sls.datestart,mc.parent_id,pat.birthday ") ;
     		    	
     				sql3.append(" order by mc.datestart") ;
     				sql3.append("");
@@ -625,13 +636,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			    			ahr.setEntranceDepDate(ConvertSql.parseDate(begDateDep));
 			    			ahr.setDischargeHospDate(ConvertSql.parseDate(endDate)) ;
 			    			ahr.setDischargeDepDate(ConvertSql.parseDate(endDateDep)) ;
-			    			ahr.setIsDeath(ConvertSql.parseBoolean(o3[11])) ;
+			    			ahr.setIsDeath(o3[11]==null?false:ConvertSql.parseBoolean(o3[11])) ;
 			    			ahr.setNumberHosp(hospInd) ;
 			    			ahr.setIdcDepartmentCode(ConvertSql.parseString(o3[8])) ;
 				    		ahr.setIdcDischarge(ConvertSql.parseString(o3[10])) ;
 				    		ahr.setIdcEntranceCode(ConvertSql.parseString(o3[9])) ;
 				    		//ahr.setIdcTransferCode(ConvertSql.parseString(obj[34])) ;
-				    		
+				    		ahr.setAgeDischargeSls(ConvertSql.parseLong(obj[12]));
+				    		ahr.setAgeEntranceSlo(ConvertSql.parseLong(obj[13]));
+				    		ahr.setAgeEntranceSls(ConvertSql.parseLong(obj[14]));
+				    		ahr.setAgeDischargeSlo(ConvertSql.parseLong(obj[15]));
+				    		ahr.setBirthday(ConvertSql.parseDate(obj[16]));
 			    			if (ind>0) {
 			    				ahr.setIdcTransferCode(ConvertSql.parseString(l3.get(ind-1)[8], true));
 			    				ahr.setTransferDepartmentFrom(ConvertSql.parseLong(l3.get(ind-1)[6]));
@@ -999,7 +1014,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,wchb.dateFrom as w19chbdatefrom");
     	sql.append(", wchb.visit_id as v20isit");
     	sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
-    	sql.append(", cast(case when cast(to_char(p.birthday,'yyyy') as int)-cast(to_char(current_date,'yyyy') as int)>=18 then '0' else '1' end) as varchar(1)) as f22det"); //TODO доделать обработку по детям
+    	sql.append(", cast(case when cast(to_char(p.birthday,'yyyy') as int)-cast(to_char(current_date,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det"); //TODO доделать обработку по детям
     	sql.append(" from WorkCalendarHospitalBed wchb");
     	sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
     	sql.append(" left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id");
@@ -1274,7 +1289,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	
     }
-    public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
+    public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage
+    		, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -1282,8 +1298,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-    	workDir = aSaveInFolder?config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") :null;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
     	WebQueryResult res = new WebQueryResult() ;
     	
