@@ -33,6 +33,12 @@ public class CalculationsResult extends BaseEntity{
         public void setCalculator(Calculator aCalculator){theCalculator = aCalculator;}
         private Calculator theCalculator;
 
+        /** Дата */
+       	@Comment("Результат")
+       	public String getResDate(){return theResDate;}
+       	public void setResDate(String aResDate){theResDate = aResDate;}
+       	private String theResDate;
+        
         /** Результат */
 	@Comment("Результат")
 	public String getResult(){return theResult;}

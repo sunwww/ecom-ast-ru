@@ -2,8 +2,10 @@ package ru.ecom.mis.ejb.domain.calc;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import ru.ecom.diary.ejb.domain.protocol.parameter.voc.VocMeasureUnit;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -29,6 +31,13 @@ public class Calculator extends BaseEntity{
 	public String getUsername() {return theUsername;}
 	public void setUsername(String aUsername) {theUsername = aUsername;	}
 	private String theUsername;
+	
+	/** Единица измерения */
+	@Comment("Единица измерения")
+	@OneToOne
+	public VocMeasureUnit getValueOfResult() {return theValueOfResult;}
+	public void setValueOfResult(VocMeasureUnit aValueOfResult) {theValueOfResult = aValueOfResult;	}
+	private VocMeasureUnit theValueOfResult;
 	
 	/** Комментарий */
 	@Comment("Комментарий")

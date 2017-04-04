@@ -35,6 +35,13 @@ public class CalculationsResultForm extends IdEntityForm{
         public void setCalculator(Long aCalculator){theCalculator = aCalculator;}
         private Long theCalculator;
         
+        /** Дата */
+      	@Comment("Результат")
+      	@Persist
+      	public String getResDate(){return theResDate;}
+      	public void setResDate(String aResDate){theResDate = aResDate;}
+      	private String theResDate;
+      	
 	/** Результат */
 	@Comment("Результат")
 	@Persist

@@ -15,7 +15,6 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Форма калькулятора")
 @WebTrail(comment = "Форма калькулятора"
 , nameProperties= "id", list="entityParentList-calculator.do", view="entityParentView-calc_calculator.do")
-//@Parent(property="dispCard", parentForm=ExtDispCardForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculator")
 public class CalculatorForm extends IdEntityForm{
 
@@ -39,4 +38,11 @@ public class CalculatorForm extends IdEntityForm{
 	public String getComment() {return theComment;}
 	public void setComment(String aComment) {theComment = aComment;	}
 	private String theComment;
+	
+	/** Единица измерения результата */
+	@Comment("Единица измерения результата")
+	@Persist
+	public Long getValueOfResult() {return theValueOfResult;}
+	public void setValueOfResult(Long aValueOfResult) {theValueOfResult = aValueOfResult;}
+	private Long theValueOfResult;
 }
