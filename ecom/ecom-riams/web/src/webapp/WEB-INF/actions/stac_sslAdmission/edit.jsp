@@ -20,50 +20,21 @@
       	  <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
     	  <ecom:webQuery name="isTransferLpu" nativeSql="select id,lpu_id from medcase where id=${param.id} and moveToAnotherLpu_id is not null"/>
     	  <msh:tableNotEmpty name="isTransferLpu">
-    	  		<ecom:webQuery name="directOtherLpuQ" nativeSql="select wchb.id as id, to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate
- ,cast('1' as varchar(1)) as f1orPom
- ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l2puSent
- ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as l3puDirect
- ,vmc.code as m4edpolicytype
- ,mp.series as m5pseries
- , mp.polnumber as p6olnumber
- , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as o7ossmocode
- , ri.ogrn as o8grnSmo
- ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as o9katoSmo
- ,p.lastname as l10astname
- ,p.firstname as f11irstname
- ,p.middlename as m12iddlename
- ,vs.omcCode as v13somccode
- ,to_char(p.birthday,'yyyy-mm-dd') as b14irthday
- ,wchb.phone as p15honepatient
- ,mkb.code as m16kbcode
- ,vbt.codeF as v17btcodef
- ,wp.snils as w18psnils
- ,wchb.dateFrom as w19chbdatefrom
-, wchb.visit_id as v20isit
-, case when vbst.code='3' then '2' else vbst.code end as v21bstcode
-, cast('0' as varchar(1)) as f22det 
+    	  		<ecom:webQuery name="directOtherLpuQ" nativeSql="select 
+    	  		wchb.id as i1d
+    	  		, to_char(wchb.createDate,'yyyy-MM-dd') as w2chbcreatedate
+ ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l3puSent
+ ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as l4puDirect
+ ,mkb.code as m5kbcode
+ ,vbt.name as v6btcodef
+ ,wchb.dateFrom as w7chbdatefrom
+, vbst.name as v8bstcode
  from WorkCalendarHospitalBed wchb
  left join VocBedType vbt on vbt.id=wchb.bedType_id
  left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id
- left join Patient p on p.id=wchb.patient_id
- left join VocSex vs on vs.id=p.sex_id
- left join VocServiceStream vss on vss.id=wchb.serviceStream_id
- left join MedCase mc on mc.id=wchb.visit_id
- left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate
  left join VocIdc10 mkb on mkb.id=wchb.idc10_id
  left join MisLpu ml on ml.id=wchb.department_id
- left join Vocmedpolicyomc vmc on mp.type_id=vmc.id
- left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id
- left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id
- left join reg_ic ri on ri.id=mp.company_id
- left join WorkFunction wf on wf.id=mc.workFunctionExecute_id
- left join Worker w on w.id=wf.worker_id
- left join Patient wp on wp.id=w.person_id
- left join mislpu lpu on lpu.id=w.lpu_id
- left join mislpu plpu on plpu.id=lpu.parent_id
  left join mislpu olpu on olpu.id=wchb.orderLpu_id
- left join mislpu oplpu on oplpu.id=olpu.parent_id
  where wchb.visit_id =${param.id}
     	"/>
     	<msh:tableEmpty name="directOtherLpuQ">
@@ -73,7 +44,9 @@
     	</msh:tableEmpty>
     	<msh:tableNotEmpty name="directOtherLpuQ">
     	<msh:table  action="entityView-smo_planHospitalByHosp.do" name="directOtherLpuQ" idField="1">
-    		<msh:tableColumn property="1" columnName="?"/>
+    		<msh:tableColumn property="4" columnName="Направлен в ЛПУ"/>
+    		<msh:tableColumn property="6" columnName="Профиль"/>
+    		<msh:tableColumn property="5" columnName="Диагноз"/>
     	</msh:table>
     	</msh:tableNotEmpty>
     	  </msh:tableNotEmpty>
@@ -179,7 +152,13 @@
         <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
           <msh:textField property="attendant" label="Сопровождающее лицо" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:separator label="Направлен" colSpan="6" guid="fd40b634-ea84-450b-ac57-60e339d4fd11" />
+        <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
+        <msh:separator label="Направлен <input type='button' value='Список направлений' onclick='viewTable263narp_byPat()'///>" colSpan="6" />
+        </msh:ifFormTypeIsNotView>
+        <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
+        <msh:separator label="Направлен" colSpan="6" />
+        </msh:ifFormTypeIsView>
+        
         <msh:row guid="a53d1f37-afe8-4779-9e63-0b2684e14828">
           <msh:autoComplete property="orderLpu" label="Кем направлен" vocName="mainLpu" guid="c44b474f-6dba-4ba8-9af7-56a0dca363ad" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
@@ -289,8 +268,10 @@
       </msh:panel>
     </msh:form>
     <tags:stac_infoBySls form="stac_sslAdmissionForm"/>
+
     <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
-    	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand">
+    <tags:hosp_263 name="Direct"/>
+        	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand">
     		<script type="text/javascript">
     			$('statCardNumber').select() ;
     			$('statCardNumber').focus() ;
@@ -323,8 +304,8 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	
- 
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 
 
      <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
@@ -362,6 +343,29 @@
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
     
     <script type="text/javascript">
+    function viewTable263narp_byPat() {
+    	if ($('orderDate').value=="") {
+    		alert("Введите дату направления");
+    		$('orderDate').focus() ;
+    		$('orderDate').select() ;
+    	} else {
+    		showDirect263naprByPat($('patient').value,$('orderDate').value) ;
+    	}
+    }
+    function setHospByHDF(aHDF,aPat) {
+    	HospitalMedCaseService.getInfoByHDF(aHDF,{
+ 			callback: function(aResult) {
+ 				result=aResult.split("###@###") ;
+ 				$('orderLpu').value=result[0];
+ 				$('orderLpuName').value=result[1];
+ 				$('orderNumber').value=result[2];
+ 				$('orderDate').value=result[3];
+ 				$('orderMkb').value=result[4];
+ 				$('orderMkbName').value=result[5];
+ 				cancelDirect263() ;
+ 			}
+    	}) ;
+    }
 		try{	
 		    if (orderMkbAutocomplete) orderMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('orderMkb','orderDiagnos');

@@ -109,8 +109,10 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        		if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
 	        		if (wqr1.get3()!=null) sb.append("<a href='../rtf/"+wqr1.get3()+"'>"+wqr1.get3()+"</a>").append("</br>") ;
 	        		form.setFilename(sb.toString()) ;
-		        	aRequest.setAttribute("listExist", wqr.get4()) ;
-		        	aRequest.setAttribute("listError", wqr.get5()) ;
+	        		aRequest.setAttribute("listExist", wqr.get4()) ;
+	        		aRequest.setAttribute("listError", wqr.get5()) ;
+		        	aRequest.setAttribute("listExist1", wqr1.get4()) ;
+		        	aRequest.setAttribute("listError1", wqr1.get5()) ;
 		        	
 	        } else if (typeView!=null && typeView.equals("8")) {
 	        	WebQueryResult[] filenameList=service.exportFondZip23(format_n.format(cal.getTime()), 

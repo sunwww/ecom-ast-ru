@@ -57,7 +57,6 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 		theWorkArcDir = new File(theArcDirName, theWorkDirName);
 		theWorkErrorDir = new File(theErrorDirName, theWorkDirName);
 		setPermissions(dir);
-		System.out.println("1 этап") ;
 		parseDir(dir, aRootDir, aMonitorId);
 	}
 	public void parseDir(File aDir, Boolean aRootDir, long aMonitorId) throws Exception{
@@ -65,14 +64,14 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 		File targetDir = null;
 
 		File[] files=aDir.listFiles();
-		System.out.println(aDir) ;
+		//System.out.println(aDir) ;
 		if (files == null) {
 		} else {
 		    for (File file:files) {
 		    	if(file.isDirectory()==false){
-		    		System.out.println(file.getAbsolutePath()) ;
+		    		//System.out.println(file.getAbsolutePath()) ;
 		    		targetDir = theWorkArcDir;
-		    		System.out.println(targetDir) ;
+		    		//System.out.println(targetDir) ;
 		    		try {
 			    		theHospService.importFileDataFond(aMonitorId,file.getAbsolutePath());
 			    	} catch (Exception e) {
@@ -98,6 +97,10 @@ public class HospitalDirectFondImportFromDirAction  extends BaseAction {
 	public static String getOutFolderBy263(HttpServletRequest aRequest) throws NamingException {
 		IKdlDiaryService service = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
 		return service.getDir("data.dir.order263.out", null); 
+	}
+	public static String getInFolderBy263(HttpServletRequest aRequest) throws NamingException {
+		IKdlDiaryService service = Injection.find(aRequest).getService(IKdlDiaryService.class) ;
+		return service.getDir("data.dir.order263.in", null); 
 	}
 	public static String deleteSlsInDirectFond(HttpServletRequest aRequest,Long aIdDirectFond) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

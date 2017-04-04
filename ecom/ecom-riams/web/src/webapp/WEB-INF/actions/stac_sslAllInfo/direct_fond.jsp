@@ -124,13 +124,13 @@
       <msh:row>
         <td></td>
         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="11"> (N0) для выгрузки N1
+        	<input type="radio" name="typeView" value="11"> (N0) для выгрузки N1 с портала
         </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="12"> (N0) для выгрузки N2
+	        	<input type="radio" name="typeView" value="12"> (N0) для выгрузки N2 с портала
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="13"> (N0) для выгрузки N5
+	        	<input type="radio" name="typeView" value="13"> (N0) для выгрузки N5 с портала
 	        </td>
        </msh:row>
        <msh:row>
@@ -253,6 +253,8 @@
 			                    <td colspan="15">
 			                        <input type="file" name="file" id="file" size="50" value="" onchange="">
 			                        <input type="button" name="run_import" value="Импорт"  onclick="this.form.submit()" />
+			                        
+			                        <input type="button" id="run_import_dir" name="run_import_dir" value="Импорт из папки"  onclick="this.form.action='stac_direct_in_fond_import_dir.do';this.form.submit()" />
 			                    </td>
 			                </msh:row>
 			                
@@ -269,6 +271,13 @@
       <% 
       String dir = HospitalDirectFondImportFromDirAction.getOutFolderBy263(request) ;
       if (dir==null) { %>
+      <script type="text/javascript">
+      $('rowLoad').style.display="none" ;
+      </script>
+      <% } %>
+      <% 
+      String dirIn = HospitalDirectFondImportFromDirAction.getInFolderBy263(request) ;
+      if (dirIn==null) { %>
       <script type="text/javascript">
       $('rowLoad').style.display="none" ;
       </script>
@@ -423,8 +432,34 @@
 		request.setAttribute("emergencySql", " and (hdf.formHelp='3')");
 		request.setAttribute("emergencySlsSql", " and (sls.emergency is null or sls.emergency='0')");
 	}
-	if (typeMode!=null && typeMode.equals("1")) {if (isCkeck && request.getAttribute("listError")!=null){%>
+	if (typeMode!=null && typeMode.equals("1")) {
+		if (isCkeck && request.getAttribute("listError")!=null){%>
 	<msh:table name="listError" action="javascript:void(0)" idField="1">
+			<msh:tableColumn property="sn" columnName="#"/>
+			<msh:tableColumn property="1" columnName="Дата напр."/>
+			<msh:tableColumn property="2" columnName="Форма помощи."/>
+			<msh:tableColumn property="3" columnName="Код ЛПУ напр."/>
+			<msh:tableColumn property="4" columnName="Код ЛПУ куда напр."/>
+			<msh:tableColumn property="5" columnName="Вид полиса"/>
+			<msh:tableColumn property="6" columnName="Серия полиса"/>
+			<msh:tableColumn property="7" columnName="Номер полиса"/>
+			<msh:tableColumn property="8" columnName="СМО"/>
+			<msh:tableColumn property="9" columnName="ОГРН"/>
+			<msh:tableColumn property="10" columnName="ОКАТО"/>
+			<msh:tableColumn property="11" columnName="Фамилия"/>
+			<msh:tableColumn property="12" columnName="Имя"/>
+			<msh:tableColumn property="13" columnName="Отчество"/>
+			<msh:tableColumn property="14" columnName="Пол"/>
+			<msh:tableColumn property="15" columnName="Дата рождения"/>
+			<msh:tableColumn property="16" columnName="Телефон"/>
+			<msh:tableColumn property="17" columnName="Диагноз"/>
+			<msh:tableColumn property="18" columnName="Профиль коек"/>
+			<msh:tableColumn property="19" columnName="СНИЛС врача"/>
+	</msh:table>
+	
+	<% }
+		if (isCkeck && request.getAttribute("listError1")!=null){%>
+	<msh:table name="listError1" action="javascript:void(0)" idField="1">
 			<msh:tableColumn property="sn" columnName="#"/>
 			<msh:tableColumn property="1" columnName="Дата напр."/>
 			<msh:tableColumn property="2" columnName="Форма помощи."/>
@@ -549,8 +584,8 @@ left join VocServiceStream vss on vss.id=sls.serviceStream_id
 left join MisLpu oml on oml.id=sls.orderLpu_id
 where sls.dtype='HospitalMedCase' and sls.datestart between to_date('${param.period}','dd.mm.yyyy') and to_date('${periodTo}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is null
-and (slo.id is null or slo.prevMedCase_id is null) and (vbst.id is null or vbst.code='1')
-and vss.code in ('OBLIGATORYINSURANCE','OTHER')
+and (slo.id is null or slo.prevMedCase_id is null) 
+and vss.code in ('OBLIGATORYINSURANCE')
 and hdf.hospitalmedcase_id is null
 
 ${lpuSlsSql} ${emergencySlsSql}

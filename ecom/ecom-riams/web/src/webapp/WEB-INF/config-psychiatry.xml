@@ -61,6 +61,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/journal_compulsory_treatment_psych.jsp" />
         </action>        
+        <action path='/stac_report_36pl' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report_36pl.jsp" />
+        </action>        
         <action path='/psych_suicideMessage_by_period' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
