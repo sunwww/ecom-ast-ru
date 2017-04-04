@@ -16,194 +16,267 @@
 </tiles:put>
 
 
-<!-- Sider -->
-<tiles:put name="side" type="string">
-<msh:ifFormTypeAreViewOrEdit formName="calc_calculationsResultForm">
- <msh:sideMenu title="Управление">
-      
-      	<!-- <msh:sideLink confirm="Точно хотите удалть?" name="Удалить" action=".javascript:edit()" roles="/Policy/Mis/Calc/Calculation/Edit"/>
-    	<msh:sideLink name="Изменить" action=".javascript:delete()" roles="/Policy/Mis/Calc/Calculation/Edit"/>
-    	-->
-    	<msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-calc_calculationsResult" name="Изменить" roles="/Policy/Mis/Calc/Calculation/Edit" />
-        <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-calc_calculationsResult" name="Удалить" roles="/Policy/Mis/Calc/Calculation/Edit" />
-    	</msh:sideMenu>
-</msh:ifFormTypeAreViewOrEdit>
-</tiles:put>
-   
-  
-<tiles:put name="body" type="string">
-		<msh:form action="/entitySaveGoView-calc_calculationsResult.do" defaultField="name">
-		
-            <msh:hidden property="id" />
-            <msh:hidden property="saveType" />
+	<!-- Sider -->
+	<tiles:put name="side" type="string">
+		<msh:ifFormTypeAreViewOrEdit formName="calc_calculationsResultForm">
+			<msh:sideMenu title="Управление">
+				<msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id"
+					action="/entityEdit-calc_calculationsResult" name="Изменить"
+					roles="/Policy/Mis/Calc/Calculation/Edit" />
+				<msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?"
+					params="id"
+					action="/entityParentDeleteGoParentView-calc_calculationsResult"
+					name="Удалить" roles="/Policy/Mis/Calc/Calculation/Edit" />
+			</msh:sideMenu>
+		</msh:ifFormTypeAreViewOrEdit>
+	</tiles:put>
+
+	<!-- Styler -->
+	<tiles:put name="style" type="string">
+		<style>
+			.calc {
+				display: inline-block;
+				padding: 3px;
+				border: 1px solid rgba(255, 0, 0, 0);
+				transition: 3s;
+				border-color: rgb(59, 92, 105);
+				position: relative;
+				padding-top: 0.4em;
+				min-height: 0em;
+			}
+		</style>
+	</tiles:put>
+	
+	<!-- Body -->
+	<tiles:put name="body" type="string">
+		<msh:form action="/entitySaveGoView-calc_calculationsResult.do"
+			defaultField="name">
+			<msh:hidden property="id" />
+			<msh:hidden property="saveType" />
 			<msh:hidden property="departmentMedCase" />
-			<msh:hidden property="calculator"/>
-
-   <b>  Расчет клубочковой фильтрации:</b>
-   <div class="formula"> </div>
+			<msh:hidden property="calculator" />
 			<msh:panel>
-				<br>
-				<tr>
-				<td colspan="1" class="label"><label>Пол:</label></td>
-				<td colspan="2">
-<label><input disabled name="sex" id="sex2" value="2" type="radio">муж </label>
-<label><input disabled name="sex" id="sex1" value="1" type="radio">жен</label>
-</td>
-</tr>
-				<tr>
-					<td colspan="1" class="label"><label>Возраст:</label></td>
-					<td colspan="3"><input disabled id="age" size="10" type="text"></td>
-				</tr>
-				
-				<msh:ifFormTypeIsNotView formName="calc_calculationsResultForm"> 
-				<tr>
-					<td colspan="1" class="label"><label>Креатинин(с плав зап):</label></td>
-					<td colspan="3"><input id="createnin" size="10" type="text"></td>
-				</tr>
-
-				<tr>
-					<td colspan="1" class="label"><label>Масса тела(кг):</label></td>
-					<td colspan="3"><input id="mass" size="10" type="text"></td>
-				</tr>
-				</msh:ifFormTypeIsNotView>
 				<msh:row>
-					<msh:textField viewOnlyField="true" property="result" label="Результат"
-						horizontalFill="true" fieldColSpan="3" />
+					<msh:autoComplete vocName="vocCalculator" property="calculator" label="Выбор калькулятора" fieldColSpan="4" size="30" />
 				</msh:row>
-				
 			</msh:panel>
+<msh:ifFormTypeIsView formName="calc_calculationsResultForm">
+<input  hidden id="checker" class="check" size="60" type="text" value="1">
+		<msh:row>					
+			<msh:textField property="result"/>
+		</msh:row>
+</msh:ifFormTypeIsView>
 			
-<msh:ifFormTypeIsNotView formName="calc_calculationsResultForm"> 
-<tr> 
-<td> 
-<input value="Отмена" onclick="goBack();" type="button">
-</td>
-<td> 
-<input value="Рассчитать" onclick="calculate();" type="button">
-</td>
-<msh:ifFormTypeAreViewOrEdit formName="calc_calculationsResultForm"> 
-<td> 
-<input value="Рассчитать и сохранить" onclick="EditRes();" type="button">
-</td>
-</msh:ifFormTypeAreViewOrEdit> 
-<msh:ifFormTypeIsCreate formName="calc_calculationsResultForm"> 
-<td> 
-<input value="Рассчитать и создать" onclick="saveRes();" type="button">
-</td>
-</msh:ifFormTypeIsCreate>
-</tr>
-</msh:ifFormTypeIsNotView>
-
-
-</msh:form>
-</tiles:put>
-
-
-
-
-
-
-<!-- Scripts -->
+			<msh:ifFormTypeIsNotView formName="calc_calculationsResultForm">
+			<input  hidden id="checker" class="check" size="60" type="text" value="2">
+			<msh:ifFormTypeAreViewOrEdit formName="calc_calculationsResultForm">
+			<msh:row>					
+			<msh:hidden property="result"/>
+			</msh:row>
+			</msh:ifFormTypeAreViewOrEdit>
+			
+			<br>
+			<div class="calc">
+				<table>
+					<tr>
+						<td style="padding-left: 20px; padding-top: 20px;">
+							<div id="calculator" class="calc">Выберите калькулятор!</div>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 20px; padding-top: 20px;"> 
+						<input id="cancel" type="button" value="asd" onclick="test()"/> 
+						<input id="cancel" type="button" value="Отмена" onclick="goBack()"/> 
+						<input disabled id="calculate" type="button" value="Рассчитать" onclick="calculating()"/> 
+						<input disabled id="calcandsave" type="button" value="Рассчитать и сохранить" onclick="CreateRes()" />
+						<td>
+					</tr>
+				</table>
+			</div>
+			</msh:ifFormTypeIsNotView>
+			
+			
+		</msh:form>
+	</tiles:put>
+	<!-- Scripts -->
 <tiles:put name="javascript" type="string">
 <script type="text/javascript" src="./dwr/interface/CalculateService.js"></script>
 <script type="text/javascript">
-
- 
 var DepartmentId= $('departmentMedCase');
 var aId= $('id');
-var result = document.querySelector('#resultReadOnly');
-var createnin = document.querySelector('#createnin');
-var mass = document.querySelector('#mass');
-var formula = document.querySelector('.formula');
-var empty=true;
-var ages="";
-var genders="";
-
-getGenderAndAge();
+var calculator = document.querySelector('#calculator'); //id калькулятора.
+var div = document.querySelector('#calculator.calc'); 
+var global=0;
+var result;
+var resultofcalc;
 
 
-function EditRes() {
-	 calculate();
-	 if(!checkEmpty()){
-	 CalculateService.SetCalculateResultEdit(aId.value, result.value, {
+	function GetAndParseJson() {
+		CalculateService.GetSettingsById(calculator.value, {
 			callback : function(aResult) {
-				//alert("Сохранено!");
-				goBack();
-				}
-	 });
-	 }}
-	 
- function saveRes() {
-	 calculate();
-	 if(!checkEmpty()){
-	 CalculateService.SetCalculateResultCreate(DepartmentId.value, result.value, {
-			callback : function(aResult) {
-				//alert("Сохранено!");
-				goBack();
-				}
-	 });
-	 }}
+
+				result = JSON.parse(aResult);
+				
+				var t= document.querySelector('#checker.check');
+				if(t.value>"1"){createObjects();}
+			}
+		});}
 	
-function getGenderAndAge() {
-	CalculateService.GetGenderAndAge(DepartmentId.value, {
-		callback : function(aResult) {
-		
-   var age = document.querySelector('#age');
-   var radio1 = document.querySelector('#sex1');
-   var radio2 = document.querySelector('#sex2');
-			
-			var i = 0, p = 0;
-			for (i; i < aResult.length; i++) {
-				if (aResult[i] == "|") {
-					p = 1;
-					i++;
-				}
-				if (p == 0) {
-					ages += aResult[i];
-				}
-				if (p == 1) {
-					genders += aResult[i];
-				}
-			}
-			age.value = ages;
-			if(genders==1) radio1.checked=true;  //жен
-			if(genders==2) radio2.checked=true; //муж
-		}});}
+	
+	GetAndParseJson();
+	
+	
+	function createObjects() {
 
-		
-		
-		function calculate() {
+		var size = result.length;
+		var table = document.createElement('table');
 
-			createnin.value = createnin.value.replace(".",",");
-			result.className = "horizontalFill";
-			
-			if(!checkEmpty()){
-			if (genders == "2") {
-				result.value = ((1.23 * (140 - ages) * mass.value) / createnin.value);
-				formula.innerHTML = ' по формуле: <b>1,23 х (140 - возраст) х масса / креатинин</b>';
+		document.querySelector('#calculate').disabled = false;
+		document.querySelector('#calcandsave').disabled = false;
+
+		var tempo = document.querySelector('#calculatorName');
+
+		div.removeChild(div.firstChild);
+		global = 0;
+		div.innerHTML = "Калькулятор: <b>" + tempo.value + "</b>";
+		div.appendChild(table);
+		var formul = "";
+
+		for ( var i = 0; i < size; i++) {
+			var tr = document.createElement('tr');
+			tr.id = "id" + global;
+			table.appendChild(tr);
+			if (result[i].Type_id == 1) {
+
+				if (result[i].Value == "@gender") {
+					getGender(global);
+					tr.innerHTML += "<td class=\"label'\"><label id=\"gen"+global+"\" class=\"txtbox\" >"
+							+ result[i].Comment + ":</label></td>";
+					tr.innerHTML += "<td><input disabled id=\"id"+global+"\" class=\"txtbox\" size=\"60\" type=\"text\"></td>";
+					global++;
+				}
+
+				if (result[i].Value == "@age") {
+					getAge(global);
+					tr.innerHTML += "<td class=\"label'\"><label>"
+							+ result[i].Comment + ":</label></td>";
+					tr.innerHTML += "<td><input disabled id=\"id"+global+"\" class=\"txtbox\" size=\"60\" type=\"text\"></td>";
+					global++;
+				}
+
+				if (result[i].Value != "@age" && (result[i].Value != "@gender")) {
+					tr.innerHTML += "<td class=\"label'\"><label>"
+							+ result[i].Comment + ":</label></td>";
+					tr.innerHTML += "<td><input id=\"id"+global+"\" class=\"txtbox\" size=\"60\" type=\"text\"></td>";
+					global++;
+				}
 			}
-			if (genders == "1") {//1
-				result.value = ((1.04 * (140 - ages) * mass.value) / createnin.value);
-				formula.innerHTML = ' по формуле: <b>1,04 х (140 - возраст) х масса / креатинин</b>';
+
+			if (result[i].Type_id == 2) {
+				tr.innerHTML += "<td class=\"label'\"><label hidden>-</label></td>";
+				tr.innerHTML += "<td><input hidden disabled id=\"id"+global+"\" class=\"txtbox\" size=\"60\" type=\"text\" value=\""+result[i].Value+"\"></td>";
+				global++;
 			}
-			}
-			else {formula.innerHTML = '  <font color="red"><b>Заполните все поля!</b></font>';}
-			result.className = "viewOnly horizontalFill";
 		}
 		
+		var tr2 = document.createElement('tr');
+		tr2.id = "res";
+		table.appendChild(tr2);
+		///////////////////---------------
 		
-		 function goBack() // возврат на родительскую страницу.
-		 {
-			 location.href= "entityParentView-stac_slo.do?id="+DepartmentId.value;
-		 }
-		 
-		 function checkEmpty() //проверка полей на пустоту
-		 {
-			 if(createnin.value =="" || mass.value=="") return true;
-				else return false;
-		 }
+					
+				
+		tr2.innerHTML += "<td class=\"label'\"><label>Результат:</label></td>";
+		tr2.innerHTML += "<td><input disabled id=\"result\" class=\"result\" size=\"60\" type=\"text\"></td>";
 		
-	</script>
+		
+		var invisibleResult = document.querySelector('#result');
+		var visibleResult = document.querySelector('#result.result');
+		visibleResult.value = invisibleResult.value;
+	}
+	calculatorAutocomplete.addOnChangeCallback(function() {
+		GetAndParseJson();
+	});
+
+
+	function calculating() {
+		var T = "";
+		for ( var i = 0; i < global; i++) {
+			var inputbox = document.querySelector('#id' + i + '.txtbox');
+			T += "" + inputbox.value;
+		}
+
+		var res = document.querySelector('#result.result');
+		res.value = eval(T);
+		resultofcalc = eval(T);
+	}
+
+
+
+
+	function getGender(glob) {
+
+		CalculateService.getGender(DepartmentId.value, {
+			callback : function(aResult) {
+
+				var genLab = document.querySelector('#gen' + glob + ".txtbox");
+				var gentxt = document.querySelector('#id' + glob + ".txtbox");
+
+				if (aResult == 2) {
+					genLab.innerHTML = "Пол мужской"
+					gentxt.value += "1.23";
+				}
+
+				if (aResult == 1) {
+					genLab.innerHTML = "Пол женский"
+					gentxt.value += "1.04";
+				}
+			}
+		});
+	}
+
+
+	function getAge(glob) {
+		CalculateService.getAge(DepartmentId.value, {
+			callback : function(aResult) {
+				var age = document.querySelector('#id' + glob + ".txtbox");
+				age.value = aResult;
+
+			}
+		});
+	}
+
+
+	function CreateRes() {
+		calculating();
+		if (!isEmpty()) {
+			CalculateService.SetCalculateResultCreate(DepartmentId.value,
+					result, calculator.value, {
+						callback : function(aResult) {
+							//alert("Сохранено!");
+							goBack();
+						}
+					});
+		}
+	}
+
+	//проверка полей на пустоту
+	function isEmpty() {
+		for ( var i = 0; i < global; i++) {
+			var inputbox = document.querySelector('#id' + i + '.txtbox');
+			if (inputbox.value == "") {
+				alert("Заполнены не все поля!");
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	 // возврат на родительскую страницу.
+	function goBack() {
+		location.href = "entityParentView-stac_slo.do?id=" + DepartmentId.value;
+	}
+</script>
  </tiles:put>
 </tiles:insert>
 

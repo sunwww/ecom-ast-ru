@@ -23,6 +23,11 @@
 					<msh:textArea rows="2" property="comment" label="Описание (для констант)"
 						fieldColSpan="3" horizontalFill="true" />
 				</msh:row>
+			
+	  
+	  <msh:row>
+	<msh:autoComplete  property="valueOfResult" label="Тип" vocName="vocMeasureUnit" size="100" fieldColSpan="3" />
+</msh:row>
 				<msh:row>
 				<msh:label property="username" label="пол-ль"/>
 				<msh:submitCancelButtonsRow colSpan="1000"  />
