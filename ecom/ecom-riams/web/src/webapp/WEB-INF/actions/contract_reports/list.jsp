@@ -211,7 +211,7 @@ and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
 ${nationalitySql} ${paymentSql}
 group by wp.lastname,wp.firstname,wp.middlename
 order by wp.lastname
-			"/>
+			"/> 
 
 			<ecom:webQuery name="finansReport_without_vat" nameFldSql="finansReport_without_vat_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
