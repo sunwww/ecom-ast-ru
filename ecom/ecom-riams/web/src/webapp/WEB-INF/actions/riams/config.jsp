@@ -118,7 +118,7 @@
 						<li><msh:link action="serviceExport.do" roles="/Policy/Jaas/Activation">
 	                            Активация политик
 	                        </msh:link></li>
-						<li><msh:link action="entityList-sec_userPermission.do" roles="/Policy/Jaas/Permission/User/View">
+						<li><msh:link action="js-sec_userPermission-listNext.do" roles="/Policy/Jaas/Permission/User/View">
 	                            Разрешения
 	                        </msh:link></li>
 					</ul>

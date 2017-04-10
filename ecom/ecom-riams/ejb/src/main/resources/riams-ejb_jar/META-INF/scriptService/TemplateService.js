@@ -270,6 +270,43 @@ function findListDeleteJournal(aContext, aId, aCnt, aNext) {
 	return ret ;
 }
 
+function findListPermission(aContext, aId, aCnt, aNext) {
+	var list ;
+	var ret = new java.util.ArrayList() ;
+	
+	if (aNext < 0) {
+		if (aCnt<0) aCnt = aCnt*(-1) ;
+		if (aId==null || aId == "" || aId==0) {
+			list =  aContext.manager.createQuery("from Permission order by id asc").setMaxResults(aCnt).getResultList() ;
+		} else {
+			list =  aContext.manager.createQuery("from Permission where id > "+aId+" order by id asc").setMaxResults(aCnt).getResultList() ;
+			if (list.size()<aCnt) {
+				return findListPermission(aContext,"",aCnt,1) ; 
+			}
+		}
+		
+		for (var i=list.size()-1 ; i>=0 ; i--) {
+			var temp = list.get(i) ;
+			ret.add(permissionMap(temp)) ;
+		}
+	} else {
+		if (aId==null || aId == "" || aId==0) {
+			list =  aContext.manager.createQuery("from Permission order by id desc").setMaxResults(aCnt).getResultList() ;
+		} else {
+			list =  aContext.manager.createQuery("from Permission where id < "+aId+" order by id desc").setMaxResults(aCnt).getResultList() ;
+			if (list.size()<aCnt) {
+				return findListPermission(aContext,"",aCnt,-1) ;
+			}
+		}
+		for (var i=0 ; i< list.size() ; i++) {
+			var temp = list.get(i) ;
+			ret.add(permissionMap(temp)) ;
+		}
+	}
+		 
+	return ret ;
+}
+
 
 
 
@@ -328,5 +365,19 @@ function calendarPatternMap(aTemp) {
 	map.put("defaultTimeTo", aTemp.defaultTimeTo) ;
 	map.put("defaultTimeInterval", aTemp.defaultTimeInterval) ;
 	map.put("noActive", aTemp.noActive) ;
+	return map ;
+}
+function permissionMap(aTemp) {
+	var map = new java.util.HashMap() ;
+	map.put("id", new java.lang.Long(aTemp.id)) ;
+	map.put("dateFrom", aTemp.dateFrom) ;
+	map.put("dateTo", aTemp.dateTo) ;
+	map.put("objectInfo", aTemp.objectInfo) ;
+	map.put("permissionInfo", aTemp.permissionInfo) ;
+	map.put("idObject", aTemp.idObject) ;
+	map.put("userInfo", aTemp.userInfo) ;
+	map.put("createUsername", aTemp.createUsername) ;
+	map.put("createDate", aTemp.createDate) ;
+
 	return map ;
 }
