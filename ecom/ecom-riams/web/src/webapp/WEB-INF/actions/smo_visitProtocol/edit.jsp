@@ -196,26 +196,13 @@
 	</tiles:put>
 
 	<tiles:put name='title' type='string'>
-		<ecom:titleTrail mainMenu="Patient" beginForm="smo_visitProtocolForm"
-			guid="444ehb-b971-441e-9a90-5194a8019c07" />
+		<ecom:titleTrail mainMenu="Patient" beginForm="smo_visitProtocolForm"/>
 	</tiles:put>
-
-
 	<tiles:put name='javascript' type='string'>
-
-
-
-
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
 				<script type="text/javascript">
-    
-    
-    
-    
-    
-    
-    var medCaseId = document.querySelector('#medCase');
+        var medCaseId = document.querySelector('#medCase');
     var flag=0;
     
     setTimeout(checktime,600000) ;
@@ -302,23 +289,19 @@
 		
 		<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
 		<script type="text/javascript">
-	   // getCountDiary();
-	   // function getCountDiary() {
-		   
+		   var ishosp=0;
 		   var btn = document.querySelector('#SKNF');
 		   btn.className = "";
 		   flag=1;
 			CalculateService.getCountDiary(medCaseId.value, {
 				callback : function(aResult) {
-				if(parseInt(aResult)==0)
+					//alert(ishosp);
+				if(parseInt(aResult)==0 &&ishosp==1)
 				{
 					showMyNewCalculation(medCaseId.value,0);
-					
 				}
 				}});
-			//}
-	   
-		</script>
+	   </script>
 		</msh:ifInRole>
 		<script type="text/javascript">
 		
@@ -345,7 +328,7 @@
     		TemplateProtocolService.isCanEditProtocol($('id').value,$('username').value,
     			{
                     callback: function(aString) {
-                    	//alert(aString) ;
+                    	//alert(aString);
                         if (+aString>0) {} else {
                          	alert('У Вас стоит ограничение на редактрование данного протокола!');
                          	window.location.href= "entityParentView-smo_visitProtocol.do?id=${param.id}";
@@ -362,10 +345,12 @@
     			callback: function(aDtype) {
                 	//alert(aString) ;
                     if (aDtype!=null && aDtype=="HospitalMedCase") {
+                    	ishosp=1;
                     	$('stateName').className="autocomplete horizontalFill required";
                     	$('typeName').className="autocomplete horizontalFill required";
                         $('journalText').className="required maxHorizontalSize";
                     } else if (aDtype!=null && aDtype=="DepartmentMedCase") {
+                    	ishosp=1;
                     	$('typeName').className="autocomplete horizontalFill required";
                     	$('stateName').className="autocomplete horizontalFill required";
                     }
