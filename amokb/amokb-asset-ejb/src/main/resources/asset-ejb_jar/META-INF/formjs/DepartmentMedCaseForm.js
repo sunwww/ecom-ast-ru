@@ -35,8 +35,9 @@ function onPreSave(aForm,aEntity, aContext) {
 	if (bedFund!=null && bedFund.bedSubType!=null) {
 		var bedSubType = bedFund.bedSubType.code ;
 		if (hosp.hospType!=null) {
-			if ((hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==2) 
-				|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1) ) {
+			if ((hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==2)
+				|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1)
+				|| (hosp.hospType.code=="HOUSE" && +bedSubType==3)) {
 			} else {
 				throw "Не соответствует тип стационара "+hosp.hospType.name+" и профиль коек "+ bedFund.bedSubType.name;
 			}
