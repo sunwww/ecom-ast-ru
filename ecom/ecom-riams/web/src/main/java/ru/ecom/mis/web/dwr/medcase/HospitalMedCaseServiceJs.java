@@ -1789,4 +1789,46 @@ public class HospitalMedCaseServiceJs {
 
 		return res.toString() ;
     }
+    //Milamesher 263 приказ
+    public String sqlorder263(int id,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="SELECT hf.id, hf.firstname, hf.lastname, hf.middlename, hf.birthday, hf.phone" +
+				" ,case when hf.sex_id=1 then 'Ж' else 'М' end from hospitaldatafond hf " +
+				"left join vocsex v on v.id=hf.sex_id where hf.hospitalmedcase_id=" + id;
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
+		StringBuilder res = new StringBuilder() ;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("#").append((new SimpleDateFormat("dd.MM.yyyy").format(wqr.get5()))).append("#").append(wqr.get6()).append("#").append(wqr.get7()).append("#") ;
+		} else {
+			res.append("##");
+		}
+		query="SELECT typepolicy,seriespolicy, numberpolicy, directmedcase_id, numberfond, directdate, diagnosis,orderlpucode from hospitaldatafond hf where hf.hospitalmedcase_id=" + id;
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			Object date = wqr.get6();
+			if (date!=null) date=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get6());
+			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("#").append(wqr.get5()).append("#").append(date).append("#").append(wqr.get7()).append("#").append(wqr.get8()).append("#") ;
+		} 
+		query="SELECT prehospdate,directlpucode, profile, hospdate, hospdischargedate from hospitaldatafond hf where hf.hospitalmedcase_id=" + id;
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			Object date1 = wqr.get1();
+			if (date1!=null) date1=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get1());
+			Object date4 = wqr.get4();
+			if (date4!=null) date4=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get4());
+			Object date5 = wqr.get5();
+			if (date5!=null) date5=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get5());
+			res.append(date1).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(date4).append("#").append(date5).append("#") ;
+		} 
+		query="SELECT name FROM vocdeniedhospitalizating where id=(SELECT deniedhospital FROM hospitaldatafond hf where hf.hospitalmedcase_id=" + id + ")";
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1()).append("#");
+			}
+		return res.toString();
+    }
 }

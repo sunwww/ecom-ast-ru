@@ -109,6 +109,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink styleId="stac_protocol" params="id" roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View"
     action="/printProtocolsBySLS.do?stNoPrint=selected" name="Список нераспечатанных протоколов"
     />
+    
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="263 приказ" 
+    	 action='/javascript:showorder263CloseDocument()' title='263 приказ' styleId="stac_slo"
+    	/>
+    
               <msh:sideLink roles="/Policy/Mis/Document/Flow/View" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&medcase=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
 
     
@@ -209,6 +214,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		<msh:sideLink action = "/entityParentPrepareCreate-stac_disabilityCase" name = "Нетрудоспособность" params = "id" title = "Нетрудоспособность" roles = "/Policy/Mis/MedCase/Stac/Ssl//Disability/Disability/Create"  />
 </msh:sideMenu>
 <tags:contract_getAccount name="ACCOUNT"  />
+<<tags:order263 name="order263" />
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <script type="text/javascript">
   function viewOtherVisitsByPatient(d) {
@@ -304,4 +310,5 @@ function gotoNewBornHistory(aMedCase,aUrl) {
 			  }
 			}) ;
   }	
+
 </script>
