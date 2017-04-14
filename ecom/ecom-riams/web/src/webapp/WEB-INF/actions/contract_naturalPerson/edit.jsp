@@ -28,21 +28,26 @@
 ,(select sum(ca.balanceSum)
 			from ContractAccount ca
 			where ca.contract_id=mc.id) as sumbalance
+,max (case when mc.customer_id='${param.id}' then 'Заказчик' when sp1.person_id='${param.id}' then 'Обслуживаемая персона' else 'Неопределено' end) as f7_personType
 from MedContract mc 
 left join ServedPerson sp on mc.id=contract_id left join ContractPerson cp on cp.id=sp.person_id 
-left join Patient cpp on cpp.id=cp.patient_id left join ContractAccount ca on ca.servedPerson_id=sp.id 
+left join Patient cpp on cpp.id=cp.patient_id left join ContractAccount ca on ca.contract_id=mc.id
+left join contractAccountMedservice cams on cams.account_id=ca.id
+left join servedPerson sp1 on sp1.id = cams.servedperson_id
 left join PriceList pl on pl.id=mc.priceList_id 
-where mc.customer_id='${param.id}'
+where mc.customer_id='${param.id}' or sp1.person_id='${param.id}'
 group by mc.id,mc.dateFrom,mc.dateTo,mc.contractNumber,pl.name 
 order by mc.dateFrom desc
       	" maxResult="10"/>
       	<msh:table name="medContracts" viewUrl="entityView-contract_medContract.do?short=Short" action="entityView-contract_medContract.do" idField="1">
+      		<msh:tableColumn property="7" columnName="Роль персоны"/>
       		<msh:tableColumn property="2" columnName="№ договора"/>
       		<msh:tableColumn property="3" columnName="Дата начала"/>
       		<msh:tableColumn property="4" columnName="Дата окончания"/>
       		<msh:tableColumn property="6" columnName="Оплачено по договору"/>
       		<msh:tableColumn property="5" columnName="Прейкурант"/>
       	</msh:table>
+      	      	
       </msh:section>
       			<ecom:webQuery name="lastVisit1" nativeSql="select 
     	m.id,m.dateStart as dateFrom
