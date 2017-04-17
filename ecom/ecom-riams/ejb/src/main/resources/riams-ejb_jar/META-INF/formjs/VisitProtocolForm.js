@@ -54,7 +54,6 @@ function onPreCreate(aForm, aCtx) {
 			)
 			.getResultList() ;
 		errorThrow(protocols, "В базе уже существует заключение созданное Вами в это время") ;
-		
 	}
 	
 }
@@ -63,11 +62,11 @@ function onCreate(aForm, aEntity, aCtx) {
 	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
 	//throw ""+aForm.getMedCase()+"<>"+ aEntity.id;
 	if (aForm.getParams()!=null&&aForm.getParams()!="") {
-	Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
+		Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
 	}	
-	createServiceMedCase(aForm, aEntity, aCtx);
-	
+	createServiceMedCase(aForm, aEntity, aCtx);	
 }
+
 function createServiceMedCase(aForm, aEntity, aCtx) {
 	if (aForm.medService!==null&&+aForm.medService>0) {
 		var smc = null;
@@ -131,7 +130,16 @@ function onSave(aForm, aEntity, aCtx) {
 	createServiceMedCase(aForm, aEntity, aCtx);
 }
 function check(aForm,aCtx) {
-	
+
+	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
+		// Дата регистрации дневника не должна быть больше текущей даты
+		var dateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateRegistration,aForm.timeRegistration) ;
+		var currentDate = new java.util.Date();
+		if (dateTime.getTime()>currentDate.getTime()) {
+			throw "Дата регистрации дневника не может быть больше текущего времени!";
+		}
+		
+	}
 	if (aForm.medCase!=null&&(+aForm.medCase)>0) {
 		
 		var lother = aCtx.manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('"+aForm.getDateRegistration()+"','dd.mm.yyyy') and mc.workfunctionexecute_id='"+aForm.specialist+"' then mc.id end as agrmc,to_char(mc.datefinish,'dd.mm.yyyy') as mcfinish,mc.id as mcid from medcase mc where mc.id='"+aForm.medCase+"'").getResultList() ;
