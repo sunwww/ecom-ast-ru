@@ -50,7 +50,14 @@ function onPreSave(aForm,aEntity, aContext) {
 	var prev = +aForm.prevMedCase>0?aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase,aForm.prevMedCase):null ;
 	var isDoc=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
 	var isNoPalat = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/NoRoomNumber") ;
-
+	
+	//Запрет на поступление в экстренном порядке на дневные койки
+	if ((hosp.emergency||aForm.emergency)&&bedFund.bedSubType!=null&&(bedFund.bedSubType.code=="2"||bedFund.bedSubType.code=="3")) {
+		if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Sso/CreateEmergencyDayHospBedFund")){
+			throw "Установлен запрет на ЭКСТРЕННУЮ госпитализацию на тип коек '"+bedFund.bedSubType.name+"'";
+		}
+		
+	}
 	if (prev!=null) {
 		var dateTransfer ;
 		
