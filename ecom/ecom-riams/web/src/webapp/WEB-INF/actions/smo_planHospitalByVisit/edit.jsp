@@ -81,7 +81,7 @@
         	<td colspan="3" align="center">
         	<input type="button" onclick="getTextDiaryByMedCase(this);return false;" value="Вставить данные дневниковой записи"/>
         	</td>
-        </msh:row>
+        </msh:row>  
         </msh:ifFormTypeIsCreate>
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
@@ -129,6 +129,11 @@
         </td></tr></table></td></tr>
         </msh:panel>
         <msh:panel>
+        <msh:row>
+        	<td colspan="3" align="center">
+        	<input type="button" onclick="infoPlanHospital()" value="Другие предварительные госпитализации"/>
+        	</td>
+        </msh:row>
         <msh:row>
         	<msh:separator label="Фактическая госпитализация" colSpan="4"/>
         </msh:row>
@@ -183,7 +188,8 @@
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsView formName="smo_planHospitalByVisitForm">
   <msh:ifInRole roles="/Policy/Mis/MedCase/Visit/PrintNotView">
-  <script type="text/javascript">
+  <script type="text/javascript"> 
+  
     function printDocument() {
       	if (confirm('Распечатать документ?')) {
       		window.location.href = "print-documentDirection1.do?next=entityParentView-smo_visit.do__id="+$('visit').value+"&s=VisitPrintService&m=printPlanHospital&id=${param.id}" ;
@@ -263,7 +269,10 @@
   			        	); 
   	    }
   	   	}
-  	
+  			//Milamesher 19.04.2017 
+  			function infoPlanHospital() {
+  				showinfoPlanHospitalCloseDocument();
+  			}
   	function updateDefaultDate() {
 		WorkCalendarService.getDefaultDate($('surgCabinet').value,
 		{
@@ -309,7 +318,38 @@
 		//	}catch(e) {}
 		//}	
 	}
-  	
+  	//Milamesher 20.04.2017 проверка даты - текущий и следующий года только
+  	eventutil.addEventListener($('dateFrom'),'blur', function() {checkDate();}); 
+  	function checkDate() {
+  		var date = $(dateFrom).value;
+  		if (date.length==10) {
+  			//прошлые даты - минимум сегодня
+  			var d=$(dateFrom).value.substring(0,2); 
+ 			var m=$(dateFrom).value.substring(3,5); 
+ 			var y=date.substring(6); 
+ 			date=""; date=y.toString()+m.toString()+d.toString();  
+ 			
+ 			var now=new Date();
+ 			var today=""; 
+ 			year=now.getFullYear()
+ 			today=year.toString();
+ 			var month=now.getMonth()+1;
+			if (month<10) month="0"+month; 
+			var day=now.getDate();
+			if (day<10) day="0"+day;
+			today=today+month.toString()+day.toString(); 
+			
+			if (date<today) {
+				$(dateFrom).value=day+'.'+month+'.'+year;
+			}
+			else {
+				if (y-year>1) {  //больше чем год разницы
+					$(dateFrom).value=$(dateFrom).value.replace(y,year);
+				}
+				
+			} 
+  		}
+  	}
   		//initPersonPatientDialog();
   		function getTextDiaryByMedCase(aElement) {
   			HospitalMedCaseService.getTextDiaryByMedCase(
@@ -365,7 +405,8 @@
      		}) ;
       	 });
   		bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
-      		</script>  
+      		</script> 
+      		<tags:infoPlanHospital name="infoPlanHospital" /> 
   </msh:ifFormTypeIsNotView>
   </tiles:put>
 
