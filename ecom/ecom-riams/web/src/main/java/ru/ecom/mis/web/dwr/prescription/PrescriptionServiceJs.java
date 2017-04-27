@@ -1405,4 +1405,31 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		return ""+service.savePrescriptNew(aPrescriptList, Long.valueOf(0),aName).toString();	
 	}
 	
+	 public String getInfoAboutPrescription(Long aId, HttpServletRequest aRequest)
+		    throws NamingException {
+		
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("select intakedate||' '||intaketime as intake, intakeusername,transferdate ||' '||transfertime as transfer,transferusername, ");
+		sql.append("canceldate||' '||canceltime as cancel, cancelreasontext,cancelusername ");
+		sql.append("from prescription where id='"+aId.toString()+"'");
+		
+		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
+		
+		
+		StringBuilder sb = new StringBuilder();
+		for (WebQueryResult wqr : res) {
+		    sb.append("" + wqr.get1());
+		    sb.append("|" + wqr.get2());
+		    sb.append("|" + wqr.get3());
+		    sb.append("|" + wqr.get4());
+		    sb.append("|" + wqr.get5());
+		    sb.append("|" + wqr.get6());
+		    sb.append("|" + wqr.get7());
+		}
+		System.out.println(sb.toString());
+		return sb.toString();
+	    }
+	
 }
