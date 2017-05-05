@@ -25,9 +25,7 @@
 
     <tiles:put name='body' type='string'>
     
-    <input id="SKNF"  class="hide" type="button" value="Вычисление СКФ" onClick="showMyPrescriptionReport(265641,1)"/>
-    <!-- <input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId.value,1)"/>  -->
-            <msh:form action="/pres_prescription_find.do" defaultField="number" method="GET">
+      <msh:form action="/pres_prescription_find.do" defaultField="number" method="GET">
                 <msh:panel>
                 	<msh:row>
                 	
