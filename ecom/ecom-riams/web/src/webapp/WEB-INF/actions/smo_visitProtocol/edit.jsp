@@ -175,6 +175,14 @@
 					action="/entityParentDeleteGoSubclassView-smo_visitProtocol"
 					name="Удалить" confirm="Вы действительно хотите удалить?" />
 			</msh:ifFormTypeAreViewOrEdit>
+			
+			<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+			<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=1&ido=${param.id}"
+		name="Добавить разрешение на редактирование протокола"
+		title="Добавить разрешение на редактирование протокола" 
+		roles="/Policy/Jaas/Permission/User/Create" /> 
+			</msh:ifFormTypeAreViewOrEdit>
+			
 		</msh:sideMenu>
 
 		<msh:ifFormTypeIsView formName="smo_visitProtocolForm">

@@ -57,11 +57,23 @@
         </msh:ifFormTypeIsView>
         <msh:submitCancelButtonsRow colSpan="4" guid="8515167d-96cf-48ad-8294-1f3f60a105ec" />
       </msh:panel>
+          <%  
+  String ido=request.getParameter("ido");
+  String type =request.getParameter("type"); 
+  request.setAttribute("ido", ido);
+  request.setAttribute("type", type); 
+  %> 
     </msh:form>
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail mainMenu="Config" beginForm="sec_userPermissionForm" guid="6602cbc1-6a25-4fe2-a951-b297a9d9b990" />
   </tiles:put>
   <tiles:put name="javascript" type="string" />
+   <script>
+  window.onload=function load(){  
+	  ${"idObject"}.value='${ido}';
+	  ${"object"}.value='${type}';
+	  if ('${type}'=="1") ${"objectName"}.value="Протокол"; else ${"objectName"}.value="Выписка"; 
+  }
+  </script>
 </tiles:insert>
-
