@@ -78,7 +78,7 @@
     	
 	} else if (typePatient.equals("2")) {
 	
-		request.setAttribute("groupSql", " and ar.name != 'Астраханская' group by ar.name order by ar.name");
+	    request.setAttribute("groupSql", " and ar.kladr not like '30%' and (oo.id is null or oo.voc_code='643') group by ar.name order by ar.name");
 		request.setAttribute("change", "ar.name as vnname");
 		request.setAttribute("address", " left join address2 a on a.addressid=p.address_addressid left join Address2 ar on ar.addressid=a.region_addressid");
 		request.setAttribute("names", "Cубъект РФ, где зарегистрирован гражданин");
