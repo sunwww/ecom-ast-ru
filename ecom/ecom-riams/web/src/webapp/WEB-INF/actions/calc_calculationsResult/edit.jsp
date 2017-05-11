@@ -49,8 +49,10 @@
 	
 	<!-- Body -->
 	<tiles:put name="body" type="string">
-		<msh:form action="/entitySaveGoView-calc_calculationsResult.do"
-			defaultField="name">
+	<% 
+		String shorts = (String)request.getParameter("short");
+		System.out.println(shorts);%>
+		<msh:form action="/entitySaveGoView-calc_calculationsResult.do" defaultField="name">
 			<msh:hidden property="id" />
 			<msh:hidden property="saveType" />
 			<msh:hidden property="departmentMedCase" />
@@ -74,9 +76,11 @@
 			<msh:hidden property="result"/>
 			</msh:row>
 			</msh:ifFormTypeAreViewOrEdit>
-			
+				
 			<br>
+			
 			<div class="calc">
+				
 				<table>
 					<tr>
 						<td style="padding-left: 20px; padding-top: 20px;">
@@ -90,8 +94,10 @@
 						<input disabled id="calcandsave" type="button" value="Рассчитать и сохранить" onclick="CreateRes()" />
 						<td>
 					</tr>
+
 				</table>
 			</div>
+			
 			</msh:ifFormTypeIsNotView>
 		</msh:form>
 	</tiles:put>
@@ -128,8 +134,14 @@ var resultofcalc;
 		var size = result.length;
 		var table = document.createElement('table');
 
-		document.querySelector('#calculate').disabled = false;
-		document.querySelector('#calcandsave').disabled = false;
+		calculat = document.querySelector('#calculate');
+		calculatSave = document.querySelector('#calcandsave');
+		
+		if(calculat!=null){
+		calculat.disabled = false;
+		calculatSave.disabled = false;
+		}
+		
 
 		var tempo = document.querySelector('#calculatorName');
 
@@ -276,6 +288,17 @@ var resultofcalc;
 	function goBack() {
 		location.href = "entityParentView-stac_slo.do?id=" + DepartmentId.value;
 	}
+	 
+	
+	 function DelFromForm()
+	 {
+		 var d = document.querySelector('#calcandsave');
+		    d.parentNode.removeChild(d);
+		    d = document.querySelector('#calculate');
+		    d.parentNode.removeChild(d);
+		    d = document.querySelector('#cancel');
+		    d.parentNode.removeChild(d);
+	 }
 </script>
  </tiles:put>
 </tiles:insert>
