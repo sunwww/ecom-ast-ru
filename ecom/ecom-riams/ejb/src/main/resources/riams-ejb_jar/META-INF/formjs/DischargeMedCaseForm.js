@@ -141,7 +141,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 				
 				if (+check==0) {
-					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение 24 часов.";
+					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение "+cntHour+" часов.";
 					
 				}
 			}
