@@ -78,10 +78,10 @@ function cancel${name}NewOtherCalculation() {
 //сохран
 function save${name}NewCalculation() {
 	
-	calc();
-	alert('${param.id}')
-	var result2 = document.getElementById('iframe').contentDocument.documentElement.querySelector('#calculator.calc').value;
-	alert(result2);
+	calc();  //var tempo = document.querySelector('#calculatorName');
+	//alert('${param.id}')
+	var result2 = document.getElementById('iframe').contentDocument.documentElement.querySelector('#calculatorName').value;
+	//alert(result2);
 	var result = document.getElementById('iframe').contentDocument.documentElement.querySelector('#result').value;
 	
 	if(result!=""){
@@ -89,7 +89,7 @@ function save${name}NewCalculation() {
     if ("${property}"=="") {
         prop = "record" ;
     } else { prop = "${property}" ;}
-    $(prop).value +=  result;
+    $(prop).value +=  result2+":"+result;
 	the${name}NewOtherCalculationDialog.hide();
 	}else alert("Заполните поля!")
 }

@@ -186,6 +186,12 @@ var resultofcalc;
 				tr.innerHTML += "<td><input hidden disabled id=\"id"+global+"\" class=\"txtbox\" size=\"60\" type=\"text\" value=\""+result[i].Value+"\"></td>";
 				global++;
 			}
+			
+			if (result[i].Type_id == 3){
+				tr.innerHTML += "<td class=\"label'\"><label>"+ result[i].Comment + ":</label></td>";
+				tr.innerHTML += "<td><input type=\"checkbox\"/ id=\"id"+global+"\" class=\"Ctxtbox\" value='"+result[i].Value+"'></td>";
+				global++;
+			}
 		}
 		
 		var tr2 = document.createElement('tr');
@@ -213,8 +219,20 @@ var resultofcalc;
 	function calculating() {
 		var T = "";
 		for ( var i = 0; i < global; i++) {
+			
+			if(document.querySelector('#id' + i + '.Ctxtbox')==null)
+				{
 			var inputbox = document.querySelector('#id' + i + '.txtbox');
 			T += "" + inputbox.value;
+			
+				}else{
+					chkbox = document.querySelector('#id' + i + '.Ctxtbox');
+					
+					if(chkbox.checked)
+					{
+						T += "+" + chkbox.value;
+					}
+			}
 		}
 
 		var res = document.querySelector('#result.result');
