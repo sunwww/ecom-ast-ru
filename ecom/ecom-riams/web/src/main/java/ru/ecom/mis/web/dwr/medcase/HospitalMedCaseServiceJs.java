@@ -1855,5 +1855,47 @@ public class HospitalMedCaseServiceJs {
 		else res.append("##");
 		return res.toString();
     }
-
+    //Milamesher постановка на наблюдение
+    public String watchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
+    	String res="Пациент добавлен в список наблюдения!";
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+    	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
+    	int idlistwatch=0;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			idlistwatch=Integer.parseInt(wqr.get1().toString());
+			}
+		if (idlistwatch==0) { // надо добавить его
+			query="INSERT into listwatch(datewatch) VALUES(CAST('today' AS DATE))";
+			service.executeUpdateNativeSql(query); 
+			query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+			list = service.executeNativeSql(query,1); 
+			if (list.size()>0) {
+				WebQueryResult wqr = list.iterator().next() ;
+				idlistwatch=Integer.parseInt(wqr.get1().toString());
+				}
+		}
+		query="select medcase_id from patientwatch where listwatch_id='" + idlistwatch + "' and medcase_id='"+id+"'"; //есть ли уже
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) res="Пациент уже был добавлен в список наблюдения!";
+		else {
+			query="INSERT INTO patientwatch(medcase_id,listwatch_id) VALUES('" + id + "','" + idlistwatch + "')";
+			service.executeUpdateNativeSql(query);
+		}
+    	return res;
+    } 
+    //Milamesher снятие с наблюдения
+    public String notWatchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
+    	String res="Пациент убран из списка наблюдения!";
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select medcase_id from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'"; //есть ли уже
+    	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
+    	if (list.size()>0) { //удаляем
+    		query="delete from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'";
+    		service.executeUpdateNativeSql(query);
+    	}
+    	else res="Пациент и не был в списке наблюдения!";
+    	return res;
+    } 
 }

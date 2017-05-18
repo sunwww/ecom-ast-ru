@@ -973,7 +973,15 @@
             scope='request' validate="false" name="">
             <forward name="success" path="/js-mis_worker-pattern.do" redirect="true"/>
         </action>  
-	</action-mappings>
+        
+        <action path='/patientWatch' type='ru.ecom.web.actions.base.ForwardAction' 
+                validate='false'
+                name='stac_admissionJournalForm'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
+        </action>
+	</action-mappings> 
 
 
 </struts-config>
