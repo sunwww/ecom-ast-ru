@@ -251,6 +251,7 @@ public class PatientServiceBean implements IPatientService {
 		String [][] streetList = {
 				{"Н.ОСТРОВСКОГО ул","Николая Островского ул"}
 				,{"В.Комарова ул","Космонавта В.Комарова ул"}
+				,{"М.ЛУКОНИНА ул","Михаила Луконина ул"}
 				};
 			for (int i=0;i<streetList.length;i++) {
 				if (streetList[i][0].toUpperCase().equals(aStreet)) {
