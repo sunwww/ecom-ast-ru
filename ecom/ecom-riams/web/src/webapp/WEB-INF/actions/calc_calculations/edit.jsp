@@ -55,7 +55,7 @@
 		size="100" fieldColSpan="3" />
 </msh:row>
 <msh:row>
-	<msh:textField property="value" label="Название" horizontalFill="true" fieldColSpan="3" />
+	<msh:textField property="value" label="Значение" horizontalFill="true" fieldColSpan="3" />
 </msh:row>
 <msh:row>
 <msh:textField property="comment" label="Комментарий" horizontalFill="true" fieldColSpan="3" />

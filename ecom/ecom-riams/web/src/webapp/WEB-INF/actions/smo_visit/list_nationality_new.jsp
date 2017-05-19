@@ -1,3 +1,4 @@
+<%@page import="org.apache.ecs.xhtml.param"%>
 <%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -53,7 +54,22 @@
 
     </msh:panel>
     </msh:form>
-    <% if (typePatient.equals("1")) {
+    <% 
+
+	String date = (String)request.getParameter("beginDate");
+	String dateEnd = (String)request.getParameter("finishDate");
+
+	if (date!=null && !date.equals("")){
+	    
+	if(dateEnd==null || dateEnd.equals("")){ 
+	    dateEnd = date;
+	}
+	  
+	  
+	 request.setAttribute("beginDate",date);
+	 request.setAttribute("finishDate",dateEnd);
+
+    if (typePatient.equals("1")) {
     	
     	request.setAttribute("groupSql", " and (oo.id is not null and oo.voc_code!='643') group by oo.name order by oo.name");
 		request.setAttribute("change", "oo.name as vnname");
@@ -62,11 +78,10 @@
     	
 	} else if (typePatient.equals("2")) {
 	
-		request.setAttribute("groupSql", " and ar.name != 'Астраханская' group by ar.name order by ar.name");
+	    request.setAttribute("groupSql", " and ar.kladr not like '30%' and (oo.id is null or oo.voc_code='643') group by ar.name order by ar.name");
 		request.setAttribute("change", "ar.name as vnname");
 		request.setAttribute("address", " left join address2 a on a.addressid=p.address_addressid left join Address2 ar on ar.addressid=a.region_addressid");
 		request.setAttribute("names", "Cубъект РФ, где зарегистрирован гражданин");
-		
 	}
     	%>
     
@@ -94,7 +109,7 @@ ${address}
 left join Omc_Oksm oo on oo.id=p.nationality_id 
 left join bedfund bf on bf.id = smo.bedfund_id
 left join vocbedsubtype vbs on vbs.id = bf.bedsubtype_id 
-where m.dateStart between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+where m.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 AND case when m.dtype = 'HospitalMedCase' then case when m.deniedHospitalizating_id is not null then '0' else '1' end else '1' end = '1'
 and (smo.dtype in ('Visit', 'ShortMedCase') or smo.dtype='DepartmentMedCase' and smo.transferDate is null)
 and m.dtype in ('HospitalMedCase', 'PolyclinicMedCase')
@@ -102,10 +117,9 @@ and vss.code in ('OBLIGATORYINSURANCE', 'BUDGET', 'CHARGED')
 ${groupSql}"
 /> 
 
-    
     <msh:sectionContent>
         <msh:table
-         name="journal_swod" action="journal_nationality_new.do?beginDate=${param.beginDate}&finishDate=${param.finishDate}&typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}" idField="1" noDataMessage="Не найдено">
+         name="journal_swod" action="journal_nationality_new.do?beginDate=${beginDate}&finishDate=${finishDate}&typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}" idField="1" noDataMessage="Не найдено">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="2" rowspan="2" />
@@ -139,7 +153,9 @@ ${groupSql}"
     </msh:sectionContent>
 
     </msh:section>    	
-    	
+    	<% }  else {%>
+    	<i>Выберите параметры поиска и нажмите "Найти" </i>
+    	<% }   %>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">

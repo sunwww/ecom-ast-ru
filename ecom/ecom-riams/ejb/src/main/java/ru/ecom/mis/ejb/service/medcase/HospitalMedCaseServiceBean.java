@@ -1358,8 +1358,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vs.omcCode as f11vsomccode");
     	sql.append(" ,to_char(hdf.birthday,'yyyy-mm-dd') as f12birthday");
     	sql.append(" ,vbt.codeF as f13vbtomccode");
-    	sql.append(" ,ss.code as f14sscode");
-    	sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
+    	sql.append(" ,ss.code as f14sscode")
+    	.append(" ,coalesce ((select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id ")
+    	.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id ")
+    	.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id ")
+    	.append(" where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4'),(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb")
+    	.append(" on mkb.id=diag.idc10_id ")
+    	.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id")
+    	.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id")
+    	.append(" where diag.medcase_id=slo.id and vpd.code='1' and (vdrt.code = '1' or vdrt.code = '2')))")
+    	.append(" as f15mkbcode");
+    	//sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
     	sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
     	sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
     	sql.append(" ,hdf.numberfond as f18numberfond") ;

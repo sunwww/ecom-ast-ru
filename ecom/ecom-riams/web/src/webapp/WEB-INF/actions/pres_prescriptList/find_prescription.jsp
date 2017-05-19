@@ -4,6 +4,9 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
+<%@ taglib uri="/WEB-INF/mis.tld" prefix="mis"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>
+
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
@@ -16,11 +19,13 @@
 
         <msh:sideMenu>
                 <tags:laboratory_menu currentAction="pres_find"/>
+                <tags:prescriptionReportTag name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title="123"></tags:prescriptionReportTag>
         </msh:sideMenu>
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-            <msh:form action="/pres_prescription_find.do" defaultField="number" method="GET">
+    
+      <msh:form action="/pres_prescription_find.do" defaultField="number" method="GET">
                 <msh:panel>
                 	<msh:row>
                 	
@@ -37,8 +42,7 @@
             %>
             <msh:section title='Результат поиска'>
             	<ecom:webQuery name="listPres" nativeSql="
-            	
-            	select 
+    select 
     p.id as pid,
     case 
     when p.cancelDate is not null then 'ОТМЕНЕНО: ' ||vpcr.name||' '||coalesce(p.cancelreasontext,'')
@@ -69,7 +73,7 @@
    ,case when mc.datestart is not null then p.id end as btnAnnul
    ,to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f20dtintake
    ,case when p.canceldate is not null then p.id end as btnUncancel
-   ,p.barcodenumber
+   ,p.barcodenumber , p.id
     from prescription p
     left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id
     left join MedCase mc on mc.id=p.medcase_id
@@ -112,12 +116,13 @@
 	      <msh:tableColumn columnName="Отделение" property="15"  />
 	      <msh:tableColumn columnName="Забор" property="10"/>
 	      <msh:tableColumn columnName="Передача в лаб." property="20"/>
-	      <msh:tableColumn columnName="Код" property="4"/>
+	      <msh:tableColumn columnName="Код" property="4"/>  <!-- 'showMyPrescriptionReport('||p.id||',1)' -->
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о пациенте" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
+	      <msh:tableButton property="23" buttonFunction="showMyPrescriptionReport" buttonName="Отчет" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
 	      <msh:tableColumn columnName="ФИО пациента" property="6"  />
 	      <msh:tableColumn columnName="Услуга" property="7"/>
 	      <msh:tableColumn columnName="Результат" property="18" cssClass="preCell"/>
-
+	      
 	    </msh:table>
             </msh:section>
             <%} %>

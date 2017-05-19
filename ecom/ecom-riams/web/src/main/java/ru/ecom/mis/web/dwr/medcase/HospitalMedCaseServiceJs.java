@@ -1831,4 +1831,71 @@ public class HospitalMedCaseServiceJs {
 			}
 		return res.toString();
     }
+    //Milamesher наличие других предварительных госпитализаций
+    public String prevPlanHospital(int id,HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select wchb.datefrom,wchb.diagnosis,m.name,p.lastname,p.firstname,p.middlename " +
+ "from workcalendarhospitalbed wchb " +
+ "left join mislpu m on wchb.department_id=m.id " +
+ "left join medcase mc on wchb.patient_id=mc.patient_id  " +
+ "left join workfunction wf on wf.id=wchb.workfunction_id " +
+ "left join worker w on w.id=wf.worker_id " +
+"left join patient p on p.id=w.person_id " +
+ "where wchb.datefrom>CAST('today' AS DATE) " +
+ "and wchb.patient_id=" + id;
+		Collection<WebQueryResult> list = service.executeNativeSql(query); 
+		StringBuilder res = new StringBuilder() ;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			Object date = wqr.get1();
+			if (date!=null) date=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get1());
+			String fio = wqr.get4() + " " + wqr.get5() + " " + wqr.get6();
+			res.append(date).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(fio).append("!") ;
+		} 
+		else res.append("##");
+		return res.toString();
+    }
+    //Milamesher постановка на наблюдение
+    public String watchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
+    	String res="Пациент добавлен в список наблюдения!";
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+    	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
+    	int idlistwatch=0;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			idlistwatch=Integer.parseInt(wqr.get1().toString());
+			}
+		if (idlistwatch==0) { // надо добавить его
+			query="INSERT into listwatch(datewatch) VALUES(CAST('today' AS DATE))";
+			service.executeUpdateNativeSql(query); 
+			query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+			list = service.executeNativeSql(query,1); 
+			if (list.size()>0) {
+				WebQueryResult wqr = list.iterator().next() ;
+				idlistwatch=Integer.parseInt(wqr.get1().toString());
+				}
+		}
+		query="select medcase_id from patientwatch where listwatch_id='" + idlistwatch + "' and medcase_id='"+id+"'"; //есть ли уже
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) res="Пациент уже был добавлен в список наблюдения!";
+		else {
+			query="INSERT INTO patientwatch(medcase_id,listwatch_id) VALUES('" + id + "','" + idlistwatch + "')";
+			service.executeUpdateNativeSql(query);
+		}
+    	return res;
+    } 
+    //Milamesher снятие с наблюдения
+    public String notWatchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
+    	String res="Пациент убран из списка наблюдения!";
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select medcase_id from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'"; //есть ли уже
+    	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
+    	if (list.size()>0) { //удаляем
+    		query="delete from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'";
+    		service.executeUpdateNativeSql(query);
+    	}
+    	else res="Пациент и не был в списке наблюдения!";
+    	return res;
+    } 
 }

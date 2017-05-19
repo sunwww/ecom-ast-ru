@@ -57,7 +57,7 @@
 </msh:panel>
 <tr> 
 <td> 
-<input id="cancel" value="Отмена" onclick="cancel${name}NewCalculation()" type="button">
+<input class="cancel" id="cancel" value="Отмена" onclick="cancel${name}NewCalculation()" type="button">
 </td>
 <td> 
 <input value="Рассчитать" onclick="calculate();" type="button">
@@ -112,10 +112,10 @@
         getGender(id);
         
         //
-        if(create==0)
-        	document.getElementById("cancel").style.display = "none";
+       // if(create==0)
+        //	document.getElementById("cancel").style.display = "none";
         
-        if(create!=0)
+       // if(create!=0)
         	document.getElementById("cancel").style.display ="";
 
     }

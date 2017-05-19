@@ -16,7 +16,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = CalculationsResult.class)
 @Comment("Калькулятор человека")
 @WebTrail(comment = "Калькулятор человека"
-, nameProperties= "id", list="entityParentList-calc_calculationsResult.do", view="entityParentView-calc_calculationsResult.do")
+, nameProperties= "id", list="entityParentList-calc_calculationsResult.do", view="entityParentView-calc_calculationsResult.do", shortView="entityShortView-calc_calculationsResult.do")
 @Parent(property="departmentMedCase", parentForm=DepartmentMedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculation")
 public class CalculationsResultForm extends IdEntityForm{

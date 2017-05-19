@@ -159,8 +159,11 @@
 			<tags:template_new_diary name="newTemp"
 				roles="/Policy/Diary/Template/Create" field="record" title="Создание шаблона"></tags:template_new_diary>
 
-		
-<tags:calculation name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title="Калькулирование"></tags:calculation>
+
+<tags:calculation_other name="Mycalc" roles="/Policy/Mis/Calc/Calculation/OtherCalculations" field="record2" title="Остальные вычисления"></tags:calculation_other>	
+
+<tags:calculation name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""></tags:calculation>
+
 			<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
 				<tags:mis_protocolTemplateDocumentList name="Print" />
 				<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Edit" key="ALT+2"
@@ -175,6 +178,14 @@
 					action="/entityParentDeleteGoSubclassView-smo_visitProtocol"
 					name="Удалить" confirm="Вы действительно хотите удалить?" />
 			</msh:ifFormTypeAreViewOrEdit>
+			
+			<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+			<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=1&ido=${param.id}"
+		name="Добавить разрешение на редактирование протокола"
+		title="Добавить разрешение на редактирование протокола" 
+		roles="/Policy/Jaas/Permission/User/Create" /> 
+			</msh:ifFormTypeAreViewOrEdit>
+			
 		</msh:sideMenu>
 
 		<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
@@ -247,7 +258,7 @@
         	if (prefix==null) prefix="" ;
         	initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1)
         	//window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
-            
+        	
          }
      }
     ) ;
@@ -282,39 +293,6 @@
     	</script>
 		</msh:ifFormTypeIsNotView>
 		
-		
-		
-
-		<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
-		
-		<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
-		<script type="text/javascript">
-		   var ishosp=0;
-		   var btn = document.querySelector('#SKNF');
-		   btn.className = "";
-		   flag=1;
-			CalculateService.getCountDiary(medCaseId.value, {
-				callback : function(aResult) {
-					//alert(ishosp);
-				if(parseInt(aResult)==0 &&ishosp==1)
-				{
-					showMyNewCalculation(medCaseId.value,0);
-				}
-				}});
-	   </script>
-		</msh:ifInRole>
-		<script type="text/javascript">
-		
-		if(flag==0){
-    			if ($('record').value=="" && confirm("Вы хотите создать дневник на основе шаблона?")) {
-    				showtmpTemplateProtocol() ;
-    			} else {
-    				if ($('dateRegistration').value!="") setFocusOnField('record') ;
-    			}
-    		}
-    	</script>
-		</msh:ifFormTypeIsCreate>
-
 		<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
 			<script type="text/javascript">
    	 function createExternalDocument() {
@@ -341,6 +319,9 @@
 		</msh:ifFormTypeAreViewOrEdit>
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<script type="text/javascript">
+			var ishosp=0;
+			
+			function getDtype(){
     		TemplateProtocolService.getDtypeMedCase($('medCase').value,{
     			callback: function(aDtype) {
                 	//alert(aString) ;
@@ -355,8 +336,43 @@
                     	$('stateName').className="autocomplete horizontalFill required";
                     }
                  }
-    		})
+    		});
+			}
+			getDtype();
+    		
     		</script>
 		</msh:ifFormTypeIsNotView>
+		
+		<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
+		
+		<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
+		<script type="text/javascript">
+		   var btn = document.querySelector('#SKNF');
+		   btn.className = "";
+		   flag=1;
+		   function CalcService(){
+			CalculateService.getCountDiary(medCaseId.value, {
+				callback : function(aResult) {
+				if(parseInt(aResult)==0 && parseInt(ishosp)==1)
+				{
+					showMyNewCalculation(medCaseId.value,0);
+				}
+				}});
+		   }
+		   getDtype();
+		   CalcService();
+	   </script>
+		</msh:ifInRole>
+		<script type="text/javascript">
+		
+		if(flag==0){
+    			if ($('record').value=="" && confirm("Вы хотите создать дневник на основе шаблона?")) {
+    				showtmpTemplateProtocol() ;
+    			} else {
+    				if ($('dateRegistration').value!="") setFocusOnField('record') ;
+    			}
+    		}
+    	</script>
+		</msh:ifFormTypeIsCreate>
 	</tiles:put>
 </tiles:insert>

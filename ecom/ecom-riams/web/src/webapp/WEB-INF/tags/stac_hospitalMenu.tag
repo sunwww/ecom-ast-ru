@@ -189,6 +189,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete"
 		styleId="deleteDischarge"
 	/>
+	<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=2&ido=${param.id}"
+		name="Добавить разрешение на редактирование случая"
+		title="Добавить разрешение на редактирование случая" 
+		roles="/Policy/Jaas/Permission/User/Create" 
+	/>
     	<tags:stac_deniedHospitalizating name="DH" title="Оформить отказ больного" roles="/Policy/Mis/MedCase/Stac/Ssl/DeniedHospitalizatingSls" />
     	<tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/ChangeServiceStream" />
 		<tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
@@ -207,6 +212,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </msh:sideMenu>
  <msh:sideMenu title="Дополнительно">
         <msh:sideLink action="/stac_sslList.do?sslid=${param.id}" name="⇧Все госпитализации пациента" title="Все госпитализации пациента" />
+         <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+         <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
         <msh:sideLink action="/mis_patients" name="Новая госпитализация" roles="/Mis/MainMenu/Patient,/Policy/Mis/MedCase/Stac/Ssl/Admission/Create"/>
 </msh:sideMenu>
 
@@ -249,8 +256,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
   	</script>
   </msh:ifInRole>
 
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
-  
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script> 
 <script type="text/javascript">
 
 
@@ -309,6 +315,25 @@ function gotoNewBornHistory(aMedCase,aUrl) {
 			     }
 			  }
 			}) ;
-  }	
+  }
 
+function watchThisPatient() {
+	HospitalMedCaseService.watchThisPatient(
+			'${param.id}', {
+			callback: function(res) { 
+				alert(res);
+			}
+			}
+			);
+}
+
+function notWatchThisPatient() {
+	HospitalMedCaseService.notWatchThisPatient(
+			'${param.id}', {
+			callback: function(res) { 
+				alert(res);
+			}
+			}
+			);
+}
 </script>

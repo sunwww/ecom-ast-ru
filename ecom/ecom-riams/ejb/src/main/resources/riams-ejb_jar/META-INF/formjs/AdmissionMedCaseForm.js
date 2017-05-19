@@ -33,7 +33,7 @@ function onPreCreate(aForm, aCtx) {
 	
 	
 }
-function onCreate(aForm, aEntity, aCtx) {
+function onCreate(aForm, aEntity, aCtx) { 
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	if (aForm.attachedPolicies!="" && aForm.attachedPolicies>0) {
 		var medPolicyOmc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.MedPolicy,aForm.attachedPolicies) ;
@@ -95,7 +95,7 @@ function onSave(aForm,aEntity,aCtx) {
 	
 }
 
-function onPreSave(aForm,aEntity, aCtx) {
+function onPreSave(aForm,aEntity, aCtx) { 
 	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
 	if (pat.getDeathDate()!=null) {
 		
@@ -252,5 +252,35 @@ function onPreSave(aForm,aEntity, aCtx) {
 	    	}
     	}
     }
-       
+    //sendMsg(aForm,aEntity, aCtx,"lmeshkova");
+    sendMsg(aForm,aEntity, aCtx,"dzaharov");
+    sendMsg(aForm,aEntity, aCtx,"nkostenko");
+}
+//Milamesher 24042017
+function sendMsg(aForm,aEntity, aCtx,user) {
+	 var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
+	 if (pat.getNationality()!=null) {
+	    var n = pat.getNationality().toString().replace("ru.ecom.expomc.ejb.domain.omcvoc.OmcOksm:","");
+	    
+	    if (n!="171") {
+	    	if (aForm.getEmergency()!=null && aForm.getEmergency() && aForm.getDepartment()!=null && aForm.getDepartment()!=0) {
+	    		//здесь код, а потом этот код - в условия n!=171
+	    		var listnat =  aCtx.getManager().createNativeQuery("select name from Omc_Oksm where id='" + n + "'").getResultList() ; 
+	    		var list = aCtx.getManager().createNativeQuery("select name from mislpu where id='" + aForm.getDepartment() + "'").getResultList() ;
+	    		var m = "Гражданин (" + listnat.get(0) + ") " + pat.getPatientInfo() + " госпитализирован в " + list.get(0);
+	    		var mes = new Packages.ru.ecom.ejb.services.live.domain.CustomMessage() ;
+				mes.setMessageText(m) ;
+				mes.setMessageTitle("Госпитализация иностранного гражданина") ;
+				var date = new java.util.Date() ;
+				var dispatchDate = new java.sql.Date(date.getTime()) ; 
+				var dispatchTime = new java.sql.Time(date.getTime()) ;
+				mes.setRecipient(user) ;   //whom
+				mes.setDispatchDate(dispatchDate) ;
+				mes.setDispatchTime(dispatchTime) ;
+				mes.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString() ) ;  
+				mes.setIsEmergency(false) ;
+				aCtx.manager.persist(mes) ;
+	    	} 
+	    }
+	 }
 }
