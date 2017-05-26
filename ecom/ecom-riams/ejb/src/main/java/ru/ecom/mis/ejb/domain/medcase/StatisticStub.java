@@ -118,6 +118,7 @@ public abstract class StatisticStub extends BaseEntity {
 	
 	/** Справочник по форма помощи */
 	@Comment("Справочник по форма помощи")
+	@OneToOne
 	public VocFormHelp getFormHelp() {
 		return theFormHelp;
 	}
