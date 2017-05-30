@@ -25,8 +25,8 @@ import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
+//import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+//import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
 
 public class UnionDoublePatientAction extends BaseAction{
 
