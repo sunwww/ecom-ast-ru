@@ -650,7 +650,7 @@ public class PatientServiceBean implements IPatientService {
 		String lpu = aLpu, attachedType=aAttachedType, attachedDate = aAttachedDate;
 	//	System.out.println("=== === "+aPatientId+ ":"+aCompany+ ":"+aLpu+ ":"+aAttachedDate+ ":"+aAttachedType);
 		RegInsuranceCompany insCompany =null; 
-		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where smoCode = :code and (deprecated is null or deprecated='0')")
+		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where omcCode = :code and (deprecated is null or deprecated='0')")
 				.setParameter("code", aCompany).getResultList(); 
 		
 		if (!companies.isEmpty()) {
