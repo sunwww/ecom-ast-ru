@@ -54,19 +54,22 @@ function onPreCreate(aForm, aCtx) {
 			)
 			.getResultList() ;
 		errorThrow(protocols, "В базе уже существует заключение созданное Вами в это время") ;
+		
 	}
-	
+    checkCreateDiagnosis(aForm, aCtx);
 }
 function onCreate(aForm, aEntity, aCtx) {
 	
 	var username = aCtx.getSessionContext().getCallerPrincipal().toString();
 	//throw ""+aForm.getMedCase()+"<>"+ aEntity.id;
 	if (aForm.getParams()!=null&&aForm.getParams()!="") {
-		Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
+	Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean.saveParametersByProtocol(aForm.getMedCase(),aEntity,aForm.getParams(), username, aCtx.manager);
 	}	
-	createServiceMedCase(aForm, aEntity, aCtx);	
+	createServiceMedCase(aForm, aEntity, aCtx);
+	var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
+	bean.sendProtocolToExternalResource(aEntity.getId(),null,"",aCtx.manager);
+         //sendProtocolToExternalResource(Protocol d, MedCase mc, String aDischargeEpicrisis, EntityManager aManager)
 }
-
 function createServiceMedCase(aForm, aEntity, aCtx) {
 	if (aForm.medService!==null&&+aForm.medService>0) {
 		var smc = null;
@@ -130,16 +133,7 @@ function onSave(aForm, aEntity, aCtx) {
 	createServiceMedCase(aForm, aEntity, aCtx);
 }
 function check(aForm,aCtx) {
-
-	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
-		// Дата регистрации дневника не должна быть больше текущей даты
-		var dateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateRegistration,aForm.timeRegistration) ;
-		var currentDate = new java.util.Date();
-		if (dateTime.getTime()>currentDate.getTime()) {
-			throw "Дата регистрации дневника не может быть больше текущего времени!";
-		}
-		
-	}
+	
 	if (aForm.medCase!=null&&(+aForm.medCase)>0) {
 		
 		var lother = aCtx.manager.createNativeQuery("select case when mc.dtype='ShortMedCase' then mc.dtype else null end as dtype,case when mc.datestart=to_date('"+aForm.getDateRegistration()+"','dd.mm.yyyy') and mc.workfunctionexecute_id='"+aForm.specialist+"' then mc.id end as agrmc,to_char(mc.datefinish,'dd.mm.yyyy') as mcfinish,mc.id as mcid from medcase mc where mc.id='"+aForm.medCase+"'").getResultList() ;
@@ -251,8 +245,44 @@ function check(aForm,aCtx) {
 		}
 		
 	}
-	
 }
+function checkCreateDiagnosis (aForm, aCtx) {
+    var idc = aForm.getDiagnosisIdc10() ;
+    if (idc==null||idc==0) {
+    	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/MustCreateDiaryInHospitalMedCase")) {
+            throw "Необходимо заполнить поле \"Диагноз\"";
+		}
+
+    } else {
+        var m = aCtx.manager;
+        var mc = m.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase, aForm.getMedCase());
+        var theDiagnosisPriority =aForm.getDiagnosisPriority();
+        var theDiagnosisText =aForm.getDiagnosisText();
+        var theDiagnosisIllnessPrimary =aForm.getDiagnosisIllnessPrimary();
+        var theDiagnosisRegistrationType =aForm.getDiagnosisRegistrationType() ; //not all
+        if (theDiagnosisPriority==null||theDiagnosisPriority==0||theDiagnosisIllnessPrimary==null||theDiagnosisIllnessPrimary==0) {
+            throw "При указании кода МКБ необходимо заполнить поля \"Характер заболевания\",\"Приоритет\"";
+        }
+        var dtype = ""+m.createNativeQuery("select id, dtype from medcase where id="+mc.getId()).getSingleResult()[1];
+        if ((dtype=='HospitalMedCase' ||dtype=='DepartmentMedCase') &&(theDiagnosisRegistrationType==null||theDiagnosisRegistrationType==0)) {
+            throw "При указании кода МКБ в стационаре необходимо заполнить поля \"Тип регистрации\"";
+        }
+
+        var d = new Packages.ru.ecom.mis.ejb.domain.medcase.Diagnosis();
+        d.setName(theDiagnosisText);
+        d.setPriority(m.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis, theDiagnosisPriority));
+        d.setIdc10(m.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10, idc));
+        d.setEstablishDate(Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.getDateRegistration()));
+        d.setMedCase(mc);
+        d.setRegistrationType(m.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType,theDiagnosisRegistrationType));
+        d.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+        d.setMedicalWorker(m.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, aForm.getSpecialist()));
+        d.setIllnesPrimary(m.find(Packages.ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary,theDiagnosisIllnessPrimary));
+        d.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
+        m.persist(d);
+    }
+}
+
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
 	l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
 	if (l.isEmpty()) {
