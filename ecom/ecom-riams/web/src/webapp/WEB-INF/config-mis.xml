@@ -9,8 +9,8 @@
         <form-bean name="calc_calculationsForm"			type="ru.ecom.mis.ejb.form.calc.CalculationsForm" />
 		<form-bean name="calc_calculatorForm"			type="ru.ecom.mis.ejb.form.calc.CalculatorForm" />
 		<form-bean name="calc_calculationsResultForm"	type="ru.ecom.mis.ejb.form.calc.CalculationsResultForm" />
-	<!-- /Калькулятор -->	
-		
+	<!-- /Калькулятор -->
+		<form-bean name="mis_patientExternalServiceAccountForm"			type="ru.ecom.mis.ejb.form.patient.PatientExternalServiceAccountForm" />
 		<form-bean name="work_attorneyForm"			type="ru.ecom.mis.ejb.form.worker.AttorneyForm" />
 		<form-bean name="stac_vmpCaseForm"			type="ru.ecom.mis.ejb.form.medcase.hospital.HitechMedicalCaseForm" />
 		<form-bean name="diet_journalForm"			type="ru.ecom.mis.web.action.diet.DietJournalForm" />
@@ -20,7 +20,6 @@
 		<form-bean name="mis_assessmentCardTemplateForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardTemplateForm" />
 		<form-bean name="mis_assessmentForm"		type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentForm" />
 		<form-bean name="mis_assessmentCardForm"	type="ru.ecom.mis.ejb.form.assessmentcard.AssessmentCardForm" />
-
 		<form-bean name="mis_archiveCaseForm"		type="ru.ecom.mis.ejb.form.archive.ArchiveCaseForm" />
 		<form-bean name="temp_protocolPrintForm"	type="ru.ecom.mis.ejb.form.userdocument.TemplatePrintDocumentForm" />
 		<form-bean name="mis_lpuGroupForm"			type="ru.ecom.mis.ejb.form.lpu.LpuGroupForm" />

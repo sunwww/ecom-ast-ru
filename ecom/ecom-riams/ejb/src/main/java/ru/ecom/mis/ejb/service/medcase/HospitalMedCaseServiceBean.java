@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -29,10 +30,13 @@ import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.Document;
 import org.jdom.IllegalDataException;
 import org.jdom.input.SAXBuilder;
+import org.json.JSONException;
 import org.w3c.dom.Element;
 
 import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
+import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
+import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -68,6 +72,7 @@ import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInt
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
+import ru.ecom.poly.ejb.domain.protocol.Protocol;
 import ru.ecom.poly.ejb.services.MedcardServiceBean;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
@@ -112,7 +117,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		prot.setMedCase(aMedCase) ;
     		aManager.persist(prot);
     	}
-    	return true ;
+		try {
+			TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
+			bean.sendProtocolToExternalResource(null,aMedCase, aDischargeEpicrisis, aManager);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true ;
     	
     }
     public static boolean saveDischargeEpicrisis(long aMedCaseId,String aDischargeEpicrisis,EntityManager aManager) {

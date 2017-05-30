@@ -56,7 +56,7 @@
 			<msh:panel colsWidth="1%,1%,1%,1%,1%,1%,65%">
 				<msh:row>
 					<msh:textField label="Дата" property="dateRegistration" fieldColSpan="1"/>
-					<msh:textField label="Время" property="timeRegistration"fieldColSpan="1"/>
+					<msh:textField label="Время" property="timeRegistration" fieldColSpan="1"/>
 				</msh:row>
 				<msh:row>
 					<msh:autoComplete property="type" fieldColSpan="3"
@@ -75,7 +75,21 @@
 				<msh:row>
 					<msh:autoComplete property="medService" fieldColSpan="3"
 						horizontalFill="true" vocName="medServiceForSpec" />
+				</msh:row><msh:separator colSpan="6" label="Сведения о диагнозе"/>
+					<msh:row>
+						<msh:autoComplete property="diagnosisRegistrationType" label="Тип регистрации" horizontalFill="true" fieldColSpan="1" vocName="vocDiagnosisRegistrationType" guid="1ecf26b7-d071-4abc-93ae-c52af4ae368b" />
+						<msh:autoComplete vocName="vocPriorityDiagnosis" property="diagnosisPriority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
+					</msh:row>
+				<msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
+					<msh:autoComplete vocName="vocIdc10" property="diagnosisIdc10" label="Код МКБ-10" guid="e36df3bf-fe77-4096-a082-51016fc2baad" fieldColSpan="3" horizontalFill="true" />
 				</msh:row>
+				<msh:row>
+					<msh:autoComplete vocName="vocIllnesPrimary" property="diagnosisIllnessPrimary" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
+				</msh:row>
+				<msh:row guid="fb31a065-5f7f-4b11-b1b5-0f336254b9fd">
+					<msh:textArea property="diagnosisText" label="Наименование" guid="c0a86a5e-34ff-46f3-984b-5ecbd2749760" fieldColSpan="5" rows="2" horizontalFill="true" />
+				</msh:row>
+
 				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 					<msh:row>
 						<td colspan="3" align="right">
@@ -177,6 +191,10 @@
 					key='ALT+DEL' params="id"
 					action="/entityParentDeleteGoSubclassView-smo_visitProtocol"
 					name="Удалить" confirm="Вы действительно хотите удалить?" />
+				<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Delete"
+							  key='ALT+DEL' params="id"
+							  action="/javascript:sendService()"
+							  name="Послать" confirm="Вы действительно хотите отправить дневник наружу?" />
 			</msh:ifFormTypeAreViewOrEdit>
 			
 			<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
@@ -250,7 +268,14 @@
 			</msh:ifFormTypeAreViewOrEdit>
 		</msh:ifFormTypeIsNotView>
 		<script type="text/javascript">
+        function sendService() {
+            TemplateProtocolService.sendService($('id').value,{
+               callback: function (a) {
+                   alert ("ret="+a);
+			   }
+			});
 
+        }
     function printProtocol() {
     	HospitalMedCaseService.getPrefixByProtocol(${param.id},
     		{
@@ -330,6 +355,11 @@
                     	$('stateName').className="autocomplete horizontalFill required";
                     	$('typeName').className="autocomplete horizontalFill required";
                         $('journalText').className="required maxHorizontalSize";
+                        $('diagnosisRegistrationTypeName').className="autocomplete horizontalFill required";
+						$('diagnosisPriorityName').className="autocomplete horizontalFill required";
+						$('diagnosisIdc10Name').className="autocomplete horizontalFill required";
+						$('diagnosisIllnessPrimaryName').className="autocomplete horizontalFill required";
+                        //Обязательны
                     } else if (aDtype!=null && aDtype=="DepartmentMedCase") {
                     	ishosp=1;
                     	$('typeName').className="autocomplete horizontalFill required";
@@ -372,6 +402,17 @@
     				if ($('dateRegistration').value!="") setFocusOnField('record') ;
     			}
     		}
+        diagnosisIdc10Autocomplete.addOnChangeCallback(function() {
+            setDiagnosisText('diagnosisIdc10','diagnosisText');
+        });
+        function setDiagnosisText(aFieldMkb,aFieldText) {
+            var val = $(aFieldMkb+'Name').value ;
+            var ind = val.indexOf(' ') ;
+            //alert(ind+' '+val)
+            if (ind!=-1) {
+                if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+            }
+        }
     	</script>
 		</msh:ifFormTypeIsCreate>
 	</tiles:put>

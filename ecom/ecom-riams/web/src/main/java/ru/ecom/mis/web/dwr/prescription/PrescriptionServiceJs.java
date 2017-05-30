@@ -30,7 +30,7 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import sun.awt.windows.ThemeReader;
-
+import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 /**
  * Сервис назначений
  * @author STkacheva
@@ -1248,6 +1248,13 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		.append("','dd.mm.yyyy'),timeRegistration=cast('").append(formatT.format(date)).append("' as time)")
 		.append(" where id in (").append(aProtocol).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
+		//Тут делаем вызов функции по передаче лаб. исследования в ЛК
+
+		try{
+			ITemplateProtocolService service1 = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;
+			service1.sendProtocolToExternalResource(aProtocol,aSmoId,"",null);
+		} catch (Exception e) {e.printStackTrace();}
+
 		return "" ;
 	}
 	public String getParameterByTemplate(Long aSmoId, Long aPrescript, Long aServiceId, Long aProtocolId, Long aTemplateId, HttpServletRequest aRequest) throws NamingException, JspException {

@@ -1,10 +1,13 @@
 package ru.ecom.template.web.dwr;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.jboss.ejb3.dd.Inject;
+import org.json.JSONException;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
@@ -32,7 +35,15 @@ import javax.naming.NamingException;
  * To change this template use File | Settings | File Templates.
  */
 public class TemplateProtocolJs {
-	
+	public String sendService(Long aProtocolId, Long aMedCaseId, HttpServletRequest aRequest) throws NamingException, IOException, JSONException {
+		ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
+
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+		System.out.println("sending service, templateprotocolJs, usename = "+username);
+		service.sendProtocolToExternalResource(aProtocolId, aMedCaseId, null, null);
+		System.out.println("2sending service, templateprotocolJs, usename = "+username);
+		return "";
+	}
 	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
 		if (aParams==null||aParams.equals("")) {aParams="0";}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

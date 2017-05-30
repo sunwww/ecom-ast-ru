@@ -20,7 +20,6 @@ function onPreDelete(aEntityId, aCtx) {
 		} else {
 			throw "В БД нет протокола с таким ИД!!!" ;
 		}
-	
 		
 	aCtx.manager.createNativeQuery("delete from forminputprotocol where docprotocol_id="+aEntityId).executeUpdate();
 }
