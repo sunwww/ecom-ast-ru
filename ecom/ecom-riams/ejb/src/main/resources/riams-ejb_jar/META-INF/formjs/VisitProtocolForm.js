@@ -133,7 +133,7 @@ function onSave(aForm, aEntity, aCtx) {
 	createServiceMedCase(aForm, aEntity, aCtx);
 }
 function check(aForm,aCtx) {
-
+//test
 	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
 		// Дата регистрации дневника не должна быть больше текущей даты
 		var dateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(aForm.dateRegistration,aForm.timeRegistration) ;
