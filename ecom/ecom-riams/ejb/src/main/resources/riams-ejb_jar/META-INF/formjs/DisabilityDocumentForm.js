@@ -58,6 +58,11 @@ function onPreCreate(aForm, aCtx) {
 	} else {
 		aForm.setOtherCloseDate("") ;
 	}
+	list = aCtx.manager.createNativeQuery("select number, disabilitydocument_id from ElectronicDisabilityDocumentNumber where number =:num and disabilitydocument_id is not null").setParameter("num",number).getResultList();
+	if (list.size()>0) {
+		throw "Данный номер уже был использован в случае нетрудоспособности "+list.get(0)[1];
+	}
+
 }
 function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setPatient(aEntity.disabilityCase.patient) ;
@@ -93,6 +98,17 @@ function onCreate(aForm, aEntity, aCtx) {
 			pat.setWorks(aForm.job) ;
 			aCtx.manager.persist(pat) ;
 		}
+	}
+	var elns = aCtx.manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aEntity.number).getResultList();
+	if (elns.size()>0) { //Если номер из таблицы с полученнми номерами от ФСС, забираем номер.
+		var eln = elns.get(0);
+		if (eln.getDocument!=null) {throw "Случилось то, чего не должно случиться. Обратитесь к разработчикам. Ошибка: ELN_UJE_ZANYAT";}
+		eln.setDisabilityDocument(aEntity);
+		eln.setUsername(aForm.getCreateUsername());
+		eln.setReserveDate(null);
+        eln.setReserveTime(null);
+        aCtx.manager.persist(eln);
+
 	}
 }
 function onSave(aForm, aEntity, aCtx) {
@@ -191,4 +207,20 @@ function onPreDelete(aEntityId, aContext) {
 		aContext.manager.persist(orig);
 	} 
 	
+}
+function onView (aForm, aEntity, aCtx){ //Если документ отправляли в ФСС - берем информациб о цего статусе
+	var eln = aCtx.manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aForm.getNumber()).getResultList();
+	var status = "";
+	if (eln.isEmpty()){
+		eln = aCtx.manager.createNativeQuery("select id, result , to_char(requestdate,'dd.MM.yyyy') as f2_date from exportfsslog where disabilitynumber=:num").setParameter("num",aForm.getNumber()).getResultList();
+		if (!eln.isEmpty()) {
+			var e = eln.get(0);
+			status = e[1]+" от "+e[2];
+		}
+	} else {
+		var e = eln.get(0);
+		status = e.getStatus()!=null?(e.getStatus().getName()+" от "+Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(e.getExportDate())):"Не выгружался в ФСС";
+
+	}
+    aForm.setExportStatus(status);
 }

@@ -36,6 +36,9 @@
         <msh:row>
           <msh:textField property="series" label="Серия"/>
           <msh:textField property="number" label="Номер" size="30" />
+          <msh:ifFormTypeIsCreate formName="dis_documentByPatientForm">
+            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber()" value="Получить номер"></td>
+          </msh:ifFormTypeIsCreate>
         </msh:row>
         
         <msh:row guid="e1b2ffa3-e51c-46ef-9a21-6b6c19b60831">
@@ -177,6 +180,25 @@
     <msh:ifFormTypeIsNotView formName="dis_documentByPatientForm">
     
     <script type="text/javascript">
+        function getFreeNumber (){
+            if ($('number').value!="") {
+                alert ("Поле \"Номер\" уже заполнено");
+                return;
+            }
+            DisabilityService.getFreeNumberForDisabilityDocument({
+                callback: function (num) {
+                    if (num!=null&&num!="") {
+                        $('number').value=num;
+                        $('number').className="viewOnly";
+                        $('getFreeNumberButton').style.display="none";
+                    } else {
+                        alert ("Не удалось получить номер больничного листа");
+                    }
+
+                }
+            });
+        }
+
     closeReasonAutocomplete.addOnChangeCallback(function() {
     	DisabilityService.getCodeByReasonClose($('closeReason').value,{
     		callback: function(aString) {

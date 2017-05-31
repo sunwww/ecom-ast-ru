@@ -547,4 +547,12 @@ public class DisabilityDocumentForm extends IdEntityForm{
 
 	/** Дата иное */
 	private String theOtherCloseDate;
+
+	/** Статус экспорта в ФСС */
+	@Comment("Статус экспорта в ФСС")
+	public String getExportStatus() {return theExportStatus;}
+	public void setExportStatus(String aExportStatus) {theExportStatus = aExportStatus;}
+	/** Статус экспорта в ФСС */
+	private String theExportStatus ;
+
 }
