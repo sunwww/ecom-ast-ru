@@ -77,9 +77,9 @@
         	<msh:textField horizontalFill="true" property="diagnosis" fieldColSpan="3" label="Диагноз"/>
         </msh:row>
         <msh:ifFormTypeIsCreate formName="smo_planHospitalByVisitForm">
-        <msh:row>
+            <msh:row><td></td>
         	<td colspan="3" align="center">
-        	<input type="button" onclick="getTextDiaryByMedCase(this);return false;" value="Вставить данные дневниковой записи"/>
+        	<input type="button" onclick="getTextDiaryByMedCase(this);return false;" value="Вставить данные дневниковой записи"/><input type="button" value="Вставить данные из шаблона" onClick="showtmpTemplateProtocol()"/>
         	</td>
         </msh:row>  
         </msh:ifFormTypeIsCreate>
@@ -183,6 +183,10 @@
       	<msh:sideLink key="CTRL+2" params="id" action="/print-documentDirection1.do?m=printPlanHospital&s=VisitPrintService" name="Предварительной госпитализации"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
+      <tags:infoPlanHospital name="infoPlanHospital" />
+      <tags:templateProtocol idSmo="smo_planHospitalByVisit.visit"
+                             version="Visit" name="tmp" property="comment"
+                             voc="protocolVisitByPatient" />
   </tiles:put>
   
   <tiles:put name="javascript" type="string">
@@ -406,7 +410,7 @@
       	 });
   		bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
       		</script> 
-      		<tags:infoPlanHospital name="infoPlanHospital" /> 
+
   </msh:ifFormTypeIsNotView>
   </tiles:put>
 
