@@ -2,18 +2,16 @@ package ru.ecom.diary.ejb.service.template;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.sql.Date;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
@@ -49,57 +47,110 @@ import ru.nuzmsh.util.StringUtil;
 public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	static final Logger log = Logger.getLogger(TemplateProtocolServiceBean.class);
 
-	private void makeHttpPostRequest(final String data, final String address){
-		log.info("create connection, address = "+address+" , data="+data);
+
+	private void makeHttpPostRequest(String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager){
+		log.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
 		try {
 			if (address==null) {
 				return;
 			}
-			Thread thread = new Thread(new Runnable() {
-                public void run() {
+			//Thread thread = new Thread(new Runnable() {
+             //   public void run() {
 					HttpURLConnection connection = null;
 					try {
 						//HttpClinet client = HttpClientBuilder
 						//HttpPost request =
+						URL url = new URL(address+"/"+aMethod);
+						connection = (HttpURLConnection) url.openConnection();
+						if (params!=null&&!params.isEmpty()) {
+							for (Map.Entry<String,String> par: params.entrySet()) {
 
-                        URL url = new URL(address);
-					    connection = (HttpURLConnection) url.openConnection();
+								connection.setRequestProperty(par.getKey(),par.getValue());
+								//paramData.append(URLEncoder.encode(par.getKey(),"UTF-8")).append("=");
+								//paramData.append(URLEncoder.encode(par.getValue(),"UTF-8"));
+							}
+
+
+						}
 					    connection.setDoInput(true);
                         connection.setDoOutput(true);
                         connection.setRequestProperty("Accept", "application/json");
                         connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 						connection.setRequestProperty("Content-Type", "application/json");
 
+
+
 						OutputStream writer = connection.getOutputStream();
+
                         writer.write(data.getBytes("UTF-8"));
                         writer.flush();
                         writer.close();
-                        connection.getInputStream();
-                      //  BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        //   StringBuffer answerString = new StringBuffer();
-                        //   String line;
-                        //   while ((line = br.readLine()) != null) {
-                        //   	answerString.append(line);
-                        //   }
-                       // br.close();
+                        log.info("get response");
+                        //connection.getInputStream();
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String s = "";
+                           while ((s = in.readLine()) != null) {
+                        response.append(s);
+                           }
+                        in.close();
                         connection.disconnect();
+                        if (response.length()>0) {
+                        	log.info("Получили ответ, вот он"+response.toString());
+                        	if (aMethod.equals("SetRegisterPatient")) {
+								log.info("if SetRegisterPatient, manager = <"+aManager+">");
+								setAccountExternalCode(aObjectId,aManager,response.toString());
+							} else if (aMethod.equals("SetBlockPatient")){
+                        		setAccountDateTo(aObjectId,aManager,new java.sql.Date(new java.util.Date().getTime()));
+							}
 
-                    } catch (Exception e) {
+						}
+
+                    } catch (ConnectException e) {
+						log.error("Ошибка соединения с сервисом. "+e);
+					} catch (Exception e) {
 						if (connection!=null) {connection.disconnect();}
                         log.error("in thread happens exception"+e);
                         e.printStackTrace();
                     }
 					log.info("endstarting new thread, sending message");
 
-                }
-            });
-			thread.start();
+           //     }
+          //  });
+		//	thread.start();
 			log.info("exit the function");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	public void setAccountDateTo (Long aPatientExternalServiceAccountId, EntityManager aManager, Date aDateTo) {
+		changeAccountInformation (aPatientExternalServiceAccountId, aManager, null,aDateTo);
+	}
+	public void setAccountExternalCode(Long aPatientExternalServiceAccountId, EntityManager aManager, String aExternalCode) {
+		changeAccountInformation (aPatientExternalServiceAccountId, aManager, aExternalCode,null);
+	}
+	public void changeAccountInformation (Long aPatientExternalServiceAccountId, EntityManager aManager, String aExternalCode, Date aDateTo) {
+		try {
+			log.info("Получили результат, manager = <"+aManager+"> <"+aPatientExternalServiceAccountId+"> <"+aExternalCode+"><"+aDateTo+">");
 
+
+		//	List<Patient> list1 = theManager.createQuery("from Patient").setMaxResults(1).getResultList();
+			List<PatientExternalServiceAccount> list = aManager.createQuery("from PatientExternalServiceAccount where id=:id").setParameter("id",aPatientExternalServiceAccountId).getResultList();
+			if (!list.isEmpty()) {
+				PatientExternalServiceAccount p = list.get(0);
+				if (p==null) return;
+				if (aExternalCode!=null) {p.setExternalCode(aExternalCode);}
+				if (aDateTo!=null) {p.setDateTo(aDateTo);}
+				aManager.persist(p);
+			}
+
+		} catch (Exception e) {
+			log.error("changeInformation exception: "+e);
+			e.printStackTrace();
+		}
+
+
+	}
 	public void registerPatientExternalResource(Long aPatientExternalServiceAccountId, EntityManager aManager) {
 		try {
 			if (aManager==null) {
@@ -111,7 +162,8 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			PatientExternalServiceAccount pesa = aManager.find(PatientExternalServiceAccount.class, aPatientExternalServiceAccountId);
 			Patient pat = pesa.getPatient();
 			JSONObject root = new JSONObject();
-
+			Map<String,String> params = new LinkedHashMap<String,String>();
+			String function  = "SetRegisterPatient";
 			Date birthDate = pat.getBirthday();
 			Calendar cal = new GregorianCalendar();
 			cal.setTime(birthDate);
@@ -123,11 +175,15 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			root.put("birthday",birthDate);
 			root.put("phonenumber",pesa.getPhoneNumber());
 			root.put("email",pesa.getEmail());
-			root.put("finishdate",pesa.getDateTo()!=null?pesa.getDateTo():"");
-			root.put("patientcode",pesa.getExternalCode()!=null?pesa.getExternalCode():"");
-			root.put("function",pesa.getDateTo()!=null?"register":"block");
+			//root.put("finishdate",pesa.getDateTo()!=null?pesa.getDateTo():"");
+			//root.put("patientcode",pesa.getExternalCode()!=null?pesa.getExternalCode():"");
 
-makeHttpPostRequest(root.toString(),address);
+			if (pesa.getDateTo()!=null) {
+				log.info("Отзываем согласие пациента. uid = "+pesa.getExternalCode());
+				params.put("uid",pesa.getExternalCode());
+				function="SetBlockPatient";
+			}
+			makeHttpPostRequest(root.toString(),address,function, params, aPatientExternalServiceAccountId, aManager);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -223,9 +279,9 @@ makeHttpPostRequest(root.toString(),address);
 						log.info("Протокол в стационаре, выгружать не станем");
 						return;
 					}
-				} else if (mc instanceof DepartmentMedCase) { //Дневники специалистов не трогаем
+				} else if (mc instanceof DepartmentMedCase) { //Дневники специалистов в отделении не трогаем
 					return;
-				} else if (mc instanceof Visit) {//Для тестов возьмем визит, id=3976538 . Ищем лаб. исследования, диагностические, или просто заключения (поликлинические визиты)
+				} else if (mc instanceof Visit) {
 					List<ServiceMedCase> list = aManager.createQuery("from ServiceMedCase where parent=:vis").setParameter("vis", mc).getResultList();
 					Visit vis = (Visit) mc;
 					if (vis.getDateStart() == null) {
@@ -233,9 +289,10 @@ makeHttpPostRequest(root.toString(),address);
 						return;
 					}
 					serviceType = "VISIT";
-					medcaseDate = "" + vis.getDateStart();
-					medcaseTime = "" + vis.getTimeExecute();
-					executor = vis.getWorkFunctionExecute().getWorkFunction().getName() + " " + vis.getWorkFunctionExecute().getWorkerInfo();
+					medcaseDate = "" +  d.getDateRegistration();//vis.getDateStart();
+					medcaseTime = "" + d.getTimeRegistration();//vis.getTimeExecute();
+//					executor = vis.getWorkFunctionExecute().getWorkFunction().getName() + " " + vis.getWorkFunctionExecute().getWorkerInfo();
+					executor = d.getSpecialist()!=null?(d.getSpecialist().getWorkFunction().getName() + " " + d.getSpecialist().getWorkerInfo()):(vis.getWorkFunctionExecute().getWorkFunction().getName() + " " + vis.getWorkFunctionExecute().getWorkerInfo());
 					aRecord= aRecord!=null?d.getRecord():aRecord;
 
 					if (list.size() > 0) {
@@ -258,8 +315,8 @@ makeHttpPostRequest(root.toString(),address);
 				root.put("recordtimeexecute", medcaseTime);
 				root.put("recordexecutor", executor);
 				root.put("recordtext", aRecord);
-				log.info("=== jSON is ready, " + root.toString());
-				makeHttpPostRequest(root.toString(), address);
+				//log.info("=== jSON is ready, " + root.toString());
+				makeHttpPostRequest(root.toString(), address,"SetStatement",null, mc.getId(), aManager);
 				//log.info("return = ");
 			} else if (pat == null) {
 				//log.info("if=== patient pat = " + pat);

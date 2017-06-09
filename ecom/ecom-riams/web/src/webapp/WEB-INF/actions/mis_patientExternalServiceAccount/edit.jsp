@@ -43,7 +43,7 @@
                 </msh:row>
 
 
-                <msh:submitCancelButtonsRow colSpan="4"/>
+                <msh:submitCancelButtonsRow colSpan="1"/>
             </msh:panel>
         </msh:form>
     </tiles:put>
