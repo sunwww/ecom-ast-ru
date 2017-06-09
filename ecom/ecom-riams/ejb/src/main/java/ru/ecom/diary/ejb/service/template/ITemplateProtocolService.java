@@ -16,7 +16,6 @@ import java.io.IOException;
  */
 
 public interface ITemplateProtocolService {
-//	public static String saveParametersByProtocol(Long aSmoId,Long aProtocolId, String aParams, String aUsername) throws JSONException;
     public void registerPatientExternalResource(Long aPatientExternalServiceAccountId, EntityManager aManager);
     public void sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) ;
     public String getTextTemplate(long aId) ;

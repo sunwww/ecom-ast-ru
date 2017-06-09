@@ -2,6 +2,7 @@ package ru.ecom.miniejb.impl;
 
 import java.security.Identity;
 import java.security.Principal;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,8 +55,12 @@ public class SimpleSessionContext implements SessionContext {
         throw new MethodNotImplementedException() ;
     }
 
-    public Object getInvokedBusinessInterface() throws IllegalStateException {
+    public Class getInvokedBusinessInterface() throws IllegalStateException {
         throw new MethodNotImplementedException() ;
+    }
+
+    public boolean wasCancelCalled() throws IllegalStateException {
+        return false;
     }
 
     public EJBHome getEJBHome() {
@@ -98,5 +103,9 @@ public class SimpleSessionContext implements SessionContext {
 
     public Object lookup(String string) {
         throw new MethodNotImplementedException() ;
+    }
+
+    public Map<String, Object> getContextData() {
+        return null;
     }
 }

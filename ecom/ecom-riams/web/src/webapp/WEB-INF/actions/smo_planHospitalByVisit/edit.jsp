@@ -43,11 +43,7 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" horizontalFill="true"/>
-        	
-         </msh:row>
-        
-          
-       
+        </msh:row>
         <msh:row>
         	<msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true" vocName="vocLpuHospOtdAll"/>
         </msh:row>

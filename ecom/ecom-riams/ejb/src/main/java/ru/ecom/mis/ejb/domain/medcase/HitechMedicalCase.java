@@ -18,7 +18,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(properties="medCase", table="MedCase")
+	@AIndex(properties="medCase")
 }) 
 public class HitechMedicalCase extends BaseEntity {
 

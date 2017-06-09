@@ -3,9 +3,8 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
-
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>
+
 
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
@@ -19,7 +18,7 @@
 
         <msh:sideMenu>
                 <tags:laboratory_menu currentAction="pres_find"/>
-                <tags:prescriptionReportTag name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title="123"></tags:prescriptionReportTag>
+                <tags:prescriptionReportTag name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title="123"/>
         </msh:sideMenu>
     </tiles:put>
 
