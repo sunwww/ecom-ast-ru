@@ -250,6 +250,16 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		wqs.executeUpdateNativeSql(sql);
 				
 	}
+
+	/**
+	 * Отменяем назначение на диагностическое исследование
+	 * @param aId ИД назначения (prescription)
+	 * @param aReason Текст причины отмены
+	 * @param aRequest
+	 * @return
+	 * @throws NamingException
+	 */
+
 	public String cancelPrescription (String aId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
@@ -554,21 +564,30 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		return "Выполнено: ";
 	}
-	
-	public String cancelService(String aPrescript,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
+
+	/**
+	 *  Брак назначений. Заполняет поля кто и когда аннулировал лаб. назначения
+	 * @param aPrescripts Строка с ИД назначений (prescription) разделенная запятами
+	 * @param aReasonId ИД причины отмены
+	 * @param aReason Текст причины отмены
+	 * @param aRequest
+	 * @return
+	 * @throws NamingException
+	 */
+	public String cancelService(String aPrescripts,Long aReasonId,String aReason,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
-		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id in (").append(aPrescript).append(")");
+		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id in (").append(aPrescripts).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		
 		sql = new StringBuilder() ;
-		sql.append("update medcase set datestart = current_date, noactuality='1' where id in (select medcase_id from prescription where id in ("+aPrescript+"))");
+		sql.append("update medcase set datestart = current_date, noactuality='1' where id in (select medcase_id from prescription where id in ("+aPrescripts+"))");
 		service.executeUpdateNativeSql(sql.toString()) ;
-		List<Object[]> list = service.executeNativeSqlGetObj("select pl.id,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name from prescription p left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id where p.id='"+aPrescript+"'") ;
+		List<Object[]> list = service.executeNativeSqlGetObj("select pl.id,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name from prescription p left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id where p.id in ("+aPrescripts+")") ;
 		if (list.size()>0) {
 			Object[] obj = list.get(0) ;
 			String usernameO=""+obj[1] ;
@@ -587,11 +606,11 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		return "1" ;
 	}
 	
-	public String uncancelService(String aPrescript, HttpServletRequest aRequest) throws NamingException {
+	public String uncancelService(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("update Prescription set cancelReason_id=null, cancelReasonText=null, cancelDate=null, ");
-		sql.append("cancelTime=null, cancelUsername=null where id in (").append(aPrescript).append(")");
+		sql.append("cancelTime=null, cancelUsername=null where id in (").append(aPrescripts).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 
 		return "1" ;
