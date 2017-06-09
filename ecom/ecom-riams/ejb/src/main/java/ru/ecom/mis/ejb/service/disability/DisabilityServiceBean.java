@@ -1,7 +1,8 @@
 package ru.ecom.mis.ejb.service.disability;
 
-import java.io.FileWriter;
-import java.io.StringReader;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -69,8 +70,78 @@ public class DisabilityServiceBean implements IDisabilityService  {
 
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
-    
+
+	/**
+	 * Делаем просто GET запрос, возвращаем ответ сервера
+	 * @param aAddress
+	 * @param aMethod
+	 * @return
+	 */
+    public String makeHttpGetRequest (String aAddress, String aMethod)  {
+		try {
+			URL url = new URL(aAddress+"/"+aMethod);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setRequestMethod("GET");
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(),"UTF-8"));
+			StringBuilder response = new StringBuilder();
+			String s = "";
+			while ((s = in.readLine()) != null) {
+                response.append(s);
+            }
+			in.close();
+			connection.disconnect();
+			if (response.length()>0) {
+               // LOG.info("Получили ответ, вот он"+response.toString());
+                return response.toString();
+
+            }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+    private String getSoftConfigValue (String aKey, String aDefaultValue) {
+    	List<Object[]> list = theManager.createNativeQuery("select id,keyvalue from softconfig where key='"+aKey+"'").getResultList();
+    	if (list.isEmpty()) {
+    		return aDefaultValue;
+		}
+		return list.get(0)[1].toString();
+	}
+    private String getConfigValue(String aKey, String aDefaultValue) {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		return config.get(aKey, aDefaultValue) ;
+	}
+
+	/**
+	 * Выгружаем ЭЛН на сервис экспорта в ФСС. Получаем ИД документа нетрудоспособности, возвращаем ответ сервиса
+	 * @param aDocumentId - ИД документа
+	 * @return Результат экспорта
+	 */
+	public String exportDisabilityDocument(Long aDocumentId) {
+		//Формируем строку для отправки на сервис Руслана
+		String address = getSoftConfigValue("FSS_PROXY_SERVICE",null);
+		String lpuId= getSoftConfigValue("DEFAULT_LPU",null);
+		if (address==null||lpuId==null) {
+			LOG.info ("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId);
+			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId;
+		}
+		List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = "+lpuId).getResultList();
+		if (list.size()>0) {
+			String ogrn = list.get(0)[1].toString();
+			if (ogrn==null||ogrn.equals("0")) {
+				LOG.info ("У ЛПУ не указан ОГРН. ЛПУ = "+lpuId);
+				return "У ЛПУ не указан ОГРН. ЛПУ = "+lpuId;
+			}
+
+			String method = "SetLnData";
+			method+="?id="+aDocumentId+"&ogrn="+ogrn;
+			return makeHttpGetRequest(address,method);
+		}
+		return "Не найдено ЛПУ для отправки больничного листа";
+	}
    public boolean isRightSnils (String aSNILS) {
 	//   System.out.println("=======isRightSnils, snilsBefore="+aSNILS);
 		String currentSnils = aSNILS.replace("-", "").replace(" ", "").replace("\t","");

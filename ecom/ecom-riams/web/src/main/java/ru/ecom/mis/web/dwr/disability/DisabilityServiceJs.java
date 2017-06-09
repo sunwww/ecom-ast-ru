@@ -6,6 +6,7 @@ import java.util.*;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.disability.IDisabilityService;
@@ -20,6 +21,13 @@ import ru.nuzmsh.util.format.DateConverter;
  *
  */
 public class DisabilityServiceJs {
+	public String exportDisabilityDocument (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
+		//ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
+		String ret = service.exportDisabilityDocument(aDocumentId);
+
+		return ret;
+	}
 
 	public String getExportJournalById (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
@@ -48,10 +56,9 @@ public class DisabilityServiceJs {
 	 */
 	public String getFreeNumberForDisabilityDocument(HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
-		String ret = null;
-		Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy')||''||cast(reservetime as varchar(5)) as datetime from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null ");
+		String ret = "";
+		Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy') as f2_date, cast(reservetime as varchar(5)) as f3_time from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null ");
 		if (list.isEmpty()) {
-
 		} else {
 			Date currentDate = new Date();
 			Calendar cal = new GregorianCalendar();
@@ -61,7 +68,6 @@ public class DisabilityServiceJs {
 					ret = r.get1().toString();
 					break;
 				} else {
-					String dateTime = r.get2().toString();
 					Date reserveDate = DateConverter.createDateTime(r.get2().toString(),r.get3().toString());
 					cal.setTime(reserveDate);
 					cal.add(Calendar.HOUR,1);
@@ -72,7 +78,7 @@ public class DisabilityServiceJs {
 
 				}
 			}
-			if (ret!=null) {
+			if (ret!=null&&!ret.equals("")) {
 				service.executeUpdateNativeSql("update ElectronicDisabilityDocumentNumber set reservedate = current_date, reservetime = current_time where number ='"+ret+"' ");
 			}
 		}

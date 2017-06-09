@@ -8,8 +8,8 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
 	<%
-	String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1", request);
-	request.setAttribute("fssProxyService", fssProxyService);
+	//String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1", request);
+	//request.setAttribute("fssProxyService", fssProxyService);
 	
 	
 	%>
@@ -245,12 +245,6 @@
 	<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 	<script type="text/javascript">
 
-	function exportDocument() {
-		if (+$('id').value>0){
-			document.location.href=""+$('fssServerAddress').value+"/SetLnData?id="+$('id').value;
-		}
-		
-	}
 	function printDoc(aTemplate) {
   		DisabilityService.getPrefixForLN({
     		callback: function(aResult) {
@@ -418,7 +412,7 @@
       </msh:sideMenu>
       <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/ExportDocument">
       <msh:sideMenu  title="Экспорт в ФСС" guid="c79769a2-8a1c-4c21-ab9c-b7ed71ceb99d">
-      <msh:sideLink  name="Экспортировать документ" action="/javascript:exportDocument()"/>
+      <msh:sideLink  name="Экспортировать документ" action="/javascript:showJournalFSSProgress()"/>
       <msh:sideLink  name="Просмотреть журнал экспорта" action="/javascript:showJournalFSSJournal()"/>
       </msh:sideMenu>
       </msh:ifInRole>
