@@ -54,9 +54,8 @@
 			dep.id=(select m.department_id from medcase m where m.id=pw.medcase_id)
 			where dep.omccode='1' and pw.listwatch_id=(select lw.id from listwatch lw
 			where lw.datewatch=to_date('${param.dateBegin}','dd.mm.yyyy')) group by dep.id"/>
-	    	 <msh:table hideTitle="false" styleRow="2" idField="1" name="patList" action="javascript:void(0)"
-	    	  viewUrl="patientWatch.do?dateBegin=${param.dateBegin}&depCode=${param.id}" 
-	     		action="patientWatch.do?dateBegin=${param.dateBegin}&depCode=${param.id}" idField="1">
+	    	 <msh:table hideTitle="false" styleRow="2" idField="1" name="patList" action="patientWatch.do?dateBegin=${param.dateBegin}&depCode=${param.id}"
+	    	  viewUrl="patientWatch.do?dateBegin=${param.dateBegin}&depCode=${param.id}">
 	    	 
 	                    <msh:tableColumn columnName="Код" property="1"/>
 	                    <msh:tableColumn columnName="Наименование отделения" property="2"/>
