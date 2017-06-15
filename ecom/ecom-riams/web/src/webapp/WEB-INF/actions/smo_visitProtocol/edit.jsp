@@ -347,11 +347,13 @@
 						$('diagnosisPriorityName').className="autocomplete horizontalFill required";
 						$('diagnosisIdc10Name').className="autocomplete horizontalFill required";
 						$('diagnosisIllnessPrimaryName').className="autocomplete horizontalFill required";
-                        //Обязательны
+                        medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
+
                     } else if (aDtype!=null && aDtype=="DepartmentMedCase") {
                     	ishosp=1;
                     	$('typeName').className="autocomplete horizontalFill required";
                     	$('stateName').className="autocomplete horizontalFill required";
+                    	medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
                     }
                  }
     		});
