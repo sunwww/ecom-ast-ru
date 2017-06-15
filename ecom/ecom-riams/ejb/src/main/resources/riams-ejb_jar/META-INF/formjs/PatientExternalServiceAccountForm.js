@@ -38,6 +38,13 @@ function checkFields(aForm, aCtx) {
     function onCreate(aForm, aEntity, aCtx) {
         var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
         bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager);
+        if (aEntity.getExportAllHistory()) {
+            if (aEntity.getExternalCode()!=null){
+                bean.sendPatientMedicalHistoryToExternalResource(aEntity.getId(), aCtx.manager);
+            } else {
+                throw "Нет кода пациента, выгрузка невозможна";
+            }
+        }
         //aCtx.manager.createQuery("update ")
 
     }

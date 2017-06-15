@@ -112,6 +112,14 @@ public class PatientExternalServiceAccountForm extends IdEntityForm {
     /** Аннулировать согласие */
     private String theDisabled ;
 
+    /** Разрешить выгрузку всей истории болезни */
+    @Comment("Разрешить выгрузку всей истории болезни")
+    @Persist
+    public Boolean getExportAllHistory() {return theExportAllHistory;}
+    public void setExportAllHistory(Boolean aExportAllHistory) {theExportAllHistory = aExportAllHistory;}
+    /** Разрешить выгрузку всей истории болезни */
+    private Boolean theExportAllHistory ;
+
 
 }
 

@@ -83,4 +83,11 @@ public class PatientExternalServiceAccount extends BaseEntity {
     public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
     /** Дата редактирования записи */
     private Date theEditDate ;
+
+    /** Разрешить выгрузку всей истории болезни */
+    @Comment("Разрешить выгрузку всей истории болезни")
+    public Boolean getExportAllHistory() {return theExportAllHistory;}
+    public void setExportAllHistory(Boolean aExportAllHistory) {theExportAllHistory = aExportAllHistory;}
+    /** Разрешить выгрузку всей истории болезни */
+    private Boolean theExportAllHistory ;
 }

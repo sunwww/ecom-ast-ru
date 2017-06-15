@@ -41,6 +41,9 @@
                 <msh:row>
                     <msh:textField property="email"/>
                 </msh:row>
+                <msh:row>
+                    <msh:checkBox property="exportAllHistory" label="Выгрузить всю истории лечения пациента"/>
+                </msh:row>
 
 
                 <msh:submitCancelButtonsRow colSpan="1"/>
