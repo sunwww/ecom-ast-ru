@@ -191,10 +191,6 @@
 					key='ALT+DEL' params="id"
 					action="/entityParentDeleteGoSubclassView-smo_visitProtocol"
 					name="Удалить" confirm="Вы действительно хотите удалить?" />
-				<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/Delete"
-							  key='ALT+DEL' params="id"
-							  action="/javascript:sendService()"
-							  name="Послать" confirm="Вы действительно хотите отправить дневник наружу?" />
 			</msh:ifFormTypeAreViewOrEdit>
 			
 			<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
@@ -268,14 +264,6 @@
 			</msh:ifFormTypeAreViewOrEdit>
 		</msh:ifFormTypeIsNotView>
 		<script type="text/javascript">
-        function sendService() {
-            TemplateProtocolService.sendService($('id').value,{
-               callback: function (a) {
-                   alert ("ret="+a);
-			   }
-			});
-
-        }
     function printProtocol() {
     	HospitalMedCaseService.getPrefixByProtocol(${param.id},
     		{
