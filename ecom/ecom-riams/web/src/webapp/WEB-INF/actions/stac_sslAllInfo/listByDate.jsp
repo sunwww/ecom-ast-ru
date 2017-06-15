@@ -173,7 +173,7 @@ left join VocPreAdmissionTime vpat on vpat.id=m.preAdmissionTime_id
                                 </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+    <msh:table viewUrl="entityShortView-stac_ssl.do" name="datelist" idField="1" action="entityView-stac_ssl.do" guid="d579127c-69a0-4eca-b3e3-950381d1585c"  printToExcelButton="Сохранить в excel">
       <msh:tableColumn columnName="#" property="sn" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Стат.карта" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="6" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
