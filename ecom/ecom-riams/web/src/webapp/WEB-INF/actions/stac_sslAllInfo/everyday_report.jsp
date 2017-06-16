@@ -469,7 +469,7 @@
 						left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id
 						left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 						left join VocServiceStream vss on vss.id=sls.serviceStream_id
-						left join MedCase sloLast on sloLast.parent_id=sls.id and sloLast.transferdate is null
+						left join MedCase sloLast on sloLast.parent_id=sls.id and sloLast.transferdate is null and sloLast.dtype='DepartmentMedCase'
 						left join Mislpu mlLast on sloLast.department_id=mlLast.id
     					where sls.dtype='HospitalMedCase' and ${whereSql} 
     					group by sls.id,pat.id,pat.lastname,pat.firstname,pat.middlename,ss.code,vss.name,sls.Entrancetime,sls.dateStart
@@ -486,8 +486,8 @@
     				    	<msh:tableColumn property="4" columnName="ФИО"/>
     				    	<msh:tableColumn property="5" columnName="Поток обслуживания"/>
     				    	<msh:tableColumn property="6" columnName="Отделение пост."/>
-    				    	<msh:tableColumn property="7" columnName="Отделение сост."/>
-    				    	<msh:tableColumn property="8" columnName="Дата пост. в отд сост."/>
+    				    	<msh:tableColumn property="8" columnName="Отделение сост."/>
+    				    	<msh:tableColumn property="7" columnName="Дата пост. в отд сост."/>
     				    	<msh:tableColumn property="9" columnName="Дата выписки"/>
     				    </msh:table>
     				    			<%    					
