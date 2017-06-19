@@ -1431,31 +1431,35 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		return ""+service.savePrescriptNew(aPrescriptList, Long.valueOf(0),aName).toString();	
 	}
 	
-	 public String getInfoAboutPrescription(Long aId, HttpServletRequest aRequest)
-		    throws NamingException {
+	 public String getInfoAboutPrescription(Long aId, HttpServletRequest aRequest) throws NamingException {
 		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("select intakedate||' '||intaketime as intake, intakeusername,transferdate ||' '||transfertime as transfer,transferusername, ");
-		sql.append("canceldate||' '||canceltime as cancel, cancelreasontext,cancelusername ");
-		sql.append("from prescription where id='"+aId.toString()+"'");
+		sql.append("select to_char(p.createdate,'dd.MM.yyyy')||' '||cast(p.createtime as varchar(5))||' '||p.createusername as createInfo ")
+			.append(",to_char(p.intakedate,'dd.MM.yyyy')||' '||cast(p.intaketime as varchar(5)) ||' '|| p.intakeusername as intakeInfo")
+			.append(",to_char(p.transferdate,'dd.MM.yyyy') ||' '||cast(p.transfertime as varchar(5)) ||' '||p.transferusername as transferInfo")
+			.append(",to_char(vis.createdate,'dd.MM.yyyy')||' '||cast(vis.createtime as varchar(5))||' '||vis.username as researchIndo")
+			.append(",to_char(vis.datestart,'dd.MM.yyyy')||' '||cast(vis.timeexecute as varchar(5))||' '||vis.editusername as labDoctorIndo")
+			.append(",to_char(p.canceldate,'dd.MM.yyyy')||' '||cast(p.canceltime as varchar(5))||' '||p.cancelusername ||coalesce(vpcr.name,'')||' '||coalesce(p.cancelreasontext,'')  as cancelInfo")
+			.append(" from prescription p " +
+				" left join medcase vis on vis.id=p.medcase_id" +
+				" left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id" +
+				" where p.id='"+aId+"'");
 		
 		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
 		
 		
 		StringBuilder sb = new StringBuilder();
 		for (WebQueryResult wqr : res) {
-		    sb.append("" + wqr.get1());
-		    sb.append("|" + wqr.get2());
-		    sb.append("|" + wqr.get3());
-		    sb.append("|" + wqr.get4());
-		    sb.append("|" + wqr.get5());
-		    sb.append("|" + wqr.get6());
-		    sb.append("|" + wqr.get7());
+		    sb.append(unnul(wqr.get1())).append("|" + unnul(wqr.get2())).append("|" + unnul(wqr.get3())).append("|" + unnul(wqr.get4())).append("|" + unnul(wqr.get5()))
+					.append("|" + unnul(wqr.get6()));
 		}
-		System.out.println(sb.toString());
+		//System.out.println(sb.toString());
 		return sb.toString();
 	    }
-	
+	private String unnul(Object o) {
+		if (o!=null) {return o.toString();}
+		return "";
+	}
 }

@@ -18,7 +18,7 @@
 
         <msh:sideMenu>
                 <tags:laboratory_menu currentAction="pres_find"/>
-                <tags:prescriptionReportTag name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title="123"/>
+                <tags:prescriptionReportTag name="My" roles="/Policy/Mis/Prescription/ViewInformation"/>
         </msh:sideMenu>
     </tiles:put>
 
@@ -117,7 +117,7 @@
 	      <msh:tableColumn columnName="Передача в лаб." property="20"/>
 	      <msh:tableColumn columnName="Код" property="4"/>  <!-- 'showMyPrescriptionReport('||p.id||',1)' -->
 	      <msh:tableButton property="13" buttonFunction="getDefinition" buttonName="Просмотр данных о пациенте" buttonShortName="П" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
-	      <msh:tableButton property="23" buttonFunction="showMyPrescriptionReport" buttonName="Отчет" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Patient/View"/>
+	      <msh:tableButton property="23" buttonFunction="showMyPrescriptionReport" buttonName="История назначения" buttonShortName="О" hideIfEmpty="true" role="/Policy/Mis/Prescription/ViewInformation"/>
 	      <msh:tableColumn columnName="ФИО пациента" property="6"  />
 	      <msh:tableColumn columnName="Услуга" property="7"/>
 	      <msh:tableColumn columnName="Результат" property="18" cssClass="preCell"/>
