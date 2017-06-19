@@ -19,6 +19,7 @@ function onPreCreate(aForm, aCtx) {
 
 }
 
+
 function onPreSave(aForm, aEntity, aCtx) {
     checkFields(aForm, aCtx);
     if (aForm.getDisabled()!=null&&aForm.getDisabled()=="1") {
@@ -30,9 +31,30 @@ function onPreSave(aForm, aEntity, aCtx) {
     }
 }
 function checkFields(aForm, aCtx) {
-    if ((aForm.getPhoneNumber==null ||aForm.getPhoneNumber().trim()=="")&&(aForm.getEmail()==null||aForm.getEmail().trim()=="")) {
-        throw "Необходимо указать либо номер мобильного телефона либо адрес электронной почты ";
+    var phone = aForm.getPhoneNumber().trim();
+    var email = aForm.getEmail().trim();
+    var listSql = "",errorMessage="";
 
+    if (aForm.getId()!=null&&+aForm.getId()>0) {
+        listSql+=" id!="+aForm.getId()+" and ";
+    }
+
+    if (phone!=null&&phone!=""){
+        phone = checkSetPhone(phone);
+        aForm.setPhoneNumber(phone);
+        listSql+=" phonenumber='"+phone+"'";
+        errorMessage="телефоном";
+    } else if (email!=null&&email!=""){
+        email = setCheckEmail(email);
+        aForm.setEmail(email);
+        listSql+=" email='"+email+"'";
+        errorMessage="адресом электронной почты";
+    } else {
+        throw "Необходимо указать либо номер мобильного телефона либо адрес электронной почты ";
+    }
+    var list = aCtx.manager.createNativeQuery("select id from PatientExternalServiceAccount where "+listSql+" and dateTo is null").getResultList();
+    if (!list.isEmpty()) {
+        throw "В системе уже существует учетная запись с указанным "+errorMessage;
     }
 }
     function onCreate(aForm, aEntity, aCtx) {
@@ -49,11 +71,44 @@ function checkFields(aForm, aCtx) {
 
     }
     function onSave(aForm, aEntity, aCtx) {
-    onCreate(aForm, aEntity, aCtx);
+        /**
+         * TODO
+         * При изменении номера телефона необходимо отвязать старый номер, на этого же пациента привязать новый номер. Вести журнал изменения номеров
+         */
+        if (aForm.getPhoneNumber()!=null&&aForm.getPhoneNumber!=aEntity.getPhoneNumber()) {
+            onCreate(aForm, aEntity, aCtx);
+        }
+
     }
 
     function onPreDelete (aEntityId, aCtx) {
     throw "У вас стоит запрет на удаление согласия";
         //aCtx.manager.createQuery("update patient set isTransferAgreementExist='0' where id=(select patient_id from PatientExternalServiceAccount where id="+pat+" )").executeUpdate();
 
+    }
+    function checkSetPhone (aPhone) {
+    aPhone = aPhone.trim();
+        if (aPhone.startsWith("8")) {
+            aPhone = "+7"+ aPhone.substring(1);
+        } else if (!aPhone.startsWith("+")) {
+            aPhone +="+"+aPhone;
+        }
+        aPhone = aPhone.split(" ").join("");
+        aPhone = aPhone.split("-").join("");
+        var regexpPhone = /^\+\d{11}$/;
+        if (!regexpPhone.test(aPhone)) {
+            throw "Неправильно указан номер телефона. Пример: +79170000000";
+        }
+    return aPhone;
+
+    }
+    function setCheckEmail (aEmail) {
+        if (aEmail != null && aEmail.trim() != "") {
+            aEmail = aEmail.trim();
+            var regexpEmail = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/;
+            if (regexpEmail.test(aEmail)) {
+                throw "Неправильно заполнен адрес электронной почты";
+            }
+        }
+        return aEmail;
     }

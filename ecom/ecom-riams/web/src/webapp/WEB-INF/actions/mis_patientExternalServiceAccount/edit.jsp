@@ -36,10 +36,10 @@
                     </msh:row>
                  </msh:ifFormTypeAreViewOrEdit>
                 <msh:row>
-                    <msh:textField property="phoneNumber"/>
+                    <msh:textField property="phoneNumber" size="50" label="Номер телефона (в формате +7ХХХХХХХХХХ)"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="email"/>
+                    <msh:textField property="email" size="50"/>
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="exportAllHistory" label="Выгрузить всю истории лечения пациента"/>
