@@ -76,7 +76,7 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
         if (CAN_DEBUG) LOG.debug("listAll: executing query ..."); 
         Collection results = theManager.createQuery("from "
                 + findFormPersistance((Class<IEntityForm>) type).clazz().getSimpleName() + " c order by id")
-                .setMaxResults(200).getResultList();
+                .setMaxResults(300).getResultList();
         
     	if (CAN_DEBUG) LOG.debug("listAll: copying ..."); 
         LinkedList<IEntityForm> ret = new LinkedList<IEntityForm>();
