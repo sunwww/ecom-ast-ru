@@ -213,7 +213,7 @@ function check(aForm, aCtx) {
                             } else {
                                 var param1 = new java.util.HashMap();
                                 param1.put("obj", "Protocol");
-                                param1.put("permission", "hosp_editAfterCertainHour");
+                                param1.put("permission", "editAfterCertainHour");
                                 param1.put("id", +aForm.id);
                                 isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
                                 if (+isCheck != 1) {
