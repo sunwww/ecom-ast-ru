@@ -202,7 +202,13 @@ function onPreSave(aForm,aEntity, aContext) {
 			}
 			}
 	}
-
+//проверка на перевод из реанимации в реанимацию с галочкой не входит в омс
+	if (aForm!=null && prev!=null 
+			&& aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/CantTransferReanimationToReanimation")) { 
+		var lpu = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,aForm.department); 
+		if (lpu.getIsNoOmc() && prev.department.getIsNoOmc())
+			throw "Нельзя переводить из одной реанимации в другую реанимацию!";
+	}
 }
 function checkPrescriptionList(aForm, aEntity, aCtx) {
 	var currentDate = new java.sql.Date(new java.util.Date().getTime()) ;
