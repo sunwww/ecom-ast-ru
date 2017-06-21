@@ -348,7 +348,15 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <script type="text/javascript">
-  var slo_form_is_view = 0 ;
+  var slo_form_is_view = 0 ; 
+  var medCaseId = $('id');
+	eventutil.addEventListener($('dischargeEpicrisis'), "keyup", 
+		  	function() { 
+		try {
+		localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);   
+		}
+		catch (e) {}
+		}) ; 
   </script>
   <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
   <script type="text/javascript">
@@ -549,10 +557,25 @@
         		$('outcomeName').select() ;
         		$('outcomeName').focus() ;
         	</script>
-        </msh:ifInRole>
-        
+        </msh:ifInRole> 
      <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
      	<script type="text/javascript">
+     	try {
+     	if (localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML)!=null) 
+			$('dischargeEpicrisis').value=localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+     	}
+     	catch (e) {}
+function submitFunc() { 
+	var frm = document.stac_sslDischargeForm;
+	var medCaseId = document.querySelector('#id'); 
+	try {
+	localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+	}
+	catch (e) {}
+	frm.action= "entityParentEdit-stac_sslDischarge.do";
+	frm.submit();
+} 		
+     	
      	HospitalMedCaseService.isCanDischarge('${param.id}', {
             callback: function(aResult) {
                 if (aResult!=null) {
