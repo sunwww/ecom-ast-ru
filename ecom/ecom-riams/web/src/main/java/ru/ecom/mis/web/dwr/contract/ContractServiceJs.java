@@ -178,10 +178,10 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 				}
 				arr.put(record);
 			}
+			root.put("isTerminalPayment", isTerminalPayment);
 			if (isRefund) {
 				root.put("totalRefundSum", totalSum) ;
 			} else {
-				root.put("isTerminalPayment", isTerminalPayment);
 				root.put("pos", arr) ;
 				root.put("totalPaymentSum", ""+totalSum+"") ;
 				if (taxSum>0) {
