@@ -124,6 +124,7 @@
         <msh:hidden property="admissionOrder"/>
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>
+        <msh:hidden property="guarantee"/>
        <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
        	<msh:hidden property="hotelServices"/>
        </msh:ifNotInRole>

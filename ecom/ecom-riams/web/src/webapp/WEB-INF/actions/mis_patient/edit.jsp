@@ -864,6 +864,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_languageSkill" name="Знание языков" title="Добавить знание языков" guid="13e03012-904b-4ee4-93ce-063a5ad76e18" roles="/Policy/Mis/Worker/LaguageSkill/Create" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_workBook" name="Трудовую книжку" title="Добавить трудовую книжку" guid="8e53bc77-8ba0-422f-901d-fec5f4fda589" roles="/Policy/Mis/Worker/WorkBook/Create" />
          --%>
+          <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/Create"/>
       </msh:sideMenu>
       <msh:sideMenu title="Показать все" guid="9f390953-ddd1-426b-bf16-5198c38f449b">
         
@@ -883,7 +884,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <mis:sideLinkForWoman classByObject="Patient" id="${param.id}" params="id" action="/entityParentList-preg_pregnancy" name="Беременности" title="Показать все беременности" roles="/Policy/Mis/Pregnancy/View"/>
         <msh:sideLink params="id" action="/entityParentList-mis_kinsman" name="Родственников (представителей)"  title="Показать всех родственников (представителей)" roles="/Policy/Mis/Patient/Kinsman/View"/>
         <msh:sideLink params="id" action="/js-mis_assessmentCard-listByPatient" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
-      </msh:sideMenu>
+        <msh:sideLink params="id" action="/entityParentList-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/View"/>
+        </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
         <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" 
         name="Амбул.карты" title="Печать амбул.карты" 

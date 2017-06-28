@@ -18,6 +18,7 @@
   <%
   	String typeGroup =ActionUtil.updateParameter("Form039Action","typeGroup","1", request) ;
   	String typePayment =ActionUtil.updateParameter("Form039Action","typePayment","1", request) ;
+  	String typeHelp =ActionUtil.updateParameter("Form039Action","typeHelp","3", request) ;
 %>
 		<msh:form action="/contract_reports_finance.do" defaultField="dateFrom">
 			<msh:panel>
@@ -57,6 +58,22 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="4"> гражданству
 	        </td>
+	         <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeGroup" value="5"> по региону
+	        </td>
+        </msh:row>		
+         <msh:row>
+	        <td class="label" title="Группировака (typeHelp)" colspan="1"><label for="typeHelpName" id="typeHelpLabel">Вид мед. помощи:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeHelp" value="1">  поликлиника
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeHelp" value="2"> стационар
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeHelp" value="3"> все
+	        </td>
+	      
         </msh:row>				
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
@@ -126,6 +143,13 @@
        		request.setAttribute("groupGroupNext", "4") ;
    			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name") ;
    			request.setAttribute("groupOrder", "pp.code") ;*/
+		} else if (typeGroup.equals("5")) { //Группировка по иногородним
+			request.setAttribute("groupSql", "ar.name") ;
+   			request.setAttribute("groupSqlId", "'&inogorod='||ar.name") ;
+   			request.setAttribute("groupName", "") ;
+   			request.setAttribute("groupGroup", "ar.name") ;
+       		request.setAttribute("groupGroupNext", "_NULL_") ;
+   			request.setAttribute("groupOrder", "ar.name") ;
 		} else {
 			//Реестр
    			request.setAttribute("groupSql", "pms.name") ;
@@ -134,11 +158,32 @@
    			request.setAttribute("groupGroup", "pms.id,pms.code,pms.name") ;
    			request.setAttribute("groupOrder", "pms.code") ;
 		}
+		if (typeHelp!=null&&(typeHelp.equals("1")||typeHelp.equals("2"))) { //Поликлиника или стац
+			String sqlAdd = "(select ca1.id"+
+				" from contractaccount CA1"+ 
+				" left join ContractAccountOperation CAO1 on CAO1.account_id=CA1.id"+ 
+				" left join ContractAccountOperationByService caos1 on cao1.id=caos1.accountOperation_id"+ 
+				" left join ContractAccountMedService cams1 on caos1.accountMedService_id=cams1.id"+ 
+				" left join PriceMedService pms1 on pms1.id=cams1.medService_id "+
+				" left join PricePosition pp1 on pp1.id=pms1.pricePosition_id"+ 
+				" left join medservice ms1 on ms1.id=pms1.medservice_id"+
+				" left join vocservicetype vst1 on vst1.id=ms1.servicetype_id"+
+				" WHERE CA1.id=ca.id and CAo1.operationdate between to_date('"+dateFrom+"', 'dd.mm.yyyy') AND to_date('"+dateTo+"', 'dd.mm.yyyy') and (cao1.dtype='OperationAccrual' or cao1.dtype='OperationReturn') and (pp1.isVat='0' or pp1.isVat is null)"+
+				" and vst1.code='к/д')";
+			if (typeHelp.equals("1")) {
+				sqlAdd = " and ca.id not in "+sqlAdd;
+			} else {
+				sqlAdd = " and ca.id in "+sqlAdd;
+			}
+			request.setAttribute("sqlAdd", sqlAdd);
+		} else {
+			request.setAttribute("sqlAdd", "");
+		} 
 		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
 		ActionUtil.setParameterFilterSql("medService","pms.id", request) ;
 		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
 		%>
-		<% if (typeGroup!=null && (typeGroup.equals("1") || typeGroup.equals("2")|| typeGroup.equals("4"))) {%>
+		<% if (typeGroup!=null && (typeGroup.equals("1") || typeGroup.equals("2")|| typeGroup.equals("4")|| typeGroup.equals("5"))) {%>
 			<msh:section>
 			<ecom:webQuery name="finansReport_operators" nameFldSql="finansReport_operators_sql" nativeSql="
 SELECT wp.lastname as sqlId
@@ -154,6 +199,7 @@ left join PricePosition pp on pp.id=pms.pricePosition_id
  
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+
 left join Omc_Oksm vn on vn.id=ccp.nationality_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join WorkFunction wf on wf.id=cao.workFunction_id
@@ -165,7 +211,7 @@ and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
 ${nationalitySql} ${paymentSql}
 group by wp.lastname,wp.firstname,wp.middlename
 order by wp.lastname
-			"/>
+			"/> 
 
 			<ecom:webQuery name="finansReport_without_vat" nameFldSql="finansReport_without_vat_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
@@ -175,6 +221,7 @@ SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.d
 ,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
 ,1 as cnt2
 ,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as wpfio
+,count(distinct ccp.id) as cntPatient
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
@@ -184,6 +231,8 @@ left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join address2 a on a.addressid=ccp.address_addressid
+left join Address2 ar on ar.addressid=a.region_addressid
 left join Omc_Oksm vn on vn.id=ccp.nationality_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join WorkFunction wf on wf.id=cao.workFunction_id
@@ -192,12 +241,11 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
-${nationalitySql} ${paymentSql}
+${nationalitySql} ${paymentSql} ${sqlAdd}
 and (pp.isVat='0' or pp.isVat is null)
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
-
 			<ecom:webQuery name="finansReport_with_vat" nameFldSql="finansReport_with_vat_sql" nativeSql="
 SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
@@ -206,6 +254,7 @@ SELECT ${groupSqlId}||${operatorSqlId}||${medServiceSqlId}||'&dateFrom=${param.d
 ,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSum
 ,round(sum(case when cao.dtype='OperationReturn' then cams.cost*cams.countMedService*18/118*(100-coalesce(cao.discount,0))/100 else 0 end),2) as returnSumVat
 ,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as wpfio
+,count(distinct ccp.id) as cntPatient
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
@@ -217,6 +266,9 @@ left join PricePosition pp on pp.id=pms.pricePosition_id
  
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
 LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join address2 a on a.addressid=ccp.address_addressid
+left join Address2 ar on ar.addressid=a.region_addressid
+
 left join Omc_Oksm vn on vn.id=ccp.nationality_id
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join WorkFunction wf on wf.id=cao.workFunction_id
@@ -226,6 +278,7 @@ left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') ${operatorSql}
 ${nationalitySql} ${paymentSql}
+${sqlAdd}
 and pp.isVat='1'
 group by ${groupGroup}
 order by ${groupOrder}
@@ -258,9 +311,10 @@ order by ${groupOrder}
 					<msh:tableColumn columnName="Оплачено" isCalcAmount="true" property="3" />
 					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="Оператор(ы)" property="7" />
+					<msh:tableColumn columnName="Кол-во пациентов" isCalcAmount="true" property="8"/>
 				</msh:table>
 </msh:section>
-<msh:section title="Услуги с НДС">
+<msh:section title="Услуги с НДС-ВСЕ">
 
 				<msh:table name="finansReport_with_vat" 
 				action="contract_reports_finance.do?typeGroup=${groupGroupNext}&typePayment=${param.typePayment}"
@@ -272,6 +326,7 @@ order by ${groupOrder}
 					<msh:tableColumn columnName="Возврат" isCalcAmount="true" property="5" />
 					<msh:tableColumn columnName="НДС (18%)" isCalcAmount="true" property="6" />
 					<msh:tableColumn columnName="Оператор(ы)" property="7" />
+					<msh:tableColumn columnName="Кол-во пациентов" isCalcAmount="true" property="8"/>
 				</msh:table>
 
 			</msh:section>
@@ -425,6 +480,7 @@ order by cao.operationDate,cao.operationTime
     //checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     //checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typePayment','${typePayment}',2) ;
+    checkFieldUpdate('typeHelp','${typeHelp}',3) ;
     
     
     function checkFieldUpdate(aField,aValue,aDefault) {

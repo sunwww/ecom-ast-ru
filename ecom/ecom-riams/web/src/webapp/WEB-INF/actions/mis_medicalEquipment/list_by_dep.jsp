@@ -28,6 +28,7 @@ request.setAttribute("sqlAdd", sqlAdd);
 <input type="button"  onclick="document.location='js-mis_medicalEquipment-listByDep.do?filter=empty'" value="Отобразить без проставленного типа">
 <input type="button"  onclick="document.location='js-mis_medicalEquipment-listByDep.do?filter=notEmpty'" value="Отобразить только с проставленнными типами">
 <input type="button"  onclick="document.location='js-mis_medicalEquipment-listByDep.do'" value="Отобразить все">
+<input type="button"  onclick="document.location='js-mis_lpu-addOtherEquipment.do?id=${depId}'" value="Добавить оборудование из других отделений">
 <msh:sectionTitle>Список всего оборудования по отделению ${depName}</msh:sectionTitle>
 <msh:sectionContent>
 <ecom:webQuery name="list"  nameFldSql="list_sql" nativeSql="select e.id, e.name as name, e.inventoryNumber as invNumber, vte.name as type from equipment e

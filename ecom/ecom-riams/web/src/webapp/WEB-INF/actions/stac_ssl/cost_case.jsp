@@ -152,12 +152,7 @@ where slo.parent_id='${param.id}'
       <ecom:webQuery name="list1" nativeSql="
       select
       d.id,to_char(d.dateRegistration,'dd.mm.yyyy'),vwf.name||' '||wp.lastname as sloinfo
-      ,pp.code||' '||pp.name as ppname
-      ,pp.cost as ppcost
       from Diary d
-      left join medcase smc on smc.id=d.servicemedcase_id
-      left join pricemedservice pms on pms.medservice_id=smc.medservice_id
-      left join priceposition pp on pp.id=pms.priceposition_id 
       left join workfunction wf on wf.id=d.specialist_id
       left join vocworkfunction vwf on vwf.id=wf.workfunction_id
       left join worker w on w.id=wf.worker_id
@@ -165,7 +160,7 @@ where slo.parent_id='${param.id}'
       left join medcase slo on slo.id=d.medcase_id
       where
       (slo.parent_id='${param.id}' and upper(slo.dtype)='DEPARTMENTMEDCASE' and w.lpu_id!=slo.department_id or slo.id='${param.id}')
-      and (pp.pricelist_id='${priceList}' or d.servicemedcase_id is null)
+      
        
       "/>
 

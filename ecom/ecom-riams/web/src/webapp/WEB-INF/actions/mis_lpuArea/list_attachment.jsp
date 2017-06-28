@@ -105,12 +105,12 @@
         	<input type="radio" name="typePatientFond" value="1">  есть в базе
         </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typePatientFond" value="2">  нет в базе 
+	        	<input type="radio" name="typePatientFond" value="2">  нет в базе
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
 	        	<input type="radio" name="typePatientFond" value="3">  все без ограничения
 	        </td>
-	        
+
        </msh:row>
       <msh:row>
         <td class="label" title="Участок  (typeAreaCheck)" colspan="1"><label for="typeAreaCheckName" id="typeAreaCheckLabel">Прикрепление к участку:</label></td>

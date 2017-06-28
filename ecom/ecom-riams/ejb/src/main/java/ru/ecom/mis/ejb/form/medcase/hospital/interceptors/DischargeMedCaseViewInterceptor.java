@@ -14,7 +14,6 @@ import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
-import sun.awt.windows.ThemeReader;
 
 
 public class DischargeMedCaseViewInterceptor implements IFormInterceptor{

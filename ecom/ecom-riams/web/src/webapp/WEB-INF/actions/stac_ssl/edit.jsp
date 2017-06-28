@@ -86,7 +86,7 @@
       <msh:hidden property="id" guid="c5a9c42c-d593-4fae-a685-44586a81938b" />
       <msh:hidden property="patient" guid="fbedab7b-1153-4f3c-b9d4-14643e32a6f7" />
       <msh:hidden property="saveType" guid="7cb7bcb7-2cb3-4e65-92ce-2a4a2cec809f" />
-      
+      <msh:hidden property="guarantee"/>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      

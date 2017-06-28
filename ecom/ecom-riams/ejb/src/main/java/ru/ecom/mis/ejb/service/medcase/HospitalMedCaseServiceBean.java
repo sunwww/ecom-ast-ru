@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -31,10 +32,13 @@ import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.Document;
 import org.jdom.IllegalDataException;
 import org.jdom.input.SAXBuilder;
+import org.json.JSONException;
 import org.w3c.dom.Element;
 
 import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
+import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
+import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -70,6 +74,7 @@ import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInt
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
+import ru.ecom.poly.ejb.domain.protocol.Protocol;
 import ru.ecom.poly.ejb.services.MedcardServiceBean;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
@@ -114,7 +119,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		prot.setMedCase(aMedCase) ;
     		aManager.persist(prot);
     	}
-    	return true ;
+		try {
+			TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
+			bean.sendProtocolToExternalResource(null,aMedCase, aDischargeEpicrisis, aManager);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return true ;
     	
     }
     public static boolean saveDischargeEpicrisis(long aMedCaseId,String aDischargeEpicrisis,EntityManager aManager) {
@@ -262,12 +274,20 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	IMonitor monitor = null;
     	System.out.print("Save data") ;
     	try {
+
+    		System.out.println("start importDataFond");
+    		
+    		monitor = theMonitorService.startMonitor(aMonitorId, "ImportFondMonitor", aList.size());
+    		monitor.advice(20) ;
+    		System.out.println("start importDataFond");
+/*
     		try{
     		monitor = theMonitorService.getMonitor(aMonitorId);
     		monitor.advice(20) ;
     		}catch(Exception e) {
     			e.fillInStackTrace() ;
     		}
+*/
     		int size = aList.size()/80 ;
     		
     		for (int i=0;i<aList.size();i++) {
@@ -398,15 +418,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     				//	}
     				//}
     			}
-    			if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
+    			if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(i+" ").append(wqr.get1()).append(" ").append(wqr.get2()).append("...").toString());
     			if(size>0&&i%size==0) monitor.advice(1);
     			
     			if (i % 300 == 0) {
     				monitor.setText("Импортировано " + i);
     			}
     		}
-    		//monitor.finish("");
+    		System.out.println("==== Закончили импорт!");
+    		monitor.finish("");
     	} catch (Exception e) {
+    		e.printStackTrace();
     		if(monitor!=null) monitor.setText(e+"");
     		throw new IllegalStateException(e) ;
     	}
@@ -696,6 +718,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		}
     		monitor.finish("");
     	} catch (Exception e) {
+    		e.printStackTrace();
     		if(monitor!=null) monitor.setText(e+"");
     		throw new IllegalStateException(e) ;
     	}
@@ -1619,8 +1642,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,vs.omcCode as f11vsomccode");
     	sql.append(" ,to_char(hdf.birthday,'yyyy-mm-dd') as f12birthday");
     	sql.append(" ,vbt.codeF as f13vbtomccode");
-    	sql.append(" ,ss.code as f14sscode");
-    	sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
+    	sql.append(" ,ss.code as f14sscode")
+    	.append(" ,coalesce ((select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id ")
+    	.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id ")
+    	.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id ")
+    	.append(" where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4'),(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb")
+    	.append(" on mkb.id=diag.idc10_id ")
+    	.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id")
+    	.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id")
+    	.append(" where diag.medcase_id=slo.id and vpd.code='1' and (vdrt.code = '1' or vdrt.code = '2')))")
+    	.append(" as f15mkbcode");
+    	//sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
     	sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
     	sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
     	sql.append(" ,hdf.numberfond as f18numberfond") ;
@@ -2524,11 +2556,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    		if (obj[0]!=null) {
 	    			// Отд next1=current (объединять 2 отделения)
 	    			theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    			theManager.createNativeQuery("update medcase  set parent_id='"+aSlo+"' where parent_id='"+obj[1]+"'").executeUpdate() ;
 	    			
-	    			//Копирование листа назначениея в объединяемое
-	    			//theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
 	    			//Закрытие диет и Режимов из объединяемого.Копирование назначений из листа назначения объединяемого СЛО и затем его удаление.
-	    			
 	    			theManager.createNativeQuery("update prescription " +
 	    					"set planEndDate=planStartDate, planEndTime=planStartTime " +
 	    					"where (dtype='DietPrescription' or dtype='ModePrescription') " +
@@ -2573,7 +2603,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	    			//
 	    			theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 	    		
-	    			//theManager.createNativeQuery("update prescriptionlist pl set medcase_id='"+aSlo+"' where pl.medCase_id='"+obj[1]+"'").executeUpdate() ;
+	    			theManager.createNativeQuery("update medcase  set parent_id='"+aSlo+"' where parent_id='"+obj[1]+"'").executeUpdate() ;
 	    			
 	    			theManager.createNativeQuery("update prescription " +
 	    					"set planEndDate=planStartDate, planEndTime=planStartTime " +

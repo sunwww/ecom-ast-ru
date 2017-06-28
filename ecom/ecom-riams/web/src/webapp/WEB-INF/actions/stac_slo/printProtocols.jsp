@@ -114,7 +114,7 @@ order by d.dateRegistration,d.timeRegistration
             <msh:sectionContent>
             	<ecom:webQuery name="protocols" nameFldSql="protocols_sql" nativeSql="
             	select to_char(d.dateRegistration,'yyyymmdd')||'!'||cast(d.timeRegistration as varchar(5))||'!'||d.id as id
-            	, d.dateRegistration, d.timeRegistration, case when count (mc.id)>0 then list(mc.code||' '||mc.name)||'<br>' else '' end ||' '|| d.record, d.printDate 
+            	, d.dateRegistration, d.timeRegistration, case when count(mc2.id)>0 then list(mc2.code||' '||mc2.name)||'<br>' when list(aslo.dtype)='Visit' and count (mc.id)>0 then list(mc.code||' '||mc.name)||'<br>' else '' end ||' '|| d.record, d.printDate
             	, vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
             	from MedCase slo
       left join MedCase aslo on aslo.parent_id=slo.parent_id
@@ -125,6 +125,8 @@ order by d.dateRegistration,d.timeRegistration
       left join WorkFunction wf on wf.id=d.specialist_id
       left join Worker w on w.id=wf.worker_id
       left join Patient pw on pw.id=w.person_id
+      left join medcase smc2 on smc2.id=d.servicemedcase_id
+      left join medservice mc2 on mc2.id=smc2.medservice_id
       
       left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
             	where ${whereSQL} and d.DTYPE='Protocol'

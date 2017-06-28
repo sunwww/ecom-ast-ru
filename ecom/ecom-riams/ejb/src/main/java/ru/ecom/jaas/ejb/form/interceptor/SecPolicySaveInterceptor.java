@@ -21,7 +21,6 @@ import ru.ecom.jaas.ejb.form.SecPolicyForm;
 import ru.ecom.jaas.ejb.form.SecRoleForm;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.uc.privilege.form.interceptor.ListPersist;
-import sun.awt.windows.ThemeReader;
 
 public class SecPolicySaveInterceptor implements IFormInterceptor {
 

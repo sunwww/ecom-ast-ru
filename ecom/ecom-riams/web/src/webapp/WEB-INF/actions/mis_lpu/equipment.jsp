@@ -16,12 +16,17 @@
     </tiles:put>
     
   <tiles:put name="body" type="string">
-  <table><tr>
-  <td title='Мед. оборудование' class='label' colspan='1' size='10'><label id='equipLabel' for='equipName'>Мед. оборудование:</label></td>
-	<td colspan='2' class='equip'><div><input size='1' name='equip' value=''
-		id='equip' type='hidden'><input autocomplete='off' title='equip' name='equipName' value='' id='equipName' size='40' class='autocomplete horizontalFill' type='text'>
-		<div style='visibility: hidden; display: none;' id='equipDiv'></div></div></td>
-		</tr>
+  <table>
+  <msh:row>
+  <msh:autoComplete property="lpu" vocName="lpu" label="Отделение" size="50"/>
+  </msh:row>
+  <msh:row>
+  <msh:autoComplete property="equipmentType" vocName="vocEquipmentTypeByLpu" label="Тип оборудования" parentAutocomplete="lpu" size="50"/>
+  </msh:row>
+  <msh:row>
+  <msh:autoComplete property="equip" vocName="allMedicalEquipment" label="Мед. оборудование" size="50"/>
+  </msh:row>
+  
 		<tr><td>
   <input type="button" name="subm" onclick="createEquipment($('equip').value);" value="Добавить" tabindex="4">
   </td></tr>
@@ -36,17 +41,51 @@
    <tiles:put type="string" name="javascript">
 	    <script type="text/javascript" src="./dwr/interface/LpuService.js"></script>
     <script type="text/javascript">
-    function createAutocomplete (){
-    	var listEquip = new msh_autocomplete.Autocomplete() ;
-    	 listEquip.setUrl('simpleVocAutocomplete/allMedicalEquipment') ;
-    	 listEquip.setIdFieldId('equip');
-    	 listEquip.setNameFieldId('equipName') ;
-    	 listEquip.setDivId('equipDiv') ;
-    	 listEquip.build() ;
+    lpuAutocomplete.addOnChangeCallback(function(){checkAutocompletes();});
+    equipmentTypeAutocomplete.addOnChangeCallback(function(){createEquipmentAutocomplete();});
+ 
+    function checkAutocompletes() {
+    	createEquipmentTypeAutocomplete();
+    }
+    function createEquipmentAutocomplete (){
+    	
+    	var url = 'simpleVocAutocomplete/allMedicalEquipment';
+    	var parentId="";
+    	if ($('lpu').value!=null&&+$('lpu').value>0) {
+    		if ($('equipmentType').value!=null&&+$('equipmentType').value>0) {
+    			url="simpleVocAutocomplete/medicalEquipmentByLpuAndType";
+    			parentId=""+$('lpu').value+'#'+$('equipmentType').value;
+    		} else {
+    			url="simpleVocAutocomplete/medicalEquipmentByLpu";
+    			parentId=""+$('lpu').value;
+    		}
+    	} else {
+    		if ($('equipmentType').value!=null&&+$('equipmentType').value>0) {
+    			url="simpleVocAutocomplete/medicalEquipmentByType";
+    			parentId=""+$('equipmentType').value;
+    		}
+    	}
+    	if (parentId!="") {
+    		equipAutocomplete.setParentId(parentId);
+    	}
+    	equipAutocomplete.setUrl(url) ;
+    	 
+    	
     }	
+    function createEquipmentTypeAutocomplete() {
+    	
+    	if ($('lpu').value!=null&&+$('lpu').value>0) {
+    		equipmentTypeAutocomplete.setUrl("simpleVocAutocomplete/vocEquipmentTypeByLpu");
+    		equipmentTypeAutocomplete.setParentId(""+$('lpu').value);
+    		
+    	} else {
+    		equipmentTypeAutocomplete.setUrl("simpleVocAutocomplete/vocEquipmentType");
+    	}
+    	createEquipmentAutocomplete ();
+    }
     
     onload=function () {
-    	createAutocomplete();	
+    	 checkAutocompletes() ;	
     	LpuService.getOtherEquipmentByLpu(${param.id},{
     			callback: function(aResult) {
 					if (aResult!=null&&aResult!='') {

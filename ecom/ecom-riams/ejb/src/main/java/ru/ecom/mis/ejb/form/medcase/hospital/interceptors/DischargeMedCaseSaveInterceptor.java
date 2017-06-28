@@ -19,7 +19,6 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
-import sun.awt.windows.ThemeReader;
 
 public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
  

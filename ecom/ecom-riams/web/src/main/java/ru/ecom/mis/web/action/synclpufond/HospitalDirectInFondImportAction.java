@@ -207,6 +207,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
         final String fileErrorF= filenameError!=null?filenameError:"" ;
         
         final long monitorId = monitorService.createMonitor() ;
+
     	final String typeId = type ;
     	final String contentTypeF = contentType ;
     	
@@ -225,6 +226,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
             		}
             		service.finishMonitor(monitorId) ;
             	}
+
             	
             }
         }.start() ;

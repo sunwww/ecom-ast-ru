@@ -21,26 +21,26 @@
 	<target name='prepare.web'>
 		<copy overwrite="true" todir="target/webapp/WEB-INF/lib">
 			<fileset refid='riams.ejb.jar' />
-			<fileset file='${lib.dir}/image/jai_codec.jar' />
-			<fileset file='${lib.dir}/image/imgscalr-lib-3.2.jar' />
-			<fileset file='${lib.dir}/image/jai_imageio.jar' />
-			<fileset file='${lib.dir}/ecom/gwt/idemode/ecom-gwt-idemode.jar' />
-			<fileset file='${lib.dir}/ecom/gwt/clazz/ecom-gwt-clazz.jar' />
-			<fileset file='${lib.dir}/ecom/report/ecom-report.jar' />
-			<fileset file='${lib.dir}/gwt/gwt-servlet.jar' />
-			<fileset file='${lib.dir}/axis/axis.jar' />
-			<fileset file='${lib.dir}/axis/commons-discovery-0.2.jar' />
-			<fileset file='${lib.dir}/axis/commons-logging-1.0.4.jar' />
+			<fileset file='${libdir}/image/jai_codec.jar' />
+			<fileset file='${libdir}/image/imgscalr-lib-3.2.jar' />
+			<fileset file='${libdir}/image/jai_imageio.jar' />
+			<fileset file='${libdir}/ecom/gwt/idemode/ecom-gwt-idemode.jar' />
+			<fileset file='${libdir}/ecom/gwt/clazz/ecom-gwt-clazz.jar' />
+			<fileset file='${libdir}/ecom/report/ecom-report.jar' />
+			<fileset file='${libdir}/gwt/gwt-servlet.jar' />
+			<fileset file='${libdir}/axis/axis.jar' />
+			<fileset file='${libdir}/axis/commons-discovery-0.2.jar' />
+			<fileset file='${libdir}/axis/commons-logging-1.0.4.jar' />
 		</copy>
 
 		<delete dir='./target/webapp/ru.ecom.gwt.idemode.Main' />
 		<copy overwrite="true" todir='./target/webapp'>
-			<fileset dir='${lib.dir}/ecom/gwt/idemode/webapp' />
+			<fileset dir='${libdir}/ecom/gwt/idemode/webapp' />
 		</copy>
 
 		<delete dir='./target/webapp/ru.ecom.gwt.clazz.Main' />
 		<copy overwrite="true" todir='./target/webapp'>
-			<fileset dir='${lib.dir}/ecom/gwt/clazz/webapp' />
+			<fileset dir='${libdir}/ecom/gwt/clazz/webapp' />
 		</copy>
 		
 		<mkdir dir="./target/webapp/WEB-INF/classes/META-INF" />

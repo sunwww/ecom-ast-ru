@@ -115,24 +115,23 @@
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="journal_surOperation" nativeSql="
-    select slo.id as slo_id, ss.code as sscode,
-    pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio
+    select slo.id as slo_id, ss.code as sscode
+    ,pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio
     , to_char(sls.datestart, 'dd.MM.yyyy') || ' ' || cast(sls.entrancetime as varchar(5)) sls_start
     , to_char(slo.datestart, 'dd.MM.yyyy')||'-'||coalesce(to_char(coalesce(slo.transferdate,slo.datefinish), 'dd.MM.yyyy'),'') slo_start
     , to_char(cb.birthfinishdate, 'dd.MM.yyyy') cb_date
-    , count(cb.id) as cntCb
-    
-     from MedCase slo 
+    , count(nb.id) as cntCb
+    , list(''||durationPregnancy) as f8_gestatsiya
+     from ChildBirth cb
+     left join MedCase slo  on cb.medcase_id = slo.id
      left join MedCase sls on sls.id=slo.parent_id
      left join statisticstub ss on ss.id=sls.statisticstub_id
      left join mislpu ml on ml.id=slo.department_id
-     left join ChildBirth cb on cb.medcase_id = slo.id
      left join NewBorn nb on nb.childBirth_id=cb.id
      left join patient pat on pat.id=slo.patient_id
      where 
-    slo.datestart between to_date('${dateBegin}','dd.mm.yyyy') 
+    cb.birthFinishDate between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy') and slo.dtype='DepartmentMedCase'
-    and ml.IsMaternityWard='1'
     group by slo.id, ss.code, pat.lastname, pat.firstname, pat.middlename, pat.birthday, sls.datestart, 
     sls.entrancetime, slo.datestart, cb.birthfinishdate
     order by slo.datestart, pat.lastname, pat.firstname, pat.middlename" />
@@ -144,6 +143,7 @@
     <msh:tableColumn property="5" columnName="Поступ. в род. отд."/>
     <msh:tableColumn property="6" columnName="Дата родов"/>
     <msh:tableColumn property="7" columnName="Кол-во плодов"/>
+    <msh:tableColumn property="8" columnName="Срок гестации"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>

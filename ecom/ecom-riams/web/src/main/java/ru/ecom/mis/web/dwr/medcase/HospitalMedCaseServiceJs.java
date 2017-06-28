@@ -1880,4 +1880,113 @@ public class HospitalMedCaseServiceJs {
 
 		return res.toString() ;
     }
+    //Milamesher 263 приказ
+    public String sqlorder263(int id,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="SELECT hf.id, hf.firstname, hf.lastname, hf.middlename, hf.birthday, hf.phone" +
+				" ,case when hf.sex_id=1 then 'Ж' else 'М' end from hospitaldatafond hf " +
+				"left join vocsex v on v.id=hf.sex_id where hf.hospitalmedcase_id=" + id;
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
+		StringBuilder res = new StringBuilder() ;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("#").append((new SimpleDateFormat("dd.MM.yyyy").format(wqr.get5()))).append("#").append(wqr.get6()).append("#").append(wqr.get7()).append("#") ;
+		} else {
+			res.append("##");
+		}
+		query="SELECT typepolicy,seriespolicy, numberpolicy, directmedcase_id, numberfond, directdate, diagnosis,orderlpucode from hospitaldatafond hf where hf.hospitalmedcase_id=" + id;
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			Object date = wqr.get6();
+			if (date!=null) date=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get6());
+			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("#").append(wqr.get5()).append("#").append(date).append("#").append(wqr.get7()).append("#").append(wqr.get8()).append("#") ;
+		} 
+		query="SELECT prehospdate,directlpucode, profile, hospdate, hospdischargedate from hospitaldatafond hf where hf.hospitalmedcase_id=" + id;
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			Object date1 = wqr.get1();
+			if (date1!=null) date1=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get1());
+			Object date4 = wqr.get4();
+			if (date4!=null) date4=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get4());
+			Object date5 = wqr.get5();
+			if (date5!=null) date5=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get5());
+			res.append(date1).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(date4).append("#").append(date5).append("#") ;
+		} 
+		query="SELECT name FROM vocdeniedhospitalizating where id=(SELECT deniedhospital FROM hospitaldatafond hf where hf.hospitalmedcase_id=" + id + ")";
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1()).append("#");
+			}
+		return res.toString();
+    }
+    //Milamesher наличие других предварительных госпитализаций
+    public String prevPlanHospital(int id,HttpServletRequest aRequest) throws NamingException {
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select wchb.datefrom,wchb.diagnosis,m.name,p.lastname,p.firstname,p.middlename " +
+ "from workcalendarhospitalbed wchb " +
+ "left join mislpu m on wchb.department_id=m.id " +
+ "left join medcase mc on wchb.patient_id=mc.patient_id  " +
+ "left join workfunction wf on wf.id=wchb.workfunction_id " +
+ "left join worker w on w.id=wf.worker_id " +
+"left join patient p on p.id=w.person_id " +
+ "where wchb.datefrom>CAST('today' AS DATE) " +
+ "and wchb.patient_id=" + id;
+		Collection<WebQueryResult> list = service.executeNativeSql(query); 
+		StringBuilder res = new StringBuilder() ;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			Object date = wqr.get1();
+			if (date!=null) date=new SimpleDateFormat("dd.MM.yyyy").format(wqr.get1());
+			String fio = wqr.get4() + " " + wqr.get5() + " " + wqr.get6();
+			res.append(date).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(fio).append("!") ;
+		} 
+		else res.append("##");
+		return res.toString();
+    }
+    //Milamesher постановка на наблюдение
+    public String watchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
+    	String res="Пациент добавлен в список наблюдения!";
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+    	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
+    	int idlistwatch=0;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			idlistwatch=Integer.parseInt(wqr.get1().toString());
+			}
+		if (idlistwatch==0) { // надо добавить его
+			query="INSERT into listwatch(datewatch) VALUES(CAST('today' AS DATE))";
+			service.executeUpdateNativeSql(query); 
+			query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+			list = service.executeNativeSql(query,1); 
+			if (list.size()>0) {
+				WebQueryResult wqr = list.iterator().next() ;
+				idlistwatch=Integer.parseInt(wqr.get1().toString());
+				}
+		}
+		query="select medcase_id from patientwatch where listwatch_id='" + idlistwatch + "' and medcase_id='"+id+"'"; //есть ли уже
+		list = service.executeNativeSql(query,1); 
+		if (list.size()>0) res="Пациент уже был добавлен в список наблюдения!";
+		else {
+			query="INSERT INTO patientwatch(medcase_id,listwatch_id) VALUES('" + id + "','" + idlistwatch + "')";
+			service.executeUpdateNativeSql(query);
+		}
+    	return res;
+    } 
+    //Milamesher снятие с наблюдения
+    public String notWatchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
+    	String res="Пациент убран из списка наблюдения!";
+    	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+    	String query="select medcase_id from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'"; //есть ли уже
+    	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
+    	if (list.size()>0) { //удаляем
+    		query="delete from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'";
+    		service.executeUpdateNativeSql(query);
+    	}
+    	else res="Пациент и не был в списке наблюдения!";
+    	return res;
+    } 
 }

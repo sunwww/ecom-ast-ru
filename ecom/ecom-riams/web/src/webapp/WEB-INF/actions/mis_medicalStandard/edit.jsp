@@ -30,12 +30,13 @@
         </msh:form>
 <msh:ifFormTypeIsView formName="mis_medicalStandardForm">
 	<msh:section>
-	<ecom:webQuery name="listEquip" nativeSql="select mep.id, vte.name, mep.amount from MedicalEquipmentPosition mep
+	<ecom:webQuery name="listEquip" nativeSql="select mep.id, vte.name, mep.amount, mep.comment as comment from MedicalEquipmentPosition mep
 	left join VocTypeEquip vte on vte.id=mep.equipmentType_id
 	where mep.standard_id=${param.id}"/>
 	<msh:table name="listEquip" action="entityView-mis_medicalEquipmentPosition.do" idField="1">
             <msh:tableColumn columnName="Тип" property="2"/>
             <msh:tableColumn columnName="Количество" property="3"/>
+            <msh:tableColumn columnName="Примечание" property="4"/>
         </msh:table>
 	</msh:section>
 </msh:ifFormTypeIsView>

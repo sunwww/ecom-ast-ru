@@ -1,5 +1,8 @@
 function update_postgres(aCtx, aParams) {
+    default_id(aCtx,"ExportFSSLog") ;
+
 	default_id(aCtx,"ChangeJournal") ;
+
 	default_id(aCtx,"CustomMessage") ;
 	default_id(aCtx,"ChildBirth") ;
 	default_id(aCtx,"NewBorn") ;

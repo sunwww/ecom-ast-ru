@@ -21,12 +21,18 @@
     </tiles:put>
 
     <tiles:put name='body' type='string' >
-    <ecom:webQuery name="list" nativeSql=" select vte.name, msp.amount, count(e.id), msp.amount-count(e.id) as diff
+    <ecom:webQuery name="list" nativeSql=" select vte.name
+    , max(case when msp.amount>0 then ''||msp.amount when msp.comment is not null then msp.comment else ''||msp.amount end) as amount
+    , cast( sum (case when e.amount>0 then e.amount when e.id is not null then 1 else 0 end) +sum (case when e1.amount>0 then e1.amount when e1.id is not null then 1 else 0 end)  as varchar) as sum1
+	,cast(msp.amount-(sum (case when e.amount>0 then e.amount when e.id is not null then 1 else 0 end) +sum (case when e1.amount>0 then e1.amount when e1.id is not null then 1 else 0 end) )as varchar)  as diff
+
     from mislpu lpu
     left join medicalequipmentposition msp on msp.standard_id=lpu.medicalstandard_id
     left join voctypeequip vte on vte.id=msp.equipmenttype_id
-    left join equipment e on e.typeequip_id = msp.equipmenttype_id 
-    where lpu.id=${param.id}
+    left join equipment e on e.typeequip_id = msp.equipmenttype_id and e.lpu_id=lpu.id 
+    left join equipment_mislpu el on el.otherlpu_id=lpu.id
+    left join equipment e1 on e1.id=el.equipment_id and e1.typeequip_id=msp.equipmenttype_id
+    where lpu.id=${param.id} 
     group by vte.name, msp.amount
     "></ecom:webQuery>
     

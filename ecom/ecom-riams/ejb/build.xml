@@ -15,7 +15,7 @@
 	</fileset>
 
 	<target name='persistence.xml'>
-		<fileset id="lib.fileset" dir="${lib.dir}">
+		<fileset id="lib.fileset" dir="${libdir}">
 			<include name="**/*.jar" />
 		</fileset>
 

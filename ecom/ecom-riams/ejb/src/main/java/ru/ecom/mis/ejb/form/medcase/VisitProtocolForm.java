@@ -165,4 +165,40 @@ public class VisitProtocolForm extends ProtocolForm {
 
 	/** Режим */
 	private Long theMode;
+
+	/** Приоритет диагноза */
+	@Comment("Приоритет диагноза")
+	public Long getDiagnosisPriority() {return theDiagnosisPriority;}
+	public void setDiagnosisPriority(Long aDiagnosisPriority) {theDiagnosisPriority = aDiagnosisPriority;}
+	/** Приоритет диагноза */
+	private Long theDiagnosisPriority ;
+
+	/** Код МКБ-10 диагноза */
+	@Comment("Код МКБ-10 диагноза")
+	public Long getDiagnosisIdc10() {return theDiagnosisIdc10;}
+	public void setDiagnosisIdc10(Long aDiagnosisIdc10) {theDiagnosisIdc10 = aDiagnosisIdc10;}
+	/** Код МКБ-10 диагноза */
+	private Long theDiagnosisIdc10 ;
+
+	/** Текст диагноза */
+	@Comment("Текст диагноза")
+	public String getDiagnosisText() {return theDiagnosisText;}
+	public void setDiagnosisText(String aDiagnosisText) {theDiagnosisText = aDiagnosisText;}
+	/** Текст диагноза */
+	private String theDiagnosisText ;
+
+	/** Характер заболевания */
+	@Comment("Характер заболевания")
+	public Long getDiagnosisIllnessPrimary() {return theDiagnosisIllnessPrimary;}
+	public void setDiagnosisIllnessPrimary(Long aDiagnosisIllnessPrimary) {theDiagnosisIllnessPrimary = aDiagnosisIllnessPrimary;}
+	/** Характер заболевания */
+	private Long theDiagnosisIllnessPrimary ;
+
+	/** Тип регистрации диагноза */
+	@Comment("Тип регистрации диагноза")
+	public Long getDiagnosisRegistrationType() {return theDiagnosisRegistrationType;}
+	public void setDiagnosisRegistrationType(Long aDiagnosisRegistrationType) {theDiagnosisRegistrationType = aDiagnosisRegistrationType;}
+	/** Тип регистрации диагноза */
+	private Long theDiagnosisRegistrationType ;
+
 }

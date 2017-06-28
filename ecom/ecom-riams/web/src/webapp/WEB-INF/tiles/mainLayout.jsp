@@ -92,7 +92,7 @@
              </msh:ifInRole>
              </li>
             <li class="separator">|</li>
-            <li><ecom:loginName /></li>
+            <li id="current_username_li"><ecom:loginName /></li>
             <li class="separator">|</li>
             <li><a href='js-secuser-changePassword.do'>Смена пароля</a></li>
             <li class="separator">|</li>

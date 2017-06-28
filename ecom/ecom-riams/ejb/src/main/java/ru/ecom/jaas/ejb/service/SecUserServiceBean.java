@@ -95,9 +95,11 @@ public class SecUserServiceBean implements ISecUserService {
 		}
 		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', passwordChangedDate=current_date, changePasswordAtLogin='0' where login = '"+aUsername+"'").executeUpdate();
 		exportUsersProperties();
+		
 		return "1Пароль успешно обновлен";
 	}
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
+    	System.out.println("FlushingJboss");
         MBeanServer SERVER = MBeanServerLocator.locateJBoss();
         String[] signature = {"java.lang.String"};
         Object retVal  = SERVER.invoke(new ObjectName("jboss.security:service=JaasSecurityManager")
@@ -114,7 +116,7 @@ public class SecUserServiceBean implements ISecUserService {
 
     public static String getHashPassword(String aUsername, String aPassword) {
     	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
-    	System.out.println(hash) ;
+    	//System.out.println(hash) ;
     	return new StringBuilder().append("F").append(hash).toString();
     }
     
@@ -127,7 +129,7 @@ public class SecUserServiceBean implements ISecUserService {
             		user.setPassword(getHashPassword(user.getLogin(), user.getPassword())) ;
             		user.setIsHash(true) ;
             	}
-            	log(user.getFullname()) ;
+            	//log(user.getFullname()) ;
                 out.print("#") ;
                 out.println(user.getFullname()) ;
                 out.print(user.getLogin()) ;
@@ -138,6 +140,15 @@ public class SecUserServiceBean implements ISecUserService {
         	if(out!=null) out.close() ;
         }
         exportPropertiesOtherServer(aFilename);
+        try {
+        	
+			fhushJboss();
+		} catch (Exception e) {
+			System.out.println("=== Jboss Flush Exception:"+e);
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
     }
 
     public void exportRolesProperties() throws IOException {

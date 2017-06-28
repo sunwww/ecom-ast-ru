@@ -46,11 +46,22 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			  ,"objNew.setDispRisk(objS);"]
 			,"from ExtDispRisk where card_id='"+aEntity.getId()+"' and dispRisk_id"
 			) ;
+}
 
+/**
+ * Перед удалением
+ */
+function onPreDelete(aEntityId, aContext) {
 	
-		
-	
+	var sql ="delete FROM extdispappointment e using extdispcard ed where ed.id = e.dispcard_id and ed.id = '"+aEntityId+"'";
+	aContext.manager.createNativeQuery(sql).executeUpdate();
+}
 
+/**
+ * При удалении
+ */
+function onDelete(aEntityId, aContext) {
+	
 	
 }
 

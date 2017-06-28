@@ -23,7 +23,6 @@ import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DischargeMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
-import sun.awt.windows.ThemeReader;
 
 public class DepartmentSaveInterceptor  implements IFormInterceptor{
 

@@ -299,6 +299,9 @@ public class TableTag extends AbstractGuidSupportTag {
             try {
                 JspWriter out = pageContext.getOut();
                 out.println("<form>") ;
+                if (thePrintToExcelButton!=null&&!thePrintToExcelButton.equals("")) { //Если есть кнопка "Сохранить в excel", будем сохранять
+                	out.println("<input type='button' onclick='mshSaveNextTableToExcel(this)' value='"+thePrintToExcelButton+"'>");
+                }
                 out.println("<table border='1' class='tabview sel tableArrow'>");
             } catch (Exception e) {
                 new JspException(e);
@@ -1070,4 +1073,16 @@ public class TableTag extends AbstractGuidSupportTag {
     String theFunctionEditName ;
     String theFunctionPrintName ;
     String theFunctionViewName ;
+    
+
+    /**
+     * Аттрибут для кнопки отправки таблицы в excel
+     * @jsp.attribute   description = "Кнопка для печати "
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+	public String getPrintToExcelButton() {return thePrintToExcelButton;}
+	public void setPrintToExcelButton(String aPrintToExcelButton) {thePrintToExcelButton = aPrintToExcelButton;}
+	/** Кнопка для печати */
+	String thePrintToExcelButton;
 }

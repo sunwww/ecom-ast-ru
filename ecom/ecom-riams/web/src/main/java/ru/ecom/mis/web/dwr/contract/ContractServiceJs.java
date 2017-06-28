@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.xhtml.a;
+import org.apache.log4j.Logger;
 import org.json.JSONArray; 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,18 +27,23 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.util.Injection; 
+
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+
 public class ContractServiceJs {
 	
-	
+	public static Logger log = Logger.getLogger(ContractServiceJs.class);
 	
 private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws IOException, NamingException {
 	
+		log.info("===Send to KKM. Data = "+data);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select keyvalue from  softconfig where key='KKM_WEB_SERVER'");
 		if (!l.isEmpty()) {
 			String address = l.iterator().next().get1().toString();
-			System.out.println("KKM_server = "+address);
+			
+			log.info("KKM_server = "+address);
 			//method by milamesher 15.03.2017
 			//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
 			URL url = new URL(address); 
@@ -59,6 +65,8 @@ private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throw
 		 //   }
 		    br.close();
 		    connection.disconnect();
+		} else {
+			log.error("Нет настройки 'KKM_WEB_SERVER', работа с ККМ невозможна");
 		}
 		
 	}
@@ -71,9 +79,9 @@ public JSONObject makeKKMEmptyJson () {
 	try {
 		JSONObject root = new JSONObject();
 		//root.put("function", "");
-		root.put("totalPaymentSum", 0) ;
-		root.put("totalTaxSum", 0) ;
-		root.put("totalRefundSum", 0) ;
+	//	root.put("totalPaymentSum", 0) ;
+	//	root.put("totalTaxSum", 0) ;
+	//	root.put("totalRefundSum", 0) ;
 		//JSONObject par = new JSONObject();
 		return root;
 	} catch (Exception e) {
@@ -91,7 +99,7 @@ public String printKKMReport(String aType, HttpServletRequest aRequest) {
 			if (root!=null) {
 				root.put("function", "print"+aType+"Report");
 				makeHttpPostRequest(root.toString(),aRequest);
-				return root.toString()+"<>"+ aType+" отчет успешно отправлен на печать";
+				return  aType+" отчет успешно отправлен на печать";
 			}
 		}
 		catch (Exception e) {
@@ -106,12 +114,12 @@ public String printKKMReport(String aType, HttpServletRequest aRequest) {
 //method by milamesher 15.03.2017
 //отправляет на принтер команду возврата (пока 3 копейки, чтобы продемонстрировать отказ возврата)
 
-public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, HttpServletRequest aRequest) throws JspException {
+public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, HttpServletRequest aRequest) throws JspException {
 	if (RolesHelper.checkRoles(" /Policy/Config/KKMWork", aRequest)) {
 	if (aFunction!=null &&aFunction.equals("makePayment")) {
-		return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, aRequest);
+		return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aRequest);
 	} else if (aFunction!=null&&aFunction.equals("makeRefund")) {
-		return makeKKMPaymentOrRefund(aAccountId, aDiscont, true,aRequest);
+		return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment, aRequest);
 	} else if (aFunction!=null&&aFunction.equals("printZReport")){
 		return printKKMReport("Z", aRequest);
 	} else if (aFunction!=null&&aFunction.equals("printXReport")){
@@ -122,13 +130,13 @@ public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont,
 		return "Нет прав для работы с ККМ";
 	}
 }
-public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,HttpServletRequest aRequest) {
+public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, HttpServletRequest aRequest) {
 	try {		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String discontSql = "cams.cost";
 		if (aDiscont!=null&&!aDiscont.equals("")) {
-			System.out.println("=== Send KKM, discont = "+aDiscont);
+			log.info("=== Send KKM, discont = "+aDiscont);
 			discontSql = "round(cams.cost*(100-"+aDiscont+")/100,2)";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -144,7 +152,7 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 		List<Object[]> l = service.executeNativeSqlGetObj(sb.toString());
 		//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 		if (!l.isEmpty()) {
-			System.out.println("not empty");
+		//	System.out.println("not empty");
 			Double totalSum = 0.00;
 			Double taxSum = 0.00;
 			JSONObject root = new JSONObject();
@@ -164,22 +172,26 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 				record.put("sum", r[5].toString());
 			//	record.put("price", 0);
 			//	record.put("sum", 0);
-				record.put("taxName", r[6]!=null?r[6]:"");
-				record.put("taxSum", r[7]!=null?r[7].toString():"");
-				
+				if (r[6]!=null&&!(""+r[6]).equals("")) {
+					record.put("taxName", "");
+					record.put("taxSum", r[7]!=null?r[7].toString():"");
+				}
 				arr.put(record);
 			}
+			root.put("isTerminalPayment", isTerminalPayment);
 			if (isRefund) {
 				root.put("totalRefundSum", totalSum) ;
 			} else {
-				
 				root.put("pos", arr) ;
-				root.put("totalPaymentSum", totalSum) ;
-				root.put("totalTaxSum", new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()) ;
+				root.put("totalPaymentSum", ""+totalSum+"") ;
+				if (taxSum>0) {
+					root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()+"") ;
+				}
+				
 				
 			}
 			makeHttpPostRequest(root.toString(), aRequest);
-			return root.toString()+"Чек отправлен на печать";
+			return "Чек отправлен на печать";
 		} else {
 			return "Произошла ошибка, обратитесь к программистам";
 		}
@@ -190,13 +202,13 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 }
 	/**
 	 * Проверяем, нужно ли гарантийное письмо для выбранного потока обслуживания. Если нужно - находим. 
-	 * @param aPatient
-	 * @param aServiceStreamId
-	 * @param aDate
-	 * @param aDatePlanId
-	 * @param aMedhelpType
+	 * @param aPatient  - id пациента 
+	 * @param aServiceStreamId id потока обслуживания
+	 * @param aDate - дата оказания услуги
+	 * @param aDatePlanId - id номера дня в календаре
+	 * @param aMedhelpType - тип помощи (амбулаторная либо стационарная)
 	 * @param aRequest
-	 * @return
+	 * @return Гарантийное письмо с остатком ден. средств
 	 * @throws NamingException
 	 */
 	public String checkIfDogovorIsNeeded (String aPatient, String aServiceStreamId, String aDate, String aDatePlanId,String aMedhelpType, HttpServletRequest aRequest) throws NamingException {
@@ -230,26 +242,25 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 				sb.append(" and (cg.actiondateto is null or cg.actiondateto >=current_date)");
 			}
 			sb.append(" and case when cpCustomer.regcompany_id is not null and mp.company_id=cpCustomer.regcompany_id then 1 else 0 end = 1");
-		//	System.out.println("=== Ищем гар. письмо по пациенту. sql="+sb.toString());
+		log.info("=== Ищем гар. письмо по пациенту. sql="+sb.toString());
 			l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
+				log.info("Ищем уже исрасходованную сумму лечения");
 				WebQueryResult r = l.iterator().next();
 				float limit  = Float.parseFloat(r.get5().toString());
 				String priceListId = r.get6().toString();
 				String guaranteeId = r.get1().toString();
 				l = service.executeNativeSql("select list(''||id) from medcase where guarantee_id="+guaranteeId);
 				float spent = 0;
-				if (l.size()>0) {
-					String limitSql = "select sum(pp.cost) from medcase smc " +
-							" left join medservice ms on ms.id=smc.medservice_id" +
-							" left join pricemedservice pms on pms.medservice_id=smc.medservice_id" +
-							" left join priceposition pp on pp.id=pms.priceposition_id" +
-							" where smc.dtype='ServiceMedCase' and smc.parent_id in ("+l.iterator().next().get1()+") and pp.pricelist_id ="+priceListId;
-					l = service.executeNativeSql(limitSql);
-					spent= !l.isEmpty()?Float.parseFloat(l.iterator().next().get1().toString()):0;
-					
+				for (WebQueryResult wqr: l) {
+					String listId =wqr.get2()!=null?wqr.get2().toString():null;
+					if (listId!=null) {
+						String[] ids = listId.split(",");
+						for (String id: ids) {
+							spent +=calculateMedCaseCost(Long.valueOf(id), Long.valueOf(priceListId), aRequest);
+						}
+					}				
 				}
-				
 				sb.setLength(0);
 				sb.append(guaranteeId) //id письма
 				.append("|гар. письмо № ").append(r.get2()) //номер письма
@@ -262,6 +273,232 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 		}
 		
 		return null;
+	}
+	/**
+	 * Функция нахождения стоимости случая лечения ( визита либо случая лечения в стационаре)
+	 * @param aMedcaseId - id случая лечения
+	 * @param aPriceListId - id прайс-листа
+	 * @param aRequest
+	 * @return Стоимость случая
+	 * @throws NamingException
+	 */
+public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServletRequest aRequest) throws NamingException {
+		
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "";
+		if (aPriceListId==null) {
+			log.debug("Ищем прайс лист по СМО, либо по умолчанию");
+			sql = "select pl.id as priceBySLS" +
+				" , (select max(id) from pricelist where isdefault='1') as defaultPrice" +
+				" from medcase mc" +
+				" left join contractguarantee cg on cg.id=mc.guarantee_id" +
+				" left join medcontract mcon on mcon.id=cg.contract_id" +
+				" left join pricelist pl on pl.id=mcon.pricelist_id" +
+				" where mc.id ="+aMedcaseId;
+			Collection<WebQueryResult> l =	service.executeNativeSql(sql);
+			if (!l.isEmpty()) {
+				WebQueryResult r = l.iterator().next();
+				if (r.get1()!=null&&!(""+r.get1()).equals("")) { //Используем прайс лист по гар. письму, если есть
+					aPriceListId = Long.valueOf(r.get1().toString());
+				} else if (r.get2()!=null&&!(""+r.get2()).equals("")) { //Используем прайс-лист по умолчанию 
+					aPriceListId = Long.valueOf(r.get2().toString());
+				} else {
+					log.info("Не удалось вычислить прайс-лист для расчета цены случая " +aMedcaseId);
+					return 0.00;
+				}
+			}
+		}
+		log.debug("Находим информацию по пацинету, СМО="+aMedcaseId);
+		sql = "select m.patient_id,to_char(m.datestart,'dd.mm.yyyy') as dstart ,to_char(coalesce(m.datefinish,current_date),'dd.mm.yyyy') as dfinish,m.serviceStream_id as servstream, m.dtype as dtype from medcase m where m.id="+aMedcaseId;
+		Double sum = 0.00;
+		Collection<WebQueryResult> l = service.executeNativeSql(sql);
+		if (!l.isEmpty()) {
+			WebQueryResult slsInfo = l.iterator().next();
+			String dtype = ""+slsInfo.get5();
+			String patientId = ""+slsInfo.get1();
+			String dateStart = ""+slsInfo.get2();
+			String dateFinish = ""+slsInfo.get3();
+			String serviceStreamId = ""+slsInfo.get4();
+			String bedType = "11";
+			if (dtype!=null&&dtype.toUpperCase().equals("HOSPITALMEDCASE")) {
+				log.debug("Высчитываем стоимость госпитализации c id="+aMedcaseId);
+				sql = " select list(''||( case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'" +
+						"       else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end" +
+						"       * pp.cost)) as ppsum" +
+						"       from medcase slo" +
+						"       left join medcase sls on sls.id=slo.parent_id" +
+						" left join Vochosptype vht on vht.id=sls.hosptype_id" +
+						" left join statisticstub ss on ss.id=sls.statisticStub_id" +
+						" left join bedfund bf on bf.id=slo.bedfund_id" +
+						" left join vocbedtype vbt on vbt.id=bf.bedtype_id" +
+						" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id" +
+						" left join workPlace wp on wp.id=slo.roomNumber_id" +
+						" left join Patient pat on pat.id=slo.patient_id" +
+						" left join VocRoomType vrt on vrt.id=wp.roomType_id" +
+						" left join mislpu ml on ml.id=slo.department_id" +
+						" left join workfunctionservice wfs on wfs.lpu_id=slo.department_id" +
+						"     and bf.bedtype_id=wfs.bedtype_id and bf.bedsubtype_id=wfs.bedsubtype_id" +
+						"     and wfs.roomType_id=wp.roomType_id" +
+						" left join medservice ms on ms.id=wfs.medservice_id" +
+						" left join pricemedservice pms on pms.medservice_id=wfs.medservice_id" +
+						" left join priceposition pp on pp.id=pms.priceposition_id" +
+						" and (pp.isvat is null or pp.isvat='0')" +
+						" where slo.parent_id='"+aMedcaseId+"'" +
+						"  and ms.servicetype_id='"+bedType+"' and pp.priceList_id='"+aPriceListId+"'";
+				log.debug("Запрос для поиска койко дней: "+sql);
+				l= service.executeNativeSql(sql);
+				
+				if (l.size()>0) {
+					Object o = l.iterator().next().get1();
+					Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+					log.debug("Сумма за койко дни СЛС№"+aMedcaseId+" = "+cost);
+					sum +=cost;
+				}
+				sql = "select sum (pp.cost) as ppcost " +
+					" from medcase vis" +
+					" left join workfunction wf on wf.id=vis.workfunctionexecute_id" +
+					" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+					" left join worker w on w.id=wf.worker_id" +
+					" left join patient wp on wp.id=w.person_id" +
+					" left join vocservicestream vss on vss.id=vis.servicestream_id" +
+					" left join medcase smc on smc.parent_id=vis.id and upper(smc.dtype)='SERVICEMEDCASE'" +
+					" left join medservice ms on ms.id=smc.medservice_id" +
+					" left join pricemedservice pms on pms.medservice_id=smc.medservice_id" +
+					" left join priceposition pp on pp.id=pms.priceposition_id" +
+					" where vis.patient_id='"+patientId+"' and (vis.datestart between to_date('"+dateStart+"','dd.mm.yyyy') and to_date('"+dateFinish+"','dd.mm.yyyy')" +
+					" and upper(vis.dtype)='VISIT' and (vss.code='HOSPITAL' or vss.id='"+serviceStreamId+"' or vss.code='OTHER')" +
+					" or vis.datestart-to_date('"+dateStart+"','dd.mm.yyyy') = -1 and upper(vis.dtype)='VISIT' and ( vss.id='"+serviceStreamId+"' ))" +
+					" and pp.priceList_id='"+aPriceListId+"' and (vis.noActuality='0' or vis.noActuality is null)";
+				
+				l = service.executeNativeSql(sql);
+				if (!l.isEmpty()) {
+					Object o = l.iterator().next().get1();
+					Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+					log.debug("Найдена сумма по диагностическим визитам при нахождении в стационаре ("+aMedcaseId+"), сумма = "+cost);
+					sum+=cost;
+				}
+				
+				log.debug("Поиск лабораторных исследований");
+				sql = "select sum (pp.cost) as ppcost " +
+						" from medcase vis" +
+						" left join workfunction wf on wf.id=vis.workfunctionexecute_id" +
+						" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+						" left join worker w on w.id=wf.worker_id" +
+						" left join patient wp on wp.id=w.person_id" +
+						" left join vocservicestream vss on vss.id=vis.servicestream_id" +
+						" left join medcase smc on smc.parent_id=vis.id and upper(smc.dtype)='SERVICEMEDCASE'" +
+						" left join medservice ms on ms.id=smc.medservice_id" +
+						" left join pricemedservice pms on pms.medservice_id=smc.medservice_id" +
+						" left join priceposition pp on pp.id=pms.priceposition_id" +
+						" where vis.parent_id='"+aMedcaseId+"'" +
+						" and vis.datestart between to_date('"+dateStart+"','dd.mm.yyyy') and to_date('"+dateFinish+"','dd.mm.yyyy')" +
+						" and upper(vis.dtype)='VISIT'" +
+						" and (vss.code='HOSPITAL' or vss.id is null)" +
+						" and (vis.noActuality='0' or vis.noActuality is null) and pp.id is not null and pp.pricelist_id="+aPriceListId;
+						
+					l = service.executeNativeSql(sql);
+					if (!l.isEmpty()) {
+						Object o = l.iterator().next().get1();
+						Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+						log.debug("Найдена сумма за лабораторные анализы ("+aMedcaseId+"), сумма = "+cost);
+						sum+=cost;
+					}
+					
+					log.debug("Поиск цен за операции");
+					sql = "select sum (pp.cost) as ppcost " +
+						" from SurgicalOperation so"+
+						" left join workfunction wf on wf.id=so.surgeon_id"+
+						" left join vocworkfunction vwf on vwf.id=wf.workfunction_id"+
+						" left join worker w on w.id=wf.worker_id"+
+						" left join patient wp on wp.id=w.person_id"+
+						" left join medcase slo on slo.id=so.medcase_id"+
+						" left join vocservicestream vss on vss.id=so.servicestream_id"+
+						" left join medservice ms on ms.id=so.medservice_id"+
+						" left join pricemedservice pms on pms.medservice_id=so.medservice_id"+
+						" left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='"+aPriceListId+"'"+
+						" where (slo.parent_id='"+aMedcaseId+"' or slo.id='"+aMedcaseId+"') "+
+						" and pp.id is not null";
+							
+						l = service.executeNativeSql(sql);
+						if (!l.isEmpty()) {
+							Object o = l.iterator().next().get1();
+							Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+							log.debug("Найдена сумма за операции ("+aMedcaseId+"), сумма = "+cost);
+							sum+=cost;
+						}
+						
+						log.debug("Поиск цен за анастезию");
+						sql = "select coalesce(sum (pp.cost),0) as ppcost " +
+							" from Anesthesia aso " +
+							"       left join VocAnesthesiaMethod vam on vam.id=aso.method_id" +
+							"     left join VocAnesthesia va on va.id=aso.type_id" +
+							"     left join SurgicalOperation so on so.id=aso.surgicalOperation_id" +
+							"     left join workfunction wf on wf.id=aso.anesthesist_id" +
+							"     left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+							"     left join worker w on w.id=wf.worker_id" +
+							"     left join patient wp on wp.id=w.person_id" +
+							"     left join medcase slo on slo.id=so.medcase_id" +
+							"     left join vocservicestream vss on vss.id=so.servicestream_id" +
+							"     left join medservice ms on ms.id=aso.medservice_id" +
+							"   left join pricemedservice pms on pms.medservice_id=aso.medservice_id" +
+							"   left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='"+aPriceListId+"'" +
+							" where (slo.parent_id='"+aMedcaseId+"' or slo.id='"+aMedcaseId+"') ";
+								
+							l = service.executeNativeSql(sql);
+							if (!l.isEmpty()) {
+								Object o = l.iterator().next().get1();
+								Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+								log.debug("Найдена сумма за анастезию ("+aMedcaseId+"), сумма = "+cost);
+								sum+=cost;
+							}
+							
+							log.debug("Поиск цен за доп. услуги");
+							sql = "select sum (pp.cost*coalesce(so.medserviceamount,'1'))"+
+								 " from MedCase so"+
+								 "      left join VocIdc10 mkb on mkb.id=so.idc10_id"+
+								 "    left join workfunction wf on wf.id=so.workFunctionExecute_id"+
+								 "    left join vocworkfunction vwf on vwf.id=wf.workfunction_id"+
+								 "    left join worker w on w.id=wf.worker_id"+
+								 "    left join patient wp on wp.id=w.person_id"+
+								 "    left join medcase slo on slo.id=so.parent_id"+
+								 "    left join vocservicestream vss on vss.id=so.servicestream_id"+
+								 "    left join medservice ms on ms.id=so.medservice_id"+
+								 "  left join pricemedservice pms on pms.medservice_id=so.medservice_id"+
+								 "  left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='"+aPriceListId+"'"+
+								 "    where (slo.parent_id='"+aMedcaseId+"' or slo.id='"+aMedcaseId+"')"+
+								 "    and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT'"+
+								 "    and pp.id is not null";
+									
+								l = service.executeNativeSql(sql);
+								if (!l.isEmpty()) {
+									Object o = l.iterator().next().get1();
+									Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+									log.debug("Найдена сумма за доп. услуги ("+aMedcaseId+"), сумма = "+cost);
+									sum+=cost;
+								}
+			} else if (dtype!=null&&dtype.toUpperCase().equals("VISIT")) {
+				log.debug("Поиск стоимости случая по визиту №"+aMedcaseId);
+				sql = "select sum(pp.cost) from medcase smc " +
+						" left join medservice ms on ms.id=smc.medservice_id" +
+						" left join pricemedservice pms on pms.medservice_id=smc.medservice_id" +
+						" left join priceposition pp on pp.id=pms.priceposition_id" +
+						" where smc.dtype='ServiceMedCase' and smc.parent_id ="+aMedcaseId+" and pp.pricelist_id ="+aPriceListId;
+				l = service.executeNativeSql(sql);
+				if (!l.isEmpty()) {
+					Object o = l.iterator().next().get1();
+					Double cost = (o!=null&&!o.toString().equals(""))?Double.valueOf(o.toString()):0.00;
+					log.debug("Найдена сумма по визиту №"+aMedcaseId+", сумма = "+cost);
+					sum+=cost;
+				}
+			}
+			
+				
+			return sum;
+			
+		} else {
+			return 0.00;
+		}
+		
 	}
 	public String deleteCAMS(String aIds, HttpServletRequest aRequest) throws NamingException {
 		String ret = "";

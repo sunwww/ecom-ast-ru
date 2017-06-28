@@ -9,7 +9,7 @@
     <msh:title mainMenu="Config" title="Разрешения пользователя" guid="5d110f49-20c3-4699-b6d0-b657032a8fae" />
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:table name="list" action="entityView-sec_userPermission.do" idField="id" guid="34ddbeac-1d7e-4552-a53a-c6938c9f8bad">
+    <msh:table navigationAction="js-sec_userPermission-listNext.do" name="list" action="entityView-sec_userPermission.do" idField="id" guid="34ddbeac-1d7e-4552-a53a-c6938c9f8bad">
       <msh:tableColumn columnName="Дата начала" property="dateFrom" guid="34416cd7-307b-4963-9bec-4c3a9a7527af" />
       <msh:tableColumn columnName="Дата окончания" property="dateTo" guid="34416cd7-307b-4963-9bec-4c3a9a7527af" />
       <msh:tableColumn columnName="Объект" property="objectInfo" guid="83eb9636-f2a9-4377-a4e7-58fc0f46f748" />

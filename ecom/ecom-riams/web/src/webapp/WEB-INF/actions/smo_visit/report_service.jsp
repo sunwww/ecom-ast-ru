@@ -392,7 +392,6 @@ LEFT JOIN VocWorkFunction ovwf on ovwf.id=owf.workFunction_id
 LEFT JOIN Worker ow on ow.id=owf.worker_id 
 left join mislpu owflpu on owflpu.id=ow.lpu_id
 LEFT JOIN Patient owp on owp.id=ow.person_id
-LEFT JOIN MisLpu owflpu on owflpu.id=ow.lpu_id
 WHERE  ${dtypeSql} 
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
@@ -432,27 +431,27 @@ select
 ''||'&medService='||ms.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,ms.code||' '||ms.name as vmsname
-,count(*) as cntAll
-,count(case when (vwpt.code='POLYCLINIC') then smc.id else null end) as cntAllPoly
-,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then smc.id else null end) as cntVil
-,count(case when vwpt.code='POLYCLINIC' and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+,sum(coalesce(smc.medserviceamount,1)) as cntAll
+,sum(case when (vwpt.code='POLYCLINIC') then coalesce(smc.medserviceamount,1) else null end) as cntAllPoly
+,sum(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then coalesce(smc.medserviceamount,1) else null end) as cntVil
+,sum(case when vwpt.code='POLYCLINIC' and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)<18 
-	then smc.id else null end) as cntAll17
-,count(case when vwpt.code='POLYCLINIC' and 
+	then coalesce(smc.medserviceamount,1) else null end) as cntAll17
+,sum(case when vwpt.code='POLYCLINIC' and 
 	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-then -1 else 0 end)>=60 then smc.id else null end) as cntAll60
+then -1 else 0 end)>=60 then coalesce(smc.medserviceamount,1) else null end) as cntAll60
 
-,count(case when (vss.code='OBLIGATORYINSURANCE') then smc.id else null end) as cntOMC
-,count(case when (vss.code='BUDGET') then smc.id else null end) as cntBudget
-,count(case when (vss.code='CHARGED') then smc.id else null end) as cntCharged
-,count(case when (vss.code='PRIVATEINSURANCE') then smc.id else null end) as cntPrivateIns
-,count(case when (vss.code='DOGOVOR') then smc.id else null end) as cntdogovor
-,count(case when (vss.code='HOSPITAL') then smc.id else null end) as cnthospital
-,count(case when (vss.code='OTHER') then smc.id else null end) as cntother
+,sum(case when (vss.code='OBLIGATORYINSURANCE') then coalesce(smc.medserviceamount,1) else null end) as cntOMC
+,sum(case when (vss.code='BUDGET') then coalesce(smc.medserviceamount,1) else null end) as cntBudget
+,sum(case when (vss.code='CHARGED') then coalesce(smc.medserviceamount,1) else null end) as cntCharged
+,sum(case when (vss.code='PRIVATEINSURANCE') then coalesce(smc.medserviceamount,1) else null end) as cntPrivateIns
+,sum(case when (vss.code='DOGOVOR') then coalesce(smc.medserviceamount,1) else null end) as cntdogovor
+,sum(case when (vss.code='HOSPITAL') then coalesce(smc.medserviceamount,1) else null end) as cnthospital
+,sum(case when (vss.code='OTHER') then coalesce(smc.medserviceamount,1) else null end) as cntother
 ,count(DISTINCT p.id) as f16_patid
 ,count(distinct (case when vss.code!='HOSPITAL' then p.id end)) as f_17cntPolyclinicPatients 
 ,count(distinct (case when vss.code='HOSPITAL' then p.id end)) as f_18cntStacPatients 
@@ -508,8 +507,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
          		<th></th>
          		<th></th>
          		<th></th>
-         		<th></th>
-         		<th colspan="4">Услуги</th>
+         		<th colspan="5">Услуги</th>
          		<th colspan="7">Услуги по видам оплаты</th>
          	</tr>
          </msh:tableNotEmpty>  
@@ -519,12 +517,12 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
              <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во пациентов" property="16"/>
              <msh:tableColumn isCalcAmount="true" columnName="Пациенты в пол-ке" property="17"/>
              <msh:tableColumn isCalcAmount="true" columnName="Пациенты в стац" property="18"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во" property="4"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Общее кол-во услуг" property="4"/>
            
-            <msh:tableColumn isCalcAmount="true" columnName="Всего" property="5"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего с.ж." property="6"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего до 17 лет" property="7"/>
-            <msh:tableColumn isCalcAmount="true" columnName="из всего старше 60 лет" property="8"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Всего услуг в пол-ке" property="5"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них с.ж." property="6"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них до 17 лет" property="7"/>
+            <msh:tableColumn isCalcAmount="true" columnName="из них старше 60 лет" property="8"/>
             
             
             <msh:tableColumn isCalcAmount="true" columnName="ОМС" property="9"/>
@@ -550,26 +548,26 @@ select
 ''||'&workFunctionGroup='||wfg.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
 ,coalesce(wfg.groupname)
-,count(*) as cntAll
-,count(case when (vwpt.code='POLYCLINIC') then 1 else null end) as cntAllPoly
-,count(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then 1 else null end) as cntVil
-,count(case when vwpt.code='POLYCLINIC' and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
+,sum(coalesce(smc.medserviceamount,1)) as cntAll
+,sum(case when (vwpt.code='POLYCLINIC') then coalesce(smc.medserviceamount,1) else null end) as cntAllPoly
+,sum(case when vwpt.code='POLYCLINIC' and (ad1.addressIsVillage='1') then coalesce(smc.medserviceamount,1) else null end) as cntVil
+,sum(case when vwpt.code='POLYCLINIC' and cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
 then -1 else 0 end)<18 
-	then 1 else null end) as cntAll17
-,count(case when vwpt.code='POLYCLINIC' and 
+	then coalesce(smc.medserviceamount,1) else null end) as cntAll17
+,sum(case when vwpt.code='POLYCLINIC' and 
 	cast(to_char(smo.dateStart,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
 +(case when (cast(to_char(smo.dateStart, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
 +(case when (cast(to_char(smo.dateStart,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-then -1 else 0 end)>=60 then 1 else null end) as cntAll60
-,count(case when (vss.code='OBLIGATORYINSURANCE') then smc.id else null end) as cntOMC
-,count(case when (vss.code='BUDGET') then smc.id else null end) as cntBudget
-,count(case when (vss.code='CHARGED') then smc.id else null end) as cntCharged
-,count(case when (vss.code='PRIVATEINSURANCE') then smc.id else null end) as cntPrivateIns
-,count(case when (vss.code='DOGOVOR') then smc.id else null end) as cntdogovor
-,count(case when (vss.code='HOSPITAL') then smc.id else null end) as cnthospital
-,count(case when (vss.code='OTHER') then smc.id else null end) as cntother
+then -1 else 0 end)>=60 then coalesce(smc.medserviceamount,1) else null end) as cntAll60
+,sum(case when (vss.code='OBLIGATORYINSURANCE') then coalesce(smc.medserviceamount,1) else null end) as cntOMC
+,sum(case when (vss.code='BUDGET') then coalesce(smc.medserviceamount,1) else null end) as cntBudget
+,sum(case when (vss.code='CHARGED') then coalesce(smc.medserviceamount,1) else null end) as cntCharged
+,sum(case when (vss.code='PRIVATEINSURANCE') then coalesce(smc.medserviceamount,1) else null end) as cntPrivateIns
+,sum(case when (vss.code='DOGOVOR') then coalesce(smc.medserviceamount,1) else null end) as cntdogovor
+,sum(case when (vss.code='HOSPITAL') then coalesce(smc.medserviceamount,1) else null end) as cnthospital
+,sum(case when (vss.code='OTHER') then coalesce(smc.medserviceamount,1) else null end) as cntother
 FROM MedCase smo
 left join medcase smc on smc.parent_id=smo.id and smc.dtype='ServiceMedCase'
 left join medservice ms on ms.id=smc.medservice_id

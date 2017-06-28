@@ -39,7 +39,7 @@ function onSave(aForm,aEntity, aCtx) {
 	closePrescriptions(aForm, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
-	
+	checkDeathThenPlan(aCtx, aForm.result, aForm.reasonDischarge);
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	
 	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy")) {
@@ -145,8 +145,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 					
 				}
 			}
-	}
-	
+	} 
 
 }
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
@@ -176,5 +175,19 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 			}
 			throw "Не полностью заполнены данные по диагнозам в отделениях!!! "+ slo ;
 		}	
+	}
+}
+//Milamesher
+//проверка на если результат - смерть, то только плановая
+function checkDeathThenPlan(aCtx,resultcode,reasoncode) {  
+	var res,reas;
+	var sql="select code from vochospitalizationresult where id='" + resultcode + "'";
+	var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+	if (list.size()>0) res=list.get(0);
+	if (res=="11") {
+		sql = "select code from vocreasondischarge where id='" + reasoncode + "'"; 
+		var list = aCtx.manager.createNativeQuery(sql).getResultList() ;
+		if (list.size()>0) reas=list.get(0);
+		if (reas!="DIS_PLAN") throw ("Если результат - смерть, то причина выписки должна быть плановая!")
 	}
 }
