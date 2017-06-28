@@ -29,9 +29,7 @@
       <msh:hidden property="provisional" guid="38fe07ac-6706-4911-a217-65edb3c85dac" />
       <msh:hidden property="result" guid="156ff02c-61dd-40b9-80f4-d88885db16f8" />
       <msh:hidden property="moveToAnotherLPU" guid="c0b69264-2081-4952-8c0a-7ea12712f14c" />
-      <msh:hidden property="rwDate" guid="9438b469-d5b6-4d11-8dc9-91a551e2f2d1" />
-      <msh:hidden property="rwNumber" guid="70e2513e-0d2e-48fd-9d08-3e83415755f9" />
-      <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
+       <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="rareCase"/>
       <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
         <msh:separator label="Приемное отделение" colSpan="9" guid="af11419b-1c80-4025-be30-b7e83df06024" />
@@ -74,8 +72,10 @@
           <msh:autoComplete property="orderLpu" label="Кем направлен" vocName="mainLpu" guid="c44b474f-6dba-4ba8-9af7-56a0dca363ad" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
         <msh:row guid="f2aba5-68fb-4ccc-9982-7b44a147">
-          <msh:autoComplete vocName="vocHospType" property="sourceHospType" label="Тип направившего ЛПУ" fieldColSpan="3" horizontalFill="true" guid="1064-23b2-42c0-ba47-65847816c" />
+          <msh:autoComplete vocName="vocHospType" property="sourceHospType" label="Тип направившего ЛПУ" fieldColSpan="1" horizontalFill="true" guid="1064-23b2-42c0-ba47-65847816c" />
+          <msh:textField property="orderDate" label="Дата" guid="3e74c0ff-d603-4923-b207-b4ce0d665841" />
         </msh:row>
+        
         <msh:row guid="36c67c6c-b817-4863-835d-0c37bcc96d19">
           <msh:autoComplete property="orderMkb" label="Код МКБ направителя" guid="d956d424-ffa2-4874-ae98-7a26fcc6a49d" vocName="vocIdc10" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
