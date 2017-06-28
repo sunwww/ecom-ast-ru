@@ -38,7 +38,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	action='/stac_policiesEdit'  key='Alt+4' 
     	styleId="stac_policies"
     	title='Полисы данного случая лечения в стационаре!'/> 
-    	<tags:stac_rw name="RW" key="ALT+3" title="Данные RW" number="rwNumber" date="rwDate" roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/Show" />
+    	
    </msh:sideMenu>
   
    <msh:sideMenu title="Показать">
