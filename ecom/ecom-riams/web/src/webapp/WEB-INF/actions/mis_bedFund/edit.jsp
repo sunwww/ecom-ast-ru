@@ -71,6 +71,7 @@
     
     <msh:sideMenu title="Перейти" guid="sideMenu-123">
       <msh:sideLink guid="7a5-4caf-4e14-aa70-287" action="/entityParentListRedirect-mis_bedFund" name="К списку" params="id" />
+      <msh:sideLink guid="7a5-4caf-4e14-aa70-287" roles="/Policy/Mis/Journal/263injunction" action="/stac_direct_in_fond.do" name="263 приказ" params="id" />
     </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
