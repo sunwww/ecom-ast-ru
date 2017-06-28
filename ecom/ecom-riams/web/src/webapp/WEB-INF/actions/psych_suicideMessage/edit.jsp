@@ -82,6 +82,30 @@
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>
+    
+    <msh:ifFormTypeIsView formName="psych_suicideMessageForm">
+    <msh:section
+     title="Осмотр после суицида"
+     createRoles="/Policy/Mis/Psychiatry/CareCard/SuicideMessage/Suicide/Create" createUrl="entityParentPrepareCreate-psych_suicide.do?id=${param.id}">
+    <msh:sectionContent>
+      	<ecom:webQuery name="listd" nativeSql="select s.id,pcc.cardNumber
+  	,s.registrationDate
+  	from Suicide s
+  	left join PsychiatricCareCard pcc on pcc.id=s.careCard_id   
+  	where s.suiMessage_id=${param.id}
+  		"/>
+    <msh:table name="listd" action="entityParentView-psych_suicide.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+              <msh:tableColumn property="sn" columnName="#"/>
+              <msh:tableColumn property="1" columnName="ИД"/>
+              <msh:tableColumn property="2" columnName="№карты"/>
+              <msh:tableColumn property="3" columnName="Дата осмотра"/>
+    </msh:table>
+    
+    </msh:sectionContent>
+    </msh:section>
+    
+    </msh:ifFormTypeIsView>
+    
   </tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="psych_suicideMessageForm" />

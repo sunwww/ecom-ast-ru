@@ -20,6 +20,7 @@
   	String noViewForm = request.getParameter("noViewForm") ;
   	String typeDateSuicide=ActionUtil.updateParameter("ReportMesSuicide","typeDateSuicide","1", request) ;
   	String typeView=ActionUtil.updateParameter("ReportMesSuicide","typeView","2", request) ;
+  	String typeAgeView=ActionUtil.updateParameter("ReportMesSuicide","typeAgeView","1", request) ;
   	String typeIsFinish=ActionUtil.updateParameter("ReportMesSuicide","typeIsFinish","3", request) ;
   	
   	StringBuilder paramSql= new StringBuilder() ;
@@ -61,6 +62,17 @@
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeView" value="3"> общий свод
         </td>
+
+       </msh:row>
+      <msh:row>
+        <td class="label" title="Просмотр данных (typeAgeView)" colspan="1"><label for="typeAgeViewName" id="typeAgeViewLabel">Разбивка по возрастам:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAgeView" value="1"> дети + взрослые
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeAgeView" value="2"> дети
+        </td>
+
 
        </msh:row>
       <msh:row>
@@ -110,6 +122,7 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
            <script type='text/javascript'>
           
+           checkFieldUpdate('typeAgeView','${typeAgeView}',1) ;
            checkFieldUpdate('typeView','${typeView}',1) ;
            checkFieldUpdate('typeIsFinish','${typeIsFinish}',1) ;
            checkFieldUpdate('typeDateSuicide','${typeDateSuicide}',1) ;
@@ -194,7 +207,22 @@
 		sql.append("		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
 		sql.append("		then -1 else 0 end) > case when vs.omcCode='2' then 54 else 59 end") ;
 		sql.append(")") ;
+	} else if (typeAge!=null&&typeAge.equals("4")) {
+		sql.append(" and (cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+		sql.append("		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+		sql.append("		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+		sql.append("		then -1 else 0 end) between 0 and 14") ;
+		sql.append(")") ;
+	} else if (typeAge!=null&&typeAge.equals("5")) {
+		sql.append(" and (cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+		sql.append("		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+		sql.append("		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+		sql.append("		then -1 else 0 end) between 15 and 17") ;
+		sql.append(")") ;
 	}
+	
+	
+	
     String intoxication = request.getParameter("intoxication") ;
 	if (intoxication!=null&&intoxication.equals("1")) {
 		sql.append(" and i.code='1'") ;
@@ -251,7 +279,7 @@ order by p.lastname,p.firstname,p.middlename
     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
     <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
     <input type='hidden' name="m" id="m" value="printNativeQuery">
-    <input type="submit" value="Печать"> 
+    
     </form>
     
     </msh:sectionTitle>
@@ -276,6 +304,53 @@ order by p.lastname,p.firstname,p.middlename
    
      
         <% } else if (view.equals("2")||view.equals("3")) {
+        	
+        	
+        	if (typeAgeView!=null && typeAgeView.equals("1")) {
+        		StringBuilder p1 = new StringBuilder() ;
+        		StringBuilder p2 = new StringBuilder() ;
+        		p1.append("  (cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+        		p1.append("		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+        		p1.append("		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+        		p1.append("		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 54 else 59 end") ;
+        		p1.append(")") ;
+        	
+        		p2.append("  (cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+        		p2.append("		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+        		p2.append("		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+        		p2.append("		then -1 else 0 end) > case when vs.omcCode='2' then 54 else 59 end") ;
+        		p2.append(")") ;
+        		
+        		request.setAttribute("param1", p1.toString()) ;
+        		request.setAttribute("param2", p2.toString()) ;
+        		request.setAttribute("paramAge1", "2") ;
+        		request.setAttribute("paramAge2", "3") ;
+        		request.setAttribute("paramTitle1", "Трудоспособный возраст (до 55-60)") ;
+        		request.setAttribute("paramTitle2", "Старше трудоспособного возраста") ;
+        	} else {
+        		StringBuilder p1 = new StringBuilder() ;
+        		StringBuilder p2 = new StringBuilder() ;
+        		
+        		p1.append("  (cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+        		p1.append("		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+        		p1.append("		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+        		p1.append("		then -1 else 0 end) between 0 and 14") ;
+        		p1.append(")") ;
+        	
+        		p2.append("  (cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)") ;
+        		p2.append("		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)") ;
+        		p2.append("		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)") ;
+        		p2.append("		then -1 else 0 end) between 15 and 17") ;
+        		p2.append(")") ;
+        		
+        		request.setAttribute("param1", p1.toString()) ;
+        		request.setAttribute("param2", p2.toString()) ;
+        		request.setAttribute("paramAge1", "4") ;
+        		request.setAttribute("paramAge2", "5") ;
+        		request.setAttribute("paramTitle1", "0-14") ;
+        		request.setAttribute("paramTitle2", "15-17") ;
+        	}
+        	
         	
         	if (view.equals("2")) {
         		request.setAttribute("groupBy", ",vs.id,vs.name") ;
@@ -339,34 +414,19 @@ select '&type='||vsmt.id${fldAdd} as id
 
 
 ,count(distinct case when  (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 54 else 59 end
+		${param1}
 )then sm.id else null end) as cnt55
 ,count(distinct case when a.addressisCity='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 54 else 59 end
+		${param1}
 ) then sm.id else null end) as cnt55C
 ,count(distinct case when a.addressisVillage='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 54 else 59 end
+		${param1}
 ) then sm.id else null end) as cnt55V
 ,count(distinct case when h.code='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 54 else 59 end
+	${param1}
 ) then sm.id else null end) as cnt55H
 ,count(distinct case when i.code='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) between 18 and case when vs.omcCode='2' then 54 else 59 end
+		${param1}
 ) then sm.id else null end) as cnt55I
 
 
@@ -377,34 +437,19 @@ select '&type='||vsmt.id${fldAdd} as id
 
 
 ,count(distinct case when  (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end)> case when vs.omcCode='2' then 54 else 59 end
+		${param2}
 )then sm.id else null end) as cntSt55
 ,count(distinct case when a.addressisCity='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) > case when vs.omcCode='2' then 54 else 59 end
+		${param2}
 ) then sm.id else null end) as cntSt55C
 ,count(distinct case when a.addressisVillage='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) > case when vs.omcCode='2' then 54 else 59 end
+		${param2}
 ) then sm.id else null end) as cntSt55V
 ,count(distinct case when h.code='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) > case when vs.omcCode='2' then 54 else 59 end
+		${param2}
 ) then sm.id else null end) as cntSt55H
 ,count(distinct case when i.code='1' and (
-		cast(to_char(sm.suicideDate,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
-		+(case when (cast(to_char(sm.suicideDate, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int)
-		+(case when (cast(to_char(sm.suicideDate,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0)
-		then -1 else 0 end) > case when vs.omcCode='2' then 54 else 59 end
+		${param2}
 ) then sm.id else null end) as cntSt55I
 
 
@@ -449,36 +494,36 @@ order by vsmt.name${orderBy}
      <th></th>
      <th colspan="5">Всего</th>
      <th colspan="5">Дети (0-17)</th>
-     <th colspan="5">Трудоспособный возраст (до 55-60)</th>
-     <th colspan="5">Старше трудоспособного возраста</th>
+     <th colspan="5">${paramTitle1}</th>
+     <th colspan="5">${paramTitle2}</th>
      </tr>
      </msh:tableNotEmpty>
       <msh:tableColumn columnName="Вид попытки" property="2" />
       <msh:tableColumn columnName="Пол" property="3" />
       
-      <msh:tableColumn columnName="Всего" property="4" />
-      <msh:tableColumn columnName="из них гор." property="5" addParam="&typeAddress=1"/>
-      <msh:tableColumn columnName="село" property="6" addParam="&typeAddress=2"/>
-      <msh:tableColumn columnName="из всего оказана пом. СМП" property="7" addParam="&helpSMP=1"/>
-      <msh:tableColumn columnName="из всего в опьянении" property="8" addParam="&intoxication=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="4" />
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="5" addParam="&typeAddress=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="село" property="6" addParam="&typeAddress=2"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего оказана пом. СМП" property="7" addParam="&helpSMP=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего в опьянении" property="8" addParam="&intoxication=1"/>
       
-      <msh:tableColumn columnName="Всего" property="9" addParam="&typeAge=1"/>
-      <msh:tableColumn columnName="из них гор." property="10" addParam="&typeAge=1&typeAddress=1"/>
-      <msh:tableColumn columnName="село" property="11" addParam="&typeAge=1&typeAddress=2"/>
-      <msh:tableColumn columnName="из всего оказана пом. СМП" property="12" addParam="&typeAge=1&helpSMP=1"/>
-      <msh:tableColumn columnName="из всего в опьянении" property="13" addParam="&typeAge=1&intoxication=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="9" addParam="&typeAge=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="10" addParam="&typeAge=1&typeAddress=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="село" property="11" addParam="&typeAge=1&typeAddress=2"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего оказана пом. СМП" property="12" addParam="&typeAge=1&helpSMP=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего в опьянении" property="13" addParam="&typeAge=1&intoxication=1"/>
       
-      <msh:tableColumn columnName="Всего" property="14" addParam="&typeAge=2"/>
-      <msh:tableColumn columnName="из них гор." property="15" addParam="&typeAge=2&typeAddress=1"/>
-      <msh:tableColumn columnName="село" property="16" addParam="&typeAge=2&typeAddress=2"/>
-      <msh:tableColumn columnName="из всего оказана пом. СМП" property="17" addParam="&typeAge=2&helpSMP=1"/>
-      <msh:tableColumn columnName="из всего в опьянении" property="18" addParam="&typeAge=2&intoxication=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="14" addParam="&typeAge=${paramAge1}"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="15" addParam="&typeAge=${paramAge1}&typeAddress=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="село" property="16" addParam="&typeAge=${paramAge1}&typeAddress=2"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего оказана пом. СМП" property="17" addParam="&typeAge=${paramAge1}&helpSMP=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего в опьянении" property="18" addParam="&typeAge=${paramAge1}&intoxication=1"/>
       
-      <msh:tableColumn columnName="Всего" property="19" addParam="&typeAge=3"/>
-      <msh:tableColumn columnName="из них гор." property="20" addParam="&typeAge=3&typeAddress=1"/>
-      <msh:tableColumn columnName="село" property="21" addParam="&typeAge=3&typeAddress=2"/>
-      <msh:tableColumn columnName="из всего оказана пом. СМП" property="22" addParam="&typeAge=3&helpSMP=1"/>
-      <msh:tableColumn columnName="из всего в опьянении" property="23" addParam="&typeAge=3&intoxication=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="Всего" property="19" addParam="&typeAge=${paramAge2}"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из них гор." property="20" addParam="&typeAge=${paramAge2}&typeAddress=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="село" property="21" addParam="&typeAge=${paramAge2}&typeAddress=2"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего оказана пом. СМП" property="22" addParam="&typeAge=${paramAge2}&helpSMP=1"/>
+      <msh:tableColumn isCalcAmount="true" columnName="из всего в опьянении" property="23" addParam="&typeAge=${paramAge2}&intoxication=1"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
