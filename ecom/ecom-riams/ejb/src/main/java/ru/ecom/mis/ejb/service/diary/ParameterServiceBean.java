@@ -59,8 +59,10 @@ public class ParameterServiceBean implements IParameterService{
 	public String checkOrCreateCode(String aCode, String aId) {
 		String retCode = "";
 		if (aCode==null||aCode.equals("")) { //Генерируем код автоматически
-			Long maxId = ConvertSql.parseLong(theManager.createNativeQuery("select max(id) from parameter").getSingleResult());
-			if (maxId==null) maxId=Long.valueOf(1) ;
+			List<Object> ll = theManager.createNativeQuery("select max(id) from parameter").getResultList() ;
+			Long maxId = ConvertSql.parseLong(ll.size()>0?ll.get(0):Long.valueOf(0));
+			
+			if (maxId==null) maxId=Long.valueOf(0) ;
 			maxId++;
 			while (true) {
 				List<Object> l = theManager.createNativeQuery("select id from parameter where code='code_"+maxId+"'").getResultList();
