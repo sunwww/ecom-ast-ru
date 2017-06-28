@@ -197,6 +197,8 @@ public class HospitalMedCaseServiceJs {
 		}
 		return "" ;
 	}
+	
+	
 	public String getDiaryDefects(Long aDiaryId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder req = new StringBuilder();
@@ -1502,15 +1504,7 @@ public class HospitalMedCaseServiceJs {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		return service.getTypeDiagByAccoucheur() ;
 	}
-	public String getRW(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		return service.getRW(aMedCase) ;
-	}
-	public String setRW(Long aMedCase, String aRwDate, String aRwNumber, HttpServletRequest aRequest) throws NamingException, ParseException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		service.setRW(aMedCase, aRwDate, aRwNumber) ;
-		return "" ;
-	}
+	
 	public static void createAdminChangeMessageBySmo (Long aSmo, String aType, String aTextInfo
 			, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
