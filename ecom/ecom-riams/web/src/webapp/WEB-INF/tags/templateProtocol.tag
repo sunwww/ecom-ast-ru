@@ -115,7 +115,8 @@ var fldJson = null ;
      var theIs${name}TempProtLastFunction = "temp" ;
      var theIs${name}TempProtDialogInitialized = false ;
      var the${name}TempProtDialog = new msh.widget.Dialog($('${name}templateProtocolDialog')) ;
-     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('the${name}IntakeInfoDialog')) 
+     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('the${name}IntakeInfoDialog')) ;
+     var the${name}IntakeInfoDialogInit = false ;
      // Показать
      
     function save${name}Result() {
@@ -138,7 +139,7 @@ var fldJson = null ;
     }
     $('record').value=text;
 	the${name}IntakeInfoDialog.hide();
-    
+	the${name}IntakeInfoDialogInit=false ;
     $('record').disabled=false;
     isEditable();
    }
@@ -293,6 +294,7 @@ var fldJson = null ;
     }
     
      function showTemplateForm(aTemplateId) {
+    	 the${name}IntakeInfoDialogInit = true ;
     	 the${name}TempProtDialog.hide() ;
     	    	 	//alert(aTempId) ;
     	    	 	    	 the${name}IntakeInfoDialog.hide();
@@ -427,6 +429,7 @@ var fldJson = null ;
      
      function cancel${name}IntakeInfo() {
          the${name}IntakeInfoDialog.hide() ;
+         the${name}IntakeInfoDialogInit=false;
        //  the${name}TempProtDialog.show() ;
        $('record').disabled=false;
          msh.effect.FadeEffect.pushFadeAll();
