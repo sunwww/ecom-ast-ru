@@ -523,14 +523,17 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 }
 function recordDisability(aContext,aSlsId,aField) {
 	var wqr = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
-	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateTo),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname from DisabilityCase dc"
+	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateTo),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname"
+		+",vddt.name as vddtname"
+		+" from DisabilityCase dc"
 		+" 	left join Patient pat on pat.id=dc.patient_id"
 		+" 	left join MedCase sls on sls.patient_id=pat.id"
 		+" 	left join DisabilityDocument dd on dd.disabilityCase_id=dc.id"
 		+" 	left join DisabilityRecord dr on dr.disabilityDocument_id=dd.id"
 		+" 	left join VocDisabilityDocumentCloseReason vddcr on dd.closeReason_id=vddcr.id"
+		+" 	left join VocDisabilityDocumentType vddt on dd.documentType_id=vddt.id"
 		+" 	where sls.id='"+aSlsId+"' and dd.anotherlpu_id is null"
-		+" 	group by dc.id,dd.id,sls.dateStart,sls.dateFinish,dd.number,vddcr.name,dd.issueDate"
+		+" 	group by dc.id,dd.id,sls.dateStart,sls.dateFinish,dd.number,vddcr.name,dd.issueDate,vddt.name"
 		+" 	having min(dr.dateFrom) between sls.dateStart and coalesce(sls.dateFinish,current_date)"
 		+"  order by dd.issueDate"
 	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
@@ -539,6 +542,14 @@ function recordDisability(aContext,aSlsId,aField) {
 		wqr.set1("№"+obj[2]+" открыт с "+obj[3]+" по "+obj[4]+". Причина закрытия: "+obj[5]);//aField+".info",
 		wqr.set2(null);//aField+".age",
 		wqr.set3(null);//aField+".sex",
+		wqr.set4(obj[6]);
+		var ddinfo="" ;
+		for (var i=0;i<list.size();i++){
+			var obj1=list.get(i) ;
+			ddinfo=ddinfo+obj1[6]+" №"+obj1[2]+" открыт с "+obj1[3]+" по "+obj1[4]+". Причина закрытия: "+obj1[5];//aField+".info",
+			if (i+1<list.size()) ddinfo=ddinfo+", ";
+		}
+		wqr.set5(ddinfo);
 	} 
 	return wqr ;
 }

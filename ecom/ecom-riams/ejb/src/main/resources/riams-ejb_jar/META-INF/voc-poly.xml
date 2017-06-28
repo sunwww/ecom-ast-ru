@@ -2,8 +2,8 @@
     <voc id='medcard' type='EntityVocService'>
             <EntityVocService
                     entity  = 'ru.ecom.poly.ejb.domain.Medcard'
-                    names   = 'firstname'
-                    queried = 'firstname'
+                    names   = 'number'
+                    queried = 'number'
                     />
     </voc>
 

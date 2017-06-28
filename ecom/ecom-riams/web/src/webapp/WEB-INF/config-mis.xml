@@ -58,6 +58,8 @@
 	    <form-bean name="smo_directionForm" type="ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm" />
 	    <form-bean name="smo_direction_medserviceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCase20ForDirect" />
 
+		<form-bean name="doc_flow_searchForm" type="ru.ecom.mis.web.action.patient.FlowDocumentSearchForm"/>
+		<form-bean name="doc_flowForm" type="ru.ecom.document.ejb.form.FlowDocumentForm"/>
 		<form-bean name="doc_baseMedicalExaminationForm" type="ru.ecom.mis.ejb.form.licence.BaseMedicalExaminationForm"/>
 		<form-bean name="doc_documentForm" type="ru.ecom.mis.ejb.form.licence.DocumentForm"/>
 		<form-bean name="doc_directionMicrobiologForm" type="ru.ecom.mis.ejb.form.licence.DirectionToMicrobiologAnalysisForm"/>
@@ -409,7 +411,29 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_claim/list_by_operator_pda.jsp" />
         </action>
- <action path='/all_claims' type='ru.ecom.web.actions.base.ForwardAction'
+ 		<action path='/doc_flow_sending' type='ru.ecom.web.actions.base.ForwardAction'
+                name='doc_flow_searchForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_sending_documents.jsp" />
+        </action>
+ 		<action path='/doc_flow_receit' type='ru.ecom.web.actions.base.ForwardAction'
+                name='doc_flow_searchForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_receit_documents.jsp" />
+        </action>
+ 		<action path='/doc_flow_backtrace' type='ru.ecom.web.actions.base.ForwardAction'
+                name='doc_flow_searchForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/doc_flow/list_backtrace.jsp" />
+        </action>
+        
+ 		<action path='/all_claims' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pres_journalForm'
                 validate='false'
                 scope="session"
@@ -552,6 +576,13 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_lpuArea/list_attachment.jsp" />
         </action>
         <action path='/stac_direct_in_fond_import' type='ru.ecom.mis.web.action.synclpufond.HospitalDirectInFondImportAction'
+                name='serviceImportRolesForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/stac_direct_in_fond.do" />
+        </action>
+        <action path='/stac_direct_in_fond_import_dir' type='ru.ecom.mis.web.action.synclpufond.HospitalDirectFondImportFromDirAction'
                 name='serviceImportRolesForm'
                 validate='false'
                 scope="session"

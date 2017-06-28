@@ -13,15 +13,22 @@
       <msh:hidden guid="hiddenId" property="id" />
       <msh:panel guid="panel">
          <msh:hidden property="saveType"/>
-      <msh:autoComplete property="type" vocName="patientListType"/>
+      <msh:row>
+      <msh:autoComplete property="type" vocName="patientListType" fieldColSpan="3" horizontalFill="true"/>
+      </msh:row>
         <msh:row>
           <msh:textField property="name" label="Название списка" />
         </msh:row>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
-          <msh:textField property="colorName" label="Цвет сообщения" size="50" />
+          <msh:textField property="colorName" label="Цвет фона" size="20" />
+          <msh:textField property="colorText" label="Цвет текста" size="20" />
+        </msh:row>
+        <msh:row>
+        	<msh:checkBox property="isViewWhenSeaching" label="Отображать в поиске"/>
+        	<msh:checkBox property="isViewInWebTrail" label="Отображать в WebTrail"/>
         </msh:row>
         <msh:row guid="b5f456eb-b971-441e-9a90-5194a8019c07">
-          <msh:textField property="message" label="Сообщение" size="50" />
+          <msh:textField property="message" label="Сообщение" size="50" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>

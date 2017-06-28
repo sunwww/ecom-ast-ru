@@ -38,6 +38,7 @@ import ru.ecom.diary.ejb.service.protocol.field.SeparatorField;
 import ru.ecom.diary.ejb.service.protocol.field.TextField;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
@@ -58,7 +59,10 @@ public class ParameterServiceBean implements IParameterService{
 	public String checkOrCreateCode(String aCode, String aId) {
 		String retCode = "";
 		if (aCode==null||aCode.equals("")) { //Генерируем код автоматически
-			Long maxId = Long.valueOf(theManager.createNativeQuery("select max(id) from parameter").getSingleResult().toString());
+			List<Object> ll = theManager.createNativeQuery("select max(id) from parameter").getResultList() ;
+			Long maxId = ConvertSql.parseLong(ll.size()>0?ll.get(0):Long.valueOf(0));
+			
+			if (maxId==null) maxId=Long.valueOf(0) ;
 			maxId++;
 			while (true) {
 				List<Object> l = theManager.createNativeQuery("select id from parameter where code='code_"+maxId+"'").getResultList();

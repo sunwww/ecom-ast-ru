@@ -135,6 +135,7 @@
 	    </msh:sideMenu>
     <msh:sideMenu title="Показать все">
         <msh:sideLink roles="/Policy/Poly/Ticket/Edit" key="ALT+4" params="id" action="/js-smo_ticket-list" name="Талоны" guid="661fe852-e096-410a-9fab-86d8e75db177" title="Все талоны по мед.карте" />
+          <msh:sideLink roles="/Policy/Mis/Document/Flow/View" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&medcard=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
     </msh:sideMenu>
     <msh:sideMenu title="Печать">
     <msh:sideLink roles="/Policy/Mis/Patient/View"  key="CTRL+1"

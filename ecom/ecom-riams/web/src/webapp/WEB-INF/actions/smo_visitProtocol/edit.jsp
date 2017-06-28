@@ -31,6 +31,7 @@
 }
 </style>
 
+
 	</tiles:put>
 
 	<tiles:put name='body' type='string'>
@@ -101,6 +102,8 @@ horizontalFill="true" />
 							value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" /> 
 							
 							<input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId.value,1)"/>
+              <input type="button" onclick="$('record').value=getCookie('protocol')" value="Последний сохраненный протокол">
+
 
 							<input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
 							<input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
@@ -119,6 +122,7 @@ horizontalFill="true" />
 					<msh:row>
 						<td colspan="3" align="right"><input type="button" style="display: none" name="btnEditProt1" id="btnEditProt1" 
 						value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" /> 
+              <input type="button" onclick="$('record').value=getCookie('protocol')" value="Последний сохраненный протокол">
 						<input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
 						<input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()"></td>
 						<tags:keyWord name="record" service="KeyWordService" methodService="getDecryption" />
@@ -160,13 +164,19 @@ horizontalFill="true" />
 					var action="entityParentSaveGoSubclassView-smo_visitProtocol.do";
 					</script>
 				</msh:ifFormTypeIsCreate>
+        <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+                 <msh:hidden property="editUsername"/>
+        </msh:ifFormTypeIsNotView>
+                <msh:row>
+	                <msh:submitCancelButtonsRow colSpan="3"  functionSubmit="saveCookie();this.form.action='entityParentSaveGoSubclassView-smo_visitProtocol.do';save_form(this.form);" />
+                </msh:row>
 				<msh:row>
 					<msh:submitCancelButtonsRow colSpan="3" 
-					functionSubmit="submitFunc();"/>
+					functionSubmit=""/>
 				</msh:row>
 			</msh:panel>
 		</msh:form>
-
+<tags:mis_login name="Login" />
 		<tags:stac_selectPrinter name="Select"
 			roles="/Policy/Config/SelectPrinter" />
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
@@ -248,7 +258,35 @@ horizontalFill="true" />
 				
     var flag=0;
     
+function save_form(aForm) {
+    	$('submitButton').disabled=true;
+    	TemplateProtocolService.getUsername(
+        		{
+            callback: function(aValue) {
+            	if (aValue!="") {
+            		$('editUsername').value=aValue ;
+            		submitFunc();
+            		//$('submitButton').disabled=false;
+            		
+            	} else {
+            		$('submitButton').disabled=false;
+            		 if (confirm("Возникли проблемы с авторизацией. Вы хотите ввести логин и пароль в новом окне?")) {
+            			 showLoginAutorization() ;
+	   			     };
+            	}
+            	
+            	
+             }
+         }
+        ) ;
+    }
+    </script>
+    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
+    <script type="text/javascript">
     setTimeout(checktime,600000) ;
+ </script>
+     </msh:ifNotInRole> 
+        <script type="text/javascript">
    if ($('templateProtocol').value>0) {
 	   $('btnEditProt1').style.display='inline' ;
 	   $('btnEditProt2').style.display='inline' ;
@@ -256,6 +294,9 @@ horizontalFill="true" />
    
     function checktime() {
     	if (confirm('Вы хотите сохранить дневник?')) {
+    		if (thetmpIntakeInfoDialogInit) {
+    			savetmpIntakeInfo();
+    		}
     		document.forms[1].action='entityParentSaveGoEdit-smo_visitProtocol.do';
     		document.forms[1].submit() ;
     	}else {setTimeout(checktime,600000); }
@@ -297,6 +338,7 @@ horizontalFill="true" />
     }
     
     </script>
+
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<script type="text/javascript">
 			try {
@@ -314,6 +356,49 @@ horizontalFill="true" />
 		frm.action= action;
 		frm.submit();
 	} 		
+        function saveCookie() {
+    		if (($('record').value.replace(/|\s+|\s+$/gm,''))!="") setCookie("protocol", $('record').value) ;
+    	}
+    	
+    	function getCookie(name) {
+    		  var matches = document.cookie.match(new RegExp(
+    		    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    		  ));
+    		  return matches ? decodeURIComponent(matches[1]) : undefined;
+    		}
+    	function setCookie(name, value, options) {
+    		  options = options || {};
+
+    		  var expires = options.expires;
+
+    		  if (typeof expires == "number" && expires) {
+    		    var d = new Date();
+    		    d.setTime(d.getTime() + expires * 1000);
+    		    expires = options.expires = d;
+    		  }
+    		  if (expires && expires.toUTCString) {
+    		    options.expires = expires.toUTCString();
+    		  }
+
+    		  value = encodeURIComponent(value);
+
+    		  var updatedCookie = name + "=" + value;
+
+    		  for (var propName in options) {
+    		    updatedCookie += "; " + propName;
+    		    var propValue = options[propName];
+    		    if (propValue !== true) {
+    		      updatedCookie += "=" + propValue;
+    		    }
+    		  }
+
+    		  document.cookie = updatedCookie;
+    		}
+    	function deleteCookie(name) {
+    		  setCookie(name, "", {
+    		    expires: -1
+    		  })
+    		}
         function setMedServiceParent() {
         	medServiceAutocomplete.setParentId($('specialist').value+"#"+$('dateRegistration').value);
         }

@@ -144,8 +144,8 @@ public class DisabilityServiceJs {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		return service.createDuplicateDocument(aDocId, aReasonId, aSeries, aNumber,aWorkFunction2,aJob,aUpdateJob) ;
 	}
-	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, HttpServletRequest aRequest) throws Exception {
+	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument, HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
-		return service.createWorkComboDocument(aDocId, aJob, aSeries, aNumber, aVocCombo) ;
+		return service.createWorkComboDocument(aDocId, aJob, aSeries, aNumber, aVocCombo, aPrevDocument) ;
 	}
 }

@@ -15,6 +15,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.LpuArea;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychObservationReason;
+import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychOtherPlaceTransfer;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychStrikeOffReason;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychTransferReason;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -203,4 +204,18 @@ private String theCreateUsername;
 private Date theEditDate;
 /** Дата создания */
 private Date theCreateDate;
+
+/** Др.место перевода */
+@Comment("Др.место перевода")
+@OneToOne
+public VocPsychOtherPlaceTransfer getOtherPlaceTransfer() {
+	return theOtherPlaceTransfer;
+}
+
+public void setOtherPlaceTransfer(VocPsychOtherPlaceTransfer aOtherPlaceTransfer) {
+	theOtherPlaceTransfer = aOtherPlaceTransfer;
+}
+
+/** Др.место перевода */
+private VocPsychOtherPlaceTransfer theOtherPlaceTransfer;
 }

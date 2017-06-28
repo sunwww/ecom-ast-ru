@@ -2,9 +2,9 @@ function onView(aForm, aVisit, aCtx) {
 	if(aForm.parent!=0) {
 		aForm.addDisabledField("parent") ;
 	}
-	if(aForm.startWorker==0) {
-		aForm.startWorker = aCtx.serviceInvoke("WorkerService", "findLogginedWorker").id ;
-	}
+	//if(aForm.startWorker==0) {
+	//	aForm.startWorker = aCtx.serviceInvoke("WorkerService", "findLogginedWorker").id ;
+	//}
 	// FIXME определять функцию правильно
 	if(aForm.workFunctionExecute==0) {
 		aForm.workFunctionExecute = aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")

@@ -48,6 +48,7 @@
     	<msh:sideLink roles="/Policy/Mis/MedCase/Direction/Journal" name="Журнал направленных" action="/visit_journal_direction.do"/>
         <msh:sideLink roles="/Policy/Poly/Ticket/Create,/Policy/Poly/Ticket/Stream" action='/entityPrepareCreate-smo_short_spo_stream.do' name="Поточный ввод обращений" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
         <msh:sideLink roles="/Policy/Poly/Ticket/Create,/Policy/Poly/Ticket/Stream" action='/entityPrepareCreate-smo_spo_ticket_stream.do' name="Поточный ввод посещений" guid="4cecc5e2-4e6b-4196-82ef-bf68124d90a5" />
+        <msh:sideLink roles="/Policy/Mis/Document/Flow/Create" action='/entityPrepareCreate-doc_flow.do' name="Передача документа"/>
     
     </msh:sideMenu>
 

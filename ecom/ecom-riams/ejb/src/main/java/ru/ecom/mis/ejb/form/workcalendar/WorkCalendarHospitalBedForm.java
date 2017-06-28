@@ -24,7 +24,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class WorkCalendarHospitalBedForm extends IdEntityForm {
 	/** Отделение */
 	@Comment("Отделение")
-	@Persist @Required
+	@Persist 
 	public Long getDepartment() {return theDepartment;}
 	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
 

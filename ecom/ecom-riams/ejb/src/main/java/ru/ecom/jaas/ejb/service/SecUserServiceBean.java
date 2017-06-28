@@ -78,7 +78,7 @@ public class SecUserServiceBean implements ISecUserService {
 		if (isGood==null||isGood.equals("")) {
 			return "0Старый пароль указан неверно";			
 		}
-		List<Object[]> l = theManager.createNativeQuery("select KeyValue, description from SoftConfig where key='PASSWORDREGEXP'").getResultList() ;
+		List<Object[]> l = theManager.createNativeQuery("select sc.KeyValue, sc.description from SoftConfig sc where sc.key='PASSWORDREGEXP'").getResultList() ;
 		if (!l.isEmpty()) {
 			regexp = l.get(0)[0].toString();
 		}

@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
@@ -260,6 +262,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 	}
                 }
             }
+            importDataFond(aMonitorId, type,list) ;
         } catch (Exception e) {
         	
         }
@@ -269,12 +272,22 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     }
     public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
     	IMonitor monitor = null;
+    	System.out.print("Save data") ;
     	try {
+
     		System.out.println("start importDataFond");
     		
     		monitor = theMonitorService.startMonitor(aMonitorId, "ImportFondMonitor", aList.size());
     		monitor.advice(20) ;
     		System.out.println("start importDataFond");
+/*
+    		try{
+    		monitor = theMonitorService.getMonitor(aMonitorId);
+    		monitor.advice(20) ;
+    		}catch(Exception e) {
+    			e.fillInStackTrace() ;
+    		}
+*/
     		int size = aList.size()/80 ;
     		
     		for (int i=0;i<aList.size();i++) {
@@ -282,6 +295,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			if (monitor.isCancelled()) {
     				throw new IllegalMonitorStateException("Прервано пользователем");
     			}
+    			System.out.println("Save data="+i) ;
     			//Object id = null ;
     			if (wqr.get1()!=null) {
     				List<Object> lf = theManager.createNativeQuery("select id from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
@@ -554,9 +568,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		    	sql3.append(" ,list(distinct case when vdrt.code='2' then mkb.code else null end) as f9orderDiag") ;
     		    	sql3.append(" ,list(distinct case when vdrt.code='3' and vpd.code='1' then mkb.code else null end) as f10dischargeDiag") ;
     		    	sql3.append(" ,case when vhr.code='11' then cast('1' as int) else null end as f11isDeath") ;
-    		    	
+    		    	sql3.append(" , case when sls.dateFinish is not null then cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f12ageDischarge") ;
+    		    	sql3.append(" , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f13ageEntranceSls") ;
+    		    	sql3.append(" , cast(to_char(mc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(mc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(mc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f14ageEntranceSlo") ;
+    		    	sql3.append(" , case when coalesce(mc.transferDate,mc.dateFinish) is not null then cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish), 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f15ageDischarge") ;
+    		    	sql3.append(" , pat.birthday as f16birthday") ;
     				sql3.append(" from medcase mc") ;
     				sql3.append(" left join medcase sls on mc.parent_id=sls.id") ;
+    				sql3.append(" left join patient pat on mc.patient_id=sls.patient_id") ;
     		    	sql3.append(" left join bedfund bf on bf.id=mc.bedfund_id") ;
     		    	sql3.append(" left join vocbedsubtype vbst on bf.bedsubtype_id=vbst.id") ;
     		    	sql3.append(" left join mislpu ml on ml.id=mc.department_id") ;
@@ -581,7 +600,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		    	sql3.append(" ,sls.admissionOrder_id,vhr.code") ;
     		    	sql3.append(" ,mc.department_id") ;
     		    	sql3.append(" ,sls.serviceStream_id,bf.bedType_id,bf.bedSubType_id") ;
-    		    	sql3.append(" ,mc.entranceTime, mc.dischargeTime,sls.emergency,vht.code,mc.transferTime,vhtHosp.id,vbst.code,sls.datefinish,sls.datestart,mc.parent_id ") ;
+    		    	sql3.append(" ,mc.entranceTime, mc.dischargeTime,sls.emergency,vht.code,mc.transferTime,vhtHosp.id,vbst.code,sls.datefinish,sls.datestart,mc.parent_id,pat.birthday ") ;
     		    	
     				sql3.append(" order by mc.datestart") ;
     				sql3.append("");
@@ -640,13 +659,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 			    			ahr.setEntranceDepDate(ConvertSql.parseDate(begDateDep));
 			    			ahr.setDischargeHospDate(ConvertSql.parseDate(endDate)) ;
 			    			ahr.setDischargeDepDate(ConvertSql.parseDate(endDateDep)) ;
-			    			ahr.setIsDeath(ConvertSql.parseBoolean(o3[11])) ;
+			    			ahr.setIsDeath(o3[11]==null?false:ConvertSql.parseBoolean(o3[11])) ;
 			    			ahr.setNumberHosp(hospInd) ;
 			    			ahr.setIdcDepartmentCode(ConvertSql.parseString(o3[8])) ;
 				    		ahr.setIdcDischarge(ConvertSql.parseString(o3[10])) ;
 				    		ahr.setIdcEntranceCode(ConvertSql.parseString(o3[9])) ;
 				    		//ahr.setIdcTransferCode(ConvertSql.parseString(obj[34])) ;
-				    		
+				    		ahr.setAgeDischargeSls(ConvertSql.parseLong(o3[12]));
+				    		ahr.setAgeEntranceSlo(ConvertSql.parseLong(o3[13]));
+				    		ahr.setAgeEntranceSls(ConvertSql.parseLong(o3[14]));
+				    		ahr.setAgeDischargeSlo(ConvertSql.parseLong(o3[15]));
+				    		ahr.setBirthday(ConvertSql.parseDate(o3[16]));
 			    			if (ind>0) {
 			    				ahr.setIdcTransferCode(ConvertSql.parseString(l3.get(ind-1)[8], true));
 			    				ahr.setTransferDepartmentFrom(ConvertSql.parseLong(l3.get(ind-1)[6]));
@@ -864,13 +887,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String filename = "N"+aReestr+"M"+aLpu+"T30_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
     	return filename ;
     }
-    public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
-    	WebQueryResult[] fileExpList = {exportN2(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    	WebQueryResult[] fileExpList = {exportN2(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
+    			, exportN3(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
     			,new WebQueryResult()
     	};
     	
@@ -895,13 +918,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	return fileExpList ;
     }
-    public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu) 
+    public String[] exportFondZip45(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	String nPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
     			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
-    	String[] fileExpList = {exportN4(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
-    			, exportN5(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage)
+    	String[] fileExpList = {exportN4(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
+    			, exportN5(aDateFrom,aDateTo,aPeriodByReestr,aLpu,nPackage,aSaveInFolder)
     			,""
     	};
     	
@@ -925,7 +948,44 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	return fileExpList ;
     }
     
-    public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN0(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage
+    		, String aVidN, boolean aSaveInFolder) throws TransformerFactoryConfigurationError, TransformerException, ParserConfigurationException {
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
+    	
+    	
+    	String filename = getTitleFile("0",aLpu,aPeriodByReestr,aNPackage) ;
+    	WebQueryResult res = new WebQueryResult() ;
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	xmlDoc.newElement(title, "VERSION", "1.0");
+    	xmlDoc.newElement(title, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	xmlDoc.newElement(title, "VID_N", aVidN);
+    	
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
+    	return res;
+	}
+    public WebQueryResult exportN1(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aIsPolyc, boolean aIsHospital, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
@@ -936,7 +996,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
     	
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	
     	String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
@@ -950,7 +1010,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
     	StringBuilder sql = new StringBuilder() ;
     	
-    	sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate");
+    	if (!aIsPolyc&&aIsHospital) {
+    		sql.append(" select to_char(mc.datefinish,'yyyy-MM-dd') as w0chbcreatedate");
+    	} else if (aIsPolyc&&!aIsHospital) {
+    		sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate");
+    	} else if (aIsPolyc&&aIsHospital) {
+    		sql.append(" select to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate");
+    	}
     	sql.append(" ,cast('1' as varchar(1)) as f1orPom");
     	sql.append(" ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l2puSent");
     	sql.append(" ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as l3puDirect");
@@ -972,7 +1038,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" ,wchb.dateFrom as w19chbdatefrom");
     	sql.append(", wchb.visit_id as v20isit");
     	sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
-    	sql.append(", cast('0' as varchar(1)) as f22det"); //TODO доделать обработку по детям
+    	sql.append(", cast(case when cast(to_char(p.birthday,'yyyy') as int)-cast(to_char(current_date,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det"); //TODO доделать обработку по детям
     	sql.append(" from WorkCalendarHospitalBed wchb");
     	sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
     	sql.append(" left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id");
@@ -980,14 +1046,25 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" left join VocSex vs on vs.id=p.sex_id");
     	sql.append(" left join VocServiceStream vss on vss.id=wchb.serviceStream_id");
     	sql.append(" left join MedCase mc on mc.id=wchb.visit_id");
-    	sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
+    	if (!aIsPolyc&&aIsHospital) {
+    		sql.append(" left join medcase_medpolicy mcp on mcp.medcase_id=mc.id ");
+        	sql.append(" left join medpolicy mp on mp.id=mcp.policies_id");
+        	sql.append(" left join WorkFunction wf on wf.id=wchb.workFunction_id");
+    	} else if (aIsPolyc&&!aIsHospital) {
+    		sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
+        	sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
+    	} else if (aIsPolyc&&aIsHospital) {
+    		sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
+        	sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
+    	}
+    	
     	sql.append(" left join VocIdc10 mkb on mkb.id=wchb.idc10_id");
     	sql.append(" left join MisLpu ml on ml.id=wchb.department_id");
     	sql.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
     	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
     	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
     	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
-    	sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
+    	
     	sql.append(" left join Worker w on w.id=wf.worker_id");
     	sql.append(" left join Patient wp on wp.id=w.person_id");
     	sql.append(" left join mislpu lpu on lpu.id=w.lpu_id");
@@ -997,6 +1074,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	sql.append(" where wchb.visit_id is not null");
     	sql.append(" and wchb.createDate between to_date('").append(aDateFrom).append("','yyyy-MM-dd') and to_date('").append(aDateTo).append("','yyyy-MM-dd')");
     	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER') and wchb.visit_id is not null");
+    	if (aIsPolyc&&aIsHospital) {
+    	} else if (aIsPolyc&&!aIsHospital) {
+    		sql.append(" and upper(mc.dtype) = 'VISIT'") ;
+    	} else if (!aIsPolyc&&aIsHospital) {
+    		sql.append(" and upper(mc.dtype) = 'HOSPITALMEDCASE'") ;
+    	}
     	sql.append(" order by p.lastname,p.firstname,p.middlename");
     	List<Object[]> list = theManager.createNativeQuery(sql.toString())
     			.setMaxResults(70000).getResultList() ;
@@ -1039,6 +1122,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
     
@@ -1176,6 +1268,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	return true ;
     }
     private boolean checkN3(Object[] aObj) {
+    	if (aObj[2]==null) return false ;
     	if (aObj[4]==null) return false ;
     	if (aObj[8]==null) return false ;
     	if (aObj[13]==null) return false ;
@@ -1220,7 +1313,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	
     }
-    public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage
+    		, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -1229,7 +1323,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
     	WebQueryResult res = new WebQueryResult() ;
     	
@@ -1332,9 +1426,19 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
-    public WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    
+    public WebQueryResult exportN2_trasferInLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -1343,7 +1447,175 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
+    	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
+    	WebQueryResult res = new WebQueryResult() ;
+    	ArrayList<XmlDocument> xmlDocList = new ArrayList<XmlDocument>() ;
+    	
+    	XmlDocument xmlDoc = new XmlDocument() ;
+    	XmlDocument xmlDocError = new XmlDocument() ;
+    	XmlDocument xmlDocExist = new XmlDocument() ;
+    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
+    	Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
+    	Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
+    	int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+    	
+    	StringBuilder sql = new StringBuilder() ;
+    	sql.append("select  sls.id as slsid, count(distinct case when sloALL.dtype='DepartmentMedCase' then vbtALL.codef else null end) cntProfile" );
+    	sql.append(", count(distinct case when sloALL.dtype='DepartmentMedCase' then sloALL.id else null end) as cntDep");
+    	
+    	sql.append("  from medcase sls");
+    	sql.append(" left join medcase sloALL on sloALL.parent_id=sls.id");
+    	sql.append(" left join bedfund bfALL on bfALL.id=sloALL.bedfund_id");
+    	sql.append(" left join vocbedtype vbtALL on vbtALL.id=bfALL.bedtype_id");
+    	sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
+    	sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
+    	sql.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
+    	sql.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
+    	sql.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
+    	sql.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
+    	sql.append(" left join reg_ic ri on ri.id=mp.company_id");
+    	sql.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
+    	sql.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
+    	sql.append(" left join mislpu olpu on olpu.id=sls.orderlpu_id");
+    	sql.append(" left join mislpu oplpu on oplpu.id=olpu.parent_id");
+    	
+    	sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
+    	sql.append(" left join Patient p on p.id=sls.patient_id");
+    	sql.append(" left join VocSex vs on vs.id=hdf.sex_id");
+    	sql.append(" left join medcase slo on slo.parent_id=sls.id ");
+    	sql.append(" left join BedFund bf on bf.id=slo.bedFund_id");
+    	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+    	sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
+    	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
+    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('").append(aDateFrom).append("','yyyy-mm-dd') and to_date('").append(aDateTo).append("','yyyy-mm-dd')");
+    	sql.append(" and sls.deniedHospitalizating_id is null and slo.prevMedCase_id is null and upper(slo.dtype)='DEPARTMENTMEDCASE'");
+    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE')") ;
+    	sql.append(" and hdf.id is not null and hdf.numberfond is not null and hdf.numberfond!=''") ;
+    	sql.append(" and (hdf.istable3 is null or hdf.istable3='0')") ;
+    	sql.append(" and (hdf.istable2 is null or hdf.istable2='0')") ;
+    	sql.append(" and (hdf.istable4 is null or hdf.istable4='0')") ;
+    	sql.append(" and (hdf.istable5 is null or hdf.istable5='0')") ;
+    	sql.append(" group by sls.id,p.lastname,p.firstname,p.middlename") ;
+    	sql.append(" order by p.lastname,p.firstname,p.middlename") ;
+    	
+    	List<Object[]> list = theManager.createNativeQuery(sql.toString())
+    			.setMaxResults(70000).getResultList() ;
+    	
+    	Element title = xmlDoc.newElement(root, "ZGLV", null);
+    	Element title_error = xmlDocError.newElement(root_error, "ZGLV", null);
+    	Element title_exist = xmlDocExist.newElement(root_exist, "ZGLV", null);
+    	xmlDoc.newElement(title, "VERSION", "1.0");
+    	xmlDoc.newElement(title, "DATA", aDateFrom);xmlDocExist.newElement(title_exist, "DATA", aDateFrom);xmlDocError.newElement(title_error, "DATA", aDateFrom);
+    	xmlDoc.newElement(title, "FILENAME", filename);
+    	//int i=0 ;
+    	for (Object[] obj:list) {
+    		if (ConvertSql.parseLong(obj[1])>Long.valueOf(1)) {
+    			StringBuilder sqlDep = new StringBuilder() ;
+    	    	sqlDep.append("select to_char(slo.dateStart,'yyyy-mm-dd') as f0datestart");
+    	    	sqlDep.append(" ,cast(slo.entranceTime as varchar(5)) as f1entrancetime");
+    	    	sqlDep.append(" ,vmc.code as f2medpolicytype");
+    	    	sqlDep.append(" ,mp.series as f3mpseries");
+    	    	sqlDep.append(" , mp.polnumber as f4polnumber");
+    	    	sqlDep.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as f5oossmocode");
+    	    	sqlDep.append(" , ri.ogrn as f6ogrnSmo");
+    	    	sqlDep.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as f7okatoSmo");
+    	    	sqlDep.append(" ,hdf.lastname as f8lastname");
+    	    	sqlDep.append(" ,hdf.firstname as f9firstname");
+    	    	sqlDep.append(" ,hdf.middlename as f10middlename");
+    	    	sqlDep.append(" ,vs.omcCode as f11vsomccode");
+    	    	sqlDep.append(" ,to_char(hdf.birthday,'yyyy-mm-dd') as f12birthday");
+    	    	sqlDep.append(" ,vbt.codeF as f13vbtomccode");
+    	    	sqlDep.append(" ,ss.code as f14sscode");
+    	    	sqlDep.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
+    	    	sqlDep.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
+    	    	sqlDep.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;
+    	    	sqlDep.append(" ,hdf.numberfond as f18numberfond") ;
+    	    	sqlDep.append(" ,to_char(slo.dateStart,'yyyy-mm-dd') as f19directDate") ;
+    	    	sqlDep.append(" ,hdf.formHelp  as f20pokaz");
+    	    	sqlDep.append(" ,case when vbst.code='3' then '2' else vbst.code end as f21vbtomccode");
+    	    	sqlDep.append(" ,case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as f22vbtomccode");
+    	    	
+    	    	sqlDep.append("  from medcase sls");
+    	    	sqlDep.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
+    	    	sqlDep.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
+    	    	sqlDep.append(" left join medpolicy mp on mp.id=mcmp.policies_id");
+    	    	sqlDep.append(" left join Vocmedpolicyomc vmc on mp.type_id=vmc.id");
+    	    	sqlDep.append(" left join Omc_kodter okt on okt.id=mp.insuranceCompanyArea_id");
+    	    	sqlDep.append(" left join Omc_SprSmo oss on oss.id=mp.insuranceCompanyCode_id");
+    	    	sqlDep.append(" left join reg_ic ri on ri.id=mp.company_id");
+    	    	sqlDep.append(" left join mislpu lpu on lpu.id=sls.lpu_id");
+    	    	sqlDep.append(" left join mislpu plpu on plpu.id=lpu.parent_id");
+    	    	sqlDep.append(" left join mislpu olpu on olpu.id=sls.orderlpu_id");
+    	    	sqlDep.append(" left join mislpu oplpu on oplpu.id=olpu.parent_id");
+    	    	
+    	    	sqlDep.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id");
+    	    	sqlDep.append(" left join Patient p on p.id=sls.patient_id");
+    	    	sqlDep.append(" left join VocSex vs on vs.id=hdf.sex_id");
+    	    	sqlDep.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'");
+    	    	sqlDep.append(" left join BedFund bf on bf.id=slo.bedFund_id");
+    	    	sqlDep.append(" left join VocBedType vbt on vbt.id=bf.bedType_id");
+    	    	sqlDep.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
+    	    	sqlDep.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id");
+    	    	sqlDep.append(" where sls.id=").append(obj[0]).append(" and slo.prevdocument_id is null") ;
+    	    	sqlDep.append(" order by p.lastname,p.firstname,p.middlename,slo.datestart,slo.entrancetime") ;
+    		
+	    		if (checkN2(obj)) {
+		    			Element zap = xmlDoc.newElement(root, "NPR", null);
+		    			recordN2(xmlDoc, zap, obj, false) ;
+		    	} else {
+		    		Element zapError = xmlDocError.newElement(root_error, "NPR", null);
+		    		i_error.add(recordN2(xmlDocError, zapError, obj,true)) ;
+		    		
+		    	}
+    		}
+    	}
+    	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
+    	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
+    	
+    	if (!i_exist.isEmpty()) {
+    		res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
+    		res.set4(i_exist) ;
+    		XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workDir).append("/exist_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocExist,new File(new StringBuilder().append(workAddDir).append("/").append("/exist_").append(filename).append(".xml").toString())) ;
+    	}
+    	if (!i_error.isEmpty()) {
+    		res.set3(new StringBuilder().append("error_").append(filename).append(".xml").toString()) ;
+    		res.set5(i_error) ;
+    		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
+    		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
+    	}
+    	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
+    	return res;
+    }
+    
+    public WebQueryResult exportN2(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
+    		throws ParserConfigurationException, TransformerException {
+    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
+    			.getLocalService(ISequenceService.class)
+    			.startUseNextValueNoCheck("PACKAGE_HOSP","number");
+    	}
+    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
     	WebQueryResult res = new WebQueryResult() ;
 
@@ -1441,6 +1713,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(workDir+"/"+filename+".xml")) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(workAddDir+"/"+filename+".xml")) ;
+    	
     	if (!i_exist.isEmpty()) {
     		res.set2(new StringBuilder().append("exist_").append(filename).append(".xml").toString()) ;
     		res.set4(i_exist) ;
@@ -1454,16 +1727,33 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
-    public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN1_planHosp(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	WebQueryResult res = new WebQueryResult() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1572,17 +1862,26 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("error_").append(filename).append(".xml").toString())) ;
     	}
     	res.set1(filename+".xml") ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
     
-    public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	WebQueryResult res = new WebQueryResult() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1668,16 +1967,25 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workDir).append("/error_").append(filename).append(".xml").toString())) ;
     		if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDocError,new File(new StringBuilder().append(workAddDir).append("/").append("/error_").append(filename).append(".xml").toString())) ;
     	}
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return res;
     }
     
-    public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1720,6 +2028,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return filename+".xml";
     }
     public String exportN4b(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
@@ -1803,13 +2120,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	XmlUtil.saveXmlDocument(xmlDoc,outFile) ;
     	return filename+".xml";
     }
-    public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
+    public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1899,15 +2216,25 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return filename+".xml";
     }
-    public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage) 
-    			throws ParserConfigurationException, TransformerException {
+    public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
+    			throws ParserConfigurationException, TransformerException, ParseException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
-    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+    	String workDir =config.get("tomcat.data.dir"
+    			, "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-    	String workAddDir =config.get("data.dir.order263.out", null);
+    	String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
     	
     	if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
     			.getLocalService(ISequenceService.class)
@@ -1918,49 +2245,172 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	//File outFile = new File(workDir+"/"+filename+".xml") ;
     	XmlDocument xmlDoc = new XmlDocument() ;
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
-    	StringBuilder sql = new StringBuilder() ;
-    	sql.append("select vbt.codef,vbt.name") ;
-    	sql.append(" ,count(distinct sls.id) as cntHosp") ;
-    	sql.append(" ,count(distinct case when sls.dateStart=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntEnter") ;
-    	sql.append(" ,count(distinct case when sls.dateFinish=to_date('").append(aDateFrom).append("','yyyy-mm-dd') then sls.id else null end) as cntDischarge") ;
-    	sql.append(" ,count(distinct case when sls.dateFinish is null or sls.datefinish>=to_date('").append(aDateTo).append("','yyyy-mm-dd') then sls.id else null end) as cntCurrent") ;
-    	sql.append(" ,(select sum(bf1.amount) from bedfund bf1 left join VocBedSubType vbst1 on bf1.bedSubtype_id=vbst1.id left join VocBedType vbt1 on bf1.bedtype_id=vbt1.id where vbt1.codef=vbt.codef and case when vbst.code='3' then '2' else vbst.code end=case when vbst1.code='3' then '2' else vbst1.code end) as sumBed") ;
-    	sql.append(" , case when vbst.code='3' then '2' else vbst.code end as usl_ok") ;
-    	sql.append(" , case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as det") ;
-    	sql.append(" from medcase sls") ;
-    	sql.append(" left join medcase sloF on sloF.parent_id = sls.id and sloF.dtype='DepartmentMedCase' and sloF.prevMedCase_id is null") ;
-    	sql.append(" left join medcase sloL on sloL.parent_id = sls.id and sloF.dtype='DepartmentMedCase' and sloL.dateFinish is not null ") ;
-    	sql.append(" left join BedFund bf on bf.id=sloF.bedFund_id") ;
-    	sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id") ;
-    	sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id") ;
-    	sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id") ;
-    	sql.append(" where sls.dtype='HospitalMedCase' and sls.dateStart>=to_date('").append(aDateFrom).append("','yyyy-mm-dd')") ;
-    	sql.append(" and sls.dateFinish>=coalesce(to_date('").append(aDateTo).append("','yyyy-mm-dd'),current_date)") ;
-    	sql.append(" and vss.code in ('OBLIGATORYINSURANCE','OTHER') and vbst.code='1'") ;
-    	sql.append(" group by vbt.codef,vbt.name,vbst.code,case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end") ;
-    	sql.append(" order by vbt.name");
     	
-    	List<Object[]> list = theManager.createNativeQuery(sql.toString())
-    			.setMaxResults(70000).getResultList() ;
+    	StringBuilder sqlB = new StringBuilder() ;
+    	sqlB.append("select   vbt.codef as v0btcodef");
+    	sqlB.append(",  case when vbst.code='3' then '2' else vbst.code end as u1sl_ok"); 
+    	sqlB.append(", case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as d2et ") ;
+    	sqlB.append(", sum(bf.amount) as b3famount");
+    	sqlB.append(", list(distinct ''||bf.id) as b4famount");
+    	sqlB.append(", (select count(hdf.id) from hospitaldatafond hdf where hdf.profile=vbt.codef ");
+    	sqlB.append(" 		and forchild=case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end ");
+    	sqlB.append(" 		and hdf.bedsubtype=case when vbst.code='3' then '2' else vbst.code end") ;
+    	sqlB.append("		and prehospdate between to_date('").append(aDateFrom).append("','yyyy-MM-dd') and to_date('").append(aDateTo).append("','yyyy-MM-dd')") ;
+    	sqlB.append("		and hospitalmedcase_id is null and hdf.directLpuCode=lpu.codef) as a5mountDirect") ;
+    	sqlB.append("  from BedFund bf ");
+    	sqlB.append("   left join VocBedType vbt on vbt.id=bf.bedType_id"); 
+    	sqlB.append("   left join VocBedSubType vbst on vbst.id=bf.bedSubType_id"); 
+    	sqlB.append("   left join VocServiceStream vss on vss.id=bf.serviceStream_id");
+    	sqlB.append("   left join MisLpu lpu on lpu.id=bf.lpu_id ");
+    	sqlB.append("   left join MisLpu lpuP on lpuP.id=lpu.parent_id ");
+    	sqlB.append("  where bf.dateStart<=to_date('").append(aDateFrom).append("','yyyy-MM-dd')"); 
+    	sqlB.append("  and coalesce(bf.dateFinish,to_date('").append(aDateTo).append("','yyyy-MM-dd')) >=to_date('").append(aDateTo).append("','yyyy-MM-dd')");
+    	sqlB.append("  and vss.code in ('OBLIGATORYINSURANCE') and (lpu.codef='").append(aLpu).append("' or lpuP.codef='").append(aLpu).append("')");
+    	sqlB.append("  group by  vbt.codef ,   vbst.code , bf.forChild, lpu.codef"); 
+    	sqlB.append("  order by vbt.codef,vbst.code");
+    	List<Object[]> listB = theManager.createNativeQuery(sqlB.toString())
+    			.setMaxResults(100).getResultList() ;
     	Element title = xmlDoc.newElement(root, "ZGLV", null);
     	xmlDoc.newElement(title, "VERSION", "1.0");
     	xmlDoc.newElement(title, "DATA", aDateFrom);
     	xmlDoc.newElement(title, "FILENAME", filename);
+    	Calendar cal = Calendar.getInstance() ;
+    	//SimpleDateFormat format_n=new SimpleDateFormat("yyyy-MM-dd") ;
+    	SimpleDateFormat format=new SimpleDateFormat("dd.MM.yyyy") ;
+        String dateBegin = aDateFrom ;
+        String dateEnd = aDateTo ;    	
+        
+        java.util.Date dat =  ru.nuzmsh.util.format.DateFormat.parseDate(dateBegin,"yyyy-MM-dd") ;
+        cal.setTime(dat) ;
+        cal.add(Calendar.DAY_OF_MONTH, -1) ;
+        dateBegin = format.format(cal.getTime()) ;
+        
+        dat = ru.nuzmsh.util.format.DateFormat.parseDate(dateEnd,"yyyy-MM-dd") ;
+        cal.setTime(dat) ;
+        cal.add(Calendar.DAY_OF_MONTH, -1) ;
+        dateEnd = format.format(cal.getTime()) ;
+        
+        
+        dat =  ru.nuzmsh.util.format.DateFormat.parseDate(dateBegin) ;
+        cal.setTime(dat) ;
+        cal.add(Calendar.DAY_OF_MONTH, 1) ;
+        String dateNextBegin=format.format(cal.getTime()) ;
+        //request.setAttribute("dateNextBegin", date1) ;
+        cal.add(Calendar.DAY_OF_MONTH, -2) ;
+        String datePrevBegin=format.format(cal.getTime()) ;
+        //request.setAttribute("datePrevBegin", date1) ;
+    	
+        dat = ru.nuzmsh.util.format.DateFormat.parseDate(dateEnd) ;
+        cal.setTime(dat) ;
+        cal.add(Calendar.DAY_OF_MONTH, 1) ;
+        String dateNextEnd=format.format(cal.getTime()) ;
+
     	int i=0 ;
-    	for (Object[] obj:list) {
+    	for (Object[] obj:listB) {
     		Element zap = xmlDoc.newElement(root, "NPR", null);
+    		StringBuilder sqlB1 = new StringBuilder() ;
+    		sqlB1.append("select ") ;
+    		//sqlB1.append(" '&dateBegin=21.06.2017&dateEnd=22.06.2017&serviceStream=1&typeView=5&department=' as fldId") ;
+    		//sqlB1.append(" ,vbt.codeF as vbtcodeF") ;
+    		//sqlB1.append(" ,list(distinct lpu.name) as fldName") ;
+    		//sqlB1.append(" ,list(distinct vbst.name) as vbstname") ;
+    		//sqlB1.append(" ,list(distinct vss.name) as vssname") ;
+    		sqlB1.append(" count(distinct case when (slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime") ;
+    		sqlB1.append("	or to_date('").append(dateBegin).append("','dd.mm.yyyy')>slo.datestart)") ;
+    		sqlB1.append("	and (slo.datefinish is null ") ;
+    		sqlB1.append("	or slo.datefinish > to_date('").append(dateBegin).append("','dd.mm.yyyy') ") ;
+    		sqlB1.append("	or slo.datefinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time))") ;
+    		sqlB1.append("	and (slo.transferdate is null ") ;
+    		sqlB1.append("	or slo.transferdate > to_date('").append(dateBegin).append("','dd.mm.yyyy')") ; 
+    		sqlB1.append("	or") ;
+    		sqlB1.append("	slo.transferdate = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time))") ;
+    		sqlB1.append("	 then slo.id else null end)") ;
+    		sqlB1.append("	as cnt0CurrentFrom") ;
+    		
+    		sqlB1.append("	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("	 or slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)") ;
+    		sqlB1.append(" or slo.datestart = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)") ;
+    		sqlB1.append("	as cnt1Entrance") ;
+    		
+    		sqlB1.append("	,count(distinct case when slo.prevmedcase_id is not null and (slo.datestart between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("	 or slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)") ;
+    		sqlB1.append("	or slo.datestart = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)") ;
+    		sqlB1.append("	as cnt2TransferOutOtherDepartment") ;
+    		
+    		sqlB1.append("	,count(distinct case when  (slo.transferdate between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("	 or slo.transferdate = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.transfertime>=cast('09:00:00' as time)") ;
+    		sqlB1.append("	or slo.transferdate = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end)") ; 
+    		sqlB1.append("	as cnt3TransferInOtherDepartment") ;
+    		
+    		sqlB1.append("	,count(distinct case when vhr.code!='11' and (slo.dateFinish between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("	 or slo.dateFinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)") ;
+    		sqlB1.append("	or slo.dateFinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)") ; 
+    		sqlB1.append("	as cnt4Finished") ;
+    		
+    		sqlB1.append("	,count(distinct case when vhr.code='11' and (slo.dateFinish between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("	 or slo.dateFinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)") ;
+    		sqlB1.append("	or slo.dateFinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)") ; 
+    		sqlB1.append("	as cnt5Death") ;
+    		
+    		sqlB1.append("	, count(distinct case when") ; 
+    		sqlB1.append("			(") ;
+    		sqlB1.append("				slo.transferdate is null") ;
+    		sqlB1.append("				or slo.transferdate > to_date('").append(dateNextEnd).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("				or slo.transferdate = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)") ;
+    		sqlB1.append("			) and (") ;
+    		sqlB1.append("				slo.datefinish is null or") ;
+    		sqlB1.append("				slo.datefinish > to_date('").append(dateNextEnd).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("				or slo.datefinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)") ;
+    		sqlB1.append("			)") ;
+    		sqlB1.append("		 then slo.id else null end") ;
+    		sqlB1.append("	)") ;
+    		sqlB1.append("	 as cnt6CurrentTo") ;
+    		
+    		sqlB1.append("	 from medcase slo") ;
+    		sqlB1.append("	 left join patient pat on pat.id=slo.patient_id") ;
+    		sqlB1.append(" left join vocsex vs on vs.id=pat.sex_id") ;
+    		sqlB1.append("	 left join mislpu lpu on lpu.id=slo.department_id") ;
+    		sqlB1.append("	 left join medcase sls on sls.id=slo.parent_id") ;
+    		sqlB1.append("	 left join vochospitalizationoutcome vho on vho.id=sls.outcome_id") ;
+    		sqlB1.append("	 left join vochospitalizationresult vhr on vhr.id=sls.result_id") ;
+    		sqlB1.append("	left join bedfund bf on bf.id=slo.bedfund_id") ;
+    		sqlB1.append("	left join vocbedtype vbt on vbt.id=bf.bedtype_id") ;
+    		sqlB1.append("	left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id") ;
+    		sqlB1.append("	left join vocservicestream vss on vss.id=bf.servicestream_id") ;
+    		sqlB1.append("	left join vochosptype vht on vht.id=sls.sourceHospType_id") ;
+    		sqlB1.append("	where ") ;
+    		sqlB1.append("	slo.dtype='DepartmentMedCase' ") ;
+    		sqlB1.append("	and (to_date('23.06.2017','dd.mm.yyyy')>slo.datestart") ;
+    		sqlB1.append("	or to_date('23.06.2017','dd.mm.yyyy')=slo.dateStart and cast('09:00' as time)>slo.entrancetime") ;
+    		sqlB1.append("	)") ;
+    		sqlB1.append("	and (slo.datefinish is null") ; 
+    		sqlB1.append("	or") ;
+    		sqlB1.append("	slo.datefinish>to_date('21.06.2017','dd.mm.yyyy')") ;
+    		sqlB1.append("	or to_date('21.06.2017','dd.mm.yyyy')=slo.datefinish and slo.dischargetime>=cast('09:00' as time)") ;
+    		sqlB1.append("	)") ;
+    		sqlB1.append("	and (slo.transferdate is null ") ;
+    		sqlB1.append("	or slo.transferdate > to_date('21.06.2017','dd.mm.yyyy')") ;
+    		sqlB1.append("	or to_date('21.06.2017','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('09:00' as time)") ;
+    		sqlB1.append("	)") ;
+    		sqlB1.append("	  and vss.code='OBLIGATORYINSURANCE' and bf.id in (").append(obj[4]).append(")") ;
+    		sqlB1.append("	group by vbt.codeF") ;
+    		sqlB1.append("	order by vbt.codeF") ;
+    		List<Object[]> listB1 = theManager.createNativeQuery(sqlB1.toString())
+        			.setMaxResults(1).getResultList() ;
+    		Object[] objB1 = listB1.size()>0? listB1.get(0):null ;
     		//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATA",aDateFrom,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU",aLpu,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU_1",null,false,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"USL_OK",obj[7],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DET",obj[8],true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"USL_OK",ConvertSql.parseLong(obj[1]),true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DET",ConvertSql.parseLong(obj[2]),true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PROFIL",obj[0],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"COUNTP",obj[5],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"POSTP",obj[3],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VIBP",obj[4],true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PLANP",0,true,"") ;
-    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEK",obj[6],true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"COUNTP",objB1==null?0:(ConvertSql.parseLong(objB1[0])),true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"POSTP",objB1==null?0:(ConvertSql.parseLong(objB1[1])+ConvertSql.parseLong(objB1[2])),true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VIBP",objB1==null?0:(ConvertSql.parseLong(objB1[3])+ConvertSql.parseLong(objB1[4])+ConvertSql.parseLong(objB1[5])),true,"") ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PLANP",obj==null?0:(ConvertSql.parseLong(obj[5])),true,"") ;
+    		Long freek = objB1==null?0:(ConvertSql.parseLong(obj[3])-ConvertSql.parseLong(objB1[6])-(obj==null?Long.valueOf(0):(ConvertSql.parseLong(obj[5])))) ;
+    		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEK",freek>Long.valueOf(0)?freek:0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEM",0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEW",0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREED",0,true,"") ;
@@ -1974,6 +2424,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	}
     	XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workDir).append("/").append(filename).append(".xml").toString())) ;
     	if (workAddDir!=null) XmlUtil.saveXmlDocument(xmlDoc,new File(new StringBuilder().append(workAddDir).append("/").append(filename).append(".xml").toString())) ;
+    	if (workAddDir!=null) {
+    		try{
+    			Runtime.getRuntime().exec("chmod -R 777 "+workAddDir);
+    		} catch (Exception e) {
+    			
+    		}
+    			
+    	}
+
     	return filename+".xml";
     }
     public void createNewDiary(String aTitle, String aText, String aUsername) {
@@ -2497,20 +2956,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
           System.out.println("Запрос по medCase: ");
 	        System.out.println(query.toString()) ;
 	        return createHospitalList(query2);
-    }
-    public String getRW(long aIdSls) {
-    	HospitalMedCase hospital = theManager.find(HospitalMedCase.class, aIdSls) ;
-    	StringBuilder ret = new StringBuilder() ;
-    	if(hospital.getRwDate()!=null) ret.append(DateFormat.formatToDate(hospital.getRwDate())) ;
-    	ret.append("#") ;
-    	if (hospital.getRwNumber()!=null) ret.append(hospital.getRwNumber()) ;
-    	return ret.toString() ;
-    }
-    public void setRW(long aIdSls, String aRwDate, String aRwNumber) throws ParseException {
-    	HospitalMedCase hospital = theManager.find(HospitalMedCase.class, aIdSls) ;
-    	hospital.setRwNumber(aRwNumber);
-    	hospital.setRwDate(DateFormat.parseSqlDate(aRwDate)) ;
-    	theManager.persist(hospital) ;
     }
     public void setPatientByExternalMedservice(String aNumberDoc, String aOrderDate, String aPatient) {
     	theManager.createNativeQuery("update Document set patient_id='"+aPatient+"' where NumberDoc='"+aNumberDoc+"' and OrderDate=to_date('"+aOrderDate+"','dd.mm.yyyy')").executeUpdate() ;

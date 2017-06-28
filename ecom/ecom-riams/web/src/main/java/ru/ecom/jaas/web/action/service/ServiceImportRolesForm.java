@@ -45,4 +45,15 @@ public class ServiceImportRolesForm extends BaseValidatorForm {
 
 	/** Clear */
 	private Boolean theIsClear;
+	/** Формат импорта */
+	public Long getImportFormat() {
+		return theImportFormat;
+	}
+
+	public void setImportFormat(Long aImportFormat) {
+		theImportFormat = aImportFormat;
+	}
+
+	/** Формат импорта */
+	private Long theImportFormat;
 }

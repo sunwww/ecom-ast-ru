@@ -22,6 +22,7 @@
     	type="ru.ecom.mis.ejb.form.psychiatry.PsychiatricObservationByCareCardForm" />
     <form-bean name="psych_publicDangerousEffectForm" type="ru.ecom.mis.ejb.form.psychiatry.PublicDangerousEffectForm" />
     <form-bean name="psych_suicideForm" type="ru.ecom.mis.ejb.form.psychiatry.SuicideForm" />
+    <form-bean name="psych_suicideMessageForm" type="ru.ecom.mis.ejb.form.psychiatry.SuicideMessageForm" />
 
 
 
@@ -59,6 +60,20 @@
                 scope="session"
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/journal_compulsory_treatment_psych.jsp" />
+        </action>        
+        <action path='/stac_report_36pl' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report_36pl.jsp" />
+        </action>        
+        <action path='/psych_suicideMessage_by_period' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/psych_suicideMessage/listByPeriod.jsp" />
         </action>        
   </action-mappings>
 </struts-config>

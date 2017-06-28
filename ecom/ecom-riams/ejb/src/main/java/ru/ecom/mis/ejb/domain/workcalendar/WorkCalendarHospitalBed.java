@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.domain.workcalendar;
 import java.sql.Date;
 import java.sql.Time;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.lpu.HospitalBed;
 import ru.ecom.mis.ejb.domain.lpu.HospitalRoom;
@@ -57,6 +59,7 @@ public class WorkCalendarHospitalBed extends BaseEntity {
 
 	/** Примечание */
 	@Comment("Примечание")
+	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getComment() {return theComment;}
 	public void setComment(String aComment) {theComment = aComment;}
 
