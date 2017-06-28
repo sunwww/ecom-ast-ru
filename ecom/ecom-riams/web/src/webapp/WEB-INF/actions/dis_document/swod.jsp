@@ -1,3 +1,4 @@
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.mis.web.action.disability.DisabilitySearchForm"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -14,10 +15,42 @@
         <tags:dis_menu currentAction="swodNT"/>
     </tiles:put>
   <tiles:put name="body" type="string">
+  <%
+  	
+  	String typeReport =ActionUtil.updateParameter("DIS_DOCUMENT","typeReport","1", request) ;
+  	%>
     <msh:form action="/dis_swod.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
+      </msh:row>
+      
+      	<msh:row>
+        <td class="label" title="Поиск по дате  (typeReport)" colspan="1"><label for="typeReportName" id="typeReportLabel">Поиск по дате:</label></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeReport" value="1">  сводная информация
+        </td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeReport" value="2">  информация о случаях ВН (кроме 31, 37 кода)
+        </td>
+      </msh:row>
+      <msh:row>
+          <msh:autoComplete vocName="vocDisabilityDocumentType" property="documentType" label="Документ" guid="c431085f-265a-40ab-958a1c8b5babeff" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+      <msh:row>
+      	<msh:autoComplete property="sex" fieldColSpan="3" size="6" horizontalFill="true"
+      		label="Пол" vocName="vocSex"
+      	/>
+      </msh:row>
+      <msh:row>
+      	<msh:autoComplete property="disabilityReason" fieldColSpan="3" size="6" horizontalFill="true"
+      		label="Причина нетруд." vocName="vocDisabilityReason"
+      	/>
+      </msh:row>
+      <msh:row>
+      	<msh:autoComplete property="closeReason" fieldColSpan="3" horizontalFill="true"
+      		label="Причина закрытия" vocName="vocDisabilityDocumentCloseReason"
+      	/>
       </msh:row>
       <msh:row >
         <msh:textField property="beginDate" label="Период с" />
@@ -26,26 +59,144 @@
             <input type="submit" onclick="find()" value="Найти" />
           </td>
            <td>
-            <input type="submit" onclick="print()" value="Печать" />
+            <input type="submit" onclick="print()" value="Печать свода" />
           </td>
       </msh:row>
       <input type="hidden" value="DisabilityService" name="s"/>
       <input type="hidden" value="printJournal" name="m"/>
     </msh:panel>
     </msh:form>
+    <script type="text/javascript">
+
+    checkFieldUpdate('typeReport','${typeReport}',1) ;
     
+    
+    
+    function checkFieldUpdate(aField,aValue,aDefault) {
+    	
+    	eval('var chk =  document.forms[0].'+aField) ;
+    	var max = chk.length ;
+    	if ((+aValue)>max) {
+    		chk[+aDefault-1].checked='checked' ;
+    	} else {
+    		chk[+aValue-1].checked='checked' ;
+    	}
+    }
+    
+  	
+  	function getCheckedValue(radioGrp) {
+  		var radioValue ;
+  		for(i=0; i < radioGrp.length; i++) {
+  		  if (radioGrp[i].checked == true){
+  		    radioValue = radioGrp[i].value;
+  		    break ;
+  		  }
+  		}
+  		return radioValue ;
+  	}
+  	function openPatientNewTab(aPat) {
+  		window.open("entitySubclassView-mis_medCase.do?id="+aPat) ;
+  	}
+  		
+  	</script>
     <%
     DisabilitySearchForm form 
     	= (DisabilitySearchForm)request.getAttribute("dis_searchForm");
     String date = form.getBeginDate() ;
     String date1 = form.getEndDate() ;
-    
+
+
+    StringBuilder addSql = new StringBuilder() ;
+    addSql.append(ActionUtil.setParameterFilterSql("disabilityReason","vdr.id", request)) ;
+    addSql.append(ActionUtil.setParameterFilterSql("closeReason","vddcr.id", request)) ;
+    addSql.append(ActionUtil.setParameterFilterSql("sex","pat.sex_id", request)) ;
+    addSql.append(ActionUtil.setParameterFilterSql("documentType","vddt.id", request)) ;
+    request.setAttribute("addSql", addSql.toString()) ;
     if (date!=null && !date.equals("")) {
     	if (date1==null || date1.equals("")) {
     		date1=date ;
     	}
     	request.setAttribute("beginDate", date) ;
     	request.setAttribute("endDate", date1) ;
+    	
+    	if (typeReport!=null && typeReport.equals("2")) {
+    		%>
+    		<msh:section title="Список закрытых СНТ">
+    		<msh:sectionContent>
+    	<ecom:webQuery name="inf_svn"
+    	nameFldSql="inf_svn_sql"
+    	nativeSql="
+    	select dc.id as dcid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,pat.birthday as birthday
+    	
+    	,max(
+    	cast(to_char(dr.dateto,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)
++(case when (cast(to_char(dr.dateto, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int)
++(case when (cast(to_char(dr.dateto,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0)
+then -1 else 0 end)
+    	
+    	
+    	
+    	
+    	) as age
+,vs.name,adr.fullname,list(distinct dd.hospitalizednumber) as statcard
+,
+(select list(distinct mkb.code)
+from medcase mc
+left join statisticstub ss on ss.id=mc.statisticstub_id
+left join diagnosis d on d.medcase_id=mc.id
+left join vocdiagnosisregistrationtype vdrt on vdrt.id=d.registrationtype_id
+left join vocprioritydiagnosis vpd on vpd.id=d.priority_id
+left join vocidc10 mkb on mkb.id=d.idc10_id
+where mc.patient_id=dc.patient_id and ss.code=trim(dd.hospitalizednumber)
+and vpd.code='1' and vdrt.code='3'
+)
+, min(dr.datefrom) as mind,max(dr.dateto) as maxd
+,max(dr.dateto)-min(dr.datefrom)+1 as cntdays
+,vddcr.name as reason
+
+ from disabilitydocument ddM
+left join vocdisabilitydocumentclosereason vddcr on vddcr.id=ddM.closereason_id
+ left join VocDisabilityReason vdr on vdr.id=ddM.disabilityReason_id 
+left join disabilitycase dc on ddM.disabilitycase_id=dc.id
+left join disabilitydocument dd on dd.disabilitycase_id=dc.id
+left join disabilityrecord dr on dr.disabilitydocument_id=dd.id
+left join patient pat on pat.id=dc.patient_id
+left join vocsex vs on vs.id=pat.sex_id
+left join address2 adr on adr.addressid=pat.address_addressid
+left join vocdisabilitydocumenttype vddt on vddt.id=ddM.documentType_id
+where (select max(drM.dateTo) from disabilityrecord drM where drM.disabilitydocument_id=ddM.id) 
+between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
+and case when vddcr.codeF='31' then '1' when vddcr.codeF='37' then '1' else '2' end='2'
+and dd.isclose='1' ${addSql}
+and ddM.workComboType_id is null
+and ddm.isclose='1' and dd.isclose='1' 
+and ddM.workComboType_id is null and dd.workComboType_id is null
+and (dd.noactuality='0' or dd.noactuality is null) and (ddm.noactuality='0' or ddm.noactuality is null) 
+
+group by dc.id ,pat.lastname,pat.firstname,pat.middlename ,pat.birthday 
+,vs.name,adr.fullname,vddcr.name
+order by pat.lastname,pat.firstname,pat.middlename
+    	
+    	"
+    	/>	
+    		<msh:table viewUrl="entityView-dis_case.do?short=Short" name="inf_svn" action="entityParentView-dis_case.do" idField="1">
+      <msh:tableColumn property="sn" columnName="#"/>
+      <msh:tableColumn columnName="ФИО" property="2"/>
+      <msh:tableColumn columnName="Дата рождения" property="3"/>
+      <msh:tableColumn columnName="Возраст (на дату закрытия БЛ)" property="4"/>
+      <msh:tableColumn columnName="Пол" property="5"/>
+      <msh:tableColumn columnName="Место жительства (по регистрации)" property="6"/>
+      <msh:tableColumn columnName="№ИБ" property="7"/>
+      <msh:tableColumn columnName="Шифр по МКБ выписной" property="8"/>
+      <msh:tableColumn columnName="Дата открытия случая" property="9"/>
+      <msh:tableColumn columnName="Дата закрытия случая" property="10"/>
+      <msh:tableColumn columnName="Длительность" property="11"/>
+      <msh:tableColumn columnName="Причина закрытия" property="12"/>
+    </msh:table>
+    </msh:sectionContent>
+    </msh:section>
+    		<%
+    	} else {
     	%>
     
     
@@ -70,14 +221,15 @@
 , sum(case when dd.isClose='1' and dup.id is  null then (select max(dr.dateTo)-min(dr.dateFrom) from disabilityrecord dr where dr.disabilityDocument_id=dd.id) else 0 end) as aANewCloseDays
 from DisabilityDocument dd 
 left join DisabilityCase dc on dc.id=dd.disabilityCase_id
+left join patient pat on pat.id=dc.patient_id
 left join DisabilityDocument dup on dup.duplicate_id=dd.id 
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
-
+left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
-and dd.anotherlpu_id is null
+and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate "/>
     <msh:sectionTitle>Сводная таблица по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
@@ -137,14 +289,16 @@ group by dd.issueDate order by dd.issueDate "/>
 , sum(case when dd.isClose='1' and dup.id is  null then (select max(dr.dateTo)-min(dr.dateFrom) from disabilityrecord dr where dr.disabilityDocument_id=dd.id) else 0 end) as aANewCloseDays
 from DisabilityDocument dd 
 left join DisabilityCase dc on dc.id=dd.disabilityCase_id
+left join patient pat on pat.id=dc.patient_id
 left join DisabilityDocument dup on dup.duplicate_id=dd.id 
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
     
-where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
-and dd.anotherlpu_id is null
+where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY') 
+and dd.anotherlpu_id is null ${addSql}
 "/>
     <msh:sectionTitle>ИТОГ по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
@@ -203,12 +357,16 @@ and dd.anotherlpu_id is null
 	then 1 else null end) pr2D
 
 from DisabilityDocument dd 
+left join disabilitycase dc on dd.disabilitycase_id=dc.id
+left join patient pat on pat.id=dc.patient_id
 left join DisabilityDocument dup on dup.duplicate_id=dd.id 
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
-and dd.anotherlpu_id is null
+and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate"
     />
     <msh:table name="journal_issueDuplicate" action="dis_documentClose.do" idField="1">
@@ -257,12 +415,16 @@ group by dd.issueDate order by dd.issueDate"
 	then 1 else null end) pr2D
 
 from DisabilityDocument dd 
+left join disabilitycase dc on dd.disabilitycase_id=dc.id
+left join patient pat on pat.id=dc.patient_id
 left join DisabilityDocument dup on dup.duplicate_id=dd.id 
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
-where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
-and dd.anotherlpu_id is null
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
+where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY') 
+and dd.anotherlpu_id is null ${addSql}
 "
     />
     <msh:table name="journal_issueDuplicate_itog" action="dis_documentClose.do" idField="1">
@@ -308,12 +470,16 @@ and dd.anotherlpu_id is null
 	then 1 else null end) pr2D
 
 from DisabilityDocument dd 
+left join disabilitycase dc on dd.disabilitycase_id=dc.id
+left join patient pat on pat.id=dc.patient_id
 left join DisabilityDocument dup on dup.id=dd.duplicate_id 
 left join VocDisabilityStatus vds on vds.id=dd.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
-and dd.anotherlpu_id is null
+and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate"
     />
     <msh:table name="journal_duplicate" action="dis_documentClose.do" idField="1">
@@ -361,13 +527,17 @@ group by dd.issueDate order by dd.issueDate"
 	then 1 else null end) pr2D
 
 from DisabilityDocument dd 
+left join disabilitycase dc on dd.disabilitycase_id=dc.id
+left join patient pat on pat.id=dc.patient_id
 left join DisabilityDocument dup on dup.id=dd.duplicate_id 
 left join VocDisabilityStatus vds on vds.id=dd.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
-and dd.anotherlpu_id is null
-"
+and dd.anotherlpu_id is null ${addSql}
+" 
     />
     <msh:table name="journal_duplicate_itog" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
@@ -392,7 +562,7 @@ and dd.anotherlpu_id is null
     </msh:sectionContent>
 
     </msh:section>
-    <% } else {%>
+    <% }} else {%>
     	<i>Введите заполните период</i>
     	<% }   %>
   </tiles:put>
