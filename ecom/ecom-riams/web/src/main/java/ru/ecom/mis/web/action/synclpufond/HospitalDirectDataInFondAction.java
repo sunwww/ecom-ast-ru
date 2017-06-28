@@ -89,15 +89,6 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        	aRequest.setAttribute("listExist", wqr.get4()) ;
 	        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("4")) {
-	        	filename=service.exportN4(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
-	        } else if (typeView!=null && typeView.equals("5")) {
-	        	filename=service.exportN5(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
-	        } else if (typeView!=null && typeView.equals("6")) {
-	        	filename=service.exportN6(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
-	        } else if (typeView!=null && typeView.equals("7")) {
 	        	WebQueryResult wqr = service.exportN1_planHosp(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
 		        	WebQueryResult wqr1 = service.exportN2_plan_otherLpu(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
 		        	filename= null;
@@ -114,7 +105,38 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 		        	aRequest.setAttribute("listExist1", wqr1.get4()) ;
 		        	aRequest.setAttribute("listError1", wqr1.get5()) ;
 		        	
+	        } else if (typeView!=null && typeView.equals("5")) {
+	        	filename=service.exportN4(format_n.format(cal.getTime()), 
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+	        } else if (typeView!=null && typeView.equals("6")) {
+	        	//TODO доделять переводы внутри ЛПУ
+	        	WebQueryResult wqr = service.exportN2_trasferInLpu(format_n.format(cal.getTime()), 
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+	        	if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        	aRequest.setAttribute("listExist", wqr.get4()) ;
+	        	aRequest.setAttribute("listError", wqr.get5()) ;
+	        } else if (typeView!=null && typeView.equals("7")) {
+	        	filename=service.exportN5(format_n.format(cal.getTime()), 
+	        			format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
 	        } else if (typeView!=null && typeView.equals("8")) {
+	        	WebQueryResult wqr = service.exportN1(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,false,true,isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+	        	if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        	aRequest.setAttribute("listExist", wqr.get4()) ;
+	        	aRequest.setAttribute("listError", wqr.get5()) ;
+	        } else if (typeView!=null && typeView.equals("9")) {
+	        	filename=service.exportN6(format_n.format(cal.getTime()), 
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+	        } else if (typeView!=null && typeView.equals("10")) {
 	        	WebQueryResult[] filenameList=service.exportFondZip23(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),isSaveInFolder) ;
 	        	StringBuilder sb = new StringBuilder() ;
@@ -126,7 +148,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 		        	//aRequest.setAttribute("listError", fn.get5()) ;
 	        	}
 	        	form.setFilename(sb.toString()) ;
-	        } else if (typeView!=null && typeView.equals("9")) {
+	        } else if (typeView!=null && typeView.equals("11")) {
 	        	String[] filenameList=service.exportFondZip45(format_n.format(cal.getTime()), 
 	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),isSaveInFolder) ;
 	        	StringBuilder sb = new StringBuilder() ;
@@ -134,30 +156,26 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        		sb.append("<a href='../rtf/"+fn+"'>"+fn+"</a>").append("</br>") ;
 	        	}
         		form.setFilename(sb.toString()) ;
-	        } else if (typeView!=null && typeView.equals("10")) {
-	        	WebQueryResult wqr = service.exportN1(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,false,true,isSaveInFolder) ;
-	        	filename= null;
-	        	StringBuilder sb = new StringBuilder() ;
-	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
-	        	if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
-	        	if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
-	        	form.setFilename(sb.toString()) ;
-	        	aRequest.setAttribute("listExist", wqr.get4()) ;
-	        	aRequest.setAttribute("listError", wqr.get5()) ;
-	        } else if (typeView!=null && typeView.equals("11")) {
+	        } else if (typeView!=null && typeView.equals("12")) {
 	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N1",isSaveInFolder) ;
 	        	filename= null;
 	        	StringBuilder sb = new StringBuilder() ;
 	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
 	        	form.setFilename(sb.toString()) ;
-	        } else if (typeView!=null && typeView.equals("12")) {
+	        } else if (typeView!=null && typeView.equals("13")) {
 	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N2",isSaveInFolder) ;
 	        	filename= null;
 	        	StringBuilder sb = new StringBuilder() ;
 	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
 	        	form.setFilename(sb.toString()) ;
-	        } else if (typeView!=null && typeView.equals("13")) {
+	        } else if (typeView!=null && typeView.equals("14")) {
 	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N5",isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        } else if (typeView!=null && typeView.equals("15")) {
+	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N8",isSaveInFolder) ;
 	        	filename= null;
 	        	StringBuilder sb = new StringBuilder() ;
         		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
