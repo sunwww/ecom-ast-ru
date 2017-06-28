@@ -236,13 +236,7 @@
         	<msh:autoComplete viewAction="entityParentView-preg_pregnancy.do" property="pregnancy" label="Беременность" fieldColSpan="3" parentId="stac_sslAdmissionForm.patient" vocName="pregnancyByPatient" horizontalFill="true"/>
         </msh:row>
         </mis:ifPatientIsWoman>
-        <msh:row guid="494efe58-5b3c-44b7-8148-dd3a32922082">
-          <msh:separator colSpan="6" label="RW" guid="8ca2fac1-9f38-4cd2-9e7d-8e081222815d" />
-        </msh:row>
-        <msh:row guid="f6e5b8dd-89fd-4442-9779-4995ba7cc3d8">
-          <msh:textField label="Дата RW" property="rwDate" guid="ffd282d7-95fe-40e5-a3a8-6d424c98dac0" />
-          <msh:textField label="Номер RW" property="rwNumber" guid="2b3421f3-f4c8-40be-9820-8f887023fc1c" />
-        </msh:row>
+        
         <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>
