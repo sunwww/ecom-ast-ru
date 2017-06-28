@@ -1764,14 +1764,16 @@ function printStatCardInfo(aCtx, aParams) {
 	return map ;
 }
 function recordDisability(aContext,aSlsId,aField) {
-	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateTo),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname from DisabilityCase dc"
+	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateTo),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname"
+		+" ,vddt.name as vddtname from DisabilityCase dc"
 		+" 	left join Patient pat on pat.id=dc.patient_id"
 		+" 	left join MedCase sls on sls.patient_id=pat.id"
 		+" 	left join DisabilityDocument dd on dd.disabilityCase_id=dc.id"
 		+" 	left join DisabilityRecord dr on dr.disabilityDocument_id=dd.id"
 		+" 	left join VocDisabilityDocumentCloseReason vddcr on dd.closeReason_id=vddcr.id"
+		+" 	left join VocDisabilityDocumentType vddt on dd.documentType_id=vddt.id"
 		+" 	where sls.id='"+aSlsId+"' and dd.anotherlpu_id is null"
-		+" 	group by dc.id,dd.id,sls.dateStart,sls.dateFinish,dd.number,vddcr.name,dd.issueDate"
+		+" 	group by dc.id,dd.id,sls.dateStart,sls.dateFinish,dd.number,vddcr.name,dd.issueDate,vddt.name"
 		+" 	having min(dr.dateFrom) between sls.dateStart and coalesce(sls.dateFinish,current_date)"
 		+"  order by dd.issueDate"
 	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
@@ -1780,10 +1782,20 @@ function recordDisability(aContext,aSlsId,aField) {
 		map.put(aField+".info","№"+obj[2]+" открыт с "+obj[3]+" по "+obj[4]+". Причина закрытия: "+obj[5]);
 		map.put(aField+".age",null);
 		map.put(aField+".sex",null);
+		map.put(aField+".type",obj[6]);
+		var ddinfo="" ;
+		for (var i=0;i<list.size();i++){
+			var obj1=list.get(i) ;
+			ddinfo=ddinfo+obj1[6]+" №"+obj1[2]+" открыт с "+obj1[3]+" по "+obj1[4]+". Причина закрытия: "+obj1[5];//aField+".info",
+			if (i+1<list.size()) ddinfo=ddinfo+", ";
+		}
+		map.put(aField+".all",ddinfo);
 	} else {
 		map.put(aField+".info",null);
 		map.put(aField+".age",null);
 		map.put(aField+".sex",null);
+		map.put(aField+".all",null);
+		map.put(aField+".type",null);
 	}
 }
 
@@ -2055,6 +2067,7 @@ function printProtocol (aCtx,aParams){
 		map.put("ticket",null) ;
 		map.put("typeInfo",null) ;
 	}
+	recordDiagnosis(aCtx,medCase.id,"4","1","diag_cl") ;
 	recordDiagnosis(aCtx,medCase.id,"3","1","diag") ;
 	recordDiagnosis(aCtx,medCase.id,"1","1","diag_order") ;
 	return map ;
