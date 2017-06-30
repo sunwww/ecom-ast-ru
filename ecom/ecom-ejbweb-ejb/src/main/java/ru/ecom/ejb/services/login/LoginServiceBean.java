@@ -25,6 +25,7 @@ import org.jboss.annotation.security.SecurityDomain;
 import org.jboss.mx.util.MBeanServerLocator;
 
 import ru.ecom.ejb.services.live.domain.CustomMessage;
+import ru.ecom.ejb.services.live.domain.journal.AuthenticationJournal;
 import ru.ecom.ejb.services.util.JBossConfigUtil;
 
 /**
@@ -76,6 +77,23 @@ public class LoginServiceBean implements ILoginService {
         }
         if (CAN_DEBUG) LOG.debug("roles = " + ret);
         return ret ;
+    }
+    
+    @PermitAll
+    public void createRecordInAuthJournal(String aUsername, String aRemoteAdd, String aLocalAdd
+    		,String aServerName,boolean aIsChecked,String aError,String aErrorPassword) {
+    	AuthenticationJournal authJour = new AuthenticationJournal() ;
+    	java.util.Date dat = new java.util.Date() ;
+    	authJour.setAuthDate(new java.sql.Date(dat.getTime())) ;
+    	authJour.setAuthTime(new java.sql.Time(dat.getTime())) ;
+    	authJour.setIsChecked(aIsChecked) ;
+    	authJour.setUsername(aUsername) ;
+    	authJour.setRemoteAdd(aRemoteAdd) ;
+    	authJour.setLocalAdd(aLocalAdd) ;
+    	authJour.setServerName(aServerName) ;
+    	authJour.setErrorMessage(aError) ;
+    	authJour.setErrorPassword(aErrorPassword);
+    	theManager.persist(authJour) ;
     }
 
     public Long createSystemMessage(String aTitle, String aText, String aRecipient) {

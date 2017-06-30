@@ -13,4 +13,6 @@ public interface ILoginService {
     public void checkMessage(Long aIdMessage);
 	public void hideMessage(Long aIdMessage) ;
 	public String[] getConfigUrl() ;
+	public void createRecordInAuthJournal(String aUsername, String aRemoteIp, String aLocalIp
+    		,String aServerName,boolean aIsChecked,String aError,String aErrorPassword);
 }
