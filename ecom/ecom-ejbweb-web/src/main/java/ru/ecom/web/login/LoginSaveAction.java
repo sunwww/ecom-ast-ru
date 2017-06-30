@@ -105,17 +105,21 @@ public class LoginSaveAction extends LoginExitAction {
             Set<String> roles = service.getUserRoles() ;
             
             if(roles==null) throw new NullPointerException("Нет ролей у пользователя roles==null") ;
-            
+            service.createRecordInAuthJournal(form.getUsername(), aRequest.getRemoteAddr(), aRequest.getLocalAddr(), aRequest.getServerName(), true,null,null) ;
             Long d = getPasswordAge(form.getUsername(),aRequest);
             loginInfo.setUserRoles(service.getUserRoles());
             boolean changePasswordAtLogin = needChangePasswordAtLogin(form.getUsername(), aRequest);
+            
             if ((d!=null&& d==0)||changePasswordAtLogin){
             	return aMapping.findForward("new_password") ;
             }  else if (d!=null&&d<8L) {
             	UserMessage.addMessage(aRequest,d,"Срок действия вашего пароля истекает через "+d+" дней. ", "Сменить пароль","js-secuser-changePassword.do") ;
             	
-            }           
+            }     
         } catch (Exception e) {
+        	//ILoginService service = Injection.find(aRequest).getService(ILoginService.class) ;
+            
+           
             LOG.error("Ошибка при входе: "+getErrorMessage(e),e);
             e.printStackTrace() ;
             LoginErrorMessage.setMessage(aRequest, getErrorMessage(e));
