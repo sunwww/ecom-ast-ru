@@ -21,6 +21,11 @@ import ru.nuzmsh.util.format.DateConverter;
  *
  */
 public class DisabilityServiceJs {
+
+	public String getLNNumberRange (Long aCount, HttpServletRequest aRequest) throws NamingException {
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
+		return service.getLNNumberRange(aCount);
+	}
 	public String exportDisabilityDocument (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
 		//ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
