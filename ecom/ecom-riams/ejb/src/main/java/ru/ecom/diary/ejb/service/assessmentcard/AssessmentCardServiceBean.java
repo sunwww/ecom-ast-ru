@@ -29,7 +29,7 @@ public class AssessmentCardServiceBean implements IAssessmentCardService{
 		
 			JSONObject obj = new JSONObject(aParams) ;
 			String wf = String.valueOf(obj.get("workFunction"));
-			System.out.print("workfunction================"+wf);
+		//	System.out.print("workfunction================"+wf);
 			Patient pat = aManager.find(Patient.class, aPatientId) ;
 			if (pat!=null) {			
 				if (ac!=null) {

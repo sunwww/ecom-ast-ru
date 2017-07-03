@@ -284,6 +284,7 @@ from PsychiatricCareCard pcc where pcc.patient_id='${param.id}'
         </msh:row>
         <msh:row>
         	<msh:textField property="phone" label="Телефон" horizontalFill="true" fieldColSpan="3"/>
+            <msh:label property="mobileAppPhoneNumber"/>
         </msh:row>
 
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">

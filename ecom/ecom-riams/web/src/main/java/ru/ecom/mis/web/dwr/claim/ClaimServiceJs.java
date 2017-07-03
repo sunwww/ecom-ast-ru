@@ -87,7 +87,7 @@ public class ClaimServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		
 		String sql = "update Claim set startWorkDate = "+aDate+", startWorkTime = "+aTime+", startworkUsername = '"+aExecutorLogin+"' where id="+aId;
-		System.out.println("===== "+sql);
+		//System.out.println("===== "+sql);
 		service.executeUpdateNativeSql(sql);
 		return aId;
 	}
