@@ -49,7 +49,8 @@ public class RepMisLpuChildInterceptor implements IFormInterceptor {
 		String key = aMain+"_"+aChild ;
 		if(!hash.contains(key)) {
 			System.out.println("    "+aMain.getName()+"  -  "+aChild.getName()) ;
-			rep.setTrailName(aMain.getName()+"  -  "+aChild.getName());
+			rep.setTrailName(aMain.getName()!=null?aMain.getName().substring(0,aMain.getName().length()>100?100:aMain.getName().length()-1):""+"  -  "
+					+aChild.getName()!=null?aChild.getName().substring(0,aChild.getName().length()>100?100:aChild.getName().length()-1):"");
 			rep.setLpuLevel(getLevel(aMain));
 			aManager.persist(rep);
 			hash.add(key);

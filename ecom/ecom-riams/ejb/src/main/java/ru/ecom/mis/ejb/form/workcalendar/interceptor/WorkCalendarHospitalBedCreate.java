@@ -24,9 +24,11 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
         
         EntityManager manager = aContext.getEntityManager();
         //MedCase parent = manager.find(MedCase.class, aParentId) ;
-        List<Object[]> list= manager.createNativeQuery("select mkb.code,d.name,mkb.id,mc.serviceStream_id,mc.patient_id from MedCase mc"
+        List<Object[]> list= manager.createNativeQuery("select mkb.code,d.name,mkb.id,mc.serviceStream_id,mc.patient_id,to_char(mc.dateFinish,'dd.mm.yyyy') as datefin,mc.moveToAnotherLPU_id "
+        		+" ,(select max(slo.ownerFunction_Id) from medcase slo where slo.parent_id=mc.id and mc.datefinish is not null and upper(slo.dtype)='DEPARTMENTMEDCASE') as wf "
+        		+" from MedCase mc "
         		+" left join Diagnosis d on mc.id=d.medCase_id "
-        		+" left join VocIdc10 mkb on mkb.id=d.idc10_id"
+        		+" left join VocIdc10 mkb on mkb.id=d.idc10_id "
         		+" where mc.id='"+aParentId+"' order by d.id").getResultList() ;
         StringBuilder res = new StringBuilder() ; 
         boolean isFirst = true ;
@@ -35,25 +37,30 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
         		form.setIdc10(ConvertSql.parseLong(obj[2])) ;
         		form.setServiceStream(ConvertSql.parseLong(obj[3])) ;
         		form.setPatient(ConvertSql.parseLong(obj[4])) ;
+        		form.setDateFrom(ConvertSql.parseString(obj[5],true)) ;
+        		form.setOrderLpu(ConvertSql.parseLong(obj[6])) ;
+        		form.setWorkFunction(ConvertSql.parseLong(obj[7])) ;
         	}
         	res.append(obj[0]).append(". ").append(obj[1]).append("\n") ;
         }
         form.setDiagnosis(res.toString()) ;
         list.clear() ;
-    	list = manager.createNativeQuery("select wf.id as wfid,su.id as suid " 
-    			+ " from SecUser su " 
-    			+ " left join WorkFunction wf on wf.secuser_id=su.id " 
-    			+ " left join Worker w on w.id=wf.worker_id " 
-    			+ " left join MisLpu ml on w.lpu_id=ml.id " 
-    			+ " left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id " 
-    			+ " where su.login = :login and wf.id is not null") 
-    		.setParameter("login", username).setMaxResults(1).getResultList() ;
-    	if (list.size()>0) {
-    		form.setWorkFunction(ConvertSql.parseLong(list.get(0)[0])) ;
-    	
-    	} else {
-    		
-    	}
+        if (form.getWorkFunction()==null){
+	    	list = manager.createNativeQuery("select wf.id as wfid,su.id as suid " 
+	    			+ " from SecUser su " 
+	    			+ " left join WorkFunction wf on wf.secuser_id=su.id " 
+	    			+ " left join Worker w on w.id=wf.worker_id " 
+	    			+ " left join MisLpu ml on w.lpu_id=ml.id " 
+	    			+ " left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id " 
+	    			+ " where su.login = :login and wf.id is not null") 
+	    		.setParameter("login", username).setMaxResults(1).getResultList() ;
+	    	if (list.size()>0) {
+	    		 form.setWorkFunction(ConvertSql.parseLong(list.get(0)[0])) ;
+	    	
+	    	} else {
+	    		
+	    	}
+        }
     	
     }
 

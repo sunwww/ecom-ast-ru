@@ -127,17 +127,17 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	public Long getResult() {return theResult;	}
 	public void setResult(Long aResult) {theResult = aResult;}
 
-	/** Обследован на RW */
-	@Comment("Обследован на RW")
-	@Persist
-	public Boolean getRwExamination() {return theRwExamination;}
-	public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
+	///** Обследован на RW */
+	//@Comment("Обследован на RW")
+	//@Persist
+	//public Boolean getRwExamination() {return theRwExamination;}
+	//public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
 
-	/** Обследован на ВИЧ */
-	@Comment("Обследован на ВИЧ")
-	@Persist
-	public Boolean getAidsExamination() {return theAidsExamination;}
-	public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
+	///** Обследован на ВИЧ */
+	//@Comment("Обследован на ВИЧ")
+	//@Persist
+	//public Boolean getAidsExamination() {return theAidsExamination;}
+	//public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
 	
 	/** Пациент */
 	@Comment("Пациент")
@@ -167,12 +167,12 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	public Long getDeniedHospitalizating() {return theDeniedHospitalizating;}
 	public void setDeniedHospitalizating(Long aDeniedHospitalizating) {theDeniedHospitalizating = aDeniedHospitalizating;}
 
-	/** Дата RW */
-	@Comment("Дата RW")
-	@DateString @DoDateString 
-	@Persist 
-	public String getRwDate() {return theRwDate;}
-	public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
+	///** Дата RW */
+	//@Comment("Дата RW")
+	//@DateString @DoDateString 
+	//@Persist 
+	//public String getRwDate() {return theRwDate;}
+	//public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
 
 	/** Диагноз при поступлении */
 	@Comment("Диагноз при поступлении") 
@@ -350,8 +350,8 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	private String theEntranceDiagnos;
 	/** Дата диагноза при поступлении */
 	private String theEntranceDiagDate;
-	/** Дата RW */
-	private String theRwDate;
+	///** Дата RW */
+	//private String theRwDate;
 	/** Отказ от госпитализации */
 	private Long theDeniedHospitalizating;
 	/** Кем доставлен (тип доставки) */
@@ -363,10 +363,10 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 
 	/** Пациент */
 	private Long thePatient;
-	/** Обследован на ВИЧ */
-	private Boolean theAidsExamination;
-	/** Обследован на RW */
-	private Boolean theRwExamination;
+	///** Обследован на ВИЧ */
+	//private Boolean theAidsExamination;
+	///** Обследован на RW */
+	//private Boolean theRwExamination;
 	/** Результат госпитализации */
 	private Long theResult;
 	/** Исход госпитализации */

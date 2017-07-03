@@ -107,15 +107,20 @@
 
 
 <script type="text/javascript">
+function trim(aStr) {
+	return aStr.replace(/|\s+|\s+$/gm,'') ;
+    }
 var fldJson = null ;
+
      var theIs${name}TempProtLastFunction = "temp" ;
      var theIs${name}TempProtDialogInitialized = false ;
      var the${name}TempProtDialog = new msh.widget.Dialog($('${name}templateProtocolDialog')) ;
-     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('the${name}IntakeInfoDialog')) 
+     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('the${name}IntakeInfoDialog')) ;
+     var the${name}IntakeInfoDialogInit = false ;
      // Показать
      
     function save${name}Result() {
-    var rows = $('tblParamProtocol').children[0].children;
+    var rows = $('tblParamProtocol').childNodes[0].childNodes;
     var text = '';
 
     for (var ind=0;ind<fldJson.params.length;ind++) {
@@ -134,7 +139,7 @@ var fldJson = null ;
     }
     $('record').value=text;
 	the${name}IntakeInfoDialog.hide();
-    
+	the${name}IntakeInfoDialogInit=false ;
     $('record').disabled=false;
     isEditable();
    }
@@ -174,7 +179,7 @@ var fldJson = null ;
 					var v = par.voc[indVal] ;
 					if ($('param'+par.id+"_"+v.id).checked) {
 						val = val + ","+$('param'+par.id+"_"+v.id).value ;
-						par.valueVoc += ", "+$('param'+par.id+"_"+v.id+'Span').innerHTML.trim() ;
+						par.valueVoc += trim(", "+$('param'+par.id+"_"+v.id+'Span').innerHTML) ;
 						v.checked='1';
 					} else {
 						v.checked='0';
@@ -289,6 +294,7 @@ var fldJson = null ;
     }
     
      function showTemplateForm(aTemplateId) {
+    	 the${name}IntakeInfoDialogInit = true ;
     	 the${name}TempProtDialog.hide() ;
     	    	 	//alert(aTempId) ;
     	    	 	    	 the${name}IntakeInfoDialog.hide();
@@ -423,6 +429,7 @@ var fldJson = null ;
      
      function cancel${name}IntakeInfo() {
          the${name}IntakeInfoDialog.hide() ;
+         the${name}IntakeInfoDialogInit=false;
        //  the${name}TempProtDialog.show() ;
        $('record').disabled=false;
          msh.effect.FadeEffect.pushFadeAll();

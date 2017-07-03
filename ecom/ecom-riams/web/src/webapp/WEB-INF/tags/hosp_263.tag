@@ -22,6 +22,43 @@
      var theIs${name}263DialogInitialized = false ;
      var the${name}263Dialog = new msh.widget.Dialog($('${name}263Dialog')) ;
      // Показать 
+     function show${name}263naprByPat(aPat,aPreDateHosp,aMode) {
+    	 $('${name}Title').innerHTML = "ВЫБОР НАПРАВЛЕНИЯ ДЛЯ ГОСПИТАЛИЗАЦИИ от "+aPreDateHosp;
+    	 $('${name}RootDiv').innerHTML ="<i>Загрузка данных...</i>" ;
+    	 the${name}263Dialog.show() ;
+    	 HospitalMedCaseService.viewTable263narpByPat(aPat,aPreDateHosp,aMode,{
+ 			callback: function(aResult) {
+ 				//+" на "+aLastname+" "+aFirstname+" "+aMiddlename+" "+aBirthday 
+ 				result = aResult.split("###@###") ;
+		    	 $('${name}Title').innerHTML = "ВЫБОР НАПРАВЛЕНИЯ ДЛЯ ГОСПИТАЛИЗАЦИИ от "+aPreDateHosp+result[0];
+ 				var change ="\"show${name}263naprByPat('"+aPat+"','"+aPreDateHosp+"',this.value)\"";
+ 		    	 $('${name}RootDiv').innerHTML ="<input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}263()\">"
+ 					+"<form name='frm${name}NaprView' id='frm${name}NaprView' action='javascript:void(0)'><table><tr>"
+ 		    		 +'<td class="label" title="Список  (typeView1)" colspan="1"><label for="typeView1Name" id="typeView1Label">Совпадание:</label></td>'
+ 		    		 +'<td onclick="this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()" colspan="4">'
+ 		    		 +' <input name="type${name}NaprView" value="1" type="radio" onchange='+change+'>  ФИО+ДР' 
+ 		    		 +'</td>'
+ 		    		 +'<td onclick="this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()" colspan="4">'
+ 		    		 +'	<input name="type${name}NaprView" value="2" type="radio" onchange='+change+'>  Фамилия' 
+ 		    		 +'</td>'
+ 		    		 +'<td onclick="this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()" colspan="4">'
+ 		    		 +'	<input name="type${name}NaprView" value="3" type="radio" onchange='+change+'>  Имя' 
+ 		    		 +'</td>'
+ 		    		 +'<td onclick="this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()" colspan="4">'
+ 		    		 +'	<input name="type${name}NaprView" value="4" type="radio" onchange='+change+'>  Пред.дата госп.' 
+ 		    		 +'</td>'
+ 		    		 +'<td onclick="this.childNodes[1].checked=\'checked\';this.childNodes[1].onchange()" colspan="4">'
+ 		    		 +'	<input name="type${name}NaprView" value="5" type="radio" onchange='+change+'>  Все' 
+ 		    		 +'</td>'
+ 		    		 +'</tr></table></form>'
+ 				+result[1]+"<input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}263()\">" ;
+ 		    	try{document.forms['frm${name}NaprView'].type${name}NaprView[aMode-1].checked='checked' ;}catch(e){}
+ 	    	 	the${name}263Dialog.show() ;
+ 	    	 }
+ 		}) ;
+    	 
+     }
+     // Показать 
      function show${name}263napr(aSls,aPreDateHosp,aLastname,aFirstname,aMiddlename,aBirthday,aMode) {
     	 $('${name}Title').innerHTML = "ВЫБОР НАПРАВЛЕНИЯ ДЛЯ ГОСПИТАЛИЗАЦИИ от "+aPreDateHosp+" на "+aLastname+" "+aFirstname+" "+aMiddlename+" "+aBirthday ;
     	 $('${name}RootDiv').innerHTML ="<i>Загрузка данных...</i>" ;

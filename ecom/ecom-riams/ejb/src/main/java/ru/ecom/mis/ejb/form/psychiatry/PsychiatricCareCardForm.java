@@ -1,9 +1,12 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+import javax.persistence.OneToOne;
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiatricCareCard;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.psychiatry.interceptor.CareCardPreCreateInterceptor;
@@ -296,4 +299,18 @@ public class PsychiatricCareCardForm extends IdEntityForm {
 	 * Новое свойство
 	 */
 	private Boolean theUpdateDates;
+	
+	/** ЛПУ */
+	@Comment("ЛПУ")
+	@Persist @Required
+	public Long getLpu() {
+		return theLpu;
+	}
+
+	public void setLpu(Long aLpu) {
+		theLpu = aLpu;
+	}
+
+	/** ЛПУ */
+	private Long theLpu;
 }

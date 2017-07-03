@@ -53,6 +53,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	<msh:sideLink name="Форма 039У-02" action="/visit_f039_list.do" params="" 
 		roles="/Policy/Poly/Ticket/Report039" styleId="report039"
 	/>
+	<msh:sideLink name="Отчет по суицидальным попыткам" action="/psych_suicideMessage_by_period.do" params="" 
+		roles="/Policy/Poly/Ticket/SuicideMessageList" styleId="reportSuicide"
+	/>
 	<msh:sideLink action="/psych_listByArea" 
 	name="Список пациентов по участкам" roles="/Policy/Poly/Ticket/Psych" styleId="psychDriveArea"/>
 

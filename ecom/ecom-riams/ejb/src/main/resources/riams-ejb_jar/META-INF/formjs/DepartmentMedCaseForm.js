@@ -174,8 +174,8 @@ function onPreSave(aForm,aEntity, aContext) {
 		cal3.setTime(dateCur) ;		
 		cal2.setTime(dateCur) ;		
 		cal1.setTime(dateFin) ;
-		
-		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-24)) ;
+		var cntHour = +getDefaultParameterByConfig("edit_slsDischarge_after_discharge", 24, aCtx) ;
+		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-1*cntHour)) ;
 		
 		if (cal1.after(cal3)) {
 			
@@ -196,13 +196,19 @@ function onPreSave(aForm,aEntity, aContext) {
 				check=aContext.serviceInvoke("WorkerService", "checkPermission", param)+"";
 				
 				if (+check==0) {
-					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение 24 часов.";
+					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение "+cntHour+" часов.";
 					
 				}
 			}
 			}
 	}
-
+//проверка на перевод из реанимации в реанимацию с галочкой не входит в омс
+	if (aForm!=null && prev!=null 
+			&& aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/CantTransferReanimationToReanimation")) { 
+		var lpu = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,aForm.department); 
+		if (lpu.getIsNoOmc() && prev.department.getIsNoOmc())
+			throw "Нельзя переводить из одной реанимации в другую реанимацию!";
+	}
 }
 function checkPrescriptionList(aForm, aEntity, aCtx) {
 	var currentDate = new java.sql.Date(new java.util.Date().getTime()) ;

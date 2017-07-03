@@ -130,17 +130,17 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public Long getResult() {return theResult;	}
 	public void setResult(Long aResult) {theResult = aResult;}
 
-	/** Обследован на RW */
-	@Comment("Обследован на RW")
-	@Persist
-	public Boolean getRwExamination() {return theRwExamination;}
-	public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
+	///** Обследован на RW */
+	//@Comment("Обследован на RW")
+	//@Persist
+	//public Boolean getRwExamination() {return theRwExamination;}
+	//public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
 
-	/** Обследован на ВИЧ */
-	@Comment("Обследован на ВИЧ")
-	@Persist
-	public Boolean getAidsExamination() {return theAidsExamination;}
-	public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
+	///** Обследован на ВИЧ */
+	//@Comment("Обследован на ВИЧ")
+	//@Persist
+	//public Boolean getAidsExamination() {return theAidsExamination;}
+	//public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
 	
 	/** Пациент */
 	@Comment("Пациент")
@@ -184,12 +184,12 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public Long getDeniedHospitalizating() {return theDeniedHospitalizating;}
 	public void setDeniedHospitalizating(Long aDeniedHospitalizating) {theDeniedHospitalizating = aDeniedHospitalizating;}
 
-	/** Дата RW */
-	@Comment("Дата RW")
-	@DateString @DoDateString 
-	@Persist
-	public String getRwDate() {return theRwDate;}
-	public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
+	///** Дата RW */
+	//@Comment("Дата RW")
+	//@DateString @DoDateString 
+	//@Persist
+	//public String getRwDate() {return theRwDate;}
+	//public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
 
 	/** Диагноз при поступлении */
 	@Comment("Диагноз при поступлении")
@@ -247,11 +247,11 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public String getStatCardNumber() {return theStatCardNumber;	}
 	public void setStatCardNumber(String aStatCardNumber) {theStatCardNumber = aStatCardNumber;}
 
-	/** Номер RW */
-	@Comment("Номер RW")
-	@Persist
-	public String getRwNumber() {return theRwNumber;}
-	public void setRwNumber(String aRwNumber) {theRwNumber = aRwNumber;}
+	///** Номер RW */
+	//@Comment("Номер RW")
+	//@Persist
+	//public String getRwNumber() {return theRwNumber;}
+	//public void setRwNumber(String aRwNumber) {theRwNumber = aRwNumber;}
 
 	/** Сообщение родственникам */
 	@Comment("Сообщение родственникам")
@@ -452,8 +452,8 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Boolean theMedicalAid;
 	/** Сообщение родственникам */
 	private Boolean theRelativeMessage;
-	/** Номер RW */
-	private String theRwNumber;
+	///** Номер RW */
+	//private String theRwNumber;
 	/** Номер стат. карты */
 	private String theStatCardNumber;
 	/** Амбулаторное лечение */
@@ -474,8 +474,8 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private Long theEntranceMkb;
 	/** Диагноз при поступлении */
 	private String theEntranceDiagnos;
-	/** Дата RW */
-	private String theRwDate;
+	///** Дата RW */
+	//private String theRwDate;
 	/** Отказ от госпитализации */
 	private Long theDeniedHospitalizating;
 	/** Кем доставлен (тип доставки) */
@@ -490,10 +490,10 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String theDateFinish;
 	/** Пациент */
 	private Long thePatient;
-	/** Обследован на ВИЧ */
-	private Boolean theAidsExamination;
-	/** Обследован на RW */
-	private Boolean theRwExamination;
+	///** Обследован на ВИЧ */
+	//private Boolean theAidsExamination;
+	///** Обследован на RW */
+	//private Boolean theRwExamination;
 	/** Результат госпитализации */
 	private Long theResult;
 	/** Исход госпитализации */
@@ -555,22 +555,22 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	public Long getJudgment35() {return theJudgment35;}
 	public void setJudgment35(Long aJudgment35) {theJudgment35 = aJudgment35;}
 
-	/** Число дней лечебных отпусков */
-	@Comment("Число дней лечебных отпусков")
-	@Persist
-	public Integer getMedicalHolidayDays() {return theMedicalHolidayDays;}
-	public void setMedicalHolidayDays(Integer aMedicalHolidayDays) {theMedicalHolidayDays = aMedicalHolidayDays;}
+	///** Число дней лечебных отпусков */
+	//@Comment("Число дней лечебных отпусков")
+	//@Persist
+	//public Integer getMedicalHolidayDays() {return theMedicalHolidayDays;}
+	//public void setMedicalHolidayDays(Integer aMedicalHolidayDays) {theMedicalHolidayDays = aMedicalHolidayDays;}
 
-	/** Число лечебных отпусков */
-	@Comment("Число лечебных отпусков")
-	@Persist
-	public Integer getMedicalHolidays() {return theMedicalHolidays;}
-	public void setMedicalHolidays(Integer aMedicalHolidays) {theMedicalHolidays = aMedicalHolidays;}
+	///** Число лечебных отпусков */
+	//@Comment("Число лечебных отпусков")
+	//@Persist
+	//public Integer getMedicalHolidays() {return theMedicalHolidays;}
+	//public void setMedicalHolidays(Integer aMedicalHolidays) {theMedicalHolidays = aMedicalHolidays;}
 
-	/** Число лечебных отпусков */
-	private Integer theMedicalHolidays;
-	/** Число дней лечебных отпусков */
-	private Integer theMedicalHolidayDays;
+	///** Число лечебных отпусков */
+	//private Integer theMedicalHolidays;
+	///** Число дней лечебных отпусков */
+	//private Integer theMedicalHolidayDays;
 	/** Решение суда по 35 статье */
 	private Long theJudgment35;
 	/** Порядок поступления */

@@ -6,6 +6,7 @@ function printArea(aCtx, aParams) {
 	var typeDate = +aParams.get("typeDate");// +check[0] ;
 	var typeInv = +aParams.get("typeInv");//+check[1] ;
 	var typeSuicide =+aParams.get("typeSuicide");// +check[2] ;
+	var typeDateSuicide =+aParams.get("typeDateSuicide");// +check[2] ;
 	var typeAge = +aParams.get("typeAge");//+check[3] ;
 	var ambulatoryCare = +aParams.get("ambulatoryCare");
 	var typeCare = +aParams.get("typeCare");
@@ -95,22 +96,22 @@ function printArea(aCtx, aParams) {
 	}
 	var suicideSql="",suicideInfo="",suicideAddField=addField("suicide",0) ; ;
 	if (typeSuicide==2) {
-		var sui = " and sui.fulfilmentDate between "+dateBegin+" and "+dateEnd+" " ;
+		var sui = " and "+((+typeDateSuicide==1)?"sui.suicideDate":"sui.regDate")+" between "+dateBegin+" and "+dateEnd+" " ;
 		if (natureSuicide>0) {
-			sui=sui+" and sui.nature_id='"+natureSuicide+"'" ;
-			var vs = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychSuicideNature, new java.lang.Long(sex)) ;
-			suicideInfo= " характер суицида: "+(vs!=null?vs.name:"?") ;
+			sui=sui+" and sui.type_id='"+natureSuicide+"'" ;
+			var vs = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.psychiatry.voc.VocSuicideMesType, new java.lang.Long(sex)) ;
+			suicideInfo= " вид суицида: "+(vs!=null?vs.name:"?") ;
 		} else {
 			suicideInfo= " суицид " ;
 		}
 		suicideSql= sui;
 		suicideAddField=addField("suicide",1) ;
 	} else if (typeSuicide==3) {
-		var sui = " and sui.fulfilmentDate between "+dateBegin+" and "+dateEnd+" and sui.isFinished='1' " ;
+		var sui = " and "+((+typeDateSuicide==1)?"sui.suicideDate":"sui.regDate")+" between "+dateBegin+" and "+dateEnd+" and sui.isFinished='1' " ;
 		if (natureSuicide>0) {
-			sui=sui+" and sui.nature_id='"+natureSuicide+"'" ;
-			var vs = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychSuicideNature, new java.lang.Long(natureSuicide)) ;
-			suicideInfo= " характер суицида завершенного: "+(vs!=null?vs.name:"?") ;
+			sui=sui+" and sui.type_id='"+natureSuicide+"'" ;
+			var vs = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.psychiatry.voc.VocSuicideMesType, new java.lang.Long(natureSuicide)) ;
+			suicideInfo= " вид суицида завершенного: "+(vs!=null?vs.name:"?") ;
 		} else {
 			suicideInfo= " суицид завершенный " ;
 		}
@@ -309,8 +310,8 @@ function printArea(aCtx, aParams) {
 	sql = sql + " left join VocCriminalCodeArticle vcca on vcca.id=ct.crimainalCodeArticle_id";
 	sql = sql + " left join PsychiaticObservation po on po.lpuAreaPsychCareCard_id=area.id" ;
 	sql = sql + groupDopJoin ;
-	sql = sql + " left join Suicide sui on sui.careCard_id=pcc.id" ;
-	sql = sql + " left join VocPsychSuicideNature vpsn on vpsn.id=sui.nature_id";
+	sql = sql + " left join SuicideMessage sui on sui.patient_id=p.id" ;
+	sql = sql + " left join VocSuicideMesType vpsn on vpsn.id=sui.type_id";
 	sql = sql + " left join VocPsychObservationReason vpor on vpor.id=area.observationReason_id" ;
 	sql = sql + " left join VocPsychTransferReason vptr on vptr.id=area.transferReason_id" ;
 	sql = sql + " left join VocPsychStrikeOffReason vpsor on vpsor.id=area.stikeOffReason_id" ;
@@ -356,7 +357,7 @@ function addField(aType,aInt) {
 			return ",'s1' as s1,'s2' as s2,'s3' as s3" ;
 			//return ",' ' as s1,' ' as s2,' ' as s3" ;
 		} else {
-			return ", to_char(sui.fulfilmentDate,'dd.mm.yyyy') as suifulfilmentdate, case when sui.isFinished='1' then 'Да' else 'Нет' end as suiisfinished, vpsn.name as vpsn " ;
+			return ", to_char(sui.suicideDate,'dd.mm.yyyy') as suifulfilmentdate, case when sui.isFinished='1' then 'Да' else 'Нет' end as suiisfinished, vpsn.name as vpsn " ;
 		}
 	} else if (aType=="group") {
 		if (aInt==0) {

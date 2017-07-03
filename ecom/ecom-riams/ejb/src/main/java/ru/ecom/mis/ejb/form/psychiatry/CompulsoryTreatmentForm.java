@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.CompulsoryTreatment;
@@ -10,8 +11,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
+import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @EntityForm
 @EntityFormPersistance(clazz = CompulsoryTreatment.class)
@@ -257,5 +260,47 @@ public class CompulsoryTreatmentForm extends IdEntityForm {
 
 	/** Дата регистрации замены */
 	private String theRegistrationReplaceDate;
+	 /** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DoDateString @DateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	@Persist @DoDateString @DateString
+	public String getEditDate() {return theEditDate;}
+	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	@Persist
+	public String getCreateUsername() {return theCreateUsername;}
+	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	/** Пользователь, последний редактировавший запись */
+	@Comment("Пользователь, последний редактировавший запись")
+	@Persist
+	public String getEditUsername() {return theEditUsername;}
+	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+
+	/** Время создания */
+	@Comment("Время создания")
+	@Persist @TimeString @DoTimeString
+	public String getCreateTime() {return theCreateTime;}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	@Persist @TimeString @DoTimeString
+	public String getEditTime() {return theEditTime;}
+	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
 	
+	/** Время редактрования */
+	private String theEditTime;
+	/** Время создания */
+	private String theCreateTime;	/** Пользователь, последний редактировавший запись */
+	private String theEditUsername;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+	/** Дата редактирования */
+	private String theEditDate;
+	/** Дата создания */
+	private String theCreateDate;
 }

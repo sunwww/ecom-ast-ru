@@ -1102,8 +1102,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	return newDoc.getId() ;
     	
     }
-    public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo){
+    public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument){
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
+    	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(Long.valueOf(0))?theManager.find(DisabilityDocument.class, aPrevDocument):null ;
     	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;		
     	if (doc.getWorkComboType()!=null) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО ДОБАВИТЬ ТОЛЬКО ПО ОСНОВНОМУ МЕСТУ РАБОТЫ") ;
@@ -1121,6 +1122,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	newDoc.setMainWorkDocumentNumber(doc.getNumber()) ;
     	newDoc.setMainWorkDocumentSeries(doc.getSeries()) ;
     	newDoc.setWorkComboType(newVocComb);
+    	newDoc.setPrevDocument(docPrev) ;
     	//newDoc.setNoActuality(doc.getNoActuality()) ;   	
     	theManager.persist(newDoc) ;
     	return newDoc.getId() ;

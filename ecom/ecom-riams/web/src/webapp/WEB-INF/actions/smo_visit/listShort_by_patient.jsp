@@ -25,9 +25,9 @@
 vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as wfExecute,
 list(vpd.name ||' '||mkb.code||' '||ds.name) as dsname
 ,list(prot.record) as protrecord, vr.name as vrname, vvr.name as vvrname
-,list(ms.code||' '||ms.name) as mslist
+,list(distinct case when smc.dtype='ServiceMedCase' then ms.code||' '||ms.name else null end) as mslist
  from medcase mc 
- left join medcase smc on smc.parent_id=mc.id and smc.dtype='ServiceMedCase'
+ left join medcase smc on smc.parent_id=mc.id 
  left join medservice ms on ms.id=smc.medservice_id
 left join vocreason vr on vr.id=mc.visitreason_id
 left join vocvisitresult vvr on vvr.id = mc.visitresult_id
@@ -39,7 +39,8 @@ left join workFunction wf on wf.id=mc.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
-where mc.patient_id='${param.id}' and (mc.DTYPE='Visit' or mc.DTYPE='ShortMedCase') and mc.dateStart is not null and (mc.noActuality is null or mc.noActuality='0')
+where mc.patient_id='${param.id}' and upper(mc.DTYPE) in ('VISIT','SHORTMEDCASE') 
+and CASE WHEN mc.dateStart is not null and (mc.noActuality is null or mc.noActuality='0') THEN '1' ELSE '0' END = '1'
 group by mc.id
 ,mc.dateStart , 
 vwf.name, wp.lastname, wp.firstname,wp.middlename , vr.name , vvr.name

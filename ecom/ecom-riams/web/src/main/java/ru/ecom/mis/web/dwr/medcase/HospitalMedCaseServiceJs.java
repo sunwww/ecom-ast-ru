@@ -197,6 +197,8 @@ public class HospitalMedCaseServiceJs {
 		}
 		return "" ;
 	}
+	
+	
 	public String getDiaryDefects(Long aDiaryId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder req = new StringBuilder();
@@ -395,6 +397,103 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("delete from HospitalDataFond where id='"+aNapr+"'") ;
 		return null;
+	}
+	public String getInfoByHDF(Long aHDF, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sql = new StringBuilder() ;
+		sql.append("select (select min(lpu.id||'###@###'||lpu.name) from mislpu lpu where lpu.codef=hdf.OrderLpuCode) as orderLpuCode") ;
+		sql.append(", hdf.numberFond as numberFond") ;
+		sql.append(", to_char(hdf.directDate,'dd.mm.yyyy') as directDate") ;
+		sql.append(", (select min(mkb.id||'###@###'||mkb.code||' '||mkb.name) from vocidc10 mkb where mkb.code=hdf.Diagnosis) as mkb") ;
+		sql.append(" from hospitaldatafond hdf where hdf.id='").append(aHDF).append("'") ;
+		List<Object[]> r = service.executeNativeSqlGetObj(sql.toString()) ;
+		if (r.isEmpty()) {
+			return null ;
+		} else {
+			Object[] o = r.get(0) ;
+			StringBuilder res = new StringBuilder() ;
+			if (o[0]==null) {res.append("###@###") ;}else{res.append(o[0]);}
+			res.append("###@###") ;
+			if (o[1]==null) {}else{res.append(o[1]);}
+			res.append("###@###") ;
+			if (o[2]==null) {}else{res.append(o[2]);}
+			res.append("###@###") ;
+			if (o[3]==null) {res.append("###@###") ;}else{res.append(o[3]);}
+			return res.toString() ;
+		}
+		
+	}
+	public String viewTable263narpByPat(Long aPATid,String aPreHospDate, String aMode, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder sqlP = new StringBuilder() ;
+		sqlP.append("select lastname,firstname,middlename,to_char(birthday,'dd.mm.yyyy') from patient where id='").append(aPATid).append("'") ;
+		List<Object[]> lP=service.executeNativeSqlGetObj(sqlP.toString()) ;
+		if (lP.isEmpty()) return "###@###" ;
+		Object[] pat = lP.get(0) ;
+		String lastname=ConvertSql.parseString(pat[0]) ;
+		String firstname=ConvertSql.parseString(pat[1]) ;
+		String middlename=ConvertSql.parseString(pat[2]) ;
+		String birthday=ConvertSql.parseString(pat[3]) ;
+		StringBuilder sql = new StringBuilder() ; 
+		sql.append(" select hdf.id,hdf.numberfond,hdf.lastname||' '||hdf.firstname||' '||hdf.middlename") ; 
+		sql.append(" 	||' '||to_char(hdf.birthday,'dd.mm.yyyy') as fio") ;
+		sql.append(" ,hdf.formHelp") ;
+		sql.append(" ,hdf.profile as f5") ;
+		sql.append(" ,to_char(coalesce(hdf.prehospdate,hdf.hospdate),'dd.mm.yyyy') as prehospdate") ;
+		sql.append(" ,hdf.directdate,hdf.snils as f8snils") ;
+		sql.append(" ,hdf.phone,hdf.diagnosis") ;
+		sql.append(" ,hdf.orderlpucode") ;
+		sql.append(" ,hdf.directlpucode") ;
+		sql.append(" ,hdf.statcard as f13") ;
+		sql.append(" ,hdf.deniedHospital") ;
+		sql.append(" ,''''||hdf.id||''','''||coalesce(''||hdf.deniedHospital,'')||'''' as idden") ;
+		sql.append(" from HospitalDataFond hdf") ;
+		sql.append(" where hdf.hospitalMedCase_id is null and (case when  hdf.isTable4 ='1' then '1' when hdf.IsTable4='1' then '1' else null end) is null") ;
+		sql.append(" and hdf.deniedHospital is null") ;
+		if (aMode==null||aMode.equals("1")) {
+			sql.append(" and hdf.lastname='").append(lastname).append("'") ;
+			sql.append(" and hdf.firstname='").append(firstname).append("'") ;
+			sql.append(" and hdf.middlename='").append(middlename).append("'") ;
+			sql.append(" and hdf.birthday=to_date('").append(birthday).append("','dd.mm.yyyy')") ;
+		} else if (aMode.equals("2")) {
+			sql.append(" and hdf.lastname='").append(lastname).append("'") ;
+		} else if (aMode.equals("3")) {
+			sql.append(" and hdf.firstname='").append(firstname).append("'") ;
+		} else if (aMode.equals("4")) {
+			sql.append(" and coalesce(hdf.prehospdate,hdf.hospdate)=to_date('").append(aPreHospDate).append("','dd.mm.yyyy')") ;
+		}
+		sql.append(" order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id") ;
+		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
+		StringBuilder ret = new StringBuilder() ;
+		ret.append(lastname).append(" ");
+		ret.append(firstname).append(" ");
+		ret.append(middlename).append(" ");
+		ret.append(birthday);
+		ret.append("###@###") ;
+		ret.append("<table border='1'><tr style='padding:10px'>") ;
+		ret.append("<th></th>") ;
+		ret.append("<th>№ по фонду</th>") ;
+		ret.append("<th>ФИО</th>") ;
+		ret.append("<th>Форма помощи</th>") ;
+		ret.append("<th>Профиль</th>") ;
+		ret.append("<th>Пред. дата госп.</th>") ;
+		ret.append("<th>Диагноз</th>") ;
+		ret.append("<th>ЛПУ направителя</th>") ;
+		ret.append("</tr>") ;
+		for (WebQueryResult wqr : l) {
+			ret.append("<tr>") ;
+			ret.append("<td><input type='button' value='Выбор' title='Установить соответствие с этим направлением' onclick=\"setHospByHDF('").append(wqr.get1()).append("','").append(aPATid).append("')\"></td>") ;
+			ret.append("<td>").append(wqr.get2()).append("</td>") ;
+			ret.append("<td>").append(wqr.get3()).append("</td>") ;
+			ret.append("<td>").append(wqr.get4()).append("</td>") ;
+			ret.append("<td>").append(wqr.get5()).append("</td>") ;
+			ret.append("<td>").append(wqr.get6()).append("</td>") ;
+			ret.append("<td>").append(wqr.get10()).append("</td>") ;
+			ret.append("<td>").append(wqr.get11()).append("</td>") ;
+			ret.append("</tr>") ;
+		}
+		ret.append("</table>") ;
+		return ret.toString() ;
 	}
 	public String viewTable263narp(Long aSLSid,String aPreHospDate,String aLastname,String aFirstname, String aMiddlename, String aBirthday, String aMode, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -1405,15 +1504,7 @@ public class HospitalMedCaseServiceJs {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
 		return service.getTypeDiagByAccoucheur() ;
 	}
-	public String getRW(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		return service.getRW(aMedCase) ;
-	}
-	public String setRW(Long aMedCase, String aRwDate, String aRwNumber, HttpServletRequest aRequest) throws NamingException, ParseException {
-		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class) ;
-		service.setRW(aMedCase, aRwDate, aRwNumber) ;
-		return "" ;
-	}
+	
 	public static void createAdminChangeMessageBySmo (Long aSmo, String aType, String aTextInfo
 			, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
