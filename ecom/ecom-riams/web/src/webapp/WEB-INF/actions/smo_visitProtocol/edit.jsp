@@ -170,10 +170,6 @@ horizontalFill="true" />
                 <msh:row>
 	                <msh:submitCancelButtonsRow colSpan="3"  functionSubmit="saveCookie();this.form.action='entityParentSaveGoSubclassView-smo_visitProtocol.do';save_form(this.form);" />
                 </msh:row>
-				<msh:row>
-					<msh:submitCancelButtonsRow colSpan="3" 
-					functionSubmit=""/>
-				</msh:row>
 			</msh:panel>
 		</msh:form>
 <tags:mis_login name="Login" />

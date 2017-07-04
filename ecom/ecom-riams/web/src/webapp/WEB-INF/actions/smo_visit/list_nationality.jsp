@@ -203,7 +203,7 @@
   	<msh:section title="Поликлиника">
 
   	
-	    <ecom:webQuery name="list_yes" maxResult="1000" nativeSql="select m.id
+	    <ecom:webQuery name="list_yes" nameFldSql="list_yes_sql" maxResult="1000" nativeSql="select m.id
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY')||' '||cast(m.timeExecute as varchar(5)) as dateStart
 
@@ -530,7 +530,7 @@ and (m.noActuality is null or m.noActuality='0') ${emergencySql}
  ${serviceStreamSql} ${patientSql} ${nationalitySql} ${regionSql} 
 group by ${groupSqlId},${groupSql}
 
-" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
 
 
     <msh:sectionTitle>Период с ${param.beginDate} по ${param.finishDate}${emergencyInfo}

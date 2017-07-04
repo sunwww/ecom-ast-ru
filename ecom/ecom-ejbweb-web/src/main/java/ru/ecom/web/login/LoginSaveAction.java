@@ -87,7 +87,7 @@ public class LoginSaveAction extends LoginExitAction {
         //String password = getHashPassword(form.getUsername(), form.getPassword()) ;
         String password = form.getPassword() ;
         LoginInfo loginInfo = new LoginInfo(form.getUsername(), password);
-        
+
         HttpSession session = aRequest.getSession(true) ;
         loginInfo.saveTo(session) ;
 
@@ -99,27 +99,23 @@ public class LoginSaveAction extends LoginExitAction {
             String[] urls=service.getConfigUrl() ;
             loginInfo.setUrlMainBase(urls[0],session) ;
             loginInfo.setUrlReportBase(urls[1],session) ;
-            
+
             logLoginUserInvironment(aRequest) ;
-            
+
             Set<String> roles = service.getUserRoles() ;
-            
+
             if(roles==null) throw new NullPointerException("Нет ролей у пользователя roles==null") ;
-            service.createRecordInAuthJournal(form.getUsername(), aRequest.getRemoteAddr(), aRequest.getLocalAddr(), aRequest.getServerName(), true,null,null) ;
+
             Long d = getPasswordAge(form.getUsername(),aRequest);
             loginInfo.setUserRoles(service.getUserRoles());
             boolean changePasswordAtLogin = needChangePasswordAtLogin(form.getUsername(), aRequest);
-            
             if ((d!=null&& d==0)||changePasswordAtLogin){
             	return aMapping.findForward("new_password") ;
             }  else if (d!=null&&d<8L) {
             	UserMessage.addMessage(aRequest,d,"Срок действия вашего пароля истекает через "+d+" дней. ", "Сменить пароль","js-secuser-changePassword.do") ;
-            	
-            }     
+
+            }
         } catch (Exception e) {
-        	//ILoginService service = Injection.find(aRequest).getService(ILoginService.class) ;
-            
-           
             LOG.error("Ошибка при входе: "+getErrorMessage(e),e);
             e.printStackTrace() ;
             LoginErrorMessage.setMessage(aRequest, getErrorMessage(e));
@@ -138,18 +134,18 @@ public class LoginSaveAction extends LoginExitAction {
                 LOG.debug("next(3) = "+next) ;
             } catch (Exception e) {
             	LOG.warn("next в URLEncode: "+next, e);
-            	
+
             	next = form.getNext().substring(form.getNext().indexOf('/',2)) ;
                 LOG.debug("next(4) = "+next) ;
             }
-            
+
             if (next.length()>1900) {
                 if(next.indexOf('?')>0) {
                     String path  = next.substring(1,next.indexOf('?'));
                     String param = next.substring(next.indexOf('?')+1) ;
-                    
-                    
-                    
+
+
+
                     String[] paramM=param.split("&") ;
                     StringBuilder res = new StringBuilder() ;
                     res.append("<form method='post' action='"+path+"'>") ;
@@ -159,7 +155,7 @@ public class LoginSaveAction extends LoginExitAction {
                         String valN  = val.substring(0,val.indexOf('='));
                         String valV = val.substring(val.indexOf('=')+1) ;
                         String valV1 = URLDecoder.decode(valV,"utf-8") ;
-                        //WebQueryResult wqr = new WebQueryResult() ; 
+                        //WebQueryResult wqr = new WebQueryResult() ;
                         //wqr.set1(valN) ;
                         //wqr.set2(valV) ;
                         //wqr.set3(valV1) ;
@@ -169,26 +165,26 @@ public class LoginSaveAction extends LoginExitAction {
                         res.append(""+valN+"=") ;
                         res.append(valV1) ;
                         //list.add(wqr) ;
-                        
+
                     }
                     res.append("Загрузка...");
                     //System.out.print(res) ;
                     res.append("</form>");
                     //StringBuilder resS = new StringBuilder() ;
                     aRequest.setAttribute("textScript","<script type='text/javascript'>document.forms[0].submit() ;</script>") ;
-                    //aRequest.setAttribute("listParam", list) ; 
-                    aRequest.setAttribute("textParam", res) ; 
-                    
+                    //aRequest.setAttribute("listParam", list) ;
+                    aRequest.setAttribute("textParam", res) ;
+
                     aRequest.setAttribute("path", path.replaceFirst("/", "")) ;
                     aRequest.setAttribute("next", param) ;
                     aRequest.getRequestDispatcher("ecom_redirectMany.do").forward(aRequest, aResponse) ;
                 }
-            	
-            	
-            } 
-            	
+
+
+            }
+
             return new ActionForward(next,true) ;
-            
+
         }
     }
     

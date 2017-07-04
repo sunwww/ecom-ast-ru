@@ -268,6 +268,7 @@
                     if (num!=null&&num!="") {
                         $('number').value=num;
                         $('number').className="viewOnly";
+                        $('number').disa
                         $('getFreeNumberButton').style.display="none";
                     } else {
                         alert ("Не удалось получить номер больничного листа");

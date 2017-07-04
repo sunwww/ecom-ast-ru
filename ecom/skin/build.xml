@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JS, css, images" basedir="." default='all' >
 
-	<property file="${user.home}/build.properties"/>
+	<!-- <property file="${user.home}/build.properties"/> -->
 
 	<target name='all' depends="prepare, shrink">
 		

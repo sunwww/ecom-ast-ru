@@ -4,7 +4,7 @@
     <property name="appname" value="ecom" />
     <property name='dirname' value="ecom/ejbweb"/>
 
-    <import file="../../ant-support/property-skeleton.xml" />
+    <import file="../ant-support/property-skeleton.xml" />
 
     <fileset id='compile.fileset' dir="${libdir}">
         <include name="stub.jar"/>
@@ -41,7 +41,7 @@
     </target>
 
     <target name="compile">
-        <ant inheritrefs="true" inheritall="true" antfile="../../ant-support/web-support.xml" target="compile"/>
+        <ant inheritrefs="true" inheritall="true" antfile="../ant-support/web-support.xml" target="compile"/>
     </target>
 
     <target name="clean">
