@@ -179,14 +179,13 @@
           <ecom:webQuery name="hitechCases" nameFldSql="hitechCases_sql" nativeSql="select himc.id
           ,to_char(himc.ticketDate,'dd.mm.yyyy') as f2_ticketDate
           ,to_char(himc.planHospDate,'dd.mm.yyyy') as f3_planHospDate
-          ,vkhc.code ||' '||vkhc.name as f4_kind
-          ,vmhc.code ||' '||vmhc.name as f5_method
+          ,(select list(vkhc.code ||' '||vkhc.name) from vocKindHighCare vkhc where vkhc.id=coalesce(himc.kind_id, slo.kindhighcare_id)) as f4_kind
+
+          ,(select list(vmhc.code ||' '||vmhc.name) from vocMethodHighCare vmhc where vmhc.id=coalesce(himc.method_id, slo.methodhighcare_id)) as f5_method
           from medcase slo
           left join HitechMedicalCase himc on  himc.medCase_id = slo.id
-          left join vocKindHighCare vkhc on vkhc.id=coalesce(himc.kind_id, slo.kindhighcare_id)
-          left join vocMethodHighCare vmhc on vmhc.id=coalesce(himc.method_id, slo.methodhighcare_id)
-          where  
-          slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase' and vkhc.id is not null
+          where
+          slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase'
           order by himc.ticketDate
           "/>
 	    <msh:section title="Случаи ВМП (включая случаи в СЛО) ">
