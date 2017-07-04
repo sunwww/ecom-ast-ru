@@ -24,7 +24,7 @@
 ,mc.dateStart as datstart, 
 vwf.name ||' '|| wp.lastname ||' '|| wp.firstname ||' '|| wp.middlename as wfExecute,
 list(vpd.name ||' '||mkb.code||' '||ds.name) as dsname
-,list(prot.record) as protrecord, vr.name as vrname, vvr.name as vvrname
+,list(distinct case when prot.dtype='Protocol' then prot.record else null end) as protrecord, vr.name as vrname, vvr.name as vvrname
 ,list(distinct case when smc.dtype='ServiceMedCase' then ms.code||' '||ms.name else null end) as mslist
  from medcase mc
  left join medcase smc on smc.parent_id=mc.id 
@@ -34,7 +34,7 @@ left join vocvisitresult vvr on vvr.id = mc.visitresult_id
 left join diagnosis ds on ds.medcase_id=mc.id
 left join vocidc10 mkb on mkb.id=ds.idc10_id
 left join VocPriorityDiagnosis vpd on vpd.id = ds.priority_id
-left join diary prot on prot.medcase_id=mc.id and prot.dtype='Protocol'
+left join diary prot on prot.medcase_id=mc.id
 left join workFunction wf on wf.id=mc.workFunctionExecute_id
 left join vocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join worker w on w.id=wf.worker_id
