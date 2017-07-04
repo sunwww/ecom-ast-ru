@@ -276,18 +276,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	try {
 
     		System.out.println("start importDataFond");
-    		
+    		/*
     		monitor = theMonitorService.startMonitor(aMonitorId, "ImportFondMonitor", aList.size());
     		monitor.advice(20) ;
     		System.out.println("start importDataFond");
-/*
+*/
     		try{
     		monitor = theMonitorService.getMonitor(aMonitorId);
     		monitor.advice(20) ;
     		}catch(Exception e) {
     			e.fillInStackTrace() ;
     		}
-*/
+
     		int size = aList.size()/80 ;
     		
     		for (int i=0;i<aList.size();i++) {
@@ -2231,6 +2231,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     			throws ParserConfigurationException, TransformerException, ParseException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+    	String time_263 =config.get("injuction263.format.time"
+    			, "09:00");
     	String workDir =config.get("tomcat.data.dir"
     			, "/opt/tomcat/webapps/rtf");
     	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
@@ -2315,52 +2317,52 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		//sqlB1.append(" ,list(distinct lpu.name) as fldName") ;
     		//sqlB1.append(" ,list(distinct vbst.name) as vbstname") ;
     		//sqlB1.append(" ,list(distinct vss.name) as vssname") ;
-    		sqlB1.append(" count(distinct case when (slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and cast('09:00:00' as time)>slo.entrancetime") ;
+    		sqlB1.append(" count(distinct case when (slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and cast('").append(time_263).append(":00' as time)>slo.entrancetime") ;
     		sqlB1.append("	or to_date('").append(dateBegin).append("','dd.mm.yyyy')>slo.datestart)") ;
     		sqlB1.append("	and (slo.datefinish is null ") ;
     		sqlB1.append("	or slo.datefinish > to_date('").append(dateBegin).append("','dd.mm.yyyy') ") ;
-    		sqlB1.append("	or slo.datefinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time))") ;
+    		sqlB1.append("	or slo.datefinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('").append(time_263).append("' as time))") ;
     		sqlB1.append("	and (slo.transferdate is null ") ;
     		sqlB1.append("	or slo.transferdate > to_date('").append(dateBegin).append("','dd.mm.yyyy')") ; 
     		sqlB1.append("	or") ;
-    		sqlB1.append("	slo.transferdate = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time))") ;
+    		sqlB1.append("	slo.transferdate = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.transfertime>=cast('").append(time_263).append("' as time))") ;
     		sqlB1.append("	 then slo.id else null end)") ;
     		sqlB1.append("	as cnt0CurrentFrom") ;
     		
     		sqlB1.append("	,count(distinct case when slo.prevmedcase_id is null and (slo.datestart between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
-    		sqlB1.append("	 or slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)") ;
-    		sqlB1.append(" or slo.datestart = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)") ;
+    		sqlB1.append("	 or slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.entrancetime>=cast('").append(time_263).append(":00' as time)") ;
+    		sqlB1.append(" or slo.datestart = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('").append(time_263).append("' as time)>slo.entrancetime) then slo.id else null end)") ;
     		sqlB1.append("	as cnt1Entrance") ;
     		
     		sqlB1.append("	,count(distinct case when slo.prevmedcase_id is not null and (slo.datestart between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
-    		sqlB1.append("	 or slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.entrancetime>=cast('09:00:00' as time)") ;
-    		sqlB1.append("	or slo.datestart = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.entrancetime) then slo.id else null end)") ;
+    		sqlB1.append("	 or slo.datestart = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.entrancetime>=cast('").append(time_263).append(":00' as time)") ;
+    		sqlB1.append("	or slo.datestart = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('").append(time_263).append("' as time)>slo.entrancetime) then slo.id else null end)") ;
     		sqlB1.append("	as cnt2TransferOutOtherDepartment") ;
     		
     		sqlB1.append("	,count(distinct case when  (slo.transferdate between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
-    		sqlB1.append("	 or slo.transferdate = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.transfertime>=cast('09:00:00' as time)") ;
-    		sqlB1.append("	or slo.transferdate = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.transfertime) then slo.id else null end)") ; 
+    		sqlB1.append("	 or slo.transferdate = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.transfertime>=cast('").append(time_263).append(":00' as time)") ;
+    		sqlB1.append("	or slo.transferdate = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('").append(time_263).append("' as time)>slo.transfertime) then slo.id else null end)") ; 
     		sqlB1.append("	as cnt3TransferInOtherDepartment") ;
     		
     		sqlB1.append("	,count(distinct case when vhr.code!='11' and (slo.dateFinish between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
-    		sqlB1.append("	 or slo.dateFinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)") ;
-    		sqlB1.append("	or slo.dateFinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)") ; 
+    		sqlB1.append("	 or slo.dateFinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('").append(time_263).append(":00' as time)") ;
+    		sqlB1.append("	or slo.dateFinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('").append(time_263).append("' as time)>slo.dischargetime) then slo.id else null end)") ; 
     		sqlB1.append("	as cnt4Finished") ;
     		
     		sqlB1.append("	,count(distinct case when vhr.code='11' and (slo.dateFinish between to_date('").append(dateNextBegin).append("','dd.mm.yyyy') and to_date('").append(dateEnd).append("','dd.mm.yyyy')") ;
-    		sqlB1.append("	 or slo.dateFinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00:00' as time)") ;
-    		sqlB1.append("	or slo.dateFinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('09:00' as time)>slo.dischargetime) then slo.id else null end)") ; 
+    		sqlB1.append("	 or slo.dateFinish = to_date('").append(dateBegin).append("','dd.mm.yyyy') and slo.dischargetime>=cast('").append(time_263).append(":00' as time)") ;
+    		sqlB1.append("	or slo.dateFinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and cast('").append(time_263).append("' as time)>slo.dischargetime) then slo.id else null end)") ; 
     		sqlB1.append("	as cnt5Death") ;
     		
     		sqlB1.append("	, count(distinct case when") ; 
     		sqlB1.append("			(") ;
     		sqlB1.append("				slo.transferdate is null") ;
     		sqlB1.append("				or slo.transferdate > to_date('").append(dateNextEnd).append("','dd.mm.yyyy')") ;
-    		sqlB1.append("				or slo.transferdate = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and slo.transfertime>=cast('09:00' as time)") ;
+    		sqlB1.append("				or slo.transferdate = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and slo.transfertime>=cast('").append(time_263).append("' as time)") ;
     		sqlB1.append("			) and (") ;
     		sqlB1.append("				slo.datefinish is null or") ;
     		sqlB1.append("				slo.datefinish > to_date('").append(dateNextEnd).append("','dd.mm.yyyy')") ;
-    		sqlB1.append("				or slo.datefinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and slo.dischargetime>=cast('09:00' as time)") ;
+    		sqlB1.append("				or slo.datefinish = to_date('").append(dateNextEnd).append("','dd.mm.yyyy') and slo.dischargetime>=cast('").append(time_263).append("' as time)") ;
     		sqlB1.append("			)") ;
     		sqlB1.append("		 then slo.id else null end") ;
     		sqlB1.append("	)") ;
@@ -2380,17 +2382,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		sqlB1.append("	left join vochosptype vht on vht.id=sls.sourceHospType_id") ;
     		sqlB1.append("	where ") ;
     		sqlB1.append("	slo.dtype='DepartmentMedCase' ") ;
-    		sqlB1.append("	and (to_date('23.06.2017','dd.mm.yyyy')>slo.datestart") ;
-    		sqlB1.append("	or to_date('23.06.2017','dd.mm.yyyy')=slo.dateStart and cast('09:00' as time)>slo.entrancetime") ;
+    		sqlB1.append("	and (to_date('").append(dateNextEnd).append("','dd.mm.yyyy')>slo.datestart") ;
+    		sqlB1.append("	or to_date('").append(dateNextEnd).append("','dd.mm.yyyy')=slo.dateStart and cast('").append(time_263).append("' as time)>slo.entrancetime") ;
     		sqlB1.append("	)") ;
     		sqlB1.append("	and (slo.datefinish is null") ; 
     		sqlB1.append("	or") ;
-    		sqlB1.append("	slo.datefinish>to_date('21.06.2017','dd.mm.yyyy')") ;
-    		sqlB1.append("	or to_date('21.06.2017','dd.mm.yyyy')=slo.datefinish and slo.dischargetime>=cast('09:00' as time)") ;
+    		sqlB1.append("	slo.datefinish>to_date('").append(dateBegin).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("	or to_date('").append(dateBegin).append("','dd.mm.yyyy')=slo.datefinish and slo.dischargetime>=cast('").append(time_263).append("' as time)") ;
     		sqlB1.append("	)") ;
     		sqlB1.append("	and (slo.transferdate is null ") ;
-    		sqlB1.append("	or slo.transferdate > to_date('21.06.2017','dd.mm.yyyy')") ;
-    		sqlB1.append("	or to_date('21.06.2017','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('09:00' as time)") ;
+    		sqlB1.append("	or slo.transferdate > to_date('").append(dateBegin).append("','dd.mm.yyyy')") ;
+    		sqlB1.append("	or to_date('").append(dateBegin).append("','dd.mm.yyyy')=slo.transferdate and slo.transfertime>=cast('").append(time_263).append("' as time)") ;
     		sqlB1.append("	)") ;
     		sqlB1.append("	  and vss.code='OBLIGATORYINSURANCE' and bf.id in (").append(obj[4]).append(")") ;
     		sqlB1.append("	group by vbt.codeF") ;
@@ -2409,7 +2411,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"POSTP",objB1==null?0:(ConvertSql.parseLong(objB1[1])+ConvertSql.parseLong(objB1[2])),true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VIBP",objB1==null?0:(ConvertSql.parseLong(objB1[3])+ConvertSql.parseLong(objB1[4])+ConvertSql.parseLong(objB1[5])),true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"PLANP",obj==null?0:(ConvertSql.parseLong(obj[5])),true,"") ;
-    		Long freek = objB1==null?0:(ConvertSql.parseLong(obj[3])-ConvertSql.parseLong(objB1[6])-(obj==null?Long.valueOf(0):(ConvertSql.parseLong(obj[5])))) ;
+    		Long freek = objB1==null?0:(ConvertSql.parseLong(obj[3])-ConvertSql.parseLong(objB1[6])
+    				-(obj==null?Long.valueOf(0):(ConvertSql.parseLong(obj[5])))) ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEK",freek>Long.valueOf(0)?freek:0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEM",0,true,"") ;
     		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FREEW",0,true,"") ;
