@@ -15,7 +15,7 @@ function onPreCreate(aForm, aCtx) {
     if (!list.isEmpty()&&list.size()>0) {
         throw "У пациента уже есть неотозванное согласие на передачу. Создание нового невозможно";
     }
-    aCtx.manager.createNativeQuery("update patient set isTransferAgreementExist='1' where id="+pat).executeUpdate();
+  //  aCtx.manager.createNativeQuery("update patient set isTransferAgreementExist='1' where id="+pat).executeUpdate();
 
 }
 
@@ -25,10 +25,10 @@ function onPreSave(aForm, aEntity, aCtx) {
     if (aForm.getDisabled()!=null&&aForm.getDisabled()=="1") {
         var date = new java.util.Date() ;
         aForm.setDateTo(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-        var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
-        aForm.setEditUsername(username);
-        aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
     }
+    var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
+    aForm.setEditUsername(username);
+    aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
 }
 function checkFields(aForm, aCtx) {
     var phone = aForm.getPhoneNumber().trim();
@@ -75,8 +75,9 @@ function checkFields(aForm, aCtx) {
          * TODO
          * При изменении номера телефона необходимо отвязать старый номер, на этого же пациента привязать новый номер. Вести журнал изменения номеров
          */
-        if (aForm.getPhoneNumber()!=null&&aForm.getPhoneNumber!=aEntity.getPhoneNumber()) {
-            onCreate(aForm, aEntity, aCtx);
+        if (aEntity.getDateTo()!=null) {
+            var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
+            bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager);
         }
 
     }
@@ -91,8 +92,9 @@ function checkFields(aForm, aCtx) {
         if (aPhone.startsWith("8")) {
             aPhone = "+7"+ aPhone.substring(1);
         } else if (!aPhone.startsWith("+")) {
-            aPhone +="+"+aPhone;
+            aPhone ="+"+aPhone;
         }
+
         aPhone = aPhone.split(" ").join("");
         aPhone = aPhone.split("-").join("");
         var regexpPhone = /^\+\d{11}$/;
@@ -106,7 +108,7 @@ function checkFields(aForm, aCtx) {
         if (aEmail != null && aEmail.trim() != "") {
             aEmail = aEmail.trim();
             var regexpEmail = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/;
-            if (regexpEmail.test(aEmail)) {
+            if (!regexpEmail.test(aEmail)) {
                 throw "Неправильно заполнен адрес электронной почты";
             }
         }

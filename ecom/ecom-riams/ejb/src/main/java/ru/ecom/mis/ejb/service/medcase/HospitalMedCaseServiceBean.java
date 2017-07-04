@@ -107,14 +107,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     	System.out.println("cnt%len = "+(lend%len)) ;
     	for (int i=0;i<cnt;i++) {
     		DischargeEpicrisis prot = new DischargeEpicrisis() ;
-    		System.out.println("record1="+aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
+    	//	System.out.println("record1="+aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
     		prot.setRecord(aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
     		prot.setMedCase(aMedCase) ;
     		aManager.persist(prot);
     	}
     	if (lend%len>0) {
     		DischargeEpicrisis prot = new DischargeEpicrisis() ;
-    		System.out.println("record2="+aDischargeEpicrisis.substring(len*cnt)) ;
+    		//System.out.println("record2="+aDischargeEpicrisis.substring(len*cnt)) ;
     		prot.setRecord(aDischargeEpicrisis.substring(len*cnt)) ;
     		prot.setMedCase(aMedCase) ;
     		aManager.persist(prot);
@@ -206,7 +206,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 org.jdom.Element parEl = (org.jdom.Element) o;
                 if ("ZGLV".equals(parEl.getName())) {
                 	type = parEl.getChild("FILENAME").getText().trim().toUpperCase().substring(0,2) ;
-                	System.out.println("type-------------"+type) ;
+                //	System.out.println("type-------------"+type) ;
                 } else if("NPR".equals(parEl.getName())) {
                 	//System.out.println("parel=="+parEl.getChildren("REFREASON")) ;
                 	if (parEl.getChildren("REFREASON").isEmpty()) {

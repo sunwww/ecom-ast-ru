@@ -187,9 +187,8 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 				if (taxSum>0) {
 					root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()+"") ;
 				}
-				
-				
 			}
+			root.put("isTerminalPayment", isTerminalPayment);
 			makeHttpPostRequest(root.toString(), aRequest);
 			return "Чек отправлен на печать";
 		} else {

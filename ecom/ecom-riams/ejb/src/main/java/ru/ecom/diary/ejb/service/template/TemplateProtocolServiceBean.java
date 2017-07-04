@@ -65,13 +65,9 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						connection = (HttpURLConnection) url.openConnection();
 						if (params!=null&&!params.isEmpty()) {
 							for (Map.Entry<String,String> par: params.entrySet()) {
-
+								log.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
 								connection.setRequestProperty(par.getKey(),par.getValue());
-								//paramData.append(URLEncoder.encode(par.getKey(),"UTF-8")).append("=");
-								//paramData.append(URLEncoder.encode(par.getValue(),"UTF-8"));
 							}
-
-
 						}
 					    connection.setDoInput(true);
                         connection.setDoOutput(true);
@@ -154,7 +150,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	}
 
 	/**
-	 * Регистрация пациента в личном кабинете
+	 * Регистрация пациента в личном кабинете (а также прекращение регистрации)
 	 * @param aPatientExternalServiceAccountId - ИД согласия
 	 * @param aManager
 	 */
@@ -170,18 +166,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			Patient pat = pesa.getPatient();
 			JSONObject root = new JSONObject();
 			Map<String,String> params = new LinkedHashMap<String,String>();
-			String function  = "SetRegisterPatient";
-			Date birthDate = pat.getBirthday();
-			Calendar cal = new GregorianCalendar();
-			cal.setTime(birthDate);
-			cal.set(Calendar.MONTH,0);
-			cal.set(Calendar.DATE,1);
-			birthDate = new java.sql.Date(cal.getTimeInMillis());
-
-			root.put("firstname", pat.getFirstname());
-			root.put("birthday",birthDate);
-			root.put("phonenumber",pesa.getPhoneNumber());
-			root.put("email",pesa.getEmail());
+			String function  = "";
 			//root.put("finishdate",pesa.getDateTo()!=null?pesa.getDateTo():"");
 			//root.put("patientcode",pesa.getExternalCode()!=null?pesa.getExternalCode():"");
 
@@ -189,7 +174,20 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				log.info("Отзываем согласие пациента. uid = "+pesa.getExternalCode());
 				params.put("uid",pesa.getExternalCode());
 				function="SetBlockPatient";
+			} else {
+				Date birthDate = pat.getBirthday();
+				Calendar cal = new GregorianCalendar();
+				cal.setTime(birthDate);
+				cal.set(Calendar.MONTH,0);
+				cal.set(Calendar.DATE,1);
+				birthDate = new java.sql.Date(cal.getTimeInMillis());
+				function = "SetRegisterPatient";
+				root.put("firstname", pat.getFirstname());
+				root.put("birthday",birthDate);
+				root.put("phonenumber",pesa.getPhoneNumber());
+				root.put("email",pesa.getEmail());
 			}
+
 			makeHttpPostRequest(root.toString(),address,function, params, aPatientExternalServiceAccountId, aManager);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -474,7 +472,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	public static String saveParametersByProtocol(Long aSmoId,Protocol d, String aParams, String aUsername, EntityManager aManager) throws JSONException {
 		JSONObject obj = new JSONObject(aParams) ;
 		String wf = String.valueOf(obj.get("workFunction"));
-		System.out.print("workfunction================"+wf);
+		//System.out.print("workfunction================"+wf);
 		StringBuilder sql = new StringBuilder() ;
 		MedCase m = aManager.find(MedCase.class, aSmoId) ;
 		if (m!=null) {

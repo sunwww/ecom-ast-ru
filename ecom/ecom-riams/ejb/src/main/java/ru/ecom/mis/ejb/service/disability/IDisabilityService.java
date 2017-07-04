@@ -9,6 +9,7 @@ import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 import ru.ecom.poly.ejb.services.GroupByDate;
 
 public interface IDisabilityService {
+	public String getLNNumberRange (Long aCount) ;
 	public String exportDisabilityDocument(Long aDocumentId) ;
 	public void createF16vn(String aDateStart,String aDateEnd) ;
 	public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate) ;

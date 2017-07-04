@@ -64,6 +64,13 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
 )
 public class PatientForm extends IdEntityForm {
 
+	/** Номер телефона для мобильного приложения */
+	@Comment("Номер телефона для мобильного приложения")
+	public String getMobileAppPhoneNumber() {return theMobileAppPhoneNumber;}
+	public void setMobileAppPhoneNumber(String aMobileAppPhoneNumber) {theMobileAppPhoneNumber = aMobileAppPhoneNumber;}
+	/** Номер телефона для мобильного приложения */
+	private String theMobileAppPhoneNumber ;
+
 	/** Не голосует */
 	@Comment("Не голосует")
 	@Persist

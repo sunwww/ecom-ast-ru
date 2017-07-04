@@ -103,6 +103,12 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		}
 		return "";
 	}
+	public String exportDisabilityDocument(Long aDocumentId)  {
+    	return exportDisabilityDocumentOrGetNumberRange("exportDocument",aDocumentId,null);
+	}
+	public String getLNNumberRange(Long aCount)  {
+		return exportDisabilityDocumentOrGetNumberRange("getNumberRange",null,aCount);
+	}
     private String getSoftConfigValue (String aKey, String aDefaultValue) {
     	List<Object[]> list = theManager.createNativeQuery("select id,keyvalue from softconfig where key='"+aKey+"'").getResultList();
     	if (list.isEmpty()) {
@@ -116,14 +122,17 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	}
 
 	/**
-	 * Выгружаем ЭЛН на сервис экспорта в ФСС. Получаем ИД документа нетрудоспособности, возвращаем ответ сервиса
+	 * Выгружаем ЭЛН на сервис экспорта в ФСС, отправляем запрос на получения списка номеров электронных ЛН. Получаем ИД документа нетрудоспособности, возвращаем ответ сервиса
 	 * @param aDocumentId - ИД документа
+	 * @param aRangeCount - Количество номеров для импорта
+	 * @param aMethod- Метод, на который отправляется запрос
 	 * @return Результат экспорта
 	 */
-	public String exportDisabilityDocument(Long aDocumentId) {
+	private String exportDisabilityDocumentOrGetNumberRange(String aMethod, Long aDocumentId, Long aRangeCount) {
 		//Формируем строку для отправки на сервис Руслана
 		String address = getSoftConfigValue("FSS_PROXY_SERVICE",null);
 		String lpuId= getSoftConfigValue("DEFAULT_LPU",null);
+		String method = "";
 		if (address==null||lpuId==null) {
 			LOG.info ("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId);
 			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId;
@@ -135,9 +144,23 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				LOG.info ("У ЛПУ не указан ОГРН. ЛПУ = "+lpuId);
 				return "У ЛПУ не указан ОГРН. ЛПУ = "+lpuId;
 			}
+		if (aMethod!=null&&aMethod.equals("exportDocument")) {
+				if (aDocumentId!=null&&aDocumentId>0) {
+					method = "SetLnData?id="+aDocumentId+"&ogrn="+ogrn;
+				} else {
+					return "";
+				}
 
-			String method = "SetLnData";
-			method+="?id="+aDocumentId+"&ogrn="+ogrn;
+		} else if (aMethod!=null&&aMethod.equals("getNumberRange")) {
+				if (aRangeCount!=null&&aRangeCount>0){
+					method ="sNewLnNumRange?ogrn="+ogrn+"&count="+aRangeCount;
+				} else {
+					return "";
+				}
+		} else {
+				return "";
+		}
+
 			return makeHttpGetRequest(address,method);
 		}
 		return "Не найдено ЛПУ для отправки больничного листа";
