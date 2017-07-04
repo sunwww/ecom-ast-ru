@@ -6,6 +6,12 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 
 public class ContractReportsForm extends BaseValidatorForm{
 	
+	/** Рабочая функция исполнителя */
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Рабочая функция исполнителя */
+	private Long theWorkFunction ;
+	
 	/** Гарантийное письмо (номер */
 	public String getGuaranteeNumber() {return theGuaranteeNumber;}
 	public void setGuaranteeNumber(String aGuaranteeNumber) {theGuaranteeNumber = aGuaranteeNumber;}

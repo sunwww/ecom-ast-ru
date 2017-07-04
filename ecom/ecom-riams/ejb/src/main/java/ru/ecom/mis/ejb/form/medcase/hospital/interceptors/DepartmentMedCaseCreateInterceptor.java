@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 
 import ru.ecom.ejb.services.entityform.IEntityForm;
@@ -14,15 +13,12 @@ import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
-import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.util.format.DateConverter;
 import ru.nuzmsh.util.format.DateFormat;
-import sun.awt.windows.ThemeReader;
 
 
 /**
@@ -88,7 +84,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     
     public static boolean isPregnancyExists(EntityManager aManager, Long aMedCaseId) {
     	if (aMedCaseId==null) {return true;}
-		System.out.println("===== Проверяем на роды, DEP_MC_CREATE_department_id: <> "+aMedCaseId);
+		//System.out.println("===== Проверяем на роды, DEP_MC_CREATE_department_id: <> "+aMedCaseId);
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
 			String sql = "select count(cb.id) from medcase slo " +
@@ -96,7 +92,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					" left join childBirth cb on cb.medcase_id=slos.id" +
 					" where slo.id="+aMedCaseId+" and cb.pangsStartDate is not null";
 			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
-			System.out.println("=== РОДЫ, list.size()="+list.toString());
+		//	System.out.println("=== РОДЫ, list.size()="+list.toString());
 			if (Long.valueOf(list.toString())>0) {
 				return true;
 			} else {

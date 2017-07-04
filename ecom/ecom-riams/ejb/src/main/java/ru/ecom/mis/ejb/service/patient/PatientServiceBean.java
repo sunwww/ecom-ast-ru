@@ -251,6 +251,7 @@ public class PatientServiceBean implements IPatientService {
 		String [][] streetList = {
 				{"Н.ОСТРОВСКОГО ул","Николая Островского ул"}
 				,{"В.Комарова ул","Космонавта В.Комарова ул"}
+				,{"М.ЛУКОНИНА ул","Михаила Луконина ул"}
 				};
 			for (int i=0;i<streetList.length;i++) {
 				if (streetList[i][0].toUpperCase().equals(aStreet)) {
@@ -649,7 +650,7 @@ public class PatientServiceBean implements IPatientService {
 		String lpu = aLpu, attachedType=aAttachedType, attachedDate = aAttachedDate;
 	//	System.out.println("=== === "+aPatientId+ ":"+aCompany+ ":"+aLpu+ ":"+aAttachedDate+ ":"+aAttachedType);
 		RegInsuranceCompany insCompany =null; 
-		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where smoCode = :code and (deprecated is null or deprecated='0')")
+		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where omcCode = :code and (deprecated is null or deprecated='0')")
 				.setParameter("code", aCompany).getResultList(); 
 		
 		if (!companies.isEmpty()) {
@@ -1252,6 +1253,7 @@ public class PatientServiceBean implements IPatientService {
 			theManager.createNativeQuery("  update PatientFond set patient =:idnew where patient =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update JournalPatientFondCheck set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			theManager.createNativeQuery("  update JournalChangePatient set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+			theManager.createNativeQuery("  update QualityEstimationCard set patient_id =:idnew where patient_id =:idold ").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
 			
 		}
 	}

@@ -1,7 +1,8 @@
 package ru.ecom.mis.ejb.service.disability;
 
-import java.io.FileWriter;
-import java.io.StringReader;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -69,8 +70,101 @@ public class DisabilityServiceBean implements IDisabilityService  {
 
     private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
-    
+
+	/**
+	 * Делаем просто GET запрос, возвращаем ответ сервера
+	 * @param aAddress
+	 * @param aMethod
+	 * @return
+	 */
+    public String makeHttpGetRequest (String aAddress, String aMethod)  {
+		try {
+			URL url = new URL(aAddress+"/"+aMethod);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setRequestMethod("GET");
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(),"UTF-8"));
+			StringBuilder response = new StringBuilder();
+			String s = "";
+			while ((s = in.readLine()) != null) {
+                response.append(s);
+            }
+			in.close();
+			connection.disconnect();
+			if (response.length()>0) {
+               // LOG.info("Получили ответ, вот он"+response.toString());
+                return response.toString();
+
+            }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	public String exportDisabilityDocument(Long aDocumentId)  {
+    	return exportDisabilityDocumentOrGetNumberRange("exportDocument",aDocumentId,null);
+	}
+	public String getLNNumberRange(Long aCount)  {
+		return exportDisabilityDocumentOrGetNumberRange("getNumberRange",null,aCount);
+	}
+    private String getSoftConfigValue (String aKey, String aDefaultValue) {
+    	List<Object[]> list = theManager.createNativeQuery("select id,keyvalue from softconfig where key='"+aKey+"'").getResultList();
+    	if (list.isEmpty()) {
+    		return aDefaultValue;
+		}
+		return list.get(0)[1].toString();
+	}
+    private String getConfigValue(String aKey, String aDefaultValue) {
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		return config.get(aKey, aDefaultValue) ;
+	}
+
+	/**
+	 * Выгружаем ЭЛН на сервис экспорта в ФСС, отправляем запрос на получения списка номеров электронных ЛН. Получаем ИД документа нетрудоспособности, возвращаем ответ сервиса
+	 * @param aDocumentId - ИД документа
+	 * @param aRangeCount - Количество номеров для импорта
+	 * @param aMethod- Метод, на который отправляется запрос
+	 * @return Результат экспорта
+	 */
+	private String exportDisabilityDocumentOrGetNumberRange(String aMethod, Long aDocumentId, Long aRangeCount) {
+		//Формируем строку для отправки на сервис Руслана
+		String address = getSoftConfigValue("FSS_PROXY_SERVICE",null);
+		String lpuId= getSoftConfigValue("DEFAULT_LPU",null);
+		String method = "";
+		if (address==null||lpuId==null) {
+			LOG.info ("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId);
+			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId;
+		}
+		List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = "+lpuId).getResultList();
+		if (list.size()>0) {
+			String ogrn = list.get(0)[1].toString();
+			if (ogrn==null||ogrn.equals("0")) {
+				LOG.info ("У ЛПУ не указан ОГРН. ЛПУ = "+lpuId);
+				return "У ЛПУ не указан ОГРН. ЛПУ = "+lpuId;
+			}
+		if (aMethod!=null&&aMethod.equals("exportDocument")) {
+				if (aDocumentId!=null&&aDocumentId>0) {
+					method = "SetLnData?id="+aDocumentId+"&ogrn="+ogrn;
+				} else {
+					return "";
+				}
+
+		} else if (aMethod!=null&&aMethod.equals("getNumberRange")) {
+				if (aRangeCount!=null&&aRangeCount>0){
+					method ="sNewLnNumRange?ogrn="+ogrn+"&count="+aRangeCount;
+				} else {
+					return "";
+				}
+		} else {
+				return "";
+		}
+
+			return makeHttpGetRequest(address,method);
+		}
+		return "Не найдено ЛПУ для отправки больничного листа";
+	}
    public boolean isRightSnils (String aSNILS) {
 	//   System.out.println("=======isRightSnils, snilsBefore="+aSNILS);
 		String currentSnils = aSNILS.replace("-", "").replace(" ", "").replace("\t","");
@@ -1008,8 +1102,9 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	return newDoc.getId() ;
     	
     }
-    public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo){
+    public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument){
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
+    	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(Long.valueOf(0))?theManager.find(DisabilityDocument.class, aPrevDocument):null ;
     	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;		
     	if (doc.getWorkComboType()!=null) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО ДОБАВИТЬ ТОЛЬКО ПО ОСНОВНОМУ МЕСТУ РАБОТЫ") ;
@@ -1027,6 +1122,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	newDoc.setMainWorkDocumentNumber(doc.getNumber()) ;
     	newDoc.setMainWorkDocumentSeries(doc.getSeries()) ;
     	newDoc.setWorkComboType(newVocComb);
+    	newDoc.setPrevDocument(docPrev) ;
     	//newDoc.setNoActuality(doc.getNoActuality()) ;   	
     	theManager.persist(newDoc) ;
     	return newDoc.getId() ;

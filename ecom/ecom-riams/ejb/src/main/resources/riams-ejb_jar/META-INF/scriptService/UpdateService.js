@@ -1,4 +1,8 @@
 function update_postgres(aCtx, aParams) {
+    default_id(aCtx,"ExportFSSLog") ;
+
+	default_id(aCtx,"ChangeJournal") ;
+
 	default_id(aCtx,"CustomMessage") ;
 	default_id(aCtx,"ChildBirth") ;
 	default_id(aCtx,"NewBorn") ;
@@ -16,6 +20,7 @@ function update_postgres(aCtx, aParams) {
 	drop_index(aCtx,"kladr","kladr_kladrcode") ;
 	max_sequnce_default_id(aCtx,"Address2","Addressid") ;
 	max_sequnce_default_id(aCtx,"Kladr","Id") ;
+	default_fld(aCtx,"HospitalDataFond","voc_time='0'","case when voc_time>0 then '1' else null end is null") ;
 	return "1" ;
 }
 function max_sequnce_default_id(aCtx,aTable,aFldId) {
@@ -27,6 +32,11 @@ function max_sequnce_default_id(aCtx,aTable,aFldId) {
 function default_id(aCtx,aTable) {
 	aTable=aTable.toLowerCase() ;
 	aCtx.manager.createNativeQuery("alter table "+aTable+" alter column id set default nextval('"+aTable+"_sequence')").executeUpdate() ;
+	return "1" ;
+}
+function default_fld(aCtx,aTable,aFld,aWhere) {
+	aTable=aTable.toLowerCase() ;
+	aCtx.manager.createNativeQuery("update "+aTable+" set "+aFld+" where "+aWhere+"").executeUpdate() ;
 	return "1" ;
 }
 function drop_index(aCtx,aTable,aIndex) {

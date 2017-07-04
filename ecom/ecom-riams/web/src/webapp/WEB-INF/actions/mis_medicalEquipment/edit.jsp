@@ -34,7 +34,7 @@
                     <msh:autoComplete property="marka" label='Марка' vocName="vocMarka" horizontalFill="true" fieldColSpan="4"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="amount" label='Количество' vocName="vocMarka" horizontalFill="true" fieldColSpan="4"/>
+                    <msh:textField property="amount" label='Количество' horizontalFill="true" fieldColSpan="4"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="createYear" label="Год выпуска" size="50"/>
@@ -79,8 +79,9 @@
 			<msh:section>
 			<msh:sectionTitle>Оборудование используется в других отделениях</msh:sectionTitle>
 			<msh:sectionContent>
-			<ecom:webQuery name="list" nativeSql="select lpu.id, lpu.name from equipment_mislpu el 
-			left join mislpu lpu on lpu.id=el.otherlpu_id and el.equipment_id=${param.id}
+			<ecom:webQuery name="list" nativeSql="select lpu.id, lpu.name from mislpu lpu   
+			left join equipment_mislpu el on lpu.id=el.otherlpu_id 
+			where el.equipment_id=${param.id}
 			order by lpu.name"/>
 			<msh:table name="list" action="entityView-mis_lpu.do" idField="1">
 			            <msh:tableColumn columnName="Подразделение" property="2"/>

@@ -49,8 +49,14 @@
       	  <msh:textField property="address" size="50"  label="Место исполнения заявки" viewOnlyField="true"/>
         </msh:row>
           <msh:row>
-	         <msh:autoComplete vocName="vocClaimType" size="50"  property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
-          </msh:row> 
+              <msh:ifInRole roles="/Policy/Mis/Claim/Operator">
+	         <msh:autoComplete vocName="vocClaimType" size="50"  property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true"/>
+              </msh:ifInRole>
+              <msh:ifNotInRole roles="/Policy/Mis/Claim/Operator">
+                  <msh:autoComplete vocName="vocClaimType" size="50"  property="claimType" label="Тип заявки" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
+              </msh:ifNotInRole>
+          </msh:row>
+
           <msh:row>
 	         <msh:autoComplete vocName="workFunction" size="50"  property="workfunction" label="Создал" fieldColSpan="3" horizontalFill="true" viewOnlyField="true"/>
           </msh:row> 
@@ -102,7 +108,7 @@
         	</msh:row> <msh:row>
           	<msh:label property="cancelUsername" label="Пользователь, отменивший заявку" />
         </msh:row>  
-       
+       <msh:submitCancelButtonsRow colSpan="4" />
         
         
         </msh:ifFormTypeAreViewOrEdit>

@@ -130,13 +130,13 @@ select sls.id
 ,max(case when ot.voc_code='К' then to_char(sls.datestart,'dd.mm.yyyy') else null end) as f5_SMP
 ,max(case when (ot.id isnull or ot.voc_code!='К') then to_char(sls.datestart,'dd.mm.yyyy') else null end ) as f6_notSMP
 ,to_char(sls.datefinish,'dd.mm.yyyy') as f7_dateFinish
-,mkb.code as f8
+,LIST(mkb.code)
 ,case when sls.datefinish is null then (select dep.name from medcase slo left join 
 	mislpu dep on dep.id=slo.department_id where slo.dtype='DepartmentMedCase' and slo.parent_id=sls.id and slo.transferdate is null) else '' end as f9_dep 
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
 ,max(case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end) as f11_isDead
 ,max(vr.name) as f12_rayon
-,case when ms.code='A16.10.006' or ms.code='A06.10.006.1' then '+' else '-' end 
+,case when ms.code='A06.10.006' or ms.code='A06.10.006.1' then '+' else '-' end 
 ,case when ms.code='A16.12.028.017' or ms.code='A16.12.004.009' or ms.code='A16.12.004.008' then '+' else '-' end 
 from medcase sls 
 left join omc_frm  ot on ot.id=sls.ordertype_id
@@ -158,7 +158,7 @@ and ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateE
 and vpd.code='1'
 and vbst.code='1'
  ${appendSQL} 
-group by sls.id, p.lastname, p.firstname, p.middlename, p.birthday, sls.datestart, sls.datefinish, mkb.code, ms.code 
+group by sls.id, p.lastname, p.firstname, p.middlename, p.birthday, sls.datestart, sls.datefinish,ms.code 
 order by p.lastname, p.firstname, p.middlename 
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
     <msh:sectionTitle>

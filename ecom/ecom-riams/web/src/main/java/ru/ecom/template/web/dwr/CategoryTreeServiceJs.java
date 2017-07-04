@@ -85,7 +85,7 @@ public class CategoryTreeServiceJs {
     	}
     	sql.append(" ").append(whereAdd).append(" ") ;
     	sql.append(" order by ").append(fldOrderBy) ;
-    	System.out.println("======CategoryTreeService, sql= "+sql.toString());
+    	//System.out.println("======CategoryTreeService, sql= "+sql.toString());
     	Collection<WebQueryResult> list=service.executeNativeSql(sql.toString()) ;
     	StringBuilder rs = new StringBuilder() ;
     	for (WebQueryResult wqr : list) {

@@ -423,9 +423,14 @@
   		           	var serviceList = "";
   		           	for (var i=0;i<tmpList.length;i++) {
   		           		if (presList!="") {presList+=",";}
-  		           		if (serviceList!="") {serviceList+=",";}
-  		           		presList+=tmpList[i].split("#")[2];
-  		           		serviceList +=tmpList[i].split("#")[3];
+
+  		           		var ttmp =tmpList[i].split("#");
+  		           		presList+=ttmp[2];
+  		           		if (ttmp.length>3) {
+                            if (serviceList!="") {serviceList+=",";}
+                            serviceList +=ttmp[3];
+                        }
+
   		           	}
   		            PrescriptionService.setDefaultDiary(presList,serviceList, {
   		            	callback: function (a) {

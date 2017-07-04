@@ -16,7 +16,6 @@ import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
-import sun.awt.windows.ThemeReader;
 
 /**
  * Синхронизация типов адреса из кладр

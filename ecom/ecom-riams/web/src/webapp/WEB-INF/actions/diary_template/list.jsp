@@ -1,7 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
@@ -45,6 +53,35 @@
     	<msh:section listUrl="entityList-voc_documentParameter.do" title="Параметры для внешней лаборатории">
     	</msh:section>
     </msh:ifInRole>
+ 
+    <%
+    String username = LoginInfo.find(request.getSession()).getUsername();
+    request.setAttribute("username", username);
+	%>
+    <msh:ifInRole roles="/Policy/Mis/Calc/Calculator"> 
+    <ecom:webQuery name="calcs" nativeSql="select id, name,comment from calculator where username= '${username}' "/>
+      	<msh:section  createRoles="/Policy/Mis/Calc/Calculator" createUrl="entityPrepareCreate-calc_calculator.do" title="Калькуляторы">
+      		<msh:sectionContent>
+		      	<msh:table name="calcs" action="entityParentView-calc_calculator.do" idField="1">
+		      		<msh:tableColumn property="sn" columnName="##"/>
+		      		<msh:tableColumn property="2" columnName="Название" />
+		      		<msh:tableColumn property="3" columnName="Назначение" />
+		      	</msh:table>
+      		</msh:sectionContent>
+      	</msh:section>
+    </msh:ifInRole>
+    
   </tiles:put>
+  
+  <tiles:put name="javascript" type="string">
+ <script type="text/javascript">
+ //LoginInfo.find(request.getSession()).getUsername() ;
+ onPreCreate(aForm, aCtx)
+ function onPreCreate(aForm, aCtx) {
+		aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	}	
+ </script>
+ </tiles:put>
+  
 </tiles:insert>
 

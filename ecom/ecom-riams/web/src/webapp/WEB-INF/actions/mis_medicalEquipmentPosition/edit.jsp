@@ -17,6 +17,7 @@
              <msh:row>
                     <msh:autoComplete  vocName="vocEquipmentType" property="equipmentType" label="Оборудование" size="50"/>
                     <msh:textField property="amount" label="Количество" horizontalFill="true" fieldColSpan="4"/>
+                    <msh:textField property="comment" label="Примечание" horizontalFill="true" fieldColSpan="4"/>
                
 		</msh:row>
 	            <msh:submitCancelButtonsRow colSpan="4"/>

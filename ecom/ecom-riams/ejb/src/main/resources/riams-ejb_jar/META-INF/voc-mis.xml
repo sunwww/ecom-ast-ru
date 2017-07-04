@@ -1,5 +1,18 @@
 <vocconfig>
 
+
+
+<!--  Справочник калькуляторы -->
+<voc id='vocCalculator' type='NativeVocService'>
+       <NativeVocService
+	from="calculator c"
+	nameId="c.id"
+	names="c.name"
+	>
+	</NativeVocService>
+    </voc> 
+    
+    
 <!--  Справочник НДС  -->
 <voc id='vocVat' type='NativeVocService'>
        <NativeVocService
@@ -67,6 +80,7 @@
 		left join medicalstandard ms on ms.id=mep.standard_id
 		left join mislpu ml on ml.medicalstandard_id=ms.id"
 	parent="ml.id=:parent"
+	queried="upper(vte.name) like upper(:querId) "
 	>
 	</NativeVocService>
     </voc> 
@@ -316,14 +330,55 @@
 		queried="cast(vrd.id as varchar(2)) like :querId or upper(vrd.name) like upper(:query) "
 	/>
 </voc>
+<!-- Полный справочник мед. оборудования -->
 <voc id="allMedicalEquipment" type="NativeVocService">
 	<NativeVocService
 		from="equipment e"
 		nameId="e.id"
 		order="e.name"
-		names="e.id||' '|| e.name"
+		names="coalesce(e.inventoryNumber,'')||' '|| e.name"
 		queryAppend="e.dtype='MedicalEquipment'"
 		queried=" upper(e.name) like upper(:query) or upper(e.inventoryNumber) like upper(:query) "
+	/>
+</voc>
+
+<!-- Справочник мед. оборудования, закрепленного за отделением (parent=lpu_id) -->
+<voc id="medicalEquipmentByLpu" type="NativeVocService">
+	<NativeVocService
+		from="equipment e"
+		nameId="e.id"
+		order="e.name"
+		names="coalesce(e.inventoryNumber,'')||' '|| e.name"
+		queryAppend="e.dtype='MedicalEquipment'"
+		queried=" upper(e.name) like upper(:query) or upper(e.inventoryNumber) like upper(:query) "
+		parent="e.lpu_id=:parent"
+	/>
+</voc>
+
+<!-- Справочник мед. оборудования указанного типа, закрепленного за отделением (parent=lpu_id#equiptype_id) -->
+<voc id="medicalEquipmentByLpuAndType" type="NativeVocService">
+	<NativeVocService
+		parentSplitCount="2"
+		from="equipment e"
+		nameId="e.id"
+		order="e.name"
+		names="coalesce(e.inventoryNumber,'')||' '|| e.name"
+		queryAppend="e.dtype='MedicalEquipment'"
+		queried=" upper(e.name) like upper(:query) or upper(e.inventoryNumber) like upper(:query) "
+		parent="e.lpu_id=:par1 and e.typeequip_id=:par2 "
+	/>
+</voc>
+
+<!-- Справочник мед. оборудования указанного типа(parent=equiptype_id) -->
+<voc id="medicalEquipmentByType" type="NativeVocService">
+	<NativeVocService
+		from="equipment e"
+		nameId="e.id"
+		order="e.name"
+		names="coalesce(e.inventoryNumber,'')||' '|| e.name"
+		queryAppend="e.dtype='MedicalEquipment'"
+		queried=" upper(e.name) like upper(:query) or upper(e.inventoryNumber) like upper(:query) "
+		parent="e.typeequip_id=:parent"
 	/>
 </voc>
 
@@ -360,7 +415,7 @@
 		queried=" upper(ms.name) like upper(:query) "
 	/>
 </voc>
-
+<!-- Полный справочник видов оборудования -->
 <voc id="vocEquipmentType" type="NativeVocService">
 	<NativeVocService
 		from="VocTypeEquip vte"
@@ -368,6 +423,20 @@
 		order="vte.name"
 		names="vte.id||' '|| vte.name"
 		queried=" upper(vte.name) like upper(:query) "
+	/>
+</voc>
+
+<!-- Полный справочник видов оборудования -->
+<voc id="vocEquipmentTypeByLpu" type="NativeVocService">
+	<NativeVocService
+		from="VocTypeEquip vte"
+		nameId="vte.id"
+		order="vte.name"
+		names="vte.id||' '|| vte.name"
+		queried=" upper(vte.name) like upper(:query) "
+		join="left join medicalEquipmentPosition mep on mep.equipmenttype_id=vte.id
+			left join mislpu ml on ml.medicalstandard_id=mep.standard_id"
+		parent="ml.id=:parent"
 	/>
 </voc>
 
@@ -490,7 +559,11 @@
 		nameId="ms.id"
 		parent=" wf.id = :parent "
 		queryAppend="MS.DTYPE='MedService'  and ms.finishDate is null" 
-		join="  left join WorkFunctionService wfs on wfs.medservice_id =ms.id left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id left join VocServiceType vst on vst.id=ms.serviceType_id  " order=""
+		join="  
+		left join WorkFunctionService wfs on wfs.medservice_id =ms.id 
+		left join WorkFunction wf on wf.workfunction_id=wfs.vocworkfunction_id 
+		left join VocServiceType vst on vst.id=ms.serviceType_id
+		" order=""
 		names="ms.code||' '|| ms.name"
 		queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
 	/>
@@ -867,7 +940,7 @@
     </voc> 
     
     <voc id='medcardByPatient' type='NativeVocService'>
-        <NativeVocService
+        <NativeVocService 
                 from  = 'medcard m'
                 parent="m.person_id=:parent"
                 nameId="m.id"
@@ -1032,10 +1105,11 @@
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
+    			queryAppend="ms.dtype='MedService' and (ms.isPoliclinic='1' or ms.isDayHospital='1' and ms.isPoliclinic='1')"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
     			order=''
     			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+    			groupBy="ms.id, ms.code, ms.name"
     			 			
     	/>
     
@@ -1899,6 +1973,19 @@
     		nameId="pcc.id"
     		join=""
     		queried="pcc.cardNumber like UPPER(:query)"
+    		
+    	/>
+    </voc>
+    <voc id="psychiatricCareCardBySuiMes" type="NativeVocService">
+    	<NativeVocService
+    		from="PsychiatricCareCard pcc"
+    		names="pcc.cardNumber "
+    		nameId="pcc.id"
+    		join="
+    		left join suicidemessage sm on sm.patient_id=pcc.patient_id
+    		"
+    		queried="pcc.cardNumber like UPPER(:query)"
+    		parent="sm.id=:parent"
     		
     	/>
     </voc>

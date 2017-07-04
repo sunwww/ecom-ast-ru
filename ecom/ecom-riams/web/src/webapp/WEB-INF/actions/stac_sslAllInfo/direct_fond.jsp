@@ -73,9 +73,12 @@
       <msh:panel styleId="exportXml">
       <msh:row styleId="rowLoad">
       	<td class="label" title="Тип xml  (typeLoad)" colspan="1"><label for="typeLoadName" id="typeLoadLabel">Сохранять в папку ДЛЯ VIPNET:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        <td onclick="this.childNodes[1].checked='checked';" colspan="1">
         	<input type="radio" name="typeLoad" value="1"> не сохранять (еще нужно просмотреть)
         </td>
+      	            </msh:row>
+      <msh:row>
+        <td></td>
         <td onclick="this.childNodes[1].checked='checked';" colspan="2">
         	<input type="radio" name="typeLoad" value="2"> сохранять для отправки
         </td>
@@ -83,54 +86,126 @@
       </msh:row>
       <msh:row>
         <td class="label" title="Тип xml  (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Тип xml:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
+       </msh:row>
+      <msh:row>
+        <td></td>
+        <td colspan="10"><b>Отправляется после оформления направления в поликлинике</b></td>
+        </msh:row>
+      <msh:row>
+        <td></td>
+          <td onclick="this.childNodes[1].checked='checked';">
         	<input type="radio" name="typeView" value="1"> (N1) направления на госп.
         </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="2"> (N2) госпитализации по направлению
+        
+       </msh:row>
+      <msh:row>
+        <td></td>
+        <td colspan="10"><br><b>Отправляется при поступлении в стационар</b></td>
+	      </msh:row>
+      <msh:row>
+        <td></td>
+            <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="2"> (N2) для плановых госпитализаций (по направлению из поликлиник)
 	        </td>
+		            </msh:row>
+      <msh:row>
+        <td></td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="3"> (N3) экстр. госпитализация
+	        	<input type="radio" name="typeView" value="3"> (N3) для экстр. госпитализаций
+	        </td>
+         </msh:row>
+      <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+        	<input type="radio" name="typeView" value="4">  (N1) формирование направлений для план. госп. без направлений из тек. ЛПУ и (N2) для план. госп. из других ЛПУ
+        </td>
+       </msh:row>
+      <msh:row>
+        <td></td>
+        <td colspan="10"><br><b>Формируется для направлений, по которым не осуществлена госпитализация (аннулированных направлений из поликлиники)</b></td>
+          </msh:row>
+      <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="5"> (N4) аннулирование направ. на госп.
+        </td>
+         </msh:row>
+      <msh:row>
+        <td></td>
+        <td colspan="10"><br><b>Отправляется после выписки пациентов из стационара</b></td>
+       </msh:row>
+      <msh:row>
+        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="6"> (N2) В РАЗРАБОТКЕ!!!! переводы внутри ЛПУ (отправлять файлы надо по одному строго по очередности!!!!)
+	        </td>
+       	            </msh:row>
+      <msh:row>
+        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="7"> (N5) выбывшие из стац.
+	        </td>
+       	            </msh:row>
+      <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';">
+        	<input type="radio" name="typeView" value="8">  (N1) для переводов в другие стационары
+        </td>
+        
+       </msh:row>
+      <msh:row>
+        <td></td>
+        <td colspan="10"><br><b>Выгрузка свободных мест по ЛПУ</b></td>
+       </msh:row>
+      <msh:row>
+        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeView" value="9"> (N6) наличие своб. мест
 	        </td>
        </msh:row>
       <msh:row>
         <td></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="4"> (N4) аннулирование направ. на госп.
-        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="5"> (N5) выбывшие из стац.
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="6"> (N6) наличие своб. мест
-	        </td>
+        <td colspan="10"><br><b>Выгрузка нескольких файлов</b></td>
        </msh:row>
        <msh:row>
         <td></td>
         
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="7">  список неопред. по N1
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="10">  N2 + N3 выгружаются при поступлание для плановых и экстренных госпитализаций
         </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="8">  N2 + N3 таблицы
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="9">  N4 + N5 таблицы
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="10">  N1 для переводов по стационару
+       	            </msh:row>
+      <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+        	<input type="radio" name="typeView" value="11">  N4 + N5 выгружаются при выписке пациентов и анулирование направлений
         </td>
        </msh:row>
       <msh:row>
         <td></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeView" value="11"> (N0) для выгрузки N1 с портала
+        <td><br><b>Для выгрузки данных с портала фонда</b></td>
+       </msh:row>
+      <msh:row>
+        <td></td>
+        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+        	<input type="radio" name="typeView" value="12"> (N0) для выгрузки N1, неоформленных направлений (в ожидании очереди на госпитализацию)
+ 	            </msh:row>
+      <msh:row>
+        <td></td>
         </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="12"> (N0) для выгрузки N2 с портала
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+	        	<input type="radio" name="typeView" value="13"> (N0) для выгрузки N2, госпитализированных пациентов (еще не выписанных)
 	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeView" value="13"> (N0) для выгрузки N5 с портала
+	            </msh:row>
+      <msh:row>
+        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+	        	<input type="radio" name="typeView" value="14"> (N0) для выгрузки N5, выписанных пациентов
+	        </td>
+	            </msh:row>
+      <msh:row>
+        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
+	        	<input type="radio" name="typeView" value="15"> (N0) для выгрузки N8, ВСЕ направления по ЛПУ (выписанные, аннулированные, госпитализированные, неоформленные) (не для загрузки!!!!!!!)
 	        </td>
        </msh:row>
        <msh:row>
@@ -186,7 +261,7 @@
             <td class="label" title="Список  (typeView1)" colspan="1"><label for="typeView1Name" 
                id="typeView1Label">Список:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
-	        	<input type="radio" name="typeView1" value="1"> госпитализации без направлений 
+	        	<input type="radio" name="typeView1" value="1"> госпитализации без прикрепленных направлений из поликлиники 
 	        </td>
 	   </msh:row>
 	   <msh:row>
@@ -198,19 +273,25 @@
 	   <msh:row>
 	        <td></td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
-	        	<input type="radio" name="typeView1" value="3">  неопред. госп. и направления 
+	        	<input type="radio" name="typeView1" value="3">  неопред. госп. и направления (отображаются 2 таблицы)
 	        </td>
 	   </msh:row>
 	   <msh:row>
 	        <td></td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="4">
-	        	<input type="radio" name="typeView1" value="4">  отделения, по которым не проставлен диагноз 
+	        	<input type="radio" name="typeView1" value="4">  отделения, по которым не проставлен диагноз (ошибка при формировании таблицы (N2) поступивших в стационар)
 	        </td>
        	</msh:row>
        	<msh:row>
 	        <td></td>
 	        <td onclick="this.childNodes[1].checked='checked';" colspan="8">
-	        	<input type="radio" name="typeView1" value="5">  СНИЛС врача для ген. плановых направлений для госпит. 
+	        	<input type="radio" name="typeView1" value="5">  СНИЛС врача для генерации направлений по плановым госпитализациям без направлений по тек. ЛПУ  
+	        </td>
+	   </msh:row>
+       	<msh:row>
+	        <td></td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="8">
+	        	<input type="radio" name="typeView1" value="6">  коечный фонд (для формирования табл. свободные койки (N6))
 	        </td>
 	   </msh:row>
              <msh:row>
@@ -222,7 +303,7 @@
           
           <msh:panel styleId="findByNumber">
              <msh:row>
-             	<msh:textField property="numberDirect"/>
+             	<msh:textField property="numberDirect" size="100" />
              </msh:row>
              <msh:row>
            <td colspan="11">
@@ -376,6 +457,21 @@
 			}
 		}
 	}
+	function setAmountBed(aIdBedFund,aCnt) {
+		var cnt = aCnt!=null?aCnt:""; 
+		cnt = prompt("Введите кол-во:",cnt);
+		if (cnt!=null && cnt.length>0) {
+			HospitalMedCaseService.updateTable('BedFund','id',aIdBedFund,'amount',cnt,'',{
+	  			callback: function(aResult) {
+	  				window.location.reload() ;
+	  			}
+	  		}) ;
+		} else {
+			if (confirm("Вы хотите ввести кол-во еще раз?")) {
+				setAmountBed(aIdBedFund,aCnt) ;
+			}
+		}
+	}
 	function setDeniedByHDF(aHDFid,aFrm,aDenied) {
 		var val =null;
 		if (aFrm!=null) {
@@ -491,54 +587,55 @@
  			request.setAttribute("middlename",sss.length>2?sss[2]:"") ;
 
 	%>
-	
-	НАПРАВЛЕНИЕ по номеру:${param.numberDirect} 
-		<ecom:webQuery name="table1" nativeSql="
-	select hdf.id
-	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
-	||hdf.numberfond||'<'||'/'||'span'||'>' as f2numberfond
-	,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>' 
-	||hdf.lastname||' '||hdf.firstname||' '||coalesce(hdf.middlename,'')||'<'||'/'||'span'||'>' as f3io
-	
-	,hdf.birthday,hdf.formHelp
-,hdf.profile,hdf.prehospdate,hdf.hospdate,hdf.directdate,hdf.snils as f10snils
+
+НАПРАВЛЕНИЕ по номеру:${param.numberDirect}
+<ecom:webQuery name="table1" nativeSql="
+select hdf.id
+,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>'
+||hdf.numberfond||'<'||'/'||'span'||'>' as f2numberfond
+,hdf.statcard as f3
+,'<'||'span '||case when hdf.deniedHospital is not null then 'style=''background:#01DF74''' else '' end|| '>'
+||hdf.lastname||' '||hdf.firstname||' '||coalesce(hdf.middlename,'')||'<'||'/'||'span'||'>' as f3io
+
+,hdf.birthday,hdf.formHelp
+,hdf.profile,hdf.directdate,hdf.hospdate,hdf.hospDischargeDate,hdf.snils as f10snils
 ,hdf.phone,hdf.diagnosis
 ,hdf.orderlpucode
 ,hdf.directlpucode
-,hdf.statcard as f15
+
 ,hdf.deniedHospital
 ,hdf.id||''','''||coalesce(''||hdf.deniedHospital,'') as idden
-,hdf.id||''','''||to_char(coalesce(hdf.prehospdate,hdf.hospdate),'dd.mm.yyyy')||''','''||hdf.lastname||''','''||hdf.firstname||''','''||coalesce(hdf.middlename,'')
-	||''','''||to_char(hdf.birthday,'dd.mm.yyyy')||''',''1'','''||coalesce(hdf.deniedHospital,0) as idforsls
+,case when hdf.hospitalmedcase_id is null then hdf.id||''','''||to_char(coalesce(hdf.prehospdate,hdf.hospdate),'dd.mm.yyyy')||''','''||hdf.lastname||''','''||hdf.firstname||''','''||coalesce(hdf.middlename,'')
+||''','''||to_char(hdf.birthday,'dd.mm.yyyy')||''',''1'','''||coalesce(hdf.deniedHospital,0) else null end as idforsls
 
 from HospitalDataFond hdf
 where (hdf.numberfond='${param.numberDirect}' or upper(hdf.lastname) like '${lastname}%' and upper(hdf.firstname) like '${firstname}%' and upper(hdf.middlename) like '${middlename}%')
+and (hdf.directDate between to_date('${param.period}','dd.mm.yyyy') and to_date('${periodTo}','dd.mm.yyyy')
+or hdf.hospDate between to_date('${param.period}','dd.mm.yyyy') and to_date('${periodTo}','dd.mm.yyyy')
+or hdf.hospDischargeDate between to_date('${param.period}','dd.mm.yyyy') and to_date('${periodTo}','dd.mm.yyyy')
+)
 order by hdf.lastname,hdf.firstname,hdf.middlename,hdf.id
-	"/>
-		<msh:table name="table1" action=" javascript:void(0)" idField="1">
-			<msh:tableButton property="1" buttonFunction="showHDF" buttonName="Просмотр информации о направление" buttonShortName="Инф."/>
-			<msh:tableButton property="1" buttonFunction="deleteHDF" buttonName="Удалить направление" buttonShortName="Удалить"/>
-			<msh:tableColumn property="sn" columnName="#"/>
-			<msh:tableColumn property="2" columnName="<a href='javascript:alert(\"lpu\")'>Напр. ЛПУ</a>"/>
-			<msh:tableColumn property="3" columnName="№ИБ"/>
-			<msh:tableColumn property="4" columnName="<a href='javascript:alert(\"pat\")'>ФИО пациента</a>"/>
-			<msh:tableColumn property="5" columnName="Дата рождения"/>
-			<msh:tableColumn property="6" columnName="Показания"/>
-			<msh:tableColumn property="7" columnName="Дата госп."/>
-			<msh:tableColumn property="8" columnName="Дата выписки"/>
-			<msh:tableColumn property="9" columnName="Отделение"/>
-			<msh:tableColumn property="10" columnName="<a href='javascript:alert(\"prof\")'>Профиль коек</a>"/>
-			<msh:tableColumn property="11" columnName="Поток обслуживания"/>
-			<msh:tableColumn property="12" columnName="Диагноз"/>
-		</msh:table>
-	
-	
-	
-	
-	
-	
-	
-	<%
+"/>
+<msh:table name="table1" action=" javascript:void(0)" idField="1">
+<msh:tableButton property="1" buttonFunction="showHDF" buttonName="Просмотр информации о направление" buttonShortName="Инф."/>
+<msh:tableButton property="1" buttonFunction="deleteHDF" buttonName="Удалить направление" buttonShortName="Удалить"/>
+<msh:tableButton property="18" hideIfEmpty="true" buttonFunction="showDiag263sls" buttonName="Установить соответствие с неопределенной госпитализацией" buttonShortName="СЛС"/>
+<msh:tableColumn property="sn" columnName="#"/>
+<msh:tableColumn property="2" columnName="<a href='javascript:alert(\"lpu\")'>Напр. ЛПУ</a>"/>
+<msh:tableColumn property="3" columnName="№ИБ"/>
+<msh:tableColumn property="4" columnName="<a href='javascript:alert(\"pat\")'>ФИО пациента</a>"/>
+<msh:tableColumn property="5" columnName="Дата рождения"/>
+<msh:tableColumn property="6" columnName="Показания"/>
+<msh:tableColumn property="7" columnName="<a href='javascript:alert(\"prof\")'>Профиль коек</a>"/>
+<msh:tableColumn property="8" columnName="Дата напр."/>
+<msh:tableColumn property="9" columnName="Дата госп."/>
+<msh:tableColumn property="9" columnName="Дата выписки"/>
+<msh:tableColumn property="13" columnName="Диагноз"/>
+<msh:tableColumn property="14" columnName="ЛПУ напр"/>
+<msh:tableColumn property="15" columnName="ЛПУ приним"/>
+</msh:table>
+
+<%
 	} else if (typeMode!=null && typeMode.equals("3") && isCkeck) {
 	
 	%>
@@ -777,6 +874,45 @@ group by bf.id,bf.snilsDoctorDirect263,ml.name,vbt.name
 			<msh:tableColumn property="4" columnName="Отделение"/>
 			<msh:tableColumn property="5" columnName="Профиль"/>
 			<msh:tableColumn property="6" columnName="Кол-во случаев"/>
+		</msh:table>	
+		<%       }  else  if (typeView1!=null && typeView1.equals("6")) {%>
+		<ecom:webQuery name="table1" nativeSql="
+select 
+bf.id as bfid
+,lpu.name as lpuname
+, vbt.codef as vbtcodef
+, vbt.name  as vbtname
+,  vbst.name as usl_ok 
+, case when bf.forChild='1' then 'Да' else 'Нет' end as det 
+, bf.amount as bfamount
+,vss.name as vssname
+,bf.id||''','''||coalesce(bf.amount,'0') as id
+,lpuP.name as lpupname
+  from BedFund bf 
+   left join VocBedType vbt on vbt.id=bf.bedType_id 
+   left join VocBedSubType vbst on vbst.id=bf.bedSubType_id 
+   left join VocServiceStream vss on vss.id=bf.serviceStream_id
+   left join MisLpu lpu on lpu.id=bf.lpu_id 
+   left join MisLpu lpuP on lpuP.id=lpu.parent_id 
+   
+  where bf.dateStart <=to_date('${param.period}','dd.mm.yyyy') 
+  and coalesce(bf.dateFinish,to_date('${periodTo}','dd.mm.yyyy')) >=to_date('${periodTo}','dd.mm.yyyy')
+  and vss.code in ('OBLIGATORYINSURANCE') 
+  group by bf.id ,lpu.name , vbt.codef , vbt.name  ,  vbst.name , bf.forChild, bf.amount, vss.name,lpuP.name
+  order by vbt.name,lpu.name,lpuP.name
+		"/>
+		<msh:table name="table1" editUrl="entityParentEdit-mis_bedFund.do" action="entityParentView-mis_bedFund.do" idField="1">
+			
+			<msh:tableColumn property="sn" columnName="#"/>
+			<msh:tableColumn property="8" columnName="Поток обслуживания"/>
+			<msh:tableColumn property="10" columnName="ЛПУ"/>
+			<msh:tableColumn property="2" columnName="Отделение"/>
+			<msh:tableColumn property="3" columnName="Код профиля"/>
+			<msh:tableColumn property="4" columnName="Профиль"/>
+			<msh:tableColumn property="5" columnName="Тип коек"/>
+			<msh:tableColumn property="6" columnName="Детские койки"/>
+			<msh:tableButton property="9" buttonFunction="setAmountBed" buttonName="Установить кол-во коек" buttonShortName="Уст. кол-во"/>
+			<msh:tableColumn property="7" columnName="Кол-во"/>
 		</msh:table>	
 		<%       } %>
 	<% } %>

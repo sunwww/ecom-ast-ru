@@ -19,7 +19,6 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import sun.awt.X11.PropMwmHints;
 
 /**
  * Услуги по рабочим функциям

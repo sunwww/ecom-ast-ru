@@ -505,7 +505,6 @@
       	left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id where cb.medCase_id='${param.id}' group by cb.id,cb.birthFinishDate"/>
       	<msh:section>
       		<msh:sectionTitle> 
-      		
 	      		Роды 
 	      		<msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
 	      		</msh:ifInRole>
@@ -523,6 +522,40 @@
       		</msh:sectionContent>
       	</msh:section>
       </msh:ifInRole>
+      
+        <msh:ifInRole roles="/Policy/Mis/Calc/Calculation"> 
+      	<ecom:webQuery name="calcs" nativeSql="select cr.id,c.name, cr.result, vmu.name as vmu, cr.resdate
+from calculationsresult cr 
+left join calculator c on c.id=cr.calculator_id 
+left join vocmeasureunit vmu on c.valueofresult_id =vmu.id
+left join medcase m on cr.departmentmedcase_id = m.id
+where m.id ='${param.id}'"/>
+      	<msh:section>
+      		<msh:sectionTitle> 
+	      		Расчеты
+	      		<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
+	      		<a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}">Добавить вычисление</a>
+	      		</msh:ifInRole>
+	      		
+	      		
+	      		<msh:ifInRole roles="/Policy/Mis/Calc/Calculator/Create">
+	      		<a href="entityPrepareCreate-calc_calculator.do"> Добавить новый калькулятор</a>
+	      		</msh:ifInRole>
+	      		
+      		</msh:sectionTitle>
+      		
+      		<msh:sectionContent>
+		      	<msh:table name="calcs" action="entityParentView-calc_calculationsResult.do" idField="1">
+		      		<msh:tableColumn property="sn" columnName="##"/>
+		      		<msh:tableColumn property="2" columnName="Название" />
+		      		<msh:tableColumn property="3" columnName="Результат" />
+		      		<msh:tableColumn property="4" columnName="Ед. измерения" />
+		      		<msh:tableColumn property="5" columnName="Дата" />
+		      	</msh:table>
+      		</msh:sectionContent>
+      	</msh:section>
+      </msh:ifInRole>
+      
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">

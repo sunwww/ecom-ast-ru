@@ -48,4 +48,12 @@ public class MedicalEquipmentPositionForm extends IdEntityForm {
 	public void setAmount(Long aAmount) {theAmount = aAmount;}
 	/** Необходимое количество */
 	private Long theAmount;
+	
+	/** Примечание */
+	@Comment("Примечание")
+	@Persist
+	public String getComment() {return theComment;}
+	public void setComment(String aComment) {theComment = aComment;}
+	/** Примечание */
+	private String theComment;
 }

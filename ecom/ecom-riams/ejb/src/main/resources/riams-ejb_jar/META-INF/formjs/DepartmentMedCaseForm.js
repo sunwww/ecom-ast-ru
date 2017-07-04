@@ -50,7 +50,14 @@ function onPreSave(aForm,aEntity, aContext) {
 	var prev = +aForm.prevMedCase>0?aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase,aForm.prevMedCase):null ;
 	var isDoc=aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction") ;
 	var isNoPalat = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/NoRoomNumber") ;
-
+	
+	//Запрет на поступление в экстренном порядке на дневные койки
+	if ((hosp.emergency||aForm.emergency)&&bedFund.bedSubType!=null&&(bedFund.bedSubType.code=="2"||bedFund.bedSubType.code=="3")) {
+		if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Sso/CreateEmergencyDayHospBedFund")){
+			throw "Установлен запрет на ЭКСТРЕННУЮ госпитализацию на тип коек '"+bedFund.bedSubType.name+"'";
+		}
+		
+	}
 	if (prev!=null) {
 		var dateTransfer ;
 		
@@ -132,7 +139,9 @@ function onPreSave(aForm,aEntity, aContext) {
 		if (hosp.hospType!=null) {
 			if ((hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==2) 
 					||(hosp.hospType.code=="DAYTIMEHOSP" && +bedSubType==3) 
-					|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1) ) {
+					|| (hosp.hospType.code=="ALLTIMEHOSP" && +bedSubType==1)
+					|| (hosp.hospType.code=="HOUSE" && +bedSubType==3)) 
+			{
 			} else {
 				if (prev!=null || +bedSubType>2) {
 					throw "Не соответствует тип стационара "+hosp.hospType.name+" и профиль коек "+ bedFund.bedSubType.name;
@@ -165,8 +174,8 @@ function onPreSave(aForm,aEntity, aContext) {
 		cal3.setTime(dateCur) ;		
 		cal2.setTime(dateCur) ;		
 		cal1.setTime(dateFin) ;
-		
-		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-24)) ;
+		var cntHour = +getDefaultParameterByConfig("edit_slsDischarge_after_discharge", 24, aCtx) ;
+		cal3.add(java.util.Calendar.HOUR_OF_DAY,(-1*cntHour)) ;
 		
 		if (cal1.after(cal3)) {
 			
@@ -187,13 +196,19 @@ function onPreSave(aForm,aEntity, aContext) {
 				check=aContext.serviceInvoke("WorkerService", "checkPermission", param)+"";
 				
 				if (+check==0) {
-					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение 24 часов.";
+					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение "+cntHour+" часов.";
 					
 				}
 			}
 			}
 	}
-
+//проверка на перевод из реанимации в реанимацию с галочкой не входит в омс
+	if (aForm!=null && prev!=null 
+			&& aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/CantTransferReanimationToReanimation")) { 
+		var lpu = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,aForm.department); 
+		if (lpu.getIsNoOmc() && prev.department.getIsNoOmc())
+			throw "Нельзя переводить из одной реанимации в другую реанимацию!";
+	}
 }
 function checkPrescriptionList(aForm, aEntity, aCtx) {
 	var currentDate = new java.sql.Date(new java.util.Date().getTime()) ;

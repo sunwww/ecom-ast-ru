@@ -609,7 +609,7 @@ ${groupSqlAdd}
     left join mislpu ml on ml.id=m.department_id
     left join VocServiceStream vss on vss.id=smo.serviceStream_id
     where  
-    m.DTYPE='DepartmentMedCase' and m.dateFinish between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
+    m.DTYPE='DepartmentMedCase' and ${dateSql} between to_date('${param.beginDate}','dd.mm.yyyy') and to_date('${param.finishDate}','dd.mm.yyyy')
     and (m.noActuality is null or m.noActuality='0')
     and smo.deniedHospitalizating_id is null
     ${emergencySql} ${departmentSql} 

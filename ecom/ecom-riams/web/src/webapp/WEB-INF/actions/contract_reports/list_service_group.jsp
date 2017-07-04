@@ -382,11 +382,14 @@ as sumItogWithoutVat
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
 LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
-LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+
 LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
 left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
 left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join servedperson sp on sp.id=cams.servedperson_id
+left join contractperson cp on cp.id=sp.person_id
+LEFT JOIN patient CCP ON CCP.id=Cp.patient_id
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
 left join PricePosition pg on pg.id=pp.parent_id
@@ -403,7 +406,7 @@ ${departmentTypeSql}
 
 group by lpu.id,lpu.name,mc.id,lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom,pp.positionType_id,pp.id,pp.code,pp.name
 order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,pp.code
-			"/>
+			"/>${dep_list_sql}
 			<table border='1px solid'>
 <tr>
 	<th>Наименование</th>

@@ -21,6 +21,7 @@
       <msh:hidden property="infoByPolicy" />
       <msh:hidden property="medserviceAmounts" />
       <msh:hidden property="isPreRecord" />
+      <msh:hidden property="guarantee" />
       <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel">
                   	<msh:row>

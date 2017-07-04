@@ -37,11 +37,15 @@
     		<msh:textField property="${name}Number" label="Номер" size="20"/>
     	</msh:row>
         <msh:row>
+          <msh:autoComplete vocName="disabilityDocumentByCase" property="${name}PrevDocument" label="Предыдущий документ"  fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+        <msh:row>
         	<msh:autoComplete label="Тип совместит.:" property="${name}WorkComboType" vocName="vocCombo" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
         	<msh:textField label="Место раб. по совмест:" property="${name}Job"  horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
+        
     </msh:panel>
         <msh:row>
             <td colspan="6">
@@ -63,6 +67,7 @@
          if (!theIs${name}WorkComboDisDocumentDialogInitialized) {
          	init${name}WorkComboDisDocumentDialog() ;
           }
+         ${name}PrevDocumentAutocomplete.setParentId($('disabilityCase').value) ;
          the${name}WorkComboDisDocumentDialog.show() ;
          $("${name}Number").focus() ;
      }
@@ -90,6 +95,7 @@
      	else {
 	     	DisabilityService.createWorkComboDocument(
 	     		'${param.id}',$('${name}Job').value, $('${name}Seria').value,$('${name}Number').value, $('${name}WorkComboType').value
+	     		,$('${name}PrevDocument').value
 	     		 ,{
 	                   callback: function(aString) {
 	        				alert('Создан бланк по совместительству!');

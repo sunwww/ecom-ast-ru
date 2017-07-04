@@ -3,6 +3,7 @@ package ru.ecom.mis.web.action.patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
@@ -48,4 +49,18 @@ public class FlowDocumentSearchForm extends BaseValidatorForm {
 
 	/** Вид */
 	private Long theType;
+	
+	/** Фамилия */
+	@Comment("Фамилия")
+	@DoUpperCase
+	public String getLastname() {
+		return theLastname;
+	}
+
+	public void setLastname(String aLastname) {
+		theLastname = aLastname;
+	}
+
+	/** Фамилия */
+	private String theLastname;
 }

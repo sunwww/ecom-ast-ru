@@ -1208,7 +1208,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
 	  for (var i=0; i<document.getElementsByName("expDispAge").length;i++) {
 		  if (document.getElementsByName("expDispAge")[i].checked){
 			  if (document.getElementsByName("expDispAge")[i].value=="2") {
-				  sqlAdd+=" and vedag.code not like '%.%' ";
+				  sqlAdd+=" and (vedag.code not like '%.%' and vedag.code!='0') ";
 			  }  
 		  }		
 	  }

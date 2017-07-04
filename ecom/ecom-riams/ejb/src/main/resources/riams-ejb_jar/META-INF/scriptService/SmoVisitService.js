@@ -403,9 +403,9 @@ function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDep
 			+" 	 from MedCase sls"
 			+" 	left join patient p on p.id=sls.patient_id"
 			+" 	left join medcard mp on mp.person_id=p.id"
-			+" 	left join workfunction wf on wf.id=sls.ownerFunction_id"
-			+" 	left join worker w on w.id=wf.worker_id"
-			+" 	left join vocworkfunction vwf on vwf.id=wf.workFunction_id"
+		//	+" 	left join workfunction wf on wf.id=sls.ownerFunction_id"
+		//	+" 	left join worker w on w.id=wf.worker_id"
+		//	+" 	left join vocworkfunction vwf on vwf.id=wf.workFunction_id"
 			+" 	left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)"
 			+" 	left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id"
 			+" 	left join workfunction dwf on dwf.id=diag.medicalWorker_id"
@@ -414,14 +414,15 @@ function createNewVisitByDenied(aContext,aDepartment,aBeginDate,aFinishDate,aDep
 			+" 	left join worker wN on Wn.person_id=dw.person_id and wN.lpu_id="+aDepartmentPolyclinic
 			+" 	left join workfunction wfN on wfN.worker_id=wN.id"
 			+" 	left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id"
+			+" 	left join vocworkfunction vwfN on vwfN.id=wfN.workFunction_id"
 			+" 	left join vocidc10 mkb on mkb.id=diag.idc10_id"
 			+" 	where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('"+aBeginDate+"','dd.mm.yyyy') and to_date('"+aFinishDate+"','dd.mm.yyyy')"
 			+" 	and sls.deniedHospitalizating_id is not null"
 			+" 	and sls.department_id='"+aDepartment+"' and sls.medicalAid='1'"
 			+" 	and diag.id is not null and (select count(*) from medcase t where t.patient_id=sls.patient_id and t.workFunctionExecute_id=wfN.id and t.datestart=sls.datestart and t.dtype='ShortMedCase')=0"
-			+" 	and wfN.id is not null"
+			+" 	and wfN.id is not null and dvwf.code=vwfN.code"
 			+" 	order by sls.dateStart,p.lastname,p.firstname,p.middlename" ;
-		var list = aContext.manager.createNativeQuery(sql).getResultList() ;
+			var list = aContext.manager.createNativeQuery(sql).getResultList() ;
 		var visitResult = "3" ;
 		var visitReason = "2" ;
 		var workPlaceType="1" ;

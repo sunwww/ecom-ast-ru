@@ -78,6 +78,7 @@
       <msh:hidden property="id" guid="ca766a3b-4eb3-4c57-8997-68fe5cb52623" />
       <msh:hidden property="patient" guid="7ad1d4c1-b642-4f31-98d4-a22c6cccf6d8" />
       <msh:hidden property="saveType" guid="dab3ef4c-4014-43b7-be41-c2398a50b816" />
+      <msh:hidden property="guarantee"/>
       <msh:panel guid="ddf23842-a6ce-4da9-a2e6-1dd53c341551">
         <msh:separator colSpan="8" label="Поступление" guid="7b1b6e55-04dd-449d-9566-c5b6ae80f22e" />
         <msh:row guid="a1e5b5a4-f9c2-4f1b-b0f9-97bd9a7a3815">

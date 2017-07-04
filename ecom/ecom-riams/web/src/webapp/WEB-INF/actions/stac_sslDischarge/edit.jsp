@@ -158,7 +158,6 @@
       <msh:hidden property="lpu" guid="14b0b5c0-045b-41b2-a2aa-6f799f1c2ea4" />
       <msh:hidden property="emergency"/>
       <msh:hidden property="ambulanceTreatment"/>
-      <msh:hidden property="aidsExamination"/>
       <msh:hidden property="ownerFunction"/>
       <msh:hidden property="bedType"/>
       <msh:hidden property="department"/>
@@ -180,13 +179,14 @@
       <msh:hidden property="deniedHospitalizating"/>
       <msh:hidden property="ambulanceTreatment"/>
       <msh:hidden property="username"/>
-        <msh:hidden property="judgment35"/>
-        <msh:hidden property="admissionOrder"/>
-        <msh:hidden property="lawCourtDesicionDate"/>
-        <msh:hidden property="psychReason"/>
-       <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
-       	<msh:hidden property="hotelServices"/>
-       </msh:ifNotInRole>
+      <msh:hidden property="judgment35"/>
+      <msh:hidden property="admissionOrder"/>
+      <msh:hidden property="lawCourtDesicionDate"/>
+      <msh:hidden property="psychReason"/>
+      <msh:hidden property="guarantee"/>
+      <msh:ifNotInRole roles="/Policy/Mis/Patient/Newborn">
+       <msh:hidden property="hotelServices"/>
+      </msh:ifNotInRole>
               <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
               	<msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
               		<msh:hidden property="dischargeEpicrisis"/>
@@ -374,11 +374,7 @@
 	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true" vocName="vocJudgment"/>
 	        </msh:row>
         </msh:ifInRole>
-        <msh:separator colSpan="8" label="RW" guid="597ac93d-a5d0-4b08-a6b1-79efee0f497a" />
-        <msh:row guid="f6e5b8dd-89fd-4442-9779-4995ba7cc3d8">
-          <msh:textField label="Дата RW" property="rwDate" guid="ffd282d7-95fe-40e5-a3a8-6d424c98dac0" />
-          <msh:textField label="Номер RW" property="rwNumber" guid="2b3421f3-f4c8-40be-9820-8f887023fc1c" />
-        </msh:row>
+        
         <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>
@@ -411,7 +407,15 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <script type="text/javascript">
-  var slo_form_is_view = 0 ;
+  var slo_form_is_view = 0 ; 
+  var medCaseId = $('id');
+	eventutil.addEventListener($('dischargeEpicrisis'), "keyup", 
+		  	function() { 
+		try {
+		localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);   
+		}
+		catch (e) {}
+		}) ; 
   </script>
   <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
   <script type="text/javascript">
@@ -612,10 +616,25 @@
         		$('outcomeName').select() ;
         		$('outcomeName').focus() ;
         	</script>
-        </msh:ifInRole>
-        
+        </msh:ifInRole> 
      <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
      	<script type="text/javascript">
+     	try {
+     	if (localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML)!=null) 
+			$('dischargeEpicrisis').value=localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+     	}
+     	catch (e) {}
+function submitFunc() { 
+	var frm = document.stac_sslDischargeForm;
+	var medCaseId = document.querySelector('#id'); 
+	try {
+	localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+	}
+	catch (e) {}
+	frm.action= "entityParentEdit-stac_sslDischarge.do";
+	frm.submit();
+} 		
+     	
      	HospitalMedCaseService.isCanDischarge('${param.id}', {
             callback: function(aResult) {
                 if (aResult!=null) {

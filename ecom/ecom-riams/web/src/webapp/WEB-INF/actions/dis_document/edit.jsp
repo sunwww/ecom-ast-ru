@@ -6,14 +6,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
-
-	<%
-	String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1", request);
-	request.setAttribute("fssProxyService", fssProxyService);
-	
-	
-	%>
-
   <tiles:put name="body" type="string">
     <!-- 
     	  - Документ нетрудоспособности
@@ -24,6 +16,7 @@
       <msh:hidden property="disabilityCase" />
       <input type='hidden' name='fssServerAddress' id='fssServerAddress' value = '${fssProxyService}'>
       <msh:panel>
+          <msh:label property="exportStatus"/>
         <msh:row>
           <msh:autoComplete vocName="mainLpu" property="anotherLpu" label="Другое лечебное учреждение" guid="c431085f-265a-4c8b5babeff" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -45,7 +38,10 @@
         </msh:row>
         <msh:row>
           <msh:textField property="series" label="Серия" guid="b9d0f37f-bd93-4e91-be9c-703c363ca9a8" />
-          <msh:textField property="number" label="Номер"  fieldColSpan="30" />
+            <msh:textField property="number" label="Номер"  fieldColSpan="30" />
+            <msh:ifFormTypeIsCreate formName="dis_documentForm">
+            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber()" value="Получить номер"></td>
+            </msh:ifFormTypeIsCreate>
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="disabilityDocumentByCase" property="prevDocument" label="Предыдущий документ" guid="c431085f-265a-40ab-9581-a1c8b5babeff" fieldColSpan="3" horizontalFill="true" />
@@ -231,6 +227,7 @@
           </msh:table>
         </msh:section>
       </msh:ifInRole>
+        <tags:fssJournal name="Journal" documentId="${param.id}"/>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
@@ -239,12 +236,7 @@
   <tiles:put name="javascript" type="string">
 	<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 	<script type="text/javascript">
-	function exportDocument() {
-		if (+$('id').value>0){
-			document.location.href=""+$('fssServerAddress').value+"/SetLnData?id="+$('id').value;
-		}
-		
-	}
+
 	function printDoc(aTemplate) {
   		DisabilityService.getPrefixForLN({
     		callback: function(aResult) {
@@ -266,6 +258,25 @@
      </msh:ifFormTypeIsView>
      <msh:ifFormTypeIsNotView formName="dis_documentForm">
     <script type="text/javascript">
+        function getFreeNumber (){
+            if ($('number').value!="") {
+                alert ("Поле \"Номер\" уже заполнено");
+                return;
+            }
+            DisabilityService.getFreeNumberForDisabilityDocument({
+                callback: function (num) {
+                    if (num!=null&&num!="") {
+                        $('number').value=num;
+                        $('number').className="viewOnly";
+                        $('getFreeNumberButton').style.display="none";
+                    } else {
+                        alert ("Не удалось получить номер больничного листа");
+                    }
+
+                }
+            });
+        }
+
 		prevDocumentAutocomplete.setParentId($('disabilityCase').value) ;
 	    closeReasonAutocomplete.addOnChangeCallback(function() {
 	    	DisabilityService.getCodeByReasonClose($('closeReason').value,{
@@ -393,8 +404,9 @@
         <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_medSocCommission" roles="/Policy/Mis/Disability/Case/Document/MedSocCommission/Create" name="МСЭК" title="Добавить решение медико-социальной экспертной комиссии" guid="4e09fb92-851a-4547-a12d-c384f63e31cd" key="CTRL+3" />
       </msh:sideMenu>
       <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/ExportDocument">
-      <msh:sideMenu  title="Экспортировать" guid="c79769a2-8a1c-4c21-ab9c-b7ed71ceb99d">
-      <msh:sideLink  name="документ" action="/javascript:exportDocument()"/>
+      <msh:sideMenu  title="Экспорт в ФСС" guid="c79769a2-8a1c-4c21-ab9c-b7ed71ceb99d">
+      <msh:sideLink  name="Экспортировать документ" action="/javascript:showJournalFSSProgress()"/>
+      <msh:sideLink  name="Просмотреть журнал экспорта" action="/javascript:showJournalFSSJournal()"/>
       </msh:sideMenu>
       </msh:ifInRole>
     </msh:ifFormTypeIsView>

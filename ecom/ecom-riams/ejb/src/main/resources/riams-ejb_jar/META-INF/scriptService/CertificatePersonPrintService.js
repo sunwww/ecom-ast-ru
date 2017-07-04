@@ -169,7 +169,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"		where ca.id='"+pid+"' and cao.id is null and caos.id is null group by mc.id,mc.contractnumber" ;
 	var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
 	var obj = list1.size()>0?list1.get(0):null ;
-	//map.put("contract","jkljlkj") ;
+	var ret = new java.util.ArrayList() ;
 	if (obj!=null) {
 		map.put("discount",+obj[6]>0?+obj[6]:null) ;
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
@@ -184,12 +184,15 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 			map.put("customer1.fio",null) ;
 			map.put("customer2.fio",obj[2]) ;
 			map.put("served.fio",obj[1]) ;
+			var parDep = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ; //Если заказчик !=обслуживаемая персона, то печатает 3 договора.
+			ret.add(parDep);
 			servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
 		}
+		map.put("print3Dogovor",ret);
+		//throw ""+ret.size();
 		customerPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[4])) ;
 		map.put("customerPerson",customerPerson) ;
 		map.put("servedPerson",servedPerson) ;
-		//throw ""+obj[4] ;l
 		map.put("customer.addressRegistration",customerPerson.addressRegistration) ;
 		map.put("customer.passportInfo",getPassportInfo(customerPerson.passportType
 				,customerPerson.passportSeries,customerPerson.passportNumber
@@ -307,24 +310,30 @@ function printContractByAccrual(aCtx, aParams) {
 	if (obj!=null) {
 		map.put("discount",+obj[6]>0?+obj[6]:null) ;
 		var contract = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.MedContract,java.lang.Long.valueOf(""+obj[5])) ;
+		var ret = new java.util.ArrayList() ;
 		map.put("contract",contract) ;
 		map.put("contractNumber",obj[0]!=null?obj[0]:"________") ;
-		var servedPerson = null,customerPerson=null; 
+		var servedPerson = null,customerPerson=null;
+		
 		if (+obj[3]==(+obj[4])) {
-			map.put("customer1.fio",obj[1]) ;
+			map.put("customer1.fio",obj[2]) ;
 			map.put("customer2.fio",null) ;
 			map.put("served.fio",null) ;
 		} else {
+			 
 			map.put("customer1.fio",null) ;
-			map.put("customer2.fio",obj[1]) ;
-			map.put("served.fio",obj[2]) ;
+			map.put("customer2.fio",obj[2]) ;
+			map.put("served.fio",obj[1]) ;
+			var parDep = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ; //Если заказчик !=обслуживаемая персона, то печатает 3 договора.
+			ret.add(parDep);
 			servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
 		}
+		
+		map.put("print3Dogovor",ret);
 		customerPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[4])) ;
 		map.put("customerPerson",customerPerson) ;
 		map.put("servedPerson",servedPerson) ;
 		
-		//throw ""+obj[4] ;
 		map.put("customer.passportInfo",getPassportInfo(customerPerson.passportType
 				,customerPerson.passportSeries,customerPerson.passportNumber
 				,customerPerson.passportDateIssued,customerPerson.passportWhomIssued)) ;

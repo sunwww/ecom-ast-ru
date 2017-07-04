@@ -8,3 +8,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditUsername(aContext.getSessionContext().getCallerPrincipal().toString()) ;
 }
+function onView(aForm, aEntity, aContext) {
+	aForm.setFinanceSource(aEntity.medCase.serviceStream.id);
+	
+}

@@ -86,7 +86,7 @@
       <msh:hidden property="id" guid="c5a9c42c-d593-4fae-a685-44586a81938b" />
       <msh:hidden property="patient" guid="fbedab7b-1153-4f3c-b9d4-14643e32a6f7" />
       <msh:hidden property="saveType" guid="7cb7bcb7-2cb3-4e65-92ce-2a4a2cec809f" />
-      
+      <msh:hidden property="guarantee"/>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      
@@ -236,13 +236,7 @@
         	<msh:autoComplete viewAction="entityParentView-preg_pregnancy.do" property="pregnancy" label="Беременность" fieldColSpan="3" parentId="stac_sslAdmissionForm.patient" vocName="pregnancyByPatient" horizontalFill="true"/>
         </msh:row>
         </mis:ifPatientIsWoman>
-        <msh:row guid="494efe58-5b3c-44b7-8148-dd3a32922082">
-          <msh:separator colSpan="6" label="RW" guid="8ca2fac1-9f38-4cd2-9e7d-8e081222815d" />
-        </msh:row>
-        <msh:row guid="f6e5b8dd-89fd-4442-9779-4995ba7cc3d8">
-          <msh:textField label="Дата RW" property="rwDate" guid="ffd282d7-95fe-40e5-a3a8-6d424c98dac0" />
-          <msh:textField label="Номер RW" property="rwNumber" guid="2b3421f3-f4c8-40be-9820-8f887023fc1c" />
-        </msh:row>
+        
         <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>

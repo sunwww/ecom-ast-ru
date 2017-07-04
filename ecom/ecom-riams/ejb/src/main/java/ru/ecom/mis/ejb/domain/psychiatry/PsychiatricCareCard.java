@@ -144,22 +144,7 @@ public class PsychiatricCareCard extends BaseEntity{
   * Наблюдения
   */
  private List<PsychiaticObservation> theObservations;
- /**
-  * Суициды
-  */
- @Comment("Суициды")
- @OneToMany(mappedBy="careCard", cascade=CascadeType.ALL)
- @OrderBy("fulfilmentDate")
- public List<Suicide> getSuicides() {
-  return theSuicides;
- }
- public void setSuicides(List<Suicide> aSuicides) {
-  theSuicides = aSuicides;
- }
- /**
-  * Суициды
-  */
- private List<Suicide> theSuicides;
+
  /**
   * Общественно-опасные события
   */

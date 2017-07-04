@@ -3,6 +3,26 @@ var theDefaultTimeOut ;
 var theDefaultTimeOutCnt=4 ;
 var theDefaultFieldName ;
 var theDefaultEvt ; 
+
+function mshSaveTableToExcelById(aId) {
+	mshPrintTextToExcelTable(document.getElementById(aId).outerHTML);
+}
+function mshSaveNextTableToExcel(aButton) {
+	var nodes = aButton.parentNode.childNodes;
+	var ret=0;
+	for (var i=0;i<nodes.length;i++) {
+		if(""+nodes[i]=='[object HTMLTableElement]') {
+			ret=1;
+			var html = nodes[i].outerHTML;
+			mshPrintTextToExcelTable(html);
+		} 
+	}
+	if (ret==0) {alert('Не смог найти таблицу :(');}
+	
+}
+function mshPrintTextToExcelTable (html) {
+	window.location.href='data:application/vnd.ms-excel,'+'\uFEFF'+encodeURIComponent(html);
+}
 function adjustMessage(text,aDiv) {
 	var MessageObj = document.getElementById(aDiv);
 	var isThisMozilla = true ;

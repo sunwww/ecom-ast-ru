@@ -47,8 +47,22 @@ public interface IHospitalMedCaseService {
 	public WebQueryResult exportN3(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
 	public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) throws ParserConfigurationException, TransformerException;
 	public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)  throws ParserConfigurationException, TransformerException;
-	public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)  throws ParserConfigurationException, TransformerException;
+	public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)  throws ParserConfigurationException, TransformerException, ParseException;
 	public WebQueryResult exportN2_plan_otherLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
+    		throws ParserConfigurationException, TransformerException ;
+	/**
+	 * Выгрузка xml-файлов по переводам внутри ЛПУ
+	 * @param aDateFrom дата с
+	 * @param aDateTo дата по
+	 * @param aPeriodByReestr период
+	 * @param aLpu код федеральный ЛПУ
+	 * @param aNPackage номер пакета
+	 * @param aSaveInFolder сохранять в папку
+	 * @return список файлов
+	 * @throws ParserConfigurationException
+	 * @throws TransformerException
+	 */
+	public WebQueryResult exportN2_trasferInLpu(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder) 
     		throws ParserConfigurationException, TransformerException ;
 	public void createNewDiary(String aTitle, String aText, String aUsername) ;
 	public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) ;
@@ -84,8 +98,6 @@ public interface IHospitalMedCaseService {
     public List<HospitalMedCaseForm> findOpenHospitalByDate(String aDate) ;
     public String isOpenningSlo(long aIdSls) ;
     
-    public String getRW(long aIdSls) ;
-    public void setRW(long aIdSls, String aRwDate, String aRwNumber)  throws ParseException;
     
     // Поиск СЛС по номеру стат.карты
     public List<HospitalMedCaseForm>findSlsByStatCard(String aNumber) ;

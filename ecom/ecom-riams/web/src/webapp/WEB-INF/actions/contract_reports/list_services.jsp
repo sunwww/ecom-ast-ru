@@ -46,6 +46,9 @@
 				<msh:row>
 					<msh:autoComplete property="priceMedService" parentAutocomplete="priceList" label="Медицинская услуга" vocName="priceMedServiceByPriceList" horizontalFill="true" fieldColSpan="4"/>
 				</msh:row>
+				<msh:row>
+					<msh:autoComplete property="workFunction" label="Специалист" vocName="workFunction" horizontalFill="true" fieldColSpan="4"/>
+				</msh:row>
 				
         <msh:row>
 	        <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
@@ -67,6 +70,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="5"> реестр
 	        </td>
+			<td onclick="this.childNodes[1].checked='checked';">
+				<input type="radio" name="typeGroup" value="6"> по специалисту
+			</td>
         </msh:row>				
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
@@ -153,6 +159,14 @@ if (dateFrom!=null) {
        		request.setAttribute("groupGroupNext", "2") ;
    			request.setAttribute("groupGroup", "lpu.id,lpu.name,vpt.id,vpt.name") ;
    			request.setAttribute("groupOrder", "lpu.name,vpt.name") ;
+		} else if (typeGroup.equals("6")) { //Группировка по рабочим функциям исполнителя
+			request.setAttribute("groupSql", "vwfexec.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename") ;
+			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&workFunction='||wfexec.id||'&pricemedservice='||pms.id") ;
+			request.setAttribute("groupName", "Специалист") ;
+			request.setAttribute("groupGroupNext", "5") ;
+			request.setAttribute("groupGroup", "lpu.id,lpu.name,wfexec.id,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name,pms.id") ;
+			request.setAttribute("groupOrder", "lpu.name,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name") ;
+
 		} else {
 		
 			//Реестр
@@ -169,11 +183,12 @@ if (dateFrom!=null) {
 		ActionUtil.setParameterFilterSql("department","lpu.id", request) ;
 		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
 		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
+		ActionUtil.setParameterFilterSql("workFunction","workfunctionExecutor","wfexec.id", request) ;
 		%>
 		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
@@ -203,15 +218,16 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
+left join medcase vis on vis.id=caos.medcase_id
+left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
-${nationalitySql} ${departmentSql} ${positionTypeSql}
+${nationalitySql} ${departmentSql} ${positionTypeSql} ${workfunctionExecutorSql}
 ${departmentTypeSql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
-
-				<msh:table name="finansReport" 
+				<msh:table name="finansReport"  printToExcelButton="Сохранить в excel"
 				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
@@ -287,9 +303,12 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
+
+left join medcase vis on vis.id=caos.medcase_id
+left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
-${nationalitySql} ${departmentSql} ${positionTypeSql}
+${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
 ${departmentTypeSql}
 
 group by ${groupGroup}
@@ -308,7 +327,7 @@ order by ${groupOrder}
 	    </form>     
 			</msh:sectionTitle>
 			<msh:sectionContent>
-				<msh:table name="finansReport" 
+				<msh:table name="finansReport"   printToExcelButton="Сохранить в excel"
 				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
@@ -388,14 +407,17 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
+
+left join medcase vis on vis.id=caos.medcase_id
+left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
-${nationalitySql} ${departmentSql} ${positionTypeSql}
+${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
 ${departmentTypeSql}
 group by ${groupGroup}
 order by ${groupOrder}
 			"/>
-			<msh:sectionTitle> 
+			<msh:sectionTitle>
 	    <form action="print-contract_reports_services_3.do" method="post" target="_blank">
 	    Финасовый отчет по услугам за период ${FromTo}
 	    <input type='hidden' name="sqlText" id="sqlText" value="${finansReport_sql}"> 
@@ -406,7 +428,7 @@ order by ${groupOrder}
 	    <input type="submit" value="Печать"> 
 	    </form>     
 			</msh:sectionTitle>
-				<msh:table name="finansReport" 
+				<msh:table name="finansReport"   printToExcelButton="Сохранить в excel"
 				action="contract_reports_services.do?typeGroup=${groupGroupNext}" 
 				viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short" 
 				idField="1">
@@ -484,9 +506,12 @@ left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
+
+left join medcase vis on vis.id=caos.medcase_id
+left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
-${nationalitySql} ${departmentSql} ${positionTypeSql}
+${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
 ${departmentTypeSql}
 group by mc.id,${groupGroup},lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
@@ -504,7 +529,7 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 			
 			</msh:sectionTitle>
 
-				<msh:table name="finansReport" 
+				<msh:table name="finansReport"  printToExcelButton="Сохранить в excel"
 				action="entityView-contract_medContract.do" 
 				viewUrl="entityView-contract_medContract.do?short=Short"
 				idField="1">
@@ -537,7 +562,81 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 				</msh:table>
 
 			</msh:section>
-	<%} 
+	<%} else if (typeGroup!=null&& typeGroup.equals("6")) { //группировка по специалистам
+		    %>
+		<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
+			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
+SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+,${groupSql} as dateNum
+,pp.code||' '||pp.name
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService
+, sum(case when cao.dtype='OperationAccrual' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscount
+, sum(case when cao.dtype='OperationAccrual' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService
+, sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount
+
+, sum(case when cao.dtype='OperationReturn' then cams.countMedService else 0 end) as sumCountMedServiceRet
+, sum(case when cao.dtype='OperationReturn' and coalesce(cao.discount,0)>0 then cams.countMedService else 0 end) as sumCountMedServiceWithDiscountRet
+, sum(case when cao.dtype='OperationReturn' then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedServiceRet
+, sum(case when cao.dtype='OperationReturn' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscountRet
+
+FROM medcontract MC
+LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id
+LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+left join ContractAccountOperation CAO on CAO.account_id=CA.id
+left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
+left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+
+left join PriceMedService pms on pms.id=cams.medService_id
+left join PricePosition pp on pp.id=pms.pricePosition_id
+left join PricePosition pg on pg.id=pp.parent_id
+left join MisLpu lpu on lpu.id=pg.lpu_id
+left join WorkFunction wf on wf.id=cao.workFunction_id
+left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+left join Worker w on w.id=wf.worker_id
+left join Patient wp on wp.id=w.person_id
+left join medcase vis on vis.id=caos.medcase_id
+left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
+left join worker wexec on wexec.id=wfexec.worker_id
+left join vocworkfunction vwfexec on vwfexec.id=wfexec.workfunction_id
+left join patient wpat on wpat.id=wexec.person_id
+WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+${nationalitySql} ${departmentSql} ${positionTypeSql} ${workfunctionExecutorSql}
+${departmentTypeSql}
+group by ${groupGroup}
+order by ${groupOrder}
+			"/>
+
+			<msh:table name="finansReport" printToExcelButton="Сохранить в excel"
+					   action="contract_reports_services.do?typeGroup=${groupGroupNext}"
+					   viewUrl="contract_reports_services.do?typeGroup=${groupGroupNext}&short=Short"
+					   idField="1">
+				<msh:tableNotEmpty>
+					<tr>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th colspan="4">Оплата</th>
+						<th colspan="4">Возврат</th>
+					</tr>
+				</msh:tableNotEmpty>
+				<msh:tableColumn columnName="${groupName}" property="2" />
+				<msh:tableColumn columnName="Услуга" property="3" />
+				<msh:tableColumn columnName="Кол-во услуг" isCalcAmount="true" property="4" />
+				<msh:tableColumn columnName="Кол-во со скидкой" isCalcAmount="true" property="5" />
+				<msh:tableColumn columnName="Сумма" isCalcAmount="true" property="6" />
+				<msh:tableColumn columnName="с учетом скидки" isCalcAmount="true" property="7" />
+				<msh:tableColumn columnName="Кол-во" isCalcAmount="true" property="8" />
+				<msh:tableColumn columnName="Кол-во со скидкой" isCalcAmount="true" property="9" />
+				<msh:tableColumn columnName="Сумма" isCalcAmount="true" property="10" />
+				<msh:tableColumn columnName="с учетом скидки с НДС" isCalcAmount="true" property="11" />
+			</msh:table>
+
+		</msh:section>
+		<%
+	}
 	
 	}%>
 	</tiles:put>

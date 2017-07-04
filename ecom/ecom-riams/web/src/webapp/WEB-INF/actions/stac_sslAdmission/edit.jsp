@@ -64,8 +64,6 @@
       <msh:hidden property="provisional" guid="38fe07ac-6706-4911-a217-65edb3c85dac" />
       <msh:hidden property="result" guid="156ff02c-61dd-40b9-80f4-d88885db16f8" />
       <msh:hidden property="moveToAnotherLPU" guid="c0b69264-2081-4952-8c0a-7ea12712f14c" />
-      <msh:hidden property="rwDate" guid="9438b469-d5b6-4d11-8dc9-91a551e2f2d1" />
-      <msh:hidden property="rwNumber" guid="70e2513e-0d2e-48fd-9d08-3e83415755f9" />
       <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="reasonDischarge" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="rareCase"/>
@@ -77,6 +75,10 @@
         <msh:hidden property="lawCourtDesicionDate"/>
         <msh:hidden property="psychReason"/>      
       </msh:ifNotInRole>
+      <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <msh:hidden property="guarantee"/>
+      </msh:ifNotInRole>
+     
 
       <msh:panel guid="6e8d827a-d32c-4a05-b4b0-5ff7eed6eedc">
         <msh:separator label="Приемное отделение" colSpan="9" guid="af11419b-1c80-4025-be30-b7e83df06024" />
@@ -122,6 +124,11 @@
           <msh:autoComplete vocName="vocHospType" property="hospType" label="Тип тек. стационара" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p16c" />
           <msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" fieldColSpan="1" horizontalFill="true" guid="10h64-23b2-42c0-ba47-65p8g16c" />
         </msh:row>
+         <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <msh:row>
+          <msh:autoComplete  vocName="guaranteeByPatient" parentId="smo_directionForm.patient" property="guarantee" label="Гарантийное письмо" guid="58d43ea6-3555-4eaf-978e-f259920d179c" fieldColSpan="3" horizontalFill="true" />
+        </msh:row>
+      </msh:ifInRole>
         <msh:row guid="5d9db3cf-010f-463e-a2e6-3bbec49fa646">
           <msh:autoComplete property="pediculosis" vocName="vocPediculosis" label="Педикулез" horizontalFill="true" guid="30c4f14a-0fa4-4b5b-9c13-4ecfca6000f6" />
           <msh:autoComplete property="deniedHospitalizating" label="Причина отказа от госп." vocName="vocDeniedHospitalizating" horizontalFill="true" fieldColSpan="1" guid="f1dab596-6c7d-4cb4-848b-71b62bd6bf3a" />
@@ -341,8 +348,39 @@
     	</msh:ifInRole>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm" guid="76f69ba0-a7b7-4cdb-8007-4de4ae2836ec">
-    
+      <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
+      <script type="text/javascript">
+       	function checkIfDogovorNeeded() {
+  		if (+$('serviceStream').value>0&&$('guaranteeName')) {
+  			ContractService.checkIfDogovorIsNeeded($('patient').value, $('serviceStream').value, $('dateStart').value,null,'HOSPITAL', {
+  	  			callback: function (res) {
+  	  				if (res!=null&&res!='') {
+  	  					if (res.startsWith("0")) {
+  	  						alert ("Ошибка: "+res.substring(1));
+  	  					} else {
+  	  						var arr = res.substring(1).split("|");
+  	  						$('guarantee').value = arr[0];
+  	  						$('guaranteeName').value = arr[1];
+  	  					}	 
+  	  				} else {
+  	  				
+  	  				}
+  	  			$('guaranteeName').disabled=true;
+  	  			}
+  	  		});
+  		}
+  		
+  	}
+       	</script>
+      </msh:ifInRole>
+      <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
+      <script type="text/javascript"> function checkIfDogovorNeeded() {}
+      </script>
+      </msh:ifNotInRole>
     <script type="text/javascript">
+
+    serviceStreamAutocomplete.addOnChangeCallback(function(){checkIfDogovorNeeded();});
     function viewTable263narp_byPat() {
     	if ($('orderDate').value=="") {
     		alert("Введите дату направления");

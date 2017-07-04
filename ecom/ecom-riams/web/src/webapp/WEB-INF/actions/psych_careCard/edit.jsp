@@ -401,17 +401,7 @@
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Psychiatry/CareCard/Suicide/View" guid="62c676d9-c94e-4333-9d86-f99033d5c672">
       <td>
-       <msh:section title="Суициды." createRoles="/Policy/Mis/Psychiatry/CareCard/Suicide/Create" createUrl="entityParentPrepareCreate-psych_suicide.do?id=${param.id}"
-        listUrl="entityParentList-psych_suicide.do?id=${param.id}">
-          <msh:sectionContent guid="dc298afa-d1da-4059-bc63-0612623efcc4">
-            <ecom:parentEntityListAll attribute="suicides" formName="psych_suicideForm" guid="80d89232-1c00-4a2f-a590-d9fa66ec5815" />
-            <msh:table name="suicides" idField="id" action="entityParentView-psych_suicide.do" guid="764bb8ab-3a0f-4b21-bec0-cd2449d7252b">
-              <msh:tableColumn property="id" columnName="ИД" guid="260b7cf5-d2eb-4335-a31d-7a6dd1b1664b" />
-              <msh:tableColumn property="fulfilmentDate" columnName="Дата совершения"/>
-              <msh:tableColumn property="notes" columnName="Описание" />
-            </msh:table>
-          </msh:sectionContent>
-        </msh:section>
+       
         <msh:section title="Талоны по суицидальным попыткам">
         <ecom:webQuery name="listds" nativeSql="select s.id,s.suicideDate
   	from SuicideMessage s

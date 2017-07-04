@@ -19,3 +19,6 @@ function infoDiagByMedcard(aForm,aCtx) {
 function list(aForm,aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/smo_ticket/list.jsp") ;
 }
+function generate(aForm,aCtx) {
+	return aCtx.createForward("/WEB-INF/actions/smo_ticket/gener_ticket.jsp") ;
+}

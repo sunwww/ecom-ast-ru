@@ -402,7 +402,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     <msh:section>
     <msh:sectionTitle>Свод по дневникам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
     select ${vocWorkFunctionsSqlId} as vwfid,vwf.name as vwfname
     ,count(distinct sls.id) as cntSls
     ,count(distinct case when diag.id is null then sls.id else null end) as notdiag
@@ -429,7 +429,7 @@ and sls.medicalAid='1'
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во отказов" property="3" isCalcAmount="true" />
       <msh:tableColumn columnName="из них без диагноза" property="4" isCalcAmount="true" />
-    </msh:table>
+    </msh:table>${datelist_sql}
     </msh:sectionContent>
     </msh:section> 
     <% } %>

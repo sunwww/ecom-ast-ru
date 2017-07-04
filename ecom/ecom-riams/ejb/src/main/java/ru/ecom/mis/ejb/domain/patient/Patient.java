@@ -1015,4 +1015,5 @@ public class Patient extends BaseEntity{
 
 	/** Цветовая характеристика */
 	private Boolean theColorType;
+
 }

@@ -16,8 +16,11 @@
 				<div class='menu'>
 				<h2>Работа с данными</h2>
 				<ul>
-					<li><msh:link roles='/Policy/Mis/Patient' action="lab_checkImportPDF.do">
-                            TEST check pdf
+					<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:sendDiary()">
+						TEST = отправить дневник в ЛК
+					</msh:link></li>
+					<li><msh:link roles='/Policy/Mis/Disability/Case/Document/ExportDocument' action="/javascript:getLNNumberRange()">
+                            Получить номера электронных больничных листов (ЭЛН)
                         </msh:link></li>
 					<li><msh:link roles='/Policy/Mis/Patient' action="templateDocument-import.do">
                             Загрузить файл
@@ -118,7 +121,7 @@
 						<li><msh:link action="serviceExport.do" roles="/Policy/Jaas/Activation">
 	                            Активация политик
 	                        </msh:link></li>
-						<li><msh:link action="entityList-sec_userPermission.do" roles="/Policy/Jaas/Permission/User/View">
+						<li><msh:link action="js-sec_userPermission-listNext.do" roles="/Policy/Jaas/Permission/User/View">
 	                            Разрешения
 	                        </msh:link></li>
 					</ul>
@@ -178,9 +181,38 @@
 	</tiles:put>
 	 <tiles:put name="javascript" type="string">
 	   <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+		 <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
+		 <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 	   <script type="text/javascript">
-	   
+
+           function getLNNumberRange() {
+               var num = prompt("Укажите количество требуемых номеров",20);
+               if (+num>0) {
+					DisabilityService.getLNNumberRange(num, {
+					    callback:function (ret) {
+					        if (ret!=null&&ret!='') {
+                                alert ("Номера ЭЛН в количестве "+num+" штук успешно получены.");
+							} else {
+					            alert ("Произошла ошибка при получении номеров ЭЛН! Попробуйте еще раз.")
+							}
+
+						}
+					});
+			   }
+		   }
+		   function sendDiary() {
+	       var protocolId = 3098407; //3094777-KT , 3098407-LAB, 4080564-Visit
+	       var medcaseId=null ;  // 3964827//SLS
+	       alert ("sending: protocol= "+protocolId+", medcase="+medcaseId);
+           TemplateProtocolService.sendService(protocolId, medcaseId, {
+               callback:function (res) {
+                   alert ("отправлено"+res);
+			   }
+		   });
+	   }
 	   function deleteAllTalons () {
+
+
 		   var date = prompt('Введите дату, до которой были выданы талоны','01.01.2016');
 		   if (date!=null&&date!='') {
 			   TicketService.deleteTalons('',date,{

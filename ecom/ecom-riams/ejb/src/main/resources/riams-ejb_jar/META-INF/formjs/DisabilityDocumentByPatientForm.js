@@ -43,6 +43,10 @@ function onPreCreate(aForm, aCtx) {
 	} else {
 		aForm.setOtherCloseDate("") ;
 	}
+    list = aCtx.manager.createNativeQuery("select number, disabilitydocument_id from ElectronicDisabilityDocumentNumber where number =:num and disabilitydocument_id is not null").setParameter("num",number).getResultList();
+    if (list.size()>0) {
+        throw "Данный номер уже был использован в случае нетрудоспособности "+list.get(0)[1];
+    }
 }
 
 function onCreate(aForm, aEntity, aCtx) {
@@ -98,6 +102,17 @@ function onCreate(aForm, aEntity, aCtx) {
 			aCtx.manager.persist(pat) ;
 		}
 	}
+    var elns = aCtx.manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aEntity.number).getResultList();
+    if (elns.size()>0) { //Если номер из таблицы с полученнми номерами от ФСС, забираем номер.
+        var eln = elns.get(0);
+        if (eln.getDocument!=null) {throw "Случилось то, чего не должно случиться. Обратитесь к разработчикам. Ошибка: ELN_UJE_ZANYAT";}
+        eln.setDisabilityDocument(aEntity);
+        eln.setUsername(aEntity.getCreateUsername());
+        eln.setReserveDate(null);
+        eln.setReserveTime(null);
+        aCtx.manager.persist(eln);
+
+    }
 }
 function errorThrow(aList, aError) {
 	if (aList.size()>0) {
