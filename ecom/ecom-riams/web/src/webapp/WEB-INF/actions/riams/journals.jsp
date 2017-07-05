@@ -119,6 +119,9 @@
 	                        <li><msh:link  isReport="false" action="move_to_archive.do" roles="/Policy/Mis/ArchiveCase/Create">
 	                           Передача историй болезни в архив
 	                        </msh:link></li>
+	                        <li><msh:link  isReport="false" action="eln_count.do" roles="/Policy/Mis/ArchiveCase/Create">
+	                           Количество сформированных ЭЛН
+	                        </msh:link></li>
 					</ul>
 					</div>
 				</td>
