@@ -715,6 +715,18 @@
 		queried="upper(ce.name) like upper(:query)"
 	/>
 </voc>
+	<!--Список позиций прейскуранта по прейскуранту-->
+	<voc id="pricePositionByPriceList" type="NativeVocService">
+		<NativeVocService
+				from="PricePosition PP"
+				parent='PP.priceList_id = :parent'
+				nameId="PP.id"
+				queryAppend=""
+				order=""
+				names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
+				queried=" (upper(PP.code) like upper(:query) or upper(replace(PP.code,'.','')) like upper(:query) or upper(PP.name) like upper(:query) or upper(''||pp.id) like upper(:query)) "
+		/>
+	</voc>
 <voc id="priceMedServiceByPriceList" type="NativeVocService">
 		<NativeVocService
 			from="PriceMedService PMS"

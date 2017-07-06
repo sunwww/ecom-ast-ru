@@ -47,6 +47,9 @@
 					<msh:autoComplete property="priceMedService" parentAutocomplete="priceList" label="Медицинская услуга" vocName="priceMedServiceByPriceList" horizontalFill="true" fieldColSpan="4"/>
 				</msh:row>
 				<msh:row>
+					<msh:autoComplete property="pricePosition" parentAutocomplete="priceList" label="Позиция прейскуранта" vocName="pricePositionByPriceList" horizontalFill="true" fieldColSpan="4"/>
+				</msh:row>
+				<msh:row>
 					<msh:autoComplete property="workFunction" label="Специалист" vocName="workFunction" horizontalFill="true" fieldColSpan="4"/>
 				</msh:row>
 				
@@ -138,10 +141,10 @@ if (dateFrom!=null) {
 		if (typeGroup.equals("1")||typeGroup.equals("2")) {
 			// Группировка по услугам 
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
-   			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
+   			request.setAttribute("groupSqlId", "'&pricePosition='||pp.id") ;
    			request.setAttribute("groupName", "Услуга") ;
        		request.setAttribute("groupGroupNext", "5") ;
-   			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat,lpu.name") ;
+   			request.setAttribute("groupGroup", "pp.id,pp.code,pp.name,pp.isVat,lpu.name") ;
    			request.setAttribute("groupOrder", "lpu.name,pp.code") ;
 		} else if (typeGroup.equals("3")){
 			// Группировка по отделению 
@@ -161,23 +164,24 @@ if (dateFrom!=null) {
    			request.setAttribute("groupOrder", "lpu.name,vpt.name") ;
 		} else if (typeGroup.equals("6")) { //Группировка по рабочим функциям исполнителя
 			request.setAttribute("groupSql", "vwfexec.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename") ;
-			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&workFunction='||wfexec.id||'&pricemedservice='||pms.id") ;
+			request.setAttribute("groupSqlId", "'&department='||lpu.id||'&workFunction='||wfexec.id||'&pricePosition='||pp.id") ;
 			request.setAttribute("groupName", "Специалист") ;
 			request.setAttribute("groupGroupNext", "5") ;
-			request.setAttribute("groupGroup", "lpu.id,lpu.name,wfexec.id,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name,pms.id") ;
+			request.setAttribute("groupGroup", "lpu.id,lpu.name,wfexec.id,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name,pp.id") ;
 			request.setAttribute("groupOrder", "lpu.name,vwfexec.name,wpat.lastname,wpat.firstname,wpat.middlename,pp.code,pp.name") ;
 
 		} else {
 		
 			//Реестр
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
-   			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
+   			request.setAttribute("groupSqlId", "'&pricePosition='||pp.id") ;
    			request.setAttribute("groupName", "Сотрудник") ;
-   			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat") ;
+   			request.setAttribute("groupGroup", "pp.id,pp.code,pp.name,pp.isVat") ;
    			request.setAttribute("groupOrder", "pp.code") ;
 		}
 		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
-		ActionUtil.setParameterFilterSql("priceMedService","pms.id", request) ;
+		//ActionUtil.setParameterFilterSql("priceMedService","pms.id", request) ;
+		ActionUtil.setParameterFilterSql("pricePosition","pp.id", request) ;
 		ActionUtil.setParameterFilterSql("priceList","pp.priceList_id", request) ;
 		ActionUtil.setParameterFilterSql("nationality","ccp.nationality_id", request) ;
 		ActionUtil.setParameterFilterSql("department","lpu.id", request) ;
@@ -188,7 +192,7 @@ if (dateFrom!=null) {
 		<% if (typeGroup!=null&& typeGroup.equals("1")) {%>
 			<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
@@ -221,7 +225,7 @@ left join Patient wp on wp.id=w.person_id
 left join medcase vis on vis.id=caos.medcase_id
 left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql} ${workfunctionExecutorSql}
 ${departmentTypeSql}
 group by ${groupGroup}
@@ -256,7 +260,7 @@ order by ${groupOrder}
 	<%} else if (typeGroup!=null&& (typeGroup.equals("2") || typeGroup.equals("4"))) {%>
 			<msh:section>
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,list(distinct lpu.name)
 
@@ -307,7 +311,7 @@ left join Patient wp on wp.id=w.person_id
 left join medcase vis on vis.id=caos.medcase_id
 left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
 ${departmentTypeSql}
 
@@ -362,7 +366,7 @@ order by ${groupOrder}
 			<msh:section >
 
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as countMedDog 
@@ -411,7 +415,7 @@ left join Patient wp on wp.id=w.person_id
 left join medcase vis on vis.id=caos.medcase_id
 left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
 ${departmentTypeSql}
 group by ${groupGroup}
@@ -510,7 +514,7 @@ left join Patient wp on wp.id=w.person_id
 left join medcase vis on vis.id=caos.medcase_id
 left join workfunction wfexec on wfexec.id=vis.workfunctionexecute_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}  ${workfunctionExecutorSql}
 ${departmentTypeSql}
 group by mc.id,${groupGroup},lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
@@ -566,7 +570,7 @@ order by ${groupOrder},CCP.lastname,CCP.firstname,CCP.middlename
 		    %>
 		<msh:section title="Финасовый отчет по услугам за период ${FromTo} ">
 			<ecom:webQuery name="finansReport" nameFldSql="finansReport_sql" nativeSql="
-SELECT ${groupSqlId}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
+SELECT ${groupSqlId}||${operatorSqlId}||${pricePositionSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||${workfunctionExecutorSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}' as sqlId
 ,${groupSql} as dateNum
 ,pp.code||' '||pp.name
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService
@@ -602,7 +606,7 @@ left join worker wexec on wexec.id=wfexec.worker_id
 left join vocworkfunction vwfexec on vwfexec.id=wfexec.workfunction_id
 left join patient wpat on wpat.id=wexec.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
-and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
+and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${pricePositionSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql} ${workfunctionExecutorSql}
 ${departmentTypeSql}
 group by ${groupGroup}
