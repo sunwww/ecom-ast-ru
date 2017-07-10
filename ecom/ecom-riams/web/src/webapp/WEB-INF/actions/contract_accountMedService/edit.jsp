@@ -56,7 +56,33 @@
 			}
 			});
 		}
-	
+    eventutil.addEventListener($('dateFrom'),'change',function(){getAmountByPerid ();}) ;
+    eventutil.addEventListener($('dateFrom'),'blur',function(){getAmountByPerid ();}) ;
+    eventutil.addEventListener($('dateFrom'),'keyup',function(){getAmountByPerid ();}) ;
+    eventutil.addEventListener($('dateTo'),'change',function(){getAmountByPerid ();}) ;
+    eventutil.addEventListener($('dateTo'),'blur',function(){getAmountByPerid ();}) ;
+    eventutil.addEventListener($('dateTo'),'keyup',function(){getAmountByPerid ();}) ;
+
+	function getAmountByPerid () {
+
+	    var startDate = $('dateFrom').value;
+	    var finishDate = $('dateTo').value;
+
+	    if (startDate!=null&& startDate!="" &&startDate.length==10 &&finishDate!=null&&finishDate.length==10) {
+            var amount = "";
+	        try {
+                    var dt1 = startDate.substr(6,4)+'-'+startDate.substr(3,2)+'-'+startDate.substr(0,2);
+                    var dt2= finishDate.substr(6,4)+'-'+finishDate.substr(3,2)+'-'+finishDate.substr(0,2);
+                    var d1 = new Date(), d2 = new Date();
+                    d1.setTime(Date.parse(dt1));
+                    d2.setTime(Date.parse(dt2));
+                    amount = (d2.getTime() - d1.getTime())/1000/60/60/24;
+			} catch (e) {
+
+			}
+            $('countMedService').value=""+amount;
+		}
+	}
 	</script>
 	</tiles:put>
 </tiles:insert>
