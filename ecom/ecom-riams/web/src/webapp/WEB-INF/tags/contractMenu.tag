@@ -105,8 +105,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		/>
 </msh:sideMenu>
 <msh:sideMenu title="Работа с ККМ">
-<msh:sideLink styleId="analisisPriceServices"
-		action="/javascript:printKKMReport('Z')" 
+<msh:sideLink styleId="medContract"
+		action="/javascript:printKKMReport('Z')"
 		name="Распечатать Z отчет" roles="/Policy/Config/KKMWork"
 		title="Распечатать Z отчет"
 		/>
