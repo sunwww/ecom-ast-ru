@@ -18,8 +18,10 @@
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры запуска" colSpan="5"/>
+        
       </msh:row>
       <msh:row>
+      <msh:textField property="refreshType"/>
         <msh:textField property="dateBegin" label="Период с" />
         <msh:textField property="dateEnd" label="по" />
            <td>

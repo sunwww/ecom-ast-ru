@@ -209,7 +209,7 @@ function onPreDelete(aEntityId, aContext) {
 	
 }
 function onView (aForm, aEntity, aCtx){ //Если документ отправляли в ФСС - берем информациб о цего статусе
-	var eln = aCtx.manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aForm.getNumber()).getResultList();
+	var eln = aCtx.manager.createQuery("from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aForm.getNumber()).getResultList();
 	var status = "";
 	if (eln.isEmpty()){
 		eln = aCtx.manager.createNativeQuery("select id, result , to_char(requestdate,'dd.MM.yyyy') as f2_date from exportfsslog where disabilitynumber=:num").setParameter("num",aForm.getNumber()).getResultList();

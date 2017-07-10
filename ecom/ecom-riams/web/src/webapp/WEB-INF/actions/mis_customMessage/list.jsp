@@ -26,8 +26,8 @@
   	<ecom:webQuery name="list"
   	nativeSql="select cm.messageTitle,cm.messageText,count(distinct cm.id) as cntMes,list(cm.recipient||'<br/>') as addr,to_char(cm.validityDate,'dd.mm.yyyy') as validDate,to_char(cm.dateReceipt,'dd.mm.yyyy')||' '||cast(cm.timeReceipt as varchar(5))
   	from CustomMessage cm where ${addParam} and (cm.isHidden='0' or cm.isHidden is null)
-  	  	group by cm.messageTitle,cm.messageText,cm.recipient,cm.validityDate,cm.dateReceipt,cm.timeReceipt
-  	"
+  	  	group by cm.messageTitle,cm.messageText,cm.recipient,cm.validityDate,cm.dateReceipt,cm.timeReceipt order by cm.dateReceipt desc
+  	" maxResult="20"
   	/>
   	<msh:section createUrl="entityPrepareCreate-mis_customMessage.do" 
   	createRoles="/Policy/Mis/CustomMessage/Create" title="${title}">

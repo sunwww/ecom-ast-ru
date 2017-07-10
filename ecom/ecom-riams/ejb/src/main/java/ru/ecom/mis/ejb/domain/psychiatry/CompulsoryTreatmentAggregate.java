@@ -109,8 +109,7 @@ public class CompulsoryTreatmentAggregate extends BaseEntity {
 	public void setIsDeath(boolean aIsDeath) {theIsDeath = aIsDeath;}
 
 	
-	/** Перевод в ЛПУ */
-	private String theTransferLpuCode;
+
 	/** Умер */
 	private boolean theIsDeath;
 	
@@ -262,4 +261,33 @@ public class CompulsoryTreatmentAggregate extends BaseEntity {
 	public void setIdcEntranceCode(String aIdcCode) {theIdcEntranceCode = aIdcCode;}
 	/** Диагноз при поступлении */
 	private String theIdcEntranceCode ;
+	
+	/** Возраст на начало СЛО */
+	@Comment("Возраст на начало СЛО")
+	public Long getAgeEntranceSlo() {return theAgeEntranceSlo;}
+	public void setAgeEntranceSlo(Long aAgeEntranceSlo) {theAgeEntranceSlo = aAgeEntranceSlo;}
+
+	/** Возраст на конец СЛО */
+	@Comment("Возраст на конец СЛО")
+	public Long getAgeDischargeSlo() {return theAgeDischargeSlo;}
+	public void setAgeDischargeSlo(Long aAgeDischargeSlo) {theAgeDischargeSlo = aAgeDischargeSlo;}
+
+	/** Возраст на начало СЛС */
+	@Comment("Возраст на начало СЛС")
+	public Long getAgeEntranceSls() {return theAgeEntranceSls;}
+	public void setAgeEntranceSls(Long aAgeEntranceSls) {theAgeEntranceSls = aAgeEntranceSls;}
+
+	/** Возраст на конец СЛС */
+	@Comment("Возраст на конец СЛС")
+	public Long getAgeDischargeSls() {return theAgeDischargeSls;}
+	public void setAgeDischargeSls(Long aAgeDischargeSls) {theAgeDischargeSls = aAgeDischargeSls;}
+	
+	/** Возраст на конец СЛС */
+	private Long theAgeDischargeSls;
+	/** Возраст на начало СЛС */
+	private Long theAgeEntranceSls;
+	/** Возраст на конец СЛО */
+	private Long theAgeDischargeSlo;
+	/** Возраст на начало СЛО */
+	private Long theAgeEntranceSlo;
 }

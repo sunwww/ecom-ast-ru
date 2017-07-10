@@ -24,18 +24,22 @@ function onPreDelete(aEntityId, aCtx) {
     aCtx.manager.createNativeQuery("delete from forminputprotocol where docprotocol_id=" + aEntityId).executeUpdate();
 }
 function onPreCreate(aForm, aCtx) {
-    var date = new java.util.Date();
-    aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-    aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
-    aForm.setTime(new java.sql.Time(date.getTime()));
-    var wfe = aCtx.manager.createNativeQuery("select id,workFunctionExecute_id from MedCase where id = :medCase")
-        .setParameter("medCase", aForm.medCase).getResultList();
-    var wfeid = java.lang.Long.valueOf(0);
-    if (wfe.size() > 0) {
-        wfeid = wfe.get(0)[1];
-    }
 
-    var wf = java.lang.Long.valueOf(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionListByPoliclinic"
+	var date = new java.util.Date() ;
+	aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+	aForm.setTime(new java.sql.Time (date.getTime())) ;
+	if (!aForm.username.equals(aForm.editUsername)) {
+		//aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'"+aForm.username+"- -"+aForm.editUsername+"','"+aForm.medCase+"')").executeUpdate() ;
+		throw "Не удалось сохранить протокол: <br/><pre>"+aForm.record+"</pre><br/> Попробуйте сохранить протокол еще раз. При возникновении данной ошибки повторно, обращайтесь в службу технической поддержки." ;
+	}
+	var wfe =aCtx.manager.createNativeQuery("select id,workFunctionExecute_id from MedCase where id = :medCase")
+		.setParameter("medCase", aForm.medCase).getResultList() ;
+	var wfeid = java.lang.Long.valueOf(0) ;
+	if (wfe.size()>0) {
+		wfeid=wfe.get(0)[1] ;
+	}
+      var wf = java.lang.Long.valueOf(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionListByPoliclinic"
         , wfeid));
     aForm.setSpecialist(wf);
     check(aForm, aCtx);

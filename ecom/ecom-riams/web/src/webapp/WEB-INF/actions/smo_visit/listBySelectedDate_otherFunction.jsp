@@ -46,7 +46,7 @@
   	<ecom:webQuery  name="wf3" nativeSql="select wcdN.id
   	,vwfN.name as vwfNname,wfNG.groupName as fwNGgroupname
   	,count(distinct case when wctN.medCase_id is not null then wctN.id else null end) as cntAll
-  	,count(distinct case when mcN.dateStart is not null then mcN else null end) as cntPrin
+  	,count(distinct case when mcN.dateStart is not null then mcN.id else null end) as cntPrin
 from workCalendarDay wcdN
 left join WorkCalendar wcN on wcN.id=wcdN.workCalendar_id
 left join WorkFunction wfNG on wfNG.id=wcN.workFunction_id

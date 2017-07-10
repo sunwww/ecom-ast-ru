@@ -80,4 +80,28 @@ public class DisabilitySearchForm extends BaseValidatorForm {
 
 	/** Исполнитель */
 	private Long theWorkFunction;
+	
+	/** Пол */
+	public Long getSex() {
+		return theSex;
+	}
+
+	public void setSex(Long aSex) {
+		theSex = aSex;
+	}
+
+	/** Пол */
+	private Long theSex;
+	
+	/** Тип документа */
+	public Long getDocumentType() {
+		return theDocumentType;
+	}
+
+	public void setDocumentType(Long aDocumentType) {
+		theDocumentType = aDocumentType;
+	}
+
+	/** Тип документа */
+	private Long theDocumentType;
 }

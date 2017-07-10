@@ -31,7 +31,9 @@ public class HospitalDirectDataInFondAction extends BaseAction {
     	AttachmentByLpuForm form =(AttachmentByLpuForm)aForm ;
     	String typeMode=ActionUtil.updateParameter("HospitalDirectDataInFond","typeMode","1", aRequest) ;
     	String typeImport=ActionUtil.updateParameter("HospitalDirectDataInFond","typeImport","1", aRequest) ;
+    	String typeLoad=ActionUtil.updateParameter("HospitalDirectDataInFond","typeLoad","1", aRequest) ;
     	// Export xml
+    	boolean isSaveInFolder = typeLoad.equals("2")?true:false ;
     	if (form!=null && typeMode!=null && typeMode.equals("1")) {
     		if (form!=null) {
     			
@@ -56,7 +58,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	    	//SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy") ;
 	    	String filename =null;
 	        if (typeView!=null && typeView.equals("1")) {
-	        	WebQueryResult wqr = service.exportN1(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	WebQueryResult wqr = service.exportN1(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,true,false,isSaveInFolder) ;
 	        	filename= null;
 	        	StringBuilder sb = new StringBuilder() ;
         		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
@@ -66,7 +68,7 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        	aRequest.setAttribute("listExist", wqr.get4()) ;
 	        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("2")) {
-	        	WebQueryResult wqr = service.exportN2(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	WebQueryResult wqr = service.exportN2(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
 	        	filename= null;
 	        	StringBuilder sb = new StringBuilder() ;
         		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
@@ -77,30 +79,66 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 	        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("3")) {
 	        	WebQueryResult wqr = service.exportN3(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
-	        	filename=""+wqr.get1() ;
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+	        	filename=null ;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+        		if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+        		if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+        		form.setFilename(sb.toString()) ;
+	        	aRequest.setAttribute("listExist", wqr.get4()) ;
+	        	aRequest.setAttribute("listError", wqr.get5()) ;
 	        } else if (typeView!=null && typeView.equals("4")) {
-	        	filename=service.exportN4(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
-	        } else if (typeView!=null && typeView.equals("5")) {
-	        	filename=service.exportN5(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
-	        } else if (typeView!=null && typeView.equals("6")) {
-	        	filename=service.exportN6(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
-	        } else if (typeView!=null && typeView.equals("7")) {
-		        	WebQueryResult wqr = service.exportN1_planHosp(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null) ;
+	        	WebQueryResult wqr = service.exportN1_planHosp(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+		        	WebQueryResult wqr1 = service.exportN2_plan_otherLpu(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
 		        	filename= null;
 		        	StringBuilder sb = new StringBuilder() ;
-	        		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+		        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        		sb.append("<a href='../rtf/"+wqr1.get1()+"'>"+wqr1.get1()+"</a>").append("</br>") ;
 	        		if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+	        		if (wqr1.get2()!=null) sb.append("<a href='../rtf/"+wqr1.get2()+"'>"+wqr1.get2()+"</a>").append("</br>") ;
 	        		if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+	        		if (wqr1.get3()!=null) sb.append("<a href='../rtf/"+wqr1.get3()+"'>"+wqr1.get3()+"</a>").append("</br>") ;
 	        		form.setFilename(sb.toString()) ;
-		        	aRequest.setAttribute("listExist", wqr.get4()) ;
-		        	aRequest.setAttribute("listError", wqr.get5()) ;
+	        		aRequest.setAttribute("listExist", wqr.get4()) ;
+	        		aRequest.setAttribute("listError", wqr.get5()) ;
+		        	aRequest.setAttribute("listExist1", wqr1.get4()) ;
+		        	aRequest.setAttribute("listError1", wqr1.get5()) ;
+		        	
+	        } else if (typeView!=null && typeView.equals("5")) {
+	        	filename=service.exportN4(format_n.format(cal.getTime()), 
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+	        } else if (typeView!=null && typeView.equals("6")) {
+	        	//TODO доделять переводы внутри ЛПУ
+	        	WebQueryResult wqr = service.exportN2_trasferInLpu(format_n.format(cal.getTime()), 
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+	        	if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        	aRequest.setAttribute("listExist", wqr.get4()) ;
+	        	aRequest.setAttribute("listError", wqr.get5()) ;
+	        } else if (typeView!=null && typeView.equals("7")) {
+	        	filename=service.exportN5(format_n.format(cal.getTime()), 
+	        			format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
 	        } else if (typeView!=null && typeView.equals("8")) {
+	        	WebQueryResult wqr = service.exportN1(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,false,true,isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	if (wqr.get2()!=null) sb.append("<a href='../rtf/"+wqr.get2()+"'>"+wqr.get2()+"</a>").append("</br>") ;
+	        	if (wqr.get3()!=null) sb.append("<a href='../rtf/"+wqr.get3()+"'>"+wqr.get3()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        	aRequest.setAttribute("listExist", wqr.get4()) ;
+	        	aRequest.setAttribute("listError", wqr.get5()) ;
+	        } else if (typeView!=null && typeView.equals("9")) {
+	        	filename=service.exportN6(format_n.format(cal.getTime()), 
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,isSaveInFolder) ;
+	        } else if (typeView!=null && typeView.equals("10")) {
 	        	WebQueryResult[] filenameList=service.exportFondZip23(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr()) ;
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),isSaveInFolder) ;
 	        	StringBuilder sb = new StringBuilder() ;
 	        	for (WebQueryResult wqr:filenameList) {
 	        		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
@@ -110,14 +148,39 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 		        	//aRequest.setAttribute("listError", fn.get5()) ;
 	        	}
 	        	form.setFilename(sb.toString()) ;
-	        } else if (typeView!=null && typeView.equals("9")) {
+	        } else if (typeView!=null && typeView.equals("11")) {
 	        	String[] filenameList=service.exportFondZip45(format_n.format(cal.getTime()), 
-	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), "01") ;
+	    	        	format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),isSaveInFolder) ;
 	        	StringBuilder sb = new StringBuilder() ;
 	        	for (String fn:filenameList) {
 	        		sb.append("<a href='../rtf/"+fn+"'>"+fn+"</a>").append("</br>") ;
 	        	}
         		form.setFilename(sb.toString()) ;
+	        } else if (typeView!=null && typeView.equals("12")) {
+	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N1",isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        } else if (typeView!=null && typeView.equals("13")) {
+	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N2",isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        } else if (typeView!=null && typeView.equals("14")) {
+	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N5",isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+	        	sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+	        	form.setFilename(sb.toString()) ;
+	        } else if (typeView!=null && typeView.equals("15")) {
+	        	WebQueryResult wqr = service.exportN0(format_n.format(cal.getTime()),format_n.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr(),null,"N8",isSaveInFolder) ;
+	        	filename= null;
+	        	StringBuilder sb = new StringBuilder() ;
+        		sb.append("<a href='../rtf/"+wqr.get1()+"'>"+wqr.get1()+"</a>").append("</br>") ;
+        		form.setFilename(sb.toString()) ;
+	        
 	        }
 	        if (filename!=null) form.setFilename("<a href='../rtf/"+filename+"'>"+filename+"</a>") ;
         }}
@@ -168,14 +231,17 @@ public class HospitalDirectDataInFondAction extends BaseAction {
 						//System.out.println(dat1) ;
 						sql = new StringBuilder() ;
 						sql.append(" select list(''||sls.id) from medcase sls ") ;
+						sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id ") ;
+						sql.append(" left join medpolicy mp on mcmp.policies_id=mp.id ") ;
 						sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ") ;
 						sql.append(" left join patient pat on pat.id=sls.patient_id ") ;
+						sql.append(" left join patient pat1 on pat1.id=mp.patient_id ") ;
 						sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
 						sql.append(" left join bedfund bf on bf.id=slo.bedfund_id ") ;
 						sql.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id ") ;
 						sql.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id ") ;
 						sql.append(" where sls.dtype='HospitalMedCase' and slo.prevmedcase_id is null ") ;
-						sql.append(" and pat.id in (").append(wqr.get2()).append(")");
+						sql.append(" and (pat.id in (").append(wqr.get2()).append(") or pat1.id in (").append(wqr.get2()).append(")) ");
 						sql.append(" and sls.datestart").append(dat1);
 						if (wqr.get3()!=null) sql.append(" and ss.code='"+wqr.get3()+"' ") ;
 						Collection<WebQueryResult> l1 = service.executeNativeSql(sql.toString()) ;
@@ -203,12 +269,15 @@ public class HospitalDirectDataInFondAction extends BaseAction {
         				sql.append(" select list(''||sls.id) from medcase sls ") ;
         				sql.append(" left join statisticstub ss on ss.id=sls.statisticstub_id ") ;
         				sql.append(" left join patient pat on pat.id=sls.patient_id ") ;
-        				sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
+        				sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id ") ;
+						sql.append(" left join medpolicy mp on mcmp.policies_id=mp.id ") ;
+						sql.append(" left join patient pat1 on pat1.id=mp.patient_id ") ;
+						sql.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' ") ;
         				sql.append(" left join bedfund bf on bf.id=slo.bedfund_id ") ;
         				sql.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id ") ;
         				sql.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id ") ;
         				sql.append(" where sls.dtype='HospitalMedCase' and slo.prevmedcase_id is null ") ;
-        				sql.append(" and pat.id in (").append(wqr.get2()).append(")");
+        				sql.append(" and (pat.id in (").append(wqr.get2()).append(") or pat1.id in (").append(wqr.get2()).append("))");
         				sql.append(" and sls.datestart").append(dat1);
         				//if (wqr.get3()!=null) sql.append(" and ss.code=TRIM('"+wqr.get3()+"') ") ;
         				Collection<WebQueryResult> l1 = service.executeNativeSql(sql.toString()) ;

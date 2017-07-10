@@ -1048,6 +1048,7 @@ var Position = {
     target.style.height = source.offsetHeight + 'px';
   }
 }
+
 var tablearrow = {
     Version: '1.0'
 }
@@ -1386,6 +1387,7 @@ tablearrow.TableArrow = function(aTableId) {
 
 
 }
+
 /*
 Copyright (c) 2005 JSON.org
 
@@ -1591,6 +1593,7 @@ function deleteCookie(name,path,domain) {
 }
 /* ---------------------------------------------------------------------- */
 /* End Copyright 2003 Danny Goodman */
+
 /**
 * @class The MSH global namespace
 */
@@ -1667,6 +1670,7 @@ msh.idemode.goInIdeMode = function() {
 	setCookie("showTags","true") ;
 	window.location.reload() ;
 }	
+
 /**
 *
 */
@@ -1728,6 +1732,7 @@ msh.effect.FadeEffect.pushFadeAll = function() {
         div.parentNode.removeChild(div) ;
     }
 }
+
 /**
  * @class Диалоговое окно
  *
@@ -2032,6 +2037,7 @@ msh.widget.TreeTableDialog.prototype.createForwardTd = function() {
 msh.widget.TreeTableDialog.prototype.hide = function() {
     this.theDialog.hide() ;
 }
+
 /**
  * Вывод списка в виде таблицы
  */
@@ -2694,6 +2700,7 @@ function createTestData() {
 }
 
 
+
 var theMainFormDataInstance = null ;
 
 msh.util.FormData = function() {
@@ -2740,6 +2747,7 @@ msh.util.FormData.getInstance = function() {
 
 
 
+
 var errorutil = {
     Version: '1.0'
 }
@@ -2782,6 +2790,7 @@ errorutil.SetErrorObj = function (msg) {
     return err ;
 
 }
+
 
 var eventutil = {
     Version: '1.0'
@@ -2898,6 +2907,7 @@ eventutil.addEnterSupport = function(aCurrentElementName, aNextElementName) {
 eventutil.isKey = function(aEvent, aKeyVk) {
     return aEvent.keyCode == aKeyVk ;
 }
+
 
 PrivateAccessKeyEvent = function(aKeyCode, aIsCtrl, aIsAlt, aIsShift) {
     this.theKeyCode = aKeyCode ;
@@ -3032,6 +3042,7 @@ accesskeyutil.registerKey = function (aHrefElement, aAccessKeyEvent) {
     eventutil.addEventListener(document, "keydown"
             , new accesskeyutil.AccessKeyListener(aHrefElement, aAccessKeyEvent).onKey) ;
 }
+
 var theTimeout = null ;
 
 /*
@@ -3116,6 +3127,7 @@ function parseSnils(inputStr) {
     }
     return "";
 }
+
 var theTimeout = null ;
 
 /*
@@ -3495,6 +3507,7 @@ function onKeyPress(aEvent) {
 }
 document.onkeypress = onKeyPress ;
 
+
 var theTabs = new Array();
 var theLastSelectedTabId = null ;
 
@@ -3638,6 +3651,7 @@ function _tabbedPaneInit() {
 	$(theDefaultFieldName).select() ;
    setFocusOnField(theDefaultFieldName) ;
 }
+
 var theTimeout = null ;
 
 function error(aHtml) {
@@ -4409,6 +4423,7 @@ function showAutocompleteWindow(aIdField, aNameField, aSelectedId, aVocName) {
 function showAutocomplete(aNameField, aIdField, aUrl) {
     alert(aNameField);
 }
+
 var ecom_tree_autocomplete = {
     Version: '0.0'
 }
@@ -4932,6 +4947,7 @@ ecom_tree_autocomplete.Autocomplete = function() {
 function showTreeAutocomplete(aNameField, aIdField, aUrl) {
     alert(aNameField);
 }
+
 /**
  * Редактирование/Добавление значения в справочник
  */
@@ -5096,10 +5112,31 @@ msh.widget.VocValueEditDialog = function(theDialogId, theTitle, theController) {
 }
 
 
+
 var theDefaultTimeOut ;
 var theDefaultTimeOutCnt=4 ;
 var theDefaultFieldName ;
 var theDefaultEvt ; 
+
+function mshSaveTableToExcelById(aId) {
+	mshPrintTextToExcelTable(document.getElementById(aId).outerHTML);
+}
+function mshSaveNextTableToExcel(aButton) {
+	var nodes = aButton.parentNode.childNodes;
+	var ret=0;
+	for (var i=0;i<nodes.length;i++) {
+		if(""+nodes[i]=='[object HTMLTableElement]') {
+			ret=1;
+			var html = nodes[i].outerHTML;
+			mshPrintTextToExcelTable(html);
+		} 
+	}
+	if (ret==0) {alert('Не смог найти таблицу :(');}
+	
+}
+function mshPrintTextToExcelTable (html) {
+	window.location.href='data:application/vnd.ms-excel,'+'\uFEFF'+encodeURIComponent(html);
+}
 function adjustMessage(text,aDiv) {
 	var MessageObj = document.getElementById(aDiv);
 	var isThisMozilla = true ;
@@ -5246,7 +5283,15 @@ function checkClaimMessage (aId, aStatus) {
 		});
 
 }
+function checkAllMessages(aName) {
+	var msg = document.getElementsByClassName(aName);
+	for (var i=0; i<msg.length;i++){
+		var id = msg[i].id.substring(aName.length);
+		checkUserMessage(id);
 
+	}
+	
+}
 function checkUserMessage(aId) {
 	VocService.checkMessage(aId, {
         callback: function(aName) {
@@ -5348,6 +5393,7 @@ function format2day(aCnt) {
 		return "0"+aCnt ;
 	}
 }
+
 
 // Один элемент
 msh.widget.OneToManyAuto = function(theSerial, theChild, theTr, theTitle
@@ -5711,3 +5757,4 @@ msh.widget.OneToManyAutocompletes = function(theInstallDiv, theForm, theFieldNam
         theLegend = legend;
     }
 }
+

@@ -359,6 +359,20 @@
             </msh:table>
           </msh:sectionContent>
         </msh:section>
+        <msh:section title="Талоны по суицидальным попыткам">
+        <ecom:webQuery name="listds" nativeSql="select s.id,s.suicideDate
+  	from SuicideMessage s
+  	left join PsychiatricCareCard card on card.patient_id=s.patient_id where card.id=${param.id}
+  	
+  	
+  	order by s.suicideDate
+  	"/>
+    <msh:table name="listds" action="entityParentView-psych_suicideMessage.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+              <msh:tableColumn property="sn" columnName="#"/>
+              <msh:tableColumn property="1" columnName="ИД"/>
+              <msh:tableColumn property="2" columnName="Дата суицида"/>
+    </msh:table>
+        </msh:section>
         </td>
       </msh:ifInRole>
       </tr></table>

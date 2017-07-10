@@ -99,7 +99,6 @@
       <msh:hidden property="lpu" guid="14b0b5c0-045b-41b2-a2aa-6f799f1c2ea4" />
       <msh:hidden property="emergency"/>
       <msh:hidden property="ambulanceTreatment"/>
-      <msh:hidden property="aidsExamination"/>
       <msh:hidden property="ownerFunction"/>
       <msh:hidden property="bedType"/>
       <msh:hidden property="department"/>
@@ -310,11 +309,7 @@
 	        	<msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true" vocName="vocJudgment"/>
 	        </msh:row>
         </msh:ifInRole>
-        <msh:separator colSpan="8" label="RW" guid="597ac93d-a5d0-4b08-a6b1-79efee0f497a" />
-        <msh:row guid="f6e5b8dd-89fd-4442-9779-4995ba7cc3d8">
-          <msh:textField label="Дата RW" property="rwDate" guid="ffd282d7-95fe-40e5-a3a8-6d424c98dac0" />
-          <msh:textField label="Номер RW" property="rwNumber" guid="2b3421f3-f4c8-40be-9820-8f887023fc1c" />
-        </msh:row>
+        
         <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>

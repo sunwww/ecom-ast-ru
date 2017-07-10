@@ -172,35 +172,20 @@
 	    </msh:section>
     </msh:tableNotEmpty>
       
-        <%-- 
-        <msh:section title="Хирургические операции. <a href='entityParentPrepareCreate-stac_surOperation.do?id=${param.id }'>Добавить новую хирургическую операцию</a>" guid="14258dfa-85a8-466d-98d9-b384a96ecc91">
-        
-          <ecom:parentEntityListAll formName="stac_surOperationForm" attribute="surgicalOperations" guid="275c530f-4793-410e-aa4e-f4097633d319" />
-          <msh:table idField="id" name="surgicalOperations" action="entityParentView-stac_surOperation.do" guid="8a451fa2-b1c0-4ce0-a12b-ecd5c7739907">
-            <msh:tableColumn columnName="Дата" property="operationDate" guid="1c6ad238-4b69-46f1-98be-e076cca3b323" />
-            <msh:tableColumn columnName="Время" property="operationTime" guid="e0ca512f-c83d-47aa-8e3b-5e77bcad0a30" />
-	      <msh:tableColumn columnName="Хирург" property="surgeonInfo" guid="805b92e3-4d45-4918-9b8a-3a629591e030" />
-	      <msh:tableColumn columnName="Ассистенты" property="surgeonsInfo" guid="8045-4918-9b8a-3a629591e030" />
-            <msh:tableColumn columnName="Операция" property="operationInfo" guid="037fe2d5-da32-4e97-a5da-631277c96d3a" />
-            <msh:tableColumn columnName="Основная" property="base" guid="9f03b67b-d1a9-4566-b2d1-327fd2ddcb65" />
-            <msh:tableColumn columnName="Анестезия" property="anesthesiaInfo" guid="66a7929d-af80-4862-b449-89004b56612b" />
-          </msh:table>
-        </msh:section>
-        --%>
+      
       </msh:ifInRole>
       
      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/View">
           <ecom:webQuery name="hitechCases" nameFldSql="hitechCases_sql" nativeSql="select himc.id
           ,to_char(himc.ticketDate,'dd.mm.yyyy') as f2_ticketDate
           ,to_char(himc.planHospDate,'dd.mm.yyyy') as f3_planHospDate
-          ,vkhc.code ||' '||vkhc.name as f4_kind
-          ,vmhc.code ||' '||vmhc.name as f5_method
+          ,(select list(vkhc.code ||' '||vkhc.name) from vocKindHighCare vkhc where vkhc.id=coalesce(himc.kind_id, slo.kindhighcare_id)) as f4_kind
+
+          ,(select list(vmhc.code ||' '||vmhc.name) from vocMethodHighCare vmhc where vmhc.id=coalesce(himc.method_id, slo.methodhighcare_id)) as f5_method
           from medcase slo
           left join HitechMedicalCase himc on  himc.medCase_id = slo.id
-          left join vocKindHighCare vkhc on vkhc.id=coalesce(himc.kind_id, slo.kindhighcare_id)
-          left join vocMethodHighCare vmhc on vmhc.id=coalesce(himc.method_id, slo.methodhighcare_id)
-          where  
-          slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase' and vkhc.id is not null
+          where
+          slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase'
           order by himc.ticketDate
           "/>
 	    <msh:section title="Случаи ВМП (включая случаи в СЛО) ">
@@ -241,6 +226,40 @@
           </msh:table>
         </msh:section>
       </msh:ifInRole>
+      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View">
+      	<msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/ViewForDeniedHospitalization">
+      	</msh:ifInRole>
+      	
+      		<msh:section>
+		       
+		          <ecom:webQuery name="protocols" nativeSql="select p.id as pid
+		          ,p.dateRegistration as pdateregistration,p.timeRegistration as ptimeRegistration
+		          ,p.record as precord
+		          ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
+		           from diary p left join workfunction wf on wf.id=p.specialist_id 
+		           left join medcase m on m.id=p.medcase_id
+		           left join worker w on w.id=wf.worker_id left join patient wp on wp.id=w.person_id 
+		           left join vocworkfunction vwf on vwf.id=wf.workfunction_id 
+		           where p.medcase_id=${param.id} and p.dtype='Protocol'
+		           and m.deniedHospitalizating_id is not null
+		           "/>
+		           <msh:tableNotEmpty name="protocols">
+		            <msh:sectionTitle>
+		        	Дневник специалиста
+			        </msh:sectionTitle>
+			        <msh:sectionContent>
+			          <msh:table hideTitle="false" disableKeySupport="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false" disabledGoLast="false" guid="d0e60067-9aec-4ee0-b20a-4f6b37">
+			              <msh:tableColumn property="sn" columnName="#"/>
+					      <msh:tableColumn columnName="Дата" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />
+					      <msh:tableColumn columnName="Время" property="3" guid="0694f40-4ebf-a274-1efd6901cfe4" />
+					      <msh:tableColumn columnName="Текст" property="4" guid="6682eeef-105f-43a0-be61-30a865f27972" cssClass="preCell"/>
+					      <msh:tableColumn columnName="Специалист" property="5" guid="f31b12-3392-4978-b31f-5e54ff2e45bd" />
+				     </msh:table>
+				     </msh:sectionContent>
+				     </msh:tableNotEmpty>
+		        </msh:section>
+      	
+      </msh:ifNotInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View">
         <msh:section>
         <msh:sectionTitle>

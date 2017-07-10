@@ -16,6 +16,41 @@
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
   <tiles:put name="body" type="string">
+  
+      	  <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
+    	  <ecom:webQuery name="isTransferLpu" nativeSql="select id,lpu_id from medcase where id=${param.id} and moveToAnotherLpu_id is not null"/>
+    	  <msh:tableNotEmpty name="isTransferLpu">
+    	  		<ecom:webQuery name="directOtherLpuQ" nativeSql="select 
+    	  		wchb.id as i1d
+    	  		, to_char(wchb.createDate,'yyyy-MM-dd') as w2chbcreatedate
+ ,case when lpu.codef is null or lpu.codef='' then plpu.codef else lpu.codef end as l3puSent
+ ,case when olpu.codef is null or olpu.codef='' then oplpu.codef else olpu.codef end as l4puDirect
+ ,mkb.code as m5kbcode
+ ,vbt.name as v6btcodef
+ ,wchb.dateFrom as w7chbdatefrom
+, vbst.name as v8bstcode
+ from WorkCalendarHospitalBed wchb
+ left join VocBedType vbt on vbt.id=wchb.bedType_id
+ left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id
+ left join VocIdc10 mkb on mkb.id=wchb.idc10_id
+ left join MisLpu ml on ml.id=wchb.department_id
+ left join mislpu olpu on olpu.id=wchb.orderLpu_id
+ where wchb.visit_id =${param.id}
+    	"/>
+    	<msh:tableEmpty name="directOtherLpuQ">
+    	<span style="background-color: red; font-size: 200%">НЕОБХОДИМО ЗАПОЛНИТЬ ФОРМУ НАПРАВЛЕНИЯ В ДРУГОЕ ЛПУ !!!
+    	<msh:link action="entityParentPrepareCreate-smo_planHospitalByHosp.do?id=${param.id}">Создать</msh:link>
+    	</span>
+    	</msh:tableEmpty>
+    	<msh:tableNotEmpty name="directOtherLpuQ">
+    	<msh:table  action="entityView-smo_planHospitalByHosp.do" name="directOtherLpuQ" idField="1">
+    		<msh:tableColumn property="4" columnName="Направлен в ЛПУ"/>
+    		<msh:tableColumn property="6" columnName="Профиль"/>
+    		<msh:tableColumn property="5" columnName="Диагноз"/>
+    	</msh:table>
+    	</msh:tableNotEmpty>
+    	  </msh:tableNotEmpty>
+  </msh:ifFormTypeIsView>
     <!-- 
     	  - Случай стационарного лечения (поступление)
     	  -->
@@ -29,8 +64,6 @@
       <msh:hidden property="provisional" guid="38fe07ac-6706-4911-a217-65edb3c85dac" />
       <msh:hidden property="result" guid="156ff02c-61dd-40b9-80f4-d88885db16f8" />
       <msh:hidden property="moveToAnotherLPU" guid="c0b69264-2081-4952-8c0a-7ea12712f14c" />
-      <msh:hidden property="rwDate" guid="9438b469-d5b6-4d11-8dc9-91a551e2f2d1" />
-      <msh:hidden property="rwNumber" guid="70e2513e-0d2e-48fd-9d08-3e83415755f9" />
       <msh:hidden property="dischargeEpicrisis" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="reasonDischarge" guid="290e9247-43d1-4f8b-a7c5-3a091d9f78ce" />
       <msh:hidden property="rareCase"/>
@@ -126,7 +159,13 @@
         <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
           <msh:textField property="attendant" label="Сопровождающее лицо" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
-        <msh:separator label="Направлен" colSpan="6" guid="fd40b634-ea84-450b-ac57-60e339d4fd11" />
+        <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
+        <msh:separator label="Направлен <input type='button' value='Список направлений' onclick='viewTable263narp_byPat()'///>" colSpan="6" />
+        </msh:ifFormTypeIsNotView>
+        <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
+        <msh:separator label="Направлен" colSpan="6" />
+        </msh:ifFormTypeIsView>
+        
         <msh:row guid="a53d1f37-afe8-4779-9e63-0b2684e14828">
           <msh:autoComplete property="orderLpu" label="Кем направлен" vocName="mainLpu" guid="c44b474f-6dba-4ba8-9af7-56a0dca363ad" horizontalFill="true" fieldColSpan="3" />
         </msh:row>
@@ -236,8 +275,10 @@
       </msh:panel>
     </msh:form>
     <tags:stac_infoBySls form="stac_sslAdmissionForm"/>
+
     <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
-    	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand">
+    <tags:hosp_263 name="Direct"/>
+        	<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardNumberByHand">
     		<script type="text/javascript">
     			$('statCardNumber').select() ;
     			$('statCardNumber').focus() ;
@@ -270,8 +311,8 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	
- 
     <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
 
 
      <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
@@ -338,7 +379,31 @@
       </script>
       </msh:ifNotInRole>
     <script type="text/javascript">
+
     serviceStreamAutocomplete.addOnChangeCallback(function(){checkIfDogovorNeeded();});
+    function viewTable263narp_byPat() {
+    	if ($('orderDate').value=="") {
+    		alert("Введите дату направления");
+    		$('orderDate').focus() ;
+    		$('orderDate').select() ;
+    	} else {
+    		showDirect263naprByPat($('patient').value,$('orderDate').value) ;
+    	}
+    }
+    function setHospByHDF(aHDF,aPat) {
+    	HospitalMedCaseService.getInfoByHDF(aHDF,{
+ 			callback: function(aResult) {
+ 				result=aResult.split("###@###") ;
+ 				$('orderLpu').value=result[0];
+ 				$('orderLpuName').value=result[1];
+ 				$('orderNumber').value=result[2];
+ 				$('orderDate').value=result[3];
+ 				$('orderMkb').value=result[4];
+ 				$('orderMkbName').value=result[5];
+ 				cancelDirect263() ;
+ 			}
+    	}) ;
+    }
 		try{	
 		    if (orderMkbAutocomplete) orderMkbAutocomplete.addOnChangeCallback(function() {
 	      	 	setDiagnosisText('orderMkb','orderDiagnos');

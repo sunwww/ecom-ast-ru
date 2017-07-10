@@ -39,6 +39,9 @@
         	<msh:autoComplete size="100" vocName="vocPsychStrikeOffReason" property="stikeOffReason" label="Причина снятия"/>
         </msh:row>
         <msh:row>
+        	<msh:autoComplete label="Переведен в интернат" fieldColSpan="3" property="otherPlaceTransfer" vocName="vocPsychOtherPlaceTransfer" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
         	<msh:separator label="Дополнительно" colSpan="4"/>
         </msh:row>
         <msh:row>

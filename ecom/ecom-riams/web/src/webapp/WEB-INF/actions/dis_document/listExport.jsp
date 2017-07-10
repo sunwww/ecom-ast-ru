@@ -13,7 +13,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
   <tiles:put name="title" type="string">
-        <msh:title mainMenu="Disability">Журнал экспорта за период</msh:title>
+        <msh:title mainMenu="Disability">Журнал экспорта за период (НЕ ИСПОЛЬЗУЕТСЯ)</msh:title>
   </tiles:put>
     <tiles:put name='side' type='string'>
         <tags:dis_menu currentAction="exportDNT"/>

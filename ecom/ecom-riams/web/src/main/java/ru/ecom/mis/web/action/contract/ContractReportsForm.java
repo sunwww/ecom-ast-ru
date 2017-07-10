@@ -5,6 +5,18 @@ import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 
 public class ContractReportsForm extends BaseValidatorForm{
+
+	/** Позиция прейскуранта */
+	public Long getPricePosition() {return thePricePosition;}
+	public void setPricePosition(Long aPricePosition) {thePricePosition = aPricePosition;}
+	/** Позиция прейскуранта */
+	private Long thePricePosition ;
+	
+	/** Рабочая функция исполнителя */
+	public Long getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Рабочая функция исполнителя */
+	private Long theWorkFunction ;
 	
 	/** Гарантийное письмо (номер */
 	public String getGuaranteeNumber() {return theGuaranteeNumber;}

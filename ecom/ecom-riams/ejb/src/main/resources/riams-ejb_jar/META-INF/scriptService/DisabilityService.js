@@ -427,23 +427,6 @@ function printDocument(aCtx, aParams) {
 	}
 	
 	recordChar(lastDoctor!=null? lastDoctor.lastname+" "+lastDoctor.firstname.substring(0,1)+" "+lastDoctor.middlename.substring(0,1):"",16,"doc.lastworker.fio");
-	//.lastname+" "+lastWorker.firstname.substring(0,1)+" "+lastWorker.middlename.substring(0,1)
-	//recordChar("ФАМИЛИЯ",28,"doc.lastname") ;
-	//recordChar("ИМЯ",28,"doc.firstname") ;
-	//recordChar("ОТЧЕСТВО",28,"doc.middlename") ;
-	//recordDate(curDate,"pat.birthday") ;
-	//recordCode(1,2,"pat.sex" );
-	//recordChar("МЕСТО РАБОТЫ",29,"pat.work.org.name") ;
-	//recordCode(1,2,"doc.primary") ;
-	//recordChar("main Work Document",12,"doc.maindoc.number") ;
-	//recordDate(curDate,"doc.hospitalizedFrom");
-	//recordDate(curDate,"doc.hospitalizedTo");
-	//recordDate(curDate,"doc.issueDate");
-	//recordChar("next number",12,"doc.nextdoc.number") ;
-	//recordChar("number card",10,"pat.card.number") ;
-	//recordChar("НАИМЕНОВАНИЕ МЕД. ОРГАНИЗАЦИИ",38,"doc.lpu.name");
-	//recordChar("АДРЕС МЕД. ОРГАНИЗАЦИИ",38,"doc.lpu.address");
-	//recordChar("ОГРН",38,"doc.lpu.ogrn");
 	
 	var care1 = cas.nursingPerson1 ;
 	var care2 = cas.nursingPerson2 ;
@@ -487,31 +470,6 @@ function printDocument(aCtx, aParams) {
 		recordChar(kinship,2,"doc.care"+i+".kinship.code") ;
 		recordChar(kinpat!=null?kinpat.lastname+" "+kinpat.firstname+" "+kinpat.middlename:"",39,"doc.care"+i+".kinship.fio") ;
 	}
-	//recordChar("11",2,"doc.reason.code") ;
-	//recordChar("222",3,"doc.reason2.code") ;
-	//recordChar("33",2,"doc.reasonChange.code") ;
-	//recordBoolean(true,"pat.placementService") ;
-	//recordChar("sanatnumber",7,"doc.sanat.number") ;
-	//recordChar("ogrn sanat",15,"doc.sanat.ogrn") ;
-	//recordDate(curDate,"doc.sanat.dateFrom") ;
-	//recordDate(curDate,"doc.sanat.dateTo") ;
-	//recordDate(curDate,"doc.medSocCommission.assignmentDate") ;
-	//recordDate(curDate,"doc.medSocCommission.registrationDate") ;
-	//recordDate(curDate,"doc.medSocCommission.examinationDate") ;
-	//recordBoolean(true,"doc.medSocCommission.invalidityReg") ;
-	//recordCode(1,2,"doc.workComboType") ;
-	//recordCode(true==true?1:2,2,"pat.earlyPregnancyRegistration") ;
-	//for (var i=1;i<4;i++) {
-	//	recordDate(curDate,"doc.record"+i+".dateFrom") ;
-	//	recordDate(curDate,"doc.record"+i+".dateTo") ;
-	//	recordChar("POST DOCTOR",18,"doc.record"+i+".doctor.post") ;
-	//	recordChar("FIO DOCTOR",28,"doc.record"+i+".doctor.fio") ;
-	//}
-	//recordDate(curDate,"doc.regimeViolation.date") ;
-	//recordChar("33",2,"doc.regimeViolation.type") ;	
-	//recordDate(curDate,"doc.endDate") ;
-	//recordDate(curDate,"doc.otherEnd.date") ;
-	//recordChar("44",2,"doc.otherEnd.code") ;
 	return map ;
 }
 
@@ -548,9 +506,13 @@ function recordDate(aDate,aKey) {
 	
 	var FORMAT_0 = new java.text.SimpleDateFormat("ddMMyyyy") ;
 	var date = aDate==null?"":""+FORMAT_0.format(aDate);
-	
-	//throw "throw: "+date+" "+date.length;
 	recordChar(date,8,aKey);
+	
+	
+	var FORMAT_0 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
+	var date = aDate==null?"":""+FORMAT_0.format(aDate);
+	recordChar(date,10,aKey+"full");
+	
 }
 
 function recordDateWithDots(aDate,aKey) {

@@ -6,14 +6,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
-
-	<%
-	//String fssProxyService = ActionUtil.getDefaultParameterByConfig("FSS_PROXY_SERVICE", "http://127.0.0.1", request);
-	//request.setAttribute("fssProxyService", fssProxyService);
-	
-	
-	%>
-
   <tiles:put name="body" type="string">
     <!-- 
     	  - Документ нетрудоспособности
@@ -276,6 +268,7 @@
                     if (num!=null&&num!="") {
                         $('number').value=num;
                         $('number').className="viewOnly";
+                        $('number').disa
                         $('getFreeNumberButton').style.display="none";
                     } else {
                         alert ("Не удалось получить номер больничного листа");
@@ -404,6 +397,7 @@
       	<msh:sideLink  name="шаблон 3" action="/javascript:printDoc(3,'.do')"/>
       	<msh:sideLink  name="шаблон 4" action="/javascript:printDoc(4,'.do')"/>
       	<msh:sideLink  name="шаблон МВД" action="/javascript:printDoc(5,'.do')"/>
+      	<msh:sideLink  name="шаблон справки 095" action="/javascript:printDoc('reference','.do')"/>
       </msh:sideMenu>
       <msh:sideMenu title="Добавить" guid="c79769a2-8a1c-4c21-ab9c-b7ed71ceb99d">
         <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_record" roles="/Policy/Mis/Disability/Case/Document/Record/Create" name="Продление" guid="0634b894-60e2-4b73-acee-7bf7316a77fc" title="Продлить листок нетрудоспособности" key="CTRL+1" />

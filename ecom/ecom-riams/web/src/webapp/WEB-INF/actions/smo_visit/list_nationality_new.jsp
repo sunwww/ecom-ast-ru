@@ -19,7 +19,7 @@
     
   <tiles:put name="body" type="string">
   <%
-	String typeEmergency =ActionUtil.updateParameter("Report_nationality","typeEmergency","3", request) ;
+	String typeDate =ActionUtil.updateParameter("Report_nationality","typeDate","1", request) ;
 	String typePatient =ActionUtil.updateParameter("Report_nationality","typePatient","1", request) ;
 	String typeGroup =ActionUtil.updateParameter("Report_nationality","typeGroup","2", request) ;
 	String typeView =ActionUtil.updateParameter("Report_nationality","typeView","3", request) ;
@@ -32,6 +32,16 @@
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
         <msh:separator label="Параметры поиска" colSpan="7" guid="15c6c628-8aab-4c82-b3d8-ac77b7b3f700" />
       </msh:row>
+              <msh:row>
+	        <td class="label" title="Поиск по дате (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Дата поиска:</label></td>
+	        <td onclick="this.childNodes[1].checked='checked';">
+	        	<input type="radio" name="typeDate" value="1">  поступления
+	        </td>
+	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	        	<input type="radio" name="typeDate" value="2"  >  выписки 
+	        </td>
+
+        </msh:row>
       <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
         <td class="label" title="Поиск по пациентам (typePatient)" colspan="1"><label for="typePatientName" id="typePatientLabel">Пациенты:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -78,11 +88,19 @@
     	
 	} else if (typePatient.equals("2")) {
 	
+
 	    request.setAttribute("groupSql", " and ar.kladr not like '30%' and (oo.id is null or oo.voc_code='643') group by ar.name order by ar.name");
 		request.setAttribute("change", "ar.name as vnname");
 		request.setAttribute("address", " left join address2 a on a.addressid=p.address_addressid left join Address2 ar on ar.addressid=a.region_addressid");
 		request.setAttribute("names", "Cубъект РФ, где зарегистрирован гражданин");
+
 	}
+    if (typeDate.equals("1")) {
+    	request.setAttribute("dateFld", "dateStart") ;
+    } else {
+    	request.setAttribute("dateFld", "dateFinish") ;
+    }
+    if (request.getParameter("beginDate")!=null && request.getParameter("finishDate")!=null) {
     	%>
     
     <msh:section>
@@ -109,7 +127,9 @@ ${address}
 left join Omc_Oksm oo on oo.id=p.nationality_id 
 left join bedfund bf on bf.id = smo.bedfund_id
 left join vocbedsubtype vbs on vbs.id = bf.bedsubtype_id 
+
 where m.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
+
 AND case when m.dtype = 'HospitalMedCase' then case when m.deniedHospitalizating_id is not null then '0' else '1' end else '1' end = '1'
 and (smo.dtype in ('Visit', 'ShortMedCase') or smo.dtype='DepartmentMedCase' and smo.transferDate is null)
 and m.dtype in ('HospitalMedCase', 'PolyclinicMedCase')
@@ -119,7 +139,8 @@ ${groupSql}"
 
     <msh:sectionContent>
         <msh:table
-         name="journal_swod" action="journal_nationality_new.do?beginDate=${beginDate}&finishDate=${finishDate}&typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}" idField="1" noDataMessage="Не найдено">
+         name="journal_swod" action="journal_nationality_new.do?beginDate=${beginDate}&finishDate=${finishDate}&typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
+
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="2" rowspan="2" />
@@ -153,14 +174,17 @@ ${groupSql}"
     </msh:sectionContent>
 
     </msh:section>    	
+
     	<% }  else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
+
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<script type="text/javascript">
   	
     checkFieldUpdate('typePatient','${typePatient}',1) ;
+    checkFieldUpdate('typeDate','${typeDate}',1) ;
 
   	function checkFieldUpdate(aField,aValue,aDefault) {
   		aValue=+aValue ;

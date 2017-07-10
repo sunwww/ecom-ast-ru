@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.psychiatry;
 import java.sql.Date;
+import java.sql.Time;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -219,5 +221,64 @@ private Date theRegistrationDate;
 	/** Дата регистрации замены */
 	private Date theRegistrationReplaceDate;
 
+	 /** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {
+		return theCreateDate;
+	}
 
+	public void setCreateDate(Date aCreateDate) {
+		theCreateDate = aCreateDate;
+	}
+	/** Дата редактирования */
+	@Comment("Дата редактирования")
+	public Date getEditDate() {
+		return theEditDate;
+	}
+
+	public void setEditDate(Date aEditDate) {
+		theEditDate = aEditDate;
+	}
+	/** Пользователь, создавший запись */
+	@Comment("Пользователь, создавший запись")
+	public String getCreateUsername() {
+		return theCreateUsername;
+	}
+
+	public void setCreateUsername(String aCreateUsername) {
+		theCreateUsername = aCreateUsername;
+	}
+	/** Пользователь, последний редактировавший запись */
+	@Comment("Пользователь, последний редактировавший запись")
+	public String getEditUsername() {
+		return theEditUsername;
+	}
+
+	public void setEditUsername(String aEditUsername) {
+		theEditUsername = aEditUsername;
+	}
+
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	/** Время редактрования */
+	@Comment("Время редактрования")
+	public Time getEditTime() {return theEditTime;}
+	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
+	
+	/** Время редактрования */
+	private Time theEditTime;
+	/** Время создания */
+	private Time theCreateTime;
+
+	/** Пользователь, последний редактировавший запись */
+	private String theEditUsername;
+	/** Пользователь, создавший запись */
+	private String theCreateUsername;
+
+	/** Дата редактирования */
+	private Date theEditDate;
+	/** Дата создания */
+	private Date theCreateDate;
 }

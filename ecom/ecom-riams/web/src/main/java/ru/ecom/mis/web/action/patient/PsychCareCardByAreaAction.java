@@ -27,6 +27,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		String typeInv = ActionUtil.updateParameter("PsychCareCardByArea","typeInv","1", aRequest) ;
 		String typeAge = ActionUtil.updateParameter("PsychCareCardByArea","typeAge","2", aRequest) ;
 		String typeSuicide = ActionUtil.updateParameter("PsychCareCardByArea","typeSuicide","1", aRequest) ;
+		String typeDateSuicide = ActionUtil.updateParameter("PsychCareCardByArea","typeDateSuicide","1", aRequest) ;
 		String typeCare = ActionUtil.updateParameter("PsychCareCardByArea","typeCare","1", aRequest) ;
 		String typeAddress = ActionUtil.updateParameter("PsychCareCardByArea","typeAddress","1", aRequest) ;
 		String typeDiag = ActionUtil.updateParameter("PsychCareCardByArea","typeDiag","1", aRequest) ;
@@ -109,22 +110,22 @@ public class PsychCareCardByAreaAction extends BaseAction {
 		
 		if (typeSuicide.equals("2")) {
 			StringBuilder sui  ;
-			sui = new StringBuilder().append(" and sui.fulfilmentDate between ")
+			sui = new StringBuilder().append(" and ").append(typeDateSuicide!=null&&typeDateSuicide.equals("1")?"sui.suicideDate":"sui.regDate").append(" between ")
 			.append(dateBegin).append(" and ")
 			.append(dateEnd).append(" ") ;
 			if (form.getNatureSuicide()!=null && form.getNatureSuicide()>Long.valueOf(0)) {
-				sui.append(" and sui.nature_id='").append(form.getNatureSuicide()).append("'") ;
+				sui.append(" and sui.type_id='").append(form.getNatureSuicide()).append("'") ;
 			}
 			aRequest.setAttribute("suicide", sui.toString());
 			aRequest.setAttribute("suicideInfo", " суицид ") ;
 			aRequest.setAttribute("suicideAddField", addField("suicide",1)) ;
 		} else if (typeSuicide.equals("3")) {
 			StringBuilder sui  ;
-			sui = new StringBuilder().append(" and sui.fulfilmentDate between ")
+			sui = new StringBuilder().append(" and ").append(typeDateSuicide!=null&&typeDateSuicide.equals("1")?"sui.suicideDate":"sui.regDate").append(" between ")
 					.append(dateBegin).append(" and ")
 					.append(dateEnd).append(" and sui.isFinished='1' ") ;
 			if (form.getNatureSuicide()!=null && form.getNatureSuicide()>Long.valueOf(0)) {
-				sui.append(" and sui.nature_id='").append(form.getNatureSuicide()).append("'") ;
+				sui.append(" and sui.type_id='").append(form.getNatureSuicide()).append("'") ;
 			}
 			aRequest.setAttribute("suicide", sui.toString());
 			aRequest.setAttribute("suicideInfo", " суицид завершенный ") ;
@@ -344,7 +345,7 @@ public class PsychCareCardByAreaAction extends BaseAction {
 				return ",'s1' as s1,'s2' as s2,'s3' as s3" ;
 				//return ",' ' as s1,' ' as s2,' ' as s3" ;
 			} else {
-				return ", to_char(sui.fulfilmentDate,'dd.mm.yyyy') as suifulfilmentdate, case when sui.isFinished='1' then 'Да' else 'Нет' end as suiisfinished, vpsn.name as vpsn " ;
+				return new StringBuilder().append(", to_char(sui.suicideDate,'dd.mm.yyyy') as suifulfilmentdate, case when sui.isFinished='1' then 'Да' else 'Нет' end as suiisfinished, vpsn.name as vpsn ").toString() ;
 			}
 		} else if (aType.equals("group")) {
 			if (aInt==0) {

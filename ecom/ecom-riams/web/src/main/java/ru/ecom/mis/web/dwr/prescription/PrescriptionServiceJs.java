@@ -122,7 +122,7 @@ public class PrescriptionServiceJs {
 								"from secuser su left join workfunction wf on wf.secuser_id=su.id " +
 								"where su.login='"+login+"'").iterator().next().get1().toString();
 			Long newId = psb.clonePrescription(aPrescriptionId, aMedServiceId, Long.parseLong(workFunction), login) ;
-			System.out.println("===== RET="+newId);
+		//	System.out.println("===== RET="+newId);
 			return newId;
 		}
 		
@@ -294,7 +294,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	}
 	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
 		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId,Long aCountDays, HttpServletRequest aRequest )throws NamingException {
-		System.out.println("===== PZ = "+aCountDays);
+		//System.out.println("===== PZ = "+aCountDays);
 		if (aTimePlanId==null||aTimePlanId.equals(Long.valueOf(0))) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -392,7 +392,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			} else {
 				//pz.append(" and wcd.calendardate>=current_date");
 			}
-			System.out.println("===== PZ = "+pz);
+		//	System.out.println("===== PZ = "+pz);
 			Collection <WebQueryResult> res = service.executeNativeSql(pz.toString());
 			if (aServiceType!=null&&aServiceType.equals("OPERATION")) {aServiceType="surg";}
 			if (!res.isEmpty()) {
@@ -441,7 +441,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aMedcaseId);
 		String dtype = !res.isEmpty()?res.iterator().next().get1().toString():null;
-		System.out.println("isMedcaseIsDepartment, dtype="+dtype);
+		//System.out.println("isMedcaseIsDepartment, dtype="+dtype);
 		if (dtype!=null&&dtype.equals("DepartmentMedCase")) {
 			return true;
 		} else if (dtype!=null&&dtype.equals("HospitalMedCase")) {
@@ -651,7 +651,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			String sqlCreate = "insert into prescriptionlist (dtype,medcase_id, createusername, createdate, createtime, workfunction_id) values ('PrescriptList',"
 					+aMedcase+", '"+username+"',to_date('"+formatD.format(date)+"','dd.MM.yyyy')"
 					+", cast('"+formatT.format(date)+"' as time), "+wf+")";
-			System.out.println(" ========= "+sqlCreate);
+		//	System.out.println(" ========= "+sqlCreate);
 			service.executeUpdateNativeSql(sqlCreate);
 			return isPrescriptListExists(aMedcase, aRequest);
 		}

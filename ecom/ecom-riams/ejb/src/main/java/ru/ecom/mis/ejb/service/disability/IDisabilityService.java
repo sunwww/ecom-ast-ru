@@ -9,6 +9,7 @@ import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 import ru.ecom.poly.ejb.services.GroupByDate;
 
 public interface IDisabilityService {
+	public String getLNNumberRange (Long aCount) ;
 	public String exportDisabilityDocument(Long aDocumentId) ;
 	public void createF16vn(String aDateStart,String aDateEnd) ;
 	public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate) ;
@@ -19,7 +20,7 @@ public interface IDisabilityService {
 	public List<GroupByDate> findCloseDocumentGroupByDate(String aDateFrom, String aDateTo) ;
 	public String getDataByClose(Long aDocumentId) ;
 	public Long createDuplicateDocument(Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFuntion2,String aJob,Boolean aUpdateJob) ;
-	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo) ;
+	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument) ;
 	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, String aDateType)  throws ParseException, NamingException ;
 	public String exportLNByNumber (String aNumber) throws ParseException, NamingException ;
 	public String analyseExportLN(String aFileName) throws NamingException ;

@@ -44,7 +44,7 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
 	, view = "entityView-mis_patient.do", shortView="entityShortView-mis_patient.do"
 			,journal=true,listStyle={
 		"select case when (deathDate is not null) then cast('border: 2px solid;font-size: 14px; color: black;font-weight:bold;text-decoration:blink' as varchar(200)) when colorType='1' then cast('font-size: 14px; color: red;font-weight:bold;text-decoration:blink' as varchar(200)) end from patient where id=:id"
-		,"select 'background:'||coalesce((select max(pl.colorName) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#CDE') from SuicideMessage where patient_id=:id group by patient_id"
+		,"select 'background:'||coalesce((select max(pl.colorName) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#CDE')||';color:'||coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'black')||';' from SuicideMessage where patient_id=:id group by patient_id"
 		,"select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=:id and pl.isViewInWebTrail='1' group by plr.patient"
 		
 		})
@@ -63,6 +63,13 @@ import ru.nuzmsh.forms.validator.validators.VInputNonLat;
         @AEntityFormInterceptor(PatientViewInterceptor.class)
 )
 public class PatientForm extends IdEntityForm {
+
+	/** Номер телефона для мобильного приложения */
+	@Comment("Номер телефона для мобильного приложения")
+	public String getMobileAppPhoneNumber() {return theMobileAppPhoneNumber;}
+	public void setMobileAppPhoneNumber(String aMobileAppPhoneNumber) {theMobileAppPhoneNumber = aMobileAppPhoneNumber;}
+	/** Номер телефона для мобильного приложения */
+	private String theMobileAppPhoneNumber ;
 
 	/** Не голосует */
 	@Comment("Не голосует")

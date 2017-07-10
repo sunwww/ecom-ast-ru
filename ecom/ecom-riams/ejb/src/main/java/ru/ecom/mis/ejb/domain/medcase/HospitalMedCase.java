@@ -2,29 +2,20 @@ package ru.ecom.mis.ejb.domain.medcase;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.ejb.util.DurationUtil;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
-import ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionOrder;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCause;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
@@ -34,7 +25,6 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocJudgment;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocRWresult;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -119,15 +109,15 @@ public class HospitalMedCase extends LongMedCase {
 	public VocHospitalizationResult getResult() {return theResult;}
 	public void setResult(VocHospitalizationResult aResult) {theResult = aResult;}
 
-	/** Обследован на RW */
-	@Comment("Обследован на RW")
-	public Boolean getRwExamination() {return theRwExamination;}
-	public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
+	///** Обследован на RW */
+	//@Comment("Обследован на RW")
+	//public Boolean getRwExamination() {return theRwExamination;}
+	//public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
 
-	/** Обследован на ВИЧ */
-	@Comment("Обследован на ВИЧ")
-	public Boolean getAidsExamination() {return theAidsExamination;}
-	public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
+	///** Обследован на ВИЧ */
+	//@Comment("Обследован на ВИЧ")
+	//public Boolean getAidsExamination() {return theAidsExamination;}
+	//public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
 
 	/** Кем доставлен */
 	@Comment("Кем доставлен")
@@ -141,10 +131,10 @@ public class HospitalMedCase extends LongMedCase {
 	public VocDeniedHospitalizating getDeniedHospitalizating() {return theDeniedHospitalizating;}
 	public void setDeniedHospitalizating(VocDeniedHospitalizating aDeniedHospitalizating) {theDeniedHospitalizating = aDeniedHospitalizating;}
 
-	/** Дата RW */
-	@Comment("Дата RW")
-	public Date getRwDate() {return theRwDate;}
-	public void setRwDate(Date aRwDate) {theRwDate = aRwDate;}
+	///** Дата RW */
+	//@Comment("Дата RW")
+	//public Date getRwDate() {return theRwDate;}
+	//public void setRwDate(Date aRwDate) {theRwDate = aRwDate;}
 
 	/** Амбулаторное лечение */
 	@Comment("Амбулаторное лечение")
@@ -157,10 +147,10 @@ public class HospitalMedCase extends LongMedCase {
 	public StatisticStubExist getStatisticStub() {return theStatisticStub;}
 	public void setStatisticStub(StatisticStubExist aStatisticStub) {theStatisticStub = aStatisticStub;}
 
-	/** Номер RW */
-	@Comment("Номер RW")
-	public String getRwNumber() {return theRwNumber;}
-	public void setRwNumber(String aRwNumber) {theRwNumber = aRwNumber;}
+	///** Номер RW */
+	//@Comment("Номер RW")
+	//public String getRwNumber() {return theRwNumber;}
+	//public void setRwNumber(String aRwNumber) {theRwNumber = aRwNumber;}
 
 	/** Сообщение родственникам */
 	@Comment("Сообщение родственникам")
@@ -190,17 +180,17 @@ public class HospitalMedCase extends LongMedCase {
 	public OmcQz getIllessCharacter() {return theIllessCharacter;}
 	public void setIllessCharacter(OmcQz aIllessCharacter) {theIllessCharacter = aIllessCharacter;}
 
-	/** Причина смерти */
-	@Comment("Причина смерти")
-	@OneToOne
-	public VocDeathCause getDeathCause() {return theDeathCause;}
-	public void setDeathCause(VocDeathCause aDeathCause) {theDeathCause = aDeathCause;}
+	///** Причина смерти */
+	//@Comment("Причина смерти")
+	//@OneToOne
+	//public VocDeathCause getDeathCause() {return theDeathCause;}
+	//public void setDeathCause(VocDeathCause aDeathCause) {theDeathCause = aDeathCause;}
 
-	/** Результат RW */
-	@Comment("Результат RW")
-	@OneToOne
-	public VocRWresult getRWresult() {return theRWresult;}
-	public void setRWresult(VocRWresult aRWresult) {theRWresult = aRWresult;}
+	///** Результат RW */
+	//@Comment("Результат RW")
+	//@OneToOne
+	//public VocRWresult getRWresult() {return theRWresult;}
+	//public void setRWresult(VocRWresult aRWresult) {theRWresult = aRWresult;}
 
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
@@ -349,10 +339,10 @@ public class HospitalMedCase extends LongMedCase {
 	private MisLpu theMoveToAnotherLPU;
 	/** Провизорность */
 	private Boolean theProvisional;
-	/** Обследован на ВИЧ */
-	private Boolean theAidsExamination;
-	/** Обследован на RW */
-	private Boolean theRwExamination;
+	///** Обследован на ВИЧ */
+	//private Boolean theAidsExamination;
+	///** Обследован на RW */
+	//private Boolean theRwExamination;
 	/** Результат госпитализации */
 	private VocHospitalizationResult theResult;
 	/** Исход госпитализации */
@@ -376,10 +366,10 @@ public class HospitalMedCase extends LongMedCase {
 
 	/** Рабочая функция направителя */
 	private WorkFunction theOrderWorkFunction;
-	/** Результат RW */
-	private VocRWresult theRWresult;
-	/** Причина смерти */
-	private VocDeathCause theDeathCause;
+	///** Результат RW */
+	//private VocRWresult theRWresult;
+	///** Причина смерти */
+	//private VocDeathCause theDeathCause;
 	/** Характер заболевания */
 	private OmcQz theIllessCharacter;
 	///** Полисы */
@@ -390,16 +380,16 @@ public class HospitalMedCase extends LongMedCase {
 	private VocBedType theBedType;
 	/** Сообщение родственникам */
 	private Boolean theRelativeMessage;
-	/** Номер RW */
-	private String theRwNumber;
+	///** Номер RW */
+	//private String theRwNumber;
 	/** Стат. карта */
 	private StatisticStubExist theStatisticStub;
 	/** Амбулаторное лечение */
 	private Boolean theAmbulanceTreatment;
 	/** Номер стат.карты */
 	//private String theStatCardNumber;
-	/** Дата RW */
-	private Date theRwDate;
+	///** Дата RW */
+	//private Date theRwDate;
 	/** Отказ от госпитализации */
 	private VocDeniedHospitalizating theDeniedHospitalizating;
 	/** Кем доставлен */
@@ -455,20 +445,20 @@ public class HospitalMedCase extends LongMedCase {
 	public VocJudgment getJudgment35() {return theJudgment35;}
 	public void setJudgment35(VocJudgment aJudgment35) {theJudgment35 = aJudgment35;}
 
-	/** Число дней лечебных отпусков */
-	@Comment("Число дней лечебных отпусков")
-	public Integer getMedicalHolidayDays() {return theMedicalHolidayDays;}
-	public void setMedicalHolidayDays(Integer aMedicalHolidayDays) {theMedicalHolidayDays = aMedicalHolidayDays;}
+	///** Число дней лечебных отпусков */
+	//@Comment("Число дней лечебных отпусков")
+	//public Integer getMedicalHolidayDays() {return theMedicalHolidayDays;}
+	//public void setMedicalHolidayDays(Integer aMedicalHolidayDays) {theMedicalHolidayDays = aMedicalHolidayDays;}
 
-	/** Число лечебных отпусков */
-	@Comment("Число лечебных отпусков")
-	public Integer getMedicalHolidays() {return theMedicalHolidays;}
-	public void setMedicalHolidays(Integer aMedicalHolidays) {theMedicalHolidays = aMedicalHolidays;}
+	///** Число лечебных отпусков */
+	//@Comment("Число лечебных отпусков")
+	//public Integer getMedicalHolidays() {return theMedicalHolidays;}
+	//public void setMedicalHolidays(Integer aMedicalHolidays) {theMedicalHolidays = aMedicalHolidays;}
 
-	/** Число лечебных отпусков */
-	private Integer theMedicalHolidays;
-	/** Число дней лечебных отпусков */
-	private Integer theMedicalHolidayDays;
+	///** Число лечебных отпусков */
+	//private Integer theMedicalHolidays;
+	///** Число дней лечебных отпусков */
+	//private Integer theMedicalHolidayDays;
 	/** Решение суда по 35 статье */
 	private VocJudgment theJudgment35;
 	/** Порядок поступления */
