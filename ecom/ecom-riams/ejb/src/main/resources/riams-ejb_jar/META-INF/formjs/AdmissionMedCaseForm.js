@@ -259,15 +259,14 @@ function onPreSave(aForm,aEntity, aCtx) {
 //Milamesher 24042017
 function sendMsg(aForm,aEntity, aCtx,user) {
 	 var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
-	 if (pat.getNationality()!=null) {
-	    var n = pat.getNationality().toString().replace("ru.ecom.expomc.ejb.domain.omcvoc.OmcOksm:","");
-	    
-	    if (n!="171") {
+	 var nationality=pat.getNationality(); 
+	 if (nationality!=null && !nationality.getCode().equals("643")) {
 	    	if (aForm.getEmergency()!=null && aForm.getEmergency() && aForm.getDepartment()!=null && aForm.getDepartment()!=0) {
+	    		
 	    		//здесь код, а потом этот код - в условия n!=171
-	    		var listnat =  aCtx.getManager().createNativeQuery("select name from Omc_Oksm where id='" + n + "'").getResultList() ; 
+	    	//	var listnat =  aCtx.getManager().createNativeQuery("select name from Omc_Oksm where id='" + n + "'").getResultList() ; 
 	    		var list = aCtx.getManager().createNativeQuery("select name from mislpu where id='" + aForm.getDepartment() + "'").getResultList() ;
-	    		var m = "Гражданин (" + listnat.get(0) + ") " + pat.getPatientInfo() + " госпитализирован в " + list.get(0);
+	    		var m = "Гражданин (" + nationality.getName() + ") " + pat.getPatientInfo() + " госпитализирован в " + list.get(0);
 	    		var mes = new Packages.ru.ecom.ejb.services.live.domain.CustomMessage() ;
 				mes.setMessageText(m) ;
 				mes.setMessageTitle("Госпитализация иностранного гражданина") ;
@@ -280,7 +279,7 @@ function sendMsg(aForm,aEntity, aCtx,user) {
 				mes.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString() ) ;  
 				mes.setIsEmergency(false) ;
 				aCtx.manager.persist(mes) ;
-	    	} 
-	    }
+				
+	    	}
 	 }
 }
