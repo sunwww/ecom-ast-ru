@@ -1117,7 +1117,7 @@
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend="ms.dtype='MedService' and (ms.isPoliclinic='1' or ms.isDayHospital='1' and ms.isPoliclinic='1')"
+    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
     			order=''
     			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
@@ -1126,6 +1126,26 @@
     	/>
     
     </voc>
+    
+        <voc id='medServiceForSpecStac' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'MedService ms'
+    			parent="wf.id=:par1 
+    			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate) 
+    			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))"
+    			parentSplitCount='2'
+    			names = "ms.code||' '||ms.name"
+    			nameId="ms.id"
+    			queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1')"
+    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
+    			order=''
+    			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+    			groupBy="ms.id, ms.code, ms.name"
+    			 			
+    	/>
+    
+    </voc>
+    
     <voc id='medServiceByVocWorkFunction' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService ms'
