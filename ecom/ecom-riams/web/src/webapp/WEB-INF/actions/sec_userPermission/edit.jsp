@@ -11,7 +11,7 @@
       <msh:sideMenu title="Разрешения пользователя" guid="58caa1eb-0a6c-4e93-9575-fde48488ebe5">
         <msh:sideLink key="ALT+2" params="id" action="/entityEdit-sec_userPermission" name="Изменить" roles="/Policy/Jaas/Permission/User/Edit" guid="c714bd8f-4fef-44dc-9d0b-cbaf455258dc" />
         <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-sec_userPermission" name="Удалить" roles="/Policy/Jaas/Permission/User/Delete" guid="48146ed8-f1f6-431c-8d29-2ba385d21cb7" />
-        <msh:sideLink key="ALT+3" action="/entityList-sec_userPermission" name="⇧К списку" roles="/Policy/Jaas/Permission/User/View" guid="48146ed8--431c-8d29-2ba385d21cb7" />
+        <msh:sideLink key="ALT+3" action="/js-sec_userPermission-listNext.do" name="⇧К списку" roles="/Policy/Jaas/Permission/User/View" guid="48146ed8--431c-8d29-2ba385d21cb7" />
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
   </tiles:put>
