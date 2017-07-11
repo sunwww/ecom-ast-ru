@@ -1,36 +1,25 @@
 package ru.ecom.mis.web.dwr.prescription;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
-import org.apache.ecs.xhtml.comment;
 import org.jdom.IllegalDataException;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONWriter;
-
+import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.ejb.services.vocentity.VocEntityPropertyInfo;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
-import sun.awt.windows.ThemeReader;
-import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.List;
 /**
  * Сервис назначений
  * @author STkacheva
