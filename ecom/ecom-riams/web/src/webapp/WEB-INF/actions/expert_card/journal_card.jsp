@@ -219,7 +219,8 @@ order by ${orderBySql}
     	/>
     	
     	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2> 
-    	<table border="1px solid">
+    	<input type='button' onclick="mshSaveTableToExcelById('expertCardReport')" value='Сохранить в excel'>
+    	<table id='expertCardReport' border="1px solid">
            <tr>
          		<th rowspan="2">#</th>
          		<th rowspan="2">Дата проведения контроля</th>

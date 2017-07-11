@@ -362,7 +362,7 @@ order by p.lastname,p.firstname,p.middlename
 
 </msh:sectionTitle>
 <msh:sectionContent>
-				<msh:table name="reestrExtDispCard" 
+				<msh:table name="reestrExtDispCard" printToExcelButton="Сохранить в excel"
 				action="entityView-extDisp_card.do" viewUrl="entityView-extDisp_card.do?short=Short"
 				idField="1">
 					<msh:tableColumn columnName="ФИО пациента" property="2" />
@@ -436,7 +436,7 @@ order by p.lastname,p.firstname,p.middlename
 
 </msh:sectionTitle>
 <msh:sectionContent>
-				<msh:table name="reestrExtDispCard" 
+				<msh:table name="reestrExtDispCard" printToExcelButton="Сохранить в excel"
 				action="entityView-extDisp_card.do" viewUrl="entityView-extDisp_card.do?short=Short"
 				idField="1">
 					<msh:tableColumn columnName="ФИО пациента" property="2" />
@@ -508,7 +508,7 @@ order by p.lastname,p.firstname,p.middlename
 
 </msh:sectionTitle>
 <msh:sectionContent>
-				<msh:table name="reestrExtDispCard" 
+				<msh:table name="reestrExtDispCard" printToExcelButton="Сохранить в excel"
 				action="entityView-extDisp_card.do" viewUrl="entityView-extDisp_card.do?short=Short"
 				idField="1">
 					<msh:tableColumn columnName="ФИО пациента" property="2" />
@@ -547,7 +547,7 @@ group by ved.id,ved.name,ved.code
 order by ved.code
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Тип доп.диспансеризации" property="2" />
@@ -587,7 +587,7 @@ group by ved.id,ved.name,ved.code,vedag.id,vedag.name
 order by vedag.name
 			"/>
 
-				<msh:table name="extDispAgeSwod" 
+				<msh:table name="extDispAgeSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Возрастная группа" property="4" />
@@ -625,7 +625,7 @@ group by ved.id,ved.name,ved.code,vedag.id,vedag.name,vedr.id,vedr.name
 order by vedr.id,vedag.name
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Фактор риска" property="5" />
@@ -675,7 +675,7 @@ group by ved.id,ved.name,ved.code,vedag.id,vedag.name,vedhg.id,vedhg.name
 order by vedhg.name,vedag.name
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>
@@ -741,7 +741,7 @@ group by ved.id,ved.name,ved.code,veds.id,veds.name,veds.code
 order by veds.id
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>
@@ -793,7 +793,7 @@ group by ved.id,ved.name,ved.code,vedag.id,vedag.name,substring(mkb.code,1,3)
 order by substring(mkb.code,1,3),vedag.name
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Класс МКБ" property="5" />
@@ -834,7 +834,7 @@ group by ved.id,wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename
 order by wp.lastname
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Раб.функция" property="2" />
@@ -874,7 +874,7 @@ group by ved.id,lpu.id,lpu.name
 order by lpu.name
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Раб.функция" property="2" />
@@ -920,7 +920,7 @@ group by ved.id,ved.name,ved.code,vedarg.id,vedarg.code,vedarg.name
 order by vedarg.code
 			"/>
 
-				<msh:table name="extDispAgeSwod" 
+				<msh:table name="extDispAgeSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Возрастная группа" property="4" />
@@ -959,7 +959,7 @@ group by ved.id,ved.name,ved.code,vedarg.id,vedarg.name,vedarg.code,vedr.id,vedr
 order by vedr.id,vedarg.code
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Фактор риска" property="5" />
@@ -1010,7 +1010,7 @@ group by ved.id,ved.name,ved.code,vedarg.id,vedarg.name,vedarg.code,vedhg.id,ved
 order by vedhg.name,vedarg.code
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>
@@ -1073,7 +1073,7 @@ group by ved.id,ved.name,ved.code,vedarg.id,vedarg.name,vedarg.code,substring(mk
 order by substring(mkb.code,1,3),vedarg.name
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 					<msh:tableColumn columnName="Класс МКБ" property="5" />
@@ -1121,7 +1121,7 @@ group by wf.id,ved.id,ved.name,ved.code,veds.id,veds.name,veds.code,vwf.name,wp.
 order by vwf.name,wp.lastname,wf.id,veds.id
 			"/>
 
-				<msh:table name="extDispSwod" 
+				<msh:table name="extDispSwod" printToExcelButton="Сохранить в excel"
 				action="extDisp_journal_card.do?beginDate=${beginDate}&vocWorkFunction=${params.vocWorkFunction}&finishDate=${finishDate}" 
 				idField="1">
 				<msh:tableNotEmpty>

@@ -83,7 +83,7 @@
     	
     	where wfs.medService_id='${param.id}'
     	"/>
-  		<msh:table selection="true" name="workFunc" 
+  		<msh:table printToExcelButton="Вывести в excel"  selection="true" name="workFunc" 
   		action="entityParentView-mis_medService_workFunction.do"
   		editUrl="entityParentEdit-mis_medService_workFunction.do" disableKeySupport="true"
   		idField="1"  deleteUrl="entityParentDeleteGoParentView-mis_medService_workFunction.do">
@@ -114,7 +114,7 @@
           	 where ms.parent_id='${param.id}' and ms.dtype='MedServiceGroup'
           	 order by ms.code
           " guid="childMedService" />
-  	<msh:table selection="true" name="childMedService" disableKeySupport="true" action="entityParentView-mis_medServiceGroup.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
+  	<msh:table  selection="true" name="childMedService" disableKeySupport="true" action="entityParentView-mis_medServiceGroup.do" idField="1" guid="16cdff9b-c2ac-4629-8997-eebc80ecc49c">
             <msh:tableColumn  property="7" columnName="Код"  />
             <msh:tableColumn  property="2" columnName="Название" guid="2fd022ea-59b0-4cc9-a8ce-0ed4a3ddc91f" />
 		    <msh:tableColumn columnName="Дата начала" property="4"/>
@@ -187,6 +187,7 @@
   <msh:ifFormTypeIsView formName="mis_medServiceGroupForm">
  
   	<script type="text/javascript">
+    	
   		if ($('planDate')) new dateutil.DateField($('planDate')) ;
   		function updateStartDate() {
 	  		var ids = theTableArrow.getInsertedIdsAsParams("ids","childMedService") ;
