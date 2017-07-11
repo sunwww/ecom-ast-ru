@@ -29,7 +29,10 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 		sql=sql+"	where mc.dtype='Visit'";
 		sql=sql+"	and mc.dateStart between to_date('"+aDate1+"','dd.mm.yyyy') and to_date('"+aDate2+"','dd.mm.yyyy')";
 		sql=sql+"	and vss.code='CHARGED' and (mc.noActuality='0' or mc.noActuality is null)";
-		sql=sql+"	and caos1.id is null";
+		if (i>0){
+            sql=sql+"	and caos1.id is null";
+		}
+
 		sql=sql+"	and cao.repealoperation_id is null";
 		//sql=sql+"	group by p.lastname,wp.lastname,mc.id,mc.username,caos.id,wfs.lpu_id,w.lpu_id,wfs.vocworkfunction_id,wf.workfunction_id";
 		//sql=sql+"	,ms.isPoliclinic,mc.dateStart,cao.operationdate,caos.medcase_id,ms.finishDate";
@@ -49,7 +52,9 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 				sql=sql+"	left join ContractAccountOperation cao on cao.account_id=sp.account_id and cao.dtype='OperationAccrual'";
 				sql=sql+"	left join ContractAccountOperationByService caos on caos.accountOperation_id=cao.id and caos.medcase_id is null";
 				sql=sql+"	left join ContractAccountMedService cams on cams.id=caos.accountMedService_id";
-				sql=sql+"	left join ContractAccountOperationByService caos1 on caos1.medcase_id=mc.id";
+				if (i>0) {
+                    sql=sql+"	left join ContractAccountOperationByService caos1 on caos1.medcase_id=mc.id";
+				}
 				sql=sql+"	left join pricemedservice pms on cams.medService_id=pms.id";
 				sql=sql+"	left join medservice ms on pms.medservice_id=ms.id";
 				sql=sql+"	left join workfunctionservice wfs on ms.id=wfs.medservice_id";
@@ -61,7 +66,10 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 				sql=sql+"	and mc.dateStart between cao.operationdate and cao.operationdate+"+i;
 				sql=sql+"	and vss.code='CHARGED' and (mc.noActuality='0' or mc.noActuality is null)";
 				sql=sql+"	and cao.repealoperation_id is null";
-				sql=sql+"	and caos1.id is null and caos.id=caos222.id";
+				if (i>0) {
+                    sql=sql+"	and caos1.id is null ";
+				}
+                sql=sql+	" and caos.id=caos222.id";
 				sql=sql+"	and wfs.lpu_id=w.lpu_id and wfs.vocworkfunction_id=wf.workfunction_id";
 				sql=sql+"	and ms.isPoliclinic='1' and ms.finishDate is null";
 				sql=sql+"	and caos.medcase_id is null";
