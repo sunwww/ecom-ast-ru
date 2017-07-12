@@ -5,6 +5,11 @@
 <struts-config>
 
 	<form-beans>
+	<!-- Справочник -->
+	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
+	<form-bean name="directory_departmentForm"			type="ru.ecom.mis.ejb.form.directory.DepartmentForm"/>
+	<form-bean name="directory_telephonenumberForm"			type="ru.ecom.mis.ejb.form.directory.TelephoneNumberForm"/>
+	
 	<!-- Калькулятор -->
         <form-bean name="calc_calculationsForm"			type="ru.ecom.mis.ejb.form.calc.CalculationsForm" />
 		<form-bean name="calc_calculatorForm"			type="ru.ecom.mis.ejb.form.calc.CalculatorForm" />
