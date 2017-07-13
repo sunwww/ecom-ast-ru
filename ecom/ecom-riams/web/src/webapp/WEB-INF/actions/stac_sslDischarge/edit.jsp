@@ -409,10 +409,10 @@
   <script type="text/javascript">
   var slo_form_is_view = 0 ; 
   var medCaseId = $('id');
-	eventutil.addEventListener($('dischargeEpicrisis'), "keyup", 
+	eventutil.addEventListener($('dischargeEpicrisis'), "input",
 		  	function() { 
 		try {
-		localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);   
+		localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
 		}
 		catch (e) {}
 		}) ; 
@@ -719,6 +719,10 @@ function submitFunc() {
   			HospitalMedCaseService.preRecordDischarge(
   					$('id').value,$('dischargeEpicrisis').value, {
 	                    callback: function(aResult) {
+                            try {
+                                localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+                            }
+                            catch (e) {}
 	                        alert("Сохранено") ;
 	                    }
   					}
@@ -734,6 +738,10 @@ function submitFunc() {
     	if (confirm('Вы хотите сохранить выписку?')) {
     		
     		check_diags('');
+            try {
+                localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+            }
+            catch (e) {}
     	}else {setTimeout(checktime,600000); }
     	
     }
