@@ -179,13 +179,16 @@
           <ecom:webQuery name="hitechCases" nameFldSql="hitechCases_sql" nativeSql="select himc.id
           ,to_char(himc.ticketDate,'dd.mm.yyyy') as f2_ticketDate
           ,to_char(himc.planHospDate,'dd.mm.yyyy') as f3_planHospDate
-          ,(select list(vkhc.code ||' '||vkhc.name) from vocKindHighCare vkhc where vkhc.id=coalesce(himc.kind_id, slo.kindhighcare_id)) as f4_kind
-
-          ,(select list(vmhc.code ||' '||vmhc.name) from vocMethodHighCare vmhc where vmhc.id=coalesce(himc.method_id, slo.methodhighcare_id)) as f5_method
+          ,coalesce(vkhc1.code ||' '||vkhc1.name,vkhc2.code ||' '||vkhc2.name) as f4_kind
+          ,coalesce(vmhc1.code ||' '||vmhc1.name, vmhc2.code ||' '||vmhc2.name) as f5_method
           from medcase slo
           left join HitechMedicalCase himc on  himc.medCase_id = slo.id
+          left join vocKindHighCare vkhc1 on vkhc1.id=himc.kind_id
+          left join vocKindHighCare vkhc2 on vkhc2.id= slo.kindhighcare_id
+          left join vocMethodHighCare vmhc1 on vmhc1.id=himc.method_id
+          left join vocMethodHighCare vmhc2 on vmhc2.id= slo.methodhighcare_id
           where
-          slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase'
+          slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase'  and coalesce(vkhc1.id, vkhc2.id) is not null
           order by himc.ticketDate
           "/>
 	    <msh:section title="Случаи ВМП (включая случаи в СЛО) ">
