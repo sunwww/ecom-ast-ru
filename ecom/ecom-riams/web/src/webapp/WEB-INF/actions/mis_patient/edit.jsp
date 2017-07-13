@@ -286,8 +286,10 @@ where pcc.patient_id='${param.id}'
         </msh:row>
         <msh:row>
         	<msh:textField property="phone" label="Телефон" horizontalFill="true" fieldColSpan="3"/>
-            <msh:label property="mobileAppPhoneNumber"/>
         </msh:row>
+          <msh:row>
+              <msh:label property="mobileAppPhoneNumber"  fieldColSpan="3"/>
+          </msh:row>
 
         <msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">
         	<msh:row>
