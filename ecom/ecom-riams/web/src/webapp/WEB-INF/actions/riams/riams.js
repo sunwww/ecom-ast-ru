@@ -1,6 +1,10 @@
 function phone(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/riams/phone.htm") ;
 }
+
+function phoneTest(aForm, aCtx) {
+	return aCtx.createForward("/entityList-directory_telephonenumber.do") ;
+}
 function instructions(aForm, aCtx) {
 	return aCtx.createForward("/WEB-INF/actions/riams/instructions.jsp") ;
 }
