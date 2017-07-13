@@ -154,7 +154,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	 * @param aPatientExternalServiceAccountId - ИД согласия
 	 * @param aManager
 	 */
-	public void registerPatientExternalResource(Long aPatientExternalServiceAccountId, EntityManager aManager) {
+	public void registerPatientExternalResource(Long aPatientExternalServiceAccountId, EntityManager aManager, String aUsername) {
 		try {
 			if (aManager==null) {
                 aManager=theManager;
@@ -174,6 +174,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				log.info("Отзываем согласие пациента. uid = "+pesa.getExternalCode());
 				params.put("uid",pesa.getExternalCode());
 				function="SetBlockPatient";
+				root.put("blockUser", aUsername);
 			} else {
 				Date birthDate = pat.getBirthday();
 				Calendar cal = new GregorianCalendar();
@@ -186,7 +187,9 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				root.put("birthday",birthDate);
 				root.put("phonenumber",pesa.getPhoneNumber());
 				root.put("email",pesa.getEmail());
+				root.put("regUser", aUsername);
 			}
+
 
 			makeHttpPostRequest(root.toString(),address,function, params, aPatientExternalServiceAccountId, aManager);
 		} catch (JSONException e) {
