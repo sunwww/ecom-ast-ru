@@ -1950,7 +1950,7 @@ public class HospitalMedCaseServiceJs {
     public String watchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
     	String res="Пациент добавлен в список наблюдения!";
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	String query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+    	String query="select id from listwatch where datewatch=current_date";
     	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
     	int idlistwatch=0;
 		if (list.size()>0) {
@@ -1958,9 +1958,9 @@ public class HospitalMedCaseServiceJs {
 			idlistwatch=Integer.parseInt(wqr.get1().toString());
 			}
 		if (idlistwatch==0) { // надо добавить его
-			query="INSERT into listwatch(datewatch) VALUES(CAST('today' AS DATE))";
+			query="INSERT into listwatch(datewatch) VALUES(current_date)";
 			service.executeUpdateNativeSql(query); 
-			query="select id from listwatch where datewatch=CAST('today' AS DATE)";
+			query="select id from listwatch where datewatch=current_date";
 			list = service.executeNativeSql(query,1); 
 			if (list.size()>0) {
 				WebQueryResult wqr = list.iterator().next() ;
