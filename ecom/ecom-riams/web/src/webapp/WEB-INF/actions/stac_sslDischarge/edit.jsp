@@ -415,7 +415,21 @@
 		localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
 		}
 		catch (e) {}
-		}) ; 
+		}) ;
+  eventutil.addEventListener($('dischargeEpicrisis'), "keyup",
+      function() {
+          try {
+              localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
+          }
+          catch (e) {}
+      }) ;
+  eventutil.addEventListener($('dischargeEpicrisis'), "paste",
+      function() {
+          try {
+              localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
+          }
+          catch (e) {}
+      }) ;
   </script>
   <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
   <script type="text/javascript">
