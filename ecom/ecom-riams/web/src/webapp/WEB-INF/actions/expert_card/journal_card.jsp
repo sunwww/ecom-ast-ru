@@ -180,7 +180,7 @@ div#header{display:none;}
         		StringBuilder sql = new StringBuilder() ;
         		for (int i=0;i<critList.size();i++) {
         			WebQueryResult wqr = (WebQueryResult)critList.get(i) ;
-        			sql.append(",max(case when vqec.id = '").append(wqr.get1()).append("' then (vqem.mark||' '||coalesce(vqecd.name,'')) else ''||0 end) as f").append(i+5).append("_def1") ;
+        			sql.append(",max(case when vqec.id = '").append(wqr.get1()).append("' then (vqem.mark||' '||(select list(vqecd.name) from qualityestimationcritdefect qecd left join vocqualityestimationcritdefect vqecd on vqecd.id=qecd.defect where qecd.criterion=qecr.id ))  else ''||0 end) as f").append(i+5).append("_def1") ;
         		}
         		request.setAttribute("critSql", sql.toString()) ;
     	%>
@@ -207,8 +207,6 @@ left join medcase sls on sls.id=qec.medcase_id
 left join medcase sls2 on sls2.id=sls.parent_id
 left join patient pat on pat.id=sls.patient_id
 left join statisticstub ss on ss.medcase_id=coalesce(sls2.id,sls.id)
-left join qualityestimationcritdefect qecd on qecd.criterion = qecr.id
-left join vocqualityestimationcritdefect vqecd on vqecd.id=qecd.defect 
 
 where  qec.createDate between to_date('${param.dateBegin}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
 and qec.kind_id=${param.estimationKind}
@@ -219,7 +217,8 @@ order by ${orderBySql}
     	/>
     	
     	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2> 
-    	<table border="1px solid">
+    	<input type='button' onclick="mshSaveTableToExcelById('expertCardReport')" value='Сохранить в excel'>
+    	<table id='expertCardReport' border="1px solid">
            <tr>
          		<th rowspan="2">#</th>
          		<th rowspan="2">Дата проведения контроля</th>

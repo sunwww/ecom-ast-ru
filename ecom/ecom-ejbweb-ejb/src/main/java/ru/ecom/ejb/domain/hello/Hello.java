@@ -1,5 +1,6 @@
 package ru.ecom.ejb.domain.hello;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Comment;
 import static javax.persistence.CascadeType.ALL;
 
 import java.util.List;

@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.naming.NamingException;
-import javax.print.attribute.standard.Finishings;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 

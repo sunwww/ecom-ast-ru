@@ -49,11 +49,8 @@
 					<li><msh:link  action="js-riams-instruction.do?id=refusal_hospitalization">
 						Оформление отказа от госпитализаций
                     </msh:link></li>
-					<li><msh:link  action="js-riams-instruction.do?id=disability">
-						Экспорт листков нетрудоспособности в ФСС
-                    </msh:link></li>
-                     <li><msh:link  action="js-riams-instruction.do?id=disablility-eln">
-						Экспорт листков нетрудоспособности в ФСС (ЭЛН)
+					<li><msh:link  action="js-riams-instruction.do?id=disability-case">
+						Оформление листков нетруспособности
                     </msh:link></li>
                     <li><msh:link  action="js-riams-instruction.do?id=prototcol-kili">
 						Комиссия исследования летальных исходов
@@ -63,7 +60,9 @@
 				<h2 style="font-size: large;" align="center">Общее</h2>
 				<ul style="font-size: large; list-style: none;" >
 
-					
+					<li><msh:link  action="js-riams-instruction.do?id=online_doctor">
+						Подключение услуги "личный кабинет пациента"
+					</msh:link></li>
 					<li><msh:link  action="js-riams-instruction.do?id=medtechnic">
 						Указание типа мед. оборудования
                     </msh:link></li>

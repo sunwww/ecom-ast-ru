@@ -249,7 +249,7 @@
 	    </form>     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table action="entityView-mis_patient.do"
+    <msh:table action="entityView-mis_patient.do" printToExcelButton="Сохранить в excel"
     viewUrl="entityShortView-mis_patient.do"
      name="reestr" idField="1">
     	<msh:tableColumn property="sn" columnName="#"/>
@@ -293,7 +293,7 @@ where pat.deathdate is null ${dispSql}
 ${groupBySql}
 
 "/> 
-<msh:table name="swod" action="mis_patient_by_age.do?typeReestr=1&lpu=${param.lpu}&area=${param.area}" idField="1" cellFunction="true">
+<msh:table name="swod" printToExcelButton="Сохранить в excel" action="mis_patient_by_age.do?typeReestr=1&lpu=${param.lpu}&area=${param.area}" idField="1" cellFunction="true">
 	<msh:tableColumn property="2" columnName="Возраст" addParam=""/>
 	<msh:tableColumn property="3" columnName="Январь" addParam="&month=01"/>
 	<msh:tableColumn property="4" columnName="Февраль" addParam="&month=02"/>

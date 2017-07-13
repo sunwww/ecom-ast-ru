@@ -44,7 +44,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 		try {
 			theManager.createNativeQuery(sql2).executeUpdate();
 			return "Изменено записей: "+theManager.createNativeQuery(sql).executeUpdate();
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "Ошибка при перекреплении: "+e.toString();
 		}
@@ -128,19 +128,24 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 							String spPrik= el.getChildText("SP_PRIK");
 							String tPrik= el.getChildText("T_PRIK");
 							String datePrik= el.getChildText("DATE_1");
+							String prikName = "Прикрепление";
+							if (tPrik!=null&&tPrik.equals("2")) { //При дефекте случая, поданного на открепление, не учитываем дефект(МАКС-М - 14 -открепление неправомерно, когда пациент уже откреплен)
+								refreason="";
+								prikName = "Открепление"; 
+							}
 							String birthday2 = formatOutput.format(format.parse(birthday))+" г.р.";
 							Long patientId = theSyncService.findPatientId(lastname, firstname, middlename, new java.sql.Date(format.parse(birthday).getTime()));
 							if (patientId!=null&&patientId!=0) {
 								LpuAttachedByDepartment att = getAttachment(patientId, new java.sql.Date(format.parse(datePrik).getTime()), spPrik,tPrik);
 								if (refreason!=null&&!refreason.equals("")) { //Дефект
 					    			if (att!=null) {
-										sb.append("red:"+i+":"+patientId+":"+att.getId()+":Прикрепление пациента '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'обновлено. Дефект='"+refreason+"'#");
+										sb.append("red:"+i+":"+patientId+":"+att.getId()+":"+prikName+" пациента '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'обновлено. Дефект='"+refreason+"'#");
 					    			} else {
-					    				sb.append("blue:"+i+":"+patientId+"::Прикрепление не найдено в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+					    				sb.append("blue:"+i+":"+patientId+"::"+prikName+" не найдено в базе. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
 					    			}									 
 								} else { //Не дефект
 									if (att!=null) {
-										sb.append("green:"+i+":"+patientId+"::Прикрепление принято без дефектов. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
+										sb.append("green:"+i+":"+patientId+"::"+prikName+" принято без дефектов. Данные пациента= '"+lastname+" "+firstname+" "+middlename+" "+birthday2+"'#");
 									}								
 								}
 								if (att!=null) {

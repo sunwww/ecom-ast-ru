@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 
 public interface ITemplateProtocolService {
-    public void registerPatientExternalResource(Long aPatientExternalServiceAccountId, EntityManager aManager);
+    public void registerPatientExternalResource(Long aPatientExternalServiceAccountId, EntityManager aManager, String aUsername);
     public void sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) ;
     public String getTextTemplate(long aId) ;
     public String getTextByProtocol(long aProtocolId) ;

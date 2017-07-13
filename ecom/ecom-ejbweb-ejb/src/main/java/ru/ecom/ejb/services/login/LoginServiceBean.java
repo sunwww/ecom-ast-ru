@@ -48,6 +48,7 @@ public class LoginServiceBean implements ILoginService {
     	String[] rets = new String[2] ;
     	rets[0]=ret ;rets[1]=ret1 ;
     	return rets ;
+
     }
 
     @PermitAll

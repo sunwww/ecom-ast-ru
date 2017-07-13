@@ -5,6 +5,11 @@
 <struts-config>
 
 	<form-beans>
+	<!-- Справочник -->
+	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
+	<form-bean name="directory_departmentForm"			type="ru.ecom.mis.ejb.form.directory.DepartmentForm"/>
+	<form-bean name="directory_telephonenumberForm"			type="ru.ecom.mis.ejb.form.directory.TelephoneNumberForm"/>
+	
 	<!-- Калькулятор -->
         <form-bean name="calc_calculationsForm"			type="ru.ecom.mis.ejb.form.calc.CalculationsForm" />
 		<form-bean name="calc_calculatorForm"			type="ru.ecom.mis.ejb.form.calc.CalculatorForm" />
@@ -382,6 +387,15 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/mis_archiveCase/move_to_archive.jsp" />
         </action>
+        
+          <action path='/eln_count' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/eln_count.jsp" />
+        </action>
+        
  <action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -993,8 +1007,7 @@
 			type='ru.ecom.mis.web.action.patient.FindPersonBySocialCardAction' 
 			validate='false'
 			scope='session'
-			name='mis_patientSearchForm'
-			>
+			name='mis_patientSearchForm'>
 			<forward name="success" redirect="false" path='/WEB-INF/actions/mis_patient/list.jsp'/>
 			
 		</action>
@@ -1011,6 +1024,8 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
         </action>
+        
+       
 	</action-mappings> 
 
 

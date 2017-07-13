@@ -22,6 +22,10 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		return theInfos.toArray(ret);
 	}
 
+	public TagLibraryInfo[] getTagLibraryInfos() {
+		return new TagLibraryInfo[0];
+	}
+
 
 	private ArrayList<TagInfo> theInfos = new ArrayList<TagInfo>() ;
 	

@@ -1,5 +1,86 @@
 <vocconfig>
 
+<!-- select distinct on (p.lastname) p.lastname||' '||p.firstname||' '||p.middlename from workfunction wf
+left join Worker as w on w.id=wf.worker_id
+left join Patient as p on p.id=w.person_id
+where wf.dtype='PersonalWorkFunction' -->
+
+
+<voc id="vocEntry" type="NativeVocService">
+	<NativeVocService 
+	from="entry as e"
+	join="left join WorkFunction as wf on wf.id= e.person_id
+		left join Worker as w on w.id=wf.worker_id
+		left join Patient as p on p.id=w.person_id
+		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+		left join department d on d.id=e.department_id
+		left join mislpu m on m.id=d.department_id" 
+	queryAppend="wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')" 
+	names="e.comment||' - '||p.lastname||' '||p.firstname||' '||p.middlename||'('||m.name||')' as name" 
+	nameId="e.id"
+	queriedSplitCount="3"
+	queried =" (cast(e.id as varchar(20))= :querInd or e.comment like UPPER(:quer1) or p.lastname like :quer1 or m.name like :quer2"
+/>	
+</voc>
+
+
+<voc id="vocPersonShort" type="NativeVocService">
+	<NativeVocService 
+	from="workfunction as wf"
+	join="left join Worker as w on w.id=wf.worker_id
+		  left join Patient as p on p.id=w.person_id
+		  left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" 
+	queryAppend="wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')" 
+	names="p.lastname||' '||p.firstname||' '||p.middlename, vwf.name as name " 
+	nameId="wf.id"
+	queriedSplitCount="3"
+	queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
+/>	
+</voc>
+
+<voc id="vocDepartmentShort" type="NativeVocService">
+	<NativeVocService 
+	from="department as d"
+	join="left join mislpu m on m.id = d.department_id" 
+	nameId="d.id"
+	names="m.name" 
+	queriedSplitCount="1"
+	queried ="(cast(d.id as varchar(20))= :querInd or m.name like :quer1)"/>
+</voc>
+
+<voc id="vocDepartmentFull" type="NativeVocService">
+	<NativeVocService 
+	from="department as d"
+	join="left join mislpu m on m.id = d.department_id
+    	  left join vocbuildinglevel vbl on vbl.id = d.buildinglevel_id
+		  left join vocbuilding vb on vb.id = d.building_id"
+	nameId="d.id" 
+	names="vb.name||' - '||m.name||'('||vbl.name||')'"
+	queriedSplitCount="1"
+	queried ="(cast(d.id as varchar(20))= :querInd or m.name like :quer1 or vbl.name like :quer1 or vb.name like :quer1)"/>
+</voc>
+
+<voc id="vocBuildingShort" type="NativeVocService">
+	<NativeVocService 
+	from="vocBuilding as vb " 
+	nameId="vb.id"
+	names="vb.name" />
+</voc>
+	
+<voc id="vocBuildingLevelShort" type="NativeVocService">
+	<NativeVocService 
+	from="vocBuildingLevel as vbl "
+	nameId="vbl.id" 
+	names="vbl.name" />
+</voc>
+
+<voc id="vocDepartmet" type="NativeVocService">
+	<NativeVocService 
+	from="mislpu as m " 
+	nameId="m.id"
+	queryAppend="m.parent_id = 1" 
+	names="m.name" />
+</voc>
 
 
 <!--  Справочник калькуляторы -->
@@ -715,6 +796,18 @@
 		queried="upper(ce.name) like upper(:query)"
 	/>
 </voc>
+	<!--Список позиций прейскуранта по прейскуранту-->
+	<voc id="pricePositionByPriceList" type="NativeVocService">
+		<NativeVocService
+				from="PricePosition PP"
+				parent='PP.priceList_id = :parent'
+				nameId="PP.id"
+				queryAppend=""
+				order=""
+				names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
+				queried=" (upper(PP.code) like upper(:query) or upper(replace(PP.code,'.','')) like upper(:query) or upper(PP.name) like upper(:query) or upper(''||pp.id) like upper(:query)) "
+		/>
+	</voc>
 <voc id="priceMedServiceByPriceList" type="NativeVocService">
 		<NativeVocService
 			from="PriceMedService PMS"
@@ -1105,7 +1198,7 @@
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
-    			queryAppend="ms.dtype='MedService' and (ms.isPoliclinic='1' or ms.isDayHospital='1' and ms.isPoliclinic='1')"
+    			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
     			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
     			order=''
     			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
@@ -1114,6 +1207,26 @@
     	/>
     
     </voc>
+    
+        <voc id='medServiceForSpecStac' type='NativeVocService'>
+    	<NativeVocService
+    			from = 'MedService ms'
+    			parent="wf.id=:par1 
+    			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate) 
+    			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))"
+    			parentSplitCount='2'
+    			names = "ms.code||' '||ms.name"
+    			nameId="ms.id"
+    			queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1')"
+    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
+    			order=''
+    			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+    			groupBy="ms.id, ms.code, ms.name"
+    			 			
+    	/>
+    
+    </voc>
+    
     <voc id='medServiceByVocWorkFunction' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService ms'

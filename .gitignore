@@ -1,1 +1,14 @@
 ecom/ecom-riams/ejb/.classpath
+.idea/
+/ecom/ecom-riams/ejb/.settings/
+/ecom/ecom-riams/web/target/
+/ecom/ecom-riams/ejb/target/
+/ecom/ecom-riams/ejb/${jboss_deploy}/
+/ecom/ecom-riams/ejb/${jboss_postgres_deploy}/
+/ecom/ecom-ejbweb/ejb/target/
+/gwt/clazz/bin/
+/gwt/clazz/tomcat/
+/gwt/document/target/
+/msh/msh-web/target/
+/target/
+/BUILD/

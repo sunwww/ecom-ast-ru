@@ -52,12 +52,14 @@ function onPreSave(aForm,aEntity, aContext) {
 	var isNoPalat = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Slo/NoRoomNumber") ;
 	
 	//Запрет на поступление в экстренном порядке на дневные койки
-	if ((hosp.emergency||aForm.emergency)&&bedFund.bedSubType!=null&&(bedFund.bedSubType.code=="2"||bedFund.bedSubType.code=="3")) {
+	if (((hosp.emergency!=null&&hosp.emergency==true)||(aForm.emergency!=null&&aForm.emergency==true))&&bedFund.bedSubType!=null&&(bedFund.bedSubType.code=="2"||bedFund.bedSubType.code=="3")) {
 		if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Sso/CreateEmergencyDayHospBedFund")){
+			
 			throw "Установлен запрет на ЭКСТРЕННУЮ госпитализацию на тип коек '"+bedFund.bedSubType.name+"'";
+			
 		}
 		
-	}
+	} //else throw "123";
 	if (prev!=null) {
 		var dateTransfer ;
 		
