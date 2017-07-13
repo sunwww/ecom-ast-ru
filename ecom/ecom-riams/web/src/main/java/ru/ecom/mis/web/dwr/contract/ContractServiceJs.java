@@ -26,7 +26,8 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.contract.IContractService;
-import ru.ecom.web.util.Injection; 
+import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.Injection;
 
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
@@ -37,7 +38,7 @@ public class ContractServiceJs {
 	
 private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws IOException, NamingException {
 	
-		log.info("===Send to KKM. Data = "+data);
+		System.out.println("===Send to KKM. Data = "+data);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select keyvalue from  softconfig where key='KKM_WEB_SERVER'");
 		if (!l.isEmpty()) {
@@ -72,30 +73,11 @@ private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throw
 	}
 
 
-
-//method by milamesher 15.03.2017
-//отправляет на принтер команду печатать z-отчёт
-public JSONObject makeKKMEmptyJson () {
-	try {
-		JSONObject root = new JSONObject();
-		//root.put("function", "");
-	//	root.put("totalPaymentSum", 0) ;
-	//	root.put("totalTaxSum", 0) ;
-	//	root.put("totalRefundSum", 0) ;
-		//JSONObject par = new JSONObject();
-		return root;
-	} catch (Exception e) {
-		e.printStackTrace();
-		return null;
-	}
-	
-}
-
 //Печать K, Z отчета
 public String printKKMReport(String aType, HttpServletRequest aRequest) {
 	if (aType!=null&&(aType.equals("Z")||aType.equals("X"))) {
 		try {
-			JSONObject root = makeKKMEmptyJson();
+			JSONObject root = new JSONObject();
 			if (root!=null) {
 				root.put("function", "print"+aType+"Report");
 				makeHttpPostRequest(root.toString(),aRequest);
@@ -124,19 +106,55 @@ public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont,
 		return printKKMReport("Z", aRequest);
 	} else if (aFunction!=null&&aFunction.equals("printXReport")){
 		return printKKMReport("X",aRequest);
+	} else if (aFunction!=null&&aFunction.equals("printLastOrder")) {
+		return printLastOrder(aRequest);
 	}
 	return "Неизвестная функция";
 	} else {
 		return "Нет прав для работы с ККМ";
 	}
 }
+private String getOperatorInfoByUsername(HttpServletRequest aRequest) throws NamingException {
+	String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+	StringBuilder sql = new StringBuilder().append("select vwf.name||' '||pat.lastname||' '||substring(pat.firstname,1,1)||'.'||substring(pat.middlename,1,1)||'.'  from secuser su")
+			.append(" left join workfunction wf on wf.secuser_id=su.id")
+			.append(" left join worker w on w.id=wf.worker_id")
+			.append(" left join patient pat on pat.id=w.person_id")
+			.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+			.append(" where su.login='").append(username).append("'");
+	Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
+	if (!list.isEmpty()) {
+		return list.iterator().next().get1().toString();
+	}
+	return null;
+}
+
+	/**
+	 * Печать последнего чека (в случае неудачи его первой печати
+	 * @param aRequest
+	 * @return
+	 */
+	public String printLastOrder(HttpServletRequest aRequest)  {
+		try {
+			JSONObject root = new JSONObject();
+			root.put("function", "continuePrint");
+			makeHttpPostRequest(root.toString(), aRequest);
+			return "Чек отправлен на печать";
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+			return "Произошла ошибка: "+e;
+		}
+	}
+
 public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, HttpServletRequest aRequest) {
 	try {		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String discontSql = "cams.cost";
 		if (aDiscont!=null&&!aDiscont.equals("")) {
-			log.info("=== Send KKM, discont = "+aDiscont);
+		//	log.info("=== Send KKM, discont = "+aDiscont);
 			discontSql = "round(cams.cost*(100-"+aDiscont+")/100,2)";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -152,6 +170,7 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 		List<Object[]> l = service.executeNativeSqlGetObj(sb.toString());
 		//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 		if (!l.isEmpty()) {
+			String kassir = getOperatorInfoByUsername(aRequest);
 		//	System.out.println("not empty");
 			Double totalSum = 0.00;
 			Double taxSum = 0.00;
@@ -189,6 +208,7 @@ public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean is
 				}
 			}
 			root.put("isTerminalPayment", isTerminalPayment);
+			root.put("FIO", kassir);
 			makeHttpPostRequest(root.toString(), aRequest);
 			return "Чек отправлен на печать";
 		} else {

@@ -17,6 +17,8 @@ function update_postgres(aCtx, aParams) {
 	default_id(aCtx,"VocQualityEstimationCrit") ;
 	default_id(aCtx,"VocQualityEstimationMark") ;
 	default_id(aCtx,"FlowDocument") ;
+    default_id(aCtx,"electronicdisabilitydocumentnumber") ;
+    default_id(aCtx,"exportfsslog") ;
 	drop_index(aCtx,"kladr","kladr_kladrcode") ;
 	max_sequnce_default_id(aCtx,"Address2","Addressid") ;
 	max_sequnce_default_id(aCtx,"Kladr","Id") ;

@@ -58,8 +58,9 @@ function checkFields(aForm, aCtx) {
     }
 }
     function onCreate(aForm, aEntity, aCtx) {
+        var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
         var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
-        bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager);
+        bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager, username);
         if (aEntity.getExportAllHistory()) {
             if (aEntity.getExternalCode()!=null){
                 bean.sendPatientMedicalHistoryToExternalResource(aEntity.getId(), aCtx.manager);
@@ -71,13 +72,14 @@ function checkFields(aForm, aCtx) {
 
     }
     function onSave(aForm, aEntity, aCtx) {
+        var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
         /**
          * TODO
          * При изменении номера телефона необходимо отвязать старый номер, на этого же пациента привязать новый номер. Вести журнал изменения номеров
          */
         if (aEntity.getDateTo()!=null) {
             var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
-            bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager);
+            bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager, username);
         }
 
     }
