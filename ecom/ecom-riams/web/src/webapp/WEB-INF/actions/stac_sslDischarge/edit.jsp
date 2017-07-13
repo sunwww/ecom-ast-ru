@@ -410,13 +410,20 @@
   var slo_form_is_view = 0 ; 
   var medCaseId = $('id');
 	eventutil.addEventListener($('dischargeEpicrisis'), "input",
-		  	function() { 
+		  	function() {
 		try {
 		localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
 		}
 		catch (e) {}
 		}) ;
   eventutil.addEventListener($('dischargeEpicrisis'), "keyup",
+      function() {
+          try {
+              localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
+          }
+          catch (e) {}
+      }) ;
+  eventutil.addEventListener($('dischargeEpicrisis'), "blur",
       function() {
           try {
               localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
