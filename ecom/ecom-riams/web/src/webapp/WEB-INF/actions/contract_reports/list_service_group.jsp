@@ -66,6 +66,9 @@
 	        <td onclick="this.childNodes[1].checked='checked';">
 	        	<input type="radio" name="typeGroup" value="4"> ???
 	        </td>
+			<td onclick="this.childNodes[1].checked='checked';">
+				<input type="radio" name="typeGroup" value="5"> по регионам
+			</td>
         </msh:row>			
         <msh:row>
         	<msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
@@ -114,7 +117,7 @@
 			dateTo=dateFrom ;
 		}
 		
-		if (typeGroup.equals("2")||typeGroup.equals("2")) {
+		if (typeGroup.equals("2")) {
 			// Группировка по услугам 
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
    			request.setAttribute("groupSql1", "lpu.name") ;
@@ -143,14 +146,28 @@
        		request.setAttribute("groupGroupNext", "2") ;
    			request.setAttribute("groupGroup", "lpu.id,lpu.name,vpt.id,vpt.name") ;
    			request.setAttribute("groupOrder", "lpu.name,vpt.name") ;
+		} else if (typeGroup.equals("5")) { //Разбивка по регионам
+			request.setAttribute("selectSql1","ar.addressid as sqlId, ar.name as adrname");
+			request.setAttribute("groupSql1", "ar.addressid, ar.name") ;
+			request.setAttribute("orderSql1","ar.name");
+			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
+			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
+			request.setAttribute("groupName", "Сотрудник") ;
+			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat") ;
+			request.setAttribute("groupOrder", "pp.code") ;
+			request.setAttribute("whereSql1","ar.addressid");
 		} else if (typeGroup.equals("1")) {
 		
 			//Реестр
+			request.setAttribute("selectSql1","lpu.id as sqlId,lpu.name as lpuname");
+			request.setAttribute("groupSql1","lpu.id, lpu.name");
+			request.setAttribute("orderSql1","lpu.name");
    			request.setAttribute("groupSql", "pp.code||' '||pp.name") ;
    			request.setAttribute("groupSqlId", "'&priceMedService='||pms.id") ;
    			request.setAttribute("groupName", "Сотрудник") ;
    			request.setAttribute("groupGroup", "pms.id,pp.code,pp.name,pp.isVat") ;
    			request.setAttribute("groupOrder", "pp.code") ;
+   			request.setAttribute("whereSql1","lpu.id");
 		}
 		ActionUtil.setParameterFilterSql("operator","cao.workFunction_id", request) ;
 		ActionUtil.setParameterFilterSql("priceMedService","pms.id", request) ;
@@ -160,16 +177,13 @@
 		ActionUtil.setParameterFilterSql("positionType","pp.positionType_id", request) ;
 		ActionUtil.setParameterFilterSql("departmentType","lpu.lpuFunction_id", request) ;
 		%>
-		<% if (typeGroup!=null&& typeGroup.equals("1")) { %>
+		<% if (typeGroup!=null&& (typeGroup.equals("1")||typeGroup.equals("5"))) { %>
 			
 			
 			
 			<ecom:setAttribute name="id_group" value="${groupSqlId1}||${operatorSqlId}||${priceMedServiceSqlId}||${departmentSqlId}||${positionTypeSqlId}||${priceListSqlId}||'&dateFrom=${param.dateFrom}&dateTo=${param.dateTo}"/>
 			<ecom:setAttribute name="queryGroup_sql" value="
-SELECT lpu.id as sqlId
-,lpu.name
-
-
+SELECT ${selectSql1}
 , count(distinct case when cao.dtype='OperationAccrual' then mc.id else null end) as cntDogMedService 
 , sum(case when cao.dtype='OperationAccrual' then cams.countMedService else 0 end) as sumCountMedService 
 , sum(case when cao.dtype='OperationAccrual' then round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) else 0 end) sumNoAccraulMedServiceWithDiscount  
@@ -195,21 +209,22 @@ as sumItog
 as sumItogWithoutVat
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
-LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
-LEFT JOIN patient CCP ON CCP.id=CC.patient_id
-LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+
+
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
 left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
 left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
-
+left join servedperson sp on sp.id=cams.servedperson_id
+LEFT JOIN contractPerson CC ON CC.id=sp.person_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+left join address2 a on a.addressid=ccp.address_addressid
+left join Address2 ar on ar.addressid=a.region_addressid
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
 left join VocPositionType vpt on vpt.id=pp.positionType_id 
 left join PricePosition pg on pg.id=pp.parent_id
-
 left join MisLpu lpu on lpu.id=pg.lpu_id
 left join VocLpuFunction vlf on vlf.id=lpu.lpuFunction_id
-
 left join WorkFunction wf on wf.id=cao.workFunction_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
@@ -218,11 +233,12 @@ WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND t
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
-group by lpu.id,lpu.name
-order by lpu.name
+group by ${groupSql1}
+order by ${orderSql1}
 			"/>
 			<ecom:webQuery name="department_list" nativeSql="${queryGroup_sql}"/>
-			<table border='1px solid'>
+		<input type="button" onclick="mshSaveTableToExcelById('journalTable')" value="Сохранить в excel">
+			<table border='1px solid' id="journalTable">
 
 			
 <tr>
@@ -302,12 +318,16 @@ as sumItog
 as sumItogWithoutVat
 FROM medcontract MC
 LEFT JOIN contractaccount as CA ON CA.contract_id=MC.id 
-LEFT JOIN contractPerson CC ON CC.id=MC.customer_id
-LEFT JOIN patient CCP ON CCP.id=CC.patient_id
-LEFT JOIN VocOrg CCO ON CCO.id=CC.organization_id
+
 left join ContractAccountOperation CAO on CAO.account_id=CA.id 
 left join ContractAccountOperationByService caos on cao.id=caos.accountOperation_id
 left join ContractAccountMedService cams on caos.accountMedService_id=cams.id
+left join servedperson sp on sp.id=cams.servedperson_id
+LEFT JOIN contractPerson CC ON CC.id=sp.person_id
+LEFT JOIN patient CCP ON CCP.id=CC.patient_id
+
+left join address2 a on a.addressid=ccp.address_addressid
+left join Address2 ar on ar.addressid=a.region_addressid
 
 left join PriceMedService pms on pms.id=cams.medService_id
 left join PricePosition pp on pp.id=pms.pricePosition_id
@@ -322,7 +342,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') 
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn')  
-and lpu.id  ${groupDep_id}
+and ${whereSql1} ${groupDep_id}
 ${priceMedServiceSql} ${operatorSql} ${priceListSql}
 ${nationalitySql} ${departmentSql} ${positionTypeSql}
 ${departmentTypeSql}
@@ -406,8 +426,9 @@ ${departmentTypeSql}
 
 group by lpu.id,lpu.name,mc.id,lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom,pp.positionType_id,pp.id,pp.code,pp.name
 order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,pp.code
-			"/>${dep_list_sql}
-			<table border='1px solid'>
+			"/>
+		<input type="button" onclick="mshSaveTableToExcelById('journalTable')" value="Сохранить в excel">
+		<table border='1px solid' id="journalTable">
 <tr>
 	<th>Наименование</th>
 	<th>Кол-во услуг</th>
@@ -562,7 +583,7 @@ order by lpu.name,CCP.lastname,CCP.firstname,CCP.middlename,pp.positionType_id,p
 			
 			%>
 			
-	<%}%>
+	<%} %>
 	
 	</table>
 	<%
