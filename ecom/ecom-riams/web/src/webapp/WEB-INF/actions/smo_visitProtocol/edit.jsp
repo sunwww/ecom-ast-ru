@@ -242,12 +242,11 @@ horizontalFill="true" />
 	</tiles:put>
 	<tiles:put name='javascript' type='string'>
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
-			<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
 				<script type="text/javascript">  
-				var medCaseId = document.querySelector('#medCase');
 				eventutil.addEventListener($('record'), "keyup", 
 			  		  	function() { try {
-					localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('record').value);
+							var medCaseId = document.querySelector('#medCase');
+							localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('record').value);
 			  		  	}
 			  		  	catch(e) {}
 			  		}) ; 
@@ -300,7 +299,6 @@ function save_form(aForm) {
     
     </script>
 
-			</msh:ifNotInRole>
 			<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
 				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 					<script type="text/javascript"> 
@@ -344,9 +342,9 @@ function save_form(aForm) {
 			catch (e) {}
 	function submitFunc() { 
 		var frm = document.smo_visitProtocolForm;
-		var medCaseId = document.querySelector('#medCase'); 
 		try {
-		localStorage.removeItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+			var medCaseId = document.querySelector('#medCase'); 
+			localStorage.removeItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
 		}
 		catch (e) {}
 		frm.action= action;
