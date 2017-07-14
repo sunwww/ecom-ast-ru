@@ -9,7 +9,7 @@
 case when tn.typenumber_id=3 then list(tn.telnumber) else '' end as sot,
 case when tn.typenumber_id=2 then list(tn.telnumber) else '' end as gor,
 e.comment,
-p.lastname||' '||p.firstname||' '||p.middlename as names,vb.name,vbl.name,m.name as dep
+p.lastname||' '||p.firstname||' '||p.middlename as names,vb.name as build,vbl.name as level,m.name as dep
 from entry e  
 left join WorkFunction as wf on wf.id= e.person_id
 left join Worker as w on w.id=wf.worker_id
