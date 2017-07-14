@@ -101,7 +101,7 @@ horizontalFill="true" />
 						<input type="button" style="display: none" name="btnEditProt2" id="btnEditProt2"
 							value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" /> 
 							
-							<input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId.value,1)"/>
+							<input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId,1)"/>
               <input type="button" onclick="$('record').value=getCookie('protocol')" value="Последний сохраненный протокол">
 
 
@@ -242,12 +242,11 @@ horizontalFill="true" />
 	</tiles:put>
 	<tiles:put name='javascript' type='string'>
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
-			<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
 				<script type="text/javascript">  
-				var medCaseId = document.querySelector('#medCase');
+				var medCaseId =$('medCase').value;
 				eventutil.addEventListener($('record'), "keyup", 
 			  		  	function() { try {
-					localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('record').value);
+					localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId+";"+$('current_username_li').innerHTML, $('record').value);
 			  		  	}
 			  		  	catch(e) {}
 			  		}) ; 
@@ -270,8 +269,6 @@ function save_form(aForm) {
             			 showLoginAutorization() ;
 	   			     };
             	}
-            	
-            	
              }
          }
         ) ;
@@ -297,10 +294,7 @@ function save_form(aForm) {
     		document.forms[1].submit() ;
     	}else {setTimeout(checktime,600000); }
     }
-    
     </script>
-
-			</msh:ifNotInRole>
 			<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
 				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 					<script type="text/javascript"> 
@@ -338,15 +332,15 @@ function save_form(aForm) {
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<script type="text/javascript">
 			try {
-			if (localStorage.getItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML)!=null) 
-				$('record').value=localStorage.getItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+			if (localStorage.getItem("smo_visitProtocolForm"+";"+medCaseId+";"+$('current_username_li').innerHTML)!=null)
+				$('record').value=localStorage.getItem("smo_visitProtocolForm"+";"+medCaseId+";"+$('current_username_li').innerHTML);
 			}
 			catch (e) {}
 	function submitFunc() { 
 		var frm = document.smo_visitProtocolForm;
-		var medCaseId = document.querySelector('#medCase'); 
+
 		try {
-		localStorage.removeItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+		localStorage.removeItem("smo_visitProtocolForm"+";"+medCaseId+";"+$('current_username_li').innerHTML);
 		}
 		catch (e) {}
 		frm.action= action;
@@ -481,15 +475,17 @@ function save_form(aForm) {
 		
 		<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
 		<script type="text/javascript">
-		   var btn = document.querySelector('#SKNF');
+		   var btn =$('SKNF');
 		   btn.className = "";
-		   flag=1;
+		   flag=0;
 		   function CalcService(){
-			CalculateService.getCountDiary(medCaseId.value, {
+			CalculateService.getCountDiary(medCaseId, {
 				callback : function(aResult) {
 				if(parseInt(aResult)==0 && parseInt(ishosp)==1)
 				{
-					showMyNewCalculation(medCaseId.value,0);
+                    flag=1;
+				    showMyNewCalculation(medCaseId,0);
+
 				}
 				}});
 		   }
