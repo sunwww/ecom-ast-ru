@@ -75,27 +75,34 @@
 				<msh:row>
 					<msh:autoComplete property="medService" fieldColSpan="3"
 						horizontalFill="true" vocName="medServiceForSpec" />
-				</msh:row><msh:separator colSpan="6" label="Сведения о диагнозе"/>
-					<msh:row>
+				</msh:row>
+				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+				<msh:row>
+					<msh:checkBox property="isCreateDiagnosis" fieldColSpan="2" label="Добавить диагноз"/>
+				</msh:row>
+				
+				<msh:row  styleId="rwCreateDiagnosis1">
+					<msh:separator  colSpan="6" label="Сведения о диагнозе"/>
+				</msh:row>
+					<msh:row  styleId="rwCreateDiagnosis2">
 						<msh:autoComplete property="diagnosisRegistrationType" label="Тип регистрации" horizontalFill="true" fieldColSpan="1" 
 vocName="vocDiagnosisRegistrationType" guid="1ecf26b7-d071-4abc-93ae-c52af4ae368b" />
 						<msh:autoComplete vocName="vocPriorityDiagnosis" property="diagnosisPriority" label="Приоритет" guid="e28f35fc-fe25-4968-
 bf2f-d1fe4661349e" horizontalFill="true" />
 					</msh:row>
-				<msh:row guid="cfba9b91-b2af-4867-aab3-29a1f39833fd">
+				<msh:row styleId="rwCreateDiagnosis3">
 					<msh:autoComplete vocName="vocIdc10" property="diagnosisIdc10" label="Код МКБ-10" guid="e36df3bf-fe77-4096-a082-51016fc2baad" 
 fieldColSpan="3" horizontalFill="true" />
 				</msh:row>
-				<msh:row>
+				<msh:row styleId="rwCreateDiagnosis4">
 					<msh:autoComplete vocName="vocIllnesPrimary" property="diagnosisIllnessPrimary" label="Характер заболевания" horizontalFill="true" 
 fieldColSpan="3"/>
 				</msh:row>
-				<msh:row guid="fb31a065-5f7f-4b11-b1b5-0f336254b9fd">
+				<msh:row  styleId="rwCreateDiagnosis5">
 					<msh:textArea property="diagnosisText" label="Наименование" guid="c0a86a5e-34ff-46f3-984b-5ecbd2749760" fieldColSpan="5" rows="2" 
 horizontalFill="true" />
 				</msh:row>
-
-				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+				
 					<msh:row>
 						<td colspan="3" align="right">
 						<input type="button" style="display: none" name="btnEditProt2" id="btnEditProt2"
@@ -243,6 +250,60 @@ horizontalFill="true" />
 	<tiles:put name='javascript' type='string'>
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 				<script type="text/javascript">  
+				onCreateDiagnosis(true) ;
+				eventutil.addEventListener($('isCreateDiagnosis'), 'click', onCreateDiagnosis) ;
+		        eventutil.addEventListener($('isCreateDiagnosis'), 'focus', onCheckBoxFocus) ;
+		        eventutil.addEventListener($('isCreateDiagnosis'), 'blur', onCheckBoxBlur) ;
+		        eventutil.addEnterSupport('isCreateDiagnosis', 'record') ;
+
+		        function onCreateDiagnosis(aFocus) {
+		        	var isCreateDiagnosis = $('isCreateDiagnosis').checked ;
+					if (aFocus) {} else {aFocus=false;}
+					
+						for (i=1;i<6;i++){
+							showRow('rwCreateDiagnosis'+i, isCreateDiagnosis) ;
+						}
+						if (aFocus) {
+							try {
+								if (isCreateDiagnosis) {
+									$('diagnosisRegistrationTypeName').select() ;
+									$('diagnosisRegistrationTypeName').focus() ;
+									eventutil.addEnterSupport('isCreateDiagnosis', 'diagnosisRegistrationTypeName')
+									
+								} else {
+									$('record').select() ;
+									$('record').focus() ;
+									eventutil.addEnterSupport('isCreateDiagnosis', 'record') ;
+								}
+							} catch (e) {}
+						}
+					
+		        }
+		        function onCheckBoxFocus() {
+					try {
+						$(this.id+'Label').style.border='1px dotted black' ;
+					} catch(e) {}
+				}
+				function onCheckBoxBlur() {
+					try {
+						$(this.id+'Label').style.border='none' ;
+					} catch(e) {}
+				}
+    	
+				function showRow(aRowId, aCanShow, aField ) {
+		    		//alert(aRowId) ;
+					try {
+						//alert( aCanShow ? 'table-row' : 'none') ;
+						$(aRowId).style.display = aCanShow ? 'table-row' : 'none' ;
+					} catch (e) {
+						// for IE
+						//alert(aCanShow ? 'block' : 'none') ;
+						try{
+						$(aRowId).style.display = aCanShow ? 'block' : 'none' ;
+						}catch(e) {}
+					}	
+				}
+				
 				eventutil.addEventListener($('record'), "keyup", 
 			  		  	function() { try {
 							var medCaseId = document.querySelector('#medCase');
