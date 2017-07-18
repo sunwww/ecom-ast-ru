@@ -155,13 +155,15 @@ function printJournal(aCtx, aParams) {
     	order="p.lastname,p.firstname,p.middlename,dd.number" ;
     }
     var sql = "select dd.id as ddid,to_char(dd.issueDate,'dd.MM.yyyy') as date1"
-       +" ,vddp.name||' '||dd.number as ddnumber,dd.hospitalizedNumber as ddhosnumber"
+       +" ,dd.number as ddnumber,dd.hospitalizedNumber as ddhosnumber"
        +" ,p.lastname||' '||p.firstname||' '||p.middlename as pat"
        +" ,dd.job as ddjob,dd.workComboType_id as ddcombo"
 		+" ,mkbP.code as mkbPcode,mkbF.code as mkbFcode"
 		+" ,COALESCE(vddcr.shortName,vddcr.name) as vddcrname"
 		+" , case when (cast(dd.noActuality as int)=1) then ' испорчен' else '' end as ddnoA"
-		+", p.id as pid,dd.anotherLpu_id"
+		+", p.id as pid,dd.anotherLpu_id" +
+		", vddp.code as f13_ddprimarycode" +
+		", dd.number as f14_justnumber"
         +"  	from disabilitydocument as dd" 
     	+"   	left join disabilitycase dc on dc.id=dd.disabilityCase_id"
         +"	left join patient p on p.id=dc.patient_id"
@@ -216,6 +218,8 @@ function printJournal(aCtx, aParams) {
     	obj.setDiagnosisFinal(o[8]!=null?o[8]:"") ;
 		obj.setCloseReasonInfo(o[9]!=null?o[9]:"") ;
     	obj.setDuration(Packages.ru.ecom.ejb.util.DurationUtil.getDurationMedCase(dateRecordF, dateRecordL, java.lang.Integer.valueOf("0").intValue(), java.lang.Integer.valueOf("1").intValue() )) ;
+    	obj.setPatientAgeYear(Packages.ru.nuzmsh.util.date.AgeUtil.calcAgeYear(pat.birthday,dateRecordF));
+    	obj.setPrimarityInfo(""+o[13]);
     	if (o[5]!=null && o[5]!="") {
     		if (o[6]!=null && +o[6]>0) {
     			obj.setJob("внешнее совместительство "+o[5]) ;

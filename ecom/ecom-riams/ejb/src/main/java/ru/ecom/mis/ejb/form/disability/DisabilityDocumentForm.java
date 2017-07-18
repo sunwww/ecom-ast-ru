@@ -555,4 +555,12 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	/** Статус экспорта в ФСС */
 	private String theExportStatus ;
 
+	/** Возраст пациента на дату начала случая */
+	@Comment("Возраст пациента на дату начала случая")
+	public String getPatientAgeYear() {return thePatientAgeYear;}
+	public void setPatientAgeYear(String aPatientAgeYear) {thePatientAgeYear = aPatientAgeYear;}
+	/** Возраст пациента на дату начала случая */
+	private String thePatientAgeYear ;
+
+
 }
