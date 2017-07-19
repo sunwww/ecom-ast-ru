@@ -408,30 +408,47 @@ function save_form(aForm) {
 			<script type="text/javascript">
 			var ishosp=0;
 
-			function getDtype(){
-    		TemplateProtocolService.getDtypeMedCase($('medCase').value,{
-    			callback: function(aDtype) {
-                	//alert(aString) ;
-                    if (aDtype!=null && aDtype=="HospitalMedCase") {
-                    	ishosp=1;
-                    	$('stateName').className="autocomplete horizontalFill required";
-                    	$('typeName').className="autocomplete horizontalFill required";
-                        $('journalText').className="required maxHorizontalSize";
-                        $('diagnosisRegistrationTypeName').className="autocomplete horizontalFill required";
-						$('diagnosisPriorityName').className="autocomplete horizontalFill required";
-						$('diagnosisIdc10Name').className="autocomplete horizontalFill required";
-						$('diagnosisIllnessPrimaryName').className="autocomplete horizontalFill required";
-                        medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
-
-                    } else if (aDtype!=null && aDtype=="DepartmentMedCase") {
-                    	ishosp=1;
-                    	$('typeName').className="autocomplete horizontalFill required";
-                    	$('stateName').className="autocomplete horizontalFill required";
-                    	medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
+            function getDtype(){
+                TemplateProtocolService.getDtypeMedCase($('medCase').value,{
+                    callback: function(res) {
+                        var aResult = res.split('#') ;
+                        aDtype=aResult[0];
+                        ifCharged=aResult[1];
+                        alert(aDtype);alert(ifCharged);
+                        if (aDtype != null && aDtype == "HospitalMedCase") {
+                            ishosp = 1;
+                            $('stateName').className = "autocomplete horizontalFill required";
+                            $('typeName').className = "autocomplete horizontalFill required";
+                            $('journalText').className = "required maxHorizontalSize";
+                            $('diagnosisRegistrationTypeName').className = "autocomplete horizontalFill required";
+                            $('diagnosisPriorityName').className = "autocomplete horizontalFill required";
+                            $('diagnosisIdc10Name').className = "autocomplete horizontalFill required";
+                            $('diagnosisIllnessPrimaryName').className = "autocomplete horizontalFill required";
+                            if (ifCharged != null && ifCharged == "CHARGED") {
+                                medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStacCharged');
+                            }
+                            else {
+                                medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
+                            }
+                        } else if (aDtype != null && aDtype == "DepartmentMedCase") {
+                            ishosp = 1;
+                            $('typeName').className = "autocomplete horizontalFill required";
+                            $('stateName').className = "autocomplete horizontalFill required";
+                            if (ifCharged != null && ifCharged == "CHARGED") {
+                                medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStacCharged');
+                            }
+                            else  {
+                                medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecStac');
+                            }
+                        } else {
+                            if (ifCharged != null && ifCharged == "CHARGED") {
+                                alert("!!");
+                                medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
+                            }
+                        }
                     }
-                 }
-    		});
-			}
+                });
+            }
 			getDtype();
 
     		</script>
