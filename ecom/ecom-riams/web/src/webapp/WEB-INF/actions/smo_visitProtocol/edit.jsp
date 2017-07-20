@@ -344,9 +344,13 @@ function save_form(aForm) {
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<script type="text/javascript">
 			try {
-			if (localStorage.getItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML)!=null)
-				$('record').value=localStorage.getItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
-			}
+                if (localStorage.getItem("smo_visitProtocolForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML) != null) {
+                    if (confirm('Обнаружен несохранённый протокол. Восстановить?')) {
+                        $('record').value = localStorage.getItem("smo_visitProtocolForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML);
+                    }
+                    removeFromStorage();
+                }
+            }
 			catch (e) {}
 	function submitFunc() {
         var frm = document.smo_visitProtocolForm;
@@ -414,7 +418,6 @@ function save_form(aForm) {
                         var aResult = res.split('#') ;
                         aDtype=aResult[0];
                         ifCharged=aResult[1];
-                        alert(aDtype);alert(ifCharged);
                         if (aDtype != null && aDtype == "HospitalMedCase") {
                             ishosp = 1;
                             $('stateName').className = "autocomplete horizontalFill required";
@@ -442,7 +445,6 @@ function save_form(aForm) {
                             }
                         } else {
                             if (ifCharged != null && ifCharged == "CHARGED") {
-                                alert("!!");
                                 medServiceAutocomplete.setUrl('simpleVocAutocomplete/medServiceForSpecCharged');
                             }
                         }

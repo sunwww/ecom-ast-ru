@@ -629,9 +629,13 @@
      <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
      	<script type="text/javascript">
      	try {
-     	if (localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML)!=null) 
-			$('dischargeEpicrisis').value=localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
-     	}
+            if (localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML) != null) {
+                if (confirm('Обнаружена несохранённая выписка. Восстановить?')) {
+                    $('dischargeEpicrisis').value = localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML);
+                }
+                removeFromStorage();
+            }
+        }
      	catch (e) {}
 function submitFunc() { 
 	var frm = document.stac_sslDischargeForm;
