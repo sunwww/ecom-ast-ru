@@ -42,7 +42,7 @@
                     <msh:textField property="email" size="50"/>
                 </msh:row>
                 <msh:row>
-                    <msh:checkBox property="exportAllHistory" label="Выгрузить всю истории лечения пациента"/>
+                    <msh:checkBox property="exportAllHistory" label="Выгрузить всю истории лечения пациента" />
                 </msh:row>
 
 
@@ -75,6 +75,10 @@
 
     <tiles:put type="string" name="javascript">
         <script type="text/javascript">
+            setChecked();
+            function setChecked() {
+                $('exportAllHistory').checked=true;
+            }
             function setDisabled() {
 
 
