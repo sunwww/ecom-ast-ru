@@ -77,4 +77,12 @@ public class ElectronicDisabilityDocumentNumber extends BaseEntity {
     /** Дата получения номера от ФСС */
     private Date theCreateDate ;
 
+    /** Последний ХЕШ ЭЛН */
+    @Comment("Последний ХЕШ ЭЛН")
+    public String getLastHash() {return theLastHash;}
+    public void setLastHash(String aLastHash) {theLastHash = aLastHash;}
+    /** Последний ХЕШ ЭЛН */
+    private String theLastHash ;
+
+
 }
