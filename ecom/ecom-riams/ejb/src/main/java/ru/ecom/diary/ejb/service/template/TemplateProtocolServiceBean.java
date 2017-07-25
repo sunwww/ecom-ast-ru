@@ -172,9 +172,11 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 
 			if (pesa.getDateTo()!=null) {
 				log.info("Отзываем согласие пациента. uid = "+pesa.getExternalCode());
-				params.put("uid",pesa.getExternalCode());
+				//params.put("uid",pesa.getExternalCode());
+				//params.put("blockUser",aUsername);
+				root.put("uid",pesa.getExternalCode());
+				root.put("blockUser",aUsername);
 				function="SetBlockPatient";
-				root.put("blockUser", aUsername);
 			} else {
 				Date birthDate = pat.getBirthday();
 				Calendar cal = new GregorianCalendar();
