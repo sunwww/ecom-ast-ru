@@ -29,7 +29,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
         @AParentEntityFormInterceptor(WorkCalendarHospitalBedCreate.class)
 )
 public class WorkCalendarHospitalBedByVisitForm extends WorkCalendarHospitalBedForm{
-	
+
+	/** Отделение */
+	@Comment("Отделение")
+	@Persist @Required
+	public Long getDepartment() {return theDepartment;}
+	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	private Long theDepartment;
 
 	/** Показания для госпитализации */
 	@Comment("Показания для госпитализации")

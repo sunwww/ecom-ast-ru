@@ -17,8 +17,8 @@ function update_postgres(aCtx, aParams) {
 	default_id(aCtx,"VocQualityEstimationCrit") ;
 	default_id(aCtx,"VocQualityEstimationMark") ;
 	default_id(aCtx,"FlowDocument") ;
-  default_id(aCtx,"electronicdisabilitydocumentnumber") ;
-  default_id(aCtx,"exportfsslog") ;
+ 	default_id(aCtx,"electronicdisabilitydocumentnumber") ;
+  	default_id(aCtx,"exportfsslog") ;
 	default_id(aCtx,"listwatch") ;
 	default_id(aCtx,"patientwatch") ;
 
