@@ -409,34 +409,22 @@
   <script type="text/javascript">
   var slo_form_is_view = 0 ; 
   var medCaseId = $('id');
-	eventutil.addEventListener($('dischargeEpicrisis'), "input",
-		  	function() {
-		try {
-		localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
-		}
-		catch (e) {}
-		}) ;
-  eventutil.addEventListener($('dischargeEpicrisis'), "keyup",
-      function() {
-          try {
-              localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
-          }
-          catch (e) {}
-      }) ;
-  eventutil.addEventListener($('dischargeEpicrisis'), "blur",
-      function() {
-          try {
-              localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
-          }
-          catch (e) {}
-      }) ;
-  eventutil.addEventListener($('dischargeEpicrisis'), "paste",
-      function() {
-          try {
-              localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
-          }
-          catch (e) {}
-      }) ;
+  function saveToStorage() {
+      try {
+          localStorage.setItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
+      }
+      catch (e) {}
+  }
+  function removeFromStorage() {
+      try {
+          localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+      }
+      catch (e) {}
+  }
+  eventutil.addEventListener($('dischargeEpicrisis'), "input", function(){saveToStorage();}) ;
+  eventutil.addEventListener($('dischargeEpicrisis'), "keyup", function(){saveToStorage();}) ;
+  eventutil.addEventListener($('dischargeEpicrisis'), "blur", function(){saveToStorage();}) ;
+  eventutil.addEventListener($('dischargeEpicrisis'), "paste", function(){saveToStorage();}) ;
   </script>
   <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
   <script type="text/javascript">
@@ -471,7 +459,7 @@
       			} else {
       				document.forms["mainForm"].action=old_action ;
     	      	}
-      			
+                removeFromStorage();
 	      		document.forms["mainForm"].submit() ;
       		} else {
       			try{$('submitPreDischrge2').disabled=false ;
@@ -641,17 +629,18 @@
      <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
      	<script type="text/javascript">
      	try {
-     	if (localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML)!=null) 
-			$('dischargeEpicrisis').value=localStorage.getItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
-     	}
+            if (localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML) != null) {
+                if (confirm('Обнаружена несохранённая выписка. Восстановить?')) {
+                    $('dischargeEpicrisis').value = localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML);
+                }
+                removeFromStorage();
+            }
+        }
      	catch (e) {}
 function submitFunc() { 
 	var frm = document.stac_sslDischargeForm;
-	var medCaseId = document.querySelector('#id'); 
-	try {
-	localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
-	}
-	catch (e) {}
+	var medCaseId = document.querySelector('#id');
+    removeFromStorage();
 	frm.action= "entityParentEdit-stac_sslDischarge.do";
 	frm.submit();
 } 		
@@ -740,10 +729,7 @@ function submitFunc() {
   			HospitalMedCaseService.preRecordDischarge(
   					$('id').value,$('dischargeEpicrisis').value, {
 	                    callback: function(aResult) {
-                            try {
-                                localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
-                            }
-                            catch (e) {}
+                            removeFromStorage();
 	                        alert("Сохранено") ;
 	                    }
   					}
@@ -759,10 +745,7 @@ function submitFunc() {
     	if (confirm('Вы хотите сохранить выписку?')) {
     		
     		check_diags('');
-            try {
-                localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
-            }
-            catch (e) {}
+            removeFromStorage();
     	}else {setTimeout(checktime,600000); }
     	
     }

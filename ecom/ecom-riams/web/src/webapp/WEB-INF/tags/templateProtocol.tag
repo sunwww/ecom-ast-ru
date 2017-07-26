@@ -523,6 +523,19 @@ var fldJson = null ;
    				alert('Добавлено в заключение') ;
    			}
 	         //$(prop).select() ;
+         //Milamesher localStorage
+         if (document.getElementsByName("stac_sslDischargeForm") !=null) {
+             try {
+                 localStorage.setItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
+             }
+             catch (e) {}
+   			}
+   			if (document.getElementsByName("smo_visitProtocolForm") !=null) {
+             try {
+                 localStorage.setItem("smo_visitProtocolForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML, $('record').value);
+             }
+             catch(e) {}
+         }
      }
      // Предварительный просмотр
      function preView${name}TemplateProtocol() {
