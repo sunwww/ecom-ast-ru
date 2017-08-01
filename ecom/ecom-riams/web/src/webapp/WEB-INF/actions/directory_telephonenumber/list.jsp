@@ -1,11 +1,70 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
-<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
-<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom"%>
 
-<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
-<tiles:put name="body" type="string">
-<ecom:webQuery name="list" nativeSql="select e.id, e.insidenumber,
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp"
+	flush="true">
+	<tiles:put name="body" type="string">
+
+
+		<msh:form guid="formHello" action="/directory_search.do"
+			defaultField="hello">
+			<msh:panel guid="panel">
+				<msh:row>
+					<msh:row>
+						<msh:autoComplete vocName="vocBuildingShort" property="building"
+							label="Корпус" fieldColSpan="4" size="60" />
+					</msh:row>
+					<msh:row>
+						<msh:autoComplete vocName="vocBuildingLevelShort"
+							property="buildingLevel" label="Этажа" fieldColSpan="4" size="60" />
+					</msh:row>
+
+					<msh:row>
+						<msh:textField property="lastname" label="По параметру" horizontalFill="true" />
+					</msh:row>
+					<td><input type="submit" value="Найти" /></td>
+				</msh:row>
+			</msh:panel>
+		</msh:form>
+		<%
+		    String whereSQL = "";
+				    String buildingId = request.getParameter("building");
+				    String buildingLevelId = request.getParameter("buildingLevel");
+				    String FIO = request.getParameter("lastname");
+				    String searchSQL = "";
+				    if (buildingId != null && !buildingId.equals("")) {
+					searchSQL += " vb.id=" + buildingId;
+				    }
+
+				    if (buildingLevelId != null && !buildingLevelId.equals("")) {
+					if (!searchSQL.equals(""))
+					    searchSQL += " and ";
+					searchSQL += " vbl.id=" + buildingLevelId;
+				    }
+
+				    if (FIO != null && !FIO.equals("")) {
+					if (!searchSQL.equals(""))
+					    searchSQL += " and ";
+					searchSQL += "upper(p.lastname||' '||p.firstname||' '||p.middlename) like '%"
+						+ FIO.toUpperCase()
+						+ "%' or upper(e.insidenumber) like '%"
+						+ FIO.toUpperCase()
+						+ "%' or tn.telnumber like '%"
+						+ FIO.toUpperCase()
+						+ "%' or upper(e.comment) like '%"
+						+ FIO.toUpperCase() + "%'";
+				    }
+				    if (!searchSQL.equals("")) {
+					whereSQL = "where " + searchSQL;
+				    }
+
+				    request.setAttribute("whereSQL", whereSQL);
+				    System.out.println(whereSQL);
+		%>
+		<ecom:webQuery name="list" nameFldSql="listSQL"
+			nativeSql="select e.id, e.insidenumber,
 case when tn.typenumber_id=3 then list(tn.telnumber) else '' end as sot,
 case when tn.typenumber_id=2 then list(tn.telnumber) else '' end as gor,
 e.comment,
@@ -20,24 +79,29 @@ left join vocbuildinglevel vbl on vbl.id = d.buildinglevel_id
 left join vocbuilding vb on vb.id = d.building_id
 left join telephonenumber tn on tn.entry_id = e.id
 left join voctypenumber vtn on vtn.id = tn.typenumber_id
+${whereSQL}
 group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment" />
-      
-	<msh:table name="list" action="entityParentView-directory_entry.do" idField="1">
-	<msh:tableColumn columnName="#" property="sn"/>
-	<msh:tableColumn columnName="Внутренний номер" property="2"/>
-	<msh:tableColumn columnName="Сотовый" property="3"/>
-	<msh:tableColumn columnName="Городской" property="4"/>
-	<msh:tableColumn columnName="Наименование" property="5"/>
-	<msh:tableColumn columnName="ФИО" property="6"/>
-	<msh:tableColumn columnName="Корпус" property="7"/>
-	<msh:tableColumn columnName="Этаж" property="8"/>
-	<msh:tableColumn columnName="Отделение" property="9"/>
-	</msh:table>
-</tiles:put>
-    <tiles:put name="side" type="string">
-    <msh:sideMenu guid="helloSideMenu-123">
-      <msh:sideLink guid="helloSideLinkNew" roles="/Policy/Mis/Directory/Department" key="ALT+N" action="/entityPrepareCreate-directory_telephonenumber" name="Создать"  />
-    </msh:sideMenu>
-  </tiles:put>
-  	
+		<msh:table name="list" action="javascript:void()" idField="1">
+			<msh:tableColumn columnName="#" property="sn" />
+			<msh:tableColumn columnName="Внутренний номер" property="2" />
+			<msh:tableColumn columnName="Сотовый" property="3" />
+			<msh:tableColumn columnName="Городской" property="4" />
+			<msh:tableColumn columnName="Наименование" property="5" />
+			<msh:tableColumn columnName="ФИО" property="6" />
+			<msh:tableColumn columnName="Корпус" property="7" />
+			<msh:tableColumn columnName="Этаж" property="8" />
+			<msh:tableColumn columnName="Отделение" property="9" />
+		</msh:table>
+	</tiles:put>
+
+
+<!-- 
+	<tiles:put name="side" type="string">
+		<msh:sideMenu guid="helloSideMenu-123">
+			<msh:sideLink guid="helloSideLinkNew"
+				roles="/Policy/Mis/Directory/Department" key="ALT+N"
+				action="/entityPrepareCreate-directory_telephonenumber"
+				name="Создать" />
+		</msh:sideMenu>
+	</tiles:put> -->
 </tiles:insert>
