@@ -643,7 +643,7 @@ public class PatientServiceBean implements IPatientService {
 			s("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
 			return null;
 		}
-		String updateDate = updateEditDate?" editdate=current_date, ":""; 
+		String updateDate = " editdate=current_date, ";
 		SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
 		//String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
 		StringBuilder ret = new StringBuilder();
@@ -654,7 +654,9 @@ public class PatientServiceBean implements IPatientService {
 		if (aCompany.length()<5) { //В некоторых случаях мы получаем местный код (7, 15) в этом случае, и искать мы будем по местному коду
 			sqlAdd="omcCode";
 		}
-		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where "+sqlAdd+" = :code and (deprecated is null or deprecated='0')")
+		String sqll = "from RegInsuranceCompany where "+sqlAdd+" = :code and (deprecated is null or deprecated='0')";
+		s("WHERE IS ERROR?? "+sqll);
+		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery(sqll)
 				.setParameter("code", aCompany).getResultList(); 
 		
 		if (!companies.isEmpty()) {
