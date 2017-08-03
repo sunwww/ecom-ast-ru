@@ -38,7 +38,7 @@ public class DisabilityServiceJs {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
 
 		StringBuilder ret = new StringBuilder();
-		String sql="select result, to_char(requestdate,'dd.MM.yyyy') as f2_date, cast (requesttime as varchar(5)) as f3_time from exportfsslog where disabilitydocument='"+aDocumentId+"' order by requestdate desc , requesttime desc limit 60";
+		String sql="select result, to_char(requestdate,'dd.MM.yyyy') as f2_date, cast (requesttime as varchar(5)) as f3_time from exportfsslog where disabilitydocument='"+aDocumentId+"' order by requestdate desc , requesttime desc ";
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
 		if (!list.isEmpty()) {
 			ret.append("<table class=\"tabview sel tableArrow\"><tr>");
