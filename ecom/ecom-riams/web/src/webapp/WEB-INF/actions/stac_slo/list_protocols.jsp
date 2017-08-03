@@ -121,7 +121,7 @@
       from Diary as d
       left join MedCase aslo on aslo.id=d.medCase_id
       left join MedCase slo on aslo.parent_id=slo.parent_id
-      left join medcase servmc on servmc.parent_id=aslo.id
+      left join medcase servmc on servmc.id=d.servicemedcase_id
       left join medservice mc on mc.id=servmc.medservice_id
       left join WorkFunction wf on wf.id=d.specialist_id
       left join Worker w on w.id=wf.worker_id
