@@ -1025,6 +1025,14 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
         </action>
         
+        
+        <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
+                name='directory_searchForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/list.jsp" />
+        </action>
        
 	</action-mappings> 
 

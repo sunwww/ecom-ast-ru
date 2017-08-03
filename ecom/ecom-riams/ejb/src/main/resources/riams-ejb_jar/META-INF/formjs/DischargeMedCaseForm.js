@@ -39,7 +39,7 @@ function onSave(aForm,aEntity, aCtx) {
 	closePrescriptions(aForm, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
-    checkUniqueDiagnosis(aForm,aCtx);
+    //checkUniqueDiagnosis(aForm,aCtx);
     checkDeathThenPlan(aCtx, aForm.result, aForm.reasonDischarge);
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	

@@ -16,7 +16,7 @@ function onCreate(aForm, aEntity, aContext) {
 	
 	aContext.manager.persist(aEntity) ;
 	checkPolyclinic(aForm,aEntity,aContext);
-    checkUniqueDiagnosis(aForm,aEntity,aContext);
+    //checkUniqueDiagnosis(aForm,aEntity,aContext);
 }
 
 /**
