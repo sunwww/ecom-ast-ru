@@ -104,10 +104,13 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		return "";
 	}
 	public String exportDisabilityDocument(Long aDocumentId)  {
-    	return exportDisabilityDocumentOrGetNumberRange("exportDocument",aDocumentId,null);
+		return exportDisabilityDocumentOrGetNumberRangeOrAnnulSheet("exportDocument",aDocumentId,null,null,null,null);
 	}
 	public String getLNNumberRange(Long aCount)  {
-		return exportDisabilityDocumentOrGetNumberRange("getNumberRange",null,aCount);
+		return exportDisabilityDocumentOrGetNumberRangeOrAnnulSheet("getNumberRange",null,aCount,null,null,null);
+	}
+	public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, String textReason, String snils) {
+		return exportDisabilityDocumentOrGetNumberRangeOrAnnulSheet("annullSheet",aDocumentId,null,aReasonAnnulId,textReason,snils);
 	}
     private String getSoftConfigValue (String aKey, String aDefaultValue) {
     	List<Object[]> list = theManager.createNativeQuery("select sc.id, sc.keyvalue from softconfig sc where sc.key='"+aKey+"'").getResultList();
@@ -128,7 +131,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	 * @param aMethod- Метод, на который отправляется запрос
 	 * @return Результат экспорта
 	 */
-	private String exportDisabilityDocumentOrGetNumberRange(String aMethod, Long aDocumentId, Long aRangeCount) {
+	private String exportDisabilityDocumentOrGetNumberRangeOrAnnulSheet(String aMethod, Long aDocumentId, Long aRangeCount, String aReasonAnnulId, String textReason, String snils) {
 		//Формируем строку для отправки на сервис Руслана
 		String address = getSoftConfigValue("FSS_PROXY_SERVICE",null);
 		String lpuId= getSoftConfigValue("DEFAULT_LPU",null);
@@ -144,23 +147,35 @@ public class DisabilityServiceBean implements IDisabilityService  {
 				LOG.info ("У ЛПУ не указан ОГРН. ЛПУ = "+lpuId);
 				return "У ЛПУ не указан ОГРН. ЛПУ = "+lpuId;
 			}
-		if (aMethod!=null&&aMethod.equals("exportDocument")) {
+			if (aMethod!=null&&aMethod.equals("exportDocument")) {
 				if (aDocumentId!=null&&aDocumentId>0) {
 					method = "SetLnData?id="+aDocumentId+"&ogrn="+ogrn;
 				} else {
 					return "";
 				}
 
-		} else if (aMethod!=null&&aMethod.equals("getNumberRange")) {
+			} else if (aMethod!=null&&aMethod.equals("getNumberRange")) {
 				if (aRangeCount!=null&&aRangeCount>0){
 					method ="sNewLnNumRange?ogrn="+ogrn+"&count="+aRangeCount;
 				} else {
 					return "";
 				}
-		} else {
-				return "";
-		}
+			} else  if (aMethod!=null&&aMethod.equals("annullSheet")){
 
+				if (aDocumentId!=null&&aDocumentId>0&&aReasonAnnulId!=null&&textReason!=null&&snils!=null) {
+					String[] str = snils.split("-");
+					snils = str[0] + str[1] + str[2];
+					str = snils.split(" ");
+					snils = str[0] + str[1];
+					method = "sDisableLn?ogrn="+ogrn+"&lnCode="+aDocumentId+"&snils="+snils+"&reasonCode="+aReasonAnnulId+"&reason="+textReason;
+					//return method;
+				} else {
+					return "";
+				}
+			}
+			else {
+				return "";
+			}
 			return makeHttpGetRequest(address,method);
 		}
 		return "Не найдено ЛПУ для отправки больничного листа";
@@ -198,7 +213,8 @@ public class DisabilityServiceBean implements IDisabilityService  {
     public DisabilityDocument getDocument (String aNumber) {
 		try {
 			System.out.println("---------------STRING aNumber="+aNumber);
-			DisabilityDocument list = (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
+			//DisabilityDocument list = (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
+			DisabilityDocument list = (DisabilityDocument )  theManager.createQuery("select id from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
 			System.out.println(list);
 		return list;
 		} catch (Exception e) {

@@ -6,13 +6,11 @@ import java.util.*;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
-import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.disability.IDisabilityService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.CollectionUtil;
 import ru.nuzmsh.util.format.DateConverter;
 
 /**
@@ -33,7 +31,11 @@ public class DisabilityServiceJs {
 
 		return ret;
 	}
-
+//Milamesher 0408
+public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, String textReason, String snils, HttpServletRequest aRequest)  throws NamingException {
+	IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
+	return service.annulDisabilityDocument(aDocumentId,aReasonAnnulId,textReason,snils);
+}
 	public String getExportJournalById (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
 
@@ -152,5 +154,42 @@ public class DisabilityServiceJs {
 	public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument, HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		return service.createWorkComboDocument(aDocId, aJob, aSeries, aNumber, aVocCombo, aPrevDocument) ;
+	}
+	//Milamesher 0308 - получить список причин аннулирования
+	public String getReasonsfOfAnnulSheets(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="SELECT code,name from vocannulreason";
+		Collection<WebQueryResult> list = service.executeNativeSql(query);
+		StringBuilder res = new StringBuilder() ;
+		if (list.size()>0) {
+			for (WebQueryResult wqr : list) {
+				res.append(wqr.get1()).append("#").append(wqr.get2()).append("!");
+			}
+		}
+		else {
+			res.append("##");
+			}
+		return res.toString();
+	}
+	//Milamesher 0308 - отметить аннулирование
+	public String setAnnulDisabilitySheet(Long aDocId,String comment,String code,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql = "SELECT number from electronicdisabilitydocumentnumber WHERE disabilitydocument_id='" + aDocId + "'";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			StringBuilder res = new StringBuilder();
+			WebQueryResult wqr = list.iterator().next() ;
+			service.executeUpdateNativeSql("UPDATE electronicdisabilitydocumentnumber SET annuldate=current_date, comment='" + comment + "', annulreason_id=(SELECT id FROM vocannulreason WHERE code='" + code + "') WHERE disabilitydocument_id='" + aDocId + "'");
+			service.executeUpdateNativeSql("UPDATE disabilitydocument SET noactuality=true WHERE number='" + wqr.get1().toString() + "'");
+			res.append(wqr.get1().toString()).append('#');
+			list = service.executeNativeSql("select p.snils from patient p\n" +
+					"inner join disabilitydocument d on d.patient_id=p.id\n" +
+					"inner join electronicdisabilitydocumentnumber e on e.disabilitydocument_id=d.id where e.number='" + wqr.get1().toString() + "'");
+			wqr = list.iterator().next() ;
+			if (list.size() > 0) res.append(wqr.get1().toString());
+			else return "Не найден СНИЛС у пациента!";
+			return res.toString();
+		}
+		else return "Такого электронного ЛН нет!";
 	}
 }
