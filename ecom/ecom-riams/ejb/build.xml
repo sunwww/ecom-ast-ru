@@ -6,6 +6,7 @@
 
 	<import file="../../ant-support/property-skeleton.xml" />
 
+	<import file="../../ant-support/ejb-skeleton.xml" />
 
 	<fileset id='compile.fileset' dir="${libdir}">
 		<include name="msh/util-voc/msh-util-voc.jar" />
@@ -15,7 +16,7 @@
 	</fileset>
 
 	<target name='persistence.xml'>
-		<fileset id="lib.fileset" dir="${libdir}">
+		<fileset id="lib.fileset" dir="C:\MedOS_libs">
 			<include name="**/*.jar" />
 		</fileset>
 
@@ -64,5 +65,4 @@
 		</jar>
 	</target>
 
-	<import file="../../ant-support/ejb-skeleton.xml" />
 </project>

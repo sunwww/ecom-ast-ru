@@ -1,8 +1,8 @@
 package ru.ecom.mis.ejb.domain.disability;
 
-import org.jboss.remoting.samples.chat.exceptions.DatabaseException;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentExportStatus;
+import ru.ecom.mis.ejb.domain.disability.voc.VocAnnulReason;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -84,5 +84,25 @@ public class ElectronicDisabilityDocumentNumber extends BaseEntity {
     /** Последний ХЕШ ЭЛН */
     private String theLastHash ;
 
+    /** Дата аннулирования документа */
+    @Comment("Дата аннулирования документа ")
+    public Date getAnnulDate() {return theAnnulDate;}
+    public void setAnnulDate(Date aAnnulDate) {theAnnulDate = aAnnulDate;}
+    /** Дата аннулирования документа */
+    private Date theAnnulDate ;
 
+    /** Комментарий */
+    @Comment("Комментарий")
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    /** Комментарий */
+    private String theComment ;
+
+    /** Причина аннулирования */
+    @Comment("Причина аннулирования")
+    @OneToOne
+    public VocAnnulReason getAnnulReason() {return theAnnulReason;}
+    public void setAnnulReason(VocAnnulReason aAnnulReason) {theAnnulReason = aAnnulReason;}
+    /** Причина аннулирования */
+    private VocAnnulReason theAnnulReason ;
 }

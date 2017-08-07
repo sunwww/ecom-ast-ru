@@ -369,8 +369,8 @@
 	  			//alert('222') ;
 	  		}
 	  	}
-	  	setPeriod() ;
-	  	
+	  	setPeriod();
+
 	 </script>
      </msh:ifFormTypeIsNotView>
   </tiles:put>
@@ -388,7 +388,6 @@
         	name="duplicate" title="Дубликат (испорчен)" confirm="Вы действительно хотите создать дубликат текущего документа нетрудоспособности?" />
         <tags:dis_workComboDocument roles="/Policy/Mis/Disability/Case/Document/Create" key="ALT+5" 
         	name="workCombo" title="Бланк по совместительству" confirm="Вы действительно хотите создать документ по совместительству на основе текущего документа нетрудоспособности?" />
-        	
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink  name="шаблон 1" key="ALT+6" action="/javascript:printDoc(1,'.do')"/>
@@ -410,7 +409,12 @@
       <msh:sideLink  name="Просмотреть журнал экспорта" action="/javascript:showJournalFSSJournal()"/>
       </msh:sideMenu>
       </msh:ifInRole>
+        <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/AnnulSheet">
+            <tags:annulDisSheetReason name="annulDisSheetReason" />
+            <msh:sideMenu  title="Аннулирование ЛН">
+                <msh:sideLink  name="Аннулировать документ" action="/javascript:showannulDisSheetReasonCloseDocument(${param.id})"/>
+            </msh:sideMenu>
+        </msh:ifInRole>
     </msh:ifFormTypeIsView>
   </tiles:put>
-</tiles:insert>
-
+</tiles:insert>Т
