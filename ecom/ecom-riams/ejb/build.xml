@@ -16,7 +16,7 @@
 	</fileset>
 
 	<target name='persistence.xml'>
-		<fileset id="lib.fileset" dir="C:\MedOS_libs">
+		<fileset id="lib.fileset" dir="${lib.dir}">
 			<include name="**/*.jar" />
 		</fileset>
 
