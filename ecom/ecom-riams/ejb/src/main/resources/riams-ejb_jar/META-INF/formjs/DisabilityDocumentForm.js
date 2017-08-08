@@ -2,6 +2,7 @@
 * @author stkacheva
 */
 function onPreCreate(aForm, aCtx) {
+	
 	if (aForm.anotherLpu<1 && aForm.workFunction<1) throw "Специалист является обязательным полем при создании нового документа нетрудоспособности" ;
 	if (aForm.regime.equals("")) throw "Режим нетрудоспособности является обязательным полем при создании нового документа нетрудоспособности" ;
 	if (aForm.dateFrom.equals("")) throw "Дата начала является обязательным полем при создании нового документа нетрудоспособности" ;
@@ -128,7 +129,25 @@ function onSave(aForm, aEntity, aCtx) {
 	}
 	
 }
+
+function check(aEntity , aCtx){
+	
+	if(aEntity>0){
+		var lnnum = aCtx.manager.createNativeQuery("select number,series from disabilitydocument  where id ="+aEntity).getResultList();
+		var elns = aCtx.manager.createNativeQuery("select exportdate from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",lnnum.get(0)[0]).getResultList();
+	
+	}else {
+		var elns = aCtx.manager.createNativeQuery("select exportdate from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aEntity.getNumber()).getResultList();
+	}
+	if (elns.size()>0) {
+        if (elns.get(0)!=null){
+        	throw "Невозможно выполнить действие! Документ выгружен: "+elns.get(0);
+        }
+	}
+}
 function onPreSave(aForm,aEntity , aCtx) {
+	
+    check(aEntity,aCtx);
 	var series = aForm.getSeries() ;
 	var number = aForm.getNumber() ;
 	var thisid = aForm.getId() ;
@@ -185,6 +204,7 @@ function errorThrow(aList, aError) {
 
 
 function onPreDelete(aEntityId, aContext) {
+	check(aEntityId,aContext);
 	var doc = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument
 			, new java.lang.Long(aEntityId)) ;
 	//if (doc.duplicate!=null) throw "Невозможно удалить документ так"
@@ -206,7 +226,6 @@ function onPreDelete(aEntityId, aContext) {
 		}
 		aContext.manager.persist(orig);
 	} 
-	
 }
 function onView (aForm, aEntity, aCtx){ //Если документ отправляли в ФСС - берем информациб о цего статусе
 	var eln = aCtx.manager.createQuery("from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aForm.getNumber()).getResultList();
