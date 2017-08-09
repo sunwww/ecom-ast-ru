@@ -14,9 +14,11 @@
     <tiles:put name='body' type='string'>
     <%
     	String type=request.getParameter("type") ;
+    	String leftJoinSql = " left join medcase servmc on servmc.parent_id=aslo.id ";
     	if (type!=null&&type.equals("1")) {
     		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='DepartmentMedCase'") ;
     		request.setAttribute("title","дневники") ;
+			leftJoinSql = " left join medcase servmc on servmc.id=d.servicemedcase_id ";
     	} else if (type!=null&&type.equals("2")) {
     		request.setAttribute("title","лабораторные исследования") ;
     		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='Visit' and vst.code='LABSURVEY'") ;
@@ -43,6 +45,7 @@
     		}
     		
     	}
+    	request.setAttribute("leftJoinSql", leftJoinSql);
     	if (request.getParameter("service")!=null) {
     		request.setAttribute("filterAdd", "slo.patient_id='"+request.getParameter("patient")+"' and aslo.dtype='Visit' and servmc.medservice_id in ("+request.getParameter("service")+")") ;
     	}
@@ -110,6 +113,7 @@
     	<%	
     	} else {
     %><a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stAll=selected&type=${param.type}'>Печать: ${title}</a>
+		<a href='printProtocolsBySLO.do?medcase=${param.id }&id=${param.id}&stNoPrint=selected&type=${param.type}'>Печать: ${title} (нераспеч.)</a>
             	<ecom:webQuery nameFldSql="protocols_sql" name="protocols"  nativeSql="select d.id as did, to_char(d.dateRegistration,'dd.mm.yyyy') ||' '|| cast(d.timeRegistration as varchar(5)) as dtimeRegistration
             	,case when count (mc.id)>0 then list(mc.code||' '||mc.name) ||'<'||'br'||'/>' else '' end || d.record 
       ||'<'||'br'||'/>'|| vwf.name||' '||pw.lastname||' '||pw.firstname||' '||pw.middlename as doctor
@@ -121,7 +125,7 @@
       from Diary as d
       left join MedCase aslo on aslo.id=d.medCase_id
       left join MedCase slo on aslo.parent_id=slo.parent_id
-      left join medcase servmc on servmc.id=d.servicemedcase_id
+      ${leftJoinSql}
       left join medservice mc on mc.id=servmc.medservice_id
       left join WorkFunction wf on wf.id=d.specialist_id
       left join Worker w on w.id=wf.worker_id
@@ -136,7 +140,7 @@
       ,aslo.dtype,vtp.name
       ,aslo.department_id,slo.patient_id 
             	order by  d.dateRegistration desc,  d.timeRegistration desc
-            	"/>            	
+            	"/>
                 <msh:table hideTitle="false" styleRow="4" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
                     <msh:tableButton property="6" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Динамика исследования" buttonShortName="Дин."/>
                     <msh:tableColumn columnName="#" property="sn"/>
