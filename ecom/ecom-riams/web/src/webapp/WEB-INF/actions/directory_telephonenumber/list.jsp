@@ -20,7 +20,6 @@
 						<msh:autoComplete vocName="vocBuildingLevelShort"
 							property="buildingLevel" label="Этажа" fieldColSpan="4" size="60" />
 					</msh:row>
-
 					<msh:row>
 						<msh:textField property="lastname" label="По параметру" horizontalFill="true" />
 					</msh:row>
