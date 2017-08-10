@@ -36,7 +36,7 @@ public class ByCuratorSearchAction extends ListAction{
             }
         } else {
                 curator = service.getWorkFunction() ;
-                System.out.println("curator="+curator) ;
+              //  System.out.println("curator="+curator) ;
             	
         	
         }

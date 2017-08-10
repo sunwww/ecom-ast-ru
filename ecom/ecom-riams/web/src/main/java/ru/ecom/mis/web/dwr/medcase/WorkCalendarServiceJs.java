@@ -806,9 +806,9 @@ public class WorkCalendarServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		res.append("<form name='frmFunctions' id='frmFunctions' action='javascript:step3()'><ul id='listFunctions'>") ;
 		res.append("<li class='title'>Специалисты</li>");
-		System.out.print("list="+list.size()) ;
+		//System.out.print("list="+list.size()) ;
 		for (WebQueryResult wqr:list) {
-			System.out.println(wqr.get1()+"---"+wqr.get3()) ;
+		//	System.out.println(wqr.get1()+"---"+wqr.get3()) ;
 			if (aManyIs) {
 				res.append("<li onclick=\"if (this.childNodes[1].checked) {this.childNodes[1].checked=false;}else{this.childNodes[1].checked=true} step3('")
 				.append(wqr.get1()).append("#").append(wqr.get3()).append("')\">") ;

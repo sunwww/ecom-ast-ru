@@ -39,9 +39,9 @@ public class TemplateProtocolJs {
 		ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
 
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
-		System.out.println("sending service, templateprotocolJs, usename = "+username);
+	//	System.out.println("sending service, templateprotocolJs, usename = "+username);
 		service.sendProtocolToExternalResource(aProtocolId, aMedCaseId, null, null);
-		System.out.println("2sending service, templateprotocolJs, usename = "+username);
+	//	System.out.println("2sending service, templateprotocolJs, usename = "+username);
 		return "";
 	}
 	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {

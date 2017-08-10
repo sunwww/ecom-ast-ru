@@ -8,14 +8,11 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
 
-import org.apache.ecs.xhtml.area;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import com.google.gwt.http.client.Request;
 
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.print.IPrintService;
@@ -24,7 +21,6 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.struts.BaseAction;
 import ru.nuzmsh.web.tags.helper.RolesHelper;

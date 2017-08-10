@@ -51,8 +51,8 @@ public class FondWebService {
         //System.out.println("http://"+theAddress+"/ws/WS.WSDL") ;
         WS_MES_SERVERSoapPort soap = service.getWS_MES_SERVERSoapPort();
         result = (String)soap.get_RZ_from_SS(aSnils, theLpu);
-        System.out.println("result:") ;
-        System.out.println(result) ;
+      //  System.out.println("result:") ;
+      //  System.out.println(result) ;
         InputStream in = new ByteArrayInputStream(result.getBytes());
         Document doc = new SAXBuilder().build(in);
         Element root = doc.getRootElement();
@@ -183,7 +183,6 @@ public class FondWebService {
 				defaultLpu = listSC.iterator().next().get1().toString();
 			}
 			int i=0;
-			System.out.println("FWS - Количество найденных пациентов а базе = "+pats.size());
 			for (WebQueryResult pat: pats) {
 				//if (i==10)break; 
 				i++;
@@ -451,8 +450,8 @@ public class FondWebService {
 			
 			StringBuilder sb = new StringBuilder() ;
         	String result = (String)aSoap.get_FIODR_from_RZ(aRz, theLpu) ;
-        	System.out.println("getInfoByPatient FIODR_from_RZ, result info:") ;
-            System.out.println(result) ;
+        	//System.out.println("getInfoByPatient FIODR_from_RZ, result info:") ;
+            //System.out.println(result) ;
         	result = updateXml(result) ;
         	IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
     		
@@ -542,7 +541,7 @@ public class FondWebService {
             //System.out.println(result) ;
         	
         	result = updateXml(result) ;
-        	System.out.println("=== FondWebService policy: "+result);
+        	//System.out.println("=== FondWebService policy: "+result);
         	in = new ByteArrayInputStream(result.getBytes());
         	doc = new SAXBuilder().build(in);
         	root = doc.getRootElement();
@@ -696,8 +695,8 @@ public class FondWebService {
             in.close() ;
             
             result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
-            System.out.println("result adress:") ;
-            System.out.println(result) ;
+         //   System.out.println("result adress:") ;
+         //   System.out.println(result) ;
         	
         	result = updateXml(result) ;
         	//System.out.println(result) ;
