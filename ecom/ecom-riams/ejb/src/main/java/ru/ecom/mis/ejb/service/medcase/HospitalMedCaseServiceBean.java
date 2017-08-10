@@ -1038,7 +1038,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		sql.append(" ,wchb.dateFrom as w19chbdatefrom");
 		sql.append(", wchb.visit_id as v20isit");
 		sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
-		sql.append(", cast(case when cast(to_char(p.birthday,'yyyy') as int)-cast(to_char(current_date,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det"); //TODO доделать обработку по детям
+		sql.append(", cast(case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det"); //TODO доделать обработку по детям
 		sql.append(" from WorkCalendarHospitalBed wchb");
 		sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
 		sql.append(" left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id");
