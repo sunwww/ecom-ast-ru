@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.disability;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -48,6 +49,18 @@ public class DisabilityRecord extends BaseEntity{
 	public Date getDateTo() {return theDateTo;}
 	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;	}
 
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	private Date theCreateDate;
+	
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	private Time theCreateTime;
 	
 	/** Режим нетрудоспособности */
 	@Comment("Режим нетрудоспособности")

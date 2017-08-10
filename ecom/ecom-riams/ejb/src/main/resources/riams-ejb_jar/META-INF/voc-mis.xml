@@ -79,7 +79,20 @@ where wf.dtype='PersonalWorkFunction' -->
 	from="mislpu as m " 
 	nameId="m.id"
 	queryAppend="m.parent_id = 1" 
-	names="m.name" />
+	names="m.name"
+	queriedSplitCount="1"
+	queried ="(m.name like :quer1)" />
+</voc>
+
+<voc id="vocWorkFunctionShort" type="NativeVocService">
+	<NativeVocService 
+	from="vocworkfunction as vwf " 
+	nameId="vwf.id"
+	queryAppend="vwf.code is not null" 
+	names="vwf.name"
+	queriedSplitCount="1"
+	queried ="(cast(vwf.id as varchar(20)) = :querInd or vwf.name like UPPER(:query))" />
+	
 </voc>
 
 

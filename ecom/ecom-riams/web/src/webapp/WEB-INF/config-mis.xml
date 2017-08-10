@@ -395,7 +395,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/eln_count.jsp" />
         </action>
-        
  <action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -1033,6 +1032,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/list.jsp" />
         </action>
+        
+		<action path='/report_timeexecute' type='ru.ecom.web.actions.base.ForwardAction'
+		name='directory_searchForm'
+		validate='false'
+		scope="session">
+		<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/report_timeexecute.jsp" />
+		</action>
        
 	</action-mappings> 
 

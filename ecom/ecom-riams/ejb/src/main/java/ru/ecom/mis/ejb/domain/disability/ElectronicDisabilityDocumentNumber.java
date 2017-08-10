@@ -54,6 +54,12 @@ public class ElectronicDisabilityDocumentNumber extends BaseEntity {
     public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
     /** Дата последнего экспорта */
     private Date theExportDate ;
+    
+    /** Время последнего экспорта */
+    @Comment("Время последнего экспорта")
+    public Time getExportTime() {return theExportTime;}
+    public void setExportTime(Time aExportTime) {theExportTime = aExportTime;}
+    private Time theExportTime;
 
 
     /** Дата резерва */
