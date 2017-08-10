@@ -62,7 +62,7 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
 				sql=sql+"	left join Worker w on w.id=wf.worker_id";
 				sql=sql+"	left join Patient wp on wp.id=w.person_id";
 				sql=sql+"	left join VocServiceStream vss on vss.id=mc.serviceStream_id";
-                sql=sql+"	left join medcase smc on smc.parent_id=ms.id"
+                sql=sql+"	left join medcase smc on smc.parent_id=mc.id"
 				sql=sql+"	where mc.dtype='Visit' and smc.dtype='ServiceMedCase' and smc.medservice_id=ms.id";
 				sql=sql+"	and mc.dateStart between cao.operationdate and cao.operationdate+"+i;
 				sql=sql+"	and vss.code='CHARGED' and (mc.noActuality='0' or mc.noActuality is null)";
