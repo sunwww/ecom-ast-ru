@@ -87,5 +87,12 @@ public class HitechMedicalCase extends BaseEntity {
 	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
 	/** Пользователь, редактировавший запись */
 	private String theEditUsername;
+
+	/** Количество установленных стентов */
+	@Comment("Количество установленных стентов")
+	public Long getStantAmount() {return theStantAmount;}
+	public void setStantAmount(Long aStantAmount) {theStantAmount = aStantAmount;}
+	/** Количество установленных стентов */
+	private Long theStantAmount ;
 	
 }

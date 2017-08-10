@@ -16,6 +16,7 @@
           ,to_char(himc.planHospDate,'dd.mm.yyyy') as f3_planHospDate
           ,vkhc.code ||' '||vkhc.name as f4_kind
           ,vmhc.code ||' '||vmhc.name as f5_method
+          ,himc.stantAmount as f6_stantAmount
           from HitechMedicalCase himc
           left join vocKindHighCare vkhc on vkhc.id=himc.kind_id
           left join vocMethodHighCare vmhc on vmhc.id=himc.method_id
@@ -33,6 +34,7 @@
 	    		<msh:tableColumn columnName="Дата предварительной госпитализации" property="3"/>
 	    		<msh:tableColumn columnName="Вид" property="4"/>
 	    		<msh:tableColumn columnName="Метод" property="5"/>
+                <msh:tableColumn columnName="Количество стентов" property="6"/>
 	    	</msh:table>
 	    </msh:section>
     </msh:ifInRole>

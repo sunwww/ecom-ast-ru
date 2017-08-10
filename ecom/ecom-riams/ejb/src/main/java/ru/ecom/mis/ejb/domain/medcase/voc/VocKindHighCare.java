@@ -8,6 +8,9 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+/**
+ * Виды ВМП
+ */
 @Entity
 @Table(schema="SQLUser")
 public class VocKindHighCare extends VocBaseEntity {
@@ -33,4 +36,11 @@ public class VocKindHighCare extends VocBaseEntity {
 	private Date theDateFrom;
 	/** Дата окончания */
 	private Date theDateTo;
+	
+	/** Необходимо указывать количество стентов */
+	@Comment("Необходимо указывать количество стентов")
+	public Boolean getIsStentRequired() {return theIsStentRequired;}
+	public void setIsStentRequired(Boolean aIsStentRequired) {theIsStentRequired = aIsStentRequired;}
+	/** Необходимо указывать количество стентов */
+	private Boolean theIsStentRequired ;
 }

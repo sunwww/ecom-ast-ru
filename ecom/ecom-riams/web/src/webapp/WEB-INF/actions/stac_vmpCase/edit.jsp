@@ -31,8 +31,13 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="method" label="Метод ВМП"  horizontalFill="true" fieldColSpan="3" parentAutocomplete="kind" vocName="vocMethodHighCare" size="50"/>
-        </msh:row>     
-         <msh:row>
+        </msh:row>
+
+        <msh:row>
+          <msh:textField property="stantAmount" label="Количество установленных стентов" />
+        </msh:row>
+
+        <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
           <msh:label property="createUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
         </msh:row>

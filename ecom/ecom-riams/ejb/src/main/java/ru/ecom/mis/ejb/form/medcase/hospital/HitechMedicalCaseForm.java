@@ -113,6 +113,13 @@ public class HitechMedicalCaseForm extends IdEntityForm{
 	public void setFinanceSource(Long aFinanceSource) {theFinanceSource = aFinanceSource;}
 	/** Источник финансировани */
 	private Long theFinanceSource;
-	
+
+	/** Количество установленных стентов */
+	@Comment("Количество установленных стентов")
+	@Persist
+	public Long getStantAmount() {return theStantAmount;}
+	public void setStantAmount(Long aStantAmount) {theStantAmount = aStantAmount;}
+	/** Количество установленных стентов */
+	private Long theStantAmount ;
 	
 }
