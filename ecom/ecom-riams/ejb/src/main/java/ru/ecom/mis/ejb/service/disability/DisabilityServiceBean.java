@@ -212,10 +212,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
    }
     public DisabilityDocument getDocument (String aNumber) {
 		try {
-			System.out.println("---------------STRING aNumber="+aNumber);
-			//DisabilityDocument list = (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
-			DisabilityDocument list = (DisabilityDocument )  theManager.createQuery("select id from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
-			System.out.println(list);
+			DisabilityDocument list = (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
 		return list;
 		} catch (Exception e) {
 			e.printStackTrace();
