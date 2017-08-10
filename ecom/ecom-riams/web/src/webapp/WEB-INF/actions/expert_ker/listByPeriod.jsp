@@ -186,7 +186,7 @@
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select 
-coalesce(cec.numberinjournal,''||cec.id) as f1_id, to_char(expertDate,'dd.mm.yyyy')
+cec.id as f1_id, to_char(expertDate,'dd.mm.yyyy')
 ,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename as workfunction
 ,p.lastname||' '||p.firstname||' '||p.middlename as patient
 , case when p.address_addressId is not null 
@@ -211,6 +211,7 @@ coalesce(cec.numberinjournal,''||cec.id) as f1_id, to_char(expertDate,'dd.mm.yyy
 ,vec.name||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||coalesce('. '||vecs.name,'')||' '||coalesce(cec.additionInfo,'') as conclusion
 ,cec.orderHADate as orderHADate,cec.conclusionHA as conlusionHA
 ,cec.receiveHADate as receiveHADate,cec.additionInfoHA as addtionInfoHA
+,coalesce(cec.numberinjournal,''||cec.id) as numberInJournal
 from ClinicExpertCard cec
 left join MedCase slo on slo.id=cec.medCase_id
 left join MisLpu ml on ml.id=slo.department_id
@@ -256,6 +257,7 @@ ${lpuSql} ${typeSql}
     viewUrl="entityParentView-expert_ker.do?short=Short" 
      action="entityParentView-expert_ker.do" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn property="20" columnName="Номер в журнале" />
       <msh:tableColumn columnName="Дата экспертизы" property="2" />
       <msh:tableColumn columnName="ФИО врача" property="3" />
       <msh:tableColumn columnName="ФИО пациента" property="4" />

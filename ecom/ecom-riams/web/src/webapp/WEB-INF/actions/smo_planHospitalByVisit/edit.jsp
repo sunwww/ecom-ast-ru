@@ -394,7 +394,7 @@
 
      				if (+res[0]!=0) {
      					$('bedSubType').value = res[0] ; 
-     					$('bedSubTypeName').value = res[1] ; 
+     					$('bedSubTypeName').value = res[1] ;
      				} else {
      		      	 	$('bedSubType').value='0';
      		      	 	$('bedSubTypeName').value='';
