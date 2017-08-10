@@ -78,7 +78,7 @@ public class BaseValidatorForm extends ValidatorForm implements Serializable {
     public void reset(ActionMapping actionMapping, HttpServletRequest httpServletRequest) {
         super.reset(actionMapping, httpServletRequest);
         //theDisabledFields.clear();
-        System.out.println(" *********** CLEAR *******************" + this);
+       // System.out.println(" *********** CLEAR *******************" + this);
     }
 
     /** Поле по-умолчанию */

@@ -33,7 +33,7 @@ public class SnilsStringValidator implements IValidator{
 	public boolean isRigthSnils (String aSnils) {
 				String currentSnils = aSnils.replace("-", "").replace(" ", "");
 				int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
-				System.out.println(snilsCN);
+				//System.out.println(snilsCN);
 				if (currentSnils.length()!=11) {
 					return false;
 				} 
@@ -49,10 +49,10 @@ public class SnilsStringValidator implements IValidator{
 					controlNumber=sum;
 				} 
 				if (snilsCN==controlNumber) {
-					System.out.println("==isRightSnilsValidator, СНИЛС верный! "+currentSnils);
+					//System.out.println("==isRightSnilsValidator, СНИЛС верный! "+currentSnils);
 					return true;	
 				} else {
-					System.out.println("==isRightSnilsValidator, Неправильный СНИЛС!"+currentSnils);
+					//System.out.println("==isRightSnilsValidator, Неправильный СНИЛС!"+currentSnils);
 					return false;
 				}
 	}

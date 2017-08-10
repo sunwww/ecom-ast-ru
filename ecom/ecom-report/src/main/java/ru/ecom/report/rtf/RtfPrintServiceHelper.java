@@ -121,7 +121,7 @@ public class RtfPrintServiceHelper {
     		}
     	}
     	if(driver==null) throw 
-    		new IllegalStateException("Нет подходящего драйвера для преобразование "+aKey+" в каталоге "+theTemplateDir) ;
+    		new IllegalStateException("Нет подходящего шаблона для преобразование "+aKey+" в каталоге "+theTemplateDir) ;
     	return driver ;
     }
 
