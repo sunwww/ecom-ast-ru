@@ -238,7 +238,7 @@ left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
 ${lpuSql} ${typeSql}
-    order by cec.numberinjournal, cec.expertDate
+    order by cast(cec.numberinjournal as int), cec.expertDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
     
