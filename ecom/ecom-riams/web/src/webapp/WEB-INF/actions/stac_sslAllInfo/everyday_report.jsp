@@ -180,7 +180,7 @@
     	paramHref.append("&typeView=").append(typeView);
     	
     	ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request);
-    	ActionUtil.setParameterFilterSql("department", "ml.id", request);
+    	ActionUtil.setParameterFilterSql("department", "lastSlo.department_id", request);
     	ActionUtil.setParameterFilterSql("pigeonHole", "ml.pigeonHole_id", request);
     	String serviceStream=request.getParameter("serviceStream");
     	paramHref.append("&serviceStream=").append(serviceStream!=null?serviceStream:"");
@@ -530,6 +530,7 @@
 ,count(distinct case when (ok.id is null or ok.isCurrent='1') and adr.kladr is not null and adr.isCurrentRegion is null then sls.id else null end) as cntInog
 ,count(distinct case when ok.isCurrent='0' then sls.id else null end) as cntInost
 from medcase sls
+left join medcase lastSlo on lastSlo.parent_id=sls.id and lastSlo.dtype='DepartmentMedCase' and lastSlo.transferDate is null
 left join Patient pat on pat.id=sls.patient_id
 left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id
 left join Address2 adr on adr.addressid=pat.address_addressid
