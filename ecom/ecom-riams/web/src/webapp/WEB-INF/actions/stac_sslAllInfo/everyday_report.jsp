@@ -180,7 +180,8 @@
     	paramHref.append("&typeView=").append(typeView);
     	
     	ActionUtil.setParameterFilterSql("serviceStream", "m.serviceStream_id", request);
-    	ActionUtil.setParameterFilterSql("department", "lastSlo.department_id", request);
+    	ActionUtil.setParameterFilterSql("department", "ml.id", request);
+		ActionUtil.setParameterFilterSql("department","lastDepartment", "lastSlo.department_id", request);
     	ActionUtil.setParameterFilterSql("pigeonHole", "ml.pigeonHole_id", request);
     	String serviceStream=request.getParameter("serviceStream");
     	paramHref.append("&serviceStream=").append(serviceStream!=null?serviceStream:"");
@@ -475,7 +476,7 @@
     					group by sls.id,pat.id,pat.lastname,pat.firstname,pat.middlename,ss.code,vss.name,sls.Entrancetime,sls.dateStart
     					,ml.name,mlLast.name,sloLast.dateStart,sloLast.Entrancetime,sls.dateFinish,sls.dischargeTime
     					order by mlLast.name,pat.lastname,pat.firstname,pat.middlename
-    				    "/>
+    				    "/>3=${reestr_sql}
     				    
     				    <msh:table action="entitySubclassView-mis_medCase.do" 
     				    viewUrl="entitySubclassShortView-mis_medCase.do"
@@ -540,7 +541,7 @@ left join Omc_Oksm ok on pat.nationality_id=ok.id
 where  
  ${periodCurrentSls}
 and sls.dtype='HospitalMedCase'
-${departmentSql}
+${lastDepartmentSql}
 and sls.deniedHospitalizating_id is null
 ${pigeonHoleSql} 
  ${serviceStreamSql} 
@@ -599,7 +600,7 @@ and (ok.isCurrent='1' or ok.id is null) and (adr.addressid is null or adr.domen<
 , count(distinct case when sls.deniedHospitalizating_id='8' then sls.id else null end) as denied8
 , count(distinct case when sls.deniedHospitalizating_id='5' then sls.id else null end) as denied5
 , count(distinct case when sls.deniedHospitalizating_id='2' then sls.id else null end) as denied2
-from medcase sls 
+from medcase sls
 left join MisLpu as ml on ml.id=sls.department_id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
 left join Patient p on p.id=sls.patient_id
@@ -653,7 +654,6 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
     	      <msh:tableColumn isCalcAmount="true" columnName="всего" addParam="&emergency=1" property="4" />
     	      <msh:tableColumn isCalcAmount="true" columnName="самообр." addParam="&emergency=1&orderType=О" property="5" />
     	      <msh:tableColumn isCalcAmount="true" columnName="ск. пом." addParam="&emergency=1&orderType=К" property="6" />
-
     	      <msh:tableColumn isCalcAmount="true" columnName="всего" addParam="&denied=0" property="8"/>
     	      <msh:tableColumn isCalcAmount="true" columnName="с.ж." addParam="&denied=0&patient=village" property="9"/>
     	      <msh:tableColumn isCalcAmount="true" columnName="гор." addParam="&denied=0&patient=city" property="10"/>
@@ -684,7 +684,8 @@ and sls.dtype='HospitalMedCase' and ( sls.noActuality is null or sls.noActuality
 ,count(distinct case when vho.code!='1' then sls.id else null end) as cntDischargeOtherLpu
 ,count(distinct case when vhr.code='11' then sls.id else null end) as cntDeathPatient
 ,list(distinct case when vhr.code='11' then '<br/>'||pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'')||' г.р.'||to_char(pat.birthday,'dd.mm.yyyy') else null end) as listDeathPatient
-from medcase sls 
+from medcase sls
+left join medcase lastSlo on lastSlo.parent_id=sls.id and lastSlo.dtype='DepartmentMedCase' and lastSlo.transferDate is null
 left join Patient pat on pat.id=sls.patient_id
 left join MisLpu as ml on ml.id=sls.department_id
 left join VocPigeonHole vph on vph.id=ml.pigeonHole_id
@@ -692,14 +693,14 @@ left join Omc_Frm vof on vof.id=sls.orderType_id
 left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 where  ${periodDischargeSls} and sls.dtype='HospitalMedCase' 
-${departmentSql}
+${lastDepartmentSql}
 and ( sls.noActuality is null or sls.noActuality='0')
     	${pigeonHoleSql}  
     	${serviceStreamSql}
     	group by vph.id,vph.name
     	order by vph.name
     	      " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    	      
+    	      ${journal_priem_sql}
     	    <msh:table cellFunction="true" name="journal_priem" action="stac_everyday_report.do?${paramHref}&dtype=Hosp&dateinfo=dateFinish" idField="1">
     	      <msh:tableColumn columnName="#" property="sn" addParam="&dateinfo=dateFinish"/>
     	      <msh:tableColumn columnName="Приемник" property="2" addParam="&dateinfo=dateFinish" />
