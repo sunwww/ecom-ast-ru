@@ -59,7 +59,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 			
 		}
 	}
-	checkExport(aEntity,aCtx);
+	checkExport(aEntity.getId(),aCtx);
 }
 
 function onSave(aForm,aEntity,aCtx) {
@@ -67,6 +67,7 @@ function onSave(aForm,aEntity,aCtx) {
 }
 
 function onPreDelete(aEntityId, aContext) {
+	if (aCtx.manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id="+aEntity))
 	checkExport(aEntityId, aContext);
 }
 
@@ -81,38 +82,31 @@ function errorThrow(aList, aError) {
 	}
 }
 
-function checkExport(aEntity, aCtx) {
-	
-	if(aEntity>0){
-		var disRec = aCtx.manager.createNativeQuery("select createdate,createtime,disabilitydocument_id from disabilityrecord where id="+aEntity).getResultList();
-	}else {
-		var disRec = aCtx.manager.createNativeQuery("select createdate,createtime,disabilitydocument_id from disabilityrecord where id="+aEntity.getId()).getResultList();
-	}
-	
+function checkExport(aEntityId, aCtx) {
+    var disRec = aCtx.manager.createNativeQuery("select createdate,createtime,disabilitydocument_id from disabilityrecord where id="+aEntityId).getResultList();
 	var number = aCtx.manager.createNativeQuery("select number,id from disabilitydocument  where id ="+ disRec.get(0)[2]).getResultList();
 	var electronic = aCtx.manager.createNativeQuery("select exportdate,exporttime from ElectronicDisabilityDocumentNumber where number='"+ number.get(0)[0] + "'").getResultList();
-
-	var createDate = disRec.get(0)[0];
-	if (createDate != null)  createDate = createDate.getTime();  else return;
-	var createTime = disRec.get(0)[1];
-	if (createTime != null)  createTime = createTime.getTime();   else return;
-	var exportDate = electronic.get(0)[0];
-	var exportTime = electronic.get(0)[1]
-	if (exportDate != null) {
-		exportDate = exportDate.getTime();
-		if (exportDate > createDate) {
-			throw "Нельзя изменять период! Данный период уже выгружен!";
-		} else if (exportDate == createDate) {
-			// проверка по времени, если даты равны
-			if (exportTime != null) {
-				exportTime = exportTime.getTime();
-				if (exportTime >= createTime) {
-					throw "Нельзя изменять период! Данный период уже выгружен!";
-				}
-			//	throw "Ok";
-			}
-		}
-		//throw "Ok!!";
+	if (electronic!=null&&electronic.size()>0) {
+    	var createDate = disRec.get(0)[0];
+    	if (createDate != null)  createDate = createDate.getTime();  else return;
+    	var createTime = disRec.get(0)[1];
+   		 if (createTime != null)  createTime = createTime.getTime();   else return;
+    	var exportDate = electronic.get(0)[0];
+   		var exportTime = electronic.get(0)[1]
+    	if (exportDate != null) {
+        	exportDate = exportDate.getTime();
+        	if (exportDate > createDate) {
+           	 throw "Нельзя изменять период! Данный период уже выгружен!";
+        	} else if (exportDate == createDate) {
+            // проверка по времени, если даты равны
+            	if (exportTime != null) {
+                	exportTime = exportTime.getTime();
+                	if (exportTime >= createTime) {
+                  	  throw "Нельзя изменять период! Данный период уже выгружен!";
+               		}
+            	}
+       		}
+    	}
 	}
-	//throw "Ok!!";
+
 }

@@ -130,24 +130,17 @@ function onSave(aForm, aEntity, aCtx) {
 	
 }
 
-function check(aEntity , aCtx){
-	
-	if(aEntity>0){
-		var lnnum = aCtx.manager.createNativeQuery("select number,series from disabilitydocument  where id ="+aEntity).getResultList();
-		var elns = aCtx.manager.createNativeQuery("select exportdate from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",lnnum.get(0)[0]).getResultList();
-	
-	}else {
-		var elns = aCtx.manager.createNativeQuery("select exportdate from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aEntity.getNumber()).getResultList();
-	}
+function checkIsElectronic(aEntityId , aCtx){
+	var elns = aCtx.manager.createNativeQuery("select exportdate from ElectronicDisabilityDocumentNumber where disabilitydocument_id=:num and exportDate is not null").setParameter("num",aEntityId).getResultList();
 	if (elns.size()>0) {
-        if (elns.get(0)!=null){
         	throw "Невозможно выполнить действие! Документ выгружен: "+elns.get(0);
-        }
+	} else {
+		aCtx.manager.createNativeQuery("update ElectronicDisabilityDocumentNumber set disabilityDocument_id = null where disabilitydocument_id=:num").setParameter("num",aEntityId).executeUpdate();
 	}
 }
 function onPreSave(aForm,aEntity , aCtx) {
-	
-    check(aEntity,aCtx);
+
+    checkIsElectronic(aEntity.getId(),aCtx);
 	var series = aForm.getSeries() ;
 	var number = aForm.getNumber() ;
 	var thisid = aForm.getId() ;
@@ -204,7 +197,7 @@ function errorThrow(aList, aError) {
 
 
 function onPreDelete(aEntityId, aContext) {
-	check(aEntityId,aContext);
+    checkIsElectronic(aEntityId,aContext);
 	var doc = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument
 			, new java.lang.Long(aEntityId)) ;
 	//if (doc.duplicate!=null) throw "Невозможно удалить документ так"

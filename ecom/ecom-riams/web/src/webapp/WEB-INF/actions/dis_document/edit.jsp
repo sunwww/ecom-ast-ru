@@ -38,7 +38,7 @@
         </msh:row>
         <msh:row>
           <msh:textField property="series" label="Серия" guid="b9d0f37f-bd93-4e91-be9c-703c363ca9a8" />
-            <msh:textField property="number" label="Номер"  fieldColSpan="30" />
+            <msh:textField property="number" label="Номер"  size="20" fieldColSpan="30" />
             <msh:ifFormTypeIsCreate formName="dis_documentForm">
             <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber()" value="Получить номер"></td>
             </msh:ifFormTypeIsCreate>
