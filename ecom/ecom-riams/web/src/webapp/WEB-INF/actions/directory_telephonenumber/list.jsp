@@ -62,7 +62,10 @@
 				    request.setAttribute("whereSQL", whereSQL);
 				    System.out.println(whereSQL);
 		%>
-		<ecom:webQuery name="list" nameFldSql="listSQL"
+		<input id="getExcel" class="button" name="submit" value="Сохранить в excel" onclick="mshSaveTableToExcelById()" role="button" type="submit">
+		
+		<div id="myTemp">
+		<ecom:webQuery  name="list" nameFldSql="listSQL"
 			nativeSql="select e.id, e.insidenumber,
 case when tn.typenumber_id=3 then list(tn.telnumber) else '' end as sot,
 case when tn.typenumber_id=2 then list(tn.telnumber) else '' end as gor,
@@ -79,7 +82,8 @@ left join vocbuilding vb on vb.id = d.building_id
 left join telephonenumber tn on tn.entry_id = e.id
 left join voctypenumber vtn on vtn.id = tn.typenumber_id
 ${whereSQL}
-group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment" />
+group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment
+order by build, level,dep" />
 		<msh:table name="list" action="javascript:void()" idField="1">
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="Внутренний номер" property="2" />
@@ -91,6 +95,7 @@ group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment" />
 			<msh:tableColumn columnName="Этаж" property="8" />
 			<msh:tableColumn columnName="Отделение" property="9" />
 		</msh:table>
+		</div>
 	</tiles:put>
 
 
@@ -103,4 +108,18 @@ group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment" />
 				name="Создать" />
 		</msh:sideMenu>
 	</tiles:put> -->
+
+	<tiles:put name="javascript" type="string">
+		<script type="text/javascript">
+		
+		function mshPrintTextToExcelTable (html) {
+			  window.location.href='data:application/vnd.ms-excel,'+'\uFEFF'+encodeURIComponent(html);
+			}
+		
+		function mshSaveTableToExcelById() {
+			  mshPrintTextToExcelTable(document.getElementById("myTemp").outerHTML);
+			  //mshPrintTextToExcelTable(document.getElementsByClassName("tabview").outerHTML);
+		}//tabview sel tableArrow
+		</script>
+	</tiles:put>
 </tiles:insert>
