@@ -43,8 +43,6 @@ private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throw
 		Collection<WebQueryResult> l = service.executeNativeSql("select keyvalue from  softconfig where key='KKM_WEB_SERVER'");
 		if (!l.isEmpty()) {
 			String address = l.iterator().next().get1().toString();
-			
-			log.info("KKM_server = "+address);
 			//method by milamesher 15.03.2017
 			//отправка пост-запроса на веб-сервис, управляющий печатью ккм  
 			URL url = new URL(address); 
@@ -148,7 +146,10 @@ private String getOperatorInfoByUsername(HttpServletRequest aRequest) throws Nam
 		}
 	}
 
-public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, HttpServletRequest aRequest) {
+	//Не должно нигде использоваться, убираем
+	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, HttpServletRequest aRequest) {
+		log.error("Вызов makeKKMPaymentOrRefund там, где его быть не должно!");
+		if (1==1) {return "Вызов makeKKMPaymentOrRefund там, где его быть не должно!";}
 	try {		
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		

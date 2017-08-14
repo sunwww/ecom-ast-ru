@@ -1,16 +1,28 @@
 package ru.ecom.mis.ejb.service.contract;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Date;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -25,6 +37,145 @@ import ru.nuzmsh.util.format.DateFormat;
 @Stateless
 @Remote(IContractService.class)
 public class ContractServiceBean implements IContractService {
+	private final static Logger log = Logger.getLogger(ContractServiceBean.class);
+
+
+	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, EntityManager aManager) {
+		try {
+			String discontSql = "cams.cost";
+			if (aDiscont!=null&&!aDiscont.equals("")) {
+				//	log.info("=== Send KKM, discont = "+aDiscont);
+				discontSql = "round(cams.cost*(100-"+aDiscont+")/100,2)";
+			}
+			StringBuilder sb = new StringBuilder();
+			sb.append("select pp.id, pp.code as f2_code, pp.name as f3_name, cams.countmedservice as f4_count, cast("+discontSql+" as varchar) as f5_cost, cast("+discontSql+"*cams.countmedservice as varchar) as f6_sum")
+					.append(",case when pp.isVat='1' then 'Ставка налога НДС '||coalesce(vv.taxrate,0) ||'%' end as f7_taxName")
+					.append(",case when pp.isVat='1' then cast(round("+discontSql+"*cams.countmedservice*vv.taxrate/100,2) as varchar) end as f8_taxSum")
+					.append(" from contractaccount  ca")
+					.append(" left join contractaccountmedservice cams on cams.account_id=ca.id")
+					.append(" left join pricemedservice pms on pms.id=cams.medservice_id")
+					.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+					.append(" left join vocvat vv on vv.id=pp.tax_id")
+					.append(" where ca.id=").append(aAccountId);
+			List<Object[]> l = aManager.createNativeQuery(sb.toString()).getResultList();
+			//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
+			if (!l.isEmpty()) {
+				//	System.out.println("not empty");
+				Double totalSum = 0.00;
+				Double taxSum = 0.00;
+				JSONObject root = new JSONObject();
+				root.put("function", isRefund?"makeRefund":"makePayment");
+				JSONArray arr = new JSONArray();
+				for (Object[] r: l) {
+
+					Double sum = Double.valueOf(r[5].toString());
+					Double tax = Double.valueOf(r[7]!=null?r[7].toString():"0.00");
+					totalSum+=sum;
+					taxSum+=tax;
+					JSONObject record = new JSONObject();
+					record.put("code", r[1]);
+					record.put("name", r[2]);
+					record.put("count", r[3]);
+					record.put("price", r[4].toString());
+					record.put("sum", r[5].toString());
+					//	record.put("price", 0);
+					//	record.put("sum", 0);
+					if (r[6]!=null&&!(""+r[6]).equals("")) {
+						record.put("taxName", "");
+						record.put("taxSum", r[7]!=null?r[7].toString():"");
+					}
+					arr.put(record);
+				}
+				root.put("isTerminalPayment", isTerminalPayment);
+				if (isRefund) {
+					root.put("totalRefundSum", totalSum) ;
+				} else {
+					root.put("pos", arr) ;
+					root.put("totalPaymentSum", ""+totalSum+"") ;
+					if (taxSum>0) {
+						root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()+"") ;
+					}
+				}
+				//root.put("isTerminalPayment", isTerminalPayment);
+				root.put("FIO", aKassir);
+				log.warn("isTermPayment = "+isTerminalPayment);
+				makeHttpPostRequest(root.toString(), aManager);
+				return "Чек отправлен на печать";
+			} else {
+				return "Произошла ошибка, обратитесь к программистам";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	private void makeHttpPostRequest(String data, EntityManager aManager) throws IOException, NamingException {
+		if (aManager==null) {aManager=theManager;}
+		log.warn("===Send to KKM_BEAN. Data = "+data);
+		List<Object> list = aManager.createNativeQuery("select keyvalue from  softconfig where key='KKM_WEB_SERVER'").getResultList();
+		if (!list.isEmpty()) {
+			String address = list.iterator().next().toString();
+			URL url = new URL(address);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+			writer.write(data);
+			writer.close();
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			//   StringBuffer answerString = new StringBuffer();
+			//   String line;
+			//   while ((line = br.readLine()) != null) {
+			//   	answerString.append(line);
+			//   }
+			br.close();
+			connection.disconnect();
+		} else {
+			log.error("Нет настройки 'KKM_WEB_SERVER', работа с ККМ невозможна");
+		}
+
+	}
+
+
+	//Печать K, Z отчета
+	public String printKKMReport(String aType, EntityManager aManager) {
+		if (aType!=null&&(aType.equals("Z")||aType.equals("X"))) {
+			try {
+				JSONObject root = new JSONObject();
+				if (root!=null) {
+					root.put("function", "print"+aType+"Report");
+					makeHttpPostRequest(root.toString(),aManager);
+					return  aType+" отчет успешно отправлен на печать";
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return e.getMessage();
+			}
+
+		}
+		return "Неизвестный тип отчета";
+	}
+	public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, String aKassir,EntityManager aManager)  {
+			if (aFunction!=null &&aFunction.equals("makePayment")) {
+				return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aKassir,aManager);
+			} else if (aFunction!=null&&aFunction.equals("makeRefund")) {
+				return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment,aKassir, aManager);
+			} else if (aFunction!=null&&aFunction.equals("printZReport")){
+				return printKKMReport("Z", aManager);
+			} else if (aFunction!=null&&aFunction.equals("printXReport")){
+				return printKKMReport("X",aManager);
+			} else if (aFunction!=null&&aFunction.equals("printLastOrder")) {
+				//return printLastOrder(aRequest);
+			}
+			return "Неизвестная функция";
+
+	}
 	
 	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType) {
 		return getMedService(aDepartment, aBedType, aBedSubType, aRoomType, null);
