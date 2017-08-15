@@ -81,7 +81,7 @@ where wf.dtype='PersonalWorkFunction' -->
 	queryAppend="m.parent_id = 1" 
 	names="m.name"
 	queriedSplitCount="1"
-	queried ="(m.name like :quer1)" />
+	queried ="(cast(m.id as varchar(20)) = :querInd or m.name like UPPER(:query))" />
 </voc>
 
 <voc id="vocWorkFunctionShort" type="NativeVocService">

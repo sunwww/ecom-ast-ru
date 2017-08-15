@@ -21,10 +21,16 @@
 							property="buildingLevel" label="Этажа" fieldColSpan="4" size="60" />
 					</msh:row>
 					<msh:row>
-						<msh:textField property="lastname" label="По параметру" horizontalFill="true" />
+					<msh:autoComplete vocName="vocDepartmet"
+							property="department" label="Отделение" fieldColSpan="4" size="60" />
+					</msh:row>
+					<msh:row>
+						<msh:textField property="lastname" label="По параметру *" horizontalFill="true" />
 					</msh:row>
 					<td><input type="submit" value="Найти" /></td>
+					
 				</msh:row>
+				* - по номеру телефона или наименованию или ФИО<br>
 			</msh:panel>
 		</msh:form>
 		<%
@@ -32,7 +38,9 @@
 				    String buildingId = request.getParameter("building");
 				    String buildingLevelId = request.getParameter("buildingLevel");
 				    String FIO = request.getParameter("lastname");
+				    String dep = request.getParameter("department");
 				    String searchSQL = "";
+				    
 				    if (buildingId != null && !buildingId.equals("")) {
 					searchSQL += " vb.id=" + buildingId;
 				    }
@@ -41,6 +49,11 @@
 					if (!searchSQL.equals(""))
 					    searchSQL += " and ";
 					searchSQL += " vbl.id=" + buildingLevelId;
+				    }
+				    
+				    if(dep!=null && !dep.equals("")){
+					if (!searchSQL.equals("")) searchSQL += " and ";
+					searchSQL+=" m.id="+dep;
 				    }
 
 				    if (FIO != null && !FIO.equals("")) {
