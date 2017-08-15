@@ -21,10 +21,16 @@
 							property="buildingLevel" label="Этажа" fieldColSpan="4" size="60" />
 					</msh:row>
 					<msh:row>
-						<msh:textField property="lastname" label="По параметру" horizontalFill="true" />
+					<msh:autoComplete vocName="vocDepartmet"
+							property="department" label="Отделение" fieldColSpan="4" size="60" />
+					</msh:row>
+					<msh:row>
+						<msh:textField property="lastname" label="По параметру *" horizontalFill="true" />
 					</msh:row>
 					<td><input type="submit" value="Найти" /></td>
+					
 				</msh:row>
+				* - по номеру телефона или наименованию или ФИО<br>
 			</msh:panel>
 		</msh:form>
 		<%
@@ -32,7 +38,9 @@
 				    String buildingId = request.getParameter("building");
 				    String buildingLevelId = request.getParameter("buildingLevel");
 				    String FIO = request.getParameter("lastname");
+				    String dep = request.getParameter("department");
 				    String searchSQL = "";
+				    
 				    if (buildingId != null && !buildingId.equals("")) {
 					searchSQL += " vb.id=" + buildingId;
 				    }
@@ -41,6 +49,11 @@
 					if (!searchSQL.equals(""))
 					    searchSQL += " and ";
 					searchSQL += " vbl.id=" + buildingLevelId;
+				    }
+				    
+				    if(dep!=null && !dep.equals("")){
+					if (!searchSQL.equals("")) searchSQL += " and ";
+					searchSQL+=" m.id="+dep;
 				    }
 
 				    if (FIO != null && !FIO.equals("")) {
@@ -62,7 +75,10 @@
 				    request.setAttribute("whereSQL", whereSQL);
 				    System.out.println(whereSQL);
 		%>
-		<ecom:webQuery name="list" nameFldSql="listSQL"
+		<input id="getExcel" class="button" name="submit" value="Сохранить в excel" onclick="mshSaveTableToExcelById()" role="button" type="submit">
+		
+		<div id="myTemp">
+		<ecom:webQuery  name="list" nameFldSql="listSQL"
 			nativeSql="select e.id, e.insidenumber,
 case when tn.typenumber_id=3 then list(tn.telnumber) else '' end as sot,
 case when tn.typenumber_id=2 then list(tn.telnumber) else '' end as gor,
@@ -79,7 +95,8 @@ left join vocbuilding vb on vb.id = d.building_id
 left join telephonenumber tn on tn.entry_id = e.id
 left join voctypenumber vtn on vtn.id = tn.typenumber_id
 ${whereSQL}
-group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment" />
+group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment
+order by build, level,dep" />
 		<msh:table name="list" action="javascript:void()" idField="1">
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="Внутренний номер" property="2" />
@@ -91,6 +108,7 @@ group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment" />
 			<msh:tableColumn columnName="Этаж" property="8" />
 			<msh:tableColumn columnName="Отделение" property="9" />
 		</msh:table>
+		</div>
 	</tiles:put>
 
 
@@ -103,4 +121,18 @@ group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment" />
 				name="Создать" />
 		</msh:sideMenu>
 	</tiles:put> -->
+
+	<tiles:put name="javascript" type="string">
+		<script type="text/javascript">
+		
+		function mshPrintTextToExcelTable (html) {
+			  window.location.href='data:application/vnd.ms-excel,'+'\uFEFF'+encodeURIComponent(html);
+			}
+		
+		function mshSaveTableToExcelById() {
+			  mshPrintTextToExcelTable(document.getElementById("myTemp").outerHTML);
+			  //mshPrintTextToExcelTable(document.getElementsByClassName("tabview").outerHTML);
+		}//tabview sel tableArrow
+		</script>
+	</tiles:put>
 </tiles:insert>

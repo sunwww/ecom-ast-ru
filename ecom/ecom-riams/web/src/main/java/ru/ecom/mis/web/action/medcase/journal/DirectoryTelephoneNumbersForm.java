@@ -42,4 +42,10 @@ public class DirectoryTelephoneNumbersForm extends BaseValidatorForm{
     public void setEndDate(String aEndDate) {theEndDate = aEndDate;}
     private String theEndDate;
     
+    /** Отделение */
+    @Comment("Отделение")
+    public Long getDepartment() { return theDepartment;}
+    public void setDepartment(Long aDepartment) { theDepartment = aDepartment;}
+    private Long theDepartment;
+    
 }
