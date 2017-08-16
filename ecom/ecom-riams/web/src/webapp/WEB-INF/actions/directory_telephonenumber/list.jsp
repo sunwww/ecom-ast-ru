@@ -5,9 +5,18 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp"
 	flush="true">
+	 
+	
+	<tiles:put name="side" type="string">
+		<msh:sideMenu guid="helloSideMenu-123">
+			<msh:sideLink guid="helloSideLinkNew"
+				roles="/Policy/Mis/Directory/Department" key="ALT+N"
+				action="/directory_createEntry"
+				name="Создать!!" />
+		</msh:sideMenu>
+	</tiles:put>
+	
 	<tiles:put name="body" type="string">
-
-
 		<msh:form guid="formHello" action="/directory_search.do"
 			defaultField="hello">
 			<msh:panel guid="panel">
@@ -110,19 +119,7 @@ order by build, level,dep" />
 		</msh:table>
 		</div>
 	</tiles:put>
-
-
-<!-- 
-	<tiles:put name="side" type="string">
-		<msh:sideMenu guid="helloSideMenu-123">
-			<msh:sideLink guid="helloSideLinkNew"
-				roles="/Policy/Mis/Directory/Department" key="ALT+N"
-				action="/entityPrepareCreate-directory_telephonenumber"
-				name="Создать" />
-		</msh:sideMenu>
-	</tiles:put> -->
-
-	<tiles:put name="javascript" type="string">
+<tiles:put name="javascript" type="string">
 		<script type="text/javascript">
 		
 		function mshPrintTextToExcelTable (html) {

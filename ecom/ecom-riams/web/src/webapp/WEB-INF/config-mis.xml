@@ -9,6 +9,8 @@
 	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
 	<form-bean name="directory_departmentForm"			type="ru.ecom.mis.ejb.form.directory.DepartmentForm"/>
 	<form-bean name="directory_telephonenumberForm"			type="ru.ecom.mis.ejb.form.directory.TelephoneNumberForm"/>
+    <form-bean name="directory_searchForm"	       type="ru.ecom.mis.web.action.medcase.journal.DirectoryTelephoneNumbersForm" />
+	<form-bean name="directory_entryCreateEditForm"	       type="ru.ecom.mis.web.action.medcase.journal.DirectoryEntryForm" />
 	
 	<!-- Калькулятор -->
         <form-bean name="calc_calculationsForm"			type="ru.ecom.mis.ejb.form.calc.CalculationsForm" />
@@ -1024,7 +1026,6 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
         </action>
         
-        
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
                 validate='false'
@@ -1034,10 +1035,17 @@
         </action>
         
 		<action path='/report_timeexecute' type='ru.ecom.web.actions.base.ForwardAction'
-		name='directory_searchForm'
-		validate='false'
-		scope="session">
-		<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/report_timeexecute.jsp" />
+				name='directory_searchForm'
+				validate='false'
+				scope="session">
+				<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/report_timeexecute.jsp" />
+		</action>
+		
+		<action path='/directory_createEntry' type='ru.ecom.web.actions.base.ForwardAction'
+				name='directory_entryCreateEditForm'
+				validate='false'
+				scope="session">
+				<forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/directory_createentry.jsp" />
 		</action>
        
 	</action-mappings> 
