@@ -5,7 +5,6 @@
 <struts-config>
 
 	<form-beans>
-	<form-bean name="directory_searchForm"	       type="ru.ecom.mis.web.action.medcase.journal.DirectoryTelephoneNumbersForm" />
 	
         <form-bean name="stac_planHospitalForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm" />
         <form-bean name="smo_planHospitalByVisitForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />

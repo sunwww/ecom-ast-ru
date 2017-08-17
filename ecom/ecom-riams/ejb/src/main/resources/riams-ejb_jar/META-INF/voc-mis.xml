@@ -31,10 +31,10 @@ where wf.dtype='PersonalWorkFunction' -->
 		  left join Patient as p on p.id=w.person_id
 		  left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" 
 	queryAppend="wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')" 
-	names="p.lastname||' '||p.firstname||' '||p.middlename, vwf.name as name " 
+	names="p.lastname||' '||p.firstname||' '||p.middlename" 
 	nameId="wf.id"
 	queriedSplitCount="3"
-	queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
+	queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like UPPER(:quer1) or (p.lastname like UPPER(:quer1) and (UPPER(:quer2) is null or p.firstname like UPPER(:quer2)) and (UPPER(:quer3) is null or p.middlename like UPPER(:quer3))) )"
 />	
 </voc>
 
