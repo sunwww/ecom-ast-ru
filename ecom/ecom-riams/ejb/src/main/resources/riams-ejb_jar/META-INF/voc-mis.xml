@@ -1208,7 +1208,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			parent="wf.id=:par1
     			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate)
     			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))
-				and (wfs.lpu_id is null or wfs.lpu_id=w.lpu_id)"
+				and (wfs.lpu_id is null or wfs.lpu_id=coalesce(wf.lpu_id,w.lpu_id))"
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
