@@ -212,7 +212,9 @@ cec.id as f1_id, to_char(expertDate,'dd.mm.yyyy')
 ,cec.orderHADate as orderHADate,cec.conclusionHA as conlusionHA
 ,cec.receiveHADate as receiveHADate,cec.additionInfoHA as addtionInfoHA
 ,coalesce(cec.numberinjournal,''||cec.id) as numberInJournal
+,replace(replace(vecomp.name,' ',''),',',chr(13)) as expertComission
 from ClinicExpertCard cec
+left join VocExpertComposition vecomp on vecomp.id=cec.expcomposition_id
 left join MedCase slo on slo.id=cec.medCase_id
 left join MisLpu ml on ml.id=slo.department_id
 left join WorkFunction owf on owf.id=cec.orderFunction_id
@@ -238,7 +240,7 @@ left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
 ${lpuSql} ${typeSql}
-    order by cast(cec.numberinjournal as int), cec.expertDate
+    order by cast('0'||cec.numberinjournal as int), cec.expertDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
     
