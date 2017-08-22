@@ -6,6 +6,7 @@ import java.util.*;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.disability.IDisabilityService;
@@ -19,7 +20,58 @@ import ru.nuzmsh.util.format.DateConverter;
  *
  */
 public class DisabilityServiceJs {
+	public static Logger log = Logger.getLogger(DisabilityServiceJs.class);
 
+	/**
+	 *
+	 * @param aDisabilityDocumentId - ID документа нетрудоспособности
+	 * @param aNumber - Номер документа нетрудоспособности
+	 * @param aRequest
+	 * @return
+	 */
+	public Long getElectronicDisabilityNumber(Long aDisabilityDocumentId, String aNumber, HttpServletRequest aRequest) throws NamingException {
+
+		String documentInfo = getElectronicDisabilityDocumentInfo(aDisabilityDocumentId,aNumber,aRequest);
+		if (documentInfo!=null) {
+			return Long.valueOf(documentInfo.split("#")[0]);
+		}
+		return null;
+	}
+	public String getStringFromWebQueryResult(WebQueryResult wqr, String aDelimiter) {
+		if (wqr==null||wqr.get1()==null) {return null;}
+		StringBuilder sb = new StringBuilder();
+		//while (true) {
+			//sb.append(wqr.get+i())
+		//}
+		return "";
+	}
+	public String getElectronicDisabilityDocumentInfo(Long aDisabilityDocumentId, String aNumber, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sb = new StringBuilder();
+		sb.append("select el.id, el.number, coalesce(to_char(el.createdate,'dd.MM.yyyy'),'') as createDate, coalesce(to_char(el.exportDate,'dd.MM.yyyy'),'') as exportDate" +
+				", coalesce(to_char(el.annuldate,'dd.MM.yyyy'),'') as annulDate from electronicdisabilitydocumentnumber el where ");
+		if (aDisabilityDocumentId!=null&&aDisabilityDocumentId>0) {
+			sb.append(" el.disabilitydocument_id=").append(aDisabilityDocumentId);
+		} else if (aNumber!=null&&!aNumber.trim().equals("")){
+			sb.append(" el.number = '").append(aNumber).append("'");
+		}
+		log.info(sb);
+		Collection<WebQueryResult> list = service.executeNativeSql(sb.toString());
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next();
+			return wqr.get1()+"#"+wqr.get2()+"#"+wqr.get3()+"#"+wqr.get4()+"#"+wqr.get5();
+		} else {
+			return null;
+		}
+
+	}
+	/**
+	 * Получение списка номеров ЭЛН
+	 * @param aCount - количество запрашиваемых номеров
+	 * @param aRequest
+	 * @return
+	 * @throws NamingException
+	 */
 	public String getLNNumberRange (Long aCount, HttpServletRequest aRequest) throws NamingException {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
 		return service.getLNNumberRange(aCount);
@@ -28,14 +80,37 @@ public class DisabilityServiceJs {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
 		//ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
 		String ret = service.exportDisabilityDocument(aDocumentId);
-
 		return ret;
 	}
-//Milamesher 0408
-public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, String textReason, String snils, HttpServletRequest aRequest)  throws NamingException {
-	IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-	return service.annulDisabilityDocument(aDocumentId,aReasonAnnulId,textReason,snils);
-}
+
+	//Milamesher 0308 - отметить аннулирование
+	public String setAnnulDisabilityDocument(Long aDocumentId,String aAnnulText,String aAnnulCode,HttpServletRequest aRequest) throws NamingException {
+		String ret = null;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql = "SELECT number from electronicdisabilitydocumentnumber WHERE disabilitydocument_id='" + aDocumentId + "'";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			IDisabilityService disService = Injection.find(aRequest).getService(IDisabilityService.class);
+			String number =  list.iterator().next().get1().toString() ;
+			String snils = null;
+			list = service.executeNativeSql("select p.snils from patient p\n" +
+					" left join disabilitydocument d on d.patient_id=p.id\n" +
+					" where d.id='" + aDocumentId+ "'");
+			if (list.size() > 0) {
+				snils=list.iterator().next().get1().toString();
+			}
+			ret = disService.annulDisabilityDocument(Long.valueOf(number),aAnnulCode,aAnnulText,snils);
+			if (ret!=null&&!ret.equals("")) { //Если сервис успешно аннулировал запись
+				service.executeUpdateNativeSql("UPDATE electronicdisabilitydocumentnumber SET annuldate=current_date, comment='" + aAnnulText + "', annulreason_id=(SELECT id FROM vocannulreason WHERE code='" + aAnnulCode + "') WHERE disabilitydocument_id='" + aDocumentId + "'");
+				service.executeUpdateNativeSql("UPDATE disabilitydocument SET noactuality='1', status_id=(select id from VocDisabilityStatus where code='1_ELN')  WHERE id='" + aDocumentId+ "'");
+			}
+		}
+		else {
+			ret= "Такого электронного ЛН нет!";
+		}
+		return  ret;
+	}
+
 	public String getExportJournalById (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
 
@@ -53,7 +128,9 @@ public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, S
 		}
 		return ret.length()>0?ret.toString():null;
 	}
-
+	public String getFreeNumberForDisabilityDocument(HttpServletRequest aRequest) throws NamingException, ParseException {
+		return getFreeNumberForDisabilityDocumentReloaded(0,aRequest);
+	}
 	/**
 	 * Возвращаем любой свободный номер больничного листа, или номер, резерв которого закончился (прошел час с момента резервирования)
 	 * @param aRequest
@@ -61,11 +138,18 @@ public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, S
 	 * @throws NamingException
 	 * @throws ParseException
 	 */
-	public String getFreeNumberForDisabilityDocument(HttpServletRequest aRequest) throws NamingException, ParseException {
+	public String getFreeNumberForDisabilityDocumentReloaded(int aCount, HttpServletRequest aRequest) throws NamingException, ParseException {
+		if (aCount>2) { //Если за 3 раза не удалось вернуть номер, выходим
+			return "Произошла непредвиденная ошибка, обратитесь к разработчикам";
+		}
+		aCount++;
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
 		String ret = "";
 		Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy') as f2_date, cast(reservetime as varchar(5)) as f3_time from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null ");
-		if (list.isEmpty()) {
+		if (list.isEmpty()) { //Получаем один номер с сервера ФСС
+			log.warn("Не найдено свободных номеров ЭЛН, запрашиваем один номер");
+			getLNNumberRange(Long.valueOf(1),aRequest);
+			return getFreeNumberForDisabilityDocumentReloaded(aCount,aRequest);
 		} else {
 			Date currentDate = new Date();
 			Calendar cal = new GregorianCalendar();
@@ -91,6 +175,8 @@ public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, S
 		}
 		return ret;
 	}
+
+
 	public String getPrefixForLN(HttpServletRequest aRequest) throws NamingException {
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		StringBuilder sql = new StringBuilder() ;
@@ -170,26 +256,5 @@ public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, S
 			res.append("##");
 			}
 		return res.toString();
-	}
-	//Milamesher 0308 - отметить аннулирование
-	public String setAnnulDisabilitySheet(Long aDocId,String comment,String code,HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql = "SELECT number from electronicdisabilitydocumentnumber WHERE disabilitydocument_id='" + aDocId + "'";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (list.size() > 0) {
-			StringBuilder res = new StringBuilder();
-			WebQueryResult wqr = list.iterator().next() ;
-			service.executeUpdateNativeSql("UPDATE electronicdisabilitydocumentnumber SET annuldate=current_date, comment='" + comment + "', annulreason_id=(SELECT id FROM vocannulreason WHERE code='" + code + "') WHERE disabilitydocument_id='" + aDocId + "'");
-			service.executeUpdateNativeSql("UPDATE disabilitydocument SET noactuality=true WHERE number='" + wqr.get1().toString() + "'");
-			res.append(wqr.get1().toString()).append('#');
-			list = service.executeNativeSql("select p.snils from patient p\n" +
-					"inner join disabilitydocument d on d.patient_id=p.id\n" +
-					"inner join electronicdisabilitydocumentnumber e on e.disabilitydocument_id=d.id where e.number='" + wqr.get1().toString() + "'");
-			wqr = list.iterator().next() ;
-			if (list.size() > 0) res.append(wqr.get1().toString());
-			else return "Не найден СНИЛС у пациента!";
-			return res.toString();
-		}
-		else return "Такого электронного ЛН нет!";
 	}
 }

@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.service.disability;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -41,10 +42,7 @@ import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
-import ru.ecom.mis.ejb.domain.disability.DisabilityRecord;
-import ru.ecom.mis.ejb.domain.disability.DisabilityReport;
-import ru.ecom.mis.ejb.domain.disability.RegimeViolationRecord;
+import ru.ecom.mis.ejb.domain.disability.*;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -79,7 +77,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 	 */
     public String makeHttpGetRequest (String aAddress, String aMethod)  {
 		try {
-			URL url = new URL(aAddress+"/"+aMethod);
+			URL url = new URL(aAddress+"/"+ aMethod);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
@@ -136,6 +134,18 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		String address = getSoftConfigValue("FSS_PROXY_SERVICE",null);
 		String lpuId= getSoftConfigValue("DEFAULT_LPU",null);
 		String method = "";
+		if (textReason!=null) {
+			try {
+				textReason = URLEncoder.encode(textReason, "UTF-8");
+
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		if (snils!=null) {
+			snils=snils.replace("-","").replace(" ","");
+
+		}
 		if (address==null||lpuId==null) {
 			LOG.info ("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId);
 			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = "+address+", ЛПУ = "+lpuId;
@@ -163,12 +173,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
 			} else  if (aMethod!=null&&aMethod.equals("annullSheet")){
 
 				if (aDocumentId!=null&&aDocumentId>0&&aReasonAnnulId!=null&&textReason!=null&&snils!=null) {
-					String[] str = snils.split("-");
-					snils = str[0] + str[1] + str[2];
-					str = snils.split(" ");
-					snils = str[0] + str[1];
 					method = "sDisableLn?ogrn="+ogrn+"&lnCode="+aDocumentId+"&snils="+snils+"&reasonCode="+aReasonAnnulId+"&reason="+textReason;
-					//return method;
 				} else {
 					return "";
 				}
@@ -1146,12 +1151,13 @@ public class DisabilityServiceBean implements IDisabilityService  {
     
     private DisabilityDocument copyDocument(DisabilityDocument aDocument, String aSeries, String aNumber,Date aIssuedDate,Long aWorkFunction2, boolean isDuplicate) {
     	WorkFunction wf2 = aWorkFunction2!=null?theManager.find(WorkFunction.class,aWorkFunction2):null ;
-    	DisabilityDocument newDoc = new DisabilityDocument() ;
+    	String username = theContext.getCallerPrincipal().toString();
+		DisabilityDocument newDoc = new DisabilityDocument() ;
     	newDoc.setAnotherLpu(aDocument.getAnotherLpu()) ;
     	newDoc.setBeginWorkDate(aDocument.getBeginWorkDate()) ;
     	newDoc.setCloseReason(aDocument.getCloseReason()) ;
     	newDoc.setCreateDate(new java.sql.Date(new java.util.Date().getTime())) ;
-    	newDoc.setCreateUsername(theContext.getCallerPrincipal().toString() ) ;
+    	newDoc.setCreateUsername(username) ;
     	newDoc.setDiagnosis(aDocument.getDiagnosis()) ;
     	newDoc.setDisabilityCase(aDocument.getDisabilityCase()) ;
     	newDoc.setDisabilityReason(aDocument.getDisabilityReason()) ;
@@ -1249,6 +1255,15 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	newDoc.setDisabilityRecords(list1) ;
     	newDoc.setRegimeViolationRecords(list2) ;
     	theManager.persist(newDoc) ;
+		//Проверяем, является ли больничный лист - электронным
+		List<ElectronicDisabilityDocumentNumber> elns = theManager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aNumber).getResultList();
+		if (elns!=null&&elns.size()>0) {
+			LOG.info("При создании дубликата выявилось что больничный лист - электронный");
+			ElectronicDisabilityDocumentNumber eln = elns.get(0);
+			eln.setDisabilityDocument(newDoc);
+			eln.setUsername(username);
+			theManager.persist(eln);
+		}
     	return newDoc ;
 
     }

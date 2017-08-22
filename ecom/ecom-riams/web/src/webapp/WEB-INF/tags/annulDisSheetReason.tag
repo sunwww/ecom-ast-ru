@@ -15,10 +15,12 @@
 </style>
 
 <div id='${name}AnnulDisDocumentDialog' class='dialog'>
+
     <h2>Выберите причину аннулирования:</h2>
     <div class='rootPane'>
 
         <form action="javascript:void(0) ;" id="formId">
+            <div id='${name}AnnulDisDocumentResultInfo'>
             <table width="100%" cellspacing="10" cellpadding="10" id="table1" border="1">
                 <tr>
                     <th align="center" width="150">Код</th>
@@ -34,11 +36,12 @@
                 </tr>
             </table>
             <textarea rows="8" cols="55" class="area" required id="text"></textarea>
+            </div>
             <table width="100%" cellspacing="10" cellpadding="10">
                 <tr><td></td></tr>
                 <tr>
-                    <td align="center"><input  type="button" value='Аннулировать' style="font-weight:bold" id="${name}nul" onclick='javascript:${name}Document()'/></td>
-                    <td align="center"><input type="button" value='Закрыть' id="${name}Cancel" onclick='javascript:cancel${name}CloseDocument()'/></td>
+                    <td align="center"><input  type="button" value='Аннулировать' style="font-weight:bold" id="${name}nul" onclick='javascript:${name}ElectronicDocument(this)'/></td>
+                    <td align="center"><input type="button" value='Закрыть' id="${name}Cancel" onclick='javascript:cancel${name}CloseElectronicDocument()'/></td>
                 </tr>
                 <tr><td></td></tr>
             </table>
@@ -47,12 +50,11 @@
     </div>
 </div>
 <script type="text/javascript">
-    var ID;
+
     var theIs${name}AnnulDisDocumentDialogInitialized = false ;
     var the${name}AnnulDisDocumentDialog = new msh.widget.Dialog($('${name}AnnulDisDocumentDialog')) ;
     // Показать
-    function show${name}CloseDocument(id) {
-        ID=id;
+    function show${name}CloseElectronicDocument() {
         showPossibleReasons();
         theTableArrow = null ;
     }
@@ -80,14 +82,17 @@
         });
     }
     // Отмена
-    function cancel${name}CloseDocument() {
+    function cancel${name}CloseElectronicDocument() {
         the${name}AnnulDisDocumentDialog.hide() ;
         document.getElementById('annulDisSheetReasonnul').removeAttribute('hidden');
         document.getElementById("text2").setAttribute('hidden',true);
         document.getElementById("text2").value="";
     }
     // Аннулирование
-    function ${name}Document() {
+    function ${name}ElectronicDocument(aButton) {
+        aButton.value="Подождите...";
+        aButton.disabled=true;
+
         var text=document.getElementById("text").value;
         var radio=document.getElementById('table1').getElementsByTagName("input");
         var code="";
@@ -96,20 +101,12 @@
                 code=document.getElementById(i).textContent;
         if (code=="" || text=="") alert("Должна быть выбрана причина и написан комментарий!");
         else {
-            DisabilityService.setAnnulDisabilitySheet(ID,text,code,{callback: function(res) {
-                if (res.indexOf('#')!=-1) {
-                    var mas = res.split('#');
-                    var number=mas[0]; var snils=mas[1];
-                    DisabilityService.annulDisabilityDocument(number,code,text,snils, { callback: function(a) {
-                        //alert("Электронный ЛН аннулирован.");
-                        //alert(a);
-                        document.getElementById('text2').removeAttribute('hidden');
-                        document.getElementById('text2').innerHTML = a;
-                        document.getElementById("annulDisSheetReasonnul").setAttribute('hidden',true);
-                    }
-                    });
-                }
-                else alert(res);
+            DisabilityService.setAnnulDisabilityDocument(${param.id},text,code,{callback: function(res) {
+                the${name}AnnulDisDocumentDialog.hide() ;
+
+                this.value="Ответ получен...";
+                $('${name}AnnulDisDocumentResultInfo').innerHTML="Ответ сервиса ФСС: \n\n"+res;
+                the${name}AnnulDisDocumentDialog.show() ;
             }
             });
         }

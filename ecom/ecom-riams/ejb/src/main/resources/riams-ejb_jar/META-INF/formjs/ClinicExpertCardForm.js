@@ -31,5 +31,15 @@ function setJournalNumber(aEntity, aCtx) {
         var num = helper.startUseNextValueNoCheck(code,"",aCtx.manager);
         aEntity.setNumberInJournal(""+num);
         aCtx.manager.persist(aEntity);
+
+        var change = new Packages.ru.ecom.mis.ejb.domain.prescription.AdminChangeJournal();
+        var date = new java.util.Date();
+        change.setCreateDate(new java.sql.Date(date.getTime()));
+        change.setCreateTime(new java.sql.Time(date.getTime()));
+        change.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+        change.setCType("EXPERT_CARD_AUTOJOURNALNUMBER");
+        change.setAnnulRecord("ВК с ИД: "+aEntity.getId()+" присвоен номер в журнале: "+num+", код дня: "+code);
+        aCtx.manager.persist(change);
+
     }
 }

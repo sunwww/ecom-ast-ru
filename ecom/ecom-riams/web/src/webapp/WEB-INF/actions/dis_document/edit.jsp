@@ -14,7 +14,6 @@
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="disabilityCase" />
-      <input type='hidden' name='fssServerAddress' id='fssServerAddress' value = '${fssProxyService}'>
       <msh:panel>
           <msh:label property="exportStatus"/>
         <msh:row>
@@ -40,7 +39,7 @@
           <msh:textField property="series" label="Серия" guid="b9d0f37f-bd93-4e91-be9c-703c363ca9a8" />
             <msh:textField property="number" label="Номер"  size="20" fieldColSpan="30" />
             <msh:ifFormTypeIsCreate formName="dis_documentForm">
-            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber()" value="Получить номер"></td>
+            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber('number',this)" value="Получить номер"></td>
             </msh:ifFormTypeIsCreate>
         </msh:row>
         <msh:row>
@@ -256,27 +255,60 @@
      }
      </script>
      </msh:ifFormTypeIsView>
+      <msh:ifFormTypeIsView formName="dis_documentForm">
+          <script type="text/javascript">
+              function getFreeNumber (aField, aButton){
+                  if (""+aField=="") {
+                      aField="number";
+                  }
+                  if ($(aField).value!="") {
+                      alert ("Поле \"Номер\" уже заполнено");
+                      return;
+                  }
+                  DisabilityService.getFreeNumberForDisabilityDocument({
+                      callback: function (num) {
+                          if (num!=null&&num!="") {
+                              $(aField).value=num;
+                              $(aField).className="viewOnly";
+                              $(aField).disabled=true;
+                              aButton.style.display="none";
+                          } else {
+                              alert ("Не удалось получить номер больничного листа");
+                          }
+
+                      }
+                  });
+              }
+          </script>
+      </msh:ifFormTypeIsView>
+      <msh:ifFormTypeIsCreate formName="dis_documentForm">
+          <script type="text/javascript">
+              function getFreeNumber (aField, aButton){
+                  if (""+aField=="") {
+                      aField="number";
+                  }
+                  if ($(aField).value!="") {
+                      alert ("Поле \"Номер\" уже заполнено");
+                      return;
+                  }
+                  DisabilityService.getFreeNumberForDisabilityDocument({
+                      callback: function (num) {
+                          if (num!=null&&num!="") {
+                              $(aField).value=num;
+                              $(aField).className="viewOnly";
+                              $(aField).disabled=true;
+                              aButton.style.display="none";
+                          } else {
+                              alert ("Не удалось получить номер больничного листа");
+                          }
+
+                      }
+                  });
+              }
+          </script>
+      </msh:ifFormTypeIsCreate>
      <msh:ifFormTypeIsNotView formName="dis_documentForm">
     <script type="text/javascript">
-        function getFreeNumber (){
-            if ($('number').value!="") {
-                alert ("Поле \"Номер\" уже заполнено");
-                return;
-            }
-            DisabilityService.getFreeNumberForDisabilityDocument({
-                callback: function (num) {
-                    if (num!=null&&num!="") {
-                        $('number').value=num;
-                        $('number').className="viewOnly";
-                        $('number').disa
-                        $('getFreeNumberButton').style.display="none";
-                    } else {
-                        alert ("Не удалось получить номер больничного листа");
-                    }
-
-                }
-            });
-        }
 
 		prevDocumentAutocomplete.setParentId($('disabilityCase').value) ;
 	    closeReasonAutocomplete.addOnChangeCallback(function() {
@@ -412,7 +444,7 @@
         <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/AnnulSheet">
             <tags:annulDisSheetReason name="annulDisSheetReason" />
             <msh:sideMenu  title="Аннулирование ЛН">
-                <msh:sideLink  name="Аннулировать документ" action="/javascript:showannulDisSheetReasonCloseDocument(${param.id})"/>
+                <msh:sideLink  name="Аннулировать документ" action="/javascript:showannulDisSheetReasonCloseElectronicDocument()"/>
             </msh:sideMenu>
         </msh:ifInRole>
     </msh:ifFormTypeIsView>
