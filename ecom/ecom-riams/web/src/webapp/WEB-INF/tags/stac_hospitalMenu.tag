@@ -214,8 +214,6 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </msh:sideMenu>
  <msh:sideMenu title="Дополнительно">
         <msh:sideLink action="/stac_sslList.do?sslid=${param.id}" name="⇧Все госпитализации пациента" title="Все госпитализации пациента" />
-         <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
-         <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
         <msh:sideLink action="/mis_patients" name="Новая госпитализация" roles="/Mis/MainMenu/Patient,/Policy/Mis/MedCase/Stac/Ssl/Admission/Create"/>
 </msh:sideMenu>
 
@@ -318,24 +316,4 @@ function gotoNewBornHistory(aMedCase,aUrl) {
 			  }
 			}) ;
   }
-
-function watchThisPatient() {
-	HospitalMedCaseService.watchThisPatient(
-			'${param.id}', {
-			callback: function(res) { 
-				alert(res);
-			}
-			}
-			);
-}
-
-function notWatchThisPatient() {
-	HospitalMedCaseService.notWatchThisPatient(
-			'${param.id}', {
-			callback: function(res) { 
-				alert(res);
-			}
-			}
-			);
-}
 </script>

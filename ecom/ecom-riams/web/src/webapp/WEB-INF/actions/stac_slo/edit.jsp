@@ -68,7 +68,8 @@
     	/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/Create" name="Случай ВМП" action="/entityParentPrepareCreate-stac_vmpCase" params="id" title="Добавить случай ВМП"/>
-      	
+          <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+          <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
       </msh:sideMenu>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
       <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
@@ -570,7 +571,26 @@ where m.id ='${param.id}'"/>
   slo_form_is_view = 1 ;
   </script>
   </msh:ifFormTypeIsView>
-      	<script type="text/javascript"> 
+      	<script type="text/javascript">
+            function watchThisPatient() {
+                HospitalMedCaseService.watchThisPatient(
+                    '${param.id}', {
+                        callback: function(res) {
+                            alert(res);
+                        }
+                    }
+                );
+            }
+
+            function notWatchThisPatient() {
+                HospitalMedCaseService.notWatchThisPatient(
+                    '${param.id}', {
+                        callback: function(res) {
+                            alert(res);
+                        }
+                    }
+                );
+            }
       	try {
 	      	var old_action = document.forms["mainForm"].action ; 
 	      	document.forms["mainForm"].action="javascript:check_diags('')" ; 
@@ -597,35 +617,34 @@ where m.id ='${param.id}'"/>
       			$('submitButton').disabled=false ;
       		}
       	}
-      	onload=function(){
-      		
-      		var list_diag = ["complication","concomitant"] ;
-      		for (var j=0;j<list_diag.length;j++) {
-      			
-               		if ($(list_diag[j]+'Diags').value!='') {
-                        var addRowF="";
-                        var ind_f=0 ;
-                  		for (var i=0;i<theFld.length;i++) {
-                  			addRowF+="ar["+(ind_f++)+"],"
-                  			if (theFld[i][2]==1) {
-                  				addRowF+="ar["+(ind_f++)+"],"
-                  			}
-                  		}
-                		addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
-                        addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+",1);"
-                        
-                  		var arr = $(list_diag[j]+'Diags').value.split("#@#");
-                  		for (var i=0;i<arr.length;i++) {
-                  			var ar=arr[i].split("@#@") ;
-                  			//alert(addRowF);
-                              eval(addRowF) ;
-                  		}
-                  	}
-                    
+      	onload=function() {
+
+            var list_diag = ["complication", "concomitant"];
+            for (var j = 0; j < list_diag.length; j++) {
+
+                if ($(list_diag[j] + 'Diags').value != '') {
+                    var addRowF = "";
+                    var ind_f = 0;
+                    for (var i = 0; i < theFld.length; i++) {
+                        addRowF += "ar[" + (ind_f++) + "],"
+                        if (theFld[i][2] == 1) {
+                            addRowF += "ar[" + (ind_f++) + "],"
+                        }
+                    }
+                    addRowF = addRowF.length > 0 ? trim(addRowF).substring(0, addRowF.length - 1) : "";
+                    addRowF = "addRowDiag('" + list_diag[j] + "'," + addRowF + ",1);"
+
+                    var arr = $(list_diag[j] + 'Diags').value.split("#@#");
+                    for (var i = 0; i < arr.length; i++) {
+                        var ar = arr[i].split("@#@");
+                        //alert(addRowF);
+                        eval(addRowF);
+                    }
+                }
+
             }
-	        	
+
         }
-      	
         function addDiag(aDiagType,aCheck) {
             var addRowF="";
             var isCheckReq =true ;
