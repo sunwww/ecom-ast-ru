@@ -44,6 +44,12 @@ public class DirectoryServiceJs {
 			e.printStackTrace();
 		}
 	}
+
+	public void deleteEnryRecord(String EntryId,HttpServletRequest aRequest){
+		SQLupdate(aRequest,"delete from telephonenumber where entry_id = "+EntryId);
+		SQLupdate(aRequest,"delete from entry where id = "+EntryId);
+		SQLupdate(aRequest,"delete from department   where id = (select department_id from entry  where id = "+EntryId+")");
+	}
 	public boolean updateEntryEdit(String aJson,HttpServletRequest aRequest) throws NamingException, JSONException {
 
 		JSONObject obj = new JSONObject(aJson);

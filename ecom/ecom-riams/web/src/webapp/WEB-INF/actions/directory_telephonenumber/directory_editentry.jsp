@@ -7,6 +7,17 @@
 <%@ taglib prefix="title" uri="http://jakarta.apache.org/struts/tags-tiles" %>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
+
+    <tiles:put name="side" type="string">
+        <msh:sideMenu guid="helloSideMenu-123">
+            <msh:sideLink guid="helloSideLinkNew"
+                          roles="/Policy/Mis/Directory/Department/DeleteRecord" key="ALT+D"
+                          action="/javascript:deleteRecord('.do')"
+                          name="Удалить" />
+        </msh:sideMenu>
+    </tiles:put>
+
+
     <tiles:put name="style" type="string">
         <style>
             .number {
@@ -211,6 +222,14 @@
             function goBack() // возврат на родительскую страницу.
             {
                 location.href = "js-riams-phoneTest.do";
+            }
+
+            function deleteRecord() {
+                DirectoryService.deleteEnryRecord(${Id}, {
+                    callback : function(aResult) {
+                        goBack();
+                    }
+                });
             }
         </script>
     </tiles:put>
