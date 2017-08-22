@@ -154,11 +154,18 @@
 
 			extJSON += "}";
 
-			DirectoryService.setEntryAndNumber(extJSON, {
+			DirectoryService.setEntryAndNumber(JSON, {
 				callback : function(aResult) {
 				}
 			});
 		}
+
+		function  save() {
+            DirectoryService.setEntryAndNumber(extJSON, {
+                callback : function(aResult) {
+                }
+            });
+        }
 	</script>
 	</tiles:put>
 	</tiles:insert>

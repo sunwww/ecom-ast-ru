@@ -6,13 +6,12 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp"
 	flush="true">
 	 
-	
 	<tiles:put name="side" type="string">
 		<msh:sideMenu guid="helloSideMenu-123">
 			<msh:sideLink guid="helloSideLinkNew"
 				roles="/Policy/Mis/Directory/Department" key="ALT+N"
-				action="/directory_createEntry"
-				name="Создать!!" />
+				action="/directory_createEntry.do"
+				name="Создать" />
 		</msh:sideMenu>
 	</tiles:put>
 	
@@ -106,7 +105,7 @@ left join voctypenumber vtn on vtn.id = tn.typenumber_id
 ${whereSQL}
 group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment
 order by build, level,dep" />
-		<msh:table name="list" action="javascript:void()" idField="1">
+		<msh:table name="list" action="directory_editEntry.do" idField="1">
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="Внутренний номер" property="2" />
 			<msh:tableColumn columnName="Сотовый" property="3" />
@@ -130,6 +129,10 @@ order by build, level,dep" />
 			  mshPrintTextToExcelTable(document.getElementById("myTemp").outerHTML);
 			  //mshPrintTextToExcelTable(document.getElementsByClassName("tabview").outerHTML);
 		}//tabview sel tableArrow
+
+			function myAlert() {
+				alert(123);
+            }
 		</script>
 	</tiles:put>
 </tiles:insert>
