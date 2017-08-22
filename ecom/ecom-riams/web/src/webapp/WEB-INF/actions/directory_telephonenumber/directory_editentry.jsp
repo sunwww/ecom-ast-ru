@@ -6,6 +6,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom"%>
 <%@ taglib prefix="title" uri="http://jakarta.apache.org/struts/tags-tiles" %>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
+
     <tiles:put name="style" type="string">
         <style>
             .number {
@@ -30,6 +31,7 @@
             request.setAttribute("Id", Id);%>
 
 
+        <msh:ifInRole roles="/Policy/Mis/Directory/Department/EditRecord">
         <msh:panel guid="panel">
             <div class="content">
                 <msh:row>
@@ -61,6 +63,7 @@
                 <td><input id="cancel" type="submit" value="Отмена" onclick="goBack()"/></td>
             </div>
         </div>
+        </msh:ifInRole>
     </tiles:put>
 
 
@@ -202,6 +205,9 @@
                 return intId;
             }
 
+            <msh:ifNotInRole roles="/Policy/Mis/Directory/Department/EditRecord">
+            goBack();
+            </msh:ifNotInRole>
             function goBack() // возврат на родительскую страницу.
             {
                 location.href = "js-riams-phoneTest.do";

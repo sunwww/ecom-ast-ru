@@ -9,7 +9,7 @@
 	<tiles:put name="side" type="string">
 		<msh:sideMenu guid="helloSideMenu-123">
 			<msh:sideLink guid="helloSideLinkNew"
-				roles="/Policy/Mis/Directory/Department" key="ALT+N"
+				roles="/Policy/Mis/Directory/Department/CreateRecord" key="ALT+N"
 				action="/directory_createEntry.do"
 				name="Создать" />
 		</msh:sideMenu>
