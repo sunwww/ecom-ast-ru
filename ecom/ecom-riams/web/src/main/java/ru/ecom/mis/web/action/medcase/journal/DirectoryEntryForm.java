@@ -44,6 +44,5 @@ public class DirectoryEntryForm extends BaseValidatorForm{
     public String getInternalNumber() {	return theInternalNumber; }
     public void setInternalNumber(String aInternalNumber) { theInternalNumber = aInternalNumber;}
     private String theInternalNumber;
-    
-    
+
 }

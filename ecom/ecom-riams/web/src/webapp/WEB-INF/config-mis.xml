@@ -1047,6 +1047,12 @@
 				scope="session">
 				<forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/directory_createentry.jsp" />
 		</action>
+		<action path='/directory_editEntry' type='ru.ecom.web.actions.base.ForwardAction'
+				name='directory_entryCreateEditForm'
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/directory_editentry.jsp" />
+		</action>
        
 	</action-mappings> 
 

@@ -7,22 +7,25 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-	<% String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request); %>
+		<% String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request); %>
 		<msh:form guid="formHello" action="/report_timeexecute.do"
-			defaultField="hello">
+				  defaultField="hello">
 			<msh:panel guid="panel">
 				<msh:row>
 					<msh:row>
 						<msh:autoComplete vocName="vocWorkFunctionShort"
-							property="building" label="Отделение" fieldColSpan="4" size="60" />
+										  property="building" label="Отделение" fieldColSpan="4" size="60" />
 					</msh:row>
 					<msh:row>
-						<td class="label" title="Отображать" colspan="1"><label
-							for="typeDateName" id="typeDateLabel">По:</label></td>
-						<td onclick="this.childNodes[1].checked='checked';"><input
-							type="radio" name="typeDate" value="1"> Дате записи</td>
-						<td onclick="this.childNodes[1].checked='checked';"><input
-							type="radio" name="typeDate" value="2"> Дате приема</td>
+						<td class="label" title="Отображать" colspan="1">
+							<label for="typeDateName" id="typeDateLabel">По:</label>
+						</td>
+						<td onclick="this.childNodes[1].checked='checked';">
+							<input type="radio" name="typeDate" value="1"> Дате записи
+						</td>
+						<td onclick="this.childNodes[1].checked='checked';">
+							<input type="radio" name="typeDate" value="2"> Дате приема
+						</td>
 					</msh:row>
 					<msh:row>
 						<msh:textField property="beginDate" label="c" />
@@ -35,34 +38,34 @@
 
 
 		<%
-		
-		 String SQL = "";
-		 String dep = request.getParameter("building");
 
-		 if(dep!=null && !dep.equals("")){
-		     SQL+=" and vwf.id="+dep;
-		     request.setAttribute("SQL", SQL);
-		 }
-		 
-     String beginDate = request.getParameter("beginDate") ;
-	if (beginDate!=null && !beginDate.equals("")) {
-		String finishDate = request.getParameter("endDate") ;		
-		if (finishDate==null || finishDate.equals("")) {
-			finishDate=beginDate ;
-		}
-		 request.setAttribute("dateStart", beginDate);
-		 request.setAttribute("dateFinish", finishDate) ;
-		 
-		 
-		 String SQLDate="";
-		 if(typeDate.equals("1")){
-		     SQLDate = " and coalesce(wct.createdateprerecord,m.createdate) ";
-		 }else{
-		     SQLDate = " and m.datestart ";
-		 }
-		 request.setAttribute("SQLDate", SQLDate);
-%>
-		
+			String SQL = "";
+			String dep = request.getParameter("building");
+
+			if(dep!=null && !dep.equals("")){
+				SQL+=" and vwf.id="+dep;
+				request.setAttribute("SQL", SQL);
+			}
+
+			String beginDate = request.getParameter("beginDate") ;
+			if (beginDate!=null && !beginDate.equals("")) {
+				String finishDate = request.getParameter("endDate") ;
+				if (finishDate==null || finishDate.equals("")) {
+					finishDate=beginDate ;
+				}
+				request.setAttribute("dateStart", beginDate);
+				request.setAttribute("dateFinish", finishDate) ;
+
+
+				String SQLDate="";
+				if(typeDate.equals("1")){
+					SQLDate = " and coalesce(wct.createdateprerecord,m.createdate) ";
+				}else{
+					SQLDate = " and m.datestart ";
+				}
+				request.setAttribute("SQLDate", SQLDate);
+		%>
+
 		<ecom:webQuery name = "elnList" nativeSql="
 select 
 vwf.name,
@@ -83,10 +86,10 @@ where
 m.id is not null 
 ${SQLDate} between to_date('${dateStart}','dd.MM.yyyy') and to_date('${dateFinish}','dd.MM.yyyy')
 ${SQL}" />
-* - разница между датой, когда был записан и на какую дату записан пациент; <br>
-** - разница между датой записи и датой исполнения;
-    <msh:section>
-    <msh:sectionContent>
+		* - разница между датой, когда был записан и на какую дату записан пациент; <br>
+		** - разница между датой записи и датой исполнения;
+		<msh:section>
+			<msh:sectionContent>
 				<msh:table name="elnList" action="" idField="1">
 					<msh:tableColumn columnName="Рабочая функция" property="1" />
 					<msh:tableColumn columnName="ФИО пациента" property="2" />
@@ -96,29 +99,29 @@ ${SQL}" />
 					<msh:tableColumn columnName="Дата приема" property="6"/>
 					<msh:tableColumn columnName="Время ожидания **" property="7" />
 				</msh:table>
-				</msh:sectionContent>
-			</msh:section>
-					 <%} else { %>
-			    	<p>Укажите период!</p>
-			    	<%}%>
-			
+			</msh:sectionContent>
+		</msh:section>
+		<%} else { %>
+		<p>Укажите период!</p>
+		<%}%>
+
 	</tiles:put>
-	
-	  <tiles:put name="javascript" type="string">
-  	<script type="text/javascript">
-  	checkFieldUpdate('typeDate','${typeDate}',1) ;
-   
-    function checkFieldUpdate(aField,aValue,aDefault) {
-    	
-    	eval('var chk =  document.forms[0].'+aField) ;
-    	var max = chk.length ;
-    	if ((+aValue)>max) {
-    		chk[+aDefault-1].checked='checked' ;
-    	} else {
-    		chk[+aValue-1].checked='checked' ;
-    	}
-    }
-  		
-  	</script>
-  </tiles:put>
+
+	<tiles:put name="javascript" type="string">
+		<script type="text/javascript">
+            checkFieldUpdate('typeDate','${typeDate}',1) ;
+
+            function checkFieldUpdate(aField,aValue,aDefault) {
+
+                eval('var chk =  document.forms[0].'+aField) ;
+                var max = chk.length ;
+                if ((+aValue)>max) {
+                    chk[+aDefault-1].checked='checked' ;
+                } else {
+                    chk[+aValue-1].checked='checked' ;
+                }
+            }
+
+		</script>
+	</tiles:put>
 </tiles:insert>
