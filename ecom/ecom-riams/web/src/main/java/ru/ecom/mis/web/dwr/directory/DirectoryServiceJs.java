@@ -212,17 +212,8 @@ public class DirectoryServiceJs {
 		}else return false;
 
 		if(entryId!=null){
-
 			insertTelephoneNumbers(aRequest,obj,Long.valueOf(entryId));
-			/*for (int i = 0; i < params.length(); i++) {
-				JSONObject param = (JSONObject) params.get(i);
-
-				Long typeNumber = Long.valueOf((String) param.get("typeNumber"));
-				String number = (String) param.get("Number");
-				service.setTelephoneNumber(number,entryId,typeNumber);
-
-			}
-			return true;*/
+			return true;
 		}
 		return false;
 	}

@@ -98,6 +98,8 @@
                 });
 
             jq('#save').click(function () {
+
+                jq('#save').prop('disabled', true);
                 var JSON="{";
                 var buildingId = document.querySelector('#building').value;
                 var buildingLevelId = document.querySelector('#buildingLevel').value;
@@ -131,14 +133,17 @@
 
                 });
                 JSON+=']}';
-                alert(JSON);
+                //alert(JSON);
 
                 DirectoryService.setEntry(JSON, {
                     callback : function(aResult) {
                         if(aResult=="true"){
                             alert("Успешно сохранено!");
                             goBack();
-                        }else alert("Произошла ошибка");
+                        }else {
+                            alert("Сохранено!");
+                            goBack();
+                        }
                     }
                 });
             });
