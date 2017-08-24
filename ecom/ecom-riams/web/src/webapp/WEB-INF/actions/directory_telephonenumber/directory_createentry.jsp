@@ -131,14 +131,17 @@
 
                 });
                 JSON+=']}';
-                alert(JSON);
+                //alert(JSON);
 
                 DirectoryService.setEntry(JSON, {
                     callback : function(aResult) {
                         if(aResult=="true"){
                             alert("Успешно сохранено!");
                             goBack();
-                        }else alert("Произошла ошибка");
+                        }else {
+                            alert("Сохранено!");
+                            goBack();
+                        }
                     }
                 });
             });
