@@ -31,7 +31,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AParentEntityFormInterceptor(ClinicExpertCardPreCreateInterceptor.class)
 )
 public class DirectOfMedicalCommissionForm extends IdEntityForm {
-	
+
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	@Comment("Лист нетрудоспособности выданный другим ЛПУ")
+	@Persist
+	public String getAnotherDisabilityNumber() {return theAnotherDisabilityNumber;}
+	public void setAnotherDisabilityNumber(String aAnotherDisabilityNumber) {theAnotherDisabilityNumber = aAnotherDisabilityNumber;}
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	private String theAnotherDisabilityNumber ;
+
 	/** Тип ВК */
 	@Comment("Тип ВК")
 	@Persist @Required

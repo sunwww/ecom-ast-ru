@@ -205,7 +205,7 @@ cec.id as f1_id, to_char(expertDate,'dd.mm.yyyy')
 ,vs.name as vsname,veps.code||', '||cec.profession as job
 ,mkb.code as mkbcode
 ,vepc.code as vepccode
-,vemc.code||coalesce(', № Л/Н'||dd.number,'')||', д. '||(cec.orderDate-cec.disabilityDate+1)||', '||ves.code as disability
+,coalesce(cec.anotherDisabilityNumber,'')||vemc.code||coalesce(', № Л/Н'||dd.number,'')||', д. '||(cec.orderDate-cec.disabilityDate+1)||', '||ves.code as disability
 ,veds.name||' '||cec.deviationStandardsText as deviationStandards
 ,cec.defects as defects,cec.resultStep as resultStep
 ,vec.name||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||coalesce('. '||vecs.name,'')||' '||coalesce(cec.additionInfo,'') as conclusion
