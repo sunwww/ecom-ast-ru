@@ -37,8 +37,7 @@ function onPreCreate(aForm, aCtx) {
 	       	.getSingleResult() ;
 		if (list>0) throw "В текущему случаю может быть только 1 первичный неиспорченный документ по основному месту работы" ;
 	}
-	if (aForm.workComboType!=0 && 
-		(aForm.mainWorkDocumentNumber.equals("") || aForm.mainWorkDocumentSeries.equals("") ) )
+	if (aForm.workComboType!=0 && aForm.mainWorkDocumentNumber.equals("") )
 			throw "При совмещении необходимо указывать номер и серию документа по основному месту работы" ;
 	//errorThrow(list, ) ;
 	var date = new java.util.Date() ;
