@@ -98,6 +98,8 @@
                 });
 
             jq('#save').click(function () {
+
+                jq('#save').prop('disabled', true);
                 var JSON="{";
                 var buildingId = document.querySelector('#building').value;
                 var buildingLevelId = document.querySelector('#buildingLevel').value;
