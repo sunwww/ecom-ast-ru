@@ -1086,10 +1086,14 @@ public class DisabilityServiceBean implements IDisabilityService  {
     public Long createDuplicateDocument( Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFunction2
     		,String aJob, Boolean aUpdateJob){
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
-    	if (doc.getIsClose()==null || doc.getIsClose()==false) {
+    	boolean isElectronicDocument = false; // Отключаем проверки для электронных больничных листов
+		List<Object[]> list = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",doc.getId()).getResultList();
+		if (list.size()>0) {isElectronicDocument = true;}
+
+    	if (!isElectronicDocument && (doc.getIsClose()==null || doc.getIsClose()==false)) {
     		throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!") ;
     	}
-    	if (doc.getStatus()==null || !doc.getStatus().getCode().equals("0")) {
+    	if (!isElectronicDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
     		throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ДЕЙСТВУЮЩЕГО ДОКУМЕНТА!!!") ;
     	}
     	
