@@ -212,9 +212,20 @@ public class DisabilityServiceJs {
 			return wqr.get2()==null?""+wqr.get1():null ;
 		}
 	}
+	private String getDateGoToWork(Long aDisDocument, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l = service.executeNativeSql("select max(dateto)+1 from disabilityrecord where disabilitydocument_id ="+aDisDocument,1) ;
+		if (l.isEmpty()) {
+			return null ;
+		} else {
+			WebQueryResult wqr = l.iterator().next() ;
+			return wqr.get1().toString();
+		}
+	}
 	public String closeDisabilityDocument(Long aDocId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate,HttpServletRequest aRequest) throws Exception {
-		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
-		return service.closeDisabilityDocument(aDocId, aReasonId,aSeries,aNumber,aOtherCloseDate) ;
+		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
+		String dateGoToWork = getDateGoToWork(aDocId,aRequest);
+		return service.closeDisabilityDocument(aDocId, aReasonId,aSeries,aNumber,aOtherCloseDate,dateGoToWork) ;
 	}
 	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, String aDateType, HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;

@@ -35,6 +35,9 @@
           <msh:textField passwordEnabled="false" hideLabel="false" property="issueDate" viewOnlyField="false" guid="7a444864-9b79-4e21-b218-11989c5d4c98" horizontalFill="false" />
           <msh:autoComplete vocName="vocDisabilityDocumentPrimarity" property="primarity" label="Первичность" guid="2e7aa7a4-336c-4831-b3d9-97d6f64d2ef1" horizontalFill="true" size="20" />
         </msh:row>
+          <msh:row>
+              <msh:textField property="beginWorkDate" viewOnlyField="true" horizontalFill="false" />
+          </msh:row>
         <msh:row>
           <msh:textField property="series" label="Серия" guid="b9d0f37f-bd93-4e91-be9c-703c363ca9a8" />
             <msh:textField property="number" label="Номер"  size="20" fieldColSpan="30" />
@@ -159,9 +162,10 @@
         			<msh:checkBox property="isClose" label="Документ закрыт" guid="c425f-265a-40ab-9581-a8ff"  />
         		</msh:ifFormTypeIsNotView>
          	</msh:ifInRole> 
-        	<msh:ifFormTypeIsView formName="dis_documentForm">
+        	<%--<msh:ifFormTypeIsView formName="dis_documentForm">
         		<msh:checkBox property="isClose" label="Документ закрыт"/>
-        	</msh:ifFormTypeIsView>
+        	</msh:ifFormTypeIsView>--%>
+            <msh:checkBox property="isClose" label="Документ закрыт"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -323,11 +327,14 @@
 	    		    				$('otherCloseDate').value=$('hospitalizedTo').value ;;
 	    		    			}
 	    		    		}
-	    		    	})
+	    		    	});
 	   					$('otherCloseDate').className="required";
 	    			} else {
+	    			   // alert('null');
 	    				$('otherCloseDate').className="";
 	    				$('otherCloseDate').value="";
+                        document.getElementById('isClose').checked = '';
+                        document.getElementById('beginWorkDateReadOnly').value = '';
 	    			}
 	    		}
 	    	})

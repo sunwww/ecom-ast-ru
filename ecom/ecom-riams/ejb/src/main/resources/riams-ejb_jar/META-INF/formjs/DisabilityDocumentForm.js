@@ -182,6 +182,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 		}
 	} else {
 		aForm.setOtherCloseDate("") ;
+        aForm.setBeginWorkDate("");
 	}
 }
 function errorThrow(aList, aError) {

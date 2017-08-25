@@ -13,7 +13,7 @@ public interface IDisabilityService {
 	public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, String textReason, String snils) ;
 	public String exportDisabilityDocument(Long aDocumentId) ;
 	public void createF16vn(String aDateStart,String aDateEnd) ;
-	public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate) ;
+	public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate,String dateGoToWork) ;
 	public List<DisabilityDocumentForm> findDocumentBySeriesAndNumber(String aFind) ;
 	public List<DisabilityDocumentForm> findOpenTicketByDate(String aDate) ;
 	public List<DisabilityDocumentForm> findCloseTicketByDate(String aDate,String aType) ;
