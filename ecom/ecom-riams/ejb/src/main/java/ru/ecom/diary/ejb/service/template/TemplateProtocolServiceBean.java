@@ -9,9 +9,7 @@ import java.util.*;
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
@@ -30,10 +28,10 @@ import ru.ecom.mis.ejb.domain.licence.DischargeDocument;
 import ru.ecom.mis.ejb.domain.medcase.*;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientExternalServiceAccount;
+import ru.ecom.mis.ejb.domain.prescription.AdminChangeJournal;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor;
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
-import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
 import ru.nuzmsh.util.StringUtil;
 
 /**
@@ -59,8 +57,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
              //   public void run() {
 					HttpURLConnection connection = null;
 					try {
-						//HttpClinet client = HttpClientBuilder
-						//HttpPost request =
 						URL url = new URL(address+"/"+aMethod);
 						connection = (HttpURLConnection) url.openConnection();
 						if (params!=null&&!params.isEmpty()) {
@@ -128,10 +124,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	}
 	public void changeAccountInformation (Long aPatientExternalServiceAccountId, EntityManager aManager, String aExternalCode, Date aDateTo) {
 		try {
-			//log.info("Получили результат, manager = <"+aManager+"> <"+aPatientExternalServiceAccountId+"> <"+aExternalCode+"><"+aDateTo+">");
-
-
-		//	List<Patient> list1 = theManager.createQuery("from Patient").setMaxResults(1).getResultList();
 			List<PatientExternalServiceAccount> list = aManager.createQuery("from PatientExternalServiceAccount where id=:id").setParameter("id",aPatientExternalServiceAccountId).getResultList();
 			if (!list.isEmpty()) {
 				PatientExternalServiceAccount p = list.get(0);
@@ -140,13 +132,10 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				if (aDateTo!=null) {p.setDateTo(aDateTo);}
 				aManager.persist(p);
 			}
-
 		} catch (Exception e) {
 			log.error("changeInformation exception: "+e);
 			e.printStackTrace();
 		}
-
-
 	}
 
 	/**
@@ -167,10 +156,9 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			JSONObject root = new JSONObject();
 			Map<String,String> params = new LinkedHashMap<String,String>();
 			String function  = "";
-			//root.put("finishdate",pesa.getDateTo()!=null?pesa.getDateTo():"");
-			//root.put("patientcode",pesa.getExternalCode()!=null?pesa.getExternalCode():"");
-
+			String logType = "EXTERNAL_RESOURCE_";
 			if (pesa.getDateTo()!=null) {
+				logType+="BLOCK_PATIENT";
 				log.info("Отзываем согласие пациента. uid = "+pesa.getExternalCode());
 				//params.put("uid",pesa.getExternalCode());
 				//params.put("blockUser",aUsername);
@@ -178,6 +166,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				root.put("blockUser",aUsername);
 				function="SetBlockPatient";
 			} else {
+				logType+="REGISTER_PATIENT";
 				Date birthDate = pat.getBirthday();
 				Calendar cal = new GregorianCalendar();
 				cal.setTime(birthDate);
@@ -192,7 +181,13 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				root.put("regUser", aUsername);
 			}
 
-
+			AdminChangeJournal changeLog = new AdminChangeJournal();
+			changeLog.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
+			changeLog.setCreateTime(new java.sql.Time(new java.util.Date().getTime()));
+			changeLog.setCreateUsername(aUsername);
+			changeLog.setCType(logType);
+			changeLog.setAnnulRecord(root.toString());
+			aManager.persist(changeLog);
 			makeHttpPostRequest(root.toString(),address,function, params, aPatientExternalServiceAccountId, aManager);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -245,42 +240,62 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		JSONObject root = new JSONObject();
 		JSONArray services = new JSONArray();
 		String serviceType = "", medcaseDate = "", medcaseTime = "", executor = "", record = "";
-		List<Object[]> list = aManager.createNativeQuery("select d.id as f1_did, mc.id f2_mid, mc.dtype from diary d left join medcase mc on mc.id=d.medcase_id " +
-				"left join medcase par on par.id=mc.parent_id left join patient pat on pat.id=COALESCE(mc.patient_id,par.patient_id) where d.dtype='Protocol' and mc.dtype='Visit' and pat.id =:pat").setParameter("pat", aPatientId).getResultList();
+		//List<Object[]> diaryList = aManager.createNativeQuery("select d.id as f1_did, mc.id f2_mid, mc.dtype from diary d left join medcase mc on mc.id=d.medcase_id " +
+		//		"left join medcase par on par.id=mc.parent_id left join patient pat on pat.id=COALESCE(mc.patient_id,par.patient_id) where d.dtype='Protocol' and mc.dtype='Visit' and pat.id =:pat").setParameter("pat", aPatientId).getResultList();
+		List<Object[]> list = aManager.createNativeQuery("select dd.id as f1_did, mc.id f2_mid" +
+				", case when vst.code='LABSURVEY' then 'LABSURVEY' when vst.code='SERVICE' then 'SERVICE' else 'VISIT' end as f3_dtype" +
+				",prot.id f4_prot,list(''||ms.id) as f5_msIds" +
+				" from patient pat" +
+				" left join medcase spo on spo.patient_id=pat.id" +
+				" left join medcase mc on mc.parent_id=spo.id" +
+				" left join diary prot on prot.medcase_id = mc.id and prot.dtype='Protocol'" +
+				" left join document dd on dd.medcase_id=mc.id" +
+				" left join medcase smc on smc.parent_id=mc.id and smc.dtype='ServiceMedCase'" +
+				" left join medservice ms on ms.id=smc.medservice_id" +
+				" left join vocservicetype vst on vst.id=ms.servicetype_id" +
+				" where mc.dtype='Visit' and pat.id =:pat AND mc.datestart is not null " +
+				" group by dd.id, mc.id, mc.dtype, vst.code, prot.id" +
+				" order by mc.datestart desc, mc.timeexecute desc")
+				.setParameter("pat", aPatientId).getResultList();
 		if (!list.isEmpty()) {
-			log.info("Найдено "+list.size()+" протоколов по пациенту "+aPatientId);
+			log.info("Найдено "+list.size()+" выписок по пациенту "+aPatientId);
 			//Выгружаем дневники пол-ки, диагностика, лаборатория
 			for (Object[] rec: list) {
-				JSONObject service = new JSONObject();
-				serviceType="VISIT";
-				Protocol d = aManager.find(Protocol.class,Long.valueOf(rec[0].toString()));
 				Visit vis = aManager.find(Visit.class, Long.valueOf(rec[1].toString()));
-				List<ServiceMedCase> smcList = aManager.createQuery("from ServiceMedCase where parent=:vis").setParameter("vis", vis).getResultList();
-				if (vis.getDateStart() == null) {
-					log.debug("Визит " + vis.getId() + "не был оформлен, ничего не выгружаем");
-					continue;
-				}
-				medcaseDate = "" +  d.getDateRegistration();
-				medcaseTime = "" + d.getTimeRegistration();
-				executor = d.getSpecialist()!=null?(d.getSpecialist().getWorkFunction().getName() + " " + d.getSpecialist().getWorkerInfo()):(vis.getWorkFunctionExecute().getWorkFunction().getName() + " " + vis.getWorkFunctionExecute().getWorkerInfo());
-				record= d.getRecord();
 
-				if (smcList.size() > 0) {
-					if (smcList.size()>1) {log.error("Больше одной услуги в визите. Выгружаем только первую и это очень плохо");}
-					ServiceMedCase smc = smcList.get(0);
-					MedService medService =smc.getMedService();
-					String serviceCode = medService.getServiceType()!=null?medService.getServiceType().getCode():null;
-					if (serviceCode==null) {
-						log.error("Услуга "+medService.getCode()+medService.getName()+" без типа. Выгружать не станем");
+				JSONObject service = new JSONObject();
+				serviceType=rec[2].toString();
+				if (serviceType.equals("VISIT")) { //визит к врачу (не диагностика), выгружаем только выписки из амб. карты (dischargeDocument)
+					if (rec[0]!=null&&!rec[0].equals("")){
+						DischargeDocument dd =aManager.find(DischargeDocument.class,Long.valueOf(rec[0].toString()));
+						record = dd.getHistory();
+					} else {
+						log.warn("У визита "+rec[1]+" нет выписки, запись не выгружаем");
 						continue;
 					}
-					if (serviceCode != null && serviceCode.equals("LABSURVEY")) { //Помечаем случай как лаб. исследование
-						serviceType = "LABSURVEY";
-					} else if (serviceCode != null && serviceCode.equals("SERVICE")) { //Диагностическое исследование
-						serviceType = "SERVICE";
+				} else if (serviceType.equals("LABSURVEY")||serviceType.equals("SERVICE")) { //Диагностика или лаб. исследование
+					if (rec[3]!=null&&!rec[3].equals("")) {
+						Protocol protocol = aManager.find(Protocol.class,Long.valueOf(rec[3].toString()));
+						record = protocol.getRecord();
+					} else {
+						log.warn("У диагностиечкой услуги/визита "+rec[1]+" нет протокола, запись не выгружаем");
 					}
-					service.put("medservicecode", medService.getCode());
-					service.put("medservicename", medService.getName());
+				} else {
+					log.error("Неизвестный тип услуги");
+					continue;
+				}
+				medcaseDate = "" +  vis.getDateStart();
+				medcaseTime = "" + vis.getTimeExecute();
+				executor = vis.getWorkFunctionExecute().getWorkFunction().getName() + " " + vis.getWorkFunctionExecute().getWorkerInfo();
+
+				String[] medServicesIds = (rec[4]!=null&&!rec[4].toString().equals(""))?rec[4].toString().split(","):null;
+				if (medServicesIds!=null) {
+					for (int i=0;i<medServicesIds.length;i++) {
+						Long msId = Long.valueOf(medServicesIds[i]);
+						MedService medService = aManager.find(MedService.class,msId);
+						service.put("medservicecode", medService.getCode());
+						service.put("medservicename", medService.getName());
+					}
 				}
 
 				//Заполнили все данные, начинаем формирование json
