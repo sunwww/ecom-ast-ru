@@ -29,6 +29,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 
 
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	@Comment("Лист нетрудоспособности выданный другим ЛПУ")
+	@Persist
+	public String getAnotherDisabilityNumber() {return theAnotherDisabilityNumber;}
+	public void setAnotherDisabilityNumber(String aAnotherDisabilityNumber) {theAnotherDisabilityNumber = aAnotherDisabilityNumber;}
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	private String theAnotherDisabilityNumber ;
 
 	/** Характеристика случая экспертизы */
 	@Comment("Характеристика случая экспертизы")

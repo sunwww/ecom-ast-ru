@@ -68,7 +68,7 @@
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MedCase/ClinicExpertCard/NumberInJournal">
         <msh:row>
-                	<msh:textField property="numberInJournal" labelColSpan="3" label="Порядковый номер в журнале"/>
+                	<msh:textField property="numberInJournal" labelColSpan="3" label="Порядковый номер в журнале" viewOnlyField="true"/>
         </msh:row>
         </msh:ifInRole>
         <msh:row>
@@ -78,6 +78,9 @@
         <msh:row>
         	<msh:autoComplete property="disabilityDocument" fieldColSpan="3" label="Лист нетруд." parentId="expert_kerForm.patient"
         		vocName="disabilityDocumentByPatient" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+            <msh:textField property="anotherDisabilityNumber" label="Номер ЛН выданного другим ЛПУ"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="modeCase" fieldColSpan="3" label="Вид экспертизы" horizontalFill="true" vocName="vocExpertModeCase"/>

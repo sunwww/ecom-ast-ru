@@ -36,7 +36,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 ,@AIndex(properties={"expertDate"})
 })
 public class ClinicExpertCard extends BaseEntity {
-	
+
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	@Comment("Лист нетрудоспособности выданный другим ЛПУ")
+	public String getAnotherDisabilityNumber() {return theAnotherDisabilityNumber;}
+	public void setAnotherDisabilityNumber(String aAnotherDisabilityNumber) {theAnotherDisabilityNumber = aAnotherDisabilityNumber;}
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	private String theAnotherDisabilityNumber ;
+
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne

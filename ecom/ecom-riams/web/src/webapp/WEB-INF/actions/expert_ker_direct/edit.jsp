@@ -53,6 +53,9 @@
         	<msh:autoComplete property="disabilityDocument" fieldColSpan="5" label="Лист нетруд." parentId="expert_ker_directForm.patient"
         		vocName="disabilityDocumentByPatient" horizontalFill="true"/>
         </msh:row>
+          <msh:row>
+              <msh:textField property="anotherDisabilityNumber" label="Номер ЛН выданного другим ЛПУ"/>
+          </msh:row>
         <msh:row>
         	<msh:autoComplete property="mainDiagnosis" fieldColSpan="5" label="Код осн. диаг." horizontalFill="true" vocName="vocIdc10"/>
         </msh:row>      

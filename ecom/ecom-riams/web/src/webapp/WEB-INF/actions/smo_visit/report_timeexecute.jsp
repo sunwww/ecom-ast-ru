@@ -70,7 +70,7 @@
 select 
 vwf.name,
 p.lastname||' '||p.firstname||' '||p.middlename as fio,
-to_char((coalesce(wct.createdateprerecord,m.createdate)),'dd.MM.yyyy')||' '||to_char((coalesce(wct.createtimeprerecord,m.createtime)),'hh:mm:ss') as whenrecord,
+to_char((coalesce(wct.createdateprerecord,m.createdate)),'dd.MM.yyyy')||' '||to_char((coalesce(wct.createtimeprerecord,m.createtime)),'HH24:MI:ss') as whenrecord,
 to_char((wcd.calendardate),'dd.MM.yyyy')||' '||wct.timefrom as onRec,
 CAST(CAST(wcd.calendardate + wct.timefrom AS timestamp)-CAST(coalesce(wct.createdateprerecord,m.createdate)+coalesce(wct.createtimeprerecord,m.createtime) AS timestamp) as text) as executeTime,
 to_char((m.datestart),'dd.MM.yyyy')||' '||m.timeexecute as exect,
