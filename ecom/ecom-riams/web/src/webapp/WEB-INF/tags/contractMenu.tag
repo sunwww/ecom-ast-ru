@@ -78,12 +78,19 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="Отчет по услугам (группы)" roles="/Policy/Mis/Contract/Journals/Servicies,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
 		title="Разбивка по услугам (группы)"
 		/>
+
+	<msh:sideLink styleId="nationalityReportGroup"
+		action="/contract_nationalityReport"
+		name="Сведения об оказанной мед. помощи иногородним и иностранным гражданам" roles="/Policy/Mis/Contract/Journals/Servicies,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
+		title="Сведения об оказанной мед. помощи иногородним и иностранным гражданам"
+		/>
+
 	<msh:sideLink styleId="financeReport"
 		action="/contract_reports_finance" 
 		name="финансовый отчет" roles="/Policy/Mis/Contract/Journals/Finance,/Policy/Mis/Contract/MedContract/View,/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/View"
 		title="Финансовый отчет"
 		/>
-	<msh:sideLink styleId="contract_policlinic_render" 
+	<msh:sideLink styleId="serviciesPolicReport"
 		action="/contract_policlinic_render" 
 		name="Отчет по поликлинике" roles="/Policy/Mis/Contract/Journals/ContractPolicRender"
 		title="Отчет по поликлинике"
@@ -98,19 +105,19 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		name="Анализ услуг прейскуранта" roles="/Policy/Mis/Contract/Journals/AnalisisPriceServices"
 		title="Анализ услуг прейскуранта"
 		/>
-	<msh:sideLink styleId="analisisPriceServices"
+	<msh:sideLink styleId="quaranteeReport"
 		action="/contract_list_quarantee_by_period.do" 
 		name="Отчет по остаткам по гар. письмам" roles="/Policy/Mis/Contract/Journals/AnalisisPriceServices"
 		title="Отчет по остаткам по гар. письмам"
 		/>
 </msh:sideMenu>
 <msh:sideMenu title="Работа с ККМ">
-<msh:sideLink styleId="medContract"
+<msh:sideLink styleId="printZReport"
 		action="/javascript:printKKMReport('Z')"
 		name="Распечатать Z отчет" roles="/Policy/Config/KKMWork"
 		title="Распечатать Z отчет"
 		/>
-<msh:sideLink styleId="analisisPriceServices"
+<msh:sideLink styleId="printXReport"
 		action="/javascript:printKKMReport('X')" 
 		name="Распечатать X отчет" roles="/Policy/Config/KKMWork"
 		title="Распечатать X отчет"

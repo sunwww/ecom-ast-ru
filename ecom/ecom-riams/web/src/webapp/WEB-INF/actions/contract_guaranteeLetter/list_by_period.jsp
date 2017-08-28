@@ -11,11 +11,7 @@
 		<msh:title mainMenu="Contract" >Поиск гарантийных писем</msh:title>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
-		
-		 <msh:sideMenu title="Добавить">
-			<msh:sideLink key='ALT+N' roles="/Policy/Mis/Contract/MedContract/Create" params="" action="/entityPrepareCreate-contract_medContract" title="Добавить медицинский договор" name="Медицинский договор" />
-		</msh:sideMenu>
-		<tags:contractMenu currentAction="contract_account"/>
+		<tags:contractMenu currentAction="quaranteeReport"/>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
 	<%
