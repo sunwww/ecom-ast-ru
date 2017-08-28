@@ -33,10 +33,10 @@
                 <msh:row>
                     <td class="label" title="Группировака (typePatient)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Группировка по:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeGroup" value="1"> Сведения об оказанной помощи иностранным гражданам
+                        <input type="radio" name="typeGroup" value="1"> Сведения об оказанной помощи иногородним гражданам
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeGroup" value="2"> Сведения об оказанной помощи иногородним гражданам
+                        <input type="radio" name="typeGroup" value="2"> Сведения об оказанной помощи иностранным гражданам
                     </td>
                 </msh:row>
                 <msh:row>
