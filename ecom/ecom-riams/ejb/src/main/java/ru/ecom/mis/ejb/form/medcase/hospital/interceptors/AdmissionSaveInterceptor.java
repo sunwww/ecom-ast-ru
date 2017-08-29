@@ -50,7 +50,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 	    				//throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
 	    				StatisticStubStac.removeStatCardNumber(aContext.getEntityManager(), aContext.getSessionContext(),medCase);
 	    			} else {
-	    				StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());
+	    				StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext(),form);
 	    			}
 	    		} else {
 	    			StatisticStubStac.changeStatCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());    			
@@ -58,7 +58,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				
 			} else {
 				if (form.getDeniedHospitalizating().equals(Long.valueOf(0))) {
-					StatisticStubStac.createStacCardNumber(id,statCardNumber,  aContext.getEntityManager(), aContext.getSessionContext());
+					StatisticStubStac.createStacCardNumber(id,statCardNumber,  aContext.getEntityManager(), aContext.getSessionContext(),form);
 				} else {
 					
 					StatisticStubStac.removeStatCardNumber(aContext.getEntityManager(), aContext.getSessionContext(),medCase);
@@ -72,7 +72,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				.getResultList() ;
 			if (list.size()==0) {
 				//if (aForm.deniedHospitalizating==0) {
-					StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());
+					StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext(),form);
 				//} else {
 					
 				//}	
@@ -112,8 +112,6 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				//medCase.setDiagnosis(diagList);
 			}
 		}
-		
-		
 	}
 
 	/*PatientForm form = (PatientForm) aForm ;
