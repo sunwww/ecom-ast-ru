@@ -112,6 +112,12 @@ public class DisabilityRecord extends BaseEntity{
 	public WorkFunction getWorkFunctionAdd() {return theWorkFunctionAdd;}
 	public void setWorkFunctionAdd(WorkFunction aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
 
+	/** Экспортировано */
+	@Comment("Экспортировано")
+	public Boolean getIsExport(){return theIsExport;}
+	public void setIsExport(Boolean aIsExport) {theIsExport = aIsExport;}
+	private Boolean theIsExport;
+
 	/** Доп. рабочая функция */
 	private WorkFunction theWorkFunctionAdd;
 	/** Специалист */

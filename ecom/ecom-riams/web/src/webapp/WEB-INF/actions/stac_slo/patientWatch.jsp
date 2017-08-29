@@ -49,7 +49,6 @@
                  request.setAttribute("dateBegin", dateBegin);
              }
 	    	%>
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
 	    	<ecom:webQuery name="patList" nativeSql="select dep.id,dep.name,count(pw.id)
 			from MisLpu dep left join patientwatch pw on
 			dep.id=(select m.department_id from medcase m where m.id=pw.medcase_id)
@@ -64,36 +63,16 @@
 	                    <msh:tableColumn columnName="Наименование отделения" property="2"/>
 	                    <msh:tableColumn columnName="Количество пациентов" property="3"/>
 	                </msh:table>
-        </msh:ifNotInRole>
         <%@page import="ru.ecom.web.login.LoginInfo"%>
         <%
             String username = LoginInfo.find(request.getSession()).getUsername();
             request.setAttribute("username", username);
         %>
-        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
-            <ecom:webQuery name="patList" nativeSql="select p.lastname,p.firstname,p.middlename,st.code, dep.name
-            from patientwatch pw
-            left join listwatch lw on lw.id=pw.listwatch_id
-            left join medcase mc on mc.id=pw.medcase_id
-            left join patient p on p.id=mc.patient_id
-            left join statisticstub st on st.medcase_id=mc.id
-            left join mislpu dep on dep.id=mc.department_id
-            left join worker w on w.lpu_id=dep.id
-            left join workfunction wf on wf.worker_id=w.id
-            where lw.datewatch=to_date('${param.dateBegin}','dd.mm.yyyy') and wf.secuser_id=(select id from secuser where login='${username}')"/>
-            <msh:table hideTitle="false" styleRow="2" idField="1" name="patList" action="javascript:void(0)">
-                <msh:tableColumn columnName="Фамилия" property="1"/>
-                <msh:tableColumn columnName="Имя" property="2"/>
-                <msh:tableColumn columnName="Отчество" property="3"/>
-                <msh:tableColumn columnName="Номер карты" property="4"/>
-                <msh:tableColumn columnName="Отделение" property="5"/>
-            </msh:table>
-        </msh:ifInRole>
+
 	    	<%
     		}
 	    else {
 	    	%>
-        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Journal/ByHospital">
 	    	<ecom:webQuery name="patList" nativeSql="select p.lastname,p.firstname,p.middlename,st.code
 	    	from patientwatch pw left join listwatch lw on lw.id=pw.listwatch_id left join medcase mc on
 	    	mc.id=pw.medcase_id  left join patient p on p.id=mc.patient_id left join statisticstub st
@@ -104,7 +83,6 @@
 	                    <msh:tableColumn columnName="Отчество" property="3"/>
 	                    <msh:tableColumn columnName="Номер карты" property="4"/>
 	                </msh:table>
-        </msh:ifNotInRole>
 	    	<%
 	    }
     }

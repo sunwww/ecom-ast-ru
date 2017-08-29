@@ -1295,7 +1295,7 @@ public class DisabilityServiceBean implements IDisabilityService  {
     	
     }
     
-    public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate) {
+    public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate, String dateGoToWork) {
 		DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocumentId) ;
 		if (doc.getDateTo()==null) {
 			throw new IllegalStateException("Нельзя закрыть документ, так как есть не закрытое продление!") ;  
@@ -1304,7 +1304,10 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		doc.setCloseReason(reason) ;
 		doc.setSeries(aSeries) ;
 		doc.setNumber(aNumber) ;
-		doc.setIsClose(Boolean.TRUE) ;
+		doc.setIsClose(Boolean.TRUE);
+
+
+
 		if (reason.getCodeF()!=null && (reason.getCodeF().equals("32")
 				||reason.getCodeF().equals("33")
 				||reason.getCodeF().equals("34")
@@ -1324,6 +1327,16 @@ public class DisabilityServiceBean implements IDisabilityService  {
 		} else {
 			doc.setOtherCloseDate(null) ;
 		}
+
+		System.out.println(reason.getCodeF()+">>>>>>>");
+		if(reason.getCodeF()!=null){
+			if(!reason.getCodeF().equals("31") && !reason.getCodeF().equals("37")) {
+				if (aOtherCloseDate.equals("")) {
+					doc.setBeginWorkDate(Date.valueOf(dateGoToWork));
+				}
+			}
+		}
+
 		theManager.persist(doc) ;
 		return reason.getName() ;
 	}
