@@ -65,6 +65,9 @@
         <msh:row>
         	<msh:autoComplete property="orderConclusion" parentAutocomplete="type" fieldColSpan="5" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
         </msh:row>
+          <msh:row>
+              <msh:textField property="patientHealthInfo" label="Описание состояния здоровью пациента" fieldColSpan="5" size="50" />
+          </msh:row>
         <msh:row>
         	<msh:textField property="delayReason" label="Обоснов. задержки подачи на ВК" horizontalFill="true" labelColSpan="4" fieldColSpan="2"/>
         </msh:row>
