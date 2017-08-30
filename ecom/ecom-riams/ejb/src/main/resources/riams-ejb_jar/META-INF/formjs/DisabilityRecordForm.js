@@ -56,7 +56,6 @@ function onPreSave(aForm,aEntity , aCtx) {
 			dateToNew = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.dateTo) ;
 			if (dateToNew.getTime() != dateToOld.getTime()) 
 				throw "Запрет на изменение дат продления, кроме даты начала 1 периода и даты окончания последнего периода!!!" ;
-			
 		}
 	}
 	checkExport(aEntity.getId(),aCtx);
@@ -67,7 +66,7 @@ function onSave(aForm,aEntity,aCtx) {
 }
 
 function onPreDelete(aEntityId, aContext) {
-	if (aCtx.manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id="+aEntity))
+	if (aContext.manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id="+aEntityId))
 	checkExport(aEntityId, aContext);
 }
 
@@ -83,30 +82,10 @@ function errorThrow(aList, aError) {
 }
 
 function checkExport(aEntityId, aCtx) {
-    var disRec = aCtx.manager.createNativeQuery("select createdate,createtime,disabilitydocument_id from disabilityrecord where id="+aEntityId).getResultList();
-	var number = aCtx.manager.createNativeQuery("select number,id from disabilitydocument  where id ="+ disRec.get(0)[2]).getResultList();
-	var electronic = aCtx.manager.createNativeQuery("select exportdate,exporttime from ElectronicDisabilityDocumentNumber where number='"+ number.get(0)[0] + "'").getResultList();
-	if (electronic!=null&&electronic.size()>0) {
-    	var createDate = disRec.get(0)[0];
-    	if (createDate != null)  createDate = createDate.getTime();  else return;
-    	var createTime = disRec.get(0)[1];
-   		 if (createTime != null)  createTime = createTime.getTime();   else return;
-    	var exportDate = electronic.get(0)[0];
-   		var exportTime = electronic.get(0)[1]
-    	if (exportDate != null) {
-        	exportDate = exportDate.getTime();
-        	if (exportDate > createDate) {
-           	 throw "Нельзя изменять период! Данный период уже выгружен!";
-        	} else if (exportDate == createDate) {
-            // проверка по времени, если даты равны
-            	if (exportTime != null) {
-                	exportTime = exportTime.getTime();
-                	if (exportTime >= createTime) {
-                  	  throw "Нельзя изменять период! Данный период уже выгружен!";
-               		}
-            	}
-       		}
-    	}
-	}
-
+    var disRec = aCtx.manager.createNativeQuery("select isexport from disabilityrecord where id="+aEntityId).getResultList();
+    if(disRec.get(0)!=null && disRec.get(0)!="false"){
+        throw "Нельзя изменять период! Данный период уже выгружен!";
+    }else {
+        return;
+    }
 }
