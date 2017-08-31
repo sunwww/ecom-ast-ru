@@ -100,7 +100,7 @@
     } else {
     	request.setAttribute("dateFld", "dateFinish") ;
     }
-    if (request.getParameter("beginDate")!=null && request.getParameter("finishDate")!=null) {
+    if (date!=null && dateEnd!=null) {
     	%>
     
     <msh:section>
@@ -175,7 +175,7 @@ ${groupSql}"
 
     </msh:section>    	
 
-    	<% }  else {%>
+    	<% } } else {%>
     	<i>Выберите параметры поиска и нажмите "Найти" </i>
     	<% }   %>
 
@@ -208,7 +208,7 @@ ${groupSql}"
 	}
   	function getCheckedValue(radioGrp) {
   		var radioValue ;
-  		for(i=0; i < radioGrp.length; i++){
+  		for(var i=0; i < radioGrp.length; i++){
   		  if (radioGrp[i].checked == true){
   		    radioValue = radioGrp[i].value;
   		    break ;
