@@ -66,9 +66,10 @@ function onSave(aForm,aEntity,aCtx) {
 	onCreate(aForm,aEntity,aCtx);
 }
 
-function onPreDelete(aEntityId, aContext) {
-	if (aCtx.manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id="+aEntity))
-	checkExport(aEntityId, aContext);
+function onPreDelete(aEntityId, aCtx) {
+	if (aCtx.manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id="+aEntityId)) {
+        checkExport(aEntityId, aCtx);
+	}
 }
 
 function errorThrow(aList, aError) {
