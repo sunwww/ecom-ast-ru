@@ -194,17 +194,32 @@
 
     		</msh:table>
     	</msh:section>
-      <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/Record/View" guid="7c589f25-6e30-4d30-bb2f-d86a68f4f0cd">
-        <msh:section guid="sectionChilds" title="Продление" 
-        	createRoles="/Policy/Mis/Disability/Case/Document/Record/Create" createUrl="entityParentPrepareCreate-dis_record.do?id=${param.id}">
-          <ecom:parentEntityListAll guid="parentEntityListChilds" formName="dis_recordForm" attribute="disabilityRecord" />
-          <msh:table editUrl="entityParentEdit-dis_record.do" guid="tableChilds" viewUrl="entityShortView-dis_record.do" name="disabilityRecord" action="entityParentView-dis_record.do" idField="id">
-            <msh:tableColumn columnName="Дата начала" property="dateFrom" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
-            <msh:tableColumn columnName="Дата окончания" property="dateTo" guid="a744754f-5212-4807-910f-e4b252aec108" />
-            <msh:tableColumn columnName="Леч.врач" identificator="false" property="workFunctionInfo"  />
-            <msh:tableColumn columnName="Председ. ВК" identificator="false" property="workFunctionAddInfo"  />
-            <msh:tableColumn columnName="Режим" identificator="false" property="regimeText" guid="14e8c4f9-f430-496c-ae75-ae2a2240937d" />
-          </msh:table>
+      <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/Record/View">
+        <msh:section guid="sectionChilds" title="Продление"
+                     createRoles="/Policy/Mis/Disability/Case/Document/Record/Create" createUrl="entityParentPrepareCreate-dis_record.do?id=${param.id}">
+        <ecom:webQuery name="list" nativeSql="select dr.id,dr.datefrom,dr.dateto,case when dr.workfunction_id is not null then p.lastname||' '||p.firstname||' '||p.middlename||' '||vwf.name else dr.docname||' '||dr.docrole end as doc,
+case when dr.workfunctionadd_id is not null then pvk.lastname||' '||pvk.firstname||' '||pvk.middlename||' '|| vwfvk.name else dr.vkname||' '||dr.vkrole end as vk
+,vr.name as regime
+,case when dr.isexport is null or dr.isexport = false then '-' else '+' end as export
+from disabilityrecord dr
+left join workfunction wfdoc on wfdoc.id =  dr.workfunction_id
+left join vocworkfunction  vwf on vwf.id = wfdoc.workfunction_id
+left join worker w on w.id = wfdoc.worker_id
+left join patient p on p.id = w.person_id
+left join workfunction wfvk on wfvk.id =  dr.workfunctionadd_id
+left join vocworkfunction  vwfvk on vwfvk.id = wfvk.workfunction_id
+left join worker wvk on wvk.id = wfvk.worker_id
+left join patient pvk on pvk.id = wvk.person_id
+left join VocDisabilityRegime vr on vr.id = dr.regime_id
+where disabilitydocument_id = ${param.id}"/>
+        <msh:table name="list" action="entityParentView-dis_record.do" idField="1">
+            <msh:tableColumn columnName="Дата начала" property="2"/>
+            <msh:tableColumn columnName="Дата окончания" property="3"/>
+            <msh:tableColumn columnName="Леч.врач" property="4"/>
+            <msh:tableColumn columnName="Председ. ВК" property="5"/>
+            <msh:tableColumn columnName="Режим" property="6"/>
+            <msh:tableColumn columnName="Выгружен" property="7"/>
+        </msh:table>
         </msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/RegimeViolationRecord/View" guid="1e5e59a5-8acd-4c54-a10a-fafd5ddcc685">
