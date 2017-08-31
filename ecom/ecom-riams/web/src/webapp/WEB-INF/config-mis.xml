@@ -1034,7 +1034,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
         </action>
-        
+		<action path='/reportIMT' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/reportIMT.jsp" />
+		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
                 validate='false'

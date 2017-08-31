@@ -309,6 +309,9 @@
 	                        <li><msh:link  isReport="true" action="patientWatch.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 	                            Отчет по пациентам под наблюдением
 	                        </msh:link></li>
+							<li><msh:link  isReport="true" action="reportIMT.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+								Отчет по ИМТ пациентов
+							</msh:link></li>
 	                        <li><msh:link  isReport="true" action="pres_report4385.do" roles="/Policy/Mis/MedCase/Stac/Journal/ReportForOlesya">
 	                            Отчет по антибиотикорезистентности
 	                        </msh:link></li>

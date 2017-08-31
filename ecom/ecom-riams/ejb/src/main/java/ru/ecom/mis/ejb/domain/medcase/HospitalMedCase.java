@@ -297,10 +297,6 @@ public class HospitalMedCase extends LongMedCase {
 		return reasonDischarge;
 	}
 	
-	
-
-	
-	
 	/** Главное ЛПУ инфо */
 	@Comment("Главное ЛПУ инфо")
 	@Transient
@@ -463,6 +459,41 @@ public class HospitalMedCase extends LongMedCase {
 	private VocJudgment theJudgment35;
 	/** Порядок поступления */
 	private VocAdmissionOrder theAdmissionOrder;
-	
 
+	/** Рост */
+	@Comment("Рост")
+	@Transient
+	public Integer getHeight() {
+		Integer height = 0;
+		if (theStatisticStub != null) {
+			height = theStatisticStub.getHeight();
+		}
+		return height;
+	}
+	/** Вес */
+	@Comment("Вес")
+	@Transient
+	public Integer getWeight() {
+		Integer weight = 0;
+		if (theStatisticStub != null) {
+			weight = theStatisticStub.getWeight();
+		}
+		return weight;
+	}
+	/** Индекс массы тела */
+	@Comment("Индекс массы тела")
+	@Transient
+	public Double getTheIMT() {
+		Double IMT = 0.0;
+		if (theStatisticStub != null) {
+			IMT = theStatisticStub.getIMT();
+		}
+		return IMT;
+	}
+	/** Вес */
+	private Integer theWeight;
+	/** Рост */
+	private Integer theHeight;
+	/** Индекс массы тела */
+	private Double theIMT;
 }
