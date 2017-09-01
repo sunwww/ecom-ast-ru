@@ -661,4 +661,35 @@ public class HospitalMedCaseForm extends MedCaseForm {
 
 	/** Причина выписки */
 	private Long theResultDischarge;
+	/* Рост */
+	@Comment("Рост")
+	@Persist
+	public Integer getHeight() { return theHeight; }
+	public void setHeight(Integer aHeight) {
+		theHeight = aHeight;
+	}
+	/* Вес */
+	@Comment("Вес")
+	@Persist
+	public Integer getWeight() {
+		return theWeight;
+	}
+	public void setWeight(Integer aWeight) {
+		theWeight = aWeight;
+	}
+	/* Индекс массы тела */
+	@Comment("Индекс массы тела")
+	@Persist
+	public Double getTheIMT() {
+		return theIMT;
+	}
+	public void setTheIMT(Double aIMT) {
+		theIMT = aIMT;
+	}
+	/** Вес */
+	private Integer theWeight;
+	/** Рост */
+	private Integer theHeight;
+	/** Индекс массы тела */
+	private Double theIMT;
 }

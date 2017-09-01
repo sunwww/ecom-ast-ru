@@ -118,7 +118,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     
               <msh:sideLink roles="/Policy/Mis/Document/Flow/View" styleId="viewShort" action="/javascript:getDefinition('js-doc_flow-infoByPatient.do?id=${param.id}&medcase=${param.id}&short=Short')" name="Передача документов" title="Передача документов" />
 
-    
+	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="Изменить рост/вес/ИМТ"
+					 action='/javascript:showIMTCloseDocument()' title='Изменить рост/вес/ИМТ' styleId="stac_slo"
+	   />
 </msh:sideMenu>
 
 
@@ -222,6 +224,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </msh:sideMenu>
 <tags:contract_getAccount name="ACCOUNT"  />
 <tags:order263 name="order263" />
+<tags:IMT name="IMT" />
   <script type='text/javascript' src='./dwr/interface/PregnancyService.js'></script>
   <script type="text/javascript">
   function viewOtherVisitsByPatient(d) {

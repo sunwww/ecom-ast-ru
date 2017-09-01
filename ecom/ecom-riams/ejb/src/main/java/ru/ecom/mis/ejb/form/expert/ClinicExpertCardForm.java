@@ -28,6 +28,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 )
 public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 
+	/** Описание состояния здоровья пациента */
+	@Comment("Описание состояния здоровья пациента")
+	@Persist
+	public String getPatientHealthInfo() {return thePatientHealthInfo;}
+	public void setPatientHealthInfo(String aPatientHealthInfo) {thePatientHealthInfo = aPatientHealthInfo;}
+	/** Описание состояния здоровья пациента */
+	private String thePatientHealthInfo ;
 
 	/** Лист нетрудоспособности выданный другим ЛПУ */
 	@Comment("Лист нетрудоспособности выданный другим ЛПУ")

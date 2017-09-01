@@ -177,6 +177,11 @@
         <msh:row guid="e101a36c-d874-4d43-9cfe-fff88ff64ffa">
           <msh:autoComplete property="trauma" label="Травма" guid="ee46d9b9-2961-42be-9a05-c015f4caff23" vocName="vocTraumaType" fieldColSpan="5" horizontalFill="true" />
         </msh:row>
+      <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
+          <msh:textField property="height" label="Рост (см)"  guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="false" />
+          <msh:textField property="weight" label="Вес (кг)" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="false" />
+          <msh:textField property="theIMT" label="ИМТ" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="false" />
+      </msh:row>
         <msh:row guid="f0f8aa80-2ed5-460e-88b7-a86906e249a3" />
         <msh:row guid="20c4aa51-33db-4141-9de9-4c5060ee9049">
           <msh:checkBox property="noActuality" label="Недействительность" guid="6299a6be-428f-4a09-9db5-e4c60154b605" />

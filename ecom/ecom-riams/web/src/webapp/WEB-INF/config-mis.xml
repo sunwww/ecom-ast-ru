@@ -790,7 +790,16 @@
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_reports/list_services.jsp" />
 		</action>
-		<!-- Реестры услуг по договорам -->	
+		<!-- Сведеия об оказанной помощи иногородним-->
+		<action path='/contract_nationalityReport'
+				type='ru.ecom.web.actions.base.ForwardAction'
+				name="contract_reportsForm"
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false"
+					 path="/WEB-INF/actions/contract_reports/nationalityReport.jsp" />
+		</action>
+		<!-- Реестры услуг по договорам -->
 		<action path='/contract_reports_services_group'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm"
@@ -1025,7 +1034,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
         </action>
-        
+		<action path='/reportIMT' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/reportIMT.jsp" />
+		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
                 validate='false'

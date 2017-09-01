@@ -12,7 +12,7 @@
 		<msh:title mainMenu="Contract" >Отчет по услугам</msh:title>
 	</tiles:put>
 	<tiles:put name='side' type='string'>
-	<tags:contractMenu currentAction="serviciesReport"/>
+	<tags:contractMenu currentAction="serviciesPolicReport"/>
 	</tiles:put>
 	<tiles:put name='body' type='string' >
   <%

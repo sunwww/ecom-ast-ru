@@ -18,6 +18,7 @@ import ru.ecom.mis.ejb.domain.medcase.StatisticStubExist;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubNew;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubRestored;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
+import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.StringUtil;
 
 /**
@@ -356,7 +357,7 @@ public class StatisticStubStac {
     * Создание следующего порядкового номера статкарты и сохранение
     * Вызывать после сохранения всех полей
     */
-    public static void createStacCardNumber(long aSlsId, String aStatCardNumberByHand , EntityManager aManager, SessionContext aContext) throws EJBException{
+    public static void createStacCardNumber(long aSlsId, String aStatCardNumberByHand , EntityManager aManager, SessionContext aContext,AdmissionMedCaseForm form) throws EJBException{
     	HospitalMedCase medCase = aManager.find(HospitalMedCase.class, aSlsId);
     	VocPigeonHole vph = medCase.getDepartment()!=null?medCase.getDepartment().getPigeonHole():null ;
     	boolean isEmerPlan = vph!=null && vph.getIsStatStubEmerPlan()!=null && vph.getIsStatStubEmerPlan() ? true:false ;
@@ -516,6 +517,15 @@ public class StatisticStubStac {
 	            }
 	        }
         }
+		//ИМТ рост вес
+		int height = form.getHeight();
+		int weight = form.getWeight();
+		double imt=Math.round((weight / (0.0001 * height * height))*100.0)/100.0;
+		if (imt!=0) {
+			medCase.getStatisticStub().setHeight(height);
+			medCase.getStatisticStub().setWeight(weight);
+			medCase.getStatisticStub().setIMT(imt);
+		}
     }
 
     /**
