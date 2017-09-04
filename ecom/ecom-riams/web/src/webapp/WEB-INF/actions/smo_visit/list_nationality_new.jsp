@@ -108,16 +108,16 @@
 select ${change}
 ,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='OBLIGATORYINSURANCE'  then m.id end) as visitOMC
 ,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='BUDGET' then m.id else null end) as visitBUDGET
-,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='CHARGED' then m.id else null end) as visitPATIENT
+,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and (vss.code='CHARGED' or vss.code='PRIVATEINSURANCE' or vss.code='DOGOVOR')  then m.id else null end) as visitPATIENT
 ,count(distinct case when m.dtype='PolyclinicMedCase' and (m.dateStart!=m.dateFinish or m.dateFinish is null) and vss.code='OBLIGATORYINSURANCE' then m.id else null end) as treatmentOMC
 ,count(distinct case when m.dtype='PolyclinicMedCase' and (m.dateStart!=m.dateFinish or m.dateFinish is null) and vss.code='BUDGET' then m.id else null end) as treatmentBUDGET
-,count(distinct case when m.dtype='PolyclinicMedCase' and (m.dateStart!=m.dateFinish or m.dateFinish is null) and vss.code='CHARGED' then m.id else null end) as treatmentPATIENT
+,count(distinct case when m.dtype='PolyclinicMedCase' and (m.dateStart!=m.dateFinish or m.dateFinish is null) and (vss.code='CHARGED' or vss.code='PRIVATEINSURANCE' or vss.code='DOGOVOR') then m.id else null end) as treatmentPATIENT
 ,count(distinct case when m.dtype='HospitalMedCase' and vss.code='OBLIGATORYINSURANCE' and vbs.code='1'  then m.id else null end) as statOMC
 ,count(distinct case when m.dtype='HospitalMedCase' and vss.code='BUDGET' and vbs.code='1' then m.id else null end) as statBudget
-,count(distinct case when m.dtype='HospitalMedCase' and vss.code='CHARGED' and vbs.code='1' then m.id else null end) as statPatient
+,count(distinct case when m.dtype='HospitalMedCase' and (vss.code='CHARGED' or vss.code='PRIVATEINSURANCE' or vss.code='DOGOVOR') and vbs.code='1' then m.id else null end) as statPatient
 ,count(distinct case when m.dtype='HospitalMedCase' and vss.code='OBLIGATORYINSURANCE' and vbs.code='2'  then m.id else null end) as daystatOMC
 ,count(distinct case when m.dtype='HospitalMedCase' and vss.code='BUDGET' and vbs.code='2' then m.id else null end) as daystatBudget
-,count(distinct case when m.dtype='HospitalMedCase' and vss.code='CHARGED' and vbs.code='2' then  m.id else null end) as daystatPatient
+,count(distinct case when m.dtype='HospitalMedCase' and (vss.code='CHARGED' or vss.code='PRIVATEINSURANCE' or vss.code='DOGOVOR') and vbs.code='2' then  m.id else null end) as daystatPatient
 ,0,0
 from medcase m
 left join medcase smo on smo.parent_id = m.id  
@@ -133,7 +133,7 @@ where m.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${fi
 AND case when m.dtype = 'HospitalMedCase' then case when m.deniedHospitalizating_id is not null then '0' else '1' end else '1' end = '1'
 and (smo.dtype in ('Visit', 'ShortMedCase') or smo.dtype='DepartmentMedCase' and smo.transferDate is null)
 and m.dtype in ('HospitalMedCase', 'PolyclinicMedCase')
-and vss.code in ('OBLIGATORYINSURANCE', 'BUDGET', 'CHARGED')
+and vss.code in ('OBLIGATORYINSURANCE', 'BUDGET', 'CHARGED', 'PRIVATEINSURANCE','DOGOVOR')
 ${groupSql}"
 /> 
 
@@ -158,16 +158,16 @@ ${groupSql}"
             <msh:tableColumn columnName="${names}" property="1"/>            
             <msh:tableColumn columnName="за счет ОМС" property="2" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет бюджета" property="3" isCalcAmount="true"/>
-            <msh:tableColumn columnName="за счет личных средств граждан" property="4" isCalcAmount="true"/>
+            <msh:tableColumn columnName="за счет личных средств граждан, договору и ДМС" property="4" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет ОМС" property="5" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет бюджета" property="6" isCalcAmount="true"/>
-            <msh:tableColumn columnName="за счет личных средств граждан" property="7" isCalcAmount="true"/>
+            <msh:tableColumn columnName="за счет личных средств граждан, договору и ДМС" property="7" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет ОМС" property="8" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет бюджета" property="9" isCalcAmount="true"/>
-            <msh:tableColumn columnName="в т.ч. платно" property="10" isCalcAmount="true"/>
+            <msh:tableColumn columnName="за счет личных средств граждан, договору и ДМС" property="10" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет ОМС" property="11" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет бюджета" property="12" isCalcAmount="true"/>
-            <msh:tableColumn columnName="за счет личных средств граждан" property="13" isCalcAmount="true"/>
+            <msh:tableColumn columnName="за счет личных средств граждан, договору и ДМС" property="13" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет ОМС" property="14" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет бюджета" property="15" isCalcAmount="true"/>
         </msh:table>
