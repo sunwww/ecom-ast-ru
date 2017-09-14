@@ -303,7 +303,8 @@
         <form-bean name="mis_medServiceGroup_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
         <form-bean name="smo_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm" />
         <form-bean name="smo_visitPrescriptionBlankForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitPrescriptionBlankForm" />
-        
+		<form-bean name="stac_bandageForm" type="ru.ecom.mis.ejb.form.medcase.hospital.BandageForm" />
+
         <!-- Лекарсвенные средства -->
         <form-bean name="drug_classificatorForm" type="ru.ecom.mis.ejb.uc.privilege.form.DrugClassificatorForm" />
         <form-bean name="voc_drugForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugClassifyForm" />
@@ -1068,7 +1069,7 @@
 				scope="session">
 			<forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/directory_editentry.jsp" />
 		</action>
-       
+
 	</action-mappings> 
 
 
