@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * Created by Milamesher on 31.08.2017.
  */
-@MappedSuperclass
 @Entity
 @Comment("Медицинская манипуляция")
 @AIndexes({
@@ -39,19 +38,19 @@ import java.util.List;
 public class MedicalManipulation extends BaseEntity {
     /** Дата начала*/
     @Comment("Дата начала")
-    public Date getTheStartDate() {return theStartDate;}
-    public void setTheStartDate(Date aStartDate) {theStartDate = aStartDate;	}
+    public Date getStartDate() {return theStartDate;}
+    public void setStartDate(Date aStartDate) {theStartDate = aStartDate;	}
 
     /** Время начала */
     @Comment("Время начала")
-    public Time getTheStartTime() {return theStartTime;}
-    public void setTheStartTime(Time aStartTime) {theStartTime = aStartTime;	}
+    public Time getStartTime() {return theStartTime;}
+    public void setStartTime(Time aStartTime) {theStartTime = aStartTime;	}
 
     /** Отделение */
     @Comment("Отделение")
     @OneToOne
-    public MisLpu getTheDepartment() {return theDepartment;}
-    public void setTheDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+    public MisLpu getDepartment() {return theDepartment;}
+    public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
 
     /** Анестизия */
     @Comment("Анестезия")
@@ -91,8 +90,8 @@ public class MedicalManipulation extends BaseEntity {
 
     /** Дата окончания */
     @Comment("Дата окончания")
-    public Date getTheEndDate() {return theEndDate;}
-    public void setTheEndDate(Date aEndDate) {theEndDate = aEndDate;}
+    public Date getEndDate() {return theEndDate;}
+    public void setEndDate(Date aEndDate) {theEndDate = aEndDate;}
 
     /** Анестезиолог */
     @Comment("Анестезиолог")
@@ -103,25 +102,25 @@ public class MedicalManipulation extends BaseEntity {
     /** Медсестра */
     @Comment("Медсестра")
     @OneToOne
-    public WorkFunction getTheNurse() {return theNurse;}
-    public void setTheNurse(WorkFunction aNurse) {theNurse = aNurse;}
+    public WorkFunction getNurse() {return theNurse;}
+    public void setNurse(WorkFunction aNurse) {theNurse = aNurse;}
 
     /** Эпикриз */
     @Comment("Эпикриз")
     @Column(length= ColumnConstants.TEXT_MAXLENGHT)
-    public String getTheEpicrisis() {return theEpicrisis;}
-    public void setTheEpicrisis(String aEpicrisis) {theEpicrisis = aEpicrisis;}
+    public String getEpicrisis() {return theEpicrisis;}
+    public void setEpicrisis(String aEpicrisis) {theEpicrisis = aEpicrisis;}
 
     /** Описание */
     @Comment("Описание")
     @Column(length=ColumnConstants.TEXT_MAXLENGHT)
-    public String getTheText() {return theText;}
-    public void setTheText(String aText) {theText = aText;}
+    public String getText() {return theText;}
+    public void setText(String aText) {theText = aText;}
 
     /** Время окончания */
     @Comment("Время окончания")
-    public Time getTheEndTime() {return theEndTime;}
-    public void setTheEndTime(Time aEndTime) {theEndTime = aEndTime;}
+    public Time getEndTime() {return theEndTime;}
+    public void setEndTime(Time aEndTime) {theEndTime = aEndTime;}
 
     /** Хирурги */
     @Comment("Хирурги")
@@ -195,8 +194,8 @@ public class MedicalManipulation extends BaseEntity {
     /** Хирург */
     @Comment("Хирург")
     @OneToOne
-    public WorkFunction getTheSurgeon() {return theSurgeon;}
-    public void setTheSurgeon(WorkFunction aSurgeon) {theSurgeon = aSurgeon;}
+    public WorkFunction getSurgeon() {return theSurgeon;}
+    public void setSurgeon(WorkFunction aSurgeon) {theSurgeon = aSurgeon;}
 
     /** Хирург */
     private WorkFunction theSurgeon;
