@@ -160,9 +160,9 @@
           <msh:textField property="attendant" label="Сопровождающее лицо" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
           <msh:row guid="8gaf5-7144-46a4-9015-eg230a2c">
-              <msh:textField property="height" label="Рост (см)"  guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="false" />
-              <msh:textField property="weight" label="Вес (кг)" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="false" />
-              <msh:textField  property="theIMT" label="ИМТ" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="3" horizontalFill="false" />
+              <msh:textField property="height" label="Рост (см)"  guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="1" horizontalFill="false" />
+              <msh:textField property="weight" label="Вес (кг)" guid="7fvd3-3f43-42b7-8c46-ffd05c" fieldColSpan="1" horizontalFill="false" />
+              <msh:textField  property="theIMT" label="ИМТ" guid="7fvd3-3f43-42b7-8c46-ffd05c" viewOnlyField="true" fieldColSpan="1" horizontalFill="false" />
           </msh:row>
         <msh:ifFormTypeIsNotView formName="stac_sslAdmissionForm">
         <msh:separator label="Направлен <input type='button' value='Список направлений' onclick='viewTable263narp_byPat()'///>" colSpan="6" />
@@ -328,6 +328,7 @@
               var imt=(w / (0.0001 * h * h)).toFixed(2);
               $('theIMT').value=imt;
               if ($('theIMT').value=="NaN") $('theIMT').value="0.0";
+              $('theIMTReadOnly').value=$('theIMT').value;
           }) ;
           eventutil.addEventListener($('height'), "change",function(){
               $('height').value=parseInt($('height').value);
@@ -337,6 +338,7 @@
               var imt=(w / (0.0001 * h * h)).toFixed(2);
               $('theIMT').value=imt;
               if ($('theIMT').value=="NaN") $('theIMT').value="0.0";
+              $('theIMTReadOnly').value=$('theIMT').value;
           }) ;
           eventutil.addEventListener($('theIMT'), "change",function(){
               var w = parseInt($('weight').value);

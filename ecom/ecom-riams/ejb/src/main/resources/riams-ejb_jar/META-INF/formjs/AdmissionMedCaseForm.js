@@ -118,6 +118,10 @@ function onPreSave(aForm,aEntity, aCtx) {
 			if (+aForm.orderLpu>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Кем направлен!!!" ;}
 			if (+aForm.sourceHospType>0) {} else {throw "При плановой госпитализации необходимо заполнять поле Тип направившего ЛПУ!!!" ;}
 		}
+		//Рост и вес - обязательные поля
+        if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/MustFillHeigthAndWeigth")) {
+			if (+aForm.height>0&&+aForm.weight>0) {} else {throw "При плановой госпитализации поля \"рост\", \"вес\" являются обязательными";}
+		}
 	} else {
 		if (+aForm.orderType>0) {} else {throw "При экстренной госпитализации раздел доставлен является обязательным для заполнения!!!" ;}
 		if (+aForm.preAdmissionTime>0) {} else {throw "При экстренной госпитализации раздел доставлен является обязательным для заполнения!!!" ;}
