@@ -14,7 +14,7 @@
                 top:0px;  height:55em;
                 overflow: auto;
             }
-            .theText {
+            .text {
                 width:100%;
             }
         </style>
@@ -43,15 +43,15 @@
                     <msh:separator label="Сведения о перевязке" colSpan="5"  />
                 </msh:ifNotInRole>
                 <msh:row guid="f7540b-4474-46c6-b162-828">
-                    <msh:textField property="theStartDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
-                    <msh:textField property="theStartTime" label="время" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
+                    <msh:textField property="startDate" label="Начало дата" guid="e8636a99-31e6-4c99-a6f5-825da2a35caf" />
+                    <msh:textField property="startTime" label="время" guid="b5bc7756-2fa4-496b-8a35-f54f44be9732" />
                 </msh:row>
                 <msh:row guid="f7b4a40b-4474-46c6-b162-80be1590e1a8">
-                    <msh:textField property="theEndDate" label="Окончание дата" guid="e8599-31e6-4c99-a6f5-885caf" />
-                    <msh:textField property="theEndTime" label="время" guid="496b-8a35-f89732" />
+                    <msh:textField property="endDate" label="Окончание дата" guid="e8599-31e6-4c99-a6f5-885caf" />
+                    <msh:textField property="endTime" label="время" guid="496b-8a35-f89732" />
                 </msh:row>
                 <msh:row guid="a03a1e02-5a44-4403-bb71-fb8e5afcec43">
-                    <msh:autoComplete property="theDepartment" label="Отделение" guid="cfc50051-15f6-4b6f-a382-9c5387482c60" fieldColSpan="3" horizontalFill="true" vocName="vocDepartmet" />
+                    <msh:autoComplete property="department" label="Отделение" guid="cfc50051-15f6-4b6f-a382-9c5387482c60" fieldColSpan="3" horizontalFill="true" vocName="vocDepartmet" />
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="serviceStream" label="Поток обслуживания" fieldColSpan="3" horizontalFill="true" vocName="vocServiceStream" />
@@ -60,27 +60,15 @@
                 <msh:row guid="1221-2e6b-425a-a14e-1c02959">
                     <msh:autoComplete property="medService" label="Услуга" size="60" fieldColSpan="3" horizontalFill="true" vocName="medServiceForBandage" />
                 </msh:row>
-                <mis:ifPatientIsWoman classByObject="MedCase" idObject="${medcase}">
-
-                    <msh:row>
-                        <msh:autoComplete property="profile" label="Профиль" guid="e22-9d6f-4c39-a6a1-302f14f" horizontalFill="true" vocName="vocSurgicalProfile" />
-                    </msh:row>
-
-                    <msh:row guid="1221-2e6b-425a-a14e-1c02959">
-                        <msh:autoComplete property="abortion" vocName="vocAbortationByProfile" parentAutocomplete="profile" fieldColSpan="3" horizontalFill="true" label="Тип аборта"/>
-                    </msh:row>
-                </mis:ifPatientIsWoman>
 
 
-                <msh:hidden property="surgeonFunctions"/>
-
-                <msh:hidden property="theNurse"/>
+                <msh:hidden property="nurse"/>
                 <msh:hidden property="aspect"/>
 
 
                 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                     <msh:row guid="ca8a7727-42ac-4c64-8e52-23d4f84dfe43">
-                        <msh:textArea rows="6" hideLabel="false" property="theText" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол" />
+                        <msh:textArea rows="6" hideLabel="false" property="text" viewOnlyField="false" guid="e-5833-4bc3-80df-52fdd237fce9" fieldColSpan="3" label="Протокол" />
                     </msh:row>
                     <msh:row>
                         <msh:ifFormTypeIsNotView formName="stac_bandageForm" guid="1c1ec646-5-b9d5-177a7324aa7f">
@@ -97,13 +85,10 @@
 
                 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                     <msh:row>
-                        <msh:autoComplete label="Хирург" property="theSurgeon" horizontalFill="true" fieldColSpan="3" vocName="workFunctionIsSurgical" />
-                    </msh:row>
-                    <msh:row guid="f0851bc5-6ac2-4e6f-bfab-90593e637799">
-                        <ecom:oneToManyOneAutocomplete colSpan="3" label="Ассистенты" property="surgeonFunctions" vocName="workFunctionIsSurgical" guid="e68271bf-c384-4022-9fb6-6ba7eeedb6fe" />
+                        <msh:autoComplete label="Хирург" property="surgeon" horizontalFill="true" fieldColSpan="3" vocName="workFunctionIsSurgical" />
                     </msh:row>
                     <msh:row guid="12721-2e6b-425a-a14e-1c0298959">
-                        <msh:autoComplete property="theNurse" label="Медсестра" guid="e282-9d6f-4c39-a6a1-30g2f14f" fieldColSpan="3" horizontalFill="true" vocName="workFunctionIsInstrumentNurse" />
+                        <msh:autoComplete property="nurse" label="Медсестра" guid="e282-9d6f-4c39-a6a1-30g2f14f" fieldColSpan="3" horizontalFill="true" vocName="workFunctionIsInstrumentNurse" />
                     </msh:row>
                 </msh:ifNotInRole>
 
@@ -147,7 +132,7 @@
             </msh:panel>
         </msh:form>
         <msh:ifFormTypeIsNotView formName="stac_bandageForm" guid="6ea7dcbb-d32c-4230-b6b0-a662dcc9f568">
-            <tags:templateProtocol property="theText" name="TheTextTemp"
+            <tags:templateProtocol property="text" name="TheTextTemp"
                                    idSmo="stac_bandageForm.medCase" version="Visit" voc="protocolVisitByPatient"
             />
         </msh:ifFormTypeIsNotView>
@@ -182,33 +167,19 @@
             var isChangeSizeEpicrisis=1 ;
             function changeSizeEpicrisis() {
                 if (isChangeSizeEpicrisis==1) {
-                    Element.addClassName($('theText'), "protocols") ;
+                    Element.addClassName($('text'), "protocols") ;
                     if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Уменьшить' ;
                     isChangeSizeEpicrisis=0 ;
                 } else {
-                    Element.removeClassName($('theText'), "protocols") ;
+                    Element.removeClassName($('text'), "protocols") ;
                     if ($('changeSizeEpicrisisButton')) $('changeSizeEpicrisisButton').value='Увеличить' ;
                     isChangeSizeEpicrisis=1;
                 }
             }
-            eventutil.addEventListener($('theText'), "dblclick",
+            eventutil.addEventListener($('text'), "dblclick",
                 function() {
                     changeSizeEpicrisis() ;
                 }) ;
-           // alert($('department').value);
-          //  alert($('lpu').value);
-            /*departmentAutocomplete.addOnChangeCallback(function() {
-             try {
-
-             departmentAutocomplete.setParentId($('department').value);
-
-
-             } catch (e) {
-             }
-             });*/
-            //  alert($('lpu').value);
-            // $('department').value=$('lpu').value;
-            //departmentAutocomplete.setParentId($('lpu').value)
         </script>
     </tiles:put>
 </tiles:insert>
