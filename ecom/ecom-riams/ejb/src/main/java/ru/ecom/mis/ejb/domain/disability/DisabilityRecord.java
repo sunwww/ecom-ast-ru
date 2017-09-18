@@ -118,6 +118,48 @@ public class DisabilityRecord extends BaseEntity{
 	public void setIsExport(Boolean aIsExport) {theIsExport = aIsExport;}
 	private Boolean theIsExport;
 
+
+	private String docName;
+	private String docRole;
+	private String vkName;
+	private String vkRole;
+
+	/** ФИО врача */
+	@Comment("ФИО врача")
+	public String getDocName() {
+		return docName;
+	}
+	public void setDocName(String docName) {
+		this.docName = docName;
+	}
+	/** Роль врача */
+	@Comment("Роль врача")
+	public String getDocRole() {
+		return docRole;
+	}
+	public void setDocRole(String docRole) {
+		this.docRole = docRole;
+	}
+
+	/** ФИО ВК */
+	@Comment("ФИО ВК")
+	public String getVkName() {
+		return vkName;
+	}
+	public void setVkName(String vkName) {
+		this.vkName = vkName;
+	}
+
+	/** Роль ВК */
+	@Comment("Роль ВК")
+	public String getVkRole() {
+		return vkRole;
+	}
+	public void setVkRole(String vkRole) {
+		this.vkRole = vkRole;
+	}
+
+
 	/** Доп. рабочая функция */
 	private WorkFunction theWorkFunctionAdd;
 	/** Специалист */
