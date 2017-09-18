@@ -106,22 +106,24 @@
     <%
     String priceList = (String)request.getParameter("priceList") ;
     String date1 = (String)request.getParameter("dateEnd") ;
-    
-    if (priceList!=null && !priceList.equals("") && !priceList.equals("0"))  {
+    String filterByCode = request.getParameter("filterByCode") ;
+    String filterByName = request.getParameter("filterByName") ;
+    if ((filterByCode!=null&& !filterByCode.equals(""))||(filterByName!=null&&!filterByName.equals("")))  {
 
-    	if (typeFindMed!=null && typeFindMed.equals("1")) {
+
+    	if (typeFindMed!=null && typeFindMed.equals("1")) { //совпадают коды
     		request.setAttribute("findMedSql", " pp.code=ms.code") ;
     		request.setAttribute("findMedAddSql", " and ms.id is not null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("2")) {
+    	} else if (typeFindMed!=null && typeFindMed.equals("2")) { //совпадают названия
     		request.setAttribute("findMedSql", " trim(upper(ms.name))=trim(upper(pp.name))") ;
     		request.setAttribute("findMedAddSql", " and ms.id is not null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("3")) {
+    	} else if (typeFindMed!=null && typeFindMed.equals("3")) { //совпадают коды и названия
     		request.setAttribute("findMedSql", " pp.code=ms.code and trim(upper(ms.name))=trim(upper(pp.name))") ;
     		request.setAttribute("findMedAddSql", " and ms.id is not null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("4")) {
+    	} else if (typeFindMed!=null && typeFindMed.equals("4")) { //нет совпадений
     		request.setAttribute("findMedSql", " (pp.code=ms.code or trim(upper(ms.name))=trim(upper(pp.name)))") ;
     		request.setAttribute("findMedAddSql", " and ms.id is null") ;
-    	} else if (typeFindMed!=null && typeFindMed.equals("5")) {
+    	} else if (typeFindMed!=null && typeFindMed.equals("5")) { //искать всё
     		request.setAttribute("findMedSql", "") ;
     	} 
     	if (typeView!=null && typeView.equals("1")) {
@@ -131,12 +133,11 @@
     	} else if (typeView!=null && typeView.equals("3")) {
     		request.setAttribute("viewSql", "") ;
     	} 
-    	String filterByCode = request.getParameter("filterByCode") ;
-    	String filterByName = request.getParameter("filterByName") ;
+
     	ActionUtil.setUpperLikeSql("filterByCode", "ms1.code", request) ;
     	ActionUtil.setUpperLikeSql("filterByName", "ms1.name", request) ;
     	ActionUtil.setParameterFilterSql("priceList","pp.priceList_id", request) ;
-    	if (typeFindMed!=null && (typeFindMed.equals("1") ||typeFindMed.equals("2")||typeFindMed.equals("3")||typeFindMed.equals("4"))) {
+    	if (typeFindMed!=null && (typeFindMed.equals("1") ||typeFindMed.equals("2")||typeFindMed.equals("3")||typeFindMed.equals("4"))&&priceList!=null&&!!priceList.equals("")&&!priceList.equals("0")) {
     	%>
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
@@ -145,6 +146,7 @@ select coalesce(pp.id,0)||'&medService_id='||coalesce(ms.id,'0') as ppid,pp.code
 ,ms1.code as ms1code,ms1.name as ms1name
 ,ms.code as mscode,ms.name as msname,pp.cost
 ,ms1.id as msidname
+,pl.name as plName
 from MedService ms1
 left join PriceMedService pms on ms1.id=pms.pricePosition_id
 left join PricePosition pp on pms.medService_id=pp.id
@@ -167,7 +169,7 @@ order by ms1.code
     </msh:sectionTitle>
     <msh:sectionContent>
     <msh:table selection="multy" name="journal_expert"
-    viewUrl="entityParentView-mis_medService.do?short=Short" 
+    viewUrl="entityParentView-mis_medService.do?short=Short"
      action="entityParentView-mis_medService.do" idField="1" >
      	<msh:tableNotEmpty>
      		                        <tr>
@@ -182,7 +184,7 @@ order by ms1.code
      			<th></th>
      			<th></th>
      			<th colspan="3">По прейскуранту</th>
-     			<th colspan="2">Соответсвие</th>
+     			<th colspan="2">Соответствие</th>
      			<th colspan="2">Подобранное соответствие</th>
      		</tr>
      	</msh:tableNotEmpty>
@@ -198,16 +200,24 @@ order by ms1.code
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <%} else { %>
-    <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
+    <%} else {
+    if (priceList!=null&&!priceList.equals("")&&!priceList.equals("0")) {
+        request.setAttribute("priceListSql","(pp.dtype='PricePosition' and pp.priceList_id = '"+priceList+"' or pp.dtype is null) ");
+    } else {
+        request.setAttribute("priceListSql"," ms1.id is not null ");
+    }
+    %>
+      <msh:section>
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select ms1.id as ms1id,pp.code as ppcode,pp.name as ppname
-,ms1.code as ms1code,ms1.name as ms1name,pp.cost,pp.id
+,ms1.code as ms1code,ms1.name as ms1name,pp.cost,pp.id as ppid, pl.name as priceList
+,case when ms1.finishdate is not null then ' color:red; ' end as rowStyle
 from MedService ms1
 left join PriceMedService pms on ms1.id=pms.medService_id
 left join PricePosition pp on pms.pricePosition_id=pp.id
-where (pp.dtype='PricePosition' and pp.priceList_id = '${param.priceList}' or pp.dtype is null) ${viewSql} 
-${filterByCodeSql} ${filterByNameSql}  and ms1.finishdate is null
+left join PriceList pl on pl.id=pp.pricelist_id
+where ${priceListSql} ${viewSql}
+${filterByCodeSql} ${filterByNameSql}
 order by ms1.code
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -223,26 +233,27 @@ order by ms1.code
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="journal_expert"
+    <msh:table name="journal_expert" styleRow="9"
     viewUrl="entityParentView-mis_medService.do?short=Short" 
-     action="entityParentView-mis_medService.do" idField="1" >
+     action="entityParentView-mis_medService.do" idField="1"  >
      	<msh:tableNotEmpty>
      		<tr>
      			<th></th>
      			<th></th>
-     			<th colspan="2">Услуга</th>
+     			<th colspan="3">Услуга</th>
      			<th colspan="5">По прейскуранту</th>
      		</tr>
      	</msh:tableNotEmpty>
       <msh:tableColumn columnName="#" property="sn" />
       <msh:tableColumn columnName="код" property="4" />
       <msh:tableColumn columnName="наименование" property="5" />
+        <msh:tableColumn property="1" columnName="ИД"/>
 	  	<msh:tableButton property="1" buttonFunction="showVMSServiceFind" addParam="'PricePosition','MedService'" buttonName="Прикрепление к прейскуранту" buttonShortName="П"/>
-      
       <msh:tableColumn columnName="код" property="2" />
       <msh:tableColumn columnName="наименование" property="3" />
       <msh:tableColumn columnName="цена" property="6" />
       <msh:tableColumn columnName="id" property="7" />
+      <msh:tableColumn columnName="Прайслист" property="8" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
