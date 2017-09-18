@@ -22,6 +22,9 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.nuzmsh.util.PropertyUtil;
 
@@ -49,6 +52,35 @@ public class WebQueryServiceBean implements IWebQueryService {
         }
         return "---------------no jndi" ;
     }*/
+	public String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult) {
+		List<Object> list = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")).setMaxResults(aMaxResult).getResultList();
+		try {
+			if (list.size()>0) {
+                JSONArray ret = new JSONArray();
+                boolean first = true;
+                for (Object rowO: list) {
+                    if (rowO instanceof Object[]){
+                        Object[] row = (Object[]) rowO;
+                        if (first && row.length<aFieldNames.length) {
+                            return "Количество возвращаемых столбцов меньше количества ужидаемых столбцов (возвращено "+row.length+" при ожидаемых "+aFieldNames.length+")";
+                        }
+                        first=false;
+                        JSONObject el = new JSONObject();
+                        int fldId=0;
+                        for (Object val:row){
+                            el.put(aFieldNames.length>fldId?aFieldNames[fldId]:"fldValue_"+fldId,val.toString());
+                            fldId++;
+                        }
+                        ret.put(el);
+                    }
+                }
+            return ret.toString();
+            }
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult) {
 		
 		return executeQuery(theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")),aMaxResult) ;
