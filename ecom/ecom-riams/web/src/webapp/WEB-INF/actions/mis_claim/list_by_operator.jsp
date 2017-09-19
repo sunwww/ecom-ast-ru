@@ -197,12 +197,13 @@ if (searchField!=null&&!searchField.equals("")&&searchField.length()>3) {
 ,cl.address as address
 ,coalesce(cl.executorcomment,'') as comment
 ,cl.id||':'||coalesce(cl.executorcomment,'') as comment2
+,cl.id as clid
+,cl.startworkusername
 from claim cl
 left join workfunction uwf on uwf.id=cl.workfunction
 left join vocworkfunction vwf on vwf.id=uwf.workfunction_id
 left join worker uw on uw.id=uwf.worker_id
 left join patient upat on upat.id=uw.person_id
-
 left join vocclaimtype vct on vct.id=cl.claimtype
 left join workfunctionclaimtype wfct on wfct.claimtype=vct.id
 left join workfunction gwf on gwf.id=wfct.workfunction
