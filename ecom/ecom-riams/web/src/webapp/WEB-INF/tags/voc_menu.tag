@@ -27,7 +27,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 </style>
 <msh:sideMenu></msh:sideMenu>
 	    <msh:sideMenu title="Перейти">
-		 <msh:sideLink styleId="org" action="/pharm_voc" name="Отчет по аптеке" roles="/Policy/Mis/Pharmacy/PharmReport" title="Отчет по аптеке"/>
+		 <msh:sideLink styleId="org" action="/pharm_voc" name="Отчет по аптеке" roles="/Policy/Mis/Pharmacy/PharmReport" title="Отчет по аптеке" />
 	    <msh:sideLink styleId="org" action="/entityPrepareCreate-directory_department" name="Отделения" roles="/Policy/Mis/Directory/Department" title="Перейти к списку отделений"/>
 	    <msh:sideLink styleId="org" action="/entityPrepareCreate-directory_entry" name="Персоны" roles="/Policy/Mis/Directory/Department" title="Перейти к списку персон"/>
 	    <msh:sideLink styleId="org" action="/entityPrepareCreate-directory_telephonenumber" name="Номера" roles="/Policy/Mis/Directory/Department" title="Перейти к списку персон"/>
