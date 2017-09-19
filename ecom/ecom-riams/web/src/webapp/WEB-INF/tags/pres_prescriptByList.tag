@@ -40,6 +40,7 @@
     </msh:section>
 
 
+<msh:ifInRole roles="/Policy/Mis/Pharmacy/CreateDrugPrescription">
     <msh:section>
     	<ecom:webQuery name="pres" nativeSql="select pres.id,vd.name as nm,
 to_char(pres.planstartdate,'dd.MM.yyyy') as start,
@@ -67,8 +68,7 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
-
-
+</msh:ifInRole>
     <msh:section>
     	<ecom:webQuery name="pres" nativeSql="select 
     	p.id as pid,pl.id as plid,ms.name as drname
