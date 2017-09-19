@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface IWebQueryService {
-
+	String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult);
 	Collection<WebQueryResult> executeHql(String aQuery) ;
 	Collection<WebQueryResult> executeNativeSql(String aQuery) ;
 	Collection<WebQueryResult> executeHql(String aQuery,Integer aMaxResult) ;

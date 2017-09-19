@@ -80,7 +80,17 @@ public class Anesthesia extends BaseEntity{
 
 	/** Хирургическая операция */
 	private SurgicalOperation theSurgicalOperation;
-	
+
+	/* Манипуляция*/
+	@Comment("Манипуляция")
+	@ManyToOne
+	public MedicalManipulation getManipulation() {return theManipulation;}
+	public void setManipulation(MedicalManipulation aManipulation) {theManipulation = aManipulation;}
+
+  	/* Манипуляция */
+	private MedicalManipulation theManipulation;
+
+
 	/** Анестезиолог */
 	@Comment("Анестезист")
 	@OneToOne

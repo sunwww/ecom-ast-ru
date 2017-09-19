@@ -35,7 +35,103 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 public class ContractServiceJs {
 	
 	public static Logger log = Logger.getLogger(ContractServiceJs.class);
-	
+
+	public String getSpecializations(String aServiceStream, HttpServletRequest aRequest) throws NamingException, JSONException {
+		log.error("Всё отлично: "+aServiceStream);
+		if (aServiceStream==null) return null;
+		StringBuilder sqlAppend = new StringBuilder();
+		if (aServiceStream.equals("OMC")) {
+			sqlAppend.append(" and wct.reservetype_id is null");
+		} else if (aServiceStream.equals("CHARGED")){
+			sqlAppend.append(" and vrt.code='PAYMENT'");
+		} else {
+			log.error("Неправильный источник оплаты: "+aServiceStream);
+			return null;
+		}
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String[] fields = {"spec_id", "spec_name"};
+		StringBuilder sql = new StringBuilder();
+		sql.append("select vwf.id ,vwf.name")
+				.append(" from WorkFunction as wf")
+				.append(" left join Worker as w on w.id=wf.worker_id")
+				.append(" left join Patient as p on p.id=w.person_id")
+				.append(" inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id")
+				.append(" left join WorkCalendar wc on wc.workFunction_id=wf.id")
+				.append(" left join workcalendarday wcd on wcd.workcalendar_id=wc.id")
+				.append(" left join workcalendartime wct on wct.workCalendarDay_id=wcd.id")
+				.append(" left join vocServiceReserveType vrt on vrt.id=wct.reservetype_id")
+				.append(" left join mislpu mlGr on mlGr.id=wf.lpu_id")
+				.append(" where wc.id is not null")
+				.append(" and wcd.calendardate>=current_date")
+				.append(" and wf.group_id is null ")
+				.append(" and (wf.archival is null or wf.archival='0')")
+				.append(" and (wf.isnoviewremoteuser  ='0' or wf.isnoviewremoteuser is null)")
+				.append(" and wct.medCase_id is null and wct.prepatient_id is null ")
+				.append(" and (wct.prepatientinfo is null or wct.prepatientinfo='') ")
+				.append(sqlAppend)
+				.append(" group by vwf.id, vwf.name")
+				.append(" having count(wct.id)>0");
+		log.info("Поток обслуживания = "+aServiceStream+". Запрос для поиска специальностей="+sql);
+		String jsonData = service.executeNativeSqlGetJSON(fields,sql.toString(),50);
+		if (jsonData!=null) {
+			JSONObject ret = new JSONObject();
+			ret.put("type","specializations");
+			ret.put("data",new JSONArray(jsonData));
+			return ret.toString();
+		}
+
+		return null;
+	}
+
+	public String getDoctorsBySpeciality(Long aSpecialityId, String aServiceStream, HttpServletRequest aRequest) throws NamingException, JSONException {
+		log.error("Всё отлично: "+aServiceStream);
+		if (aServiceStream==null) return null;
+		StringBuilder sqlAppend = new StringBuilder();
+		if (aServiceStream.equals("OMC")) {
+			sqlAppend.append(" and wct.reservetype_id is null");
+		} else if (aServiceStream.equals("CHARGED")){
+			sqlAppend.append(" and vrt.code='PAYMENT'");
+		} else {
+			log.error("Неправильный источник оплаты: "+aServiceStream);
+			return null;
+		}
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String[] fields = {"doctor_id", "doctor_workFunction","doctor_name"};
+		StringBuilder sql = new StringBuilder();
+		sql.append("wf.id , vwf.name, case when wf.dtype='PersonalWorkFunction' then p.lastname ' ' end as lastname, coalesce(p.firstname,'') as firstname, coalesce(p.middlename,'') as middlename")
+			.append(" from WorkFunction as wf")
+			.append(" left join Worker as w on w.id=wf.worker_id")
+			.append(" left join Patient as p on p.id=w.person_id")
+			.append(" inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id")
+			.append(" left join WorkCalendar wc on wc.workFunction_id=wf.id")
+			.append(" left join workcalendarday wcd on wcd.workcalendar_id=wc.id")
+			.append(" left join workcalendartime wct on wct.workCalendarDay_id=wcd.id")
+			.append(" left join vocServiceReserveType vrt on vrt.id=wct.reservetype_id")
+			.append(" where wc.id is not null")
+			.append(" and wf.group_id is null")
+			.append(" and (wf.archival is null or wf.archival='0')")
+			.append(" and (wf.isnoviewremoteuser  ='0' or wf.isnoviewremoteuser is null)")
+			.append(" and wct.prepatient_id is null")
+			.append(" and (wct.prepatientinfo is null or wct.prepatientinfo='')")
+			.append(" and wct.medCase_id is null")
+			.append(" and wcd.calendardate>=current_date")
+			.append(sqlAppend)
+			.append(" and vwf.id = ").append(aSpecialityId)
+			.append(" group by wf.id, vwf.name, p.lastname ,p.firstname,p.middlename")
+			.append(" having count(wct.id)>0");
+
+		log.info("Поток обслуживания = "+aServiceStream+". Запрос для поиска врачей="+sql);
+		String jsonData = service.executeNativeSqlGetJSON(fields,sql.toString(),50);
+		if (jsonData!=null) {
+			JSONObject ret = new JSONObject();
+			ret.put("type","doctors");
+			ret.put("data",new JSONArray(jsonData));
+			return ret.toString();
+		}
+
+		return null;
+	}
+
 private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throws IOException, NamingException {
 	
 		System.out.println("===Send to KKM. Data = "+data);

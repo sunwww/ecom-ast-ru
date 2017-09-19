@@ -66,7 +66,7 @@ function printNoActuality(aCtx, aParams) {
         +" 	where "+status+" "
         //+statusNoActuality
         +" "+ dateGroup +" between to_date('"+beginDate+"','dd.mm.yyyy') and to_date('"
-        +endDate+"' ,'dd.mm.yyyy') "+sqlReason+" and mdd.id is not null order by "
+        +endDate+"' ,'dd.mm.yyyy') "+sqlReason+" and mdd.id is not null and vds.code!='1_ELN' order by "
         +order ;
     //throw sql ;
     var list=aCtx.manager.createNativeQuery(sql).getResultList() ;

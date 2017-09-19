@@ -66,6 +66,9 @@
     	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create" name="Операцию"  
     	params="id"  action='/entityParentPrepareCreate-stac_surOperation'  key='Alt+7' title="Операции"
     	/>
+          <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/Create" name="Перевязку"
+                        params="id"  action='/entityParentPrepareCreate-stac_bandage'  key='Alt+9' title="Перевязки"
+          />
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/Create" name="Случай ВМП" action="/entityParentPrepareCreate-stac_vmpCase" params="id" title="Добавить случай ВМП"/>
           <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
@@ -94,7 +97,10 @@
     	params="id"  action='/entityParentList-stac_surOperation'  key='Alt+7' title='Операции'
     	styleId="stac_surOperation"
     	/>
-
+          <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/View" name="Перевязки"
+                        params="id"  action='/entityParentList-stac_bandage'  key='Alt+9' title='Перевязки'
+                        styleId="stac_bandage"
+          />
         <mis:sideLinkForWoman classByObject="MedCase" id="${param.id}" styleId="viewShort"
          action="/javascript:getDefinition('entityParentList-preg_childBirth.do?short=Short&id=${param.id}',null)" name="Описание родов" title="Показать описание родов" roles="/Policy/Mis/Pregnancy/ChildBirth/View"/>
     <msh:sideLink roles="/Policy/Mis/Inspection/View" name="Осмотры"     
@@ -452,9 +458,42 @@
 	    		<msh:tableColumn columnName="Отделение" property="4"/>
 	    	</msh:table>
 	    </msh:section>
-    </msh:tableNotEmpty>      
+    </msh:tableNotEmpty>
       </msh:ifInRole>
-      
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/View">
+            <ecom:webQuery name="allBandage" nativeSql="select so.id,
+            to_char(so.startdate,'dd.mm.yyyy')||' '||coalesce(cast(so.starttime as varchar(5)),'') as datetime,
+            a.duration,vam.name as vamname,va.name as vaname,substring(so.text,1,100)||' ...' as text from medicalmanipulation so
+            left join MedService ms on ms.id=so.medService_id
+            left join medcase parent on parent.id=so.medcase_id
+            left join MisLpu d on d.id=so.thedepartment_id
+            left join WorkFunction wf on wf.id=so.thesurgeon_id
+            left join Worker w on w.id=wf.worker_id
+            left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+            left join Patient wp on wp.id=w.person_id
+            left join anesthesia a on a.manipulation_id=so.id
+            left join vocanesthesiamethod vam on vam.id=a.method_id
+            left join vocanesthesia va on va.id=a.type_id
+          where
+           so.medCase_id=${param.id} and so.dtype='Bandage'
+          order by so.startdate
+          "/>
+        <msh:tableNotEmpty name="allBandage">
+            <msh:section title="Перевязки " createUrl="entityParentPrepareCreate-stac_bandage.do?id=${param.id}"
+                         createRoles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/Create">
+                <msh:table viewUrl="entityShortView-stac_bandage.do"
+                           editUrl="entityParentEdit-stac_bandage.do"
+                           name="allBandage" action="entityParentView-stac_bandage.do" idField="1">
+                    <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableColumn columnName="Дата и время" property="2"/>
+                    <msh:tableColumn columnName="Длительность" property="3"/>
+                    <msh:tableColumn columnName="Метод" property="4"/>
+                    <msh:tableColumn columnName="Тип" property="5"/>
+                    <msh:tableColumn columnName="Протокол перевязки" property="6"/>
+                </msh:table>
+            </msh:section>
+        </msh:tableNotEmpty>
+    </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Transfusion/View">
       	<msh:tableNotEmpty name="transfusions">
       	<ecom:webQuery name="select tr.id as tr1id, tr.journalNumber as tr2journalnumber
