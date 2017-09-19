@@ -291,7 +291,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				String[] medServicesIds = (rec[4]!=null&&!rec[4].toString().equals(""))?rec[4].toString().split(","):null;
 				if (medServicesIds!=null) {
 					for (int i=0;i<medServicesIds.length;i++) {
-						Long msId = Long.valueOf(medServicesIds[i]);
+						Long msId = Long.valueOf(medServicesIds[i].trim());
 						MedService medService = aManager.find(MedService.class,msId);
 						service.put("medservicecode", medService.getCode());
 						service.put("medservicename", medService.getName());
