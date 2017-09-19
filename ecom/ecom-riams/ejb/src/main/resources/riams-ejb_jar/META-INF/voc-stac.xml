@@ -840,4 +840,21 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc>
+
+	<!--Назначения -->
+	<voc id="vocPharmDrugOnStorage" type="NativeVocService">
+		<NativeVocService
+				from="prescriptionlist as pl"
+				parent="pl.id =:parent"
+				nameId="pd.id"
+				join="left join medcase mc on mc.id = pl.medcase_id
+						left join pharmstorage ps on ps.department_id =mc.department_id
+						left join pharmdrug pd on pd.pharmstorage_id = ps.id and pd.nextstate_id is null
+						left join vocdrug vd on vd.id = pd.drug_id"
+				queryAppend="pd.nextstate_id is null"
+				order=""
+				queried="(vd.name like upper(:query))"
+				names = "vd.name"
+		/>
+	</voc>
 </vocconfig>    

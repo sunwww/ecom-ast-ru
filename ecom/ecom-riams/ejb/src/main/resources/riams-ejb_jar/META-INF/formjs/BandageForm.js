@@ -23,7 +23,7 @@ function onCreate(aForm, aBandage, aCtx) {
                 anes.setMedService(anesthesiaService) ;
                 anes.setAnesthesist(anesthetist) ;
                 anes.setDuration(+aForm.anesthesiaDuration) ;
-                anes.setTheBandage(aBandage) ;
+                anes.setManipulation(aBandage) ;
                 var date = new java.util.Date() ;
                 anes.setCreateDate(new java.sql.Date(date.getTime())) ;
                 anes.setCreateTime(new java.sql.Time (date.getTime())) ;
@@ -33,17 +33,6 @@ function onCreate(aForm, aBandage, aCtx) {
 
 
                 aBandage.setAnesthesia(anesthesiaType);
-               // aBandage.setTheAnesthesiaService(anesthesiaService);
-
-
-
-                //throw ""+aForm.getTheText();
-                //aBandage.setTheText(aForm.theText);
-                //aBandage.anesthesiaType=anesthesiaType;
-                /*aBandage.anesthesiaService=anesthesiaService;
-                aBandage.anesthetist=anesthetist;
-                aBandage.anesthesiaDuration=anesthesiaDuration;*/
-                //aBandage.theAnesthesia=anes;
             } else {
                 throw "Не заполнены данные по анастезии" ;
             }
@@ -83,9 +72,9 @@ function checkPeriod(aForm,aCtx) {
     var isCreateAnyTime = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateAnyTime") ;
     if (!isCreateAnyTime) {
         Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
-            , aForm.getTheStartDate(), aForm.getTheStartTime());
+            , aForm.getStartDate(), aForm.getStartTime());
     }
-    var theStartDate = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.theStartDate) ;
+    var theStartDate = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.getStartDate()) ;
     var medCase = aManager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
         ,aForm.medCase) ;
     if (medCase.dateStart.getTime()>theStartDate.getTime()) {
@@ -96,4 +85,7 @@ function checkPeriod(aForm,aCtx) {
 }
 function onSave(aForm, aCtx) {
 
+}
+function onPreDelete(aEntityId, aContext) {
+    aContext.manager.createNativeQuery("delete from anesthesia where manipulation_id="+aEntityId).executeUpdate() ;
 }

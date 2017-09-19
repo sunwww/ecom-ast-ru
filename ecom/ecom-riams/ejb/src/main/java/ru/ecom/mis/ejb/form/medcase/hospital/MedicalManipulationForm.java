@@ -41,22 +41,22 @@ public class MedicalManipulationForm extends IdEntityForm {
     @MaxDateCurrent
     @DateString
     @DoDateString
-    public String getTheStartDate() {return theStartDate;}
-    public void setTheStartDate(String aStartDate) {theStartDate = aStartDate;	}
+    public String getStartDate() {return theStartDate;}
+    public void setStartDate(String aStartDate) {theStartDate = aStartDate;	}
 
     /** Время начала */
     @Comment("Время начала")
     @Persist @Required
     @TimeString
     @DoTimeString
-    public String getTheStartTime() {return theStartTime;}
-    public void setTheStartTime(String aStartTime) {theStartTime = aStartTime;	}
+    public String getStartTime() {return theStartTime;}
+    public void setStartTime(String aStartTime) {theStartTime = aStartTime;	}
 
     /** Отделение */
     @Comment("Отделение")
     @Persist @Required
-    public Long getTheDepartment() {return theDepartment;}
-    public void setTheDepartment(Long aDepartment) {theDepartment = aDepartment;}
+    public Long getDepartment() {return theDepartment;}
+    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
 
     /** Анестизия */
     @Comment("Анестезия")
@@ -88,19 +88,13 @@ public class MedicalManipulationForm extends IdEntityForm {
     public String getAnesthesiaAmount() {return theAnesthesiaAmount;}
     public void setAnesthesiaAmount(String aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
 
-    ///** Рабочая функция врача, проводившего операцию */
-    //@Comment("Рабочая функция врача, проводившего операцию")
-    //@Persist @Required
-    //public Long getSurgeonFunction() {return theSurgeonFunction;}
-    //public void setSurgeonFunction(Long aSurgeonFunction) {theSurgeonFunction = aSurgeonFunction;}
-
     /** Дата окончания */
     @Comment("Дата окончания")
     @DateString
     @DoDateString
     @Persist  @MaxDateCurrent
-    public String getTheEndDate() {return theEndDate;}
-    public void setTheEndDate(String aEndDate) {theEndDate = aEndDate;}
+    public String getEndDate() {return theEndDate;}
+    public void setEndDate(String aEndDate) {theEndDate = aEndDate;}
 
 
     /** Анестезиолог */
@@ -117,44 +111,35 @@ public class MedicalManipulationForm extends IdEntityForm {
     /** Медсестра */
     @Comment("Медсестра")
     @Persist
-    public Long getTheNurse() {return theNurse;}
-    public void setTheNurse(Long aNurse) {theNurse = aNurse;}
+    public Long getNurse() {return theNurse;}
+    public void setNurse(Long aNurse) {theNurse = aNurse;}
 
     /** Хирург */
     @Comment("Хирург")
     @Persist
-    public Long getTheSurgeon() {return theSurgeon;}
-    public void setTheSurgeon(Long aSurgeon) {theSurgeon = aSurgeon;}
+    public Long getSurgeon() {return theSurgeon;}
+    public void setSurgeon(Long aSurgeon) {theSurgeon = aSurgeon;}
 
     /** Эпикриз */
     @Comment("Эпикриз")
     @Persist
-    public String getTheEpicrisis() {return theEpicrisis;}
-    public void setTheEpicrisis(String aEpicrisis) {theEpicrisis = aEpicrisis;}
+    public String getEpicrisis() {return theEpicrisis;}
+    public void setEpicrisis(String aEpicrisis) {theEpicrisis = aEpicrisis;}
 
 
     /** Описание */
     @Comment("Описание")
     @Persist
-    public String getTheText() {return theText;}
-    public void setTheText(String aText) {theText = aText;}
+    public String getText() {return theText;}
+    public void setText(String aText) {theText = aText;}
 
     /** Время окончания */
     @Comment("Время окончания")
     @Persist
     @TimeString
     @DoTimeString
-    public String getTheEndTime() {return theEndTime;}
-    public void setTheEndTime(String aEndTime) {theEndTime = aEndTime;}
-
-    /** Хирурги */
-    @Comment("Хирурги")
-    @Persist @PersistManyToManyOneProperty(collectionGenericType=WorkFunction.class)
-    public String getSurgeonFunctions() {return theSurgeonFunctions;}
-    public void setSurgeonFunctions(String aSurgeonFunctions) {theSurgeonFunctions = aSurgeonFunctions;}
-
-    /** Хирурги */
-    private String theSurgeonFunctions;
+    public String getEndTime() {return theEndTime;}
+    public void setEndTime(String aEndTime) {theEndTime = aEndTime;}
 
     /** Информация */
     @Comment("Информация")
@@ -182,8 +167,6 @@ public class MedicalManipulationForm extends IdEntityForm {
 
     /** Информация о хир.операции */
     private String theInformation;
-    /** Малая */
-    private Boolean theMinor;
 
     /** Хирург */
     private Long theSurgeon;
@@ -191,8 +174,6 @@ public class MedicalManipulationForm extends IdEntityForm {
     /** Номер в журнале */
     private String theNumberInJournal;
 
-    /** Анестезии */
-    private List<Long> theAnesthesies;
     /** Информация о пациенте */
     private String thePatientInfo;
     /** Период */

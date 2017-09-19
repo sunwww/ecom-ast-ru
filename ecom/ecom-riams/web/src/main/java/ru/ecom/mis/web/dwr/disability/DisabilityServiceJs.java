@@ -268,4 +268,20 @@ public class DisabilityServiceJs {
 			}
 		return res.toString();
 	}
+	public String getSnils(Long aPatinetId,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String snils="";
+		Collection<WebQueryResult> list = service.executeNativeSql("select snils from patient where id="+aPatinetId);
+		if (list.size() > 0) {
+			snils=list.iterator().next().get1().toString();
+		}
+
+		String str[];
+		str = snils.split("-");
+		snils = str[0] + str[1] + str[2];
+		str = snils.split(" ");
+		snils = str[0] + str[1];
+		return snils;
+	}
+
 }

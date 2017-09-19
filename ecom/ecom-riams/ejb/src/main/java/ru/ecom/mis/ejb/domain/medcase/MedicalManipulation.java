@@ -27,7 +27,7 @@ import java.util.List;
 @AIndexes({
         @AIndex(properties="medCase"),
         @AIndex(properties="theStartDate"),
-        @AIndex(properties={"surgeon"}),
+        @AIndex(properties={"theSurgeon"}),
         @AIndex(properties={"medService"}),
         @AIndex(properties="patient"),
         @AIndex(properties="serviceStream"),
@@ -122,12 +122,6 @@ public class MedicalManipulation extends BaseEntity {
     public Time getEndTime() {return theEndTime;}
     public void setEndTime(Time aEndTime) {theEndTime = aEndTime;}
 
-    /** Хирурги */
-    @Comment("Хирурги")
-    @ManyToMany
-    public List<WorkFunction> getSurgeonFunctions() {return theSurgeonFunctions;}
-    public void setSurgeonFunctions(List<WorkFunction> aSurgeonFunctions) {theSurgeonFunctions = aSurgeonFunctions;}
-
     @Comment("Информация")
     @Transient
     public String getInformation() {
@@ -209,8 +203,6 @@ public class MedicalManipulation extends BaseEntity {
 
     /** Кол-во  анастезии */
     private BigDecimal theAnesthesiaAmount;
-    /** Хирурги */
-    private List<WorkFunction> theSurgeonFunctions;
     /** Анестезиолог */
     private WorkFunction theAnaesthetist;
     /** Дата манипуляции по */

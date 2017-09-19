@@ -12,8 +12,8 @@
     <tiles:put name="body" type="string">
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/View">
             <ecom:webQuery name="allBandage" nativeSql="select so.id,
-            to_char(so.thestartdate,'dd.mm.yyyy')||' '||coalesce(cast(so.thestarttime as varchar(5)),'') as datetime,
-            a.duration,vam.name as vamname,va.name as vaname,substring(so.theText,1,100)||' ...' as text from bandage so
+            to_char(so.startdate,'dd.mm.yyyy')||' '||coalesce(cast(so.starttime as varchar(5)),'') as datetime,
+            a.duration,vam.name as vamname,va.name as vaname,substring(so.text,1,100)||' ...' as text from medicalmanipulation so
             left join MedService ms on ms.id=so.medService_id
             left join medcase parent on parent.id=so.medcase_id
             left join MisLpu d on d.id=so.thedepartment_id
@@ -21,12 +21,12 @@
             left join Worker w on w.id=wf.worker_id
             left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
             left join Patient wp on wp.id=w.person_id
-            left join anesthesia a on a.thebandage_id=so.id
+            left join anesthesia a on a.manipulation_id=so.id
             left join vocanesthesiamethod vam on vam.id=a.method_id
             left join vocanesthesia va on va.id=a.type_id
           where
-           so.medCase_id=${param.id}
-          order by so.thestartdate
+           so.medCase_id=${param.id} and so.dtype='Bandage'
+          order by so.startdate
           "/>
             <msh:section title="Перевязки " createUrl="entityParentPrepareCreate-stac_bandage.do?id=${param.id}"
                          createRoles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/Create">

@@ -86,25 +86,27 @@
 		<input id="getExcel" class="button" name="submit" value="Сохранить в excel" onclick="mshSaveTableToExcelById()" role="button" type="submit">
 		
 		<div id="myTemp">
-		<ecom:webQuery  name="list" nameFldSql="listSQL"
-			nativeSql="select e.id, e.insidenumber,
-case when tn.typenumber_id=3 then list(tn.telnumber) else '' end as sot,
-case when tn.typenumber_id=2 then list(tn.telnumber) else '' end as gor,
-e.comment,
-p.lastname||' '||p.firstname||' '||p.middlename as names,vb.name as build,vbl.name as level,m.name as dep
-from entry e  
-left join WorkFunction as wf on wf.id= e.person_id
-left join Worker as w on w.id=wf.worker_id
-left join Patient as p on p.id=w.person_id
-left join department d on d.id=e.department_id
-left join mislpu m on m.id=d.department_id
-left join vocbuildinglevel vbl on vbl.id = d.buildinglevel_id
-left join vocbuilding vb on vb.id = d.building_id
-left join telephonenumber tn on tn.entry_id = e.id
-left join voctypenumber vtn on vtn.id = tn.typenumber_id
-${whereSQL}
-group by e.id,names,vb.name,vbl.name,dep,tn.typenumber_id,e.comment
-order by build, level,dep" />
+			<ecom:webQuery  name="list" nameFldSql="listSQL"
+			nativeSql="select  e.id,
+					e.insidenumber,
+					list(tn.telnumber) as sot,
+					list(tn2.telnumber) as gor
+					,p.lastname||' '||p.firstname||' '||p.middlename as names,vb.name as build,vbl.name as level,m.name as dep
+					from entry e
+					left join WorkFunction as wf on wf.id= e.person_id
+					left join Worker as w on w.id=wf.worker_id
+					left join Patient as p on p.id=w.person_id
+					left join department d on d.id=e.department_id
+					left join mislpu m on m.id=d.department_id
+					left join vocbuildinglevel vbl on vbl.id = d.buildinglevel_id
+					left join vocbuilding vb on vb.id = d.building_id
+					left join telephonenumber tn on tn.entry_id = e.id and tn.typenumber_id = 3
+					left join voctypenumber vtn on vtn.id = tn.typenumber_id
+					left join telephonenumber tn2 on tn2.entry_id = e.id and tn2.typenumber_id = 2
+					left join voctypenumber vtn2 on vtn2.id = tn2.typenumber_id
+					${whereSQL}
+					group by e.id,names,build,level,dep
+					order by build, level,dep"/>
 		<msh:table name="list" action="directory_editEntry.do" idField="1">
 			<msh:tableColumn columnName="#" property="sn" />
 			<msh:tableColumn columnName="Внутренний номер" property="2" />
