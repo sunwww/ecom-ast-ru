@@ -1129,7 +1129,7 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
             <msh:tableColumn columnName="из них экстр. госпит." isCalcAmount="true" property="6"/>            
             <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="7"/>            
             <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="8"/>            
-            <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true"property="9"/>            
+            <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true" property="9"/>
             <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="10"/>            
             <msh:tableColumn columnName="Сводный коэффициент" property="11"/>            
         </msh:table>
