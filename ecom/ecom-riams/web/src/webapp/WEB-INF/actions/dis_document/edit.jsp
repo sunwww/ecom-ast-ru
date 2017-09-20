@@ -211,7 +211,7 @@ left join vocworkfunction  vwfvk on vwfvk.id = wfvk.workfunction_id
 left join worker wvk on wvk.id = wfvk.worker_id
 left join patient pvk on pvk.id = wvk.person_id
 left join VocDisabilityRegime vr on vr.id = dr.regime_id
-where disabilitydocument_id = ${param.id}"/>
+where disabilitydocument_id = ${param.id} order by dr.datefrom"/>
         <msh:table name="list" action="entityParentView-dis_record.do" idField="1">
             <msh:tableColumn columnName="Дата начала" property="2"/>
             <msh:tableColumn columnName="Дата окончания" property="3"/>
