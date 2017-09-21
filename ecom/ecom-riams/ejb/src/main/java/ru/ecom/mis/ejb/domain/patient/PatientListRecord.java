@@ -11,7 +11,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	   @AIndex(unique = false, properties= {"patient"})	
 })
-public class PatientListRecord extends BaseEntity{
+public class
+PatientListRecord extends BaseEntity{
 
 	
 	/** Список */
@@ -34,4 +35,12 @@ public class PatientListRecord extends BaseEntity{
 	public void setMessage(String aMessage) {theMessage = aMessage;}
 	/** Сообщение */
 	private String theMessage;
+
+	/** Номер телефона */
+	@Comment("Номер телефона")
+	public String getPhoneNumber() {return thePhoneNumber;}
+	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
+	/** Номер телефона */
+	private String thePhoneNumber ;
+
 }
