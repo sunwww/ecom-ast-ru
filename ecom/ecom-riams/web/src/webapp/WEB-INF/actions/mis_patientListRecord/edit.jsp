@@ -18,6 +18,9 @@
         <msh:row>
           <msh:textField property="message" label="Отображаемое сообщение" size="100"/>
         </msh:row>
+          <msh:row>
+              <msh:textField property="phoneNumber" label="Телефон" size="100"/>
+          </msh:row>
        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
     </msh:form>

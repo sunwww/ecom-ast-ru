@@ -1,12 +1,10 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionPreCreateInterceptor;
+import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.interceptor.DirectionViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -30,6 +28,12 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Direction")
 @AParentPrepareCreateInterceptors(
 		@AParentEntityFormInterceptor(DirectionPreCreateInterceptor.class)
+)
+@ACreateInterceptors(
+		@AEntityFormInterceptor(DirectionSaveInterceptor.class)
+)
+@ASaveInterceptors(
+		@AEntityFormInterceptor(DirectionSaveInterceptor.class)
 )
 @AViewInterceptors(
 		@AEntityFormInterceptor(DirectionViewInterceptor.class)

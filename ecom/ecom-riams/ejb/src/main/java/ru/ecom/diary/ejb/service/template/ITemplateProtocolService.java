@@ -22,6 +22,4 @@ public interface ITemplateProtocolService {
     public String getTextByProtocol(long aProtocolId) ;
     public String getNameVoc(String aClassif, long aId) ;
     public Long getCountSymbolsInProtocol(long aVisit) ;
-
-
 }

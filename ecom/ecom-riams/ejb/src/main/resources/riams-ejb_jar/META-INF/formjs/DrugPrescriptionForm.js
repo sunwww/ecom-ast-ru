@@ -7,7 +7,6 @@ function onSave(aForm, aEntity, aCtx) {
 	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-
 }
 /**
  * Перед созданием
@@ -30,7 +29,8 @@ function onCreate(aForm, aEntity, aCtx) {
     var freq = aEntity.getFrequency();
 
     var result = (dateCount+1)*(freq*countPerDay);
-    var functionExist = new Packages.ru.ecom.mis.ejb.service.pharmacy.PharmOperationServiceBean.setFunctionReserve(aCtx.manager);
+    var functionExist = new Packages.ru.ecom.mis.ejb.service.pharmacy.PharmOperationServiceBean;//.setFunctionReserve(aCtx.manager);
+    functionExist.setFunctionReserve(aCtx.manager);
     sql = "select pharmReseve("+aEntity.getDrug().getId()+","+result+","+Id+","+workfunc+");";
     aCtx.manager.createNativeQuery(sql).getResultList();
 }
