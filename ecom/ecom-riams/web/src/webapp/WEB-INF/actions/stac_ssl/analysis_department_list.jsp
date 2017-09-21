@@ -5,7 +5,7 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 	<tiles:put name="style" type="string">
 	
 	</tiles:put>
@@ -18,8 +18,10 @@
     <tiles:put name='side' type='string'>
         <tags:stac_journal currentAction="stac_analysis_department"/>
     </tiles:put>
-    
   <tiles:put name="body" type="string">
+      <%
+          if (request.getParameter("short")==null) {
+      %>
     <msh:form action="/stac_analysis_department_list.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
     <input type="hidden" value="printDeathList" name="m">
@@ -121,7 +123,7 @@
     </msh:panel>
     </msh:form>
     
-    <%
+    <%}
     
     String date = (String)request.getParameter("dateBegin") ;
     String view = (String)request.getParameter("typeView") ;
@@ -1013,9 +1015,9 @@ where so.department_id=so1.department_id and
     	and hmc1.DTYPE='HospitalMedCase' 
      and so1.surgeon_id is not null
     	and dmc1.dateFinish is not null)
-as numeric) ,2) 
+as numeric) ,2)
 
- as SpByDepartment
+ as SpByDepartment ,'&docId='||coalesce(swf.id,0)||'&fiodoc='||coalesce(swp.lastname||' '||swp.firstname||' '||swp.middlename,'')||'&depname='||coalesce(dep.name,'')||'&docOper='||coalesce(so.surgeon_id,0)||'&depId='||coalesce(dep.id,0)
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join SurgicalOperation so on so.medCase_id = dmc.id
@@ -1038,26 +1040,26 @@ where hmc.DTYPE='HospitalMedCase'
     	${depOper}
     	and so.surgeon_id is not null
     	and dmc.dateFinish is not null
-group by so.department_id,dep.name,so.surgeon_id
-,svwf.name,swp.lastname,swp.firstname,swp.middlename
+group by so.department_id,dep.name,so.surgeon_id,dep.id
+,svwf.name,swp.lastname,swp.firstname,swp.middlename,swf.id
 order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
    
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_otd_surgeon"
-         action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_list_otd_surgeon" cellFunction="true"
+         action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}" idField="14" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
-            <msh:tableColumn columnName="Отделение" property="2"/>
-            <msh:tableColumn columnName="Должность" property="3"/>
-            <msh:tableColumn columnName="ФИО врача" property="4"/>
-            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" isCalcAmount="true" property="5"/>            
-            <msh:tableColumn columnName="Кол-во опер. пациентов" isCalcAmount="true" property="6"/>            
-            <msh:tableColumn columnName="из них экстр. госпит." isCalcAmount="true" property="7"/>            
-            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="8"/>            
-            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="9"/>            
-            <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true" property="10"/>            
-            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="11"/>            
-            <msh:tableColumn columnName="Сводный коэффициент" property="12"/>            
-            <msh:tableColumn columnName="% от общ. числа опер. по отд." property="13"/>            
+            <msh:tableColumn columnName="Отделение" property="2" addParam="&typeView=3_dep&depId=${depId}"/>
+            <msh:tableColumn columnName="Должность" property="3" addParam="&typeView=3_dep&depId=${depId}"/>
+            <msh:tableColumn columnName="ФИО врача" property="4" addParam="&typeView=3_docAll&docOper=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
+            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" isCalcAmount="true" property="5" addParam="&typeView=3_docOper&docOper=${docId}&fiodoc=${fiodoc}&depId=${depId}" />
+            <msh:tableColumn columnName="Кол-во опер. пациентов" isCalcAmount="true" property="6" addParam="&typeView=3_docTreat&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
+            <msh:tableColumn columnName="из них экстр. госпит." isCalcAmount="true" property="7" addParam="&typeView=3_eHospPat&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
+            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="8" addParam="&typeView=3_eOperPat&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
+            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="9" addParam="&typeView=3_operAll&depId=${depId}&docOper=${docId}&fiodoc=${fiodoc}"/>
+            <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true" property="10" addParam="&typeView=3_eHospOper&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
+            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="11" addParam="&typeView=3_eOperOper&depId=${depId}&docOper=${docId}&fiodoc=${fiodoc}"/>
+            <msh:tableColumn columnName="Сводный коэффициент" property="12"/>
+            <msh:tableColumn columnName="% от общ. числа опер. по отд." property="13"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -1268,7 +1270,442 @@ order by dep.name
     </msh:section>
     <% }} else {%>
     	<i>Выберите параметры и нажмите найти </i>
-    	<% }   %>
+    	<% }
+      if (view!=null && view.equals("3_dep")) {
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_dep" nameFldSql="journal_3_dep_sql" nativeSql="select
+pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
+     from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+     left join SurgicalOperation so on so.medCase_id = dmc.id
+     left join VocHospitalAspect vha on vha.id=so.aspect_id
+      left join MedService vo on vo.id=so.medService_id
+       left join Patient pat on pat.id=hmc.patient_id
+       left join Address2 adr on adr.addressid=pat.address_addressid
+       left join Omc_Oksm ok on pat.nationality_id=ok.id
+       left join VocRayon vr on vr.id=pat.rayon_id
+        left join MisLpu dep on dep.id=so.department_id
+        left join VocHospType vht on vht.id=hmc.hospType_id
+        left join WorkFunction swf on swf.id=so.surgeon_id
+         left join Worker sw on sw.id=swf.worker_id
+         left join Patient swp on swp.id=sw.person_id
+         left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+         left join vocservicestream as vss on vss.id=hmc.servicestream_id
+         where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+         and to_date('${param.dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
+         and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+
+              <form action="stac_analysis_department_list3_dep.do" method="post" target="_blank">
+                  Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_dep}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_dep"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_docTreat")) {
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_docTreat" nameFldSql="journal_3_docTreat_sql" nativeSql="select
+pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
+     from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+     left join SurgicalOperation so on so.medCase_id = dmc.id
+     left join VocHospitalAspect vha on vha.id=so.aspect_id
+      left join MedService vo on vo.id=so.medService_id
+       left join Patient pat on pat.id=hmc.patient_id
+       left join Address2 adr on adr.addressid=pat.address_addressid
+       left join Omc_Oksm ok on pat.nationality_id=ok.id
+       left join VocRayon vr on vr.id=pat.rayon_id
+        left join MisLpu dep on dep.id=so.department_id
+        left join VocHospType vht on vht.id=hmc.hospType_id
+        left join WorkFunction swf on swf.id=so.surgeon_id
+         left join Worker sw on sw.id=swf.worker_id
+         left join Patient swp on swp.id=sw.person_id
+         left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+         left join vocservicestream as vss on vss.id=hmc.servicestream_id
+         where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+         and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
+         and swf.id='${param.docId}'
+         and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+
+              <form action="stac_analysis_department_list3_docTreat.do" method="post" target="_blank">
+                  Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_docTreat}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_docTreat"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_docOper")) {
+          //Лечащий врач
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_docOper" nameFldSql="journal_3_docOper_sql" nativeSql="select
+                             pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
+              from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+              left join SurgicalOperation so on so.medCase_id = dmc.id
+              left join VocHospitalAspect vha on vha.id=so.aspect_id
+              left join MedService vo on vo.id=so.medService_id
+              left join Patient pat on pat.id=hmc.patient_id
+              left join Address2 adr on adr.addressid=pat.address_addressid
+              left join Omc_Oksm ok on pat.nationality_id=ok.id
+              left join VocRayon vr on vr.id=pat.rayon_id
+              left join MisLpu dep on dep.id=so.department_id
+              left join VocHospType vht on vht.id=hmc.hospType_id
+              left join WorkFunction swf on swf.id=so.surgeon_id
+              left join Worker sw on sw.id=swf.worker_id
+              left join Patient swp on swp.id=sw.person_id
+              left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+              left join vocservicestream as vss on vss.id=hmc.servicestream_id
+              where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+              and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
+              and dmc.ownerFunction_id='${param.docId}'
+              and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+
+              <form action="stac_analysis_department_list3_docOper.do" method="post" target="_blank">
+                  Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, у которых лечащий врач ${param.fiodoc}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_docOper}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_docOper"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_docAll")) {
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_docOper" nameFldSql="journal_3_docOper_sql" nativeSql="select
+                             pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
+              from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+              left join SurgicalOperation so on so.medCase_id = dmc.id
+              left join VocHospitalAspect vha on vha.id=so.aspect_id
+              left join MedService vo on vo.id=so.medService_id
+              left join Patient pat on pat.id=hmc.patient_id
+              left join Address2 adr on adr.addressid=pat.address_addressid
+              left join Omc_Oksm ok on pat.nationality_id=ok.id
+              left join VocRayon vr on vr.id=pat.rayon_id
+              left join MisLpu dep on dep.id=so.department_id
+              left join VocHospType vht on vht.id=hmc.hospType_id
+              left join WorkFunction swf on swf.id=so.surgeon_id
+              left join Worker sw on sw.id=swf.worker_id
+              left join Patient swp on swp.id=sw.person_id
+              left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+              left join vocservicestream as vss on vss.id=hmc.servicestream_id
+              where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+              and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
+              and dmc.ownerFunction_id='${param.docId}'
+              and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+
+              <form action="stac_analysis_department_list3_docOper.do" method="post" target="_blank">
+                  Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, у которых лечащий врач ${param.fiodoc}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_docOper}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_docOper"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_docTreat" nameFldSql="journal_3_docTreat_sql" nativeSql="select
+pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
+     from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+     left join SurgicalOperation so on so.medCase_id = dmc.id
+     left join VocHospitalAspect vha on vha.id=so.aspect_id
+      left join MedService vo on vo.id=so.medService_id
+       left join Patient pat on pat.id=hmc.patient_id
+       left join Address2 adr on adr.addressid=pat.address_addressid
+       left join Omc_Oksm ok on pat.nationality_id=ok.id
+       left join VocRayon vr on vr.id=pat.rayon_id
+        left join MisLpu dep on dep.id=so.department_id
+        left join VocHospType vht on vht.id=hmc.hospType_id
+        left join WorkFunction swf on swf.id=so.surgeon_id
+         left join Worker sw on sw.id=swf.worker_id
+         left join Patient swp on swp.id=sw.person_id
+         left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+         left join vocservicestream as vss on vss.id=hmc.servicestream_id
+         where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+         and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
+         and swf.id='${param.docId}'
+         and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+
+              <form action="stac_analysis_department_list3_docTreat.do" method="post" target="_blank">
+                  Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_docTreat}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_docTreat"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_operAll")) {
+              //Лечащий врач
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_operAll" nameFldSql="journal_3_operAll_sql" nativeSql="
+select so.id ,to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'') as soperationTime
+,ms.code||' '||ms.name as voname , dep.name as whoIs , pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id  left join SurgicalOperation so on so.medCase_id = dmc.id
+left join VocHospitalAspect vha on vha.id=so.aspect_id left join MedService vo on vo.id=so.medService_id
+left join Patient pat on pat.id=hmc.patient_id left join Address2 adr on adr.addressid=pat.address_addressid
+ left join Omc_Oksm ok on pat.nationality_id=ok.id left join VocRayon vr on vr.id=pat.rayon_id
+ left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
+  left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
+   left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id
+    left join VocWorkFunction svwf on svwf.id=swf.workFunction_id left join vocservicestream as vss on vss.id=hmc.servicestream_id
+    where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+    and to_date('${param.dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}'
+     and dmc.dateFinish is not null
+group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.firstname,pat.middlename order by so.operationDate"/>
+              <form action="stac_analysis_department_list3_operAll.do" method="post" target="_blank">
+                  Все операции отделения ${param.depname} хирурга ${param.fiodoc} в период с ${param.dateBegin} по ${param.dateEnd}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_operAll}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+
+              </form>
+          </msh:sectionTitle>
+              <msh:sectionContent>
+              <msh:table name="journal_3_operAll"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityShortView-stac_surOperation.do" idField="1">
+              <msh:tableColumn columnName="#" property="sn"/>
+              <msh:tableColumn columnName="Дата и время" property="2"/>
+              <msh:tableColumn columnName="Операция" property="3"/>
+              <msh:tableColumn columnName="Пациент" property="4"/>
+              <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_eHospPat")) {
+      %>
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_eHospPat" nameFldSql="journal_3_eHospPat_sql" nativeSql="
+    select distinct(pat.id), pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAspect vha on vha.id=so.aspect_id
+ left join MedService vo on vo.id=so.medService_id left join Patient pat on pat.id=hmc.patient_id
+ left join Address2 adr on adr.addressid=pat.address_addressid left join Omc_Oksm ok on pat.nationality_id=ok.id
+ left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
+  left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
+  left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+   where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+    and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
+ and hmc.emergency='1'
+group by pat.lastname,pat.firstname,pat.middlename,pat.id order by pat.id"/>
+              <form action="stac_analysis_department_list3_eHospPat.do" method="post" target="_blank">
+                  Все ПАЦИЕНТЫ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}, которых ГОСПИТАЛИЗИРОВАЛИ ЭКСТРЕННО.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_eHospPat}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_eHospPat"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_eOperPat")) {
+      %>
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_eOperPat" nameFldSql="journal_3_eOperPat_sql" nativeSql="
+              select distinct(pat.id), pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAspect vha on vha.id=so.aspect_id
+ left join MedService vo on vo.id=so.medService_id left join Patient pat on pat.id=hmc.patient_id
+ left join Address2 adr on adr.addressid=pat.address_addressid left join Omc_Oksm ok on pat.nationality_id=ok.id
+ left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
+  left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
+  left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+      where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+    and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
+   and vha.code='EMERGENCY'
+group by pat.lastname,pat.firstname,pat.middlename,pat.id order by pat.id"/>
+              <form action="stac_analysis_department_list3_eOperPat.do" method="post" target="_blank">
+                  Все ПАЦИЕНТЫ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}, которых ОПЕРИРОВАЛИ ЭКСТРЕННО.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_eOperPat}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_eOperPat"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_eHospOper")) {
+      %>
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_eHospOper" nameFldSql="journal_3_eHospOper_sql" nativeSql="
+              select so.id ,to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'') as soperationTime ,ms.code||' '||ms.name as voname , dep.name as whoIs , pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAspect vha on vha.id=so.aspect_id
+ left join MedService vo on vo.id=so.medService_id left join Patient pat on pat.id=hmc.patient_id
+ left join Address2 adr on adr.addressid=pat.address_addressid left join Omc_Oksm ok on pat.nationality_id=ok.id
+ left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
+  left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
+  left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+      where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+    and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
+   and hmc.emergency='1'
+group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.firstname,pat.middlename order by so.operationDate"/>
+              <form action="stac_analysis_department_list3_eHospOper.do" method="post" target="_blank">
+                  Все ОПЕРАЦИИ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, хирургом на которых был врач ${param.fiodoc}, при этом пациенты были ГОСПИТАЛИЗИРОВАНЫ ЭКСТРЕННО.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_eHospOper}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_eHospOper"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityShortView-stac_surOperation.do" idField="1">
+              <msh:tableColumn columnName="#" property="sn"/>
+              <msh:tableColumn columnName="Дата и время" property="2"/>
+              <msh:tableColumn columnName="Операция" property="3"/>
+              <msh:tableColumn columnName="Пациент" property="4"/>
+              <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>,
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_eOperOper")) {
+      %>
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_eOperOper" nameFldSql="journal_3_eOperOper_sql" nativeSql="
+              select so.id ,to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'') as soperationTime ,ms.code||' '||ms.name as voname , dep.name as whoIs , pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAspect vha on vha.id=so.aspect_id
+ left join MedService vo on vo.id=so.medService_id left join Patient pat on pat.id=hmc.patient_id
+ left join Address2 adr on adr.addressid=pat.address_addressid left join Omc_Oksm ok on pat.nationality_id=ok.id
+ left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
+  left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
+  left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
+   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+      where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+    and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
+   and vha.code='EMERGENCY'
+group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.firstname,pat.middlename order by so.operationDate"/>
+              <form action="stac_analysis_department_list3_eOperOper.do" method="post" target="_blank">
+                  Все ОПЕРАЦИИ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, хирургом на которых был врач ${param.fiodoc}, при этом пациенты были ОПЕРИРОВАНЫ ЭКСТРЕННО.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_eOperOper}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_eOperOper"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityShortView-stac_surOperation.do" idField="1">
+                  <msh:tableColumn columnName="#" property="sn"/>
+                  <msh:tableColumn columnName="Дата и время" property="2"/>
+                  <msh:tableColumn columnName="Операция" property="3"/>
+                  <msh:tableColumn columnName="Пациент" property="4"/>
+                  <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>,
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+      %>
     <script type='text/javascript'>
     
      checkFieldUpdate('typeDate','${typeDate}',2) ;
@@ -1332,6 +1769,5 @@ order by dep.name
     	frm.action='js-stac_ssl-printReestr.do' ;
     }
     </script>
-  </tiles:put>
+          </tiles:put>
 </tiles:insert>
-
