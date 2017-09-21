@@ -52,7 +52,7 @@
 	    	<ecom:webQuery name="patList" nativeSql="select dep.id,dep.name,count(pw.id)
 			from MisLpu dep left join patientwatch pw on
 			dep.id=(select m.department_id from medcase m where m.id=pw.medcase_id)
-			where dep.omccode='1' and pw.listwatch_id=(select lw.id from listwatch lw
+			where pw.listwatch_id=(select lw.id from listwatch lw
 			where lw.datewatch=to_date('${param.dateBegin}','dd.mm.yyyy'))
 			group by dep.id,dep.name
 			"/>
