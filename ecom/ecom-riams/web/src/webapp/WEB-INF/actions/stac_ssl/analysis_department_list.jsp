@@ -108,7 +108,7 @@
         	<msh:autoComplete property="department" fieldColSpan="6" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="serviceStream" fieldColSpan="6" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
+            <msh:autoComplete property="serviceStream" fieldColSpan="6" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
         </msh:row>
         <msh:row>
 	        <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -940,7 +940,8 @@ order by dep.name
 ,count(distinct hmc.id) as cntStatCard
 ,count(distinct case when hmc.emergency='1' then hmc.id else null end) cntEmerStatCard
 ,count(distinct pat.id) as cntPat
-from MedCase hmc
+,'&docId='||coalesce(dmc.ownerFunction_id,0)||'&fiodoc='||coalesce(owp.lastname||' '||owp.firstname||' '||owp.middlename,'')||'&depname='||coalesce(dep.name,'')||'&depId='||coalesce(dep.id,0)
+as f1 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
 left join Address2 adr on adr.addressid=pat.address_addressid
@@ -961,21 +962,20 @@ where hmc.DTYPE='HospitalMedCase'
     	${dep}
     	
 
-group by dmc.department_id,dep.name,dmc.ownerFunction_id,ovwf.name 
-,owp.lastname,owp.firstname,owp.middlename
+group by dmc.department_id,dep.name,dmc.ownerFunction_id,ovwf.name
+,owp.lastname,owp.firstname,owp.middlename,dep.id,dmc.ownerFunction_id
 order by dep.name   ,ovwf.name 
 ,owp.lastname,owp.firstname,owp.middlename
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_otd_owner"
-         action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_list_otd_owner" cellFunction="true"
+           action="stac_analysis_department_list.do?short=Short&typeView=3_docOwner&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}" idField="8" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Должность" property="3"/>
             <msh:tableColumn columnName="ФИО врача" property="4"/>
             <msh:tableColumn columnName="Кол-во пациентов" isCalcAmount="true" property="5"/>
-            <msh:tableColumn columnName="из них экстр." isCalcAmount="true" property="6"/>
-
+            <msh:tableColumn columnName="из них экстр." isCalcAmount="true" property="6" addParam="&emergency=1"/>
         </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -1017,7 +1017,7 @@ where so.department_id=so1.department_id and
     	and dmc1.dateFinish is not null)
 as numeric) ,2)
 
- as SpByDepartment ,'&docId='||coalesce(swf.id,0)||'&fiodoc='||coalesce(swp.lastname||' '||swp.firstname||' '||swp.middlename,'')||'&depname='||coalesce(dep.name,'')||'&docOper='||coalesce(so.surgeon_id,0)||'&depId='||coalesce(dep.id,0)
+ as SpByDepartment ,'&docId='||coalesce(swf.id,0)||'&fiodoc='||coalesce(swp.lastname||' '||swp.firstname||' '||swp.middlename,'')||'&depname='||coalesce(dep.name,'')||'&docId='||coalesce(so.surgeon_id,0)||'&depId='||coalesce(dep.id,0)
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join SurgicalOperation so on so.medCase_id = dmc.id
@@ -1050,14 +1050,14 @@ order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2" addParam="&typeView=3_dep&depId=${depId}"/>
             <msh:tableColumn columnName="Должность" property="3" addParam="&typeView=3_dep&depId=${depId}"/>
-            <msh:tableColumn columnName="ФИО врача" property="4" addParam="&typeView=3_docAll&docOper=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
-            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" isCalcAmount="true" property="5" addParam="&typeView=3_docOper&docOper=${docId}&fiodoc=${fiodoc}&depId=${depId}" />
+            <msh:tableColumn columnName="ФИО врача" property="4" addParam="&typeView=3_docAll&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
+            <msh:tableColumn columnName="Кол-во пациентов, у которых был леч. врачом" isCalcAmount="true" property="5" addParam="&typeView=3_docOper&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}" />
             <msh:tableColumn columnName="Кол-во опер. пациентов" isCalcAmount="true" property="6" addParam="&typeView=3_docTreat&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
             <msh:tableColumn columnName="из них экстр. госпит." isCalcAmount="true" property="7" addParam="&typeView=3_eHospPat&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
             <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="8" addParam="&typeView=3_eOperPat&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
-            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="9" addParam="&typeView=3_operAll&depId=${depId}&docOper=${docId}&fiodoc=${fiodoc}"/>
+            <msh:tableColumn columnName="Кол-во операций" isCalcAmount="true" property="9" addParam="&typeView=3_operAll&depId=${depId}&docId=${docId}&fiodoc=${fiodoc}"/>
             <msh:tableColumn columnName="из них экстр. госп." isCalcAmount="true" property="10" addParam="&typeView=3_eHospOper&docId=${docId}&fiodoc=${fiodoc}&depId=${depId}"/>
-            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="11" addParam="&typeView=3_eOperOper&depId=${depId}&docOper=${docId}&fiodoc=${fiodoc}"/>
+            <msh:tableColumn columnName="из них экстр. опер." isCalcAmount="true" property="11" addParam="&typeView=3_eOperOper&depId=${depId}&docId=${docId}&fiodoc=${fiodoc}"/>
             <msh:tableColumn columnName="Сводный коэффициент" property="12"/>
             <msh:tableColumn columnName="% от общ. числа опер. по отд." property="13"/>
         </msh:table>
@@ -1701,6 +1701,44 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
                   <msh:tableColumn columnName="Операция" property="3"/>
                   <msh:tableColumn columnName="Пациент" property="4"/>
                   <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>,
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_docOwner")) {
+              //Лечащий врач
+              String emerg = request.getParameter("emergency") ;
+              if (emerg!=null &&emerg.equals("1"))
+                  request.setAttribute("emSql", " and hmc.emergency='1'") ;
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_docOwner" nameFldSql="journal_3_docOwner_sql" nativeSql="select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id left join Patient pat on pat.id=hmc.patient_id left join Address2 adr on adr.addressid=pat.address_addressid
+left join Omc_Oksm ok on pat.nationality_id=ok.id left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=dmc.department_id
+left join VocHospType vht on vht.id=hmc.hospType_id left join WorkFunction owf on owf.id=dmc.ownerFunction_id
+left join Worker ow on ow.id=owf.worker_id left join Patient owp on owp.id=ow.person_id left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id left join vocservicestream as vss on vss.id=hmc.servicestream_id
+ where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy') and dmc.dateFinish is not null and vss.id='1'
+and dep.id='${param.depId}' and dmc.ownerFunction_id='${param.docId}' ${emSql}
+group by pat.id,pat.lastname,pat.firstname,pat.middlename, dep.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename order by dep.name ,ovwf.name,owp.lastname,owp.firstname,owp.middlename"/>
+
+              <form action="stac_analysis_department_list3_docOwner.do" method="post" target="_blank">
+                  Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, у которых лечащий врач ${param.fiodoc}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_docOwner}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_docOwner"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
               </msh:table>
           </msh:sectionContent>
       </msh:section>
