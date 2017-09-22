@@ -438,147 +438,177 @@ order by dep.name
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_swod" nativeSql="
     select
-dmc.department_id,dep.name
+dmc.department_id as depid,dep.name
 ,count(distinct hmc.id) as cntDischarge
 
 ,(select count(distinct hmc1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where 
  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+ ${vss1}
 ) as cntOperPat
 
 ,(select count(distinct case when vha1.code='EMERGENCY' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where 
   hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+ ${vss1}
 ) as cntEmerPat
 
 ,(select count(distinct case when (vha1.code='PLAN') then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where 
   hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
   hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+ ${vss1}
 ) as cntPlanPat
 
 ,(select (count(distinct case when vha1.code='PLAN' then hmc1.id else null end) +count(distinct case when vha1.code='EMERGENCY' then hmc1.id else null end)-count(distinct hmc1.id)) from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where 
   hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
   hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+ ${vss1}
 ) as cntEmerAndPlanPat
 
 
-,(select count(distinct so1.id)  from medcase hmc1 
+,(select count(distinct so1.id)  from medcase hmc1
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+ ${vss1}
 ) as cntOper
 
 ,(select count( case when vha1.code='EMERGENCY' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+   left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+ ${vss1}
 ) as cntEmerOper
 ,(select count( case when vha1.code='PLAN' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
- hmc1.dateFinish is not null 
+ hmc1.dateFinish is not null
+  ${vss1}
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 ) as cntPlanOper
 
 ,case when (select count(distinct so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 )>0 then
 cast(round(100*(select count( case when vha1.code='EMERGENCY' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+   left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 )/cast((select count(distinct so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+    left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 ) as numeric) ,2) as numeric) else 0 end as procEmer
 
 ,case when (select count(distinct so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 )>0 then cast(round(100*(select count( case when vha1.code='PLAN' then hmc1.id else null end)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 )/cast((select count(distinct so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 ) as numeric) ,2) as numeric) else 0 end  as procPlan
 
 ,case when count(distinct hmc.id)>0 then cast(round(100*(select count(distinct hmc1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 )/cast(count(distinct hmc.id) as numeric) ,1) as numeric) else 0 end as alanysisPat
 
 ,case when count(distinct hmc.id)>0 then cast(round(100*(select count(distinct so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
+  ${vss1}
 ) /cast(count(distinct hmc.id) as numeric) ,1) as numeric) else 0 end  as analysisOper
 
 
@@ -586,60 +616,72 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+   left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='PLAN')
+  ${vss1}
 )>0 then
 cast(round((select sum(so1.operationDate-hmc1.dateStart)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+   left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='PLAN')
+  ${vss1}
 ) / cast((select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+    left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='PLAN')
+  ${vss1}
 ) as numeric),1) as numeric)  else 0 end as srDayPlanTo
 
 ,case when (select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='PLAN')
+  ${vss1}
 )>0 then
 cast(round((select sum(hmc1.dateFinish-so1.operationDate) from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+   left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='PLAN')
+  ${vss1}
 ) / cast((select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+    left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='PLAN')
+   ${vss1}
 ) as numeric),1) as numeric) else 0 end as srDayPlanAfter
 
 
@@ -647,16 +689,19 @@ and (vha1.code='PLAN')
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+     left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='EMERGENCY')
+  ${vss1}
 )>0 then
 cast(round((select sum(so1.operationDate-hmc1.dateStart)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
@@ -666,43 +711,53 @@ and (vha1.code='EMERGENCY')
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='EMERGENCY')
+  ${vss1}
 ) as numeric),1) as numeric)  else 0 end as srDayEmerTo
 
 ,case when (select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='EMERGENCY')
+  ${vss1}
 )>0 then
 cast(round((select sum(hmc1.dateFinish-so1.operationDate) from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+  left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='EMERGENCY')
+  ${vss1}
 ) / cast((select count(so1.id)  from medcase hmc1 
  left join MedCase dmc1 on dmc1.parent_id=hmc1.id and dmc1.dtype='DepartmentMedCase'
  left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
  left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+ left join vocservicestream as vss1 on vss1.id=hmc1.servicestream_id
+ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
  where  hmc1.dtype='HospitalMedCase' and ${dateT1} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') and 
  hmc1.dateFinish is not null 
 and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
 and (vha1.code='EMERGENCY')
+  ${vss1}
 ) as numeric),1) as numeric) else 0 end as srDayEmerAfter
 
+,'&depId='||coalesce(dmc.department_id,0)
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
@@ -716,12 +771,12 @@ where hmc.DTYPE='HospitalMedCase'
     	${dep}
     	
     
-group by dmc.department_id,dep.name 
+group by dmc.department_id,dep.name,dmc.department_id
 order by dep.name   
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod"
-         action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
+        <msh:table name="journal_list_swod" cellFunction="true"
+           action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="19" noDataMessage="Не найдено">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />
@@ -736,15 +791,15 @@ order by dep.name
             </msh:tableNotEmpty>            
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Наименование отделения" property="2"/>
-            <msh:tableColumn columnName="Число выбывших больных" isCalcAmount="true" property="3"/>
-            <msh:tableColumn columnName="всего" isCalcAmount="true" property="4"/>
-            <msh:tableColumn columnName="экст." isCalcAmount="true" property="5"/>
-            <msh:tableColumn columnName="план. " isCalcAmount="true" property="6"/>
+            <msh:tableColumn columnName="Число выбывших больных" isCalcAmount="true" property="3" addParam="&typeView=3_patAllInDep"/>
+            <msh:tableColumn columnName="всего" isCalcAmount="true" property="4"  addParam="&typeView=3_patAllOper"/>
+            <msh:tableColumn columnName="экст." isCalcAmount="true" property="5" addParam="&typeView=3_patAllOper&emergency=1&typePat=экстренные"/>
+            <msh:tableColumn columnName="план. " isCalcAmount="true" property="6" addParam="&typeView=3_patAllOper&emergency=0&typePat=плановые"/>
             <msh:tableColumn columnName="экстр. + план. " isCalcAmount="true" property="7"/>
             
-            <msh:tableColumn columnName="всего" isCalcAmount="true" property="8"/>
-            <msh:tableColumn columnName="экст." isCalcAmount="true" property="9"/>
-            <msh:tableColumn columnName="план. " isCalcAmount="true" property="10"/>
+            <msh:tableColumn columnName="всего" isCalcAmount="true" property="8" addParam="&typeView=3_operAllOper"/>
+            <msh:tableColumn columnName="экст." isCalcAmount="true" property="9" addParam="&typeView=3_operAllOper&emergency=1&typePat=экстренные"/>
+            <msh:tableColumn columnName="план. " isCalcAmount="true" property="10" addParam="&typeView=3_operAllOper&emergency=0&typePat=плановые"/>
             <msh:tableColumn columnName="экст." property="11"/>
             <msh:tableColumn columnName="план. " property="12"/>
             <msh:tableColumn columnName="по пациентам" property="13"/>
@@ -969,7 +1024,7 @@ order by dep.name   ,ovwf.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_otd_owner" cellFunction="true"
-           action="stac_analysis_department_list.do?short=Short&typeView=3_docOwner&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}" idField="8" noDataMessage="Не найдено">
+           action="stac_analysis_department_list.do?short=Short&typeView=3_docOwner&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="8" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Должность" property="3"/>
@@ -1017,7 +1072,7 @@ where so.department_id=so1.department_id and
     	and dmc1.dateFinish is not null)
 as numeric) ,2)
 
- as SpByDepartment ,'&docId='||coalesce(swf.id,0)||'&fiodoc='||coalesce(swp.lastname||' '||swp.firstname||' '||swp.middlename,'')||'&depname='||coalesce(dep.name,'')||'&docId='||coalesce(so.surgeon_id,0)||'&depId='||coalesce(dep.id,0)
+ as SpByDepartment ,'&docId='||coalesce(swf.id,0)||'&fiodoc='||coalesce(swp.lastname||' '||swp.firstname||' '||swp.middlename,'')||'&depname='||coalesce(dep.name,'')||'&docId='||coalesce(so.surgeon_id,0)||'&depId='||coalesce(dep.id,0)||'&depId='||coalesce(dep.id,0)
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join SurgicalOperation so on so.medCase_id = dmc.id
@@ -1033,11 +1088,11 @@ left join WorkFunction swf on swf.id=so.surgeon_id
 left join Worker sw on sw.id=swf.worker_id
 left join Patient swp on swp.id=sw.person_id
 left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-left join vocservicestream as vss on vss.id=hmc.servicestream_id
+left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
 where hmc.DTYPE='HospitalMedCase' 
     and ${dateT} between to_date('${param.dateBegin}','dd.mm.yyyy')  
     	and to_date('${dateEnd}','dd.mm.yyyy') 
-    	${depOper}
+    	${depOper} ${vss1}
     	and so.surgeon_id is not null
     	and dmc.dateFinish is not null
 group by so.department_id,dep.name,so.surgeon_id,dep.id
@@ -1046,7 +1101,7 @@ order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
    
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
         <msh:table name="journal_list_otd_surgeon" cellFunction="true"
-         action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}" idField="14" noDataMessage="Не найдено">
+         action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="14" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2" addParam="&typeView=3_dep&depId=${depId}"/>
             <msh:tableColumn columnName="Должность" property="3" addParam="&typeView=3_dep&depId=${depId}"/>
@@ -1292,10 +1347,10 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
          left join Worker sw on sw.id=swf.worker_id
          left join Patient swp on swp.id=sw.person_id
          left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-         left join vocservicestream as vss on vss.id=hmc.servicestream_id
+         left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
          where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
          and to_date('${param.dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
-         and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+         and dmc.dateFinish is not null ${vss1} group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
 
               <form action="stac_analysis_department_list3_dep.do" method="post" target="_blank">
                   Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}.
@@ -1338,11 +1393,11 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
          left join Worker sw on sw.id=swf.worker_id
          left join Patient swp on swp.id=sw.person_id
          left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-         left join vocservicestream as vss on vss.id=hmc.servicestream_id
+         left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
          where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
          and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
          and swf.id='${param.docId}'
-         and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+         and dmc.dateFinish is not null ${vss1} group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
 
               <form action="stac_analysis_department_list3_docTreat.do" method="post" target="_blank">
                   Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}.
@@ -1386,11 +1441,11 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
               left join Worker sw on sw.id=swf.worker_id
               left join Patient swp on swp.id=sw.person_id
               left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-              left join vocservicestream as vss on vss.id=hmc.servicestream_id
+              left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
               where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
               and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
               and dmc.ownerFunction_id='${param.docId}'
-              and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+              and dmc.dateFinish is not null ${vss1} group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
 
               <form action="stac_analysis_department_list3_docOper.do" method="post" target="_blank">
                   Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, у которых лечащий врач ${param.fiodoc}.
@@ -1417,7 +1472,7 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
 
       <msh:section>
           <msh:sectionTitle>
-              <ecom:webQuery name="journal_3_docOper" nameFldSql="journal_3_docOper_sql" nativeSql="select
+              <ecom:webQuery name="journal_3_docAll" nameFldSql="journal_3_docAll_sql" nativeSql="select
                              pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
               from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
               left join SurgicalOperation so on so.medCase_id = dmc.id
@@ -1433,15 +1488,15 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
               left join Worker sw on sw.id=swf.worker_id
               left join Patient swp on swp.id=sw.person_id
               left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-              left join vocservicestream as vss on vss.id=hmc.servicestream_id
+              left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
               where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
               and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
               and dmc.ownerFunction_id='${param.docId}'
-              and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+              and dmc.dateFinish is not null ${vss1} group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
 
-              <form action="stac_analysis_department_list3_docOper.do" method="post" target="_blank">
+              <form action="stac_analysis_department_list3_docAll.do" method="post" target="_blank">
                   Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, у которых лечащий врач ${param.fiodoc}.
-                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_docOper}">
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_docAll}">
                   <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
                   <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
                   <input type='hidden' name="s" id="s" value="PrintService">
@@ -1450,7 +1505,7 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
               </form>
           </msh:sectionTitle>
           <msh:sectionContent>
-              <msh:table name="journal_3_docOper"
+              <msh:table name="journal_3_docAll"
                          viewUrl="entityShortView-stac_ssl.do"
                          action="entityView-mis_patient.do" idField="1" >
                   <msh:tableColumn columnName="#" property="sn" />
@@ -1476,11 +1531,11 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
          left join Worker sw on sw.id=swf.worker_id
          left join Patient swp on swp.id=sw.person_id
          left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-         left join vocservicestream as vss on vss.id=hmc.servicestream_id
+         left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
          where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
          and to_date('${dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null
          and swf.id='${param.docId}'
-         and dmc.dateFinish is not null group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
+         and dmc.dateFinish is not null ${vss1} group by pat.id,pat.lastname,pat.firstname,pat.middlename "/>
 
               <form action="stac_analysis_department_list3_docTreat.do" method="post" target="_blank">
                   Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}.
@@ -1518,10 +1573,10 @@ left join Patient pat on pat.id=hmc.patient_id left join Address2 adr on adr.add
  left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
   left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
    left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id
-    left join VocWorkFunction svwf on svwf.id=swf.workFunction_id left join vocservicestream as vss on vss.id=hmc.servicestream_id
+    left join VocWorkFunction svwf on svwf.id=swf.workFunction_id left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
     where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
     and to_date('${param.dateEnd}','dd.mm.yyyy') and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}'
-     and dmc.dateFinish is not null
+     and dmc.dateFinish is not null ${vss1}
 group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.firstname,pat.middlename order by so.operationDate"/>
               <form action="stac_analysis_department_list3_operAll.do" method="post" target="_blank">
                   Все операции отделения ${param.depname} хирурга ${param.fiodoc} в период с ${param.dateBegin} по ${param.dateEnd}.
@@ -1560,10 +1615,10 @@ left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAs
  left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
   left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
   left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+   left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
    where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
     and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
- and hmc.emergency='1'
+ and hmc.emergency='1' ${vss1}
 group by pat.lastname,pat.firstname,pat.middlename,pat.id order by pat.id"/>
               <form action="stac_analysis_department_list3_eHospPat.do" method="post" target="_blank">
                   Все ПАЦИЕНТЫ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}, которых ГОСПИТАЛИЗИРОВАЛИ ЭКСТРЕННО.
@@ -1598,10 +1653,10 @@ left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAs
  left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
   left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
   left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+   left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
       where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
     and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
-   and vha.code='EMERGENCY'
+   and vha.code='EMERGENCY' ${vss1}
 group by pat.lastname,pat.firstname,pat.middlename,pat.id order by pat.id"/>
               <form action="stac_analysis_department_list3_eOperPat.do" method="post" target="_blank">
                   Все ПАЦИЕНТЫ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, которых оперировал врач ${param.fiodoc}, которых ОПЕРИРОВАЛИ ЭКСТРЕННО.
@@ -1636,10 +1691,10 @@ left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAs
  left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
   left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
   left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+   left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
       where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
     and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
-   and hmc.emergency='1'
+   and hmc.emergency='1' ${vss1}
 group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.firstname,pat.middlename order by so.operationDate"/>
               <form action="stac_analysis_department_list3_eHospOper.do" method="post" target="_blank">
                   Все ОПЕРАЦИИ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, хирургом на которых был врач ${param.fiodoc}, при этом пациенты были ГОСПИТАЛИЗИРОВАНЫ ЭКСТРЕННО.
@@ -1677,10 +1732,10 @@ left join SurgicalOperation so on so.medCase_id = dmc.id left join VocHospitalAs
  left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=so.department_id left join VocHospType vht on vht.id=hmc.hospType_id
   left join MedService ms on ms.id=so.medService_id left join WorkFunction swf on swf.id=so.surgeon_id
   left join Worker sw on sw.id=swf.worker_id left join Patient swp on swp.id=sw.person_id left join VocWorkFunction svwf on svwf.id=swf.workFunction_id
-   left join vocservicestream as vss on vss.id=hmc.servicestream_id
+   left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
       where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
     and so.department_id='${param.depId}' and so.surgeon_id is not null and swf.id='${param.docId}' and dmc.dateFinish is not null
-   and vha.code='EMERGENCY'
+   and vha.code='EMERGENCY' ${vss1}
 group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.firstname,pat.middlename order by so.operationDate"/>
               <form action="stac_analysis_department_list3_eOperOper.do" method="post" target="_blank">
                   Все ОПЕРАЦИИ отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}, хирургом на которых был врач ${param.fiodoc}, при этом пациенты были ОПЕРИРОВАНЫ ЭКСТРЕННО.
@@ -1718,9 +1773,9 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
 from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id left join Patient pat on pat.id=hmc.patient_id left join Address2 adr on adr.addressid=pat.address_addressid
 left join Omc_Oksm ok on pat.nationality_id=ok.id left join VocRayon vr on vr.id=pat.rayon_id left join MisLpu dep on dep.id=dmc.department_id
 left join VocHospType vht on vht.id=hmc.hospType_id left join WorkFunction owf on owf.id=dmc.ownerFunction_id
-left join Worker ow on ow.id=owf.worker_id left join Patient owp on owp.id=ow.person_id left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id left join vocservicestream as vss on vss.id=hmc.servicestream_id
- where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy') and dmc.dateFinish is not null and vss.id='1'
-and dep.id='${param.depId}' and dmc.ownerFunction_id='${param.docId}' ${emSql}
+left join Worker ow on ow.id=owf.worker_id left join Patient owp on owp.id=ow.person_id left join VocWorkFunction ovwf on ovwf.id=owf.workFunction_id left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
+ where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy') and dmc.dateFinish is not null
+and dep.id='${param.depId}' and dmc.ownerFunction_id='${param.docId}' ${emSql} ${vss1}
 group by pat.id,pat.lastname,pat.firstname,pat.middlename, dep.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename order by dep.name ,ovwf.name,owp.lastname,owp.firstname,owp.middlename"/>
 
               <form action="stac_analysis_department_list3_docOwner.do" method="post" target="_blank">
@@ -1743,9 +1798,140 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename, dep.name,ovwf.name,ow
           </msh:sectionContent>
       </msh:section>
       <% }
+          if (view!=null && view.equals("3_patAllInDep")) {
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_patAllInDep" nameFldSql="journal_3_patAllInDep_sql" nativeSql="
+              select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc left join MedCase dmc on dmc.parent_id=hmc.id
+left join Patient pat on pat.id=hmc.patient_id
+left join MisLpu dep on dep.id=dmc.department_id
+left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
+where hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and dmc.dateFinish is not null and dmc.department_id='${param.depId}' ${vss1}
+group by dmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename
+order by dep.name  "/>
+
+              <form action="stac_analysis_department_list3_patAllInDep.do" method="post" target="_blank">
+                  Все пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_patAllInDep}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_patAllInDep"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_patAllOper")) {
+              String emerg = request.getParameter("emergency") ;
+              if (emerg!=null &&emerg.equals("1"))
+                  request.setAttribute("emSql", " and vha1.code='EMERGENCY'") ;
+              if (emerg!=null &&emerg.equals("0"))
+                  request.setAttribute("emSql", " and vha1.code='PLAN'") ;
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_patAllOper" nameFldSql="journal_3_patAllOper_sql" nativeSql="
+              select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename from MedCase hmc
+ left join MedCase dmc1 on dmc1.parent_id=hmc.id and dmc1.dtype='DepartmentMedCase'
+ left join SurgicalOperation so1 on so1.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so1.aspect_id
+left join Patient pat on pat.id=hmc.patient_id
+left join MisLpu dep on dep.id=hmc.department_id
+left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
+ where
+ hmc.dtype='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+    	and to_date('${param.dateEnd}','dd.mm.yyyy')
+and hmc.dischargeTime is not null and so1.department_id=hmc.department_id and hmc.department_id='${param.depId}' ${vss1} ${emSql}
+group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename order by dep.name"/>
+
+              <form action="stac_analysis_department_list3_patAllOper.do" method="post" target="_blank">
+                  Все ${param.typePat} пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_patAllOper}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_patAllOper"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityView-mis_patient.do" idField="1" >
+                  <msh:tableColumn columnName="#" property="sn" />
+                  <msh:tableColumn columnName="ФИО" property="2" />
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
+          if (view!=null && view.equals("3_operAllOper")) {
+              String emerg = request.getParameter("emergency") ;
+              if (emerg!=null &&emerg.equals("1"))
+                  request.setAttribute("emSql", " and vha1.code='EMERGENCY'") ;
+              if (emerg!=null &&emerg.equals("0"))
+                  request.setAttribute("emSql", " and vha1.code='PLAN'") ;
+      %>
+
+      <msh:section>
+          <msh:sectionTitle>
+              <ecom:webQuery name="journal_3_operAllOper" nameFldSql="journal_3_operAllOper_sql" nativeSql="
+              select so.id ,to_char(so.operationDate,'dd.mm.yyyy')||' '||coalesce(cast(so.operationTime as varchar(5)),'') as soperationTime
+,ms.code||' '||ms.name as voname , dep.name as whoIs , pat.lastname||' '||pat.firstname||' '||pat.middlename
+from Medcase hmc
+ left join MedCase dmc1 on dmc1.parent_id=hmc.id and dmc1.dtype='DepartmentMedCase'
+ left join SurgicalOperation so on so.medCase_id=dmc1.id
+ left join VocHospitalAspect vha1 on vha1.id=so.aspect_id
+left join Patient pat on pat.id=hmc.patient_id
+left join MisLpu dep on dep.id=hmc.department_id
+left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
+left join MedService ms on ms.id=so.medService_id
+ where
+ hmc.dtype='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+    	and to_date('${param.dateEnd}','dd.mm.yyyy')
+and hmc.dischargeTime is not null and so.department_id=dmc1.department_id and dmc1.department_id='${param.depId}' ${vss1} ${emSql}
+group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename,
+ so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.firstname,pat.middlename order by so.operationDate"/>
+
+              <form action="stac_analysis_department_list3_operAllOper.do" method="post" target="_blank">
+                  Все ${param.typePat} ОПЕРАЦИИ  в отделении ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}.
+                  <input type='hidden' name="sqlText" id="sqlText" value="${journal_3_operAllOper}">
+                  <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                  <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                  <input type='hidden' name="s" id="s" value="PrintService">
+                  <input type='hidden' name="m" id="m" value="printNativeQuery">
+                  <input type="submit" value="Печать">
+              </form>
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <msh:table name="journal_3_operAllOper"
+                         viewUrl="entityShortView-stac_ssl.do"
+                         action="entityShortView-stac_surOperation.do" idField="1">
+                  <msh:tableColumn columnName="#" property="sn"/>
+                  <msh:tableColumn columnName="Дата и время" property="2"/>
+                  <msh:tableColumn columnName="Операция" property="3"/>
+                  <msh:tableColumn columnName="Пациент" property="4"/>
+                  <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+      <% }
       %>
     <script type='text/javascript'>
-    
+
      checkFieldUpdate('typeDate','${typeDate}',2) ;
      //checkFieldUpdate('typePatient','${typePatient}',3) ;
      //checkFieldUpdate('typeOperation','${typeOperation}',3) ;
