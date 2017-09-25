@@ -153,7 +153,7 @@
 	          <msh:textField property="anesthesiaDuration" label="Длительность (мин)"  fieldColSpan="3" />
 	        </msh:row>
 	        <msh:row >
-	          <msh:autoComplete property="anaesthetist" label="Анестезист" vocName="workFunction" fieldColSpan="3" horizontalFill="true" />
+	          <msh:autoComplete property="anaesthetist" label="Анестезиолог" vocName="workFunction" fieldColSpan="3" horizontalFill="true" />
 	        </msh:row>
         </msh:ifFormTypeIsCreate>
          <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/HideCheckBox">
