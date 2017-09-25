@@ -8,7 +8,7 @@
 	
         <form-bean name="stac_planHospitalForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm" />
         <form-bean name="smo_planHospitalByVisitForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />
-        <form-bean name="smo_planHospitalByHospForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />
+        <form-bean name="smo_planHospitalByHospForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByHospForm" />
         <form-bean name="stac_sslAdmissionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
         <form-bean name="stac_sslAdmissionShortForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
         <form-bean name="stac_sslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm" />

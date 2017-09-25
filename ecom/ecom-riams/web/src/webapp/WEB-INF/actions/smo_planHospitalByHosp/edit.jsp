@@ -302,50 +302,7 @@
     		}) ;
   			aElement.style.display="none" ;
   		} 
-  		departmentAutocomplete.addOnChangeCallback(function() {
-			HospitalMedCaseService.getDefaultBedTypeByDepartment(
-					 $('department').value, $('serviceStream').value
-      				, $('dateFrom').value,{
-      			callback: function(aResult) {
-      				var res = aResult.split('#') ;
 
-      				if (+res[0]!=0) {
-      					$('bedType').value = res[0] ; 
-      					$('bedTypeName').value = res[1] ; 
-      					$('bedSubType').value = res[2] ; 
-      					$('bedSubTypeName').value = res[3] ; 
-      				} else {
-      		      	 	$('bedType').value='0';
-      		      	 	$('bedTypeName').value='';
-      		      	 	$('bedSubType').value='0';
-      		      	 	$('bedSubTypeName').value='';
-      				}
-      				bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
-      				
-      			}
-      		}) ;  
-  		});
-  		bedTypeAutocomplete.addOnChangeCallback(function() {
-  			HospitalMedCaseService.getDefaultBedSubTypeByDepartment(
-					 $('department').value, $('serviceStream').value
-					 ,$('bedType').value
-     				, $('dateFrom').value,{
-     			callback: function(aResult) {
-     				var res = aResult.split('#') ;
-
-     				if (+res[0]!=0) {
-     					$('bedSubType').value = res[0] ; 
-     					$('bedSubTypeName').value = res[1] ; 
-     				} else {
-     		      	 	$('bedSubType').value='0';
-     		      	 	$('bedSubTypeName').value='';
-     				}
-     				bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
-     				
-     			}
-     		}) ;
-      	 });
-  		bedSubTypeAutocomplete.setParentId($('department').value+'#'+$('bedType').value) ;
       		</script>  
   </msh:ifFormTypeIsNotView>
   </tiles:put>
