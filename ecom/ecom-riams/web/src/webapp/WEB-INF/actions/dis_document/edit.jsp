@@ -315,7 +315,6 @@ where disabilitydocument_id = ${param.id} order by dr.datefrom"/>
                           if (num!=null&&num!="") {
                               $(aField).value=num;
                               $(aField).className="viewOnly";
-                              $(aField).disabled=true;
                               aButton.style.display="none";
                           } else {
                               alert ("Не удалось получить номер больничного листа");
