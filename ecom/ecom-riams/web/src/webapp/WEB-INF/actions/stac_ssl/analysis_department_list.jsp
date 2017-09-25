@@ -912,6 +912,7 @@ when (ok.voc_code='643' and adr.addressid is null) then hmc.id
 when (ok.voc_code is null and adr.addressid is not null) then hmc.id
 
 else null end) as cntnoadr
+,'&depId='||coalesce(dmc.department_id,0)||'&depName='||coalesce(dep.name,'')
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
@@ -945,8 +946,8 @@ order by dep.name
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_list_otd_rayon_swod"
-                           action="stac_analysis_department_list.do" idField="1" noDataMessage="Не найдено">
+                <msh:table name="journal_list_otd_rayon_swod" cellFunction="true"
+                           action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="22" noDataMessage="Не найдено">
                     <msh:tableNotEmpty>
                         <tr>
                             <th colspan="1" />
@@ -962,25 +963,25 @@ order by dep.name
                     </msh:tableNotEmpty>
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Отделение" property="2"/>
-                    <msh:tableColumn columnName="Всего посту- пило" isCalcAmount="true" property="20"/>
-                    <msh:tableColumn columnName="Всего выпи- сано" isCalcAmount="true" property="3"/>
-                    <msh:tableColumn columnName="г. Астра- хань" isCalcAmount="true" property="4"/>
-                    <msh:tableColumn columnName="г. Зна- менск" isCalcAmount="true" property="5"/>
-                    <msh:tableColumn columnName="Всего" isCalcAmount="true" property="6"/>
-                    <msh:tableColumn columnName="Ахту- бин- ский" isCalcAmount="true" property="7"/>
-                    <msh:tableColumn columnName="Воло- дар- ский " isCalcAmount="true" property="8"/>
-                    <msh:tableColumn columnName="Ено- таевский" isCalcAmount="true" property="9"/>
-                    <msh:tableColumn columnName="Икря- нинский" isCalcAmount="true" property="10"/>
-                    <msh:tableColumn columnName="Камы- зякский" isCalcAmount="true" property="11"/>
-                    <msh:tableColumn columnName="Красно- ярский" isCalcAmount="true" property="12"/>
-                    <msh:tableColumn columnName="Лиман- ский" isCalcAmount="true" property="13"/>
-                    <msh:tableColumn columnName="Нари- манов- ский" isCalcAmount="true" property="14"/>
-                    <msh:tableColumn columnName="Привол- жский" isCalcAmount="true" property="15"/>
-                    <msh:tableColumn columnName="Хара- балин- ский" isCalcAmount="true" property="16"/>
-                    <msh:tableColumn columnName="Черно- ярский" isCalcAmount="true" property="17"/>
-                    <msh:tableColumn columnName="Ино- город- ние" isCalcAmount="true" property="18"/>
-                    <msh:tableColumn columnName="Иност- ранцы" isCalcAmount="true" property="19"/>
-                    <msh:tableColumn columnName="Без адр. или гражд." isCalcAmount="true" property="21"/>
+                    <msh:tableColumn columnName="Всего посту- пило" isCalcAmount="true" property="20" addParam="&typeView=3_totalIn"/>
+                    <msh:tableColumn columnName="Всего выпи- сано" isCalcAmount="true" property="3" addParam="&typeView=3_totalOut"/>
+                    <msh:tableColumn columnName="г. Астра- хань" isCalcAmount="true" property="4" addParam="&typeView=3_patAllDistrict&district=Астрахань"/>
+                    <msh:tableColumn columnName="г. Зна- менск" isCalcAmount="true" property="5" addParam="&typeView=3_patAllDistrict&district=Знаменск"/>
+                    <msh:tableColumn columnName="Всего" isCalcAmount="true" property="6" addParam="&typeView=3_patAllDistrict&district=РАЙОН"/>
+                    <msh:tableColumn columnName="Ахту- бин- ский" isCalcAmount="true" property="7" addParam="&typeView=3_patAllDistrict&district=Ахтубинский"/>
+                    <msh:tableColumn columnName="Воло- дар- ский " isCalcAmount="true" property="8" addParam="&typeView=3_patAllDistrict&district=Володарский"/>
+                    <msh:tableColumn columnName="Ено- таевский" isCalcAmount="true" property="9" addParam="&typeView=3_patAllDistrict&district=Енотаеский"/>
+                    <msh:tableColumn columnName="Икря- нинский" isCalcAmount="true" property="10" addParam="&typeView=3_patAllDistrict&district=Икрянинский"/>
+                    <msh:tableColumn columnName="Камы- зякский" isCalcAmount="true" property="11" addParam="&typeView=3_patAllDistrict&district=Камызякский"/>
+                    <msh:tableColumn columnName="Красно- ярский" isCalcAmount="true" property="12" addParam="&typeView=3_patAllDistrict&district=Красонярский"/>
+                    <msh:tableColumn columnName="Лиман- ский" isCalcAmount="true" property="13" addParam="&typeView=3_patAllDistrict&district=Лиманский"/>
+                    <msh:tableColumn columnName="Нари- манов- ский" isCalcAmount="true" property="14" addParam="&typeView=3_patAllDistrict&district=Наримановский"/>
+                    <msh:tableColumn columnName="Привол- жский" isCalcAmount="true" property="15" addParam="&typeView=3_patAllDistrict&district=Приволжский"/>
+                    <msh:tableColumn columnName="Хара- балин- ский" isCalcAmount="true" property="16" addParam="&typeView=3_patAllDistrict&district=Харабалинский"/>
+                    <msh:tableColumn columnName="Черно- ярский" isCalcAmount="true" property="17" addParam="&typeView=3_patAllDistrict&district=Черноярский"/>
+                    <msh:tableColumn columnName="Ино- город- ние" isCalcAmount="true" property="18" addParam="&typeView=3_patAllDistrict&district=Иногородние"/>
+                    <msh:tableColumn columnName="Иност- ранцы" isCalcAmount="true" property="19" addParam="&typeView=3_patAllDistrict&district=Иностранцы"/>
+                    <msh:tableColumn columnName="Без адр. или гражд." isCalcAmount="true" property="21" addParam="&typeView=3_patAllDistrict&district=бомж"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -2116,6 +2117,89 @@ group by so.id,so.operationDate,ms.code,ms.name,pat.lastname,pat.firstname,pat.m
                     <msh:tableColumn columnName="Операция" property="3"/>
                     <msh:tableColumn columnName="Пациент" property="4"/>
                     <msh:tableColumn columnName="Отделение" property="5"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <%
+            }
+            if (view!=null && view.equals("3_patAllDistrict")) {
+                String sqlDistrict = request.getParameter("district") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Астрахань"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30000001%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Знаменск"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30000002%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("РАЙОН"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30%' and adr.kladr not like '30000%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Ахтубинский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30002%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Володарский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30003%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Енотаеский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30004%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Икрянинский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30005%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Камызякский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30006%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Красонярский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30007%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Лиманский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30008%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Наримановский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30009%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Приволжский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30010%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Харабалинский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30011%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Черноярский"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code='643' and adr.kladr like '30012%' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Иногородние"))
+                    request.setAttribute("sqlDistrict", " and adr.kladr not like '30%' and ok.voc_code='643' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("Иностранцы"))
+                    request.setAttribute("sqlDistrict", " and ok.voc_code is not null and ok.voc_code!='643' ") ;
+                if (sqlDistrict!=null && sqlDistrict.equals("бомж")) {
+                    request.setAttribute("district", "без адр. или гражд.") ;
+                    request.setAttribute("sqlDistrict", " and ((ok.voc_code is null and adr.addressid is null) or (ok.voc_code='643' and adr.addressid is null) or (ok.voc_code is null and adr.addressid is not null)) ");
+                }
+        %>
+
+        <msh:section>
+            <msh:sectionTitle>
+                <ecom:webQuery name="journal_3_patAllDistrict" nameFldSql="journal_3_patAllDistrict_sql" nativeSql="
+                select
+pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+ from MedCase hmc
+left join MedCase dmc on dmc.parent_id=hmc.id
+left join Patient pat on pat.id=hmc.patient_id
+left join Address2 adr on adr.addressid=pat.address_addressid
+left join Omc_Oksm ok on pat.nationality_id=ok.id
+left join VocRayon vr on vr.id=pat.rayon_id
+left join MisLpu dep on dep.id=dmc.department_id
+left join VocHospType vht on vht.id=hmc.hospType_id
+left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
+where hmc.DTYPE='HospitalMedCase'
+    and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
+    	and to_date('${dateEnd}','dd.mm.yyyy')
+    	and hmc.deniedHospitalizating_id is null
+    	and dmc.dateFinish is not null
+    	and dmc.department_id='${param.depId}'  ${vss1} ${sqlDistrict}
+group by pat.id,pat.lastname,pat.firstname,pat.middlename order by pat.id"/>
+
+                <form action="stac_analysis_department_list3_patAllDistrict.do" method="post" target="_blank">
+                    Пациенты ${param.typePat} отделения ${param.depName} в период с ${param.dateBegin} по ${param.dateEnd} из района ${param.district}.
+                    <input type='hidden' name="sqlText" id="sqlText" value="${journal_patAllDistrict}">
+                    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
+                    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
+                    <input type='hidden' name="s" id="s" value="PrintService">
+                    <input type='hidden' name="m" id="m" value="printNativeQuery">
+                    <input type="submit" value="Печать">
+                </form>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table name="journal_3_patAllDistrict"
+                           viewUrl="entityShortView-stac_ssl.do"
+                           action="entityView-mis_patient.do" idField="1" >
+                    <msh:tableColumn columnName="#" property="sn" />
+                    <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
