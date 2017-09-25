@@ -1293,7 +1293,7 @@ and hmc1.dischargeTime is not null and so1.department_id=dmc.department_id
     	and to_date('${dateEnd}','dd.mm.yyyy') 
     	${vss1} 
     	and hmc1.department_id=dmc.department_id and hmc1.deniedHospitalizating_id is null) as cntAdmisPat
-    	,'&depId='||coalesce(dmc.department_id,0)
+    	,'&depId='||coalesce(dmc.department_id,0)||'&depName='||coalesce(dep.name,'')
 from MedCase hmc
 left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
@@ -1316,7 +1316,7 @@ order by dep.name
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="9" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Наименование отделения" property="2"/>
-                    <msh:tableColumn columnName="Всего поступивших больных" isCalcAmount="true" property="8" addParam="&typeView=3_totalIn&inout=in"/>
+                    <msh:tableColumn columnName="Всего поступивших больных" isCalcAmount="true" property="8" addParam="&typeView=3_totalIn"/>
                     <msh:tableColumn columnName="Всего выписанных больных" isCalcAmount="true" property="3" addParam="&typeView=3_totalOut"/>
                     <msh:tableColumn columnName="Всего койко- дней" isCalcAmount="true" property="4"/>
                     <msh:tableColumn columnName="Сред. койко- дней " property="5"/>
@@ -1598,8 +1598,8 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Операция" property="3"/>
-                    <msh:tableColumn columnName="Пациент" property="4"/>
-                    <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>
+                    <msh:tableColumn columnName="Отделение" property="4"/>
+                    <msh:tableColumn property="5" columnName="Пациент"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -1715,8 +1715,8 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Операция" property="3"/>
-                    <msh:tableColumn columnName="Пациент" property="4"/>
-                    <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>,
+                    <msh:tableColumn columnName="Отделение" property="4"/>
+                    <msh:tableColumn property="5" columnName="Пациент"/>,
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -1756,8 +1756,8 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Операция" property="3"/>
-                    <msh:tableColumn columnName="Пациент" property="4"/>
-                    <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>,
+                    <msh:tableColumn columnName="Отделение" property="4"/>
+                    <msh:tableColumn property="5" columnName="Пациент"/>,
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -1925,16 +1925,16 @@ group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middle
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Дата и время" property="2"/>
                     <msh:tableColumn columnName="Операция" property="3"/>
-                    <msh:tableColumn columnName="Пациент" property="4"/>
-                    <msh:tableColumn cssClass="preCell" property="5" columnName="Протокол операции"/>
+                    <msh:tableColumn columnName="Отделение" property="4"/>
+                    <msh:tableColumn property="5" columnName="Пациент"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
         <% }
             if (view!=null && view.equals("3_totalIn")) {
-                String inout = request.getParameter("inout") ;
+                /*String inout = request.getParameter("inout") ;
                 if (inout!=null &&inout.equals("in"))
-                    request.setAttribute("inOutSql", " and hmc.datestart ") ;
+                    request.setAttribute("inOutSql", " and hmc.datestart ") ;*/
               /*if (inout!=null &&inout.equals("out"))
                   request.setAttribute("inOutSql", "  and hmc.dateFinish ") ;*/
         %>
@@ -1948,13 +1948,13 @@ left join Patient pat on pat.id=hmc.patient_id
 left join MisLpu dep on dep.id=hmc.department_id
 left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
  where
- hmc.dtype='HospitalMedCase' ${inOutSql} between to_date('${param.dateBegin}','dd.mm.yyyy')
+ hmc.dtype='HospitalMedCase' and hmc.datestart between to_date('${param.dateBegin}','dd.mm.yyyy')
     	and to_date('${param.dateEnd}','dd.mm.yyyy')
 and hmc.dischargeTime is not null and hmc.department_id='${param.depId}' ${vss1}
 group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename order by dep.name"/>
 
                 <form action="stac_analysis_department_list3_totalIn.do" method="post" target="_blank">
-                    Все ${param.typePat} пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}
+                    Все пациенты отделения ${param.depName}, ПОСТУПИВШИЕ в период с ${param.dateBegin} по ${param.dateEnd}
                     <input type='hidden' name="sqlText" id="sqlText" value="${journal_totalIn}">
                     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
                     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
@@ -1979,18 +1979,21 @@ group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middle
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery name="journal_3_totalOut" nameFldSql="journal_3_totalOut_sql" nativeSql="
-              select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename from MedCase hmc
- left join MedCase dmc1 on dmc1.parent_id=hmc.id and dmc1.dtype='DepartmentMedCase'
+select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+from MedCase hmc
+left join MedCase dmc on dmc.parent_id=hmc.id
 left join Patient pat on pat.id=hmc.patient_id
-left join MisLpu dep on dep.id=hmc.department_id
+left join MisLpu dep on dep.id=dmc.department_id
+left join VocHospType vht on vht.id=hmc.hospType_id
 left join vocservicestream as vss1 on vss1.id=hmc.servicestream_id
- where
- hmc.DTYPE='HospitalMedCase' and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
-  and to_date('${param.dateEnd}','dd.mm.yyyy') and hmc.department_id='${param.depId}' ${vss1}
-group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename order by dep.name"/>
+where hmc.DTYPE='HospitalMedCase'
+and hmc.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${param.dateEnd}','dd.mm.yyyy')
+and dmc.dateFinish is not null
+and dmc.department_id='${param.depId}'  ${vss1}
+group by pat.id,pat.lastname,pat.firstname,pat.middlename order by pat.id"/>
 
                 <form action="stac_analysis_department_list3_totalOut.do" method="post" target="_blank">
-                    Все ${param.typePat} пациенты отделения ${param.depname} в период с ${param.dateBegin} по ${param.dateEnd}
+                    Все пациенты отделения ${param.depName}, выписанные в период с ${param.dateBegin} по ${param.dateEnd}
                     <input type='hidden' name="sqlText" id="sqlText" value="${journal_totalOut}">
                     <input type='hidden' name="sqlInfo" id="sqlInfo" value="Период с ${param.dateBegin} по ${param.dateEnd}.">
                     <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
