@@ -52,10 +52,13 @@
 		<create creator="new" javascript="CalculateService" scope="application">
 			<param name="class" value="ru.ecom.mis.web.dwr.calculator.CalculateServiceJs"/>
 		</create>
-		
 		 <create creator="new" javascript="DirectoryService" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.directory.DirectoryServiceJs"/>
         </create>
+
+		<create creator="new" javascript="PharmacyService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.pharmacy.PharmacyServiceJs"/>
+		</create>
 		
     </allow>
 

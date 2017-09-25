@@ -2,16 +2,18 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
-<%@ taglib uri="http://www.ecom-ast.ru/tags/mis" prefix="mis" %>
+<%@ taglib uri="http://www.ecom-ast.ru/tags/mis" prefix="mis" %>%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
+  <%@page import="ru.ecom.web.login.LoginInfo"%>
 
   <tiles:put name="body" type="string">
-    <!--
-    - Назначение лекарственного средства
-    -->
+    <%
+      String username = LoginInfo.find(request.getSession(true)).getUsername() ;
+      request.setAttribute("username",username) ;
+    %>
     <msh:form guid="formHello" action="/entityParentSaveGoView-pres_drugPrescription.do" defaultField="id" title="Назначение лекарственного средства">
       <msh:hidden guid="hiddenId" property="id" />
-      <msh:hidden property="prescriptionList" guid="8bca0c6c-d5aa-40f0-a9f5-216fc7c32ad6" />
+      <msh:hidden property="prescriptionList"/>
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:panel guid="panel" colsWidth="3">
         <msh:row>
@@ -47,11 +49,11 @@
           <msh:label property="createUsername" label="пользователь"/>
         </msh:row>
         <msh:row>
-          <msh:label property="editDate" label="Дата редактирования"/>
-          <msh:label property="editTime" label="время"/>
+          <msh:label property="cancelDate" label="Дата завершения"/>
+          <msh:label property="cancelTime" label="время"/>
         </msh:row>
         <msh:row>
-          <msh:label property="editUsername" label="пользователь"/>
+          <msh:label property="cancelUsername" label="пользователь"/>
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
       </msh:panel>
@@ -75,8 +77,7 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_drugPrescriptionForm" guid="998yr7aa692-c1d3-4d79-bc37-cfa204fa846c">
       <msh:sideMenu title="Лекарственное назначение" guid="eb2154-b971-441e-9a90-51jhf">
-        <msh:sideLink roles="/Policy/Mis/Prescription/DrugPrescription/Edit" params="id" action="/entityParentEdit-pres_drugPrescription" name="Изменить" guid="ca519fhfui7r-9239-47e3-aec4-9a0336e47144" key="ALT+2"/>
-        <msh:sideLink  confirm="Удалить?" roles="/Policy/Mis/Prescription/DrugPrescription/Delete" params="id" action="/entityParentDelete-pres_drugPrescription" name="Удалить" guid="ca519fhfui7r-9239-47e3-aec4-9a0336e47144" key="ALT+DEL"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/DrugPrescription/Edit" params="id" action="/javascript:CancelPrescription()" name="Отменить" key="ALT+2"/>
       </msh:sideMenu>
 
       <msh:sideMenu title="Добавить" guid="0e25aac7-5361-434d-a8a7-1237aabb506f">
@@ -89,6 +90,33 @@
         <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" guid="e98f5d94-fe74-4c43-85b1-2e4847ce3eff" key="ALT+5"/>
       </msh:sideMenu>
     </msh:ifFormTypeIsView>
+
+  </tiles:put>
+
+  <tiles:put name="javascript" type="string">
+
+  <script type="text/javascript" src="./dwr/interface/PharmacyService.js"></script>
+  <script language="javascript" type="text/javascript">
+
+      function CancelPrescription() {
+          var name = "${username}";
+          PharmacyService.endPrescription(${param.id},name, {
+              callback : function(aResult) {
+                  if(aResult=="1"){
+                      alert("Назначение уже закрыто!");
+                  }else {
+                      alert("Назначение закрыто!");
+                      goBack();
+                  }
+              }
+          });
+      }
+
+      function goBack(){
+          var PrescriptionListId = document.querySelector('#prescriptionList').value;
+          location.href = "entityParentView-pres_prescriptList.do?id="+PrescriptionListId;
+      }
+  </script>
   </tiles:put>
 </tiles:insert>
 
