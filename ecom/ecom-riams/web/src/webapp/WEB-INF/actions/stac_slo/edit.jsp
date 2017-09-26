@@ -429,10 +429,11 @@
           , d.name as whoIs  
           , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
           ,substring(so.operationText,1,100)||' ...' as operationText
+          ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fioan
           from SurgicalOperation as so 
           left join MedService ms on ms.id=so.medService_id
-          left join medcase parent on parent.id=so.medcase_id 
-          
+          left join medcase parent on parent.id=so.medcase_id
+           left join anesthesia a on a.surgicaloperation_id=so.id
       		left join MedCase aslo on aslo.id=so.medCase_id
       		left join MedCase slo on slo.parent_id=aslo.parent_id
           left join MisLpu d on d.id=so.department_id 
@@ -440,6 +441,9 @@
           left join Worker w on w.id=wf.worker_id
           left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
           left join Patient wp on wp.id=w.person_id
+          left join workfunction wfan on wfan.id=a.anesthesist_id
+left join worker wan on wan.id=wfan.worker_id
+left join Patient pat on pat.id=wan.person_id
           where  
            slo.id=${param.id}
           order by so.operationDate
@@ -456,6 +460,7 @@
 	    		<msh:tableColumn columnName="Хирург" property="5"/>
 	    		<msh:tableColumn cssClass="preCell" property="6" columnName="Протокол операции"/>
 	    		<msh:tableColumn columnName="Отделение" property="4"/>
+                <msh:tableColumn columnName="Анестезиолог" property="7"/>
 	    	</msh:table>
 	    </msh:section>
     </msh:tableNotEmpty>
@@ -463,17 +468,16 @@
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/View">
             <ecom:webQuery name="allBandage" nativeSql="select so.id,
             to_char(so.startdate,'dd.mm.yyyy')||' '||coalesce(cast(so.starttime as varchar(5)),'') as datetime,
-            a.duration,vam.name as vamname,va.name as vaname,substring(so.text,1,100)||' ...' as text from medicalmanipulation so
+            a.duration,vam.name as vamname,va.name as vaname,substring(so.text,1,100)||' ...' as text,pat.lastname||' '||pat.firstname||' '||pat.middlename as fioan from medicalmanipulation so
             left join MedService ms on ms.id=so.medService_id
             left join medcase parent on parent.id=so.medcase_id
             left join MisLpu d on d.id=so.thedepartment_id
-            left join WorkFunction wf on wf.id=so.thesurgeon_id
-            left join Worker w on w.id=wf.worker_id
-            left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
-            left join Patient wp on wp.id=w.person_id
             left join anesthesia a on a.manipulation_id=so.id
             left join vocanesthesiamethod vam on vam.id=a.method_id
             left join vocanesthesia va on va.id=a.type_id
+left join workfunction wfan on wfan.id=a.anesthesist_id
+left join worker wan on wan.id=wfan.worker_id
+left join Patient pat on pat.id=wan.person_id
           where
            so.medCase_id=${param.id} and so.dtype='Bandage'
           order by so.startdate
@@ -490,6 +494,7 @@
                     <msh:tableColumn columnName="Метод" property="4"/>
                     <msh:tableColumn columnName="Тип" property="5"/>
                     <msh:tableColumn columnName="Протокол перевязки" property="6"/>
+                    <msh:tableColumn columnName="Анестезиолог" property="7"/>
                 </msh:table>
             </msh:section>
         </msh:tableNotEmpty>
