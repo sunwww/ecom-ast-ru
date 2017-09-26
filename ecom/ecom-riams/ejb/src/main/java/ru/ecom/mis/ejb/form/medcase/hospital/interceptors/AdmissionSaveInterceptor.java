@@ -119,7 +119,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				//medCase.setDiagnosis(diagList);
 			}
 		}
-		List<Object[]> rec = manager.createNativeQuery("select pasmot.lastname||' '||substring(pat.firstname,1,1)||''||substring(coalesce(pat.middlename,' '),1,1) as f1_name , pr.phonenumber " +
+		List<Object[]> rec = manager.createNativeQuery("select pat.lastname||' '||substring(pat.firstname,1,1)||''||substring(coalesce(pat.middlename,' '),1,1) as f1_name , pr.phonenumber " +
 				" from patientlistrecord pr left join patient pat on pat.id=pr.patient where pr.patient="+medCase.getPatient().getId()+" and pr.phoneNumber is not null").getResultList();
 		if (rec.size()>0) {
 			Object[] r = rec.get(0);
