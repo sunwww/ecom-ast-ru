@@ -14,7 +14,7 @@ boolean isCache = ActionUtil.isCacheCurrentLpu( request);
 %>
 
 	<tiles:put name="body" type="string">
-		<form action="javascript:void(0)"  id="mainForm" method="get" >
+		<form action="javascript:void(0)"  id="mainForm" method="post" >
 		<input type="hidden" value="${param.id}" name="card" id="card">
 	<ecom:webQuery name="getServiceExam" nativeSql="
 	select 
