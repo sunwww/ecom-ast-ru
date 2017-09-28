@@ -12,21 +12,33 @@
                 <msh:textField property="elnNumber" label="Номер ЭЛН" horizontalFill="true" size="50"/>
             </msh:row>
         </msh:panel>
-            <div id="responseDiv"/>
+
         </msh:form>
-        <input type="button" value="Импортировать из ФСС" onclick="importDisabilityDocument('import');this.disabled=true;">
-        <input type="button" value="Просмотреть ЭЛН (не импортируя)" onclick="importDisabilityDocument('show');this.disabled=true;">
+        <input type="button" value="Импортировать из ФСС" onclick="importDisabilityDocument('import',this)">
+        <input type="button" value="Просмотреть ЭЛН (не импортируя)" onclick="importDisabilityDocument('show',this)">
+        <div id="responseDiv"/>
     </tiles:put>
 
     <tiles:put name="javascript" type="string">
         <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
         <script language="javascript" type="text/javascript">
-            function importDisabilityDocument(method) {
-                DisabilityService.importDisabilityDocument($('elnNumber').value,+'${param.id}',method, {
-                   callback: function (a) {
-                     $('responseDiv').innerHTML=a;
-                   }
-                });
+            $('elnNumber').className+=" required";
+
+            function importDisabilityDocument(method,aButton) {
+                if (+$('elnNumber').value>0) {
+                    var oldValue =aButton.value;
+                    aButton.value="Подождите...";
+                    aButton.disabled=true;
+                    DisabilityService.importDisabilityDocument($('elnNumber').value,+'${param.id}',method, {
+                       callback: function (a) {
+                         $('responseDiv').innerHTML=a;
+                         aButton.value = oldValue;
+                           aButton.disabled=false;
+                       }
+                    });
+                } else {
+                    alert ('Не заполнен номер ЭЛН!');
+                }
             }
         </script>
     </tiles:put>
