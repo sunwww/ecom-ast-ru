@@ -83,6 +83,25 @@ public class DisabilityServiceJs {
 		return ret;
 	}
 
+	/**
+	 * Просмотр либо импорт ЭЛН с ФСС
+	 * @param aDisabilityDocumentNumber - номер документа
+	 * @param aPatientId - ИД пациента
+	 * @param aMethod - метод(просмотреть или импортировать)
+	 * @param aRequest
+	 * @return
+	 * @throws NamingException
+	 */
+	public String importDisabilityDocument(String aDisabilityDocumentNumber, Long aPatientId, String aMethod, HttpServletRequest aRequest) throws NamingException {
+		String snils = getSnils(aPatientId,aRequest);
+		if (snils.length()>0) {
+			IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
+			return service.importDisabilityDocument(aDisabilityDocumentNumber,snils,aPatientId, aMethod);
+		}
+		return "У пациента не указан СНИЛС!";
+
+	}
+
 	//Milamesher 0308 - отметить аннулирование
 	public String setAnnulDisabilityDocument(Long aDocumentId,String aAnnulText,String aAnnulCode,HttpServletRequest aRequest) throws NamingException {
 		String ret = null;

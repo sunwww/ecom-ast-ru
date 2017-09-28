@@ -9,6 +9,7 @@ import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 import ru.ecom.poly.ejb.services.GroupByDate;
 
 public interface IDisabilityService {
+	public String importDisabilityDocument(String aDisabilityNumber, String aSnils, Long aPatientId, String aMethod) ;
 	public String getLNNumberRange (Long aCount) ;
 	public String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, String textReason, String snils) ;
 	public String exportDisabilityDocument(Long aDocumentId) ;

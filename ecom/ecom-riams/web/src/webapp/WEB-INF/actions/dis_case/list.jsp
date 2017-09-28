@@ -15,6 +15,7 @@
   </tiles:put>
   <tiles:put name="body" type="string">
   <msh:section createRoles="/Policy/Mis/Disability/Case/Create" createUrl="entityParentPrepareCreate-dis_documentByPatient.do?id=${param.id}" title="Список случаев временной нетрудоспособности">
+    <a href="dis_import.do?id=${param.id}"><img src="/skin/images/main/plus.png" alt="Импорт ЭЛН с ФСС" title="Импорт ЭЛН с ФСС" height="14" width="14">Импорт ЭЛН с ФСС</a>
   	<ecom:webQuery name="list" nativeSql="
   	select dc.id
   	, min(dr.datefrom) as mindatefrom
@@ -33,7 +34,7 @@ case when max(dr.dateto)=min(dr.datefrom) then '1' else max(dr.dateto)-min(dr.da
   	group by dc.id
   	order by dc.id
   	"/>
-    <msh:table viewUrl="entityView-dis_case.do?short=Short" name="list" 
+    <msh:table viewUrl="entityView-dis_case.do?short=Short" name="list"
     action="entityParentView-dis_case.do" idField="1" >
       <msh:tableColumn columnName="#" property="sn" guid="06d94f6a7-ed40-4ebf-a274-1efd69d01cfe4" />
       <msh:tableColumn columnName="Дата начала" property="2" guid="0694f6a7-ed40-4ebf-a274-1efd6901cfe4" />

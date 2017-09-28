@@ -8,39 +8,26 @@
     <tiles:put name="body" type="string">
         <msh:form guid="formHello" action="/dis_import.do" defaultField="documentTypeName">
         <msh:panel guid="panel">
-            <msh:hidden property="patient_id" />
-             <msh:hidden property="ogrn"/>
             <msh:row>
-                <msh:textField property="snils" label="СНИЛС" viewOnlyField="true"/>
-            </msh:row>
-            <%--<msh:row>
-                <msh:textField property="patient_id" label="ID" horizontalFill="true"/>
-            </msh:row>
-            <msh:row>
-                <msh:textField property="ogrn" label="ОГРН" horizontalFill="true"/>
-            </msh:row>--%>
-            <msh:row>
-                <msh:textField property="elnNumber" label="Номер ЭЛН" horizontalFill="true"/>
+                <msh:textField property="elnNumber" label="Номер ЭЛН" horizontalFill="true" size="50"/>
             </msh:row>
         </msh:panel>
+            <div id="responseDiv"/>
         </msh:form>
-        <input type="button" value="Импорт из ФСС" onclick="dodo()">
+        <input type="button" value="Импортировать из ФСС" onclick="importDisabilityDocument('import');this.disabled=true;">
+        <input type="button" value="Просмотреть ЭЛН (не импортируя)" onclick="importDisabilityDocument('show');this.disabled=true;">
     </tiles:put>
 
     <tiles:put name="javascript" type="string">
         <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
         <script language="javascript" type="text/javascript">
-            function dodo() {
-                alert("asd");
+            function importDisabilityDocument(method) {
+                DisabilityService.importDisabilityDocument($('elnNumber').value,+'${param.id}',method, {
+                   callback: function (a) {
+                     $('responseDiv').innerHTML=a;
+                   }
+                });
             }
-
-            document.getElementById('patient_id').value = ${param.id};
-            DisabilityService.getSnils(${param.id},{
-                callback: function (snils) {
-                    document.getElementById('snilsReadOnly').value = snils;
-                }
-            });
-
         </script>
     </tiles:put>
 </tiles:insert>
