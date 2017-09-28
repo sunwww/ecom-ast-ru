@@ -22,8 +22,6 @@
           left join MedService ms on ms.id=so.medService_id
           left join medcase parent on parent.id=so.medcase_id
            left join anesthesia a on a.surgicaloperation_id=so.id
-      		left join MedCase aslo on aslo.id=so.medCase_id
-      		left join MedCase slo on slo.parent_id=aslo.parent_id
           left join MisLpu d on d.id=so.department_id
           left join WorkFunction wf on wf.id=so.surgeon_id
           left join Worker w on w.id=wf.worker_id
