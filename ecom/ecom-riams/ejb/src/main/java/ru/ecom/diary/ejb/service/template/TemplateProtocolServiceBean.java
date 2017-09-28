@@ -47,74 +47,66 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	static final Logger log = Logger.getLogger(TemplateProtocolServiceBean.class);
 
 
-	private void makeHttpPostRequest(String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager){
+	public String makePOSTRequest (String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager) {
 		log.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
 		try {
 			if (address==null) {
-				return;
+				return "";
 			}
-			//Thread thread = new Thread(new Runnable() {
-             //   public void run() {
-					HttpURLConnection connection = null;
-					try {
-						URL url = new URL(address+"/"+aMethod);
-						connection = (HttpURLConnection) url.openConnection();
-						if (params!=null&&!params.isEmpty()) {
-							for (Map.Entry<String,String> par: params.entrySet()) {
-								log.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
-								connection.setRequestProperty(par.getKey(),par.getValue());
-							}
-						}
-					    connection.setDoInput(true);
-                        connection.setDoOutput(true);
-                        connection.setRequestProperty("Accept", "application/json");
-                        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-						connection.setRequestProperty("Content-Type", "application/json");
+			HttpURLConnection connection = null;
+			try {
+				URL url = new URL(address+"/"+aMethod);
+				connection = (HttpURLConnection) url.openConnection();
+				if (params!=null&&!params.isEmpty()) {
+					for (Map.Entry<String,String> par: params.entrySet()) {
+						log.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
+						connection.setRequestProperty(par.getKey(),par.getValue());
+					}
+				}
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+				connection.setRequestProperty("Accept", "application/json");
+				connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+				connection.setRequestProperty("Content-Type", "application/json");
+				OutputStream writer = connection.getOutputStream();
+				writer.write(data.getBytes("UTF-8"));
+				writer.flush();
+				writer.close();
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				StringBuilder response = new StringBuilder();
+				String s = "";
+				while ((s = in.readLine()) != null) {
+					response.append(s);
+				}
+				in.close();
+				connection.disconnect();
+				return response.toString();
 
-
-
-						OutputStream writer = connection.getOutputStream();
-
-                        writer.write(data.getBytes("UTF-8"));
-                        writer.flush();
-                        writer.close();
-                        log.info("get response");
-                        //connection.getInputStream();
-                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        StringBuilder response = new StringBuilder();
-                        String s = "";
-                           while ((s = in.readLine()) != null) {
-                        response.append(s);
-                           }
-                        in.close();
-                        connection.disconnect();
-                        if (response.length()>0) {
-                        	log.info("Получили ответ, вот он"+response.toString());
-                        	if (aMethod.equals("SetRegisterPatient")) {
-								log.info("if SetRegisterPatient, manager = <"+aManager+">");
-								setAccountExternalCode(aObjectId,aManager,response.toString());
-							} else if (aMethod.equals("SetBlockPatient")){
-                        		setAccountDateTo(aObjectId,aManager,new java.sql.Date(new java.util.Date().getTime()));
-							}
-
-						}
-
-                    } catch (ConnectException e) {
-						log.error("Ошибка соединения с сервисом. "+e);
-					} catch (Exception e) {
-						if (connection!=null) {connection.disconnect();}
-                        log.error("in thread happens exception"+e);
-                        e.printStackTrace();
-                    }
-					log.info("endstarting new thread, sending message");
-
-           //     }
-          //  });
-		//	thread.start();
-			log.info("exit the function");
+			} catch (ConnectException e) {
+				log.error("Ошибка соединения с сервисом. "+e);
+			} catch (Exception e) {
+				if (connection!=null) {connection.disconnect();}
+				log.error("in thread happens exception"+e);
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return "";
+	}
+	private void makeHttpPostRequest(String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager){
+			if (address==null) {
+				return;
+			}
+			String response = makePOSTRequest(data, address, aMethod, params, aObjectId, aManager);
+			if (response.length()>0) {
+				log.info("Получили ответ, вот он"+response);
+				if (aMethod.equals("SetRegisterPatient")) {
+					setAccountExternalCode(aObjectId,aManager,response);
+				} else if (aMethod.equals("SetBlockPatient")){
+					setAccountDateTo(aObjectId,aManager,new java.sql.Date(new java.util.Date().getTime()));
+				}
+			}
 	}
 	public void setAccountDateTo (Long aPatientExternalServiceAccountId, EntityManager aManager, Date aDateTo) {
 		changeAccountInformation (aPatientExternalServiceAccountId, aManager, null,aDateTo);

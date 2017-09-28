@@ -123,7 +123,8 @@ if (date!=null && !date.equals("")) {
 	ActionUtil.getValueByList("diag_priority_m_sql", "diag_priority_m", request) ;
 	ActionUtil.getValueByList("diag_typeReg_cl_sql", "diag_typeReg_cl", request) ;
 	ActionUtil.getValueByList("result_death_sql", "result_death", request) ;
-	ActionUtil.setParameterFilterSql("department", "sloa.department_id", request) ;
+	//ActionUtil.setParameterFilterSql("department", "sloa.department_id", request) ;
+	ActionUtil.setParameterFilterSql("department", "case when mlLast.isnoomc='1' then mlPreLast.id else mlLast.id end ", request) ;
     if (typeView.equals("1")||typeView.equals("2")) {
     	if (typeView.equals("2")) {
     		request.setAttribute("tableGroup", ",vpat.id,vpat.name") ;
@@ -161,7 +162,10 @@ left join diagnosis diag on sls.id=diag.medcase_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-left join MedCase sloa on sloa.parent_id=sls.id
+left join MedCase sloa on sloa.parent_id=sls.id  and sloa.dateFinish is not null
+left join MedCase sloaPre on sloaPre.id=sloa.prevmedcase_id
+left join mislpu mlLast on mlLast.id=sloa.department_id
+left join mislpu mlPreLast on mlPreLast.id=sloaPre.department_id
 left join MedCase sloall on sloall.parent_id=sls.id
 left join SurgicalOperation so on so.medCase_id=sloall.id
 left join BedFund bf on bf.id=sloa.bedFund_id
@@ -191,7 +195,7 @@ and coalesce(
     and vpd.id='${diag_priority_m}'
     )
     ) between rspt.codefrom and rspt.codeto 
-    and sloa.dateFinish is not null
+
 and vdrt.id='${diag_typeReg_cl}' and vpd.id='${diag_priority_m}'
 ${departmentSql}
 group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code ${tableGroup}
