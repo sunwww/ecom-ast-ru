@@ -37,6 +37,7 @@
             </table>
             <textarea rows="8" cols="55" class="area" required id="text"></textarea>
             </div>
+            <div id='${name}AnnulDisDocumentResultInfoResponse' style="display: none;"></div>
             <table width="100%" cellspacing="10" cellpadding="10">
                 <tr><td></td></tr>
                 <tr>
@@ -55,6 +56,8 @@
     var the${name}AnnulDisDocumentDialog = new msh.widget.Dialog($('${name}AnnulDisDocumentDialog')) ;
     // Показать
     function show${name}CloseElectronicDocument() {
+        $('${name}AnnulDisDocumentResultInfo').style.display='block';
+        $('${name}AnnulDisDocumentResultInfoResponse').style.display='none';
         showPossibleReasons();
         theTableArrow = null ;
     }
@@ -99,13 +102,22 @@
         for (var i=0; i<radio.length; i++)
             if (document.getElementById('table1').getElementsByTagName("input")[i].checked==true)
                 code=document.getElementById(i).textContent;
-        if (code=="" || text=="") alert("Должна быть выбрана причина и написан комментарий!");
+        if (code=="" || text=="") {
+            alert("Должна быть выбрана причина и написан комментарий!");
+            aButton.disabled=false;
+            aButton.value="Аннулировать";
+        }
         else {
+            $('${name}AnnulDisDocumentResultInfoResponse').innerHTML="";
             DisabilityService.setAnnulDisabilityDocument(${param.id},text,code,{callback: function(res) {
                 the${name}AnnulDisDocumentDialog.hide() ;
 
                 this.value="Ответ получен...";
-                $('${name}AnnulDisDocumentResultInfo').innerHTML="Ответ сервиса ФСС: \n\n"+res;
+                $('${name}AnnulDisDocumentResultInfoResponse').innerHTML="Ответ сервиса ФСС: \n\n"+res;
+                $('${name}AnnulDisDocumentResultInfo').style.display='none';
+                $('${name}AnnulDisDocumentResultInfoResponse').style.display='block';
+                aButton.disabled=false;
+                aButton.value="Аннулировать";
                 the${name}AnnulDisDocumentDialog.show() ;
             }
             });
