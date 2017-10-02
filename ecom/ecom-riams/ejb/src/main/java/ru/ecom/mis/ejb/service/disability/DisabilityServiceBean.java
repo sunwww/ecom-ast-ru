@@ -96,6 +96,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 	 */
 	public String makeHttpGetRequest(String aAddress, String aMethod) {
 		try {
+			System.out.println("makeHttpGetRequest, "+aAddress+"/"+aMethod);
 			URL url = new URL(aAddress + "/" + aMethod);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoInput(true);
@@ -113,12 +114,13 @@ public class DisabilityServiceBean implements IDisabilityService {
 			if (response.length() > 0) {
 				// LOG.info("Получили ответ, вот он"+response.toString());
 				return response.toString();
-
+			} else {
+				return "Ошибка! Не получен ответ от сервера";
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			return ""+e;
 		}
-		return "";
 	}
 
 	public String exportDisabilityDocument(Long aDocumentId) {
@@ -199,7 +201,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 			LOG.info("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = " + address + ", ЛПУ = " + lpuId);
 			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = " + address + ", ЛПУ = " + lpuId;
 		}
-		List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
+		//List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
 
 
 		if (ogrn == null || ogrn.equals("0")) {
@@ -210,24 +212,24 @@ public class DisabilityServiceBean implements IDisabilityService {
 			if (aDocumentId != null && aDocumentId > 0) {
 				method = "SetLnData?id=" + aDocumentId + "&ogrn=" + ogrn;
 			} else {
-				return "";
+				return "Ошибка! При экспорте документа не указан ИД документа";
 			}
 
 		} else if (aMethod != null && aMethod.equals("getNumberRange")) {
 			if (aRangeCount != null && aRangeCount > 0) {
 				method = "sNewLnNumRange?ogrn=" + ogrn + "&count=" + aRangeCount;
 			} else {
-				return "";
+				return "Ошибка! При получении номеров ЭЛН не указано кол-во номеров";
 			}
 		} else if (aMethod != null && aMethod.equals("annullSheet")) {
 
 			if (aDocumentId != null && aDocumentId > 0 && aReasonAnnulId != null && textReason != null && snils != null) {
 				method = "sDisableLn?ogrn=" + ogrn + "&lnCode=" + aDocumentId + "&snils=" + snils + "&reasonCode=" + aReasonAnnulId + "&reason=" + textReason;
 			} else {
-				return "";
+				return "Ошибка! При аннулировании ЭЛН не указан ИД документа либо причина аннулирования";
 			}
 		} else {
-			return "";
+			return "Ошибка! Не указана функция для работы с ЭЛН";
 		}
 		return makeHttpGetRequest(address, method);
 	}
