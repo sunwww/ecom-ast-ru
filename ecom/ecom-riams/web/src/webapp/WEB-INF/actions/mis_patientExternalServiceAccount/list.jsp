@@ -12,7 +12,6 @@
 
     <tiles:put name='side' type='string'>
         <msh:sideMenu title="Добавить" guid="dcf2e072-d44e-47ca-ad16-db0ec61e35c8" >
-            <msh:sideLink key="ALT+N" roles="/Policy/Voc/VocKiliDefect/Create" action="/entityPrepareCreate-voc_post" name="Согласие" />
         </msh:sideMenu>
     </tiles:put>
 
@@ -22,7 +21,7 @@
             <msh:sectionContent>
                 <ecom:webQuery nativeSql="
 	       			select id, externalcode , dateStart, dateTo, phoneNumber, email from patientExternalServiceAccount where patient_id=${param.id}" name="list"/>
-                <msh:table name="list" action="entityParentEdit-mis_patientExternalServiceAccount.do" idField="1" disableKeySupport="true">
+                <msh:table name="list" action="entityParentView-mis_patientExternalServiceAccount.do" idField="1" disableKeySupport="true">
                     <msh:tableColumn columnName="Код" property="2"/>
                     <msh:tableColumn columnName="Дата получения согласия" property="3"/>
                     <msh:tableColumn columnName="Телефон" property="5"/>

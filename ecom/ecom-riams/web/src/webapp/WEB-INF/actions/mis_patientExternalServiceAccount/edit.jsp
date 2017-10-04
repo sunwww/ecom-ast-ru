@@ -21,11 +21,12 @@
             <msh:hidden property="saveType"/>
             <msh:hidden property="patient"/>
             <msh:hidden property="disabled"/>
+            <msh:hidden property="sendHistoryAgain"/>
 
             <msh:panel colsWidth="5%,15%,5%,15%,5%">
 
                 <msh:row>
-                    <msh:textField viewOnlyField="true" property="externalCode" label="Код пациента"/>
+                    <msh:textField viewOnlyField="true" property="externalCode" label="Код пациента" size="50"/>
                 </msh:row>
                  <msh:ifFormTypeAreViewOrEdit formName="mis_patientExternalServiceAccountForm">
                     <msh:row>
@@ -64,7 +65,9 @@
                               confirm="Удалить согласие?"/>
 
                 <msh:sideLink roles="/Policy/Mis/Patient/PatientExternalServiceAccount/Edit" key='ALT+3' params="id" action="/javascript:setDisabled()" name="Аннулировать согласие"
-                              confirm="Действитель аннулировать согласие?"/>
+                              confirm="Вы хотите аннулировать согласие?"/>
+                <msh:sideLink roles="/Policy/Mis/Patient/PatientExternalServiceAccount/Edit" key='ALT+3' params="id" action="/javascript:sendHistoryAgain()" name="Повторно выгрузить историю лечения"
+                              confirm="Вы хотите повторно выгрузить историю лечения?"/>
             </msh:ifFormTypeAreViewOrEdit>
         </msh:sideMenu>
     </tiles:put>
@@ -83,6 +86,10 @@
 
 
                 $('disabled').value="1";
+                document.forms[0].submit();
+            }
+            function sendHistoryAgain() {
+                $('sendHistoryAgain').value='1';
                 document.forms[0].submit();
             }
         </script>
