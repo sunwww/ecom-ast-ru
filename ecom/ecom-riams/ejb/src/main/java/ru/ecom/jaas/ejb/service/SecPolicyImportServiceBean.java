@@ -2,6 +2,7 @@ package ru.ecom.jaas.ejb.service;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -20,6 +21,7 @@ import ru.ecom.ejb.services.util.QueryResultUtil;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.nuzmsh.util.StringUtil;
+import sun.awt.windows.ThemeReader;
 
 /**
  * Импорт политик безопасности
@@ -47,6 +49,36 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     		return policy.getId() ;
     	}
     	return null ;
+    }
+    
+    public static List<Object[]> getUserByPolicy(String aPolicy, EntityManager aEntityManager) {
+    	SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class
+    			, aEntityManager.createQuery("from SecPolicy where key=:key")
+    				.setParameter("key", "/")) ;
+    	if (policy==null) return null;
+    	String[] pols = aPolicy.split("/") ;
+    	for (int i=1; i<pols.length; i++) {
+    		policy = QueryResultUtil.getFirst(SecPolicy.class
+        			, aEntityManager.createQuery("from SecPolicy where parentsecpolicy_id='"+policy.getId()+"' and key=:key")
+        				.setParameter("key", pols[i])) ;
+    		if (policy==null) return null;
+    	}
+    	StringBuilder listusers = new StringBuilder() ;
+    	listusers.append("select su.id,su.login from secuser su");
+    	listusers.append(" left join secuser_secrole ss1 on ss1.secuser_id=su.id");
+    	listusers.append(" left join secrole_secrole ss2 on ss2.secrole_id=ss1.roles_id");
+    	listusers.append(" where ss1.roles_id in");
+    	listusers.append(" (select sr.id from secrole sr");
+    	listusers.append(" left join secrole_secpolicy ss on ss.secrole_id=sr.id");
+    	listusers.append(" where ss.secpolicies_id='").append(policy.getId()).append("')");
+    	listusers.append(" or ss2.children_id in");
+    	listusers.append(" (select sr.id from secrole sr");
+    	listusers.append(" left join secrole_secpolicy ss on ss.secrole_id=sr.id");
+    	listusers.append(" where ss.secpolicies_id='").append(policy.getId()).append("')");
+    	listusers.append(" group by su.id,su.login");
+    	//TODO
+    	List<Object[]> l = aEntityManager.createNativeQuery(listusers.toString()).getResultList() ;
+    	return l ;
     }
 
     private SecPolicy findRootPolicy() {

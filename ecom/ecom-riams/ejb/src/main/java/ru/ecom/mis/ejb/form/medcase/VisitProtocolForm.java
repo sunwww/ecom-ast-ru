@@ -200,5 +200,18 @@ public class VisitProtocolForm extends ProtocolForm {
 	public void setDiagnosisRegistrationType(Long aDiagnosisRegistrationType) {theDiagnosisRegistrationType = aDiagnosisRegistrationType;}
 	/** Тип регистрации диагноза */
 	private Long theDiagnosisRegistrationType ;
+	
+	/** isCreateDiagnosis */
+	@Comment("isCreateDiagnosis")
+	public Boolean getIsCreateDiagnosis() {
+		return theIsCreateDiagnosis;
+	}
+
+	public void setIsCreateDiagnosis(Boolean aIsCreateDiagnosis) {
+		theIsCreateDiagnosis = aIsCreateDiagnosis;
+	}
+
+	/** isCreateDiagnosis */
+	private Boolean theIsCreateDiagnosis;
 
 }
