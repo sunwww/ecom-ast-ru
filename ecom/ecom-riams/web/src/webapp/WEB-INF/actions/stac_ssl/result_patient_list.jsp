@@ -290,10 +290,10 @@ then -1 else 0 end) as age
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
             <msh:tableColumn columnName="Результат госпитализации" property="3"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="4" isCalcAmount="true"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="5" isCalcAmount="true"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во плановых" property="6" isCalcAmount="true"/>
-            <msh:tableColumn isCalcAmount="true" columnName="Кол-во оперированных" property="7" isCalcAmount="true"/>
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="4" />
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во экстренных" property="5" />
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во плановых" property="6" />
+            <msh:tableColumn isCalcAmount="true" columnName="Кол-во оперированных" property="7" />
             <msh:tableColumn columnName="Ср. койко дней" property="8" />
             
         </msh:table>
