@@ -121,5 +121,13 @@ public class HitechMedicalCaseForm extends IdEntityForm{
 	public void setStantAmount(Long aStantAmount) {theStantAmount = aStantAmount;}
 	/** Количество установленных стентов */
 	private Long theStantAmount ;
+
+	/** Номер талона ВМП */
+	@Comment("Номер талона ВМП")
+	@Persist
+	public String getTicketNumber() {return theTicketNumber;}
+	public void setTicketNumber(String aTicketNumber) {theTicketNumber = aTicketNumber;}
+	/** Номер талона ВМП */
+	private String theTicketNumber ;
 	
 }

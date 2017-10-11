@@ -94,5 +94,13 @@ public class HitechMedicalCase extends BaseEntity {
 	public void setStantAmount(Long aStantAmount) {theStantAmount = aStantAmount;}
 	/** Количество установленных стентов */
 	private Long theStantAmount ;
+
+	/** Номер талона ВМП */
+	@Comment("Номер талона ВМП")
+	public String getTicketNumber() {return theTicketNumber;}
+	public void setTicketNumber(String aTicketNumber) {theTicketNumber = aTicketNumber;}
+	/** Номер талона ВМП */
+	private String theTicketNumber ;
+
 	
 }

@@ -181,6 +181,7 @@
           ,to_char(himc.planHospDate,'dd.mm.yyyy') as f3_planHospDate
           ,coalesce(vkhc1.code ||' '||vkhc1.name,vkhc2.code ||' '||vkhc2.name) as f4_kind
           ,coalesce(vmhc1.code ||' '||vmhc1.name, vmhc2.code ||' '||vmhc2.name) as f5_method
+          ,coalesce(himc.ticketNumber,'') as f6_ticketNumber
           from medcase slo
           left join HitechMedicalCase himc on  himc.medCase_id = slo.id
           left join vocKindHighCare vkhc1 on vkhc1.id=himc.kind_id
@@ -196,6 +197,7 @@
 	    	editUrl="entityParentEdit-stac_vmpCase.do"  
 	    	name="hitechCases" action="entityParentView-stac_vmpCase.do" idField="1">
 	    		<msh:tableColumn columnName="#" property="sn"/>
+	    		<msh:tableColumn columnName="Номер талона" property="6"/>
 	    		<msh:tableColumn columnName="Дата направления" property="2"/>
 	    		<msh:tableColumn columnName="Дата предварительной госпитализации" property="3"/>
 	    		<msh:tableColumn columnName="Вид" property="4"/>
