@@ -1303,7 +1303,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     	    <form action="print-stac_report_14_3.do" method="post" target="_blank">
 	    Свод по нозоологиям (умершие)
 	    <input type='hidden' name="sqlText" id="sqlText" value="${report14swod_sql}"> 
-	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (умершие) за ${param.dateBegin}-${dateEnd}.">
+	    <input type='hidden' name="sqlInfo" id="sqlInfo" value="Свод по нозоологиям (умершие) ДОСУТОЧНО за ${param.dateBegin}-${dateEnd}.">
 	    <input type='hidden' name="sqlColumn" id="sqlColumn" value="${groupName}">
 	    <input type='hidden' name="s" id="s" value="PrintService"><input type='hidden' name="isReportBase" id="isReportBase" value="${isReportBase}">
 	    <input type='hidden' name="m" id="m" value="printNativeQuery">
@@ -1435,11 +1435,12 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     and vpd.id='${diag_priority_m}'
     )
     ) between rspt.codefrom and rspt.codeto
+
     and (sls.dateStart=sls.dateFinish or sls.dateFinish-sls.dateStart=1 and sls.dischargetime<sls.entrancetime)
     group by sls.id
     ,ss.code,sls.emergency,sls.orderType_id,p.lastname,p.firstname
     ,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
-    ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name, mlname
+    ,bf.addCaseDuration,sls.result_id,dc.isAutopsy,vdc.name,dc.id,vdcL.name, pml.name,cert.number,cert.series
     order by p.lastname,p.firstname,p.middlename " />
     	    <form action="print-stac_report_14_3r.do" method="post" target="_blank">
 	    Реестр пациентов ${param.strname} по нозоологиям (умершие)
