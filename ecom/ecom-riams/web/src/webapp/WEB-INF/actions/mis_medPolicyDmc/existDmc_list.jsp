@@ -6,7 +6,12 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name='body' type='string'>
-    	<ecom:webQuery nativeSql="select d.id,ri.name,d.series, d.number,d.startActualDate,d.endActualDate, (select count(*) from MedPolicy as m where d.insuranceCode=m.company_id and d.number=m.polNumber and (d.series is null or d.series=m.series)) from DmcExistMedicalPolicy as d,Patient as p left join REG_IC as ri on ri.omccode=d.insurancecode where p.id=${param.id} and d.lastname=p.lastname and d.firstname=p.firstname and d.middlename=p.middlename and (d.birthday is null or d.birthday=p.birthday) and (d.snils is null or d.snils='' or d.snils=p.snils)"
+    	<ecom:webQuery nativeSql="select d.id,ri.name,d.series, d.number,d.startActualDate,d.endActualDate
+    	, (select count(*) from MedPolicy as m where d.insuranceCode=m.company_id and d.number=m.polNumber and (d.series is null or d.series=m.series))
+    	from Patient p
+    	left join DmcExistMedicalPolicy d on d.lastname=p.lastname and d.firstname=p.firstname and d.middlename=p.middlename and (d.birthday is null or d.birthday=p.birthday) and (d.snils is null or d.snils='' or d.snils=p.snils)
+    	left join REG_IC as ri on ri.omccode=d.insurancecode''||
+    	where p.id=${param.id} "
     	 name="list_existPatient"/>
         <msh:table name="list_existPatient"  action="js-mis_medPolicyDmc-createExist.do?pat=${param.id}" idField="1">
         	<msh:tableColumn property="sn" columnName="#"/>
