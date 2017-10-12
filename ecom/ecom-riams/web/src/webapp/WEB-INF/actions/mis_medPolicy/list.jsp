@@ -10,7 +10,7 @@
   </tiles:put>
   <tiles:put name="side" type="string" />
   <tiles:put name="body" type="string">
-    <msh:table  idField="id" guid="86ef8e69-6d58-4e49-961a-f2f463e02f80">
+    <msh:table action="javascript:void()" name="list" idField="id" guid="86ef8e69-6d58-4e49-961a-f2f463e02f80">
         <msh:tableColumn property="text" guid="1a71dc2e-96a6-480d-8dd1-f944bee0344e" />
     </msh:table>
   </tiles:put>
