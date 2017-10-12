@@ -90,8 +90,8 @@
 			nativeSql="select  e.id,
 					e.insidenumber,
 					list(tn.telnumber) as sot,
-					list(tn2.telnumber) as gor
-					,p.lastname||' '||p.firstname||' '||p.middlename as names,vb.name as build,vbl.name as level,m.name as dep
+					list(tn2.telnumber) as gor,
+					e.comment as comment,p.lastname||' '||p.firstname||' '||p.middlename as names,vb.name as build,vbl.name as level,m.name as dep
 					from entry e
 					left join WorkFunction as wf on wf.id= e.person_id
 					left join Worker as w on w.id=wf.worker_id
