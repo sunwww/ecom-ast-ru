@@ -120,6 +120,13 @@ public class PatientExternalServiceAccountForm extends IdEntityForm {
     /** Разрешить выгрузку всей истории болезни */
     private Boolean theExportAllHistory ;
 
+    /** Выгрзуить историю лечения повторно */
+    @Comment("Выгрзуить историю лечения повторно")
+    public String getSendHistoryAgain() {return theSendHistoryAgain;}
+    public void setSendHistoryAgain(String aSendHistoryAgain) {theSendHistoryAgain = aSendHistoryAgain;}
+    /** Выгрзуить историю лечения повторно */
+    private String theSendHistoryAgain ;
+
 
 }
 

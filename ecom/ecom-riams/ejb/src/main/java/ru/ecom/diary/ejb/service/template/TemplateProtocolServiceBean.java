@@ -227,6 +227,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		String address = getExternalServiceAddress();
 		if (address==null) {return;}
 		log.info("start export all history");
+		String lpuCode= "AMOKB"; //TODO - переделать для работы в разных ЛПУ
 		PatientExternalServiceAccount pesa = aManager.find(PatientExternalServiceAccount.class,aPatientExternalAccountId);
 		Long aPatientId = pesa.getPatient().getId();
 		JSONObject root = new JSONObject();
@@ -249,11 +250,12 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				" group by dd.id, mc.id, mc.dtype, vst.code, prot.id" +
 				" order by mc.datestart desc, mc.timeexecute desc")
 				.setParameter("pat", aPatientId).getResultList();
-		if (!list.isEmpty()) {
+		if (!list.isEmpty()) { //Выписка из амбулаторной карты (прием к врачу)
 			log.info("Найдено "+list.size()+" выписок по пациенту "+aPatientId);
 			//Выгружаем дневники пол-ки, диагностика, лаборатория
 			for (Object[] rec: list) {
 				Visit vis = aManager.find(Visit.class, Long.valueOf(rec[1].toString()));
+				String externalCaseId = null;
 
 				JSONObject service = new JSONObject();
 				serviceType=rec[2].toString();
@@ -261,6 +263,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					if (rec[0]!=null&&!rec[0].equals("")){
 						DischargeDocument dd =aManager.find(DischargeDocument.class,Long.valueOf(rec[0].toString()));
 						record = dd.getHistory();
+						externalCaseId = lpuCode+"#"+serviceType+"#"+(record!=null?record.hashCode():0);
 					} else {
 						log.warn("У визита "+rec[1]+" нет выписки, запись не выгружаем");
 						continue;
@@ -269,8 +272,9 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					if (rec[3]!=null&&!rec[3].equals("")) {
 						Protocol protocol = aManager.find(Protocol.class,Long.valueOf(rec[3].toString()));
 						record = protocol.getRecord();
+						externalCaseId = lpuCode+"#"+serviceType+"#"+rec[3].toString();
 					} else {
-						log.warn("У диагностиечкой услуги/визита "+rec[1]+" нет протокола, запись не выгружаем");
+						log.warn("У диагностичекой услуги/визита "+rec[1]+" нет протокола, запись не выгружаем");
 					}
 				} else {
 					log.error("Неизвестный тип услуги");
@@ -291,19 +295,25 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				}
 
 				//Заполнили все данные, начинаем формирование json
+				service.put("caseid",externalCaseId);
 				service.put("patientcode", pesa.getExternalCode());
-				service.put("lpucodecode", "AMOKB");
+				service.put("lpucodecode", lpuCode);
 				service.put("recordtype", serviceType);
 				service.put("recorddatestart", medcaseDate);
 				service.put("recordtimeexecute", medcaseTime);
 				service.put("recordexecutor", executor);
 				service.put("recordtext", record);
 				services.put(service);
+
+
+
+
 			}
 		}
 		//Начинаем искать госпитализации пациента
 		list = aManager.createNativeQuery("select h.id as f1, h.id as f2 from medcase h where h.dtype='HospitalMedCase' and h.patient_id=:pat and h.dischargetime is not null and h.deniedhospitalizating_id is NULL ").setParameter("pat",aPatientId).getResultList();
 		if (!list.isEmpty()) {
+			serviceType = "DISCHARGE";
 			log.info("Выгружаем госпитализации. Размер: "+list.size());
 			for (Object [] hosps: list){
 				JSONObject service = new JSONObject();
@@ -336,9 +346,10 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						executor = dep[3].toString();
 					}
 				}
+				service.put("caseid",lpuCode+"#"+serviceType+"#"+hosps[0].toString());
 				service.put("patientcode", pesa.getExternalCode());
-				service.put("lpucodecode", "AMOKB");
-				service.put("recordtype", "DISCHARGE");
+				service.put("lpucodecode", lpuCode);
+				service.put("recordtype", serviceType);
 				service.put("recorddatestart", medcaseDate);
 				service.put("recordtimeexecute", medcaseTime);
 				service.put("recordexecutor", executor);
@@ -373,9 +384,11 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					log.info("У пациента " + pat.getPatientInfo()+" нет согласия на передачу данных, выходим");
 					return;
 				} //Нет согласия - выходим
-
+				String lpuCode = "AMOKB";
 				String serviceType = "", medcaseDate = "", medcaseTime = "", executor = "";
 				String patientCode=pesa.get(0).getExternalCode();
+				String externalCaseId = null;
+				String calendartimeId = "";
 				JSONObject root = new JSONObject();
 				JSONArray services = new JSONArray();
 				JSONObject service = new JSONObject();
@@ -389,6 +402,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					//log.info("1=getEpicrisis 1 " + aRecord);
 					HospitalMedCase hosp = (HospitalMedCase) mc;
 					serviceType = "DISCHARGE";
+					externalCaseId = lpuCode+"#"+serviceType+"#"+hosp.getId();
 					medcaseDate = "" + hosp.getDateFinish();
 					medcaseTime = "" + hosp.getDischargeTime();
 					List<Object[]> list = aManager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
@@ -422,8 +436,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				} else if (mc instanceof DepartmentMedCase) { //Дневники специалистов в отделении не трогаем
 					return;
 				} else if (mc instanceof Visit) { //Дневники визитов не выгружаем. Выгружаем только документ "Выписка из амбулаторной карты"
-
-					List<ServiceMedCase> list = aManager.createQuery("from ServiceMedCase where parent=:vis").setParameter("vis", mc).getResultList();
 					Visit vis = (Visit) mc;
 					//DischargeDocument doc = aManager.createQuery("from DischargeDocument where medCase=:vis").setParameter("vis",vis).getRe;
 					if (vis.getDateStart() == null) {
@@ -431,6 +443,8 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						return;
 					}
 					serviceType = "VISIT";
+					calendartimeId = ""+(vis.getTimePlan()!=null?vis.getTimePlan().getId():"");
+					List<ServiceMedCase> list = aManager.createQuery("from ServiceMedCase where parent=:vis").setParameter("vis", mc).getResultList();
 					if (list.size() > 0) {
 						ServiceMedCase smc = list.get(0);
 						String serviceCode = smc.getMedService().getServiceType().getCode();
@@ -441,9 +455,15 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						}
 						service.put("medservicecode", smc.getMedService().getCode());
 						service.put("medservicename", smc.getMedService().getName());
+						externalCaseId=lpuCode+"#"+serviceType+"#"+(d!=null?d.getId():0);
 					}
-					if (serviceType.equals("VISIT")&&d!=null) { //Если это визит, и не передается текст записи, не выгружаем, ибо поликлиничекие дневники мы выгружаем через "выписку"
-						return ;
+					if (serviceType.equals("VISIT")){
+						if (d!=null) { //Если это визит, и не передается текст записи, не выгружаем, ибо поликлиничекие дневники мы выгружаем через "выписку"
+							return ;
+						} else {
+							externalCaseId =lpuCode+"#"+serviceType+"#"+(aRecord!=null?aRecord.hashCode():0);
+						}
+
 					}
 					if (d!=null) {
 						medcaseDate = "" +  d.getDateRegistration();//vis.getDateStart();
@@ -462,13 +482,15 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 
 				}
 				//Заполнили все данные, начинаем формирование json
+				service.put("caseid", externalCaseId);
 				service.put("patientcode", patientCode);
-				service.put("lpucodecode", "AMOKB");
+				service.put("lpucodecode", lpuCode);
 				service.put("recordtype", serviceType);
 				service.put("recorddatestart", medcaseDate);
 				service.put("recordtimeexecute", medcaseTime);
 				service.put("recordexecutor", executor);
 				service.put("recordtext", aRecord);
+				service.put("calendartimeid",calendartimeId);
 				services.put(service); root.put("services",services);
 				//log.info("=== jSON is ready, " + root.toString());
 				makeHttpPostRequest(root.toString(), address,"SetStatement",null, mc.getId(), aManager);
