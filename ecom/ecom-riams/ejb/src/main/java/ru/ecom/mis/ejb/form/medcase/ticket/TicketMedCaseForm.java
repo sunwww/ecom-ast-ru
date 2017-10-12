@@ -336,6 +336,14 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	public void setArrivalTime(String aArrivalTime) {theArrivalTime = aArrivalTime;}
 	/** Время прибытия бригады СМП */
 	private String theArrivalTime;
+
+	/** Примечания пациента при записи */
+	@Comment("Примечания пациента при записи")
+	public String getPatientComment() {return thePatientComment;}
+	public void setPatientComment(String aPatientComment) {thePatientComment = aPatientComment;}
+	/** Примечания пациента при записи */
+	private String thePatientComment ;
+
 	
 }
 

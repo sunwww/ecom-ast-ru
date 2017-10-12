@@ -14,6 +14,7 @@ import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
+import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
@@ -21,6 +22,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "patient" },table="Document") })
 public class ExternalDocument extends Document {
+
+	/** Ссылка на время предварительной записи */
+	@Comment("Ссылка на время предварительной записи")
+	@OneToOne
+	public WorkCalendarTime getCalendarTime() {return theCalendarTime;}
+	public void setCalendarTime(WorkCalendarTime aCalendarTime) {theCalendarTime = aCalendarTime;}
+	/** Ссылка на время предварительной записи */
+	private WorkCalendarTime theCalendarTime ;
+
 	/** Ссылка на файл */
 	@Comment("Ссылка на файл")
 	public String getReferenceTo() {return theReferenceTo;}

@@ -27,6 +27,27 @@
                   	<msh:row>
       		<td colspan="4"><div id='medPolicyInformation' style="display: none;" class="errorMessage"/></td>
       	</msh:row>
+<msh:ifInRole roles="/Policy/TEST">
+<msh:row><td colspan="4">
+
+    <ecom:webQuery name="documentsByVisitList" nativeSql="select d.id,vedt.name as vedtname,to_char(d.createDate,'dd.mm.yyyy')||coalesce(' '||cast(d.createTime as varchar(5)),'')
+              ,d.referenceTo from Document d
+      	left join VocExternalDocumentType vedt on vedt.id=d.type_id
+      	where d.medcase_id='${param.id}' AND UPPER(d.dtype)='EXTERNALDOCUMENT'"/>
+    <msh:tableNotEmpty name="documentsByVisitList">
+        <msh:table name="documentsByVisitList"
+                   action="javascript:showDocument()" idField="4">
+            <msh:tableColumn  columnName="#" property="sn"/>
+            <msh:tableButton  property="4" buttonFunction="showExternalDocument" buttonName="Просмотреть документ" buttonShortName="Просмотреть документ"/>
+        </msh:table>
+    </msh:tableNotEmpty>
+</td>
+
+</msh:row>
+          <msh:row>
+              <msh:textArea property="patientComment" fieldColSpan="4" label="Сообщение пациента при записи" viewOnlyField="true"/>
+          </msh:row>
+</msh:ifInRole>
         <msh:separator colSpan="4" label="Направлен" guid="86dbd4c5-cfa1-4af1-b250-fabe97b77971" />
         <msh:row guid="fa7ff4e9-4b3d-4402-b046-86283cf7938e">
           <msh:autoComplete viewAction="entityParentView-mis_lpu.do" vocName="mainLpu" property="orderLpu" label="Внешний направитель" guid="cbab0829-c896-4b74-9a68-c9f95676cc3b" horizontalFill="true" fieldColSpan="3" viewOnlyField="true" />
@@ -338,6 +359,11 @@
   <msh:ifFormTypeIsNotView formName="smo_visitForm">
   
   	<script type="text/javascript">
+        function showExternalDocument(aPath) {
+
+            window.open("/docmis"+aPath,null,null);
+
+        }
   	if ($('parent')&&($('parent').value==null||$('parent').value==''||+$('parent').value==0)&&$('btnClosedSPO')){
   		$('btnClosedSPO').style.display="block";
   	}
