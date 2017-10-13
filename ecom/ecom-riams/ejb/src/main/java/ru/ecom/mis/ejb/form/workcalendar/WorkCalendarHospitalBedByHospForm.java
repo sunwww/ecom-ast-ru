@@ -1,11 +1,14 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
+import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarHospitalBed;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.workcalendar.interceptor.WorkCalendarHospitalBedCreate;
+import ru.ecom.mis.ejb.form.workcalendar.interceptor.WorkCalendarHospitalBedSave;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.validators.Required;
@@ -20,6 +23,9 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning")
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(WorkCalendarHospitalBedCreate.class)
+)
+@ACreateInterceptors(
+		@AEntityFormInterceptor(WorkCalendarHospitalBedSave.class)
 )
 public class WorkCalendarHospitalBedByHospForm extends WorkCalendarHospitalBedForm{
 

@@ -32,6 +32,12 @@
         <msh:hidden property="visit" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
         <msh:hidden property="patient" guid="95d2afaa-1cdb-46a9-bb71-756352439795" />
         <msh:hidden property="saveType" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
+        <msh:hidden property="internalCode" guid="c409dfd8-f4e7-469f-9322-1982b666a087" />
+          <msh:ifFormTypeIsView formName="smo_planHospitalByVisitForm">
+              <msh:row>
+                  <msh:textField property="internalCode" label="Внутренний номер направления" horizontalFill="true" fieldColSpan="3"/>
+              </msh:row>
+          </msh:ifFormTypeIsView>
         <msh:row>
         	<msh:textField property="phone" label="Телефон" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>

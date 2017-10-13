@@ -22,6 +22,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 , view="entityView-stac_planHospital.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning")
 public class WorkCalendarHospitalBedForm extends IdEntityForm {
+
+	/** Внутренний номер направлания */
+	@Comment("Внутренний номер направлания")
+	@Persist
+	public String getInternalCode() {return theInternalCode;}
+	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
+	/** Внутренний номер направлания */
+	private String theInternalCode ;
+
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist 
