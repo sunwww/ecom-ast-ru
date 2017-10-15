@@ -54,6 +54,9 @@
         <msh:row>
         	<msh:autoComplete property="orderConclusion" parentAutocomplete="type" fieldColSpan="3" label="Обоснование напр." horizontalFill="true" vocName="vocExpertOrderConclusion"/>
         </msh:row>
+          <msh:row>
+              <msh:textField property="patientHealthInfo" label="Описание состояния здоровью пациента" fieldColSpan="5" size="50" />
+          </msh:row>
         <msh:row>
         	<msh:textField property="delayReason" label="Обоснов. задержки подачи на ВК" horizontalFill="true" labelColSpan="2" fieldColSpan="2"/>
         </msh:row>
@@ -68,7 +71,7 @@
         </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MedCase/ClinicExpertCard/NumberInJournal">
         <msh:row>
-                	<msh:textField property="numberInJournal" labelColSpan="3" label="Порядковый номер в журнале"/>
+                	<msh:textField property="numberInJournal" labelColSpan="3" label="Порядковый номер в журнале" viewOnlyField="true"/>
         </msh:row>
         </msh:ifInRole>
         <msh:row>
@@ -78,6 +81,9 @@
         <msh:row>
         	<msh:autoComplete property="disabilityDocument" fieldColSpan="3" label="Лист нетруд." parentId="expert_kerForm.patient"
         		vocName="disabilityDocumentByPatient" horizontalFill="true"/>
+        </msh:row>
+        <msh:row>
+            <msh:textField property="anotherDisabilityNumber" label="Номер ЛН выданного другим ЛПУ"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete property="modeCase" fieldColSpan="3" label="Вид экспертизы" horizontalFill="true" vocName="vocExpertModeCase"/>

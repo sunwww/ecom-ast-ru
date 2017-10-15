@@ -29,6 +29,9 @@
     
 <form action="javascript:">
     <msh:panel>
+        <msh:row>
+            <td><input id="get${name}FreeNumberButton" type="button" onclick="getFreeNumber('${name}Number',this)" value="Получить номер ЭЛН"></td>
+        </msh:row>
     	<msh:row>
     		<msh:separator label="Новый бланк" colSpan="4"/>
     	</msh:row>

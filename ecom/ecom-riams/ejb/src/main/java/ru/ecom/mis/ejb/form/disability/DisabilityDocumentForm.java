@@ -77,6 +77,13 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	@Persist
 	public String getNumber() {return theNumber;}
 	public void setNumber(String aNumber) {theNumber = aNumber;}
+
+	/** Дата начала работы */
+	@Comment("Дата начала работы")
+	@DateString @DoDateString @Persist
+	public String getBeginWorkDate() { return theBeginWorkDate;}
+	public void setBeginWorkDate(String aBeginWorkDate) { this.theBeginWorkDate = aBeginWorkDate;}
+	private String theBeginWorkDate;
 	
 	/** Причина нетрудоспособности */
 	@Comment("Причина нетрудоспособности")
@@ -554,5 +561,13 @@ public class DisabilityDocumentForm extends IdEntityForm{
 	public void setExportStatus(String aExportStatus) {theExportStatus = aExportStatus;}
 	/** Статус экспорта в ФСС */
 	private String theExportStatus ;
+
+	/** Возраст пациента на дату начала случая */
+	@Comment("Возраст пациента на дату начала случая")
+	public String getPatientAgeYear() {return thePatientAgeYear;}
+	public void setPatientAgeYear(String aPatientAgeYear) {thePatientAgeYear = aPatientAgeYear;}
+	/** Возраст пациента на дату начала случая */
+	private String thePatientAgeYear ;
+
 
 }

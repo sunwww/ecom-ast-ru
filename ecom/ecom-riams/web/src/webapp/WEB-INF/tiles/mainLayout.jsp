@@ -59,8 +59,13 @@
                  alt='На главное меню' title='Переход на главное меню'/>
         </a>
         <ul id='user'>
+        
+      <!--   <msh:ifInRole roles="/Policy/Mis/Directory/Department">
+            <li><a href='js-riams-phoneTest.do' target='_blank'>Тел.АМОКБ Тест</a></li>
+            </msh:ifInRole> -->
+            
         	<msh:ifInRole roles="/Policy/Mis/CustomMessage/PhoneAmokb">
-            <li><a href='js-riams-phone.do' target='_blank'>Тел.АМОКБ</a></li>
+            <li><a href='js-riams-phoneTest.do' target='_blank'>Тел.АМОКБ</a></li>
             </msh:ifInRole>
            <li class="separator">|</li>
            <msh:ifInRole roles="/Policy/Mis/Claim/View">

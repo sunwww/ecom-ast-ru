@@ -35,7 +35,7 @@ public class AgeUtil {
 //        System.out.println("monthCalc = " + monthCalc);
 //        System.out.println("dayCalc = " + dayCalc);
         if(year==0 && monthCalc==0 && dayCalc>0) {
-            year++ ;
+           // year++ ;
         } else if (monthCalc == 0) {
             if (dayCalc < 0) {
                 year--;

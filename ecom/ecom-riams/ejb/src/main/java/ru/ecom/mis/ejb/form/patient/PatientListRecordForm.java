@@ -46,4 +46,12 @@ public class PatientListRecordForm extends IdEntityForm {
 	public void setMessage(String aMessage) {theMessage = aMessage;}
 	/** Сообщение */
 	private String theMessage;
+
+	/** Номер телефона */
+	@Comment("Номер телефона")
+	@Persist
+	public String getPhoneNumber() {return thePhoneNumber;}
+	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
+	/** Номер телефона */
+	private String thePhoneNumber ;
 }

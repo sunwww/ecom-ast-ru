@@ -73,5 +73,5 @@ function checkDateStart(aCtx,aExecuteDate,aExecuteTime,aId) {
 	}
 }
 function onPreDelete(aEntityId, aCtx) {
-	aCtx.manager.createNativeQuery("update diary set servicemedcase = null where servicemedcase="+aEntityId).executeUpdate(); //Очищаем информацию об услуге в дневнике
+	aCtx.manager.createNativeQuery("update diary set servicemedcase_id = null where servicemedcase_id="+aEntityId).executeUpdate(); //Очищаем информацию об услуге в дневнике
 }

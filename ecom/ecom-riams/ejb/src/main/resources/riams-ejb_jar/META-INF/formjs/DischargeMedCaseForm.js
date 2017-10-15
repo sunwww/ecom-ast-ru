@@ -39,7 +39,8 @@ function onSave(aForm,aEntity, aCtx) {
 	closePrescriptions(aForm, aCtx);
 }
 function onPreSave(aForm,aEntity, aCtx) {
-	checkDeathThenPlan(aCtx, aForm.result, aForm.reasonDischarge);
+    //checkUniqueDiagnosis(aForm,aCtx);
+    checkDeathThenPlan(aCtx, aForm.result, aForm.reasonDischarge);
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	
 	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy")) {
@@ -145,8 +146,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 					
 				}
 			}
-	} 
-
+	}
 }
 function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
 	l = aCtx.manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='"+aParameter+"'").getResultList();
@@ -177,7 +177,32 @@ function checkAllDiagnosis (aCtx, aSlsId) {
 		}	
 	}
 }
-//Milamesher
+//выписной диагноз должен быть уникальным
+function checkUniqueDiagnosis(aForm,aCtx) {
+    if (aForm.id != null) {
+        var sql = "select priority_id,idc10_id,registrationtype_id from diagnosis where medcase_id=" + aForm.id;
+        var list = aCtx.manager.createNativeQuery(sql).getResultList();
+        if (list.size() > 0) {
+            var mas = [];
+            var all="";
+            var str = "";
+            for (var i = 0; i < list.size(); i++) {
+                str=str + list.get(i)[0] + ";";
+                str=str + list.get(i)[1] + ";";
+                str=str + list.get(i)[2] + ";" + "#";
+               	mas.push(str);
+               	str="";
+            }
+            for (var i = 0; i < mas.length; i++) {
+                for (var j = 0; j < mas.length; j++) {
+                    if (i != j && mas[i] == mas[j]) {
+                        throw "Не должно быть абсолютно одинаковых диганозов по типу регистрации,приоритету и коду МКБ!";
+                    }
+                }
+            }
+        }
+    }
+}
 //проверка на если результат - смерть, то только плановая
 function checkDeathThenPlan(aCtx,resultcode,reasoncode) {  
 	var res,reas;

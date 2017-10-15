@@ -808,7 +808,7 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			}  
 			if (matId == null || matId.equals("")) {
 				SequenceHelper seqHelper = ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
-				matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+aDate, aManager);
+				matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+aDate,"", aManager);
 			}
 		}
 		return matId;
@@ -859,7 +859,7 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 	}
 	
 	/** Проверка на возможность создавать направление с типом "экстренно".
-	 * @param aPrescriptionListId - ИД листа назначения
+	 * @param aId - ИД листа назначения либо СМО
 	 * @return true - может быть создано назначение с типом "экстренно"
 	 */
 	public boolean checkMedCaseEmergency(Long aId, String idType) {

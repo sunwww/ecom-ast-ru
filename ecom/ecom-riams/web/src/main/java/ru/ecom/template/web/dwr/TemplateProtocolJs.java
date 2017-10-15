@@ -39,9 +39,9 @@ public class TemplateProtocolJs {
 		ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
 
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
-		System.out.println("sending service, templateprotocolJs, usename = "+username);
+	//	System.out.println("sending service, templateprotocolJs, usename = "+username);
 		service.sendProtocolToExternalResource(aProtocolId, aMedCaseId, null, null);
-		System.out.println("2sending service, templateprotocolJs, usename = "+username);
+	//	System.out.println("2sending service, templateprotocolJs, usename = "+username);
 		return "";
 	}
 	public String getSummaryBallsByNewCard (String aCardTemplate, String aParams, HttpServletRequest aRequest) throws NamingException {
@@ -342,16 +342,19 @@ public class TemplateProtocolJs {
 	public String createProtocolDrForCreateParam(Long aSmoId, Long aTemplate, HttpServletRequest aRequest) {
 		return "" ;
 	}
-	
+	//Milamesher changed
 	public String getDtypeMedCase(Long aIdMedCase, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> list = service.executeNativeSql("select dtype from MedCase where id="+aIdMedCase) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select ms.dtype,vss.code from MedCase ms,vocservicestream vss where vss.id=ms.servicestream_id and  ms.id="+aIdMedCase) ;
 		if (list.isEmpty()) {
-			return null ;
+			res.append("null") ;
 		} else {
-			return new StringBuilder().append(list.iterator().next().get1()).toString() ;
+			res.append(list.iterator().next().get1()).toString() ;
+			res.append("#");
+			res.append(list.iterator().next().get2()).toString() ;
 		}
-		
+		return res.toString();
 	}
 	/** Получить список параметров с номерами полей по шаблону */
 	public String getParameterByTemplate000(Long aIdTemp, HttpServletRequest aRequest) throws NamingException {

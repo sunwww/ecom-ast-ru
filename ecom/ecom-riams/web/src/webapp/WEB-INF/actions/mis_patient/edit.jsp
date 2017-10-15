@@ -605,7 +605,7 @@ where pcc.patient_id='${param.id}'
           <msh:tableNotEmpty name="nat_person">
           <msh:section title="Физ.обсл.лицо">
           	<msh:table name="nat_person" action="entityParentView-contract_naturalPerson.do" idField="1">
-          		<msh:tableColumn property="1"/>
+          		<msh:tableColumn property="1" columnName="ИД"/>
           	</msh:table>
           </msh:section>
           </msh:tableNotEmpty>

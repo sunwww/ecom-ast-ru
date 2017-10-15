@@ -40,12 +40,10 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.jaas.web.action.policy.ExportPolicyForm;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
-import ru.ecom.mis.web.action.kdl.KdlAction;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 
-import com.sun.imageio.plugins.jpeg.JPEGImageWriter;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
 

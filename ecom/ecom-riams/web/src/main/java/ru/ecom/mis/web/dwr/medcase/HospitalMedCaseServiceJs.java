@@ -1967,11 +1967,11 @@ public class HospitalMedCaseServiceJs {
 				idlistwatch=Integer.parseInt(wqr.get1().toString());
 				}
 		}
-		query="select medcase_id from patientwatch where listwatch_id='" + idlistwatch + "' and medcase_id='"+id+"'"; //есть ли уже
-		list = service.executeNativeSql(query,1); 
+		query="select medcase_id from patientwatch where listwatch_id='" + idlistwatch + "' and medcase_id=(select parent_id from medcase where id='"+id+"')"; //есть ли уже
+		list = service.executeNativeSql(query,1);
 		if (list.size()>0) res="Пациент уже был добавлен в список наблюдения!";
 		else {
-			query="INSERT INTO patientwatch(medcase_id,listwatch_id) VALUES('" + id + "','" + idlistwatch + "')";
+			query="INSERT INTO patientwatch(medcase_id,listwatch_id) VALUES((select parent_id from medcase where id='"+id+"'),'" + idlistwatch + "')";
 			service.executeUpdateNativeSql(query);
 		}
     	return res;
@@ -1980,13 +1980,32 @@ public class HospitalMedCaseServiceJs {
     public String notWatchThisPatient(int id,HttpServletRequest aRequest) throws NamingException {
     	String res="Пациент убран из списка наблюдения!";
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	String query="select medcase_id from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'"; //есть ли уже
+    	String query="select medcase_id from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id=(select parent_id from medcase where id='"+id+"')"; //есть ли уже
     	Collection<WebQueryResult> list = service.executeNativeSql(query,1); 
     	if (list.size()>0) { //удаляем
-    		query="delete from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id='"+id+"'";
+    		query="delete from patientwatch where listwatch_id=(select id from listwatch where datewatch=CAST('today' AS DATE)) and medcase_id=(select parent_id from medcase where id='"+id+"')";
     		service.executeUpdateNativeSql(query);
     	}
     	else res="Пациент и не был в списке наблюдения!";
     	return res;
-    } 
+    }
+	//Milamesher получение роста, веса, ИМТ
+	public String getHWeightIMT(int id,HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="select height,weight,imt from statisticstub where medcase_id ='"+id+"'";
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#");
+		}
+		else res.append("##");
+		return res.toString();
+	}
+	//Milamesher сохранение роста, веса, ИМТ
+	public void setHWeightIMT(int id,int height,int weight,double imt,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+id+"'";
+		service.executeUpdateNativeSql(query);
+	}
 }

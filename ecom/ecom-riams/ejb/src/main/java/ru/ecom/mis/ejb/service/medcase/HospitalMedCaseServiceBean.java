@@ -1038,7 +1038,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		sql.append(" ,wchb.dateFrom as w19chbdatefrom");
 		sql.append(", wchb.visit_id as v20isit");
 		sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
-		sql.append(", cast(case when cast(to_char(p.birthday,'yyyy') as int)-cast(to_char(current_date,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det"); //TODO доделать обработку по детям
+		sql.append(", cast(case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det"); //TODO доделать обработку по детям
+		sql.append(", wchb.internalcode as f23_internalDirectionNumber");
 		sql.append(" from WorkCalendarHospitalBed wchb");
 		sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
 		sql.append(" left join VocBedSubType vbst on vbst.id=wchb.bedSubType_id");
@@ -1210,6 +1211,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	private WebQueryResult recordN1(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
 
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","",true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR_LPU",obj[23],false,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[1],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[2],true,"") ;
@@ -1643,15 +1645,27 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		sql.append(" ,to_char(hdf.birthday,'yyyy-mm-dd') as f12birthday");
 		sql.append(" ,vbt.codeF as f13vbtomccode");
 		sql.append(" ,ss.code as f14sscode")
-				.append(" ,coalesce ((select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id ")
-				.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id ")
-				.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id ")
-				.append(" where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4'),(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb")
-				.append(" on mkb.id=diag.idc10_id ")
-				.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id")
-				.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id")
-				.append(" where diag.medcase_id=slo.id and vpd.code='1' and (vdrt.code = '1' or vdrt.code = '2')))")
-				.append(" as f15mkbcode");
+		.append(" ,coalesce (")
+			.append("(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id ") //Клиинческий диагноз в отделении
+			.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id ")
+			.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id ")
+			.append(" where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')")
+			.append(",(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb") // Направительный диагноз в отделении
+			.append(" on mkb.id=diag.idc10_id ")
+			.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id")
+			.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id")
+			.append(" where diag.medcase_id=slo.id and vpd.code='1' and (vdrt.code = '1' or vdrt.code = '2'))")
+			.append(",(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb") // Основной направительный диагноз в госпитализации
+			.append(" on mkb.id=diag.idc10_id ")
+			.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id")
+			.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id")
+			.append(" where diag.medcase_id=sls.id and vpd.code='1' and (vdrt.code = '1' or vdrt.code = '2'))")
+			.append(",(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb") // Любой направительный диагноз в госпитализации
+			.append(" on mkb.id=diag.idc10_id ")
+			.append(" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id")
+			.append(" left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id")
+			.append(" where diag.medcase_id=sls.id and (vdrt.code = '1' or vdrt.code = '2'))")
+				.append(") as f15mkbcode");
 		//sql.append(" ,(select max(mkb.code) from diagnosis diag left join VocIdc10 mkb on mkb.id=diag.idc10_id left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationtype_id where diag.medcase_id=slo.id and vpd.code='1' and vdrt.code = '4')  as f15mkbcode");
 		sql.append(" ,coalesce(hdf.directLpuCode,lpu.codef,plpu.codef) as f16lpucodef") ;
 		sql.append(" ,coalesce(hdf.orderLpuCode,olpu.codef,oplpu.codef) as f17olpucodef") ;

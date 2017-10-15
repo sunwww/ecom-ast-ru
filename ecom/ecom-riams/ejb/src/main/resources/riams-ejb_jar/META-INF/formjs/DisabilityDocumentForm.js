@@ -2,6 +2,7 @@
 * @author stkacheva
 */
 function onPreCreate(aForm, aCtx) {
+	
 	if (aForm.anotherLpu<1 && aForm.workFunction<1) throw "Специалист является обязательным полем при создании нового документа нетрудоспособности" ;
 	if (aForm.regime.equals("")) throw "Режим нетрудоспособности является обязательным полем при создании нового документа нетрудоспособности" ;
 	if (aForm.dateFrom.equals("")) throw "Дата начала является обязательным полем при создании нового документа нетрудоспособности" ;
@@ -36,8 +37,7 @@ function onPreCreate(aForm, aCtx) {
 	       	.getSingleResult() ;
 		if (list>0) throw "В текущему случаю может быть только 1 первичный неиспорченный документ по основному месту работы" ;
 	}
-	if (aForm.workComboType!=0 && 
-		(aForm.mainWorkDocumentNumber.equals("") || aForm.mainWorkDocumentSeries.equals("") ) )
+	if (aForm.workComboType!=0 && aForm.mainWorkDocumentNumber.equals("") )
 			throw "При совмещении необходимо указывать номер и серию документа по основному месту работы" ;
 	//errorThrow(list, ) ;
 	var date = new java.util.Date() ;
@@ -128,7 +128,18 @@ function onSave(aForm, aEntity, aCtx) {
 	}
 	
 }
+
+function checkIsElectronic(aEntityId , aCtx){
+	var elns = aCtx.manager.createNativeQuery("select exportdate from ElectronicDisabilityDocumentNumber where disabilitydocument_id=:num and exportDate is not null").setParameter("num",aEntityId).getResultList();
+	if (elns.size()>0) {
+        	throw "Невозможно выполнить действие! Документ выгружен: "+elns.get(0);
+	} else {
+		aCtx.manager.createNativeQuery("update ElectronicDisabilityDocumentNumber set disabilityDocument_id = null where disabilitydocument_id=:num").setParameter("num",aEntityId).executeUpdate();
+	}
+}
 function onPreSave(aForm,aEntity , aCtx) {
+
+    checkIsElectronic(aEntity.getId(),aCtx);
 	var series = aForm.getSeries() ;
 	var number = aForm.getNumber() ;
 	var thisid = aForm.getId() ;
@@ -170,6 +181,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 		}
 	} else {
 		aForm.setOtherCloseDate("") ;
+        aForm.setBeginWorkDate("");
 	}
 }
 function errorThrow(aList, aError) {
@@ -185,6 +197,7 @@ function errorThrow(aList, aError) {
 
 
 function onPreDelete(aEntityId, aContext) {
+    checkIsElectronic(aEntityId,aContext);
 	var doc = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument
 			, new java.lang.Long(aEntityId)) ;
 	//if (doc.duplicate!=null) throw "Невозможно удалить документ так"
@@ -206,7 +219,6 @@ function onPreDelete(aEntityId, aContext) {
 		}
 		aContext.manager.persist(orig);
 	} 
-	
 }
 function onView (aForm, aEntity, aCtx){ //Если документ отправляли в ФСС - берем информациб о цего статусе
 	var eln = aCtx.manager.createQuery("from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aForm.getNumber()).getResultList();

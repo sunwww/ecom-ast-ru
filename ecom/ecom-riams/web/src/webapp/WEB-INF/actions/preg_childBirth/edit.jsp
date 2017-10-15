@@ -199,7 +199,7 @@
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>
         </msh:ifFormTypeIsView>
-        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" />
+        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm();"/>
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
@@ -259,7 +259,7 @@
 		if (isSaveNewBorns) {
 			try {
 			createOtherNewBorns() ;
-			document.forms["mainForm"].action=old_action ; 
+			document.forms["mainForm"].action=old_action ;
 			document.forms["mainForm"].submit() ;
 			
 			} catch(e) {

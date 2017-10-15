@@ -8,6 +8,9 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+/**
+ * Методы ВМП
+ */
 @Entity
 @Table(schema="SQLUser")
 public class VocMethodHighCare extends VocBaseEntity {

@@ -275,6 +275,29 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 		theSourceHospType = aSourceHospType;
 	}
 
+	/* Рост */
+	@Comment("Рост")
+	@Persist
+	public Integer getHeight() { return theHeight; }
+	public void setHeight(Integer aHeight) {
+		theHeight = aHeight;
+	}
+	/* Вес */
+	@Comment("Вес")
+	@Persist
+	public Integer getWeight() {
+		return theWeight;
+	}
+	public void setWeight(Integer aWeight) {
+		theWeight = aWeight;
+	}
+	/* Индекс массы тела */
+	@Comment("Индекс массы тела")
+	public Double getIMT() {
+		return theIMT;
+	}
+	public void setIMT(Double aIMT) { theIMT = aIMT;}
+
 	/** Откуда поступил */
 	private Long theSourceHospType;
 	
@@ -396,5 +419,11 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	/** Дата начала */
 	private String theDateStart;
 
+	/** Вес */
+	private Integer theWeight;
+	/** Рост */
+	private Integer theHeight;
+	/** Индекс массы тела */
+	private Double theIMT;
 }
 

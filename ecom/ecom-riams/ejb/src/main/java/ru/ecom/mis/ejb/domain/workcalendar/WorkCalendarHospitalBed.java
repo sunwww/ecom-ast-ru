@@ -33,6 +33,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 		, @AIndex(properties={"medCase"}) 
 		})
 public class WorkCalendarHospitalBed extends BaseEntity {
+
+	/** Внутренний номер направлания */
+	@Comment("Внутренний номер направлания")
+	public String getInternalCode() {return theInternalCode;}
+	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
+	/** Внутренний номер направлания */
+	private String theInternalCode ;
+
 	/** Отделение */
 	@Comment("Отделение")
 	@OneToOne

@@ -20,6 +20,7 @@
 			<msh:hidden property="editUsername" />
 			<msh:hidden property="workFunction"/>
 			<msh:hidden property="medServicies"/>
+			<msh:hidden property="repealOperation"/>
 			<msh:panel colsWidth="10%,10%,10%,10%">
 				<msh:row>
 					<msh:textField viewOnlyField="true" property="cost" label="Стоимость"/>
@@ -124,7 +125,8 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 				 idField="1">
 					 <msh:tableNotEmpty>
 				 <msh:ifInRole roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation">
-					 	<a href="javascript:void()" onclick="javascript:makeKKMPaymentOrRefund('makeRefund')">Оформить возврат всей суммы</a>
+
+					 	<input type="button" id='repealButton' name='repealButton' onclick="javascript:makeRefund(this)" value="Оформить возврат всей суммы">
 				 </msh:ifInRole>
 					 </msh:tableNotEmpty>
 					<msh:tableColumn columnName="Код" property="2" />
@@ -143,35 +145,27 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 		</msh:ifFormTypeIsView>
 		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
 		<script type="text/javascript">
+            setIsRepealed();
+			function setIsRepealed() {
+			   if (+$('repealOperation').value>0) {
+			       $('repealButton').value="Возврат уже осуществлен";
+                   $('repealButton').disabled=true;
+			   }
+			}
+
 			var createType=0 ;
 			var oldaction = "";
 			
-			function makeKKMPaymentOrRefund(aFunction) {
-				ContractService.sendKKMRequest(aFunction, $('account').value,$('discount').value, $('isPaymentTerminal').checked
-						, {
-					callback: function (a) {
-						if (a!=null&&a!="") {
-							alert (""+a);
-						}
-						if (aFunction=="makePayment") {
-					document.forms['contract_accountOperationAccrualForm'].action=oldaction ;
-					document.forms['contract_accountOperationAccrualForm'].submit();
-				}else {
-					window.location = "js-contract_medContract-issueRefund.do?id=${param.id}";
-				}		
-					}
-				}
-				);
-				
-				
+			function makeRefund(aButton) {
+			    aButton.value="Подождите...";
+				aButton.disabled=true;
+				window.location = "js-contract_medContract-issueRefund.do?id=${param.id}";
 			}
 			
 		</script>
 		<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
 		
 		<script type="text/javascript">
-		oldaction = document.forms['contract_accountOperationAccrualForm'].action ;
-		document.forms['contract_accountOperationAccrualForm'].action="javascript:makeKKMPaymentOrRefund('makePayment')";
 		createType=1;
 	
 		function getCostInfo() {
@@ -180,11 +174,11 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			$('costInfo').innerHTML=cost*(100-discount)/100 ;
 			getGiveBack ();
 		}
-		    eventutil.addEventListener($('discount'),'change',function(){getCostInfo() ;});
-            eventutil.addEventListener($('discount'),'keyup',function(){getCostInfo() ;});
-            eventutil.addEventListener($('cashCount'),'keyup',function(){getGiveBack () ;});
+		eventutil.addEventListener($('discount'),'change',function(){getCostInfo() ;});
+		eventutil.addEventListener($('discount'),'keyup',function(){getCostInfo() ;});
+		eventutil.addEventListener($('cashCount'),'keyup',function(){getGiveBack () ;});
            
-            function getGiveBack (){
+		function getGiveBack (){
            var cash = +$('cashCount').value;
            var totalPrice = +$('costInfo').innerHTML;
            var giveBack = cash-totalPrice;
@@ -195,15 +189,12 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
         		   } else {
         			   $('cashGiveBackCount').innerHTML ="<b> Нужно больше денег!</b>";
         		   }
-           		
-           	} catch (e) {
-           		$('cashGiveBackCount').innerHTML ="Непонятное число";
-           	}
+           		} catch (e) {
+           			$('cashGiveBackCount').innerHTML ="Непонятное число";
+           		}
            } 
-            	
-            }
+       }
 
-		
 		</script>
 		</msh:ifFormTypeIsCreate>		
 		<% 

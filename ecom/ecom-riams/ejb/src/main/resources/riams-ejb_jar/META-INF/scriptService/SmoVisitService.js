@@ -284,7 +284,7 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 	sql = "select sls.serviceStream_id,case when sls.emergency='1' then '1' else '0' end as emergency"
 		+" ,to_char(sls.datestart,'dd.mm.yyyy') as dateStart,sls.entranceTime,wfN.id as wfNid"
 		+" ,mp.id as medcard,sls.patient_id,coalesce(sls.hospitalization_id,'1')"
-		+" ,diag.id as diagid"
+		+" ,max(diag.id) as diagid" //Берем самый последний установленный специалистом диагноз
 		+" 	 from MedCase sls"
 		+" 	left join patient p on p.id=sls.patient_id"
 		+" 	left join medcard mp on mp.person_id=p.id"
@@ -307,6 +307,7 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		+" and diag.id is not null and mp.id is not null "+filterMkbSql
 		+"  and (select count(*) from medcase t where t.patient_id=sls.patient_id and t.workFunctionExecute_id=wfN.id and t.datestart=sls.datestart and t.dtype='ShortMedCase')=0"
 		+" 	and wfN.id is not null and wfN.workFunction_id="+aVocWorkFunction
+		+" group by sls.serviceStream_id,sls.emergency,sls.datestart,sls.entranceTime,wfN.id,mp.id,sls.patient_id,sls.hospitalization_id,p.lastname,p.firstname,p.middlename"
 		+" 	order by sls.dateStart,p.lastname,p.firstname,p.middlename" ;
 	var list = aContext.manager.createNativeQuery(sql).getResultList() ;
 	var visitResult = "3" ;

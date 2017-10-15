@@ -4,17 +4,13 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
@@ -265,6 +261,14 @@ public class WorkCalendarTime extends BaseEntity{
 	public void setPreHospital(Long aPreHospital) {thePreHospital = aPreHospital;}
 	/** Предварительная госпитализация */
 	private Long thePreHospital;
-	
+	/**
+	 * Примечание пациента (при записи)*/
+	@Comment("Примечание пациента")
+	@Column(length= ColumnConstants.TEXT_MAXLENGHT)
+	public String getPatientComment() {return thePatientComment;}
+	public void setPatientComment(String aPatientComment) {thePatientComment = aPatientComment;}
+	/** Примечание пациента */
+	private String thePatientComment ;
+
 	
 }

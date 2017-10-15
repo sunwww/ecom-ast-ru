@@ -9,6 +9,8 @@
 	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
 	<form-bean name="directory_departmentForm"			type="ru.ecom.mis.ejb.form.directory.DepartmentForm"/>
 	<form-bean name="directory_telephonenumberForm"			type="ru.ecom.mis.ejb.form.directory.TelephoneNumberForm"/>
+    <form-bean name="directory_searchForm"	       type="ru.ecom.mis.web.action.medcase.journal.DirectoryTelephoneNumbersForm" />
+	<form-bean name="directory_entryCreateEditForm"	       type="ru.ecom.mis.web.action.medcase.journal.DirectoryEntryForm" />
 	
 	<!-- Калькулятор -->
         <form-bean name="calc_calculationsForm"			type="ru.ecom.mis.ejb.form.calc.CalculationsForm" />
@@ -301,7 +303,8 @@
         <form-bean name="mis_medServiceGroup_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.WorkFunctionServiceForm" />
         <form-bean name="smo_medServiceForm" type="ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm" />
         <form-bean name="smo_visitPrescriptionBlankForm" type="ru.ecom.mis.ejb.form.medcase.poly.VisitPrescriptionBlankForm" />
-        
+		<form-bean name="stac_bandageForm" type="ru.ecom.mis.ejb.form.medcase.hospital.BandageForm" />
+
         <!-- Лекарсвенные средства -->
         <form-bean name="drug_classificatorForm" type="ru.ecom.mis.ejb.uc.privilege.form.DrugClassificatorForm" />
         <form-bean name="voc_drugForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugClassifyForm" />
@@ -395,7 +398,6 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/eln_count.jsp" />
         </action>
-        
  <action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -789,7 +791,16 @@
 			<forward name="success" redirect="false"
 				path="/WEB-INF/actions/contract_reports/list_services.jsp" />
 		</action>
-		<!-- Реестры услуг по договорам -->	
+		<!-- Сведеия об оказанной помощи иногородним-->
+		<action path='/contract_nationalityReport'
+				type='ru.ecom.web.actions.base.ForwardAction'
+				name="contract_reportsForm"
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false"
+					 path="/WEB-INF/actions/contract_reports/nationalityReport.jsp" />
+		</action>
+		<!-- Реестры услуг по договорам -->
 		<action path='/contract_reports_services_group'
 			type='ru.ecom.web.actions.base.ForwardAction' 
 			name="contract_reportsForm"
@@ -1024,8 +1035,41 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/patientWatch.jsp" />
         </action>
+		<action path='/reportIMT' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/reportIMT.jsp" />
+		</action>
+        <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
+                name='directory_searchForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/list.jsp" />
+        </action>
         
-       
+		<action path='/report_timeexecute' type='ru.ecom.web.actions.base.ForwardAction'
+				name='directory_searchForm'
+				validate='false'
+				scope="session">
+				<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/report_timeexecute.jsp" />
+		</action>
+		
+		<action path='/directory_createEntry' type='ru.ecom.web.actions.base.ForwardAction'
+				name='directory_entryCreateEditForm'
+				validate='false'
+				scope="session">
+				<forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/directory_createentry.jsp" />
+		</action>
+		<action path='/directory_editEntry' type='ru.ecom.web.actions.base.ForwardAction'
+				name='directory_entryCreateEditForm'
+				validate='false'
+				scope="session">
+			<forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/directory_editentry.jsp" />
+		</action>
+
 	</action-mappings> 
 
 

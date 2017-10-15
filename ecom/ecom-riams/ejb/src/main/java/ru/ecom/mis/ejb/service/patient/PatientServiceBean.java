@@ -643,14 +643,20 @@ public class PatientServiceBean implements IPatientService {
 			s("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
 			return null;
 		}
-		String updateDate = updateEditDate?" editdate=current_date, ":""; 
+		String updateDate = " editdate=current_date, ";
 		SoftConfig sc = (SoftConfig) theManager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
 		//String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
 		StringBuilder ret = new StringBuilder();
 		String lpu = aLpu, attachedType=aAttachedType, attachedDate = aAttachedDate;
 	//	System.out.println("=== === "+aPatientId+ ":"+aCompany+ ":"+aLpu+ ":"+aAttachedDate+ ":"+aAttachedType);
-		RegInsuranceCompany insCompany =null; 
-		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery("from RegInsuranceCompany where omcCode = :code and (deprecated is null or deprecated='0')")
+		RegInsuranceCompany insCompany =null;
+		String sqlAdd = "smoCode"; //smoCode - федеральный 5 значный код
+		if (aCompany.length()<5) { //В некоторых случаях мы получаем местный код (7, 15) в этом случае, и искать мы будем по местному коду
+			sqlAdd="omcCode";
+		}
+		String sqll = "from RegInsuranceCompany where "+sqlAdd+" = :code and (deprecated is null or deprecated='0')";
+		s("WHERE IS ERROR?? "+sqll);
+		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery(sqll)
 				.setParameter("code", aCompany).getResultList(); 
 		
 		if (!companies.isEmpty()) {
@@ -690,12 +696,10 @@ public class PatientServiceBean implements IPatientService {
 				s("Участок нашли, ИД="+areaId);
 				la = theManager.find(LpuArea.class, areaId);
 			}
-		} else {
-			s("Ошибка: Тип прикрепления - НЕ территориальный");
 		}
 		if (la==null && aDoctorSnils!=null && !aDoctorSnils.trim().equals("")){ //Если не нашли подходящий участок по адресу, ищем участок по СНИЛС врача
 			s("ищем участок по СНИЛС врача. snils = "+aDoctorSnils);
-			obj = theManager.createNativeQuery("select la.id, la.id" +
+			obj = theManager.createNativeQuery("select la.id " +
 					" from lpuarea la" +
 					" left join workfunction wf on wf.id=la.workfunction_id" +
 					" left join worker w on w.id=wf.worker_id" +
@@ -718,7 +722,7 @@ public class PatientServiceBean implements IPatientService {
 		VocAttachedType attType = (VocAttachedType) (!theManager.createQuery("from VocAttachedType where code=:code")
 			.setParameter("code", attachedType).getResultList().isEmpty()?theManager.createQuery("from VocAttachedType where code=:code")
 			.setParameter("code", attachedType).getResultList().get(0):null);
-		s("check no create att_area === Patient = "+aPatientId+", AreaId = "+areaId);
+
 		if (attType==null) {
 			return "Прикрепление не создано, не распознан тип прикрепления: "+attachedType;
 		}
@@ -748,7 +752,7 @@ public class PatientServiceBean implements IPatientService {
 						att.setArea(la);
 					} else {
 						//Debug
-						System.out.println("=== Почему же не найден участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+					//	System.out.println("=== Почему же не найден участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
 					}
 					theManager.persist(att);
 				} catch (ParseException e) {
@@ -765,25 +769,13 @@ public class PatientServiceBean implements IPatientService {
 			for (LpuAttachedByDepartment a: attachments) {
 				StringBuilder str = new StringBuilder();
 				String areaSql = areaId!=null?(", area_id="+areaId):"";
-				if (a.getAttachedType()==null||a.getAttachedType().equals(attType)||ignoreType) {
-					
-					ret.append("Обновлено прикрепление. Старый тип - " +
-						(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
-						", дата - "+ DateFormat.formatToDate(a.getDateFrom()) + 
-						". Новый тип - "+attType.getCode()+ ", дата - "+ attachedDate+". ");
-					str.append("update LpuAttachedByDepartment set "+updateDate+" dateFrom=to_date('").append(attachedDate)
-						.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check', attachedtype_id=(select id from vocattachedtype where code='"+attachedType+"') "+areaSql+" where id='").append(a.getId()).append("'");
-					theManager.createNativeQuery(str.toString()).executeUpdate();
-			//		System.out.println("Прикрепление Обновлено! Пациент = "+a.getPatient().getPatientInfo());
-				} else {
-				ret.append("Обновлена дата прикрепления. Тип - " +
+				ret.append("Обновлено прикрепление. Старый тип - " +
 					(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
-					", дата - "+ DateFormat.formatToDate(a.getDateFrom()) + 
-					". Новая дата - "+ attachedDate+". ");
+					", дата - "+ DateFormat.formatToDate(a.getDateFrom()) +
+					". Новый тип - "+attType.getCode()+ ", дата - "+ attachedDate+". ");
 				str.append("update LpuAttachedByDepartment set "+updateDate+" dateFrom=to_date('").append(attachedDate)
-					.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check'"+areaSql+" where id='").append(a.getId()).append("'");
-				theManager.createNativeQuery(str.toString()).executeUpdate();						
-				}
+					.append("','dd.mm.yyyy'), company_id='"+insCompany.getId()+"', editusername='fond_check', attachedtype_id="+attType.getId()+" "+areaSql+" where id='").append(a.getId()).append("'");
+				theManager.createNativeQuery(str.toString()).executeUpdate();
 			}
 		}
 	}

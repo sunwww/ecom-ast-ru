@@ -5,10 +5,10 @@ function onPreCreate(aForm, aCtx) {
     checkFields(aForm, aCtx);
     var pat = aForm.getPatient() ;
     var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
-    var date = new java.util.Date() ;
-    aForm.setDateStart(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
+    var date = Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date()) ;
+    aForm.setDateStart(date);
     aForm.setUsername(username);
-    aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
+    aForm.setCreateDate(date);
 
     var list = aCtx.manager.createQuery("select id from PatientExternalServiceAccount where patient_id= :pat and dateTo is null"
     ).setParameter("pat",pat).getResultList() ;
@@ -19,16 +19,15 @@ function onPreCreate(aForm, aCtx) {
 
 }
 
-
 function onPreSave(aForm, aEntity, aCtx) {
     checkFields(aForm, aCtx);
+    var date =Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date()) ;
     if (aForm.getDisabled()!=null&&aForm.getDisabled()=="1") {
-        var date = new java.util.Date() ;
-        aForm.setDateTo(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
+        aForm.setDateTo(date);
     }
     var username = aCtx.getSessionContext().getCallerPrincipal().toString() ;
     aForm.setEditUsername(username);
-    aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
+    aForm.setEditDate(date);
 }
 function checkFields(aForm, aCtx) {
     var phone = aForm.getPhoneNumber().trim();
@@ -77,12 +76,17 @@ function checkFields(aForm, aCtx) {
          * TODO
          * При изменении номера телефона необходимо отвязать старый номер, на этого же пациента привязать новый номер. Вести журнал изменения номеров
          */
+        var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
         if (aEntity.getDateTo()!=null) {
-            var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
             bean.registerPatientExternalResource(aEntity.getId(), aCtx.manager, username);
-        }
-
+        } else if (aForm.getSendHistoryAgain()!=null&&aForm.getSendHistoryAgain()=="1") {
+            if (aEntity.getExternalCode()!=null){
+                bean.sendPatientMedicalHistoryToExternalResource(aEntity.getId(), aCtx.manager);
+            } else {
+                throw "Не указан код пациента";
+            }
     }
+}
 
     function onPreDelete (aEntityId, aCtx) {
     throw "У вас стоит запрет на удаление согласия";

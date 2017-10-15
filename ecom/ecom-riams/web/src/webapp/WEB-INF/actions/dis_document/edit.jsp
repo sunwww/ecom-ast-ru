@@ -14,7 +14,6 @@
       <msh:hidden property="id" />
       <msh:hidden property="saveType" />
       <msh:hidden property="disabilityCase" />
-      <input type='hidden' name='fssServerAddress' id='fssServerAddress' value = '${fssProxyService}'>
       <msh:panel>
           <msh:label property="exportStatus"/>
         <msh:row>
@@ -36,11 +35,14 @@
           <msh:textField passwordEnabled="false" hideLabel="false" property="issueDate" viewOnlyField="false" guid="7a444864-9b79-4e21-b218-11989c5d4c98" horizontalFill="false" />
           <msh:autoComplete vocName="vocDisabilityDocumentPrimarity" property="primarity" label="Первичность" guid="2e7aa7a4-336c-4831-b3d9-97d6f64d2ef1" horizontalFill="true" size="20" />
         </msh:row>
+          <msh:row>
+              <msh:textField property="beginWorkDate" viewOnlyField="true" horizontalFill="false" />
+          </msh:row>
         <msh:row>
           <msh:textField property="series" label="Серия" guid="b9d0f37f-bd93-4e91-be9c-703c363ca9a8" />
-            <msh:textField property="number" label="Номер"  fieldColSpan="30" />
+            <msh:textField property="number" label="Номер"  size="20" fieldColSpan="30" />
             <msh:ifFormTypeIsCreate formName="dis_documentForm">
-            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber()" value="Получить номер"></td>
+            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber('number',this)" value="Получить номер"></td>
             </msh:ifFormTypeIsCreate>
         </msh:row>
         <msh:row>
@@ -160,9 +162,10 @@
         			<msh:checkBox property="isClose" label="Документ закрыт" guid="c425f-265a-40ab-9581-a8ff"  />
         		</msh:ifFormTypeIsNotView>
          	</msh:ifInRole> 
-        	<msh:ifFormTypeIsView formName="dis_documentForm">
+        	<%--<msh:ifFormTypeIsView formName="dis_documentForm">
         		<msh:checkBox property="isClose" label="Документ закрыт"/>
-        	</msh:ifFormTypeIsView>
+        	</msh:ifFormTypeIsView>--%>
+            <msh:checkBox property="isClose" label="Документ закрыт"/>
         </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -191,17 +194,32 @@
 
     		</msh:table>
     	</msh:section>
-      <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/Record/View" guid="7c589f25-6e30-4d30-bb2f-d86a68f4f0cd">
-        <msh:section guid="sectionChilds" title="Продление" 
-        	createRoles="/Policy/Mis/Disability/Case/Document/Record/Create" createUrl="entityParentPrepareCreate-dis_record.do?id=${param.id}">
-          <ecom:parentEntityListAll guid="parentEntityListChilds" formName="dis_recordForm" attribute="disabilityRecord" />
-          <msh:table editUrl="entityParentEdit-dis_record.do" guid="tableChilds" viewUrl="entityShortView-dis_record.do" name="disabilityRecord" action="entityParentView-dis_record.do" idField="id">
-            <msh:tableColumn columnName="Дата начала" property="dateFrom" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
-            <msh:tableColumn columnName="Дата окончания" property="dateTo" guid="a744754f-5212-4807-910f-e4b252aec108" />
-            <msh:tableColumn columnName="Леч.врач" identificator="false" property="workFunctionInfo"  />
-            <msh:tableColumn columnName="Председ. ВК" identificator="false" property="workFunctionAddInfo"  />
-            <msh:tableColumn columnName="Режим" identificator="false" property="regimeText" guid="14e8c4f9-f430-496c-ae75-ae2a2240937d" />
-          </msh:table>
+      <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/Record/View">
+        <msh:section guid="sectionChilds" title="Продление"
+                     createRoles="/Policy/Mis/Disability/Case/Document/Record/Create" createUrl="entityParentPrepareCreate-dis_record.do?id=${param.id}">
+        <ecom:webQuery name="list" nativeSql="select dr.id,dr.datefrom,dr.dateto,case when dr.workfunction_id is not null then p.lastname||' '||p.firstname||' '||p.middlename||' '||vwf.name else dr.docname||' '||dr.docrole end as doc,
+case when dr.workfunctionadd_id is not null then pvk.lastname||' '||pvk.firstname||' '||pvk.middlename||' '|| vwfvk.name else dr.vkname||' '||dr.vkrole end as vk
+,vr.name as regime
+,case when dr.isexport is null or dr.isexport = false then '-' else '+' end as export
+from disabilityrecord dr
+left join workfunction wfdoc on wfdoc.id =  dr.workfunction_id
+left join vocworkfunction  vwf on vwf.id = wfdoc.workfunction_id
+left join worker w on w.id = wfdoc.worker_id
+left join patient p on p.id = w.person_id
+left join workfunction wfvk on wfvk.id =  dr.workfunctionadd_id
+left join vocworkfunction  vwfvk on vwfvk.id = wfvk.workfunction_id
+left join worker wvk on wvk.id = wfvk.worker_id
+left join patient pvk on pvk.id = wvk.person_id
+left join VocDisabilityRegime vr on vr.id = dr.regime_id
+where disabilitydocument_id = ${param.id} order by dr.datefrom"/>
+        <msh:table name="list" action="entityParentView-dis_record.do" idField="1">
+            <msh:tableColumn columnName="Дата начала" property="2"/>
+            <msh:tableColumn columnName="Дата окончания" property="3"/>
+            <msh:tableColumn columnName="Леч.врач" property="4"/>
+            <msh:tableColumn columnName="Председ. ВК" property="5"/>
+            <msh:tableColumn columnName="Режим" property="6"/>
+            <msh:tableColumn columnName="Выгружен" property="7"/>
+        </msh:table>
         </msh:section>
       </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/RegimeViolationRecord/View" guid="1e5e59a5-8acd-4c54-a10a-fafd5ddcc685">
@@ -256,27 +274,59 @@
      }
      </script>
      </msh:ifFormTypeIsView>
+      <msh:ifFormTypeIsView formName="dis_documentForm">
+          <script type="text/javascript">
+              function getFreeNumber (aField, aButton){
+                  if (""+aField=="") {
+                      aField="number";
+                  }
+                  if ($(aField).value!="") {
+                      alert ("Поле \"Номер\" уже заполнено");
+                      return;
+                  }
+                  DisabilityService.getFreeNumberForDisabilityDocument({
+                      callback: function (num) {
+                          if (num!=null&&num!="") {
+                              $(aField).value=num;
+                              $(aField).className="viewOnly";
+                              $(aField).disabled=true;
+                              aButton.style.display="none";
+                          } else {
+                              alert ("Не удалось получить номер больничного листа");
+                          }
+
+                      }
+                  });
+              }
+          </script>
+      </msh:ifFormTypeIsView>
+      <msh:ifFormTypeIsCreate formName="dis_documentForm">
+          <script type="text/javascript">
+              function getFreeNumber (aField, aButton){
+                  if (""+aField=="") {
+                      aField="number";
+                  }
+                  if ($(aField).value!="") {
+                      alert ("Поле \"Номер\" уже заполнено");
+                      return;
+                  }
+                  DisabilityService.getFreeNumberForDisabilityDocument({
+                      callback: function (num) {
+                          if (num!=null&&num!="") {
+                              $(aField).value=num;
+                              $(aField).className="viewOnly";
+                              aButton.style.display="none";
+                          } else {
+                              alert ("Не удалось получить номер больничного листа");
+                          }
+
+                      }
+                  });
+              }
+          </script>
+      </msh:ifFormTypeIsCreate>
      <msh:ifFormTypeIsNotView formName="dis_documentForm">
     <script type="text/javascript">
-        function getFreeNumber (){
-            if ($('number').value!="") {
-                alert ("Поле \"Номер\" уже заполнено");
-                return;
-            }
-            DisabilityService.getFreeNumberForDisabilityDocument({
-                callback: function (num) {
-                    if (num!=null&&num!="") {
-                        $('number').value=num;
-                        $('number').className="viewOnly";
-                        $('number').disa
-                        $('getFreeNumberButton').style.display="none";
-                    } else {
-                        alert ("Не удалось получить номер больничного листа");
-                    }
-
-                }
-            });
-        }
 
 		prevDocumentAutocomplete.setParentId($('disabilityCase').value) ;
 	    closeReasonAutocomplete.addOnChangeCallback(function() {
@@ -291,11 +341,14 @@
 	    		    				$('otherCloseDate').value=$('hospitalizedTo').value ;;
 	    		    			}
 	    		    		}
-	    		    	})
+	    		    	});
 	   					$('otherCloseDate').className="required";
 	    			} else {
+	    			   // alert('null');
 	    				$('otherCloseDate').className="";
 	    				$('otherCloseDate').value="";
+                        document.getElementById('isClose').checked = '';
+                        document.getElementById('beginWorkDateReadOnly').value = '';
 	    			}
 	    		}
 	    	})
@@ -369,8 +422,8 @@
 	  			//alert('222') ;
 	  		}
 	  	}
-	  	setPeriod() ;
-	  	
+	  	setPeriod();
+
 	 </script>
      </msh:ifFormTypeIsNotView>
   </tiles:put>
@@ -388,7 +441,6 @@
         	name="duplicate" title="Дубликат (испорчен)" confirm="Вы действительно хотите создать дубликат текущего документа нетрудоспособности?" />
         <tags:dis_workComboDocument roles="/Policy/Mis/Disability/Case/Document/Create" key="ALT+5" 
         	name="workCombo" title="Бланк по совместительству" confirm="Вы действительно хотите создать документ по совместительству на основе текущего документа нетрудоспособности?" />
-        	
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       	<msh:sideLink  name="шаблон 1" key="ALT+6" action="/javascript:printDoc(1,'.do')"/>
@@ -410,7 +462,12 @@
       <msh:sideLink  name="Просмотреть журнал экспорта" action="/javascript:showJournalFSSJournal()"/>
       </msh:sideMenu>
       </msh:ifInRole>
+        <msh:ifInRole roles="/Policy/Mis/Disability/Case/Document/AnnulSheet">
+            <tags:annulDisSheetReason name="annulDisSheetReason" />
+            <msh:sideMenu  title="Аннулирование ЛН">
+                <msh:sideLink  name="Аннулировать документ" action="/javascript:showannulDisSheetReasonCloseElectronicDocument()"/>
+            </msh:sideMenu>
+        </msh:ifInRole>
     </msh:ifFormTypeIsView>
   </tiles:put>
-</tiles:insert>
-
+</tiles:insert>Т

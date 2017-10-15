@@ -39,6 +39,20 @@ public class DisabilityRecordForm extends IdEntityForm {
 	public Long getDisabilityDocument() {return theDisabilityDocument;}
 	public void setDisabilityDocument(Long aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
 
+	/** Дата создания */
+	@Comment("Дата создания")
+	@Persist @DateString @DoDateString
+	public String getCreateDate() {return theCreateDate;}
+	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	private String theCreateDate;
+	
+	/** Время создания */
+	@Comment("Время создания")
+	@Persist @DateString @DoDateString
+	public String getCreateTime() {return theCreateTime;}
+	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	private String theCreateTime;
+	
 	/** Дата начала нетрудоспособности */
 	@Comment("Дата начала нетрудоспособности")
 	@Persist @DateString @DoDateString @Required

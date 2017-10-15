@@ -31,10 +31,10 @@ where wf.dtype='PersonalWorkFunction' -->
 		  left join Patient as p on p.id=w.person_id
 		  left join VocWorkFunction vwf on vwf.id=wf.workFunction_id" 
 	queryAppend="wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')" 
-	names="p.lastname||' '||p.firstname||' '||p.middlename, vwf.name as name " 
+	names="p.lastname||' '||p.firstname||' '||p.middlename" 
 	nameId="wf.id"
 	queriedSplitCount="3"
-	queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like :quer1 or (p.lastname like :quer1 and (:quer2 is null or p.firstname like :quer2) and (:quer3 is null or p.middlename like :quer3)) )"
+	queried =" (cast(wf.id as varchar(20))= :querInd or vwf.name like UPPER(:quer1) or p.lastname like UPPER(:quer1) or (p.lastname like UPPER(:quer1) and (UPPER(:quer2) is null or p.firstname like UPPER(:quer2)) and (UPPER(:quer3) is null or p.middlename like UPPER(:quer3))) )"
 />	
 </voc>
 
@@ -78,8 +78,22 @@ where wf.dtype='PersonalWorkFunction' -->
 	<NativeVocService 
 	from="mislpu as m " 
 	nameId="m.id"
-	queryAppend="m.parent_id = 1" 
-	names="m.name" />
+	queryAppend="m.parent_id = 1"
+	order="m.name"
+	names="m.name"
+	queriedSplitCount="1"
+	queried ="(cast(m.id as varchar(20)) = :querInd or m.name like UPPER(:query))"
+	/>
+</voc>
+
+<voc id="vocWorkFunctionShort" type="NativeVocService">
+	<NativeVocService 
+	from="vocworkfunction as vwf " 
+	nameId="vwf.id"
+	queryAppend="vwf.code is not null" 
+	names="vwf.name"
+	queriedSplitCount="1"
+	queried ="(cast(vwf.id as varchar(20)) = :querInd or vwf.name like UPPER(:query))" />
 </voc>
 
 
@@ -1192,39 +1206,78 @@ where wf.dtype='PersonalWorkFunction' -->
     <voc id='medServiceForSpec' type='NativeVocService'>
     	<NativeVocService
     			from = 'MedService ms'
-    			parent="wf.id=:par1 
-    			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate) 
-    			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))"
+    			parent="wf.id=:par1
+    			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate)
+    			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))
+				and (wfs.lpu_id is null or wfs.lpu_id=coalesce(wf.lpu_id,w.lpu_id))"
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
-    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
+    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join worker w on w.id=wf.worker_id'
     			order=''
     			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			groupBy="ms.id, ms.code, ms.name"
-    			 			
+
     	/>
-    
     </voc>
-    
-        <voc id='medServiceForSpecStac' type='NativeVocService'>
-    	<NativeVocService
-    			from = 'MedService ms'
-    			parent="wf.id=:par1 
-    			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate) 
+	<voc id='medServiceForSpecCharged' type='NativeVocService'>
+		<NativeVocService
+				from = 'priceposition pp'
+				parent="wf.id=:par1
+    			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate)
     			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))"
-    			parentSplitCount='2'
-    			names = "ms.code||' '||ms.name"
-    			nameId="ms.id"
-    			queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1')"
-    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
-    			order=''
-    			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
-    			groupBy="ms.id, ms.code, ms.name"
-    			 			
-    	/>
-    
+				parentSplitCount='2'
+				names = "ms.code||' '||ms.name"
+				nameId="ms.id"
+				queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1' and pl.dateto is null and pp.dateto is null"
+				join="left join pricemedservice pms on pms.priceposition_id=pp.id
+				left join medservice ms on ms.id=pms.medservice_id
+ 				left join pricelist pl on pl.id=pp.pricelist_id
+ 				left join WorkFunctionService wfs on wfs.medService_id=ms.id
+ 				left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id
+				left join worker w on w.id=wf.worker_id"
+				order=''
+				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+				groupBy="ms.id, ms.code, ms.name"
+
+		/>
+	</voc>
+        <voc id='medServiceForSpecStac' type='NativeVocService'>
+			<NativeVocService
+					from = 'MedService ms'
+					parent="wf.id=:par1
+					and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate)
+					and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))"
+					parentSplitCount='2'
+					names = "ms.code||' '||ms.name"
+					nameId="ms.id"
+					queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1')"
+					join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
+					order=''
+					queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+					groupBy="ms.id, ms.code, ms.name"
+
+			/>
+		</voc>
+	<voc id='medServiceForSpecStacCharged' type='NativeVocService'>
+		<NativeVocService
+				from = 'priceposition pp'
+				parent="wf.id=:par1
+				and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate)
+    			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))"
+				parentSplitCount='2'
+				names = "ms.code||' '||ms.name"
+				nameId="ms.id"
+				queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1') and pl.dateto is null and pp.dateto is null"
+				join="left join pricemedservice pms on pms.priceposition_id=pp.id
+				left join medservice ms on ms.id=pms.medservice_id
+ 				left join pricelist pl on pl.id=pp.pricelist_id
+ 				left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id "
+				order=''
+				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+				groupBy="ms.id, ms.code, ms.name"
+		/>
     </voc>
     
     <voc id='medServiceByVocWorkFunction' type='NativeVocService'>

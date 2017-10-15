@@ -38,6 +38,9 @@ public class DirectionViewInterceptor implements IFormInterceptor {
 				if(polerr.size()>1) form.setInfoByPolicy("БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС");
 	    	}
     	}
+    	if (entity.getTimePlan()!=null&&entity.getTimePlan().getPatientComment()!=null) {
+    		form.setPatientComment(entity.getTimePlan().getPatientComment());
+		}
     	form.setMedServices(TicketMedCaseViewInterceptor.getArray(manager,"MedCase","medService_id"
 				,new StringBuilder().append("parent_id='").append(entity.getId()).append("'").append(" and dtype='ServiceMedCase'").toString()
 			)) ;

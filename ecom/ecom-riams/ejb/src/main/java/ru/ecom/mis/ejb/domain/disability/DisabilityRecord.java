@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.disability;
 
 import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -48,6 +49,18 @@ public class DisabilityRecord extends BaseEntity{
 	public Date getDateTo() {return theDateTo;}
 	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;	}
 
+	/** Дата создания */
+	@Comment("Дата создания")
+	public Date getCreateDate() {return theCreateDate;}
+	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	private Date theCreateDate;
+	
+	
+	/** Время создания */
+	@Comment("Время создания")
+	public Time getCreateTime() {return theCreateTime;}
+	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
+	private Time theCreateTime;
 	
 	/** Режим нетрудоспособности */
 	@Comment("Режим нетрудоспособности")
@@ -98,6 +111,54 @@ public class DisabilityRecord extends BaseEntity{
 	@OneToOne
 	public WorkFunction getWorkFunctionAdd() {return theWorkFunctionAdd;}
 	public void setWorkFunctionAdd(WorkFunction aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+
+	/** Экспортировано */
+	@Comment("Экспортировано")
+	public Boolean getIsExport(){return theIsExport;}
+	public void setIsExport(Boolean aIsExport) {theIsExport = aIsExport;}
+	private Boolean theIsExport;
+
+
+	private String docName;
+	private String docRole;
+	private String vkName;
+	private String vkRole;
+
+	/** ФИО врача */
+	@Comment("ФИО врача")
+	public String getDocName() {
+		return docName;
+	}
+	public void setDocName(String docName) {
+		this.docName = docName;
+	}
+	/** Роль врача */
+	@Comment("Роль врача")
+	public String getDocRole() {
+		return docRole;
+	}
+	public void setDocRole(String docRole) {
+		this.docRole = docRole;
+	}
+
+	/** ФИО ВК */
+	@Comment("ФИО ВК")
+	public String getVkName() {
+		return vkName;
+	}
+	public void setVkName(String vkName) {
+		this.vkName = vkName;
+	}
+
+	/** Роль ВК */
+	@Comment("Роль ВК")
+	public String getVkRole() {
+		return vkRole;
+	}
+	public void setVkRole(String vkRole) {
+		this.vkRole = vkRole;
+	}
+
 
 	/** Доп. рабочая функция */
 	private WorkFunction theWorkFunctionAdd;

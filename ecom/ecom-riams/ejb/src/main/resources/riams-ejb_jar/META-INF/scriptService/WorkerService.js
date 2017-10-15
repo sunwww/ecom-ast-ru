@@ -145,7 +145,7 @@ function findLogginedWorkFunctionList(aCtx) {
 	var list = aCtx.manager.createQuery("from WorkFunction where secUser.login = :login")
 		.setParameter("login", username) 
 		.getResultList() ;
-	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между WorkFunction и SecUser" ;	
+	if(list.size()==0) throw "Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответствия между WorkFunction и SecUser" ;
 	return list ;
 }
 function getGroupByWorkFunction(aCtx,aWorkFunction) {

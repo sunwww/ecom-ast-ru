@@ -66,9 +66,13 @@
     	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create" name="Операцию"  
     	params="id"  action='/entityParentPrepareCreate-stac_surOperation'  key='Alt+7' title="Операции"
     	/>
+          <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/Create" name="Перевязку"
+                        params="id"  action='/entityParentPrepareCreate-stac_bandage'  key='Alt+9' title="Перевязки"
+          />
       	<msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
       	<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/Create" name="Случай ВМП" action="/entityParentPrepareCreate-stac_vmpCase" params="id" title="Добавить случай ВМП"/>
-      	
+          <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+          <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
       </msh:sideMenu>
       <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
       <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
@@ -93,7 +97,10 @@
     	params="id"  action='/entityParentList-stac_surOperation'  key='Alt+7' title='Операции'
     	styleId="stac_surOperation"
     	/>
-
+          <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/View" name="Перевязки"
+                        params="id"  action='/entityParentList-stac_bandage'  key='Alt+9' title='Перевязки'
+                        styleId="stac_bandage"
+          />
         <mis:sideLinkForWoman classByObject="MedCase" id="${param.id}" styleId="viewShort"
          action="/javascript:getDefinition('entityParentList-preg_childBirth.do?short=Short&id=${param.id}',null)" name="Описание родов" title="Показать описание родов" roles="/Policy/Mis/Pregnancy/ChildBirth/View"/>
     <msh:sideLink roles="/Policy/Mis/Inspection/View" name="Осмотры"     
@@ -422,10 +429,11 @@
           , d.name as whoIs  
           , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
           ,substring(so.operationText,1,100)||' ...' as operationText
+          ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fioan
           from SurgicalOperation as so 
           left join MedService ms on ms.id=so.medService_id
-          left join medcase parent on parent.id=so.medcase_id 
-          
+          left join medcase parent on parent.id=so.medcase_id
+           left join anesthesia a on a.surgicaloperation_id=so.id
       		left join MedCase aslo on aslo.id=so.medCase_id
       		left join MedCase slo on slo.parent_id=aslo.parent_id
           left join MisLpu d on d.id=so.department_id 
@@ -433,6 +441,9 @@
           left join Worker w on w.id=wf.worker_id
           left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
           left join Patient wp on wp.id=w.person_id
+          left join workfunction wfan on wfan.id=a.anesthesist_id
+left join worker wan on wan.id=wfan.worker_id
+left join Patient pat on pat.id=wan.person_id
           where  
            slo.id=${param.id}
           order by so.operationDate
@@ -449,11 +460,45 @@
 	    		<msh:tableColumn columnName="Хирург" property="5"/>
 	    		<msh:tableColumn cssClass="preCell" property="6" columnName="Протокол операции"/>
 	    		<msh:tableColumn columnName="Отделение" property="4"/>
+                <msh:tableColumn columnName="Анестезиолог" property="7"/>
 	    	</msh:table>
 	    </msh:section>
-    </msh:tableNotEmpty>      
+    </msh:tableNotEmpty>
       </msh:ifInRole>
-      
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/View">
+            <ecom:webQuery name="allBandage" nativeSql="select so.id,
+            to_char(so.startdate,'dd.mm.yyyy')||' '||coalesce(cast(so.starttime as varchar(5)),'') as datetime,
+            a.duration,vam.name as vamname,va.name as vaname,substring(so.text,1,100)||' ...' as text,pat.lastname||' '||pat.firstname||' '||pat.middlename as fioan from medicalmanipulation so
+            left join MedService ms on ms.id=so.medService_id
+            left join medcase parent on parent.id=so.medcase_id
+            left join MisLpu d on d.id=so.thedepartment_id
+            left join anesthesia a on a.manipulation_id=so.id
+            left join vocanesthesiamethod vam on vam.id=a.method_id
+            left join vocanesthesia va on va.id=a.type_id
+left join workfunction wfan on wfan.id=a.anesthesist_id
+left join worker wan on wan.id=wfan.worker_id
+left join Patient pat on pat.id=wan.person_id
+          where
+           so.medCase_id=${param.id} and so.dtype='Bandage'
+          order by so.startdate
+          "/>
+        <msh:tableNotEmpty name="allBandage">
+            <msh:section title="Перевязки " createUrl="entityParentPrepareCreate-stac_bandage.do?id=${param.id}"
+                         createRoles="/Policy/Mis/MedCase/Stac/Ssl/Bandage/Create">
+                <msh:table viewUrl="entityShortView-stac_bandage.do"
+                           editUrl="entityParentEdit-stac_bandage.do"
+                           name="allBandage" action="entityParentView-stac_bandage.do" idField="1">
+                    <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableColumn columnName="Дата и время" property="2"/>
+                    <msh:tableColumn columnName="Длительность" property="3"/>
+                    <msh:tableColumn columnName="Метод" property="4"/>
+                    <msh:tableColumn columnName="Тип" property="5"/>
+                    <msh:tableColumn columnName="Протокол перевязки" property="6"/>
+                    <msh:tableColumn columnName="Анестезиолог" property="7"/>
+                </msh:table>
+            </msh:section>
+        </msh:tableNotEmpty>
+    </msh:ifInRole>
       <msh:ifInRole roles="/Policy/Mis/MedCase/Transfusion/View">
       	<msh:tableNotEmpty name="transfusions">
       	<ecom:webQuery name="select tr.id as tr1id, tr.journalNumber as tr2journalnumber
@@ -570,7 +615,26 @@ where m.id ='${param.id}'"/>
   slo_form_is_view = 1 ;
   </script>
   </msh:ifFormTypeIsView>
-      	<script type="text/javascript"> 
+      	<script type="text/javascript">
+            function watchThisPatient() {
+                HospitalMedCaseService.watchThisPatient(
+                    '${param.id}', {
+                        callback: function(res) {
+                            alert(res);
+                        }
+                    }
+                );
+            }
+
+            function notWatchThisPatient() {
+                HospitalMedCaseService.notWatchThisPatient(
+                    '${param.id}', {
+                        callback: function(res) {
+                            alert(res);
+                        }
+                    }
+                );
+            }
       	try {
 	      	var old_action = document.forms["mainForm"].action ; 
 	      	document.forms["mainForm"].action="javascript:check_diags('')" ; 
@@ -597,35 +661,34 @@ where m.id ='${param.id}'"/>
       			$('submitButton').disabled=false ;
       		}
       	}
-      	onload=function(){
-      		
-      		var list_diag = ["complication","concomitant"] ;
-      		for (var j=0;j<list_diag.length;j++) {
-      			
-               		if ($(list_diag[j]+'Diags').value!='') {
-                        var addRowF="";
-                        var ind_f=0 ;
-                  		for (var i=0;i<theFld.length;i++) {
-                  			addRowF+="ar["+(ind_f++)+"],"
-                  			if (theFld[i][2]==1) {
-                  				addRowF+="ar["+(ind_f++)+"],"
-                  			}
-                  		}
-                		addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
-                        addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+",1);"
-                        
-                  		var arr = $(list_diag[j]+'Diags').value.split("#@#");
-                  		for (var i=0;i<arr.length;i++) {
-                  			var ar=arr[i].split("@#@") ;
-                  			//alert(addRowF);
-                              eval(addRowF) ;
-                  		}
-                  	}
-                    
+      	onload=function() {
+
+            var list_diag = ["complication", "concomitant"];
+            for (var j = 0; j < list_diag.length; j++) {
+
+                if ($(list_diag[j] + 'Diags').value != '') {
+                    var addRowF = "";
+                    var ind_f = 0;
+                    for (var i = 0; i < theFld.length; i++) {
+                        addRowF += "ar[" + (ind_f++) + "],"
+                        if (theFld[i][2] == 1) {
+                            addRowF += "ar[" + (ind_f++) + "],"
+                        }
+                    }
+                    addRowF = addRowF.length > 0 ? trim(addRowF).substring(0, addRowF.length - 1) : "";
+                    addRowF = "addRowDiag('" + list_diag[j] + "'," + addRowF + ",1);"
+
+                    var arr = $(list_diag[j] + 'Diags').value.split("#@#");
+                    for (var i = 0; i < arr.length; i++) {
+                        var ar = arr[i].split("@#@");
+                        //alert(addRowF);
+                        eval(addRowF);
+                    }
+                }
+
             }
-	        	
+
         }
-      	
         function addDiag(aDiagType,aCheck) {
             var addRowF="";
             var isCheckReq =true ;

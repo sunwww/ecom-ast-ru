@@ -186,7 +186,7 @@
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
     <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select 
-cec.id,to_char(expertDate,'dd.mm.yyyy')
+cec.id as f1_id, to_char(expertDate,'dd.mm.yyyy')
 ,ovwf.name||' '||owp.lastname||' '||owp.firstname||' '||owp.middlename as workfunction
 ,p.lastname||' '||p.firstname||' '||p.middlename as patient
 , case when p.address_addressId is not null 
@@ -205,13 +205,16 @@ cec.id,to_char(expertDate,'dd.mm.yyyy')
 ,vs.name as vsname,veps.code||', '||cec.profession as job
 ,mkb.code as mkbcode
 ,vepc.code as vepccode
-,vemc.code||coalesce(', № Л/Н'||dd.number,'')||', д. '||(cec.orderDate-cec.disabilityDate+1)||', '||ves.code as disability
+,coalesce(cec.anotherDisabilityNumber,'')||vemc.code||coalesce(', № Л/Н'||dd.number,'')||', д. '||(cec.orderDate-cec.disabilityDate+1)||', '||ves.code as disability
 ,veds.name||' '||cec.deviationStandardsText as deviationStandards
 ,cec.defects as defects,cec.resultStep as resultStep
 ,vec.name||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||coalesce('. '||vecs.name,'')||' '||coalesce(cec.additionInfo,'') as conclusion
 ,cec.orderHADate as orderHADate,cec.conclusionHA as conlusionHA
 ,cec.receiveHADate as receiveHADate,cec.additionInfoHA as addtionInfoHA
+,coalesce(cec.numberinjournal,''||cec.id) as numberInJournal
+,replace(replace(vecomp.name,' ',''),',',chr(13)) as expertComission
 from ClinicExpertCard cec
+left join VocExpertComposition vecomp on vecomp.id=cec.expcomposition_id
 left join MedCase slo on slo.id=cec.medCase_id
 left join MisLpu ml on ml.id=slo.department_id
 left join WorkFunction owf on owf.id=cec.orderFunction_id
@@ -237,7 +240,7 @@ left join Omc_StreetT ost on ost.id=p.TypeStreetNonresident_id
     where cec.expertDate between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 ${emergencySql} ${departmentSql} ${modeCaseSql} ${patientStatusSql} ${reasonDirectSql} ${deviationStandardsSql} ${conclusionSql} ${conclusionSentSql}
 ${lpuSql} ${typeSql}
-    order by cec.expertDate
+    order by cast('0'||cec.numberinjournal as int), cec.expertDate
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
     
@@ -256,6 +259,7 @@ ${lpuSql} ${typeSql}
     viewUrl="entityParentView-expert_ker.do?short=Short" 
      action="entityParentView-expert_ker.do" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
+      <msh:tableColumn property="20" columnName="Номер в журнале" />
       <msh:tableColumn columnName="Дата экспертизы" property="2" />
       <msh:tableColumn columnName="ФИО врача" property="3" />
       <msh:tableColumn columnName="ФИО пациента" property="4" />

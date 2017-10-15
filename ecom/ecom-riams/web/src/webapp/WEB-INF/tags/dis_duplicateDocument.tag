@@ -29,6 +29,9 @@
     
 <form action="javascript:">
     <msh:panel>
+        <msh:row>
+            <td><input id="get${name}FreeNumberButton" type="button" onclick="getFreeNumber('${name}Number',this)" value="Получить номер ЭЛН"></td>
+        </msh:row>
     	<msh:row>
     		<msh:separator label="Новый бланк" colSpan="4"/>
     	</msh:row>
@@ -60,7 +63,7 @@
 </div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}DuplicateDisDocumentDialogInitialized = false ;
      var the${name}DuplicateDisDocumentDialog = new msh.widget.Dialog($('${name}DuplicateDisDocumentDialog')) ;
      // Показать
@@ -69,8 +72,7 @@
          if (!theIs${name}DuplicateDisDocumentDialogInitialized) {
          	init${name}DuplicateDisDocumentDialog() ;
           }
-         the${name}DuplicateDisDocumentDialog.show() ;
-         $("${name}Number").focus() ;
+         checkIsElectronicDocument();
 
      }
 
@@ -109,5 +111,26 @@
      function init${name}DuplicateDisDocumentDialog() {
      	theIs${name}DuplicateDisDocumentDialogInitialized = true ;
      	$('${name}Job').value = $('job').value ;
+     }
+     function checkIsElectronicDocument() {
+         DisabilityService.getElectronicDisabilityDocumentInfo (${param.id},null,{
+            callback: function (res) { {
+                if (res!=null){ //электронный ЛВН id#number#createDate#exportDate#annulDate
+                    var eln = res.split("#");
+                    if (""+eln[4]=="") { //ЭЛН не закрыт
+                        if (confirm("Больничный лист является электронным, для выдачи дубликата необходимо аннулировать этот больничный лист. Перейти к аннулированию?")) {
+                            showannulDisSheetReasonCloseElectronicDocument();
+                        }
+                    } else {
+                        the${name}DuplicateDisDocumentDialog.show() ;
+                        $("${name}Number").focus() ;
+                    }
+                } else { //Не электронный, продолжаем
+                    the${name}DuplicateDisDocumentDialog.show() ;
+                    $("${name}Number").focus() ;
+                }
+            }
+            }
+         });
      }
 </script>

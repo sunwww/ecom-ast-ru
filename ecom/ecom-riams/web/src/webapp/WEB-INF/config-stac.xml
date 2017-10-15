@@ -5,9 +5,10 @@
 <struts-config>
 
 	<form-beans>
+	
         <form-bean name="stac_planHospitalForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedForm" />
         <form-bean name="smo_planHospitalByVisitForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />
-        <form-bean name="smo_planHospitalByHospForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByVisitForm" />
+        <form-bean name="smo_planHospitalByHospForm"            type="ru.ecom.mis.ejb.form.workcalendar.WorkCalendarHospitalBedByHospForm" />
         <form-bean name="stac_sslAdmissionForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
         <form-bean name="stac_sslAdmissionShortForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm" />
         <form-bean name="stac_sslForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm" />
@@ -31,16 +32,14 @@
 		<form-bean name="stac_deathReasonForm"             type="ru.ecom.mis.ejb.form.medcase.death.DeathReasonForm" />
 		<form-bean name="stac_deathCertificateForm"        type="ru.ecom.document.ejb.form.certificate.DeathCertificateForm" />
 		<form-bean name="stac_certificateForm"             type="ru.ecom.document.ejb.form.certificate.CertificateForm" />
-
 		<form-bean name="stac_statisticStubNewForm"        type="ru.ecom.mis.ejb.form.medcase.hospital.StatisticStubNewForm" />
-
 		<form-bean name="stac_birthCaseForm"               type="ru.ecom.mis.ejb.form.medcase.birth.BirthCaseForm" />
 		<form-bean name="stac_anesthesiaForm"              type="ru.ecom.mis.ejb.form.medcase.hospital.AnesthesiaForm" />
 		<form-bean name="stac_birthCertificateForm"
 		        type="ru.ecom.document.ejb.form.certificate.BirthCertificateForm" />
-		<form-bean name="stac_repeatCaseForm"
-		        type="ru.ecom.mis.web.action.medcase.journal.RepeatCaseJournalForm" />
-		
+		<form-bean name="stac_repeatCaseForm"		        type="ru.ecom.mis.web.action.medcase.journal.RepeatCaseJournalForm" />
+        <form-bean name="disabilityImport"		        type="ru.ecom.mis.web.action.disability.DisabilityImportForm" />
+        <form-bean name="vocPharmForm"		        type="ru.ecom.mis.web.action.pharm.VocPharmForm"/>
 
 	</form-beans>
 
@@ -594,7 +593,20 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/print_discharge_by_current.jsp" />
         </action>
 
-        		
+        <action path='/dis_import' type='ru.ecom.web.actions.base.ForwardAction'
+                name='disabilityImport'
+                validate='false'
+                scope="session">
+            <forward name="success" redirect="false" path="/WEB-INF/actions/dis_case/dis_import.jsp" />
+        </action>
+
+        <action path='/pharm_voc' type='ru.ecom.web.actions.base.ForwardAction'
+                name='vocPharmForm'
+                validate='false'
+                scope="session">
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_operations/voc_pharm.jsp" />
+        </action>
+
 	</action-mappings>
 
 

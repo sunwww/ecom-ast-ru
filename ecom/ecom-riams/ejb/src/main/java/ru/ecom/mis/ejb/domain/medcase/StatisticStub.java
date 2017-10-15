@@ -130,4 +130,38 @@ public abstract class StatisticStub extends BaseEntity {
 	/** Справочник по форма помощи */
 	private VocFormHelp theFormHelp;
 
+	/** Рост */
+	@Comment("Рост")
+	public Integer getHeight() {
+		return theHeight;
+	}
+
+	public void setHeight(Integer aHeight) {
+		theHeight = aHeight;
+	}
+
+	/** Рост */
+	private Integer theHeight;
+
+	/** Вес */
+	@Comment("Вес")
+	public Integer getWeight() { return theWeight; }
+
+	public void setWeight(Integer aWeight) {
+		theWeight = aWeight;
+	}
+
+	/** Вес */
+	private Integer theWeight;
+
+	/** Индекс массы тела */
+	@Comment("Индекс массы тела")
+	public Double getIMT() { return theIMT; }
+
+	public void setIMT(Double aIMT) {
+		theIMT = aIMT;
+	}
+
+	/** Индекс массы тела */
+	private Double theIMT;
 }

@@ -45,6 +45,11 @@
     		<input name="add" type='button' onclick="javascript:goTo('mode')" value='Добавить режим'> 
     	</td>
     </tr>
+	<tr>
+		<td>
+			<input name="add" type='button' onclick="javascript:goTo('drug')" value='Добавить назначение лекарственного препарата'>
+		</td>
+	</tr>
     <tr>
     	<td>
     		<input name="view" type='button' onclick="javascript:goTo('view')" value='Просмотреть назначения'> 
@@ -62,7 +67,7 @@
 </div>
 </div>
 <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
-<script type="text/javascript"><!--
+<script type="text/javascript">
 var plId ;
 var isSLSClosed = true;
      var theIs${name}PrescriptListDialogInitialized = false ;
@@ -76,7 +81,9 @@ var isSLSClosed = true;
     	else if (aValue=='diet') window.location='entityParentPrepareCreate-pres_dietPrescription.do?id='+plId;
     	else if (aValue=='mode') window.location='entityParentPrepareCreate-pres_modePrescription.do?id='+plId;
     	else if (aValue=='func') window.location='entityParentPrepareCreate-pres_diagnosticPrescription.do?id='+plId;
+        else if (aValue=="drug") window.location='entityParentPrepareCreate-pres_drugPrescription.do?id='+plId;
     	else if (aValue=='view') window.location='entityParentView-pres_prescriptList.do?id='+plId;
+
     	
      }
      

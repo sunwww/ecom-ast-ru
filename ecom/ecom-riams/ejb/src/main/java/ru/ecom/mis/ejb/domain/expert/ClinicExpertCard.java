@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.domain.expert;
 import java.sql.Date;
 import java.sql.Time;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.mis.ejb.domain.expert.voc.VocExpertComposition;
@@ -36,7 +38,22 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 ,@AIndex(properties={"expertDate"})
 })
 public class ClinicExpertCard extends BaseEntity {
-	
+
+	/** Описание состояния здоровья пациента */
+	@Comment("Описание состояния здоровья пациента")
+	@Column(length= ColumnConstants.TEXT_MAXLENGHT)
+	public String getPatientHealthInfo() {return thePatientHealthInfo;}
+	public void setPatientHealthInfo(String aPatientHealthInfo) {thePatientHealthInfo = aPatientHealthInfo;}
+	/** Описание состояния здоровья пациента */
+	private String thePatientHealthInfo ;
+
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	@Comment("Лист нетрудоспособности выданный другим ЛПУ")
+	public String getAnotherDisabilityNumber() {return theAnotherDisabilityNumber;}
+	public void setAnotherDisabilityNumber(String aAnotherDisabilityNumber) {theAnotherDisabilityNumber = aAnotherDisabilityNumber;}
+	/** Лист нетрудоспособности выданный другим ЛПУ */
+	private String theAnotherDisabilityNumber ;
+
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne

@@ -183,6 +183,7 @@
 	   <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
 		 <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
 		 <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
+		 <script type='text/javascript' src='./dwr/interface/ContractService.js'></script>
 	   <script type="text/javascript">
 
            function getLNNumberRange() {
@@ -201,12 +202,11 @@
 			   }
 		   }
 		   function sendDiary() {
-	       var protocolId = 3098407; //3094777-KT , 3098407-LAB, 4080564-Visit
-	       var medcaseId=null ;  // 3964827//SLS
-	       alert ("sending: protocol= "+protocolId+", medcase="+medcaseId);
-           TemplateProtocolService.sendService(protocolId, medcaseId, {
+               var typeT="OMC";
+	         alert ("getSpecs "+typeT);
+           ContractService.getSpecializations(typeT, {
                callback:function (res) {
-                   alert ("отправлено"+res);
+                   alert ("результат: "+res);
 			   }
 		   });
 	   }

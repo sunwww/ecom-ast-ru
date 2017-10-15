@@ -2,6 +2,7 @@
  * При создании
  */
 function onCreate(aForm, aEntity, aContext) {
+
 	var illnesPrimary=aEntity.illnesPrimary  ;
 	if (illnesPrimary!=null) {
 		aEntity.setAcuity(illnesPrimary.getIllnesType()) ;
@@ -15,6 +16,7 @@ function onCreate(aForm, aEntity, aContext) {
 	
 	aContext.manager.persist(aEntity) ;
 	checkPolyclinic(aForm,aEntity,aContext);
+    //checkUniqueDiagnosis(aForm,aEntity,aContext);
 }
 
 /**
@@ -32,9 +34,51 @@ function onSave(aForm, aEntity, aContext) {
 	}
 	aContext.manager.persist(aEntity) ;
 	checkPolyclinic(aForm,aEntity,aContext);
-	//
 }
-
+//диагноз должен быть уникальным
+function checkUniqueDiagnosis(aForm,aEntity,aCtx) {
+	if (aForm!=null) {
+        var medcase_id = aForm.getMedCase();
+        if (medcase_id != null) {
+            var sql = "select dtype from medcase where id=" + medcase_id;
+            var list = aCtx.manager.createNativeQuery(sql).getResultList();
+            var dtype = "";
+            if (list.size() > 0) {
+                dtype = list.get(0) + "";
+            }
+            var priority = aForm.getPriority();
+            var regtype = aForm.getRegistrationType();
+            var diagnosis = aForm.getIdc10();
+            if (dtype == "HospitalMedCase") {
+                var sql = "select lpu.name from medcase mcs" +
+                    " left join mislpu lpu on mcs.department_id = lpu.id" +
+                    " left join diagnosis ds on ds.medcase_id = " + medcase_id +
+                    " where ds.priority_id = '" + priority + "')" +
+                    " and ds.idc10_id = '" + diagnosis +
+                    "' and ds.registrationtype_id = '" + regtype + "')" +
+                    " and mcs.id = " + medcase_id;
+                var list = aCtx.manager.createNativeQuery(sql).getResultList();
+                if (list.size() > 0) {
+                    throw "Такой же диагноз (тип регистрации, приоритет, код МКБ) уже есть в отделении " + list.get(0);
+                }
+            }
+            else if (dtype == "DepartmentMedCase") {
+                var sql = "select coalesce(ml.name, 'Приемное отделение') from diagnosis d" +
+                    " left join medcase mc on mc.id=d.medcase_id" +
+                    " left join mislpu ml on ml.id=mc.department_id" +
+                    " where d.priority_id = (select id from vocprioritydiagnosis vds where vds.code = '" + priority + "')" +
+                    " and d.idc10_id = '" + diagnosis +
+                    "' and d.registrationtype_id=(select id from vocdiagnosisregistrationtype rt where rt.code = '" + regtype + "')" +
+                    "  and d.medcase_id in (select id from medcase where id in (select id from medcase where id = " + medcase_id +
+					"or (parent_id = " + medcase_id + " and dtype='DepartmentMedCase')))";
+                var list = aCtx.manager.createNativeQuery(sql).getResultList();
+                if (list.size() > 0) {
+                    throw "Такой же диагноз (тип регистрации, приоритет, код МКБ) уже есть в отделении " + list.get(0);
+                }
+            }
+        }
+    }
+}
 
 function checkPolyclinic(aForm,aEntity,aCtx) {
 	var medCase =aEntity.getMedCase() ; 
@@ -54,8 +98,9 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	if (!isDiagnosisAllowed(aForm, aCtx)) {
 		throw "Данный диагноз запрещен в отделении!";
-	} 
+	}
 }
+
 function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date();
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
@@ -64,7 +109,7 @@ function onPreCreate(aForm, aCtx) {
 	
 	if (!isDiagnosisAllowed(aForm, aCtx)) {
 		throw "Данный диагноз запрещен в отделении!";
-	} 
+	}
 }
 
 function getMedCaseType (aId, aCtx) {

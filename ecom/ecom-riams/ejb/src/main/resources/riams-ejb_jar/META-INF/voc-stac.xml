@@ -346,8 +346,17 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     			queried = "(cast(ms.id as varchar(10)) like :querId or replace(ms.code,'.','') like :query or ms.code like :querId  or UPPER(ms.name) like UPPER(:query))"
 		    	parentSplitCount="3" />
     </voc>
-    
-    
+
+	<voc id="medServiceForBandage" type="NativeVocService">
+		<NativeVocService
+				from="medservice ms"
+				nameId="ms.id"
+				order="ms.name, ms.code"
+				groupBy="ms.id, ms.name, ms.code"
+				names="ms.code||' '||ms.name"
+				queryAppend="ms.finishDate is null and code='A16.01.029' or code='A16.01.003' or code like 'A16.01.010.%' or code='A16.01.004' or code='A16.01.004.996'"
+		/>
+	</voc>
     
     <!-- Справочник осложнений -->
     <voc id='vocComplication' type='EntityVocService'>
@@ -831,4 +840,21 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried = 'name'
                 />
     </voc>
+
+	<!--Назначения -->
+	<voc id="vocPharmDrugOnStorage" type="NativeVocService">
+		<NativeVocService
+				from="prescriptionlist as pl"
+				parent="pl.id =:parent"
+				nameId="pd.id"
+				join="left join medcase mc on mc.id = pl.medcase_id
+						left join pharmstorage ps on ps.department_id =mc.department_id
+						left join pharmdrug pd on pd.pharmstorage_id = ps.id and pd.nextstate_id is null
+						left join vocdrug vd on vd.id = pd.drug_id"
+				queryAppend="pd.nextstate_id is null"
+				order=""
+				queried="(vd.name like upper(:query))"
+				names = "vd.name"
+		/>
+	</voc>
 </vocconfig>    

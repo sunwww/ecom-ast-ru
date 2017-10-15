@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,12 +9,16 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 
+import org.json.JSONObject;
+import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
@@ -24,12 +30,13 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		AdmissionMedCaseForm form=(AdmissionMedCaseForm)aForm ;
+		EntityManager manager = aContext.getEntityManager();
 		if (CAN_DEBUG) LOG.debug("Проверка правильности введенных данных");
 		
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 		Long id = medCase.getId() ;
 		
-		StatisticStubStac stub = new StatisticStubStac(medCase,aContext.getSessionContext(),aContext.getEntityManager());
+		StatisticStubStac stub = new StatisticStubStac(medCase,aContext.getSessionContext(),manager);
 		
 		String statCardNumber = form.getStatCardNumber() ;
 		String stubCode = medCase.getStatisticStub()!=null?medCase.getStatisticStub().getCode():null;
@@ -39,7 +46,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			
 			String year = form.getDateStart().substring(6) ;
 			//throw ""+year ;
-			List<Object[]> list = aContext.getEntityManager()
+			List<Object[]> list = manager
 					.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
 				.setParameter("number", statCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
 			
@@ -48,31 +55,31 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				if (!alwaysCreate) {
 	    			if (form.getDeniedHospitalizating()!=null && form.getDeniedHospitalizating()>Long.valueOf(0)) {
 	    				//throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
-	    				StatisticStubStac.removeStatCardNumber(aContext.getEntityManager(), aContext.getSessionContext(),medCase);
+	    				StatisticStubStac.removeStatCardNumber(manager, aContext.getSessionContext(),medCase);
 	    			} else {
-	    				StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());
+	    				StatisticStubStac.createStacCardNumber(id, statCardNumber, manager, aContext.getSessionContext(),form);
 	    			}
 	    		} else {
-	    			StatisticStubStac.changeStatCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());    			
+	    			StatisticStubStac.changeStatCardNumber(id, statCardNumber, manager, aContext.getSessionContext());
 	    		}
 				
 			} else {
 				if (form.getDeniedHospitalizating().equals(Long.valueOf(0))) {
-					StatisticStubStac.createStacCardNumber(id,statCardNumber,  aContext.getEntityManager(), aContext.getSessionContext());
+					StatisticStubStac.createStacCardNumber(id,statCardNumber, manager, aContext.getSessionContext(),form);
 				} else {
 					
-					StatisticStubStac.removeStatCardNumber(aContext.getEntityManager(), aContext.getSessionContext(),medCase);
+					StatisticStubStac.removeStatCardNumber(manager, aContext.getSessionContext(),medCase);
 					//throw "remove" ;
 				}
 			}
 			
 		} else {
-			List<Object> list = aContext.getEntityManager().createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist'")
+			List<Object> list = manager.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist'")
 				//.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year))
 				.getResultList() ;
 			if (list.size()==0) {
 				//if (aForm.deniedHospitalizating==0) {
-					StatisticStubStac.createStacCardNumber(id, statCardNumber, aContext.getEntityManager(), aContext.getSessionContext());
+					StatisticStubStac.createStacCardNumber(id, statCardNumber, manager, aContext.getSessionContext(),form);
 				//} else {
 					
 				//}	
@@ -88,32 +95,55 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			if (!adding1is) adding1 = true ; 
 			boolean adding2 = false ;
 			if (!adding2is) adding2 = true ;
-			VocDiagnosisRegistrationType vocTypeOrder = aContext.getEntityManager().find(VocDiagnosisRegistrationType.class, Long.valueOf(1));
-			VocDiagnosisRegistrationType vocTypeEnter = aContext.getEntityManager().find(VocDiagnosisRegistrationType.class, Long.valueOf(2));
-			List<Diagnosis> diagList = aContext.getEntityManager().createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
+			VocDiagnosisRegistrationType vocTypeOrder = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(1));
+			VocDiagnosisRegistrationType vocTypeEnter = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(2));
+			List<Diagnosis> diagList = manager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
 			if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
 			for(Diagnosis diag:diagList){
-				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, aContext.getEntityManager()) ;
-				if (!adding2) adding2=setDiagnosisByType(false,diag, vocTypeOrder, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aContext.getEntityManager()) ;
+				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, manager) ;
+				if (!adding2) adding2=setDiagnosisByType(false,diag, vocTypeOrder, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, manager) ;
 				if (adding1&&adding2) break ;
 			}
 			
 			if (!adding1 || !adding2) {
 				if (!adding1) {
 					Diagnosis diag = new Diagnosis();
-					setDiagnosisByType(true,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, aContext.getEntityManager()) ;
+					setDiagnosisByType(true,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, manager) ;
 					//diagList.add(diag);
 				}
 				if (!adding2) {
 					Diagnosis diag = new Diagnosis();
-					setDiagnosisByType(true,diag, vocTypeOrder, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, aContext.getEntityManager()) ;
+					setDiagnosisByType(true,diag, vocTypeOrder, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, manager) ;
 					//diagList.add(diag);
 				}
 				//medCase.setDiagnosis(diagList);
 			}
 		}
-		
-		
+		List<Object[]> rec = manager.createNativeQuery("select pat.lastname||' '||substring(pat.firstname,1,1)||''||substring(coalesce(pat.middlename,' '),1,1) as f1_name , pr.phonenumber " +
+				" from patientlistrecord pr left join patient pat on pat.id=pr.patient where pr.patient="+medCase.getPatient().getId()+" and pr.phoneNumber is not null").getResultList();
+		if (rec.size()>0) {
+			Object[] r = rec.get(0);
+			try {
+				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+				String address =config.get("ru.amokb.patientcabinetaddress", null) ;
+				if (address!=null){
+					String method = "SendSms";
+					SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+					String wfName = medCase.getDepartment().getName();
+					String message = "Пациент "+r[0].toString()+" госпитализирован в "+wfName;
+					String phone = r[1].toString();
+					JSONObject json = new JSONObject();
+					json.put("phonenumber",phone);
+					json.put("message",message);
+					TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
+					bean.makePOSTRequest(json.toString(),address,method,null,null,manager);
+				}
+
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/*PatientForm form = (PatientForm) aForm ;
