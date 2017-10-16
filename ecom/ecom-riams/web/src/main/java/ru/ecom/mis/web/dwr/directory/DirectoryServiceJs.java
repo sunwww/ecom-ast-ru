@@ -55,6 +55,7 @@ public class DirectoryServiceJs {
 		JSONObject obj = new JSONObject(aJson);
 		JSONArray params= null;
 		JSONArray params2= null;
+		String departid = "";
 
 		Long buildingId,misLpuId,buildingLevelId,departmentId;
 		if(isNotNullObj(obj,"buildingId") && isNotNullObj(obj,"buildingLevelId")
@@ -63,11 +64,23 @@ public class DirectoryServiceJs {
 			misLpuId = Long.valueOf(String.valueOf(obj.get("misLpuId")));
 			buildingLevelId = Long.valueOf(String.valueOf(obj.get("buildingLevelId")));
 			departmentId = Long.valueOf(String.valueOf(obj.get("departmentId")));
+			//System.out.println("Mislpu>>>"+misLpuId+" Department>>>"+departmentId);
+			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+			StringBuilder sql = new StringBuilder();
+			sql.append("select id from department")
+				.append(" where building_id ="+buildingId)
+				.append(" and department_id = "+misLpuId)
+				.append(" and buildinglevel_id = "+buildingLevelId);
 
-			SQLupdate(aRequest,"update department " +
-			"set building_id ="+buildingId+", " +
-			"department_id = "+misLpuId+", " +
-			"buildinglevel_id="+buildingLevelId+" where id="+departmentId);
+			Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
+			for (WebQueryResult wqr : res) {
+				departid = wqr.get1().toString();
+			}
+			if(departid.equalsIgnoreCase("")){
+				IDirectoryService service2 = Injection.find(aRequest).getService(IDirectoryService.class);
+				departid = String.valueOf(service2.setDepartment(buildingId,buildingLevelId,misLpuId));
+			}
+			//System.out.println(">>>>ID:"+departid);
 		}else return false;
 
 		String entryId="";
@@ -81,8 +94,9 @@ public class DirectoryServiceJs {
 				personId =String.valueOf(obj.get("personId"));
 			}else personId = "null";
 			SQLupdate(aRequest,"update entry " +
-					"set comment ='"+comment+"', " +
-					"insidenumber ='"+internalNumber+"', " +
+					"set comment ='"+comment+"'" +
+					" ,department_id = "+departid +
+					" ,insidenumber ='"+internalNumber+"', " +
 					"person_id="+personId+" where id="+entryId);
 
 		}else return false;
@@ -184,6 +198,8 @@ public class DirectoryServiceJs {
 		String comment,internalNumber;
 		IDirectoryService service = Injection.find(aRequest).getService(IDirectoryService.class);
 
+		System.out.println(">>>Saving");
+
 		if(isNotNullObj(obj,"buildingId") && isNotNullObj(obj,"buildingLevelId")
 				&& isNotNullObj(obj,"departmentId"))
 		{
@@ -192,7 +208,8 @@ public class DirectoryServiceJs {
 			buildingLevelId = Long.valueOf(String.valueOf(obj.get("buildingLevelId")));
 			depRetId = service.setDepartment(buildingId,buildingLevelId,departmentId);
 			System.out.println(">>>>>DEP>>>:"+depRetId);
-		}else return false;
+		}else {
+			System.out.println("FALSE!!!!");return false;}
 
 		if(depRetId!=null){
 			if(isNotNullObj(obj,"comment") && isNotNullObj(obj,"internalNumber")){
@@ -217,10 +234,6 @@ public class DirectoryServiceJs {
 		}
 		return false;
 	}
-
-
-
-
 
     // Добавление записи
     public void setEntryAndNumber(String aJson, HttpServletRequest aRequest) throws JSONException, NamingException{
