@@ -1,4 +1,3 @@
-<script type="text/javascript" src="./js/jquery-3.2.1.min.js"></script>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>

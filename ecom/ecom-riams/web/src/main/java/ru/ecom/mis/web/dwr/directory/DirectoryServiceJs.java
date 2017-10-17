@@ -1,24 +1,16 @@
 package ru.ecom.mis.web.dwr.directory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.ecs.html.LI;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.mis.ejb.domain.directory.Entry;
-import ru.ecom.mis.ejb.domain.directory.TelephoneNumber;
-import ru.ecom.mis.ejb.domain.directory.voc.VocTypeNumber;
 import ru.ecom.mis.ejb.service.directory.IDirectoryService;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 /**
  * Сервис справочника
