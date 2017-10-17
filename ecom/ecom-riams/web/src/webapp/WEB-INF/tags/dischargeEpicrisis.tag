@@ -98,7 +98,18 @@
 <script type="text/javascript">
      var theIs${name}EpicrisisDialogInitialized = false ;
      var the${name}EpicrisisDialog = new msh.widget.Dialog($('${name}EpicrisisDialog')) ;
-
+	function escapeHtml(aText) {
+	    return aText.replace(/&/g, '&amp;')
+            .replace(/>/g, '&gt;')
+            .replace(/</g, '&lt;')
+            .replace(/"/g, '&quot;');
+	}
+     function unEscapeHtml(aText) {
+         return aText.replace('&amp;',/&/g)
+             .replace( '&gt;',/>/g)
+             .replace('&lt;',/</g)
+             .replace('&quot;',/"/g);
+     }
      function show${name}DiariesDiv() {
     	 
      if ($('${name}Diaries').checked) {
@@ -116,7 +127,7 @@
     				 p+='<tr>';
     				 p+='<td><input type=\'checkbox\' name=\'diary'+text[0]+'\'></td>';
     				 p+='<td>'+text[1]+'</td>';
-    				 p+='<td id='+text[0]+'>'+text[2]+'</td>';
+    				 p+='<td id='+text[0]+'>'+escapeHtml(text[2])+'</td>';
     				 p+='</tr>';
     				 }
     				 p+='</tbody></table>'
@@ -231,7 +242,7 @@
     			 var td = rows[i].childNodes;
     			// alert ('tDD = '+td[2].innerHTML)
     			 if (td[0].childNodes[0].checked){
-    			 	res+=td[2].innerHTML+'\n\n';
+    			 	res+=unEscapeHtml(td[2].innerHTML)+'\n\n';
     			 }
     		 }
     		 $('${property}').value+=res;

@@ -97,6 +97,8 @@ function checkFields(aForm, aCtx) {
     aPhone = aPhone.trim();
         if (aPhone.startsWith("8")) {
             aPhone = "+7"+ aPhone.substring(1);
+        } else if (aPhone.length==10) {
+            aPhone="+7"+aPhone;
         } else if (!aPhone.startsWith("+")) {
             aPhone ="+"+aPhone;
         }
