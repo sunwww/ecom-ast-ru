@@ -105,7 +105,7 @@ function onCreate(aForm, aEntity, aCtx) {
     var elns = aCtx.manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aEntity.number).getResultList();
     if (elns.size()>0) { //Если номер из таблицы с полученнми номерами от ФСС, забираем номер.
         var eln = elns.get(0);
-        if (eln.getDocument!=null) {throw "Случилось то, чего не должно случиться. Обратитесь к разработчикам. Ошибка: ELN_UJE_ZANYAT";}
+        if (eln.getDocument()!=null) {throw "Случилось то, чего не должно случиться. Обратитесь к разработчикам. Ошибка: ELN_UJE_ZANYAT";}
         eln.setDisabilityDocument(aEntity);
         eln.setUsername(aEntity.getCreateUsername());
         eln.setReserveDate(null);

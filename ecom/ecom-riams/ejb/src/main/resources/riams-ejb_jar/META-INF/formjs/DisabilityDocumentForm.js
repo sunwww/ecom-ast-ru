@@ -102,7 +102,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	var elns = aCtx.manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aEntity.number).getResultList();
 	if (elns.size()>0) { //Если номер из таблицы с полученнми номерами от ФСС, забираем номер.
 		var eln = elns.get(0);
-		if (eln.getDocument!=null) {throw "Случилось то, чего не должно случиться. Обратитесь к разработчикам. Ошибка: ELN_UJE_ZANYAT";}
+		if (eln.getDocument()!=null) {throw "Случилось то, чего не должно случиться. Обратитесь к разработчикам. Ошибка: ELN_UJE_ZANYAT";}
 		eln.setDisabilityDocument(aEntity);
 		eln.setUsername(aForm.getCreateUsername());
 		eln.setReserveDate(null);
@@ -129,17 +129,17 @@ function onSave(aForm, aEntity, aCtx) {
 	
 }
 
-function checkIsElectronic(aEntityId , aCtx, sql){
+function checkIsElectronic(aEntityId , aCtx, sql, aMessage){
 var elns = aCtx.manager.createNativeQuery("select id from ElectronicDisabilityDocumentNumber where disabilitydocument_id=:num "+sql)
 	.setParameter("num",aEntityId).getResultList();
     if (elns.size()>0) {
-        throw "Невозможно выполнить действие!";
+        throw aMessage;
     }
 }
 
 function onPreSave(aForm,aEntity , aCtx) {
 
-    checkIsElectronic(aEntity.getId(),aCtx,"and exportDate is not null");
+    checkIsElectronic(aEntity.getId(),aCtx,"and exportDate is not null","Сохранение невозможно, ЭЛН выгружен в ФСС");
 	var series = aForm.getSeries() ;
 	var number = aForm.getNumber() ;
 	var thisid = aForm.getId() ;
@@ -198,7 +198,7 @@ function errorThrow(aList, aError) {
 
 function onPreDelete(aEntityId, aContext) {
 
-    checkIsElectronic(aEntityId,aContext,"");
+    checkIsElectronic(aEntityId,aContext,"","Невозможно удалить ЭЛН!");
 	var doc = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument
 			, new java.lang.Long(aEntityId)) ;
 	//if (doc.duplicate!=null) throw "Невозможно удалить документ так"
