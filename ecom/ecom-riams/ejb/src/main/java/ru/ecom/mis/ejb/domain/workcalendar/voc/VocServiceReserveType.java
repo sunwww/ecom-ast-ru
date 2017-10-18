@@ -83,10 +83,10 @@ public class VocServiceReserveType extends VocBaseEntity{
 
 	/** Создавать направления без предварительной записи */
 	@Comment("Создавать направления без предварительной записи")
-	public boolean getIsNoPreRecord() {return theIsNoPreRecord;}
-	public void setIsNoPreRecord(boolean aIsNoPreRecord) {theIsNoPreRecord = aIsNoPreRecord;}
+	public Boolean getIsNoPreRecord() {return theIsNoPreRecord;}
+	public void setIsNoPreRecord(Boolean aIsNoPreRecord) {theIsNoPreRecord = aIsNoPreRecord;}
 	/** Создавать направления без предварительной записи */
-	private boolean theIsNoPreRecord ;
+	private Boolean theIsNoPreRecord ;
 
 
 }
