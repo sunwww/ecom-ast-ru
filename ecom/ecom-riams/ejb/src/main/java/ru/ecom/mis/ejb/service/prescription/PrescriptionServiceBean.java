@@ -950,7 +950,7 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			list.setLength(0);
 			list.append("DRUG@");
 			list.append(presNew.getDrug().getId()).append(":");
-			list.append(presNew.getDrug().getName()).append("::"); //: Date 
+			//list.append(presNew.getDrug().getName()).append("::"); //: Date
 			list.append(presNew.getMethod().getId()).append(":");
 			list.append(presNew.getMethod().getName()).append(":");
 			if (presNew.getFrequency()!=null){
@@ -963,11 +963,11 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 				list.append(presNew.getAmountUnit().getId()).append(":");
 				list.append(presNew.getAmountUnit().getName()).append(":");
 			} else list.append(":::");
-			if (presNew.getDuration()!=null) {
+			/*if (presNew.getDuration()!=null) {
 				list.append(presNew.getDuration()).append(":");
 				list.append(presNew.getDurationUnit().getId()).append(":");
 				list.append(presNew.getDurationUnit().getName()).append("#");
-			} else list.append("::#");
+			} else list.append("::#");*/
 			
 			return list.toString() ;
 			}
@@ -1132,8 +1132,8 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			presNew.setAmountUnit(presOld.getAmountUnit());
 			presNew.setComments(presOld.getComments());
 			presNew.setDrug(presOld.getDrug());
-			presNew.setDuration(presOld.getDuration());
-			presNew.setDurationUnit(presOld.getDurationUnit());
+			//presNew.setDuration(presOld.getDuration());
+			//presNew.setDurationUnit(presOld.getDurationUnit());
 			presNew.setFrequency(presOld.getFrequency());
 			presNew.setFrequencyUnit(presOld.getFrequencyUnit());
 			presNew.setMethod(presOld.getMethod());
