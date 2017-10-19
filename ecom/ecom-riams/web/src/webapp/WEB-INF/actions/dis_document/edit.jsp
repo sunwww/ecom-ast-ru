@@ -284,6 +284,8 @@ where disabilitydocument_id = ${param.id} order by dr.datefrom"/>
                       alert ("Поле \"Номер\" уже заполнено");
                       return;
                   }
+                  aButton.value="Подождите...";
+                  aButton.disabled=true;
                   DisabilityService.getFreeNumberForDisabilityDocument({
                       callback: function (num) {
                           if (num!=null&&num!="") {
