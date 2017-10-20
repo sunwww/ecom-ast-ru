@@ -231,9 +231,10 @@ public class DisabilityServiceJs {
 			return wqr.get2()==null?""+wqr.get1():null ;
 		}
 	}
+
 	private String getDateGoToWork(Long aDisDocument, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> l = service.executeNativeSql("select max(dateto)+1 from disabilityrecord where disabilitydocument_id ="+aDisDocument,1) ;
+		Collection<WebQueryResult> l = service.executeNativeSql("select to_char(max(dateto)+1,'yyyy-MM-dd') from disabilityrecord where disabilitydocument_id ="+aDisDocument,1) ;
 		if (l.isEmpty()) {
 			return null ;
 		} else {
