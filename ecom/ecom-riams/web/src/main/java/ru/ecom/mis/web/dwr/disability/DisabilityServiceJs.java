@@ -165,17 +165,15 @@ public class DisabilityServiceJs {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
 		String ret = "";
 		Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy') as f2_date, cast(reservetime as varchar(5)) as f3_time from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null ");
-		if (list.isEmpty()) { //Получаем один номер с сервера ФСС
-			log.warn("Не найдено свободных номеров ЭЛН, запрашиваем один номер");
-			getLNNumberRange(Long.valueOf(1),aRequest);
-			return getFreeNumberForDisabilityDocumentReloaded(aCount,aRequest);
-		} else {
+		boolean needGetNewNumber = true;
+		if (!list.isEmpty()) {
 			Date currentDate = new Date();
 			Calendar cal = new GregorianCalendar();
 
 			for (WebQueryResult r: list) {
 				if (r.get2()==null||r.get2().toString().trim().equals("")) {
 					ret = r.get1().toString();
+					needGetNewNumber=false;
 					break;
 				} else {
 					Date reserveDate = DateConverter.createDateTime(r.get2().toString(),r.get3().toString());
@@ -183,14 +181,19 @@ public class DisabilityServiceJs {
 					cal.add(Calendar.HOUR,1);
 					if (currentDate.getTime()>cal.getTime().getTime()) { //Если за 1 час больничный лист не оформили, забераем его себе.
 					ret = r.get1().toString();
+					needGetNewNumber=false;
 					break;
 					}
-
 				}
 			}
 			if (ret!=null&&!ret.equals("")) {
 				service.executeUpdateNativeSql("update ElectronicDisabilityDocumentNumber set reservedate = current_date, reservetime = current_time where number ='"+ret+"' ");
 			}
+		}
+		if (needGetNewNumber) {
+			log.warn("Не найдено свободных номеров ЭЛН, запрашиваем один номер");
+			getLNNumberRange(Long.valueOf(1),aRequest);
+			return getFreeNumberForDisabilityDocumentReloaded(aCount,aRequest);
 		}
 		return ret;
 	}

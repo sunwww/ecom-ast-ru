@@ -253,6 +253,13 @@
     	</script>
     </msh:ifFormTypeIsCreate>
     <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="0cfa71af-92f6-432b-b592-483a2c92429d">
+        <msh:ifFormTypeAreViewOrEdit formName="smo_directionForm">
+            <script type="text/javascript">
+                jQuery(document).ready(function() {
+                    if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
+                } );
+            </script>
+        </msh:ifFormTypeAreViewOrEdit>
     <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
       <script type="text/javascript">
       
@@ -278,8 +285,23 @@
    	 serviceStreamAutocomplete.addOnChangeCallback(function() {
 	 	updateTime() ;
 	 	checkIfDogovorNeeded() ;
-	 });
-      
+
+
+     });
+
+   	 //TODO Доделать выбор справочника исходя от источника финансирования
+   	 function disabled_setMedserviceVoc() { //Пока не используется
+         WorkCalendarService.getChargedServiceStream({
+             callback: function(charged) {
+                 charged=charged.split(":")[0];
+                 if (+charged==+$('serviceStream').value){ // Если поток обслуживания - платно, то указываем только те услуги, которые есть в прейскуранте
+                     theOtmoa_medServices.setVocName('simpleVocAutocomplete/medServiceForSpecCharged');
+
+                 }
+             }
+         });
+     }
+
       //new dateutil.DateField($('datePlanName'));
       //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
@@ -398,6 +420,7 @@
     		  }
     	  if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
   		}) ;
+
     function checkRecord(aId,aValue,aIdService,aService) {
     	$('timePlan').value = aId; 
     	$('timePlanName').value = aValue ;
