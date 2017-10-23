@@ -200,7 +200,7 @@
         <ecom:webQuery name="list" nativeSql="select dr.id,dr.datefrom,dr.dateto,case when dr.workfunction_id is not null then p.lastname||' '||p.firstname||' '||p.middlename||' '||vwf.name else dr.docname||' '||dr.docrole end as doc,
 case when dr.workfunctionadd_id is not null then pvk.lastname||' '||pvk.firstname||' '||pvk.middlename||' '|| vwfvk.name else dr.vkname||' '||dr.vkrole end as vk
 ,vr.name as regime
-,case when dr.isexport is null or dr.isexport = false then '-' else '+' end as export
+,case when dr.isexport is null or dr.isexport='0' then '-' else '+' end as export
 from disabilityrecord dr
 left join workfunction wfdoc on wfdoc.id =  dr.workfunction_id
 left join vocworkfunction  vwf on vwf.id = wfdoc.workfunction_id
@@ -284,6 +284,8 @@ where disabilitydocument_id = ${param.id} order by dr.datefrom"/>
                       alert ("Поле \"Номер\" уже заполнено");
                       return;
                   }
+                  aButton.value="Подождите...";
+                  aButton.disabled=true;
                   DisabilityService.getFreeNumberForDisabilityDocument({
                       callback: function (num) {
                           if (num!=null&&num!="") {

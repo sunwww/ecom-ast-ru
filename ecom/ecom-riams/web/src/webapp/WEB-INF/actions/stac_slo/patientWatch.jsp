@@ -51,7 +51,7 @@
 	    	%>
 	    	<ecom:webQuery name="patList" nativeSql="select dep.id,dep.name,count(pw.id)
 			from MisLpu dep left join patientwatch pw on
-			dep.id=(select m.department_id from medcase m where m.id=pw.medcase_id)
+			dep.id=(select m.department_id from medcase m where m.parent_id=pw.medcase_id and m.transferdate is null and m.dtype='DepartmentMedCase')
 			where pw.listwatch_id=(select lw.id from listwatch lw
 			where lw.datewatch=to_date('${param.dateBegin}','dd.mm.yyyy'))
 			group by dep.id,dep.name
@@ -75,8 +75,10 @@
 	    	%>
 	    	<ecom:webQuery name="patList" nativeSql="select p.lastname,p.firstname,p.middlename,st.code
 	    	from patientwatch pw left join listwatch lw on lw.id=pw.listwatch_id left join medcase mc on
-	    	mc.id=pw.medcase_id  left join patient p on p.id=mc.patient_id left join statisticstub st
-	    	on st.medcase_id=mc.id where lw.datewatch=to_date('${param.dateBegin}','dd.mm.yyyy') and mc.department_id='${param.id}'"/>
+	    	mc.parent_id=pw.medcase_id  left join patient p on p.id=mc.patient_id left join statisticstub st
+	    	on st.medcase_id=mc.parent_id
+	    	where lw.datewatch=to_date('${param.dateBegin}','dd.mm.yyyy') and mc.department_id='${param.id}'
+	    	and mc.transferdate is null and mc.dtype='DepartmentMedCase'"/>
 	    	 <msh:table hideTitle="false" styleRow="2" idField="1" name="patList" action="javascript:void(0)">
 	                    <msh:tableColumn columnName="Фамилия" property="1"/>
 	                    <msh:tableColumn columnName="Имя" property="2"/>

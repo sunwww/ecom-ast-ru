@@ -165,8 +165,13 @@ function onSave(aForm, aVisit, aCtx) {
 	
 }
 function onPreDelete(aId,aCtx) {
-	aCtx.manager
-		.createNativeQuery("update WorkCalendarTime set medCase_id=null where medCase_id=:medCase")
+	var manager = aCtx.manager;
+	var list = manager.createNativeQuery("select id from medcase where id="+aId+" and datestart is not null").getResultList();
+	if (list.size()>0) {
+		throw "Визит оформлен, удаление направления невозможно!";
+	}
+	manager.createNativeQuery("delete from medcase where parent_id="+aId).executeUpdate();
+	manager.createNativeQuery("update WorkCalendarTime set medCase_id=null where medCase_id=:medCase")
 		.setParameter("medCase",aId).executeUpdate() ;
 }
 function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,

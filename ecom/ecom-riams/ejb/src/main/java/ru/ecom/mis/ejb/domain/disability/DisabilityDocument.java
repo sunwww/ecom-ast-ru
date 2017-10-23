@@ -48,7 +48,17 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 })
 @Table(schema="SQLUser")
 public class DisabilityDocument extends BaseEntity{
-	
+
+
+	private String diagnos;
+	@Comment("Диагноз из импорта")
+	public String getDiagnos() {
+		return diagnos;
+	}
+	public void setDiagnos(String diagnos) {
+		this.diagnos = diagnos;
+	}
+
 	/** Медико-социальная экспертная комиссия */
 	@Comment("Медико-социальная экспертная комиссия")
 	@OneToOne

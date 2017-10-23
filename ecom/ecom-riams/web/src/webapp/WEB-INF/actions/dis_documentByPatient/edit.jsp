@@ -37,7 +37,7 @@
           <msh:textField property="series" label="Серия"/>
           <msh:textField property="number" label="Номер" size="30" />
           <msh:ifFormTypeIsCreate formName="dis_documentByPatientForm">
-            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber()" value="Получить номер"></td>
+            <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber(this)" value="Получить номер"></td>
           </msh:ifFormTypeIsCreate>
         </msh:row>
         
@@ -180,7 +180,9 @@
     <msh:ifFormTypeIsNotView formName="dis_documentByPatientForm">
     
     <script type="text/javascript">
-        function getFreeNumber (){
+        function getFreeNumber (aButton){
+            aButton.value="Подождите...";
+            aButton.disabled=true;
             if ($('number').value!="") {
                 alert ("Поле \"Номер\" уже заполнено");
                 return;
@@ -190,7 +192,7 @@
                     if (num!=null&&num!="") {
                         $('number').value=num;
                         $('number').className="viewOnly";
-                        $('getFreeNumberButton').style.display="none";
+                        aButton.style.display="none";
                     } else {
                         alert ("Не удалось получить номер больничного листа");
                     }
