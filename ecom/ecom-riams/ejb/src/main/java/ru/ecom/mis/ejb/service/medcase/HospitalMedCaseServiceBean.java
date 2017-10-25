@@ -1211,7 +1211,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	private WebQueryResult recordN1(XmlDocument xmlDoc, Element zap, Object[] obj, boolean aIsCreateWQR) {
 
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR","",true,"") ;
-		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR_LPU",obj[23],false,"") ;
+		if (obj.length>23) XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR_LPU",obj[23],false,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[1],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[2],true,"") ;
@@ -1782,29 +1782,29 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 		Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
 		StringBuilder sql = new StringBuilder() ;
-		sql.append(" select to_char(sls.dateStart,'yyyy-mm-dd') as wchbcreatedate");
-		sql.append(" ,cast('1' as varchar(1)) as forPom");
-		sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpuSent");
-		sql.append(" ,coalesce(lpu.codef,plpu.codef) as lpuDirect");
-		sql.append(" ,vmc.code as medpolicytype");
-		sql.append(" ,mp.series as mpseries");
-		sql.append(" , mp.polnumber as polnumber");
-		sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as oossmocode");
-		sql.append(" , ri.ogrn as ogrnSmo");
-		sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as okatoSmo");
-		sql.append(" ,p.lastname as lastname");
-		sql.append(" ,p.firstname as firstname");
-		sql.append(" ,p.middlename as middlename");
-		sql.append(" ,vs.omcCode as vsomccode");
-		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as birthday");
-		sql.append(" ,case when p.phone is null or p.phone='' then '*' else p.phone end as phonepatient");
-		sql.append(" ,mkb.code as mkbcode");
-		sql.append(" ,vbt.codeF as vbtcodef");
-		sql.append(" ,bf.snilsDoctorDirect263 as wpsnils");
-		sql.append(" ,to_char(sls.dateStart,'yyyy-mm-dd') as wchbdatefrom");
-		sql.append(", cast(null as int) as visit");
-		sql.append(", case when vbst.code='3' then '2' else vbst.code end as v22bstcode");
-		sql.append(", case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as f23det"); //TODO доделать обработку по детям
+		sql.append(" select to_char(sls.dateStart,'yyyy-mm-dd') as w0chbcreatedate");
+		sql.append(" ,cast('1' as varchar(1)) as f1orPom");
+		sql.append(" ,coalesce(lpu.codef,plpu.codef) as l2puSent");
+		sql.append(" ,coalesce(lpu.codef,plpu.codef) as l3puDirect");
+		sql.append(" ,vmc.code as m4edpolicytype");
+		sql.append(" ,mp.series as m5pseries");
+		sql.append(" , mp.polnumber as p6olnumber");
+		sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as o7ossmocode");
+		sql.append(" , ri.ogrn as o8grnSmo");
+		sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as o9katoSmo");
+		sql.append(" ,p.lastname as l10astname");
+		sql.append(" ,p.firstname as f11irstname");
+		sql.append(" ,p.middlename as m12iddlename");
+		sql.append(" ,vs.omcCode as v13somccode");
+		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as b14irthday");
+		sql.append(" ,case when p.phone is null or p.phone='' then '*' else p.phone end as p15honepatient");
+		sql.append(" ,mkb.code as m16kbcode");
+		sql.append(" ,vbt.codeF as v17btcodef");
+		sql.append(" ,bf.snilsDoctorDirect263 as w18psnils");
+		sql.append(" ,to_char(sls.dateStart,'yyyy-mm-dd') as w19chbdatefrom");
+		sql.append(", cast(null as int) as v20isit");
+		sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
+		sql.append(", case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as f22det"); //TODO доделать обработку по детям
 		sql.append("  from medcase sls");
 		sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
 		sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
@@ -2272,7 +2272,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		sqlB.append(" 		and forchild=case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end ");
 		sqlB.append(" 		and hdf.bedsubtype=case when vbst.code='3' then '2' else vbst.code end") ;
 		sqlB.append("		and prehospdate between to_date('").append(aDateFrom).append("','yyyy-MM-dd') and to_date('").append(aDateTo).append("','yyyy-MM-dd')") ;
-		sqlB.append("		and hospitalmedcase_id is null and hdf.directLpuCode=lpu.codef) as a5mountDirect") ;
+		sqlB.append("		and (hospitalmedcase_id is null or (select sls.datestart from medcase sls where sls.id=hdf.hospitalmedcase_id)<to_date('").append(aDateFrom).append("','yyyy-MM-dd') ) ");
+		sqlB.append("       and hdf.directLpuCode=lpu.codef) as a5mountDirect") ;
 		sqlB.append("  from BedFund bf ");
 		sqlB.append("   left join VocBedType vbt on vbt.id=bf.bedType_id");
 		sqlB.append("   left join VocBedSubType vbst on vbst.id=bf.bedSubType_id");
