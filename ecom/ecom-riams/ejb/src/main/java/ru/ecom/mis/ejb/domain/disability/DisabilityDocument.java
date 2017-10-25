@@ -50,13 +50,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public class DisabilityDocument extends BaseEntity{
 
 
-	private String diagnos;
+	private String theDiagnos;
 	@Comment("Диагноз из импорта")
 	public String getDiagnos() {
-		return diagnos;
+		return theDiagnos;
 	}
-	public void setDiagnos(String diagnos) {
-		this.diagnos = diagnos;
+	public void setDiagnos(String aDiagnos) {
+		theDiagnos = aDiagnos;
 	}
 
 	/** Медико-социальная экспертная комиссия */
