@@ -15,7 +15,7 @@
       <msh:hidden property="saveType" />
       <msh:hidden property="disabilityCase" />
       <msh:panel>
-          <msh:label property="exportStatus"/>
+          <msh:label property="exportStatus" fieldColSpan="4"/>
         <msh:row>
           <msh:autoComplete vocName="mainLpu" property="anotherLpu" label="Другое лечебное учреждение" guid="c431085f-265a-4c8b5babeff" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
