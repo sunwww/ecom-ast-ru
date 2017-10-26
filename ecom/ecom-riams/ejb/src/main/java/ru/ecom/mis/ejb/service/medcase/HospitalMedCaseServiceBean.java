@@ -1774,7 +1774,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				.startUseNextValueNoCheck("PACKAGE_HOSP","number");
 		}
 		String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ; ;
-
 		XmlDocument xmlDoc = new XmlDocument() ;
 		XmlDocument xmlDocError = new XmlDocument() ;
 		XmlDocument xmlDocExist = new XmlDocument() ;
@@ -1805,6 +1804,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		sql.append(", cast(null as int) as visit");
 		sql.append(", case when vbst.code='3' then '2' else vbst.code end as v22bstcode");
 		sql.append(", case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as f23det"); //TODO доделать обработку по детям
+		sql.append(",to_char(sls.dateStart,'yyyy')||'"+aLpu+"'||ss.id as f23_internalDirectionNumber");
 		sql.append("  from medcase sls");
 		sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
 		sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id");
@@ -2573,6 +2573,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				if (obj[0]!=null) {
 					// Отд next1=current (объединять 2 отделения)
 					theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
+					theManager.createNativeQuery("update newBorn cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"'").executeUpdate() ;
 					theManager.createNativeQuery("update medcase  set parent_id='"+aSlo+"' where parent_id='"+obj[1]+"'").executeUpdate() ;
 
 					//Закрытие диет и Режимов из объединяемого.Копирование назначений из листа назначения объединяемого СЛО и затем его удаление.
@@ -2619,6 +2620,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 				} else {
 					//
 					theManager.createNativeQuery("update childBirth cb set medcase_id='"+aSlo+"' where cb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
+					theManager.createNativeQuery("update newBorn nb    set medcase_id='"+aSlo+"' where nb.medCase_id='"+obj[1]+"' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='"+aSlo+"')").executeUpdate() ;
 
 					theManager.createNativeQuery("update medcase  set parent_id='"+aSlo+"' where parent_id='"+obj[1]+"'").executeUpdate() ;
 
