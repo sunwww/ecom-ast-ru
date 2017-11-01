@@ -324,7 +324,7 @@
     <input type="submit" value="Печать"> 
     </form>
     	
-    	<msh:table name="swod_by_standart" 
+    	<msh:table printToExcelButton="Сохранить в Excel" name="swod_by_standart"
     	action="entityParentView-stac_slo.do" viewUrl="entityShortView-stac_slo.do" idField="1">
     		<msh:tableColumn property="sn" columnName="#"/>
     		<msh:tableColumn property="2" columnName="ФИО пациента"/>
@@ -411,7 +411,7 @@
     vss.id,vss.name,os.id,os.code,os.name
     order by  ${viewDepartmentOrder} ${viewBedOrder} vss.name,vbst.name,os.code
     	"/>
-    	<msh:table name="swod_by_standart" 
+    	<msh:table printToExcelButton="Сохранить в Excel" name="swod_by_standart"
     	action="stac_report_standartOmc.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1">
     		<msh:tableColumn property="2" cssClass="noDepartment" columnName="Отделение"/>
     		<msh:tableColumn property="3" cssClass="noBed" columnName="Профиль коек"/>
