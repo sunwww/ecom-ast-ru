@@ -130,7 +130,6 @@
       <input type="hidden" value="printJournal" name="m"/>
     </msh:panel>
     </msh:form>
-
       <%
           String date = (String)request.getParameter("beginDate") ;
           String date1 = (String)request.getAttribute("endDate") ;
@@ -147,11 +146,10 @@
                   showbyType = " eln.id is null and ";
               }
               if(orderByType.equals("2")){
-                  showbyType = " eln.number = dd.number and";
+                  showbyType = " eln.number = dd.number and ";
               }
               request.setAttribute("showbyType", showbyType);
       %>
-    
     <msh:section>
     <msh:sectionTitle>Результаты поиска обращений за  период с ${beginDate} по ${endDate}. ${infoSearch} ${anotherlpuinfo}</msh:sectionTitle>
     <msh:sectionContent>
