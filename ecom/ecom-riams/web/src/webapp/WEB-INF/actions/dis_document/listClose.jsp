@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.util.ActionUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -13,6 +14,7 @@
         <tags:dis_menu currentAction="closeDNT"/>
     </tiles:put>
   <tiles:put name="body" type="string">
+      <% String orderByType= ActionUtil.updateParameter("BloodReport","orderByType","1", request); %>
     <msh:form action="/dis_documentClose.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel guid="6ae283c8-7035-450a-8eb4-6f0f7da8a8ff">
       <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
@@ -78,6 +80,18 @@
         	<input type="radio" name="orderBy" value="3">  по ФИО
         </td>
       </msh:row>
+        <msh:row>
+            <td class="label" title="Сортировать  (orderByType)" colspan="1"><label for="orderByTypeName" id="orderByTypeLabel">Отобразить:</label></td>
+            <td onclick="this.childNodes[1].checked='checked';">
+                <input type="radio" name="orderByType" value="1">  бумажные
+            </td>
+            <td onclick="this.childNodes[1].checked='checked';">
+                <input type="radio" name="orderByType" value="2">  электронные
+            </td>
+            <td onclick="this.childNodes[1].checked='checked';">
+                <input type="radio" name="orderByType" value="3">  все
+            </td>
+        </msh:row>
       <msh:row>
       	<msh:autoComplete property="disabilityReason" fieldColSpan="3" size="6" horizontalFill="true"
       		label="Причина нетруд." vocName="vocDisabilityReason"
@@ -116,18 +130,27 @@
       <input type="hidden" value="printJournal" name="m"/>
     </msh:panel>
     </msh:form>
-    
-    <%
-    String date = (String)request.getParameter("beginDate") ;
-    String date1 = (String)request.getAttribute("endDate") ;
-    String valid = (String) request.getAttribute("valid") ;
-    if (valid!=null && !valid.equals("0")) {
-    	
-    	if (date1==null || date1.equals("")) {
-    		date1=date ;
-    	}
-    	request.setAttribute("endDate", date1) ;
-    	%>
+
+      <%
+          String date = (String)request.getParameter("beginDate") ;
+          String date1 = (String)request.getAttribute("endDate") ;
+          String valid = (String) request.getAttribute("valid") ;
+          if (valid!=null && !valid.equals("0")) {
+
+              if (date1==null || date1.equals("")) {
+                  date1=date ;
+              }
+              request.setAttribute("endDate", date1) ;
+
+              String showbyType=" ";
+              if(orderByType.equals("1")){
+                  showbyType = " eln.id is null and ";
+              }
+              if(orderByType.equals("2")){
+                  showbyType = " eln.number = dd.number and";
+              }
+              request.setAttribute("showbyType", showbyType);
+      %>
     
     <msh:section>
     <msh:sectionTitle>Результаты поиска обращений за  период с ${beginDate} по ${endDate}. ${infoSearch} ${anotherlpuinfo}</msh:sectionTitle>
@@ -146,10 +169,11 @@
 	   	left join disabilitydocument dupl on dupl.id=dd.duplicate_id
 	   	left join VocDisabilityStatus vds on vds.id=dd.status_id
 	   	left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
-	   	left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+	   	left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+	   	left join electronicdisabilitydocumentnumber eln on eln.disabilitydocument_id = dd.id
 	   	left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
     	left join patient p on p.id=dc.patient_id
-     	where ${status} ${statusNoActuality} ${dateGroup } between cast('${beginDate}' as date) and cast('${endDate}' as date) ${disReason} ${closeReason} ${primarity} ${anotherlpu} order by ${orderBystatus} "/>
+     	where ${showbyType} ${status} ${statusNoActuality} ${dateGroup } between cast('${beginDate}' as date) and cast('${endDate}' as date) ${disReason} ${closeReason} ${primarity} ${anotherlpu} order by ${orderBystatus} "/>
     <msh:table viewUrl="entityShortView-dis_document.do" name="journal_priem" action="entityParentView-dis_document.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата выдачи" property="2"/>
@@ -175,13 +199,15 @@
     var typeDocument = document.forms[0].typeDocument ;
     var typeDate = document.forms[0].typeDate ;
     var noActuality = document.forms[0].noActuality ;
+    var orderByType = document.forms[0].orderByType;
     
     checkFieldUpdate('typeDate','${typeDate}',3) ;
     checkFieldUpdate('noActuality','${noActuality}',3) ;
     checkFieldUpdate('typeDocument','${typeDocument}',3) ;
     checkFieldUpdate('orderBy','${orderBy}',1) ;
     checkFieldUpdate('typeLpu','${typeLpu}',1) ;
-    
+    checkFieldUpdate('orderByType','${orderByType}',3) ;
+
     function checkFieldUpdate(aField,aValue,aDefault) {
     	eval('var chk =  document.forms[0].'+aField) ;
     	var aMax = chk.length ;
@@ -192,8 +218,6 @@
     		chk[+aValue-1].checked='checked' ;
     	}
     }
-
-    
 
     function find() {
     	var frm = document.forms[0] ;
