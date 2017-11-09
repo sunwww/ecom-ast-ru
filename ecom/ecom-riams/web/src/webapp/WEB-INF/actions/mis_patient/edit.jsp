@@ -1175,8 +1175,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     	}
     	function isExistPatient() {
     		if (!checkPassportSeriesAndNumber()) {
-    				
-    			
+
     			document.getElementById('submitButton').disabled=false;
                 document.getElementById('submitButton').value='Создать';
     			return;
@@ -1206,11 +1205,10 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     				return "none" ;
     			}
     		}
-    	//]]>
     	</script>
     	
   </msh:ifFormTypeIsNotView>
-    <script type="text/javascript">// <![CDATA[//
+    <script type="text/javascript">
     	
     	function showRow(aRowId, aCanShow, aField ) {
     		//alert(aRowId) ;

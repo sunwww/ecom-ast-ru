@@ -88,5 +88,13 @@ public class VocServiceReserveType extends VocBaseEntity{
 	/** Создавать направления без предварительной записи */
 	private Boolean theIsNoPreRecord ;
 
+	/** Сообщение при удаленной записи */
+	@Comment("Сообщение при удаленной записи")
+	public String getRecordComment() {return theRecordComment;}
+	public void setRecordComment(String aRecordComment) {theRecordComment = aRecordComment;}
+	/** Сообщение при удаленной записи */
+	private String theRecordComment ;
+
+
 
 }

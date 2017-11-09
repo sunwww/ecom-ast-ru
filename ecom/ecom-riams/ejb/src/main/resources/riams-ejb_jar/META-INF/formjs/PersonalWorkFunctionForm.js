@@ -34,7 +34,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 function onCreate(aForm, aEntity, aContext) {
 	if ((0+aForm.group)==0 && aForm.isCalendarCreate!=null&&aForm.isCalendarCreate) {
 		var calendar = new Packages.ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar() ;
-		calendar.workFunction = aWorkFunction ;
+		calendar.workFunction = aEntity ;
 		aContext.manager.persist(calendar) ;
 		aEntity.workCalendar = calendar ;
 	}
