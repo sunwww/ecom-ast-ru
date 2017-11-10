@@ -1,8 +1,10 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,21 +25,23 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
-import org.jdom.Document;
+
 import org.jdom.IllegalDataException;
 import org.jdom.input.SAXBuilder;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 
 import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
-import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.EntityFormException;
@@ -45,7 +49,9 @@ import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
@@ -56,10 +62,7 @@ import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterConfig;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.medcase.MedCaseMedPolicy;
-import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
+import ru.ecom.mis.ejb.domain.medcase.*;
 import ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
@@ -91,6 +94,1573 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
 	private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+
+	private HashMap getMiacServiceStreamMap() {
+		HashMap<String, String> ss = new HashMap<String, String>();
+		ss.put("OBLIGATORY","Средства ОМС");
+		ss.put("BUDGET","Средства бюджета");
+		ss.put("CHARGED","Личные средства граждан, по договору и ДМС");
+		return ss;
+	}
+
+	/**
+	 * Формируем "справочник" с профилями поликлинических специалистов
+	 * @return map со странами в виде (Код специальности, Название_МИАЦа)
+	 */
+	private HashMap getPolicProfileMap() {
+		HashMap<String, String> policProfiles = new HashMap<String, String>();
+		policProfiles.put("11","акушерство и гинекология ");
+		policProfiles.put("13","аллергология и иммунология");
+		policProfiles.put("14","анестезиология и реаниматология");
+		policProfiles.put("15","гастроэнтерология");
+		policProfiles.put("16","гематология");
+		policProfiles.put("17","генетика");
+		policProfiles.put("18","гериатрия");
+		policProfiles.put("19","дерматовенерология");
+		policProfiles.put("20","детская кардиология");
+		policProfiles.put("21","детская хирургия");
+		policProfiles.put("22","детская эндокринология");
+		policProfiles.put("23","диабетология");
+		policProfiles.put("24","диетология");
+		policProfiles.put("25","инфекционные болезни");
+		policProfiles.put("26","кардиология");
+		policProfiles.put("27","клиническая лабораторная диагностика");
+		policProfiles.put("29","колопроктология");
+		policProfiles.put("30","лабораторная генетика");
+		policProfiles.put("31","лечебная физкультура и спортивная медицина");
+	//	policProfiles.put("32","лечебная физкультура и спортивная медицина");
+		policProfiles.put("34","мануальная терапия");
+		policProfiles.put("17","медицинская генетика");
+		policProfiles.put("35","неврология");
+		policProfiles.put("36","нейрохирургия");
+		policProfiles.put("37","нефрология");
+		policProfiles.put("39","онкология");
+		policProfiles.put("103","ортодонтия");
+		policProfiles.put("40","оториноларингология (за исключением кохлеарной имплантации)");
+		policProfiles.put("41","офтальмология");
+		policProfiles.put("49","профпатология");
+		policProfiles.put("51","психиатрия");
+		policProfiles.put("57","психиатрия-наркология");
+		policProfiles.put("50","психотерапия");
+		policProfiles.put("58","пульмонология");
+		policProfiles.put("59","радиология");
+		policProfiles.put("61","ревматология");
+		policProfiles.put("60","рентгенология");
+		policProfiles.put("62","рефлексотерапия");
+		policProfiles.put("64","сердечно-сосудистая хирургия");
+		policProfiles.put("105","стоматология детская");
+		policProfiles.put("107","стоматология ортопедическая");
+		policProfiles.put("106","стоматология терапевтическая");
+		policProfiles.put("108","стоматология хирургическая");
+		policProfiles.put("77","токсикология");
+		policProfiles.put("78","торакальная хирургия");
+		policProfiles.put("79","травматология и ортопедия");
+		policProfiles.put("81","ультразвуковая диагностика");
+		policProfiles.put("82","урология");
+		policProfiles.put("83","физиотерапия");
+		policProfiles.put("84","фтизиатрия");
+		policProfiles.put("86","функциональная диагностика");
+		policProfiles.put("87","хирургия");
+		policProfiles.put("109","челюстно-лицевая хирургия");
+		policProfiles.put("88","эндокринология");
+		policProfiles.put("89","эндоскопия");
+		policProfiles.put("71","терапия");
+		policProfiles.put("44","педиатрия");
+		policProfiles.put("38","общая врачебная практика (семейная медицина)");
+		policProfiles.put("65","скорая медицинская помощь");
+		return policProfiles;
+	}
+
+	/**
+	 * Формируем "справочник" с профилями коек в стационаре
+	 * @return map со странами в виде (профиль койки, Название_МИАЦа)
+	 */
+	private HashMap getStacProfileMap() {
+		HashMap<String, String> stacProfiles = new HashMap<String, String>();
+		stacProfiles.put("40","акушерство и гинекология");
+		stacProfiles.put("38","акушерство и гинекология");
+		stacProfiles.put("39","акушерство и гинекология");
+		stacProfiles.put("8","аллергология и иммунология");
+		stacProfiles.put("801","анестезиология и реаниматология");
+		stacProfiles.put("80","анестезиология и реаниматология");
+		stacProfiles.put("6","гастроэнтерология");
+		stacProfiles.put("16","гематология");
+		stacProfiles.put("3","кардиология");
+		stacProfiles.put("63","колопроктология");
+		stacProfiles.put("48","неврология");
+		stacProfiles.put("22","нейрохирургия");
+		stacProfiles.put("18","нефрология");
+		stacProfiles.put("37","онкология");
+		stacProfiles.put("56","оториноларингология (за исключением кохлеарной имплантации)");
+		stacProfiles.put("54","офтальмология");
+		stacProfiles.put("69","пульмонология");
+		stacProfiles.put("65","ревматология");
+		stacProfiles.put("26","сердечно-сосудистая хирургия");
+		stacProfiles.put("24","торакальная хирургия");
+		stacProfiles.put("31","травматология и ортопедия");
+		stacProfiles.put("28","травматология и ортопедия");
+		stacProfiles.put("33","урология");
+		stacProfiles.put("20","хирургия");
+		stacProfiles.put("41","хирургия");
+		stacProfiles.put("35","челюстно-лицевая хирургия");
+		stacProfiles.put("12","эндокринология");
+		stacProfiles.put("2","терапия");
+		stacProfiles.put("61","педиатрия");
+		stacProfiles.put("81","педиатрия");
+		stacProfiles.put("29","другое");
+		return stacProfiles;
+	}
+
+	/**
+	 * Формируем "справочник" стран с названиями для экспорта в МИАЦ
+	 * @return  map со странами в виде (Код, Название_МИАЦа)
+	 */
+	private HashMap getCountries() {
+	HashMap<String, String> countries = new HashMap<String, String>();
+	countries.put("31","Азербайджан");
+	countries.put("24","Ангола");
+	countries.put("51","Армения");
+	countries.put("4","Афганистан");
+	countries.put("50","Бангладеш");
+	countries.put("112","Беларусь");
+	countries.put("72","Ботсвана");
+	countries.put("76","Бразилия");
+	countries.put("862","Венесуэла");
+	countries.put("704","Вьетнам");
+	countries.put("598","Гвинея");
+	countries.put("276","Германия");
+	countries.put("268","Грузия");
+	countries.put("818","Египет");
+	countries.put("894","Замбия");
+	countries.put("716","Зимбабве");
+	countries.put("376","Израиль");
+	countries.put("356","Индия");
+	countries.put("368","Ирак");
+	countries.put("364","Иран");
+	countries.put("724","Испания");
+	countries.put("398","Казахстан");
+	countries.put("120","Камерун");
+	countries.put("124","Канада");
+	countries.put("178","Конго");
+	countries.put("192","Куба");
+	countries.put("442","Люксембург");
+	countries.put("466","Мали");
+	countries.put("504","Марокко");
+	countries.put("508","Мозамбик");
+	countries.put("498","Молдова");
+	countries.put("496","Монголия");
+	countries.put("516","Намибия");
+	countries.put("566","Нигерия");
+	countries.put("784","Объединенные Арабские Эмираты");
+	countries.put("616","Польша");
+	countries.put("895","Республика Абхазия");
+	countries.put("144","Республика Шри-Ланка");
+	countries.put("642","Румыния");
+	countries.put("686","Сенегал");
+	countries.put("688","Сербия");
+	countries.put("762","Таджикистан");
+	countries.put("764","Таиланд");
+	countries.put("834","Танзания");
+	countries.put("795","Туркменистан");
+	countries.put("860","Узбекистан");
+	countries.put("804","Украина");
+	countries.put("191","Хорватия");
+	countries.put("152","Чили");
+	countries.put("896","Южная Осетия");
+	countries.put("392","Япония");
+	countries.put("12","Алжир");
+	countries.put("70","Босния");
+	countries.put("288","Ганна");
+	countries.put("300","Греция");
+	countries.put("887","Йемен");
+	countries.put("417","Киргизия");
+	countries.put("156","Китай");
+	countries.put("384","Кот-д-Вуар");
+	countries.put("417","Кыргызстан");
+	countries.put("428","Латвия");
+	countries.put("422","Ливан");
+	countries.put("440","Литва");
+	countries.put("484","Мексика");
+	countries.put("528","Нидерланды");
+	countries.put("9999","Перу");
+	countries.put("790","Сирия");
+	countries.put("840","США");
+	countries.put("788","Тунис");
+	countries.put("795","Туркмения");
+	countries.put("792","Турция");
+	countries.put("246","Финляндия");
+	countries.put("710","Южная-Африканская Республика");
+	return countries;
+}
+
+	/**
+	 * Формируем "справочник" регионов с названиями для экспорта в МИАЦ
+	 * @return  map с регионами в виде (Код, Название_МИАЦа)
+	 */
+private HashMap getRegions() {
+	HashMap<String, String> countries = new HashMap<String, String>();
+	countries.put("715","Республика Адыгея");
+	countries.put("731","Республика Алтай");
+	countries.put("716","Республика Башкортостан");
+	countries.put("163466","Республика Бурятия");
+	countries.put("184994","Республика Дагестан");
+	countries.put("718","Республика Ингушетия");
+	countries.put("719","Кабардино-Балкарская республика");
+	countries.put("178795","Республика Калмыкия");
+	countries.put("720","Карачаево-Черкесская республика");
+	countries.put("721","Республика Карелия");
+	countries.put("722","Республика Коми");
+	countries.put("10685919","Республика Крым");
+	countries.put("723","Республика Марий Эл");
+	countries.put("724","Республика Мордовия");
+	countries.put("725","Республика Саха (Якутия)");
+	countries.put("175534","Республика Северная Осетия-Алания");
+	countries.put("726","Республика Татарстан");
+	countries.put("727","Республика Тыва");
+	countries.put("728","Удмуртская республика");
+	countries.put("729","Республика Хакасия");
+	countries.put("146915","Чеченская республика");
+	countries.put("191518","Чувашская республика");
+	countries.put("731","Алтайский край");
+	countries.put("780","Забайкальский край");
+	countries.put("748","Камчатский край");
+	countries.put("732","Краснодарский край");
+	countries.put("172298","Красноярский край");
+	countries.put("765","Пермский край");
+	countries.put("733","Приморский край");
+	countries.put("734","Ставропольский край");
+	countries.put("735","Хабаровский край");
+	countries.put("736","Амурская область");
+	countries.put("737","Архангельская область");
+	countries.put("738","Белгородская область");
+	countries.put("739","Брянская область");
+	countries.put("740","Владимирская область");
+	countries.put("741","Волгоградская область");
+	countries.put("742","Вологодская область");
+	countries.put("743","Воронежская область");
+	countries.put("744","Ивановская область");
+	countries.put("745","Иркутская область");
+	countries.put("746","Калининградская область");
+	countries.put("747","Калужская область");
+	countries.put("749","Кемеровская область");
+	countries.put("750","Кировская область");
+	countries.put("751","Костромская область");
+	countries.put("752","Курганская область");
+	countries.put("753","Курская область");
+	countries.put("754","Ленинградская область");
+	countries.put("755","Липецкая область");
+	countries.put("756","Магаданская область");
+	countries.put("757","Московская область");
+	countries.put("758","Мурманская область");
+	countries.put("759","Нижегородская область");
+	countries.put("150442","Новгородская область");
+	countries.put("760","Новосибирская область");
+	countries.put("775","Омская область");
+	countries.put("762","Оренбургская область");
+	countries.put("763","Орловская область");
+	countries.put("764","Пензенская область");
+	countries.put("766","Псковская область");
+	countries.put("767","Ростовская область");
+	countries.put("768","Рязанская область");
+	countries.put("769","Самарская область");
+	countries.put("770","Саратовская область");
+	countries.put("771","Сахалинская область");
+	countries.put("147349","Свердловская область");
+	countries.put("772","Смоленская область");
+	countries.put("773","Тамбовская область");
+	countries.put("774","Тверская область");
+	countries.put("775","Томская область");
+	countries.put("776","Тульская область");
+	countries.put("777","Тюменская область");
+	countries.put("778","Ульяновская область");
+	countries.put("779","Челябинская область");
+	countries.put("781","Ярославская область");
+	countries.put("181694","Москва");
+	countries.put("155491","Санкт-Петербург");
+	countries.put("10686960","Севастополь");
+	countries.put("782","Еврейская автономная область");
+	countries.put("786","Ненецкий автономный округ");
+	countries.put("784","Ханты-Мансийский автономный округ - Югра");
+	countries.put("785","Чукотский автономный округ");
+	countries.put("786","Ямало-Ненецкий автономный округ");
+	countries.put("787","Байконур (Казахстан)");
+	return  countries;
+
+}
+
+
+	public String s(Object o) {
+	return o!=null?o.toString().trim():"";
+}
+	public String getContentOfHTTPPage(String pageAddress, String codePage) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		URL pageURL = new URL(pageAddress);
+		URLConnection uc = pageURL.openConnection();
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(
+						uc.getInputStream(), codePage));
+		try {
+			String inputLine;
+			while ((inputLine = br.readLine()) != null) {
+				sb.append(inputLine);
+			}
+		} finally {
+			br.close();
+		}
+		return sb.toString();
+	}
+	public String getDataByReferencePrintNotOnlyOMS(Long aMedCase,String aType, boolean aIsUrl, String aSqlAdd) throws Exception {
+	//	IWebQueryService service = IWebQueryService.class.newInstance();
+		String code_page = ""+getDefaultParameterByConfig("code_csp_page", "CP1251") ;
+		String address_lpu = ""+getDefaultParameterByConfig("address_lpu", "_______________________________________________________") ;
+		String name_lpu = ""+getDefaultParameterByConfig("name_lpu", "_______________________________________________________") ;
+		name_lpu = name_lpu.replaceAll("\"", "%22");
+		Object csp_port=getDefaultParameterByConfig("csp_post", "57772") ;
+
+
+		String cspurl = new StringBuilder().append("expert").append(!csp_port.equals("")?(":"+csp_port):"")
+				.append("/csp/").append(getDefaultParameterByConfig("data_base_namespace", "riams")).toString() ;
+		StringBuilder href = new StringBuilder() ;
+		StringBuilder res = new StringBuilder() ;
+		res.append(param("address_lpu",address_lpu)) ;
+		res.append(param("name_lpu",name_lpu)) ;
+		if (aSqlAdd!=null) {
+			if (!aSqlAdd.equals("")) {
+				aSqlAdd=" or vss.code in ('"+aSqlAdd+"') ";
+			}
+		} else {aSqlAdd = "";}
+		boolean isf = true ;
+		if (aType!=null &&aType.equals("HOSP")) {
+			//Дополнительная диспансеризация
+			href.append(param("AddDisp",null)) ;
+			href.append(param("AddDispAge",null)) ;
+			href.append(param("AddDispCases",null)) ;
+			href.append(param("AddDispHealthGroup",null)) ;
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select to_char(sls.dateStart,'yyyymmdd') as datestart");
+			sql.append(" ,to_char(sls.dateFinish,'yyyymmdd') as dateFinish");
+			sql.append(" ,to_char(pat.birthday,'yyyymmdd') as birthday");
+			sql.append(" ,vs.omcCode as vsomccode");
+			sql.append(" ,ml.omccode as mlomccode");
+			sql.append(" ,case when sls.hotelServices='1' then '1' else '0' end as hotelserv");
+			sql.append(" ,case when vrd1.code='1' then vhr.code when vrd.code='DIS_PAT' then '16' when vrd.code='DIS_LPU' then '17' when vho.code='2' then '5' when vho.code='3' then '4' when vho.code='4' then '14' when vhr.code is null then '2' else vhr.code end as result");
+			sql.append(" ,case when pvss.code='И0' then '1' else '0' end as foreign");
+			sql.append(" , to_char(sls.dateStart,'dd.mm.yyyy') as date5start");
+			sql.append(" ,to_char(sls.dateFinish,'dd.mm.yyyy') as date5Finish");
+			sql.append(" ,sls.patient_id as patient");
+			sql.append(" ,coalesce(k.kinsman_id,sls.patient_id) as kinsman");
+			sql.append(" ,mp.series||' '||mp.polNumber as polnumber");
+			sql.append(" ,ss.code as sscode");
+
+			sql.append(" from MedCase sls ");
+			sql.append(" left join Kinsman k on k.id=sls.kinsman_id") ;
+			sql.append(" left join Patient pat on pat.id=sls.patient_id") ;
+			sql.append(" left join VocSex vs on vs.id=pat.sex_id") ;
+			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
+			sql.append(" left join VocServiceStream vss on vss.id=sls.serviceStream_id") ;
+			sql.append(" left join StatisticStub ss on ss.id=sls.statisticStub_id") ;
+			sql.append(" left join VocReasonDischarge vrd on vrd.id=ss.reasonDischarge_id") ;
+			sql.append(" left join VocResultDischarge vrd1 on vrd1.id=ss.resultDischarge_id") ;
+			sql.append(" left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id") ;
+			sql.append(" left join medpolicy mp on mcmp.policies_id=mp.id") ;
+			sql.append(" left join VocHospitalizationResult vhr on vhr.id=sls.result_id") ;
+			sql.append(" left join VocHospitalizationOutcome vho on vho.id=sls.outcome_id") ;
+			sql.append(" left join MisLpu ml on ml.id=sls.lpu_id") ;
+			sql.append(" where sls.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and sls.dischargeTime is not null") ;
+
+			List<Object[]> l = theManager.createNativeQuery(sql.toString()).getResultList() ;
+			if (l.isEmpty()) {}
+			Object[] wqr = l.get(0);
+			href.append(param("BirthDate",wqr[2])) ;
+			href.append(param("Lpu",wqr[4])) ;
+			href.append(param("Foreigns",wqr[7])) ;
+			href.append(param("HotelServices",wqr[5])) ;
+			href.append(param("Sex",wqr[3])) ;
+			href.append(param("Reason",null)) ;
+			href.append(param("ReasonC",null)) ;
+			href.append(param("Render",null)) ;
+			href.append(param("Result",wqr[6])) ;
+			href.append(param("Yet",null)) ;
+			res.append("&dateFrom=").append(wqr[8]).append("&dateTo=").append(wqr[9])
+					.append("&patient=").append(wqr[10])
+					.append("&kinsman=").append(wqr[11])
+					.append("&polNumber=").append(wqr[12])
+					.append("&card=").append(wqr[13])
+			;
+			StringBuilder sql_bt = new StringBuilder() ;
+			sql_bt.append("select to_char(min(slo.dateStart),'yyyymmdd') as datestart");
+			sql_bt.append(" ,to_char(max(coalesce(slo.dateFinish,slo.transferDate)),'yyyymmdd') as dateFinish");
+			sql_bt.append(" ,max(case when slo.emergency='1' then '1' else '0' end) as emergency");
+			sql_bt.append(" ,list(case when ms.isNoOmc='1' then null else vms.code end) as operation ") ;
+			sql_bt.append(" ,list(distinct mkb.code) as diagnosis ") ;
+			sql_bt.append(" ,vlf.code as vlfcode") ;
+			sql_bt.append(" ,list(distinct case when ml.isnoomc='1' then null else vbt.omccode end) as vbtcode") ;
+			sql_bt.append(" ,list(distinct case when ml.isnoomc='1' then null else vbst.code end) as vbstfcode") ;
+			sql_bt.append(" ,sum(case when ml.isnoomc='1' then 0 else case when (coalesce(slo.dateFinish,slo.transferDate)-slo.dateStart)=0 then 1")
+					.append(" when bf.addCaseDuration='1' then (coalesce(slo.dateFinish,slo.transferDate)-slo.dateStart)+1")
+					.append(" else (coalesce(slo.dateFinish,slo.transferDate)-slo.dateStart)")
+					.append(" end end) as beddays") ;
+			sql_bt.append(" ,list(case when ml.isnoomc='1' then null else vodp.code end) as vodpcode") ;
+			sql_bt.append(" ,list(case when ml.isnoomc='1' then null else vodt.code end) as vodtcode") ;
+			sql_bt.append(" ,list(distinct case when vpd.code='1' and vdrt.code='4' and (ml.isnoomc='0' or ml.isnoomc is null) then mkb.code else null end) as diag1nosis ") ;
+			sql_bt.append(" ,list(distinct case when vpd.code='3' and vdrt.code='4' and (ml.isnoomc='0' or ml.isnoomc is null) then mkb.code else null end) as diag3nosis ") ;
+			sql_bt.append(" ,coalesce(max(vkhc.code),'') as vkhccode");
+			sql_bt.append(", to_char(min(slo.dateStart),'dd.mm.yyyy') as date5start");
+			sql_bt.append(" ,to_char(max(coalesce(slo.dateFinish,slo.transferdate)),'dd.mm.yyyy') as date5Finish") ;
+			sql_bt.append(" ,list(distinct ml.name) as mlname") ;
+			sql_bt.append(" ,case when vbst.code='2' then case when vlf.code='2' or vlf.code='4' then 'APUHOSP' else 'LPUHOSP' end when vbst.code='3' then 'HOMEHOSP' else 'HOSP' end as vidLpu") ;
+			sql_bt.append(" ,case when ml.isnoomc='1' then null else 'HOSP' end as noprint") ;
+			sql_bt.append(" from MedCase slo ");
+			sql_bt.append(" left join VocKindHighCare vkhc on vkhc.id=slo.kindHighCare_id") ;
+			sql_bt.append(" left join WorkFunction wf on wf.id=slo.ownerFunction_id") ;
+			sql_bt.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id") ;
+			sql_bt.append(" left join VocPost vp on vp.id=vwf.vocPost_id") ;
+			sql_bt.append(" left join VocOmcDoctorPost vodp on vodp.id=vp.omcDoctorPost_id") ;
+			sql_bt.append(" left join VocOmcDepType vodt on vodt.id=vp.omcDepType_id") ;
+			sql_bt.append(" left join BedFund bf on bf.id=slo.bedFund_id") ;
+			sql_bt.append(" left join VocBedType vbt on vbt.id=bf.bedType_id") ;
+			sql_bt.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id") ;
+			sql_bt.append(" left join Diagnosis diag on diag.medCase_id=slo.id") ;
+			sql_bt.append(" left join VocDiagnosisRegistrationType vdrt on diag.registrationType_id=vdrt.id") ;
+			sql_bt.append(" left join VocPriorityDiagnosis vpd on diag.priority_id=vpd.id") ;
+			sql_bt.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
+			sql_bt.append(" left join SurgicalOperation so on so.medCase_id=slo.id") ;
+			sql_bt.append(" left join MedService ms on so.medService_id=ms.id") ;
+			sql_bt.append(" left join VocMedService vms on ms.vocMedService_id=vms.id") ;
+			sql_bt.append(" left join Patient pat on pat.id=slo.patient_id") ;
+			sql_bt.append(" left join VocSex vs on vs.id=pat.sex_id") ;
+			sql_bt.append(" left join VocSocialStatus vss on vss.id=pat.sex_id") ;
+			sql_bt.append(" left join MisLpu ml on ml.id=slo.department_id") ;
+			sql_bt.append(" left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id") ;
+			sql_bt.append(" where slo.parent_id=").append(aMedCase) ;
+			sql_bt.append(" group by vbst.code,bf.addCaseDuration,vbt.code,vlf.code,ml.isnoomc") ;
+			//sql_bt.append(" order by slo.dateStart,coalesce(slo.dateFinish,slo.transferDate)") ;
+
+
+			sql = new StringBuilder() ;
+			sql.append("select to_char(slo.dateStart,'yyyymmdd') as datestart");
+			sql.append(" ,to_char(slo.dateFinish,'yyyymmdd') as dateFinish");
+			sql.append(" ,case when slo.emergency='1' then '1' else '0' end as emergency");
+			sql.append(" ,list(case when ms.isNoOmc='1' then null else vms.code end) as operation ") ;
+			sql.append(" ,list(mkb.code) as diagnosis ") ;
+			sql.append(" ,vlf.code as vlfcode") ;
+			sql.append(" ,vbt.omccode as vbtcode") ;
+			sql.append(" ,vbst.code as vbstfcode") ;
+			sql.append(" ,case when (coalesce(slo.dateFinish,slo.transferDate)-slo.dateStart)=0 then 1")
+					.append(" when bf.addCaseDuration='1' then (coalesce(slo.dateFinish,slo.transferDate)-slo.dateStart)+1")
+					.append(" else (coalesce(slo.dateFinish,slo.transferDate)-slo.dateStart)")
+					.append(" end as beddays") ;
+			sql.append(" ,vodp.code as vodpcode") ;
+			sql.append(" ,vodt.code as vodtcode") ;
+			sql.append(" ,list(distinct case when vpd.code='1' and vdrt.code='4' then mkb.code else null end) as diag1nosis ") ;
+			sql.append(" ,list(distinct case when vpd.code='3' and vdrt.code='4' then mkb.code else null end) as diag3nosis ") ;
+			sql.append(" ,coalesce(vkhc.code,'') as vkhccode");
+			sql.append(", to_char(slo.dateStart,'dd.mm.yyyy') as date5start");
+			sql.append(" ,to_char(coalesce(slo.dateFinish,slo.transferdate),'dd.mm.yyyy') as date5Finish") ;
+			sql.append(" ,ml.name as mlname") ;
+			sql.append(" ,case when vbst.code='2' then case when vlf.code='2' or vlf.code='4' then 'APUHOSP' else 'LPUHOSP' end when vbst.code='3' then 'HOMEHOSP' else 'HOSP' end as vidLpu") ;
+			sql.append(" ,case when ml.isnoomc='1' then null else 'HOSP' end as noprint") ;
+			sql.append(" from MedCase slo ");
+			sql.append(" left join VocKindHighCare vkhc on vkhc.id=slo.kindHighCare_id") ;
+			sql.append(" left join WorkFunction wf on wf.id=slo.ownerFunction_id") ;
+			sql.append(" left join VocWorkFunction vwf on vwf.id=wf.workFunction_id") ;
+			sql.append(" left join VocPost vp on vp.id=vwf.vocPost_id") ;
+			sql.append(" left join VocOmcDoctorPost vodp on vodp.id=vp.omcDoctorPost_id") ;
+			sql.append(" left join VocOmcDepType vodt on vodt.id=vp.omcDepType_id") ;
+			sql.append(" left join BedFund bf on bf.id=slo.bedFund_id") ;
+			sql.append(" left join VocBedType vbt on vbt.id=bf.bedType_id") ;
+			sql.append(" left join VocBedSubType vbst on vbst.id=bf.bedSubType_id") ;
+			sql.append(" left join Diagnosis diag on diag.medCase_id=slo.id") ;
+			sql.append(" left join VocDiagnosisRegistrationType vdrt on diag.registrationType_id=vdrt.id") ;
+			sql.append(" left join VocPriorityDiagnosis vpd on diag.priority_id=vpd.id") ;
+			sql.append(" left join VocIdc10 mkb on mkb.id=diag.idc10_id") ;
+			sql.append(" left join SurgicalOperation so on so.medCase_id=slo.id") ;
+			sql.append(" left join MedService ms on so.medService_id=ms.id") ;
+			sql.append(" left join VocMedService vms on ms.vocMedService_id=vms.id") ;
+			sql.append(" left join Patient pat on pat.id=slo.patient_id") ;
+			sql.append(" left join VocSex vs on vs.id=pat.sex_id") ;
+			sql.append(" left join VocSocialStatus vss on vss.id=pat.sex_id") ;
+			sql.append(" left join MisLpu ml on ml.id=slo.department_id") ;
+			sql.append(" left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id") ;
+			sql.append(" where slo.parent_id=").append(aMedCase) ;
+			sql.append(" group by slo.dateStart,slo.dateFinish,slo.transferDate,vlf.code,vbt.omccode,vbst.code,vkhc.code,bf.addCaseDuration,vodt.code,vodp.code,slo.emergency,ml.name") ;
+			sql.append(" order by slo.dateStart,coalesce(slo.dateFinish,slo.transferDate)") ;
+
+			List<Object[]> l_slo = theManager.createNativeQuery(sql_bt.toString()).getResultList() ;
+			//res.append("&render=") ;
+			for (Object[] wqr_slo:l_slo) {
+				if (wqr_slo[18]!=null){
+
+
+					StringBuilder href_slo = new StringBuilder() ;
+					href_slo.append(href) ;
+					href_slo.append(param("AdmissionDate",wqr_slo[0])) ;
+					href_slo.append(param("DischargeDate",wqr_slo[1])) ;
+					href_slo.append(param("BedDays",wqr_slo[8])) ;
+					href_slo.append(param("DepType",wqr_slo[6])) ;
+					href_slo.append(param("DiagnosisList",wqr_slo[4])) ;
+					href_slo.append(param("DiagnosisMain",wqr_slo[11])) ;
+					href_slo.append(param("DiagnosisConcomitant",wqr_slo[12])) ;
+					href_slo.append(param("DoctorPost",wqr_slo[9])) ;
+					href_slo.append(param("Emergency",wqr_slo[2])) ;
+					href_slo.append(param("Hts",wqr_slo[13])) ;
+					href_slo.append(param("LpuFunction",wqr_slo[5])) ; //
+					href_slo.append(param("VidLpu",wqr_slo[17])) ;//1-stac, 2- polic
+					href_slo.append(param("Operations",wqr_slo[3])) ;
+					StringBuilder url_csp = new StringBuilder() ;
+					url_csp.append("http://").append(cspurl)
+							.append("/getmedcasecost.csp?CacheUserName=_system&tmp=").append(Math.random()).append("&CachePassword=sys&")
+							.append(href_slo) ;
+					//System.out.println(url_csp) ;
+
+					StringBuilder c ;
+					if (aIsUrl) {
+						res.append(" ").append(wqr_slo[16]).append(" С ").append(wqr_slo[14]).append(" ПО ").append(wqr_slo[15]).append(" url=").append(url_csp) ;
+					} else {
+						String cost = getContentOfHTTPPage(url_csp.toString().replaceAll(" ", ""),code_page);
+						//String cost = "11#2222" ;
+						//System.out.println("----cost--->"+cost) ;
+						if (isf) {
+							res.append("&render=") ;
+							isf=false;
+						} else {
+							res.append("%23%23") ;
+						}
+						c = getRender(cost,new StringBuilder().append(wqr_slo[16]).append(". КОЙКИ "),new StringBuilder().append(" С ").append(wqr_slo[14]).append(" ПО ").append(wqr_slo[15])) ;
+						res.append(c.toString().replaceAll("#", "%23").replaceAll(" ", "%20")) ;
+					}
+
+
+					//System.out.println(res.toString()) ;
+				}
+
+			}
+			//res.append("&render=21663%23ПУЛЬМОНОЛОГИЧЕСКОЕ ОТДЕЛЕНИЕ. КОЙКИ АЛЛЕРГОЛОГИЧЕСКИЕ. КРУГЛОСУТОЧНЫЙ СТАЦИОНАР, ПОЛНЫЙ СЛУЧАЙ,ВЗРОСЛЫЕ С 03.01.2014 ПО 14.01.2014") ;
+		} else if (aType!=null && aType.equals("PREVISIT")) {
+			//Дополнительная диспансеризация
+			href.append(param("AddDisp",null)) ;
+			href.append(param("AddDispAge",null)) ;
+			href.append(param("AddDispCases",null)) ;
+			href.append(param("AddDispHealthGroup",null)) ;
+
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select to_char(coalesce(spo.dateStart,wcd.calendardate,vis.datefinish),'yyyymmdd') as f1datestart");
+			sql.append(" ,to_char(case when vis.emergency='1' then coalesce(spo.datestart,wcd.calendardate,vis.datefinish) else coalesce(spo.dateFinish,spo.dateStart,wcd.calendardate,vis.datefinish) end,'yyyymmdd') as f2dateFinish");
+			sql.append(" ,to_char(pat.birthday,'yyyymmdd') as f3birthday");
+			sql.append(" ,vs.omcCode as f4vsomccode");
+			sql.append(" ,spo.id as f5spo");
+			sql.append(" ,case when pvss.code='И0' then '1' else '0' end as f6foreign");
+			sql.append(" , to_char(coalesce(spo.dateStart,wcd.calendardate,vis.datefinish),'dd.mm.yyyy') as f7date5start");
+			sql.append(" ,to_char(case when vis.emergency='1' then coalesce(spo.datestart,wcd.calendardate,vis.datefinish) else coalesce(spo.dateFinish,spo.dateStart,wcd.calendardate,vis.datefinish) end,'dd.mm.yyyy') as f8date5Finish");
+			sql.append(" ,vis.patient_id as f9patient");
+			sql.append(" ,coalesce(k.kinsman_id,vis.patient_id) as f10kinsman");
+			sql.append(" ,mp.series||' '||mp.polNumber as f11policy") ;
+			sql.append(" ,coalesce(card.number,pat.patientSync) as f12patientcode") ;
+			sql.append(" ,case when vis.emergency='1' or spo.datefinish is null or vis.datestart is null or spo.datefinish-spo.datestart=0 then 1 else spo.datefinish-spo.datestart+1 end as f13beddays") ;
+			sql.append(" from MedCase vis ");
+			sql.append(" left join WorkCalendarDay wcd on wcd.id=vis.datePlan_id") ;
+			sql.append(" left join Medcard card on card.id=vis.medcard_id") ;
+			sql.append(" left join MedCase spo on spo.id=vis.parent_id") ;
+			sql.append(" left join Kinsman k on k.id=vis.kinsman_id") ;
+			sql.append(" left join Patient pat on pat.id=vis.patient_id") ;
+			sql.append(" left join VocSex vs on vs.id=pat.sex_id") ;
+			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
+			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id") ;
+			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id") ;
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=coalesce(vis.dateStart,wcd.calendardate,vis.datefinish) and coalesce(mp.actualdateto,vis.datestart,wcd.calendardate,vis.datefinish)>=coalesce(vis.datestart,wcd.calendardate,vis.datefinish) and mp.dtype like 'MedPolicyOm%'") ;
+
+			List<Object[]>  l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (l.isEmpty()) throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
+			Object[] wqr = l.get(0) ;
+			href.append(param("BirthDate",wqr[2])) ;
+
+			href.append(param("Foreigns",wqr[5])) ;
+			href.append(param("HotelServices",null)) ;
+			href.append(param("Sex",wqr[3])) ;
+			href.append(param("VidLpu","AMB")) ;//1-stac, 2- polic
+			href.append(param("AdmissionDate",wqr[0])) ;
+			href.append(param("DischargeDate",wqr[1])) ;
+			href.append(param("BedDays",wqr[12])) ;
+			res.append("&dateFrom=").append(wqr[6]).append("&dateTo=").append(wqr[7])
+					.append("&patient=").append(wqr[8])
+					.append("&kinsman=").append(wqr[9])
+					.append("&polNumber=").append(wqr[10])
+					.append("&card=").append(wqr[11])
+			;
+			sql = new StringBuilder() ;
+			sql.append(" select ");
+			sql.append("  case when vis.emergency='1' then '1' else '0' end as f1emergency ");
+			sql.append("  ,list(case when smc.dtype='ServiceMedService' and ms.isNoOmc='1' then null else vms.code end) as f2medservce ");
+			sql.append("  ,vlf.code as f3lpufunction  ");
+			sql.append("  ,ml.name as f4mlname  ");
+			sql.append("  ,vr.code as f5vrcode  ");
+			sql.append("  ,vr.omccode as f6vromccode  ");
+			sql.append("  ,coalesce(vvr.omccode,'3') as f7vvrcode  ");
+			sql.append("  ,vis.uet as f8uet  ");
+			sql.append("  ,coalesce(list(mkb.code),'Z00') as f9diagnosis   ");
+			sql.append(" ,coalesce(vodp.code,vodpe.code) as f10vodpcode") ;
+			sql.append(" ,coalesce(vodt.code,vodte.code) as f11vodtcode") ;
+			sql.append(" ,coalesce(list(distinct mkb.code),'Z00') as f12diag1nosis ") ;
+			sql.append(" ,coalesce(list(distinct case when vpd.code='1' then mkb.code else null end),'Z00') as f13diag1nosis ") ;
+			sql.append(" ,coalesce(list(distinct case when vpd.code='3' then mkb.code else null end),'Z00') as f14diag3nosis ") ;
+			sql.append("  ,coalesce(ml.omccode,ml1.omccode,ml2.omccode,ml3.omccode,mle.omccode,ml1e.omccode,ml2e.omccode,ml3e.omccode) as f15mlomccode  ");
+			sql.append("  ,vwpt.code as f16vwptcode  ");
+			sql.append("  from MedCase vis   ");
+			sql.append("  left join WorkCalendarDay wcd on wcd.id=vis.datePlan_id ");
+			sql.append("  left join VocWorkPlaceType vwpt on vwpt.id=vis.workPlaceType_id ");
+			sql.append("  left join MedCase spo on spo.id=vis.parent_id ");
+			sql.append("  left join WorkFunction wfe on wfe.id = vis.WorkFunctionExecute_id ");
+			sql.append("  left join WorkFunction wf on wf.id = vis.WorkFunctionPlan_id ");
+			sql.append("  left join Worker w on w.id=wf.worker_id ");
+			sql.append("  left join Worker we on we.id=wfe.worker_id ");
+			sql.append("  left join VocWorkFunction vwf on vwf.id=wf.workFunction_id ");
+			sql.append("  left join VocPost vp on vp.id=vwf.vocPost_id  ");
+			sql.append("  left join VocOmcDoctorPost vodp on vodp.id=vp.omcDoctorPost_id ");
+			sql.append("  left join VocOmcDepType vodt on vodt.id=vp.omcDepType_id  ");
+			sql.append("  left join VocWorkFunction vwfe on vwfe.id=wfe.workFunction_id ");
+			sql.append("  left join VocPost vpe on vpe.id=vwfe.vocPost_id  ");
+			sql.append("  left join VocOmcDoctorPost vodpe on vodpe.id=vpe.omcDoctorPost_id ");
+			sql.append("  left join VocOmcDepType vodte on vodte.id=vpe.omcDepType_id  ");
+			sql.append("  left join Diagnosis diag on diag.medCase_id=vis.id  ");
+			sql.append("  left join VocPriorityDiagnosis vpd on diag.priority_id=vpd.id ");
+			sql.append("  left join VocIdc10 mkb on mkb.id=diag.idc10_id  ");
+			sql.append("  left join MedCase smc on vis.id=smc.parent_id ");
+			sql.append("  left join MedService ms on smc.medService_id=ms.id ");
+			sql.append("  left join VocMedService vms on ms.vocMedService_id=vms.id ");
+			sql.append("  left join Patient pat on pat.id=vis.patient_id  ");
+			sql.append("  left join VocSex vs on vs.id=pat.sex_id  ");
+			sql.append("  left join VocSocialStatus vss on vss.id=pat.sex_id ");
+			sql.append("  left join MisLpu ml on ml.id=w.lpu_id  ");
+			sql.append("  left join MisLpu ml1 on ml1.id=ml.parent_id  ");
+			sql.append("  left join MisLpu ml2 on ml2.id=wf.lpu_id  ");
+			sql.append("  left join MisLpu ml3 on ml3.id=ml1.parent_id  ");
+			sql.append("  left join MisLpu mle on mle.id=we.lpu_id  ");
+			sql.append("  left join MisLpu ml1e on ml1e.id=mle.parent_id  ");
+			sql.append("  left join MisLpu ml2e on ml2e.id=wfe.lpu_id  ");
+			sql.append("  left join MisLpu ml3e on ml3e.id=ml1e.parent_id  ");
+			sql.append("  left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id ");
+			sql.append("  left join VocReason vr on vr.id=vis.visitReason_id ");
+			sql.append("  left join VocVisitResult vvr on vvr.id=vis.visitresult_id ");
+			sql.append("  where vis.id='").append(aMedCase).append("' ");
+			sql.append("  group by vis.dateStart,vis.timeExecute,ml2.omccode,ml3.omccode,vwpt.code,ml.omccode,ml1.omccode,mle.omccode,ml1e.omccode,ml2e.omccode,ml3e.omccode,vlf.code,vis.emergency,ml.name,vr.code,vr.omccode,vvr.omccode,vis.uet,vodte.code,vodpe.code,vodp.code,vodt.code ");
+			sql.append("  order by vis.datestart desc,vis.timeExecute desc ");
+
+
+			List<Object[]>  l_vis = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			//res.append("&render=") ;
+			for (Object[] wqr_vis:l_vis) {
+				StringBuilder href_vis = new StringBuilder() ;
+				href_vis.append(href) ;
+				href_vis.append(param("Lpu",wqr_vis[14])) ;
+				href_vis.append(param("Reason",wqr_vis[5])) ;
+				href_vis.append(param("ReasonC",wqr_vis[4])) ;
+				href_vis.append(param("Render",wqr_vis[1])) ;
+				href_vis.append(param("Result",wqr_vis[6])) ;
+				href_vis.append(param("Yet",wqr_vis[7])) ;
+				href_vis.append(param("WorkPlaceType",wqr_vis[15])) ;
+				href_vis.append(param("DepType",wqr_vis[10])) ;
+				/*href_vis.append(param("DiagnosisList",wqr_vis.get12())) ;
+				href_vis.append(param("DiagnosisMain",wqr_vis.get13())) ;
+				href_vis.append(param("DiagnosisConcomitant",wqr_vis.get14())) ;*/
+				href_vis.append(param("DiagnosisList","Z00")) ;
+				href_vis.append(param("DiagnosisMain","Z00")) ;
+				href_vis.append(param("DiagnosisConcomitant","Z00")) ;
+				href_vis.append(param("DoctorPost",wqr_vis[9])) ;
+				href_vis.append(param("Emergency",wqr_vis[0])) ;
+				href_vis.append(param("Hts",null)) ;
+				href_vis.append(param("LpuFunction",wqr_vis[4])) ; //
+				href_vis.append(param("Operations",null)) ;
+				System.out.println("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
+				String cost = getContentOfHTTPPage("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&"+href_vis.toString(),code_page);
+				if (isf) {
+					res.append("&render=") ;
+					isf=false;
+				} else {
+					res.append("##") ;
+				}
+				StringBuilder c = getRender(cost,"","") ;
+				res.append(c.toString().replaceAll("#", "%23")) ;
+
+
+				//res.append("0#1111".replaceAll("#", "%23")) ;
+			}
+
+
+
+			/*
+			Collection<WebQueryResult> l = service.executeNativeSql("select to_char(sls.dateStart,'yyyymmdd') as datestart,to_char(sls.dateFinish,'yyyymmdd') as dateFinish from MedCase sls where sls.id="+aMedCase) ;
+			WebQueryResult wqr = l.iterator().next() ;
+			href.append(param("AdmissionDate",null)) ;
+			href.append(param("DischargeDate",null)) ;
+			href.append(param("BedDays",null)) ;
+			href.append(param("BirthDate",null)) ;
+			href.append(param("DepType",null)) ;
+			href.append(param("DiagnosisList",null)) ;
+			href.append(param("DiagnosisMain",null)) ;
+			href.append(param("DiagnosisConcomitant",null)) ;
+			href.append(param("DoctorPost",null)) ;
+			href.append(param("Emergency",null)) ;
+			href.append(param("Foreigns",null)) ;
+			href.append(param("HotelServices","0")) ;
+			href.append(param("Hts",null)) ;
+			href.append(param("Lpu",null)) ;
+			href.append(param("LpuFunciton",null)) ;
+			href.append(param("Operations","")) ;
+			href.append(param("Reason",null)) ;
+			href.append(param("ReasonC",null)) ;
+			href.append(param("Render",null)) ;
+			href.append(param("Result",null)) ;
+			href.append(param("Sex",null)) ;
+			href.append(param("VidLpu","2")) ;//1-stac,2-polic
+			href.append(param("Yet",null)) ;*/
+		} else if (aType!=null && aType.equals("VISIT")) {
+			//Дополнительная диспансеризация
+			href.append(param("AddDisp",null)) ;
+			href.append(param("AddDispAge",null)) ;
+			href.append(param("AddDispCases",null)) ;
+			href.append(param("AddDispHealthGroup",null)) ;
+
+			StringBuilder sql = new StringBuilder() ;
+			sql.append("select to_char(spo.dateStart,'yyyymmdd') as f1datestart");
+			sql.append(" ,to_char(case when vis.emergency='1' then spo.datestart else coalesce(spo.dateFinish,spo.dateStart) end,'yyyymmdd') as f2dateFinish");
+			sql.append(" ,to_char(pat.birthday,'yyyymmdd') as f3birthday");
+			sql.append(" ,vs.omcCode as f4vsomccode");
+			sql.append(" ,spo.id as f5spo");
+			sql.append(" ,case when pvss.code='И0' then '1' else '0' end as f6foreign");
+			sql.append(" , to_char(spo.dateStart,'dd.mm.yyyy') as f7date5start");
+			sql.append(" ,to_char(case when vis.emergency='1' then spo.datestart else coalesce(spo.dateFinish,spo.dateStart) end,'dd.mm.yyyy') as f8date5Finish");
+			sql.append(" ,vis.patient_id as f9patient");
+			sql.append(" ,coalesce(k.kinsman_id,vis.patient_id) as f10kinsman");
+			sql.append(" ,mp.series||' '||mp.polNumber as f11policy") ;
+			sql.append(" ,coalesce(card.number,pat.patientSync) as f12patientcode") ;
+			sql.append(" ,case when vis.emergency='1' or spo.datefinish is null or spo.datefinish-spo.datestart=0 then 1 else spo.datefinish-spo.datestart+1 end as f13beddays") ;
+			sql.append(" from MedCase vis ");
+			sql.append(" left join Medcard card on card.id=vis.medcard_id") ;
+			sql.append(" left join MedCase spo on spo.id=vis.parent_id") ;
+			sql.append(" left join Kinsman k on k.id=vis.kinsman_id") ;
+			sql.append(" left join Patient pat on pat.id=vis.patient_id") ;
+			sql.append(" left join VocSex vs on vs.id=pat.sex_id") ;
+			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id") ;
+			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id") ;
+			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id") ;
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' "+aSqlAdd+") and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'") ;
+
+			List<Object[]>  l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			if (l.isEmpty()) {} //throw new Exception("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!") ;
+			Object[] wqr = l.iterator().next() ;
+			href.append(param("BirthDate",wqr[2])) ;
+
+			href.append(param("Foreigns",wqr[5])) ;
+			href.append(param("HotelServices",null)) ;
+			href.append(param("Sex",wqr[3])) ;
+			href.append(param("VidLpu","AMB")) ;//1-stac, 2- polic
+			href.append(param("AdmissionDate",wqr[0])) ;
+			href.append(param("DischargeDate",wqr[1])) ;
+			href.append(param("BedDays",wqr[12])) ;
+			res.append("&dateFrom=").append(wqr[6]).append("&dateTo=").append(wqr[7])
+					.append("&patient=").append(wqr[8])
+					.append("&kinsman=").append(wqr[9])
+					.append("&polNumber=").append(wqr[10])
+					.append("&card=").append(wqr[11])
+			;
+			sql = new StringBuilder() ;
+			sql.append(" select ");
+			sql.append("  case when vis.emergency='1' then '1' else '0' end as f1emergency ");
+			sql.append("  ,list(case when smc.dtype='ServiceMedService' and ms.isNoOmc='1' then null else vms.code end) as f2medservce ");
+			sql.append("  ,vlf.code as f3lpufunction  ");
+			sql.append("  ,ml.name as f4mlname  ");
+			sql.append("  ,vr.code as f5vrcode  ");
+			sql.append("  ,vr.omccode as f6vromccode  ");
+			sql.append("  ,vvr.omccode as f7vvrcode  ");
+			sql.append("  ,vis.uet as f8uet  ");
+			sql.append("  ,list(mkb.code) as f9diagnosis   ");
+			sql.append(" ,vodp.code as f10vodpcode") ;
+			sql.append(" ,vodt.code as f11vodtcode") ;
+			sql.append(" ,list(distinct mkb.code) as f12diag1nosis ") ;
+			sql.append(" ,list(distinct case when vpd.code='1' then mkb.code else null end) as f13diag1nosis ") ;
+			sql.append(" ,list(distinct case when vpd.code='3' then mkb.code else null end) as f14diag3nosis ") ;
+			sql.append("  ,coalesce(ml.omccode,ml1.omccode) as f15mlomccode  ");
+			sql.append("  ,vwpt.code as f16vwptcode  ");
+			sql.append("  from MedCase vis   ");
+			sql.append("  left join VocWorkPlaceType vwpt on vwpt.id=vis.workPlaceType_id ");
+			sql.append("  left join MedCase spo on spo.id=vis.parent_id ");
+			sql.append("  left join WorkFunction wf on wf.id = vis.WorkFunctionExecute_id ");
+			sql.append("  left join Worker w on w.id=wf.worker_id ");
+			sql.append("  left join VocWorkFunction vwf on vwf.id=wf.workFunction_id ");
+			sql.append("  left join VocPost vp on vp.id=vwf.vocPost_id  ");
+			sql.append("  left join VocOmcDoctorPost vodp on vodp.id=vp.omcDoctorPost_id ");
+			sql.append("  left join VocOmcDepType vodt on vodt.id=vp.omcDepType_id  ");
+			sql.append("  left join Diagnosis diag on diag.medCase_id=vis.id  ");
+			sql.append("  left join VocPriorityDiagnosis vpd on diag.priority_id=vpd.id ");
+			sql.append("  left join VocIdc10 mkb on mkb.id=diag.idc10_id  ");
+			sql.append("  left join MedCase smc on vis.id=smc.parent_id ");
+			sql.append("  left join MedService ms on smc.medService_id=ms.id ");
+			sql.append("  left join VocMedService vms on ms.vocMedService_id=vms.id ");
+			sql.append("  left join Patient pat on pat.id=vis.patient_id  ");
+			sql.append("  left join VocSex vs on vs.id=pat.sex_id  ");
+			sql.append("  left join VocSocialStatus vss on vss.id=pat.sex_id ");
+			sql.append("  left join MisLpu ml on ml.id=w.lpu_id  ");
+			sql.append("  left join MisLpu ml1 on ml1.id=ml.parent_id  ");
+			sql.append("  left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id ");
+			sql.append("  left join VocReason vr on vr.id=vis.visitReason_id ");
+			sql.append("  left join VocVisitResult vvr on vvr.id=vis.visitresult_id ");
+			sql.append("  where vis.id='").append(aMedCase).append("' ");
+			sql.append("  group by vis.dateStart,vis.timeExecute,vwpt.code,ml.omccode,ml1.omccode,vlf.code,vis.emergency,ml.name,vr.code,vr.omccode,vvr.omccode,vis.uet,vodp.code,vodt.code ");
+			sql.append("  order by vis.datestart desc,vis.timeExecute desc ");
+
+
+			List<Object[]>  l_vis = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			//res.append("&render=") ;
+			for (Object[] wqr_vis:l_vis) {
+				StringBuilder href_vis = new StringBuilder() ;
+				href_vis.append(href) ;
+				href_vis.append(param("Lpu",wqr_vis[14])) ;
+				href_vis.append(param("Reason",wqr_vis[5])) ;
+				href_vis.append(param("ReasonC",wqr_vis[4])) ;
+				href_vis.append(param("Render",wqr_vis[1])) ;
+				href_vis.append(param("Result",wqr_vis[6])) ;
+				href_vis.append(param("Yet",wqr_vis[7])) ;
+				href_vis.append(param("WorkPlaceType",wqr_vis[15])) ;
+				href_vis.append(param("DepType",wqr_vis[10])) ;
+				href_vis.append(param("DiagnosisList",wqr_vis[11])) ;
+				href_vis.append(param("DiagnosisMain",wqr_vis[12])) ;
+				href_vis.append(param("DiagnosisConcomitant",wqr_vis[13])) ;
+				href_vis.append(param("DoctorPost",wqr_vis[9])) ;
+				href_vis.append(param("Emergency",wqr_vis[0])) ;
+				href_vis.append(param("Hts",null)) ;
+				href_vis.append(param("LpuFunction",wqr_vis[2])) ; //
+				href_vis.append(param("Operations",null)) ;
+				System.out.println("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
+				return getContentOfHTTPPage("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&"+href_vis.toString(),code_page);
+
+			}
+
+		} else if (aType!=null && aType.equals("SPO")) {
+			//Дополнительная диспансеризация
+			href.append(param("AddDisp", null));
+			href.append(param("AddDispAge", null));
+			href.append(param("AddDispCases", null));
+			href.append(param("AddDispHealthGroup", null));
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("select to_char(spo.dateStart,'yyyymmdd') as f1datestart");
+			sql.append(" ,to_char(case when vis.emergency='1' then spo.datestart else spo.dateFinish end,'yyyymmdd') as f2dateFinish");
+			sql.append(" ,to_char(pat.birthday,'yyyymmdd') as f3birthday");
+			sql.append(" ,vs.omcCode as f4vsomccode");
+			sql.append(" ,spo.id as f5spo");
+			sql.append(" ,case when pvss.code='И0' then '1' else '0' end as f6foreign");
+			sql.append(" , to_char(spo.dateStart,'dd.mm.yyyy') as f7date5start");
+			sql.append(" ,to_char(case when vis.emergency='1' then spo.datestart else spo.dateFinish end,'dd.mm.yyyy') as f8date5Finish");
+			sql.append(" ,vis.patient_id as f9patient");
+			sql.append(" ,coalesce(k.kinsman_id,vis.patient_id) as f10kinsman");
+			sql.append(" ,mp.series||' '||mp.polNumber as f11policy");
+			sql.append(" ,coalesce(card.number,pat.patientSync) as f12patientcode");
+			sql.append(" ,case when spo.datefinish-spo.datestart=0 or vis.emergency='1' then 1 else spo.datefinish-spo.datestart+1 end as f13beddays");
+			sql.append(" from MedCase vis ");
+			sql.append(" left join Medcard card on card.id=vis.medcard_id");
+			sql.append(" left join MedCase spo on spo.id=vis.parent_id");
+			sql.append(" left join Kinsman k on k.id=vis.kinsman_id");
+			sql.append(" left join Patient pat on pat.id=vis.patient_id");
+			sql.append(" left join VocSex vs on vs.id=pat.sex_id");
+			sql.append(" left join VocSocialStatus pvss on pvss.id=pat.socialStatus_id");
+			sql.append(" left join VocServiceStream vss on vss.id=vis.serviceStream_id");
+			sql.append(" left join MedPolicy mp on mp.patient_id=pat.id");
+			sql.append(" where vis.id=").append(aMedCase).append(" and (vss.code='OBLIGATORYINSURANCE' " + aSqlAdd + ") and (spo.dateFinish is not null or vis.emergency='1') and mp.actualdatefrom <=vis.dateStart and coalesce(mp.actualdateto,vis.datestart)>=vis.datestart and mp.dtype like 'MedPolicyOm%'");
+			LOG.warn("sql1 = " + sql);
+			List<Object[]> l = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList();
+			if (l.isEmpty()) {
+				LOG.error("СПРАВКА РАСПЕЧАТЫВАЕТСЯ ТОЛЬКО ЗАКРЫТОМУ СЛУЧАЮ ПОЛИКЛИНИЧЕСКОГО ОБСЛУЖИВАНИЯ ПО ОМС БОЛЬНЫМ!!!");
+			} else {
+
+			Object[] wqr = l.get(0);
+				LOG.warn("sql_1_spoId = "+ wqr[4]);
+			href.append(param("BirthDate", wqr[2]));
+
+			href.append(param("Foreigns", wqr[5]));
+			href.append(param("HotelServices", null));
+			href.append(param("Sex", wqr[3]));
+			href.append(param("VidLpu", "AMB"));//1-stac, 2- polic
+			href.append(param("AdmissionDate", wqr[0]));
+			href.append(param("DischargeDate", wqr[1]));
+			href.append(param("BedDays", wqr[12]));
+			res.append("&dateFrom=").append(wqr[6]).append("&dateTo=").append(wqr[7])
+					.append("&patient=").append(wqr[8])
+					.append("&kinsman=").append(wqr[9])
+					.append("&polNumber=").append(wqr[10])
+					.append("&card=").append(wqr[11])
+			;
+			sql = new StringBuilder();
+			sql.append(" select ");
+			sql.append("  case when vis.emergency='1' then '1' else '0' end as f1emergency ");
+			sql.append("  ,list(case when smc.dtype='ServiceMedService' and ms.isNoOmc='1' then null else vms.code end) as f2medservce ");
+			sql.append("  ,vlf.code as f3lpufunction  ");
+			sql.append("  ,ml.name as f4mlname  ");
+			sql.append("  ,vr.code as f5vrcode  ");
+			sql.append("  ,vr.omccode as f6vromccode  ");
+			sql.append("  ,vvr.omccode as f7vvrcode  ");
+			sql.append("  ,vis.uet as f8uet  ");
+			sql.append("  ,list(mkb.code) as f9diagnosis   ");
+			sql.append(" ,vodp.code as f10vodpcode");
+			sql.append(" ,vodt.code as f11vodtcode");
+			sql.append(" ,list(distinct mkb.code) as f12diag1nosis ");
+			sql.append(" ,list(distinct case when vpd.code='1' then mkb.code else null end) as f13diag1nosis ");
+			sql.append(" ,list(distinct case when vpd.code='3' then mkb.code else null end) as f14diag3nosis ");
+			sql.append("  ,coalesce(ml.omccode,ml1.omccode) as f15mlomccode  ");
+			sql.append("  ,vwpt.code as f16vwptcode  ");
+			sql.append("  from MedCase vis   ");
+			sql.append("  left join VocWorkPlaceType vwpt on vwpt.id=vis.workPlaceType_id ");
+			sql.append("  left join MedCase spo on spo.id=vis.parent_id ");
+			sql.append("  left join WorkFunction wf on wf.id = vis.WorkFunctionExecute_id ");
+			sql.append("  left join Worker w on w.id=wf.worker_id ");
+			sql.append("  left join VocWorkFunction vwf on vwf.id=wf.workFunction_id ");
+			sql.append("  left join VocPost vp on vp.id=vwf.vocPost_id  ");
+			sql.append("  left join VocOmcDoctorPost vodp on vodp.id=vp.omcDoctorPost_id ");
+			sql.append("  left join VocOmcDepType vodt on vodt.id=vp.omcDepType_id  ");
+			sql.append("  left join Diagnosis diag on diag.medCase_id=vis.id  ");
+			sql.append("  left join VocPriorityDiagnosis vpd on diag.priority_id=vpd.id ");
+			sql.append("  left join VocIdc10 mkb on mkb.id=diag.idc10_id  ");
+			sql.append("  left join MedCase smc on vis.id=smc.parent_id ");
+			sql.append("  left join MedService ms on smc.medService_id=ms.id ");
+			sql.append("  left join VocMedService vms on ms.vocMedService_id=vms.id ");
+			sql.append("  left join Patient pat on pat.id=vis.patient_id  ");
+			sql.append("  left join VocSex vs on vs.id=pat.sex_id  ");
+			sql.append("  left join VocSocialStatus vss on vss.id=pat.sex_id ");
+			sql.append("  left join MisLpu ml on ml.id=w.lpu_id  ");
+			sql.append("  left join MisLpu ml1 on ml1.id=ml.parent_id  ");
+			sql.append("  left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id ");
+			sql.append("  left join VocReason vr on vr.id=vis.visitReason_id ");
+			sql.append("  left join VocVisitResult vvr on vvr.id=vis.visitresult_id ");
+			sql.append("  where spo.id='").append(wqr[4]).append("' ");
+			sql.append("  group by vis.dateStart,vis.timeExecute,vwpt.code,ml.omccode,ml1.omccode,vlf.code,vis.emergency,ml.name,vr.code,vr.omccode,vvr.omccode,vis.uet,vodp.code,vodt.code ");
+			sql.append("  order by vis.datestart desc,vis.timeExecute desc ");
+
+
+			List<Object[]> l_vis = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList();
+			//res.append("&render=") ;
+			for (Object[] wqr_vis : l_vis) {
+				StringBuilder href_vis = new StringBuilder();
+				href_vis.append(href);
+				href_vis.append(param("Lpu", wqr_vis[14]));
+				href_vis.append(param("Reason", wqr_vis[5]));
+				href_vis.append(param("ReasonC", wqr_vis[4]));
+				href_vis.append(param("Render", wqr_vis[1]));
+				href_vis.append(param("Result", wqr_vis[6]));
+				href_vis.append(param("Yet", wqr_vis[7]));
+				href_vis.append(param("WorkPlaceType", wqr_vis[15]));
+				href_vis.append(param("DepType", wqr_vis[10]));
+				href_vis.append(param("DiagnosisList", wqr_vis[11]));
+				href_vis.append(param("DiagnosisMain", wqr_vis[12]));
+				href_vis.append(param("DiagnosisConcomitant", wqr_vis[13]));
+				href_vis.append(param("DoctorPost", wqr_vis[9]));
+				href_vis.append(param("Emergency", wqr_vis[0]));
+				href_vis.append(param("Hts", null));
+				href_vis.append(param("LpuFunction", wqr_vis[2])); //
+				href_vis.append(param("Operations", null));
+				//System.out.println("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
+				String cost = getContentOfHTTPPage("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&" + href_vis.toString(), code_page);
+				if (isf) {
+					res.append("&render=");
+					isf = false;
+				} else {
+					res.append("##");
+				}
+				StringBuilder c = getRender(cost, "", "");
+				res.append(c.toString().replaceAll("#", "%23"));
+
+
+				//res.append("0#1111".replaceAll("#", "%23")) ;
+			}
+		}
+
+		} else if (aType!=null && aType.equals("EXTDISP")) {
+			//Дополнительная диспансеризация
+			href.append("AddDisp=").append("") ;
+			href.append("AddDispAge=").append("") ;
+			href.append("AddDispCases=").append("") ;
+			href.append("AddDispHealthGroup=").append("") ;
+
+			//List<Object[]>  l = theManager.createNativeQuery("select to_char(sls.dateStart,'yyyymmdd') as datestart,to_char(sls.dateFinish,'yyyymmdd') as dateFinish from MedCase sls where sls.id="+aMedCase).getResultList() ;
+			//WebQueryResult wqr = l.iterator().next() ;
+			href.append("AdmissionDate=").append("") ;
+			href.append("BedDays=").append("") ;
+			href.append("BirthDate=").append("") ;
+			href.append("DepType=").append("") ;
+			href.append("DiagnosisList=").append("") ;
+			href.append("DiagnosisMain=").append("") ;
+			href.append("DiagnosisConcomitant=").append("") ;
+			href.append("DischargeDate=").append("") ;
+			href.append("DoctorPost=").append("") ;
+			href.append("Emergency=").append("") ;
+			href.append("Foreigns=").append("") ;
+			href.append("HotelServices=").append("") ;
+			href.append("Hts=").append("") ;
+			href.append("Lpu=").append("") ;
+			href.append("LpuFunciton=").append("") ; //
+			href.append("Operations=").append("") ;
+			href.append("Reason=").append("") ;
+			href.append("ReasonC=").append("") ;
+			href.append("Render=").append("") ;
+			href.append("Result=").append("") ;
+			href.append("Sex=").append("") ;
+			href.append("VidLpu=").append("") ;
+			href.append("Yet=").append("") ;
+		}
+		return res.toString() ;
+	}
+
+	/**
+	 * Формируем файл для импорта в "базу данных" МИАЦа со сведениями об оказанной мед. помощи иногородним и иностранным гражданам
+	 * @param aDateFrom
+	 * @param aDateTo
+	 * @param aType
+	 * @param aServiceStream
+	 * @return
+	 */
+	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aServiceStream)  { //Формируем файл для миаца
+//		формируем файл
+
+		//Начинаем стационар
+ 		StringBuilder sqlSelect = new StringBuilder();
+ 		StringBuilder sqlAppend = new StringBuilder();
+ 		HashMap<String, String> regionOrCountry ;
+ 		HashMap<String, String> profileMap = getStacProfileMap();
+ 		HashMap<String, String> sredstvaMap = getMiacServiceStreamMap();
+
+ 		if (aType!=null&&aType.equals("inog")) {
+ 			sqlAppend.append(" and a.addressid is not null and a.region_addressid is not null and a.kladr not like '30%' ");
+			sqlSelect.append(",a.region_addressid");
+			regionOrCountry = getRegions();
+		} else if (aType!=null&&aType.equals("inos")){
+			sqlSelect.append(",nat.voc_code");
+			sqlAppend.append(" and nat.id is not null and nat.voc_code!='643' ");
+			regionOrCountry = getCountries();
+		} else {
+			LOG.error("NO VALID TYPE");
+			return "---1";
+		}
+
+		StringBuilder sql = new StringBuilder()
+				.append(" select to_char(sls.datefinish,'yyyy-MM') as f0_date")
+				.append(" ,count(distinct pat.id) as f1_person_count")
+				.append(sqlSelect).append(" as f2_address")
+				.append(" ,vbt.code as f3_profile")
+				.append(" , vss.financesource as f4_financesource")
+				.append(" ,list(sls.id||'') as f5_list")
+				.append(" from medcase sls")
+				.append(" left join medcase dep1 on dep1.parent_id=sls.id and dep1.prevmedcase_id is null and dep1.dtype='DepartmentMedCase'")
+				.append(" left join bedfund bf on bf.id=dep1.bedfund_id")
+				.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id")
+				.append(" left join mislpu ml on ml.id=sls.department_id")
+				.append(" left join patient pat on pat.id=sls.patient_id")
+				.append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
+				.append(" left join address2 a on a.addressid=pat.address_addressid")
+				.append(" left join vocservicestream vss on vss.id=sls.servicestream_id")
+				.append(" where sls.dateFinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
+				.append(" and sls.dtype='HospitalMedCase' and a.region_addressid is not null")
+				.append(sqlAppend)
+				.append(" group by vss.financesource, vbt.code, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
+				.append(" order by to_char(sls.datefinish,'yyyy-MM')");
+		LOG.info("repotr_stac = "+sql);
+		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
+		String region, profile, financeSource, patientCount;
+		String[] period, hosps;
+		double totalSum;
+		String miacLpuCode = "1", uslovia = "стационар"; //AMOKB
+		StringBuilder txtFile = new StringBuilder();
+			//1 строка = 9 строчек
+			for (Object[] row : list) {
+				period = s(row[0]).split("-");
+				patientCount = s(row[1]);
+				region = regionOrCountry.get(s(row[2]))!=null?regionOrCountry.get(s(row[2])):"CODE_REG="+s(row[2]);
+				profile = profileMap.get(s(row[3]));
+				financeSource = s(row[4]);
+				hosps = s(row[5]).split(",");
+				totalSum = 0;
+				if (financeSource.equals("CHARGED")) { //Платные случаи
+					try {
+						for (String hosp : hosps) {
+							JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim())));
+							totalSum += hospitalInfo.getDouble("totalSum");
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				} else if (financeSource.equals("OBLIGATORY")||financeSource.equals("BUDGET")) { //ОМС + БЮДЖЕТ
+					for (String hosp : hosps) {
+
+						try {
+							String[] arr = getDataByReferencePrintNotOnlyOMS(Long.valueOf(hosp.trim()), "HOSP", false, "OTHER','BUDGET").split("&");
+							for (int j = 0; j < arr.length; j++) {
+								if (arr[j].startsWith("render")) {
+									String[] arrPrice = arr[j].split("%23");
+									String price = arrPrice[0].substring(7, arrPrice[0].length());
+									LOG.warn("PRICE = "+price);
+									if (price!=null&&!price.equals("")) {
+										totalSum+=Double.valueOf(price);
+									}
+									break;
+								}
+							}
+						} catch (java.lang.NumberFormatException e) {
+							LOG.warn("Не удалось расчитать цену");
+							totalSum=0.0;
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+
+				} else {
+					LOG.warn("Неизвестный источник оплаты: "+financeSource);
+					continue;
+				}
+				if (totalSum>0.0) {
+					period[1] = period[1].startsWith("0")?period[1].substring(1):period[1];
+
+					txtFile.append(miacLpuCode).append("\n")
+							.append(period[0]).append("\n")
+							.append(period[1]).append("\n")
+							.append(region).append("\n")
+							.append(uslovia).append("\n")
+							.append(profile).append("\n")
+							.append(sredstvaMap.get(financeSource)).append("\n")
+							.append(patientCount).append("\n")
+						//	.append(totalSum).append("\n");
+							.append(new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN).doubleValue()).append("\n");
+				} else {
+					LOG.error("HOSP, price = null, IDS" +hosps);
+
+				}
+
+			}
+
+			//Начинаем искать пол-ку
+			sql = new StringBuilder();
+			String priceListId="4";
+			sql.append("select to_char(vis.datestart,'yyyy-MM') as f0_date")
+					.append(" ,count(distinct pat.id) as f1_person_count")
+					.append(sqlSelect).append(" as f2_address")
+					.append(" ,vwf.code as f3_profile")
+					.append(" , vss.financesource as f4_financesource")
+					.append(" ,sum (coalesce(smc.medserviceamount ,1)*pp.cost) as f5_totalSum")
+					.append(",list(''||vis.id) as f6_listVisits")
+					.append(" from medcase spo")
+					.append(" left join medcase vis on vis.parent_id=spo.id")
+					.append(" left join medcase smc on smc.parent_id=vis.id")
+					.append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
+					.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+					.append(" left join patient pat on pat.id=vis.patient_id")
+					.append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
+					.append(" left join address2 a on a.addressid=pat.address_addressid")
+					.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
+					.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+					.append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
+					.append(" where spo.dtype='PolyclinicMedCase' and vis.dtype='Visit' and smc.dtype='ServiceMedCase'")
+					.append(" and vis.datestart between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
+					.append(" and vss.financesource is not null and vss.financesource!='' and pp.pricelist_id=").append(priceListId)
+					.append(sqlAppend)
+					.append(" group by to_char(vis.datestart,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
+			LOG.info("repotr_pol = "+sql);
+			list = theManager.createNativeQuery(sql.toString()).getResultList();
+		uslovia="амбулаторно";
+		profileMap=getPolicProfileMap();
+			for (Object[] row: list) { //TODO добавить проверку на ОМС + БЮДЖЕТ
+
+				period =s(row[0]).split("-");
+				patientCount=s(row[1]);
+				region = regionOrCountry.get(s(row[2]));
+				profile=profileMap.get(s(row[3]))!=null?profileMap.get(s(row[3])):"CODE="+s(row[3]);
+				financeSource=s(row[4]);
+				totalSum = 0;
+				if (financeSource.equals("OBLIGATORY")||financeSource.equals("BUDGET")) { //считаем цену за ОМС
+					String[] visits = s(row[6]).split(",");
+					//LOG.info("=====polic OMC,"+visits);
+					for (String vis : visits) {
+
+						try {
+							String arr[] = getDataByReferencePrintNotOnlyOMS(Long.valueOf(vis.trim()), "VISIT", false, "OTHER','BUDGET").split("<body>");
+									String price = arr[1].trim().split("#")[0].trim();
+									LOG.warn("PRICE = "+price);
+									totalSum+=Double.valueOf(price);
+
+						}  catch (java.lang.NumberFormatException e) {
+							LOG.warn("Не удалось расчитать цену поликлиники");
+							totalSum=0.0;
+
+						}catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+				} else {
+					totalSum = Double.valueOf(s(row[5]));
+				}
+				if (totalSum>0.0) {
+					period[1] = period[1].startsWith("0")?period[1].substring(1):period[1];
+					txtFile.append(miacLpuCode).append("\n")
+							.append(period[0]).append("\n")
+							.append(period[1]).append("\n")
+							.append(region).append("\n")
+							.append(uslovia).append("\n")
+							.append(profile).append("\n")
+							.append(sredstvaMap.get(financeSource)).append("\n")
+							.append(patientCount).append("\n")
+							.append(new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN).doubleValue()).append("\n");
+							//.append(totalSum).append("\n");
+				} else {
+					LOG.error("POLIC, price = null, IDS" +s(row[6]));
+
+				}
+			}
+			//Закончили искать пол-ку
+
+		//	LOG.info("TXT file = "+txtFile);
+
+	return createFile(txtFile,aType);
+		}
+
+	public String createFile (StringBuilder aText, String aFileName) {
+		try {
+			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+			workDir+="/"+aFileName+"."+aFileName;
+			OutputStream os = new FileOutputStream(workDir);
+			os.write(aText.toString().getBytes());
+			os.close();
+			return "/rtf/"+aFileName+"."+aFileName;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "NO_FILE";
+	}
+
+	/**
+	 * Расчитываем стоимость случая госпитализации
+	 * @param aMedcaseId ID госпитализации
+	 * @return - JSON объект с полной стоимостью + список оказанных услуг
+	 */
+	public String countMedcaseCost (Long aMedcaseId) {
+		JSONObject root = new JSONObject();
+		try {
+
+			String priceListId = theManager.createNativeQuery("select max(id) from pricelist where isdefault='1'").getSingleResult().toString();
+			String idsertypebed = "11";
+			String dtype="";
+			Long patientId;
+			Long serviceStreamId;
+			MedCase mc = (MedCase) theManager.createQuery(" from MedCase where id=:id").setParameter("id",aMedcaseId).getSingleResult();
+			if (mc instanceof HospitalMedCase) {
+				HospitalMedCase hmc = (HospitalMedCase) mc;
+
+				patientId = hmc.getPatient().getId();
+				serviceStreamId = hmc.getServiceStream().getId();
+				String startDate = DateFormat.formatToDate(hmc.getDateStart());
+				String finishDate = DateFormat.formatToDate(hmc.getDateFinish() != null ? hmc.getDateFinish() : new java.sql.Date(new java.util.Date().getTime()));
+				if (hmc.getServiceStream().getFinanceSource() != null && hmc.getServiceStream().getFinanceSource().equals("CHARGED")) { //Для платных считаем цену случая сами
+
+				StringBuilder sql = new StringBuilder().append("select slo.id as f0,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo")
+						.append(" ,list(pp.code||' '||pp.name) as f2_ppname")
+						.append(" ,case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'")
+						.append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end as f3_cntDays")
+						.append(",max(pp.cost) as f4_ppcost")
+						.append(",max((")
+						.append("case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'")
+						.append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end")
+						.append("* pp.cost)) as f5_ppsum,list(ms.code||' '||ms.name) as f6_msifo")
+						.append(" from medcase slo")
+						.append(" left join medcase sls on sls.id=slo.parent_id")
+						.append(" left join Vochosptype vht on vht.id=sls.hosptype_id")
+						.append(" left join statisticstub ss on ss.id=sls.statisticStub_id")
+						.append(" left join bedfund bf on bf.id=slo.bedfund_id")
+						.append(" left join vocbedtype vbt on vbt.id=bf.bedtype_id")
+						.append(" left join vocbedsubtype vbst on vbst.id=bf.bedsubtype_id")
+						.append(" left join workPlace wp on wp.id=slo.roomNumber_id")
+						.append(" left join Patient pat on pat.id=slo.patient_id")
+						.append(" left join VocRoomType vrt on vrt.id=wp.roomType_id")
+						.append(" left join mislpu ml on ml.id=slo.department_id")
+						.append(" left join workfunctionservice wfs on wfs.lpu_id=slo.department_id")
+						.append(" and bf.bedtype_id=wfs.bedtype_id and bf.bedsubtype_id=wfs.bedsubtype_id")
+						.append(" and wfs.roomType_id=wp.roomType_id")
+						.append(" left join medservice ms on ms.id=wfs.medservice_id")
+						.append(" left join pricemedservice pms on pms.medservice_id=wfs.medservice_id")
+						.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+						.append(" and (pp.isvat is null or pp.isvat='0')")
+						.append(" where slo.parent_id=").append(mc.getId())
+						.append(" and ms.servicetype_id='").append(idsertypebed).append("' and pp.priceList_id='").append(priceListId).append("'")
+						.append(" group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code");
+				List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
+				JSONArray arr = new JSONArray(); //Койко-дни
+				double cost = 0.0;
+				double sum = 0.0;
+				double totalSum = 0.0;
+				for (Object[] o : list) { //Считаем стоимость койко-дней
+					JSONObject kd = new JSONObject();
+					cost = Double.valueOf(o[5].toString());
+					kd.put("sum", cost);
+					kd.put("name", o[6]);
+					kd.put("count", o[3]);
+					sum += cost;
+					arr.put(kd);
+				}
+				root.put("bedDays", arr);
+				totalSum += sum;
+
+				sql = new StringBuilder()
+						.append("select")
+						.append(" pp.code||' '||pp.name as ppname")
+						.append(" ,pp.cost as ppcost")
+						.append(" from medcase vis")
+						.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
+						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+						.append(" left join worker w on w.id=wf.worker_id")
+						.append(" left join patient wp on wp.id=w.person_id")
+						.append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
+						.append(" left join medcase smc on smc.parent_id=vis.id and upper(smc.dtype)='SERVICEMEDCASE'")
+						.append(" left join medservice ms on ms.id=smc.medservice_id")
+						.append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
+						.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+						.append(" where vis.patient_id=").append(patientId).append(" and (vis.datestart between to_date('").append(startDate).append("','dd.mm.yyyy') and to_date('").append(finishDate).append("','dd.mm.yyyy')")
+						.append("	and upper(vis.dtype)='VISIT' and (vss.code='HOSPITAL' or vss.id='").append(serviceStreamId).append("' or vss.code='OTHER')")
+						.append("	or")
+						.append("	vis.datestart-to_date('").append(startDate).append("','dd.mm.yyyy') = -1")
+						.append("	and upper(vis.dtype)='VISIT' and ( vss.id='").append(serviceStreamId).append("' ))")
+						.append(" and pp.priceList_id='").append(priceListId).append("'")
+						.append(" and (vis.noActuality='0' or vis.noActuality is null)")
+						.append(" order by vis.datestart");
+				list = theManager.createNativeQuery(sql.toString()).getResultList();
+				arr = new JSONArray(); //Диагностика
+				sum = 0.0;
+
+				for (Object[] o : list) { //Считаем стоимость диагностики
+					JSONObject kd = new JSONObject();
+					cost = Double.valueOf(o[1].toString());
+					kd.put("sum", cost);
+					kd.put("name", o[0]);
+					kd.put("count", "1");
+					sum += cost;
+					arr.put(kd);
+				}
+				root.put("diagnostic", arr);
+				totalSum += sum;
+
+				//Лаборатория
+				sql = new StringBuilder()
+						.append("select")
+						.append(" pp.code||' '||pp.name as ppname")
+						.append(" ,pp.cost as ppcost")
+						.append(" from medcase vis")
+						.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
+						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+						.append(" left join worker w on w.id=wf.worker_id")
+						.append(" left join patient wp on wp.id=w.person_id")
+						.append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
+						.append(" left join medcase smc on smc.parent_id=vis.id")
+						.append(" left join medservice ms on ms.id=smc.medservice_id")
+						.append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
+						.append(" left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='").append(priceListId).append("'")
+						.append(" where vis.parent_id='").append(aMedcaseId).append("'")
+						.append(" and vis.datestart between to_date('").append(startDate).append("','dd.mm.yyyy') and to_date('").append(finishDate).append("','dd.mm.yyyy')")
+						.append(" and upper(vis.dtype)='VISIT' and upper(smc.dtype)='SERVICEMEDCASE'")
+						.append(" and (vss.code='HOSPITAL' or vss.id is null)")
+						.append(" and (vis.noActuality='0' or vis.noActuality is null) and pp.id is not null");
+				LOG.info("calc price, labsurvey = " + sql);
+				list = theManager.createNativeQuery(sql.toString()).getResultList();
+				arr = new JSONArray();
+				sum = 0.0;
+
+				for (Object[] o : list) { //Считаем стоимость лаборатории
+					JSONObject kd = new JSONObject();
+					cost = Double.valueOf(o[1].toString());
+					kd.put("sum", cost);
+					kd.put("name", o[0]);
+					kd.put("count", "1");
+					sum += cost;
+					arr.put(kd);
+				}
+				root.put("laboratory", arr);
+				totalSum += sum;
+
+				//Операции
+				sql = new StringBuilder()
+						.append("select")
+						.append(" pp.code||' '||pp.name as ppname")
+						.append(" ,pp.cost as ppcost")
+						.append(" from SurgicalOperation so")
+						.append(" left join workfunction wf on wf.id=so.surgeon_id")
+						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+						.append(" left join worker w on w.id=wf.worker_id")
+						.append(" left join patient wp on wp.id=w.person_id")
+						.append(" left join medcase slo on slo.id=so.medcase_id")
+						.append(" left join vocservicestream vss on vss.id=so.servicestream_id")
+						.append(" left join medservice ms on ms.id=so.medservice_id")
+						.append(" left join pricemedservice pms on pms.medservice_id=so.medservice_id")
+						.append(" left join priceposition pp on pp.id=pms.priceposition_id and  pp.priceList_id='").append(priceListId).append("'")
+						.append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') and pp.id is not null");
+				LOG.info("calc price, operation = " + sql);
+				list = theManager.createNativeQuery(sql.toString()).getResultList();
+				arr = new JSONArray();
+				sum = 0.0;
+
+				for (Object[] o : list) { //Считаем стоимость операций
+					JSONObject kd = new JSONObject();
+					cost = Double.valueOf(o[1].toString());
+					kd.put("sum", cost);
+					kd.put("name", o[0]);
+					kd.put("count", "1");
+					sum += cost;
+					arr.put(kd);
+				}
+				root.put("surgicaloperation", arr);
+				totalSum += sum;
+
+				//Анастезия
+				sql = new StringBuilder()
+						.append("select")
+						.append(" pp.code||' '||pp.name as ppname")
+						.append(" ,pp.cost as ppcost")
+						.append(" from Anesthesia aso")
+						.append(" left join VocAnesthesiaMethod vam on vam.id=aso.method_id")
+						.append(" left join VocAnesthesia va on va.id=aso.type_id")
+						.append(" left join SurgicalOperation so on so.id=aso.surgicalOperation_id")
+						.append(" left join workfunction wf on wf.id=aso.anesthesist_id")
+						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+						.append(" left join worker w on w.id=wf.worker_id")
+						.append(" left join patient wp on wp.id=w.person_id")
+						.append(" left join medcase slo on slo.id=so.medcase_id")
+						.append(" left join vocservicestream vss on vss.id=so.servicestream_id")
+						.append(" left join medservice ms on ms.id=aso.medservice_id")
+						.append(" left join pricemedservice pms on pms.medservice_id=aso.medservice_id")
+						.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+						.append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') and pp.priceList_id='").append(priceListId).append("'");
+				LOG.info("calc price, Анастезия = " + sql);
+				list = theManager.createNativeQuery(sql.toString()).getResultList();
+				arr = new JSONArray(); //Операции
+				sum = 0.0;
+
+				for (Object[] o : list) { //Считаем стоимость анастезии
+					JSONObject kd = new JSONObject();
+					cost = Double.valueOf(o[1].toString());
+					kd.put("sum", cost);
+					kd.put("name", o[0]);
+					kd.put("count", "1");
+					sum += cost;
+					arr.put(kd);
+				}
+				root.put("anesthesia", arr);
+				totalSum += sum;
+
+				//Доп. услуги
+				sql = new StringBuilder()
+						.append("select")
+						//.append(" so.id,to_char(so.dateStart,'dd.mm.yyyy')||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo")
+						.append(" pp.code||' '||pp.name as ppname")
+						.append(" ,pp.cost as ppcost")
+						.append(" ,mkb.code as mkbcode")
+						.append(" ,coalesce(so.medserviceamount,'1') as f6_amount")
+						.append(" ,pp.cost*coalesce(so.medserviceamount,'1') as f7_sum")
+						.append(" from MedCase so")
+						.append(" left join VocIdc10 mkb on mkb.id=so.idc10_id")
+						.append(" left join workfunction wf on wf.id=so.workFunctionExecute_id")
+						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+						.append(" left join worker w on w.id=wf.worker_id")
+						.append(" left join patient wp on wp.id=w.person_id")
+						.append(" left join medcase slo on slo.id=so.parent_id")
+						.append(" left join vocservicestream vss on vss.id=so.servicestream_id")
+						.append(" left join medservice ms on ms.id=so.medservice_id")
+						.append(" left join pricemedservice pms on pms.medservice_id=so.medservice_id")
+						.append(" left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='").append(priceListId).append("'")
+						.append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("')")
+						.append(" and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' and pp.id is not null");
+				LOG.info("calc price, dop_uslugi = " + sql);
+				list = theManager.createNativeQuery(sql.toString()).getResultList();
+				arr = new JSONArray(); //Операции
+				sum = 0.0;
+
+				for (Object[] o : list) { //Считаем стоимость Доп. услуги
+					JSONObject kd = new JSONObject();
+					cost = Double.valueOf(o[1].toString());
+					kd.put("sum", cost);
+					kd.put("name", o[0]);
+					kd.put("count", "1");
+					sum += cost;
+					arr.put(kd);
+				}
+				root.put("otherServices", arr);
+				totalSum += sum;
+				root.put("totalSum", totalSum);
+			} else if (hmc.getServiceStream().getFinanceSource()!=null&&(hmc.getServiceStream().getFinanceSource().equals("BUDGET1")||hmc.getServiceStream().getFinanceSource().equals("OBLIGATORY1"))) { //ОМС - узнаем у Звягина
+					try {
+						String[] arr ={"",""};// getDataByReferencePrintNotOnlyOMS(aMedcaseId,"HOSP",false,"OTHER','BUDGET").split("&");
+						for (int j=0;j<arr.length;j++) {
+							if (arr[j].startsWith("render")) {
+								String[] arrPrice =arr[j].split("%23");
+								String price = arrPrice[0].substring(7,arrPrice[0].length());
+								root.put("totalSum",price);
+
+
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					root.put("totalSum",0.00);
+				}
+			dtype="Hospital";
+            } else if (mc instanceof PolyclinicMedCase) {
+
+				dtype="POlyclinic";
+			}else {
+                dtype="unknow";
+            }
+			root.put("dtype",dtype);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return root.toString();
+	}
+public String getDefaultParameterByConfig (String aParameter, String aDefaultValue) {
+		List<Object[]> list =  theManager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key='" +aParameter+"'").getResultList();
+		if (!list.isEmpty()) {
+			return list.get(0)[1].toString();
+		} else {
+			return aDefaultValue;
+		}
+}
+	private  StringBuilder param(String aParam, Object aValue) {
+		StringBuilder ret = new StringBuilder();
+		if (aValue!=null &&!(""+aValue).equals("")) {
+			ret.append("&").append(aParam).append("=").append(aValue) ;
+		}
+		return ret ;
+	}
+	private  StringBuilder getRender(String aHtmlCode,Object aAdditionDataFrom, Object aAdditionDataTo) {
+		String[] htm = aHtmlCode.toUpperCase().split("BODY") ;
+		StringBuilder ret = new StringBuilder() ;
+		if (htm.length>2) {
+			aHtmlCode = htm[1].substring(1) ;
+			if (aHtmlCode.length()>2) {
+				aHtmlCode = aHtmlCode.substring(0,aHtmlCode.length()-2) ;
+			}
+			String[] s = aHtmlCode.trim().split("#") ;
+			if (s.length>1) {
+				ret.append(s[0]).append("#").append(aAdditionDataFrom).append(s[1]).append(aAdditionDataTo) ;
+			}
+			return ret;
+		} else {
+			return ret ;
+		}
+	}
+	/**
+	 * Расчитываем значения для отправки на сервис экспертизы
+
+
+	 */
+
 
 	public String getDischargeEpicrisis(long aMedCaseId) {
 		return HospitalMedCaseViewInterceptor.getDischargeEpicrisis(aMedCaseId, theManager) ;

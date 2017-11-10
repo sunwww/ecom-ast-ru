@@ -8,6 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.json.JSONException;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -22,6 +23,7 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
+	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aServiceStream);
     public void finishMonitor(long aMonitorId) ;
     public void startMonitor(long aMonitorId) ;
     public void addMonitor(long aMonitorId, int aInt) ;

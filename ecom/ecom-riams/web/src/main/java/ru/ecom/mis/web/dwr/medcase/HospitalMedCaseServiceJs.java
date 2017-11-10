@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
+import org.jboss.ejb3.dd.Inject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
@@ -31,6 +32,11 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+
+	public String getMedcaseCost(String aDateFrom, String aDateTo, String aType, HttpServletRequest aRequest ) throws NamingException {
+		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
+		return service.makeReportCostCase(aDateFrom,aDateTo,aType,"");
+	}
 	public Long checkIsEndoscopyMethod (Long aMethodId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select case when endoscopyUse='1' then '1' else '0' end from VocOperationMethod where id="+aMethodId) ;

@@ -16,8 +16,9 @@
 				<div class='menu'>
 				<h2>Работа с данными</h2>
 				<ul>
-					<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:sendDiary()">
-						TEST = отправить дневник в ЛК
+					<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:sendDiary(this)">
+						Сформировать файл об оказанной помощи иногородним или иностранцам
+						<div id="miacFileLinkDiv"></div>
 					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/Disability/Case/Document/ExportDocument' action="/javascript:getLNNumberRange()">
                             Получить номера электронных больничных листов (ЭЛН)
@@ -184,6 +185,7 @@
 		 <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
 		 <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 		 <script type='text/javascript' src='./dwr/interface/ContractService.js'></script>
+		 <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
 	   <script type="text/javascript">
 
            function getLNNumberRange() {
@@ -201,14 +203,20 @@
 					});
 			   }
 		   }
-		   function sendDiary() {
-               var typeT="OMC";
-	         alert ("getSpecs "+typeT);
-           ContractService.getSpecializations(typeT, {
-               callback:function (res) {
-                   alert ("результат: "+res);
-			   }
-		   });
+		   function sendDiary(htm) {
+               var dateFrom = prompt("Дата начала",'01.01.2017');
+               var dateTo = prompt("Дата окончания",'31.10.2017');
+               var type = prompt("Тип файла (inog, inos)",'inog');
+               HospitalMedCaseService.getMedcaseCost(dateFrom,dateTo,type, {
+                   callback: function (fileUrl) {
+                       var str = "<a href='"+fileUrl+"'>Скачать файл</a>";
+                       alert(str);
+                       jQuery(htm).html(str);
+				   }
+			   });
+               jQuery('#miacFileLinkDiv').html("Подождите, идет формирование файла");
+
+
 	   }
 	   function deleteAllTalons () {
 
