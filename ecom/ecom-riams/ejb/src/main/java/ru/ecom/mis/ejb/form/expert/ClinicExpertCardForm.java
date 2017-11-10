@@ -30,7 +30,7 @@ public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 
 	/** Описание состояния здоровья пациента */
 	@Comment("Описание состояния здоровья пациента")
-	@Persist
+	@Persist @Required
 	public String getPatientHealthInfo() {return thePatientHealthInfo;}
 	public void setPatientHealthInfo(String aPatientHealthInfo) {thePatientHealthInfo = aPatientHealthInfo;}
 	/** Описание состояния здоровья пациента */
