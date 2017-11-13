@@ -14,15 +14,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Comment("Перевязка")
-@AIndexes({
-        @AIndex(properties="medCase"),
-        @AIndex(properties="theStartDate"),
-        @AIndex(properties={"surgeon"}),
-        @AIndex(properties={"medService"}),
-        @AIndex(properties="patient"),
-        @AIndex(properties="serviceStream"),
-        @AIndex(properties="department")
-})
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
 public class Bandage extends MedicalManipulation {
