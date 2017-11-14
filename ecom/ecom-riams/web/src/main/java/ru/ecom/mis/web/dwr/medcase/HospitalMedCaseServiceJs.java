@@ -33,9 +33,9 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  */
 public class HospitalMedCaseServiceJs {
 
-	public String getMedcaseCost(String aDateFrom, String aDateTo, String aType, HttpServletRequest aRequest ) throws NamingException {
+	public String getMedcaseCost(String aDateFrom, String aDateTo, String aType, String aLpuCode, HttpServletRequest aRequest ) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
-		return service.makeReportCostCase(aDateFrom,aDateTo,aType,"");
+		return service.makeReportCostCase(aDateFrom,aDateTo,aType,aLpuCode);
 	}
 	public Long checkIsEndoscopyMethod (Long aMethodId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

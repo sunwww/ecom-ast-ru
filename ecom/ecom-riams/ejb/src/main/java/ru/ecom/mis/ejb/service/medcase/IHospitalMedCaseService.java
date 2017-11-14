@@ -23,7 +23,7 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  * Time: 10:23:02
  */
 public interface IHospitalMedCaseService {
-	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aServiceStream);
+	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode);
     public void finishMonitor(long aMonitorId) ;
     public void startMonitor(long aMonitorId) ;
     public void addMonitor(long aMonitorId, int aInt) ;

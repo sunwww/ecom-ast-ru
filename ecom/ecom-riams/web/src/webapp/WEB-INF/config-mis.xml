@@ -323,6 +323,13 @@
 
 	<action-mappings>
 	
+	 <action path='/journal_foreignPatients' type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm'
+                validate='false'
+                scope="session"
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/foreignPatientReport.jsp" />
+        </action>
 	 <action path='/telemedos' type='ru.ecom.web.actions.base.ForwardAction'
                 name='contract_reportsForm'
                 validate='false'
