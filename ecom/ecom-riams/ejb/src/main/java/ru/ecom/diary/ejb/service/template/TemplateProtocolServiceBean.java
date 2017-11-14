@@ -242,7 +242,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				" left join medcase spo on spo.patient_id=pat.id" +
 				" left join medcase mc on mc.parent_id=spo.id" +
 				" left join diary prot on prot.medcase_id = mc.id and prot.dtype='Protocol'" +
-				" left join document dd on dd.medcase_id=mc.id" +
+				" left join document dd on dd.medcase_id=mc.id and dd.dtype='DischargeDocument'" +
 				" left join medcase smc on smc.parent_id=mc.id and smc.dtype='ServiceMedCase'" +
 				" left join medservice ms on ms.id=smc.medservice_id" +
 				" left join vocservicetype vst on vst.id=ms.servicetype_id" +
@@ -261,6 +261,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				serviceType=rec[2].toString();
 				if (serviceType.equals("VISIT")) { //визит к врачу (не диагностика), выгружаем только выписки из амб. карты (dischargeDocument)
 					if (rec[0]!=null&&!rec[0].equals("")){
+						log.info("У визита "+rec[1]+" есть выписка, вот она: "+rec[0]);
 						DischargeDocument dd =aManager.find(DischargeDocument.class,Long.valueOf(rec[0].toString()));
 						record = dd.getHistory();
 						externalCaseId = lpuCode+"#"+serviceType+"#"+(record!=null?record.hashCode():0);
