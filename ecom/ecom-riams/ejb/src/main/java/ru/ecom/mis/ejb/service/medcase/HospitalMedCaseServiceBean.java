@@ -1091,8 +1091,8 @@ private HashMap getRegions() {
 	 * @param aServiceStream
 	 * @return
 	 */
-	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode) { //Формируем файл для миаца
-//		формируем файл
+	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode) {
+
 
 		//Начинаем стационар
  		StringBuilder sqlSelect = new StringBuilder();
@@ -1131,7 +1131,7 @@ private HashMap getRegions() {
 				.append(" left join address2 a on a.addressid=pat.address_addressid")
 				.append(" left join vocservicestream vss on vss.id=sls.servicestream_id")
 				.append(" where sls.dateFinish between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
-				.append(" and sls.dtype='HospitalMedCase' and a.region_addressid is not null")
+				.append(" and sls.dtype='HospitalMedCase'")
 				.append(sqlAppend)
 				.append(" group by vss.financesource, vbt.code, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
 				.append(" order by to_char(sls.datefinish,'yyyy-MM')");
@@ -1221,7 +1221,15 @@ private HashMap getRegions() {
 
 			//Начинаем искать пол-ку
 			sql = new StringBuilder();
-			String priceListId="4";
+		list = theManager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
+		String priceListId = null;
+		if (list.size()==0) {
+			 LOG.error("Не указан прайс-лист по умолчанию, невозможно посчитать цену");
+		} else {
+			priceListId=list.get(0).toString();
+		}
+
+
 			sql.append("select to_char(vis.datestart,'yyyy-MM') as f0_date")
 					.append(" ,count(distinct pat.id) as f1_person_count")
 					.append(sqlSelect).append(" as f2_address")
@@ -1231,18 +1239,18 @@ private HashMap getRegions() {
 					.append(",list(''||vis.id) as f6_listVisits")
 					.append(" from medcase spo")
 					.append(" left join medcase vis on vis.parent_id=spo.id")
-					.append(" left join medcase smc on smc.parent_id=vis.id")
+					.append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
 					.append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
-					.append(" left join priceposition pp on pp.id=pms.priceposition_id")
+					.append(" left join priceposition pp on pp.id=pms.priceposition_id ").append((priceListId!=null?" and pp.pricelist_id="+priceListId:""))
 					.append(" left join patient pat on pat.id=vis.patient_id")
 					.append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
 					.append(" left join address2 a on a.addressid=pat.address_addressid")
 					.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
 					.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
 					.append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
-					.append(" where spo.dtype='PolyclinicMedCase' and vis.dtype='Visit' and smc.dtype='ServiceMedCase'")
+					.append(" where spo.dtype='PolyclinicMedCase' and (vis.dtype='Visit' or vis.dtype='ShortMedCase') ")
 					.append(" and vis.datestart between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
-					.append(" and vss.financesource is not null and vss.financesource!='' and pp.pricelist_id=").append(priceListId)
+					.append(" and vss.financesource is not null and vss.financesource!='' ")
 					.append(sqlAppend)
 					.append(" group by to_char(vis.datestart,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
 			LOG.info("===========repotr_pol = "+sql);
