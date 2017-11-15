@@ -41,7 +41,7 @@
         </td>
       </msh:row>
     <msh:row>
-      <input type="button" value="Сформировать файл" onclick="javascript:makeReport()">
+      <input type="button" id="submitButton" value="Сформировать файл" onclick="javascript:makeReport()">
     </msh:row>
     <msh:row>
       <div style="font-size: 40px; color: #00aa00" id="resultDiv"></div>
@@ -54,22 +54,36 @@
     <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
   <script type="text/javascript">
     function makeReport() {
-        jQuery("input:button").prop("disabled",true);
+        //jQuery("input:button").prop("disabled",true);
+        $('submitButton').disabled=true;
+        //var lpu = jQuery('#lpuDirect').val();
+        //var dateFrom = jQuery("#dateBegin").val();
+        //var dateTo = jQuery("#dateEnd").val();
         var lpu = jQuery('#lpuDirect').val();
         var dateFrom = jQuery("#dateBegin").val();
         var dateTo = jQuery("#dateEnd").val();
-        if (lpu=="") {alert ("Укажите код ЛПУ в справочнике МИАЦа!");return;}
-        if (dateFrom==""||dateTo=="") {alert ("Укажите период!");return;}
-        var type = jQuery("input[name=typeGroup]:radio:checked").val();
-        alert (dateFrom+"<>"+dateTo+"<>"+type);
+        if (lpu=="") {alert ("Укажите код ЛПУ в справочнике МИАЦа!");$('submitButton').disabled=false;return;}
+        if (dateFrom==""||dateTo=="") {alert ("Укажите период!");$('submitButton').disabled=false;return;}
+        var type ;//= jQuery("input[name=typeGroup]:radio:checked").val();
+        var list = document.getElementsByName('typeGroup');
+        for (var i=0;i<list.length;i++) {
+            if (list[i].checked) {
+                type=list[i].value;
+                break;
+            }
+        }
+       // alert (dateFrom+"<>"+dateTo+"<>"+type);
         HospitalMedCaseService.getMedcaseCost(dateFrom,dateTo,type,lpu, {
             callback: function (fileUrl) {
                 var str = "<a target='_blank' href='"+fileUrl+"'>Сохранить файл</a>";
-                jQuery('#resultDiv').html(str);
-                jQuery("input:button").prop("disabled",false);
+                //jQuery('#resultDiv').html(str);
+                $('resultDiv').innerHTML=str;
+                //jQuery("input:button").prop("disabled",false);
+                $('submitButton').disabled=false;
             }
         });
-        jQuery('#resultDiv').html("Подождите, идет формирование файла...");
+        //jQuery('#resultDiv').html("Подождите, идет формирование файла...");
+        $('resultDiv').innerHTML="Подождите, идет формирование файла...";
     }
   </script>
   </tiles:put>
