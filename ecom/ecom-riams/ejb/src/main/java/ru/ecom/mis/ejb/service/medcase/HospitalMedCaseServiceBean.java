@@ -1221,12 +1221,12 @@ private HashMap getRegions() {
 
 			//Начинаем искать пол-ку
 			sql = new StringBuilder();
-		list = theManager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
+		list = theManager.createNativeQuery("select id , id from pricelist where isdefault='1'").getResultList();
 		String priceListId = null;
 		if (list.size()==0) {
 			 LOG.error("Не указан прайс-лист по умолчанию, невозможно посчитать цену");
 		} else {
-			priceListId=list.get(0).toString();
+			priceListId=list.get(0)[0].toString();
 		}
 
 
