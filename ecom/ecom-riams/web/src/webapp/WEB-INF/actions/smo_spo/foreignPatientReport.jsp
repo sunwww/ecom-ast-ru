@@ -59,9 +59,9 @@
         //var lpu = jQuery('#lpuDirect').val();
         //var dateFrom = jQuery("#dateBegin").val();
         //var dateTo = jQuery("#dateEnd").val();
-        var lpu = jQuery('#lpuDirect').val();
-        var dateFrom = jQuery("#dateBegin").val();
-        var dateTo = jQuery("#dateEnd").val();
+        var lpu = $('lpuDirect').value;
+        var dateFrom = $("dateBegin").value;
+        var dateTo = $("dateEnd").value;
         if (lpu=="") {alert ("Укажите код ЛПУ в справочнике МИАЦа!");$('submitButton').disabled=false;return;}
         if (dateFrom==""||dateTo=="") {alert ("Укажите период!");$('submitButton').disabled=false;return;}
         var type ;//= jQuery("input[name=typeGroup]:radio:checked").val();
