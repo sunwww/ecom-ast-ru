@@ -111,6 +111,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		HashMap<String, String> policProfiles = new HashMap<String, String>();
 
 		policProfiles.put("80","другое");
+		policProfiles.put("0S","другое");
 		policProfiles.put("11","акушерство и гинекология");
 		policProfiles.put("13","аллергология и иммунология");
 		policProfiles.put("14","анестезиология и реаниматология");
@@ -167,7 +168,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		policProfiles.put("88","эндокринология");
 		policProfiles.put("89","эндоскопия");
 		policProfiles.put("71","терапия");
+		policProfiles.put("72","терапия");
 		policProfiles.put("44","педиатрия");
+		policProfiles.put("45","педиатрия");
 		policProfiles.put("38","общая врачебная практика (семейная медицина)");
 		policProfiles.put("65","скорая медицинская помощь");
 		return policProfiles;
@@ -1289,7 +1292,14 @@ private HashMap getRegions() {
 
 					}
 				} else {
-					totalSum = Double.valueOf(s(row[5]));
+
+					try {
+						totalSum = Double.valueOf(s(row[5]));
+					} catch (NumberFormatException e) {
+						LOG.error("Не удалось посчитать цену поликлинического случая: "+s(row[5]));
+						totalSum=0.0;
+						e.printStackTrace();
+					}
 				}
 				if (totalSum > 0.0) {
 					period[1] = period[1].startsWith("0") ? period[1].substring(1) : period[1];
@@ -1341,18 +1351,6 @@ private HashMap getRegions() {
 			LOG.error("some exception");
 			e.printStackTrace();
 		}
-		/*txtFile.append(miacLpuCode).append("\n")
-							.append(period[0]).append("\n")
-							.append(period[1]).append("\n")
-							.append(region).append("\n")
-							.append(uslovia).append("\n")
-							.append(profile).append("\n")
-							.append(sredstvaMap.get(financeSource)).append("\n")
-							.append(patientCount).append("\n")
-						//	.append(totalSum).append("\n");
-							.append(new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN).doubleValue()).append("\n");*/
-
-
 		//	LOG.info("TXT file = "+txtFile);
 
 		return createFile(txtFile,aType);
