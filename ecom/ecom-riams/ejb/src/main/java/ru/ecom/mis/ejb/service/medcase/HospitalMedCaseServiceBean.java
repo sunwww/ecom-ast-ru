@@ -1113,7 +1113,11 @@ private HashMap getRegions() {
 			LOG.error("NO VALID TYPE");
 			return "---1";
 		}
-
+		List<Object[]> list = theManager.createNativeQuery("select id , id from PriceList where isdefault='1'").getResultList();
+		String priceListId = null;
+		if (list.size()>0) {
+			priceListId=list.get(0)[0].toString();
+		}
 		StringBuilder sql = new StringBuilder()
 				.append(" select to_char(sls.datefinish,'yyyy-MM') as f0_date")
 				.append(" ,count(distinct pat.id) as f1_person_count")
@@ -1136,7 +1140,7 @@ private HashMap getRegions() {
 				.append(" group by vss.financesource, vbt.code, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
 				.append(" order by to_char(sls.datefinish,'yyyy-MM')");
 		LOG.info("repotr_stac = "+sql);
-		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
+		 list = theManager.createNativeQuery(sql.toString()).getResultList();
 		LOG.info("repotr_stac found "+list.size()+" records");
 		String region, profile, financeSource, patientCount;
 		String[] period, hosps;
@@ -1157,7 +1161,7 @@ private HashMap getRegions() {
 				if (financeSource.equals("CHARGED")) { //Платные случаи
 
 						for (String hosp : hosps) {
-							JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim())));
+							JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()),priceListId));
 							totalSum += hospitalInfo.getDouble("totalSum");
 						}
 
@@ -1221,13 +1225,8 @@ private HashMap getRegions() {
 
 			//Начинаем искать пол-ку
 			sql = new StringBuilder();
-		list = theManager.createNativeQuery("select id , id from pricelist where isdefault='1'").getResultList();
-		String priceListId = null;
-		if (list.size()==0) {
-			 LOG.error("Не указан прайс-лист по умолчанию, невозможно посчитать цену");
-		} else {
-			priceListId=list.get(0)[0].toString();
-		}
+		LOG.warn("Start search policlinic");
+
 
 
 			sql.append("select to_char(vis.datestart,'yyyy-MM') as f0_date")
@@ -1375,17 +1374,27 @@ private HashMap getRegions() {
 		}
 		return "NO_FILE";
 	}
-
+	public String countMedcaseCost (Long aMedcaseId) {return  countMedcaseCost(aMedcaseId,null);}
 	/**
 	 * Расчитываем стоимость случая госпитализации
 	 * @param aMedcaseId ID госпитализации
 	 * @return - JSON объект с полной стоимостью + список оказанных услуг
 	 */
-	public String countMedcaseCost (Long aMedcaseId) {
+	public String countMedcaseCost (Long aMedcaseId, String aPriceListId) {
 		JSONObject root = new JSONObject();
 		try {
+			String priceListId=null;
+			if (aPriceListId!=null) {
+				priceListId=aPriceListId;
+			} else {
+				LOG.info("deb0");
 
-			String priceListId = theManager.createNativeQuery("select max(id) from pricelist where isdefault='1'").getSingleResult().toString();
+				List<Object> list = theManager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
+				if (list!=null&&list.size()>0) {
+					priceListId=list.get(0).toString();
+				}
+				LOG.info("deb0-1");
+			}
 			String idsertypebed = "11";
 			String dtype="";
 			Long patientId;
@@ -1393,7 +1402,6 @@ private HashMap getRegions() {
 			MedCase mc = (MedCase) theManager.createQuery(" from MedCase where id=:id").setParameter("id",aMedcaseId).getSingleResult();
 			if (mc instanceof HospitalMedCase) {
 				HospitalMedCase hmc = (HospitalMedCase) mc;
-
 				patientId = hmc.getPatient().getId();
 				serviceStreamId = hmc.getServiceStream().getId();
 				String startDate = DateFormat.formatToDate(hmc.getDateStart());
@@ -1428,7 +1436,7 @@ private HashMap getRegions() {
 						.append(" left join priceposition pp on pp.id=pms.priceposition_id")
 						.append(" and (pp.isvat is null or pp.isvat='0')")
 						.append(" where slo.parent_id=").append(mc.getId())
-						.append(" and ms.servicetype_id='").append(idsertypebed).append("' and pp.priceList_id='").append(priceListId).append("'")
+						.append(" and ms.servicetype_id='").append(idsertypebed).append("' ").append((priceListId!=null?" and pp.priceList_id='"+priceListId+"'":""))
 						.append(" group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code");
 				List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
 				JSONArray arr = new JSONArray(); //Койко-дни
@@ -1465,9 +1473,9 @@ private HashMap getRegions() {
 						.append("	and upper(vis.dtype)='VISIT' and (vss.code='HOSPITAL' or vss.id='").append(serviceStreamId).append("' or vss.code='OTHER')")
 						.append("	or")
 						.append("	vis.datestart-to_date('").append(startDate).append("','dd.mm.yyyy') = -1")
-						.append("	and upper(vis.dtype)='VISIT' and ( vss.id='").append(serviceStreamId).append("' ))")
-						.append(" and pp.priceList_id='").append(priceListId).append("'")
-						.append(" and (vis.noActuality='0' or vis.noActuality is null)")
+						.append("	and upper(vis.dtype)='VISIT' and ( vss.id='").append(serviceStreamId).append("' ))");
+						if (priceListId!=null){sql.append(" and pp.priceList_id='").append(priceListId).append("'");}
+						sql.append(" and (vis.noActuality='0' or vis.noActuality is null)")
 						.append(" order by vis.datestart");
 				list = theManager.createNativeQuery(sql.toString()).getResultList();
 				arr = new JSONArray(); //Диагностика
@@ -1657,6 +1665,7 @@ private HashMap getRegions() {
             }
 			root.put("dtype",dtype);
 		} catch (JSONException e) {
+			LOG.error("some JSON exception happens");
 			e.printStackTrace();
 		}
 
