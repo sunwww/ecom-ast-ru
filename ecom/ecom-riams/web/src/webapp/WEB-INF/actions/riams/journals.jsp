@@ -16,6 +16,9 @@
 				<div class='menu'>
 				<h2>Сообщения</h2>
 				<ul style='list-style: none outside none; '>
+					<li><msh:link roles='/Policy/Mis/MedCase/Visit/Report039' action="journal_foreignPatients.do">
+						Отчет об оказанной помощи иногородними и иностранцам
+					</msh:link></li>
 					<li><msh:link roles='/Policy/Mis/Journal/InfectiousMessages' action="journal_infectMessage.do">
                             Журнал экстренных сообщений об инфекции
                         </msh:link></li>
