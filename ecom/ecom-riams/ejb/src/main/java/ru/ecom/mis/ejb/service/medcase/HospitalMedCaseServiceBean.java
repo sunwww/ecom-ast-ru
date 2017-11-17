@@ -4265,6 +4265,9 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					if (obj[2]!=null) {
 						theManager.createNativeQuery("update MedCase set prevMedCase_id='"+aSlo+"' where id='"+obj[2]+"'").executeUpdate() ;
 					}
+					if (theManager.createNativeQuery("select id from newborn where medcase_id='"+obj[1]+"'").getResultList().size()>0||theManager.createNativeQuery("select id from childbirth where medcase_id='"+obj[1]+"'").getResultList().size()>0) {
+						throw new IllegalArgumentException("Невозможность объединить СЛО, т.к. имеются данные по родам!");
+					}
 					theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
 				}
 			} else {
