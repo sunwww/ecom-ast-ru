@@ -163,7 +163,7 @@
       </msh:row>
       <msh:row>
         <td class="label" title="Пациенты  (typeRead)" colspan="1"><label for="typeReadName" id="typeReadLabel">Отображать:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';$('typeResultDiv').style.display='block';">
+        <td onclick="this.childNodes[1].checked='checked';$('typeResultDiv').style='';">
         	<input type="radio" name="typeRead" value="1">  xml-файл (прик. население)
         </td>
        
@@ -174,8 +174,8 @@
         	<input type="radio" name="typeRead" value="3">  xml-файл (план ДД)
         </td>
        </msh:row>
-           <msh:row >
-               <div id="typeResultDiv" style="display:none;">
+           <msh:row styleId="typeResultDiv" >
+
                <td class="label" title="Пациенты  (typeResult)" colspan="1"><label for="typeResultName" id="typeResultLabel">Отображать:</label></td>
                <td onclick="this.childNodes[1].checked='checked';">
                    <input type="radio" name="typeResult" value="xml" checked>  xml-файл
@@ -187,7 +187,7 @@
                <td onclick="this.childNodes[1].checked='checked';">
                    <input type="radio" name="typeResult" value="zip"> zip архив
                </td>
-               </div>
+
            </msh:row>
   
        <msh:row>
