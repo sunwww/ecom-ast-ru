@@ -539,7 +539,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	}
 		if (filenames.length()>0&&aReturnType!=null&&(aReturnType.equals("prik")||aReturnType.equals("zip"))) { //Если надо сделать архивы
 			String[] files = filenames.substring(1).split("#");
-			String[] zipFiles= filenames.substring(1).replace(".xml#",".prik#").split("#");
+			String[] zipFiles= filenames.substring(1).replace(".xml",".prik").split("#");
 			for (String s: files) {
 				String[] ss ={s};
 				createArchive(workDir,s.replace(".xml",".prik"),ss);
