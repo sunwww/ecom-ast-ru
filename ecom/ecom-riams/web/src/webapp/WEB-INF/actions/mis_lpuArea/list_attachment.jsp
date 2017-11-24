@@ -352,6 +352,7 @@
       }
 
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
+
           if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
               jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
           } else {

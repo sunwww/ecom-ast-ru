@@ -542,7 +542,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 			String[] zipFiles= filenames.substring(1).replace(".xml#",".prik#").split("#");
 			for (String s: files) {
 				String[] ss ={s};
-				createArchive(workDir,s+".prik",ss);
+				createArchive(workDir,s.replace(".xml",".prik"),ss);
 
 			}
 			res.set1(filenames.toString().substring(1).replace(".xml",".prik"));
@@ -567,6 +567,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 					sb.append(aWorkDir).append("/").append(aFileNames[i]).append(" ");
 				}
 				try {
+					System.out.println("START EXECUTING = "+sb);
 					Runtime.getRuntime().exec(sb.toString());//arraCmd);
 				} catch (IOException e) {
 					e.printStackTrace();
