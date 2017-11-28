@@ -58,6 +58,26 @@ public class VocQualityEstimationCritForm extends IdEntityForm {
 		public Long getParent() {return theParent;}
 		public void setParent(Long aParent) {theParent = aParent;}
 
+		/** Коды медицинских услуг */
+		@Comment("Коды медицинских услуг")
+		@Persist
+		public String getMedServiceCodes() {
+			return medServiceCodes;
+		}
+		public void setMedServiceCodes(String medServiceCodes) {
+			this.medServiceCodes = medServiceCodes;
+		}
+
+		/** Логический тип критерия? */
+		@Comment("Логический тип критерия?")
+		@Persist
+		public Boolean getBoolean() {
+			return isBoolean;
+		}
+		public void setBoolean(Boolean aBoolean) {
+			isBoolean = aBoolean;
+		}
+
 		/** Родитель */
 		private Long theParent;
 		/** Тип критерия */
@@ -70,4 +90,8 @@ public class VocQualityEstimationCritForm extends IdEntityForm {
 		private String theName;
 		 /** Вид оценки качества*/
 		 private Long theKind;
+		/** Коды медицинских услуг */
+		private String medServiceCodes;
+		/** Логический тип критерия? */
+		private Boolean isBoolean;
 }

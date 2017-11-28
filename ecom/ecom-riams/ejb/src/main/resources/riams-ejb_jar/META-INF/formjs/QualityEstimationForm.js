@@ -8,20 +8,20 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function onCreate(aForm, aEntity, aContext){
+///set comment
 	var crits = aForm.criterions.split("#") ;
 	if (crits.length>0 && aForm.criterions!=null && aForm.criterions !="") {
-		//var id = aEntity.id ;
-			
 		for (var i=0; i<crits.length; i++) {
 			var param = crits[i].split(":") ;
 			var qec = new Packages.ru.ecom.mis.ejb.domain.expert.QualityEstimationCrit() ;
-			var mark = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark
-					,java.lang.Long.valueOf(param[1])) ;
+			var mark = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark,java.lang.Long.valueOf(param[1]));
+			var crit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit,java.lang.Long.valueOf(param[0]));
+			if (param[3]!=null) {
+                qec.setComment(param[3]);
+			}
 			qec.setMark(mark) ;
-			qec.setCriterion(mark.criterion) ;
 			qec.setEstimation(aEntity) ;
-			
-			
+			qec.setCriterion(crit) ;
 			aContext.manager.persist(qec) ;
 			if (param.length>2&&(""+param[2]!="")) { //Проставляем дефекты 
 				var defects = (""+param[2]).split(",");
@@ -34,7 +34,6 @@ function onCreate(aForm, aEntity, aContext){
 				}
 			}
 			critsMap.put(+mark.criterion.id,(mark.isIgnore!=null&&mark.isIgnore.equals(java.lang.Boolean.TRUE))?null:mark.mark) ;
-			//aContext.manager.createNativeQuery("insert into QualityEstimationCrit (estimation_id,mark_id) values ('"+id+"','"+param[1]+"')").executeUpdate() ;
 		}
 		
 		var list1 = aContext.manager.createNativeQuery("select vqec.id as vqecid "
@@ -104,5 +103,4 @@ function onSave(aForm, aEntity, aContext){
 	
 }
 function onPreSave(aForm,aEntity , aCtx) {
-
 }

@@ -37,6 +37,10 @@ public class HospitalMedCaseServiceJs {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
 		return service.makeReportCostCase(aDateFrom,aDateTo,aType,aLpuCode);
 	}
+	public String getAllServicesByMedCase(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
+		return service.getAllServicesByMedCase(aMedcaseId);
+	}
 	public Long checkIsEndoscopyMethod (Long aMethodId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l= service.executeNativeSql("select case when endoscopyUse='1' then '1' else '0' end from VocOperationMethod where id="+aMethodId) ;

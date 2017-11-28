@@ -106,6 +106,8 @@
     <msh:sideLink roles="/Policy/Mis/Inspection/View" name="Осмотры"     
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
+          <tags:QECriteria name="QECriteria" />
+          <msh:sideLink styleId="viewShort" action="/javascript:showQECriteriaCloseDocument(${param.id})" name='Критерии' title="Просмотр критериев" params="" roles="/Policy/Mis/MedCase/Visit/View" />
       </msh:sideMenu>
       <msh:sideMenu title="Печать">
       
@@ -784,34 +786,39 @@ where m.id ='${param.id}'"/>
       		}
       	}
       	function addRowDiag(aDiagType,aMkb,aMkbName,aDiagnos,aIsLoad) {
-      		var table = document.getElementById('other'+aDiagType+"DiagsTable");
-      		var row = document.createElement('TR');
-      		var td = document.createElement('TD');
-      		var tdDel = document.createElement('TD');
-      		table.appendChild(row);
-      		row.appendChild(td);
-      		var txt ="" ;addText="" ;
-      		if (aDiagType=="complication") {addText="ослож."} else if (aDiagType=="concomitant") {addText="сопут." ;}
-      		for (var i=0;i<theFld.length;i++) {
-      			var fld_i = theFld[i] ;
-      			if (fld_i[2]==1) {
-      				txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+": </label>"+eval("a"+fld_i[1]+"Name")+" <input type='hidden' value='"+eval("a"+fld_i[1])+"'><input type='hidden' value='"+eval("a"+fld_i[1]+"Name")+"'>"
-      			} else if (fld_i[2]==2) {
-      				txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+":  </label><input type='text' style='width:85%' value='"+eval("a"+fld_i[1])+"'>"
-      			}
-      			if (i<theFld.length-1) txt+="<br>" ; 
-      		}
-      		td.innerHTML=txt ;
-      		if (slo_form_is_view==0) {
-	      		row.appendChild(tdDel);
-	      		tdDel.style.width='2%' ;
-	      		tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\""+aDiagType+"\")' value='- диагноз' />"
-	      		+ "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;editMkbByDiag(\""+aDiagType+"\",node);' value='редак.' />";
-	      		if (+aIsLoad>0 && (+aMkb==0)) {
-	      			//if (+$(aDiagType+"Mkb").value==0) editMkbByDiag(aDiagType,row) ;  
-	      		}
-      		}
-      	}
+            var table = document.getElementById('other' + aDiagType + "DiagsTable");
+            var row = document.createElement('TR');
+            var td = document.createElement('TD');
+            var tdDel = document.createElement('TD');
+            table.appendChild(row);
+            row.appendChild(td);
+            var txt = "";
+            addText = "";
+            if (aDiagType == "complication") {
+                addText = "ослож."
+            } else if (aDiagType == "concomitant") {
+                addText = "сопут.";
+            }
+            for (var i = 0; i < theFld.length; i++) {
+                var fld_i = theFld[i];
+                if (fld_i[2] == 1) {
+                    txt += " <label class='" + aDiagType + "Diags'>" + fld_i[0] + " " + addText + ": </label>" + eval("a" + fld_i[1] + "Name") + " <input type='hidden' value='" + eval("a" + fld_i[1]) + "'><input type='hidden' value='" + eval("a" + fld_i[1] + "Name") + "'>"
+                } else if (fld_i[2] == 2) {
+                    txt += " <label class='" + aDiagType + "Diags'>" + fld_i[0] + " " + addText + ":  </label><input type='text' style='width:85%' value='" + eval("a" + fld_i[1]) + "'>"
+                }
+                if (i < theFld.length - 1) txt += "<br>";
+            }
+            td.innerHTML = txt;
+            if (slo_form_is_view == 0) {
+                row.appendChild(tdDel);
+                tdDel.style.width = '2%';
+                tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\"" + aDiagType + "\")' value='- диагноз' />"
+                    + "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;editMkbByDiag(\"" + aDiagType + "\",node);' value='редак.' />";
+                if (+aIsLoad > 0 && (+aMkb == 0)) {
+                    //if (+$(aDiagType+"Mkb").value==0) editMkbByDiag(aDiagType,row) ;
+                }
+            }
+        }
 
 </script>
 
