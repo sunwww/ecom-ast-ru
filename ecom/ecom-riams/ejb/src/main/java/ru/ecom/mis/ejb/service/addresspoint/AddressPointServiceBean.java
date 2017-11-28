@@ -568,6 +568,9 @@ public class AddressPointServiceBean implements IAddressPointService {
 				}
 				try {
 					System.out.println("START EXECUTING = "+sb);
+					try {
+						Runtime.getRuntime().exec("zip -d " + aWorkDir + "/" + archiveName + " *");//Удаляем архив перед созданием;
+					 } catch (Exception e ) {}//Не удалось очистить архив, т.к. его нету. Ничего страшного)
 					Runtime.getRuntime().exec(sb.toString());//arraCmd);
 				} catch (IOException e) {
 					e.printStackTrace();
