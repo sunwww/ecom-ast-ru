@@ -314,7 +314,7 @@ public class QualityEstimationServiceJs {
 			Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 			while (m.find()) {
 				allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
-				res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
+				//res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
 			}
 			//return res.toString();
 			/*m = Pattern.compile("\"vmscode\":\"\\S*\"},").matcher(json);
@@ -386,7 +386,7 @@ public class QualityEstimationServiceJs {
 			Long medcase;
 			String query = "";
 			if (!createEdit)
-				query = "select medcase_id from qualityestimationcard where id=" + qEId; //если создаётся новое
+				query = "select m.parent_id from qualityestimationcard qec left join medcase m on m.id=qec.medcase_id where qec.id=" + qEId; //если создаётся новое
 			else query = "select qecard.medcase_id from qualityestimationcard qecard\n" +
 					"left join qualityestimation qe on qe.card_id=qecard.id\n" +
 					"where qe.id=" + qEId; //если ред-е
@@ -395,9 +395,9 @@ public class QualityEstimationServiceJs {
 				medcase = Long.parseLong(list0.iterator().next().get1().toString());
 				String json = getAllServicesByMedCase(medcase, aRequest);
 				List<String> allMatches = new ArrayList<String>();
-				Matcher m = Pattern.compile("\"vmscode\":\"\\S*\"}]").matcher(json);
+				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 				while (m.find()) {
-					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", ""));
+					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
 				}
 				query = "select vqcrit.medservicecodes,qem.name\n" +
 						"from vocqualityestimationcrit vqcrit\n" +
