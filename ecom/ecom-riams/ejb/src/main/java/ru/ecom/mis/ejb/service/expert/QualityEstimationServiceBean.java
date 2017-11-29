@@ -428,15 +428,17 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 if (row[13]!=null) comments.append(row[13]);
 				 comments.append(";");
 				 if (row[14]!=null) comments.append(row[14]);
-				 if (list2!=null && list2.get(i)[1].equals("yes")) {
+				 int index=-1;
+				 if (list!=null) {
+					 for (int t = 0; t < list2.size(); t++) {
+						 if (list2.get(t)[0].toString().equals(list.get(i)[1].toString())) index = t;
+					 }
+				 }
+				 if (index!=-1 && list2!=null && list2.get(index)[1].equals("yes")) {
 					 table.append("<td valign='top' align='right'"+color1+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
 				 }
 				 else
 					 table.append("<td valign='top' align='right'"+color2+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
-					 
-			 
-				 
-				 //table.append("<td>").append(row[8]).append("</td>") ;
 				 //BranchManager - зав.отделением
 				 //Expert - эксперт
 				 //Coeur - КЭР
@@ -552,7 +554,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	private List<String[]> getExecutedCriterias(Long aCard) {
 
 		List<String[]> total = new ArrayList<String[]>();
-		String query="select vqecrit.code,vqecrit.name,vqecrit.medservicecodes\n" +
+		String query="select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes\n" +
 				"from vocqualityestimationcrit vqecrit\n" +
 				"left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id\n" +
 				"left join vocidc10 d on d.id=vqecrit_d.vocidc10_id\n" +
@@ -564,17 +566,21 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				"where qecard.id="+aCard+" and reg.code='4' and prior.code='1'";
 		List<Object[]> list = theManager.createNativeQuery(query).getResultList() ;
 		if (list.size()>0) {
-			query = "select medcase_id from qualityestimationcard qecard\n" +
+			query = "select m.parent_id from qualityestimationcard qecard\n" +
 					"left join qualityestimation qe on qe.card_id=qecard.id\n" +
+					"left join medcase m on m.id=qecard.medcase_id\n" +
 					"where qecard.id=" + aCard;
 			List<Object> list0 = theManager.createNativeQuery(query).getResultList();
 			if (list0.size() > 0) {
 				Long id = Long.parseLong(list0.get(0).toString());
+				//log(id);
 				String json=theHospitalMedCaseService.getAllServicesByMedCase(id);
+				//log(json);
 				List<String> allMatches = new ArrayList<String>();
-				Matcher m = Pattern.compile("\"vmscode\":\"\\S*\"}]").matcher(json);
+				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 				while (m.find()) {
-					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", ""));
+					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
+					//res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
 				}
 				for (int i = 0; i < list.size(); i++) {
 					String mcodes = (list.get(i)[2] != null) ? list.get(i)[2].toString() : "";
@@ -585,12 +591,16 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						for (int j = 0; j < allMatches.size(); j++) {
 							String scode = allMatches.get(j).toString();
 							if (mcodes.contains("'" + scode + "'")) flag = true;
+							//log("scode "+scode);
+							//log("mcodes"+mcodes);
 						}
 					}
 					if (flag) total.get(i)[1] = "yes";
 					else total.get(i)[1] = "no";
+					//log (flag);
 				}
 			}
+			//log("total"+total.toString());
 		}
 		return total;
 	}
