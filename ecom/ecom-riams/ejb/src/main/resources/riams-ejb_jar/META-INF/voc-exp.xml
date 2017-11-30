@@ -258,6 +258,18 @@
     		join= ""
     		order=""
     	/>
+    </voc>
+    <voc id='vocQualityEstimationMarkYesNo' type='NativeVocService'>
+        <NativeVocService
+                from = ' VocQualityEstimationMark vqem '
+                parent='  vqem.criterion_id = :parent '
+                names=" vqem.name "
+                nameId=" vqem.id "
+                queried=" ( upper(vqem.id) like upper(:query) or upper(vqem.name) like upper(:query) )"
+                join= ""
+                order=""
+        />
+    </voc>
     	<!-- type='EntityVocService'>
             <EntityVocService
                     entity  = 'ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark'
@@ -265,6 +277,6 @@
                     queried = 'mark'
                     parent  = 'criterion'
                     />-->
-    </voc>
+
     
 </vocconfig>

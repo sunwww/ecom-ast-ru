@@ -57,6 +57,7 @@
     
     <tags:expert_menu currentAction="expert_card"/>
     <tags:expert_enterCritComment name="Enter"/>
+    <tags:expert_commentYesNo name="YesNo"/>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <div id='loadJavascriptCriterion'></div>
@@ -69,14 +70,35 @@
   		</script>
   </msh:ifFormTypeIsCreate>
   		<script type="text/javascript">
+            var voc;
+           //alert($F('card'));
+            QualityEstimationService.IsQECardKindBoolean($F('card'), {
+                callback: function (k) {
+                   if (+k==1) {
+                       voc="vocQualityEstimationMarkYesNo";
+                   }
+                   else
+                       voc="vocQualityEstimationMark";
+                    //alert(voc);
+                }
+
+            });
   		var cntCrit = 0;
   			function loadDataCriterion() {
   				//alert($('criterions').value) ;
 	  			QualityEstimationService.getRowEdit($('criterions').value,$('card').value,$('expertType').value,false
 	  				,{
 						 callback: function(aRow) {
-						     	//alert(aRow) ;
+						     //alert(aRow.substring(1000));
 						     	if (aRow!=null) {
+						     	    if (voc=="vocQualityEstimationMarkYesNo") {
+						     	        //вывод других этапов
+						     	        aRow=aRow.replace(new RegExp('\'center\'>1.0<td', 'g'),'\'center\'>Да<td');
+                                        aRow=aRow.replace(new RegExp('\'center\'>0.0<td', 'g'),'\'center\'>Нет<td');
+                                        //вывод текущего этапа
+                                        aRow=aRow.replace(new RegExp('size="10" value="1.0 "', 'g'),'size="10" value="Да"');
+                                        aRow=aRow.replace(new RegExp('size="10" value="0.0 "', 'g'),'size="10" value="Нет"');
+                                    }
 						     		$('loadCriterion').innerHTML = aRow ;
 						     		cntCrit=+$('criterionSize').value ;
 			     					updateVoc();
@@ -109,15 +131,15 @@
 							}
 							//		 class ru.nuzmsh.web.tags.AutoCompleteTag
 							eval("var criterion"+ii+"Autocomplete = new msh_autocomplete.Autocomplete()") ;
-							eval("criterion"+ii+"Autocomplete.setUrl('simpleVocAutocomplete/vocQualityEstimationMark') ");
+							eval("criterion"+ii+"Autocomplete.setUrl('simpleVocAutocomplete/"+voc+"') ");
 							eval("criterion"+ii+"Autocomplete.setIdFieldId('criterion"+ii+"') ");
 							eval("criterion"+ii+"Autocomplete.setNameFieldId('criterion"+ii+"Name') ");
 							eval("criterion"+ii+"Autocomplete.setDivId('criterion"+ii+"Div') ");
-							eval("criterion"+ii+"Autocomplete.setVocKey('vocQualityEstimationMark') ");
+							eval("criterion"+ii+"Autocomplete.setVocKey('"+voc+"') ");
 							eval("criterion"+ii+"Autocomplete.setVocTitle('Оценка зав.отд.')") ;
 							eval("criterion"+ii+"Autocomplete.build() ");
 							eval("criterion"+ii+"Autocomplete.setParentId('"+$('criterion'+ii+'P').value+"')") ;
-							eval("criterion"+ii+"Autocomplete.addOnChangeCallback(function() { checkCommentNeeded('criterion"+ii+"'); })") ;
+							eval("criterion"+ii+"Autocomplete.addOnChangeCallback(function() { checkCommentNeeded('criterion"+ii+"',"+ii+"); })") ;
 	  					}
 					}
 					if (firstFld!="") {
@@ -130,22 +152,51 @@
 	  			}
 					
 					
-	  			function checkCommentNeeded(aCriterion) {
+	  			function checkCommentNeeded(aCriterion,ii) {
 	  				var aMarkId = $(aCriterion).value;
-	  				if (+aMarkId>0){
-	  					QualityEstimationService.checkIsCommentNeed(aMarkId,{
-	  						callback: function (res){
-	  							var a = +res.split("@")[0];
-	  							if (+a==1){
-	  								 showEnterCritComment(res.split("@")[1], aCriterion); 
-	  								
-	  							} else {
-	  								$(aCriterion+'Comment').value="";
-	  								updateCriterions() ;
-	  							}
-	  						}
-	  					});
-	  				}
+	  				//alert(aCriterion);
+	  				//var ii=parseInt(aCriterion,10);
+                   // alert(ii);
+	  				if (+aMarkId>0) {
+                        if (voc == "vocQualityEstimationMarkYesNo") {
+                            var createEdit;
+                            var action = ''+window.location;
+                            if (action.indexOf('entityParentPrepareCreate')!=-1) createEdit=false; else createEdit=true;
+                            QualityEstimationService.GetIfCommentYesNoNeeded($('expertType').value,aMarkId,${param.id},createEdit, {
+                                callback: function (res) {
+                                    //alert(res);
+                                    if (res=='true') {
+                                        var total=$('criterion'+ii+'CommentYesNo').value;
+                                        //alert(total);
+                                        var tmp=total.split(';');
+                                        var comment;
+                                        if ($('expertType').value=='BranchManager') {
+                                            if (tmp[0]!=null) comment=tmp[0]; else comment='';
+                                        }
+                                        if ($('expertType').value=='Expert') {
+                                            if (tmp[1]!=null) comment=tmp[1]; else comment='';
+                                        }
+                                        if ($('expertType').value=='Coeur') {
+                                            if (tmp[2]!=null) comment=tmp[2]; else comment='';
+                                        }
+                                        showYesNoCommentYesNo(comment,aMarkId,ii,$('expertType').value);
+                                    }
+                                }
+                                });
+                        }
+                            QualityEstimationService.checkIsCommentNeed(aMarkId, {
+                                callback: function (res) {
+                                    var a = +res.split("@")[0];
+                                    if (+a == 1) {
+                                        showEnterCritComment(res.split("@")[1], aCriterion);
+
+                                    } else {
+                                        $(aCriterion + 'Comment').value = "";
+                                        updateCriterions();
+                                    }
+                                }
+                            });
+                    }
 	  				
 	  			}
 	  			function updateCriterions() {
@@ -153,8 +204,27 @@
 	  				
 	  				for (var i=0;i<cntCrit; i++) {
 	  					if ($("criterion"+(i+1)) && $("criterion"+(i+1)).value!="") rez=rez+"#"+$("criterion"+(i+1)+"P").value+":"+$("criterion"+(i+1)).value +":"+($("criterion"+(i+1)+"Comment").value);
+	  					if ($('criterion'+(i+1)+'CommentYesNo').value!=null) {
+                            var total=$('criterion'+(i+1)+'CommentYesNo').value;
+                            //alert(total);
+                            var tmp=total.split(';');
+                            var comment;
+                            if ($('expertType').value=='BranchManager') {
+                                if (tmp[0]!=null) comment=tmp[0]; else comment='';
+                            }
+                            if ($('expertType').value=='Expert') {
+                                if (tmp[1]!=null) comment=tmp[1]; else comment='';
+                            }
+                            if ($('expertType').value=='Coeur') {
+                                if (tmp[2]!=null) comment=tmp[2]; else comment='';
+                            }
+	  					    rez=rez+":"+comment;
+                            //$('criterion'+(i+1)+'CommentYesNo').value=document.getElementById('reasonYesNo').value;
+                        }
+	  					else  rez=rez+":";
 	  				}
 	  				$('criterions').value=rez.length>0?rez.substring(1) :"";
+                   // alert($F('criterions'));
 	  			}
   		</script>
 

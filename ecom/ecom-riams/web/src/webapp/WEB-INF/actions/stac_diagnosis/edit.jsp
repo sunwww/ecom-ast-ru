@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
-
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
@@ -56,7 +56,7 @@
           <msh:textField property="username" label="Пользователь" viewOnlyField="true" guid="962a2bab-81e2-43f8-871f-12cf8921be43" />
         </msh:row>
         <msh:row guid="26f25ba9-b90a-4825-b37f-a24f1ecf67ff" />
-        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" functionSubmit="showCriteria();"/>
       </msh:panel>
     </msh:form>
   </tiles:put>
@@ -64,6 +64,7 @@
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Patient" beginForm="stac_diagnosisForm" />
   </tiles:put>
   <tiles:put name="javascript" type="string">
+      <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />
   	<msh:ifFormTypeIsNotView formName="stac_diagnosisForm">
 	  	<script type="text/javascript">
 	  		idc10Autocomplete.addOnChangeCallback(function() {
@@ -93,6 +94,10 @@
 	  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
 	  			}
 	  		}
+	  		function showCriteria() {
+                showCreateDiagnoseCriteriaCloseDocument($(idc10).value,$('registrationType').value,$('priority').value, document.forms[0]);
+                //document.forms[0].submit() ;
+            }
 	  	</script>
   	</msh:ifFormTypeIsNotView>
   	<msh:ifFormTypeIsCreate formName="stac_diagnosisForm">

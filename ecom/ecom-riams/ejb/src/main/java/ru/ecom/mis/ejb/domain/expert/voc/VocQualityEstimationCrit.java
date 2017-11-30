@@ -67,4 +67,27 @@ private VocQualityEstimationCritType theType;
   * Вид оценки качества
   */
  private VocQualityEstimationKind theKind;
-}
+
+ /** Коды медицинских услуг */
+  @Comment("Коды медицинских услуг")
+  public String getMedServiceCodes() {
+   return medServiceCodes;
+  }
+  public void setMedServiceCodes(String medServiceCodes) {
+   this.medServiceCodes = medServiceCodes;
+  }
+  /** Коды медицинских услуг */
+  private String medServiceCodes;
+
+  /** Логический тип критерия? */
+  @Comment("Логический тип критерия?")
+  public Boolean getBoolean() {
+   return isBoolean;
+  }
+  public void setBoolean(Boolean aBoolean) {
+   isBoolean = aBoolean;
+  }
+
+  /** Логический тип критерия? */
+  private Boolean isBoolean;
+ }
