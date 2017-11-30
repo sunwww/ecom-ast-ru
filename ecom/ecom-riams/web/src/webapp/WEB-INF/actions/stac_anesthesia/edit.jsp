@@ -33,7 +33,7 @@
 	          <msh:autoComplete property="type" label="Вид" horizontalFill="true" vocName="vocAnesthesia" fieldColSpan="3" />
 	        </msh:row>
             <msh:row>
-	          <msh:autoComplete property="medService" label="Услуга" horizontalFill="true" vocName="medServiceAnesthesia" fieldColSpan="3" />
+	          <msh:autoComplete property="medService" label="Услуга" horizontalFill="true" vocName="medServiceAnesthesia" fieldColSpan="3" size="100"/>
 	        </msh:row>
         <msh:row guid="5edd4c78-6105-4726-acba-cc999e71ed78">
           <msh:textArea property="description" label="Описание" guid="fd59275f-0cb5-4959-b7d7-b49a701eb2ee" horizontalFill="true" fieldColSpan="2" />
@@ -44,7 +44,7 @@
           </msh:ifFormTypeIsNotView>
         </msh:row>
         <msh:row guid="8cf0863d-991d-4e6c-bb0a-ead66299a21c">
-          <msh:autoComplete property="anesthesist" label="Исполнитель" vocName="workFunction" guid="56067cb3-f8bd-4c07-9330-ad6ffee3e83a" fieldColSpan="3" horizontalFill="true" />
+          <msh:autoComplete property="anesthesist" label="Исполнитель" vocName="workFunction" guid="56067cb3-f8bd-4c07-9330-ad6ffee3e83a" size="100" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
         <msh:ifFormTypeAreViewOrEdit formName="stac_anesthesiaForm" guid="77f35713-df7e-40b1-a2d8-f045bc17d390">
           <msh:row guid="d1744869-a80c-4e09-ada3-22a87b8e40b3">
