@@ -22,11 +22,12 @@
             <table width="100%" cellspacing="0" cellpadding="4" id="table1" border="1">
                 <tr>
                     <th align="center" width="450">Критерий</th>
-                    <th align="center" width="150">Выполнен?</th>
+                    <th align="center" width="150">Выполнен?*</th>
                 </tr>
             </table>
             <table width="100%" cellspacing="10" cellpadding="10" id="table2">
             </table>
+            <div>*Информация рассчитана автоматически.</div>
         </form>
     </div>
 </div>
@@ -53,7 +54,7 @@
                         the${name}CloseDisDocumentDialog.show() ;
                         var all = res.split('!') ;
                         var table = document.getElementById('table1');
-                        table.innerHTML="<tr><th align=\"center\" width=\"150\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?</th></tr>";
+                        table.innerHTML="<tr><th align=\"center\" width=\"150\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th></tr>";
                         for (var i=0; i<all.length-1; i++) {
                             var aResult = all[i].split('#');
                             var tr = document.createElement('tr');
@@ -65,6 +66,7 @@
                             table.appendChild(tr);
                         }
                     }
+                    else alert("Для основного клинического диагноза госпитализации не найдено данных по 203 приказу!");
                 }
             }
         );
