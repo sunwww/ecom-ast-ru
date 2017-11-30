@@ -95,4 +95,18 @@ public class VocWorkFunction extends VocBaseEntity{
 
 	/** Не включать в 039 форму */
 	private Boolean theIsNo039;
+
+
+
+	/** Короткое название ФСС*/
+	@Comment("Короткое название ФСС")
+	public String getFSSShortName() {return theFSSShortName;}
+	public void setFSSShortName(String aFSSShortName) {theFSSShortName = aFSSShortName;}
+	private String theFSSShortName;
+
+	/** Код ФСС */
+	@Comment("Код ФСС")
+	public String getFSSCode() {return theFSSCode;}
+	public void setFSSCode(String aFSSCode) {theFSSCode = aFSSCode;}
+	private String theFSSCode;
 }

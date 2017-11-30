@@ -24,6 +24,7 @@ import ru.ecom.poly.ejb.services.GroupByDate;
  */
 public interface IHospitalMedCaseService {
 	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode);
+	public String getAllServicesByMedCase(Long aMedcaseId);
     public void finishMonitor(long aMonitorId) ;
     public void startMonitor(long aMonitorId) ;
     public void addMonitor(long aMonitorId, int aInt) ;

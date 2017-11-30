@@ -24,13 +24,13 @@
     <td>
     	<div id='defectDiv' style="display: block">
     	<table id="defect${name}Tbl"  >
-    		
+
     	</table>
     	</div>
     </td>
     </msh:row>
         <msh:row>
-        
+
             <td colspan="6">
                 <input type="button" value='Сохранить' onclick='javascript:save${name}CritComment()'/>
                 <input type="button" value='Отмена' onclick='javascript:cancel${name}CritComment()'/>
@@ -53,7 +53,7 @@
     	 for (var i=0;i<rows.length;i++){
     		 var chk = rows[i].children[0].children[0].children[0];
     		// alert (chk);
-    		
+
     		 if (chk.checked==true) {
     			 cntChecked++;
     			 if (${name}Defects.length>0){
@@ -61,11 +61,11 @@
     			 }
     				 ${name}Defects+=chk.id;
     		 }
-    		 
+
     		 $(the${name}Mark+'Comment').value = ${name}Defects;
     	 }
     	 if (cntChecked==0) {
-			 alert ("Выбирите причину снижения оценки!");
+			 alert ("Выберите причину снижения оценки!");
 			 return;
 		 }
     	 the${name}CritCommentDialog.hide() ;

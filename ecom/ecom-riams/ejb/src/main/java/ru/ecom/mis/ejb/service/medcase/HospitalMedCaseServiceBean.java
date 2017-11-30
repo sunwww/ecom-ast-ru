@@ -1373,20 +1373,23 @@ private HashMap getRegions() {
 		return "NO_FILE";
 	}
 	public String countMedcaseCost (Long aMedcaseId) {return  countMedcaseCost(aMedcaseId,null);}
+	public String countMedcaseCost (Long aMedcaseId,String aPriceList) {return  countMedcaseCost(aMedcaseId,aPriceList,false);}
+	public String getAllServicesByMedCase (Long aMedcaseId) {return  countMedcaseCost(aMedcaseId,null,true);}
 	/**
 	 * Расчитываем стоимость случая госпитализации
 	 * @param aMedcaseId ID госпитализации
 	 * @return - JSON объект с полной стоимостью + список оказанных услуг
 	 */
-	public String countMedcaseCost (Long aMedcaseId, String aPriceListId) {
+	public String countMedcaseCost (Long aMedcaseId, String aPriceListId, boolean allIsCharged) {
 		JSONObject root = new JSONObject();
+		String ppidNull=allIsCharged? " " : " and pp.id is not null ";
 		try {
 			String priceListId=null;
 			if (aPriceListId!=null) {
 				priceListId=aPriceListId;
 			} else {
 				LOG.info("deb0");
-
+				LOG.info(theManager);
 				List<Object> list = theManager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
 				if (list!=null&&list.size()>0) {
 					priceListId=list.get(0).toString();
@@ -1404,7 +1407,7 @@ private HashMap getRegions() {
 				serviceStreamId = hmc.getServiceStream().getId();
 				String startDate = DateFormat.formatToDate(hmc.getDateStart());
 				String finishDate = DateFormat.formatToDate(hmc.getDateFinish() != null ? hmc.getDateFinish() : new java.sql.Date(new java.util.Date().getTime()));
-				if (hmc.getServiceStream().getFinanceSource() != null && hmc.getServiceStream().getFinanceSource().equals("CHARGED")) { //Для платных считаем цену случая сами
+				if (hmc.getServiceStream().getFinanceSource() != null && hmc.getServiceStream().getFinanceSource().equals("CHARGED") || allIsCharged) { //Для платных считаем цену случая сами
 
 				StringBuilder sql = new StringBuilder().append("select slo.id as f0,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo")
 						.append(" ,list(pp.code||' '||pp.name) as f2_ppname")
@@ -1414,7 +1417,7 @@ private HashMap getRegions() {
 						.append(",max((")
 						.append("case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'")
 						.append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end")
-						.append("* pp.cost)) as f5_ppsum,list(ms.code||' '||ms.name) as f6_msifo")
+						.append("* pp.cost)) as f5_ppsum,list(ms.code||' '||ms.name) as f6_msifo,ms.code ")
 						.append(" from medcase slo")
 						.append(" left join medcase sls on sls.id=slo.parent_id")
 						.append(" left join Vochosptype vht on vht.id=sls.hosptype_id")
@@ -1435,7 +1438,7 @@ private HashMap getRegions() {
 						.append(" and (pp.isvat is null or pp.isvat='0')")
 						.append(" where slo.parent_id=").append(mc.getId())
 						.append(" and ms.servicetype_id='").append(idsertypebed).append("' ").append((priceListId!=null?" and pp.priceList_id='"+priceListId+"'":""))
-						.append(" group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code");
+						.append(" group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code,ms.code");
 				List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
 				JSONArray arr = new JSONArray(); //Койко-дни
 				double cost = 0.0;
@@ -1447,6 +1450,7 @@ private HashMap getRegions() {
 					kd.put("sum", cost);
 					kd.put("name", o[6]);
 					kd.put("count", o[3]);
+					kd.put("vmscode", o[7]);
 					sum += cost;
 					arr.put(kd);
 				}
@@ -1456,7 +1460,7 @@ private HashMap getRegions() {
 				sql = new StringBuilder()
 						.append("select")
 						.append(" pp.code||' '||pp.name as ppname")
-						.append(" ,pp.cost as ppcost")
+						.append(" ,pp.cost as ppcost, ms.code ")
 						.append(" from medcase vis")
 						.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
 						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
@@ -1485,6 +1489,7 @@ private HashMap getRegions() {
 					kd.put("sum", cost);
 					kd.put("name", o[0]);
 					kd.put("count", "1");
+					kd.put("vmscode", o[2]);
 					sum += cost;
 					arr.put(kd);
 				}
@@ -1495,7 +1500,7 @@ private HashMap getRegions() {
 				sql = new StringBuilder()
 						.append("select")
 						.append(" pp.code||' '||pp.name as ppname")
-						.append(" ,pp.cost as ppcost")
+						.append(" ,pp.cost as ppcost, ms.code ")
 						.append(" from medcase vis")
 						.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
 						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
@@ -1510,18 +1515,20 @@ private HashMap getRegions() {
 						.append(" and vis.datestart between to_date('").append(startDate).append("','dd.mm.yyyy') and to_date('").append(finishDate).append("','dd.mm.yyyy')")
 						.append(" and upper(vis.dtype)='VISIT' and upper(smc.dtype)='SERVICEMEDCASE'")
 						.append(" and (vss.code='HOSPITAL' or vss.id is null)")
-						.append(" and (vis.noActuality='0' or vis.noActuality is null) and pp.id is not null");
-			//	LOG.info("calc price, labsurvey = " + sql);
+						.append(" and (vis.noActuality='0' or vis.noActuality is null) ")
+						.append(ppidNull);//pp.id is not null");
+				//LOG.info("calc price, labsurvey = " + sql);
 				list = theManager.createNativeQuery(sql.toString()).getResultList();
 				arr = new JSONArray();
 				sum = 0.0;
 
 				for (Object[] o : list) { //Считаем стоимость лаборатории
 					JSONObject kd = new JSONObject();
-					cost = Double.valueOf(o[1].toString());
+					cost = (o[1]==null)? 0:Double.valueOf(o[1].toString());
 					kd.put("sum", cost);
 					kd.put("name", o[0]);
 					kd.put("count", "1");
+					kd.put("vmscode", o[2]);
 					sum += cost;
 					arr.put(kd);
 				}
@@ -1532,7 +1539,7 @@ private HashMap getRegions() {
 				sql = new StringBuilder()
 						.append("select")
 						.append(" pp.code||' '||pp.name as ppname")
-						.append(" ,pp.cost as ppcost")
+						.append(" ,pp.cost as ppcost, ms.code ")
 						.append(" from SurgicalOperation so")
 						.append(" left join workfunction wf on wf.id=so.surgeon_id")
 						.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
@@ -1543,18 +1550,20 @@ private HashMap getRegions() {
 						.append(" left join medservice ms on ms.id=so.medservice_id")
 						.append(" left join pricemedservice pms on pms.medservice_id=so.medservice_id")
 						.append(" left join priceposition pp on pp.id=pms.priceposition_id and  pp.priceList_id='").append(priceListId).append("'")
-						.append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') and pp.id is not null");
-			//	LOG.info("calc price, operation = " + sql);
+						.append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') ")
+						.append(ppidNull);
+				//LOG.info("calc price, operation = " + sql);
 				list = theManager.createNativeQuery(sql.toString()).getResultList();
 				arr = new JSONArray();
 				sum = 0.0;
 
 				for (Object[] o : list) { //Считаем стоимость операций
 					JSONObject kd = new JSONObject();
-					cost = Double.valueOf(o[1].toString());
+					cost = (o[1]==null)? 0:Double.valueOf(o[1].toString());
 					kd.put("sum", cost);
 					kd.put("name", o[0]);
 					kd.put("count", "1");
+					kd.put("vmscode", o[2]);
 					sum += cost;
 					arr.put(kd);
 				}
@@ -1565,7 +1574,7 @@ private HashMap getRegions() {
 				sql = new StringBuilder()
 						.append("select")
 						.append(" pp.code||' '||pp.name as ppname")
-						.append(" ,pp.cost as ppcost")
+						.append(" ,pp.cost as ppcost, ms.code ")
 						.append(" from Anesthesia aso")
 						.append(" left join VocAnesthesiaMethod vam on vam.id=aso.method_id")
 						.append(" left join VocAnesthesia va on va.id=aso.type_id")
@@ -1580,7 +1589,7 @@ private HashMap getRegions() {
 						.append(" left join pricemedservice pms on pms.medservice_id=aso.medservice_id")
 						.append(" left join priceposition pp on pp.id=pms.priceposition_id")
 						.append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') and pp.priceList_id='").append(priceListId).append("'");
-			//	LOG.info("calc price, anathesia = " + sql);
+				//LOG.info("calc price, anathesia = " + sql);
 				list = theManager.createNativeQuery(sql.toString()).getResultList();
 				arr = new JSONArray(); //Операции
 				sum = 0.0;
@@ -1591,6 +1600,7 @@ private HashMap getRegions() {
 					kd.put("sum", cost);
 					kd.put("name", o[0]);
 					kd.put("count", "1");
+					kd.put("vmscode", o[2]);
 					sum += cost;
 					arr.put(kd);
 				}
@@ -1602,7 +1612,7 @@ private HashMap getRegions() {
 						.append("select")
 						//.append(" so.id,to_char(so.dateStart,'dd.mm.yyyy')||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo")
 						.append(" pp.code||' '||pp.name as ppname")
-						.append(" ,pp.cost as ppcost")
+						.append(" ,pp.cost as ppcost, ms.code ")
 						.append(" ,mkb.code as mkbcode")
 						.append(" ,coalesce(so.medserviceamount,'1') as f6_amount")
 						.append(" ,pp.cost*coalesce(so.medserviceamount,'1') as f7_sum")
@@ -1618,18 +1628,20 @@ private HashMap getRegions() {
 						.append(" left join pricemedservice pms on pms.medservice_id=so.medservice_id")
 						.append(" left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='").append(priceListId).append("'")
 						.append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("')")
-						.append(" and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' and pp.id is not null");
-			//	LOG.info("calc price, dop_uslugi = " + sql);
+						.append(" and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' ")
+						.append(ppidNull);
+				//LOG.info("calc price, dop_uslugi = " + sql);
 				list = theManager.createNativeQuery(sql.toString()).getResultList();
 				arr = new JSONArray(); //Операции
 				sum = 0.0;
 
 				for (Object[] o : list) { //Считаем стоимость Доп. услуги
 					JSONObject kd = new JSONObject();
-					cost = Double.valueOf(o[1].toString());
+					cost = (o[1]==null)? 0:Double.valueOf(o[1].toString());
 					kd.put("sum", cost);
 					kd.put("name", o[0]);
 					kd.put("count", "1");
+					kd.put("vmscode", o[2]);
 					sum += cost;
 					arr.put(kd);
 				}
