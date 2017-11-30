@@ -82,7 +82,7 @@
      	if (+aNewSpo<1 && !confirm('Вы хотите перенести визит в новый СПО?')) {
      		return ;
      	}  else {
-     		if (confirm('Вы хотите точно хотите продолжить?')) {
+     		if (confirm('Вы точно хотите продолжить?')) {
      			var newSpo = null ;
      			if (+aNewSpo>0) {
      				var frm = document.forms['${name}frmSpo'] ;
