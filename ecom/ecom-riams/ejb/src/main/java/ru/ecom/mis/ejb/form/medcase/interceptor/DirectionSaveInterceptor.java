@@ -40,7 +40,7 @@ public class DirectionSaveInterceptor implements IFormInterceptor {
 					json.put("phonenumber",phone);
 					json.put("message",message);
 					TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
-					bean.makePOSTRequest(json.toString(),address,method,null,null,manager);
+					//bean.makePOSTRequest(json.toString(),address,method,null,null,manager);
 				}
 
 			} catch (Exception e) {

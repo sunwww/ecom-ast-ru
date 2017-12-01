@@ -166,7 +166,7 @@ public class MedicalManipulation extends BaseEntity {
 
     /** Анестезии */
     @Comment("Анестезии")
-    @OneToMany(mappedBy="surgicalOperation", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="manipulation", cascade=CascadeType.ALL)
     public List<Anesthesia> getAnesthesies() {
         return theAnesthesies;
     }

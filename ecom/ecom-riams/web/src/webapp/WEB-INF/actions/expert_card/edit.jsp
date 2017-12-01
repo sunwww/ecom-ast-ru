@@ -24,7 +24,7 @@
         </msh:row>
         --%>
         <msh:row>
-        	<msh:autoComplete viewAction="entityView-mis_patient.do" viewOnlyField="true" property="patient" label="Пациент" horizontalFill="true" vocName="patient" fieldColSpan="3"/>
+        	<msh:autoComplete viewOnlyField="true" viewAction="entityView-mis_patient.do" viewOnlyField="true" property="patient" label="Пациент" horizontalFill="true" vocName="patient" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
         	<msh:textField viewOnlyField="true" property="cardNumber"  label="Номер карты"/>
