@@ -25,7 +25,7 @@
 					<msh:textArea rows="3" fieldColSpan="3" property="name" label="Название" horizontalFill="true"/>
 				</msh:row>
 				<msh:row>
-					<msh:textField property="code" label="Код"/>
+					<msh:textField property="code" label="Код" size="50"/>
 					<msh:textField property="cost" label="Цена"/>
 				</msh:row>
 				<msh:row>
