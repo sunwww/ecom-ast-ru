@@ -71,7 +71,7 @@ function updateCAOSbyCharged(aCtx,aDate1,aDate2) {
                     sql=sql+"	and caos1.id is null ";
 				}
                 sql=sql+	" and caos.id=caos222.id";
-				sql=sql+"	and wfs.lpu_id=w.lpu_id and wfs.vocworkfunction_id=wf.workfunction_id";
+				sql=sql+"	and (wfs.lpu_id is null or wfs.lpu_id=w.lpu_id) and wfs.vocworkfunction_id=wf.workfunction_id";
 				sql=sql+"	and ms.isPoliclinic='1' and ms.finishDate is null";
 				sql=sql+"	and caos.medcase_id is null";
 				sql=sql+"	)";

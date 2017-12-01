@@ -26,8 +26,8 @@ import java.util.List;
 @Comment("Медицинская манипуляция")
 @AIndexes({
         @AIndex(properties="medCase"),
-        @AIndex(properties="theStartDate"),
-        @AIndex(properties={"theSurgeon"}),
+        @AIndex(properties="startDate"),
+        @AIndex(properties={"surgeon"}),
         @AIndex(properties={"medService"}),
         @AIndex(properties="patient"),
         @AIndex(properties="serviceStream"),

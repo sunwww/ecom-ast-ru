@@ -1151,10 +1151,10 @@ public class WorkCalendarServiceJs {
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
 		sql.append("") ;
-		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||coalesce(case when ms.shortname='' then null else ms.shortname end,ms.name,'') as fio") ;
+		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||coalesce(case when ms.shortname='' then null else ms.shortname end,ms.name,'') as f7_fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
-		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as patid")
+		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as f12_patid")
 			.append(", case when su.isRemoteUser='1' then 'preDirectRemoteUsername' when su1.isRemoteUser='1' then 'directRemoteUsername' else '' end as fontDirect") ; 
 		if (isRemoteUser) {
 			sql.append(", case when vsrt.id is not null and (vsrt.isViewRemoteUser='0' or vsrt.isViewRemoteUser is null) then 'ЗАНЯТО' when vsrt.isRemoteRayon='1' then 'ЗАНЯТО' when vsrt.isViewOnlyMineDoctor='1' then 'ЗАНЯТО'  when vsrt.isViewOnlyDoctor='1' then 'ЗАНЯТО' else null end as reserve") ;
@@ -1169,7 +1169,11 @@ public class WorkCalendarServiceJs {
 		if (isRemoteUser) {
 			sql.append(", case when sw.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser1") ;
 			sql.append(", case when w.lpu_id!='"+(theLpuRemoteUser!=null?theLpuRemoteUser:"")+"' then 1 else null end as notViewRetomeUser2") ;
+		} else {
+			sql.append(",cast('-' as varchar(1)) as emp1,cast('-' as varchar(1)) as emp2");
 		}
+
+		sql.append(" ,case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5)) end as f19_prerecord_info") ;
 		sql.append(" from WorkCalendarTime wct") ;
 		sql.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id");
 		sql.append(" left join MedService ms on ms.id=wct.service");
@@ -1198,7 +1202,7 @@ public class WorkCalendarServiceJs {
 		}
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
-		
+
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		String frmName = "frmTime" ;
 		if (aVocWorkFunction!=null) frmName=frmName+"_"+aVocWorkFunction ;
@@ -1228,7 +1232,7 @@ public class WorkCalendarServiceJs {
 			
 			if (wqr.get12()!=null && !(""+wqr.get12()).equals("")) reserve = true ;
 			if (isRemoteUser&& info&&reserve) info=false ;
-			if (pre==1) {
+			if (pre==1) {  //Есть направление
 				
 				if (!info) {
 					res.append("<li id='liTimeBusyForRemoteUser' >") 
@@ -1236,26 +1240,26 @@ public class WorkCalendarServiceJs {
 					res.append("-ЗАНЯТО").append("") ;
 				} else {
 					if (wqr.get7()!=null) {
-						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' ><strike>") 
+						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("' ><strike>")
 						.append(wqr.get2()) .append(" ") ;
 						res.append(wqr.get5()).append("</strike>") ;
 					} else {
-						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") 
+						res.append("<li id='liTimeDirect' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>")
 						.append(wqr.get2()) .append(" ") ;
 						res.append(wqr.get5()) ;
 					}
 				}
-			} else if (pre==2) {
+			} else if (pre==2) { //Предварительная запись
 				if (!info) {
 					res.append("<li id='liTimeBusyForRemoteUser' >") 
 					.append(wqr.get2()).append(" ") ;
 					res.append("ЗАНЯТО").append("") ;
 				} else {
-					if (wqr.get4()!=null) {
+					if (wqr.get4()!=null) { // Если визит уже оформлен
 						String prelastname = ""+wqr.get8() ;
 						String lastname = ""+wqr.get9() ;
 						//if (wqr.get13()!=null) lastname=lastname+" ("+wqr.get13()+")" ;
-						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") ;
+						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'").append(wqr.get19()!=null?" title='"+wqr.get19().toString()+"' ":"").append(">") ;
 						String add = "" ;
 						if (prelastname!=null && lastname!=null) {
 							if (!prelastname.startsWith(lastname)) {
@@ -1277,13 +1281,12 @@ public class WorkCalendarServiceJs {
 						}
 					} else {
 						res.append(" <a target='_blank' href=\"print-begunok.do?s=SmoVisitService&m=printDirectionByTime&wct=").append(wqr.get1()).append("\"").append(wqr.get1()).append("'\">ПЕЧАТЬ</a> ")  ;
-						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'>") .append(" <a href=\"javascript:patientCame('")
+						res.append("<li id='liTimePre' class='").append(wqr.get11()!=null?wqr.get11():"").append("'").append(wqr.get19()!=null?" title='"+wqr.get19().toString()+"' ":"").append(">") .append(" <a href=\"javascript:patientCame('")
 						.append(wqr.get1()).append("','").append(wqr.get5())
 						.append("','").append(wqr.get6()).append("')\">")
 						.append(wqr.get2()).append("</a>")
 						.append(" ") ;
 						res.append(wqr.get5()).append(" ").append(wqr.get13()!=null?"("+wqr.get13()+"":"").append(" <a href=\"javascript:deleteTime('").append(wqr.get1()).append("')\">У</a>")  ;
-						
 					}
 				}
 			} else {

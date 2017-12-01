@@ -31,6 +31,7 @@
           <msh:textField property="username" label="Пользователь" guid="a80d6359-1da8-4b59-a408-638bdcfa399a" viewOnlyField="true" />
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
+        <input type="button" onclick="saveGoNext()" value="test_create">
       </msh:panel>
     </msh:form>
   </tiles:put>
@@ -44,6 +45,24 @@
         <msh:sideLink roles="/Policy/Mis/Prescription/PrescriptionFulfilment/Delete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoSubclassView-pres_prescriptionFulfilment" name="Удалить" guid="48-a626-4b6e-af52-cdcc98" />
       </msh:ifFormTypeIsView>
     </msh:sideMenu>
+    <script type="text/javascript">
+      function saveGoNext() {
+          var form = $('mainForm');
+          alert ("FFF="+form.serialize());
+          var myAjax = new Ajax.Request(
+              'entitySaveGoView-pres_prescriptionFulfilment.do',
+               {
+               method:"post",
+               parameters:form.serialize(),
+               onComplete:showResponse
+              }
+          );
+          ///alert (myAjax);
+      }
+      function showResponse() {alert(123);}
+    </script>
+
   </tiles:put>
+
 </tiles:insert>
 

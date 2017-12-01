@@ -48,7 +48,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 
 
 	public String makePOSTRequest (String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager) {
-		log.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
+		//log.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
 		try {
 			if (address==null) {
 				return "";
@@ -59,7 +59,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				connection = (HttpURLConnection) url.openConnection();
 				if (params!=null&&!params.isEmpty()) {
 					for (Map.Entry<String,String> par: params.entrySet()) {
-						log.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
+					//	log.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
 						connection.setRequestProperty(par.getKey(),par.getValue());
 					}
 				}
@@ -100,7 +100,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			}
 			String response = makePOSTRequest(data, address, aMethod, params, aObjectId, aManager);
 			if (response.length()>0) {
-				log.info("Получили ответ, вот он"+response);
+				//log.info("Получили ответ, вот он"+response);
 				if (aMethod.equals("SetRegisterPatient")) {
 					setAccountExternalCode(aObjectId,aManager,response);
 				} else if (aMethod.equals("SetBlockPatient")){
@@ -207,8 +207,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	 */
 
 	public  void sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) {
-		log.debug("start sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) ");
-		log.info("start sendProtocolToExternalResource(Long aProtocolId, Long aMedCaseId, String aRecord, EntityManager aManager) ");
 		if (aManager==null) {aManager=theManager;}
 		Protocol p = aProtocolId!=null?aManager.find(Protocol.class,aProtocolId):null;
 		MedCase mc = p!=null?p.getMedCase():aManager.find(MedCase.class, aMedCaseId);
@@ -226,7 +224,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		if (aManager==null) {aManager=theManager;}
 		String address = getExternalServiceAddress();
 		if (address==null) {return;}
-		log.info("start export all history");
 		String lpuCode= "AMOKB"; //TODO - переделать для работы в разных ЛПУ
 		PatientExternalServiceAccount pesa = aManager.find(PatientExternalServiceAccount.class,aPatientExternalAccountId);
 		Long aPatientId = pesa.getPatient().getId();
@@ -242,7 +239,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				" left join medcase spo on spo.patient_id=pat.id" +
 				" left join medcase mc on mc.parent_id=spo.id" +
 				" left join diary prot on prot.medcase_id = mc.id and prot.dtype='Protocol'" +
-				" left join document dd on dd.medcase_id=mc.id" +
+				" left join document dd on dd.medcase_id=mc.id and dd.dtype='DischargeDocument'" +
 				" left join medcase smc on smc.parent_id=mc.id and smc.dtype='ServiceMedCase'" +
 				" left join medservice ms on ms.id=smc.medservice_id" +
 				" left join vocservicetype vst on vst.id=ms.servicetype_id" +
@@ -265,7 +262,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						record = dd.getHistory();
 						externalCaseId = lpuCode+"#"+serviceType+"#"+(record!=null?record.hashCode():0);
 					} else {
-						log.warn("У визита "+rec[1]+" нет выписки, запись не выгружаем");
 						continue;
 					}
 				} else if (serviceType.equals("LABSURVEY")||serviceType.equals("SERVICE")) { //Диагностика или лаб. исследование
@@ -314,7 +310,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		list = aManager.createNativeQuery("select h.id as f1, h.id as f2 from medcase h where h.dtype='HospitalMedCase' and h.patient_id=:pat and h.dischargetime is not null and h.deniedhospitalizating_id is NULL ").setParameter("pat",aPatientId).getResultList();
 		if (!list.isEmpty()) {
 			serviceType = "DISCHARGE";
-			log.info("Выгружаем госпитализации. Размер: "+list.size());
 			for (Object [] hosps: list){
 				JSONObject service = new JSONObject();
 				HospitalMedCase hosp = aManager.find(HospitalMedCase.class,Long.valueOf(hosps[0].toString()));
@@ -358,15 +353,11 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			}
 		}
 		root.put("services",services);
-		log.info("Выгружаем всю историю лечения пациента: Пациент = "+aPatientId+", История: "+root.toString());
 		makeHttpPostRequest(root.toString(), address,"SetStatement",null, null, aManager);
 
 	}
 	//public  void sendProtocolToExternalResource(Protocol d, MedCase mc, String aRecord, EntityManager aManager) {		//sendProtocolToExternalResource(d,mc.);	}
 	public  void sendProtocolToExternalResource(Protocol d, MedCase mc, String aRecord, EntityManager aManager) {
-		//log.info("ExprortToExternal.Protocol="+(d!=null?d.getId():"")+", mc="+(mc!=null?mc.getId():"")+", record"+aRecord);
-			String address = getExternalServiceAddress();
-			if (address==null) {return;}
 		try {
 			if (mc == null) {
 				if (d==null) {
@@ -376,14 +367,13 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				mc = d.getMedCase();
 			}
 			Patient pat = mc.getPatient();
-			//log.info("1=== medcase mc = " + mc);
-			//log.info("0=== patient pat = " + pat);
 			if (pat != null) {
 				List<PatientExternalServiceAccount> pesa = aManager.createQuery(" from PatientExternalServiceAccount where patient = :pat and dateTo is null").setParameter("pat", pat).getResultList();
 				if (pesa.isEmpty()) {
-					log.info("У пациента " + pat.getPatientInfo()+" нет согласия на передачу данных, выходим");
 					return;
 				} //Нет согласия - выходим
+				String address = getExternalServiceAddress();
+				if (address==null) {return;}
 				String lpuCode = "AMOKB";
 				String serviceType = "", medcaseDate = "", medcaseTime = "", executor = "";
 				String patientCode=pesa.get(0).getExternalCode();
@@ -430,7 +420,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						}
 					}
 				} else {
-						log.info("Протокол в стационаре, выгружать не станем");
 						return;
 					}
 				} else if (mc instanceof DepartmentMedCase) { //Дневники специалистов в отделении не трогаем
@@ -439,7 +428,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					Visit vis = (Visit) mc;
 					//DischargeDocument doc = aManager.createQuery("from DischargeDocument where medCase=:vis").setParameter("vis",vis).getRe;
 					if (vis.getDateStart() == null) {
-						log.debug("Визит " + vis.getId() + "не был оформлен, ничего не выгружаем");
+				//		log.debug("Визит " + vis.getId() + "не был оформлен, ничего не выгружаем");
 						return;
 					}
 					serviceType = "VISIT";

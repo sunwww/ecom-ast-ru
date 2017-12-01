@@ -33,7 +33,7 @@ public class PriceMedServiceSaveInterceptor  implements IFormInterceptor {
 					msForm.setCode(msForm.getCode().toUpperCase().trim()) ;
 				}
 				MedService medService = new MedService() ;
-				List<MedService> list = manager.createQuery("from MedService where code=:code").setParameter("code", msForm.getCode()).getResultList() ;
+				List<MedService> list = manager.createQuery("from MedService where code=:code and finishDate is null").setParameter("code", msForm.getCode()).getResultList() ;
 				if (list.size()>0) {
 					medService = list.get(0) ;
 				} else {

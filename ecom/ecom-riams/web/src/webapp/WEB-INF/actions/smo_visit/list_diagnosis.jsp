@@ -292,7 +292,7 @@
     <input type="submit" value="Печать"> 
     </form></msh:sectionTitle>
 	<msh:sectionContent>
-    <msh:table name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
+    <msh:table printToExcelButton="Сохранить в excel"  name="datelist" viewUrl="entitySubclassShortView-mis_medCase.do" action="entitySubclassView-mis_medCase.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn property="2" columnName="Дата приема"/>
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
@@ -374,7 +374,7 @@
 	    <input type="submit" value="Печать"> 
 	    </form>     </msh:sectionTitle>
 	<msh:sectionContent>
-			<msh:table name="diag_list" idField="1" 
+			<msh:table printToExcelButton="Сохранить в excel" name="diag_list" idField="1"
 			action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&illnesPrimary=${param.illnesPrimary}&spec=${param.spec}&workFunction=${param.workFunction}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
             <msh:tableNotEmpty>
               <tr>
@@ -473,7 +473,7 @@
 		group by ${mkbCode},vpd.id,vpd.name ${mkbNameGroup}
 		order by ${mkbCode},vpd.id
 		"/>
-		<msh:table name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&illnesPrimary=${param.illnesPrimary}&workFunction=${param.workFunction}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
+		<msh:table printToExcelButton="Сохранить в excel" name="diag_list" idField="1" action="journal_visit_diagnosis.do?typeReestr=1&filterAdd=${param.filterAdd}&serviceStream=${param.serviceStream}&spec=${param.spec}&illnesPrimary=${param.illnesPrimary}&workFunction=${param.workFunction}&department=${param.department}&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&typeDtype=${typeDtype}&typeMKB=${typeMKB}&typeEmergency=${typeEmergency}">
             <msh:tableNotEmpty>
               <tr>
                 <th colspan="1" />

@@ -1,4 +1,21 @@
+function checkDouble(aForm, aCtx) {
+	var serviceId = aForm.getId();
+	var code = (""+aForm.getCode());
+	if (""+aForm.finishDate==""&&code!="") {
+		var manager = aCtx.manager;
+		var sql = "select id from medservice where upper(code)=trim(upper('"+code+"')) and finishDate is null";
+		if (+serviceId>0) {
+			sql+=" and id!="+serviceId;
+		}
+		var list = manager.createNativeQuery(sql).getResultList();
+		if (list.size()>0) {
+			throw "Услуга с таким кодом существует: <a target='_blank' href='entityParentView-mis_medService.do?id="+list.get(0)+"'>Просмотреть</a>";
+		}
+	}
+
+}
 function onPreCreate(aForm, aCtx) {
+	checkDouble(aForm, aCtx);
 	var date = new java.util.Date() ;
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	//aForm.setTimeCreate(new java.sql.Time (date.getTime())) ;
@@ -10,6 +27,7 @@ function onCreate(aForm, aEntity, aContext) {
 	updateParent(0,aForm.parent,aContext,aEntity.startDate,aEntity.finishDate);
 }
 function onPreSave(aForm, aEntity, aContext) {
+    checkDouble(aForm, aContext);
 	checkPeriod(aForm.startDate,aForm.finishDate) ;
 	checkUsl(aForm.serviceType,aForm.vocMedService,aForm) ;
 }

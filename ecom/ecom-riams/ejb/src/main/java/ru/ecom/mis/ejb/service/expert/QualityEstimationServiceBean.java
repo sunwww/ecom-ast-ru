@@ -1,7 +1,10 @@
 package ru.ecom.mis.ejb.service.expert;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -14,6 +17,8 @@ import javax.persistence.PersistenceContext;
 import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean;
+import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 
 @Stateless
 @Remote(IQualityEstimationService.class)
@@ -170,7 +175,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			.append("	left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("' and qecC.estimation_id=qeC.id") 
 			.append(" left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id")
 			.append("	where vqemC.criterion_id=vqec.id and qeC.expertType='Coeur'")
-			.append(") as CoeurAct") 
+			.append(") as CoeurAct")
 			//.append(" ,qecBM.id as branchManager,qecE.id as Expert,qecC.id as Coeur")
 			.append(" from VocQualityEstimationCrit vqec") 
 			.append(" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqec.id")
@@ -180,8 +185,30 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			//.append(" left join qualityestimation qeE on qeE.card_id='").append(aCardId).append("' and qeE.expertType='Expert' and qecE.estimation_id=qeE.id")
 			//.append(" left join qualityestimationcrit qecC on qecC.mark_id=vqem.id")
 			//.append(" left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("' and qeC.expertType='Coeur' and qecC.estimation_id=qeC.id")
-			.append(" where vqec.kind_id='").append(kind).append("'")			
-			.append(" group by vqem.id ,vqec.id,vqec.code,vqec.name,vqec.shortname,vqem.code ,vqem.name,vqem.mark") 
+
+		//diagnosis for kind
+		 .append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqec.id");
+		Boolean ifTypeBool=false;
+		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
+		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
+		if (listkind.size()!=0) {
+			Object one = "1";
+			Object row = listkind.get(0) ;
+			if (row.equals(one)) {
+				ifTypeBool=true;
+				sql.append(" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id ")
+						.append(" left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("'")
+						.append(" left join qualityestimationcard qecard on qecard.id=qeC.card_id ")
+						.append(" left join medcase mcase on qecard.medcase_id= mcase.id ")
+						.append(" left join diagnosis ds on ds.medcase_id=mcase.id ")
+						.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
+						.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id ");
+			}
+		}
+
+		sql.append(" where vqec.kind_id='").append(kind).append("'");
+		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id  and reg.code='4' and prior.code='1'");
+		sql.append(" group by vqem.id ,vqec.id,vqec.code,vqec.name,vqec.shortname,vqem.code ,vqem.name,vqem.mark")
 		 	.append(" order by vqec.code")			;
 		 //log(sql) ;
 		 StringBuilder table = new StringBuilder() ;
@@ -193,7 +220,6 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 table.append("<th colspan=3>Оценочные баллы</th>") ;
 		 table.append("</tr>") ;
 		 table.append("<tr>") ;
-		 
 		 table.append("<th>зав. отд</th>") ;
 		 table.append("<th>эксперт</th>") ;
 		 table.append("<th>КЭР</th>") ;
@@ -270,63 +296,103 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder table = new StringBuilder() ;
 		StringBuilder javaScript = new StringBuilder() ;
-		sql.append("select vqec.id as vqecid,vqec.code as vqeccode,vqec.name as vqecname ") 
+		sql.append("select distinct vqec.id as vqecid,vqec.code as vqeccode,vqec.name as vqecname ")
 				.append(",")
-		.append(" (select qecBM.mark_id from qualityestimationcrit qecBM")	
+		.append(" (select qecBM.mark_id from qualityestimationcrit qecBM")
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='BranchManager') as branchManager")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='BranchManager') as branchManager")
 		.append(" ,")
 		.append(" (select vqem.mark from qualityestimationcrit qecBM")	
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='BranchManager') as branchManagerMark")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='BranchManager') as branchManagerMark")
 		.append(" ,")
 		.append(" (select qecBM.mark_id from qualityestimationcrit qecBM")	
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Expert') as expert")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Expert') as expert")
 		.append(" ,")
 		.append(" (select vqem.mark from qualityestimationcrit qecBM")	
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Expert') as expertMark")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Expert') as expertMark")
 		.append(" ,")
 		.append(" (select qecBM.mark_id from qualityestimationcrit qecBM")	
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeur")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeur")
 		.append(" ,")
 		.append(" (select vqem.mark from qualityestimationcrit qecBM")	
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeurMark")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeurMark")
 		.append(",")
 		.append(" (select list(''||qecd.defect) from qualityestimationcritdefect qecd ")
 		.append(" left join qualityestimationcrit qecBM on qecBM.id=qecd.criterion")
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='BranchManager') as branchManagerMarkDefect")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='BranchManager') as branchManagerMarkDefect")
 		.append(",")
 		.append(" (select list(''||qecd.defect) from qualityestimationcritdefect qecd ")
 		.append(" left join qualityestimationcrit qecBM on qecBM.id=qecd.criterion")
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Expert') as expertMarkDefect")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Expert') as expertMarkDefect")
 		.append(",")
 		.append(" (select list(''||qecd.defect) from qualityestimationcritdefect qecd ")
 		.append(" left join qualityestimationcrit qecBM on qecBM.id=qecd.criterion")
 		.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")	
 		.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-		.append(" where vqem.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeurMarkDefect")
+		.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Coeur') as coeurMarkDefect")
+				.append(",")
+				.append(" (select qecBM.comment from qualityestimationcrit qecBM")
+				.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")
+				.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+				.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='BranchManager') as commentbranchManager")
+				.append(" ,")
+				.append(" (select qecBM.comment from qualityestimationcrit qecBM")
+				.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")
+				.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+				.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Expert') as commentexpert")
+				.append(" ,")
+				.append(" (select qecBM.comment from qualityestimationcrit qecBM")
+				.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")
+				.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+				.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Coeur') as commentcoeur")
 		.append(" from VocQualityEstimationCrit vqec")
-		.append(" where vqec.kind_id='").append(aKind).append("'  order by vqec.code") ;
+
+		.append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqec.id");
+		Boolean ifTypeBool=false;
+		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCard;
+		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
+		if (listkind.size()!=0) {
+			Object one = "1";
+			Object row = listkind.get(0) ;
+			if (row.equals(one)) {
+				ifTypeBool=true;
+				sql.append(" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id ")
+						.append(" left join qualityestimationcard qecard on qecard.id='").append(aCard).append("'")
+						.append(" left join medcase mcase on qecard.medcase_id= mcase.id ")
+						.append(" left join diagnosis ds on ds.medcase_id=mcase.id ")
+						.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
+						.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id ");
+			}
+		}
+
+		sql.append(" where vqec.kind_id='").append(aKind).append("'");
+		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id and reg.code='4' and prior.code='1' ");
+		sql.append(" order by vqec.code") ;
 		System.out.println("shortRow="+sql.toString());
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {
-			 table.append("<table border=1 width=90%>")  ;
+			 List<String[]> list2=null;
+			 if (ifTypeBool) {
+				 list2 = getExecutedCriterias(aCard) ;
+			 }
+			 table.append("<table border=1 width=90%>")  ;//
 			 table.append("<tr>") ;
-			 table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи</th>") ;
+			 table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи (зелёным цветом выделены те критерии, которые выполнены согласно автоматическому подсчёту оказанных услуг; оранжевым - те, что не выполнены).</th>") ;
 			 table.append("<th rowspan=2>№№п/п</th>") ;
 			 table.append("<th colspan=3>Оценочные баллы</th>") ;
 			 table.append("</tr>") ;
@@ -348,15 +414,31 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 } else if (aTypeSpecialist.equals("Coeur")) {
 					 defects = ""+row[11];
 				 }
-				 
+				 //надо получить оказанные услуги по критериям - выполнено/нет
 				 table.append("<tr>") ;
 				 table.append("<td align='left'>").append(row[1]).append("-").append(row[2]).append("</td>") ;			//HERE
-				 table.append("<td valign='top' align='right'>").append(cntPart++).append("<input type='hidden' id='criterion"+(cntPart-1)+"Comment' value='"+defects+"'></td>") ;
-
-					 
-			 
-				 
-				 //table.append("<td>").append(row[8]).append("</td>") ;
+				 String color1="",color2="";
+				 if (ifTypeBool) {
+					 color1=" style=\"background-color:LightGreen\"";
+					 color2=" style=\"background-color:lightsalmon\"";
+				 }
+				 StringBuilder comments=new StringBuilder();
+				 if (row[12]!=null) comments.append(row[12]);
+				 comments.append(";");
+				 if (row[13]!=null) comments.append(row[13]);
+				 comments.append(";");
+				 if (row[14]!=null) comments.append(row[14]);
+				 int index=-1;
+				 if (list!=null) {
+					 for (int t = 0; t < list2.size(); t++) {
+						 if (list2.get(t)[0].toString().equals(list.get(i)[1].toString())) index = t;
+					 }
+				 }
+				 if (index!=-1 && list2!=null && list2.get(index)[1].equals("yes")) {
+					 table.append("<td valign='top' align='right'"+color1+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
+				 }
+				 else
+					 table.append("<td valign='top' align='right'"+color2+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
 				 //BranchManager - зав.отделением
 				 //Expert - эксперт
 				 //Coeur - КЭР
@@ -467,5 +549,59 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext EntityManager theManager ;
     @Resource SessionContext theContext;
+	@EJB IHospitalMedCaseService theHospitalMedCaseService ;
+	//Milamesher получение списка критерии+услуги
+	private List<String[]> getExecutedCriterias(Long aCard) {
 
+		List<String[]> total = new ArrayList<String[]>();
+		String query="select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes\n" +
+				"from vocqualityestimationcrit vqecrit\n" +
+				"left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id\n" +
+				"left join vocidc10 d on d.id=vqecrit_d.vocidc10_id\n" +
+				"left join diagnosis ds on ds.idc10_id=d.id\n" +
+				"left join medcase mc on mc.id=ds.medcase_id\n" +
+				"left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
+				"left join vocprioritydiagnosis prior on prior.id=ds.priority_id\n" +
+				"left join qualityestimationcard qecard on qecard.medcase_id=mc.id\n" +
+				"where qecard.id="+aCard+" and reg.code='4' and prior.code='1'";
+		List<Object[]> list = theManager.createNativeQuery(query).getResultList() ;
+		if (list.size()>0) {
+			query = "select m.parent_id from qualityestimationcard qecard\n" +
+					"left join qualityestimation qe on qe.card_id=qecard.id\n" +
+					"left join medcase m on m.id=qecard.medcase_id\n" +
+					"where qecard.id=" + aCard;
+			List<Object> list0 = theManager.createNativeQuery(query).getResultList();
+			if (list0.size() > 0) {
+				Long id = Long.parseLong(list0.get(0).toString());
+				//log(id);
+				String json=theHospitalMedCaseService.getAllServicesByMedCase(id);
+				//log(json);
+				List<String> allMatches = new ArrayList<String>();
+				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
+				while (m.find()) {
+					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
+					//res.append(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", "")).append(" ");
+				}
+				for (int i = 0; i < list.size(); i++) {
+					String mcodes = (list.get(i)[2] != null) ? list.get(i)[2].toString() : "";
+					Boolean flag = false;
+					total.add(new String[2]);
+					total.get(i)[0] = list.get(i)[0].toString();
+					if (allMatches.size() > 0) {
+						for (int j = 0; j < allMatches.size(); j++) {
+							String scode = allMatches.get(j).toString();
+							if (mcodes.contains("'" + scode + "'")) flag = true;
+							//log("scode "+scode);
+							//log("mcodes"+mcodes);
+						}
+					}
+					if (flag) total.get(i)[1] = "yes";
+					else total.get(i)[1] = "no";
+					//log (flag);
+				}
+			}
+			//log("total"+total.toString());
+		}
+		return total;
+	}
 }

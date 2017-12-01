@@ -287,6 +287,9 @@
     	 as sum2
     	
     	,case when vhr.code='11' then 'Да' else null end as deathCase
+    	,coalesce (himc.ticketNumber,'') as f14_ticketNumber
+    	,to_char(himc.ticketDate,'dd.MM.yyyy') as f15_ticketDate
+    	,to_char(himc.planHospDate,'dd.MM.yyyy') as f16_planHospDate
     from MedCase as m 
     left join hitechmedicalcase himc on himc.medcase_id=m.id
     left join vocKindHighCare os on os.id=coalesce(himc.kind_id,m.${fldStandart})
@@ -311,7 +314,7 @@
     ${departmentSql} ${serviceStreamSql} ${bedSubTypeSql} ${bedTypeSql} ${standartSql}  
     and os.id is not null  ${emergencySql} ${patientSql} 
     group by  m.id,hmc.id,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,d.name, vbst.id,vbst.name,
-    vss.id,vss.name,os.id,os.code,os.name,vhr.code,hmc.dateStart,hmc.dateFinish,m.dateStart,m.dateFinish,m.transferDate,bf.addCaseDuration
+    vss.id,vss.name,os.id,os.code,os.name,vhr.code,hmc.dateStart,hmc.dateFinish,m.dateStart,m.dateFinish,m.transferDate,bf.addCaseDuration,himc.ticketNumber, himc.ticketDate, himc.planHospDate
     order by  p.lastname, p.firstname, p.middlename,vss.name,vbst.name,os.code
     	"/>
     	    <form action="print-stac_report_standart_reestr.do" method="post" target="_blank">
@@ -323,7 +326,7 @@
     <input type="submit" value="Печать"> 
     </form>
     	
-    	<msh:table name="swod_by_standart" 
+    	<msh:table printToExcelButton="Сохранить в Excel" name="swod_by_standart"
     	action="entityParentView-stac_slo.do" viewUrl="entityShortView-stac_slo.do" idField="1">
     		<msh:tableColumn property="sn" columnName="#"/>
     		<msh:tableColumn property="2" columnName="ФИО пациента"/>
@@ -337,6 +340,9 @@
     		<msh:tableColumn property="10" columnName="Дата выписки"/>
     		<msh:tableColumn property="11" columnName="Кол-во к.дней по СЛО" isCalcAmount="true"/>
     		<msh:tableColumn property="12" columnName="Кол-во к.дней по СЛС" isCalcAmount="true"/>
+			<msh:tableColumn property="14" columnName="Номер талона ВМП"/>
+			<msh:tableColumn property="15" columnName="Дата выдачи талона"/>
+			<msh:tableColumn property="16" columnName="Дата планируемой госпитализации"/>
     	</msh:table>
     	<%
     	} else {
@@ -409,7 +415,7 @@
     vss.id,vss.name,os.id,os.code,os.name
     order by  ${viewDepartmentOrder} ${viewBedOrder} vss.name,vbst.name,os.code
     	"/>
-    	<msh:table name="swod_by_standart" 
+    	<msh:table printToExcelButton="Сохранить в Excel" name="swod_by_standart"
     	action="stac_report_standartOmc.do?typeEmergency=${typeEmergency}&typePatient=${typePatient}&typeView=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1">
     		<msh:tableColumn property="2" cssClass="noDepartment" columnName="Отделение"/>
     		<msh:tableColumn property="3" cssClass="noBed" columnName="Профиль коек"/>

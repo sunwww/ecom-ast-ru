@@ -424,8 +424,6 @@
 	    	var frm = document.forms[0] ;
 	    	frm.m.value="printReestrByDay" ;
 	    	frm.s.value="HospitalPrintService" ;
-	    	//frm.sqlText1.value = "${journal_priem_sql}" ;
-	    	//frm.sqlText2.value = "${journal_priem_denied_sql}" ;
 	    	frm.target='_blank' ;
 	    	frm.action='print-'+aFile+'.do' ;
 	    	$('id').value = getCheckedRadio(frm,"typeEmergency")+":"

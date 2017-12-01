@@ -12,15 +12,15 @@
   <tiles:put name="body" type="string">
   <%
     String typeRead =ActionUtil.updateParameter("PatientAttachment","typeRead","1", request) ;
-	String typeView=ActionUtil.updateParameter("PatientAttachment","typeView","1", request) ;
-	String typeAge=ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
-	String typeAttachment=ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
-	String typeChange=ActionUtil.updateParameter("PatientAttachment","typeChange","1", request) ;
-	String typeDefect=ActionUtil.updateParameter("PatientAttachment","typeDefect","3", request) ;
-	String typeCompany=ActionUtil.updateParameter("PatientAttachment","typeCompany","3", request) ;
-	String typeAreaCheck=ActionUtil.updateParameter("PatientAttachment","typeAreaCheck","3", request) ;
-	String typeWork=ActionUtil.updateParameter("PatientAttachment","typeWork","1", request) ;
-	String typeDivide=ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ;
+	ActionUtil.updateParameter("PatientAttachment","typeView","1", request) ;
+	ActionUtil.updateParameter("PatientAttachment","typeAge","3", request) ;
+	ActionUtil.updateParameter("PatientAttachment","typeAttachment","3", request) ;
+	ActionUtil.updateParameter("PatientAttachment","typeChange","1", request) ;
+	ActionUtil.updateParameter("PatientAttachment","typeDefect","3", request) ;
+	ActionUtil.updateParameter("PatientAttachment","typeCompany","3", request) ;
+	ActionUtil.updateParameter("PatientAttachment","typeAreaCheck","3", request) ;
+	ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ;
+	ActionUtil.updateParameter("PatientAttachemnt","typeResult","xml",request) ;
 	//String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "2", request);
 
   %>
@@ -55,12 +55,7 @@
         <msh:textField  property="period" label="Период с" />
         <msh:textField  property="periodTo" label="до" />
       </msh:row>
-      <msh:row>
-        <msh:checkBox property="noCheckLpu" label="Не учитывать ЛПУ" />
-       </msh:row>
-       <msh:row> 
-        <msh:textField  property="packetType" label="Тип пакета (для плана ДД)" />
-       </msh:row>
+
       <msh:row>
         <td class="label" title="Возраст  (typeAge)" colspan="1"><label for="typeAgeName" id="typeAgeLabel">Возраст:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -74,15 +69,7 @@
 	        </td>
 	        
        </msh:row>
-       <msh:row>
-       <td class="label" title="База  (typeWork)" colspan="1"><label for="typeWorkName" id="typeWorkLabel">База:</label></td>
-         <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeWork" value="1"> системная
-        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typeWork" value="2"> фонда 
-	        </td>
-       </msh:row>
+
       <msh:row>
         <td class="label" title="Прикрепление  (typeAttachment)" colspan="1"><label for="typeAttachmentName" id="typeAttachmentLabel">Прикрепление:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -98,20 +85,7 @@
        </msh:row>
        </msh:panel>
        <msh:panel colsWidth="fondTable">
-       
-      <msh:row>
-        <td class="label" title="Пациенты  (typePatientFond)" colspan="1"><label for="typePatientFondName" id="typePatientFondLabel">Пациенты (ДЛЯ БАЗЫ ПО ФОНДУ!):</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typePatientFond" value="1">  есть в базе
-        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typePatientFond" value="2">  нет в базе
-	        </td>
-	        <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-	        	<input type="radio" name="typePatientFond" value="3">  все без ограничения
-	        </td>
 
-       </msh:row>
       <msh:row>
         <td class="label" title="Участок  (typeAreaCheck)" colspan="1"><label for="typeAreaCheckName" id="typeAreaCheckLabel">Прикрепление к участку:</label></td>
         <td onclick="this.childNodes[1].checked='checked';">
@@ -189,17 +163,32 @@
       </msh:row>
       <msh:row>
         <td class="label" title="Пациенты  (typeRead)" colspan="1"><label for="typeReadName" id="typeReadLabel">Отображать:</label></td>
-        <td onclick="this.childNodes[1].checked='checked';">
-        	<input type="radio" name="typeRead" value="1">  xml-файл
+        <td onclick="this.childNodes[1].checked='checked';$('typeResultDiv').style='';">
+        	<input type="radio" name="typeRead" value="1">  xml-файл (прик. население)
         </td>
        
-	    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+	    <td onclick="this.childNodes[1].checked='checked';$('typeResultDiv').style.display='none';" colspan="2">
 	    	<input type="radio" name="typeRead" value="2">  на экране (первые 250 записей)
 	    </td>
-	     <td onclick="this.childNodes[1].checked='checked';">
+	     <td onclick="this.childNodes[1].checked='checked';$('typeResultDiv').style.display='none';">
         	<input type="radio" name="typeRead" value="3">  xml-файл (план ДД)
         </td>
        </msh:row>
+           <msh:row styleId="typeResultDiv" >
+
+               <td class="label" title="Пациенты  (typeResult)" colspan="1"><label for="typeResultName" id="typeResultLabel">Отображать:</label></td>
+               <td onclick="this.childNodes[1].checked='checked';">
+                   <input type="radio" name="typeResult" value="xml" checked>  xml-файл
+               </td>
+
+               <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                   <input type="radio" name="typeResult" value="prik">  prik-файл
+               </td>
+               <td onclick="this.childNodes[1].checked='checked';">
+                   <input type="radio" name="typeResult" value="zip"> zip архив
+               </td>
+
+           </msh:row>
   
        <msh:row>
        
@@ -265,11 +254,9 @@
       checkFieldUpdate('typeDefect','${typeDefect}',3) ;
       checkFieldUpdate('typeChange','${typeChange}',1) ;
       checkFieldUpdate('typeCompany','${typeCompany}',3) ;
-      checkFieldUpdate('typePatientFond','${typePatientFond}',3) ;
       checkFieldUpdate('typeDivide','${typeDivide}',1) ;
-      checkFieldUpdate('typeWork','${typeWork}',1) ;
       checkFieldUpdate('typeAreaCheck','${typeAreaCheck}',3) ;
-      //checkFieldUpdate('typeXmlFormat', '${typeXmlFormat}',1);
+      checkFieldUpdate('typeResult', '${typeResult}','xml');
       $('aView').innerHTML=$('filename').value ;
      
     	var text="";
@@ -363,16 +350,14 @@
        	//td4.innerHTML = "<span> "+aData[3]+"</span>";
        
       }
+
       function checkFieldUpdate(aField,aValue,aDefaultValue) {
-    	   	eval('var chk =  document.forms[0].'+aField) ;
-    	   	var aMax=chk.length ;
-    	   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
-    	   	if ((+aValue)==0 || (+aValue)>(+aMax)) {
-    	   		chk[+aDefaultValue-1].checked='checked' ;
-    	   	} else {
-    	   		chk[+aValue-1].checked='checked' ;
-    	   	}
-    	   }
+          if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
+              jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
+          } else {
+              jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
+          }
+      }
       </script>
     </msh:panel>
      <%if (request.getAttribute("defectWQR")!=null){ %>

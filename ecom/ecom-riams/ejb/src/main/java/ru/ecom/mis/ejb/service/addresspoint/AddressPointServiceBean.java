@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.service.addresspoint;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -134,7 +135,6 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" ").append(addSql).append(" and lp.dateto is null") ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
-        	System.out.println("-------------------EXPORT DISP_PLAN = "+sql.toString());
         	listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
         	for (int i=0;i<listPat.size();i++) {
@@ -241,7 +241,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
     		, String aNReestr, String aNPackage, Long aCompany) throws ParserConfigurationException, TransformerException {
     	return exportAll(aAge, aFilenameAddSuffix, aAddSql, aLpuCheck, aLpu, aArea, aDateFrom, aDateTo, aPeriodByReestr
-    			, aNReestr, aNPackage,null,true,"1");
+    			, aNReestr, aNPackage,null,true,"1",null);
     }
     public WebQueryResult exportFondAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
@@ -324,7 +324,6 @@ public class AddressPointServiceBean implements IAddressPointService {
     		if (aCompany!=null&&aCompany!=0) sqlGroup.append(" and vri.id='").append(aCompany).append("'  ");
     		sqlGroup.append(" group by pai.insCompName") ;
     		sqlGroup.append(" order by pai.insCompName") ;
-    		System.out.println("------------------- Need_DIVIDE_COMP = "+sqlGroup.toString());
     		List<Object> listComp = theManager.createNativeQuery(sqlGroup.toString())
     				.getResultList() ;
     		
@@ -346,7 +345,6 @@ public class AddressPointServiceBean implements IAddressPointService {
     			sql.append(" ").append(addSql) ;
         		sql.append(" group by ").append(fldGroup) ;
         		sql.append(" order by pai.lastname,pai.firstname,pai.middlename,pai.birthday") ;
-    			System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
     			listPat = theManager.createNativeQuery(sql.toString())
     					.getResultList() ;
     			createFondXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
@@ -370,7 +368,6 @@ public class AddressPointServiceBean implements IAddressPointService {
     		sql.append(" ").append(addSql) ;
     		sql.append(" group by ").append(fldGroup) ;
     		sql.append(" order by pai.lastname,pai.firstname,pai.middlename,pai.birthday") ;
-    		System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
     		listPat = theManager.createNativeQuery(sql.toString())
     				.getResultList() ;
     		createFondXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
@@ -383,10 +380,15 @@ public class AddressPointServiceBean implements IAddressPointService {
     public WebQueryResult exportAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
-    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide, String xmlFormat) throws ParserConfigurationException, TransformerException {
+    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide, String xmlFormat, String aReturnType) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
     	errList.clear();
+    	if (aLpu!=null&&aLpu>0) {
+    		aLpuCheck=true;
+		} else {
+    		aLpuCheck=false;
+		}
     	if (aAge!=null) {
     		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
     	}
@@ -467,7 +469,6 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sqlGroup.append(" ").append(addSql) ;
         	sqlGroup.append(" group by lp.company_id,vri.smocode") ;
         	sqlGroup.append(" order by lp.company_id,vri.smocode") ;
-        	System.out.println("------------------- Need_DIVIDE_COMP = "+sqlGroup.toString());
         	List<Object[]> listComp = theManager.createNativeQuery(sqlGroup.toString())
         			.setMaxResults(90000).getResultList() ;
         	
@@ -501,11 +502,10 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" ").append(addSql) ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
-        	System.out.println("------------------- Need_DIVIDE_PAT = "+sql.toString());
         	 listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
         	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
-        	//xmlDoc.saveDocument(outFile) ;
+
         	}
     	} else {
     		filename = "P_"+aFilenameAddSuffix+aNReestr+"_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
@@ -533,16 +533,53 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" ").append(addSql) ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
-        	System.out.println("-------------------NO Need_DIVIDE_PAT = "+sql.toString());
         	listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
         	 createXml(workDir, filename,aPeriodByReestr,aNReestr, listPat,props);
     	}
+		if (filenames.length()>0&&aReturnType!=null&&(aReturnType.equals("prik")||aReturnType.equals("zip"))) { //Если надо сделать архивы
+			String[] files = filenames.substring(1).split("#");
+			String[] zipFiles= filenames.substring(1).replace(".xml",".prik").split("#");
+			for (String s: files) {
+				String[] ss ={s};
+				createArchive(workDir,s.replace(".xml",".prik"),ss);
+
+			}
+			res.set1(filenames.toString().substring(1).replace(".xml",".prik"));
+			if (aReturnType.equals("zip")) {
+				createArchive(workDir,aPeriodByReestr+aNReestr+".zip",zipFiles);
+				res.set1(aPeriodByReestr+aNReestr+".zip");
+				return res;
+			}
+			return res;
+		}
     	
     	res.set1(filenames.length()>0?filenames.substring(1):"");
     	return res;
-    	//     	return (filenames.length()>0?filenames.substring(1):"")+(def.length()>0?"@"+def.toString():"");
     }
+
+	public String createArchive(String aWorkDir,String archiveName, String[] aFileNames) {
+
+				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+				StringBuilder sb = new StringBuilder();
+				sb.append("zip -r -j -9 ").append(aWorkDir).append("/").append(archiveName).append(" ") ;
+				for (int i=0;i<aFileNames.length;i++) {
+					sb.append(aWorkDir).append("/").append(aFileNames[i]).append(" ");
+				}
+				try {
+					System.out.println("START EXECUTING = "+sb);
+					try {
+						Runtime.getRuntime().exec("zip -d " + aWorkDir + "/" + archiveName + " *");//Удаляем архив перед созданием;
+					 } catch (Exception e ) {}//Не удалось очистить архив, т.к. его нету. Ничего страшного)
+					Runtime.getRuntime().exec(sb.toString());//arraCmd);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return archiveName;
+
+
+	}
+
     public void createFondXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat,String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
     	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

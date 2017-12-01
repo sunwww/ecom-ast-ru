@@ -36,8 +36,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		ActionErrors  erros = form.validate(aMapping, aRequest) ;
     		
     	//	System.out.println(erros) ;
-    		if (erros.isEmpty()&&((form.getLpu()!=null &&!form.getLpu().equals(Long.valueOf(0)))||(form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)))
-    			) {
+    		if (erros.isEmpty()) {
     		IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
     		String typeRead = ActionUtil.updateParameter("PatientAttachment","typeRead","1", aRequest) ; 
     		String typeView = ActionUtil.updateParameter("PatientAttachment","typeView","1", aRequest) ; 
@@ -48,9 +47,9 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeCompany = ActionUtil.updateParameter("PatientAttachment","typeCompany","3", aRequest) ; 
     		String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1",aRequest);
     		String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3",aRequest);
-    		String typeWork = ActionUtil.updateParameter("PatientAttachment", "typeWork", "1",aRequest);
-    		String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
-    		boolean checkLpu = form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true ;
+    		String returnType = ActionUtil.updateParameter("PatientAttachment", "typeResult", "xml",aRequest);
+				//--- String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
+    		//boolean checkLpu = form.getLpu()!=null&&form.getLpu()>0?true:false; //
     		//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
     		Date cur = DateFormat.parseDate(form.getPeriod()) ;
     		Calendar cal = Calendar.getInstance() ;
@@ -125,17 +124,17 @@ public class AttachmentByLpuAction extends BaseAction {
     			if (typeDivide!=null&&typeDivide.equals("2")) {
     				bNeedDivide = false;
     			}
-    			if (typeWork.equals("1")) {
+    		//	if (typeWork.equals("1")) { //база системная
     				if (typeRead.equals("1")){
-    				fs = service.exportAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    				fs = service.exportAll(null,prefix,sqlAdd.toString(),true
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
-		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, "1");
+		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, "1", returnType);
     				} else {
     					fs = service.exportExtDispPlanAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
     			        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format3.format(calTo.getTime()), form.getNumberReestr()
     			        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, ""+form.getPacketType());
     				}
-    			} else {
+    		/*	} else { //база фонда
     				StringBuilder sqlAdd1= new StringBuilder() ;
     				
     				if (typePatientFond.equals("1")) {
@@ -151,7 +150,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
     				
     			}
-		    	
+		    */
 		        if (fs!=null) {
 		        	Collection<WebQueryResult> def = (Collection<WebQueryResult>)fs.get2(); 
 		        	String[] files = fs.get1().toString().split("#") ;
@@ -170,14 +169,15 @@ public class AttachmentByLpuAction extends BaseAction {
 		        	form.setFilename("---") ;
 		        }
 	    	} else {
-	    		if (checkLpu) {
+
 		    		if (form.getLpu()!=null&&form.getLpu()>0) {	
 		    			sqlAdd.append(" and lp.lpu_id = ").append(form.getLpu());
+						if (form.getArea()!=null&&form.getArea()>0) {
+							sqlAdd.append(" and lp.area_id=").append(form.getArea());
+						}
 		    		}
-		    		if (form.getArea()!=null&&form.getArea()>0) {
-		    			sqlAdd.append(" and lp.area_id=").append(form.getArea());
-		    		}
-	    		}
+
+
 	    		
 	    		aRequest.setAttribute("sqlAdd", sqlAdd.toString()) ;
 	    	}

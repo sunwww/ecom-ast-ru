@@ -29,6 +29,8 @@
       <msh:hidden property="provisional" guid="38fe07ac-6706-4911-a217-65edb3c85dac" />
       <msh:hidden property="result" guid="156ff02c-61dd-40b9-80f4-d88885db16f8" />
       <msh:hidden property="moveToAnotherLPU" guid="c0b69264-2081-4952-8c0a-7ea12712f14c" />
+      <msh:hidden property="height" />
+      <msh:hidden property="weight" />
 
        <msh:ifNotInRole roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractGuaranteeLetter/View">
       <msh:hidden property="guarantee"/>
