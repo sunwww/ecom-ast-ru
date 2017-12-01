@@ -112,9 +112,10 @@ public class DisabilityServiceJs {
 			IDisabilityService disService = Injection.find(aRequest).getService(IDisabilityService.class);
 			String number =  list.iterator().next().get1().toString() ;
 			String snils = null;
-			list = service.executeNativeSql("select p.snils from patient p\n" +
-					" left join disabilitydocument d on d.patient_id=p.id\n" +
-					" where d.id='" + aDocumentId+ "'");
+			list = service.executeNativeSql("select p.snils from patient p \n" +
+					"left join disabilitycase dc on dc.patient_id = p.id \n" +
+					"left join disabilitydocument d on dc.id=d.disabilitycase_id \n" +
+					"where d.id=" + aDocumentId);
 			if (list.size() > 0) {
 				snils=list.iterator().next().get1().toString();
 			}
