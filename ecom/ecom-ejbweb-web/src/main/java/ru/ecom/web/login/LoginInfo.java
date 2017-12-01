@@ -43,7 +43,6 @@ public class LoginInfo implements ILoginInfo, Serializable {
     }
     public static String getHashPassword(String aUsername, String aPassword) {
     	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
-    	System.out.println(hash) ;
     	return hash;
     }
 
@@ -80,12 +79,10 @@ public class LoginInfo implements ILoginInfo, Serializable {
 	public void setUrlReportBase(String aVal,HttpSession aSession) {
 		theUrlReportBase=aVal ;
     	aSession.setAttribute("LOGININFO_URL_REPORT_BASE", theUrlReportBase);
-    	System.out.println("report="+theUrlReportBase) ;
 	}
 	public void setUrlMainBase(String aVal,HttpSession aSession) {
 		theUrlMainBase=aVal;
         aSession.setAttribute("LOGININFO_URL_MAIN_BASE", theUrlMainBase);
-        System.out.println("main="+theUrlMainBase) ;
 	}
 
 	/** Url report base */

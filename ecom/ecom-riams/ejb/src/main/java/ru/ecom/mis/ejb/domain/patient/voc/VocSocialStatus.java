@@ -14,4 +14,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Социальный статус")
 @Table(schema="SQLUser")
 public class VocSocialStatus extends VocIdNameOmcCode {
+
+    /**Код в промеде**/
+    private String promedCode;
+    @Comment("Код в промеде")
+    public String getPromedCode() {
+        return promedCode;
+    }
+    public void setPromedCode(String promedCode) {
+        this.promedCode = promedCode;
+    }
 }
