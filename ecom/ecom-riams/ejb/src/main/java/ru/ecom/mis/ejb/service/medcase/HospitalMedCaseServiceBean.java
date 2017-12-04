@@ -154,6 +154,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 		policProfiles.put("105","стоматология детская");
 		policProfiles.put("107","стоматология ортопедическая");
 		policProfiles.put("106","стоматология терапевтическая");
+		policProfiles.put("113","стоматология терапевтическая"); //зубной врач (стоматолог)
 		policProfiles.put("108","стоматология хирургическая");
 		policProfiles.put("77","токсикология");
 		policProfiles.put("78","торакальная хирургия");
