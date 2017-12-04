@@ -21,7 +21,7 @@
     
         <msh:separator label="Сведения об ВМП" colSpan="5" guid="a7a51c304-335b4ade6f66" />
         <msh:row>
-          <msh:textField property="ticketNumber" label="Номер талона на ВМП"/>
+          <msh:textField property="ticketNumber" label="Номер талона на ВМП" size="100"/>
         </msh:row>
         <msh:row guid="a03a1e02-5a44-4403-bb71-fb8e5afcec43">
  	       <msh:textField property="ticketDate" label="Дата выдачи талона на ВМП"/>
