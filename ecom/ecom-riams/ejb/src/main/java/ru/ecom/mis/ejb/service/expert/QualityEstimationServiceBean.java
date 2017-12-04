@@ -138,11 +138,9 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			
 			return null ;
 		}
-		
 		if (!aView && !aFullExpertCard) {
 			return getRowShort(replaceValue,val,kind, aCardId, aTypeSpecialist, cntSection, aView) ;
 		}
-		
 		 sql.append("select vqec.id as vqecid,vqec.code as vqeccode,UPPER(vqec.name) as vqecname,vqec.shortname as vqecshortname")
 			.append(" ,(select count(*) from VocQualityEstimationMark vocmark where vocmark.criterion_id=vqec.id),vqem.id as vqemid,vqem.code as vqemcode,vqem.name as vqemname,coalesce(''||vqem.mark,'-') as vqemmark")
 			.append(",")
@@ -197,8 +195,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			if (row.equals(one)) {
 				ifTypeBool=true;
 				sql.append(" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id ")
-						.append(" left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("'")
-						.append(" left join qualityestimationcard qecard on qecard.id=qeC.card_id ")
+						//.append(" left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("'")
+						.append(" left join qualityestimationcard qecard on qecard.id='").append(aCardId).append("'")
 						.append(" left join medcase mcase on qecard.medcase_id= mcase.id ")
 						.append(" left join diagnosis ds on ds.medcase_id=mcase.id ")
 						.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
@@ -209,8 +207,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		sql.append(" where vqec.kind_id='").append(kind).append("'");
 		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id  and reg.code='4' and prior.code='1'");
 		sql.append(" group by vqem.id ,vqec.id,vqec.code,vqec.name,vqec.shortname,vqem.code ,vqem.name,vqem.mark")
-		 	.append(" order by vqec.code")			;
-		 //log(sql) ;
+		 	.append(" order by vqec.code");
+		// log(sql) ;
 		 StringBuilder table = new StringBuilder() ;
 		 StringBuilder javaScript = new StringBuilder() ;
 		 table.append("<table border='1' width=90%>")  ;
@@ -225,7 +223,6 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 table.append("<th>КЭР</th>") ;
 		 
 		 table.append("</tr>") ;
-		 
 		 List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {
 			 boolean firststr = false;
@@ -384,6 +381,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id and reg.code='4' and prior.code='1' ");
 		sql.append(" order by vqec.code") ;
 		System.out.println("shortRow="+sql.toString());
+		//log(sql);
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {
 			 List<String[]> list2=null;
@@ -392,8 +390,11 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 }
 			 table.append("<table border=1 width=90%>")  ;//
 			 table.append("<tr>") ;
-			 table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи (зелёным цветом выделены те критерии, которые выполнены согласно автоматическому подсчёту оказанных услуг; оранжевым - те, что не выполнены).</th>") ;
-			 table.append("<th rowspan=2>№№п/п</th>") ;
+			 if (ifTypeBool)
+			 	table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи (зелёным цветом выделены те критерии, которые выполнены согласно автоматическому подсчёту оказанных услуг; оранжевым - те, что не выполнены).</th>") ;
+			 else
+				 table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи.</th>") ;
+		 	 table.append("<th rowspan=2>№№п/п</th>") ;
 			 table.append("<th colspan=3>Оценочные баллы</th>") ;
 			 table.append("</tr>") ;
 			 table.append("<tr>") ;

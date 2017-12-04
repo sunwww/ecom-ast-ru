@@ -51,10 +51,10 @@
                 callback: function(res) {
                     //alert(res);
                     if (res!="##") {
-                        the${name}CloseDisDocumentDialog.show() ;
+
                         var all = res.split('!') ;
                         var table = document.getElementById('table1');
-                        table.innerHTML="<tr><th align=\"center\" width=\"150\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th></tr>";
+                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th></tr>";
                         for (var i=0; i<all.length-1; i++) {
                             var aResult = all[i].split('#');
                             var tr = document.createElement('tr');
@@ -65,6 +65,7 @@
                             tr.appendChild(td1);tr.appendChild(td2);
                             table.appendChild(tr);
                         }
+                        the${name}CloseDisDocumentDialog.show() ;
                     }
                     else alert("Для основного клинического диагноза госпитализации не найдено данных по 203 приказу!");
                 }

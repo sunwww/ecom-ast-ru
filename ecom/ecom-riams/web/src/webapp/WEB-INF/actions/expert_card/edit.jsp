@@ -66,7 +66,8 @@
   <tiles:put name="title" type="string">
     <ecom:titleTrail guid="titleTrail-123" mainMenu="Expert" beginForm="expert_cardForm" />
   </tiles:put>
-  <tiles:put name="side" type="string">
+    <msh:ifFormTypeAreViewOrEdit formName="expert_cardForm">
+    <tiles:put name="side" type="string">
     <msh:sideMenu title="Вид оценки качества">
       <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/Edit" key="ALT+2" params="id" action="/entityEdit-expert_card" name="Изменить" title="Изменить данные" />
       <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/Delete" confirm="Удалить?" key="ALT+DEL" params="id" action="/entityParentDelete-expert_card" name="Удалить" title="Удалить данные" />
@@ -86,6 +87,7 @@
 
     <tags:expert_menu currentAction="expert_card_smo"/>
   </tiles:put>
+</msh:ifFormTypeAreViewOrEdit>
   <tiles:put name="javascript" type="string">
   <script type="text/javascript" src="./dwr/interface/QualityEstimationService.js" >
   /*   */
@@ -122,8 +124,6 @@
 	  			QualityEstimationService.getRow($('id').value,'',true
 	  				,{
 						 callback: function(aRow) {
-						     	//alert(aRow) ;
-                             if (aRow.length<500) alert("Диагноз этого СЛС не входит в перечень 203 приказа, поэтому экспертная карта пуста.");
                              if (aRow!=null) {
 						     		$('loadCriterion').innerHTML = aRow ;
 						     		
@@ -150,16 +150,16 @@
 							     		  if (+rows[4]>0) {
 							     			  document.location.href="entityParentPrepareCreate-expert_card.do?id="+rows[4] ;
 							     		  }
-							     		  $('patient').value = rows[0] ;
-							     		  $('patientReadOnly').value = rows[1] ;
-							     		  $('cardNumber').value = rows[2] ;
-							     		  $('cardNumberReadOnly').value = rows[2] ;
+							     		  if ($('patient')!=null) $('patient').value = rows[0] ;
+                                          if ($('patientReadOnly')!=null) $('patientReadOnly').value = rows[1] ;
+                                          if ($('cardNumber')!=null) $('cardNumber').value = rows[2] ;
+                                          if ($('cardNumberReadOnly')!=null) $('cardNumberReadOnly').value = rows[2] ;
 							     		  
 							     	} else {
-							     		  $('patient').value = "" ;
-							     		  $('patientReadOnly').value = "" ;
-							     		  $('cardNumber').value = "" ;
-							     		  $('cardNumberReadOnly').value = "" ;
+                                        if ($('patient')!=null) $('patient').value = "" ;
+                                        if ($('patientReadOnly')!=null) $('patientReadOnly').value = "" ;
+                                        if ($('cardNumber')!=null) $('cardNumber').value = "" ;
+                                        if ($('cardNumberReadOnly')!=null) $('cardNumberReadOnly').value = "" ;
 							     	}
 							     	infoBySlo() ;
 							  	}
