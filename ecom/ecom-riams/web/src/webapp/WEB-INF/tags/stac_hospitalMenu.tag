@@ -91,6 +91,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
 
+
 	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View"  name="Дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ"   
 		params="id"  action='/entityParentList-smo_visitProtocol' title='Список дневников специалистов'
 		styleId="smo_visitProtocol"

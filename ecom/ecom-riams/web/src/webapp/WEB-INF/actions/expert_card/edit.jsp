@@ -123,7 +123,8 @@
 	  				,{
 						 callback: function(aRow) {
 						     	//alert(aRow) ;
-						     	if (aRow!=null) {
+                             if (aRow.length<500) alert("Диагноз этого СЛС не входит в перечень 203 приказа, поэтому экспертная карта пуста.");
+                             if (aRow!=null) {
 						     		$('loadCriterion').innerHTML = aRow ;
 						     		
 						     		

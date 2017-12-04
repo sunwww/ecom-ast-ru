@@ -12,15 +12,17 @@
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="0d13c843-c26a-4ae2-ae97-d61b44618bae" title="Добавить по СМО">
       <msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-expert_card" name="Экспертную карту" guid="dc51a550-1158-41b8-89a4-bf3a90ffeedb" roles="/Policy/Mis/MedCase/QualityEstimationCard/Create" />
-    </msh:sideMenu>
+      </msh:sideMenu>
     <msh:sideMenu>
     	<msh:sideLink  action="/entityParentList-expert_card.do" params="id" name="Список экспертных карт по СМО" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" title="Список экспертных карт" styleId="selected"/>
     </msh:sideMenu>
         <tags:expert_menu currentAction="expert_card_smo"/>
   </tiles:put>
   <tiles:put name="body" type="string">
-    <msh:section title="Список экспертных карт" createRoles="/Policy/Mis/MedCase/QualityEstimationCard/Create" createUrl="entityParentPrepareCreate-expert_card.do?id=${param.id}">
-  			<ecom:webQuery  name="Expert" nativeSql="
+
+ <msh:section title="Список экспертных карт" createRoles="/Policy/Mis/MedCase/QualityEstimationCard/Create" createUrl="entityParentPrepareCreate-expert_card.do?id=${param.id}">
+      <!--a href="entityParentPrepareCreate-expert_card.do?id=${param.id}"><img src="/skin/images/main/plus.png" alt="Добавить экспертную карту по 203 приказу" title="Добавить экспертную карту по 203 приказу" height="14" width="14">Добавить экспертную карту по 203 приказу</a>-->
+      	<ecom:webQuery  name="Expert" nativeSql="
   			
 select card.id as cardid,vek.name as vekname
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor

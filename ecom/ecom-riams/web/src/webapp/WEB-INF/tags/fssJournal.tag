@@ -91,5 +91,4 @@ function cancel${name}FSSProgress() {
     the${name}FSSProgress.hide() ;
     msh.effect.FadeEffect.pushFadeAll();
 }
-
 </script>

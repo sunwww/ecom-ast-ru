@@ -429,7 +429,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 comments.append(";");
 				 if (row[14]!=null) comments.append(row[14]);
 				 int index=-1;
-				 if (list!=null) {
+				 if (list!=null && list2!=null) {
 					 for (int t = 0; t < list2.size(); t++) {
 						 if (list2.get(t)[0].toString().equals(list.get(i)[1].toString())) index = t;
 					 }

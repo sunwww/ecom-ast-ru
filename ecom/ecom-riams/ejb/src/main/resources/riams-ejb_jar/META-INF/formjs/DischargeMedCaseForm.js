@@ -41,6 +41,8 @@ function onSave(aForm,aEntity, aCtx) {
 function onPreSave(aForm,aEntity, aCtx) {
     //checkUniqueDiagnosis(aForm,aCtx);
     checkDeathThenPlan(aCtx, aForm.result, aForm.reasonDischarge);
+    //проверка на наличие ЭК по критериям
+    //checkIfIsQECard(aForm, aCtx);
 	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotSave"))throw "Вы не можете сохранять выписку!!!!!!"
 	
 	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy")) {
@@ -196,7 +198,7 @@ function checkUniqueDiagnosis(aForm,aCtx) {
             for (var i = 0; i < mas.length; i++) {
                 for (var j = 0; j < mas.length; j++) {
                     if (i != j && mas[i] == mas[j]) {
-                        throw "Не должно быть абсолютно одинаковых диганозов по типу регистрации,приоритету и коду МКБ!";
+                        throw "Не должно быть абсолютно одинаковых диагнозов по типу регистрации,приоритету и коду МКБ!";
                     }
                 }
             }
@@ -215,4 +217,24 @@ function checkDeathThenPlan(aCtx,resultcode,reasoncode) {
 		if (list.size()>0) reas=list.get(0);
 		if (reas!="DIS_PLAN") throw ("Если результат - смерть, то причина выписки должна быть плановая!")
 	}
+}
+//првоерка на наличие экспертной карты по критериям. Если нет - выписку запретить
+function checkIfIsQECard(aForm,aCtx) {
+    if (aForm.id != null) {
+        /*var sql = "select id from qualityestimationcard where medcase_id=" + aForm.id + " and  kind_id=(select id from vocqualityestimationkind where code='PR203')";
+        var size1=aCtx.manager.createNativeQuery(sql).getResultList().size();
+        var sql2 = "select id from qualityestimationcard where medcase_id=(select id from medcase where parent_id=" + aForm.id+") and  kind_id=(select id from vocqualityestimationkind where code='PR203')";
+        var size2=aCtx.manager.createNativeQuery(sql2).getResultList().size();
+        throw ""+size1+" ; " +size2;
+        //if (size1==0 && size2==0) throw ("Выписка пациента разрешена только после создания экспертной карты!")*/
+
+        var sql="select qe.id from qualityestimation qe\n" +
+            " left join qualityestimationcard qec on qec.id=qe.card_id\n" +
+            " left join medcase mc on mc.id=qec.medcase_id or mc.parent_id=qec.medcase_id \n" +
+            " left join vocqualityestimationkind vqk on vqk.id=qec.kind_id\n" +
+            " where \n" +
+            " (mc.id=" + aForm.id + " or mc.parent_id=" + aForm.id + " ) and " +
+        	" vqk.code='PR203' and qe.experttype='BranchManager'";
+        if (aCtx.manager.createNativeQuery(sql).getResultList().size()==0 ) throw ("Выписка пациента разрешена только после создания заведующим экспертной карты по 203 приказу!")
+    }
 }
