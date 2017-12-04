@@ -617,6 +617,7 @@ where m.id ='${param.id}'"/>
   slo_form_is_view = 1 ;
   </script>
   </msh:ifFormTypeIsView>
+      <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />
       	<script type="text/javascript">
             function watchThisPatient() {
                 HospitalMedCaseService.watchThisPatient(
@@ -657,8 +658,9 @@ where m.id ='${param.id}'"/>
       			createOtherDiag(list_diag[i]);
       		}
       		if (isnext) {
-	      		document.forms[0].action=old_action ;
-	      		document.forms[0].submit() ;
+                document.forms[0].action=old_action ;
+                showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0]);
+	      		//document.forms[0].submit() ;
       		} else {
       			$('submitButton').disabled=false ;
       		}
