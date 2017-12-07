@@ -1184,8 +1184,10 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     		if ($('saveType').value=='1') {
     			checkFull = true ;
     		}
+
+
     		PatientService.getDoubleByFio($('id').value,$('lastname').value, $('firstname').value, $('middlename').value,
-				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do',checkFull, {
+				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
                    callback: function(aResult) {
                       if (aResult) {
 				    		showPatientDouble(aResult) ;
@@ -1193,10 +1195,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
                        		document.forms[0].action = oldaction ;
 				    		document.forms[0].submit() ;
                        }
-                   }, errorHandler:function(message) {
-                   	alert("error"+message) ;
                    }
 	        	});
+
     		}
     		function getValue(aFld) {
     			if (aFld) {
