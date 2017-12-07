@@ -920,55 +920,36 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     </msh:ifInRole>
   
   <script type="text/javascript">
-	function checkPassportSeriesAndNumber(){
-		
-		ret=true;
-		pass =  $('passportTypeName').value
-			const SpaceIntoDigits = /\d\d\s\d\d/g;
-			const Digits1 = /\d\d\d\d/g;
-			 passportSeries = $('passportSeries').value
-	         passportNumber = $('passportNumber').value
-		
-		 if((passportSeries.length == 0) && (passportNumber.length==0))//((passportSeries.length==null || passportSeries.length == 0) || (passportNumber.length==null || passportNumber.length==0))
-	        	 {
-	        	 return true;
-	        	 }
-		 else{
-		 
-		if ($('passportType').value=='${passportRF}') {
+      function checkPassportSeriesAndNumber(){
 
-			 if(passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits))
-				 {
-				  ret=true;
-				 }else{
-			 
- 	 				if(passportSeries.length == 4 && passportSeries.match(Digits1))
- 	 				{
- 	 					var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
- 	 					$('passportSeries').value = text
- 	 					ret=true;
- 	 				}else 
- 	 				{
- 	 					alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
- 	 					ret=false;
- 	 				}
-				 }
- 	         
- 			
- 			 
- 			if(passportNumber.length == 6 && passportNumber.match(/[0-9]/g))
-				{
-				
-				}else 
-				{
-					alert('Неверный формат номера паспорта! \n Должно быть: "ЧЧЧЧЧЧ"!');
-					ret=false;
-				}
-		
-	}
-		}
-		return ret;
-		}
+          var ret=true;
+          const SpaceIntoDigits = /\d\d\s\d\d/g;
+          const Digits1 = /\d\d\d\d/g;
+          var passportSeries = $('passportSeries').value;
+          var passportNumber = $('passportNumber').value;
+
+          if((passportSeries.length == 0) && (passportNumber.length==0)){
+              return true;
+          }else if ($('passportType').value=='${passportRF}') {
+              if(passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits)){
+                  ret=true;
+              }else if(passportSeries.length == 4 && passportSeries.match(Digits1)){
+                  var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
+                  $('passportSeries').value = text;
+                  ret=true;
+              }else{
+                  alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
+                  ret=false;
+              }
+
+              if(passportNumber.length == 6 && passportNumber.match(/[0-9]/g)){
+              }else{
+                  alert('Неверный формат номера паспорта! \n Должно быть: "ЧЧЧЧЧЧ"!');
+                  ret=false;
+              }
+          }
+          return ret;
+      }
     </script>
 
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
@@ -1175,16 +1156,22 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     	}
     	function isExistPatient() {
     		if (!checkPassportSeriesAndNumber()) {
-
     			document.getElementById('submitButton').disabled=false;
                 document.getElementById('submitButton').value='Создать';
     			return;
     		}
+
+            if (!checkSymbolField($('middlename')) || !checkSymbolField($('firstname'))
+                || !checkSymbolField($('lastname')) ) {
+    		    alert("Неверный формат ФИО!");
+                document.getElementById('submitButton').disabled=false;
+                document.getElementById('submitButton').value='Создать';
+                return;
+            }
     		var checkFull = false
     		if ($('saveType').value=='1') {
     			checkFull = true ;
     		}
-
 
     		PatientService.getDoubleByFio($('id').value,$('lastname').value, $('firstname').value, $('middlename').value,
 				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
@@ -1206,6 +1193,14 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     				return "none" ;
     			}
     		}
+
+    		function checkSymbolField(field){
+    	     field = getValue(field);
+                if( field.search(/[\d!"#$%&'()*+,.:;<=>?@\\^_`{|}~]/g) != -1 ){
+                    return false;
+                }else return true;
+            }
+
     	</script>
     	
   </msh:ifFormTypeIsNotView>
