@@ -41,13 +41,13 @@
                 </msh:row>
                 <msh:row>
                 <td colspan="3">
-                    <input type="submit" onclick="find()" value="Найти" />
+                    <input type="button" onclick="find()" value="Найти" />
                 </td>
                 </msh:row>
             </msh:panel>
         </msh:form>
         <%
-            if (request.getParameter("dateBegin")!=null ) {
+            if (request.getParameter("dateBegin")!=null &&  !request.getParameter("dateBegin").equals("")) {
         %>
         <msh:section>
             <msh:sectionTitle>
@@ -62,15 +62,18 @@ left join MisLpu dep2 on dep2.id=mc.department_id where mc.dtype='HospitalMedCas
 ${dateBegin} ${dateEnd} ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id
 )
-,(select count(distinct mc.id) as noque from medcase mc
- left join diagnosis ds on ds.medcase_id=mc.id
- left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
-left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
-left join vocprioritydiagnosis prior on prior.id=ds.priority_id
-left join MisLpu dep2 on dep2.id=mc.department_id
-left join qualityestimationcard qec on qec.medcase_id=mc.id
-left join qualityestimation qe on qe.card_id=qe.id
-left join vocqualityestimationkind qek on qeK.id=qec.kind_id
+,(select count(distinct mc.id) as noque
+  from medcase mc
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+  left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
 where mc.dtype='HospitalMedCase' and qd.vocidc10_id=ds.idc10_id
 ${dateBegin} ${dateEnd} ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203'
@@ -80,7 +83,7 @@ and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203'
  left join MisLpu dep on dep.id=mc.department_id
  left join MedCase dmc on dmc.parent_id=mc.id
  where mc.dtype='HospitalMedCase' and dmc.dateFinish is not null  ${dateBegin} ${dateEnd} ${department}
- group by dep.name,dep.id,dmc.department_id
+ group by dep.id
  "/>
 
                 <form action="report203.do" method="post" target="_blank">
@@ -104,9 +107,18 @@ and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203'
         %>
         <script type='text/javascript'>
             function find() {
-                var frm = document.forms[0];
-                frm.target = '';
-                frm.action = 'report203.do';
+                var from = $('dateBegin').value.split(".");
+                var d1 = new Date(from[2], from[1] - 1, from[0]);
+                var d2=new Date(2017, 11, 1);
+                if(d1<d2) {
+                    alert("Работа с 203 приказом началась с 1 декабря, раньше этого периода отчётности нет!");
+                    $('dateBegin').value="01.12.2017";
+                } else {
+                    var frm = document.forms[0];
+                    frm.target = '';
+                    frm.action = 'report203.do';
+                    frm.submit();
+                }
             }
         </script>
         <%
@@ -121,14 +133,14 @@ and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203'
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery name="dishAll" nameFldSql="dishAll_sql" nativeSql="
-              select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
-  from medcase mc
-  left join MisLpu dep on dep.id=mc.department_id
-left join Patient pat on pat.id=mc.patient_id
+             select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+from  medcase mc
+left join Patient pat   on pat.id=mc.patient_id
+left join MisLpu dep on dep.id=mc.department_id
 left join MedCase dmc on dmc.parent_id=mc.id
 where mc.DTYPE='HospitalMedCase' ${dateBegin} ${dateEnd} ${department} and dep.id=${param.depId} and dmc.dateFinish is not null
-group by dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename
-order by dep.name  "/>
+group by mc.id,pat.id
+  "/>
 
                 <form action="report203.do" method="post" target="_blank">
                     Пациенты, выписанные из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo}
@@ -137,7 +149,7 @@ order by dep.name  "/>
             <msh:sectionContent>
                 <msh:table name="dishAll"
                            viewUrl="report203.do"
-                           action="entityView-mis_patient.do" idField="1" >
+                           action="entityView-stac_ssl.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
@@ -152,18 +164,50 @@ order by dep.name  "/>
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery name="203All" nameFldSql="203All_sql" nativeSql="
-              select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
-  from medcase mc
-  left join MisLpu dep on dep.id=mc.department_id
+                select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'ЭК есть' else '-' end )
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then
+(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) else
+(select
+'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id group by pat.id) end)
+from medcase mc
+left join MisLpu dep on dep.id=mc.department_id
 left join Patient pat on pat.id=mc.patient_id
 left join diagnosis ds on ds.medcase_id=mc.id
- left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
- where mc.dtype='HospitalMedCase' and qd.vocidc10_id=ds.idc10_id
-${dateBegin} ${dateEnd} ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId} ${dateBegin} ${dateEnd}
-group by dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename
-order by dep.name  "/>
+where mc.dtype='HospitalMedCase' and qd.vocidc10_id=ds.idc10_id
+ ${dateBegin} ${dateEnd} ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
+ group by mc.id,pat.id
+"/>
 
                 <form action="report203.do" method="post" target="_blank">
                     Пациенты, выписанные по 203 приказу из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo}
@@ -172,9 +216,10 @@ order by dep.name  "/>
             <msh:sectionContent>
                 <msh:table name="203All"
                            viewUrl="report203.do"
-                           action="entityView-mis_patient.do" idField="1" >
+                           action="entityView-stac_ssl.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -187,32 +232,46 @@ order by dep.name  "/>
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery name="203EK" nameFldSql="203EK_sql" nativeSql="
-              select pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
-  from medcase mc
-  left join MisLpu dep on dep.id=mc.department_id
-left join Patient pat on pat.id=mc.patient_id
-left join diagnosis ds on ds.medcase_id=mc.id
- left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
-left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
-left join vocprioritydiagnosis prior on prior.id=ds.priority_id
-left join qualityestimationcard qec on qec.medcase_id=mc.id
-left join qualityestimation qe on qe.card_id=qe.id
-left join vocqualityestimationkind qek on qeK.id=qec.kind_id
- where mc.dtype='HospitalMedCase' and qd.vocidc10_id=ds.idc10_id
-${dateBegin} ${dateEnd} ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId} ${dateBegin} ${dateEnd}
+               select distinct pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+ ,( select min(qec.id)
+from medcase mc1
+ left join MisLpu dep on dep.id=mc1.department_id
+ left join Medcase dmc on dmc.parent_id=mc1.id
+ left join Patient pat on pat.id=mc1.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc1.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id
+  )
+ from medcase mc
+ left join MisLpu dep on dep.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+ left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  where mc.dtype='HospitalMedCase' and qd.vocidc10_id=ds.idc10_id
+${dateBegin} ${dateEnd} ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
  and qe.experttype='BranchManager' and qek.code='PR203'
-group by dep.name,pat.id,pat.lastname,pat.firstname,pat.middlename
-order by dep.name  "/>
+group by mc.id,pat.id,qec.id"/>
 
                 <form action="report203.do" method="post" target="_blank">
-                    Пациенты, в СЛС которых созданы экспертные карты заведующего, выписанные по 203 приказу из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo}
+                    Пациенты, выписанные по 203 приказу из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo}, в СЛС которых созданы экспертные карты заведующего
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="203EK"
                            viewUrl="report203.do"
-                           action="entityView-mis_patient.do" idField="1" >
-                    <msh:tableColumn columnName="#" property="sn" />
+                           action="entityParentView-expert_card.do" idField="3">
+                    <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
             </msh:sectionContent>
@@ -222,8 +281,19 @@ order by dep.name  "/>
             }
         %>
     </tiles:put>
-
 </tiles:insert>
 <%
     }
 %>
+<script type="text/javascript">
+    eventutil.addEventListener($('dateBegin'), "blur",
+    function() {
+        var from = $('dateBegin').value.split(".");
+        var d1 = new Date(from[2], from[1] - 1, from[0]);
+        var d2=new Date(2017, 11, 1);
+        if(d1<d2) {
+            alert("Работа с 203 приказом началась с 1 декабря, раньше этого периода отчётности нет!");
+            $('dateBegin').value="01.12.2017";
+        }
+    }) ;
+</script>
