@@ -221,7 +221,6 @@ function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, 
 			
 			getPreRecord();
 			updateTime();
-			//alert (a);
 		}
 	});
 	
@@ -389,6 +388,8 @@ function getPreRecord() {
 	}
 	
 	function updateTime() {
+        $('surgCalTime').value="" ;
+        $('surgCalTimeName').value = "";
    		if (+$('surgCalDate').value>0 ) {
    			surgCalTimeAutocomplete.setParentId($('surgCalDate').value+"#"+$('person').value);
    			WorkCalendarService.getReserveByDateAndServiceByPrescriptionList($('surgCalDate').value,$('prescriptionList').value
@@ -426,7 +427,7 @@ function getPreRecord() {
   			}
 			}
 			) ;
-			$('surgCalTime').value="0" ;
+			$('surgCalTime').value="" ;
 		$('surgCalTimeName').value = "";
 		 
 		}
@@ -439,11 +440,14 @@ function getPreRecord() {
 	<script type="text/javascript">
 	function cancelDiagnostic() {
 		var reason = ''+ prompt('Введите причину отмены');
-		PrescriptionService.cancelPrescription($('id').value, reason, {
-			callback:function (a) {
-				alert(a);
-			}
-		}) ;
+		if (""+reason.trim()!="") {
+            PrescriptionService.cancelPrescription($('id').value, reason, {
+                callback:function (a) {
+                    alert(a);
+                }
+            }) ;
+        }
+
 	}
 	</script>
 	</msh:ifFormTypeIsView>
@@ -479,8 +483,7 @@ function getPreRecord() {
 				 <msh:hidden property="comments"  />
       
     </msh:ifFormTypeIsView>
- <%-- --------------------------------------------------Начало блока "Операции" ------ --%>
-         <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm"> 
+         <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm">
         <msh:panel>
         <msh:row>
         <tr><td>
