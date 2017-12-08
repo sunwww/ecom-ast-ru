@@ -827,9 +827,10 @@ where wf.dtype='PersonalWorkFunction' -->
 			from="PriceMedService PMS"
                 parent='PP.priceList_id = :parent'
                 nameId="PMS.id"
-                queryAppend=""
+                queryAppend="ms.finishDate is null and pms.dateTo is null"
                 join="
                 	left join PricePosition PP ON PP.id = PMS.pricePosition_id
+                	left join MedService ms on ms.id=pms.medservice_id
 				"
                 order=""
                 names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
@@ -1907,7 +1908,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			parent = " wc.workFunction_id = :parent "
     			names  = "to_char(wcd.calendarDate,'DD.MM.YYYY')"
     			queried =" (to_char(wcd.calendarDate,'DD.MM.YYYY') like :query ) "
-    			queryAppend = ""
+    			queryAppend = "(wcd.isDelete is null or wcd.isDelete='0')"
     			order =''
     			nameId='wcd.id'
     			join='left join WorkCalendar as wc on wc.id=wcd.workCalendar_id '
@@ -1952,6 +1953,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			names  = " cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
     			order =''
+				queryAppend =" (wct.isDeleted is null or wct.isDeleted='0')"
     			nameId='wct.id'
     			join=' left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id
     			left join MedCase mc on mc.id=wct.medCase_id'
@@ -1965,7 +1967,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			parent = " wct.workCalendarDay_id = :parent "
     			names  = " cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
-    			queryAppend = " wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null"
+    			queryAppend = " wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null and (wct.isDeleted is null or wct.isDeleted='0')"
     			order =''
     			nameId='wct.id'
     			join=' left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id'
@@ -1977,7 +1979,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			parent = " wc.workFunction_id = :par1 and wcd.calendarDate = to_date(:par2,'dd.mm.yyyy')"
     			names  = " to_char(wcd.calendarDate,'dd.mm.yyyy')||' '||cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
-    			queryAppend = " wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
+    			queryAppend = " wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and (wct.isDeleted is null or wct.isDeleted='0') "
     			order =''
     			nameId='wct.id'
     			join=' left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id left join WorkCalendar wc on wc.id=wcd.workCalendar_id'

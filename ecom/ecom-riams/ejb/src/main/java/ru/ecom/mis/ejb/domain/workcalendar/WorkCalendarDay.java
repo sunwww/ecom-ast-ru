@@ -32,7 +32,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 })
 @Table(schema="SQLUser")
 public class WorkCalendarDay extends BaseEntity{
-	
+	/** Удаленная запись */
+	@Comment("Удаленная запись")
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Удаленная запись */
+	private Boolean theIsDeleted ;
+
 	/** Рабочий календарь */
 	@Comment("Рабочий календарь")
 	@ManyToOne
