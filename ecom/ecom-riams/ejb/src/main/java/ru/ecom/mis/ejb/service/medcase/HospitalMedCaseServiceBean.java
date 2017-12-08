@@ -779,7 +779,7 @@ private HashMap getRegions() {
 				href_vis.append(param("Hts", null));
 				href_vis.append(param("LpuFunction", wqr_vis[4])); //
 				href_vis.append(param("Operations", null));
-				System.out.println("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys" + href_vis.toString());
+			//	System.out.println("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys" + href_vis.toString());
 				String cost = getContentOfHTTPPage("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&" + href_vis.toString(), code_page);
 				if (isf) {
 					res.append("&render=");
@@ -1730,10 +1730,10 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		int len = 15000 ;
 		int lend = aDischargeEpicrisis.length() ;
 		int cnt = lend/len;
-		System.out.println("len = "+len) ;
-		System.out.println("lend = "+lend) ;
-		System.out.println("cnt = "+cnt) ;
-		System.out.println("cnt%len = "+(lend%len)) ;
+	//	System.out.println("len = "+len) ;
+	//	System.out.println("lend = "+lend) ;
+	//	System.out.println("cnt = "+cnt) ;
+	//	System.out.println("cnt%len = "+(lend%len)) ;
 		for (int i=0;i<cnt;i++) {
 			DischargeEpicrisis prot = new DischargeEpicrisis() ;
 			//	System.out.println("record1="+aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
@@ -1901,10 +1901,10 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
 		IMonitor monitor = null;
-		System.out.print("Save data") ;
+	//	System.out.print("Save data") ;
 		try {
 
-			System.out.println("start importDataFond");
+		//	System.out.println("start importDataFond");
     		/*
     		monitor = theMonitorService.startMonitor(aMonitorId, "ImportFondMonitor", aList.size());
     		monitor.advice(20) ;
@@ -1924,7 +1924,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				if (monitor.isCancelled()) {
 					throw new IllegalMonitorStateException("Прервано пользователем");
 				}
-				System.out.println("Save data="+i) ;
+			//	System.out.println("Save data="+i) ;
 				//Object id = null ;
 				if (wqr.get1()!=null) {
 					List<Object> lf = theManager.createNativeQuery("select id from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
@@ -2054,7 +2054,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					monitor.setText("Импортировано " + i);
 				}
 			}
-			System.out.println("==== Закончили импорт!");
+		//	System.out.println("==== Закончили импорт!");
 			monitor.finish("");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2160,24 +2160,24 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				sql1.append(" order by ct1.decisiondate") ;
 				List<Object[]> l1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
 				List<Object[]> l2 = new ArrayList<Object[]>() ;
-				System.out.println("l1 size="+l1.size()) ;
+			//	System.out.println("l1 size="+l1.size()) ;
 
 				for (Object[] o1:l1) {
 					theManager.createNativeQuery("delete from CompulsoryTreatmentAggregate where sls in ("+o1[5]+")").executeUpdate() ;
-					System.out.println("o1="+o1[0]+" - "+o1[1]+" - "+o1[2]+" - "+o1[3]+" - "+o1[4]+" - "+o1[5]+" - ") ;
+				//	System.out.println("o1="+o1[0]+" - "+o1[1]+" - "+o1[2]+" - "+o1[3]+" - "+o1[4]+" - "+o1[5]+" - ") ;
 					boolean prevCT = (o1[4]!=null && Integer.valueOf(""+o1[4]).intValue()==1)?true:false ;
 					//boolean nextCT = (o1[5]!=null && Integer.valueOf(""+o1[5]).intValue()==1)?true:false ;
 					if (!prevCT) {
-						System.out.println("no prev") ;
+				//		System.out.println("no prev") ;
 						l2.add(o1) ;
 					} else {
 
 						if (l2.size()>0) {
-							System.out.println("yes prev") ;
+				//			System.out.println("yes prev") ;
 							l2.get(l2.size()-1)[1]=o1[1] ;
 							l2.get(l2.size()-1)[3]=o1[3] ;
 						} else {
-							System.out.println("yes prev -") ;
+				//			System.out.println("yes prev -") ;
 							l2.add(o1);
 						}
 					}
@@ -2187,7 +2187,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				for (Object[] o2:l2) {
 					hospInd++ ;
 
-					System.out.println("o1="+o2[0]+" - "+o2[1]+" - "+o2[2]+" - "+o2[3]+" - "+o2[4]+" - "+o2[5]+" - ") ;
+			//		System.out.println("o1="+o2[0]+" - "+o2[1]+" - "+o2[2]+" - "+o2[3]+" - "+o2[4]+" - "+o2[5]+" - ") ;
 
 					StringBuilder sql3 = new StringBuilder() ;
 					sql3.append("select mc.parent_id as s0ls,mc.id as s1lo,case when mc.datestart>to_date('").append(o2[2]==null?curDate:o2[2]).append("','dd.mm.yyyy') then '1' else null end as s2rdate");
@@ -2235,7 +2235,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					sql3.append("");
 					List<Object[]> l3=theManager.createNativeQuery(sql3.toString()).getResultList() ;
 					if (l3.size()==0) {
-						System.out.println("bad") ;
+				//		System.out.println("bad") ;
 						CompulsoryTreatmentAggregate ahr = new CompulsoryTreatmentAggregate() ;
 						ahr.setOrderCompTr(ConvertSql.parseString(obj[0])) ;
 						ahr.setPatient(ConvertSql.parseLong(obj[2])) ;
@@ -2244,7 +2244,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 						ahr.setNumberHosp(hospInd) ;
 						theManager.persist(ahr);
 					}else{
-						System.out.println("good") ;
+				//		System.out.println("good") ;
 
 						Date begDate = null ;
 						Date endDate = null ;
@@ -4465,7 +4465,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					.append(") ")
 
 					.append("from VocSex") ;
-			System.out.println(sql) ;
+		//	System.out.println(sql) ;
 			List<Object[]> usls  = theManager.createNativeQuery(sql.toString()).getResultList() ;
 
 			return usls.size()>0?new StringBuilder().append(usls.get(0)[1]).toString():"" ;
@@ -4508,11 +4508,11 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append(" left join mislpu as d on d.id=p.department_id ")
 				.append(" left join vocservicestream as vss on vss.id=smc.servicestream_id")
 				.append(" where smc.patient_id=:pat and smc.DTYPE='ServiceMedCase' and smc.medService_id=:usl and smc.dateExecute=:dat") ;
-		System.out.println("sql="+sql) ;
-		System.out.println("pat="+aPatient) ;
-		System.out.println("medservice="+aMedService) ;
-		System.out.println("service="+aService) ;
-		System.out.println("date="+aDate) ;
+	//	System.out.println("sql="+sql) ;
+	//	System.out.println("pat="+aPatient) ;
+	//	System.out.println("medservice="+aMedService) ;
+	//	System.out.println("service="+aService) ;
+	//	System.out.println("date="+aDate) ;
 		if (aMedService!=null && aMedService>0) {
 			sql.append(" and smc.id!='").append(aMedService).append("'") ;
 		}
@@ -4604,8 +4604,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append(" where statisticStub.code like :number order by dateStart");
 		Query query2 = theManager.createQuery(query.toString()) ;
 		query2.setParameter("number", "%"+aNumber+"%") ;
-		System.out.println("Запрос по medCase: ");
-		System.out.println(query.toString()) ;
+	//	System.out.println("Запрос по medCase: ");
+	//	System.out.println(query.toString()) ;
 		return createHospitalList(query2);
 	}
 	public void setPatientByExternalMedservice(String aNumberDoc, String aOrderDate, String aPatient) {
@@ -4705,7 +4705,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		for (long policyId: aPolicies) {
 
 			MedPolicy policy= theManager.find(MedPolicy.class, policyId);
-			System.out.println("adding="+policy.getId());
+	//		System.out.println("adding="+policy.getId());
 			if (!checkExistsAttachedPolicy(aMedCaseId, policyId)) {
 				MedCaseMedPolicy mp = new MedCaseMedPolicy() ;
 				mp.setMedCase(hospital) ;
@@ -4901,8 +4901,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			throw new IllegalDataException("Неправильная дата") ;
 		}
 		Query query = builder.build(theManager, "from MedCase where DTYPE='HospitalMedCase' and dateFinish is null  and deniedHospitalizating_id is null and (ambulanceTreatment is null or cast(ambulanceTreatment as int)=0)", " order by entranceTime");
-		System.out.println("Запрос по medCase: ");
-		System.out.println(query.toString()) ;
+	//	System.out.println("Запрос по medCase: ");
+	//	System.out.println(query.toString()) ;
 		return createHospitalList(query);
 	}
 

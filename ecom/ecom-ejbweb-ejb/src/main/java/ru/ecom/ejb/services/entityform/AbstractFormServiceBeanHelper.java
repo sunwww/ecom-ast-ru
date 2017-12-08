@@ -761,8 +761,8 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	private void saveOneToManyOneProperty(String aJson, Collection aCollection,
 			Class aType,String aTableName, String aParentProperty, String aValueProperty, Object aId) throws JSONException, ParseException,
 			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
-		System.out.println(aTableName);
-		System.out.println(aJson);
+		//System.out.println(aTableName);
+		//System.out.println(aJson);
 		if (aTableName==null || aTableName.equals("")) {
 			JSONArray ar ;
 			if (aJson!=null && !aJson.equals("")) {

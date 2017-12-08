@@ -82,7 +82,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
                     Element parEl = (Element) o;
                     if ("ZGLV".equals(parEl.getName())) {
                     	type = parEl.getChild("FILENAME").getText().trim().toUpperCase().substring(0,2) ;
-                    	System.out.println("type-------------"+type) ;
+                    //	System.out.println("type-------------"+type) ;
                     } else if("NPR".equals(parEl.getName())) {
                     	//System.out.println("parel=="+parEl.getChildren("REFREASON")) ;
                     	if (parEl.getChildren("REFREASON").isEmpty()) {
@@ -214,7 +214,7 @@ public class HospitalDirectInFondImportAction extends BaseAction {
     	if (!list.isEmpty()&&(typeImport.equals("1")||typeImport.equals("2"))) {
         new Thread() {
             public void run() {
-            	System.out.println("typeId-------------"+typeId) ;
+            //	System.out.println("typeId-------------"+typeId) ;
             	if (contentTypeF!=null&& contentTypeF.toUpperCase().contains("DBF")) {
             		service.importDataFondForDBF(monitorId) ;
             	} else {

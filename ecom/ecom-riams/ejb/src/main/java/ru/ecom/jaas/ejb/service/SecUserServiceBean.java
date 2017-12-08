@@ -99,7 +99,7 @@ public class SecUserServiceBean implements ISecUserService {
 		return "1Пароль успешно обновлен";
 	}
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
-    	System.out.println("FlushingJboss");
+    	//System.out.println("FlushingJboss");
         MBeanServer SERVER = MBeanServerLocator.locateJBoss();
         String[] signature = {"java.lang.String"};
         Object retVal  = SERVER.invoke(new ObjectName("jboss.security:service=JaasSecurityManager")

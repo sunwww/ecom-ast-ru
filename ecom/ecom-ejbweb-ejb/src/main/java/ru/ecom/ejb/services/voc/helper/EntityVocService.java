@@ -152,7 +152,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
                 if (queryDop!=null) sb.append(" or (upper(").append(field).append( ")  like '%").append(queryDop).append("%')") ;
             }
             sb.append(" ) ") ;
-            System.out.println(sb) ;
+            LOG.debug(sb); ;
             if(theAppendQuery!=null) {
                 sb.append(" and ") ;
                 sb.append(theAppendQuery) ;
