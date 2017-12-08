@@ -94,11 +94,24 @@
 	  				if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
 	  			}
 	  		}
-	  		function showCriteria() {
-                showCreateDiagnoseCriteriaCloseDocument($(idc10).value,$('registrationType').value,$('priority').value, document.forms[0]);
-                //document.forms[0].submit() ;
-            }
+
 	  	</script>
+        <msh:ifInRole roles="/Policy/Mis/Order203">
+            <script type="text/javascript">
+            function showCriteria() {
+            showCreateDiagnoseCriteriaCloseDocument($(idc10).value,$('registrationType').value,$('priority').value, document.forms[0]);
+            //document.forms[0].submit() ;
+            }
+            </script>
+        </msh:ifInRole>
+        <msh:ifNotInRole roles="/Policy/Mis/Order203">
+            <script type="text/javascript">
+                function showCriteria() {
+                    //showCreateDiagnoseCriteriaCloseDocument($(idc10).value,$('registrationType').value,$('priority').value, document.forms[0]);
+                    document.forms[0].submit() ;
+                }
+            </script>
+        </msh:ifNotInRole>
   	</msh:ifFormTypeIsNotView>
   	<msh:ifFormTypeIsCreate formName="stac_diagnosisForm">
   		<msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/Accoucheur">

@@ -133,12 +133,18 @@ public class DisabilityDocument extends BaseEntity{
 	public VocDisabilityDocumentPrimarity getPrimarity() {return thePrimarity;}
 	public void setPrimarity(VocDisabilityDocumentPrimarity aPrimarity) {thePrimarity = aPrimarity;}
 
+	/** Предыдущий номер ЛН (при импорте)*/
+	@Comment("Предыдущий номер ЛН (при импорте)")
+	public String getAnotherprevln() {return theAnotherprevln;}
+	public void setAnotherprevln(String aAnotherprevln) {theAnotherprevln = aAnotherprevln;}
+	private String theAnotherprevln;
+
 	/** Дата выдачи */
 	@Comment("Дата выдачи")
 	public Date getIssueDate() {return theIssueDate;}
 	public void setIssueDate(Date aIssueDate) {theIssueDate = aIssueDate;}
 
-	
+
 	/** Разрешение на выдачу документа нетрудоспособности иногороднему */
 	@Comment("Разрешенение на выдачу документа нетрудоспособности иногороднему")
 	@OneToOne

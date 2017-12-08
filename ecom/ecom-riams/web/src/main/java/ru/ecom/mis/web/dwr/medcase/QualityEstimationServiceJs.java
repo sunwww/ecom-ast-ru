@@ -357,22 +357,34 @@ public class QualityEstimationServiceJs {
 	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res=new StringBuilder();
-		String query="select case when (select code from vocdiagnosisregistrationtype where id= "
-				+regID+" )='4' and (select code from vocprioritydiagnosis where id= "+priorId+" )='1' then '1' else '0' end";
-		if (service.executeNativeSql(query).iterator().next().get1().equals("1")) {
-			query = "select vqecrit.name\n" +
+		if (regID!=null && priorId!=null) {
+			String query = "select case when (select code from vocdiagnosisregistrationtype where id= "
+					+ regID + " )='4' and (select code from vocprioritydiagnosis where id= " + priorId + " )='1' then '1' else '0' end";
+			if (service.executeNativeSql(query).iterator().next().get1().equals("1")) {
+				query = "select vqecrit.name\n" +
+						" from vocqualityestimationcrit vqecrit\n" +
+						" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
+						" where vqecrit_d.vocidc10_id=" + idc10_id;
+				Collection<WebQueryResult> list = service.executeNativeSql(query);
+				if (list.size() > 0) {
+					for (WebQueryResult w : list) {
+						res.append(w.get1()).append("#");
+					}
+				} else res.append("##");
+			} else res.append("##");
+		}
+		else { //если по умолчанию основной клинический
+			String query = "select vqecrit.name\n" +
 					" from vocqualityestimationcrit vqecrit\n" +
 					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
 					" where vqecrit_d.vocidc10_id=" + idc10_id;
-			Collection<WebQueryResult> list = service.executeNativeSql(query); //все услуги по medcase
+			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
 					res.append(w.get1()).append("#");
 				}
-			}
-			else res.append("##");
+			} else res.append("##");
 		}
-		else res.append("##");
 		return res.toString();
 	}
 	public String getAllServicesByMedCase(Long aMedcaseId,HttpServletRequest aRequest) throws NamingException {
@@ -405,14 +417,16 @@ public class QualityEstimationServiceJs {
 						"where qem.id=" + markId;
 				WebQueryResult w = service.executeNativeSql(query).iterator().next();
 				String mark = (w.get2() != null) ? w.get2().toString() : "";
+				String mcodes = (w.get1() != null) ? w.get1().toString() : "";
 				Boolean flag = false;
-				for (int i = 0; i < allMatches.size(); i++) {
-					String mcodes = (w.get1() != null) ? w.get1().toString() : "";
-					String scode = allMatches.get(i);
-					if (mcodes.contains("'" + scode + "'")) flag = true;
+				if (!mcodes.equals("")) {
+					for (int i = 0; i < allMatches.size(); i++) {
+						String scode = allMatches.get(i);
+						if (mcodes.contains("'" + scode + "'")) flag = true;
+					}
+					if (mark.equals("Да") && !flag || mark.equals("Нет") && flag) res = "true";
+					else res = "false";
 				}
-				if (mark.equals("Да") && !flag || mark.equals("Нет") && flag) res = "true";
-				else res = "false";
 			}
 		} else if (type.equals("Expert")) { //эксперт - пред. этам - зав.
 			String query = "";

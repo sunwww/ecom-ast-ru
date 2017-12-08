@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -692,20 +693,14 @@ public class PatientServiceJs {
 		createAdminChangeMessageByPatient(aIdNew, "MOVE_PATIENT_DOUBLE_DATA", "Перенесены данные из персоны "+aIdOld+" в "+aIdNew, aRequest) ;
 
 	}
+
 	public String getDoubleByFio(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, HttpServletRequest aRequest) throws NamingException, Exception {
+			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, HttpServletRequest aRequest) throws ParseException, NamingException {
+
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction) ;
+		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction);//"123";
 	}
-	public String getDoubleByFio(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, boolean aChechFull, HttpServletRequest aRequest) throws NamingException, Exception {
-		boolean checkFullBirthday = false ;
-		if (aChechFull) {
-			checkFullBirthday = RolesHelper.checkRoles("/Policy/Mis/Patient/BanDoubleCreate", aRequest) ;
-		}
-		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction,checkFullBirthday) ;
-	}
+
 	public String addPatient(String aLastname, String aFirstname, String aMiddlename, String aBirthday, Long aSex, Long aSocialStatus, String aSnils, HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
 		SnilsStringValidator val = new SnilsStringValidator() ;
