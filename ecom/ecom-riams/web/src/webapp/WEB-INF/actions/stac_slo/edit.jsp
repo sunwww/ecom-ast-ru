@@ -8,6 +8,15 @@
 <%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
+
+<%
+    ActionUtil.getValueBySql("select id,parent_id from medcase where id="+(String)request.getParameter("id"),"id","parent_id",request);
+    Object parent_id = request.getAttribute("parent_id") ;
+    if (parent_id==null || (parent_id+"").equals("")) {
+        request.setAttribute("parent_id", "0") ;
+    }
+
+%>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
     <tiles:put name="style" type="string">
         <style type="text/css">
@@ -82,7 +91,7 @@
                     <msh:sideLink styleId="viewShort"  action="/javascript:getDefinition('entityParentList-expert_ker.do?short=Short&id=${param.id}',null)" name='Врачеб. комиссии' title="Просмотр врачебных комиссий" guid="2156670f-b32c-4634-942b-2f8a4467567c" roles="/Policy/Mis/MedCase/ClinicExpertCard/View" />
                     <msh:sideLink styleId="viewShort" action="/javascript:viewOtherExtMedserviceByPatient('.do')" name='Внешние лаб. исследования' title="Просмотр внешних лабораторных данных по пациенту" key="ALT+5" guid="2156670f-b32c-4634-942b-2f8a4467567c" params="" roles="/Policy/Mis/MedCase/Document/External/Medservice/View" />
                     <msh:sideLink styleId="viewShort" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/javascript:getDefinition('entityParentList-expert_card.do?short=Short&id=${param.id}',null)"/>
-                    <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Листы назначений" params="id" action="/entityParentList-pres_prescriptList" title="Показать все листы назначений СЛО" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
+                    <msh:sideLink roles="/Policy/Mis/Prescription/Prescript/View" name="Сводный лист назначений" params="" action="/javascript:getDefinition('entityParentList-pres_prescriptList.do?short=Short&id=${parent_id}&id2=${param.id}')" title="Показать все назначения СЛС" guid="7b0b69ae-3b9c-47d9-ab3c-5055fbe6fa9f" />
                     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View" name="Диагнозы" params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы СЛО" guid="4ac8c095-3853-4150-9e4a-d01b4abc8061" />
                     <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневники специалистов" params="id" action="/entityParentList-smo_visitProtocol" title="Показать все дневники специалиста" guid="d43123-45ca-43cc-826d-bc85" />
                     <msh:sideLink name="Температурные листы" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы" guid="df23-45ca-43cc-826d-5hf5dd" params="id" />
@@ -324,6 +333,8 @@
             if (isRoleVk) {
                 request.setAttribute("edit_vk_all", "vk") ;
             }
+
+
         %>
         <msh:ifFormTypeIsView formName="stac_sloForm" guid="48eb9700-d07d-4115-a476-a5a5e">
             <tags:temperatureCurve name="New"  />

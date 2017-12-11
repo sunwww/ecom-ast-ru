@@ -15,7 +15,7 @@
 </style>
 
 <div id='${name}PrescriptListDialog' class='dialog'>
-    <h2>Выбирите услугу для создания</h2>
+    <h2>Выберите услугу для создания</h2>
     <div class='rootPane'>
     <h3>Выбор вида назначения:</h3>
 <form action="javascript:">
