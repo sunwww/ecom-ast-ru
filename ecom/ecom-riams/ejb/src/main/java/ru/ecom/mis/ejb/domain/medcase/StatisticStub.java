@@ -164,4 +164,13 @@ public abstract class StatisticStub extends BaseEntity {
 
 	/** Индекс массы тела */
 	private Double theIMT;
+
+	/** Визит оформлен диетологом */
+	@Comment("Визит оформлен диетологом")
+	public Boolean getDietDone() { return theDietDone; }
+
+	public void setDietDone(Boolean aDietDone) { theDietDone = aDietDone; }
+
+	/** Визит оформлен диетологом */
+	private Boolean theDietDone;
 }

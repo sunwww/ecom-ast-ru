@@ -2018,4 +2018,10 @@ public class HospitalMedCaseServiceJs {
 		String query="update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+id+"'";
 		service.executeUpdateNativeSql(query);
 	}
+	//Milamesher диетолог проставляет отметку в отчёте о том, что консультация была оказана
+	public void setDietVisitIsDoneReportIMT(int id, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="update statisticstub set dietdone=true where medcase_id ="+id;
+		service.executeUpdateNativeSql(query);
+	}
 }
