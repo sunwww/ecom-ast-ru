@@ -330,7 +330,9 @@ public class QualityEstimationServiceJs {
 					" left join medcase mc on mc.id=ds.medcase_id \n" +
 					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
 					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
-					" where mc.id=" + id + " and reg.code='4' and prior.code='1'";
+					" left join patient pat on pat.id=mc.patient_id \n" +
+					" where mc.id=" + id + " and reg.code='4' and prior.code='1'\n" +
+					" and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
