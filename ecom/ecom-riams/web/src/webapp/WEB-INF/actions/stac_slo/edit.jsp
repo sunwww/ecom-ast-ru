@@ -641,7 +641,7 @@ where m.id ='${param.id}'"/>
                     }
                     if (isnext) {
                         document.forms[0].action=old_action ;
-                        showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0]);
+                        showCreateDiagnoseCriteriaCloseDocument($('clinicalMkb').value,null,null, document.forms[0],${param.id});
                         //document.forms[0].submit() ;
                     } else {
                         $('submitButton').disabled=false ;
