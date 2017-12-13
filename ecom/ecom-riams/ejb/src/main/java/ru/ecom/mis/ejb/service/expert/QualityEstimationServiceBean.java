@@ -201,11 +201,17 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						.append(" left join diagnosis ds on ds.medcase_id=mcase.id ")
 						.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
 						.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id ");
+				//учитывание возраста
+				sql.append("  left join patient pat on pat.id=mcase.patient_id ");
 			}
 		}
 
 		sql.append(" where vqec.kind_id='").append(kind).append("'");
-		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id  and reg.code='4' and prior.code='1'");
+		if (ifTypeBool) {
+			sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id  and reg.code='4' and prior.code='1'");
+			//учитывание возраста
+			sql.append(" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqec.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqec.ischild=true) ");
+		}
 		sql.append(" group by vqem.id ,vqec.id,vqec.code,vqec.name,vqec.shortname,vqem.code ,vqem.name,vqem.mark")
 		 	.append(" order by vqec.code");
 		// log(sql) ;
@@ -374,11 +380,17 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						.append(" left join diagnosis ds on ds.medcase_id=mcase.id ")
 						.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
 						.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id ");
+				//учитывание возраста
+				sql.append("  left join patient pat on pat.id=mcase.patient_id ");
 			}
 		}
 
 		sql.append(" where vqec.kind_id='").append(aKind).append("'");
-		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id and reg.code='4' and prior.code='1' ");
+		if (ifTypeBool) {
+			sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id and reg.code='4' and prior.code='1' ");
+			//учитывание возраста
+			sql.append(" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqec.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqec.ischild=true) ");
+		}
 		sql.append(" order by vqec.code") ;
 		System.out.println("shortRow="+sql.toString());
 		//log(sql);
