@@ -10,11 +10,11 @@
     	<ecom:webQuery name="pres" nativeSql="select p.id as pid ,pl.id as plid,vmp.name as vmpname,to_char(p.planStartDate,'dd.mm.yyyy')||cast(p.planStartTime as varchar(5)) as startDate
     	,to_char(p.planEndDate,'dd.mm.yyyy')||' '||cast(p.planEndTime as varchar(5)) as endDate
  from Medcase sls
-left join medcase slo on slo.parent_id=sls.id
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
  left join VocModePrescription as vmp on vmp.id=p.modePrescription_id
- where ${field} and slo.dtype='DepartmentMedCase'
+ where ${field}
    and p.DTYPE='ModePrescription' order by p.planStartDate
 "/>
     	<msh:sectionTitle>Список режимов</msh:sectionTitle>
@@ -30,11 +30,11 @@ left join Prescription p on p.prescriptionList_id =pl.id
     	<ecom:webQuery name="pres" nativeSql="select p.id as pid ,pl.id as plid,d.name as dname,to_char(p.planStartDate,'dd.mm.yyyy')||cast(p.planStartTime as varchar(5)) as startDate
 ,to_char(p.planEndDate,'dd.mm.yyyy')||' '||cast(p.planEndTime as varchar(5)) as endDate
  from Medcase sls
-left join medcase slo on slo.parent_id=sls.id
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
 left join diet as d on d.id=p.diet_id
-where ${field} and slo.dtype='DepartmentMedCase'
+where ${field}
  and p.DTYPE='DietPrescription' order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначенных диет</msh:sectionTitle>
     	<msh:sectionContent>
@@ -57,13 +57,13 @@ p.frequency||' раз в день' as freq,
 'по '||p.amount as count
 ,(p.planenddate-p.planstartdate)||' дней/день' as longtime
 from Medcase sls
-left join medcase slo on slo.parent_id=sls.id 
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
 left join pharmdrug pd on pd.id = p.drug_id
 left join vocdrug vd on vd.id = pd.drug_id
 left join vocdrugmethod vdm on vdm.id = p.method_id
-where ${field} and slo.dtype='DepartmentMedCase' and p.dtype = 'DrugPrescription'"/>
+where ${field}  and p.dtype = 'DrugPrescription'"/>
     	<msh:sectionTitle>Список лекарственных назначений</msh:sectionTitle>
     	<msh:sectionContent>
     		<msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
@@ -84,7 +84,7 @@ where ${field} and slo.dtype='DepartmentMedCase' and p.dtype = 'DrugPrescription
   , p.canceldate as canceldate , coalesce(p.cancelreasontext,'') as cancelText ,case when canceldate is not null then 'color:red;'
   else null end as styleCancel
   from Medcase sls
-left join medcase slo on slo.parent_id=sls.id
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
 left join medservice ms on ms.id=p.medService_id
@@ -96,7 +96,7 @@ left join vocprescripttype vpt on vpt.id=p.prescriptType_id
 left join mislpu ml on ml.id=p.department_id
 left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelReason_id
 left join medcase presV on presV.id=p.medcase_id
-where ${field} and slo.dtype='DepartmentMedCase'
+where ${field}
   and p.DTYPE='ServicePrescription' and (vms.code='DIAGNOSTIC' or vms.code='SERVICE' or (vms.id is null and ms.id is not null)) order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на диагностические исследования</msh:sectionTitle>
     	<msh:sectionContent>
@@ -116,7 +116,7 @@ where ${field} and slo.dtype='DepartmentMedCase'
 ,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as fldCancel ,case when p.canceldate is not null
 then 'color:red;' else null end as stylCancel , case when presV.datestart is not null then coalesce(d.record, '') else '' end as lab_rests ,presV.datestart
 from Medcase sls
-left join medcase slo on slo.parent_id=sls.id
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
 left join medservice ms on ms.id=p.medService_id
@@ -128,7 +128,7 @@ left join vocprescripttype vpt on vpt.id=p.prescriptType_id
 left join mislpu ml on ml.id=p.department_id
 left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelReason_id
 left join medcase presV on presV.id=p.medcase_id
-where ${field} and slo.dtype='DepartmentMedCase'
+where ${field}
  and p.DTYPE='ServicePrescription' and vms.code='LABSURVEY'  order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на лабораторные исследования</msh:sectionTitle>
     	<msh:sectionContent>
@@ -150,7 +150,7 @@ where ${field} and slo.dtype='DepartmentMedCase'
     	<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,ms.name as drname ,to_char(p.planStartDate,'dd.MM.yyyy')
 ,cast (wct.timefrom as varchar(5)) ,wf.groupname
 from Medcase sls
-left join medcase slo on slo.parent_id=sls.id
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
 left join workfunction wf on wf.id=p.prescriptcabinet_id
@@ -159,7 +159,7 @@ left join mislpu ml on ml.id=p.department_id
 left join medservice ms on ms.id=p.medService_id
 left join vocservicetype as vms on vms.id=ms.serviceType_id
 left join vocprescripttype vpt on vpt.id=p.prescriptType_id
- where ${field} and slo.dtype='DepartmentMedCase'
+ where ${field}
   and p.DTYPE='ServicePrescription' and vms.code='OPERATION' order by p.planStartDate"/>
     	<msh:sectionTitle>Список назначений на операции</msh:sectionTitle>
     	<msh:sectionContent>
@@ -174,14 +174,14 @@ left join vocprescripttype vpt on vpt.id=p.prescriptType_id
     <msh:section>
     	<ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,ms.name as drname ,p.planStartDate,p.planEndDate
 from Medcase sls
-left join medcase slo on slo.parent_id=sls.id
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
 left join Prescription p on p.prescriptionList_id =pl.id
 left join mislpu ml on ml.id=p.department_id
 left join medservice ms on ms.id=p.medService_id
 left join vocservicetype as vms on vms.id=ms.serviceType_id
 left join vocprescripttype vpt on vpt.id=p.prescriptType_id
-where ${field} and slo.dtype='DepartmentMedCase'
+where ${field}
  and p.DTYPE='ServicePrescription' and vms.code='к/д' order by p.planStartDate"/>
     	<msh:sectionTitle>Список койко-дней</msh:sectionTitle>
     	<msh:sectionContent>

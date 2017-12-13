@@ -1460,4 +1460,22 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		if (o!=null) {return o.toString();}
 		return "";
 	}
+	//Можно ли создавать ЛН из СЛС (можно, пока не сделан СЛО)
+	public Boolean isPrescriptListCanBeChangedFromSLS(String aMedcase, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select id from medcase where dtype='DepartmentMedCase' and parent_id="+aMedcase;
+		Collection <WebQueryResult> wrt = service.executeNativeSql(sql, 1);
+		return (wrt.size()>0);
+	}
+	//Department or Hospital medcase (для вывода ЛН из СЛО). Returns true if department
+	public Boolean isPrescriptListfromSLO(String aMedcase, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select case when dtype='DepartmentMedCase'  then '1' else '0' end from medcase where id="+aMedcase;
+		Collection <WebQueryResult> wrt = service.executeNativeSql(sql, 1);
+		if (wrt.size()>0) {
+			Object res=wrt.iterator().next().get1();
+			return (res.toString().equals("1"));
+		}
+		return false;
+	}
 }

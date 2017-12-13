@@ -69,6 +69,8 @@
 <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
 <script type="text/javascript">
 var plId ;
+var parentId;
+var viewWay;
 var isSLSClosed = true;
      var theIs${name}PrescriptListDialogInitialized = false ;
      var the${name}PolicyDialog = new msh.widget.Dialog($('${name}PrescriptListDialog')) ;
@@ -82,9 +84,7 @@ var isSLSClosed = true;
     	else if (aValue=='mode') window.location='entityParentPrepareCreate-pres_modePrescription.do?id='+plId;
     	else if (aValue=='func') window.location='entityParentPrepareCreate-pres_diagnosticPrescription.do?id='+plId;
         else if (aValue=="drug") window.location='entityParentPrepareCreate-pres_drugPrescription.do?id='+plId;
-    	else if (aValue=='view') window.location='entityParentView-pres_prescriptList.do?id='+plId;
-
-    	
+    	else if (aValue=='view') window.location=viewWay;
      }
      
    
@@ -105,27 +105,44 @@ var isSLSClosed = true;
      }
      // инициализация диалогового окна 
      function show${name}PrescriptList() {
-		//alert ("In TAG, $id = ="+'${parentID}'); 
-		 PrescriptionService.isPrescriptListExists('${parentID}', {
-						 callback: function (aPresID) {
-							 if (aPresID==null||aPresID=='null') {
-								 alert ('Пациент выписан, назначения отсутствуют, добавление назначений невоможно!');
-								 cancel${name}PrescriptList();
-								 		return;			 
-							 } else {
-								 var isMedcaseClosed = aPresID.substring(0,1);
-								 if (isMedcaseClosed=='0') {
-									disableButtons();
-									 alert ('Пациент выписан, добавление назначений невоможно!');
-								 }
-								 plId = aPresID.substring(1);
-								 the${name}PrescriptListDialog.show() ;
-							 }
-							 
-							 
-						 }
-					 });
-		  
+		//alert ("In TAG, $id = ="+'${parentID}');
+         parentId=${parentID};
+         PrescriptionService.isPrescriptListExists('${parentID}', {
+             callback: function (aPresID) {
+                 if (aPresID==null||aPresID=='null') {
+                     alert ('Пациент выписан, назначения отсутствуют, добавление назначений невоможно!');
+                     cancel${name}PrescriptList();
+                     return;
+                 } else {
+                     var isMedcaseClosed = aPresID.substring(0,1);
+                     if (isMedcaseClosed=='0') {
+                         disableButtons();
+                         alert ('Пациент выписан, добавление назначений невоможно!');
+                     }
+                     plId = aPresID.substring(1);
+                     PrescriptionService.isPrescriptListCanBeChangedFromSLS('${parentID}', {
+                         callback: function (aRes) {
+                             if (aRes==true) {
+                                 disableButtons();
+                                 alert ('Пациент уже в отделении, делать назначения из госпитализации запрещено, можно только просмотреть сводный лист назначений');
+                             }
+                             PrescriptionService.isPrescriptListfromSLO('${parentID}', {
+                                 callback: function (aMCaseType) {
+                                     if (aMCaseType==true) {
+                                         viewWay='entityParentList-pres_prescriptList.do?id='+parentId;
+                                     }
+                                     else {
+                                         viewWay='entityParentView-pres_prescriptList.do?id='+plId;
+                                     }
+
+                                 }
+                             });
+                             the${name}PrescriptListDialog.show() ;
+                         }
+                     });
+                 }
+             }
+         });
 		 theIs${name}PrescriptListDialogInitialized=true;
      }
 </script>
