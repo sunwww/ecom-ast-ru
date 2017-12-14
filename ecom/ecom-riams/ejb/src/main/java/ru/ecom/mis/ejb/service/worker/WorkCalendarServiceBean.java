@@ -974,6 +974,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			theManager.persist(day) ;
 		} else {
 			day = list.get(0) ;
+			day.setIsDeleted(false);
+			theManager.persist(day);
 		}
 		//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 		/*LOG.info(new StringBuilder().append("----------+++day=").append(day).append("  ")
@@ -1038,7 +1040,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			// "from WorkCalendarTime where medCase is null "
 			 "from WorkCalendarTime where"
 			+" workCalendarDay = :day"
-			+" and timeFrom = :timeFrom")
+			+" and timeFrom = :timeFrom and (isDeleted is null or isDeleted='0')")
 			.setParameter("timeFrom", aTime)
 			.setParameter("day", aWorkCalendarDay) 
 			.getResultList() ;
@@ -1055,7 +1057,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			t.setCreateUsername(theContext.getCallerPrincipal().getName()) ;
 			theManager.persist(t) ;
 			return t.getId() ;
-		}	
+		}
 		return null ;
 	}	
 	private void  deleteUnMedCasesCalendarTimes(WorkCalendar aCalendar, Date aDateFrom, Date aDateTo) {
@@ -1079,7 +1081,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	}
 	private void deleteUnMedCasesCalendarTimesOnDay(WorkCalendar aCalendar, WorkCalendarDay aWorkCalendarDay) {
 		theManager.createNativeQuery(
-			    " delete from WorkCalendarTime"
+			    " update  WorkCalendarTime set isDeleted='1'"
 				+" where WorkCalendarTime.workCalendarDay_id =:day_id "
 				+" and WorkCalendarTime.medcase_id is null"
 				)
@@ -1088,9 +1090,10 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	}
 
 	private void deleteEmptyCalendarDays(WorkCalendar aCalendar, Date aDateFrom, Date aDateTo) {
-	//	LOG.info(new StringBuilder().append("---------->>deleteEmptyCalendarDays").toString()) ;
+		LOG.info(new StringBuilder().append("---------->>deleteEmptyCalendarDays").toString()) ;
 		theManager.createNativeQuery(
-			    "update WorkCalendarDay wcd set isDeleted='1' where wcd.workCalendar_id = :cal and wcd.calendarDate between :dateFrom and :dateTo and (select count(*) from WorkCalendarTime wct where wct.workCalendarDay_id=wcd.id)=0 and (isDeleted is null or isDeleted='0')"
+			    "update WorkCalendarDay wcd set isDeleted='1' where wcd.workCalendar_id = :cal and wcd.calendarDate between :dateFrom and :dateTo " +
+						"and (select count(*) from WorkCalendarTime wct where wct.workCalendarDay_id=wcd.id and (wct.isDeleted is null or wct.isDeleted='0'))=0 and (isDeleted is null or isDeleted='0')"
 				)
 		        
 			.setParameter("cal", aCalendar.getId())
