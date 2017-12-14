@@ -103,7 +103,7 @@
 			where ca.contract_id='${param.id}'			and (ca.isFinished='0' or ca.isFinished is null)
 			 and cao.id is null  and caos.id is null
 			and (cams.isDelete='0' or cams.isDelete is null)
-			
+			and (ca.isDeleted is null or ca.isDeleted='0')
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault,mc.discountdefault			
 			,ca.accountNumber, ca.isFinished,ca.periodFrom,ca.periodTo,ca.datefrom
@@ -146,7 +146,7 @@
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
 			where ca.contract_id='${param.id}' and ca.isFinished='1' and cao.id is null  and caos.id is null
-			and (cams.isDelete='0' or cams.isDelete is null)
+			and (cams.isDelete='0' or cams.isDelete is null) and (ca.isDeleted is null or ca.isDeleted='0')
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault,mc.discountdefault			
 			,ca.accountNumber, ca.isFinished,ca.periodFrom,ca.periodTo,ca.datefrom

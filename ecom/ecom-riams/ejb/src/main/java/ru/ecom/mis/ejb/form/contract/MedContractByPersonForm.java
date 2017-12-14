@@ -5,10 +5,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.form.contract.interceptor.MedContractByPersonPreCreateInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.validators.Required;
 
@@ -24,6 +21,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
         @AParentEntityFormInterceptor(MedContractByPersonPreCreateInterceptor.class)
 )
 public class MedContractByPersonForm extends MedContractForm {
+	/** Признак удаленной записи */
+	@Comment("Признак удаленной записи")
+	@Persist
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Признак удаленной записи */
+	private Boolean theIsDeleted ;
+
 	/** Обслуживаемая персона */
 	@Comment("Обслуживаемая персона")
 	@Required

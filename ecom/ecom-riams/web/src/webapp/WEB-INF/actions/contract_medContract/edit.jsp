@@ -83,19 +83,19 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_medContractForm">
 			<msh:section title="Счета на оплату" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
-			<ecom:webQuery nativeSql="select ca.id,
-			CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
-			,sp.dateFrom,sp.dateTo
-			, count(distinct case when cao.id is null then cams.id else null end) as cntMedService 
-			, sum(case when cao.id is null then cams.countMedService*cams.cost else 0 end) as sumNoAccraulMedService 
-			, round(sum((case when cao.id is null then cams.countMedService*cams.cost else 0 end)*(100-ca.discountDefault)/100),2) as sumNoAccraulMedServiceWithDiscount 
+			<ecom:webQuery nativeSql="select ca.id as f1_id
+			, CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
+			, sp.dateFrom,sp.dateTo
+			, count(distinct case when cao.id is null then cams.id else null end) as f5_cntMedService
+			, sum(case when cao.id is null then cams.countMedService*cams.cost else 0 end) as f6_sumNoAccraulMedService
+			, round(sum((case when cao.id is null then cams.countMedService*cams.cost else 0 end)*(100-ca.discountDefault)/100),2) as f7_sumNoAccraulMedServiceWithDiscount
 			from ContractAccount ca
 			left join ServedPerson sp on ca.id = sp.account_id
 			left join ContractAccountMedService cams on cams.account_id=ca.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where ca.contract_id='${param.id}' and cao.id is null  and caos.id is null
+			where ca.contract_id='${param.id}' and cao.id is null  and caos.id is null and (ca.isDeleted is null or ca.isDeleted='0')
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault
 			" name="serverPerson"/>
@@ -103,7 +103,6 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 				
 				printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=printDogovogByNoPrePaidServicesMedServise"
 				action="entityParentPrepareCreate-contract_accountOperationAccrual.do"
-				
 				idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>
 					<msh:tableColumn columnName="Информация" property="2"/>
@@ -116,7 +115,7 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			</msh:section>
 			<msh:section>
 			<msh:sectionTitle>Оплаченные счета 
-			<a onclick="getDefinition(&quot;js-contract_medContract-list_accrual_service.do?short=Short&amp;id=${param.id}&quot;,event); " href="javascript:void(0);"><img width="14" height="14" title="Просмотр списка оплаченных учлуг" alt="Просмотр списка" src="/skin/images/main/view1.png">Просмотр списка оплаченных услуг</a>
+			<a onclick="getDefinition(&quot;js-contract_medContract-list_accrual_service.do?short=Short&amp;id=${param.id}&quot;,event); " href="javascript:void(0);"><img width="14" height="14" title="Просмотр списка оплаченных услуг" alt="Просмотр списка" src="/skin/images/main/view1.png">Просмотр списка оплаченных услуг</a>
 			</msh:sectionTitle>
 			<msh:sectionContent>
 			<ecom:webQuery nativeSql="select ca.id,
@@ -128,7 +127,7 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 			left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
 			left join ContractPerson cp on cp.id=sp.person_id left join patient p on p.id=cp.patient_id
-			where ca.contract_id='${param.id}' and cao.id is not null
+			where ca.contract_id='${param.id}' and cao.id is not null and (ca.isDeleted is null or ca.isDeleted='0')
 			group by  sp.id,cp.dtype,p.lastname,p.firstname,p.middlename,p.birthday,cp.name
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum
 			" name="serverPerson"/>

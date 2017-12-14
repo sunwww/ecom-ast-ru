@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
@@ -31,8 +32,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	,@AIndex(unique= false, properties = {"contract"})
 })
 	@EntityListeners(DeleteListener.class)
+@UnDeletable
 public class ContractAccount extends BaseEntity{
-	
+	/** Признак удаленной записи */
+	@Comment("Признак удаленной записи")
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Признак удаленной записи */
+	private Boolean theIsDeleted ;
+
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
 	public List<ContractAccountOperation> getOperations() {return theOperations;}
 	public void setOperations(List<ContractAccountOperation> aOperations) {theOperations = aOperations;}
