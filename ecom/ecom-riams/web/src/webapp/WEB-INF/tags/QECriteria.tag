@@ -28,6 +28,7 @@
             <table width="100%" cellspacing="10" cellpadding="10" id="table2">
             </table>
             <div>*Информация рассчитана автоматически.</div>
+            <div><input type="button" value='Черновик экспертной карты заведующего' id="${name}Cancel" onclick='javascript:draft${name}CloseDocument()'/></div>
         </form>
     </div>
 </div>
@@ -75,5 +76,18 @@
     // Отмена
     function cancel${name}CloseDocument() {
         the${name}CloseDisDocumentDialog.hide() ;
+    }
+    //Создание черновика ЭК
+    function draft${name}CloseDocument() {
+        QualityEstimationService.createDraftEK(
+            ID, {
+                callback: function(res) {
+                    if (res!=null) window.location='entityEdit-expert_qualityEstimationDraft.do?id='+res+'&type=BranchManager';
+                    else {
+                        alert("Заведующий отделением уже заполнил эту карту, больше редактировать черновик нельзя!");
+                    }
+                }
+            }
+        );
     }
 </script>

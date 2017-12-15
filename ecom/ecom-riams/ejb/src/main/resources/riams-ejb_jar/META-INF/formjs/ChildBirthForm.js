@@ -276,7 +276,7 @@ function onCreate(aForm, aEntity, aCtx) {
                 dcase.setDeathTime(new java.sql.Time (currentDate.getTime()));
                 dcase.setAccidentDate(new java.sql.Date(currentDate.getTime()));
                 dcase.setAccidentCircumstance("Неонатологический случай смерти");
-                dcase.setIsNeonatologic(true);aEntity.getMedCase()
+                dcase.setIsNeonatologic(true);
                 dcase.setMedCase(aEntity.getMedCase().getParent());
                 aCtx.manager.persist(dcase) ;
 			}

@@ -413,11 +413,21 @@ public class QualityEstimationServiceJs {
 		if (type.equals("BranchManager")) {//если оценки проставляет заведующий, может быть разница с автоматическим расчётом
 			Long medcase;
 			String query = "";
-			if (!createEdit)
+			if (createEdit==null) {
+				query = "select m.parent_id from qualityestimationcard qecard\n" +
+						"left join medcase m on m.id=qecard.medcase_id\n" +
+						"left join qualityestimation qe on qe.card_id=qecard.id\n" +
+						"where qe.id=" + qEId; //если ред-е draft
+			}
+			else if (!createEdit) {
 				query = "select m.parent_id from qualityestimationcard qec left join medcase m on m.id=qec.medcase_id where qec.id=" + qEId; //если создаётся новое
-			else query = "select qecard.medcase_id from qualityestimationcard qecard\n" +
-					"left join qualityestimation qe on qe.card_id=qecard.id\n" +
-					"where qe.id=" + qEId; //если ред-е
+			}
+			else {
+				query = "select case when mc.dtype='HospitalMedCase' then mc.id else mc.parent_id end from medcase mc \n" +
+						"left join qualityestimationcard qecard on qecard.medcase_id = mc.id\n" +
+						"left join qualityestimation qe on qe.card_id=qecard.id\n" +
+						"where qe.id=" + qEId; //если ред-е
+			}
 			Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 			if (list0.size() != 0) {
 				medcase = Long.parseLong(list0.iterator().next().get1().toString());
@@ -439,10 +449,12 @@ public class QualityEstimationServiceJs {
 					for (int i = 0; i < allMatches.size(); i++) {
 						String scode = allMatches.get(i);
 						if (mcodes.contains("'" + scode + "'")) flag = true;
+						//res+=scode+=" ; ";
 					}
 					if (mark.equals("Да") && !flag || mark.equals("Нет") && flag) res = "true";
 					else res = "false";
 				}
+				else res = "false";
 			}
 		} else if (type.equals("Expert")) { //эксперт - пред. этам - зав.
 			String query = "";
@@ -467,5 +479,22 @@ public class QualityEstimationServiceJs {
 			res = (service.executeNativeSql(query).size() > 0) ? "false" : "true";
 		}
 		return res;
+	}
+	//Milamesher создание черновик ЭК
+	public Long createDraftEK(Long aMcaseId, HttpServletRequest aRequest) throws NamingException {
+		IQualityEstimationService service = Injection.find(aRequest).getService(IQualityEstimationService.class);
+		return service.createDraftEK(aMcaseId);
+	}
+	//Milamesher получить departmentMedCase
+	public String getDepMedcaseFromDraftEK(Long aCardId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medcase_id from QualityEstimationCard where id=" + aCardId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
+		if (list.size()!=0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1());
+		}
+		return res.toString();
 	}
 }
