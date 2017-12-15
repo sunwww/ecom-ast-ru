@@ -19,16 +19,11 @@ public class ImportPdfAction extends BaseAction {
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
 			HttpServletRequest aRequest, HttpServletResponse aResponse)
 			throws Exception {
-		System.out.println("==== приступаем к работе = ");
 		theService = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		try{
 		 //theService.checkPdf();
 		 theService.checkXmlFiles();
-		} catch (Exception e){
-			
-		}
-		System.out.println("==== Дело делано, результат = ");
-		
+		} catch (Exception e){}
 		return aMapping.findForward("success");
 	}
 	
