@@ -703,7 +703,7 @@ and UPPER(spo.DTYPE)='POLYCLINICMEDCASE'    and spo.dateFinish is null " />
 select smo.id , wcd.calendarDate , wct.timeFrom 
 , owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename as workerOrder 
 , vr.name as reasonName 
-, pvwf.name||' '||ppw.lastname || ' ' || ppw.firstname || ' ' || ppw.middlename as workerPlan  
+, case when pwf.dtype='PersonalWorkFunction' then pvwf.name||' '||ppw.lastname || ' ' || ppw.firstname || ' ' || ppw.middlename else pwf.groupname end as workerPlan
 from MedCase smo
 left join WorkCalendarDay wcd on smo.datePlan_id = wcd.id 
 left join WorkCalendarTime wct on smo.timePlan_id = wct.id 
