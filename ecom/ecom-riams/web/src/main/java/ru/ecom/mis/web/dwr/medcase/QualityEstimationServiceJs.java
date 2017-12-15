@@ -330,7 +330,9 @@ public class QualityEstimationServiceJs {
 					" left join medcase mc on mc.id=ds.medcase_id \n" +
 					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
 					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
-					" where mc.id=" + id + " and reg.code='4' and prior.code='1'";
+					" left join patient pat on pat.id=mc.patient_id \n" +
+					" where mc.id=" + id + " and reg.code='4' and prior.code='1'\n" +
+					" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
@@ -354,17 +356,24 @@ public class QualityEstimationServiceJs {
 		return res.toString();//*/}return null;
 	}
 	//Milamesher чисто критерии по диазнозу, список
-	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, HttpServletRequest aRequest) throws NamingException {
+	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, Long medcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res=new StringBuilder();
 		if (regID!=null && priorId!=null) {
 			String query = "select case when (select code from vocdiagnosisregistrationtype where id= "
 					+ regID + " )='4' and (select code from vocprioritydiagnosis where id= " + priorId + " )='1' then '1' else '0' end";
 			if (service.executeNativeSql(query).iterator().next().get1().equals("1")) {
-				query = "select vqecrit.name\n" +
+				query = "select distinct vqecrit.name\n" +
 						" from vocqualityestimationcrit vqecrit\n" +
 						" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
-						" where vqecrit_d.vocidc10_id=" + idc10_id;
+						" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
+						" left join diagnosis ds on ds.idc10_id=d.id \n" +
+						" left join medcase mc on mc.id=ds.medcase_id \n" +
+						" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
+						" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
+						" left join patient pat on pat.id=mc.patient_id \n" +
+						" where vqecrit_d.vocidc10_id=" + idc10_id + " and mc.id=" + medcaseId + "\n" +
+						" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
 				Collection<WebQueryResult> list = service.executeNativeSql(query);
 				if (list.size() > 0) {
 					for (WebQueryResult w : list) {
@@ -373,11 +382,18 @@ public class QualityEstimationServiceJs {
 				} else res.append("##");
 			} else res.append("##");
 		}
-		else { //если по умолчанию основной клинический
-			String query = "select vqecrit.name\n" +
+		else { //если по умолчанию основной клинический (тут medcase - hospital)
+			String query = "select distinct vqecrit.name\n" +
 					" from vocqualityestimationcrit vqecrit\n" +
 					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
-					" where vqecrit_d.vocidc10_id=" + idc10_id;
+					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
+					" left join diagnosis ds on ds.idc10_id=d.id \n" +
+					" left join medcase mc on mc.id=ds.medcase_id \n" +
+					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
+					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
+					" left join patient pat on pat.id=mc.patient_id \n" +
+					" where vqecrit_d.vocidc10_id=" + idc10_id + " and mc.id=ANY(select id from medcase where parent_id=" + medcaseId + ")\n" +
+					" and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {

@@ -90,4 +90,28 @@ private VocQualityEstimationCritType theType;
 
   /** Логический тип критерия? */
   private Boolean isBoolean;
+
+  /** Для взрослых? */
+  @Comment("Для взрослых?")
+  public Boolean getIsGrownup() {
+   return isGrownup;
+  }
+  public void setIsGrownup(Boolean aGrownup) {
+   isGrownup = aGrownup;
+  }
+
+  /** Для взрослых? */
+  private Boolean isGrownup;
+
+  /** Для детей? */
+  @Comment("Для детей?")
+  public Boolean getIsChild() {
+   return isChild;
+  }
+  public void setIsChild(Boolean aChild) {
+   isChild = aChild;
+  }
+
+  /** Для детей? */
+  private Boolean isChild;
  }

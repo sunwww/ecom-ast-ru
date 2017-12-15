@@ -270,7 +270,16 @@ function onCreate(aForm, aEntity, aCtx) {
 			}
 			newBorn.setPatient(patient) ;			
 			}
-			
+			else if (newBorn.getLiveBorn().getCode()=='2') {  //если мёртвый
+				var dcase = new Packages.ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
+				dcase.setDeathDate(new java.sql.Date(currentDate.getTime()));
+                dcase.setDeathTime(new java.sql.Time (currentDate.getTime()));
+                dcase.setAccidentDate(new java.sql.Date(currentDate.getTime()));
+                dcase.setAccidentCircumstance("Неонатологический случай смерти");
+                dcase.setIsNeonatologic(true);aEntity.getMedCase()
+                dcase.setMedCase(aEntity.getMedCase().getParent());
+                aCtx.manager.persist(dcase) ;
+			}
 			aCtx.manager.persist(newBorn) ;
 		}
 	}

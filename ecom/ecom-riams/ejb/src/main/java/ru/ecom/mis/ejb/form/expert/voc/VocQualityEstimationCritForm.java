@@ -78,6 +78,27 @@ public class VocQualityEstimationCritForm extends IdEntityForm {
 			isBoolean = aBoolean;
 		}
 
+		/** Для взрослых? */
+		@Comment("Для взрослых?")
+		@Persist
+		public Boolean getIsGrownup() {
+			return isGrownup;
+		}
+		public void setIsGrownup(Boolean aGrownup) {
+			isGrownup = aGrownup;
+		}
+
+		/** Для детей? */
+		@Comment("Для детей?")
+		@Persist
+		public Boolean getIsChild() {
+			return isChild;
+		}
+		public void setIsChild(Boolean aChild) {
+			isChild = aChild;
+		}
+
+
 		/** Родитель */
 		private Long theParent;
 		/** Тип критерия */
@@ -94,4 +115,8 @@ public class VocQualityEstimationCritForm extends IdEntityForm {
 		private String medServiceCodes;
 		/** Логический тип критерия? */
 		private Boolean isBoolean;
+		/** Для взрослых? */
+		private Boolean isGrownup;
+		/** Для детей? */
+		private Boolean isChild;
 }
