@@ -69,7 +69,7 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
-
+	private  final Logger log = Logger.getLogger(PatientServiceBean.class);
 	public void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId) {
 		theManager.createNativeQuery("update medpolicy set dtype=(select vmp.code from vocmedpolicy vmp" +
 				" where vmp.id="+aNewPolicyTypeId+") where id="+aPolicyId).executeUpdate();
@@ -302,19 +302,19 @@ public class PatientServiceBean implements IPatientService {
 		aStreet=aStreet.toUpperCase().trim() ;
 		streetType = streetType.toUpperCase().trim();
 		StringBuilder sql = new StringBuilder();
-		System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
+	//	System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
 		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode" +
 				" left join addresstype atype on atype.id=a.type_id"+
 	" where k.okatd='"+aOkato+"' and upper(a.name) = upper('"+aStreet+"')");
 		if (!streetType.equals("")) {sql.append(" and upper(atype.shortname)=upper('"+streetType+"')");}
-		System.out.println("==== 2 finding by okato, sql = "+sql.toString());
+	//	System.out.println("==== 2 finding by okato, sql = "+sql.toString());
 		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(10).getResultList() ;
 		if (listO.size()>0) {
 			if (listO.size()>1) {
-				System.out.println("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
+				log.warn("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
 				return null;
 			}
-			System.out.println("==== 3 found by okato, res = "+listO.get(0));
+		//	System.out.println("==== 3 found by okato, res = "+listO.get(0));
 			return listO.get(0).toString();
 		}
 		return null;
@@ -564,7 +564,7 @@ public class PatientServiceBean implements IPatientService {
 			String address = getAddressByOkato(aOkato, aStreet);
 			
 			if (needUpdatePatient) {
-				System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
+		//		System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
 				o=1;
 				if (aSnils!=null&&!aSnils.equals("")) {
 					str.append(prepSql("snils",aSnils));
@@ -575,7 +575,7 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsPatientUpdate(false);}
 			
 			if (needUpdateDocuments) {
-				System.out.println("++++ UPDATE DOCUMENT! = "+aLastname + " "+ aFirstname);
+		//		System.out.println("++++ UPDATE DOCUMENT! = "+aLastname + " "+ aFirstname);
 				if (aDocNumber!=null&&aDocSeries!=null&&aDocType!=null&&aDocDateIssued!=null) {
 					if (o==1) {
 						str.append(",");
@@ -592,7 +592,7 @@ public class PatientServiceBean implements IPatientService {
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
 								
-				System.out.println ("UpdatePatient = "+theManager.createNativeQuery(str.toString()).executeUpdate());
+	//			System.out.println ("UpdatePatient = "+theManager.createNativeQuery(str.toString()).executeUpdate());
 			}
 			if (needUpdatePolicy) {
 				//System.out.println("++++ UPDATE POLICY! = "+aLastname + " "+ aFirstname);
@@ -633,14 +633,10 @@ public class PatientServiceBean implements IPatientService {
 		
 		
 	}
-	public void s(Object o) {
-		System.out.println("=== patientServiceBean, "+o.toString());
-	}
 	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, String aDoctorSnils
 			, boolean ignoreType, boolean updateEditDate) {
-		System.out.println("======= patientServiceBean, create attachment: params: >"+aPatientId+"<>"+ aCompany+"<>"+aLpu+"<>"+aAttachedType+"<>"+aAttachedDate+"<>"+aDoctorSnils+"<>"+ignoreType+"<>"+updateEditDate+"<");
 		if (aCompany==null || aCompany.equals("") || aLpu==null || aLpu.equals("")) {
-			s("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
+			log.warn("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
 			return null;
 		}
 		String updateDate = " editdate=current_date, ";
@@ -655,23 +651,23 @@ public class PatientServiceBean implements IPatientService {
 			sqlAdd="omcCode";
 		}
 		String sqll = "from RegInsuranceCompany where "+sqlAdd+" = :code and (deprecated is null or deprecated='0')";
-		s("WHERE IS ERROR?? "+sqll);
+		//s("WHERE IS ERROR?? "+sqll);
 		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery(sqll)
 				.setParameter("code", aCompany).getResultList(); 
 		
 		if (!companies.isEmpty()) {
 			insCompany=companies.get(0);
 		} else {
-			s("Страх. компания не найдена");
+			log.error("Страх. компания не найдена");
 		}
 		
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
-		s(" ЛПУ наше, создаем прикрепления!!");
+		//s(" ЛПУ наше, создаем прикрепления!!");
 		List<Object> obj =null;
 		Long areaId = null;
 		LpuArea la = null;
 		if (attachedType!=null&&attachedType.equals("1")){
-			s("Тип прикрепления - территориальный, ищем участок по адресу регистрации");
+		//	s("Тип прикрепления - территориальный, ищем участок по адресу регистрации");
 			try { 
 				obj = theManager.createNativeQuery("select la.id from patient p" +
 			
@@ -686,19 +682,19 @@ public class PatientServiceBean implements IPatientService {
 				
 			//	System.out.println("==== ATT= laID = "+obj.toString());
 			} catch (NoResultException e) {
-				s("Участок по адресу не найден");
+				log.error("Участок по адресу не найден");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}		
 			
 			if (obj!=null&&obj.size()>0) {
 				areaId=Long.parseLong(obj.get(0).toString());
-				s("Участок нашли, ИД="+areaId);
+			//	s("Участок нашли, ИД="+areaId);
 				la = theManager.find(LpuArea.class, areaId);
 			}
 		}
 		if (la==null && aDoctorSnils!=null && !aDoctorSnils.trim().equals("")){ //Если не нашли подходящий участок по адресу, ищем участок по СНИЛС врача
-			s("ищем участок по СНИЛС врача. snils = "+aDoctorSnils);
+		//	s("ищем участок по СНИЛС врача. snils = "+aDoctorSnils);
 			obj = theManager.createNativeQuery("select la.id " +
 					" from lpuarea la" +
 					" left join workfunction wf on wf.id=la.workfunction_id" +
@@ -707,11 +703,11 @@ public class PatientServiceBean implements IPatientService {
 					" where wpat.snils='"+aDoctorSnils.trim()+"'").getResultList();
 			if (obj!=null&&obj.size()>0) {
 				areaId=Long.parseLong(obj.get(0).toString());
-				s("Нашли участок по СНИЛС врача. ИД ="+areaId);
+			//	s("Нашли участок по СНИЛС врача. ИД ="+areaId);
 				la = theManager.find(LpuArea.class, areaId);
 				
 			} else {
-				s("НЕ Нашли участок по СНИЛС врача");
+				log.error("НЕ Нашли участок по СНИЛС врача");
 			}
 			
 			
@@ -727,7 +723,6 @@ public class PatientServiceBean implements IPatientService {
 			return "Прикрепление не создано, не распознан тип прикрепления: "+attachedType;
 		}
 		if (attachments.isEmpty()) { // Создаем новое 
-			s("Создаем новое прикрепление");
 			MisLpu lpuAtt = null;
 			
 			if (la!=null) {
@@ -748,7 +743,7 @@ public class PatientServiceBean implements IPatientService {
 					att.setCreateUsername("fond_check");
 					
 					if (la!=null) {
-						s("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+						log.warn("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
 						att.setArea(la);
 					} else {
 						//Debug
@@ -756,7 +751,7 @@ public class PatientServiceBean implements IPatientService {
 					}
 					theManager.persist(att);
 				} catch (ParseException e) {
-					System.out.println("Дата не распознана "+attachedDate);
+					log.error("Дата не распознана "+attachedDate);
 					e.printStackTrace();
 				}
 				ret.append("Создано новое прикрепление. Тип="+att.getAttachedType().getCode() +
@@ -908,8 +903,8 @@ public class PatientServiceBean implements IPatientService {
 			
 			for (String p:pols) {
 				String[] pol = p.split("#") ;
-				System.out.println(pol.length) ;
-				System.out.println(p) ;
+			//	System.out.println(pol.length) ;
+			//	System.out.println(p) ;
 				
 				updateOrCreatePolicyByFond(aPatientId, pol[5], fiodr[0], fiodr[1], fiodr[2], fiodr[3], pol[0], pol[1], pol[2],pol[3],pol[4],curDate) ;
 			}
@@ -1307,9 +1302,9 @@ public class PatientServiceBean implements IPatientService {
 		WebQueryResult wqr = new WebQueryResult() ;
 		String defaultLpu = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", "-", theManager);
 		boolean isEnableLimitAreas = theSessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
-		System.out.print("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
-		System.out.print(isEnableLimitAreas) ;
-		System.out.print(theSessionContext.getCallerPrincipal().toString()) ;
+	//	System.out.print("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
+	//	System.out.print(isEnableLimitAreas) ;
+	//	System.out.print(theSessionContext.getCallerPrincipal().toString()) ;
 		String fiIdprev=null ;
 		if (aIdNext!=null) {
 			List<Object[]> infoNext = theManager.createNativeQuery("select lastname,firstname,middlename from patient where id="+aIdNext).getResultList() ;
