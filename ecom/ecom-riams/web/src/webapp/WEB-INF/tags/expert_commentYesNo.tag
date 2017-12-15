@@ -55,6 +55,7 @@
         }
 //alert( $('criterion'+the${name}Ii+'CommentYesNo').value);
         updateCriterions();
+            the${name}CommentYesNoDialog.hide() ;
         }
         else alert('Введите пояснение изменению значения оценки!');
     }

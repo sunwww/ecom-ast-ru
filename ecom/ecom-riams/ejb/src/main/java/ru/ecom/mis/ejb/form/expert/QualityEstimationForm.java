@@ -107,4 +107,15 @@ public class QualityEstimationForm extends IdEntityForm {
 	  * Эсперт
 	  */
 	 private Long theExpert;
+
+	@Comment("Является ли черновиком")
+	@Persist
+	public Boolean getIsDraft() {
+		return theIsDraft;
+	}
+	public void setIsDraft(Boolean aIsDraft) {
+		theIsDraft = aIsDraft;
+	}
+	/** Является ли черновиком */
+	private Boolean theIsDraft;
 }

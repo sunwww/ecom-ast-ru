@@ -22,6 +22,15 @@ function onPreCreate(aForm, aCtx) {
             if (list.size() > 0)
                 if (list.get(0) == "0")
                     throw("Не найдены критерии оценки качества по 203 приказу (диагноз этого СЛС не входит в перечень 203 приказа, либо критерии не соответствуют возрасту пациента), поэтому данный вид оценки качества в этом СЛС создать нельзя!");
+            else {
+                //проверка на имеется ли карта уже
+
+                }
+           var ids= aCtx.manager.createNativeQuery("select id from qualityestimation where card_id=ANY(select id from qualityestimationcard  where medcase_id=" + aForm.getMedcase() + " and kind_id=5)").getResultList();
+            if (ids.size() > 0) {
+                throw("По этому случаю уже есть экспертная карта по 203 приказу (с черновиком от врача отделения):"+
+                    "<a href='entityParentEdit-expert_qualityEstimation.do?id="+ids.get(0)+"&type=BranchManager'>Перейти к ней</a>");
+            }
         }
     }
 }
