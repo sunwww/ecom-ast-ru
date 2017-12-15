@@ -37,6 +37,19 @@ import ru.nuzmsh.forms.validator.validators.Required;
 )
 public class DisabilityDocumentForm extends IdEntityForm{
 	
+	/** Первичность предыдущего листа нетрудоспособности  */
+	@Comment("Первичность предыдущего листа нетрудоспособности ")
+	public String getAnotherPrevPrimarity() {return theAnotherPrevPrimarity;}
+	public void setAnotherPrevPrimarity(String aAnotherPrevPrimarity) {theAnotherPrevPrimarity = aAnotherPrevPrimarity;}
+	/** Первичность предыдущего листа нетрудоспособности  */
+	private String theAnotherPrevPrimarity ;
+
+	/** Номер первичного листа нетрудоспособности другого ЛПУ*/
+	@Comment("Номер первичного листа нетрудоспособности")
+	public String getAnotherPrevNumber() {return theAnotherPrevNumber;}
+	public void setAnotherPrevNumber(String aAnotherPrevNumber) {theAnotherPrevNumber= aAnotherPrevNumber;}
+	/** Номер первичного листа нетрудоспособности */
+	private String theAnotherPrevNumber;
 
 	/** Дата экспорта */
 	@Comment("Дата экспорта")

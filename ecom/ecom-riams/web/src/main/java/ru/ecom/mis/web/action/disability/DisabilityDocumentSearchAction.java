@@ -18,7 +18,6 @@ public class DisabilityDocumentSearchAction extends BaseAction {
         SearchForm form = (SearchForm) aForm;
         //form.validate(aMapping, aRequest);
         IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-        System.out.println("search="+form.getNumberTicket()) ;
         aRequest.setAttribute("list", service.findDocumentBySeriesAndNumber(form.getNumberTicket() ));
 
         return aMapping.findForward("success");
