@@ -69,7 +69,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String[] par = aParams.split(":");
-		System.out.println("=== == medcase = "+aMedCase+" = " +aParams+" = length "+par.length);
+	//	System.out.println("=== == medcase = "+aMedCase+" = " +aParams+" = length "+par.length);
 		String takingDate = toNull(par[0]);
 		String pulse = toNull(par[6]);
 		String bloodPressureDown = toNull(par[5]);
@@ -95,7 +95,7 @@ public class HospitalMedCaseServiceJs {
 		sql.append("to_date('"+takingDate+"','dd.MM.yyyy'),"+pulse+","+bloodPressureDown+","+bloodPressureUp+","+weight+","+respirationRate);
 		sql.append(", "+degree+", "+illnessDayNumber+", "+dayTime+", "+aMedCase+", "+stool);
 		sql.append(")");
-		System.out.println("=== === "+sql);
+	//	System.out.println("=== === "+sql);
 		return "" + service.executeUpdateNativeSql(sql.toString());
 		
 	}

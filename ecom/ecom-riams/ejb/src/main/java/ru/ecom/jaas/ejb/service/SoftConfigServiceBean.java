@@ -65,7 +65,7 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 		String[] u = dirName.split("/") ;
 		String f =u[u.length-1] ;
 		dirName=dirName.replace("/"+f, "") ;
-		System.out.println("load dirName="+dirName+" file="+f) ;
+	//	System.out.println("load dirName="+dirName+" file="+f) ;
 		if (aIsCreateDir) {
 			File dir = new File(dirName) ;
 			if (dir.exists()) {
@@ -115,8 +115,8 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 		Map<String,String> defaultConfig = create() ;
 		SoftConfig configUrl = findOrCreateSoftConfig("csp_base_url", defaultConfig) ;
 		int len = configUrl.getKeyValue().length()-1 ;
-		System.out.print("len="+len) ;
-		System.out.print("end="+configUrl.getKeyValue().substring(len)) ;
+	//	System.out.print("len="+len) ;
+	//	System.out.print("end="+configUrl.getKeyValue().substring(len)) ;
 		if (len>0&&configUrl.getKeyValue().substring(len).equals("\\") || configUrl.getKeyValue().substring(len).equals("/")) {
 			configUrl.setKeyValue(configUrl.getKeyValue().substring(0, len)) ;
 			theManager.persist(configUrl) ;
@@ -128,13 +128,13 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 
 	public String getCspBaseUrl(String aTomcatUrl) {
 		Map<String,String> defaultConfig = create() ;
-		System.out.println("tomcaturl="+aTomcatUrl) ;
+	//	System.out.println("tomcaturl="+aTomcatUrl) ;
 		SoftConfig configUrl = findOrCreateSoftConfig(aTomcatUrl, defaultConfig) ;
-		System.out.println("configurl="+configUrl) ;
+	//	System.out.println("configurl="+configUrl) ;
 		if (configUrl.getKeyValue()!=null && !configUrl.getKeyValue().equals("")) {
 		int len = configUrl.getKeyValue().length()-1 ;
-		System.out.print("len="+len) ;
-		System.out.print("end="+configUrl.getKeyValue().substring(len)) ;
+	//	System.out.print("len="+len) ;
+	//	System.out.print("end="+configUrl.getKeyValue().substring(len)) ;
 		if (len>0&&configUrl.getKeyValue().substring(len).equals("\\") || configUrl.getKeyValue().substring(len).equals("/")) {
 			configUrl.setKeyValue(configUrl.getKeyValue().substring(0, len)) ;
 			theManager.persist(configUrl) ;
