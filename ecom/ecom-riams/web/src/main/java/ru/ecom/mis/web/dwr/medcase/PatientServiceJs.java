@@ -663,9 +663,10 @@ public class PatientServiceJs {
 		}
 	}
 	public String getDoubleByFio(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,HttpServletRequest aRequest) throws NamingException, Exception {
+								 String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, HttpServletRequest aRequest) throws ParseException, NamingException {
+
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries) ;
+		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction);//"123";
 	}
 	public void createAdminChangeMessageByPatient (Long aSmo, String aType, String aTextInfo
 			, HttpServletRequest aRequest) throws NamingException {
@@ -692,12 +693,7 @@ public class PatientServiceJs {
 
 	}
 
-	public String getDoubleByFio(String aId, String aLastname, String aFirstname, String aMiddlename,
-			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries,String aAction, HttpServletRequest aRequest) throws ParseException, NamingException {
 
-		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
-		return service.getDoubleByBaseData(aId , aLastname, aFirstname, aMiddlename, aSnils, aBirthday, aPassportNumber, aPassportSeries, aAction);//"123";
-	}
 
 	public String addPatient(String aLastname, String aFirstname, String aMiddlename, String aBirthday, Long aSex, Long aSocialStatus, String aSnils, HttpServletRequest aRequest) throws Exception {
 		IPatientService service = Injection.find(aRequest).getService(IPatientService.class) ;
