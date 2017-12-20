@@ -513,4 +513,33 @@ public class QualityEstimationServiceJs {
 		}
 		return flag;
 	}
+	public void deleteDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
+		(Injection.find(aRequest).getService(IWebQueryService.class)).executeUpdateNativeSql("delete from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id);
+	}
+	public Boolean addDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="select * from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id;
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
+		Boolean flag=false;
+		if (list.size()==0) {
+			service.executeUpdateNativeSql("insert into vocqualityestimationcrit_diagnosis(vocidc10_id, vqecrit_id) VALUES (" + aIdc10Id + "," + aCritId + ")");
+			flag=true;
+		}
+		return flag;
+	}
+	public String selectDiagnoseOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select idc.id,idc.code||' '||idc.name from vocidc10 idc\n" +
+				"left join vocqualityestimationcrit_diagnosis vd on vd.vocidc10_id=idc.id\n" +
+				"left join vocqualityestimationcrit vqec on vqec.id=vd.vqecrit_id\n" +
+				"where vqec.id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1()).append("#").append(w.get2()).append("!");
+			}
+		} else res.append("##");
+		return res.toString();
+	}
 }
