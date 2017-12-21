@@ -139,7 +139,7 @@
           </msh:row>
           <msh:row>
             <msh:label property="middlename" label="Отчество" />
-            <msh:autoComplete viewOnlyField="true"property="sex" label="Пол" vocName="vocSex" />
+            <msh:autoComplete viewOnlyField="true" property="sex" label="Пол" vocName="vocSex" />
           </msh:row>
           <msh:row>
             <msh:label property="birthday" label="Дата рождения" guid="06db8372-9a2e-4737-8703-9e2b96c06782" />
