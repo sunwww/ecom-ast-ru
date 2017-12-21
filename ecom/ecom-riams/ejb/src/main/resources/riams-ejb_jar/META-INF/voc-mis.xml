@@ -1949,7 +1949,7 @@ where wf.dtype='PersonalWorkFunction' -->
     	<NativeVocService  
 
     			from = 'WorkCalendarTime as wct '
-    			parent = " wct.workCalendarDay_id = :par1 and (mc.patient_id= :par2 or ( wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null))"
+    			parent = " wct.workCalendarDay_id = :par1 and ((mc.patient_id= :par2 and mc.dateStart is null) or ( wct.medCase_id is null and wct.prescription is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and vsrt.id is null))"
     			names  = " cast(wct.timeFrom as varchar(5)) "
     			queried =" (cast(wct.timeFrom as varchar(5)) like :query ) "
     			order =''
