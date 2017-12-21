@@ -75,4 +75,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
         	styleId="diary_parameterGroup"
         	roles="/Policy/Diary/ParameterGroup/View"
         	/>
+			<msh:sideLink
+					action="/listCrits203"
+					name="Приказ 203"
+					title="Приказ 203"
+					styleId="diary_parameterGroup"
+					roles="/Policy/Mis/Order203/EditVocs"
+			/>
 	    </msh:sideMenu>

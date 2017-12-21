@@ -48,7 +48,7 @@ group by crit.id order by crit.id
     </tiles:put>
     <tiles:put name="side" type="string">
         <msh:sideMenu title="Критерии">
-            <msh:sideLink key="ALT+2" action="/entityPrepareCreate-expert_vocQualityEstimationCrit203" name="Добавить" title="Добавить" />
+            <msh:sideLink key="ALT+2" action="/entityPrepareCreate-expert_vocQualityEstimationCrit203" name="Добавить" title="Добавить" roles="/Policy/Mis/Order203/EditVocs"/>
         </msh:sideMenu>
     </tiles:put>
     <script type="text/javascript" src="./dwr/interface/QualityEstimationService.js">/**/</script>
