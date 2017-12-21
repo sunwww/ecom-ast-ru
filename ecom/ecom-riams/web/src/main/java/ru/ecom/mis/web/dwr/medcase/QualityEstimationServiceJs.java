@@ -367,12 +367,13 @@ public class QualityEstimationServiceJs {
 						" from vocqualityestimationcrit vqecrit\n" +
 						" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
 						" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
-						" left join diagnosis ds on ds.idc10_id=d.id \n" +
-						" left join medcase mc on mc.id=ds.medcase_id \n" +
-						" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
-						" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
+						//" left join diagnosis ds on ds.idc10_id=d.id \n" +
+						//" left join medcase mc on mc.id=ds.medcase_id \n" +
+						" left join medcase mc on mc.id="+medcaseId + "\n" +
+						" left join vocdiagnosisregistrationtype reg on reg.id=" + regID + "\n" +
+						" left join vocprioritydiagnosis prior on prior.id=" + priorId + "\n" +
 						" left join patient pat on pat.id=mc.patient_id \n" +
-						" where vqecrit_d.vocidc10_id=" + idc10_id + " and mc.id=" + medcaseId + "\n" +
+						" where vqecrit_d.vocidc10_id=" + idc10_id + "\n" +
 						" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
 				Collection<WebQueryResult> list = service.executeNativeSql(query);
 				if (list.size() > 0) {
@@ -387,12 +388,11 @@ public class QualityEstimationServiceJs {
 					" from vocqualityestimationcrit vqecrit\n" +
 					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
 					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
-					" left join diagnosis ds on ds.idc10_id=d.id \n" +
-					" left join medcase mc on mc.id=ds.medcase_id \n" +
-					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
-					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
+					" left join medcase mc on mc.id=ANY(select id from medcase where parent_id=" + medcaseId + ")\n" +
+					" left join vocdiagnosisregistrationtype reg on reg.code='4'  \n" +
+					" left join vocprioritydiagnosis prior on prior.code='1' \n" +
 					" left join patient pat on pat.id=mc.patient_id \n" +
-					" where vqecrit_d.vocidc10_id=" + idc10_id + " and mc.id=ANY(select id from medcase where parent_id=" + medcaseId + ")\n" +
+					" where vqecrit_d.vocidc10_id=" + idc10_id + "\n" +
 					" and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
@@ -495,6 +495,51 @@ public class QualityEstimationServiceJs {
 			WebQueryResult wqr = list.iterator().next() ;
 			res.append(wqr.get1());
 		}
+		return res.toString();
+	}
+	public Boolean deleteCrit(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		Boolean flag=false;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query ="select * from qualityestimationcrit where criterion_id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
+		if (list.size()==0) {
+			query = "delete from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId;
+			service.executeUpdateNativeSql(query);
+			query = "delete from vocqualityestimationmark where criterion_id=" + aCritId;
+			service.executeUpdateNativeSql(query);
+			query = "delete from vocqualityestimationcrit where id=" + aCritId;
+			service.executeUpdateNativeSql(query);
+			flag=true;
+		}
+		return flag;
+	}
+	public void deleteDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
+		(Injection.find(aRequest).getService(IWebQueryService.class)).executeUpdateNativeSql("delete from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id);
+	}
+	public Boolean addDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="select * from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id;
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
+		Boolean flag=false;
+		if (list.size()==0) {
+			service.executeUpdateNativeSql("insert into vocqualityestimationcrit_diagnosis(vocidc10_id, vqecrit_id) VALUES (" + aIdc10Id + "," + aCritId + ")");
+			flag=true;
+		}
+		return flag;
+	}
+	public String selectDiagnoseOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select idc.id,idc.code||' '||idc.name from vocidc10 idc\n" +
+				"left join vocqualityestimationcrit_diagnosis vd on vd.vocidc10_id=idc.id\n" +
+				"left join vocqualityestimationcrit vqec on vqec.id=vd.vqecrit_id\n" +
+				"where vqec.id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1()).append("#").append(w.get2()).append("!");
+			}
+		} else res.append("##");
 		return res.toString();
 	}
 }

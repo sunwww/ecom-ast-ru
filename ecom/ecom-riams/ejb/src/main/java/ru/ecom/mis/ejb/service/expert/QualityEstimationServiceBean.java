@@ -455,7 +455,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						 if (list2.get(t)[0].toString().equals(list.get(i)[1].toString())) index = t;
 					 }
 				 }
-				 if (index!=-1 && list2!=null && list2.get(index)[1].equals("yes")) {
+				 if (index!=-1 && list2!=null && list2.get(index)!=null && list2.get(index)[1]!=null && list2.get(index)[1].equals("yes")) {
 					 table.append("<td valign='top' align='right'"+color1+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
 				 }
 				 else
