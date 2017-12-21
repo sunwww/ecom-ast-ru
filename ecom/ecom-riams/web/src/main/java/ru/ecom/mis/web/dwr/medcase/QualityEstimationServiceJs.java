@@ -542,4 +542,73 @@ public class QualityEstimationServiceJs {
 		} else res.append("##");
 		return res.toString();
 	}
+	public String selectMedServOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1());
+			}
+		} else res.append("##");
+		return res.toString();
+	}
+	public void deleteMedServOfCrit203ById(Long aCritId, String medServ, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1());
+			}
+		}
+		if (res!=null && !res.toString().equals("")) {
+			String ms=res.toString();
+			ms=ms.replace("'"+medServ+"'","");
+			ms=ms.replace(",,",",");
+			ms=ms.replace("'","''");
+			if (ms.length()>0 && ms.substring(0,1).equals(",")) ms=ms.substring(1);
+			ms="'"+ms+"'";
+			service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
+		}
+	}
+	public Boolean addMedServOfCrit203ById(Long aCritId, String medServId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1());
+			}
+		}
+		sql = "select code from medservice where id=" + medServId;
+		list = service.executeNativeSql(sql);
+		String medServ="";
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				medServ=w.get1().toString();
+			}
+		}
+		Boolean flag=false;
+		if (res!=null && !medServ.equals("")) {
+			String ms=res.toString();
+			if (!ms.contains(medServ)) {
+				flag=true;
+				if (res.toString().equals("")) {
+					ms=medServ.replace("'","''");
+					ms="'''"+ms+"'''";
+				}
+				else {
+					ms=ms+","+"'"+medServ+"'";
+					ms=ms.replace("'","''");
+					ms="'"+ms+"'";
+				}
+				service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
+			}
+		}
+		return flag;
+	}
 }
