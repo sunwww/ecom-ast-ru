@@ -7,23 +7,29 @@ function onView(aForm, aVisit, aCtx) {
  * Перед удалением
  */
 function onPreDelete(aEntityId, aContext) {
-	var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, new java.lang.Long(aEntityId)) ;
+	var manager = aContext.manager;
+	var visit = manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, new java.lang.Long(aEntityId)) ;
 	if(visit.getNoActuality()!=null && visit.getNoActuality()==true) {
 		//throw "fdsfsd";
-		aContext.manager.createNativeQuery("delete from Diagnosis where medcase_id="+aEntityId).executeUpdate() ;
-		aContext.manager.createNativeQuery("delete from medcase where parent_id="+aEntityId).executeUpdate() ;
-		aContext.manager.createNativeQuery("delete from diary where medcase_id="+aEntityId).executeUpdate() ;
-		var  l=aContext.manager.createNativeQuery("select id,parent_id from MedCase where parent_id=(select parent_id from medcase where id="+aEntityId+") and parent_id is not null").getResultList() ;
+		manager.createNativeQuery("delete from Diagnosis where medcase_id="+aEntityId).executeUpdate() ;
+		manager.createNativeQuery("delete from medcase where parent_id="+aEntityId).executeUpdate() ;
+		manager.createNativeQuery("delete from diary where medcase_id="+aEntityId).executeUpdate() ;
+		var  l=manager.createNativeQuery("select id,parent_id from MedCase where parent_id=(select parent_id from medcase where id="+aEntityId+") and parent_id is not null").getResultList() ;
 		if (l.size()==1) {
-			aContext.manager.createNativeQuery("update medcase set parent_id=null where id="+aEntityId).executeUpdate() ;
-			aContext.manager.createNativeQuery("delete from medcase where id="+l.get(0)[1]).executeUpdate() ;
+			manager.createNativeQuery("update medcase set parent_id=null where id="+aEntityId).executeUpdate() ;
+			manager.createNativeQuery("delete from medcase where id="+l.get(0)[1]).executeUpdate() ;
 		}
 
 	} else {
-		var  l=aContext.manager.createNativeQuery("select id,parent_id from MedCase where parent_id="+aEntityId).getResultList() ;
+		var  l=manager.createNativeQuery("select id,parent_id from MedCase where parent_id="+aEntityId).getResultList() ;
 		if (l.size()>0) {
 			throw "Невозможно удалить визит, т.к. у визиту прекреплены услуги! Для удаления необходимо отметить визит как недействительный";
 		}
+	}
+	l = manager.createNativeQuery("select id from prescriptionList where medcase_id="+aEntityId).getResultList(); //Удаляем листы назначений
+	if (l.size()>0) {
+		manager.createNativeQuery("delete from prescription where prescriptionlist_id="+l.get(0)).executeUpdate();
+		manager.createNativeQuery("delete from prescriptionList where id="+l.get(0)).executeUpdate();
 	}
 }
 
