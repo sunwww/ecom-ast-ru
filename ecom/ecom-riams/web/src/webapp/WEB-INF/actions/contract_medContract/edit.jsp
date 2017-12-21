@@ -100,7 +100,7 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			,sp.dateFrom,sp.dateTo,ca.id,ca.balanceSum, ca.reservationSum,ca.discountdefault
 			" name="serverPerson"/>
 				<msh:table name="serverPerson" viewUrl="entityParentView-contract_account.do?short=Short" 
-				
+				deleteUrl="entityParentDeleteGoParentView-contract_account.do"
 				printUrl="print-dogovor572.do?s=CertificatePersonPrintService&m=printDogovogByNoPrePaidServicesMedServise"
 				action="entityParentPrepareCreate-contract_accountOperationAccrual.do"
 				idField="1">
