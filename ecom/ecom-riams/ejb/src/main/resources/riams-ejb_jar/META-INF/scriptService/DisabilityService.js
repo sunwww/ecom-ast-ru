@@ -183,7 +183,7 @@ function printJournal(aCtx, aParams) {
     	var prevDocument =doc.prevDocument;
 
     	if (prevDocument!=null&&prevDocument.anotherLpu!=null) {
-    		if (prevDocument.primarity.code="1") {//чужой первичный
+    		if (prevDocument.primarity.code=="1") {//чужой первичный
 				obj.setAnotherPrevPrimarity("1");
             } else { //чужой продолжение
                 obj.setAnotherPrevPrimarity("2");
