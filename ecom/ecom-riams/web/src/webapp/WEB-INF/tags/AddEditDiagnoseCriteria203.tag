@@ -116,6 +116,8 @@
                         reload${name}();
                         }
                         else alert("Этот диагноз уже связан с текущим критерием!");
+                        $('${name}vocidc10').value="";
+                        $('${name}vocidc10Name').value="";
                     }
                 }
             );

@@ -28,7 +28,7 @@
                 frm.action = 'listCrits203.do';
             }
         </script>
-        <ecom:webQuery name="critList" nativeSql="select crit.id,crit.name,crit.isgrownup,crit.ischild,translate(crit.medservicecodes,'''',''),list(idc.code) from vocqualityestimationcrit  crit
+        <ecom:webQuery name="critList" nativeSql="select crit.id,crit.code,crit.name,crit.isgrownup,crit.ischild,translate(crit.medservicecodes,'''',''),list(idc.code) from vocqualityestimationcrit  crit
 left join vocqualityestimationcrit_diagnosis crit_diag on crit_diag.vqecrit_id=crit.id
 left join vocidc10 idc on idc.id=crit_diag.vocidc10_id
 left join vocqualityestimationkind kind on crit.kind_id=kind.id
@@ -37,13 +37,14 @@ group by crit.id order by crit.id
         "/>
         <msh:table hideTitle="false" styleRow="2" idField="1" name="critList" action="entityEdit-expert_vocQualityEstimationCrit203.do" >
             <msh:tableColumn columnName="#" property="sn" />
-            <msh:tableColumn columnName="Критерий" property="2" />
-            <msh:tableColumn columnName="Взрослые" property="3"/>
-            <msh:tableColumn columnName="Дети" property="4"/>
-            <msh:tableColumn columnName="Диагнозы" property="6"/>
+            <msh:tableColumn columnName="Код" property="2" />
+            <msh:tableColumn columnName="Критерий" property="3" />
+            <msh:tableColumn columnName="Взрослые" property="4"/>
+            <msh:tableColumn columnName="Дети" property="5"/>
+            <msh:tableColumn columnName="Диагнозы" property="7"/>
             <msh:tableButton property="1" addParam="this" buttonFunction="deleteCrit" buttonName="Удалить" buttonShortName="Уд."/>
             <msh:tableButton property="1" addParam="this" buttonFunction="editCrit" buttonName="Редактировать" buttonShortName="Ред."/>
-            <msh:tableColumn columnName="Услуги" property="5"/>
+            <msh:tableColumn columnName="Услуги" property="6"/>
         </msh:table>
     </tiles:put>
     <tiles:put name="side" type="string">
