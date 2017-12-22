@@ -65,20 +65,8 @@ public class ContractAccountMedServiceForm extends IdEntityForm{
 	 * Мед. Услуги
 	 */
 	private Long theMedService;
-	/**
-	 * Рабочая функция
-	 */	
-	@Persist
-	public Long getWorkFunction() {
-		return theWorkFunction;
-	}
-	public void setWorkFunction(Long aWorkFunction) {
-		theWorkFunction = aWorkFunction;
-	}
-	/**
-	 * Рабочая функция
-	 */
-	private Long theWorkFunction;
+
+
 	/** Количество */
 	@Comment("Количество")
 	@Persist @Required
