@@ -10,4 +10,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocQualityEstimationKind extends VocBaseEntity{
+  /** Признак, можно ли создавать в госпитализации */
+  @Comment("Признак, можно ли создавать в госпитализации")
+  public Boolean getCreateInHMC() {return theCreateInHMC;}
+  public void setCreateInHMC(Boolean aCreateInHMC) {theCreateInHMC = aCreateInHMC;}
+  /** Признак, можно ли создавать в госпитализации */
+  private Boolean theCreateInHMC;
 }
