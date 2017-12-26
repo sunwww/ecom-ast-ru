@@ -554,7 +554,7 @@ public class QualityEstimationServiceJs {
 		} else res.append("##");
 		return res.toString();
 	}
-	public void deleteMedServOfCrit203ById(Long aCritId, String medServ, HttpServletRequest aRequest) throws NamingException {
+	public String deleteMedServOfCrit203ById(Long aCritId, String medServ, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
@@ -570,11 +570,14 @@ public class QualityEstimationServiceJs {
 			ms=ms.replace(",,",",");
 			ms=ms.replace("'","''");
 			if (ms.length()>0 && ms.substring(0,1).equals(",")) ms=ms.substring(1);
+			if (ms.endsWith(",")) ms=ms.substring(0,ms.length()-1);
 			ms="'"+ms+"'";
 			service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
+			return ms.replace("''","'").replace("''","'");
 		}
+		return "0";
 	}
-	public Boolean addMedServOfCrit203ById(Long aCritId, String medServId, HttpServletRequest aRequest) throws NamingException {
+	public String addMedServOfCrit203ById(Long aCritId, String medServId, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
@@ -592,11 +595,9 @@ public class QualityEstimationServiceJs {
 				medServ=w.get1().toString();
 			}
 		}
-		Boolean flag=false;
 		if (res!=null && !medServ.equals("")) {
 			String ms=res.toString();
 			if (!ms.contains(medServ)) {
-				flag=true;
 				if (res.toString().equals("")) {
 					ms=medServ.replace("'","''");
 					ms="'''"+ms+"'''";
@@ -607,8 +608,9 @@ public class QualityEstimationServiceJs {
 					ms="'"+ms+"'";
 				}
 				service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
+				return ms.replace("''","'").replace("''","'");
 			}
 		}
-		return flag;
+		return "0";
 	}
 }

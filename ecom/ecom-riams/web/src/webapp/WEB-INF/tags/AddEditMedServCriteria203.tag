@@ -98,9 +98,12 @@
     function deleteMedServ${name}(medServId) {
         QualityEstimationService.deleteMedServOfCrit203ById(
             ID,medServId, {
-                callback: function() {
-                    the${name}CloseDisDocumentDialog.hide() ;
-                    reload${name}();
+                callback: function(res) {
+                    if (res!="0") {
+                        $('medServiceCodes').value=res;
+                        the${name}CloseDisDocumentDialog.hide() ;
+                        reload${name}();
+                    }
                 }
             }
         );
@@ -108,16 +111,18 @@
     //Добавление связи
     function addMedServ${name}() {
         var medServId=$(${name}vocMedServ).value;
-        //medServId="A23.00.00"
         if (medServId!=null && medServId!="") {
             QualityEstimationService.addMedServOfCrit203ById(
                 ID,medServId, {
                     callback: function(res) {
-                        if (res==true) {
+                        if (res!="0") {
+                            $('medServiceCodes').value=res;
                             the${name}CloseDisDocumentDialog.hide() ;
                             reload${name}();
                         }
                         else alert("Эта услуга уже связана с текущим критерием!");
+                        $('${name}vocMedServ').value="";
+                        $('${name}vocMedServName').value="";
                     }
                 }
             );
