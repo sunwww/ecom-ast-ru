@@ -93,21 +93,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    {
         	log.debug("Найдено "+fileList.length+" файлов");
         	
-        	for (int i = 0; i < fileList.length; i++)
-        	{
-        		File file = fileList[i];        	
-	        	String fileName = file.getName(); 
-	        	
+        	for (File file: fileList) {
+	        	String fileName = file.getName();
 	        	String[] expansions = fileName.split("\\.");
-	        
-	        	if(expansions[1].equals("xml"))
-	        	{
+	            if(expansions[1].equals("xml")) {
 	        		List<ParsedPdfInfo> l = ReadXML(xmlDirectory+fileName);
-	        		if (!l.isEmpty()) {
-	        			ParsedPdfInfo p = l.get(0);
-	        		}
-	        		
-	        		
 	        		setDefaultDiaryCycle(l);
 	        		moveFile(xmlDirectory,xmlArchDirectory,fileName);
 	        	}
@@ -164,7 +154,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    public static File[] getFiles(String path) {
 	     	try{
 	         File dir = new File(path);
-	         System.out.println(dir.exists());
 	         File[] files = dir.listFiles(new FilenameFilter() {
 	             public boolean accept(File dir, String name) {
 	                 return name.toLowerCase().endsWith(".xml");
@@ -183,14 +172,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		
 	    public static boolean checkIsExist(String filePath, boolean resultExist)    {
 	        File f = new File(filePath);
-	        if(f.exists() && !f.isDirectory()) {
-	            System.out.println("Файл существует.");
-	            resultExist = true;
-	        } else {
-	            System.out.println("Файл не существует.");
-	            resultExist = false;
-	        }
-	        return resultExist;
+	        return  f.exists()&&!f.isDirectory();
 	    }
 	    
 	    public static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
@@ -217,15 +199,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	//region "Robot"
 	public String setDefaultDiaryCycle(List<ParsedPdfInfo> parsedPdfInfos) throws JSONException {
 
-		for (int i = 0; i < parsedPdfInfos.size(); i++) {
-			
-			ParsedPdfInfo parsedPdfInfo = parsedPdfInfos.get(i);
+		for (ParsedPdfInfo parsedPdfInfo:parsedPdfInfos) {
 		    setDefaultDiary(parsedPdfInfo);
 		}
 		return "0";
 	}
 	
-	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) throws JSONException	{
+	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) {
 		//ParsedPdfInfo parsedPdfInfo = doObject();
 		if (parsedPdfInfo!=null&&parsedPdfInfo.getBarcode()!=null&&!parsedPdfInfo.getBarcode().trim().equals("")) {
 		
@@ -234,11 +214,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		StringBuilder sql = new StringBuilder() ;
 		
 		
-		String SqlAdd="";
+		StringBuilder sqlAdd= new StringBuilder();
 		for(int i=0;i<parsedPdfInfo.getResults().size();i++) {
-			SqlAdd += "'"+parsedPdfInfo.getResults().get(i).getCode()+"'";
+			sqlAdd.append("'"+parsedPdfInfo.getResults().get(i).getCode()+"'");
 			if((i+1)<parsedPdfInfo.getResults().size()){
-				SqlAdd+=",";
+				sqlAdd.append(",");
 			}
 		}
 		
@@ -248,14 +228,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					"left join templateprotocol tp on tp.medservice_id=ms.id "+
 					"left join parameterbyform pf on pf.template_id = tp.id "+
 					"left join parameter p on p.id=pf.parameter_id "+
-		        	"where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"' "+
-					"and p.externalcode in("+SqlAdd+") "+
+		        	"where pres.barcodeNumber ='").append(parsedPdfInfo.getBarcode()).append("' "+
+					"and p.externalcode in(").append(sqlAdd).append(") "+
 					"group by pres.id,ms.id");
-		
 
-		
 		Collection<WebQueryResult> list = executeNativeSql(sql.toString(), theManager);
-		//System.out.println(list.size());
 
 		if (!list.isEmpty()) {
 			String username = "LabRobot";
@@ -277,7 +254,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					", vd.id as v15did,vd.name as v16dname"+
 					", p.cntdecimal as p17cntdecimal"+
 					", ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid "+
-					", " +CreateSQLQuerty(parsedPdfInfo)+" as p19valuetextdefault "+
+					", ").append(CreateSQLQuerty(parsedPdfInfo)).append(" as p19valuetextdefault "+
 					",case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc "+
 					"from prescription pres "+
 					"left join templateprotocol tp on tp.medservice_id=pres.medservice_id "+
@@ -286,7 +263,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					"left join userDomain vd on vd.id=p.valueDomain_id "+
 					"left join userValue uv on uv.domain_id=vd.id and uv.useByDefault='1' "+
 					"left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id "+
-					"where pres.barcodeNumber ='"+parsedPdfInfo.getBarcode()+"'"+
+					"where pres.barcodeNumber ='").append(parsedPdfInfo.getBarcode()).append("'"+
 					"order by pf.position");
 				
 					Collection<WebQueryResult> lwqr = executeNativeSql(sql.toString(), theManager);
@@ -347,9 +324,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				sb.append(",\"protocol\":\"").append("\"") ;
 				sb.append("}") ;
 				
-			    log.debug("==== JSSON= "+sb.toString());
+			  //  log.debug("==== JSSON= "+sb.toString());
 				 
-			    saveLabAnalyzed(Long.valueOf(0),pid,Long.valueOf(0),sb.toString(),username, templateId) ;
+			    saveLabAnalyzed(0L,pid,0L,sb.toString(),username, templateId) ;
 				
 				}catch(Exception e){
 					e.printStackTrace();
@@ -359,7 +336,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			
 			}
 
-		log.debug("Finish setDefaultDiary");
+	//	log.debug("Finish setDefaultDiary");
 		return sb.toString();
 		
 		} else {
@@ -377,8 +354,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	       List<ParsedPdfInfoResult> r = parsedPdfInfo.getResults(); 
 	        for (ParsedPdfInfoResult p: r) {
 
-	            s.append(" when p.externalcode='"+p.getCode()+
-	               "' then '"+p.getValue()+"' ");
+	            s.append(" when p.externalcode='").append(p.getCode()).append("' then '"+p.getValue()+"' ");
 	            //if((i+1)<size) s+=" ||' '||";
 	            //System.out.println(parsedPdfInfoResults.size());
 	        }
@@ -387,7 +363,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    }
 	 
 	private String str(String aValue) {
-    	if (aValue.indexOf("\"")!=-1) {
+    	if (aValue.contains("\"")) {
     		aValue = aValue.replaceAll("\"", "\\\\\"") ;
     	}
     	return aValue ;
@@ -537,15 +513,15 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 		String wf = String.valueOf(obj.get("workFunction"));
 
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select trim(ms.code|| ' ' ||ms.name) from prescription p " +
+		/*sql.append("select trim(ms.code|| ' ' ||ms.name) from prescription p " +
 				" left join medservice ms on ms.id=p.medservice_id where p.id=").append(aPrescriptId);
 		String ms=theManager.createNativeQuery(sql.toString()).getSingleResult().toString();
-		if(ms!=null&&!ms.equals("")) ms+="\n";
+		if(ms!=null&&!ms.equals("")) ms+="\n"; */
 		Visit m = theManager.find(Visit.class, aSmoId) ;
 		 
 		if (m!=null) {
 			List<Object> l = null;
-			if (aProtocolId!=null && !aProtocolId.equals(Long.valueOf(0))) {
+			if (aProtocolId!=null && !aProtocolId.equals(0L)) {
 				sql = new StringBuilder() ;
 				sql.append("select id from Diary where id=").append(aProtocolId).append(" and medCase_id=").append(aSmoId).append("") ;
 				l = theManager.createNativeQuery(sql.toString()).getResultList() ;
@@ -606,7 +582,7 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			} else if (type.equals("2")) {
 				if (value!=null&&!value.equals("")){
 					Long id = ConvertSql.parseLong(value) ;
-					if (id!=null && !id.equals(Long.valueOf(0))) {
+					if (id!=null && !id.equals(0L)) {
 						UserValue uv = theManager.find(UserValue.class, id) ;
 						fip.setValueVoc(uv) ;
 						if (sb.length()>0) sb.append("\n") ;
@@ -717,11 +693,11 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 		SimpleDateFormat sdfOut =new SimpleDateFormat("yyyy-MM-dd") ;
 		aDate = sdfOut.format(sdfIn.parse(aDate));
 		String[] prescriptionIds = aPrescriptions.split(",");
-		String aKey = "";
+		String aKey;// = "";
 		String matId = null;
 		HashMap<java.lang.String, java.lang.String> aLabMap =  new HashMap<String, String>() ;
-		for (int i=0;i<prescriptionIds.length;i++) {
-			Long presId = Long.parseLong(prescriptionIds[i].trim());
+		for (String prescriptionId: prescriptionIds) {
+			Long presId = Long.parseLong(prescriptionId.trim());
 			ServicePrescription p = theManager.find(ServicePrescription.class, presId);
 //			if (p!=null &&p.getMedService().getServiceType().getCode().equals("LABSURVEY")&&aDate!=null&&!aDate.equals("")) {
 			if (p!=null &&aDate!=null&&!aDate.equals("")) {
@@ -1041,9 +1017,11 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			//	System.out.println("================ IF HAPPENS CLASS PrescriptionList = "+template.getClass().toString());	
 				List<TemplateCategory> tempCategList = new ArrayList<TemplateCategory>() ;
 				PrescriptListTemplate template2 = (PrescriptListTemplate) template;
-				for (TemplateCategory tempCateg:template2.getCategories()) {
+				tempCategList.addAll(template2.getCategories());
+			/*	for (TemplateCategory tempCateg:template2.getCategories()) {
 					tempCategList.add(tempCateg) ;
 				}
+				*/
 				//list.setCategories(tempCategList);
 			}
 		list.setComments(template.getComments());
@@ -1125,8 +1103,8 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 			presNew.setModePrescription(presOld.getModePrescription());
 			return presNew;
 		}
-		
-		return null ;
+		throw new IllegalStateException("Невозможно создать шаблон назначения по текущему назначению, неизвестен тип назначения!");
+		//return null ;
 }
 
 		
@@ -1136,18 +1114,7 @@ private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager
 	    EntityManager theManager ;
 	    @Resource
 		SessionContext theContext ;
-		public ParsedPdfInfo getPdfInfoByBarcode(List<ParsedPdfInfo> list,
-				String aBarcode) {
-			// TODO Auto-generated method stub
-			return null;
-		}
 
-		public void checkPdf() throws IOException, NoSuchFieldException,
-				IllegalAccessException, JSONException {
-			// TODO Auto-generated method stub
-			
-		}
-		
 	}	
 
 

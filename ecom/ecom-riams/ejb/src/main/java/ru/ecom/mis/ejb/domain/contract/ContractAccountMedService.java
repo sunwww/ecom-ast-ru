@@ -14,6 +14,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
@@ -29,6 +30,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 })
 @EntityListeners(DeleteListener.class)
 public class ContractAccountMedService extends BaseEntity{
+
+	/** Рабочая функция */
+	@OneToOne
+	public WorkFunction getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Рабочая функция */
+	private WorkFunction theWorkFunction;
 
 	/** Признак удаленной записи */
 	@Comment("Признак удаленной записи")

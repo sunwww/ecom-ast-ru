@@ -1389,13 +1389,10 @@ private HashMap getRegions() {
 			if (aPriceListId!=null) {
 				priceListId=aPriceListId;
 			} else {
-				LOG.info("deb0");
-				LOG.info(theManager);
 				List<Object> list = theManager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
 				if (list!=null&&list.size()>0) {
 					priceListId=list.get(0).toString();
 				}
-				LOG.info("deb0-1");
 			}
 			String idsertypebed = "11";
 			String dtype="";
