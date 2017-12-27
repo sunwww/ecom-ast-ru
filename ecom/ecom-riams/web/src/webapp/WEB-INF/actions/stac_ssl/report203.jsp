@@ -331,7 +331,7 @@ group by mc.id,pat.id
             <msh:sectionContent>
                 <msh:table name="dishAll"
                            viewUrl="report203.do"
-                           action="entityView-stac_ssl.do" idField="1" >
+                           action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
@@ -401,7 +401,7 @@ and dep.id=${param.depId}
             <msh:sectionContent>
                 <msh:table name="203All"
                            viewUrl="report203.do"
-                           action="entityView-stac_ssl.do" idField="1" >
+                           action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                     <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
@@ -492,7 +492,7 @@ left join patient pat on slo.patient_id=pat.id
             <msh:sectionContent>
                 <msh:table name="dishAll2"
                            viewUrl="report203.do"
-                           action="entityView-stac_ssl.do" idField="1" >
+                           action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
@@ -562,7 +562,7 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
             <msh:sectionContent>
                 <msh:table name="203All2"
                            viewUrl="report203.do"
-                           action="entityView-stac_ssl.do" idField="1" >
+                           action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
@@ -626,7 +626,7 @@ group by mc.id,pat.id,qec.id
             <msh:sectionContent>
                 <msh:table name="203EK2"
                            viewUrl="report203.do"
-                           action="entityView-stac_ssl.do" idField="1" >
+                           action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
