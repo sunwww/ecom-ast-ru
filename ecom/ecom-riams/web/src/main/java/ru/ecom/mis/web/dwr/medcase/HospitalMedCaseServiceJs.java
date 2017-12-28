@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.IIOException;
@@ -2023,5 +2024,48 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query="update statisticstub set dietdone=true where medcase_id ="+id;
 		service.executeUpdateNativeSql(query);
+	}
+	//Milamesher проверка перед удалением выписки: что юзер - лечащий врач последнего СЛО что прошло <2х часов с момента выписки
+	public Boolean checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(int hmcId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		String query="select case when (select ownerfunction_id from medcase where transferdate is null \n" +
+				"and dtype='DepartmentMedCase'and parent_id="+hmcId+")\n" +
+				"=(select wf.id from workfunction wf \n" +
+				"left join secuser su on su.id=wf.secuser_id where su.login='"+login+"') \n" +
+				"then '1' else '0' end";
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
+		Boolean flag=false;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			if (wqr.get1().toString().equals("1")) {
+				//проверка, что datefinish - текущая дата
+				query="select datefinish,dischargetime from medcase where id="+hmcId;
+				list = service.executeNativeSql(query);
+				String datefinish="",timedisharge="";
+				if (list.size()>0) {
+					wqr = list.iterator().next() ;
+					datefinish=(wqr.get1()!=null)? wqr.get1().toString():"";
+					timedisharge=(wqr.get2()!=null)? wqr.get2().toString():"";
+				}
+				if (datefinish!=null && !datefinish.equals("") && timedisharge!=null && !timedisharge.equals("")) {
+					try {
+						Date d = new java.util.Date();
+						Calendar d2=Calendar.getInstance();
+						String dstr=(new SimpleDateFormat("yyyy-MM-dd")).format(d);
+						if (datefinish.equals(dstr)) { //дата сегодняшняя
+							//проверка, что прошло не более 2х часов
+							d = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(datefinish+ " " + timedisharge);
+							Calendar calD = Calendar.getInstance();
+							calD.setTime(d);
+							long diff = System.currentTimeMillis() - calD.getTimeInMillis();
+							flag=(diff<3600000*2);
+						}
+
+					} catch (ParseException e) {}
+				}
+			}
+		}
+		return flag;
 	}
 }
