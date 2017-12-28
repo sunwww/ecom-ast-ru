@@ -69,7 +69,7 @@ function onCreate(aForm, aEntity, aCtx) {
     setMedCasesPaid(aEntity, aCtx);
 
     // Отправляем запрос на ККМ
-    if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/AutoOperationWriteOff")) {
+    if (aCtx.getSessionContext().isCallerInRole("/Policy/Config/KKMWork")) {
 
 		var kkm = new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
 		var worker = wf.worker.person;
