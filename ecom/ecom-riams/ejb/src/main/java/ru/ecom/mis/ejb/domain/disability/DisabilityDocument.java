@@ -299,6 +299,32 @@ public class DisabilityDocument extends BaseEntity{
 	public MisLpu getAnotherLpu() {return theAnotherLpu;}
 	public void setAnotherLpu(MisLpu aAnotherLpu) {theAnotherLpu = aAnotherLpu;}
 
+	@Comment("Другое ЛПУ. Название")
+	public String getAnotherLpuName() {	return anotherLpuName;	}
+	public void setAnotherLpuName(String anotherLpuName) {
+		this.anotherLpuName = anotherLpuName;
+	}
+
+	@Comment("Другое ЛПУ. Адрес")
+	public String getAnotherLpuAddress() {
+		return anotherLpuAddress;
+	}
+	public void setAnotherLpuAddress(String anotherLpuAddress) {
+		this.anotherLpuAddress = anotherLpuAddress;
+	}
+
+	@Comment("Другое ЛПУ. ОГРН")
+	public String getAnotherLpuOGRN() {
+		return anotherLpuOGRN;
+	}
+	public void setAnotherLpuOGRN(String anotherLpuOGRN) {
+		this.anotherLpuOGRN = anotherLpuOGRN;
+	}
+
+	private String anotherLpuName;
+	private String anotherLpuAddress;
+	private String anotherLpuOGRN;
+
 	/** Предыдущий документ */
 	@Comment("Предыдущий документ")
 	@OneToOne
