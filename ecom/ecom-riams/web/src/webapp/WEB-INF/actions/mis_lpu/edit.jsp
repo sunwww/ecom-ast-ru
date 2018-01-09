@@ -107,6 +107,7 @@
         	<msh:checkBox property="isMaternityWard" label="Родильное отделение"/>
         </msh:row>
         <msh:row>
+            <msh:checkBox property="isMobilePolyclinic" label="Мобильная поликлиника"/>
         	<msh:checkBox property="isArchive" label="Не используется (в архиве)"/>
         </msh:row>
         <msh:row>

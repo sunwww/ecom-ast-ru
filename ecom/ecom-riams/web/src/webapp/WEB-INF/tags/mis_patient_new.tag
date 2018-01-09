@@ -103,7 +103,6 @@
      		&& checkRequered('${name}Sex','${name}SexName')
      		)
      		 {
-     		
 		     	check${name}Patient($('${name}Lastname').value,$('${name}Firstname').value,$('${name}Middlename').value,$('${name}Birthday').value,$('${name}Sex').value,$('${name}SocialStatus').value,$('${name}Snils').value) ;
          }
      }
@@ -117,10 +116,9 @@
      function check${name}Patient(aLastname,aFirstname,aMiddlename,aBirthday, aSex, aSocialStatus,aSnils) {
      	PatientService.getDoubleByFio(
 		     		null,aLastname,aFirstname,aMiddlename,aSnils,aBirthday
-		     			,'','','javascript:updatePatient',false
+		     			,'','javascript:updatePatient',false
 		     		 ,{
 		     		 callback: function(aString) {
-		     		 	
 		     		 	if (aString==null || aString=="") {
 		     		 		add${name}Patient(aLastname,aFirstname,aMiddlename,aBirthday, aSex, aSocialStatus,aSnils) ;
 		     		 	} else {

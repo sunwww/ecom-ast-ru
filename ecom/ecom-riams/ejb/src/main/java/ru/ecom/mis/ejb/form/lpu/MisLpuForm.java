@@ -53,6 +53,15 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AEntityFormInterceptor(RepMisLpuChildInterceptor.class)
 )
 public class MisLpuForm extends IdNameEntityForm {
+
+	/** Признак мобильной поликлиники */
+	@Comment("Признак мобильной поликлиники")
+	@Persist
+	public Boolean getIsMobilePolyclinic() {return theIsMobilePolyclinic;}
+	public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {theIsMobilePolyclinic = aIsMobilePolyclinic;}
+	/** Признак мобильной поликлиники */
+	private Boolean theIsMobilePolyclinic ;
+
 	
 	/** Стандарт оказания мед. помощи */
 	@Comment("Стандарт оказания мед. помощи")

@@ -17,6 +17,14 @@ import javax.persistence.PersistenceContext;
 import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.mis.ejb.domain.expert.QualityEstimation;
+import ru.ecom.mis.ejb.domain.expert.QualityEstimationCard;
+import ru.ecom.mis.ejb.domain.expert.QualityEstimationCrit;
+import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit;
+import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationKind;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 
@@ -201,11 +209,17 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						.append(" left join diagnosis ds on ds.medcase_id=mcase.id ")
 						.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
 						.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id ");
+				//учитывание возраста
+				sql.append("  left join patient pat on pat.id=mcase.patient_id ");
 			}
 		}
 
 		sql.append(" where vqec.kind_id='").append(kind).append("'");
-		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id  and reg.code='4' and prior.code='1'");
+		if (ifTypeBool) {
+			sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id  and reg.code='4' and prior.code='1'");
+			//учитывание возраста
+			sql.append(" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqec.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqec.ischild=true) ");
+		}
 		sql.append(" group by vqem.id ,vqec.id,vqec.code,vqec.name,vqec.shortname,vqem.code ,vqem.name,vqem.mark")
 		 	.append(" order by vqec.code");
 		// log(sql) ;
@@ -374,11 +388,17 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						.append(" left join diagnosis ds on ds.medcase_id=mcase.id ")
 						.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id ")
 						.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id ");
+				//учитывание возраста
+				sql.append("  left join patient pat on pat.id=mcase.patient_id ");
 			}
 		}
 
 		sql.append(" where vqec.kind_id='").append(aKind).append("'");
-		if (ifTypeBool) sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id and reg.code='4' and prior.code='1' ");
+		if (ifTypeBool) {
+			sql.append("  and ds.idc10_id=vqecrit_d.vocidc10_id and reg.code='4' and prior.code='1' ");
+			//учитывание возраста
+			sql.append(" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqec.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqec.ischild=true) ");
+		}
 		sql.append(" order by vqec.code") ;
 		System.out.println("shortRow="+sql.toString());
 		//log(sql);
@@ -435,7 +455,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						 if (list2.get(t)[0].toString().equals(list.get(i)[1].toString())) index = t;
 					 }
 				 }
-				 if (index!=-1 && list2!=null && list2.get(index)[1].equals("yes")) {
+				 if (index!=-1 && list2!=null && list2.get(index)!=null && list2.get(index)[1]!=null && list2.get(index)[1].equals("yes")) {
 					 table.append("<td valign='top' align='right'"+color1+">").append(cntPart++).append("<input type='hidden' id='criterion" + (cntPart - 1) + "Comment' value='" + defects + "'></td>").append("<input type='hidden' id='criterion" + (cntPart - 1) + "CommentYesNo' value='"+comments.toString()+"'></td>");
 				 }
 				 else
@@ -604,5 +624,80 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			//log("total"+total.toString());
 		}
 		return total;
+	}
+	//Milamesher создание черновик ЭК
+	public Long createDraftEK(Long aMcaseId) {
+		//если уже есть QE, то вернуть имеющийся, нет - создать
+		List<Object> ids= theManager.createNativeQuery("select id from qualityestimation where card_id=ANY(select id from qualityestimationcard  where medcase_id=" + aMcaseId + " and kind_id=5)").getResultList();
+		if (ids == null || ids.size()==0) {
+			QualityEstimationCard qecard = new QualityEstimationCard();
+			//беру первый основной клинический диагноз
+			Long idc10_id = ConvertSql.parseLong(theManager.createNativeQuery("select ds.idc10_id from diagnosis ds\n" +
+					"left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id \n" +
+					"left join vocprioritydiagnosis prior on prior.id=ds.priority_id\n" +
+					" where ds.medcase_id= " + aMcaseId + " and prior.code='1' and reg.code='4' order by ds.id").getResultList().get(0));
+			String login = theContext.getCallerPrincipal().toString();
+			MedCase mcase = aMcaseId != null ? theManager.find(MedCase.class, aMcaseId) : null;
+			Long kind_id = ConvertSql.parseLong(theManager.createNativeQuery("select id from vocqualityestimationkind where code='PR203'").getResultList().get(0));
+			VocQualityEstimationKind kind = kind_id != null ? theManager.find(VocQualityEstimationKind.class, kind_id) : null;
+			Long wf_id = ConvertSql.parseLong(theManager.createNativeQuery("select id from workfunction where secuser_id=(select id from secuser where login='" + login + "')").getResultList().get(0));
+			WorkFunction wf = wf_id != null ? theManager.find(WorkFunction.class, wf_id) : null;
+			VocIdc10 idc10 = idc10_id != null ? theManager.find(VocIdc10.class, idc10_id) : null;
+			Object cardnumber = theManager.createNativeQuery("select code from statisticstub  where medcase_id=(select parent_id from medcase where id=" + aMcaseId + ") ").getResultList().get(0);
+			if (mcase != null && kind_id != null && wf != null && idc10 != null && cardnumber != null) {
+				qecard.setCreateDate(new java.sql.Date((new java.util.Date()).getTime()));
+				qecard.setCreateUsername(login);
+				qecard.setMedcase(mcase);
+				qecard.setPatient(mcase.getPatient());
+				qecard.setKind(kind);
+				qecard.setDepartment(mcase.getDepartment());
+				qecard.setDoctorCase(wf);
+				qecard.setDiagnosis(idc10.getName());  //надо?
+				qecard.setIdc10(idc10);
+				qecard.setCardNumber(cardnumber.toString());
+				theManager.persist(qecard);
+			/*Long qecardid=Long.valueOf(qecard.getId()) ;
+			if (qecardid!=null) {*/
+				QualityEstimation qe = new QualityEstimation();
+				qe.setCreateDate(new java.sql.Date((new java.util.Date()).getTime()));
+				qe.setCreateUsername(login);
+				qe.setExpertType("BranchManager");
+				qe.setExpert(wf);
+				qe.setCard(qecard);
+				qe.setIsDraft(true);
+				theManager.persist(qe);
+				//нужно критерии
+				List<Object> crits = theManager.createNativeQuery("select distinct vqecrit.id\n" +
+						"from vocqualityestimationcrit vqecrit\n" +
+						"left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id\n" +
+						"left join vocidc10 d on d.id=vqecrit_d.vocidc10_id\n" +
+						"left join diagnosis ds on ds.idc10_id=d.id\n" +
+						"left join medcase mc on mc.id=ds.medcase_id\n" +
+						"left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
+						"left join vocprioritydiagnosis prior on prior.id=ds.priority_id\n" +
+						"left join patient pat on pat.id=mc.patient_id\n" +
+						"where mc.id=" + aMcaseId + " and reg.code='4' and prior.code='1'\n" +
+						" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)").getResultList();
+				if (crits != null) {
+					for (int i = 0; i < crits.size(); i++) {
+						QualityEstimationCrit crit = new QualityEstimationCrit();
+						Long id = Long.parseLong(crits.get(i).toString());//Long.parseLong(String.valueOf(crits.get(i)));
+						VocQualityEstimationCrit vcrit = id != null ? theManager.find(VocQualityEstimationCrit.class, id) : null;
+						if (vcrit != null) {
+							crit.setEstimation(qe);
+							crit.setCriterion(vcrit);
+							theManager.persist(crit);
+						}
+					}
+				}
+				return Long.valueOf(qe.getId());
+			}
+			return null;
+		}
+		else {
+			Object isdraft= theManager.createNativeQuery("select case when isdraft=true  then '1' else '0' end from qualityestimation where id="+ids.get(0)).getResultList().get(0);
+			if (isdraft.equals("1")) return ConvertSql.parseLong(ids.get(0));  //это черновик
+			else return null; //ЗАВ УЖЕ ЗАПОЛНИЛ!
+		}
 	}
 }

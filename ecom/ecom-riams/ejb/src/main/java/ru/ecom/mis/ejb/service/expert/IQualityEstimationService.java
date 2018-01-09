@@ -6,4 +6,5 @@ public interface IQualityEstimationService {
 	public Long getIdQualityEstimationByType(String aType, Long aIdCard);
 	public String getCountRow(Long aCardId);
 	public String getInfoByDep(Long aSmo, Long aDepartment) ;
+	public Long createDraftEK(Long aMcaseId);
 }

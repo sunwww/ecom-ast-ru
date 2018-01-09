@@ -35,7 +35,7 @@
           <msh:textField property="ballSum" label="Сумма баллов" size="20" fieldColSpan="3"  guid="e4d1b-8802-467d-b205-70" />
         </msh:row>
                 <msh:row guid="f53-2cae-4795-93e8-9cd1">
-          <msh:textArea property="comment" label="Описание" size="20" fieldColSpan="3" size='50' guid="e4d1b-8802-467d-b205-70" />
+          <msh:textArea property="comment" label="Описание" fieldColSpan="3" size='50' guid="e4d1b-8802-467d-b205-70" />
         </msh:row>
         <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
         <msh:row>

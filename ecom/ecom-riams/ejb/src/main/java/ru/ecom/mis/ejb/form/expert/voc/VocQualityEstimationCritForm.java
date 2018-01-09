@@ -62,36 +62,61 @@ public class VocQualityEstimationCritForm extends IdEntityForm {
 		@Comment("Коды медицинских услуг")
 		@Persist
 		public String getMedServiceCodes() {
-			return medServiceCodes;
+			return theMedServiceCodes;
 		}
 		public void setMedServiceCodes(String medServiceCodes) {
-			this.medServiceCodes = medServiceCodes;
+			theMedServiceCodes = medServiceCodes;
 		}
 
 		/** Логический тип критерия? */
 		@Comment("Логический тип критерия?")
 		@Persist
-		public Boolean getBoolean() {
-			return isBoolean;
+		public Boolean getIsBoolean() {
+			return theIsBoolean;
 		}
-		public void setBoolean(Boolean aBoolean) {
-			isBoolean = aBoolean;
+		public void setIsBoolean(Boolean aIsBoolean) {
+			theIsBoolean = aIsBoolean;
 		}
+
+		/** Для взрослых? */
+		@Comment("Для взрослых?")
+		@Persist
+		public Boolean getIsGrownup() {
+			return theIsGrownup;
+		}
+		public void setIsGrownup(Boolean aIsGrownup) {
+			theIsGrownup = aIsGrownup;
+		}
+
+		/** Для детей? */
+		@Comment("Для детей?")
+		@Persist
+		public Boolean getIsChild() {
+			return theIsChild;
+		}
+		public void setIsChild(Boolean aIsChild) {
+			theIsChild = aIsChild;
+		}
+
 
 		/** Родитель */
 		private Long theParent;
 		/** Тип критерия */
 		private Long theType;
 		/** Короткое название */
-		 private String theShortName;
+		private String theShortName;
 		/** Код */
 		private String theCode;
 		/** Наименование */
 		private String theName;
-		 /** Вид оценки качества*/
-		 private Long theKind;
+		/** Вид оценки качества*/
+		private Long theKind;
 		/** Коды медицинских услуг */
-		private String medServiceCodes;
+		private String theMedServiceCodes;
 		/** Логический тип критерия? */
-		private Boolean isBoolean;
+		private Boolean theIsBoolean;
+		/** Для взрослых? */
+		private Boolean theIsGrownup;
+		/** Для детей? */
+		private Boolean theIsChild;
 }

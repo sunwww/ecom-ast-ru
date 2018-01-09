@@ -143,7 +143,7 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
         ide.printMarker("Link", this, thePageContext);
         if(StringUtil.isNullOrEmpty(theRoles) || RolesHelper.checkRoles(theRoles, theRequest)) {
         	printIdeStart("link");
-        	System.out.println("----PREGNANCY BY PATIENT LINK") ;
+        //	System.out.println("----PREGNANCY BY PATIENT LINK") ;
            
         
 	    	try {

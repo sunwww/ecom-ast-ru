@@ -178,7 +178,21 @@ function printJournal(aCtx, aParams) {
     
     for (var i=0;i<list.size();i++) {
     	var o = list.get(i) ;
+        var doc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument, new java.lang.Long(o[0]));
     	var obj = Packages.ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm() ;
+    	var prevDocument =doc.prevDocument;
+
+    	if (prevDocument!=null&&prevDocument.anotherLpu!=null) {
+    		if (prevDocument.primarity.code=="1") {//чужой первичный
+				obj.setAnotherPrevPrimarity("1");
+            } else { //чужой продолжение
+                obj.setAnotherPrevPrimarity("2");
+			}
+    		obj.setAnotherPrevNumber(doc.prevDocument.number);
+		} else {
+            obj.setAnotherPrevPrimarity("");
+    		obj.setAnotherPrevNumber("");
+		}
     	var dateRecordF=null,dateRecordL=null ;
     	var listD = aCtx.manager.createNativeQuery(
     			"select to_char(dr.dateFrom,'dd.MM.yyyy') as date1,to_char(dr.dateTo,'dd.MM.yyyy') as date2"

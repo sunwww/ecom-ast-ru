@@ -721,7 +721,7 @@ public class FondWebService {
             sb.append("<th>").append("Кв").append("</th>") ;
             sb.append("</tr>") ;
             for (Element el:list_cur) {
-            	System.out.println(" FondWebService address = "+result);
+            //	System.out.println(" FondWebService address = "+result);
             	sb.append("<tr>") ;
         		String ac = "" ;
         		String hn = el.getChildText("house") ;

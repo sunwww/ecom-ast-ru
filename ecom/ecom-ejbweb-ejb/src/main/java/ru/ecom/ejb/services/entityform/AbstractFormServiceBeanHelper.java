@@ -39,11 +39,12 @@ import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.entityform.jsinterceptor.JavaScriptFormInterceptorContext;
 import ru.ecom.ejb.services.entityform.jsinterceptor.JavaScriptFormInterceptorManager;
 import ru.ecom.ejb.services.entityform.map.MapClassLoader;
+import ru.ecom.ejb.services.live.domain.journal.DeleteJournal;
 import ru.ecom.ejb.util.FormAfterLoadInterceptor;
-//import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.MapForm;
@@ -149,6 +150,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 		if (entity == null)
 			throw new IllegalArgumentException("Не найден объект типа "
 					+ aFormClass + " c идентификатором " + aId);
+		checkIsObjectDeleted(entity);
 		try {
 			IEntityForm form = aFormClass.newInstance();
 			copyEntityToForm(entity, form);
@@ -360,7 +362,26 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	    }
 
 	
+public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentException{
+		Class entityClass = aEntity.getClass();
+		if (entityClass.isAnnotationPresent(UnDeletable.class)) {
+			UnDeletable unDeletable = (UnDeletable )entityClass.getAnnotation(UnDeletable.class);
+			try {
+				Method getterIsDeleted = PropertyUtil.getGetterMethod(entityClass,unDeletable.fieldName());
+				Boolean isDeleted = (Boolean)getterIsDeleted.invoke(aEntity);
+				if (isDeleted!=null&&isDeleted) {
+					throw new IllegalArgumentException("Этот объект был удален");
+				}
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
 
+}
 	/**
 	 * Сохранение
 	 * 
@@ -383,6 +404,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			Object idValue = getIdValue(aForm, aForm.getClass());
 			Object entity = theManager.find(findFormPersistanceClass(aForm
 					.getClass()), idValue);
+			checkIsObjectDeleted(entity);
 			invokeJavaScriptInterceptor("onPreSave", aForm, entity, null, null);
 			copyFormToEntity(aForm, entity);
 			if(aForm.getClass().isAnnotationPresent(ASaveInterceptors.class)) {
@@ -423,7 +445,6 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 			}
 		}
 	}
-	
 	/**
 	 * Удалить объект
 	 * 
@@ -433,16 +454,34 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	public void delete(Class aFormClass, Object aId) {
 		checkPermission(aFormClass, "Delete");
 		checkDynamicPermission(aFormClass, aId, "Delete");
+		Class entityClass =findFormPersistanceClass(aFormClass);
+		Object entity = theManager.find(entityClass, aId);
+		checkIsObjectDeleted(entity);
 		invokeJavaScriptInterceptor("onPreDelete", null, null, aId, aFormClass) ;
-		theManager.remove(theManager.find(findFormPersistanceClass(aFormClass),
-				aId));
+		if (entityClass.isAnnotationPresent(UnDeletable.class)) { //Если у формы есть аннотация, не удаляем
+            String username = theContext.getCallerPrincipal().getName();
+			String fieldName = ((UnDeletable) entityClass.getAnnotation(UnDeletable.class)).fieldName();
+			theManager.createQuery("update "+entityClass.getCanonicalName()+" set "+fieldName+"='1' where id=:id").setParameter("id",aId).executeUpdate();
+            DeleteJournal deleteJournal = new DeleteJournal();
+            deleteJournal.setClassName(entityClass.getCanonicalName());
+            deleteJournal.setDeleteDate(new java.sql.Date(new java.util.Date().getTime()));
+            deleteJournal.setDeleteTime(new java.sql.Time(new java.util.Date().getTime()));
+            deleteJournal.setLoginName(username);
+            deleteJournal.setObjectId(""+aId);
+            deleteJournal.setSerialization("Помечено на удаление");
+            theManager.persist(deleteJournal);
+            deleteJournal.setStatus(2L);
+		} else {
+			theManager.remove(theManager.find(entityClass,aId));
+		}
 		invokeJavaScriptInterceptor("onDelete", null, null, aId, aFormClass) ;
+
 	}
 
     public void delete(String aFormClassName, Object aId) {
     	delete(loadMapForm(aFormClassName), aId);
     }
-	
+
 	protected Class<?> findFormPersistanceClass(Class aFormClass) {
 		return findFormPersistance(aFormClass).clazz();
 	}
@@ -761,8 +800,8 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	private void saveOneToManyOneProperty(String aJson, Collection aCollection,
 			Class aType,String aTableName, String aParentProperty, String aValueProperty, Object aId) throws JSONException, ParseException,
 			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
-		System.out.println(aTableName);
-		System.out.println(aJson);
+		//System.out.println(aTableName);
+		//System.out.println(aJson);
 		if (aTableName==null || aTableName.equals("")) {
 			JSONArray ar ;
 			if (aJson!=null && !aJson.equals("")) {

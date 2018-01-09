@@ -57,6 +57,7 @@
   
   String isReestr = request.getParameter("reestr");
   	String addSql = "";
+	String add2Sql = "";
   	String profile = (String)request.getParameter("department") ; //Это не отделение, как можно подумать, а профиль КИЛИ
   	String department = request.getParameter("dep") ;
   	String startDate = (String) request.getParameter("dateBegin");
@@ -64,10 +65,14 @@
 	if (startDate!=null&&!startDate.equals("")) {
 	request.setAttribute("dateBegin", startDate);
 	request.setAttribute("dateEnd", finishDate);
-    	if (profile!=null && !profile.equals("") && !profile.equals("0")) {
-    		addSql+=" and vkp.id = "+profile ;
-    	} 
-    	String orderBySql = "" ;
+    	if (profile!=null && !profile.equals("") && !profile.equals("0") && !profile.equals("10")) {
+    		addSql+=" and vkp.id = "+profile+" and " ;
+    	} else 	if (profile!=null &&  profile.equals("10")) { //неонатологический
+			addSql+=" and dc.isneonatologic = "+true+" and " ;
+		}
+		if (profile!=null && !profile.equals("10"))
+			add2Sql+=" and vhr.code='11' ";  //т.к. при неонат. смотрим СЛС матери
+		String orderBySql = "" ;
     	String groupBySql = "" ;
     	String selectSql = "" ;
     	String typeDateSql="sls.dateFinish";
@@ -110,6 +115,7 @@
 	  
   } 
 	request.setAttribute("addSql", addSql);
+    request.setAttribute("add2Sql", add2Sql);
 //	out.print("<H1>"+rees)
 
 	if (isReestr==null||isReestr.equals("")||isReestr.equals("0")){
@@ -117,7 +123,7 @@
 		if (typeSearch.equals("1")||typeSearch.equals("2")){
 %>
  <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
-SELECT ${selectSql} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk 
+SELECT ${selectSql} as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk
 ,count(pk.id)*100/ count(sls.id)  as persDead
 ,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase
 
@@ -131,7 +137,7 @@ left join deathcase dc on dc.medcase_id=sls.id
 	left join protocolkili pk on pk.deathcase_id=dc.id
 	left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
 left join vochospitalizationresult vhr on vhr.id=sls.result_id
-WHERE sls.dtype='HospitalMedCase' ${addSql} and slo.dtype='DepartmentMedCase'  and vhr.code='11' 
+WHERE slo.dtype='DepartmentMedCase' and sls.dtype='HospitalMedCase' ${addSql}  ${add2Sql}
 and sls.deniedhospitalizating_id is null
 
 GROUP BY ${groupBySql}
@@ -161,8 +167,8 @@ pk.protocolnumber
 ,'&protocolNumber='||pk.protocolnumber||'&protocolDate='||to_char(pk.protocoldate,'dd.MM.yyyy')||'&profile='||'' as fldId
 ,'&profileName='||vkp.name as profileName
 from protocolKili pk 
-left join deathcase dth on dth.id = pk.deathcase_id
-left join medcase sls on sls.id = dth.medcase_id
+left join deathcase dc on dc.id = pk.deathcase_id
+left join medcase sls on sls.id = dc.medcase_id
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase' and slo.transferdate is null
 left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id 
 left join patient pat on sls.patient_id = pat.id
@@ -177,7 +183,7 @@ ORDER BY cast(pk.protocolNumber as int)
 	  <msh:section>
     <msh:sectionContent>
     <msh:table cellFunction="true" name="showProfile" idField="6" noDataMessage="Не найдено" 
-    action="protocolReport.do?typeSearch=3&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c"> 
+    action="protocolReport.do?typeSearch=3&reestr=1&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
       <msh:tableColumn columnName="Протокол КИЛИ" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
       <msh:tableColumn columnName="Дата протокола" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
       <msh:tableColumn columnName="Пациентов" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
@@ -198,74 +204,77 @@ ORDER BY cast(pk.protocolNumber as int)
 	} else if (addParam!=null&&addParam.equals("2")) {
 		sqlAdd += " and pk.id is not null";
 	}
-	
+
 	//request.setAttribute("addParam", addParam!=null?addParam:"");
-	
+
 	String protocolDate = request.getParameter("protocolDate");
 	String protocolNumber = request.getParameter("protocolNumber");
-	
+
 	if (typeSearch!=null&&typeSearch.equals("3")) { //Поиск по протоколу
-	
-	} else {	  
+
+	} else {
 			sqlAdd+=" and sls.dateFinish between to_date('"+startDate+"','dd.MM.yyyy') and to_date('"+finishDate+"','dd.MM.yyyy')";
 			printS = "PrintService";
 			printM = "printNativeQuery";
 			printFileName = "kiliReport";
 	}
-	
+
 	if (protocolDate!=null&&!protocolDate.equals("")) {
 		sqlAdd += " and pk.protocolDate = to_date('"+protocolDate+"','dd.MM.yyyy')";
 	}
 	if (protocolNumber!=null&&!protocolNumber.equals("")) {
 	  sqlAdd +=" and pk.protocolNumber='"+protocolNumber+"'";
 	}
-	if (profile!=null&&!profile.equals("")) {
+	if (profile!=null && !profile.equals("") && !profile.equals("10")) {
 		if (profile.equals("0")) {
 			sqlAdd +=" and vkp.id is null";
 		} else {
 			sqlAdd +=" and vkp.id="+profile;
 		}
-	   
-	} 
+	}
+	  String neonatMother="В случае неонатологического профиля КИЛИ указывается СЛС матери мертворождённого.";
+	  if (profile!=null && profile.equals("10")) { //неонатологический
+		  sqlAdd+=" and dc.isneonatologic = "+true;
+	  }
 	  if (department!=null&&!department.equals("")) {
 		  sqlAdd +=" and case when dep.isnoomc='1' then depPrev.id else dep.id end = '"+department+"'";
-	  }	
-	  
-		request.setAttribute("sqlAdd", sqlAdd);
+	  }
+		  sqlAdd+=" and (vhr.code='11' or dc.isneonatologic=true) ";
+	  	request.setAttribute("sqlAdd", sqlAdd);
 		request.setAttribute("printM", printM);
 		request.setAttribute("printS", printS);
 		request.setAttribute("printFileName", printFileName);
+	  	request.setAttribute("neonatMother", neonatMother);
 %>
 <ecom:webQuery name="calc_reestr" nameFldSql="calc_reestr_sql" nativeSql="
 SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.MM.yyyy') as f1_fio, 'Протокол №'||pk.protocolNumber||' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as protocolField, sts.code
-, to_char(sls.dateFinish,'dd.MM.yyyy') as dateFinish 
-  FROM medcase sls 
-	left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null and slo.dtype='DepartmentMedCase'  
-	left join mislpu dep on dep.id=slo.department_id 
-	left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id 
+, to_char(sls.dateFinish,'dd.MM.yyyy') as dateFinish
+  FROM medcase sls
+	left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null and slo.dtype='DepartmentMedCase'
+	left join mislpu dep on dep.id=slo.department_id
+	left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id
 	left join mislpu depPrev on depPrev.id=sloPrev.department_id
 	left join deathcase dc on dc.medcase_id=sls.id
-	left join protocolkili pk on pk.deathcase_id=dc.id 
-	left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end 
+	left join protocolkili pk on pk.deathcase_id=dc.id
+	left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
 	left join vochospitalizationresult vhr on vhr.id=sls.result_id
 	left join patient pat on sls.patient_id = pat.id
 	left join statisticstub sts on sls.id = sts.medcase_id
-   where vhr.code='11' AND sls.deniedhospitalizating_id is null 
-		  ${sqlAdd}
+   where sls.deniedhospitalizating_id is null
+		 ${sqlAdd}
 "/>${calc_reestr_sql}
-
 <form action="print-${printFileName}.do" method="post" target="_blank">
     Период с ${dateBegin} по ${dateEnd}.
+		${neonatMother}
     <input type='hidden' name="s" id="s" value="${printS}">
     <input type='hidden' name="sqlText" id="sqlText" value="${calc_reestr_sql}">
     <input type='hidden' name="protocolNumber" id="protocolNumber" value="${param.protocolNumber}">
     <input type='hidden' name="protocolDate" id="protocolDate" value="${param.protocolDate}">
     <input type='hidden' name="m" id="m" value="${printM}">
-    <input type="submit" value="Печать"> 
+    <input type="submit" value="Печать">
     </form>
-
  <msh:section>
-    <msh:sectionContent> 
+    <msh:sectionContent>
  <msh:table name="calc_reestr"
      action="entityView-mis_patient.do" idField="1">
       <msh:tableColumn columnName="Пациент" property="2" />
@@ -274,9 +283,9 @@ SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_ch
       <msh:tableColumn columnName="Дата смерти" property="5" />
     </msh:table>
     </msh:sectionContent>
-    </msh:section> 
-    
-<% } 
+    </msh:section>
+
+<% }
 	} else {
 		out.print("Выберите период");
 	}

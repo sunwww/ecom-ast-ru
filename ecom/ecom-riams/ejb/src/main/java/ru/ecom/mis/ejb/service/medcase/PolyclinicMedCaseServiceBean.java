@@ -125,8 +125,8 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append(list.get(0)[1]) ;
 			
-			System.out.println("workfunction = "+aWorkFunction) ;
-			System.out.println("workcalendar = "+ret) ;
+		//	System.out.println("workfunction = "+aWorkFunction) ;
+		//	System.out.println("workcalendar = "+ret) ;
 			return Long.valueOf(ret.toString());
 		} else {
 			String username = theContext.getCallerPrincipal().toString() ;
@@ -166,8 +166,8 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append(list.get(0)[1]) ;
 			
-			System.out.println("workfunction = "+aWorkFunction) ;
-			System.out.println("workcalendar = "+ret) ;
+		//	System.out.println("workfunction = "+aWorkFunction) ;
+		//	System.out.println("workcalendar = "+ret) ;
 			return Long.valueOf(ret.toString());
 			
 		}
@@ -177,9 +177,9 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 	public String getWorkCalendarDay(Long aWorkCalendar,Long aWorkFunction, String aCalendarDate) throws ParseException {
 			Date date = DateFormat.parseSqlDate(aCalendarDate);
 			Long workCalen = getWorkCalendar(aWorkFunction) ;
-			System.out.println("workCalend="+aWorkCalendar);
+		//	System.out.println("workCalend="+aWorkCalendar);
 			
-			System.out.println("workCalend1="+workCalen);
+		//	System.out.println("workCalend1="+workCalen);
 				List<WorkCalendarDay> list = theManager.createQuery("from WorkCalendarDay where workCalendar_id = :workCalend and calendarDate = :date")
 					.setParameter("workCalend", workCalen)
 					.setParameter("date",date)
@@ -215,10 +215,10 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
                    .setParameter("workFunction",workFunc)
                    .setParameter("workCalendarDay", workCalendarDayId)
                    .getSingleResult();
-				System.out.println("day="+workCalendarDayId) ;
-				System.out.println("exec="+executed) ;
-				System.out.println("plan="+planned) ;
-				System.out.println("prerecord="+prerecord) ;
+			//	System.out.println("day="+workCalendarDayId) ;
+			//	System.out.println("exec="+executed) ;
+			//	System.out.println("plan="+planned) ;
+			//	System.out.println("prerecord="+prerecord) ;
 				return new StringBuilder().append(workCalendarDayId).append("#")
 						.append(executed).append("#").append(planned).append("#").append(prerecord).toString();
 				

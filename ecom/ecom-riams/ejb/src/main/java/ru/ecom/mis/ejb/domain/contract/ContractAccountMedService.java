@@ -16,8 +16,6 @@ import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-
 
 /**
  * Мед услуги по счету
@@ -32,6 +30,21 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 })
 @EntityListeners(DeleteListener.class)
 public class ContractAccountMedService extends BaseEntity{
+
+	/** Рабочая функция */
+	@OneToOne
+	public WorkFunction getWorkFunction() {return theWorkFunction;}
+	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	/** Рабочая функция */
+	private WorkFunction theWorkFunction;
+
+	/** Признак удаленной записи */
+	@Comment("Признак удаленной записи")
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Признак удаленной записи */
+	private Boolean theIsDeleted ;
+
 	/**
 	 * Договорной счет
 	 */
@@ -62,21 +75,7 @@ public class ContractAccountMedService extends BaseEntity{
 	 * Мед Услуга
 	 */
 	private PriceMedService theMedService;
-	
-	/**
-	 * Рабочая функция
-	 */
-	public WorkFunction getWorkFunction() {
-		return theWorkFunction;
-	}
-	public void setWorkFunction(WorkFunction aWorkFunction) {
-		theWorkFunction = aWorkFunction;
-	}	
-	/**
-	 * Рабочая функция
-	 */
-	private WorkFunction theWorkFunction;
-	
+
 	/** Количество */
 	@Comment("Количество")
 	public Integer getCountMedService() {

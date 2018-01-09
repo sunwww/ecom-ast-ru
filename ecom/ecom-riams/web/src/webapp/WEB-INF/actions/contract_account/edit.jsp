@@ -57,7 +57,7 @@ left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 where cao.account_id='${param.id}'
-and cao.dtype='OperationAccrual'
+and cao.dtype='OperationAccrual' and (cao.isDeleted is null or cao.isDeleted='0')
 order by cao.operationDate desc,cao.operationTime desc
 							"/>
 							<msh:table  
@@ -85,7 +85,7 @@ order by cao.operationDate desc,cao.operationTime desc
 								left join Worker w on w.id=wf.worker_id
 								left join Patient wp on wp.id=w.person_id
 							where cao.account_id='${param.id}'
-							and cao.dtype='OperationReturn'
+							and cao.dtype='OperationReturn' and (cao.isDeleted is null or cao.isDeleted='0')
 							order by cao.operationDate desc,cao.operationTime desc
 							"/>
 							<msh:table  
@@ -112,7 +112,7 @@ order by cao.operationDate desc,cao.operationTime desc
 						left join PricePosition pp on pp.id=pms.pricePosition_id
 						left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id
 						left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'
-						where ca.id='${param.id}' and cao.id is null and caos.id is null
+						where ca.id='${param.id}' and cao.id is null and caos.id is null and (ca.isDeleted is null or ca.isDeleted='0')
 						group by  cams.id, pp.code, pp.name , cams.countMedService,cams.cost,ca.discountdefault						
 						"/>
 							

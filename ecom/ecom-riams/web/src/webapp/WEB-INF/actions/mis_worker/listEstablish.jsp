@@ -31,7 +31,7 @@
   	,case when wc.autogenerate='1' then 'автоматически генерировать' end as a6utogenerate
   	,case when wc.autoGenerate='1' then wc.id else null end as i7sAuto 
   	,case when wc.autoGenerate='1' then null else wc.id end as i8sNoAuto 
-  	,(select max(wcd.calendardate) from workcalendarday wcd where wcd.workcalendar_id=wc.id) as maxdate
+  	,(select max(wcd.calendardate) from workcalendarday wcd where wcd.workcalendar_id=wc.id and (wcd.isDeleted is null or wcd.isDeleted='0')) as maxdate
   	from workfunction wf 
   	left join worker w on w.id=wf.worker_id 
   	left join Patient wp on wp.id=w.person_id 
@@ -158,7 +158,6 @@
   			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
             if (ids) {
                 window.location = 'cal_workCalendar-journal.do?functionJournal=deleteFreeTime&lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
-                //alert( 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
             } else {
                 alert("Нет выделенных функций");
             }
@@ -169,7 +168,6 @@
   			var ids = theTableArrow.getInsertedIdsAsParams("id",list) ;
             if (ids) {
                 window.location = 'cal_workCalendar-journal.do?functionJournal=deleteNoAppearance&lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids;
-                //alert( 'cal_workCalendar-generate.do?lpuId=${param.id}&beginDate='+$('beginDate').value+'&finishDate=' +$('finishDate').value+"&"+ ids);
             } else {
                 alert("Нет выделенных функций");
             }
