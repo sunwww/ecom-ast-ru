@@ -493,14 +493,13 @@ where pcc.patient_id='${param.id}'
           <table>
           <tr valign="top"></tr></table>  
       <msh:ifInRole roles="/Policy/Mis/Person/Privilege/View">
-      <!--  Льготы  -->
-      <ecom:webQuery name="privileges" nativeSql="
+      <!--  Льготы  createUrl="externalDocument-preView.do?id=${param.id}"-->
+          <msh:section title="Льготы" createUrl="entityParentPrepareCreate-mis_privilege.do?id=${param.id}">
+          <ecom:webQuery name="privileges" nativeSql="
       select p.id,p.begindate,p.enddate, vpc.name,p.serialdoc,p.numberdoc from privilege p
     left join vocprivilegecategory vpc on vpc.id = p.category_id
-    where p.person_id = ${param.id} and isdelete is null
-      "/>
+    where p.person_id = ${param.id} and isdelete is null"/>
         <msh:tableNotEmpty name="privileges" >
-          <msh:section title="Льготы" >
             <msh:table  name="privileges" action="entityParentView-mis_privilege.do" idField="1" >
               <msh:tableColumn columnName="#" property="sn" />
               <msh:tableColumn columnName="Дата включения" property="2" />
@@ -509,9 +508,10 @@ where pcc.patient_id='${param.id}'
               <msh:tableColumn columnName="Серия документа" property="5" />
               <msh:tableColumn columnName="Номер документа" property="6" />
             </msh:table>
-          </msh:section>
         </msh:tableNotEmpty>
+          </msh:section>
       </msh:ifInRole>
+        <!--  Инвалидность  -->
     	<msh:ifInRole roles="/Policy/Mis/Patient/Invalidity/View" >
     		<msh:section title="Инвалидность" createUrl="entityParentPrepareCreate-mis_invalidity.do?id=${param.id}" createRoles="/Policy/Mis/Patient/Invalidity/Create">
 		    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.lastRevisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid,i.isWorking,i.nextRevisionDate,i.withoutExam,i.incapable from invalidity i left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id where i.patient_id=${param.id}" name="invalidities"/>
