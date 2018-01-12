@@ -14,35 +14,22 @@
             <msh:hidden property="person"/>
 
              <msh:panel>
-
                  <msh:row>
                     <msh:textField property="beginDate" label="Дата включения" horizontalFill="false" />
                     <msh:textField property="endDate" label="Дата исключения" horizontalFill="false" />
                 </msh:row>
                 <msh:row>
-                	<msh:checkBox property="active" label="Активность"/>
-                	<msh:checkBox property="takeover" label="Отказ от льготы"/>
-                </msh:row>
-                <msh:row>
                 	<msh:autoComplete property="category" label="Категория льготника" horizontalFill="true" fieldColSpan="3" vocName="vocPrivilegeCategory"/>
                 </msh:row>
                 <msh:row>
-                	<msh:autoComplete property='privilegeCode' label='Код льготы' horizontalFill="true" fieldColSpan="3" vocName="vocPrivilegeCode"/>
-                </msh:row>
-                <msh:row>
-                	<msh:autoComplete property='idc10' label='Диагноз' horizontalFill="true" fieldColSpan="3" vocName="vocIdc10"/>
-                </msh:row>
-                <msh:separator label="Льготный документ" colSpan="4"></msh:separator>
-
-                <msh:row>
-                    <msh:textField property="documentNumber" label="Номер" horizontalFill="false" size="20"/>
-                    <msh:textField property="documentIssue" label="Дата выдачи"/>
+                    <msh:textField property="numberDoc" label="Номер" horizontalFill="false" size="20"/>
+                    <msh:textField property="serialDoc" label="Серия" horizontalFill="false" size="20"/>
                 </msh:row>
                 
                 <msh:submitCancelButtonsRow colSpan="4"/>
           </msh:panel>
         </msh:form>
-        
+  <%--
 <!--  Лекарственное вещество  -->
 <msh:ifFormTypeIsView formName="mis_privilegeForm">
 	<msh:ifInRole roles="/Policy/Mis/Person/Privilege/DrugNeed/View">
@@ -69,18 +56,14 @@
 			</msh:section>
 		</msh:tableNotEmpty>
 	</msh:ifInRole>
-</msh:ifFormTypeIsView>
-        
-        
+</msh:ifFormTypeIsView>--%>
   </tiles:put>
-
         <tiles:put name='side' type='string'>
         <msh:sideMenu>
             <msh:ifFormTypeIsView formName="mis_privilegeForm">
                 <msh:sideLink key="ALT+2" params="id" roles="/Policy/Mis/Person/Privilege/Edit" action="/entityEdit-mis_privilege" name="Изменить"/>
-                <msh:sideLink key="ALT+3" params="id" roles="/Policy/Mis/Person/Privilege/DrugNeed/Create" action="/entityParentPrepareCreate-mis_drugNeed" name="Добавить лекарственный препарат"/>
-                <msh:sideLink key="ALT+4" params="id" roles="/Policy/Mis/Person/Privilege/Recipe/Create" action="/entityParentPrepareCreate-mis_privilegeRecipe" name="Добавить рецепт"/>
-	            <hr/>
+                <%--<msh:sideLink key="ALT+3" params="id" roles="/Policy/Mis/Person/Privilege/DrugNeed/Create" action="/entityParentPrepareCreate-mis_drugNeed" name="Добавить лекарственный препарат"/>
+                <msh:sideLink key="ALT+4" params="id" roles="/Policy/Mis/Person/Privilege/Recipe/Create" action="/entityParentPrepareCreate-mis_privilegeRecipe" name="Добавить рецепт"/>--%>
                 <msh:sideLink key='ALT+DEL' params="id" roles="/Policy/Mis/Person/Privilege/Delete" action="/entityParentDeleteGoParentView-mis_privilege" name="Удалить льготу" confirm="Удалить льготу?"/>
             </msh:ifFormTypeIsView>
         </msh:sideMenu>
