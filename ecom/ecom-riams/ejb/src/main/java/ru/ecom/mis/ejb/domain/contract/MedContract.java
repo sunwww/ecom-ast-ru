@@ -21,6 +21,7 @@ import ru.ecom.mis.ejb.domain.contract.voc.VocContractRulesProcessing;
 import ru.ecom.mis.ejb.domain.contract.voc.VocContractTerm;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.uc.privilege.domain.Privilege;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 
@@ -41,6 +42,18 @@ import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 @EntityListeners(DeleteListener.class)
 @UnDeletable
 public class MedContract extends BaseEntity{
+
+
+	private Privilege privilege;
+
+	@Comment("Льгота")
+	@OneToOne
+	public Privilege getPrivilege() {
+		return privilege;
+	}
+	public void setPrivilege(Privilege privilege) {
+		this.privilege = privilege;
+	}
 
 	/** Признак удаленной записи */
 	@Comment("Признак удаленной записи")

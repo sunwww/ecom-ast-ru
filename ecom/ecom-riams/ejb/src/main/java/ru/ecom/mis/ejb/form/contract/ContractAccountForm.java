@@ -29,6 +29,16 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 )
 public class ContractAccountForm extends IdEntityForm{
 
+	private Long privilege;
+	@Comment("Льгота")
+	@Persist
+	public Long getPrivilege() {
+		return privilege;
+	}
+	public void setPrivilege(Long privilege) {
+		this.privilege = privilege;
+	}
+
 	/**
 	 * Сумма баланса
 	 */

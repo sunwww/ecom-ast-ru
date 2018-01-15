@@ -12,6 +12,7 @@ import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateIntercep
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.domain.contract.voc.VocContractLabel;
 import ru.ecom.mis.ejb.form.contract.interceptor.MedContractPreCreateInterceptor;
+import ru.ecom.mis.ejb.uc.privilege.domain.Privilege;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -34,6 +35,17 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AParentEntityFormInterceptor(MedContractPreCreateInterceptor.class)
 )
 public class MedContractForm extends IdEntityForm{
+
+	private Long privilege;
+	@Comment("Льгота")
+	@Persist
+	public Long getPrivilege() {
+		return privilege;
+	}
+	public void setPrivilege(Long privilege) {
+		this.privilege = privilege;
+	}
+
 	/**
 	 * ЛПУ
 	 */

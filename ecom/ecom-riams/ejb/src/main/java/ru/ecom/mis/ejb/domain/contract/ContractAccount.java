@@ -20,6 +20,7 @@ import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
 import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
+import ru.ecom.mis.ejb.uc.privilege.domain.Privilege;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
 	 * Договорной счет
@@ -34,6 +35,19 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@EntityListeners(DeleteListener.class)
 @UnDeletable
 public class ContractAccount extends BaseEntity{
+
+	private Privilege privilege;
+
+	@Comment("Льгота")
+	@OneToOne
+	public Privilege getPrivilege() {
+		return privilege;
+	}
+	public void setPrivilege(Privilege privilege) {
+		this.privilege = privilege;
+	}
+
+
 	/** Признак удаленной записи */
 	@Comment("Признак удаленной записи")
 	public Boolean getIsDeleted() {return theIsDeleted;}

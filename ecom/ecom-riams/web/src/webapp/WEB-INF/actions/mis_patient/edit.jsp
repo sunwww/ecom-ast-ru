@@ -493,7 +493,7 @@ where pcc.patient_id='${param.id}'
           <table>
           <tr valign="top"></tr></table>  
       <msh:ifInRole roles="/Policy/Mis/Person/Privilege/View">
-      <!--  Льготы  createUrl="externalDocument-preView.do?id=${param.id}"-->
+      <!--  Льготы-->
           <msh:section title="Льготы" createUrl="entityParentPrepareCreate-mis_privilege.do?id=${param.id}">
           <ecom:webQuery name="privileges" nativeSql="
       select p.id,p.begindate,p.enddate, vpc.name,p.serialdoc,p.numberdoc from privilege p
