@@ -118,7 +118,8 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		+"  ,round((cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as costDisc" 
 		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as sumNoAccraulMedServiceDisc"
 		+" ,ca.discountDefault as cadiscountDefault"
-		+" ,priv.serialdoc||' '||priv.numberdoc||' ('||vpc.name||')' as privil "
+		+" ,priv.serialdoc||' '||priv.numberdoc||' ('||vpc.name||')' as privil" +
+		" ,cams.cost*cams.countMedService as tarif "
 		+"		from ContractAccount ca"
 		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
 		+"		left join PriceMedService pms on pms.id=cams.medService_id"
