@@ -1,14 +1,5 @@
 package ru.ecom.mis.web.dwr.medcase;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -21,7 +12,60 @@ import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
+
 public class PatientServiceJs {
+
+	public String getPatientFromContractPerson(String aContractPerson,HttpServletRequest aRequest) throws NamingException {
+		StringBuilder sql = new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		sql.append("select patient_id from contractperson  where id = "+aContractPerson);
+		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
+		String str = "";
+		for (WebQueryResult wqr : res) {
+			str = wqr.get1().toString();
+		}
+		return str;
+	}
+
+	public String savePrivilege(String aPatientId, String aNumberdoc,String aSerialdoc,
+								String aBegindate,String aEnddate, String aCategoryId,
+								HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		StringBuilder headSQL = new StringBuilder();
+		StringBuilder bodySQL = new StringBuilder();
+
+		headSQL.append("insert into privilege(person_id,category_id,begindate");
+		bodySQL.append("VALUES("+aPatientId+","+aCategoryId+",'"+aBegindate+"'");
+
+		if(aNumberdoc!=null && !aNumberdoc.equals("")){
+			headSQL.append(",numberdoc");
+			bodySQL.append(",'"+aNumberdoc+"'");
+		}
+
+		if(aSerialdoc!=null && !aSerialdoc.equals("")){
+			headSQL.append(",serialdoc");
+			bodySQL.append(",'"+aSerialdoc+"'");
+		}
+
+		if(aEnddate!=null && !aEnddate.equals("")){
+			headSQL.append(",enddate");
+			bodySQL.append(",'"+aEnddate+"'");
+		}
+
+		headSQL.append(")");
+		bodySQL.append(")");
+		service.executeUpdateNativeSql(headSQL.toString()+bodySQL.toString());
+		return "1";
+	}
+
 	public String getPatients(String aLastname, String aFirstname, String aMiddlename
 			, String aYear, HttpServletRequest aRequest) throws NamingException {
 		if (new StringBuilder().append(aLastname!=null?aLastname:"").append(aFirstname!=null?aFirstname:"")

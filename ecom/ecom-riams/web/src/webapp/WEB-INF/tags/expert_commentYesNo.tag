@@ -63,7 +63,8 @@
     // Отмена
     function cancel${name}CommentYesNo() {
         the${name}CommentYesNoDialog.hide() ;
-        $('criterion'+the${name}Ii+'Name').value='';
+       $('criterion'+the${name}Ii+'Name').value='';
+        $('criterion'+the${name}Ii).value='';
     }
 
     // инициализация диалогового окна

@@ -331,11 +331,13 @@
 	,['Где','WhereEntanglement',1,11,0,'whereEntanglement',0,'VocBirthWhereEntanglement',1]
 	,['Отделение','Department',1,11,1,'department',0,"MisLpu where IsNewBornDep='1'",1]
 	,['Зрелость','Maturity',1,2,1,'maturity',0,'VocNewBornMaturity',1]
+    //,['Акушерский диагноз','Idc10',1,11,2,'idc10',1,'VocIdc10',1]
 	,['','DeadBeforeLabors',6,2,0,'deadBeforeLabors',0,'',1]
 	] ;
 	var vocList = "" ;
 	var vocValueList  ;
-	
+
+
 	for (var i=0; i<theFld.length;i ++) {
 		if (theFld[i][7]!="") {
 			if (vocList!="") vocList+="," ;
@@ -346,26 +348,24 @@
 	VocService.getAllValueByVocs(vocList,{
 	
 	callback: function(aResult) {
-		vocValueList=JSON.parse(aResult) ;
-		//alert(aResult);
-		//alert(vocValueList) ;
-	  	
+        vocValueList=JSON.parse(aResult) ;
+        //$('whereBirthOccurredOther').value=aResult;
 	  		if (+$('newBornAmount').value<1) {
 	  			$('newBornAmount').value="1";
 	  			
 	  		}
 	  		changeBorn(+$('newBornAmount').value) ;
 	 		if ($('newBornsInfo').value!='') {
-	 		//	alert ("Info = "+$('newBornsInfo').value);
+	 			//alert ("Info = "+$('newBornsInfo').value);
 	               var addRowF="";
 	               var ind_f=0 ;
 	         		for (var i=0;i<theFld.length;i++) {
-	         			addRowF+="ar["+(ind_f++)+"],"
+	         			addRowF+="ar["+(ind_f++)+"],";
 	         			if (theFld[i][2]==1) {
 	         				addRowF+="ar["+(ind_f++)+"],"
 	         			}
 	         		}
-	       	//	alert ("addRF = "+addRowF);
+	       		//alert ("addRF = "+addRowF);
 	         	    fillRows();
 	         	}
 
@@ -377,8 +377,7 @@
 	  			oldValueAmount=$('newBornAmount').value ;
 	  		}
 	  	}) ;
-		
-	
+
 	}} ) }
   	
 	
@@ -388,7 +387,7 @@
 				addRow() ;
 				borns++ ;
 				//alert(borns+"---"+aNewValue+"add")
-				//changeBorn(aNewValue) ;
+				changeBorn(aNewValue) ;
 		} else if (borns>aNewValue) {
 			//alert(borns+"---"+aNewValue+"del")
 				deleteLastNewBorn() ;
@@ -453,7 +452,7 @@
 	  				val = getCheckedRadio(document.forms["mainForm"],theFld[ii][1]+(i)) ;
 	  				
 	  				if ((theFld[ii][1]=='LiveBorn') &&($('DeadBeforeLabors'+i).value==null || $('DeadBeforeLabors'+i).value=='')) {
-	  					//alert ("chDB "+theFld[ii][1] +" <==> "+$('DeadBeforeLabors'+i).value);	
+	  					//alert ("chDB "+theFld[ii][1] +" <==> "+$('DeadBeforeLabors'+i).value);
 	  					if (val==$('deadBorn').value) {
 	  						ret=1;
 	  						showDeadBornCreateType(i, "Новорожденный "+i+" умер до начала родовой деятельности?");
@@ -482,6 +481,21 @@
     					$(theFld[ii][1]+(i+1)).value = born[ii];
     				}
     			}
+    			var index=i+1;
+                var t = new msh_autocomplete.Autocomplete();
+                t.setUrl('simpleVocAutocomplete/vocIdc10');
+                t.setIdFieldId('Idc10' + index);
+                t.setNameFieldId('Idc10' + index + 'Name');
+                t.setDivId('Idc10' + index + 'Div');
+                t.build();
+                //$('currentIndexOdNewBorn').value=i;
+                t.addOnChangeCallback(closure(index));
+                if (((document.getElementById('LiveBorn' + index)).checked)==false) {
+                    var idc10div = document.getElementById('divIdc10' + index);
+                    if (idc10div != null) {
+                        idc10div.removeAttribute('hidden');
+                    }
+                }
     		}
     	}
     }
@@ -493,11 +507,6 @@
     	    		chk[i].checked='checked';
     	    	}
     	    }
-    	    //alert ("== "+aField+" "+chk.length);
-    	   	//var aMax=chk.length ;
-    	   	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
-    	   	
-    	   
     }
     function createOtherNewBorns() {
   		var borns = document.getElementById('otherNewBorns').childNodes;
@@ -507,23 +516,31 @@
   				var val
 	  			if (+theFld[ii][2]==1) {
 	  				val = getCheckedRadio(document.forms["mainForm"],theFld[ii][1]+(i)) ;
-	  				/* if ((theFld[ii][1]=='LiveBorn') &&$('DeadBeforeLabors'+i).value=='') {
-	  					if (val==$('deadBorn').value) {
-	  						showDeadBornCreateType(i);
-	  						return;
-	  					}
-	  					
-	  				} */
 	  			} else {
 	  				val = $(theFld[ii][1]+(i)).value ;
 	  			}
   				if (theFld[ii][4]&&val=="") throw "Поле обязательное для заполнения: "+theFld[ii][0] ;
 	  			str+=val+"#";
   			}
-  			str=str.length>0?str.trim().substring(0,str.length-1):"";
+  			//alert(currentValue[i - 1]);
+            //alert((document.getElementById('LiveBorn' + i)).checked);  //false if 2!!
+  			if (((document.getElementById('LiveBorn' + i)).checked)==false) {  //если мёртвый, то диагноз+наименование
+                var idc10Field = document.getElementById('Idc10' + i/* + 'Name'*/);
+                var textField = document.getElementById('2IdcText' + i);
+                if (textField != null && idc10Field != null) {
+                    str += idc10Field.value + "#";
+                    str += textField.value + "#";
+                }
+            }
+            /*else {
+                str += "#";
+                str += "#";
+            }*/
+            str=str.length>0?str.trim().substring(0,str.length-1):"";
 	  		str+="@" ;
   		}
   		str=str.length>0?str.trim().substring(0,str.length-1):"";
+  		//alert(str);
   		$('newBornsInfo').value=str;
   	}
   	// 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2 ,dateFld-3,timeFld-4
@@ -537,7 +554,6 @@
   	function addRow () {
   		var cmd = "" ;
   		for (var i=0;i<theFld.length;i++) {
-  			//alert(theFld[i][1]+"---"+theFld[i][5]) ;
   			cmd += "a"+theFld[i][1]+"=" ;  
   			if (theFld[i].length>9 &&theFld[i][9]!="") {
   				
@@ -567,24 +583,23 @@
   		var idChild=document.getElementById('otherNewBorns').children.length ;
   		txt+="<h3>Новорожденный " +idChild+"</h3>";
   		for (var i=0;i<theFld.length;i++) {
-  			var fld_i = theFld[i] ;
+
+  			var fld_i = theFld[i] ;//alert(fld_i);
   			if (fld_i[8]==1) {txt+="<br/>";}
   			if (fld_i[2]==1) {
-  				txt+=fld_i[0]+": ";
-  					
-  					for (var ind=0;ind<vocValueList.vocs.length;ind++) {
-  						var voc = vocValueList.vocs[ind] ;
-  						if (voc.name==fld_i[7]) {
-								
-  							if (fld_i[4]==0)txt+=" <input type='radio' name='"+fld_i[1]+idChild+"' id='"+fld_i[1]+idChild+"' value=''>не выбрано";
-  							for (var ind1=0;ind1<voc.values.length;ind1++) {
-  								var vocVal = voc.values[ind1] ;
-  								txt+=" <input type='radio' name='"+fld_i[1]+idChild+"' id='"+fld_i[1]+idChild+"' value='"+vocVal.id+"'>"+vocVal.name;
-  							}
-  							break ;
-  						} 
-  						
-  					}
+  			    txt+=fld_i[0]+": ";
+                for (var ind=0;ind<vocValueList.vocs.length;ind++) {
+                    var voc = vocValueList.vocs[ind] ;
+                    if (voc.name==fld_i[7]) { //если справочник
+                        //if (fld_i[5]!='idc10') {
+                            if (fld_i[4] == 0) txt += " <input type='radio' name='" + fld_i[1] + idChild + "' id='" + fld_i[1] + idChild + "' value=''>не выбрано";
+                            for (var ind1 = 0; ind1 < voc.values.length; ind1++) {
+                                var vocVal = voc.values[ind1];
+                                txt += " <input type='radio' name='" + fld_i[1] + idChild + "' id='" + fld_i[1] + idChild + "' value='" + vocVal.id + "' onclick=handleClick(this,'"+idChild+"')>" + vocVal.name;
+                            }
+                        break ;
+                    }
+                }
   			} else if (fld_i[2]==2) {
   				txt+=" "+fld_i[0]+": <input type='text' size='5' name='"+fld_i[1]+idChild+"' id='"+fld_i[1]+idChild+"' value='"+eval("a"+fld_i[1])+"'>"
   			} else if (fld_i[2]==3) {
@@ -597,12 +612,54 @@
   				txt+=" "+fld_i[0]+": <input type='hidden'  name='"+fld_i[1]+idChild+"' id='"+fld_i[1]+idChild+"' value='"+eval("a"+fld_i[1])+"'>"
   			}
   		}
-  		td.innerHTML=txt ;
+  		txt+="<div hidden id='divIdc10"+idChild+"'><label id='IdcLabel"+idChild+"' for='IdcName'>Акушерский диагноз:</label></td>"+
+            "<div colspan='1' class='Idc10'><div><input size='1' name='Idc10"+idChild+"' "+
+            "id='Idc10"+idChild+"' type='hidden'><input autocomplete='off' title='Idc10' name='Idc10"+idChild+"Name' id='Idc10"+idChild+"Name'"+
+            " size='10' class='autocomplete horizontalFill' type='text'><div style='visibility: hidden; display: none;'"+
+            " id='Idc10"+idChild+"Div'></div></div>" +
+            "<label id='2IdcLabel"+idChild+"' for='IdcName'>Наименование:</label>" +
+            "<input type='text' size='10' style='width: 400px;' name='2IdcLabel"+idChild+"' id='2IdcText"+idChild+"'></div>";
+  		td.innerHTML=txt;
   		row.appendChild(tdDel);
   		eval(js) ;
-  		//tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherMedServices()' value='- услугу' />";
-  		//createOtherNewBorns();
   	}
+    var closure = function(i) {
+        return function() {
+            var idc10Field=document.getElementById('Idc10'+i+'Name');
+            var textField=document.getElementById('2IdcText'+i);
+            if (textField!=null && idc10Field!=null) {
+                textField.value=idc10Field.value;
+            }
+        };
+    };
+    var currentValue = [$('newBornAmount').value];
+    function handleClick(myRadio,i) {
+       // alert(myRadio.getAttribute("id").indexOf("LiveBorn"));
+        if (myRadio.getAttribute("id").indexOf("LiveBorn") != -1) {
+            if (myRadio.value == 2 && myRadio.value != currentValue[i - 1]) {
+                var t = new msh_autocomplete.Autocomplete();
+                t.setUrl('simpleVocAutocomplete/vocIdc10');
+                t.setIdFieldId('Idc10' + i);
+                t.setNameFieldId('Idc10' + i + 'Name');
+                t.setDivId('Idc10' + i + 'Div');
+                t.build();
+                //$('currentIndexOdNewBorn').value=i;
+                t.addOnChangeCallback(closure(i));
+                var idc10div = document.getElementById('divIdc10' + i);
+                if (idc10div != null) {
+                    idc10div.removeAttribute('hidden');
+                }
+                currentValue[i - 1] = myRadio.value;
+            }
+            else if (myRadio.value == 1 && myRadio.value != currentValue[i - 1]) {
+                var idc10div = document.getElementById('divIdc10' + i);
+                if (idc10div != null) {
+                    idc10div.setAttribute('hidden', true);
+                }
+                currentValue[i - 1] = myRadio.value;
+            }
+        }
+    }
   	</script>
   </msh:ifFormTypeIsCreate>
   <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
@@ -627,4 +684,3 @@
     	</msh:ifFormTypeIsNotView>
   </tiles:put>
 </tiles:insert>
-

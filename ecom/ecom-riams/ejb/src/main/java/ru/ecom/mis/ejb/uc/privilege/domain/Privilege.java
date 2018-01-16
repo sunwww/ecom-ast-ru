@@ -27,96 +27,88 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Льгота")
 @Table(schema="SQLUser")
 @AIndexes(
-	@AIndex(properties={"person"})
+		@AIndex(properties={"person"})
 )
+
 public class Privilege extends BaseEntity {
-	
-	/** Категория льготников */
+
+
+	private Patient thePerson;
+	private VocPrivilegeCategory theCategory;
+	private String serialDoc;
+	private String numberDoc;
+	private Boolean isDelete;
+	private Date theEndDate;
+	private Date theBeginDate;
+/*	private VocIdc10 theIdc10;
+	private boolean theActive;
+	private Boolean theTakeover;
+	private VocPrivilegeCode thePrivilegeCode;
+	private List<DrugNeed> theDrugNeeds;*/
+
 	@Comment("Категория льготников")
 	@OneToOne
 	public VocPrivilegeCategory getCategory() {return theCategory;}
 	public void setCategory(VocPrivilegeCategory aCategory) {theCategory = aCategory;}
 
-	/** Потребность в лекарственных препаратах */
-	@Comment("Потребность в лекарственных препаратах")
-	@OneToMany(mappedBy="privilege", cascade=ALL)
-	public List<DrugNeed> getDrugNeeds() {return theDrugNeeds;}
-	public void setDrugNeeds(List<DrugNeed> aDrugNeeds) {theDrugNeeds = aDrugNeeds;}
-
-	/** Дата начала действия */
 	@Comment("Дата начала действия")
 	public Date getBeginDate() {return theBeginDate;}
 	public void setBeginDate(Date aBeginDate) {theBeginDate = aBeginDate;}
 
-	/** Дата окончания действия */
 	@Comment("Дата окончания действия")
 	public Date getEndDate() {return theEndDate;}
 	public void setEndDate(Date aEndDate) {theEndDate = aEndDate;}
 
-	/** Действительность */
+	@Comment("Персона")
+	@OneToOne
+	public Patient getPerson() {return thePerson;}
+	public void setPerson(Patient aPerson) {thePerson = aPerson;}
+
+	@Comment("Серия документа")
+	public String getSerialDoc() {
+		return serialDoc;
+	}
+	public void setSerialDoc(String serialDoc) {
+		this.serialDoc = serialDoc;
+	}
+
+	@Comment("Номер")
+	public String getNumberDoc() {
+		return numberDoc;
+	}
+	public void setNumberDoc(String numberDoc) {
+		this.numberDoc = numberDoc;
+	}
+
+	@Comment("Признак удаления")
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+
+/*	@Comment("Потребность в лекарственных препаратах")
+	@OneToMany(mappedBy="privilege", cascade=ALL)
+	public List<DrugNeed> getDrugNeeds() {return theDrugNeeds;}
+	public void setDrugNeeds(List<DrugNeed> aDrugNeeds) {theDrugNeeds = aDrugNeeds;}
+
 	@Comment("Действительность")
 	public boolean getActive() {return theActive;}
 	public void setActive(boolean aActive) {theActive = aActive;}
 
-	/** МКБ 10 */
 	@Comment("МКБ 10")
 	@OneToOne
 	public VocIdc10 getIdc10() {return theIdc10;}
 	public void setIdc10(VocIdc10 aIdc10) {theIdc10 = aIdc10;}
 
-
-	/** Персона */
-	@Comment("Персона")
-	@ManyToOne
-	public Patient getPerson() {return thePerson;}
-	public void setPerson(Patient aPerson) {thePerson = aPerson;}
-
-	/** Льготный документ */
-	@Comment("Льготный документ")
-	@OneToOne
-	public Document getDocument() {return theDocument;}
-	public void setDocument(Document aDocument) {theDocument = aDocument;}
-
-	/** Код льготы */
 	@Comment("Код льготы")
 	@OneToOne
 	public VocPrivilegeCode getPrivilegeCode() {return thePrivilegeCode;}
 	public void setPrivilegeCode(VocPrivilegeCode aPrivilegeCode) {thePrivilegeCode = aPrivilegeCode;}
-	
-	@Transient
-	public String getInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		if (thePrivilegeCode!=null) ret.append(thePrivilegeCode.getCode()).append(". ").append(thePrivilegeCode.getName()) ;
-		if (theDocument!=null) {
-			ret.append(theDocument.getSeriaDoc()).append(" ").append(theDocument.getNumberDoc()) ;
-		}
-		return ret.toString() ;
-	}
-	
-	/** Отказ от льготы */
+
 	@Comment("Отказ от льготы")
 	public Boolean getTakeover() {return theTakeover;}
 	public void setTakeover(Boolean aTakeover) {theTakeover = aTakeover;}
-
-	/** Отказ от льготы */
-	private Boolean theTakeover;
-	
-	/** Код льготы */
-	private VocPrivilegeCode thePrivilegeCode;
-	/** Льготный документ */
-	private Document theDocument;
-	/** Персона */
-	private Patient thePerson;
-	/** МКБ 10 */
-	private VocIdc10 theIdc10;
-	/** Действительность */
-	private boolean theActive;
-	/** Дата окончания действия */
-	private Date theEndDate;
-	/** Дата начала действия */
-	private Date theBeginDate;
-	/** Потребность в лекарственных препаратах */
-	private List<DrugNeed> theDrugNeeds;
-	/** Категория льготников */
-	private VocPrivilegeCategory theCategory;
+*/
 }
