@@ -26,22 +26,15 @@ public class DirectionSaveInterceptor implements IFormInterceptor {
 			Object[] r = rec.get(0);
 			try {
 				Visit vis = (Visit) aEntity;
-				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-				String address =config.get("ru.amokb.patientcabinetaddress", null) ;
-				if (address!=null){
-					String method = "SendSms";
 					SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 					String wfName  =vis.getWorkFunctionPlan()!=null?(vis.getWorkFunctionPlan().getWorkFunction()!=null?vis.getWorkFunctionPlan().getWorkFunction().getName():""):"неопределен";
 					String date =  format.format(vis.getDatePlan().getCalendarDate());
 					String time = vis.getTimePlan().getTimeFrom().toString();
 					String message = "Пациент "+r[0].toString()+" записан к "+wfName+" на "+time+" "+date;
 					String phone = r[1].toString();
-					JSONObject json = new JSONObject();
-					json.put("phonenumber",phone);
-					json.put("message",message);
+
 					TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
-					//bean.makePOSTRequest(json.toString(),address,method,null,null,manager);
-				}
+					bean.sendSms(phone,message);
 
 			} catch (Exception e) {
 				e.printStackTrace();

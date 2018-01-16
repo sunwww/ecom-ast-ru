@@ -90,4 +90,11 @@ public class PatientExternalServiceAccount extends BaseEntity {
     public void setExportAllHistory(Boolean aExportAllHistory) {theExportAllHistory = aExportAllHistory;}
     /** Разрешить выгрузку всей истории болезни */
     private Boolean theExportAllHistory ;
+
+    /** Отправлять сообщения о поступивших заявках (для работников ЛПУ */
+    @Comment("Отправлять сообщения о поступивших заявках (для работников ЛПУ")
+    public Boolean getNewClaimNotification() {return theNewClaimNotification;}
+    public void setNewClaimNotification(Boolean aNewClaimNotification) {theNewClaimNotification = aNewClaimNotification;}
+    /** Отправлять сообщения о поступивших заявках (для работников ЛПУ */
+    private Boolean theNewClaimNotification ;
 }
