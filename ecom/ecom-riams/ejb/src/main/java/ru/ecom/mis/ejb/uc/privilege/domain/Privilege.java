@@ -40,11 +40,31 @@ public class Privilege extends BaseEntity {
 	private Boolean isDelete;
 	private Date theEndDate;
 	private Date theBeginDate;
+
+	private VocPrivilegeCode thePrivilegeCode;
+	private Document theDocument;
+
 /*	private VocIdc10 theIdc10;
 	private boolean theActive;
 	private Boolean theTakeover;
 	private VocPrivilegeCode thePrivilegeCode;
 	private List<DrugNeed> theDrugNeeds;*/
+
+
+	@OneToOne
+	public VocPrivilegeCode getThePrivilegeCode() {
+		return thePrivilegeCode;
+	}
+	public void setThePrivilegeCode(VocPrivilegeCode thePrivilegeCode) {
+		this.thePrivilegeCode = thePrivilegeCode;
+	}
+	@OneToOne
+	public Document getTheDocument() {
+		return theDocument;
+	}
+	public void setTheDocument(Document theDocument) {
+		this.theDocument = theDocument;
+	}
 
 	@Comment("Категория льготников")
 	@OneToOne
