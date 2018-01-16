@@ -43,6 +43,7 @@ public class Privilege extends BaseEntity {
 
 	private VocPrivilegeCode thePrivilegeCode;
 	private Document theDocument;
+	private String theTakeover;
 
 /*	private VocIdc10 theIdc10;
 	private boolean theActive;
@@ -66,7 +67,14 @@ public class Privilege extends BaseEntity {
 		this.theDocument = theDocument;
 	}
 
-	@Comment("Категория льготников")
+    public String getTheTakeover() {
+        return theTakeover;
+    }
+    public void setTheTakeover(String theTakeover) {
+        this.theTakeover = theTakeover;
+    }
+
+    @Comment("Категория льготников")
 	@OneToOne
 	public VocPrivilegeCategory getCategory() {return theCategory;}
 	public void setCategory(VocPrivilegeCategory aCategory) {theCategory = aCategory;}
