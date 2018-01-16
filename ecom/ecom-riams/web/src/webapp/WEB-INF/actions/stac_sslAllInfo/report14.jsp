@@ -324,7 +324,7 @@
         <msh:textField property="dateBegin" label="Период с" />
         <msh:textField property="dateEnd" label="по" />
            <td>
-            <input type="submit" value="Найти" />
+            <input type="button" onclick="this.disabled=true; this.form.submit();" value="Найти" />
           </td>
       </msh:row>
     </msh:panel>

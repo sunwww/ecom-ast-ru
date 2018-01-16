@@ -109,47 +109,50 @@ if (type!=null&&type.equals("reestr")) {
 		int weight = Integer.valueOf(w).intValue();
 		
 		switch(weight) {
-		case 1: 
-			sqlAdd+=" and nb.birthweight between 500 and 749";
-			break;
-		case 2: 
-			sqlAdd+=" and nb.birthweight between 750 and 999";
-			break;
-		case 3: 
-			sqlAdd+=" and nb.birthweight between 1000 and 1499";
-			break;
-		case 4: 
-			sqlAdd+=" and nb.birthweight between 1500 and 1999";
-			break;
-		case 5: 
-			sqlAdd+=" and nb.birthweight between 2000 and 2499";
-			break;
-		case 6: 
-			sqlAdd+=" and nb.birthweight between 2500 and 2999";
-			break;
-		case 7: 
-			sqlAdd+=" and nb.birthweight between 3000 and 3499";
-			break;
-		case 8: 
-			sqlAdd+=" and nb.birthweight between 3500 and 3999";
-			break;
-		case 9: 
-			sqlAdd+=" and nb.birthweight >= 4000";
-			break;
-		case 10: 
-			sqlAdd+=" and vnbm.code!='DONOSH' ";
-			break;
-		case 11: 
-			sqlAdd+=" and vnbm.code!='DONOSH' and cb.durationpregnancy<28.00";
-			break;
-		case 12: 
-			sqlAdd+=" and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
-			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600)< 24";
-			break;
-		case 13: 
-			sqlAdd+=" and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
-			sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) between 24 and 168";
-			break;
+            case 0:
+                sqlAdd+=" and nb.birthweight < 500 ";
+                break;
+            case 1:
+                sqlAdd+=" and nb.birthweight between 500 and 749";
+                break;
+            case 2:
+                sqlAdd+=" and nb.birthweight between 750 and 999";
+                break;
+            case 3:
+                sqlAdd+=" and nb.birthweight between 1000 and 1499";
+                break;
+            case 4:
+                sqlAdd+=" and nb.birthweight between 1500 and 1999";
+                break;
+            case 5:
+                sqlAdd+=" and nb.birthweight between 2000 and 2499";
+                break;
+            case 6:
+                sqlAdd+=" and nb.birthweight between 2500 and 2999";
+                break;
+            case 7:
+                sqlAdd+=" and nb.birthweight between 3000 and 3499";
+                break;
+            case 8:
+                sqlAdd+=" and nb.birthweight between 3500 and 3999";
+                break;
+            case 9:
+                sqlAdd+=" and nb.birthweight >= 4000";
+                break;
+            case 10:
+                sqlAdd+=" and vnbm.code!='DONOSH' ";
+                break;
+            case 11:
+                sqlAdd+=" and vnbm.code!='DONOSH' and cb.durationpregnancy<28.00";
+                break;
+            case 12:
+                sqlAdd+=" and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
+                sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600)< 24";
+                break;
+            case 13:
+                sqlAdd+=" and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp), ";
+                sqlAdd+=" cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) between 24 and 168";
+                break;
 		}  
 	}
 	
@@ -158,8 +161,8 @@ if (type!=null&&type.equals("reestr")) {
 	%> 
 	 <msh:section>
     <ecom:webQuery isReportBase="${isReportBase}" name="Report32_reestr" nameFldSql="Report32_reestr_sql" nativeSql="
-select (case when pat.id is null then mthr.id else pat.id end) pat_id
-,(case when pat.id is null then mthr.lastname || ' X ' || to_char(nb.birthdate, 'dd.mm.yyyy') else pat.patientinfo end) pat_info
+select case when pat.id is null then mthr.id else pat.id end pat_id
+,case when pat.id is null then mthr.lastname || ' X ' || to_char(nb.birthdate, 'dd.mm.yyyy') else pat.patientinfo end pat_info
 ,cast('&type=reestr' as char) as fldId
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
@@ -171,14 +174,15 @@ left join medcase mmc on mmc.id=cb.medcase_id
 left join patient mthr on mthr.id=mmc.patient_id
 where nb.birthdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
-group by pat_id, pat_info order by pat_info 
+order by pat_info
 " />
     <msh:sectionTitle>
     </msh:sectionTitle>
     <msh:sectionContent>
     <input type="button" value="Печать списка" onclick="print()" >
     <msh:table name="Report32_reestr" action="entityView-mis_patient.do" idField="1">
-      <msh:tableColumn columnName="ID" property="1" />
+        <msh:tableColumn property="sn"/>
+      <msh:tableColumn columnName="ИД пациента" property="1" />
       <msh:tableColumn columnName="Fam" property="2" addParam=""  />
     </msh:table>
     
@@ -216,6 +220,7 @@ cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') a
 cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') as timestamp)))/3600) 
 between 24 and 168 then nb.id end) as f15_death168
 , 'alive' as idLld
+,count(case when nb.birthweight <500 then nb.id else null end) as f17_499
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
@@ -256,6 +261,7 @@ when vlb.code='2' and (nb.deadbeforelabors is null or nb.deadbeforelabors='0') t
 when vlb.code='2' and nb.deadbeforelabors='1' then 'deadbefore' 
 else 'stayalive' end
 ) as idLld
+,count(case when nb.birthweight <500 then nb.id else null end) as f17_499
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
@@ -286,6 +292,7 @@ group by f1_name order by f1_name
      >
       <msh:tableColumn columnName="Наименование" property="1" />
       <msh:tableColumn columnName="Всего" property="2" addParam=""  />
+      <msh:tableColumn columnName="менее 500" property="17" addParam="&weight=0"/>
       <msh:tableColumn columnName="500-749" property="3" addParam="&weight=1"/>
       <msh:tableColumn columnName="750-999" property="4" addParam="&weight=2"/>
       <msh:tableColumn columnName="1000-1499" property="5" addParam="&weight=3"/>
