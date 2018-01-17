@@ -17,10 +17,10 @@ function onCreate(aForm, aEntity, aCtx) {
 		account.setDiscountDefault(new java.math.BigDecimal(aForm.discountDefault)) ;
 	}
 
-
-
-    var privilege = aCtx.manager.find(Packages.ru.ecom.mis.ejb.uc.privilege.domain.Privilege, aForm.privilege) ;
-	account.setPrivilege(privilege) ;
+	if(aForm.privilege!=null && aForm.privilege!="" && aForm.privilege>0) {
+        var privilege = aCtx.manager.find(Packages.ru.ecom.mis.ejb.uc.privilege.domain.Privilege, aForm.privilege);
+        account.setPrivilege(privilege);
+    }
 
 	aCtx.manager.persist(account) ;
 	var servedPerson = new Packages.ru.ecom.mis.ejb.domain.contract.ServedPerson() ;
