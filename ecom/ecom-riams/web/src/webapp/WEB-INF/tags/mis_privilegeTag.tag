@@ -3,13 +3,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <%@ attribute name="name" required="true" description="название" %>
-
-<script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script>
-<script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script>
-<script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script>
-
 <div id='${name}Privilege' class='dialog'>
-    <iframe id="iframe" src="/riams/entityParentPrepareCreate-mis_privilege.do?id=0&short=ShortCreate" scrolling="no" height="100" width="800"></iframe>
+    <iframe id="iframe" src="/riams/entityParentPrepareCreate-mis_privilege.do?id=0&short=ShortCreate" height="200" width="600"></iframe>
     <br>
     <input value="Сохранить" onclick="save${name}Privilege()" type="button">
     <input id="cancel" value="Закрыть" onclick="cancel${name}Privilege()" type="button">
