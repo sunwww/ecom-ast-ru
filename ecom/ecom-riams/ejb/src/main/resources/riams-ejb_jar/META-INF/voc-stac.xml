@@ -397,8 +397,16 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 names   = 'name'
                 queried = 'name'
                 />
-    </voc> 
-   <voc id='vocBedTypeByDep' type='NativeVocService'>
+    </voc>
+	<!-- Справочник профилей коек -->
+	<voc id='vocBedTypeWithCode' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
+				names   = 'omcCode,name'
+				queried = 'name'
+		/>
+	</voc>
+	<voc id='vocBedTypeByDep' type='NativeVocService'>
 		<NativeVocService
 		    	from=" VocBedType vbt "
 		    	parent="bf.lpu_id=:parent"

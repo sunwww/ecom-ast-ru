@@ -1,7 +1,5 @@
 package ru.ecom.diary.ejb.form.protocol.parameter.user;
 
-import java.math.BigDecimal;
-
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;

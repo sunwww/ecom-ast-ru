@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase;
 
-import java.math.BigDecimal;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;

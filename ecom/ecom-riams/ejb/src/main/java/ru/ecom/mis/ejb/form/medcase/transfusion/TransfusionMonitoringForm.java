@@ -1,14 +1,9 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
-import java.math.BigDecimal;
-
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.TransfusionMonitoring;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocUrineColor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
