@@ -18,7 +18,8 @@
         <msh:hidden property="saveType" />
         <msh:hidden property="medCase" />
         <msh:hidden property="financeSource" />
-    
+        <msh:hidden property="stantAmount" />
+
         <msh:separator label="Сведения об ВМП" colSpan="5" guid="a7a51c304-335b4ade6f66" />
         <msh:row>
           <msh:textField property="ticketNumber" label="Номер талона на ВМП" size="100"/>
@@ -35,11 +36,6 @@
         <msh:row>
         	<msh:autoComplete property="method" label="Метод ВМП"  horizontalFill="true" fieldColSpan="3" parentAutocomplete="kind" vocName="vocMethodHighCare" size="50"/>
         </msh:row>
-
-        <msh:row>
-          <msh:textField property="stantAmount" label="Количество установленных стентов" />
-        </msh:row>
-
         <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
           <msh:label property="createUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
