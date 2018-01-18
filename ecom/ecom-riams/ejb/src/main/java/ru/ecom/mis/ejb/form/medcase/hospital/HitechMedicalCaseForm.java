@@ -129,5 +129,19 @@ public class HitechMedicalCaseForm extends IdEntityForm{
 	public void setTicketNumber(String aTicketNumber) {theTicketNumber = aTicketNumber;}
 	/** Номер талона ВМП */
 	private String theTicketNumber ;
+
+	/** Список диагнозов */
+	@Comment("Список диагнозов")
+	public String getDiagnosis() {return theDiagnosis;}
+	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+	/** Список диагнозов */
+	private String theDiagnosis ;
+
+	/** Модель пациента */
+	@Comment("Модель пациента")
+	public String getPatientModel() {return thePatientModel;}
+	public void setPatientModel(String aPatientModel) {thePatientModel = aPatientModel;}
+	/** Модель пациента */
+	private String thePatientModel ;
 	
 }

@@ -43,4 +43,11 @@ public class VocMethodHighCare extends VocBaseEntity {
 	private Date theDateFrom;
 	/** Дата окончания */
 	private Date theDateTo;
+
+	/** Модель пациента */
+	@Comment("Модель пациента")
+	public String getPatientModel() {return thePatientModel;}
+	public void setPatientModel(String aPatientModel) {thePatientModel = aPatientModel;}
+	/** Модель пациента */
+	private String thePatientModel ;
 }
