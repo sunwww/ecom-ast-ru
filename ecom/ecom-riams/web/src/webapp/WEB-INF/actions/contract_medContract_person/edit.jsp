@@ -203,12 +203,15 @@
 				<msh:row>
 					<msh:autoComplete property="servedPerson" label="Обс.персона" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
+				<msh:ifInRole roles="/Policy/Mis/Person/Privilege">
 				<msh:row>
 					<msh:autoComplete property="privilege" label="Льгота" fieldColSpan="3" parentAutocomplete="servedPerson" vocName="actualPrivilege" horizontalFill="true" />
 					<td colspan="9" title="добавить льготу" class="label">
 						<a href=" javascript:showPrivilPrivilege('.do') ">Добавить льготу</a>
 					</td>
+					<tags:mis_privilegeTag name="Privil"/>
 				</msh:row>
+				</msh:ifInRole>
 				<msh:row>
 					<msh:autoComplete property="rulesProcessing" label="Обработка правил" fieldColSpan="3" vocName="vocContractRulesProcessing" horizontalFill="true" />
 				</msh:row>
@@ -222,7 +225,6 @@
 					<msh:textField property="dateTo" label="Дата окончания "/>
 				</msh:row>				
 				</msh:panel>
-			<tags:mis_privilegeTag name="Privil"/>
 								<script type="text/javascript">
 				   			    eventutil.addEventListener($('discountDefault'),'change',function(){checkSum() ;});
 				                eventutil.addEventListener($('discountDefault'),'keyup',function(){checkSum() ;});
