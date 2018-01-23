@@ -8,6 +8,9 @@
         <msh:form guid="formHello" action="/allLn_count_report.do" defaultField="hello">
             <msh:panel guid="panel">
                 <msh:row>
+                    <msh:separator label="Параметры поиска" colSpan="7"/>
+                </msh:row>
+                <msh:row>
                     <td>
                         Период
                     </td>
@@ -29,6 +32,8 @@
                 request.setAttribute("dateStart", beginDate);
                 request.setAttribute("dateFinish", finishDate);
         %>
+
+        <msh:section>
         <ecom:webQuery name = "elnList" nativeSql="
 select
 lpu.name,
@@ -48,20 +53,29 @@ and dd.hospitalizednumber is not null and dd.anotherlpu_id is null
 group by lpu.name
 order by lpu.name
 " />
-        <msh:section>
+
+
+            <msh:sectionTitle>Период с ${dateStart} по ${dateFinish}
+                <form action="print-report_categoryForeignNationals.do" method="post" target="_blank">
+                    <input type='hidden' name="s" id="s" value="PrintService">
+                    <input type='hidden' name="m" id="m" value="printManyNativeQuery">
+                    <input type="submit" value="Печать">
+                </form>
+            </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="elnList" action="" idField="1">
+                <msh:table name="elnList" action="allLn_count_report" idField="1">
+                    <msh:tableColumn columnName="№" identificator="false" property="sn" />
                     <msh:tableColumn columnName="Отделение" property="1"/>
-                    <msh:tableColumn columnName="Всего ЛН" property="2"/>
-                    <msh:tableColumn columnName="Бумажных" property="3"/>
+                    <msh:tableColumn columnName="Всего ЛН" property="2" isCalcAmount="true"/>
+                    <msh:tableColumn columnName="Бумажных" property="3" isCalcAmount="true"/>
                     <msh:tableColumn columnName="%" property="4"/>
-                    <msh:tableColumn columnName="Электронных" property="5"/>
+                    <msh:tableColumn columnName="Электронных" property="5" isCalcAmount="true"/>
                     <msh:tableColumn columnName="%" property="6"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
         <%} else { %>
-        <p>Укажите период!</p>
+        <i>Выберите параметры поиска и нажмите "Найти" </i>
         <%}%>
     </tiles:put>
 </tiles:insert>
