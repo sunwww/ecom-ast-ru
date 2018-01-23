@@ -412,6 +412,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/eln_count.jsp" />
         </action>
+		<action path='/allLn_count_report' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/allLn_count_report.jsp" />
+		</action>
  <action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

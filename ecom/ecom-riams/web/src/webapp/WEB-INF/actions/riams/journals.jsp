@@ -125,6 +125,9 @@
 	                        <li><msh:link  isReport="false" action="eln_count.do" roles="/Policy/Mis/ArchiveCase/Create">
 	                           Количество сформированных ЭЛН
 	                        </msh:link></li>
+							<li><msh:link  isReport="false" action="allLn_count_report.do" roles="/Policy/Mis/ArchiveCase/Create">
+								Количество ЛН по отделениям
+							</msh:link></li>
 					</ul>
 					</div>
 				</td>
