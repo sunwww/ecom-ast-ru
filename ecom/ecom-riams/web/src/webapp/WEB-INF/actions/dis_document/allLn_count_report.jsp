@@ -49,14 +49,14 @@ left join worker w on w.id = wf.worker_id
 left join mislpu lpu on lpu.id = w.lpu_id
 left join electronicdisabilitydocumentnumber edd on edd.disabilitydocument_id = dd.id
 where dd.issuedate between to_date('${dateStart}','dd.mm.yyyy') and to_date('${dateFinish}','dd.mm.yyyy')
-and dd.hospitalizednumber is not null and dd.anotherlpu_id is null
+and dd.hospitalizednumber is not null and dd.anotherlpu_id is null and (noactuality is null or noactuality = false)
 group by lpu.name
 order by lpu.name
 " />
 
 
             <msh:sectionTitle>Период с ${dateStart} по ${dateFinish}
-                <form action="print-report_categoryForeignNationals.do" method="post" target="_blank">
+                <form action="print-report_categoryForeignNationals.do" method="post" target="_blank">jr
                     <input type='hidden' name="s" id="s" value="PrintService">
                     <input type='hidden' name="m" id="m" value="printManyNativeQuery">
                     <input type="submit" value="Печать">
