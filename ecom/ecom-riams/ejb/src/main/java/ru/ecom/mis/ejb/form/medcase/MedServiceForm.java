@@ -44,6 +44,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 	@AEntityFormInterceptor(MedServiceSaveInterceptor.class)
 })
 public class MedServiceForm extends IdEntityForm  {
+
+	/** Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам */
+	@Comment("Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам")
+	@Persist
+	public Boolean getShowInReport() {return theShowInReport;}
+	public void setShowInReport(Boolean aShowInReport) {theShowInReport = aShowInReport;}
+	/** Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам */
+	private Boolean theShowInReport ;
 	
 	/** Может назначаться врачом лаборатории */
 	@Comment("Может назначаться врачом лаборатории")
