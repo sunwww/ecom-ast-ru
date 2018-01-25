@@ -40,7 +40,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
     }) 
 @Table(schema="SQLUser")
 public class MedService extends BaseEntity{
-	
+
+	/** Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам */
+	@Comment("Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам")
+	public Boolean getShowInReport() {return theShowInReport;}
+	public void setShowInReport(Boolean aShowInReport) {theShowInReport = aShowInReport;}
+	/** Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам */
+	private Boolean theShowInReport ;
+
 	/** Может назначаться врачом лаборатории */
 	@Comment("Может назначаться врачом лаборатории")
 	public Boolean getIsForLabDoctor() {return theIsForLabDoctor;}

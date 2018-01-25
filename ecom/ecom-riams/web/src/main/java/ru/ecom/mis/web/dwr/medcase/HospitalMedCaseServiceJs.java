@@ -34,6 +34,12 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  */
 public class HospitalMedCaseServiceJs {
 
+	public String getDiagnosisAndModelByVMPMethod(Long aMethodId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		return service.executeNativeSqlGetJSON(new String[] {"diagnosis","patientModel"},"select diagnosis as f1, patientModel as f2 from vocmethodhighcare where id="+aMethodId,1);
+
+	}
+
 	public String getMedcaseCost(String aDateFrom, String aDateTo, String aType, String aLpuCode, HttpServletRequest aRequest ) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
 		return service.makeReportCostCase(aDateFrom,aDateTo,aType,aLpuCode);
