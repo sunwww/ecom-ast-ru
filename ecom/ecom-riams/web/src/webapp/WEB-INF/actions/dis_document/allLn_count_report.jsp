@@ -32,50 +32,47 @@
                 request.setAttribute("dateStart", beginDate);
                 request.setAttribute("dateFinish", finishDate);
         %>
-
-        <msh:section>
-        <ecom:webQuery name = "elnList" nativeSql="
-select
-lpu.name,
-count(dd.id) as lns,
-count(dd.id) - count(edd.id) as ln,
-((count(dd.id) - count(edd.id))*100)/count(dd.id) as procetln,
-count(edd.id) as eln,
- 100 - ((count(dd.id) - count(edd.id))*100)/count(dd.id) as procenteln
-from disabilitydocument dd
-left join disabilityrecord dr on dr.disabilitydocument_id = dd.id
-left join workfunction wf on dr.workfunction_id = wf.id
-left join worker w on w.id = wf.worker_id
-left join mislpu lpu on lpu.id = w.lpu_id
-left join electronicdisabilitydocumentnumber edd on edd.disabilitydocument_id = dd.id
-where dd.issuedate between to_date('${dateStart}','dd.mm.yyyy') and to_date('${dateFinish}','dd.mm.yyyy')
-and dd.hospitalizednumber is not null and dd.anotherlpu_id is null and (noactuality is null or noactuality = false)
-group by lpu.name
-order by lpu.name
-" />
-
-
-            <msh:sectionTitle>Период с ${dateStart} по ${dateFinish}
-                <form action="print-report_categoryForeignNationals.do" method="post" target="_blank">jr
-                    <input type='hidden' name="s" id="s" value="PrintService">
-                    <input type='hidden' name="m" id="m" value="printManyNativeQuery">
-                    <input type="submit" value="Печать">
-                </form>
-            </msh:sectionTitle>
-            <msh:sectionContent>
-                <msh:table name="elnList" action="allLn_count_report" idField="1">
-                    <msh:tableColumn columnName="№" identificator="false" property="sn" />
-                    <msh:tableColumn columnName="Отделение" property="1"/>
-                    <msh:tableColumn columnName="Всего ЛН" property="2" isCalcAmount="true"/>
-                    <msh:tableColumn columnName="Бумажных" property="3" isCalcAmount="true"/>
-                    <msh:tableColumn columnName="%" property="4"/>
-                    <msh:tableColumn columnName="Электронных" property="5" isCalcAmount="true"/>
-                    <msh:tableColumn columnName="%" property="6"/>
-                </msh:table>
-            </msh:sectionContent>
-        </msh:section>
+        <input id="getExcel2" class="button" name="submit" value="Печать" onclick="mshSaveTableToExcelById()" role="button" type="submit">
+        <div id="myTemp">
+            <ecom:webQuery name = "elnList" nameFldSql="listSQL"
+                           nativeSql="select (select lpu.name from disabilityrecord dr
+                            left join workfunction wf on dr.workfunction_id = wf.id
+                            left join worker w on w.id = wf.worker_id
+                            left join mislpu lpu on lpu.id = w.lpu_id where
+                            dr.id=(select max(dr2.id) from disabilityrecord dr2 where dr2.disabilitydocument_id=dd.id)) as lpuname,
+                            count(dd.id) as lns,
+                            count(dd.id) - count(edd.id) as ln,
+                            ((count(dd.id) - count(edd.id))*100)/count(dd.id) as procetln,
+                            count(edd.id) as eln,
+                             100 - ((count(dd.id) - count(edd.id))*100)/count(dd.id) as procenteln
+                             ,count(dd.id)
+                            from disabilitydocument dd
+                            left join electronicdisabilitydocumentnumber edd on edd.disabilitydocument_id = dd.id
+                            where dd.noactuality =false and dd.anotherlpu_id is null and
+                            dd.issuedate  between to_date('${dateStart}','dd.MM.yyyy') and to_date('${dateFinish}','dd.MM.yyyy')
+                            group by lpuname
+                            order by lpuname"/>
+            <msh:table name="elnList" action="allLn_count_report.do" idField="1">
+                <msh:tableColumn columnName="№" identificator="false" property="sn" />
+                <msh:tableColumn columnName="Отделение" property="1"/>
+                <msh:tableColumn columnName="Всего ЛН" property="2" isCalcAmount="true"/>
+                <msh:tableColumn columnName="Бумажных" property="3" isCalcAmount="true"/>
+                <msh:tableColumn columnName="%" property="4"/>
+                <msh:tableColumn columnName="Электронных" property="5" isCalcAmount="true"/>
+                <msh:tableColumn columnName="%" property="6"/>
+            </msh:table>
+        </div>
         <%} else { %>
         <i>Выберите параметры поиска и нажмите "Найти" </i>
         <%}%>
+    </tiles:put>
+
+    <tiles:put name="javascript" type="string">
+        <script type="text/javascript">
+            function mshPrintTextToExcelTable (html) {
+                window.location.href='data:application/vnd.ms-excel,'+'\uFEFF'+encodeURIComponent(html); }
+            function mshSaveTableToExcelById() {
+                mshPrintTextToExcelTable(document.getElementById("myTemp").outerHTML);}
+        </script>
     </tiles:put>
 </tiles:insert>
