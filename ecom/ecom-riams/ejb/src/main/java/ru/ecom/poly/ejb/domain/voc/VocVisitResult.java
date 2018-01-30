@@ -25,5 +25,24 @@ public class VocVisitResult extends VocIdNameOmcCode {
 	private String theCodefamb;
 	/** Код федеральный по поликлинике */
 	private String theCodefpl;
-	
+
+	/**Код в промеде**/
+	private String promedCode1;
+	private String promedCode2;
+
+	@Comment("Код в промеде1")
+	public String getPromedCode1() {
+		return promedCode1;
+	}
+	public void setPromedCode1(String promedCode1) {
+		this.promedCode1 = promedCode1;
+	}
+
+	@Comment("Код в промеде2")
+	public String getPromedCode2() {
+		return promedCode2;
+	}
+	public void setPromedCode2(String promedCode2) {
+		this.promedCode2 = promedCode2;
+	}
 }
