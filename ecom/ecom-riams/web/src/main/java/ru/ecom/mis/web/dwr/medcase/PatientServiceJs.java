@@ -412,17 +412,18 @@ public class PatientServiceJs {
 		} else return "1";
 	}
 	public String checkPatientAttachedOrDead(String aPatientId, String isDeath, String isAttached, HttpServletRequest aRequest) throws NamingException {
-		
-		boolean checkDeath = (isDeath!=null&&isDeath.equals("1"))?true:false;	
+		boolean checkDeath = (isDeath!=null&&isDeath.equals("1"))?true:false;
 		boolean checkAttachment = (isAttached!=null&&isAttached.equals("1"))?true:false;
 		String res = "-";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-			Collection<WebQueryResult> list = service.executeNativeSql("select pf.lpuattached, to_char(pf.checkdate,'dd.mm.yyyy'),case when pf.deathdate is not null then to_char(pf.deathdate,'dd.mm.yyyy') else '' end " +
+			Collection<WebQueryResult> list = service.executeNativeSql("select coalesce(pf.lpuattached,'') as lpuAttached" +
+					", to_char(pf.checkdate,'dd.mm.yyyy') as checkDate" +
+					" ,case when pf.deathdate is not null then to_char(pf.deathdate,'dd.mm.yyyy') else '' end as deathDate" +
 					" ,coalesce(pf.doctorsnils,'') as doctorId" +
 					" from patient p " +
 					" left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
-					" and pf.birthday=p.birthday) where p.id='"+aPatientId+"' order by pf.checkdate desc", 1);
-			Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'"); 
+					" and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and pf.id is not null order by pf.checkdate desc", 1);
+			Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'");
 			String defaultLpu = null, defaultLpuName = null;
 			if (checkAttachment) {
 				if (defLpu.isEmpty()) {
@@ -434,7 +435,6 @@ public class PatientServiceJs {
 				}	
 			}			
 			if (!list.isEmpty()) {
-				
 				WebQueryResult wqr = list.iterator().next();
 				String lastAttachment = wqr.get1().toString();
 				String checkDate = wqr.get2().toString();
@@ -452,13 +452,12 @@ public class PatientServiceJs {
 					}
 					if (checkDeath&&deathDate!=null&&deathDate.length()==10) {
 						res= "2По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
-					} 
-				
+					}
 			} else {
 				if (checkAttachment) {
 					res = "0Необходимо выполнить проверку по базе ФОМС";
 				}
-			} 
+			}
 			return res;
 		}
 	
