@@ -440,7 +440,7 @@ public class PatientServiceJs {
 					" ,coalesce(pf.doctorsnils,'') as doctorId" +
 					" from patient p " +
 					" left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
-					" and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and (pf.lpuattached is not null and pf.lpuattached!='') order by pf.checkdate desc", 1);
+					" and pf.birthday=p.birthday) where p.id='"+aPatientId+"' order by pf.checkdate desc", 1);
 			Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'"); 
 			String defaultLpu = null, defaultLpuName = null;
 			if (checkAttachment) {
