@@ -572,6 +572,7 @@ public class QualityEstimationServiceJs {
 			if (ms.length()>0 && ms.substring(0,1).equals(",")) ms=ms.substring(1);
 			if (ms.endsWith(",")) ms=ms.substring(0,ms.length()-1);
 			ms="'"+ms+"'";
+			if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
 			service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
 			return ms.replace("''","'").replace("''","'");
 		}
@@ -607,10 +608,15 @@ public class QualityEstimationServiceJs {
 					ms=ms.replace("'","''");
 					ms="'"+ms+"'";
 				}
+				if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
 				service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
 				return ms.replace("''","'").replace("''","'");
 			}
 		}
 		return "0";
+	}
+	public void setMedServEmptyString(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes='' where id=" + aCritId);
 	}
 }
