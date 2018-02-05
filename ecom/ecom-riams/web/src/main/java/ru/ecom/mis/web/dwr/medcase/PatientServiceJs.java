@@ -22,6 +22,25 @@ import java.util.List;
 
 public class PatientServiceJs {
 
+
+	public String getPaid(String aPatientId,HttpServletRequest aRequest) throws NamingException {
+		StringBuilder sql = new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		sql.append("select count(cao.cost) from patient  p\n" +
+				"left join contractperson cp on cp.patient_id= p. id\n" +
+				"left join medcontract mc on mc.customer_id= cp.id\n" +
+				"left join contractaccount ca on ca.contract_id= mc.id\n" +
+				"left join contractaccountoperation cao on cao.account_id= ca.id\n" +
+				"where p.id ="+aPatientId);
+		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
+		String str = "";
+		for (WebQueryResult wqr : res) {
+			str = wqr.get1().toString();
+		}
+		System.out.println(str);
+		return str;
+	}
+
 	public String getPatientFromContractPerson(String aContractPerson,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);

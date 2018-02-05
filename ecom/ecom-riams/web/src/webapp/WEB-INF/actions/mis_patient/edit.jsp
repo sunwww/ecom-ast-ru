@@ -919,7 +919,30 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 	}
     </script>
     </msh:ifInRole>
-  
+
+      <msh:ifFormTypeAreViewOrEdit formName="mis_patientForm" guid="6c8ddaec-6990-410d-8e58-1780385ef2d3">
+      <msh:ifInRole roles="/Policy/Mis/Patient/BanEdit">
+      <script type="text/javascript">
+          iamdummy();
+      function iamdummy() {
+      PatientService.getPaid($('id').value, {
+      callback: function(aResult) {
+      //window.document.location.reload();
+          if(aResult>0){
+              document.getElementById("lastname").setAttribute("readonly", "readonly");
+              document.getElementById("birthday").setAttribute("readonly", "readonly");
+              document.getElementById("firstname").setAttribute("readonly", "readonly");
+              document.getElementById("middlename").setAttribute("readonly", "readonly");
+              document.getElementById("lastname").setAttribute("class", "viewOnly");
+              document.getElementById("birthday").setAttribute("class", "viewOnly");
+              document.getElementById("firstname").setAttribute("class", "viewOnly");
+              document.getElementById("middlename").setAttribute("class", "viewOnly");
+          }
+      }
+      });}
+      </script>
+      </msh:ifInRole>
+    </msh:ifFormTypeAreViewOrEdit>
   <script type="text/javascript">
       function checkPassportSeriesAndNumber(){
 
