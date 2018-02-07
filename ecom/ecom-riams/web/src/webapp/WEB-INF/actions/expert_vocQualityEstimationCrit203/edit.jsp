@@ -10,11 +10,12 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
     <tiles:put name="side" type="string">
     <msh:ifFormTypeAreViewOrEdit formName="expert_vocQualityEstimationCrit203Form" guid="e2054544-fdd1-4285-a21c-3bb9b4569efc">
-        <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
+        <msh:sideMenu title="Действия" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
             <tags:AddEditDiagnoseCriteria203 name="AddDs"/>
             <msh:sideLink action="/javascript:showAddDs(${param.id})" name='Диагнозы' title="Просмотр диагнозов" params="" roles="/Policy/Mis/Order203/EditVocs"/>
             <tags:AddEditMedServCriteria203 name="AddEditMedServCriteria203"/>
             <msh:sideLink action="/javascript:showAddEditMedServCriteria203(${param.id})" name='Мед. услуги' title="Просмотр услуг" params="" roles="/Policy/Mis/Order203/EditVocs"/>
+            <msh:sideLink action="/javascript:setMedServEmptyString(${param.id})" name='Обнулить услуги' title="Обнулить услуги" params="" roles="/Policy/Mis/Order203/EditVocs"/>
        </msh:sideMenu>
     </msh:ifFormTypeAreViewOrEdit>
     </tiles:put>
@@ -57,4 +58,15 @@
             </script>
         </msh:ifFormTypeIsView>
     </tiles:put>
+    <script type="text/javascript">
+        function setMedServEmptyString() {
+            QualityEstimationService.setMedServEmptyString(${param.id}, {
+                callback: function () {
+                    $('medServiceCodes').value='';
+                    alert('Список услуг обнулён.');
+                }
+
+            });
+        }
+    </script>
 </tiles:insert>
