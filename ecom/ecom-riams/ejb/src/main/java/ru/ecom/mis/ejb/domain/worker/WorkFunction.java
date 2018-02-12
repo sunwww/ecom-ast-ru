@@ -331,5 +331,14 @@ abstract public class WorkFunction extends BaseEntity {
 	public void setAttorney(Attorney aAttorney) {theAttorney = aAttorney;}
 	/** Доверенность */
 	private Attorney theAttorney;
-	
+
+	private String promedCode_workstaff;
+	@Comment("Код рабочего места в промеде")
+	public String getPromedCode_workstaff() {
+		return promedCode_workstaff;
+	}
+	public void setPromedCode_workstaff(String promedCode_workstaff) {
+		this.promedCode_workstaff = promedCode_workstaff;
+	}
+
 }
