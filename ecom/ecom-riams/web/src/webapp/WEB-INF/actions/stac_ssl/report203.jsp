@@ -63,11 +63,15 @@
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
-left join MisLpu dep2 on dep2.id=mc.department_id where qd.vocidc10_id=ds.idc10_id
+left join MisLpu dep2 on dep2.id=mc.department_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mc.patient_id
+where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
 )
 ,(select count(distinct mc.id) as noque
   from medcase mc
@@ -131,11 +135,15 @@ cast((select count(distinct mc.id) as pr203 from medcase mc
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
-left join MisLpu dep2 on dep2.id=mc.department_id where qd.vocidc10_id=ds.idc10_id
+left join MisLpu dep2 on dep2.id=mc.department_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mc.patient_id
+where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
-and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null) as numeric),2)
+and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
 end
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -177,11 +185,14 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mc.patient_id
  where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
   and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true))
 ,(select count(distinct mc.id) as noque
   from medcase mc
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
@@ -251,11 +262,14 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mc.patient_id
  where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
   and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)) as numeric),2)
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
 end
  from medcase slo
  left join medcase slo1 on slo1.prevMedCase_id=slo.id
