@@ -415,7 +415,6 @@ public class PatientServiceJs {
 		boolean checkDeath = (isDeath!=null&&isDeath.equals("1"))?true:false;
 		boolean checkAttachment = (isAttached!=null&&isAttached.equals("1"))?true:false;
 		String res = "-";
-		System.out.println("log1");
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 			Collection<WebQueryResult> list = service.executeNativeSql("select coalesce(pf.lpuattached,'') as lpuAttached" +
 					", to_char(pf.checkdate,'dd.mm.yyyy') as checkDate" +
@@ -425,49 +424,33 @@ public class PatientServiceJs {
 					" left join patientfond pf on (pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename " +
 					" and pf.birthday=p.birthday) where p.id='"+aPatientId+"' and pf.id is not null order by pf.checkdate desc", 1);
 			Collection<WebQueryResult> defLpu =service.executeNativeSql("select sc.keyvalue, case when sc.description!='' then sc.description else '№ '|| sc.keyvalue end from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE'");
-		System.out.println("log2");
 				String defaultLpu = null, defaultLpuName = null;
 			if (checkAttachment) {
-				System.out.println("log3");
 				if (defLpu.isEmpty()) {
-					System.out.println("log4");
 					return "0Необходимо указать ЛПУ по умолчанию в настройках (DEFAULT_LPU_OMCCODE)";
 				} else {
-					System.out.println("log5");
 					WebQueryResult wqr =defLpu.iterator().next();
 					defaultLpu = wqr.get1().toString();
 					defaultLpuName = wqr.get2().toString();
-					System.out.println("log6");
-				}	
+				}
 			}
-		System.out.println("log7");
 			if (!list.isEmpty()) {
-				System.out.println("log8");
 				WebQueryResult wqr = list.iterator().next();
 				String lastAttachment = wqr.get1().toString();
 				String checkDate = wqr.get2().toString();
 				String deathDate = wqr.get3().toString();
 				String doctorSnils = wqr.get4().toString();
-				System.out.println("log9");
 					if (checkAttachment) {
-						System.out.println("log10");
 						if (lastAttachment.equals(defaultLpu)) {
-							System.out.println("log11");
 							if (doctorSnils==null||doctorSnils.trim().equals("")) {
-								System.out.println("log12");
 								res = " Внимание! ФОНД не имеет информации о прикреплении пациента к участку!";
 							}
-							System.out.println("log13");
 							res = "1По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName+"."+res;
 						} else {
-							System.out.println("log14");
 							res =  "0По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName+".";
 						}
-						System.out.println("log15");
 					}
-				System.out.println("log16");
 					if (checkDeath&&deathDate!=null&&deathDate.length()==10) {
-						System.out.println("log16");
 						res= "2По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
 					}
 			} else {
