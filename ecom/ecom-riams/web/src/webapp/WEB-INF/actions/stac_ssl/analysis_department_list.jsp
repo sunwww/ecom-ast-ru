@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Journals">АНАЛИЗ РАБОТЫ УЧРЕЖДЕНИЯ
+        <msh:title mainMenu="Journals">АНАЛИЗ РАБОТЫ ОТДЕЛЕНИЙ
         </msh:title>
     </tiles:put>
 
@@ -2246,6 +2246,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename order by pat.id"/>
                 var frm = document.forms[0] ;
                 frm.target='' ;
                 frm.action='stac_analysis_department_list.do' ;
+                frm.submit();
             }
             function print() {
                 updateId() ;
