@@ -102,6 +102,9 @@
 	                   		<msh:link isReport="true" action="lab_chief_report.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratory">
 	                   		Журнал заведующего лабораторией</msh:link>
 	                   </li>
+						<li><msh:link isReport="true" action="reportKDL.do" roles="/Policy/MainMenu/LaboratoryJournal/ChiefLabJournal">
+							Сводный отчёт по КДЛ
+						</msh:link></li>
 	                   <li>
 	                   <msh:link isReport="true" action="/pres_journal" roles="/Policy/Mis/Journal/Prescription/LabSurvey/JournalPrescript">Журнал лабораторных назначений</msh:link>
 	                   </li>
@@ -206,7 +209,6 @@
 	                    <li><msh:link isReport="true" action="mis_assessment_risk_report.do" roles="/Policy/Mis/Pregnancy/Report/RiskReport">
 	                            Отчет по рискам
 	                    </msh:link></li>
-
 					</ul>
 					</div>
 				</td>			
