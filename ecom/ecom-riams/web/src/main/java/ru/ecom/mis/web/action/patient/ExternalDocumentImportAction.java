@@ -80,16 +80,14 @@ public class ExternalDocumentImportAction extends BaseAction{
     		FormFile ffile = form!=null?form.getFile():null; 
     		String parentType = form.getParentType()!=null&&!form.getParentType().equals("")?form.getParentType():"Patient";
     		String contentType = ffile!=null?ffile.getContentType().toLowerCase(): "";
-    		System.out.println("==== TYPE="+contentType);
-    		System.out.println("==== Parent_TYPE="+parentType);
     		//System.out.println("path="+path) ;
     		if (parentType.equals("Template")) {
     		dirmain = service.getConfigValue("jboss.userdocument.dir","/opt/jboss-4.0.4.GAi-postgres/server/default/data");	
-    		String filePrefix="user";
-    		System.out.println("SAVE_DIR="+dirmain+"/"+filePrefix+"_"+ffile.getFileName());
-    		saveNotImage(ffile.getInputStream(), dirmain+"/"+filePrefix+"_"+ffile.getFileName());
+    		String fileName=ffile.getFileName();
+    		if (!fileName.startsWith("user_")) {fileName="user_"+fileName;}
+    		saveNotImage(ffile.getInputStream(), dirmain+"/"+fileName);
     		service.insertExternalDocumentByObject("Template", objectId, objectType
-    				, dirmain+"/"+filePrefix+"_"+ffile.getFileName(), dirmain+"/"+filePrefix+"_"+ffile.getFileName(), "", username) ;
+    				, dirmain+"/"+fileName, dirmain+"/"+fileName, "", username) ;
     		return aMapping.findForward("uploaded") ;
     		} else if ((path!=null && !path.equals(""))||contentType.equals("application/pdf")) {
     			
