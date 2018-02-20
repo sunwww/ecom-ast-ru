@@ -7,14 +7,97 @@ import java.util.Collection;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
+import ru.ecom.mis.ejb.service.extdispplan.IExtDispPlanService;
 import ru.ecom.web.util.Injection;
 
 
 
 public class ExtDispServiceJs {
+
+    public String countRecordsInPlan(Long aPlanId, HttpServletRequest aRequest) throws NamingException {
+        return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSql("select count(*) from extdispplanpopulationrecord where plan_id="+aPlanId+" and (isDeleted is null or isDeleted='0')").iterator().next().get1().toString();
+    }
+
+	public int fillDispPlanByPersons(String aPersonJson, Long aPlanId, HttpServletRequest aRequest) throws NamingException {
+		try {
+			JSONArray arr = new JSONArray(aPersonJson);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return Injection.find(aRequest).getService(IExtDispPlanService.class).fillExtDispPlanByPersons(aPersonJson,aPlanId);
+	}
+
+
+	public String findPerson(Long aLpuId, Long aAreaId, Long aSexId, String aPatientInfo, String aYears, Integer aLimit, String aTypeSort, HttpServletRequest aRequest) throws NamingException {
+	//	System.out.println("Long aLimit = >"+aLimit+"<");
+		StringBuilder sql = new StringBuilder();
+		boolean firstWhere = true;
+		sql.append("select pat.id, pat.patientinfo, la.number||' '||vat.name from");
+		if (aLpuId!=null&&aLpuId>0) { //Ищем только прик. население
+			 sql.append(" lpuattachedByDepartment att")
+				.append(" left join patient pat on pat.id=att.patient_id")
+				.append(" left join lpuarea la on la.id=att.area_id ")
+				.append(" left join vocareatype vat on vat.id=la.type_id ")
+				.append(" where ");
+			firstWhere=false;
+			if (aAreaId!=null&&aAreaId>0) {
+				sql.append(" att.area_id=").append(aAreaId);
+			} else {
+				sql.append(" att.lpu_id=").append(aLpuId);
+			}
+		} else if (aPatientInfo!=null&&!aPatientInfo.trim().equals("")) {
+			sql.append(" patient pat ")
+					.append(" left join lpuattachedbydepartment att on att.patient_id=pat.id and att.dateto is null")
+					.append(" left join lpuarea la on la.id=att.area_id ")
+					.append(" left join vocareatype vat on vat.id=la.type_id ")
+					.append(" where ");
+		} else { //пустой поиск
+			return "";
+		}
+
+		if (aPatientInfo!=null&&!aPatientInfo.trim().equals("")){
+			aPatientInfo=aPatientInfo.toUpperCase();
+			String[] patientInfo = aPatientInfo.split(" ");
+			sql.append(firstWhere?"":" and ").append(" pat.lastname like('%").append(patientInfo[0]).append("%')");
+			firstWhere=false;
+			if (patientInfo.length>1) { //Ищем по Ф И О
+				sql.append(" and pat.firstname like('%").append(patientInfo[1]).append("%')");
+				if (patientInfo.length>2) {
+					sql.append(" and pat.middlename like('%").append(patientInfo[2]).append("%')");
+				}
+			}
+		}
+		if (aSexId!=null&&aSexId>0) {sql.append(firstWhere?"":" and ").append(" pat.sex_id=").append(aSexId); firstWhere=false;}
+		if (aYears!=null&&!aYears.equals("")) {
+			String[] years =aYears.split(",");
+			if (years.length==1) {
+				sql.append(firstWhere?"":" and ").append(" to_char(pat.birthday,'yyyy')='").append(aYears).append("'");
+				firstWhere=false;
+			} else {
+				sql.append(firstWhere?"":" and ").append(" to_char(pat.birthday,'yyyy') in (");
+				firstWhere=false;
+				boolean firstYear = true;
+				for (String year: years) {
+					if (!firstYear) {sql.append(",");} else {firstYear=false;}
+					sql.append("'").append(year).append("'");
+				}
+				sql.append(")");
+
+			}
+
+		}
+		sql.append(" order by ").append(aTypeSort!=null&&aTypeSort.equals("2")?" random() ":" pat.patientinfo ");
+		System.out.println("SQL = "+sql.toString());
+		//if (aLimit!=null&&aYear>0) { sql.append(" and to_char(pat.birthday,'yyyy')='").append(aYear).append("'");}
+		IWebQueryService service= Injection.find(aRequest).getService(IWebQueryService.class);
+		String ret =service.executeNativeSqlGetJSON(new String[]{"id", "name","area"},sql.toString(),aLimit);
+		return  ret!=null?ret:"";
+	}
 	
 	
 	public String DispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException, ParseException {

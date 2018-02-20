@@ -57,11 +57,15 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     StringBuilder def = new StringBuilder();
     WebQueryResult result = new WebQueryResult();
-    
+     /*   public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix, String aAddSql, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr
+				, String aNReestr, String aNPackage, Long aCompany,  String aPacketType) throws ParserConfigurationException, TransformerException {
+			return exportExtDispPlanAll(aAge,aFilenameAddSuffix,aAddSql,aLpu,aArea,aDateFrom,aDateTo,aPeriodByReestr,aNReestr,aNPackage,aCompany,"");
+		}*/
+
     public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
-    		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
+    		, String aAddSql, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
-    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide, String aPacketType) throws ParserConfigurationException, TransformerException {
+    		, String aNReestr, String aNPackage, Long aCompany, String aDispPlanType) throws ParserConfigurationException, TransformerException {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
     	errList.clear();
@@ -118,30 +122,44 @@ public class AddressPointServiceBean implements IAddressPointService {
     		sql.setLength(0);
     		sql.append("select ").append(fld);
     		sql.append(" ,p.id as pid, lp.id as lpid");
-            sql.append(" from LpuAttachedByDepartment lp") ;
-            sql.append(" left join patient p on lp.patient_id=p.id") ;
+    		if (aDispPlanType!=null&&aDispPlanType.equals("DISPPLAN")) {
+    			sql.append(" from ExtDispPlanPopulation plan ")
+					.append(" left join ExtDispPlanPopulationRecord rec on rec.plan_id=plan.id")
+    			    .append(" left join patient p on p.id=rec.patient_id")
+    			    .append(" left join lpuattachedbydepartment lp on lp.patient_id=p.id ");
+
+			} else {
+				sql.append(" from LpuAttachedByDepartment lp") ;
+				sql.append(" left join patient p on lp.patient_id=p.id") ;
+			}
+
             sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id") ;
             sql.append(" left join VocSex vs on vs.id=p.sex_id") ;
             sql.append(" left join medpolicy mp on mp.patient_id=p.id and mp.dtype='MedPolicyOmc'");
         	sql.append(" left join vocmedpolicyomc vmpo on vmpo.id=mp.type_id");
         
         	sql.append(" where ") ;
+		if (aDispPlanType!=null&&aDispPlanType.equals("DISPPLAN")) {
+			sql.append(" plan.year='"+aDateTo.substring(6)+"' and ");
+		}
         	sql.append(" cast(to_char(p.birthday,'MM') as int) between cast(to_char(to_date('"+aDateFrom+"','dd.MM.yyyy'),'MM') as int) and cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'MM') as int) and ");
         	sql.append(" 0 = (select count(edc.id) from extdispcard edc where edc.patient_id=p.id and cast(to_char(edc.finishdate,'yyyy') as int) = cast(to_char(to_date('"+aDateTo+"','dd.MM.yyyy'),'yyyy') as int)) and");
-        	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' ) and ") ;
-        	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
+        	if (aLpu!=null&&aLpu>0) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' ) and ") ;
+        	if (aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
+        //	if (aCompany!=null&&aCompany>0) {sql.append(" mp.company_id=").append(aCompany).append(" and ");}
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
         	sql.append(" and mp.id is not null and mp.actualdateto is null");
         	sql.append(" ").append(addSql).append(" and lp.dateto is null") ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
+		System.out.println("SQL FILL DISPPLAN = "+sql);
         	listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
         	for (int i=0;i<listPat.size();i++) {
         		Object[] o = listPat.get(i);
         		int age = Double.valueOf( o[1].toString()).intValue();
         		
-        		String dispType = "";
+        		String dispType ;
         		/**
         		 *  Если старше 18 лет, и возраст делится на 3 без остатка, до ДД (DP), иначе - профосмотр (DO >=18), (DF <18).
         		 *  

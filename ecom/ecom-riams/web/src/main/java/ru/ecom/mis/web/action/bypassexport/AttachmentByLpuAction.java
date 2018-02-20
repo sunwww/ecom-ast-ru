@@ -48,6 +48,7 @@ public class AttachmentByLpuAction extends BaseAction {
     		String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1",aRequest);
     		String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3",aRequest);
     		String returnType = ActionUtil.updateParameter("PatientAttachment", "typeResult", "xml",aRequest);
+    		String typeDispPlan = ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT",aRequest); //По какому алгоритму формировать выгрузку (план либо прикрепления)
 				//--- String typePatientFond = ActionUtil.updateParameter("PatientAttachment", "typePatientFond", "1",aRequest);
     		//boolean checkLpu = form.getLpu()!=null&&form.getLpu()>0?true:false; //
     		//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
@@ -130,27 +131,10 @@ public class AttachmentByLpuAction extends BaseAction {
 		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
 		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, "1", returnType);
     				} else {
-    					fs = service.exportExtDispPlanAll(null,prefix,sqlAdd.toString(),form.getNoCheckLpu()!=null&&form.getNoCheckLpu().equals(Boolean.TRUE)?false:true
+    					fs = service.exportExtDispPlanAll(null,prefix,sqlAdd.toString()
     			        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format3.format(calTo.getTime()), form.getNumberReestr()
-    			        		, form.getNumberPackage(),form.getCompany(),bNeedDivide, ""+form.getPacketType());
+    			        		, form.getNumberPackage(),form.getCompany(), typeDispPlan);
     				}
-    		/*	} else { //база фонда
-    				StringBuilder sqlAdd1= new StringBuilder() ;
-    				
-    				if (typePatientFond.equals("1")) {
-    					sqlAdd1.append(" and pai.patient_id is not null") ;
-    				} else if (typePatientFond.equals("2")){
-    					sqlAdd1.append(" and pai.patient_id is null") ;
-    					checkLpu=false ;
-    				}
-
-    				
-    				fs = service.exportFondAll(null,prefix,sqlAdd1.toString(),checkLpu
-    		        		, form.getLpu(),form.getArea(),format2.format(cal.getTime()),format2.format(calTo.getTime()),format1.format(calTo.getTime()), form.getNumberReestr()
-    		        		, form.getNumberPackage(),form.getCompany(),bNeedDivide);
-    				
-    			}
-		    */
 		        if (fs!=null) {
 		        	Collection<WebQueryResult> def = (Collection<WebQueryResult>)fs.get2(); 
 		        	String[] files = fs.get1().toString().split("#") ;

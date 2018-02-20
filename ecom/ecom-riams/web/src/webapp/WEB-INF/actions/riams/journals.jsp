@@ -182,6 +182,9 @@
 						<li><msh:link isReport="true" action="mis_attachment.do" roles="/Policy/Mis/ExtDisp/Card/View">
 	                            Отчет по прикрепленному населению
 	                        </msh:link></li>
+						<li><msh:link isReport="true" action="entityList-extDispPlan_plan.do" roles="/Policy/Mis/ExtDisp/Card/View">
+							Список планов доп. диспансеризации
+						</msh:link></li>
 						<li><msh:link isReport="true" action="gosuslugi_report.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 	                            Отчет "количество поступивших обращение за получение услуги "Запись на прием к врачу"
 	                        </msh:link></li>

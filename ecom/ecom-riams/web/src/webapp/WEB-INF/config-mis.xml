@@ -5,6 +5,9 @@
 <struts-config>
 
 	<form-beans>
+		<form-bean name="extDispPlan_recordForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationRecordForm"/>
+		<form-bean name="extDispPlan_planForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationForm"/>
+
 	<!-- Справочник -->
 	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
 	<form-bean name="directory_departmentForm"			type="ru.ecom.mis.ejb.form.directory.DepartmentForm"/>
@@ -321,8 +324,25 @@
 
 	<global-forwards></global-forwards>
 
+
 	<action-mappings>
-	
+
+
+		<action path='/extDispPlanAdd' type='ru.ecom.web.actions.base.ForwardAction'
+				name='mis_attachmentForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/extDispPlan_plan/add.jsp" />
+		</action>
+		<action path='/extDispPlanView' type='ru.ecom.web.actions.base.ForwardAction'
+				name='mis_attachmentForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/extDispPlan_plan/view.jsp" />
+		</action>
+
 	 <action path='/journal_foreignPatients' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
