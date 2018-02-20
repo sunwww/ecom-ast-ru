@@ -148,7 +148,7 @@
 	  <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
 	  <msh:section>
 		  <msh:sectionContent>
-			  <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+			  <msh:table name="datelist" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=${param.department}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
 				  <msh:tableColumn columnName="${tableName}" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 				  <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 				  <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
@@ -185,7 +185,10 @@
 			  printFileName = "kiliReport";
 		  }
 		  String sqlAdd = "";
-		  profile = request.getParameter("profile");
+		  /*String dep=request.getParameter("dep");
+		  if ()*/
+		  profile=request.getParameter("depprofile");
+		  if (profile==null || profile.equals("") || profile.equals("0")) profile = request.getParameter("profile");
 		  String addParam = request.getParameter("addParam");
 		  if (addParam != null && addParam.equals("1")) sqlAdd += " and dc.id is not null";
 		  else if (addParam != null && addParam.equals("2")) sqlAdd += " and pk.id is not null";
