@@ -611,11 +611,22 @@ where wf.dtype='PersonalWorkFunction' -->
 		/>
 	</voc>
 
+	<voc id="vocExtDisp" type="NativeVocService">
+		<NativeVocService
+				from="vocExtDisp as ved"
+				nameId='ved.id'
+				queryAppend="(ved.isArchival is null or ved.isArchival='0')"
+				order=""
+				names= "ved.name "
+				queried="upper(ved.name) like upper(:query)"
+		/>
+	</voc>
+
 <voc id="extDispCom" type="NativeVocService">
 	<NativeVocService
 		from="vocExtDisp as ved"
 		nameId='ved.id'
-		queryAppend="(ved.isComission='1')" 
+		queryAppend="(ved.isComission='1') and (ved.isArchival is null or ved.isArchival='0')"
 		order=""
 		names= "ved.name "
     	queried="upper(ved.name) like upper(:query)" 

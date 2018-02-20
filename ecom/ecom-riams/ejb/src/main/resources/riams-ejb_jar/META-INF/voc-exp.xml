@@ -1,4 +1,202 @@
 <vocconfig>
+    <voc id='vocE2FondV010' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV010'
+                names   = 'code, name'
+                queried = 'code, name'
+        />
+    </voc>
+    <voc id='vocE2FondV006' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV006'
+                names   = 'code, name'
+                queried = 'code, name'
+        />
+    </voc>
+    <voc id='vocE2FondV008' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV008'
+                names   = 'code, name'
+                queried = 'code, name'
+        />
+    </voc>
+    <voc id='vocE2FondV009' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV009'
+                names   = 'code, name'
+                queried = 'code, name'
+        />
+    </voc>
+    <voc id='vocE2FondV015' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV015'
+                names   = 'code, name'
+                queried = 'code, name'
+        />
+    </voc>
+    <voc id='vocE2FondV012' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV012'
+                names   = 'code, name'
+                queried = 'code, name'
+        />
+    </voc>
+    <voc id="vocPassportTypeCode" type="NativeVocService">
+        <NativeVocService
+                from="vocidentitycard voc"
+                nameId="voc.omccode"
+                order="voc.name"
+                names="voc.omccode||' '||voc.name"
+        />
+    </voc>
+    <voc id="vocInsuranceCompanySmoCode" type="NativeVocService">
+        <NativeVocService
+                from="omc_sprsmo voc"
+                nameId="voc.smocode"
+                order="voc.name"
+                names="voc.smocode, voc.name"
+                queried="voc.smocode like :querId or upper(voc.name) like upper(:query) "
+        />
+    </voc>
+    <voc id="vocNationalityCode" type="NativeVocService">
+        <NativeVocService
+                from="OMC_OKSM voc"
+                nameId="voc.voc_code"
+                order="voc.name"
+                names="voc.name"
+                queried="voc.voc_code like :querId or upper(voc.name) like upper(:query) "
+        />
+    </voc>
+    <voc id="vocSocialStatusCode" type="NativeVocService">
+        <NativeVocService
+                from="vocSocialStatus voc"
+                nameId="voc.omccode"
+                order="voc.name"
+                names="voc.omccode||' '||voc.name"
+        />
+    </voc>
+    <voc id="vocSexCode" type="NativeVocService">
+        <NativeVocService
+                from="VocSex voc"
+                nameId="voc.omccode"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+    <voc id="vocReasonDischargeCode" type="NativeVocService">
+        <NativeVocService
+                from="VocReasonDischarge vrd"
+                nameId="vrd.code"
+                order="vrd.code"
+                names="vrd.code||' '||vrd.name"
+                queried="cast(vrd.id as varchar(2)) like :querId or upper(vrd.name) like upper(:query) "
+        />
+    </voc>
+
+    <voc id='vocWorkPlaceTypeCode' type='NativeVocService'>
+        <NativeVocService
+                from = ' vocWorkPlaceType voc '
+                names="voc.code||' '||voc.name"
+                nameId=" voc.code "
+                queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
+                queryAppend=""
+                order="voc.code"
+        />
+    </voc>
+    <voc id='VocMedPolicyTypeCode' type='NativeVocService'>
+        <NativeVocService
+                from = ' vocmedpolicyomc voc '
+                names="voc.code||' '||voc.name"
+                nameId=" voc.code "
+                queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
+                queryAppend=""
+                order="voc.code"
+        />
+    </voc>
+
+    <voc id='VocHospitalizationOutcomeCode' type='NativeVocService'>
+        <NativeVocService
+                from = ' VocHospitalizationOutcome vwf '
+                names="vwf.code||' '|| vwf.name"
+                nameId=" vwf.code "
+                queried=" ( upper(vwf.code) like upper(:query) or upper(vwf.name) like upper(:query) )"
+                queryAppend=""
+                order="vwf.code"
+        />
+    </voc>
+    <voc id='VocBedSubTypeCode' type='NativeVocService'>
+        <NativeVocService
+                from = ' VocBedSubType vwf '
+                names="vwf.code||' '|| vwf.name"
+                nameId=" vwf.code "
+                queried=" ( upper(vwf.code) like upper(:query) or upper(vwf.name) like upper(:query) )"
+                queryAppend=""
+                order="vwf.code"
+        />
+    </voc>
+
+    <voc id='vocWorkFunctionCode' type='NativeVocService'>
+        <NativeVocService
+                from = 'VocWorkFunction voc '
+                names="voc.code||' '||voc.name"
+                nameId=" voc.code "
+                queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
+                queryAppend=""
+                order="voc.code"
+        />
+    </voc>
+
+    <voc id='VocHospitalizationResultCode' type='NativeVocService'>
+        <NativeVocService
+                from = ' VocHospitalizationResult  voc '
+                names="voc.code ||' '|| voc.name"
+                nameId=" voc.code "
+                queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
+                queryAppend=""
+                order="voc.code"
+        />
+    </voc>
+    <voc id='vocE2MedHelpProfile' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.VocE2MedHelpProfile'
+                names   = 'profileK,name'
+                queried = 'name'
+        />
+    </voc>
+    <voc id='vocE2ListEntryType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.VocListEntryType'
+                names   = 'code, name'
+                queried = 'name'
+                queryConvertType = 'FIRST_UPPER'
+        />
+    </voc>
+
+    <voc id='vocKSGByBedSubType' type='NativeVocService'>
+        <NativeVocService
+                from = ' vocKsg vk '
+                parent='  vbst.code=:parent '
+                names=" vk.code||' '||vk.name ||' '||cast (vk.kz as varchar(5))"
+                nameId=" vk.id "
+                queried=" ( upper(vk.code) like upper(:query) or upper(vk.name) like upper(:query) )"
+                queryAppend=""
+                join= "left join VocBedSubType vbst on vbst.id=vk.bedsubtype_id"
+                order=""
+        />
+    </voc>
+
+    <voc id='vocKsgPositionByKsg' type='NativeVocService'>
+        <NativeVocService
+                from = ' grouperksgposition gkp '
+                parent=' gkp.ksgvalue_id=:parent '
+                names=" gkp.code||' DS:'||coalesce(gkp.mainmkb,'-')||' Усл:'||coalesce(gkp.servicecode,'-')||' Пол:'||coalesce(gkp.sex,'-')||' Возраст:'||coalesce(''||gkp.age,'-')||' Длит:'||coalesce(''||gkp.duration,'-')||' Доп.МКБ:'||coalesce(gkp.anothermkb,'-')"
+                nameId=" gkp.id "
+                queried=" ( upper(gkp.mainmkb) like upper(:query) or upper(gkp.servicecode) like upper(:query) )"
+                queryAppend=""
+                order="gkp.code"
+        />
+    </voc>
+
 
     <voc id='entities' type='AllValueHelper'>
         <IAllValue>ru.ecom.expomc.ejb.services.voc.allvalues.EntitiesListAllValues</IAllValue>
