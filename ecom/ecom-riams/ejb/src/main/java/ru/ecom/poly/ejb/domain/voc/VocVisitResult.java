@@ -11,24 +11,27 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocVisitResult extends VocIdNameOmcCode {
-	/** Код федеральный по поликлинике */
+
+	/** Код исхода федеральный по поликлинике */
+	private String theCodefIshod ;
+	/** Код фед. ск.помощи */
+	private String theCodefamb;
+	/** Код результата федеральный по поликлинике */
+	private String theCodefpl;
+	/**Код в промеде1**/
+	private String promedCode1;
+
+	@Comment("Код исхода федеральный по поликлинике")
+	public String getCodefIshod() {return theCodefIshod;}
+	public void setCodefIshod(String aCodefIshod) {theCodefIshod = aCodefIshod;}
+
 	@Comment("Код федеральный по поликлинике")
 	public String getCodefpl() {return theCodefpl;}
 	public void setCodefpl(String aCodefpl) {theCodefpl = aCodefpl;}
 
-	/** Код фед. ск.помощи */
 	@Comment("Код фед. ск.помощи")
 	public String getCodefamb() {return theCodefamb;}
 	public void setCodefamb(String aCodefamb) {theCodefamb = aCodefamb;}
-
-	/** Код фед. ск.помощи */
-	private String theCodefamb;
-	/** Код федеральный по поликлинике */
-	private String theCodefpl;
-
-	/**Код в промеде**/
-	private String promedCode1;
-	private String promedCode2;
 
 	@Comment("Код в промеде1")
 	public String getPromedCode1() {
@@ -38,11 +41,4 @@ public class VocVisitResult extends VocIdNameOmcCode {
 		this.promedCode1 = promedCode1;
 	}
 
-	@Comment("Код в промеде2")
-	public String getPromedCode2() {
-		return promedCode2;
-	}
-	public void setPromedCode2(String promedCode2) {
-		this.promedCode2 = promedCode2;
-	}
 }
