@@ -280,7 +280,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				dcase.setDeathDate(new java.sql.Date(currentDate.getTime()));
                 dcase.setDeathTime(new java.sql.Time (currentDate.getTime()));
                 dcase.setAccidentDate(new java.sql.Date(currentDate.getTime()));
-                dcase.setAccidentCircumstance("Неонатологический случай смерти");
+                dcase.setAccidentCircumstance("Мертворождение");
                 dcase.setIsNeonatologic(true);
                 dcase.setMedCase(aEntity.getMedCase().getParent());
                 dcase.setReasonMainMkb(aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,java.lang.Long.valueOf(child[16])));

@@ -422,11 +422,11 @@ public class DeathCase extends BaseEntity {
 	/** Присутствие врача на вскрытие */
 	private Boolean theIsPresenceDoctorAutopsy;
 
-	/** Неонатологический ли случай смерти */
-	@Comment("Неонатологический ли случай смерти")
+	/** Мертворождение */
+	@Comment("Мертворождение")
 	public Boolean getIsNeonatologic() {return theIsNeonatologic;}
 	public void setIsNeonatologic(Boolean aIsNeonatologic) {theIsNeonatologic = aIsNeonatologic;}
 
-	/** Неонатологический ли случай смерти */
+	/** Мертворождение */
 	private Boolean theIsNeonatologic;
 }
