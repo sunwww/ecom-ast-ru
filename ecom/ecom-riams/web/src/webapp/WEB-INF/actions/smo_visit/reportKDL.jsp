@@ -164,7 +164,9 @@
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
                 left join medcase mc on mc.id=pr.medcase_id
                 left join medcase dmc on dmc.id=pl.medcase_id
-                left join MisLpu dep on dep.id=dmc.department_id
+                left join workfunction wf on wf.id=pr.prescriptspecial_id
+                left join worker w on w.id=wf.worker_id
+                left join MisLpu dep on dep.id=pr.department_id or dep.id=w.lpu_id
                 left join vocprescripttype pt on pt.id=pr.prescripttype_id
                 left join vocservicetype vst on vst.id=ms.servicetype_id
                 left join MedService msPr on msPr.id=ms.parent_id
@@ -217,7 +219,9 @@
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
                 left join medcase mc on mc.id=pr.medcase_id
                 left join medcase dmc on dmc.id=pl.medcase_id
-                left join MisLpu dep on dep.id=dmc.department_id
+                left join workfunction wf on wf.id=pr.prescriptspecial_id
+                left join worker w on w.id=wf.worker_id
+                left join MisLpu dep on dep.id=pr.department_id or dep.id=w.lpu_id
                 left join vocprescripttype pt on pt.id=pr.prescripttype_id
                 left join vocservicetype vst on vst.id=ms.servicetype_id
                 left join MedService msPr on msPr.id=ms.parent_id
@@ -258,7 +262,7 @@
         <msh:sectionTitle>
         <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
         select name,
-        totalHosp as cnt1,sum(emergCnt) as cnt2,sum(totalLabCnt) as labCnt,sum(noPlanCnt) as cnt3,sum(urgentCnt) as cnt4,sum(emCnt) as cnt5,sum(planCnt) as cnt6
+        totalHosp as cnt1,emergCnt as cnt2,sum(totalLabCnt) as labCnt,sum(noPlanCnt) as cnt3,sum(urgentCnt) as cnt4,sum(emCnt) as cnt5,sum(planCnt) as cnt6
          ,depId from
         (select dep.name
         ,(
@@ -295,7 +299,9 @@
         left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
         left join medcase mc on mc.id=pr.medcase_id
         left join medcase dmc on dmc.id=pl.medcase_id
-        left join MisLpu dep on dep.id=dmc.department_id
+        left join workfunction wf on wf.id=pr.prescriptspecial_id
+        left join worker w on w.id=wf.worker_id
+        left join MisLpu dep on dep.id=pr.department_id or dep.id=w.lpu_id
         left join vocprescripttype pt on pt.id=pr.prescripttype_id
         left join vocservicetype vst on vst.id=ms.servicetype_id
         left join MedService msPr on msPr.id=ms.parent_id
@@ -305,7 +311,7 @@
         group by dep.id, mc.emergency,pt.code,vst.code ${typeVMPOrNotValueGroup}
         order by dep.name
         ) as t
-        group by name,depId,totalHosp
+        group by name,depId,totalHosp,emergCnt
 "/>
             <form action="javascript:void(0)" method="post" target="_blank"></form>
         </msh:sectionTitle>
@@ -343,11 +349,13 @@
                 ,case when msPr.code='Q06' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt6
                 ,case when vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt7
                 from MedService ms
-		         left join prescription pr on pr.medservice_id=ms.id
+		        left join prescription pr on pr.medservice_id=ms.id
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
                 left join medcase mc on mc.id=pr.medcase_id
                 left join medcase dmc on dmc.id=pl.medcase_id
-                left join MisLpu dep on dep.id=dmc.department_id
+                left join workfunction wf on wf.id=pr.prescriptspecial_id
+                left join worker w on w.id=wf.worker_id
+                left join MisLpu dep on dep.id=pr.department_id or dep.id=w.lpu_id
                 left join vocprescripttype pt on pt.id=pr.prescripttype_id
                 left join vocservicetype vst on vst.id=ms.servicetype_id
                 left join MedService msPr on msPr.id=ms.parent_id
