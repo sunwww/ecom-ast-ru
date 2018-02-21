@@ -153,12 +153,15 @@
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
-                select ms.code,msPr.name as msname,ms.additionCode,ms.name,ms.shortname
-                ,${typeVMPOrNotValueTotalCnt}
-                ,case when pt.code='NOPLAN' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as noPlanCnt
-                ,case when pt.code='URGENT' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as urgentCnt
-                ,case when pt.code='EMERGENCY' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as emCnt
-                ,case when pt.code='PLAN' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as planCnt
+                select  name1 as name1,name2 as name2, adCode as adCode,name3 as name3, shname as shname,sum(totalCnt),sum(noPlanCnt) as noPlanCnt,sum(urgentCnt) as urgentCnt,sum(emCnt) as emCnt,sum(planCnt) as planCnt
+                 from
+                (
+                 select ms.code as name1,msPr.name as name2,ms.additionCode as adCode,ms.name as name3,ms.shortname as shname
+                ,count(mc.id) as totalCnt
+                ,case when pt.code='NOPLAN'  then count(distinct mc.id) else '0' end as noPlanCnt
+                ,case when pt.code='URGENT'  then count(distinct mc.id) else '0' end as urgentCnt
+                ,case when pt.code='EMERGENCY'  then count(distinct mc.id) else '0' end as emCnt
+                ,case when pt.code='PLAN'  then count(distinct mc.id) else '0' end as planCnt
                 from MedService ms
                 left join prescription pr on pr.medservice_id=ms.id
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
@@ -175,13 +178,16 @@
                 and vst.code='LABSURVEY' ${deps} ${depId}
                 group by ms.id,pt.code,msPr.id ${typeVMPOrNotValueGroup}
                 order by ms.id
+                 ) as t
+                group by name1,name2,adCode,shname,name3
+                order by name2
 "/>
                 <form action="javascript:void(0)" method="post" target="_blank">
 
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="total"
+                <msh:table printToExcelButton="Сохранить в excel" name="total"
                            viewUrl="reportKDL.do"
                            action="javascript:void(0)" idField="11" cellFunction="true" >
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
@@ -238,7 +244,7 @@
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="totalName"
+                <msh:table printToExcelButton="Сохранить в excel" name="totalName"
                            viewUrl="reportKDL.do"
                            action="javascript:void(0)" idField="11" cellFunction="true" >
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
@@ -306,7 +312,7 @@
         left join vocservicetype vst on vst.id=ms.servicetype_id
         left join MedService msPr on msPr.id=ms.parent_id
         ${typeVMPOrNotValueLeftJoin}
-        where ${dateT} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+        where ${dateT} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and dep.id<>0
         ${deps}
         group by dep.id, mc.emergency,pt.code,vst.code ${typeVMPOrNotValueGroup}
         order by dep.name
@@ -316,7 +322,7 @@
             <form action="javascript:void(0)" method="post" target="_blank"></form>
         </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="total"
+                <msh:table printToExcelButton="Сохранить в excel" name="total"
                            viewUrl="reportKDL.do"
                            action="reportKDL.do" idField="9" cellFunction="true" >
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
@@ -353,7 +359,7 @@
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
                 left join medcase mc on mc.id=pr.medcase_id
                 left join medcase dmc on dmc.id=pl.medcase_id
-                left join workfunction wf on wf.id=pr.prescriptspecial_id
+                 left join workfunction wf on wf.id=pr.prescriptspecial_id
                 left join worker w on w.id=wf.worker_id
                 left join MisLpu dep on dep.id=pr.department_id or dep.id=w.lpu_id
                 left join vocprescripttype pt on pt.id=pr.prescripttype_id
@@ -370,7 +376,7 @@
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="total"
+                <msh:table printToExcelButton="Сохранить в excel" name="total"
                            viewUrl="reportKDL.do"
                            action="javascript:void(0)" idField="11" cellFunction="true" >
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
