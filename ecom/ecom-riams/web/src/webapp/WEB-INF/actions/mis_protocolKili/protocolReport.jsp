@@ -65,7 +65,7 @@
 	  if (startDate!=null && !startDate.equals("")) {
 	      String profSql="";
 	      if (profile != null && !profile.equals("")) {
-			  if (profile!=null && !profile.equals("") && !profile.equals("0")) profSql=" and vkp.id = "+profile ;
+			  if (profile!=null && !profile.equals("") && !profile.equals("0") && !profile.equals("10") && !profile.equals("16")) profSql=" and vkp.id = "+profile ;
 		  String sql = "";
 		  String tableName = "";
 		  if (typeSearch != null && (shor==null|| shor.equals(""))) {
@@ -114,14 +114,27 @@
 
 				  }
 			  } else if (typeSearch.equals("3")) {
-				  sql = "select\n" +
-						  "pk.protocolnumber\n" +
+				  if (profile.equals("16")) profSql+=" and dc.isneonatologic = true ";
+				  if (profile.equals("10")) profSql+=" and cast(to_char(sls.dateFinish,'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) < 1 ";
+				 /* String strProfSelect="",strProf="";
+				  if (!profile.equals("10") && !profile.equals("16")) strProfSelect="vkp.name";
+				  else {
+					  strProf = profile.equals("10") ? "Неонатологический" : "Акушерский";
+					  strProfSelect = "CAST('" + strProf + "' AS varchar(50))";
+				  }*/
+				  sql = "select \n" +
+						  "f1 as f1,f2 as f2, f3 as f3, sum(cntPat) as cntPat, '&protocolNumber='||f4||'&protocolDate='||f5||'&profile='||'&profileName='||profileName as f5,profileName as justProfName from (\n" +
+						  "select\n" +
+						  "pk.protocolnumber as f1\n" +
 						  ",'№'||pk.protocolnumber|| ' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as f2\n" +
-						  ",pk.protocolDate\n" +
+						  ",pk.protocolDate as f3\n" +
 						  ",count(pat.id) as cntPat\n" +
-						  ",coalesce(vkp.name,'Не определен профиль') as profileName\n" +
-						  ",'&protocolNumber='||pk.protocolnumber||'&protocolDate='||to_char(pk.protocoldate,'dd.MM.yyyy')||'&profile='||'' as fldId\n" +
-						  ",'&profileName='||vkp.name as profileName\n" +
+						  ",pk.protocolnumber as f4\n" +
+						  ",to_char(pk.protocoldate,'dd.MM.yyyy') as f5\n" +
+						  ",case when dc.isneonatologic=true then cast('Акушерский' as varchar(20)) else case when \n" +
+						  "cast(to_char(sls.dateFinish,'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) < 1 \n" +
+						  "then cast('Неонатологический' as varchar(20)) else coalesce(vkp.name,'Не определен профиль') end end\n" +
+						  " as profileName\n" +
 						  "from protocolKili pk \n" +
 						  "left join deathcase dc on dc.id = pk.deathcase_id\n" +
 						  "left join medcase sls on sls.id = dc.medcase_id\n" +
@@ -131,9 +144,12 @@
 						  "left join mislpu dep on dep.id=slo.department_id\n" +
 						  "left join mislpu depPrev on depPrev.id=sloPrev.department_id\n" +
 						  "left join vockiliprofile vkp on vkp.id= case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end\n" +
-						  "where pk.id is not null and sls.dateFinish between to_date('{dateBegin}','dd.MM.yyyy') and to_date('{dateEnd}','dd.MM.yyyy')" + profSql + "\n" +
-						  "group by pk.protocolNumber, pk.protocolDate, vkp.id\n" +
-						  "ORDER BY cast(pk.protocolNumber as int)";
+						  "left join Patient p on p.id=sls.patient_id\n" +
+						  "where pk.id is not null and sls.dateFinish between to_date('{dateBegin}','dd.MM.yyyy') and to_date('{dateEnd}','dd.MM.yyyy') " + profSql + "\n" +
+						  "group by pk.protocolNumber, pk.protocolDate, dc.isneonatologic,sls.dateFinish,p.birthday,vkp.name\n" +
+						  "ORDER BY cast(pk.protocolNumber as int)\n" +
+						  ") as t\n" +
+						  "group by f1,f2,f3,f4,f5,profileName";
 			  }
 			  sql = sql.replace("{dateBegin}", startDate);
 			  sql = sql.replace("{dateEnd}", finishDate);
@@ -158,18 +174,56 @@
 			  </msh:table>
 		  </msh:sectionContent>
 	  </msh:section>
-	  <%}
+	  <%
+				  //для вывода акушерских случаев
+			  if ((String)request.getParameter("department")==null || (String)request.getParameter("department")=="" || (String)request.getParameter("department")=="0") {
+				  String tableName = (typeSearch.equals("1")) ? "Наименование отделения" : "Наименование профиля";
+				  String depProf = typeSearch.equals("1") ? "АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ" : "Акушерский";
+				  request.setAttribute("tableName", tableName);
+				  request.setAttribute("depProf", depProf);
+%>
+	  <ecom:webQuery name="datelist1" nameFldSql="datelist1_sql" nativeSql="SELECT CAST('' AS varchar(1)) as useless,CAST('${depProf}' AS varchar(50)) as depName, COUNT(sls.id) as cnt_sls, COUNT(dc.id) as cnt_dc, count(pk.id) as cnt_pk
+		,case when count(sls.id)>0 then count(pk.id)*100/ count(sls.id) else 0 end  as persDead
+		,case when count(dc.id)>0 then count(pk.id)*100/ count(dc.id) else 0 end  as persCase
+		from medcase sls
+		left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null
+		left join mislpu dep on dep.id=slo.department_id
+		left join medcase sloPrev on sloPrev.id=slo.prevmedcase_id
+		left join mislpu depPrev on depPrev.id=sloPrev.department_id
+		left join deathcase dc on dc.medcase_id=sls.id
+		left join protocolkili pk on pk.deathcase_id=dc.id
+		left join vockiliprofile vkp on vkp.id=case when dep.isnoomc='1' then depPrev.kiliprofile_id else dep.kiliprofile_id end
+		left join vochospitalizationresult vhr on vhr.id=sls.result_id
+		left join Patient p on p.id=sls.patient_id
+		where sls.deniedhospitalizating_id is null
+		and sls.dateFinish between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+		 and dc.isneonatologic = true " guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
+	  <msh:section>
+		  <msh:sectionContent>
+			  <msh:table name="datelist1" idField="1" cellFunction="true" action="protocolReport.do?short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=16" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+				  <msh:tableColumn columnName="${tableName}" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
+				  <msh:tableColumn columnName="Умерших всего" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+				  <msh:tableColumn columnName="Случаев смерти" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=1" />
+				  <msh:tableColumn columnName="Протоколов КИЛИ" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" addParam="&addParam=2"/>
+				  <msh:tableColumn columnName="% от умерших" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+				  <msh:tableColumn columnName="% от оформленных" property="7" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+			  </msh:table>
+		  </msh:sectionContent>
+	  </msh:section>
+	  <%
+			  }
+	      }
 	  else if ((shor==null|| shor.equals("")) && typeSearch!=null && typeSearch.equals("3")) {
 	  %>
 	  <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="${sql}" guid="ac83420f-43a0-4ede-b576-394b4395a23a" />
 	  <msh:section>
 		  <msh:sectionContent>
-			  <msh:table cellFunction="true" name="datelist" idField="6" noDataMessage="Не найдено"
-						 action="protocolReport.do?typeSearch=3&short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
+			  <msh:table cellFunction="true" name="datelist" idField="5" noDataMessage="Не найдено"
+						 action="protocolReport.do?typeSearch=3&short=Short&dateBegin=${dateBegin}&dateEnd=${dateEnd}&depprofile=${param.department}" guid="d579127c-69a0-4eca-b3e3-950381d1585c">
 				  <msh:tableColumn columnName="Протокол КИЛИ" property="2" guid="fc26523a-eb9c-44bc-b12e-42cb7ca9ac5b" />
 				  <msh:tableColumn columnName="Дата протокола" property="3" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 				  <msh:tableColumn columnName="Пациентов" property="4" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
-				  <msh:tableColumn columnName="Профиль" property="5" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
+				  <msh:tableColumn columnName="Профиль" property="6" guid="e98f73b5-8b9e-4a3e-966f-4d43576bbc96" />
 			  </msh:table>
 		  </msh:sectionContent>
 	  </msh:section>
@@ -189,6 +243,9 @@
 		  if ()*/
 		  profile=request.getParameter("depprofile");
 		  if (profile==null || profile.equals("") || profile.equals("0")) profile = request.getParameter("profile");
+		  String profileName = request.getParameter("profileName");
+		  if (profileName!=null && profileName.equals("Акушерский")) profile="16";
+		  if (profileName!=null && profileName.equals("Неонатологический")) profile="10";
 		  String addParam = request.getParameter("addParam");
 		  if (addParam != null && addParam.equals("1")) sqlAdd += " and dc.id is not null";
 		  else if (addParam != null && addParam.equals("2")) sqlAdd += " and pk.id is not null";
