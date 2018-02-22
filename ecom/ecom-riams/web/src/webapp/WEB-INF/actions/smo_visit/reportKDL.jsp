@@ -31,13 +31,13 @@
                     cnt++;
                 }
                 if (cnt==0) {
-                    m = Pattern.compile("\"value\":\"[0-9]*\",").matcher(deps);
+                    m = Pattern.compile("\"value\":\"[0-9]*\"").matcher(deps);
                     depRqst=new StringBuilder();
                     depRqst.append(" and (dep.id= ");
                     cnt=0;
                     while (m.find()) {
                         if (cnt!=0) depRqst.append(" or dep.id= ");
-                        depRqst.append(m.group().replace("\"value\":","").replace(",","").replace("\"",""));
+                        depRqst.append(m.group().replace("\"value\":","").replace("\"",""));
                         cnt++;
                     }
                 }
@@ -76,17 +76,6 @@
 
             String typeStacOrNot = ActionUtil.updateParameter("reportKDL","typeStacOrNot","1",request);
             if (typeStacOrNot==null) request.setAttribute("typeStacOrNotValue","");
-            /*String dateT = ActionUtil.updateParameter("reportKDL","typeDate","1",request);
-            if (dateT!=null) {
-                if (dateT.equals("1")) request.setAttribute("dateT"," mc.datestart ");
-                else if (dateT.equals("2") && !typeStacOrNot.equals("3"))  request.setAttribute("dateT"," dmc.datefinish ");
-                    //по госпитализированным в стационаре - только по дате госпитализации, т.е. datestart
-                if (dateT.equals("2") && typeStacOrNot.equals("2")) {
-                    request.setAttribute("dateT"," mc.datestart ");
-                    ActionUtil.setParameter("reportKDL","typeDate","1",request);
-                }
-            }
-            else request.setAttribute("dateT"," mc.datestart ");*/
             request.setAttribute("dateT"," mc.dateStart ");
             if (request.getParameter("short")!=null) {
                 request.setAttribute("typeStacOrNot","1");
@@ -388,15 +377,11 @@
         <%
             }
             }
-            /*} else {
-
-            }*/
         %>
 <script type="text/javascript">
     function find() {
         var frm = document.forms[0];
         frm.submit();
-        //alert(${'departments'}.value)
     }
     checkFieldUpdate('typeVMPOrNot','${typeVMPOrNot}',1) ;
     checkFieldUpdate('typeStacOrNot','${typeStacOrNot}',1) ;
