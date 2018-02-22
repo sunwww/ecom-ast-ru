@@ -852,7 +852,7 @@ where wf.dtype='PersonalWorkFunction' -->
 			from="PriceMedService PMS"
                 parent='PP.priceList_id = :parent'
                 nameId="PMS.id"
-                queryAppend="ms.finishDate is null and pms.dateTo is null"
+                queryAppend="ms.finishDate is null and pms.dateTo is null and pp.dateTo is null"
                 join="
                 	left join PricePosition PP ON PP.id = PMS.pricePosition_id
                 	left join MedService ms on ms.id=pms.medservice_id
