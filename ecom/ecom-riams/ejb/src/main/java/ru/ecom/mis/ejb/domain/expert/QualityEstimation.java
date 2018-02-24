@@ -103,4 +103,16 @@ public class QualityEstimation extends BaseEntity{
 	  * Эсперт
 	  */
 	 private WorkFunction theExpert;
+
+	 /** Является ли черновиком */
+	 @Comment("Является ли черновиком")
+	 public void setIsDraft(Boolean aIsDraft) {
+		 theIsDraft = aIsDraft;
+	 }
+	 public Boolean getIsDraft() {
+		 return theIsDraft;
+	 }
+
+	 /** Является ли черновиком */
+	 private Boolean theIsDraft;
 }

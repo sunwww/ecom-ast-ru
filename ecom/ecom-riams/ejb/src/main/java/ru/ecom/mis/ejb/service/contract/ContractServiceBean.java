@@ -93,12 +93,12 @@ public class ContractServiceBean implements IContractService {
 					root.put("pos", arr) ;
 					root.put("totalPaymentSum", ""+totalSum+"") ;
 					if (taxSum>0) {
-						root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()+"") ;
+						root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_UP).toString()+"") ;
 					}
 				}
 				//root.put("isTerminalPayment", isTerminalPayment);
 				root.put("FIO", aKassir);
-				log.warn("isTermPayment = "+isTerminalPayment);
+			//	log.warn("isTermPayment = "+isTerminalPayment);
 				makeHttpPostRequest(root.toString(), aManager);
 				return "Чек отправлен на печать";
 			} else {
@@ -112,7 +112,7 @@ public class ContractServiceBean implements IContractService {
 
 	private void makeHttpPostRequest(String data, EntityManager aManager) throws IOException, NamingException {
 		if (aManager==null) {aManager=theManager;}
-		log.warn("===Send to KKM_BEAN. Data = "+data);
+		log.debug("===Send to KKM_BEAN. Data = "+data);
 		List<Object> list = aManager.createNativeQuery("select keyvalue from  softconfig where key='KKM_WEB_SERVER'").getResultList();
 		if (!list.isEmpty()) {
 			String address = list.iterator().next().toString();

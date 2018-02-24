@@ -14,6 +14,8 @@ function onPreSave(aForm,aEntity, aContext) {
 
 function onView(aForm, aEntity, aContext) {
 	aForm.setFinanceSource(aEntity.medCase.serviceStream.id);
+	aForm.setDiagnosis(aEntity.method!=null?(aEntity.method.diagnosis!=null?aEntity.method.diagnosis:""):"");
+	aForm.setPatientModel(aEntity.method!=null?(aEntity.method.patientModel!=null?aEntity.method.patientModel:""):"");
 }
 
 function checkStantAmount(aForm, aCtx) {

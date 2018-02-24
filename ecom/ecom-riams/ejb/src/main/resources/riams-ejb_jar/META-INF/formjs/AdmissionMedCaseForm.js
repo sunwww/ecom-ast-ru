@@ -28,9 +28,9 @@ function onPreCreate(aForm, aCtx) {
 	if (ret==true) {
 		throw "Номер стат.карты "+aStatCardNumber + " уже существует в "+year+" году!!!";
 	}
-	
-	
-	
+
+
+
 	
 }
 function onCreate(aForm, aEntity, aCtx) { 
@@ -92,7 +92,6 @@ function onSave(aForm,aEntity,aCtx) {
 		.setParameter("idSLS",aForm.id)
 		.executeUpdate() ;
 	var aStatCardNumber = aForm.statCardNumber ;
-	
 }
 
 function onPreSave(aForm,aEntity, aCtx) { 

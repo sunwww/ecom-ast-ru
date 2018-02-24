@@ -10,6 +10,40 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
 public class AttachmentByLpuForm extends BaseValidatorForm {
+
+	/** Количество записей */
+	@Comment("Количество записей")
+	public String getCount() {return theCount;}
+	public void setCount(String aCount) {theCount = aCount;}
+	/** Количество записей */
+	private String theCount ;
+	/** Фамилия */
+	@Comment("Фамилия")
+	public String getLastname() {return theLastname;}
+	public void setLastname(String aLastname) {theLastname = aLastname;}
+	/** Фамилия */
+	private String theLastname ;
+
+	/** Идентификатор */
+	@Comment("Идентификатор")
+	public Long getId() {return theId;}
+	public void setId(Long aId) {theId = aId;}
+	/** Идентификатор */
+	private Long theId ;
+	/** Пол */
+	@Comment("Пол")
+	public Long getSex() {return theSex;}
+	public void setSex(Long aSex) {theSex = aSex;}
+	/** Пол */
+	private Long theSex ;
+	
+	/** Год */
+	@Comment("Год")
+	public Long getYear() {return theYear;}
+	public void setYear(Long aYear) {theYear = aYear;}
+	/** Год */
+	private Long theYear ;
+	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	public Long getLpu() {return theLpu;}
@@ -142,4 +176,11 @@ public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** Информация о пациенте */
 	private String thePatientInfo;
+
+	/** Года рождения */
+	@Comment("Года рождения")
+	public String getYears() {return theYears;}
+	public void setYears(String aYears) {theYears = aYears;}
+	/** Года рождения */
+	private String theYears ;
 }

@@ -7,9 +7,12 @@ function onCreate(aForm, aEntity, aCtx) {
 	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
 	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
 	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	var patient = aEntity.getPatient();
-	patient.setDeathDate(aEntity.getDeathDate());
-	aCtx.manager.persist(patient) ;
+	//если не неонатологический случай смерти
+	if (!aEntity.getIsNeonatologic()) {
+        var patient = aEntity.getPatient();
+        patient.setDeathDate(aEntity.getDeathDate());
+        aCtx.manager.persist(patient);
+    }
 }
 /**
  * Перед сохранением

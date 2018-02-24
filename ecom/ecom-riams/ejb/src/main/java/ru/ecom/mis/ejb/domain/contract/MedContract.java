@@ -16,20 +16,16 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
-import ru.ecom.mis.ejb.domain.contract.ContractPerson;
-import ru.ecom.mis.ejb.domain.contract.ContractRule;
-import ru.ecom.mis.ejb.domain.contract.MedContract;
-import ru.ecom.mis.ejb.domain.contract.PriceList;
-import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.ecom.mis.ejb.domain.contract.voc.VocContractLabel;
 import ru.ecom.mis.ejb.domain.contract.voc.VocContractRulesProcessing;
 import ru.ecom.mis.ejb.domain.contract.voc.VocContractTerm;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.uc.privilege.domain.Privilege;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-	/**
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
+
+/**
 	 * Медицинский договор
 	 */
 	@Comment("Медицинский договор")
@@ -44,7 +40,27 @@ import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 		}
 )
 @EntityListeners(DeleteListener.class)
+@UnDeletable
 public class MedContract extends BaseEntity{
+
+
+	private Privilege privilege;
+
+	@Comment("Льгота")
+	@OneToOne
+	public Privilege getPrivilege() {
+		return privilege;
+	}
+	public void setPrivilege(Privilege privilege) {
+		this.privilege = privilege;
+	}
+
+	/** Признак удаленной записи */
+	@Comment("Признак удаленной записи")
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Признак удаленной записи */
+	private Boolean theIsDeleted ;
 	/**
 	 * ЛПУ
 	 */

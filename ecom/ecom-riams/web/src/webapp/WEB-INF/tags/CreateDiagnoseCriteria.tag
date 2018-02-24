@@ -36,15 +36,17 @@
     var REG;
     var PRIOR;
     var FORM;
+    var MC;
     var theIs${name}CloseDisDocumentDialogInitialized = false ;
     var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog')) ;
     // Показать
 
-    function show${name}CloseDocument(id,reg,prior,form) {
+    function show${name}CloseDocument(id,reg,prior,form,mc) {
         ID=id;
         REG=reg;
         PRIOR=prior;
         FORM=form;
+        MC=mc;
         showCriteriasWhenDiagnoseCreating();
         theTableArrow = null ;
     }
@@ -52,7 +54,7 @@
         var table2 = document.getElementById('table2');
         table2.innerHTML="<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Принято к сведению.\' id=\"${name}Cancel\" onclick=\'javascript:cancel${name}CloseDocument()\'/></td></tr><tr><td></td></tr>";
         QualityEstimationService.showJustCriterias(
-            ID,REG,PRIOR, {
+            ID,REG,PRIOR,MC, {
                 callback: function(res) {
                     if (res!="##") {
                         the${name}CloseDisDocumentDialog.show() ;

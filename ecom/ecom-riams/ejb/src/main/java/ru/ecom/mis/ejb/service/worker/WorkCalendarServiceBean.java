@@ -122,7 +122,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					
 					) ; 
 		} else {
-			theManager.remove(wct) ;
+			wct.setIsDeleted(true);
+			theManager.persist(wct);
 		}
 	}
 	public String deletePreRecord(String aUsername, Long aTime) {
@@ -787,7 +788,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 					.setParameter("dateCal",new Date(cal1.getTime().getTime()))
 					.getResultList() ;
 			
-			System.out.println("------------<>----выходной день cnt="+cnt) ;
+			//System.out.println("------------<>----выходной день cnt="+cnt) ;
 			Long cntNotBusy = cnt.size()>0?ConvertSql.parseLong(cnt.get(0)):null ;
 			
 			if (cntNotBusy!=null&&cntNotBusy>Long.valueOf(0) || jpc==null) {
@@ -824,7 +825,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 										.setParameter("monthParity",parityMonth?"YES":"NO")
 										.setParameter("weekParity", parityWeek?"YES":"NO")
 										.setParameter("dayParity", parityDay?"YES":"NO");
-								;
+
 						if (query.getResultList().isEmpty()) {
 							// Поиск алгоритма по датам WorkCalendarDatesAlgorithm
 							sql = new StringBuilder() ;
@@ -866,8 +867,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 										.setParameter("monthParity",parityMonth?"YES":"NO")
 										.setParameter("weekParity", parityWeek?"YES":"NO")
 										.setParameter("dayParity", parityDay?"YES":"NO");
-								System.out.println("----------------WorkCalendarWeekAlgorithm=");
-								System.out.println("----------------dayBy="+weekDay);
+							//	System.out.println("----------------WorkCalendarWeekAlgorithm=");
+							//	System.out.println("----------------dayBy="+weekDay);
 								nextSearch = !getParrentDay(aWorkCalendar, dateCur, query) ;
 								//System.out.println("----------------WorkCalendarWeekAlgorithm="+listA.size());
 							}
@@ -892,7 +893,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 											.setParameter("monthParity",parityMonth?"YES":"NO")
 											.setParameter("weekParity", parityWeek?"YES":"NO")
 											.setParameter("dayParity", parityDay?"YES":"NO");
-									System.out.println("----------------WorkCalendarWeekDaysAlgorithm=");
+								//	System.out.println("----------------WorkCalendarWeekDaysAlgorithm=");
 									getParrentDay(aWorkCalendar, dateCur, query) ;
 									//System.out.println("----------------WorkCalendarWeekDaysAlgorithm="+listA.size());
 								}
@@ -939,10 +940,10 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			Long dayPattern = ConvertSql.parseLong(objs[1]) ;
 			WorkCalendarDayPattern pattern =theManager.find(WorkCalendarDayPattern.class, dayPattern) ;
 			WorkCalendarDay day = createCalendarDay(aWorkCalendar, aDate) ;
-			LOG.info(new StringBuilder().append("day=").append(day).toString()) ;
+			//LOG.info(new StringBuilder().append("day=").append(day).toString()) ;
 			//List<WorkCalendarTime> times = day.getWorkCalendarTimes();
 			for (WorkCalendarTimePattern timePattern :pattern.getTimePatterns() ) {
-				LOG.info(new StringBuilder().append("timeParrent=").append(timePattern).toString()) ;
+			//	LOG.info(new StringBuilder().append("timeParrent=").append(timePattern).toString()) ;
 				if (timePattern instanceof WorkCalendarTimeExample) {
 					
 					//WorkCalendarTime time = new WorkCalendarTime() ;
@@ -960,7 +961,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	}
 	/**Создаем календарный день, если он уже есть - возвращаем первый существующий*/
 	private WorkCalendarDay createCalendarDay(WorkCalendar aWorkCalendar, Date aDate) {
-		LOG.info(new StringBuilder().append("----------++createCalendarDay").toString()) ;
+	//	LOG.info(new StringBuilder().append("----------++createCalendarDay").toString()) ;
 		List<WorkCalendarDay> list = theManager.createQuery("from WorkCalendarDay where workCalendar = :workCalendar and calendarDate = :calendarDate")
 			.setParameter("calendarDate", aDate)
 			.setParameter("workCalendar", aWorkCalendar)
@@ -973,10 +974,12 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			theManager.persist(day) ;
 		} else {
 			day = list.get(0) ;
+			day.setIsDeleted(false);
+			theManager.persist(day);
 		}
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
-		LOG.info(new StringBuilder().append("----------+++day=").append(day).append("  ")
-				.append(format.format(day.getCalendarDate())).toString()) ;
+		//SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
+		/*LOG.info(new StringBuilder().append("----------+++day=").append(day).append("  ")
+				.append(format.format(day.getCalendarDate())).toString()) ;*/
 		return day ;
 	}
 	
@@ -1030,14 +1033,14 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	private Long createCalendarTime(java.sql.Time aTime
 			, VocServiceReserveType aReserveType
 			, WorkCalendarDay aWorkCalendarDay, boolean aAddData) {
-		LOG.info(new StringBuilder().append("----------++createCalendarTime").toString()) ;
+		//LOG.info(new StringBuilder().append("----------++createCalendarTime").toString()) ;
 		// проверяем на занятость
 		if (aTime== null) return null ;
 		List<WorkCalendarTime> list = theManager.createQuery(
 			// "from WorkCalendarTime where medCase is null "
 			 "from WorkCalendarTime where"
 			+" workCalendarDay = :day"
-			+" and timeFrom = :timeFrom")
+			+" and timeFrom = :timeFrom and (isDeleted is null or isDeleted='0')")
 			.setParameter("timeFrom", aTime)
 			.setParameter("day", aWorkCalendarDay) 
 			.getResultList() ;
@@ -1054,17 +1057,17 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 			t.setCreateUsername(theContext.getCallerPrincipal().getName()) ;
 			theManager.persist(t) ;
 			return t.getId() ;
-		}	
+		}
 		return null ;
 	}	
 	private void  deleteUnMedCasesCalendarTimes(WorkCalendar aCalendar, Date aDateFrom, Date aDateTo) {
 		theManager.createNativeQuery(
-			    " delete from WorkCalendarTime"
+			    " update WorkCalendarTime set isDeleted='1' " //Помечаем времена как удаленные
 				+" where WorkCalendarTime.workCalendarDay_id in "
 				+"      ( select  WorkCalendarDay.id from WorkCalendarDay where  "
 		        +"          WorkCalendarDay.workCalendar_id =:cal_id and WorkCalendarDay.calendarDate between :dateFrom and :dateTo and WorkCalendarTime.workCalendarDay_id=WorkCalendarDay.id"
 		        +"      )"
-		        +"   and WorkCalendarTime.medcase_id is null and WorkCalendarTime.prePatient_id is null and WorkCalendarTime.prePatientInfo is null"
+		        +"   and WorkCalendarTime.medcase_id is null and WorkCalendarTime.prePatient_id is null and WorkCalendarTime.prePatientInfo is null and (isDeleted is null or isDeleted='0')"
 		       // +"   and WorkCalendarTime.id not in (select medcase.timePlan_id from medcase)"
 		       )
 		        .setParameter("cal_id", aCalendar.getId())
@@ -1078,7 +1081,7 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	}
 	private void deleteUnMedCasesCalendarTimesOnDay(WorkCalendar aCalendar, WorkCalendarDay aWorkCalendarDay) {
 		theManager.createNativeQuery(
-			    " delete from WorkCalendarTime"
+			    " update  WorkCalendarTime set isDeleted='1'"
 				+" where WorkCalendarTime.workCalendarDay_id =:day_id "
 				+" and WorkCalendarTime.medcase_id is null"
 				)
@@ -1089,7 +1092,8 @@ public class WorkCalendarServiceBean implements IWorkCalendarService{
 	private void deleteEmptyCalendarDays(WorkCalendar aCalendar, Date aDateFrom, Date aDateTo) {
 		LOG.info(new StringBuilder().append("---------->>deleteEmptyCalendarDays").toString()) ;
 		theManager.createNativeQuery(
-			    "delete from WorkCalendarDay wcd where wcd.workCalendar_id = :cal and wcd.calendarDate between :dateFrom and :dateTo and (select count(*) from WorkCalendarTime wct where wct.workCalendarDay_id=wcd.id)=0"
+			    "update WorkCalendarDay wcd set isDeleted='1' where wcd.workCalendar_id = :cal and wcd.calendarDate between :dateFrom and :dateTo " +
+						"and (select count(*) from WorkCalendarTime wct where wct.workCalendarDay_id=wcd.id and (wct.isDeleted is null or wct.isDeleted='0'))=0 and (isDeleted is null or isDeleted='0')"
 				)
 		        
 			.setParameter("cal", aCalendar.getId())

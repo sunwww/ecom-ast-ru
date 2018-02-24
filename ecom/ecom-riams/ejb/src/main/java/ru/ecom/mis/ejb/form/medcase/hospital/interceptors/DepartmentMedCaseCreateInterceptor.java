@@ -42,7 +42,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		if (parentSSL.getEmergency()!=null && parentSSL.getEmergency()==Boolean.TRUE) {
     			form.setEmergency(Boolean.TRUE) ;
     		}
-    		System.out.println("Check working create");
+    		//System.out.println("Check working create");
     		if (parentSSL.getDeniedHospitalizating()!=null) {
                 throw new IllegalStateException("При отказе в госпитализации нельзя заводить случай лечения в отделении") ;
                

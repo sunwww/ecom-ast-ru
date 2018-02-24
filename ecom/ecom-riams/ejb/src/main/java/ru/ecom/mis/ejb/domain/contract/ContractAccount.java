@@ -13,12 +13,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountOperation;
 import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
+import ru.ecom.mis.ejb.uc.privilege.domain.Privilege;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	/**
 	 * Договорной счет
@@ -31,8 +33,28 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	,@AIndex(unique= false, properties = {"contract"})
 })
 	@EntityListeners(DeleteListener.class)
+@UnDeletable
 public class ContractAccount extends BaseEntity{
-	
+
+	private Privilege privilege;
+
+	@Comment("Льгота")
+	@OneToOne
+	public Privilege getPrivilege() {
+		return privilege;
+	}
+	public void setPrivilege(Privilege privilege) {
+		this.privilege = privilege;
+	}
+
+
+	/** Признак удаленной записи */
+	@Comment("Признак удаленной записи")
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Признак удаленной записи */
+	private Boolean theIsDeleted ;
+
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
 	public List<ContractAccountOperation> getOperations() {return theOperations;}
 	public void setOperations(List<ContractAccountOperation> aOperations) {theOperations = aOperations;}

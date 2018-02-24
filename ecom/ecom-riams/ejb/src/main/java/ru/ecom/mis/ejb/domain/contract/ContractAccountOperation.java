@@ -3,14 +3,13 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -23,7 +22,17 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique= false, properties = {"account"})
 })
+@EntityListeners(DeleteListener.class)
+@UnDeletable
 public class ContractAccountOperation extends BaseEntity{
+
+	/** Признак удаленной записи */
+	@Comment("Признак удаленной записи")
+	public Boolean getIsDeleted() {return theIsDeleted;}
+	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	/** Признак удаленной записи */
+	private Boolean theIsDeleted ;
+
 	/** Договорной счет */
 	@Comment("Договорной счет")
 	@ManyToOne
@@ -31,17 +40,15 @@ public class ContractAccountOperation extends BaseEntity{
 	public void setAccount(ContractAccount aAccount) {theAccount = aAccount;}
 	/** Договорной счет */
 	private ContractAccount theAccount;
-	/**
-	 * Тип операции
-	 */
-	@Comment("Тип операции")
+
+	/** Тип операции (не используется) */
+	@Comment("Тип операции (не используется)")
 	@OneToOne
 	public VocAccountOperation getType() {return theType;}
 	public void setType(VocAccountOperation aType) {theType = aType;}
-	/**
-	 * Тип операции
-	 */
+	/** Тип операции */
 	private VocAccountOperation theType;
+
 	/**
 	 * Дата
 	 */

@@ -11,7 +11,6 @@
 		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
 		<script>
 			var d = document;
-			
 			var name;
 			var nameId;
 			var cnt ;
@@ -169,7 +168,7 @@
 		
 	}
 	$('autoAccount')
-	</script>
+</script>
 	</tiles:put>
 	
 	<tiles:put name="body" type="string">
@@ -204,12 +203,22 @@
 				<msh:row>
 					<msh:autoComplete property="servedPerson" label="Обс.персона" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
+				<msh:ifInRole roles="/Policy/Mis/Person/Privilege">
+				<msh:row>
+					<msh:autoComplete property="privilege" label="Льгота" fieldColSpan="3" parentAutocomplete="servedPerson" vocName="actualPrivilege" horizontalFill="true" />
+					<td colspan="9" title="добавить льготу" class="label">
+						<a href=" javascript:showPrivilPrivilege('.do') ">Добавить льготу</a>
+					</td>
+					<tags:mis_privilegeTag name="Privil"/>
+				</msh:row>
+				</msh:ifInRole>
 				<msh:row>
 					<msh:autoComplete property="rulesProcessing" label="Обработка правил" fieldColSpan="3" vocName="vocContractRulesProcessing" horizontalFill="true" />
 				</msh:row>
 				<msh:row>
 					<msh:textField property="discountDefault" label="Скидка"/>
 					<msh:autoComplete property="priceList" label="Прейскурант" fieldColSpan="1"  vocName="actualPriceList" horizontalFill="true" />
+
 				</msh:row>
 				<msh:row>
 					<msh:textField property="dateFrom" label="Дата начала "/>

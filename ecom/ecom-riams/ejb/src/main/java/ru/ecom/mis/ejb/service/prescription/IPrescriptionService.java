@@ -18,9 +18,6 @@ import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
  */
 public interface IPrescriptionService {
 	
-	public ParsedPdfInfo getPdfInfoByBarcode(List<ParsedPdfInfo> list,String aBarcode);
-	
-	//public void checkPdf() throws IOException, NoSuchFieldException, IllegalAccessException, JSONException;
 	public void checkXmlFiles() throws JSONException, ParserConfigurationException, SAXException, IOException;
 	
 	public void setPatientDateNumber(String aPrescriptions, String aDate, String aTime, String aUsername, Long aSpec ) throws ParseException ;

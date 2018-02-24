@@ -16,6 +16,12 @@ function onCreate(aForm, aEntity, aCtx) {
 	if (aForm.discountDefault!=null && aForm.discountDefault!="") {
 		account.setDiscountDefault(new java.math.BigDecimal(aForm.discountDefault)) ;
 	}
+
+	if(aForm.privilege!=null && aForm.privilege!="" && aForm.privilege>0) {
+        var privilege = aCtx.manager.find(Packages.ru.ecom.mis.ejb.uc.privilege.domain.Privilege, aForm.privilege);
+        account.setPrivilege(privilege);
+    }
+
 	aCtx.manager.persist(account) ;
 	var servedPerson = new Packages.ru.ecom.mis.ejb.domain.contract.ServedPerson() ;
 	var person = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.contract.ContractPerson,aForm.servedPerson) ;
@@ -52,6 +58,6 @@ function onCreate(aForm, aEntity, aCtx) {
 	}
 }
 function onPreDelete(aId, aCtx) {
-	var obj=aCtx.manager.createNativeQuery("select count(*) from contractaccount where contract_id='"+aId+"'").getSingleResult() ;
+	var obj=aCtx.manager.createNativeQuery("select count(*) from contractaccount where contract_id='"+aId+"' and (isDeleted is null or isDeleted='0')").getSingleResult() ;
 	if (+obj>0) throw "Сначала нужно аннулировать счета!!!" ;
 }

@@ -19,10 +19,15 @@ public interface IAddressPointService {
     void checkExists(long aLpuAreaId, Long aLpuAddressTextId, long aAddress, String aNumber, String aBuilding, String aFlat) ;
 
     void refresh() ;
-    public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
-    		, String aAddSql, boolean aLpuCheck, Long aLpu, Long aArea
+/*    public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
+    		, String aAddSql, Long aLpu, Long aArea
     		, String aDateFrom, String aDateTo, String aPeriodByReestr
-    		, String aNReestr, String aNPackage, Long aCompany, boolean needDivide, String xmlFormat) throws ParserConfigurationException, TransformerException ;
+    		, String aNReestr, String aNPackage, Long aCompany,  String xmlFormat) throws ParserConfigurationException, TransformerException ; */
+
+    WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
+            , String aAddSql, Long aLpu, Long aArea
+            , String aDateFrom, String aDateTo, String aPeriodByReestr
+            , String aNReestr, String aNPackage, Long aCompany, String aDispPlanType) throws ParserConfigurationException, TransformerException ;
     
     public WebQueryResult export(String aAge, boolean aLpuCheck, Long aLpu, Long aArea, String aDateFrom, String aDateTo,String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException ;
     public WebQueryResult exportNoAddress(String aAge, boolean aLpuCheck, Long aLpu,Long aArea, String aDateFrom, String aDateTo,String aPeriodByReestr, String aNReestr, String aNPackage) throws ParserConfigurationException, TransformerException ;

@@ -1,39 +1,11 @@
 package ru.ecom.mis.web.action.patient;
 
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -44,8 +16,23 @@ import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
 
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 
 public class ExternalDocumentImportAction extends BaseAction{
 
@@ -93,16 +80,14 @@ public class ExternalDocumentImportAction extends BaseAction{
     		FormFile ffile = form!=null?form.getFile():null; 
     		String parentType = form.getParentType()!=null&&!form.getParentType().equals("")?form.getParentType():"Patient";
     		String contentType = ffile!=null?ffile.getContentType().toLowerCase(): "";
-    		System.out.println("==== TYPE="+contentType);
-    		System.out.println("==== Parent_TYPE="+parentType);
     		//System.out.println("path="+path) ;
     		if (parentType.equals("Template")) {
     		dirmain = service.getConfigValue("jboss.userdocument.dir","/opt/jboss-4.0.4.GAi-postgres/server/default/data");	
-    		String filePrefix="user";
-    		System.out.println("SAVE_DIR="+dirmain+"/"+filePrefix+"_"+ffile.getFileName());
-    		saveNotImage(ffile.getInputStream(), dirmain+"/"+filePrefix+"_"+ffile.getFileName());
+    		String fileName=ffile.getFileName();
+    		if (!fileName.startsWith("user_")) {fileName="user_"+fileName;}
+    		saveNotImage(ffile.getInputStream(), dirmain+"/"+fileName);
     		service.insertExternalDocumentByObject("Template", objectId, objectType
-    				, dirmain+"/"+filePrefix+"_"+ffile.getFileName(), dirmain+"/"+filePrefix+"_"+ffile.getFileName(), "", username) ;
+    				, dirmain+"/"+fileName, dirmain+"/"+fileName, "", username) ;
     		return aMapping.findForward("uploaded") ;
     		} else if ((path!=null && !path.equals(""))||contentType.equals("application/pdf")) {
     			
@@ -293,7 +278,9 @@ public class ExternalDocumentImportAction extends BaseAction{
 		}
 	}
 	public void saveNotImage(InputStream aInputStream, String aFileName) throws IOException  {
-		 int count = 0 ;
+		 int count ;
+		 File outputFile = new File(aFileName);
+		 if (!outputFile.exists()) {outputFile.createNewFile();}
 	        FileOutputStream out = new FileOutputStream(aFileName);
 	        byte[] buf = new byte[8192] ;
 	        while ( (count=aInputStream.read(buf)) > 0) {

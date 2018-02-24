@@ -21,7 +21,7 @@
 	ActionUtil.updateParameter("PatientAttachment","typeAreaCheck","3", request) ;
 	ActionUtil.updateParameter("PatientAttachemnt","typeDivide","1",request) ;
 	ActionUtil.updateParameter("PatientAttachemnt","typeResult","xml",request) ;
-	//String typeXmlFormat = ActionUtil.updateParameter("PatientAttachment", "typeXmlFormat", "2", request);
+	ActionUtil.updateParameter("PatientAttachemnt","typeDispPlan","ATTACHMENT",request) ;
 
   %>
   
@@ -189,6 +189,18 @@
                </td>
 
            </msh:row>
+           <msh:row styleId="typeDispPlan" >
+
+               <td class="label" title="Пациенты  (typeDispPlan)" colspan="1"><label for="typeDispPlanName" id="typeDispPlanLabel">Формировать:</label></td>
+               <td onclick="this.childNodes[1].checked='checked';">
+                   <input type="radio" name="typeDispPlan" value="DISPPLAN" >  Формировать из плана ДД
+               </td>
+
+               <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                   <input type="radio" name="typeDispPlan" value="ATTACHMENT" checked>  формировать из прикреплений
+               </td>
+
+           </msh:row>
   
        <msh:row>
        
@@ -218,20 +230,6 @@
            
           </td>
       </msh:row>
-        
-      <msh:row>
-           <td colspan="11" align="right">
-            <input type="button" onclick="document.getElementById('attachmentDiv').style.display='block'"  value="X" />
-          </td>
-          </msh:row><msh:row>
-          <td align="left">
-       <div id="attachmentDiv" style="display: none">
-       <p style="color: red">Внимание! Не стоит нажимать эти кнопки без необходимости</p>
-	     <input type="button" name="create_att" value="Создать прикрепления"  onclick="createAttachments()" /> 
-	     <input type="button" name="update_IC" value="Обновить страх. компании"  onclick="updateInsCompany()" /> 
-	    </div>
-	    </td>
-      </msh:row>
       <table id="defectTable" border="1" style="padding: 15px; display: none">
        <tr style="color: black">
         	<td colspan="4">Протокол импорта дефектов:</td>
@@ -257,30 +255,11 @@
       checkFieldUpdate('typeDivide','${typeDivide}',1) ;
       checkFieldUpdate('typeAreaCheck','${typeAreaCheck}',3) ;
       checkFieldUpdate('typeResult', '${typeResult}','xml');
+      checkFieldUpdate('typeDispPlan', '${typeDispPlan}','attachment');
       $('aView').innerHTML=$('filename').value ;
      
     	var text="";
-      function createAttachments() {
-    	  if (confirm("Процедуру необходимо проделывать ТОЛЬКО ОДИН РАЗ, вы уверены?")){
-    		  AttachmentService.createAttachmentFromPatient('NO', {
-        		  callback: function (aResult) {
-        			  alert(""+aResult);
-        		  }
-        	  });  
-    	  }
-    	  
-    	  
-      }
-      
-      function updateInsCompany () {
-    	  if (confirm("Будут обновлены данные страх. компаний в прикреплениях, вы уверены?")){
-    	  AttachmentService.setInsuranceCompany('NO', {
-    		  callback: function (aResult) {
-    			  alert(""+aResult);
-    		  }
-    	  });
-      }
-      }
+
     	var importDefects = function(event) {
     	  var input = event.target;
     	  var reader = new FileReader();

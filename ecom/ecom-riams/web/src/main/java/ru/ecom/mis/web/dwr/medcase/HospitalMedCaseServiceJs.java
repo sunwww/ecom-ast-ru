@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.IIOException;
@@ -32,6 +33,12 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+
+	public String getDiagnosisAndModelByVMPMethod(Long aMethodId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		return service.executeNativeSqlGetJSON(new String[] {"diagnosis","patientModel"},"select diagnosis as f1, patientModel as f2 from vocmethodhighcare where id="+aMethodId,1);
+
+	}
 
 	public String getMedcaseCost(String aDateFrom, String aDateTo, String aType, String aLpuCode, HttpServletRequest aRequest ) throws NamingException {
 		IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
@@ -69,7 +76,7 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		
 		String[] par = aParams.split(":");
-		System.out.println("=== == medcase = "+aMedCase+" = " +aParams+" = length "+par.length);
+	//	System.out.println("=== == medcase = "+aMedCase+" = " +aParams+" = length "+par.length);
 		String takingDate = toNull(par[0]);
 		String pulse = toNull(par[6]);
 		String bloodPressureDown = toNull(par[5]);
@@ -95,7 +102,7 @@ public class HospitalMedCaseServiceJs {
 		sql.append("to_date('"+takingDate+"','dd.MM.yyyy'),"+pulse+","+bloodPressureDown+","+bloodPressureUp+","+weight+","+respirationRate);
 		sql.append(", "+degree+", "+illnessDayNumber+", "+dayTime+", "+aMedCase+", "+stool);
 		sql.append(")");
-		System.out.println("=== === "+sql);
+	//	System.out.println("=== === "+sql);
 		return "" + service.executeUpdateNativeSql(sql.toString());
 		
 	}
@@ -2017,5 +2024,54 @@ public class HospitalMedCaseServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String query="update statisticstub set height='" + height + "',weight='"+weight+"',imt='"+imt+"' where medcase_id ='"+id+"'";
 		service.executeUpdateNativeSql(query);
+	}
+	//Milamesher диетолог проставляет отметку в отчёте о том, что консультация была оказана
+	public void setDietVisitIsDoneReportIMT(int id, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="update statisticstub set dietdone=true where medcase_id ="+id;
+		service.executeUpdateNativeSql(query);
+	}
+	//Milamesher проверка перед удалением выписки: что юзер - лечащий врач последнего СЛО что прошло <2х часов с момента выписки
+	public Boolean checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(int hmcId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		String query="select case when (select ownerfunction_id from medcase where transferdate is null \n" +
+				"and dtype='DepartmentMedCase'and parent_id="+hmcId+")\n" +
+				"=(select wf.id from workfunction wf \n" +
+				"left join secuser su on su.id=wf.secuser_id where su.login='"+login+"') \n" +
+				"then '1' else '0' end";
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1);
+		Boolean flag=false;
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			if (wqr.get1().toString().equals("1")) {
+				//проверка, что datefinish - текущая дата
+				query="select datefinish,dischargetime from medcase where id="+hmcId;
+				list = service.executeNativeSql(query);
+				String datefinish="",timedisharge="";
+				if (list.size()>0) {
+					wqr = list.iterator().next() ;
+					datefinish=(wqr.get1()!=null)? wqr.get1().toString():"";
+					timedisharge=(wqr.get2()!=null)? wqr.get2().toString():"";
+				}
+				if (datefinish!=null && !datefinish.equals("") && timedisharge!=null && !timedisharge.equals("")) {
+					try {
+						Date d = new java.util.Date();
+						Calendar d2=Calendar.getInstance();
+						String dstr=(new SimpleDateFormat("yyyy-MM-dd")).format(d);
+						if (datefinish.equals(dstr)) { //дата сегодняшняя
+							//проверка, что прошло не более 2х часов
+							d = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(datefinish+ " " + timedisharge);
+							Calendar calD = Calendar.getInstance();
+							calD.setTime(d);
+							long diff = System.currentTimeMillis() - calD.getTimeInMillis();
+							flag=(diff<3600000*2);
+						}
+
+					} catch (ParseException e) {}
+				}
+			}
+		}
+		return flag;
 	}
 }

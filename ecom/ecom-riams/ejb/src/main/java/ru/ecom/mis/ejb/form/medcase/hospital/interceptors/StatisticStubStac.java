@@ -402,7 +402,7 @@ public class StatisticStubStac {
 	    	SimpleDateFormat format = new SimpleDateFormat("yyyy") ;
 	        Long year = Long.valueOf(format.format(medCase.getDateStart())) ;
 	        if (medCase.getIsAmbulanseDialis()) {
-	            System.out.println(" dialis....") ;
+	         //   System.out.println(" dialis....") ;
 	            nextStatCardNumber = new StringBuffer().append(medCase.getPatient().getId()).toString();
 	            StatisticStubExist statstub = new StatisticStubExist();
 	            statstub.setCode(nextStatCardNumber);
@@ -410,12 +410,12 @@ public class StatisticStubStac {
 	            statstub.setMedCase(medCase);
 	            medCase.setStatisticStub(statstub);
 	        } else {
-	        	System.out.println(" начало создание....") ;
+	        	//System.out.println(" начало создание....") ;
 	            //Long year = getYear() ;
 	            StatisticStubRestored restored =null ;
 	            boolean next ;
 	            do {
-	            	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
+	            //	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
 	            	boolean isRestored = aContext.isCallerInRole(AllowRestoredStatCard) ;
 	            	StatisticStubRestored restoredb = getRestoredStatCard(aManager,vph,isEmerPlan,emergency,year,isRestored) ;
 	            	if (restoredb==null) break ;
@@ -541,7 +541,7 @@ public class StatisticStubStac {
 
         String nextStatCardNumber;
         if (theMedCase.getIsAmbulanseDialis()) {
-            System.out.println(" dialis....") ;
+         //   System.out.println(" dialis....") ;
             nextStatCardNumber = new StringBuffer().append(theMedCase.getPatient().getId()).toString();
             StatisticStubExist statstub = new StatisticStubExist();
             statstub.setCode(nextStatCardNumber);
@@ -549,12 +549,12 @@ public class StatisticStubStac {
             statstub.setMedCase(theMedCase);
             theMedCase.setStatisticStub(statstub);
         } else {
-        	System.out.println(" начало создание....") ;
+        //	System.out.println(" начало создание....") ;
             Long year = getYear() ;
             StatisticStubRestored restored =null ;
             boolean next ;
             do {
-            	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
+            //	System.out.println(" поиск номера стат карты в восстановленных номерах....") ;
             	StatisticStubRestored restoredb = StatisticStubStac.getRestoredStatCard(theEntityManager
             			,thePigeonHole,theIsEmergAndPlan,theIsEmergency
             			,theYear,theContext.isCallerInRole(AllowRestoredStatCard)) ;

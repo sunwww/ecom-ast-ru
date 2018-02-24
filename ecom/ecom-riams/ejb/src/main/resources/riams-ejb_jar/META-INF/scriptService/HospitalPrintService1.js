@@ -240,11 +240,13 @@ function getMedServiceNameByProtocol (aCtx, aProtocolId) {
 		" where d.id='"+aProtocolId+"' and (vst.code='DIAGNOSTIC' or vst.code='SERVICE' or vst.code='LABSURVEY') ";
 	//throw ""+sql;
 	var res =aCtx.manager.createNativeQuery(sql).getResultList();
+    var ret  ="";
 	if (res.size()>0) {
-		return ""+res.get(0)+"\n";
-	} else {
-		return "";
+		for (var i=0;i<res.size();i++) {
+			ret+=""+res.get(i)+"\n";
+		}
 	}
+	return ret;
 }
 
 function printProtocols(aCtx, aParams) {

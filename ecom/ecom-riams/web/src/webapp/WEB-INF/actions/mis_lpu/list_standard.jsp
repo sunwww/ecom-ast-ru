@@ -36,7 +36,7 @@
     group by vte.name, msp.amount
     "></ecom:webQuery>
     
-        <msh:table name="list" action="/javascript:void()" idField="1">
+        <msh:table printToExcelButton="Сохранить в excel" name="list" action="/javascript:void()" idField="1">
             <msh:tableColumn columnName="Тип оборудования" property="1" />
             <msh:tableColumn columnName="Требуемое кол-во" property="2" />
             <msh:tableColumn columnName="Кол-во по факту" property="3" />

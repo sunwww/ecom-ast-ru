@@ -301,7 +301,7 @@ public class WorkCalendarServiceJs {
 		.append(" left join Patient wp on wp.id=w.person_id")
 		.append(" where wc.workFunction_id='").append(aWorkFunction)
 		.append("' and wcd.id = '").append(aWorkCalendarDay)
-		.append("' and wct1.timeFrom>wct.timeFrom")
+		.append("' and (wct.isDeleted is null or wct.isDeleted='0') and wct1.timeFrom>wct.timeFrom")
 		.append(" group by wct.id,wcd.calendarDate,wct.timeFrom,vwf.name,wp.lastname,wp.firstname,wp.middlename,wf.groupName order by wct.timeFrom")
 		;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
@@ -430,7 +430,7 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,"+aServiceStream+",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') and vsrt.id is not null order by wct.timefrom") ;
+		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,"+aServiceStream+",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,"+dep+",%') and vsrt.id is not null order by wct.timefrom") ;
 
 		list = service.executeNativeSql(sql.toString(),50);
 
@@ -468,7 +468,7 @@ public class WorkCalendarServiceJs {
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) order by wct.timeFrom") ;
+		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) order by wct.timeFrom") ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),50);
 		StringBuilder res = new StringBuilder() ;
 		res.append("<table border=1><tr><th>Предварительно записанные к специалисту</th><th>Оформленные вместо других пациентов</th><th>Резервы</th></tr><tr><td><ul>") ;
@@ -502,7 +502,7 @@ public class WorkCalendarServiceJs {
 		sql.append(",pc.lastname ||coalesce(' ('||pc.patientSync||')',' ('||pc.id||')') as camepat") ;
 		sql.append(",vsrt.background,vsrt.colorText") ;
 		sql.append(" from WorkCalendarTime wct left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id left join MedCase m on m.id=wct.medCase_id left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
+		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
 		.append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))  order by wct.timeFrom") ;
 		
 		list = service.executeNativeSql(sql.toString(),50);
@@ -531,7 +531,7 @@ public class WorkCalendarServiceJs {
 		sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
 			.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
 			.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ") ;
-		sql.append(" and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and wct.reserveType_id is not null  order by wct.timeFrom") ;
+		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and wct.reserveType_id is not null  order by wct.timeFrom") ;
 
 		list = service.executeNativeSql(sql.toString(),50);
 
@@ -584,7 +584,7 @@ public class WorkCalendarServiceJs {
 			.append(" left join patient wp on wp.id=w.person_id ")
 			.append("left join Patient p on p.id=wct.prePatient_id ")
 			.append("left join medpolicy mp on mp.patient_id=p.id ")
-			.append("where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' and wct.medCase_id is null ") ;
+			.append("where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' and wct.medCase_id is null and (wct.isDeleted is null or wct.isDeleted='0') ") ;
 		preInfo.append(aLastname).append(" ") ;
 		if (aFirstname!=null && !aFirstname.equals("")) {
 			sql.append(" and p.firstname like '").append(aFirstname.toUpperCase()).append("%' ") ;
@@ -622,7 +622,7 @@ public class WorkCalendarServiceJs {
 		} else {
 			preInfo.append("%") ;
 		}
-		System.out.println(preInfo) ;
+	//	System.out.println(preInfo) ;
 		sql.append("or wct.prePatientInfo like '").append(preInfo).append("') ") ;
 		sql.append(" group by wct.id,wct.prePatient_id, wcd.calendarDate, wct.timeFrom, vwf.name, wp.lastname,wp.middlename,wp.firstname ,p.id,p.patientSync,p.lastname,p.firstname,p.middlename,p.birthday,wct.prepatientInfo,su.isremoteuser,su1.isremoteuser") ;
 		sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
@@ -674,7 +674,7 @@ public class WorkCalendarServiceJs {
 			.append(" left join SecUser su1 on su1.login=m.username ")
 			.append(" left join Patient p on p.id=m.patient_id ")
 			.append(" left join medpolicy mp on mp.patient_id=p.id ")
-			.append(" where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' ") ;
+			.append(" where wcd.calendarDate>=CURRENT_DATE and (p.lastname like '").append(aLastname.toUpperCase()).append("%' and (wct.isDeleted is null or wct.isDeleted='0') ") ;
 		if (aFirstname!=null && !aFirstname.equals("")) {
 			sql.append(" and p.firstname like '").append(aFirstname.toUpperCase()).append("%' ") ;
 		}
@@ -892,7 +892,7 @@ public class WorkCalendarServiceJs {
 		
 		sql.append(" where wf.workFunction_id='").append(aVocWorkFunction).append("'");
 		sql.append(" and wcd.calendarDate>=CURRENT_DATE");
-		sql.append(" and wct.medCase_id is null");
+		sql.append(" and wct.medCase_id is null and (wct.isDeleted is null or wct.isDeleted='0') ");
 		if (remoteUser) {
 			sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or (wf.dtype='GroupWorkFunction' or wf.dtype='OperatingRoom') and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
 			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
@@ -913,14 +913,14 @@ public class WorkCalendarServiceJs {
 			sql.append(" left join Patient wp on wp.id=w.person_id");
 			sql.append(" left join WorkCalendar wc on wc.workFunction_id=wf.id");
 			sql.append(" left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id");
-			sql.append(" left join WorkCalendarTime wct on wct.workCalendarDay_id=wcd.id");
+			sql.append(" left join WorkCalendarTime wct on wct.workCalendarDay_id=wcd.id ");
 			sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 			sql.append(" left join MisLpu m1 on m1.id=wf.lpu_id") ; 
 			sql.append(" left join MisLpu m2 on m2.id=w.lpu_id") ; 
 			
 			sql.append(" where wf.workFunction_id='").append(aVocWorkFunction).append("'");
 			sql.append(" and wcd.calendarDate>=CURRENT_DATE");
-			sql.append(" and wct.medCase_id is null") ;
+			sql.append(" and wct.medCase_id is null and (wct.isDeleted is null or wct.isDeleted='0') ") ;
 			if (remoteUser) {
 				sql.append(" and (wf.DTYPE='PersonalWorkFunction' and m2.id='").append(wqrLpu.get1()).append("' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and m1.id='").append(wqrLpu.get1()).append("' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0') and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0'))") ;
 				sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
@@ -966,7 +966,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join workcalendartime wct on wct.workcalendarday_id=wcd.id");
 		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 		sql.append(" where wc.id='").append(aWorkCalendar).append("'"); 
-		sql.append(" and to_char(wcd.calendardate,'mm.yyyy')='")
+		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and to_char(wcd.calendardate,'mm.yyyy')='")
 			.append(aMonth).append(".").append(aYear).append("'");
 		if (isRemoteUser) sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
 		sql.append(" group by wcd.id,wcd.calendardate");
@@ -1196,7 +1196,7 @@ public class WorkCalendarServiceJs {
 		}
 		sql.append(" left join patient pat on pat.id=vis.patient_id");
 		sql.append(" left join patient prepat on prepat.id=wct.prepatient_id");
-		sql.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("'");
+		sql.append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' and (wct.isDeleted is null or wct.isDeleted='0') ");
 		if (isRemoteUser) {
 			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0') ");
 		}

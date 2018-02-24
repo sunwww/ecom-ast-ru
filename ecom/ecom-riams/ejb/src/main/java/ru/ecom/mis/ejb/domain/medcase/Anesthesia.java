@@ -29,7 +29,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(properties="surgicalOperation")
+	@AIndex(properties="surgicalOperation"),
+	@AIndex(properties="manipulation")
     }) 
 public class Anesthesia extends BaseEntity{
 

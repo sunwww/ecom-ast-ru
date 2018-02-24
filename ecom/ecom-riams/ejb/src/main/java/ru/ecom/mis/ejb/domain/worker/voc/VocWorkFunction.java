@@ -109,4 +109,23 @@ public class VocWorkFunction extends VocBaseEntity{
 	public String getFSSCode() {return theFSSCode;}
 	public void setFSSCode(String aFSSCode) {theFSSCode = aFSSCode;}
 	private String theFSSCode;
+
+	private String promedCode_polic;
+	private String promedCode_stac;
+
+	@Comment("Код поликлиники в промеде")
+	public String getPromedCode_polic() {
+		return promedCode_polic;
+	}
+	public void setPromedCode_polic(String promedCode_polic) {
+		this.promedCode_polic = promedCode_polic;
+	}
+
+	@Comment("Код стационара в промеде")
+	public String getPromedCode_stac() {
+		return promedCode_stac;
+	}
+	public void setPromedCode_stac(String promedCode_stac) {
+		this.promedCode_stac = promedCode_stac;
+	}
 }

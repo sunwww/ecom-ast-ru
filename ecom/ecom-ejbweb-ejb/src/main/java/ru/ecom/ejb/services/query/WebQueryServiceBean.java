@@ -53,7 +53,13 @@ public class WebQueryServiceBean implements IWebQueryService {
         return "---------------no jndi" ;
     }*/
 	public String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult) {
-		List<Object> list = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")).setMaxResults(aMaxResult).getResultList();
+		List<Object> list ;
+		Query query = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
+		if (aMaxResult!=null&&aMaxResult>0) {
+			list=query.setMaxResults(aMaxResult).getResultList();
+		} else {
+			list=query.getResultList();
+		}
 		try {
 			if (list.size()>0) {
                 JSONArray ret = new JSONArray();
@@ -68,7 +74,7 @@ public class WebQueryServiceBean implements IWebQueryService {
                         JSONObject el = new JSONObject();
                         int fldId=0;
                         for (Object val:row){
-                            el.put(aFieldNames.length>fldId?aFieldNames[fldId]:"fldValue_"+fldId,val.toString());
+                            el.put(aFieldNames.length>fldId?aFieldNames[fldId]:"fldValue_"+fldId,val!=null?val.toString():null);
                             fldId++;
                         }
                         ret.put(el);
@@ -77,6 +83,7 @@ public class WebQueryServiceBean implements IWebQueryService {
             return ret.toString();
             }
 		} catch (JSONException e) {
+			System.out.println("Ошибка executeNativeSqlGetJSON "+e);
 			e.printStackTrace();
 		}
 		return null;

@@ -79,7 +79,9 @@
 				   			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
 				   			    //$('sum'+cnt).readOnly=true ;
 				   			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
-				                eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
+				   			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
+
+
 
 				   			 checkSum() ;
 							}
@@ -195,6 +197,15 @@
 				<msh:row>
 					<msh:autoComplete property="servedPerson" label="Обс.персона" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
 				</msh:row>
+				<msh:ifInRole roles="/Policy/Mis/Person/Privilege">
+				<msh:row>
+					<msh:autoComplete property="privilege" label="Льгота" fieldColSpan="3" parentAutocomplete="servedPerson" vocName="actualPrivilege" horizontalFill="true" />
+					<td colspan="9" title="добавить льготу" class="label">
+						<a href=" javascript:showPrivilPrivilege('.do') ">Добавить льготу</a>
+					</td>
+					<tags:mis_privilegeTag name="Privil"/>
+				</msh:row>
+				</msh:ifInRole>
 				<msh:row>
 					<msh:textField property="discountDefault" label="Скидка"/>
 				</msh:row>
@@ -203,10 +214,10 @@
 					<msh:textField property="dateTo" label="Дата окончания "/>
 				</msh:row>				
 				</msh:panel>
+
 								<script type="text/javascript">
 				   			    eventutil.addEventListener($('discountDefault'),'change',function(){checkSum() ;});
 				                eventutil.addEventListener($('discountDefault'),'keyup',function(){checkSum() ;});
-
 								</script>
 		
 <fieldset>

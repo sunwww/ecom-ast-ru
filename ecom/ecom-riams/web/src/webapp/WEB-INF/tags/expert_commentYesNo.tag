@@ -55,6 +55,7 @@
         }
 //alert( $('criterion'+the${name}Ii+'CommentYesNo').value);
         updateCriterions();
+            the${name}CommentYesNoDialog.hide() ;
         }
         else alert('Введите пояснение изменению значения оценки!');
     }
@@ -62,7 +63,8 @@
     // Отмена
     function cancel${name}CommentYesNo() {
         the${name}CommentYesNoDialog.hide() ;
-        $('criterion'+the${name}Ii+'Name').value='';
+       $('criterion'+the${name}Ii+'Name').value='';
+        $('criterion'+the${name}Ii).value='';
     }
 
     // инициализация диалогового окна

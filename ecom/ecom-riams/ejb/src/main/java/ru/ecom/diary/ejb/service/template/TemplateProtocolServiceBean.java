@@ -46,7 +46,20 @@ import ru.nuzmsh.util.StringUtil;
 public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	static final Logger log = Logger.getLogger(TemplateProtocolServiceBean.class);
 
-
+	public void sendSms(String aPhone, String aMessage)  {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("phonenumber", aPhone);
+			json.put("message", aMessage);
+			EjbEcomConfig config = EjbEcomConfig.getInstance();
+			String address = config.get("ru.amokb.patientcabinetaddress", null);
+			makePOSTRequest(json.toString(), address, "SendSms", null, null, null);
+			log.debug("message sent");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("Ошибка при отправке СМС "+aMessage);
+		}
+	}
 	public String makePOSTRequest (String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager) {
 		//log.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
 		try {

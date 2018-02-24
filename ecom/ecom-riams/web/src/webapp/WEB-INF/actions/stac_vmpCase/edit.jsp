@@ -18,10 +18,10 @@
         <msh:hidden property="saveType" />
         <msh:hidden property="medCase" />
         <msh:hidden property="financeSource" />
-    
+
         <msh:separator label="Сведения об ВМП" colSpan="5" guid="a7a51c304-335b4ade6f66" />
         <msh:row>
-          <msh:textField property="ticketNumber" label="Номер талона на ВМП"/>
+          <msh:textField property="ticketNumber" label="Номер талона на ВМП" size="100"/>
         </msh:row>
         <msh:row guid="a03a1e02-5a44-4403-bb71-fb8e5afcec43">
  	       <msh:textField property="ticketDate" label="Дата выдачи талона на ВМП"/>
@@ -35,11 +35,15 @@
         <msh:row>
         	<msh:autoComplete property="method" label="Метод ВМП"  horizontalFill="true" fieldColSpan="3" parentAutocomplete="kind" vocName="vocMethodHighCare" size="50"/>
         </msh:row>
-
         <msh:row>
           <msh:textField property="stantAmount" label="Количество установленных стентов" />
         </msh:row>
-
+        <msh:row>
+          <msh:textField property="diagnosis" size="50"/>
+        </msh:row>
+        <msh:row>
+          <msh:textArea property="patientModel" rows="2"/>
+      </msh:row>
         <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
           <msh:label property="createUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
@@ -72,6 +76,18 @@
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
         <script type="text/javascript" >
     kindAutocomplete.setParentId(+$('financeSource').value);
+    methodAutocomplete.addOnChangeCallback(function() {if ($('method').value>0) {
+        HospitalMedCaseService.getDiagnosisAndModelByVMPMethod($('method').value, {
+            callback: function (ret) {
+                if (ret != null) {
+                    ret = JSON.parse(ret);
+                    $('diagnosis').value = ret[0].diagnosis;
+                    $('patientModel').value = ret[0].patientModel;
+                }
+            }
+        });
+    } else {$('diagnosis').value = ""; $('patientModel').value = "";}
+    });
     </script>
    
   </tiles:put>

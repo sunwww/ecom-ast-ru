@@ -102,6 +102,9 @@
 	                   		<msh:link isReport="true" action="lab_chief_report.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/TransferToLaboratory">
 	                   		Журнал заведующего лабораторией</msh:link>
 	                   </li>
+						<li><msh:link isReport="true" action="reportKDL.do" roles="/Policy/MainMenu/LaboratoryJournal/ChiefLabJournal">
+							Сводный отчёт по КДЛ
+						</msh:link></li>
 	                   <li>
 	                   <msh:link isReport="true" action="/pres_journal" roles="/Policy/Mis/Journal/Prescription/LabSurvey/JournalPrescript">Журнал лабораторных назначений</msh:link>
 	                   </li>
@@ -125,6 +128,9 @@
 	                        <li><msh:link  isReport="false" action="eln_count.do" roles="/Policy/Mis/ArchiveCase/Create">
 	                           Количество сформированных ЭЛН
 	                        </msh:link></li>
+							<li><msh:link  isReport="false" action="allLn_count_report.do" roles="/Policy/Mis/ArchiveCase/Create">
+								Количество ЛН по отделениям
+							</msh:link></li>
 					</ul>
 					</div>
 				</td>
@@ -176,6 +182,9 @@
 						<li><msh:link isReport="true" action="mis_attachment.do" roles="/Policy/Mis/ExtDisp/Card/View">
 	                            Отчет по прикрепленному населению
 	                        </msh:link></li>
+						<li><msh:link isReport="true" action="entityList-extDispPlan_plan.do" roles="/Policy/Mis/ExtDisp/Card/View">
+							Список планов доп. диспансеризации
+						</msh:link></li>
 						<li><msh:link isReport="true" action="gosuslugi_report.do" roles="/Policy/Mis/MedCase/Visit/Report039">
 	                            Отчет "количество поступивших обращение за получение услуги "Запись на прием к врачу"
 	                        </msh:link></li>
@@ -203,7 +212,6 @@
 	                    <li><msh:link isReport="true" action="mis_assessment_risk_report.do" roles="/Policy/Mis/Pregnancy/Report/RiskReport">
 	                            Отчет по рискам
 	                    </msh:link></li>
-
 					</ul>
 					</div>
 				</td>			
@@ -318,6 +326,9 @@
 	                        <li><msh:link  isReport="true" action="pres_report4385.do" roles="/Policy/Mis/MedCase/Stac/Journal/ReportForOlesya">
 	                            Отчет по антибиотикорезистентности
 	                        </msh:link></li>
+							<li><msh:link  isReport="true" action="report203.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+								Отчет по 203 приказу
+							</msh:link></li>
 	                        
 					</ul>
 					</div>

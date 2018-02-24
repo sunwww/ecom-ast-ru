@@ -91,7 +91,13 @@ function onCreate(aForm, aEntity, aCtx) {
 				} else if (finishDateTime.getTime()>currentDate.getTime()) {
 					throw "Дата окончания родов не может быть позднее текущей даты!";
 				}
-			} 
+			}
+
+
+            if (child[2]==2) {//Акушерский диагноз если родился мертвым
+                if (child.length==15 ||child[16]=="" || child[17]=="")
+                	throw "Если ребёнок родился мертвым, обязательно должен быть заполнен акушерский диагноз (МКБ и наименование)!";
+            }
 			for (var j=0;j<theFld.length;j++) {
 			//	throw theFld.length+"   "+child[3]+"<<"+theFld[3][1];
 				//if (j==3)("===== "+j+"<<   "+child[j]+"<<"+theFld[j][1]);
@@ -149,7 +155,6 @@ function onCreate(aForm, aEntity, aCtx) {
 				} else {
 					obj = child[j] ;
 				}
-				
 				eval("newBorn.set"+theFld[j][3]+"(obj)") ;
 				
 			}
@@ -270,7 +275,18 @@ function onCreate(aForm, aEntity, aCtx) {
 			}
 			newBorn.setPatient(patient) ;			
 			}
-			
+			else if (newBorn.getLiveBorn().getCode()=='2') {  //если мёртвый
+				var dcase = new Packages.ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
+				dcase.setDeathDate(new java.sql.Date(currentDate.getTime()));
+                dcase.setDeathTime(new java.sql.Time (currentDate.getTime()));
+                dcase.setAccidentDate(new java.sql.Date(currentDate.getTime()));
+                dcase.setAccidentCircumstance("Мертворождение");
+                dcase.setIsNeonatologic(true);
+                dcase.setMedCase(aEntity.getMedCase().getParent());
+                dcase.setReasonMainMkb(aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,java.lang.Long.valueOf(child[16])));
+                dcase.setCommentReason(child[17]);
+                aCtx.manager.persist(dcase) ;
+			}
 			aCtx.manager.persist(newBorn) ;
 		}
 	}

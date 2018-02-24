@@ -146,7 +146,9 @@
                           roles="/Policy/MainMenu/Voc" title="Справочники"/>
 			<msh:sideLink params="" styleId="mainMenuExpert" action="/js-expert_card-list.do" name="Экспертиза"
                           roles="/Policy/MainMenu/Expert" title="Экспертиза"/>
-           
+			<msh:sideLink params="" styleId="mainMenuExpert2" action="/entityList-e2_entryList.do" name="Реестры ФОМС"
+                          roles="/Policy/MainMenu/Expert2" title="Реестры ФОМС"/>
+
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
 	
@@ -183,6 +185,8 @@
     	<tiles:insert attribute="hotkey" ignore="true"/>
     </div>
     <div id="footer">
+
+        <div id='gotoUp'><a class="gotoUP" href="#header">Вверх</a></div>
         <div id='copyright'>&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
     </div>

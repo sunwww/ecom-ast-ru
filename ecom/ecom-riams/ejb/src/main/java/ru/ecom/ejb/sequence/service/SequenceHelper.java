@@ -93,7 +93,7 @@ public class SequenceHelper {
 	}
 
 	private String nextValue(String aKey, String aOldValue) {
-		System.out.println("-----------oldValue="+aOldValue) ;
+	//	System.out.println("-----------oldValue="+aOldValue) ;
 		if (!aKey.equals("")) {
 			aOldValue = aOldValue.replaceFirst(aKey, "") ;
 		}

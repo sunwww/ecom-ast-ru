@@ -71,23 +71,47 @@ private VocQualityEstimationCritType theType;
  /** Коды медицинских услуг */
   @Comment("Коды медицинских услуг")
   public String getMedServiceCodes() {
-   return medServiceCodes;
+   return theMedServiceCodes;
   }
   public void setMedServiceCodes(String medServiceCodes) {
-   this.medServiceCodes = medServiceCodes;
+   theMedServiceCodes = medServiceCodes;
   }
   /** Коды медицинских услуг */
-  private String medServiceCodes;
+  private String theMedServiceCodes;
 
   /** Логический тип критерия? */
   @Comment("Логический тип критерия?")
-  public Boolean getBoolean() {
-   return isBoolean;
+  public Boolean getIsBoolean() {
+   return theIsBoolean;
   }
-  public void setBoolean(Boolean aBoolean) {
-   isBoolean = aBoolean;
+  public void setIsBoolean(Boolean aIsBoolean) {
+   theIsBoolean = aIsBoolean;
   }
 
   /** Логический тип критерия? */
-  private Boolean isBoolean;
+  private Boolean theIsBoolean;
+
+  /** Для взрослых? */
+  @Comment("Для взрослых?")
+  public Boolean getIsGrownup() {
+   return theIsGrownup;
+  }
+  public void setIsGrownup(Boolean aIsGrownup) {
+   theIsGrownup = aIsGrownup;
+  }
+
+  /** Для взрослых? */
+  private Boolean theIsGrownup;
+
+  /** Для детей? */
+  @Comment("Для детей?")
+  public Boolean getIsChild() {
+   return theIsChild;
+  }
+  public void setIsChild(Boolean aIsChild) {
+   theIsChild = aIsChild;
+  }
+
+  /** Для детей? */
+  private Boolean theIsChild;
  }

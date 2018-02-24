@@ -133,12 +133,18 @@ public class DisabilityDocument extends BaseEntity{
 	public VocDisabilityDocumentPrimarity getPrimarity() {return thePrimarity;}
 	public void setPrimarity(VocDisabilityDocumentPrimarity aPrimarity) {thePrimarity = aPrimarity;}
 
+	/** Предыдущий номер ЛН (при импорте)*/
+	@Comment("Предыдущий номер ЛН (при импорте)")
+	public String getAnotherprevln() {return theAnotherprevln;}
+	public void setAnotherprevln(String aAnotherprevln) {theAnotherprevln = aAnotherprevln;}
+	private String theAnotherprevln;
+
 	/** Дата выдачи */
 	@Comment("Дата выдачи")
 	public Date getIssueDate() {return theIssueDate;}
 	public void setIssueDate(Date aIssueDate) {theIssueDate = aIssueDate;}
 
-	
+
 	/** Разрешение на выдачу документа нетрудоспособности иногороднему */
 	@Comment("Разрешенение на выдачу документа нетрудоспособности иногороднему")
 	@OneToOne
@@ -292,6 +298,32 @@ public class DisabilityDocument extends BaseEntity{
 	@OneToOne
 	public MisLpu getAnotherLpu() {return theAnotherLpu;}
 	public void setAnotherLpu(MisLpu aAnotherLpu) {theAnotherLpu = aAnotherLpu;}
+
+	@Comment("Другое ЛПУ. Название")
+	public String getAnotherLpuName() {	return anotherLpuName;	}
+	public void setAnotherLpuName(String anotherLpuName) {
+		this.anotherLpuName = anotherLpuName;
+	}
+
+	@Comment("Другое ЛПУ. Адрес")
+	public String getAnotherLpuAddress() {
+		return anotherLpuAddress;
+	}
+	public void setAnotherLpuAddress(String anotherLpuAddress) {
+		this.anotherLpuAddress = anotherLpuAddress;
+	}
+
+	@Comment("Другое ЛПУ. ОГРН")
+	public String getAnotherLpuOGRN() {
+		return anotherLpuOGRN;
+	}
+	public void setAnotherLpuOGRN(String anotherLpuOGRN) {
+		this.anotherLpuOGRN = anotherLpuOGRN;
+	}
+
+	private String anotherLpuName;
+	private String anotherLpuAddress;
+	private String anotherLpuOGRN;
 
 	/** Предыдущий документ */
 	@Comment("Предыдущий документ")

@@ -28,6 +28,7 @@
             <table width="100%" cellspacing="10" cellpadding="10" id="table2">
             </table>
             <div>*Информация рассчитана автоматически.</div>
+            <div><input type="button" value='Черновик экспертной карты заведующего' id="${name}Cancel" onclick='javascript:draft${name}CloseDocument()'/></div>
         </form>
     </div>
 </div>
@@ -51,10 +52,10 @@
                 callback: function(res) {
                     //alert(res);
                     if (res!="##") {
-                        the${name}CloseDisDocumentDialog.show() ;
+
                         var all = res.split('!') ;
                         var table = document.getElementById('table1');
-                        table.innerHTML="<tr><th align=\"center\" width=\"150\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th></tr>";
+                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th></tr>";
                         for (var i=0; i<all.length-1; i++) {
                             var aResult = all[i].split('#');
                             var tr = document.createElement('tr');
@@ -65,6 +66,7 @@
                             tr.appendChild(td1);tr.appendChild(td2);
                             table.appendChild(tr);
                         }
+                        the${name}CloseDisDocumentDialog.show() ;
                     }
                     else alert("Для основного клинического диагноза госпитализации не найдено данных по 203 приказу!");
                 }
@@ -74,5 +76,18 @@
     // Отмена
     function cancel${name}CloseDocument() {
         the${name}CloseDisDocumentDialog.hide() ;
+    }
+    //Создание черновика ЭК
+    function draft${name}CloseDocument() {
+        QualityEstimationService.createDraftEK(
+            ID, {
+                callback: function(res) {
+                    if (res!=null) window.location='entityEdit-expert_qualityEstimationDraft.do?id='+res+'&type=BranchManager';
+                    else {
+                        alert("Заведующий отделением уже заполнил эту карту, больше редактировать черновик нельзя!");
+                    }
+                }
+            }
+        );
     }
 </script>

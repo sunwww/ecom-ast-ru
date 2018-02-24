@@ -466,6 +466,12 @@ public class DeathCaseForm extends IdEntityForm{
 	public String getBackgroundDisease() {return theBackgroundDisease;}
 	public void setBackgroundDisease(String aBackgroundDisease) {theBackgroundDisease = aBackgroundDisease;}
 
+	/** Мертворождение */
+	@Comment("Мертворождение")
+	@Persist
+	public Boolean getIsNeonatologic() {return theIsNeonatologic;}
+	public void setIsNeonatologic(Boolean aIsNeonatologic) {theIsNeonatologic = aIsNeonatologic;}
+
 	/** Фоновое заболевание */
 	private String theBackgroundDisease;
 	/** Сочетанное заболевание */
@@ -476,5 +482,6 @@ public class DeathCaseForm extends IdEntityForm{
 	private String theReasonConcomitantText;	
 	/** Текст мкб осложнения */
 	private String theReasonComplicationText;
-
+	/** Мертворождение */
+	private Boolean theIsNeonatologic;
 }

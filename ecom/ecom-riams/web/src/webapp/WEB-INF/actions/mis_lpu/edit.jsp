@@ -27,7 +27,7 @@
           </msh:ifFormTypeIsNotView>
         </msh:ifInRole>
         <msh:row guid="e3c328fa-adbc-4a2d-bcd7-ac189b052f41">
-          <msh:autoComplete vocName="timeOmcLpu" property="omcCode" label="Код ФОНДА" fieldColSpan="3" horizontalFill="true" guid="947bb0fe-365f-4147-b6cb-0ed0b07c43b2" />
+          <msh:textField property="omcCode" label="Код ФОНДА" fieldColSpan="3" horizontalFill="true" guid="947bb0fe-365f-4147-b6cb-0ed0b07c43b2" />
         </msh:row>
         <msh:row>
         	<msh:checkBox property="lpuLevel" label="Уровень оказания мед. помощи"/>
@@ -107,6 +107,7 @@
         	<msh:checkBox property="isMaternityWard" label="Родильное отделение"/>
         </msh:row>
         <msh:row>
+            <msh:checkBox property="isMobilePolyclinic" label="Мобильная поликлиника"/>
         	<msh:checkBox property="isArchive" label="Не используется (в архиве)"/>
         </msh:row>
         <msh:row>

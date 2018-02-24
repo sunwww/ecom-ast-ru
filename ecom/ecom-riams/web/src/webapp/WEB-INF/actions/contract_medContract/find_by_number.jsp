@@ -202,8 +202,8 @@
 			left join PriceList pl on pl.id=mc.priceList_id
 			left join VocJuridicalPerson vjp on vjp.id=cp.juridicalPersonType_id
 			${leftJoin}
-			where  
-			${paramSql}
+			where
+			${paramSql} and (MC.isDeleted is null or MC.isDeleted='0')
 			order by ${orderBy}
 			"/>
 				<msh:table styleRow="12" name="childContract" action="entityParentView-contract_${prefix}Contract.do" idField="1" disableKeySupport="true">

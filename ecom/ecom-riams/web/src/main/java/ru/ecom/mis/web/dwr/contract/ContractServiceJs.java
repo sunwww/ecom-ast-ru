@@ -72,7 +72,7 @@ public class ContractServiceJs {
 				.append(" group by vwf.id, vwf.name")
 				.append(" having count(wct.id)>0");
 		log.info("Поток обслуживания = "+aServiceStream+". Запрос для поиска специальностей="+sql);
-		String jsonData = service.executeNativeSqlGetJSON(fields,sql.toString(),50);
+		String jsonData = "";//service.executeNativeSqlGetJSON(fields,sql.toString(),50);
 		if (jsonData!=null) {
 			JSONObject ret = new JSONObject();
 			ret.put("type","specializations");
@@ -121,7 +121,7 @@ public class ContractServiceJs {
 			.append(" having count(wct.id)>0");
 
 		log.info("Поток обслуживания = "+aServiceStream+". Запрос для поиска врачей="+sql);
-		String jsonData = service.executeNativeSqlGetJSON(fields,sql.toString(),50);
+		String jsonData = "";//service.executeNativeSqlGetJSON(fields,sql.toString(),50);
 		if (jsonData!=null) {
 			JSONObject ret = new JSONObject();
 			ret.put("type","doctors");

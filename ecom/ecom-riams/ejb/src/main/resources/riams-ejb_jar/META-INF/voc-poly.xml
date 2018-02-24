@@ -40,6 +40,7 @@
                     entity  = 'ru.ecom.poly.ejb.domain.voc.VocVisitResult'
                     names   = 'name'
                     queried = 'name'
+                    queryAppend="(deprecated is null or deprecated='0')"
                     />
     </voc>
 

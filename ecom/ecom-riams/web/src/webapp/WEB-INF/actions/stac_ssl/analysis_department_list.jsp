@@ -11,7 +11,7 @@
     </tiles:put>
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Journals">АНАЛИЗ РАБОТЫ УЧРЕЖДЕНИЯ
+        <msh:title mainMenu="Journals">АНАЛИЗ РАБОТЫ ОТДЕЛЕНИЙ
         </msh:title>
     </tiles:put>
 
@@ -114,7 +114,7 @@
                     <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
                     <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
                     <td colspan="3">
-                        <input type="submit" onclick="find()" value="Найти" />
+                        <input type="submit" onclick="this.disabled=true;find()" value="Найти" />
                         <!--            <input type="submit" onclick="print()" value="Печать" />-->
                         <input type="submit" onclick="printReestr()" value="Реестр пациентов в excel" />
                     </td>
@@ -236,7 +236,7 @@ where hmc.DTYPE='HospitalMedCase'
 
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_list"
+                <msh:table name="journal_list" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-stac_ssl.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -322,7 +322,7 @@ where hmc.DTYPE='HospitalMedCase'
     ${addEmergency} 
 order by dep.name   
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list"
+                <msh:table name="journal_list" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_surOperation.do"
                            action="entityView-stac_surOperation.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -408,7 +408,7 @@ where hmc.DTYPE='HospitalMedCase'
     ${addEmergency} 
 order by dep.name   
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_suroper"
+                <msh:table name="journal_list_suroper" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_surOperation.do"
                            action="entityView-stac_surOperation.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -775,7 +775,7 @@ group by dmc.department_id,dep.name,dmc.department_id
 order by dep.name   
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_swod" cellFunction="true"
+                <msh:table name="journal_list_swod" cellFunction="true"  printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="19" noDataMessage="Не найдено">
                     <msh:tableNotEmpty>
                         <tr>
@@ -853,7 +853,7 @@ group by ldmc.department_id,operdep.name,dischdep.name,so.department_id,ldmc.dep
 order by operdep.name, dischdep.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_oper_otd_swod" cellFunction="true"
+                <msh:table name="journal_list_oper_otd_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="12" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Отделение (опер)" property="2"/>
@@ -946,7 +946,7 @@ order by dep.name
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_list_otd_rayon_swod" cellFunction="true"
+                <msh:table name="journal_list_otd_rayon_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="22" noDataMessage="Не найдено">
                     <msh:tableNotEmpty>
                         <tr>
@@ -1025,7 +1025,7 @@ order by dep.name   ,ovwf.name
 ,owp.lastname,owp.firstname,owp.middlename
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_otd_owner" cellFunction="true"
+                <msh:table name="journal_list_otd_owner" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&typeView=3_docOwner&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="8" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Отделение" property="2"/>
@@ -1102,7 +1102,7 @@ group by so.department_id,dep.name,so.surgeon_id,dep.id
 order by dep.name,svwf.name,swp.lastname,swp.firstname,swp.middlename
    
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_otd_surgeon" cellFunction="true"
+                <msh:table name="journal_list_otd_surgeon" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="14" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Отделение" property="2" addParam="&typeView=3_dep&depId=${depId}"/>
@@ -1180,7 +1180,7 @@ order by svwf.name,swp.lastname,swp.firstname,swp.middlename
     	
    
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_surgeon" cellFunction="true"
+                <msh:table name="journal_list_surgeon" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="12" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Должность" property="2"/>
@@ -1232,7 +1232,7 @@ group by vo.id,vo.code,vo.name
 order by vo.id,vo.code,vo.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_oper"
+                <msh:table name="journal_list_oper" printToExcelButton="Сохранить в excel"
                            action="entityView-mis_medService.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Код" property="2"/>
@@ -1315,7 +1315,7 @@ group by dmc.department_id,dep.name
 order by dep.name   
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-                <msh:table name="journal_list_otd_swod" cellFunction="true"
+                <msh:table name="journal_list_otd_swod" cellFunction="true" printToExcelButton="Сохранить в excel"
                            action="stac_analysis_department_list.do?short=Short&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&serviceStream=${param.serviceStream}" idField="9" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Наименование отделения" property="2"/>
@@ -1415,7 +1415,7 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_docTreat"
+                <msh:table name="journal_3_docTreat" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1454,7 +1454,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename"/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_docOper"
+                <msh:table name="journal_3_docOper" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1501,7 +1501,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename"/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_docAll"
+                <msh:table name="journal_3_docAll" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1544,7 +1544,7 @@ pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fiopat
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_docTreat"
+                <msh:table name="journal_3_docTreat" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1586,7 +1586,7 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_operAll"
+                <msh:table name="journal_3_operAll" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityShortView-stac_surOperation.do" idField="1">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1627,7 +1627,7 @@ group by pat.lastname,pat.firstname,pat.middlename,pat.id order by pat.id"/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_eHospPat"
+                <msh:table name="journal_3_eHospPat" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1665,7 +1665,7 @@ group by pat.lastname,pat.firstname,pat.middlename,pat.id order by pat.id"/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_eOperPat"
+                <msh:table name="journal_3_eOperPat" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1703,7 +1703,7 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_eHospOper"
+                <msh:table name="journal_3_eHospOper" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityShortView-stac_surOperation.do" idField="1">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1744,7 +1744,7 @@ group by so.id,so.operationDate,ms.code,ms.name,dep.name ,pat.lastname,pat.first
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_eOperOper"
+                <msh:table name="journal_3_eOperOper" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityShortView-stac_surOperation.do" idField="1">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1785,7 +1785,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename, dep.name,ovwf.name,ow
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_docOwner"
+                <msh:table name="journal_3_docOwner" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1821,7 +1821,7 @@ order by dep.name  "/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_patAllInDep"
+                <msh:table name="journal_3_patAllInDep" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1865,7 +1865,7 @@ group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middle
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_patAllOper"
+                <msh:table name="journal_3_patAllOper" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1913,7 +1913,7 @@ group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middle
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_operAllOper"
+                <msh:table name="journal_3_operAllOper" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityShortView-stac_surOperation.do" idField="1">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -1958,7 +1958,7 @@ group by hmc.department_id,dep.name,pat.id,pat.lastname,pat.firstname,pat.middle
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_totalIn"
+                <msh:table name="journal_3_totalIn" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -1997,7 +1997,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename order by pat.id"/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_totalOut"
+                <msh:table name="journal_3_totalOut" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -2048,7 +2048,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename order by pat.id"/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_patAllOperDiff"
+                <msh:table name="journal_3_patAllOperDiff" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -2102,7 +2102,7 @@ group by so.id,so.operationDate,ms.code,ms.name,pat.lastname,pat.firstname,pat.m
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_operAllOperDiff"
+                <msh:table name="journal_3_operAllOperDiff" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityShortView-stac_surOperation.do" idField="1">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -2188,7 +2188,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename order by pat.id"/>
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table name="journal_3_patAllDistrict"
+                <msh:table name="journal_3_patAllDistrict" printToExcelButton="Сохранить в excel"
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-mis_patient.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
@@ -2246,6 +2246,7 @@ group by pat.id,pat.lastname,pat.firstname,pat.middlename order by pat.id"/>
                 var frm = document.forms[0] ;
                 frm.target='' ;
                 frm.action='stac_analysis_department_list.do' ;
+                frm.submit();
             }
             function print() {
                 updateId() ;

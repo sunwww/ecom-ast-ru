@@ -12,6 +12,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class VocExtDisp extends VocBaseEntity{
+
 	/** Внутренний код */
 	@Comment("Внутренний код")
 	public String getInternalCode() {return theInternalCode;}
@@ -20,27 +21,34 @@ public class VocExtDisp extends VocBaseEntity{
 	/** Внутренний код */
 	private String theInternalCode;
 	
-/** Флаг медосмотра */
-@Comment("Флаг медосмотра")
-public Boolean getIsComission() {return theIsComission;}
-public void setIsComission(Boolean aIsComission) {theIsComission = aIsComission;}
-/** Флаг медосмотра */
-private Boolean theIsComission;
-	
-/** Оказывается только прикрепленному населению */
-@Comment("Оказывается только прикрепленному населению")
-public Boolean getAttachmentPopulation() {return theAttachmentPopulation;}
-public void setAttachmentPopulation(Boolean aAttachmentPopulation) {theAttachmentPopulation = aAttachmentPopulation;}
-/** Оказывается только прикрепленному населению */
-private Boolean theAttachmentPopulation;
+	/** Флаг медосмотра */
+	@Comment("Флаг медосмотра")
+	public Boolean getIsComission() {return theIsComission;}
+	public void setIsComission(Boolean aIsComission) {theIsComission = aIsComission;}
+	/** Флаг медосмотра */
+	private Boolean theIsComission;
+
+	/** Оказывается только прикрепленному населению */
+	@Comment("Оказывается только прикрепленному населению")
+	public Boolean getAttachmentPopulation() {return theAttachmentPopulation;}
+	public void setAttachmentPopulation(Boolean aAttachmentPopulation) {theAttachmentPopulation = aAttachmentPopulation;}
+	/** Оказывается только прикрепленному населению */
+	private Boolean theAttachmentPopulation;
 
 
 
-/** Запрет на дублирование */
-@Comment("Запрет на дублирование")
-public Boolean getDisableAgeDoubles() {return theDisableAgeDoubles;}
-public void setDisableAgeDoubles(Boolean aDisableAgeDoubles) {theDisableAgeDoubles = aDisableAgeDoubles;}
-/** Запрет на дублирование */
-private Boolean theDisableAgeDoubles;
+	/** Запрет на дублирование */
+	@Comment("Запрет на дублирование")
+	public Boolean getDisableAgeDoubles() {return theDisableAgeDoubles;}
+	public void setDisableAgeDoubles(Boolean aDisableAgeDoubles) {theDisableAgeDoubles = aDisableAgeDoubles;}
+	/** Запрет на дублирование */
+	private Boolean theDisableAgeDoubles;
+
+	/** В архиве */
+	@Comment("В архиве")
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** В архиве */
+	private Boolean theIsArchival ;
 
 }

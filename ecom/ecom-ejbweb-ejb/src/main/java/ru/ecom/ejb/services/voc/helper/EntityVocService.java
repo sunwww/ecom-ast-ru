@@ -152,7 +152,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
                 if (queryDop!=null) sb.append(" or (upper(").append(field).append( ")  like '%").append(queryDop).append("%')") ;
             }
             sb.append(" ) ") ;
-            System.out.println(sb) ;
+           // LOG.debug(sb); ;
             if(theAppendQuery!=null) {
                 sb.append(" and ") ;
                 sb.append(theAppendQuery) ;
@@ -162,10 +162,8 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
                 sb.append(theParentField).append('=').append(aAdditional.getParentId()) ;
             }
             sb.append(" order by id") ;
-            //if (CAN_DEBUG)
-				LOG.debug("findVocValueByQuery: query = " + sb); 
-
-            // ("from "+theEntityName+" where time = :time and "+theNameField+" like :query order by id")
+            if (CAN_DEBUG)
+				LOG.debug("findVocValueByQuery: query = " + sb);
 
             Query query  = aContext.getEntityManager().createQuery
                     (sb.toString())
@@ -208,12 +206,12 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
         }
         sb.append(" order by id desc") ;
         if (CAN_DEBUG)
-			LOG.debug("findVocValuePrevious: query = " + sb); 
+			LOG.debug("findVocValuePrevious: query = " + sb);
         Query query = aContext.getEntityManager().createQuery(sb.toString()) ;
         if(id!=null) {
             query.setParameter("id", id) ;
             if (CAN_DEBUG)
-				LOG.debug("findVocValuePrevious: id = " + id); 
+				LOG.debug("findVocValuePrevious: id = " + id);
 
         }
         List list = query.setMaxResults(aCount).getResultList();
@@ -255,7 +253,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
             sb.append(theParentField).append('=').append(aAdditional.getParentId()) ;
         }
         sb.append(" order by id") ;
-        LOG.info(sb) ;
+       // LOG.info(sb) ;
         Query query = aContext.getEntityManager().createQuery(sb.toString()) ;
         if(id!=null) {
             query.setParameter("id", id) ;

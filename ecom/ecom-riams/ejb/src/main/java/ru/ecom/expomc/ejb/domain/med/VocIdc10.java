@@ -130,4 +130,13 @@ public class VocIdc10 extends VocIdCodeName {
 	/** Используется в ОМС */
 	private Boolean theUseOmc;
 
+	/**Код в промеде**/
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
 }

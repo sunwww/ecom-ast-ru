@@ -21,7 +21,6 @@ import ru.ecom.ejb.services.util.QueryResultUtil;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.nuzmsh.util.StringUtil;
-import sun.awt.windows.ThemeReader;
 
 /**
  * Импорт политик безопасности

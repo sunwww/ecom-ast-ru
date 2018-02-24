@@ -40,7 +40,6 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     	Address adr = theEntityManager.find(Address.class, aAddressId);
     	String rayon =theAstrkhanReginHelper.getOmcRayonNameKey(adr, aHouse, theEntityManager) ;
     	if (rayon!=null) {
-        	System.out.println("-------------rayon="+rayon) ;
 	    	StringBuilder sql = new StringBuilder() ;
 	    	sql.append("select id,code||' '||name from VocRayon where code='").append(rayon).append("'") ;
 	    	

@@ -185,12 +185,6 @@ public class Patient extends BaseEntity{
 		// адрес проживания пустой
 	}
 
-    /** Льготы */
-	//@Comment("Льготы")
-	//@OneToMany(mappedBy="person", cascade=CascadeType.ALL)
-	//public List<Privilege> getPrivileges() {return thePrivileges;}
-	//public void setPrivileges(List<Privilege> aPrivileges) {thePrivileges = aPrivileges;}
-	
     /** Имя */
     @Comment("Имя")
 	public String getFirstname() { return theFirstname ; }

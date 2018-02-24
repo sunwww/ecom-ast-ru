@@ -214,7 +214,7 @@ then -1 else 0 end) as age
     ${hav} ${addOperation}
     order by pat.lastname,pat.firstname,pat.middlename
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list"
+        <msh:table name="journal_list" printToExcelButton="Сохранить в excel"
         viewUrl="entitySubclassShortView-mis_medCase.do"
          action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
@@ -285,7 +285,7 @@ then -1 else 0 end) as age
     order by d.name,vhr.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod"
+        <msh:table name="journal_list_swod"  printToExcelButton="Сохранить в excel"
          action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
@@ -357,7 +357,7 @@ then -1 else 0 end) as age
     ,vhr.name
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod"
+        <msh:table name="journal_list_swod"  printToExcelButton="Сохранить в excel"
          action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="Отделение" property="2"/>
@@ -418,7 +418,7 @@ then -1 else 0 end) as age
 
     
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-        <msh:table name="journal_list_swod_all"
+        <msh:table name="journal_list_swod_all"  printToExcelButton="Сохранить в excel"
          action="stac_resultPatient_list.do?dateBegin=${param.dateBegin}&dateEnd=${dateEnd}" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Результат госпитализации" property="2"/>
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во" property="3"/>

@@ -261,7 +261,7 @@ and sls.deniedhospitalizating_id is null
 group by ${typeGroupId},${typeGroupName}
 order by ${typeGroupName}
 " />
-    <msh:table name="report_direct_swod" 
+    <msh:table name="report_direct_swod" printToExcelButton="Сохранить в excel"
     viewUrl="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
      <msh:tableNotEmpty>
@@ -328,7 +328,7 @@ and sls.deniedhospitalizating_id is null
 group by ${typeGroupId},${typeGroupName}
 order by ${typeGroupName}
 " />
-    <msh:table name="report_direct_swod" 
+    <msh:table name="report_direct_swod"  printToExcelButton="Сохранить в excel"
     viewUrl="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="stac_report_direct_in_hospital.do?typeView=1&typeDate=${typeDate}&typeEmergency=${typeEmergency}&typeDepartment=${typeDepartment}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
      <msh:tableNotEmpty>
@@ -421,7 +421,7 @@ group by sls.id ,ss.code ,p.lastname,p.firstname,p.middlename
 , ml.name , dep.name ,of_.name , vss.name 
  ,vht.name ,sls.emergency , vlf.name ,vr.name
 order by p.lastname,p.firstname,p.middlename " />
-    <msh:table name="journal_surOperation" 
+    <msh:table name="journal_surOperation"  printToExcelButton="Сохранить в excel"
     viewUrl="entityShortView-stac_ssl.do" 
      action="entityView-stac_ssl.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />

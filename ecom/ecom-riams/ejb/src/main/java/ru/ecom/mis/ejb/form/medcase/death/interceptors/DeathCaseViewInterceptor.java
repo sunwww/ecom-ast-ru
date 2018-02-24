@@ -24,8 +24,16 @@ public class DeathCaseViewInterceptor implements IFormInterceptor {
 		// Concluding
 		frm = DischargeMedCaseViewInterceptor.getDiagnosis(manager, id, "3", "1", false) ;
 		if (frm!=null){
-			form.setConcludingDiagnos(frm.getName());
-			if (frm.getIdc10()!=null) form.setConcludingMkb(frm.getIdc10()) ;
+
+			if ( form.getIsNeonatologic()!=null && form.getIsNeonatologic()) {
+				form.setConcludingDiagnos(form.getCommentReason());
+				if (frm.getIdc10() != null) form.setConcludingMkb(form.getReasonMainMkb());
+			}
+			else {
+				form.setConcludingDiagnos(frm.getName());
+				if (frm.getIdc10() != null) form.setConcludingMkb(frm.getIdc10());
+			}
+
 		}
 		//Pathanatomical
 		frm = DischargeMedCaseViewInterceptor.getDiagnosis(manager, id, "5", "1", false) ;

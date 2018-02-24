@@ -52,11 +52,19 @@ public class VocExtDispForm extends IdEntityForm {
 	private Boolean theAttachmentPopulation;
 	
 
-/** Запрет на дублирование */
-@Comment("Запрет на дублирование")
-@Persist
-public Boolean getDisableAgeDoubles() {return theDisableAgeDoubles;}
-public void setDisableAgeDoubles(Boolean aDisableAgeDoubles) {theDisableAgeDoubles = aDisableAgeDoubles;}
-/** Запрет на дублирование */
-private Boolean theDisableAgeDoubles;
+	/** Запрет на дублирование */
+	@Comment("Запрет на дублирование")
+	@Persist
+	public Boolean getDisableAgeDoubles() {return theDisableAgeDoubles;}
+	public void setDisableAgeDoubles(Boolean aDisableAgeDoubles) {theDisableAgeDoubles = aDisableAgeDoubles;}
+	/** Запрет на дублирование */
+	private Boolean theDisableAgeDoubles;
+
+	/** В архиве */
+	@Comment("В архиве")
+	@Persist
+	public Boolean getIsArchival() {return theIsArchival;}
+	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	/** В архиве */
+	private Boolean theIsArchival ;
 }

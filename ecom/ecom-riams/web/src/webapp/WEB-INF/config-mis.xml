@@ -5,6 +5,9 @@
 <struts-config>
 
 	<form-beans>
+		<form-bean name="extDispPlan_recordForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationRecordForm"/>
+		<form-bean name="extDispPlan_planForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationForm"/>
+
 	<!-- Справочник -->
 	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
 	<form-bean name="directory_departmentForm"			type="ru.ecom.mis.ejb.form.directory.DepartmentForm"/>
@@ -321,8 +324,25 @@
 
 	<global-forwards></global-forwards>
 
+
 	<action-mappings>
-	
+
+
+		<action path='/extDispPlanAdd' type='ru.ecom.web.actions.base.ForwardAction'
+				name='mis_attachmentForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/extDispPlan_plan/add.jsp" />
+		</action>
+		<action path='/extDispPlanView' type='ru.ecom.web.actions.base.ForwardAction'
+				name='mis_attachmentForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/extDispPlan_plan/view.jsp" />
+		</action>
+
 	 <action path='/journal_foreignPatients' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -412,6 +432,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/eln_count.jsp" />
         </action>
+		<action path='/allLn_count_report' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/allLn_count_report.jsp" />
+		</action>
  <action path='/preg_child_birth_report' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
@@ -1055,6 +1082,20 @@
 				scope="session"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/reportIMT.jsp" />
+		</action>
+		<action path='/report203' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/report203.jsp" />
+		</action>
+		<action path='/reportKDL' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/reportKDL.jsp" />
 		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'

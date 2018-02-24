@@ -330,7 +330,9 @@ public class QualityEstimationServiceJs {
 					" left join medcase mc on mc.id=ds.medcase_id \n" +
 					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  \n" +
 					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id \n" +
-					" where mc.id=" + id + " and reg.code='4' and prior.code='1'";
+					" left join patient pat on pat.id=mc.patient_id \n" +
+					" where mc.id=" + id + " and reg.code='4' and prior.code='1'\n" +
+					" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
 			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
@@ -354,25 +356,51 @@ public class QualityEstimationServiceJs {
 		return res.toString();//*/}return null;
 	}
 	//Milamesher чисто критерии по диазнозу, список
-	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, HttpServletRequest aRequest) throws NamingException {
+	public String showJustCriterias(Long idc10_id, Long regID, Long priorId, Long medcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res=new StringBuilder();
-		String query="select case when (select code from vocdiagnosisregistrationtype where id= "
-				+regID+" )='4' and (select code from vocprioritydiagnosis where id= "+priorId+" )='1' then '1' else '0' end";
-		if (service.executeNativeSql(query).iterator().next().get1().equals("1")) {
-			query = "select vqecrit.name\n" +
+		if (regID!=null && priorId!=null) {
+			String query = "select case when (select code from vocdiagnosisregistrationtype where id= "
+					+ regID + " )='4' and (select code from vocprioritydiagnosis where id= " + priorId + " )='1' then '1' else '0' end";
+			if (service.executeNativeSql(query).iterator().next().get1().equals("1")) {
+				query = "select distinct vqecrit.name\n" +
+						" from vocqualityestimationcrit vqecrit\n" +
+						" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
+						" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
+						//" left join diagnosis ds on ds.idc10_id=d.id \n" +
+						//" left join medcase mc on mc.id=ds.medcase_id \n" +
+						" left join medcase mc on mc.id="+medcaseId + "\n" +
+						" left join vocdiagnosisregistrationtype reg on reg.id=" + regID + "\n" +
+						" left join vocprioritydiagnosis prior on prior.id=" + priorId + "\n" +
+						" left join patient pat on pat.id=mc.patient_id \n" +
+						" where vqecrit_d.vocidc10_id=" + idc10_id + "\n" +
+						" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
+				Collection<WebQueryResult> list = service.executeNativeSql(query);
+				if (list.size() > 0) {
+					for (WebQueryResult w : list) {
+						res.append(w.get1()).append("#");
+					}
+				} else res.append("##");
+			} else res.append("##");
+		}
+		else { //если по умолчанию основной клинический (тут medcase - hospital)
+			String query = "select distinct vqecrit.name\n" +
 					" from vocqualityestimationcrit vqecrit\n" +
 					" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  \n" +
-					" where vqecrit_d.vocidc10_id=" + idc10_id;
-			Collection<WebQueryResult> list = service.executeNativeSql(query); //все услуги по medcase
+					" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id \n" +
+					" left join medcase mc on mc.id=ANY(select id from medcase where parent_id=" + medcaseId + ")\n" +
+					" left join vocdiagnosisregistrationtype reg on reg.code='4'  \n" +
+					" left join vocprioritydiagnosis prior on prior.code='1' \n" +
+					" left join patient pat on pat.id=mc.patient_id \n" +
+					" where vqecrit_d.vocidc10_id=" + idc10_id + "\n" +
+					" and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)";
+			Collection<WebQueryResult> list = service.executeNativeSql(query);
 			if (list.size() > 0) {
 				for (WebQueryResult w : list) {
 					res.append(w.get1()).append("#");
 				}
-			}
-			else res.append("##");
+			} else res.append("##");
 		}
-		else res.append("##");
 		return res.toString();
 	}
 	public String getAllServicesByMedCase(Long aMedcaseId,HttpServletRequest aRequest) throws NamingException {
@@ -385,11 +413,21 @@ public class QualityEstimationServiceJs {
 		if (type.equals("BranchManager")) {//если оценки проставляет заведующий, может быть разница с автоматическим расчётом
 			Long medcase;
 			String query = "";
-			if (!createEdit)
+			if (createEdit==null) {
+				query = "select m.parent_id from qualityestimationcard qecard\n" +
+						"left join medcase m on m.id=qecard.medcase_id\n" +
+						"left join qualityestimation qe on qe.card_id=qecard.id\n" +
+						"where qe.id=" + qEId; //если ред-е draft
+			}
+			else if (!createEdit) {
 				query = "select m.parent_id from qualityestimationcard qec left join medcase m on m.id=qec.medcase_id where qec.id=" + qEId; //если создаётся новое
-			else query = "select qecard.medcase_id from qualityestimationcard qecard\n" +
-					"left join qualityestimation qe on qe.card_id=qecard.id\n" +
-					"where qe.id=" + qEId; //если ред-е
+			}
+			else {
+				query = "select case when mc.dtype='HospitalMedCase' then mc.id else mc.parent_id end from medcase mc \n" +
+						"left join qualityestimationcard qecard on qecard.medcase_id = mc.id\n" +
+						"left join qualityestimation qe on qe.card_id=qecard.id\n" +
+						"where qe.id=" + qEId; //если ред-е
+			}
 			Collection<WebQueryResult> list0 = service.executeNativeSql(query);
 			if (list0.size() != 0) {
 				medcase = Long.parseLong(list0.iterator().next().get1().toString());
@@ -405,13 +443,17 @@ public class QualityEstimationServiceJs {
 						"where qem.id=" + markId;
 				WebQueryResult w = service.executeNativeSql(query).iterator().next();
 				String mark = (w.get2() != null) ? w.get2().toString() : "";
+				String mcodes = (w.get1() != null) ? w.get1().toString() : "";
 				Boolean flag = false;
-				for (int i = 0; i < allMatches.size(); i++) {
-					String mcodes = (w.get1() != null) ? w.get1().toString() : "";
-					String scode = allMatches.get(i);
-					if (mcodes.contains("'" + scode + "'")) flag = true;
+				if (!mcodes.equals("")) {
+					for (int i = 0; i < allMatches.size(); i++) {
+						String scode = allMatches.get(i);
+						if (mcodes.contains("'" + scode + "'")) flag = true;
+						//res+=scode+=" ; ";
+					}
+					if (mark.equals("Да") && !flag || mark.equals("Нет") && flag) res = "true";
+					else res = "false";
 				}
-				if (mark.equals("Да") && !flag || mark.equals("Нет") && flag) res = "true";
 				else res = "false";
 			}
 		} else if (type.equals("Expert")) { //эксперт - пред. этам - зав.
@@ -437,5 +479,144 @@ public class QualityEstimationServiceJs {
 			res = (service.executeNativeSql(query).size() > 0) ? "false" : "true";
 		}
 		return res;
+	}
+	//Milamesher создание черновик ЭК
+	public Long createDraftEK(Long aMcaseId, HttpServletRequest aRequest) throws NamingException {
+		IQualityEstimationService service = Injection.find(aRequest).getService(IQualityEstimationService.class);
+		return service.createDraftEK(aMcaseId);
+	}
+	//Milamesher получить departmentMedCase
+	public String getDepMedcaseFromDraftEK(Long aCardId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medcase_id from QualityEstimationCard where id=" + aCardId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql,1) ;
+		if (list.size()!=0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1());
+		}
+		return res.toString();
+	}
+	public Boolean deleteCrit(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		Boolean flag=false;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query ="select * from qualityestimationcrit where criterion_id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
+		if (list.size()==0) {
+			query = "delete from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId;
+			service.executeUpdateNativeSql(query);
+			query = "delete from vocqualityestimationmark where criterion_id=" + aCritId;
+			service.executeUpdateNativeSql(query);
+			query = "delete from vocqualityestimationcrit where id=" + aCritId;
+			service.executeUpdateNativeSql(query);
+			flag=true;
+		}
+		return flag;
+	}
+	public void deleteDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
+		(Injection.find(aRequest).getService(IWebQueryService.class)).executeUpdateNativeSql("delete from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id);
+	}
+	public Boolean addDiagnoseOfCrit203ById(Long aCritId, Long aIdc10Id, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String query="select * from vocqualityestimationcrit_diagnosis where vqecrit_id=" + aCritId + " and vocidc10_id="+aIdc10Id;
+		Collection<WebQueryResult> list = service.executeNativeSql(query,1) ;
+		Boolean flag=false;
+		if (list.size()==0) {
+			service.executeUpdateNativeSql("insert into vocqualityestimationcrit_diagnosis(vocidc10_id, vqecrit_id) VALUES (" + aIdc10Id + "," + aCritId + ")");
+			flag=true;
+		}
+		return flag;
+	}
+	public String selectDiagnoseOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select idc.id,idc.code||' '||idc.name from vocidc10 idc\n" +
+				"left join vocqualityestimationcrit_diagnosis vd on vd.vocidc10_id=idc.id\n" +
+				"left join vocqualityestimationcrit vqec on vqec.id=vd.vqecrit_id\n" +
+				"where vqec.id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1()).append("#").append(w.get2()).append("!");
+			}
+		} else res.append("##");
+		return res.toString();
+	}
+	public String selectMedServOfCrit203ById(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1());
+			}
+		} else res.append("##");
+		return res.toString();
+	}
+	public String deleteMedServOfCrit203ById(Long aCritId, String medServ, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1());
+			}
+		}
+		if (res!=null && !res.toString().equals("")) {
+			String ms=res.toString();
+			ms=ms.replace("'"+medServ+"'","");
+			ms=ms.replace(",,",",");
+			ms=ms.replace("'","''");
+			if (ms.length()>0 && ms.substring(0,1).equals(",")) ms=ms.substring(1);
+			if (ms.endsWith(",")) ms=ms.substring(0,ms.length()-1);
+			ms="'"+ms+"'";
+			if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
+			service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
+			return ms.replace("''","'").replace("''","'");
+		}
+		return "0";
+	}
+	public String addMedServOfCrit203ById(Long aCritId, String medServId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select medservicecodes from vocqualityestimationcrit where id=" + aCritId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1());
+			}
+		}
+		sql = "select code from medservice where id=" + medServId;
+		list = service.executeNativeSql(sql);
+		String medServ="";
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				medServ=w.get1().toString();
+			}
+		}
+		if (res!=null && !medServ.equals("")) {
+			String ms=res.toString();
+			if (!ms.contains(medServ)) {
+				if (res.toString().equals("")) {
+					ms=medServ.replace("'","''");
+					ms="'''"+ms+"'''";
+				}
+				else {
+					ms=ms+","+"'"+medServ+"'";
+					ms=ms.replace("'","''");
+					ms="'"+ms+"'";
+				}
+				if (ms==null || ms.equals("null") || ms.equals("'")) ms="''";
+				service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes=" + ms + " where id=" + aCritId);
+				return ms.replace("''","'").replace("''","'");
+			}
+		}
+		return "0";
+	}
+	public void setMedServEmptyString(Long aCritId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes='' where id=" + aCritId);
 	}
 }

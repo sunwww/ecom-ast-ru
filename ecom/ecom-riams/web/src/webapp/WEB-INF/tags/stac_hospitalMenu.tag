@@ -91,6 +91,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	params="id"  action='/entityParentList-preg_inspection'  key='Alt+0' 
     	title='Медицинские осмотры'/>
 
+
 	<msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View"  name="Дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ"   
 		params="id"  action='/entityParentList-smo_visitProtocol' title='Список дневников специалистов'
 		styleId="smo_visitProtocol"
@@ -174,13 +175,17 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
     <msh:sideLink roles="/Policy/Stac/ExpOmcService/Show" name="Цена по ОМС"   params="slsId"  action='/viewCalcPriceResultSls' title='Результат определения цены'/>  
 
-        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_deathCase.do?short=Short&id=${param.id}','.do')" name='Случай смерти' title="Просмотр случая смерти" 
+        <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_deathCase.do?short=Short&id=${param.id}','.do')" name='Случай смерти' title="Просмотр случая смерти"
         	roles="/Policy/Mis/MedCase/DeathCase/View" />
 		
 		<msh:sideLink roles="/Policy/Mis/MedCase/BirthCase/View"  name="Случай рождения"   
 		params="id"  action='/entityParentList-stac_birthCase' title='Просмотр случая рождения'
 		styleId="stac_birthCase"
 		/>
+	<msh:sideLink confirm="Вы действительно желаете удалить данные выписки?"
+			roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
+				  name="Удалить данные выписки"   params="id"  action='/javascript:deleteDischargeIn2Hours()'
+				  title='Удалить данные выписки' styleId="stac_birthCase" />
 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Delete;/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin" 
     	name="Удалить"   params="id"  action="/entityParentDeleteGoParentView-stac_ssl"  
     	key='ALT+DEL' title='Удалить' confirm="Удалить?" />
@@ -318,5 +323,15 @@ function gotoNewBornHistory(aMedCase,aUrl) {
 			     }
 			  }
 			}) ;
+  }
+  function deleteDischargeIn2Hours() {
+      HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(
+		  ${param.id}, {
+          callback: function(res) {
+              if (res==true) {
+                  deleteDischarge(${param.id});
+			  }
+			  else alert("Невозможно удалить данные! Выписка должна быть создана не более 2х часов назад. Удалить её может только лечаший врач.");
+          }}) ;
   }
 </script>

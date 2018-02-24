@@ -337,7 +337,7 @@ public class WorkerServiceBean implements IWorkerService{
 			}
 		} 
 		ret.append(rownext.get(0)[0]).append("#").append(rownext.get(0)[1]) ;
-		System.out.println("default date="+ret) ;
+	//	System.out.println("default date="+ret) ;
 		return ret.toString() ;
 	}
 }

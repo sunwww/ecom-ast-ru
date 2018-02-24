@@ -26,13 +26,18 @@
     <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="cal_workCalendarForm">
       <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/JournalPattern/View" guid="a4054052-1d42-4d0b-aef1-90c19bd53973">
         <msh:section guid="sectionChilds" title="Журналы шаблонов">
-          <ecom:parentEntityListAll guid="parentEntityListChilds" formName="work_journalPatternCalendarForm" attribute="journals" />
-          <msh:table deleteUrl="entityParentDeleteGoParentView-work_journalPatternCalendar.do" editUrl="entityParentEdit-work_journalPatternCalendar.do" viewUrl="entityShortView-work_journalPatternCalendar.do" guid="tableChilds" name="journals" action="entityParentView-work_journalPatternCalendar.do" idField="id">
-            <msh:tableColumn columnName="ИД" property="id" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
-            <msh:tableColumn columnName="Информация о шаблоне" property="info" guid="a744754f-5212-4807-910f-e4b2333" />
-            <msh:tableColumn columnName="Отключен" property="noActive" guid="a744754f-5212-4807-910f-e1212" />
-            <msh:tableColumn columnName="Действует с" property="dateFrom" guid="a744754f-5212-4807-910f-333aec108" />
-            <msh:tableColumn columnName="Действует по" property="dateTo" guid="a744754f-5212-4807-910f-333aec19" />
+          <ecom:webQuery name="journals" nativeSql="select jp.id as f1_id, wcp.name as f2_name, jp.dateFrom as f3_datefrom, jp.dateTo as f4_dateto
+,case when jp.noactive='1' then 'background-color:red' when jp.dateto<current_date then 'background-color:red' else 'background-color:green' end as f5_colorStyle
+ from journalpatterncalendar jp
+ left join workcalendarpattern wcp on wcp.id=jp.pattern_id
+
+ where jp.workcalendar_id  =${param.id}"/>
+          <msh:table styleRow="5" deleteUrl="entityParentDeleteGoParentView-work_journalPatternCalendar.do" editUrl="entityParentEdit-work_journalPatternCalendar.do" viewUrl="entityShortView-work_journalPatternCalendar.do"
+                     guid="tableChilds" name="journals" action="entityParentView-work_journalPatternCalendar.do" idField="1">
+            <msh:tableColumn columnName="ИД" property="1" guid="23eed88f-9ea7-4b8f-a955-20ecf89ca86c" />
+            <msh:tableColumn columnName="Информация о шаблоне" property="2" guid="a744754f-5212-4807-910f-e4b2333" />
+            <msh:tableColumn columnName="Действует с" property="3" guid="a744754f-5212-4807-910f-333aec108" />
+            <msh:tableColumn columnName="Действует по" property="4" guid="a744754f-5212-4807-910f-333aec19" />
           </msh:table>
         </msh:section>
       </msh:ifInRole>

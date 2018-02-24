@@ -208,55 +208,64 @@
 function addPrescription(aLabID, aLabDepartment, aLabCabinet, aDateStart, aWCT, comments,addRowType, addRowNum) {
 	$('subm').value = 'Создание...';
 	$('subm').disabled = true;
-	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments);
-	PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
-	,$('surgServicies').value, $('countDays').value, {
-		callback: function(a) {
-			if (a==null) {
-				alert("Ошибка при назначении услуги!!! Выбранное время уже занято!");
-				
-			} else {
-				addRows(addRowType, addRowNum); 
-			}
-			
-			getPreRecord();
-			updateTime();
-			//alert (a);
-		}
+	PrescriptionService.addPrescriptionToListWCT($('prescriptionList').value, aLabID, aLabDepartment, aLabCabinet,"ServicePrescription",aDateStart, aWCT, comments, {
+	    callback: function (ret) {
+	        if (ret!=null) {
+	            createVisitByPrescription(addRowType,addRowNum);
+            } else {
+	            alert("Ошибка при создании назначения. Время уже занято");
+                $('subm').value = 'Создать назначение';
+                $('subm').disabled = false;
+            }
+        }
 	});
-	
-	
+}
+
+function createVisitByPrescription(addRowType,addRowNum) {
+    PrescriptionService.createVisitByPrescription($('prescriptionList').value, $('surgCabinet').value, $('surgCalDate').value, $('surgCalTime').value
+        ,$('surgServicies').value, $('countDays').value, {
+            callback: function(a) {
+                if (a==null) {
+                    alert("Ошибка при назначении услуги!!! Выбранное время уже занято!");
+
+                } else {
+                    addRows(addRowType, addRowNum);
+                }
+                getPreRecord();
+                updateTime();
+            }
+        });
 }
 function deletePrescription(aMedService, aWCT) {
 	PrescriptionService.removePrescriptionFromListWCT($('prescriptionList').value,aMedService,aWCT);
 }
 
-		function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId) {
-			var next = true ;
-			var l="",lAll="",isDoubble=0 ;
-		for (var i=0;i<aReqFldId.length;i++) {
-			if ($(aType+aFldList[aReqFldId[i]][0]+aTypeNum).value=="") {next=false ; break;}  
-		}
-		if (next) {
-			//Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU# 
-			for (var i=0;i<aFldList.length;i++) {
-				var val = aFldList[i][0]==""?"":$(aType+aFldList[i][0]+aTypeNum).value ;
-				val = val.replace(":","-");
-				if (i!=0) {
-					l += ":" ;lAll+=":";
-				} 
-				if (aCheckId==i) {
-					if ($(aCheckFld).value==val) {
-		            	isDoubble=1;	
-		            }						
-				}
-				if (aFldList[i][1]==1) { l += val ; }
-				lAll+=val ;
-				if (i==(aFldList.length-1)) {l += "#" ;lAll+="#" ;}
-			}
-		}
-		return [l,lAll,isDoubble] ;
-		}
+function getArrayByFld(aType, aTypeNum, aFldList, aReqFldId, aCheckFld, aCheckId) {
+    var next = true ;
+    var l="",lAll="",isDoubble=0 ;
+    for (var i=0;i<aReqFldId.length;i++) {
+        if ($(aType+aFldList[aReqFldId[i]][0]+aTypeNum).value=="") {next=false ; break;}
+    }
+    if (next) {
+        //Формат строки - name:date:method:freq:freqU:amount:amountU:duration:durationU#
+        for (var i=0;i<aFldList.length;i++) {
+            var val = aFldList[i][0]==""?"":$(aType+aFldList[i][0]+aTypeNum).value ;
+            val = val.replace(":","-");
+            if (i!=0) {
+                l += ":" ;lAll+=":";
+            }
+            if (aCheckId==i) {
+                if ($(aCheckFld).value==val) {
+                    isDoubble=1;
+                }
+            }
+            if (aFldList[i][1]==1) { l += val ; }
+            lAll+=val ;
+            if (i==(aFldList.length-1)) {l += "#" ;lAll+="#" ;}
+        }
+    }
+    return [l,lAll,isDoubble] ;
+}
 		
 
 		function addRows(aResult,aFocus) {
@@ -304,14 +313,14 @@ function deletePrescription(aMedService, aWCT) {
 	    //var dt2="<input id='"+type+"Cabinet"+num+"' name='"+type+"Cabinet"+num+"' value='"+cabinet+"' type='hidden'  />";
 	    
 	  	td1.innerHTML = "";//textInput("Дата",type,"Date",num,resultRow[3],date,10) ;
-	    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag("Исследование",resultRow[2],"");
+	    td2.innerHTML = hiddenInput(type,"Service",num,resultRow[1],"")+spanTag(" ",resultRow[2],"");
 	   	if (type=="lab") {
 	   		td2.innerHTML += hiddenInput(type,"Department",num,resultRow[6],"")+spanTag("Место забора",resultRow[7],"") ;
 	   		td2.innerHTML += hiddenInput(type,"Cabinet",num,cabinet,"");
 	   		labNum = num;
 	   	} else if (type=="surg"){
 		   	td2.innerHTML += hiddenInput(type,"Cabinet",num,resultRow[4],"")+spanTag("Кабинет",resultRow[5],"");
-	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[9],"") ;
+	   		td2.innerHTML += hiddenInput(type,"CalTime",num,resultRow[8],"")+spanTag("Время",resultRow[3]+" "+resultRow[9].replace("-",":"),"") ;
 	   		funcNum = num;
 	   		//$(type+'Cabinet').value='';
 			//$(type+'CabinetName').value='';
@@ -389,6 +398,8 @@ function getPreRecord() {
 	}
 	
 	function updateTime() {
+        $('surgCalTime').value="" ;
+        $('surgCalTimeName').value = "";
    		if (+$('surgCalDate').value>0 ) {
    			surgCalTimeAutocomplete.setParentId($('surgCalDate').value+"#"+$('person').value);
    			WorkCalendarService.getReserveByDateAndServiceByPrescriptionList($('surgCalDate').value,$('prescriptionList').value
@@ -426,7 +437,7 @@ function getPreRecord() {
   			}
 			}
 			) ;
-			$('surgCalTime').value="0" ;
+			$('surgCalTime').value="" ;
 		$('surgCalTimeName').value = "";
 		 
 		}
@@ -439,11 +450,14 @@ function getPreRecord() {
 	<script type="text/javascript">
 	function cancelDiagnostic() {
 		var reason = ''+ prompt('Введите причину отмены');
-		PrescriptionService.cancelPrescription($('id').value, reason, {
-			callback:function (a) {
-				alert(a);
-			}
-		}) ;
+		if (""+reason.trim()!="") {
+            PrescriptionService.cancelPrescription($('id').value, reason, {
+                callback:function (a) {
+                    alert(a);
+                }
+            }) ;
+        }
+
 	}
 	</script>
 	</msh:ifFormTypeIsView>
@@ -479,8 +493,7 @@ function getPreRecord() {
 				 <msh:hidden property="comments"  />
       
     </msh:ifFormTypeIsView>
- <%-- --------------------------------------------------Начало блока "Операции" ------ --%>
-         <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm"> 
+         <msh:ifFormTypeIsCreate formName="pres_diagnosticPrescriptionForm">
         <msh:panel>
         <msh:row>
         <tr><td>

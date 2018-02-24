@@ -51,6 +51,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 })
 @Table(schema="SQLUser")
 public class MisLpu extends BaseEntity {
+
+	/** Признак мобильной поликлиники */
+	@Comment("Признак мобильной поликлиники")
+	public Boolean getIsMobilePolyclinic() {return theIsMobilePolyclinic;}
+	public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {theIsMobilePolyclinic = aIsMobilePolyclinic;}
+	/** Признак мобильной поликлиники */
+	private Boolean theIsMobilePolyclinic ;
+
 	
 	/** Стандарт оказания мед. помощи */
 	@Comment("Стандарт оказания мед. помощи")

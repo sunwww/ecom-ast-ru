@@ -80,7 +80,9 @@
         <msh:row>
           <msh:checkBox property="isPresenceDoctorAutopsy" labelColSpan="3" label="Присутствовал леч.врач на вскрытие"/>
         </msh:row>
-        
+        <msh:row>
+          <msh:checkBox property="isNeonatologic" labelColSpan="3" label="Мертворождение" viewOnlyField="true"/>
+        </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocDeathPlace" property="deathPlace" label="Место смерти" fieldColSpan="3" horizontalFill="true" guid="109f7264-23b216c" />
         </msh:row>

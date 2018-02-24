@@ -492,25 +492,26 @@ where pcc.patient_id='${param.id}'
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="c1b89933-a744-46a8-ba32-014ac1b4fcb4">
           <table>
           <tr valign="top"></tr></table>  
-      <msh:ifInRole roles="/Policy/Mis/Person/Privilege/View" guid="6f2f5e4f-35e3-4209-88c3-a3dd5547f5f8">
-      <!--  Льготы  -->
-      <ecom:webQuery name="privileges" nativeSql="
-      select p.id,vpc.code,p.beginDate,p.endDate,p.takeover from Privilege p
-      left join VocPrivilegeCode vpc on vpc.id=p.privilegeCode_id 
-      where p.person_id=${param.id}
-      "/>
+      <msh:ifInRole roles="/Policy/Mis/Person/Privilege/View">
+      <!--  Льготы-->
+          <msh:section title="Льготы" createUrl="entityParentPrepareCreate-mis_privilege.do?id=${param.id}">
+          <ecom:webQuery name="privileges" nativeSql="
+      select p.id,p.begindate,p.enddate, vpc.name,p.serialdoc,p.numberdoc from privilege p
+    left join vocprivilegecategory vpc on vpc.id = p.category_id
+    where p.person_id = ${param.id} and isdelete is null"/>
         <msh:tableNotEmpty name="privileges" >
-          <msh:section title="Льготы" >
             <msh:table  name="privileges" action="entityParentView-mis_privilege.do" idField="1" >
               <msh:tableColumn columnName="#" property="sn" />
-              <msh:tableColumn columnName="Информация о льготе" property="2" />
-              <msh:tableColumn columnName="Дата включения" property="3" />
-              <msh:tableColumn columnName="Дата исключения" property="4" />
-              <msh:tableColumn columnName="Отказ от льготы" property="5" />
+              <msh:tableColumn columnName="Дата включения" property="2" />
+              <msh:tableColumn columnName="Дата исключения" property="3" />
+              <msh:tableColumn columnName="Категоря льготника" property="4" />
+              <msh:tableColumn columnName="Серия документа" property="5" />
+              <msh:tableColumn columnName="Номер документа" property="6" />
             </msh:table>
-          </msh:section>
         </msh:tableNotEmpty>
+          </msh:section>
       </msh:ifInRole>
+        <!--  Инвалидность  -->
     	<msh:ifInRole roles="/Policy/Mis/Patient/Invalidity/View" >
     		<msh:section title="Инвалидность" createUrl="entityParentPrepareCreate-mis_invalidity.do?id=${param.id}" createRoles="/Policy/Mis/Patient/Invalidity/Create">
 		    		<ecom:webQuery nativeSql="select i.id, i.firstDiscloseDate,i.dateFrom,i.lastRevisionDate,i.dateTo,vi.name as viname,mkb.code as mkbcode,i.childhoodInvalid,i.greatePatrioticWarInvalid,i.isWorking,i.nextRevisionDate,i.withoutExam,i.incapable from invalidity i left join VocInvalidity vi on vi.id=i.group_id left join vocidc10 mkb on mkb.id=i.idc10_id where i.patient_id=${param.id}" name="invalidities"/>
@@ -703,7 +704,7 @@ and UPPER(spo.DTYPE)='POLYCLINICMEDCASE'    and spo.dateFinish is null " />
 select smo.id , wcd.calendarDate , wct.timeFrom 
 , owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename as workerOrder 
 , vr.name as reasonName 
-, pvwf.name||' '||ppw.lastname || ' ' || ppw.firstname || ' ' || ppw.middlename as workerPlan  
+, case when pwf.dtype='PersonalWorkFunction' then pvwf.name||' '||ppw.lastname || ' ' || ppw.firstname || ' ' || ppw.middlename else pwf.groupname end as workerPlan
 from MedCase smo
 left join WorkCalendarDay wcd on smo.datePlan_id = wcd.id 
 left join WorkCalendarTime wct on smo.timePlan_id = wct.id 
@@ -730,7 +731,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         </msh:section>
       </msh:ifInRole>
       </td></tr></table>
-      <!-- Открытые ССЛ -->
+      <!-- Открытые СЛС -->
       <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/View" guid="5e0b8545-8dc8-48fd-a0ac-3a9f762f00dc">
 	      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
 		        <msh:section createUrl="entityParentPrepareCreate-stac_sslAdmissionShort.do?id=${param.id}" 
@@ -750,7 +751,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 					and (sls.dateStart=CURRENT_DATE
 					 or sls.deniedHospitalizating_id is null)
 					"  />
-	          <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
+	          <msh:table idField="1" name="openedSLSs" action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых СЛС" guid="d44ef5a2-f5a8-426a-ba79-5812701542bb">
 		            <msh:tableColumn columnName="Дата пост." property="2"/>
 		            <msh:tableColumn columnName="Стат.карта" property="3"/>
 		            <msh:tableColumn columnName="Тип" property="5"/>
@@ -783,7 +784,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 					"  />
 		          <msh:table idField="1" name="openedSLSs"
 		          viewUrl="entityShortView-stac_ssl.do"
-		           action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых ССЛ">
+		           action="entityParentView-stac_sslAdmission.do" noDataMessage="Нет открытых СЛС">
 		            <msh:tableColumn columnName="Дата пост." property="2"/>
 		            <msh:tableColumn columnName="Стат.карта" property="3"/>
 		            <msh:tableColumn columnName="Тип" property="5"/>
@@ -918,57 +919,74 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 	}
     </script>
     </msh:ifInRole>
-  
-  <script type="text/javascript">
-	function checkPassportSeriesAndNumber(){
-		
-		ret=true;
-		pass =  $('passportTypeName').value
-			const SpaceIntoDigits = /\d\d\s\d\d/g;
-			const Digits1 = /\d\d\d\d/g;
-			 passportSeries = $('passportSeries').value
-	         passportNumber = $('passportNumber').value
-		
-		 if((passportSeries.length == 0) && (passportNumber.length==0))//((passportSeries.length==null || passportSeries.length == 0) || (passportNumber.length==null || passportNumber.length==0))
-	        	 {
-	        	 return true;
-	        	 }
-		 else{
-		 
-		if ($('passportType').value=='${passportRF}') {
 
-			 if(passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits))
-				 {
-				  ret=true;
-				 }else{
-			 
- 	 				if(passportSeries.length == 4 && passportSeries.match(Digits1))
- 	 				{
- 	 					var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
- 	 					$('passportSeries').value = text
- 	 					ret=true;
- 	 				}else 
- 	 				{
- 	 					alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
- 	 					ret=false;
- 	 				}
-				 }
- 	         
- 			
- 			 
- 			if(passportNumber.length == 6 && passportNumber.match(/[0-9]/g))
-				{
-				
-				}else 
-				{
-					alert('Неверный формат номера паспорта! \n Должно быть: "ЧЧЧЧЧЧ"!');
-					ret=false;
-				}
-		
-	}
-		}
-		return ret;
-		}
+      <script type="text/javascript">
+          function banEditPerson(){
+              document.getElementById("lastname").setAttribute("readonly", "readonly");
+              document.getElementById("birthday").setAttribute("readonly", "readonly");
+              document.getElementById("firstname").setAttribute("readonly", "readonly");
+              document.getElementById("middlename").setAttribute("readonly", "readonly");
+              document.getElementById("lastname").setAttribute("class", "viewOnly");
+              document.getElementById("birthday").setAttribute("class", "viewOnly");
+              document.getElementById("firstname").setAttribute("class", "viewOnly");
+              document.getElementById("middlename").setAttribute("class", "viewOnly");
+          }
+      </script>
+
+      <msh:ifFormTypeAreViewOrEdit formName="mis_patientForm" guid="6c8ddaec-6990-410d-8e58-1780385ef2d3">
+          <msh:ifInRole roles="/Policy/Mis/Patient/BanEdit">
+              <script type="text/javascript">
+                  banEditPerson();
+              </script>
+          </msh:ifInRole>
+      </msh:ifFormTypeAreViewOrEdit>
+
+      <msh:ifFormTypeAreViewOrEdit formName="mis_patientForm" guid="6c8ddaec-6990-410d-8e58-1780385ef2d3">
+      <msh:ifInRole roles="/Policy/Mis/Patient/BanEditIfPaid">
+      <script type="text/javascript">
+          iamdummy();
+      function iamdummy() {
+      PatientService.getPaid($('id').value, {
+      callback: function(aResult) {
+          if(aResult>0){
+              banEditPerson();
+          }
+      }});
+      }
+      </script>
+      </msh:ifInRole>
+    </msh:ifFormTypeAreViewOrEdit>
+  <script type="text/javascript">
+      function checkPassportSeriesAndNumber(){
+
+          var ret=true;
+          const SpaceIntoDigits = /\d\d\s\d\d/g;
+          const Digits1 = /\d\d\d\d/g;
+          var passportSeries = $('passportSeries').value;
+          var passportNumber = $('passportNumber').value;
+
+          if((passportSeries.length == 0) && (passportNumber.length==0)){
+              return true;
+          }else if ($('passportType').value=='${passportRF}') {
+              if(passportSeries.length == 5 && passportSeries.match(SpaceIntoDigits)){
+                  ret=true;
+              }else if(passportSeries.length == 4 && passportSeries.match(Digits1)){
+                  var text =passportSeries[0]+passportSeries[1]+" "+passportSeries[2]+passportSeries[3];
+                  $('passportSeries').value = text;
+                  ret=true;
+              }else{
+                  alert('Неверный формат серии паспорта! \n Должно быть: "ЧЧ ЧЧ"!');
+                  ret=false;
+              }
+
+              if(passportNumber.length == 6 && passportNumber.match(/[0-9]/g)){
+              }else{
+                  alert('Неверный формат номера паспорта! \n Должно быть: "ЧЧЧЧЧЧ"!');
+                  ret=false;
+              }
+          }
+          return ret;
+      }
     </script>
 
   <msh:ifInRole roles="/Policy/Mis/Patient/CheckByFond">
@@ -1175,17 +1193,25 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     	}
     	function isExistPatient() {
     		if (!checkPassportSeriesAndNumber()) {
-
     			document.getElementById('submitButton').disabled=false;
                 document.getElementById('submitButton').value='Создать';
     			return;
     		}
+
+            if (!checkSymbolField($('middlename')) || !checkSymbolField($('firstname'))
+                || !checkSymbolField($('lastname')) ) {
+    		    alert("Неверный формат ФИО!");
+                document.getElementById('submitButton').disabled=false;
+                document.getElementById('submitButton').value='Создать';
+                return;
+            }
     		var checkFull = false
     		if ($('saveType').value=='1') {
     			checkFull = true ;
     		}
+
     		PatientService.getDoubleByFio($('id').value,$('lastname').value, $('firstname').value, $('middlename').value,
-				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do',checkFull, {
+				$('snils').value, $('birthday').value, getValue($('passportNumber')), getValue($('passportSeries')),'entityView-mis_patient.do', {
                    callback: function(aResult) {
                       if (aResult) {
 				    		showPatientDouble(aResult) ;
@@ -1193,10 +1219,9 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
                        		document.forms[0].action = oldaction ;
 				    		document.forms[0].submit() ;
                        }
-                   }, errorHandler:function(message) {
-                   	alert("error"+message) ;
                    }
 	        	});
+
     		}
     		function getValue(aFld) {
     			if (aFld) {
@@ -1205,6 +1230,15 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     				return "none" ;
     			}
     		}
+
+    		function checkSymbolField(field){
+    	     field = getValue(field);
+                if(field[0]=="-" ) return false;
+                if( field.search(/[\d!"#$%&'()*+,.:;<=>?@\\^_`{|}~]/g) != -1 ){
+                    return false;
+                }else return true;
+            }
+
     	</script>
     	
   </msh:ifFormTypeIsNotView>
