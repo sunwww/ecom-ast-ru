@@ -24,6 +24,9 @@ function printKiliProtocol (aCtx, aParams) {
 	",dth.reasoncomplicationtext as f15_, dth.reasonconcomitanttext as f16_, case when dth.commentcategory is null or dth.commentcategory ='' then 'Имеется совпадение диагнозов' else dth.commentcategory end as f17_com" +
 	", pk.protocolNumber as f18_pkNumber, pk.protocolDate as f19_pkDate, case when mlp.isnoomc='1' then depPrev.kiliprofile_id else mlp.kiliprofile_id end as f20_profileId  "+
 	", case when mlp.isnoomc='1' then vkp.name else vkp2.name end as f21_profileName, vkc.name as f22_kiliConclusion "+
+	",case when dth.isneonatologic=true then pk.protocolComment else '' end as protCom23 " +
+	", case when dth.isneonatologic=true then dth.commentreason else '' end as dReas24 " +
+	", case when dth.isneonatologic=true then dth.newbornhistory else '' end as nBHist25 " +
 	" from protocolKili pk "+
 	" left join deathcase dth on dth.id = pk.deathcase_id "+
 	" left join patient pat on pat.id = dth.patient_id "+
@@ -50,7 +53,7 @@ function printKiliProtocol (aCtx, aParams) {
 	" left join vockiliconclusion vkc on vkc.id = pk.conclusion_id "+
 	" where pk.protocolnumber = '"+protocolNumber+"' and pk.protocolDate = to_date('"+protocolDate+"','dd.MM.yyyy') " +
 	" group by pat.lastname||' '||pat.firstname||' '||pat.middlename, pat.birthday, mlp.name, sls.datestart,"+
-	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory, mlp.isnoomc,depPrev.name,f9_docFio, depPrev.kiliprofile_id, mlp.kiliprofile_id, vkp.name, vkp2.name, vkc.name" +
+	" sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory, mlp.isnoomc,depPrev.name,f9_docFio, depPrev.kiliprofile_id, mlp.kiliprofile_id, vkp.name, vkp2.name, vkc.name,dth.isneonatologic,dth.commentreason,dth.newbornhistory" +
 	" order by f9_docFio";
 	//throw ""+patList;
 	var resultPatList = aCtx.manager.createNativeQuery(patList).getResultList();
@@ -79,7 +82,11 @@ function printKiliProtocol (aCtx, aParams) {
 			var profileName = p[20];
 			var conclusion = p[21];
 			var rashojdenie = p[16];
-			
+
+            var protCom = (p[22]=="")? '':'Примечание: '+p[22];
+            var dReas = (p[23]=='')? '':'Причина смерти: '+p[23];
+            var nBHist = (p[24]==null || p[24]=='' || p[24]=='undefined')? '': p[24];
+
 			pp.add(fio);//0
 			pp.add(bth);//1
 			pp.add(stat);//2
@@ -93,8 +100,7 @@ function printKiliProtocol (aCtx, aParams) {
 			pp.add(OSLPat);//10
 			pp.add(SOPPat);//11
 			pp.add(docTitul);//12
-			pp.add(docFio);//13			
-			
+			pp.add(docFio);//13
 	//		var conclusionQ = "select vkc.name from protocolkili pk left join vocKiliConclusion vkc on vkc.id = pk.conclusion_id where pk.id =" +pkId;
 	//		var concResult = aCtx.manager.createNativeQuery(conclusionQ).getSingleResult();
 			
@@ -132,6 +138,11 @@ function printKiliProtocol (aCtx, aParams) {
 			pp.add(conclusion); //16
 			pp.add(rashojdenie); //17
 			//pp.add(showDefects);//6
+
+            pp.add(protCom); //18
+            pp.add(dReas); //19
+            pp.add(nBHist); //20
+
 			showPat.add(pp);
 		//	throw ""+pp.get(16);
 			}

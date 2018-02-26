@@ -472,6 +472,10 @@ public class DeathCaseForm extends IdEntityForm{
 	public Boolean getIsNeonatologic() {return theIsNeonatologic;}
 	public void setIsNeonatologic(Boolean aIsNeonatologic) {theIsNeonatologic = aIsNeonatologic;}
 
+	/** История развития новорождённого - только для акушерских случаев */
+	public String getNewBornHistory() {return theNewBornHistory;}
+	public void setNewBornHistory(String aNewBornHistory) { theNewBornHistory=aNewBornHistory;}
+
 	/** Фоновое заболевание */
 	private String theBackgroundDisease;
 	/** Сочетанное заболевание */
@@ -484,4 +488,6 @@ public class DeathCaseForm extends IdEntityForm{
 	private String theReasonComplicationText;
 	/** Мертворождение */
 	private Boolean theIsNeonatologic;
+	/** История развития новорождённого - только для акушерских случаев */
+	private String theNewBornHistory;
 }

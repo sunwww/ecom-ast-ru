@@ -429,4 +429,11 @@ public class DeathCase extends BaseEntity {
 
 	/** Мертворождение */
 	private Boolean theIsNeonatologic;
+
+	/** История развития новорождённого - только для акушерских случаев */
+	public String getNewBornHistory() {return theNewBornHistory;}
+	public void setNewBornHistory(String aNewBornHistory) { theNewBornHistory=aNewBornHistory;}
+
+	/** История развития новорождённого - только для акушерских случаев */
+	private String theNewBornHistory;
 }
