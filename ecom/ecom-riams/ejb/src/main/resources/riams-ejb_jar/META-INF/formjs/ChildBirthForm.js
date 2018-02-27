@@ -277,8 +277,8 @@ function onCreate(aForm, aEntity, aCtx) {
 			}
 			else if (newBorn.getLiveBorn().getCode()=='2') {  //если мёртвый
 				var dcase = new Packages.ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
-				dcase.setDeathDate(new java.sql.Date(newBorn.birthDate.getTime()));
-                dcase.setDeathTime(new java.sql.Time (newBorn.birthTime.getTime()));
+				dcase.setDeathDate(newBorn.birthDate);
+                dcase.setDeathTime(newBorn.birthTime);
                 dcase.setAccidentDate(new java.sql.Date(newBorn.birthDate.getTime()));
                 dcase.setAccidentCircumstance("Мертворождение");
                 dcase.setIsNeonatologic(true);

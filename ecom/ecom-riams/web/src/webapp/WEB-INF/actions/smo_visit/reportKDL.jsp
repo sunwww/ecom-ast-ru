@@ -262,7 +262,7 @@
         where hmc.DTYPE='HospitalMedCase'
         and hmc.datestart between to_date('${dateBegin}','dd.mm.yyyy')
         and to_date('${dateEnd}','dd.mm.yyyy')
-        and dmc.dateFinish is not null
+        and hmc.deniedHospitalizating_id is null
         and hmc.department_id=dep.id ${typeVMPOrNotValueJustWhere}
         ) as totalHosp
         ,(
@@ -273,7 +273,7 @@
         where hmc.DTYPE='HospitalMedCase'
         and hmc.datestart between to_date('${dateBegin}','dd.mm.yyyy')
         and to_date('${dateEnd}','dd.mm.yyyy')
-        and dmc.dateFinish is not null
+        and hmc.deniedHospitalizating_id is null
         and hmc.department_id=dep.id ${typeVMPOrNotValueJustWhere}
         and hmc.emergency='1'
         ) as emergCnt
