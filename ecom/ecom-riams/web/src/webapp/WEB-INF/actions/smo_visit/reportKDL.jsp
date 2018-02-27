@@ -31,13 +31,13 @@
                     cnt++;
                 }
                 if (cnt==0) {
-                    m = Pattern.compile("\"value\":\"[0-9]*\",").matcher(deps);
+                    m = Pattern.compile("\"value\":\"[0-9]*\"").matcher(deps);
                     depRqst=new StringBuilder();
                     depRqst.append(" and (dep.id= ");
                     cnt=0;
                     while (m.find()) {
                         if (cnt!=0) depRqst.append(" or dep.id= ");
-                        depRqst.append(m.group().replace("\"value\":","").replace(",","").replace("\"",""));
+                        depRqst.append(m.group().replace("\"value\":","").replace("\"",""));
                         cnt++;
                     }
                 }
@@ -76,17 +76,7 @@
 
             String typeStacOrNot = ActionUtil.updateParameter("reportKDL","typeStacOrNot","1",request);
             if (typeStacOrNot==null) request.setAttribute("typeStacOrNotValue","");
-            String dateT = ActionUtil.updateParameter("reportKDL","typeDate","1",request);
-            if (dateT!=null) {
-                if (dateT.equals("1")) request.setAttribute("dateT"," mc.datestart ");
-                else if (dateT.equals("2") && !typeStacOrNot.equals("3"))  request.setAttribute("dateT"," dmc.datefinish ");
-                    //по госпитализированным в стационаре - только по дате госпитализации, т.е. datestart
-                if (dateT.equals("2") && typeStacOrNot.equals("2")) {
-                    request.setAttribute("dateT"," mc.datestart ");
-                    ActionUtil.setParameter("reportKDL","typeDate","1",request);
-                }
-            }
-            else request.setAttribute("dateT"," mc.datestart ");
+            request.setAttribute("dateT"," mc.dateStart ");
             if (request.getParameter("short")!=null) {
                 request.setAttribute("typeStacOrNot","1");
             }
@@ -102,13 +92,6 @@
                     <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
                 </msh:row>
                 <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-                    <td class="label" title="Поиск по дате  (typeDate)" colspan="1"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
-                    <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeDate" value="1">  поступления
-                    </td>
-                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-                        <input type="radio" name="typeDate" value="2">  выписки
-                    </td>
                 </msh:row>
                 <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                     <td class="label" title="Поиск по промежутку  (typeStacOrNot)" colspan="1"><label for="typeStacOrNotName" id="ttypeStacOrNotLabel">Группировать по:</label></td>
@@ -158,10 +141,10 @@
                 (
                  select ms.code as name1,msPr.name as name2,ms.additionCode as adCode,ms.name as name3,ms.shortname as shname
                 ,count(mc.id) as totalCnt
-                ,case when pt.code='NOPLAN'  then count(distinct mc.id) else '0' end as noPlanCnt
-                ,case when pt.code='URGENT'  then count(distinct mc.id) else '0' end as urgentCnt
-                ,case when pt.code='EMERGENCY'  then count(distinct mc.id) else '0' end as emCnt
-                ,case when pt.code='PLAN'  then count(distinct mc.id) else '0' end as planCnt
+                ,case when pt.code='NOPLAN' ${typeVMPOrNotValueNotNull}  then count(distinct mc.id) else '0' end as noPlanCnt
+                ,case when pt.code='URGENT' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as urgentCnt
+                ,case when pt.code='EMERGENCY' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as emCnt
+                ,case when pt.code='PLAN' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as planCnt
                 from MedService ms
                 left join prescription pr on pr.medservice_id=ms.id
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
@@ -175,7 +158,7 @@
                 left join MedService msPr on msPr.id=ms.parent_id
                 ${typeVMPOrNotValueLeftJoin}
                 where ${dateT} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
-                and vst.code='LABSURVEY' ${deps} ${depId}
+                and vst.code='LABSURVEY' ${deps} ${depId} ${typeVMPOrNotValueNotNull}
                 group by ms.id,pt.code,msPr.id ${typeVMPOrNotValueGroup}
                 order by ms.id
                  ) as t
@@ -394,9 +377,6 @@
         <%
             }
             }
-            /*} else {
-
-            }*/
         %>
 <script type="text/javascript">
     function find() {
@@ -405,7 +385,6 @@
     }
     checkFieldUpdate('typeVMPOrNot','${typeVMPOrNot}',1) ;
     checkFieldUpdate('typeStacOrNot','${typeStacOrNot}',1) ;
-    checkFieldUpdate('typeDate','${typeDate}',1) ;
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
         eval('var chk =  document.forms[0].'+aField) ;
         var aMax=chk.length ;
