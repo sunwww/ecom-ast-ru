@@ -852,10 +852,9 @@ where wf.dtype='PersonalWorkFunction' -->
 			from="PriceMedService PMS"
                 parent='PP.priceList_id = :parent'
                 nameId="PMS.id"
-                queryAppend="ms.finishDate is null and pms.dateTo is null and pp.dateTo is null"
+                queryAppend=" pms.dateTo is null and pp.dateTo is null"
                 join="
                 	left join PricePosition PP ON PP.id = PMS.pricePosition_id
-                	left join MedService ms on ms.id=pms.medservice_id
 				"
                 order=""
                 names   = "PP.code || ' ' || PP.name|| ' ('||PP.cost||')'"
@@ -971,6 +970,17 @@ where wf.dtype='PersonalWorkFunction' -->
 	    		groupBy="wcp.id,wcp.name"
 			/>
 	</voc>
+	<voc id='vocMedPolicyOmc' type='NativeVocService'>
+		<NativeVocService
+				from = ' vocmedpolicyomc voc '
+				names="voc.code||' '||voc.name"
+				nameId=" voc.id "
+				queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
+				queryAppend=" (voc.isDeleted is null or voc.isDeleted='0')"
+				order="voc.code"
+		/>
+	</voc>
+
 
 	<voc id="medPolicy" type="NativeVocService">
 		<NativeVocService

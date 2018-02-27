@@ -277,14 +277,22 @@ function onCreate(aForm, aEntity, aCtx) {
 			}
 			else if (newBorn.getLiveBorn().getCode()=='2') {  //если мёртвый
 				var dcase = new Packages.ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
-				dcase.setDeathDate(new java.sql.Date(currentDate.getTime()));
-                dcase.setDeathTime(new java.sql.Time (currentDate.getTime()));
-                dcase.setAccidentDate(new java.sql.Date(currentDate.getTime()));
+				dcase.setDeathDate(new java.sql.Date(newBorn.birthDate.getTime()));
+                dcase.setDeathTime(new java.sql.Time (newBorn.birthTime.getTime()));
+                dcase.setAccidentDate(new java.sql.Date(newBorn.birthDate.getTime()));
                 dcase.setAccidentCircumstance("Мертворождение");
                 dcase.setIsNeonatologic(true);
                 dcase.setMedCase(aEntity.getMedCase().getParent());
                 dcase.setReasonMainMkb(aCtx.manager.find(Packages.ru.ecom.expomc.ejb.domain.med.VocIdc10,java.lang.Long.valueOf(child[16])));
                 dcase.setCommentReason(child[17]);
+                //var medCase = aCtx.manager.find(HospitalMedCase.class, aEntity.getMedCase().getParent());
+                var motherSls = aEntity.medCase.parent;
+                var ssMother = motherSls.statisticStub.code ;
+                var stub=ssMother.substring(1)+" -Н";
+                var history = "История развития новорождённого № " + stub +"\nДата родов " + newBorn.birthDate + " ребёнок ";
+                var sex=(newBorn.sex.omcCode=="1")?"мужского":"женского";
+                history=history+sex+" пола, вес " + newBorn.birthWeight + " гр, рост " + newBorn.birthHeight + " см, окружность головки " + newBorn.headCircle + " см, мертворождённый";
+                dcase.setNewBornHistory(history);
                 aCtx.manager.persist(dcase) ;
 			}
 			aCtx.manager.persist(newBorn) ;
