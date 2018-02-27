@@ -18,4 +18,13 @@ public class VocReason extends VocIdNameOmcCode {
 
 	/** Код для талона */
 	private String theCodeTicket;
+
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
 }
