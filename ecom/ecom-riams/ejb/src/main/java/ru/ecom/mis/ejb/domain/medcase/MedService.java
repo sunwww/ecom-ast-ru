@@ -272,4 +272,13 @@ public class MedService extends BaseEntity{
 
 	/** УЕТ */
 	private BigDecimal theUet;
+
+	private String promedCode;
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+	public void setPromedCode(String promedCode) {
+		this.promedCode = promedCode;
+	}
 }
