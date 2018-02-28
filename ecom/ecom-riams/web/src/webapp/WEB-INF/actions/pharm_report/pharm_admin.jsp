@@ -12,14 +12,14 @@
     <tiles:put name="side" type="string">
     <msh:sideMenu title="Администрирование">
         <msh:sideLink styleId="viewShort" action="/entityList-pharmnet_complect" name="Комплекты" roles="/Policy/Mis/Directory/Department" title="Перейти к списку отделений"/>
+        <msh:sideLink styleId="viewShort" action="/pharm_balance.do" name='Остатки по складам' title="Просмотр остатков" params=""/>
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='Инвентаризация' title="Просмотр визитов по пациенту" params="" roles="/Policy/Mis/MedCase/Visit/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='Склады' title="Просмотр визитов по пациенту" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='Комплекты' title="Просмотр визитов по пациенту" params="" roles="/Policy/Mis/MedCase/Visit/View" />
     </msh:sideMenu>
     </tiles:put>
 
-    <tiles:put name="body" type="string">
 
+    <tiles:put name="body" type="string">
         <ecom:webQuery name="operations" nativeSql="
                 select idoc.medcaseid
                 ,vdt.name

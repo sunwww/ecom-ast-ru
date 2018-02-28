@@ -30,6 +30,7 @@
 
         <form-bean name="pharmnet_outcomeForm"      type="ru.ecom.mis.web.action.pharmnet.OutcomeForm" />
         <form-bean name="pharmnet_adminForm"      type="ru.ecom.mis.web.action.pharmnet.PharmAdminForm" />
+        <form-bean name="pharmnet_balanceForm"      type="ru.ecom.mis.web.action.pharmnet.PharmBalanceForm" />
 
         <form-bean name="pharmnet_complectForm"      type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectForm" />
         <form-bean name="pharmnet_complectRowForm"      type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectRowForm" />
@@ -486,6 +487,14 @@
                 scope="session">
             <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_admin.jsp" />
         </action>
+
+        <action path='/pharm_balance' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pharmnet_balanceForm'
+                validate='false'
+                scope="session">
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_balance.jsp" />
+        </action>
+
 
     <!--
     <action path="/smo_directionSave" type='ru.ecom.web.actions.entity.SaveAction'

@@ -24,6 +24,7 @@ import java.util.List;
  */
 public class PharmnetServiceJs {
 
+    /**Создание списания*/
     public Integer createOutcome(String aJson, String medcase, String username, HttpServletRequest aRequest)
             throws JSONException, NamingException {
         JSONObject obj = new JSONObject(aJson);
@@ -43,7 +44,7 @@ public class PharmnetServiceJs {
         return 1;
     }
 
-
+    /**Создание комплекта*/
     public Integer createComplectRow(String regid, String complectId, String count, HttpServletRequest request)
             throws JSONException, NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
@@ -54,52 +55,104 @@ public class PharmnetServiceJs {
         return 1;
     }
 
-    public String viewComplect(String medserviceId,String count, HttpServletRequest aRequest) throws NamingException {
+    private List<GoodsLeaveEntity> getGoods(String medcaseId,HttpServletRequest aRequest) throws NamingException {
+
+        Collection<WebQueryResult> goodsl = Injection.find(aRequest)
+                .getService(IWebQueryService.class)
+                .executeNativeSql("select cast(qntost as text),regid from goodsleave  where storageid  =\n" +
+                " (select id from pharmnetstorage where groupworkfuncid  =\n" +
+                " (select group_id from workfunction where id=\n" +
+                " (select workfunctionexecute_id from medcase where id= "+medcaseId+")))\n" +
+                " and nextstate is null and (isend is null or isend = false)");
+
+
+        List<GoodsLeaveEntity> goodsLeaveEntities = new ArrayList<GoodsLeaveEntity>();
+        for (WebQueryResult wqr: goodsl) {
+            GoodsLeaveEntity goodsLeaveEntity = new GoodsLeaveEntity();
+            String temp = (String) wqr.get1();
+            goodsLeaveEntity.setQntOst(Float.valueOf(temp));
+            goodsLeaveEntity.setRegId((Integer) wqr.get2());
+            goodsLeaveEntities.add(goodsLeaveEntity);
+        }
+
+        return goodsLeaveEntities;
+    }
+    /**Предварительный просмотр комплекта, что будет списано по услуге*/
+    public String viewComplect(String medserviceId,String count,String medcaseId, HttpServletRequest aRequest) throws NamingException {
+
+        List<GoodsLeaveEntity> goodsLeaves =getGoods(medcaseId,aRequest);
 
         if(count==null || count.equals("")) count="1";
         Collection<WebQueryResult> res = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
-                .executeNativeSql("select vg.drug||'('||vg.form||')' as dr, cast(pcr.count as text) as count from pharmnetcomplectrow pcr \n" +
+                .executeNativeSql("select vg.drug||'('||vg.form||')' as dr, cast(pcr.count as text) as count, pcr.regid from pharmnetcomplectrow pcr \n" +
                         "left join vocgoods vg on vg.regid = pcr.regid\n" +
                         "where complectid =(select id from pharmnetcomplect  where medservice_id = "+medserviceId+")");
         StringBuilder sql = new StringBuilder();
 
-        sql.append("<table class='tabview sel tableArrow' border='1'><tbody><tr>");
-        sql.append("<th class='idetag tagnameCol'>Наименование</th><th class='idetag tagnameCol'>Количество</th></tr>");
+        List<GoodsLeaveEntity> goodsOuts = new ArrayList<GoodsLeaveEntity>();
+
         for (WebQueryResult wqr: res) {
+            GoodsLeaveEntity goodsOut = new GoodsLeaveEntity();
+            goodsOut.setSeria(String.valueOf(wqr.get1()));
+            String s = (String) wqr.get2();
+            goodsOut.setQntOst(Float.valueOf(s) * Float.valueOf(count));
+            goodsOut.setRegId((Integer) wqr.get3());
+            goodsOuts.add(goodsOut);
+        }
+
+        sql.append("<table class='tabview sel tableArrow' border='1'><tbody><tr>");
+        sql.append("<th class='idetag tagnameCol'>Наименование</th><th class='idetag tagnameCol'>Количество</th>" +
+                "<th class='idetag tagnameCol'>Кол-во на скаладе</th><th class='idetag tagnameCol'>Списание</th></tr>");
+        for(GoodsLeaveEntity gout: goodsOuts) {
 
             sql.append("<tr><td>");
-            sql.append(wqr.get1());
+            sql.append(gout.getSeria());
             sql.append("</td><td>");
-            String s = (String) wqr.get2();
-            sql.append( Float.valueOf(s) * Float.valueOf(count));
-            sql.append("</td></tr>");
+            sql.append(gout.getQntOst());
+            sql.append("</td><td>");
+            boolean a = false;
+            Float c= null;
+            for (GoodsLeaveEntity gleave : goodsLeaves) {
+                if(gout.getRegId().equals(gleave.getRegId())){
+                    a=true;
+                    c=gleave.getQntOst();
+                    break;
+                }else {
+                    a=false;
+                }
+            }
+
+            if(a) sql.append(c+"</td><td>+");
+            else sql.append("-</td><td>-");
         }
+        sql.append("</td></tr>");
         sql.append("</tbody></table>");
         return sql.toString();
     }
 
-    public String createOutcomeByMedservice(String medserviceId, String count, String medcaseId, HttpServletRequest aRequest)
+    public String createOutcomeByMedservice(String medserviceId, String amountMedserv, String medcaseId, String username, HttpServletRequest aRequest)
             throws NamingException {
 
 
         Collection<WebQueryResult> res = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
-                .executeNativeSql("select count, regid from pharmnetcomplectrow  where complectid =" +
+                .executeNativeSql("select cast(count as text), regid from pharmnetcomplectrow  where complectid =" +
                         "(select id from pharmnetcomplect  where medservice_id = "+medserviceId+")");
 
         List<PharmnetComplectRowEntity> pharmnetComplectRowEntityList = new ArrayList<PharmnetComplectRowEntity>();
 
         for (WebQueryResult wqr: res) {
             PharmnetComplectRowEntity pharmnetComplectRowEntity = new PharmnetComplectRowEntity();
-            pharmnetComplectRowEntity.setCount((Float) wqr.get1());
+            String temp = (String) wqr.get1();
+            pharmnetComplectRowEntity.setCount(Float.valueOf(temp));
             pharmnetComplectRowEntity.setRegid((Integer) wqr.get2());
             pharmnetComplectRowEntityList.add(pharmnetComplectRowEntity);
         }
 
         Collection<WebQueryResult> goodsl = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
-                .executeNativeSql("select id,qntost,regid from goodsleave  where storageid  =\n" +
+                .executeNativeSql("select id, cast(qntost as text),regid from goodsleave  where storageid  =\n" +
                         "                (select id from pharmnetstorage where groupworkfuncid  =\n" +
                         "                (select group_id from workfunction where id=\n" +
                         "                (select workfunctionexecute_id from medcase where id= "+medcaseId+")))\n" +
@@ -110,28 +163,67 @@ public class PharmnetServiceJs {
 
         for (WebQueryResult wqr: goodsl) {
             GoodsLeaveEntity goodsLeaveEntity = new GoodsLeaveEntity();
-            goodsLeaveEntity.setId((Long) wqr.get1());
-            goodsLeaveEntity.setQntOst((Float) wqr.get1());
-            goodsLeaveEntity.setRegId((Integer) wqr.get2());
+            Integer tmp = (Integer) wqr.get1();
+            goodsLeaveEntity.setId(tmp);
+            String t = (String) wqr.get2();
+            goodsLeaveEntity.setQntOst(Float.valueOf(t));
+            goodsLeaveEntity.setRegId((Integer) wqr.get3());
             goodsLeaveEntities.add(goodsLeaveEntity);
         }
 
-        Float qnt = Float.valueOf(count);
+        //StringBuilder result =new StringBuilder();
+        Float qnt = Float.valueOf(amountMedserv);
         for(PharmnetComplectRowEntity c:pharmnetComplectRowEntityList ) {
             for (GoodsLeaveEntity g: goodsLeaveEntities) {
                 if(c.getRegid().equals(g.getRegId())){
-                    if((c.getCount()*qnt) <= g.getQntOst()){
 
-                        //списать (c.getCount()*qnt) с (g.getRegId())
+                    Float countOut = c.getCount()*qnt;
+                    if((countOut) <= g.getQntOst()){
+
+                        //result.append(c.get)
                         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
                         StringBuilder sql = new StringBuilder();
-                        //sql.append("insert into PharmnetOutcome  (regid,complectid_id,count) VALUES  ("+regid+","+complectId+","+count+")");
-                        //System.out.println(sql.toString());
+                        sql.append("select PharmnetOutcomebyMedservice ("+g.getId()+","+medcaseId+",'"+username+"',"+countOut+","+medserviceId+")");
                         service.executeNativeSql(sql.toString());
                     }
                 }
             }
         }
         return "";
+    }
+
+    public String getBalance(String storId,HttpServletRequest aRequest)
+            throws NamingException {
+        Collection<WebQueryResult> goodsl = Injection.find(aRequest)
+                .getService(IWebQueryService.class)
+                .executeNativeSql("select gl.regid, vg.drug,vg.form, cast(gl.qntost as text),cast(gl.uqntost as text),gl.srokg from goodsleave gl\n" +
+                        "left join vocgoods vg on vg.regid = gl.regid\n" +
+                        "where gl.storageid = "+storId);
+
+        StringBuilder sql = new StringBuilder();
+
+        sql.append("<table class='tabview sel tableArrow' border='1'><tbody><tr>");
+        sql.append("<th class='idetag tagnameCol'>Id</th>" +
+                "<th class='idetag tagnameCol'>Наименование</th>" +
+                "<th class='idetag tagnameCol'>Форма</th>" +
+                "<th class='idetag tagnameCol'>Количество</th>" +
+                "<th class='idetag tagnameCol'>Кол-во упаковок</th>" +
+                "<th class='idetag tagnameCol'>Срок годности</th>" +
+                "</tr>");
+
+        for (WebQueryResult wqr: goodsl) {
+
+            sql.append("<tr><td>");
+            sql.append(wqr.get1()+"</td><td>");
+            sql.append(wqr.get2()+"</td><td>");
+            sql.append(wqr.get3()+"</td><td>");
+            sql.append(wqr.get4()+"</td><td>");
+            sql.append(wqr.get5()+"</td><td>");
+            sql.append(wqr.get6()+"</td>");
+            sql.append("</td></tr>");
+        }
+
+        sql.append("</tbody></table>");
+        return sql.toString();
     }
 }

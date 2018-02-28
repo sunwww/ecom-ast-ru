@@ -3,6 +3,11 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%
+    String username = LoginInfo.find(request.getSession()).getUsername();
+    request.setAttribute("username", username);
+%>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
@@ -130,7 +135,8 @@
         };
 
         function viewComplect(medserviceId,count) {
-            PharmnetService.viewComplect(medserviceId,count, {
+            var medcase = '${param.id}';
+            PharmnetService.viewComplect(medserviceId,count,medcase, {
                 callback: function (aResult) {
                     div.innerHTML = aResult;
                 }
@@ -145,7 +151,7 @@
                 var medcase = '${param.id}';
                 var count = document.getElementById('medServiceAmount').value;
                 if(medService!="" && count!=""){
-                createOut(medService,count,medcase);
+                    createOut(medService,count,medcase);
                 }
 
                 this.value='Создание ...';
@@ -156,7 +162,8 @@
         };
 
         function createOut(medserviceId,count,medcaseId) {
-            PharmnetService.createOutcomeByMedservice(medserviceId,count,medcaseId, {
+            var userNames= "${username}";
+            PharmnetService.createOutcomeByMedservice(medserviceId,count,medcaseId,userNames, {
                 callback : function(aResult) {
                     //alert("Списание выполнено!");
                 }

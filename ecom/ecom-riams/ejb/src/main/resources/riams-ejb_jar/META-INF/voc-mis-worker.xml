@@ -165,6 +165,15 @@
                 nameId="vg.regid"
                 names="vg.drug||'('||vg.form||')'"
                 queriedSplitCount="2"
-                queried ="upper(vg.drug) like UPPER(:query) or upper(vg.form) like upper(:query)" />
+                queried ="(upper(vg.drug) like UPPER(:quer1) or upper(vg.form) like upper(:quer2)) or upper(vg.drug) like UPPER(:query)" />
+    </voc>
+
+    <voc id="vocPharmnetStorage" type="NativeVocService">
+        <NativeVocService
+                from="pharmnetstorage as ph"
+                nameId="ph.id"
+                names="vb.branch"
+                join=" left join vocbranch vb on vb.branchid =  ph.branchid"
+                queried ="vb.branch" />
     </voc>
 </vocconfig>
