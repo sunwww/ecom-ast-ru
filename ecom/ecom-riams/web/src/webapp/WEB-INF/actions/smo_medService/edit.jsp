@@ -61,6 +61,8 @@
         </msh:row>
         <msh:submitCancelButtonsRow guid="submitCancel" colSpan="8" />
       </msh:panel>
+
+      <div id="addOut"></div>
     </msh:form>
     
     <msh:ifFormTypeIsNotView formName="smo_medServiceForm">
@@ -101,10 +103,69 @@
  
   <msh:ifFormTypeIsNotView formName="smo_medServiceForm">
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
-    <script type="text/javascript">// <![CDATA[//
+    <script type="text/javascript" src="./dwr/interface/PharmnetService.js"></script>
+    <script type="text/javascript">
     	
     	var oldaction = document.forms[0].action ;
     	document.forms[0].action = 'javascript:isExistMedService()';
+
+<msh:ifInRole roles="/Policy/Mis/Pharmacy/CreateOutcome">
+
+        var count = "";
+        var div = document.getElementById('addOut');
+
+        medServiceAutocomplete.addOnChangeCallback(function(){
+            var medserviceId = document.getElementById('medService');
+            if(medserviceId.value!="") {
+                viewComplect(medserviceId.value,count);
+            }else div.innerHTML ="";
+        });
+        var countMedservice = document.getElementById('medServiceAmount');
+        countMedservice.oninput = function() {
+            count=countMedservice.value;
+            var medserviceId = document.getElementById('medService');
+            if(medserviceId.value!="") {
+                viewComplect(medserviceId.value, count);
+            }
+        };
+
+        function viewComplect(medserviceId,count) {
+            PharmnetService.viewComplect(medserviceId,count, {
+                callback: function (aResult) {
+                    div.innerHTML = aResult;
+                }
+            });
+        }
+
+        window.onload = function() {
+            var butn = document.getElementById('submitButton');
+            butn.onclick = function() {
+
+                var medService = document.getElementById('medService').value;
+                var medcase = '${param.id}';
+                var count = document.getElementById('medServiceAmount').value;
+                if(medService!="" && count!=""){
+                createOut(medService,count,medcase);
+                }
+
+                this.value='Создание ...';
+                this.disabled=true;
+                this.form.submit();
+                return true ;
+            };
+        };
+
+        function createOut(medserviceId,count,medcaseId) {
+            PharmnetService.createOutcomeByMedservice(medserviceId,count,medcaseId, {
+                callback : function(aResult) {
+                    //alert("Списание выполнено!");
+                }
+            });
+        }
+
+        </msh:ifInRole>
+
+
     	function isExistMedService() {
     		 
     		HospitalMedCaseService.findDoubleServiceByPatient($('id').value,$('patient').value,$('medService').value, $('dateStart').value
@@ -146,7 +207,6 @@
     			$('medServiceAmount').value=cnt;
     		}
     	}
-    	//]]>
     	</script>
     	
     	

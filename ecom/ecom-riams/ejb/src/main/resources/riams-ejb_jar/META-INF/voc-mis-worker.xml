@@ -158,4 +158,13 @@
                  queried = 'name'
                  />
      </voc>
+
+    <voc id="vocRegids" type="NativeVocService">
+        <NativeVocService
+                from="vocgoods as vg"
+                nameId="vg.regid"
+                names="vg.drug||'('||vg.form||')'"
+                queriedSplitCount="2"
+                queried ="upper(vg.drug) like UPPER(:query) or upper(vg.form) like upper(:query)" />
+    </voc>
 </vocconfig>
