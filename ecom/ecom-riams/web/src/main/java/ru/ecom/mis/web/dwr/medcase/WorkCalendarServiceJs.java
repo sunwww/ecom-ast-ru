@@ -1141,6 +1141,11 @@ public class WorkCalendarServiceJs {
 		return res ;
 	}
 	//TODO доделать
+	/*
+	lastrelease: Milamesher 01.03.2018 (#91)
+	Список услуг из medcase в расписании, а не из предварительной записи.
+	В подсказке - ФИО регистратора medcase, дата и время создания.
+	 */
 	public String getTimesByWorkCalendarDay(Long aWorkCalendar,Long aWorkCalendarDay,Long aVocWorkFunction,HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -1151,7 +1156,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
 		sql.append("") ;
-		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||coalesce(case when ms.shortname='' then null else ms.shortname end,ms.name,'') as f7_fio") ;
+		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||list(coalesce(case when ms.shortname='' then null else ms.shortname end,ms.name,'')) as f7_fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as f12_patid")
@@ -1173,12 +1178,14 @@ public class WorkCalendarServiceJs {
 			sql.append(",cast('-' as varchar(1)) as emp1,cast('-' as varchar(1)) as emp2");
 		}
 
-		sql.append(" ,case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5)) end as f19_prerecord_info") ;
+		sql.append(" ,case when vis.username is not null then vis.username||' '||to_char(vis.createdate,'dd.MM.yyyy')||' '||cast(vis.createtime as varchar(5)) ") ;
+		sql.append(" else case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5)) end end as f19_prerecord_info") ;
 		sql.append(" from WorkCalendarTime wct") ;
 		sql.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id");
-		sql.append(" left join MedService ms on ms.id=wct.service");
-		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
-		sql.append(" left join MedCase vis on vis.id=wct.medCase_id")
+		sql.append(" left join MedCase vis on vis.id=wct.medCase_id");
+		sql.append(" left join MedCase servMc on servMc.parent_id=vis.id");
+		sql.append(" left join MedService ms on case when servMc.medservice_id is not null then servMc.medservice_id else wct.service end =ms.id");
+		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id")
 			.append(" left join SecUser su on su.login=wct.createPreRecord ") 
 			.append(" left join SecUser su1 on su1.login=vis.username ");
 		sql.append(" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id") ;
@@ -1200,6 +1207,7 @@ public class WorkCalendarServiceJs {
 		if (isRemoteUser) {
 			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0') ");
 		}
+		sql.append(" group by vis.id,wct.id,pat.id,prepat.id,su.id,su1.id,vsrt.id,vss.id");
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
 
