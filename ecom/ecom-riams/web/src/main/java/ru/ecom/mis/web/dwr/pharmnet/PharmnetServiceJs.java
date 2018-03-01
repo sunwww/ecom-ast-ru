@@ -196,7 +196,7 @@ public class PharmnetServiceJs {
             throws NamingException {
         Collection<WebQueryResult> goodsl = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
-                .executeNativeSql("select gl.regid, vg.drug,vg.form, cast(gl.qntost as text),cast(gl.uqntost as text),gl.srokg from goodsleave gl\n" +
+                .executeNativeSql("select gl.regid, vg.drug,vg.form, cast(gl.qntost as text),cast(gl.uqntost as text),to_char(gl.srokg,'dd.MM.yyyy') as srok from goodsleave gl\n" +
                         "left join vocgoods vg on vg.regid = gl.regid\n" +
                         "where gl.storageid = "+storId);
 

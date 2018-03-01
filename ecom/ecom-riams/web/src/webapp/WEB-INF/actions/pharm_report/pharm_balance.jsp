@@ -10,9 +10,10 @@
 
 
         <msh:row>
-            <msh:autoComplete property="vocStorage" label="Поток обслуживания" vocName="vocPharmnetStorage" fieldColSpan="3" horizontalFill="true" />
+            <msh:autoComplete property="vocStorage" label="Кабинет" vocName="vocPharmnetStorage" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
 
+        <br>
         <div id="balance"></div>
 
 
