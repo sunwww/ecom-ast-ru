@@ -165,7 +165,7 @@
                 nameId="vg.regid"
                 names="vg.drug||'('||vg.form||')'"
                 queriedSplitCount="2"
-                queried ="(upper(vg.drug) like UPPER(:quer1) or upper(vg.form) like upper(:quer2)) or upper(vg.drug) like UPPER(:query)" />
+                queried ="(cast(vg.regid as varchar(20))= :querInd) or (vg.drug like :quer1 and vg.form like :quer2)" />
     </voc>
 
     <voc id="vocPharmnetStorage" type="NativeVocService">
