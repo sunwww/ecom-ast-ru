@@ -723,39 +723,40 @@ public class PatientServiceBean implements IPatientService {
 			return "Прикрепление не создано, не распознан тип прикрепления: "+attachedType;
 		}
 		if (attachments.isEmpty()) { // Создаем новое 
-			MisLpu lpuAtt = null;
+			MisLpu lpuAtt ;
 			
 			if (la!=null) {
 				lpuAtt = la.getLpu();
 			} else {
 				Long l = Long.valueOf(theManager.createNativeQuery("select keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU'").getResultList().get(0).toString());
-				lpuAtt = (MisLpu) theManager.find(MisLpu.class, l);
+				lpuAtt = theManager.find(MisLpu.class, l);
 			}
 			if (lpuAtt!=null) {
 				LpuAttachedByDepartment att = new LpuAttachedByDepartment();
 				att.setPatient(theManager.find(Patient.class, aPatientId));
 				att.setLpu(lpuAtt);
 				att.setAttachedType(attType);
+				if (la!=null) {
+					log.warn("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+					att.setArea(la);
+				} else {
+					//Debug
+					//	System.out.println("=== Почему же не найден участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+				}
 				try {
 					att.setDateFrom(DateFormat.parseSqlDate(attachedDate));
 					att.setCompany(insCompany);
 					att.setCreateDate(new java.sql.Date(new java.util.Date().getTime()));
 					att.setCreateUsername("fond_check");
 					
-					if (la!=null) {
-						log.warn("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
-						att.setArea(la);
-					} else {
-						//Debug
-					//	System.out.println("=== Почему же не найден участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
-					}
+
 					theManager.persist(att);
 				} catch (ParseException e) {
 					log.error("Дата не распознана "+attachedDate);
 					e.printStackTrace();
 				}
 				ret.append("Создано новое прикрепление. Тип="+att.getAttachedType().getCode() +
-						", дата: "+ DateFormat.formatToDate(att.getDateFrom())+". ");
+						", дата: "+ DateFormat.formatToDate(att.getDateFrom())+", участок =  "+(la!=null?la.getNumber():"Не определен"));
 			} else {
 				ret.append("0ЛПУ с кодом '"+lpu+"' не найдено, прикрепление не создано. ");
 			}
