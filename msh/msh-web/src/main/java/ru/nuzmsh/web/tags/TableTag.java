@@ -1,20 +1,8 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import ru.ecom.diary.ejb.service.protocol.field.TextField;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.decorator.ITableDecorator;
@@ -22,6 +10,17 @@ import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.util.DemoModeUtil;
 import ru.nuzmsh.web.util.IdeTagHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 
 /**
  * @jsp.tag
@@ -230,7 +229,14 @@ public class TableTag extends AbstractGuidSupportTag {
 	                            )
 	                    
 	            );
-	    	}
+	    	} else if (aTag instanceof TableTextfieldTag){
+			    TableTextfieldTag tag = (TableTextfieldTag) aTag;
+			    theCells.add(
+			            new Textfield(tag.getProperty(), tag.getTextfieldShortName(), tag.getTextfieldName()
+                                , tag.getTextfieldFunction()
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
+                );
+            }
 		}
     }
     
@@ -482,7 +488,10 @@ public class TableTag extends AbstractGuidSupportTag {
 							} else if (obj instanceof Column) {
 								Column column = (Column) obj;
 	                            column.printHeader(out);
-							}
+							} else if (obj instanceof Textfield){
+                                Textfield textfield = (Textfield) obj;
+                                textfield.printHeader(out);
+                            }
                         }
                         out.println("</tr>");
                     }
@@ -559,7 +568,12 @@ public class TableTag extends AbstractGuidSupportTag {
                         	if (obj instanceof Button) {
 								Button button = (Button) obj;
 								button.printFunction(out, row);
-							} else if (obj instanceof Column) {
+							}
+							else if (obj instanceof Textfield){
+                                Textfield textfield = (Textfield) obj;
+                                textfield.printFunction(out,row,currentId);
+                            }
+							else if (obj instanceof Column) {
 								Column column = (Column) obj;
 								Object valueC ;
 	                            if (theCellFunction) {
@@ -605,7 +619,11 @@ public class TableTag extends AbstractGuidSupportTag {
                             Object obj = iterator.next();
 	                    	if (obj instanceof Button) {
 	                    		out.println("<td>&nbsp;</td>") ;
-							} else if (obj instanceof Column) {
+							}
+							else if (obj instanceof Textfield) {
+                                out.println("<td>&nbsp;</td>") ;
+                            }
+							else if (obj instanceof Column) {
 								Column column = (Column) obj;
 								column.printSumCell(out, rowSum, "", "");
 							}
@@ -750,6 +768,8 @@ public class TableTag extends AbstractGuidSupportTag {
     		theButtonShortName = aButtonShortName ;
     		theHideIfEmpty = aHideIfEmpty ;
     	}
+
+
     	
     	
     	private void printHeader(JspWriter aOut) throws IOException {
@@ -839,6 +859,110 @@ public class TableTag extends AbstractGuidSupportTag {
     	
     	
    }
+
+    static final class Textfield {
+
+        public Textfield(String aProperty,String aTextfieldShortName, String aTextfieldName
+                , String aTextfieldFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
+            theProperty = aProperty;
+            theTextfieldName = aTextfieldName;
+            theCssClass = aCssClass;
+            theServleRequest = aRequest ;
+            if (aAddParam==null) aAddParam="" ;
+            theAddParam =aAddParam ;
+            theTextfieldFunction = aTextfieldFunction ;
+            theTextfieldShortName = aTextfieldShortName ;
+            theHideIfEmpty = aHideIfEmpty ;
+        }
+
+
+        private void printHeader(JspWriter aOut) throws IOException {
+            if (theCssClass != null) {
+                aOut.print("<th");
+                aOut.print(" class='");
+                aOut.print(theCssClass);
+                aOut.print("'>");
+            } else {
+                aOut.print("<th>");
+            }
+            aOut.println("</th>");
+        }
+
+
+        private Object printFunction(JspWriter aOut, Object aObject,String aGoFunctionName) throws IOException {
+            String styleClass = "";
+
+            Object value;
+            //Object valueSum = null ;
+            try {
+                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+                if (value instanceof Time) {
+                    value = DateFormat.formatToTime((Time) value);
+
+                } else  if (value instanceof Date) {
+                    value = DateFormat.formatToDate((Date) value);
+
+                } else if (value instanceof Boolean) {
+                    Boolean booleanValue = (Boolean) value ;
+                    if(booleanValue!=null && booleanValue) {
+                        value = "1" ;
+                    } else {
+                        value = "0" ;
+                    }
+                }
+
+            } catch (Exception e) {
+                value = e + "";
+            }
+            if (theCssClass != null) {
+                styleClass += " " + theCssClass;
+            }
+            aOut.print("<td ");
+
+            if (theTextfieldName!=null) {
+                aOut.print("title=\"");
+                aOut.print(theTextfieldName) ;
+                aOut.print("\" ");
+            }
+            aOut.print(" class='") ;
+            aOut.print(styleClass);
+            aOut.print(' ');
+            aOut.print(theProperty);
+            aOut.print("'>");
+            if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
+                aOut.print("<input type='text' onclick=\"");
+                aOut.print(aGoFunctionName) ;
+                aOut.print(getGoFunctionName(theTextfieldFunction,value != null ? value : "",theAddParam)) ;
+                aOut.print("\" value=\""+theTextfieldShortName+"\"") ;
+                if (theTextfieldName!=null) {
+                    aOut.print(" title=\"");
+                    aOut.print(theTextfieldName) ;
+                    aOut.print("\" ");
+                }
+
+                //aOut.print("'");
+                aOut.print("id=\"text_");
+                aOut.print(aGoFunctionName);
+                aOut.print("\"");
+                aOut.println(">");
+            }
+            aOut.print("</td>");
+
+            return "" ;
+        }
+
+
+        private final String theProperty;
+        private final String theTextfieldShortName;
+        private final String theTextfieldName;
+        private final String theTextfieldFunction;
+        private final boolean theHideIfEmpty;
+
+        private final String theCssClass;
+        private final HttpServletRequest theServleRequest ;
+        private final String theAddParam;
+    }
+
     static final class Column {
         public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam) {
             theProperty = aProperty;

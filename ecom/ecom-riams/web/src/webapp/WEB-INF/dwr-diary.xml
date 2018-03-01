@@ -59,7 +59,9 @@
 		<create creator="new" javascript="PharmacyService" scope="application">
 			<param name="class" value="ru.ecom.mis.web.dwr.pharmacy.PharmacyServiceJs"/>
 		</create>
-		
+		<create creator="new" javascript="PharmnetService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.pharmnet.PharmnetServiceJs"/>
+		</create>
     </allow>
 
     <signatures>

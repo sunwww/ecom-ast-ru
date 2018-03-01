@@ -27,6 +27,13 @@
         <form-bean name="poly_protocolForm"      type="ru.ecom.poly.ejb.form.protocol.ProtocolForm" />
         <form-bean name="poly_journalBySpecForm"      type="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm" />
         <form-bean name="extDisp_journalForm"      type="ru.ecom.mis.web.action.patient.ExtDispJournalForm" />
+
+        <form-bean name="pharmnet_outcomeForm"      type="ru.ecom.mis.web.action.pharmnet.OutcomeForm" />
+        <form-bean name="pharmnet_adminForm"      type="ru.ecom.mis.web.action.pharmnet.PharmAdminForm" />
+        <form-bean name="pharmnet_balanceForm"      type="ru.ecom.mis.web.action.pharmnet.PharmBalanceForm" />
+
+        <form-bean name="pharmnet_complectForm"      type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectForm" />
+        <form-bean name="pharmnet_complectRowForm"      type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectRowForm" />
     </form-beans>
 
     <global-forwards>
@@ -466,17 +473,40 @@
                 >
             <forward name="success" redirect="false" path="/ecom_getfile.do?id=" />
         </action>
-        <!-- 
-        <action path="/smo_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
-            scope='request' validate="true" name="smo_directionForm" input="/WEB-INF/actions/smo_direction/edit.jsp">
-            <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
+
+        <action path='/pharm_outcome' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pharmnet_outcomeForm'
+                validate='false'
+        scope="session">
+        <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_outcome.jsp" />
+    </action>
+
+        <action path='/pharm_admin' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pharmnet_adminForm'
+                validate='false'
+                scope="session">
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_admin.jsp" />
         </action>
-        
-        <action path="/smo_contract_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
-            scope='request' validate="true" name="smo_contract_directionForm" input="/WEB-INF/actions/smo_direction/contract_direction.jsp">
-            <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
+
+        <action path='/pharm_balance' type='ru.ecom.web.actions.base.ForwardAction'
+                name='pharmnet_balanceForm'
+                validate='false'
+                scope="session">
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_balance.jsp" />
         </action>
-         -->
+
+
+    <!--
+    <action path="/smo_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
+        scope='request' validate="true" name="smo_directionForm" input="/WEB-INF/actions/smo_direction/edit.jsp">
+        <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
+    </action>
+
+    <action path="/smo_contract_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
+        scope='request' validate="true" name="smo_contract_directionForm" input="/WEB-INF/actions/smo_direction/contract_direction.jsp">
+        <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
+    </action>
+     -->
          </action-mappings>
 
 </struts-config>

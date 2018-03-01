@@ -2074,4 +2074,43 @@ public class HospitalMedCaseServiceJs {
 		}
 		return flag;
 	}
+	//Milamesher вывод списка микробиологических исследований пациента с положительным результатом
+	public String showMBioResResList(int dmcId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select ms.code as name1,ms.name as name3,ms.shortname as shname,to_char(aslo.datestart,'dd.mm.yyyy') as dt\n" +
+				"from diary d\n" +
+				"left join forminputprotocol fipr on fipr.docprotocol_id=d.id and  fipr.parameter_id=1092\n" +
+				"left join uservalue uv on uv.id=fipr.valuevoc_id\n" +
+				"left join medcase aslo on d.medcase_id=aslo.id and aslo.dtype='Visit'\n" +
+				"left join medcase dmc on dmc.parent_id=aslo.parent_id\n" +
+				"left join prescriptionlist pl on dmc.id=pl.medcase_id\n" +
+				"left join prescription pr on pr.medcase_id=aslo.id\n" +
+				"left join medservice ms on pr.medservice_id=ms.id\n" +
+				" where d.dtype='Protocol' and dmc.DTYPE='DepartmentMedCase' and uv.cntball=1 and dmc.id=" + dmcId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1()).append("#").append(w.get2()).append("#").append(w.get3()).append("#").append(w.get4()).append("!");
+			}
+		} else res.append("##");
+		return res.toString();
+	}
+	//Milamesher получить ФИО пациента и его стат. карту по dmc.id
+	public String getPatientFIOStat(int dmcId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename|| ' ' || to_char(pat.birthday,'dd.mm.yyyy')\n" +
+				"from medCase dmc\n" +
+				"left join MedCase as sls on sls.id = dmc.parent_id\n" +
+				"left join Patient pat on dmc.patient_id = pat.id \n" +
+				"where dmc.id=" + dmcId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1());
+		}
+		else res.append("##");
+		return res.toString();
+	}
 }
