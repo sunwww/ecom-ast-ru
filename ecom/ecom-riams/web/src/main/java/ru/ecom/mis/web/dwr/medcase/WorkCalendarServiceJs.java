@@ -1141,6 +1141,11 @@ public class WorkCalendarServiceJs {
 		return res ;
 	}
 	//TODO доделать
+	/*
+	lastrelease: Milamesher 01.03.2018 (#91)
+	Список услуг из medcase в расписании, а не из предварительной записи.
+	В подсказке - ФИО регистратора medcase, дата и время создания.
+	 */
 	public String getTimesByWorkCalendarDay(Long aWorkCalendar,Long aWorkCalendarDay,Long aVocWorkFunction,HttpServletRequest aRequest) throws NamingException, JspException {
 		StringBuilder sql = new StringBuilder() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
