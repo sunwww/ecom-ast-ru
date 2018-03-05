@@ -130,8 +130,8 @@ function onSave(aForm, aEntity, aCtx) {
 }
 
 function checkIsElectronic(aEntityId , aCtx, sql, aMessage){
-var elns = aCtx.manager.createNativeQuery("select id from ElectronicDisabilityDocumentNumber where disabilitydocument_id=:num "+sql)
-	.setParameter("num",aEntityId).getResultList();
+    var elns = aCtx.manager.createNativeQuery("select id from ElectronicDisabilityDocumentNumber where disabilitydocument_id=:num "+sql)
+        .setParameter("num",aEntityId).getResultList();
     if (elns.size()>0) {
         throw aMessage;
     }
@@ -139,7 +139,7 @@ var elns = aCtx.manager.createNativeQuery("select id from ElectronicDisabilityDo
 
 function onPreSave(aForm,aEntity , aCtx) {
 
-    checkIsElectronic(aEntity.getId(),aCtx,"and exportDate is not null","Сохранение невозможно, ЭЛН выгружен в ФСС");
+    //checkIsElectronic(aEntity.getId(),aCtx,"and exportDate is not null","Сохранение невозможно, ЭЛН выгружен в ФСС");
 	var series = aForm.getSeries() ;
 	var number = aForm.getNumber() ;
 	var thisid = aForm.getId() ;
