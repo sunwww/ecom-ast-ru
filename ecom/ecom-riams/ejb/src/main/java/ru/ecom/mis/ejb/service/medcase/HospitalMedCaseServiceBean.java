@@ -2840,9 +2840,9 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR_LPU",obj[23],false,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"D_NPR",obj[0],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"FOR_POM",obj[1],true,"") ;
-		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[2],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NCODE_MO",obj[3],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"NLPU_1","",true,"") ;
-		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[3],true,"") ;
+		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DCODE_MO",obj[2],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DLPU_1",null,false,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"VPOLIS",obj[4],true,"") ;
 		XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"SPOLIS",obj[5],true,"") ;
