@@ -527,6 +527,18 @@
 		    	path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
 		    />
 		</action>
+        <action path='/stac_journalCurrentByUserDepartmentMicroBio'
+                type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
+                name='stac_departmentJournalForm' validate='false' scope='request'
+                input='/WEB-INF/actions/stac_slo/listCurrentByUserDepartmentMicroBio.jsp'
+        >
+            <forward name="success" redirect="false"
+                     path='/WEB-INF/actions/stac_slo/listCurrentByUserDepartmentMicroBio.jsp'
+            />
+            <forward name="successerror" redirect="false"
+                     path='/WEB-INF/actions/stac_slo/listByDepartmentError.jsp'
+            />
+        </action>
 		<action path='/stac_journalDischargeByUserDepartment'
 		    type='ru.ecom.mis.web.action.medcase.journal.ByDepartmentAdmissionSearchAction'
 		    name='stac_departmentJournalForm' validate='false' scope='request'
