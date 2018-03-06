@@ -551,6 +551,32 @@ public class DisabilityDocument extends BaseEntity{
 	public void setExportDefect(String aExportDefect) {theExportDefect = aExportDefect;}
 	/** Дефект экспорта */
 	private String theExportDefect;
-	
 
+	/** Признак дубликата (ЭЛН) **/
+	private Boolean isElnDuplicate;
+	/** Следующий номер (ЭЛН) **/
+	private String nextElnNumber;
+	/** Предыдущий номер (ЭЛН) **/
+	private String pervElnNumber;
+
+	public Boolean getElnDuplicate() {
+		return isElnDuplicate;
+	}
+	public void setElnDuplicate(Boolean elnDuplicate) {
+		isElnDuplicate = elnDuplicate;
+	}
+
+	public String getNextElnNumber() {
+		return nextElnNumber;
+	}
+	public void setNextElnNumber(String nextElnNumber) {
+		this.nextElnNumber = nextElnNumber;
+	}
+
+	public String getPervElnNumber() {
+		return pervElnNumber;
+	}
+	public void setPervElnNumber(String pervElnNumber) {
+		this.pervElnNumber = pervElnNumber;
+	}
 }
