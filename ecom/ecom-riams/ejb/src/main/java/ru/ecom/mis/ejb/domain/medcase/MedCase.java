@@ -449,4 +449,13 @@ abstract public class MedCase extends BaseEntity {
 	public void setGuarantee(ContractGuarantee aGuarantee) {theGuarantee = aGuarantee;}
 	/** Гарантийное письмо */
 	private ContractGuarantee theGuarantee;
+
+	private Boolean isUpload;
+	@Comment("Выгружено")
+	public Boolean getUpload() {
+		return isUpload;
+	}
+	public void setUpload(Boolean upload) {
+		isUpload = upload;
+	}
 }
