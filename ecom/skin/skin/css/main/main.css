@@ -4,6 +4,20 @@
 	div#content {margin-left: 0em;}
 }
 
+.gotoTop {
+background-color: yellow;
+position: fixed;
+bottom: 10%;
+opacity: 0.6;
+padding: 10px;
+}
+.gotoBottom {
+background-color: yellow;
+position: fixed;
+bottom: 5%;
+opacity: 0.6;
+padding: 10px;
+}
 .instant_message { padding: 5px; font-size: 12px; font-family: Arial; visibility: hidden;
 position: absolute;
 width: 80%;
@@ -695,7 +709,7 @@ div.claimMessage {
     background-color: #E0F2F7 ;
     color: black ;
     font-weight: bold;
-    min-width: 400 px;
+    min-width: 400px;
     margin-top: 0.3em;
     padding-top: 0.3em ;
     padding-bottom: 0.3em ;

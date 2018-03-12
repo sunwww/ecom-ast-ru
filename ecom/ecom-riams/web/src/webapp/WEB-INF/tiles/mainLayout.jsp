@@ -187,7 +187,7 @@
     </div>
     <div id="footer">
 
-        <div id='gotoUp'><a class="gotoUP" href="#header">Вверх</a></div>
+        <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
         <div id='copyright'>&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
     </div>
