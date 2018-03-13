@@ -329,6 +329,9 @@
 							<li><msh:link  isReport="true" action="report203.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 								Отчет по 203 приказу
 							</msh:link></li>
+						<li><msh:link  isReport="true" action="reportBandage.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Отчет по перевязкам
+						</msh:link></li>
 	                        
 					</ul>
 					</div>
