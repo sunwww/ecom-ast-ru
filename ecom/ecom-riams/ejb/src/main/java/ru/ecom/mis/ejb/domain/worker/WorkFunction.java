@@ -341,4 +341,12 @@ abstract public class WorkFunction extends BaseEntity {
 		this.promedCode_workstaff = promedCode_workstaff;
 	}
 
+	private String promedCode_lpusection;
+	@Comment("Код рабочего места в промеде")
+	public String getPromedCode_lpusection() {
+		return promedCode_lpusection;
+	}
+	public void setPromedCode_lpusection(String promedCode_lpusection) {
+		this.promedCode_lpusection = promedCode_lpusection;
+	}
 }

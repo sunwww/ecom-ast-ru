@@ -1208,9 +1208,14 @@ public class WorkCalendarServiceJs {
 			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0') ");
 		}
 		sql.append(" group by vis.id,wct.id,pat.id,prepat.id,su.id,su1.id,vsrt.id,vss.id");
+
+		if (isRemoteUser) {
+			sql.append(",sw.lpu_id,notViewRetomeUser1,notViewRetomeUser2");
+		}
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
 
+		//System.out.println(sql.toString());
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		String frmName = "frmTime" ;
 		if (aVocWorkFunction!=null) frmName=frmName+"_"+aVocWorkFunction ;
