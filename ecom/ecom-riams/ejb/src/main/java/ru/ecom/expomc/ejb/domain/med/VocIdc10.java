@@ -139,4 +139,11 @@ public class VocIdc10 extends VocIdCodeName {
 	public void setPromedCode(String promedCode) {
 		this.promedCode = promedCode;
 	}
+	
+	/** Разрешено использовать без уточнения */
+	@Comment("Разрешено использовать без уточнения")
+	public Boolean getIsPermitWithoutDot() {return theIsPermitWithoutDot;}
+	public void setIsPermitWithoutDot(Boolean aIsPermitWithoutDot) {theIsPermitWithoutDot = aIsPermitWithoutDot;}
+	/** Разрешено использовать без уточнения */
+	private Boolean theIsPermitWithoutDot ;
 }
