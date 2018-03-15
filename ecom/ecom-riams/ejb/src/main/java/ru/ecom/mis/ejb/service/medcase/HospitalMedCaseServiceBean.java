@@ -3544,9 +3544,9 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" , case when oss.smocode is null or oss.smocode='' then ri.smocode else oss.smoCode end as o5ossmocode");
 		sql.append(" , ri.ogrn as o6grnSmo");
 		sql.append(" ,case when mp.dtype='MedPolicyOmc' then '12000' else okt.okato end as o7katoSmo");
-		sql.append(" ,p.lastname as l8astname");
-		sql.append(" ,p.firstname as f9irstname");
-		sql.append(" ,p.middlename as m10iddlename");
+		sql.append(" ,coalesce(mp.lastname,p.lastname) as l8astname");
+		sql.append(" ,coalesce(mp.firstname,p.firstname) as f9irstname");
+		sql.append(" ,coalesce(mp.middlename,p.middlename) as m10iddlename");
 		sql.append(" ,vs.omcCode as v11somccode");
 		sql.append(" ,to_char(p.birthday,'yyyy-mm-dd') as b12irthday");
 		sql.append(" ,vbt.codeF as v13btomccode");
