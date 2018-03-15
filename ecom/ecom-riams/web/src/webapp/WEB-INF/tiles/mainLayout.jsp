@@ -65,7 +65,7 @@
             </msh:ifInRole> -->
             
         	<msh:ifInRole roles="/Policy/Mis/CustomMessage/PhoneAmokb">
-            <li><a href='js-riams-phoneTest.do' target='_blank'>Тел.АМОКБ</a></li>
+            <li><a href='js-riams-phoneTest.do' target='_blank'>Телефонный справочник</a></li>
             </msh:ifInRole>
            <li class="separator">|</li>
            <msh:ifInRole roles="/Policy/Mis/Claim/View">
