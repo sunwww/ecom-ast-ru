@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import javax.persistence.Entity;
@@ -43,4 +44,11 @@ public class VocKindHighCare extends VocBaseEntity {
 	public void setIsStentRequired(Boolean aIsStentRequired) {theIsStentRequired = aIsStentRequired;}
 	/** Необходимо указывать количество стентов */
 	private Boolean theIsStentRequired ;
+
+	/** Цена */
+	@Comment("Цена")
+	public BigDecimal getCost() {return theCost;}
+	public void setCost(BigDecimal aCost) {theCost = aCost;}
+	/** Цена */
+	private BigDecimal theCost ;
 }
