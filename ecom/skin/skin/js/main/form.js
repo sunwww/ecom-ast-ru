@@ -62,8 +62,11 @@ function getDefinition(term,evt,aDiv){
 	
 	return false;
 }
+function goToPageNewWindow(aPage,aId,aTableCell){
+	goToPage(aPage,aId,aTableCell+"##NEW_WINDOW##");
+}
 
-function goToPage(aPage,aId,aTableCell) {
+function goToPage(aPage,aId,aTableCell) { //TODO сделать переход на страницу в другой вкладке
 	//if (aTableCell==null) aTableCell="" ;
     if (aPage.indexOf('javascript:')!=-1) {
     	
@@ -85,7 +88,13 @@ function goToPage(aPage,aId,aTableCell) {
     	if (aTableCell==null) {
             window.location = url ;
     	} else {
-    		getDefinition(url+aTableCell+"&short=Short") ;
+    		if (aTableCell.indexOf('##NEW_WINDOW##')>-1) {
+    			url+=aTableCell.replace("##NEW_WINDOW##","");
+    			window.open(url);
+			} else {
+                getDefinition(url+aTableCell+"&short=Short") ;
+			}
+
     	}
     }
 }

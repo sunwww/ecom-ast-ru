@@ -9,7 +9,7 @@
 	<import file="../../ant-support/ejb-skeleton.xml" />
 
 	<fileset id='compile.fileset' dir="${libdir}">
-		<include name="msh/util-voc/msh-util-voc.jar" />
+		<include name="msh/msh.jar" />
 		<include name="ecom/ejbweb/ejb/ecom-ejb-api.jar" />
 		<include name="bsh/bsh-2.0b4.jar" />
 		<include name="ldap/riams-ldap.jar" />
