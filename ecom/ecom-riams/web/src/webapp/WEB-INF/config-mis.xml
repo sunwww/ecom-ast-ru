@@ -1097,6 +1097,13 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/reportKDL.jsp" />
 		</action>
+		<action path='/reportBandage' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/reportBandage.jsp" />
+		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
                 validate='false'

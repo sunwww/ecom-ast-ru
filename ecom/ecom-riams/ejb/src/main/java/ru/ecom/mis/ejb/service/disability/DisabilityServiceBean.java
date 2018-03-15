@@ -1130,7 +1130,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     		}
     		}
     			
-    		
+
     	}
     }
     public Long createDuplicateDocument( Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFunction2
@@ -1177,14 +1177,17 @@ public class DisabilityServiceBean implements IDisabilityService {
     public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument){
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
     	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(Long.valueOf(0))?theManager.find(DisabilityDocument.class, aPrevDocument):null ;
-    	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;		
-    	if (doc.getWorkComboType()!=null) {
+    	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;
+
+		List<Object[]> list = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",aDocId).getResultList();
+		boolean isElectronicDocument = list.size()>0?true:false; //Уберем проверки для ЭЛН
+    	if (!isElectronicDocument&& doc.getWorkComboType()!=null) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО ДОБАВИТЬ ТОЛЬКО ПО ОСНОВНОМУ МЕСТУ РАБОТЫ") ;
     	}
-    	if (doc.getIsClose()==null || doc.getIsClose()==false) {
+    	if (!isElectronicDocument && (doc.getIsClose()==null || doc.getIsClose()==false)) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!") ;
     	}
-    	if (doc.getStatus()==null || !doc.getStatus().getCode().equals("0")) {
+    	if (!isElectronicDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО СДЕЛАТЬ ТОЛЬКО ДЕЙСТВУЮЩЕГО ДОКУМЕНТА!!!") ;
     	}
     	
