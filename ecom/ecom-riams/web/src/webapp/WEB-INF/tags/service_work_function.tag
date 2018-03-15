@@ -95,9 +95,7 @@
      function save${name}ServiceWorkFunction() {
      	if ($('${name}vocWorkFunction').value>0 || $('${name}workFunction').value>0 || $('${name}lpu').value>0
      			||$('${name}bedType').value>0 || $('${name}bedSubType').value>0 || $('${name}roomType').value>0
-     			||$('${name}prescriptType').value>0
-     		)
-     		 {
+     			||$('${name}prescriptType').value>0 ) {
          	ContractService.saveWorkFunctionService($('${name}MedServiceId').value,
          			$('${name}vocWorkFunction').value,$('${name}workFunction').value, $('${name}lpu').value
          			,$('${name}bedType').value, $('${name}bedSubType').value, $('${name}roomType').value
@@ -106,9 +104,9 @@
     		     			
     		     		 ,{
     		     		 callback: function(aString) {
-    			     			window.document.location.reload();
+
     		     		 }})
-    		     		 
+            the${name}ServiceWorkFunctionDialog.hide() ;
              }
      }
 
