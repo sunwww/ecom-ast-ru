@@ -12,6 +12,7 @@
 
     <tiles:put name="side" type="string">
     <msh:sideMenu>
+        <msh:sideLink key='ALT+0' params="" action=' javascript:capture()' name="Заявка в ТП"/>
     	<msh:sideLink key='ALT+1' params="" action=' javascript:backException(".do")' name="Отмена"/>
     	<msh:sideLink key='ALT+2' action=' javascript:showException(".do")' roles="/Policy/Config/ViewError" name="Ошибка" title="Показать ошибку"/>
     </msh:sideMenu>
@@ -34,7 +35,7 @@
        $('type').value = "0";
        </script>
        </msh:ifInRole>
-       
+
 
         <%
             if(request.getAttribute("javax.servlet.error.message")!=null) {
@@ -101,6 +102,7 @@
       </div>  
     </tiles:put>
     <tiles:put name="javascript" type="string">
+        <script type='text/javascript' src='./dwr/interface/ClaimService.js'></script>
      <script type="text/javascript">
         if ($('type').value=='1') backException();
 		function showException() {
@@ -111,6 +113,38 @@
 			window.history.back();
 		}
      </script>
-    </tiles:put>
+        <script type="text/javascript" src="html2canvas.js"></script>
+        <script type='text/javascript'>
+            function checkTime(i) {
+                if (i<10) i="0" + i;
+                return i;
+            }
+            Date.prototype.yyyymmdd = function() {
+                var mm = this.getMonth() + 1; // getMonth() is zero-based
+                var dd = this.getDate();
 
+                return [this.getFullYear() + "-" ,
+                    (mm>9 ? '' : '0')+ mm + "-",
+                    (dd>9 ? '' : '0') + dd
+                ].join('');
+            };
+            function capture() {
+                var img = {
+                    image_pro: null
+                };
+                html2canvas(document.body).then(function(canvas) { cp(canvas); });
+                var cp = function(canvas) {
+                    var img = canvas.toDataURL("image/png");
+                    var now = new Date();
+                    var fileName=now.yyyymmdd()+"_"+checkTime(now.getHours())+"."+checkTime(now.getMinutes())+"."+checkTime(now.getSeconds())
+                        +checkTime(now.getMilliseconds())+"_" + document.getElementById("current_username_li").innerHTML+".png";
+                    ClaimService.postRequestWithErrorScrean(img,fileName,{
+                        callback: function (res) {
+                            if (res==true) window.location="entityPrepareCreate-mis_claim.do?img="+fileName+"&description="+document.getElementsByClassName("errorMessage")[0].innerText.substr(7);
+                        }
+                    });
+                }
+            }
+     </script>
+    </tiles:put>
 </tiles:insert>
