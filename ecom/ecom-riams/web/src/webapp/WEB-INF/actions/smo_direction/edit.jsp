@@ -255,9 +255,7 @@
     <msh:ifFormTypeIsNotView formName="smo_directionForm" guid="0cfa71af-92f6-432b-b592-483a2c92429d">
         <msh:ifFormTypeAreViewOrEdit formName="smo_directionForm">
             <script type="text/javascript">
-                jQuery(document).ready(function() {
-                    if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
-                } );
+                theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
             </script>
         </msh:ifFormTypeAreViewOrEdit>
     <script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
