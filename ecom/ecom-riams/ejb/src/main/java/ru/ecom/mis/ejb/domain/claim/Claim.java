@@ -203,4 +203,12 @@ public class Claim extends BaseEntity{
 	public void setCreatorComment(String aCreatorComment) {theCreatorComment = aCreatorComment;}
 	/** Комментарий пользователя */
 	private String theCreatorComment;
+
+	/** Имя файла-скриншота */
+	@Comment("Имя файла-скриншота")
+	public String getScreenFileName() {return theScreenFileName;}
+	public void setScreenFileName(String aScreenFileName) {theScreenFileName= aScreenFileName;}
+	/** Имя файла-скриншота */
+	private String theScreenFileName;
 }
+//lastrealease milamesher 06.03.2018 #77

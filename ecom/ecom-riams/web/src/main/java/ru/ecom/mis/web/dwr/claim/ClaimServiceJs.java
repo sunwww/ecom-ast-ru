@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.claim;
 
+import javax.imageio.ImageIO;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -7,9 +8,17 @@ import org.jdom.IllegalDataException;
 
 import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+import sun.misc.BASE64Decoder;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -113,5 +122,38 @@ public class ClaimServiceJs {
 		//System.out.println("===== "+sql);
 		service.executeUpdateNativeSql(sql);
 		return aId;
+	}
+	//lastrelease milamesher 06.03.2018 #77
+	//Получить текст и id типа заявки soft для скриншотов
+	public static String getSoftType (HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res = new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql = "select id,name from vocclaimtype where code='SOFT'";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1()).append("#").append(wqr.get2());
+		}
+		else res.append("##");
+		return res.toString();
+	}
+	//lastrealease milamesher 14.03.2018 #77
+	//Сохранение скриншота ошибки
+	public Boolean postRequestWithErrorScrean(String file,String filename,HttpServletRequest aRequest) throws IOException {
+		String base64Image = file.split(",")[1];
+		BufferedImage image = null;
+		byte[] imageByte;
+
+		BASE64Decoder decoder = new BASE64Decoder();
+		imageByte = decoder.decodeBuffer(base64Image);
+		ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+		image = ImageIO.read(bis);
+		bis.close();
+		EjbEcomConfig cnf = EjbEcomConfig.getInstance();
+		String fileway=cnf.get("tomcat.screeenShot.dir","/opt/tomcat/webapps/screenShotDir");
+		fileway=fileway.equals("")? fileway:fileway+"/";
+		File outputfile = new File(fileway+filename);
+		ImageIO.write(image, "png", outputfile);
+		return true;
 	}
 }
