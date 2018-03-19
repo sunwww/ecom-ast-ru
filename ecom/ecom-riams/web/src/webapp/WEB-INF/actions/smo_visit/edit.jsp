@@ -311,6 +311,7 @@
         />
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-smo_visit" name="Принять пациента" roles="/Policy/Mis/MedCase/Visit/Edit" />
         <msh:sideLink guid="sideLinkEdit" params="id" action="/entityEdit-smo_direction" name="Редактировать направление" roles="/Policy/Mis/MedCase/Direction/Edit" />
+        <tags:mis_change_lpu service="TicketService" name="CSS" title="Изменить ЛПУ направителя" roles="/Policy/Mis/MedCase/Direction/Edit" />
         <msh:sideLink confirm="Вы точно хотите оформить не явку на прием" key="ALT+3" params="id" action="/js-smo_visit-noPatient" name="Оформить не явку на прием" title="Оформить не явку на прием" roles="/Policy/Mis/MedCase/Visit/Edit"/>
         <msh:sideLink params="id" action="/js-smo_visit-closeSpo" name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" guid="d84659f7-7ea9-4400-a11c-c83e7d5c578d" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Close" />
         
@@ -344,7 +345,7 @@
       </msh:sideMenu>
       <msh:sideMenu title="Администрирование">
 	   	
-	   	<tags:mis_change_lpu service="TicketService" name="CSS" title="Изменить ЛПУ направителя" roles="/Policy/Mis/MedCase/Visit/ChangeOrderLpu" />
+
 	   	<tags:mis_changeServiceStream service="TicketService" name="CSS" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream" />
       	<tags:mis_choiceSpo method="moveVisitOtherSpo" methodGetPatientByPatient="getOpenSpoBySmo" hiddenNewSpo="0" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Перевести визит в другой СПО" />
       <tags:pres_newPrescriptList name="Create" parentID="${param.id}" />
