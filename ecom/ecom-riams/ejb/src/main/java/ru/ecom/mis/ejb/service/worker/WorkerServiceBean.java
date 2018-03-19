@@ -215,7 +215,7 @@ public class WorkerServiceBean implements IWorkerService{
 		//	.append(" left join Patient pat on pat.id = w.person_id")
 			.append(" where wf.workfunction_id=:WFid and (wf.group_id is null) and (wf.archival is null or cast(wf.archival as integer)=0) and wc.workfunction_id is not null") 
 			.append(" and wcd.calendarDate between :dateStart and :dateFinish")
-			.append(" and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')")
+			.append(" and wct.medcase_id is null and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='') and (wcd.isDeleted is null or wcd.isDeleted='0') and (wct.isDeleted is null or wct.isDeleted='0')")
 			.append(" group by wf.id,wcd.id,wcd.calendardate order by wf.id,wcd.calendardate") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
 				.setParameter("dateStart", aDateStart)
@@ -261,7 +261,7 @@ public class WorkerServiceBean implements IWorkerService{
 
 	public List<TableSpetialistByDay> getTableSpetialistByDay(Date aDate, Long aWorkCalendarDay) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null and prepatient_id is null and (prepatientinfo is null or prepatientinfo='')") ;
+		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
 				.setParameter("WCDid", aWorkCalendarDay)
 				.getResultList() ;
@@ -280,7 +280,7 @@ public class WorkerServiceBean implements IWorkerService{
 	}
 	public String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) {
 		StringBuilder sql = new StringBuilder() ;
-		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null  and prepatient_id is null and (prepatientinfo is null or prepatientinfo='')") ;
+		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null  and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;
 		System.out.println("minIs="+aMinIs) ;
 		if (aMinIs!=null && aMinIs.equals(Long.valueOf(1))) {
 			sql.append(" order by timeFrom asc") ;
@@ -313,13 +313,13 @@ public class WorkerServiceBean implements IWorkerService{
 		StringBuilder sqlmin = new StringBuilder() ;
 		sqlmin.append("select to_char(wcd.calendarDate,'dd.MM.yyyy'),wcd.id from WorkCalendarDay as wcd")
 			.append(" inner join WorkCalendar as wc on wc.id = wcd.workCalendar_id") 
-			.append(" where  wc.workfunction_id=:workFuncId and wcd.calendarDate >= CURRENT_DATE") 
+			.append(" where  wc.workfunction_id=:workFuncId and wcd.calendarDate >= CURRENT_DATE and (wcd.isDeleted is null or wcd.isDeleted='0')")
 			.append(" group by wc.id,wcd.id,wcd.calendarDate")
 			.append(" order by wcd.calendarDate")
 			; 
 		sqlmax.append(" select to_char(wcd.calendarDate,'dd.MM.yyyy'),wcd.id from WorkCalendarDay as wcd")
 			.append(" inner join WorkCalendar as wc on wc.id = wcd.workCalendar_id") 
-			.append(" where  wc.workfunction_id=:workFuncId and wcd.calendarDate <= CURRENT_DATE") 
+			.append(" where  wc.workfunction_id=:workFuncId and wcd.calendarDate <= CURRENT_DATE and (wcd.isDeleted is null or wcd.isDeleted='0')")
 			.append(" group by wc.id,wcd.id,wcd.calendarDate")
 			.append(" order by wcd.calendarDate desc")
 			;
