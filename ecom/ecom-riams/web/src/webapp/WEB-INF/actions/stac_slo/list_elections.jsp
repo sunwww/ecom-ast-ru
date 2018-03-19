@@ -108,7 +108,7 @@ left join vocrayon vr on vr.id=pat.rayon_id
 left join vocrayon vrr on vrr.id=pat.realrayon_id
 left join addresstype vat on vat.id=adr.type_Id
 left join OMC_OKSM nat on nat.id=pat.nationality_id
-where sls.datefinish is null and sls.dtype='HospitalMedCase'
+where sls.dischargetime is null and sls.dtype='HospitalMedCase'
 and sls.deniedhospitalizating_id is null
 and slo.dtype='DepartmentMedCase'
 and cast(to_char(to_date('${electionDate}','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(pat.birthday,'yyyy') as int)

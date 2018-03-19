@@ -140,6 +140,7 @@ where wf.dtype='PersonalWorkFunction' -->
 	names="'№ '||uv.attorneynumber||' от '||to_char(uv.attorneyStartDate,'dd.MM.yyyy')||' '||pat.lastname"
 	queryAppend="(uv.isArchive is null or uv.isArchive='0')"
 	join="left join patient pat on pat.id=uv.person_id"
+	queried="pat.lastname like upper(:query) "
 	>
 	</NativeVocService>
     </voc> 
