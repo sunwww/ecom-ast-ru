@@ -765,15 +765,16 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 	 * в формате: medserviceID:msName:msType:date:cabinetName# 
 	 * На входе берем список исследований в формате ID:date:cabinet#
 	 */
-	public String getPresLabTypes(String aPresIDs, HttpServletRequest aRequest) throws NamingException {
+	/*public String getPresLabTypes(String aPresIDs, HttpServletRequest aRequest) throws NamingException {
 		return getPresLabTypes(aPresIDs, Long.valueOf(0),aRequest);
-	}
+	}*/
 	
 	
 	/*
 	 * Проверяем полученные исследования на соответствие типу листа назначения 
 	 * и возвращаем те, которые соответствуют типу ЛН.
 	 */
+	//lastrelease milamesher 20.03.2018 #31 - ф-я с двумя параметрами не используется нигде! Где не нужен 2й параметр, передаётся 0
 	public String getPresLabTypes(String aPresIDs, Long aPrescriptListType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		aPresIDs = aPresIDs.substring(0,aPresIDs.length()-1); // Обрезаем #
