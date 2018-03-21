@@ -1939,17 +1939,18 @@ public class HospitalMedCaseServiceJs {
 			}
 		return res.toString();
     }
+    //lastrelease milamesher 21.03.2018 >= и distinct
     //Milamesher наличие других предварительных госпитализаций
     public String prevPlanHospital(int id,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	String query="select wchb.datefrom,wchb.diagnosis,m.name,p.lastname,p.firstname,p.middlename " +
+    	String query="select distinct wchb.datefrom,wchb.diagnosis,m.name,p.lastname,p.firstname,p.middlename " +
  "from workcalendarhospitalbed wchb " +
  "left join mislpu m on wchb.department_id=m.id " +
  "left join medcase mc on wchb.patient_id=mc.patient_id  " +
  "left join workfunction wf on wf.id=wchb.workfunction_id " +
  "left join worker w on w.id=wf.worker_id " +
 "left join patient p on p.id=w.person_id " +
- "where wchb.datefrom>CAST('today' AS DATE) " +
+ "where wchb.datefrom>=CAST('today' AS DATE) " +
  "and wchb.patient_id=" + id;
 		Collection<WebQueryResult> list = service.executeNativeSql(query); 
 		StringBuilder res = new StringBuilder() ;
