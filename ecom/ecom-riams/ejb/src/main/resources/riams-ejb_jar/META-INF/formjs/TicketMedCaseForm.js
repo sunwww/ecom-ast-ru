@@ -175,10 +175,13 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 			spo.setDateFinish(aEntity.getDateStart()) ;
 			spo.setFinishFunction(workFunction) ;
 		}
+		spo.setIsDiagnosticSpo(aForm.getIsDiagnositcSpo()); //признак КДО
 		aCtx.manager.persist(spo) ;
 		aEntity.setParent(spo) ;
 		aCtx.manager.persist(aEntity) ;
 	} else {
+        spo.setIsDiagnosticSpo(aForm.getIsDiagnositcSpo()); //признак КДО
+        aCtx.manager.persist(spo) ;
 		if (((aForm.isCloseSpo!=null && aForm.isCloseSpo)||(aForm.emergency!=null && aForm.emergency)) && aEntity.parent!=null) {
 			//throw "Закрыть СПО: "+(aForm.isCloseSpo!=null && aForm.isCloseSpo && aEntity.parent!=null) ;
 			try {

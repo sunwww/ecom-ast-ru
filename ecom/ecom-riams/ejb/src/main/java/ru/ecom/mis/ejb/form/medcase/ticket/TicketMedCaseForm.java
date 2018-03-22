@@ -55,7 +55,12 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         @AParentEntityFormInterceptor(TicketPreCreateInterceptor.class)
 )
 public class TicketMedCaseForm extends ShortTicketMedCaseForm {
-	
+	/** Признак консультативно-диагностического обращения */
+	@Comment("Признак консультативно-диагностического обращения")
+	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
+	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
+	/** Признак консультативно-диагностического обращения */
+	private Boolean theIsDiagnosticSpo ;
 
 	/** Планируемая дата исполнения */
 	@Comment("Планируемая дата исполнения")

@@ -285,7 +285,7 @@
 		  </msh:table>
 		  </div>
 	  </msh:tableNotEmpty>
-	  <%}%>
+	  <%} else {%>
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}</msh:sectionTitle>
     <msh:sectionContent>
@@ -383,7 +383,7 @@
        </msh:tableNotEmpty>
     </msh:sectionContent>
     </msh:section>
-    <%} %>
+    <%}} %>
   </tiles:put>
   <tiles:put name="javascript" type="string">
   	<msh:ifInRole roles="/Policy/Mis/MisLpu/Psychiatry">

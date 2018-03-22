@@ -47,7 +47,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     }) 
 @EntityListeners(DeleteListener.class)
 abstract public class MedCase extends BaseEntity {
-	
+	/** Признак консультативно-диагностического обращения */
+	@Comment("Признак консультативно-диагностического обращения")
+	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
+	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
+	/** Признак консультативно-диагностического обращения */
+	private Boolean theIsDiagnosticSpo ;
+
     /** Только принят */
     public static final int STATUS_NULL = 0 ;
     /** ОТКАЗ */

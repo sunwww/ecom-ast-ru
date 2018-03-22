@@ -44,7 +44,8 @@
         </msh:ifInRole>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do" 
+        <msh:row>  <msh:checkBox property="isDiagnosticSpo" label="Диагностическое СПО"/></msh:row>
+        	<msh:autoComplete property="kinsman" label="Представитель" viewAction="entityParentView-mis_kinsman.do"
         	parentId="smo_ticketForm.medcard" vocName="kinsmanByTicket" horizontalFill="true" fieldColSpan="3"/>
         </msh:row>
 	        <msh:ifNotInRole roles="/Policy/Poly/Ticket/IsDoctorEdit">
