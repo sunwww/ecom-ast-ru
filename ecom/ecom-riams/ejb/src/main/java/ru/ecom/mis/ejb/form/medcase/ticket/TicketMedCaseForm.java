@@ -57,6 +57,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	/** Признак консультативно-диагностического обращения */
 	@Comment("Признак консультативно-диагностического обращения")
+	@Persist
 	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
 	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
 	/** Признак консультативно-диагностического обращения */
