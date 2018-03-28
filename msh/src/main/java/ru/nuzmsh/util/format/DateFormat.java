@@ -19,40 +19,56 @@ public class DateFormat {
 
     //private static SimpleDateFormat FORMAT_LOGIC = new SimpleDateFormat("yyyyMMdd");
     //private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH.mm");
-
-    public static Boolean isHoliday (String aDate) throws ParseException {
+	/** Преобразование даты в произвольный формат */
+public static String convertOtherFormat(String aDate, String aFromFormat, String aToFormat)  throws ParseException {
+	SimpleDateFormat fromFormat = new SimpleDateFormat(aFromFormat);
+	SimpleDateFormat toFormat = new SimpleDateFormat(aToFormat);
+	return toFormat.format(fromFormat.parse(aDate));
+}
+    /** Проверка дня (строка в формате 25.03.2018) - является ли воскресеньем*/
+	public static Boolean isHoliday (String aDate) throws ParseException {
     		Calendar cal = Calendar.getInstance();
     		cal.setTime(parseDate(aDate));
     		return cal.get(java.util.Calendar.DAY_OF_WEEK)==1;
     }
+	/** Из строк 2018-03-25, 12:34 в java.util.Date */
     public static Date formatDateFromDateTime(String aSqlDate, String aSqlTime) {
     	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:MI");
     	try{
     		return format.parse(aSqlDate+" "+aSqlTime);
 		} catch (Exception e){e.printStackTrace();return null;}
 	}
+	/** Из java.util.Date в 20180325 */
 	public static String formatToLogic(Date aDate) throws ParseException {
     	SimpleDateFormat FORMAT_LOGIC = new SimpleDateFormat("yyyyMMdd");
         return FORMAT_LOGIC.format(aDate) ;
     }
+	/** Из строки 25.03.2018 в 2018-03-25 */
     public static String formatToJDBC(String aDate) throws ParseException {
     	SimpleDateFormat FORMAT_LOGIC = new SimpleDateFormat("dd.MM.yyyy");
     	SimpleDateFormat FORMAT_JDBC = new SimpleDateFormat("yyyy-MM-dd");
     	Date date =FORMAT_LOGIC.parse(aDate) ;
     	return FORMAT_JDBC.format(date) ;
     }
+	/** Из 2018-03-25 в 25.03.2018	*/
+	public static String formatFromJDBC(String aDate) throws ParseException {
+		SimpleDateFormat FORMAT_LOGIC = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat FORMAT_JDBC = new SimpleDateFormat("yyyy-MM-dd");
+		Date date =FORMAT_JDBC.parse(aDate) ;
+		return FORMAT_LOGIC.format(date) ;
+	}
 
-    
+	/** Из строки 20180325 в java.util.Date */
     public static Date parseFromLogic(String aDate) throws ParseException {
     	SimpleDateFormat FORMAT_LOGIC = new SimpleDateFormat("yyyyMMdd");
         return FORMAT_LOGIC.parse(aDate) ;
     }
-
+	/** Из строки 25.03.2018 в java.sql.Date */
     public static java.sql.Date parseSqlDate(String aDate) throws ParseException {
         Date utilDate = parseDate(aDate) ;
         return utilDate != null ? new java.sql.Date(utilDate.getTime()) : null;
     }
-    
+	/** Из строки в заданном формате в java.util.Date * ограничение на минимальную дату */
     public static Date parseDate(String aDate,String aFormat) throws ParseException {
     	SimpleDateFormat FORMAT_1 = new SimpleDateFormat(aFormat);
     	Date ret ;
@@ -80,6 +96,7 @@ public class DateFormat {
     	}
     	return ret ;
     }
+	/** Из строки в заданном формате в java.sql.Date * ограничение на минимальную дату */
     public static java.sql.Date parseSqlDate(String aDate,String aFormat) throws ParseException {
     	SimpleDateFormat FORMAT_1 = new SimpleDateFormat(aFormat);
         Date ret ;
@@ -107,11 +124,18 @@ public class DateFormat {
 		}
         return new java.sql.Date(ret.getTime()) ;
     }
+
+	/** Из строки 25.03.2018 в java.util.Date */
     public static Date parseDate(String aDate) throws ParseException {
         return parseDate(aDate,"dd.MM.yyyy") ;
     }
-
+	/** Из java.util.Date в 25.03.2018*/
     public static String formatToDate(Date aDate) {
+    	SimpleDateFormat FORMAT_1 = new SimpleDateFormat("dd.MM.yyyy");
+        return aDate!=null ? FORMAT_1.format(aDate) : null;
+    }
+	/** Из java.sql.Date в 25.03.2018*/
+    public static String formatToDate(java.sql.Date aDate) {
     	SimpleDateFormat FORMAT_1 = new SimpleDateFormat("dd.MM.yyyy");
         return aDate!=null ? FORMAT_1.format(aDate) : null;
     }

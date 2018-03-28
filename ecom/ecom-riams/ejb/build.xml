@@ -13,6 +13,7 @@
 		<include name="ecom/ejbweb/ejb/ecom-ejb-api.jar" />
 		<include name="bsh/bsh-2.0b4.jar" />
 		<include name="ldap/riams-ldap.jar" />
+		<include name="apache-commons/commons-codec-1.3.jar" />
 	</fileset>
 
 	<target name='persistence.xml'>
