@@ -8,6 +8,7 @@ import ru.ecom.api.util.ApiRecordUtil;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.jws.WebParam;
@@ -120,8 +121,24 @@ public class ApiRecordResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String makeRecord(@Context HttpServletRequest aRequest
             ,  String jsonData) throws NamingException, JSONException, ParseException {
+        return makeRecordOrAnnul(aRequest,new JSONObject(jsonData));
+    }
+
+    /** Аннулирование записи пациента */
+    @POST
+    @Path("annulRecord")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String annulRecord(@Context HttpServletRequest aRequest
+            ,  String jsonData) throws NamingException, JSONException, ParseException {
         JSONObject root = new JSONObject(jsonData);
-        Long calendarTimeId = getJsonField(root,"calendarTime_id");
+        root.put("annul","annul");
+        return makeRecordOrAnnul(aRequest,root);
+    }
+
+
+    public String makeRecordOrAnnul(HttpServletRequest aRequest
+            ,  JSONObject root) throws NamingException, JSONException, ParseException {
+        Long calendarTimeId = Long.valueOf((String)getJsonField(root,"calendarTime_id"));
         String lastname = getJsonField(root,"lastname");
         String firstname = getJsonField(root,"firstname");
         String middlename = getJsonField(root,"middlename");
@@ -129,11 +146,14 @@ public class ApiRecordResource {
         String patientGUID = getJsonField(root,"patient_uid");
         String patientComment = getJsonField(root,"comment");
         String debug = getJsonField(root,"debug");
-        String annul = (String)aRequest.getAttribute("annul");
+        String token = getJsonField(root,"token");
+        String annul = getJsonField(root,"annul");
         String list;
+
+        ApiUtil.init(aRequest,token);
         IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
-        if (annul!=null&&annul.equals("annul")) {
-            list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,service);
+        if (!StringUtil.isNullOrEmpty(annul)) {
+            list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
         } else {
             System.out.println("start record, debug="+debug);
             list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,patientComment,service);
