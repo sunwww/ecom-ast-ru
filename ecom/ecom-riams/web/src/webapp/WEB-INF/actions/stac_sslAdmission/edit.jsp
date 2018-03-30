@@ -473,11 +473,13 @@
             
                 if (+$('deniedHospitalizating').value>0) {
                     $('ambulanceTreatment').checked = true;
+                    $('medicalAid').checked = true;
                     $('departmentName').className="autocomplete horizontalFill";
                     $('hospitalizationName').className="autocomplete horizontalFill";
                     $('serviceStreamName').className="autocomplete horizontalFill";
                 } else {
                 	$('ambulanceTreatment').checked = false;
+                    $('medicalAid').checked = false;
                     $('departmentName').className="autocomplete horizontalFill required";
                     $('hospitalizationName').className="autocomplete horizontalFill required";
                     $('serviceStreamName').className="autocomplete horizontalFill required";
