@@ -79,14 +79,12 @@ import ru.nuzmsh.util.format.DateFormat;
 public class PrescriptionServiceBean implements IPrescriptionService {
 	private final static Logger log = Logger.getLogger(PrescriptionServiceBean.class);
 
-	public void checkXmlFiles() throws JSONException, ParserConfigurationException, SAXException, IOException
-	{
+	public void checkXmlFiles() throws ParserConfigurationException, SAXException, IOException {
 
-		String homeDirectory  =  getDir("jboss.lab.xmldir","/opt/lab/");
+		String homeDirectory  =  getDir("jboss.lab.xmldir","/opt/lab");
 		String xmlDirectory = homeDirectory + "/xml/";
         String xmlArchDirectory = homeDirectory + "/archive/";
         
-
         File[] fileList = getFiles(xmlDirectory);
         
         if (fileList!=null&&fileList.length>0)
@@ -98,7 +96,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	        	String[] expansions = fileName.split("\\.");
 	            if(expansions[1].equals("xml")) {
 	        		List<ParsedPdfInfo> l = ReadXML(xmlDirectory+fileName);
-	        		setDefaultDiaryCycle(l);
+					for (ParsedPdfInfo parsedPdfInfo:l) {
+						setDefaultDiary(parsedPdfInfo);
+					}
 	        		moveFile(xmlDirectory,xmlArchDirectory,fileName);
 	        	}
         	}
@@ -107,17 +107,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    }
 	}
 	
-	public static List<ParsedPdfInfo> ReadXML(String namefile) throws ParserConfigurationException, SAXException, IOException
-	{
-		ParsedPdfInfo parsedPdfInfo = new ParsedPdfInfo();
+	public static List<ParsedPdfInfo> ReadXML(String namefile) throws ParserConfigurationException, SAXException, IOException {
+		ParsedPdfInfo parsedPdfInfo ;
 		List<ParsedPdfInfoResult> parsedPdfInfoResults = new ArrayList<ParsedPdfInfoResult>();
         List<ParsedPdfInfo>parsedPdfInfos = new ArrayList<ParsedPdfInfo>();
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         f.setValidating(false);
-        DocumentBuilder builder = null;
-        
-        
-            builder = f.newDocumentBuilder();
+        DocumentBuilder builder = f.newDocumentBuilder();
             Document doc = builder.parse(new File(namefile));
             NodeList nodeList = doc.getElementsByTagName("Message");
         
@@ -152,7 +148,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	
 	/** Вывод всех файлов в папке */
 	    public static File[] getFiles(String path) {
-	     	try{
+	     	try {
 	         File dir = new File(path);
 	         File[] files = dir.listFiles(new FilenameFilter() {
 	             public boolean accept(File dir, String name) {
@@ -160,9 +156,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	             }});
 	         
 	         return files;
-	     	}
-	     	catch(Exception e)
-	     	{
+	     	} catch(Exception e) {
 	     		System.out.println("Директория не обнаружена. Проверьте правильность.");
 	     		e.printStackTrace();
 	     		return null;
@@ -170,7 +164,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	     }
 	    
 		
-	    public static boolean checkIsExist(String filePath, boolean resultExist)    {
+	    public static boolean checkIsExist(String filePath, boolean resultExist) {
 	        File f = new File(filePath);
 	        return  f.exists()&&!f.isDirectory();
 	    }
@@ -188,26 +182,11 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	            e.printStackTrace();
 	        }
 	    }
-	
-	    
-	
 
-
-	//endregion
-	
-	
-	//region "Robot"
-	public String setDefaultDiaryCycle(List<ParsedPdfInfo> parsedPdfInfos) throws JSONException {
-
-		for (ParsedPdfInfo parsedPdfInfo:parsedPdfInfos) {
-		    setDefaultDiary(parsedPdfInfo);
-		}
-		return "0";
-	}
-	
 	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) {
-		//ParsedPdfInfo parsedPdfInfo = doObject();
-		if (parsedPdfInfo!=null&&parsedPdfInfo.getBarcode()!=null&&!parsedPdfInfo.getBarcode().trim().equals("")) {
+		if (parsedPdfInfo==null) {log.error("NO_RESULT");return "";}
+		String barcode = parsedPdfInfo.getBarcode();
+		if (!StringUtil.isNullOrEmpty(barcode)) {
 		
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
@@ -215,11 +194,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		
 		
 		StringBuilder sqlAdd= new StringBuilder();
-		for(int i=0;i<parsedPdfInfo.getResults().size();i++) {
-			sqlAdd.append("'"+parsedPdfInfo.getResults().get(i).getCode()+"'");
-			if((i+1)<parsedPdfInfo.getResults().size()){
-				sqlAdd.append(",");
-			}
+		List<ParsedPdfInfoResult> results =parsedPdfInfo.getResults();
+		for(int i=0;i<results.size();i++) {
+			if(i>0){sqlAdd.append(",");}
+			sqlAdd.append("'"+results.get(i).getCode()+"'");
 		}
 		
 		sql.append("select pres.id as pid, ms.id as msid, max(tp.id) as templateId "+
@@ -228,21 +206,19 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					"left join templateprotocol tp on tp.medservice_id=ms.id "+
 					"left join parameterbyform pf on pf.template_id = tp.id "+
 					"left join parameter p on p.id=pf.parameter_id "+
-		        	"where pres.barcodeNumber ='").append(parsedPdfInfo.getBarcode()).append("' "+
+		        	"where pres.barcodeNumber ='").append(barcode).append("' "+
 					"and p.externalcode in(").append(sqlAdd).append(") "+
 					"group by pres.id,ms.id");
 
-		Collection<WebQueryResult> list = executeNativeSql(sql.toString(), theManager);
+		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
 
 		if (!list.isEmpty()) {
 			String username = "LabRobot";
-			
-	
-			for (WebQueryResult res: list) {
+			for (Object[] obj: list) {
 				try {
-					Long pid = Long.parseLong(res.get1().toString());
+					Long pid = Long.parseLong(obj[0].toString());
 				//	String msid = res.get2().toString();
-					Long templateId = Long.parseLong(res.get3().toString());
+					Long templateId = Long.parseLong(obj[2].toString());
 					sql = new StringBuilder() ;
 					sql.append("select p.id as p1id,p.name as p2name"+
 					", p.shortname as p3shortname,p.type as p4type"+
@@ -254,7 +230,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					", vd.id as v15did,vd.name as v16dname"+
 					", p.cntdecimal as p17cntdecimal"+
 					", ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid "+
-					", ").append(CreateSQLQuerty(parsedPdfInfo)).append(" as p19valuetextdefault "+
+					", ").append(createSQLQuery(parsedPdfInfo)).append(" as p19valuetextdefault "+
 					",case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc "+
 					"from prescription pres "+
 					"left join templateprotocol tp on tp.medservice_id=pres.medservice_id "+
@@ -263,10 +239,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					"left join userDomain vd on vd.id=p.valueDomain_id "+
 					"left join userValue uv on uv.domain_id=vd.id and uv.useByDefault='1' "+
 					"left join vocMeasureUnit vmu on vmu.id=p.measureUnit_id "+
-					"where pres.barcodeNumber ='").append(parsedPdfInfo.getBarcode()).append("'"+
+					"where pres.id=").append(pid).append(" and pres.barcodeNumber ='").append(barcode).append("'"+
 					"order by pf.position");
 				
-					Collection<WebQueryResult> lwqr = executeNativeSql(sql.toString(), theManager);
+					List<Object[]> lwqr = theManager.createNativeQuery(sql.toString()).getResultList();
 	
 					sb.setLength(0);
 					sb.append("{");
@@ -276,31 +252,30 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					sb.append("\"params\":[") ;
 					boolean firstPassed = false ;
 					boolean firstError = false ;
-					String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
-					,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
-					,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}
-					,{"13","unitid"},{"14","unitname"}
-					,{"15","vocid"},{"16","vocname"},{"17","cntdecimal"}
-					,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
+					String[][] props = {{"0","id"},{"1","name"},{"2","shortname"}
+							,{"3","type"},{"4","min"},{"5","nmin"},{"6","max"},{"7","nmax"}
+							,{"8","minbd"},{"9","nminbd"},{"10","maxbd"},{"11","nmaxbd"}
+							,{"12","unitid"},{"13","unitname"}
+							,{"14","vocid"},{"15","vocname"},{"16","cntdecimal"}
+							,{"17","idEnter"},{"18","value"},{"19","valueVoc"}
 					} ;
-					for(WebQueryResult wqr : lwqr) {
+					for(Object[] objects : lwqr) {
 						StringBuilder par = new StringBuilder() ;
 						par.append("{") ;
 						boolean isFirtMethod = false ;
 						boolean isError = false ;
 						//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
-						if (String.valueOf(wqr.get4()).equals("2")) {
+						if (String.valueOf(objects[3]).equals("2")) {
 							//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
-							if (wqr.get15()==null) {
+							if (objects[14]==null) {
 								isError = true ;
 								//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
 							}
 						}
 						try {
 							for(String[] prop : props) {
-								Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
-								String strValue = value!=null?value.toString():"";
-								
+								Object value = PropertyUtil.getPropertyValue(objects, prop[0]) ;
+								String strValue = value!=null?(!value.toString().equals("null")?value.toString():""):"";
 								if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
 								par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
 								
@@ -323,17 +298,12 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				sb.append(",\"template\":\"").append(templateId).append("\"") ;
 				sb.append(",\"protocol\":\"").append("\"") ;
 				sb.append("}") ;
-				
-			  //  log.debug("==== JSSON= "+sb.toString());
-				 
+			//  log.info("==== JSSON= "+sb.toString());
 			    saveLabAnalyzed(0L,pid,0L,sb.toString(),username, templateId) ;
-				
 				}catch(Exception e){
 					e.printStackTrace();
 				} 
 			}
-		
-			
 			}
 
 	//	log.debug("Finish setDefaultDiary");
@@ -346,17 +316,12 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				
 	}
 	
-	 private String CreateSQLQuerty (ParsedPdfInfo parsedPdfInfo)
-	    {
-	        int size = parsedPdfInfo.getResults().size();
+	 private String createSQLQuery (ParsedPdfInfo parsedPdfInfo) {
 	        StringBuilder s = new StringBuilder();
 	        s.append("case");
 	       List<ParsedPdfInfoResult> r = parsedPdfInfo.getResults(); 
 	        for (ParsedPdfInfoResult p: r) {
-
 	            s.append(" when p.externalcode='").append(p.getCode()).append("' then '"+p.getValue()+"' ");
-	            //if((i+1)<size) s+=" ||' '||";
-	            //System.out.println(parsedPdfInfoResults.size());
 	        }
 	        s.append(" end");
 	        return s.toString();
@@ -368,56 +333,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
     	}
     	return aValue ;
     }
-	
-private Collection<WebQueryResult> executeNativeSql(String aQuery,Integer aMaxResult, EntityManager aManager) {
-		
-		return executeQuery(aManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")),aMaxResult,theManager) ;
-	}
-private Collection<WebQueryResult> executeNativeSql(String aQuery, EntityManager aManager) {
-		
-		return executeNativeSql(aQuery,null,aManager) ;
-	}
-	
-	private Collection<WebQueryResult> executeQuery(Query aQuery,Integer aMaxResult, EntityManager aManager) {
 
-	List<Object> list ;
-
-	if (aMaxResult!=null) {
-		list= aQuery.setMaxResults(aMaxResult).getResultList() ;
-	} else {
-		list= aQuery.getResultList() ;
-	}
-	
-	LinkedList<WebQueryResult> ret = new LinkedList<WebQueryResult>() ;
-	long i = 0 ;
-	Class<WebQueryResult> clazz = WebQueryResult.class ;
-	Class<Object> obj_clazz =Object.class ;
-	for (Object rowL : list) {
-		
-		WebQueryResult result = new WebQueryResult() ;
-		if (rowL instanceof Object[]) {
-			
-			Object[] row = (Object[])rowL ;
-			for (int ii =0 ;ii<row.length&&ii<27;ii++) {
-				try {
-					Method ejbSetterMethod = clazz.getMethod("set"+(ii+1), obj_clazz);
-					ejbSetterMethod.invoke(result, row[ii]) ;
-				} catch (Exception e) {
-					e.printStackTrace();
-				} 
-			}
-		} else {
-			result.set1(rowL) ;
-		}
-		
-		result.setSn(++i) ;
-		ret.add(result) ;
-	}
-	return ret ;
-	}
-	
-	
-	//-------------
 	public Long clonePrescription(Long aPrescriptionId, Long aMedServiceId, Long aWorkFunctionId, String aCreateUsername) {
 		ServicePrescription p = theManager.find(ServicePrescription.class, aPrescriptionId);
 		
