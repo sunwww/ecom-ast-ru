@@ -6,7 +6,26 @@
 <struts-config>
 
     <form-beans>
-    
+       <form-bean name="e2_entryForm" type="ru.ecom.expert2.form.E2EntryForm"/>
+       <form-bean name="e2_entryListForm" type="ru.ecom.expert2.form.E2EntryListForm"/>
+       <form-bean name="e2_vocBaseTariffForm" type="ru.ecom.expert2.form.voc.VocE2BaseTariffForm"/>
+       <form-bean name="e2_configForm" type="ru.ecom.expert2.form.Expert2ConfigForm"/>
+       <form-bean name="e2_vocMedHelpProfileForm" type="ru.ecom.expert2.form.voc.VocE2MedHelpProfileForm"/>
+       <form-bean name="e2_vocCofficientLpuLevelForm" type="ru.ecom.expert2.form.voc.VocCoefficientLpuLevelForm"/>
+       <form-bean name="e2_medHelpBedTypeForm" type="ru.ecom.expert2.form.E2MedHelpProfileBedTypeForm"/>
+       <form-bean name="e2_v009LinkForm" type="ru.ecom.expert2.form.E2FondResultLinkForm"/>
+       <form-bean name="e2_v010LinkForm" type="ru.ecom.expert2.form.E2FondResultLinkForm"/>
+       <form-bean name="e2_v012LinkForm" type="ru.ecom.expert2.form.E2FondIshodLinkForm"/>
+       <form-bean name="e2_v015LinkForm" type="ru.ecom.expert2.form.E2FondMedSpecLinkForm"/>
+        <form-bean name="e2_vocFondV009Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV009Form"/>
+        <form-bean name="e2_vocFondV012Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV012Form"/>
+        <form-bean name="e2_vocFondV015Form" type="ru.ecom.expert2.form.voc.federal.VocE2FondV015Form"/>
+        <form-bean name="e2_entryMedServiceForm" type="ru.ecom.expert2.form.EntryMedServiceForm"/>
+        <form-bean name="e2_entryDiagnosisForm" type="ru.ecom.expert2.form.EntryDiagnosisForm"/>
+        <form-bean name="e2_polyclinicCoefficientForm" type="ru.ecom.expert2.form.voc.VocE2PolyclinicCoefficientForm"/>
+        <form-bean name="e2_vocEntrySubTypeForm" type="ru.ecom.expert2.form.voc.VocE2EntrySubTypeForm"/>
+
+
        <form-bean name="exp_vocKindForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationKindForm"/>
        <form-bean name="exp_vocCritForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationCritForm"/>
        <form-bean name="exp_vocMarkForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationMarkForm"/>
@@ -60,6 +79,18 @@
     <action-mappings>
 
         <!-- ЭКСПЕРТИЗА -->
+        <action path="/e2-ImportFile" type='ru.ecom.mis.web.action.expert2.Expert2FileImportAction'
+                scope='request' validate="false" name="policyExportForm">
+            <forward name="success" path="/WEB-INF/actions/e2_entryList/list.jsp"/>
+        </action>
+
+<action path='/e2_errorsByList' type='ru.ecom.web.actions.base.ForwardAction'
+        name='expert_journalForm'
+        validate='false'
+        scope="session"
+>
+    <forward name="success" redirect="false" path="/WEB-INF/actions/e2_entryError/errorsByList.jsp" />
+</action>
 <action path='/quality_card_journal' type='ru.ecom.web.actions.base.ForwardAction'
                 name='expert_journalForm'
                 validate='false'

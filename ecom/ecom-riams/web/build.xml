@@ -15,6 +15,7 @@
 		<include name="image/imgscalr-lib-3.2.jar"/>
 		<include name="image/jai_codec.jar"/>
 		<include name="axis/axis.jar"/>
+		<include name='jersey/javax.ws.rs-api-2.1.jar' />
 		
 	</fileset>
 

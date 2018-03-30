@@ -141,11 +141,5 @@ public class VocKsg extends VocIdCodeName {
 	/** Тип коек */
 	private VocBedSubType theBedSubType ;
 
-	/** Управляющий коэффициент */
-	@Comment("Управляющий коэффициент")
-	@Column( precision = 8, scale = 5 )
-	public BigDecimal getUprCoefficient() {return theUprCoefficient;}
-	public void setUprCoefficient(BigDecimal aUprCoefficient) {theUprCoefficient = aUprCoefficient;}
-	/** Управляющий коэффициент */
-	private BigDecimal theUprCoefficient ;
+
 }
