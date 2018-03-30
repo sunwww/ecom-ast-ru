@@ -124,20 +124,7 @@ public class WorkCalendarTime extends BaseEntity{
 	/** Поток обслуживания */
 	private VocServiceStream theServiceStream;
 	
-	/** Резерв персоны */
-	@Comment("Резерв персоны")
-	@OneToOne
-	public Patient getPersonReserve() {
-		return thePersonReserve;
-	}
 
-	public void setPersonReserve(Patient aPersonReserve) {
-		thePersonReserve = aPersonReserve;
-	}
-
-	/** Резерв персоны */
-	private Patient thePersonReserve;
-	
 	/** Нерабочее время */
 	@Comment("Нерабочее время")
 	public Boolean getRest() {
