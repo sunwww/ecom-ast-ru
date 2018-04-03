@@ -189,6 +189,12 @@ public class TransfusionForm extends IdEntityForm {
 	public Boolean getPhenotypee1() {return thePhenotypee1;}
 	public void setPhenotypee1(Boolean aPhenotypee1) {thePhenotypee1 = aPhenotypee1;}
 
+	/** Фенотип не определялся */
+	@Comment("Фенотип не определялся")
+	@Persist
+	public Boolean getPhenotypeNone() {return thePhenotypeNone;}
+	public void setPhenotypeNone(Boolean aPhenotypeNone) {thePhenotypeNone = aPhenotypeNone;}
+
 	/** Фенотип E */
 	private Boolean thePhenotypee1;	
 	/** Фенотип e */
@@ -199,9 +205,11 @@ public class TransfusionForm extends IdEntityForm {
 	private Boolean thePhenotypec1;
 	/** Фенотип C */
 	private Boolean thePhenotypeC;
+	/** Фенотип не определялся*/
+	private Boolean thePhenotypeNone;
 	/** Фенотип */
 	private String thePhenotype;
-	
+
 	/** Срок годности */
 	@Comment("Срок годности")
 	@Persist @Required @DateString @DoDateString

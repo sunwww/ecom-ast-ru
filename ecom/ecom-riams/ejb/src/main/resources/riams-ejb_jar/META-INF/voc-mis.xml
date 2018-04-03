@@ -2764,7 +2764,13 @@ left join medcase smoP on smoP.owner_id=w.id "
                     queried = 'name'
                     />
     </voc>
-    
+	<voc id='vocBloodBioProbProcedure' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodBioProbProcedure'
+				names   = 'name'
+				queried = 'name'
+		/>
+	</voc>
     <voc id='vocRhesusFactor' type='EntityVocService'>
             <EntityVocService
                     entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocRhesusFactor'

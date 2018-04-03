@@ -36,13 +36,13 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 		//try {
 			//Мониторинг
 			saveForm(manager,"from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+0+"'"
-					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor".split(",")
+					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor,getDiuresis".split(",")
 					,form.getMonitorForm0(),TransfusionMonitoring.class,TransfusionMonitoringForm.class);
 			saveForm(manager,"from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+1+"'"
-					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor".split(",")
+					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor,getDiuresis".split(",")
 					,form.getMonitorForm1(),TransfusionMonitoring.class,TransfusionMonitoringForm.class);
 			saveForm(manager,"from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+2+"'"
-					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor".split(",")
+					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor,getDiuresis".split(",")
 					,form.getMonitorForm2(),TransfusionMonitoring.class,TransfusionMonitoringForm.class);
 			
 			//Реактивы
@@ -59,10 +59,10 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 		
 		StringBuilder biolTest = new StringBuilder() ;
 		if (form.getIsIllPatientsBT()!=null&&form.getIsIllPatientsBT().booleanValue()==true) {
-			biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
+			//biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
 			biolTest.append(entity.getSerumColorBT()!=null?entity.getSerumColorBT().getName():"_________") ;
 		} else {
-			biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
+			//biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
 			biolTest.append(" PS: ").append(form.getPulseRateBT()) ;
 			biolTest.append(" AD: ").append(form.getBloodPressureLowerBT()).append("/").append(form.getBloodPressureTopBT()) ;
 			biolTest.append(" ЧДД: ").append(form.getRespiratoryRateBT()) ;

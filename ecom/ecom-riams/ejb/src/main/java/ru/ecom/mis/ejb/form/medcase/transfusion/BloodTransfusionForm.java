@@ -85,13 +85,13 @@ public class BloodTransfusionForm extends TransfusionForm{
 	
 	/** Проверка группы крови пациента */
 	@Comment("Проверка группы крови пациента")
-	@Persist @Required
+	@Persist
 	public Long getPatBloodGroupCheck() {return thePatBloodGroupCheck;}
 	public void setPatBloodGroupCheck(Long aPatBloodGroupCheck) {thePatBloodGroupCheck = aPatBloodGroupCheck;}
 
 	/** Проверка группы крови препарата */
 	@Comment("Проверка группы крови препарата")
-	@Persist @Required
+	@Persist
 	public Long getPrepBloodGroupCheck() {return thePrepBloodGroupCheck;}
 	public void setPrepBloodGroupCheck(Long aPrepBloodGroupCheck) {thePrepBloodGroupCheck = aPrepBloodGroupCheck;}
 
@@ -317,4 +317,46 @@ public class BloodTransfusionForm extends TransfusionForm{
 
 	/** Биологическая проба */
 	private String theBiologicTest;
+
+	/** Справочник процедур в биологической пробе при переливаниях */
+	@Comment("Справочник процедур в биологической пробе при переливаниях")
+	@Persist @Required
+	public Long getBloodBioProbProcedure() {return theBloodBioProbProcedure;}
+	public void setBloodBioProbProcedure(Long aBloodBioProbProcedure) {theBloodBioProbProcedure=aBloodBioProbProcedure;}
+
+	/** Кровотечение усилилось или нет без видимой причины*/
+	@Comment("Кровотечение усилилось или нет без видимой причины")
+	@Persist
+	public Boolean getWasBleedingIncreased() {return theWasBleedingIncreased;}
+	public void setWasBleedingIncreased(Boolean aWasBleedingIncreased) {theWasBleedingIncreased=aWasBleedingIncreased;}
+
+	/** АД снизилось или нет без видимой причины*/
+	@Comment("АД снизилось или нет без видимой причины")
+	@Persist
+	public Boolean getWasADDecreased() {return theWasADDecreased;}
+	public void setWasADDecreased(Boolean aWasADDecreased) {theWasADDecreased=aWasADDecreased;}
+
+	/** Пульс участился или нет без видимой причины*/
+	@Comment("Пульс участился или нет без видимой причины")
+	@Persist
+	public Boolean getWasPulseIncreased() {return theWasPulseIncreased;}
+	public void setWasPulseIncreased(Boolean aWasPulseIncreased) {theWasPulseIncreased=aWasPulseIncreased;}
+
+	/** Пульс участился или нет без видимой причины*/
+	@Comment("Пульс участился или нет без видимой причины")
+	@Persist
+	public Boolean getWasUrineColorChanged() {return theWasUrineColorChanged;}
+	public void setWasUrineColorChanged(Boolean aWasUrineColorChanged) {theWasUrineColorChanged=aWasUrineColorChanged;}
+	/** Справочник процедур в биологической пробе при переливаниях */
+	private Long theBloodBioProbProcedure;
+	/** Кровотечение усилилось или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasBleedingIncreased;
+	/** АД снизилось или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasADDecreased;
+	/** Пульс участился или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasPulseIncreased;
+	/** Цвет мочи изменился или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasUrineColorChanged;
 }
+//lastrelease milamesher 30.03.2018 #95
+//added fields

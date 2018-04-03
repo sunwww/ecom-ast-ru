@@ -74,6 +74,14 @@ public class TransfusionMonitoringForm extends IdEntityForm {
 	public Long getUrineColor() {return theUrineColor;}
 	public void setUrineColor(Long aUrineColor) {theUrineColor = aUrineColor;}
 
+	/** Диурез */
+	@Comment("Диурез")
+	@Persist
+	public Integer getDiuresis() {return theDiuresis;}
+	public void setDiuresis(Integer aDiuresis) {theDiuresis = aDiuresis;}
+
 	/** Моча */
 	private Long theUrineColor;
+	/** Диурез */
+	private Integer theDiuresis;
 }

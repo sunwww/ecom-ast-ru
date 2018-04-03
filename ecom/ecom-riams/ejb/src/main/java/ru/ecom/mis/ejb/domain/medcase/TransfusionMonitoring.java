@@ -56,6 +56,11 @@ public class TransfusionMonitoring extends BaseEntity{
 	public VocUrineColor getUrineColor() {return theUrineColor;}
 	public void setUrineColor(VocUrineColor aUrineColor) {theUrineColor = aUrineColor;}
 
+	/** Диурез */
+	@Comment("Диурез")
+	public Integer getDiuresis() {return theDiuresis;}
+	public void setDiuresis(Integer aDiuresis) {theDiuresis = aDiuresis;}
+
 	/** Моча */
 	private VocUrineColor theUrineColor;
 	/** Переливание */
@@ -70,4 +75,6 @@ public class TransfusionMonitoring extends BaseEntity{
 	private Integer thePulseRate;
 	/** Кол-во часов */
 	private Integer theHourAfterTransfusion;
+	/** Диурез */
+	private Integer theDiuresis;
 }
