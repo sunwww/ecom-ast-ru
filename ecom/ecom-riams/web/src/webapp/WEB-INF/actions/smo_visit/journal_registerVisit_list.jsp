@@ -247,6 +247,7 @@
 	  <ecom:webQuery name="chronometr" nativeSql="
 		select
 		p.patientsync as numcard,
+		p.lastname||' '||p.firstname||' '||p.middlename as fio,
 		vwf.name as workfunction,
 		to_char(t.dateStart,'dd.MM.yyyy') as dateofvisit,
 		vs.code as sex,
@@ -272,16 +273,17 @@
 	  <msh:tableNotEmpty name="chronometr">
 		  <msh:table name="chronometr" action="javascript:void(0)" idField="1">
 			  <msh:tableColumn columnName="Номер карты пациента" property="1"/>
-			  <msh:tableColumn columnName="Должность врача" property="2"/>
-			  <msh:tableColumn columnName="Дата обращения" property="3"/>
-			  <msh:tableColumn columnName="Пол" property="4"/>
-			  <msh:tableColumn columnName="Возраст" property="5"/>
-			  <msh:tableColumn columnName="Посещение" property="6"/>
-			  <msh:tableColumn columnName="Место посещения" property="7"/>
-			  <msh:tableColumn columnName="Вид оказываемой мед. помощи" property="8"/>
-			  <msh:tableColumn columnName="Цель посещения" property="9"/>
-			  <msh:tableColumn columnName="Код диагноза" property="10"/>
-			  <msh:tableColumn columnName="Дата заполнения" property="11"/>
+			  <msh:tableColumn columnName="ФИО пациента" property="2"/>
+			  <msh:tableColumn columnName="Должность врача" property="3"/>
+			  <msh:tableColumn columnName="Дата обращения" property="4"/>
+			  <msh:tableColumn columnName="Пол" property="5"/>
+			  <msh:tableColumn columnName="Возраст" property="6"/>
+			  <msh:tableColumn columnName="Посещение" property="7"/>
+			  <msh:tableColumn columnName="Место посещения" property="8"/>
+			  <msh:tableColumn columnName="Вид оказываемой мед. помощи" property="9"/>
+			  <msh:tableColumn columnName="Цель посещения" property="10"/>
+			  <msh:tableColumn columnName="Код диагноза" property="11"/>
+			  <msh:tableColumn columnName="Дата заполнения" property="12"/>
 		  </msh:table>
 		  </div>
 	  </msh:tableNotEmpty>
