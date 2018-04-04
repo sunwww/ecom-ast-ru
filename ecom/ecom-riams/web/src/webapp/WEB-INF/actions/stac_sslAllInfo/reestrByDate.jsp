@@ -286,7 +286,7 @@
     <msh:sectionTitle>Реестр отказов от госпитализаций за день ${param.dateBegin}
     . По ${emerInfo} ${hourInfo} ${infoTypePat}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery nameFldSql="journal_priem_denied_sql" name="journal_priem"  nativeSql="select 
+    <ecom:webQuery nameFldSql="journal_priem_denied_sql" name="journal_priem"  nativeSql="select
     m.id as mid
     ,to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5)) as mdateStart
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename||' гр '||to_char(pat.birthday,'dd.mm.yyyy') as fio
@@ -295,7 +295,8 @@
     , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
     when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient
     
-     from MedCase as m  
+     from MedCase as m
+     left join Medcase slo on m.id=slo.parent_id
      left join StatisticStub as sc on sc.medCase_id=m.id 
      left outer join Patient pat on m.patient_id = pat.id 
      left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id
@@ -309,7 +310,7 @@
 	left join WorkFunction wf on wf.secUser_id=su.id
 	left join Worker w on w.id=wf.worker_id
 	left join MisLpu ml1 on ml1.id=w.lpu_id 
-     where m.DTYPE='HospitalMedCase' ${period}
+     where m.DTYPE='HospitalMedCase' and m.datestart= to_date('${param.dateBegin}','dd.mm.yyyy')
       and m.deniedHospitalizating_id is not null
       ${emerIs} ${pigeonHole1} ${department} ${serviceStreamSql}
       ${addPat}
@@ -493,4 +494,4 @@
 		</script>
   </tiles:put>
 </tiles:insert>
-
+<!--last release milamesher 04.04.2018 - Реестр отказов от госпитализаций за день -->
