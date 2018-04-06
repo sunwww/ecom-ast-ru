@@ -168,12 +168,12 @@
         	<msh:textField property="temperatureBT" size="4" label="t"/>
         </msh:row>
         <msh:row styleId="row12">
-           	<msh:autoComplete size="4" property="stateBT"  vocName="vocYesNo" label="Состояние удовлет." />
+           	<msh:autoComplete size="4" property="stateBT"  vocName="vocYesNo" label="Состояние изменилось?" />
            	<msh:textField property="lamentBT" label="Жалобы" fieldColSpan="9" horizontalFill="true"/>
         </msh:row>
-        <msh:row styleId="row21">
-           	<msh:autoComplete fieldColSpan="9" property="serumColorBT" horizontalFill="true" vocName="vocTransfusionTestSerumColor" label="Цвет сыворотки" />
-        </msh:row>
+        <!--msh:row styleId="row21">
+           	<!--msh:autoComplete fieldColSpan="9" property="serumColorBT" horizontalFill="true" vocName="vocTransfusionTestSerumColor" label="Цвет сыворотки" />
+        <!--/msh:row>
         <!--/msh:ifFormTypeIsNotView-->
             <msh:row styleId="row20">
                 <msh:row styleId="row22"><td colspan="10">Изменилось без видимой причины:</td></msh:row>
@@ -271,14 +271,14 @@
   	}
   	function biologTest() {
   		if ($("isIllPatientsBT").checked==true) {
-  			try { $("row20").style.display = 'table-row' ;$("row22").style.display ='table-row';$("row23").style.display ='table-row' ;$("row21").style.display = 'table-row' ;
+  			try { $("row20").style.display = 'table-row' ;$("row22").style.display ='table-row';$("row23").style.display ='table-row' ;
   			$("row10").style.display = 'none' ;$("row11").style.display = 'none' ;$("row12").style.display = 'none' ; 
-  			} catch (e) { $("row20").style.display = 'block' ;$("row21").style.display = 'block' ; $("row10").style.display = 'none'; $("row11").style.display = 'none'; $("row12").style.display = 'none' ;}
+  			} catch (e) { $("row20").style.display = 'block' ; $("row10").style.display = 'none'; $("row11").style.display = 'none'; $("row12").style.display = 'none' ;}
   		} else {
   			try { $("row20").style.display ='none'; $("row22").style.display ='none';$("row23").style.display ='none';$("row10").style.display = 'table-row' ; $("row11").style.display = 'table-row' ; $("row12").style.display = 'table-row' ;
-  			$("row20").style.display = 'none' ;$("row21").style.display = 'none' ; 
+  			$("row20").style.display = 'none' ;
   			} catch (e) { $("row10").style.display = 'block' ; $("row11").style.display = 'block' ; $("row12").style.display = 'block' ;
-  			$("row20").style.display ='none'; $("row22").style.display ='none';$("row23").style.display ='none' ;$("row21").style.display = 'none' ;}
+  			$("row20").style.display ='none'; $("row22").style.display ='none';$("row23").style.display ='none' ;}
             //alert($("row20").style.display);
   		}
   	}

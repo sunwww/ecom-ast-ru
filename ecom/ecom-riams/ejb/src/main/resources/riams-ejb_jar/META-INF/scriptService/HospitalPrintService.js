@@ -357,10 +357,10 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 		biolTest.append(", PS: ").append(trans.getRespiratoryRateBT()!=null?trans.getRespiratoryRateBT():"____") ;
 		biolTest.append(", t: ").append(trans.getTemperatureBT()!=null?trans.getTemperatureBT():"_______") ;
 		if (trans.getStateBT()!=null) {
-			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("1")) {
-				biolTest.append(". Состояние удовлетворительное.") ;
+			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("2")) {
+				biolTest.append(". Состояние не изменилось.") ;
 			} else {
-				biolTest.append(". Состояние неудовлетворительное. Жалобы:").append(trans.getLamentBT()).append(".") ;
+				biolTest.append(". Состояние изменилось. Жалобы:").append(trans.getLamentBT()).append(".") ;
 			}
 		} else {
 			biolTest.append(". Состояние: ____________________________. Жалобы _____________________________") ;
