@@ -82,6 +82,7 @@
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/Create" name="Случай ВМП" action="/entityParentPrepareCreate-stac_vmpCase" params="id" title="Добавить случай ВМП"/>
                 <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
                 <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+                <msh:sideLink roles="/Policy/Mis/AssessmentCard/Create" name="Карту оценки" action="/javascript:goCreateAssessmentCard()" title="Карту оценки" guid="abd8a59e-4968-4a55-adac-c257c1e8a899" />
             </msh:sideMenu>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                 <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
@@ -117,6 +118,7 @@
                                   title='Медицинские осмотры'/>
                     <tags:QECriteria name="QECriteria" />
                     <msh:sideLink styleId="viewShort" action="/javascript:showQECriteriaCloseDocument(${param.id})" name='Критерии' title="Просмотр критериев" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+                    <msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByPatient('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
                 </msh:sideMenu>
                 <msh:sideMenu title="Печать">
 
@@ -857,7 +859,14 @@ where m.id ='${param.id}'"/>
                     }
                 }
             }
-
+//last release milamesher 06.04.2018 #97
+            function viewAssessmentCardsByPatient(d) {
+                getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
+            }
+            function goCreateAssessmentCard() {
+                window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value ;
+                $('isPrintInfo').checked='checked' ;
+            }
         </script>
 
         <msh:ifFormTypeIsView formName="stac_sloForm">

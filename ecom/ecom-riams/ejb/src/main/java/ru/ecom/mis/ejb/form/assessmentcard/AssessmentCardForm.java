@@ -20,7 +20,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz= AssessmentCard.class)
 @Comment("Карта оценки")
-@WebTrail(comment = "Карта оценки", nameProperties= "id", view="entityParentView-mis_assessmentCard.do" ,list = "entityParentList-mis_assessmentCard.do")
+@WebTrail(comment = "Карта оценки", nameProperties= "id", view="entityParentView-mis_assessmentCard.do" ,list = "entityList-mis_assessmentCard.do")
 @Parent(property = "patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/AssessmentCard")
 public class AssessmentCardForm extends IdEntityForm{
