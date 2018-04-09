@@ -243,12 +243,10 @@
                 </msh:row>
             <msh:row>
                 <msh:textField property="reanimationEntry"/>
-                <msh:checkBox property="useLowerCoefficient"/>
             </msh:row>
             <msh:row>
                 <msh:autoComplete vocName="vocE2EntrySubType" property="subType" size="100"/>
                 </msh:row><msh:row>
-                <msh:checkBox property="isMobilePolyclinic"/>
             </msh:row>
                 <msh:row>
                     <msh:checkBox property="PRNOV"/>
@@ -265,7 +263,6 @@
                     <msh:textField property="externalPrevMedcaseId" size="50" />
             </msh:row><msh:row>
                     <msh:textField property="externalParentId" size="50" />
-                    <msh:textField property="diagnosisList" size="50" />
                 </msh:row>
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
@@ -372,7 +369,6 @@ where link.entry_id=${param.id}"/>
                         window.location.reload();
                     }
                 });
-
             }
             function makeMPFromRecord() {
                 //Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId,
@@ -382,17 +378,15 @@ where link.entry_id=${param.id}"/>
                             window.open("http://"+window.location.host+""+hName);
                     }
                 });
-
             }
 
             function unionByHospitalMedCase() {
-                alert('union');
-                Expert2Service.unionHospitalMedCase($('listEntry').value, $('externalParentId').value, {
+                        var type = $('entryType').value;
+                alert('union '+type);
+                Expert2Service.unionMedCase($('listEntry').value, $('externalParentId').value, $('externalPatientId').value,type, {
                     callback: function (a) {alert(a);}
                 });
             }
-
-
                 </script>
 
         </msh:ifFormTypeIsView>

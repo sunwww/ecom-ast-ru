@@ -8,9 +8,6 @@ import ru.ecom.expert2.domain.E2ListEntry;
 import ru.ecom.expert2.form.E2EntryListForm;
 import ru.ecom.expert2.service.IExpert2Service;
 
-import javax.naming.NamingException;
-import java.sql.SQLException;
-
 public class EntryListCreateInterceptor implements IFormInterceptor {
     @Override
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {

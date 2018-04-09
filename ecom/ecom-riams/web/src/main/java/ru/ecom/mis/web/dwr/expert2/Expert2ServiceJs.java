@@ -46,7 +46,7 @@ public class Expert2ServiceJs {
 
     /** *Отмечаем записи в заполнении как повторную подачу */
     public void markAsReSend(Long aListEntryId, Boolean aReSend, HttpServletRequest aRequest) throws NamingException  {
-        Injection.find(aRequest).getService(IWebQueryService.class).executeUpdateNativeSql("update e2entry set prnov='"+(aReSend?"1":"0")+"' where id="+aListEntryId);
+        Injection.find(aRequest).getService(IWebQueryService.class).executeUpdateNativeSql("update e2entry set prnov='"+(aReSend?"1":"0")+"' where listEntry_id="+aListEntryId+" and (isDeleted is null or isDeleted='0')");
     }
 
     /** Добавляем диагноз и услугу к случаю */
@@ -142,9 +142,10 @@ public class Expert2ServiceJs {
         service.executeUpdateNativeSql(sql);
         return true;
     }
-    public boolean unionHospitalMedCase (Long aListEntryId, Long aHospitalMedCaseId, HttpServletRequest aRequest) throws NamingException {
+
+    public boolean unionMedCase (Long aListEntryId, Long aHospitalMedCase, Long aPatientId, String aEntryType, HttpServletRequest aRequest) throws NamingException {
         IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
-        service.unionHospitalMedCase(aListEntryId,aHospitalMedCaseId);
+        service.testUnionMecCase(aListEntryId,aHospitalMedCase,aPatientId, aEntryType);
         return true;
     }
 

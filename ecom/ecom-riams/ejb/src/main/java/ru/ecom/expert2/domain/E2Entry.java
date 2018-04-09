@@ -326,30 +326,6 @@ public class E2Entry extends BaseEntity {
     /** policyPatientString */
     private String thePolicyPatientString ;
 
-     /** Применять пониженный коэффициент */
-     @Comment("Применять пониженный коэффициент")
-     public Boolean getUseLowerCoefficient() {return theUseLowerCoefficient;}
-     public void setUseLowerCoefficient(Boolean aUseLowerCoefficient) {theUseLowerCoefficient = aUseLowerCoefficient;}
-     /** Применять пониженный коэффициент */
-     private Boolean theUseLowerCoefficient ;
-
-      /** Вычисляемая услуга */
-      @Comment("Вычисляемая услуга")
-      @Transient
-      public String getAutoService() {
-        return theHelpKind+"#"+theBedSubType+(thePodvid!=null?thePodvid.getCode():"---");
-      }
-
-
-     /** Подвид медицинской помощи */
-     @Comment("Подвид медицинской помощи")
-     @OneToOne
-     @Deprecated
-     public VocE2Podvid getPodvid() {return thePodvid;}
-     public void setPodvid(VocE2Podvid aPodvid) {thePodvid = aPodvid;}
-     /** Подвид медицинской помощи */
-     private VocE2Podvid thePodvid ;
-
      /** Количество рожденных детей */
      @Comment("Количество рожденных детей")
      public Long getNewbornAmount() {return theNewbornAmount;}

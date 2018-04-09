@@ -53,8 +53,6 @@ public class E2EntryForm extends IdEntityForm {
     private Boolean theIsDeleted ;
     /** Случай реанимации */
     private Long theReanimationEntry ;
-    /** Применять пониженный коэффициент */
-    private Boolean theUseLowerCoefficient ;
     /** Количество рожденных детей */
     private Long theNewbornAmount ;
     /** Признак исправленной записи */
@@ -559,7 +557,7 @@ public class E2EntryForm extends IdEntityForm {
     public void setMedPolicyType(String aMedPolicyType) {theMedPolicyType = aMedPolicyType;}
 
     @Comment("Заполнение")
-    @Persist //ListEntry
+    @Persist
     public Long getListEntry() {return theListEntry;}
     public void setListEntry(Long aListEntry) {theListEntry = aListEntry;}
 
@@ -726,19 +724,16 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     @Comment("Специальность врача по фонду")
     public Long getFondDoctorSpec() {return theFondDoctorSpec;}
-
     public void setFondDoctorSpec(Long theFondDoctorSpec) {this.theFondDoctorSpec = theFondDoctorSpec;}
 
     @Persist
     @Comment("Многоплодная беременность")
     public Boolean getMultiplyBirth() {return theMultiplyBirth;}
-
     public void setMultiplyBirth(Boolean theMultiplyBirth) {this.theMultiplyBirth = theMultiplyBirth;}
 
     @Persist
     @Comment("Тип записи")
     public String getEntryType() {return theEntryType;}
-
     public void setEntryType(String theEntryType) {this.theEntryType = theEntryType;}
 
     @Persist
@@ -757,7 +752,7 @@ public class E2EntryForm extends IdEntityForm {
     public void setBillNumber(String aBillNumber) {theBillNumber = aBillNumber;}
 
     @Comment("Дата счета")
-    @Persist
+    @Persist @DateString @DoDateString
     public String getBillDate() {return theBillDate;}
     public void setBillDate(String aBillDate) {theBillDate = aBillDate;}
 
@@ -790,11 +785,6 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     public Long getReanimationEntry() {return theReanimationEntry;}
     public void setReanimationEntry(Long aReanimationEntry) {theReanimationEntry = aReanimationEntry;}
-
-    @Comment("Применять пониженный коэффициент")
-    @Persist
-    public Boolean getUseLowerCoefficient() {return theUseLowerCoefficient;}
-    public void setUseLowerCoefficient(Boolean aUseLowerCoefficient) {theUseLowerCoefficient = aUseLowerCoefficient;}
 
     @Comment("Количество рожденных детей")
     @Persist

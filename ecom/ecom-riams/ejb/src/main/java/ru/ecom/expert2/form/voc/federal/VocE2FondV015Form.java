@@ -23,8 +23,8 @@ import javax.persistence.PreUpdate;
  */
 @EntityForm
 @EntityFormPersistance(clazz = VocE2FondV015.class)
-@Comment("Коэффициент")
-@WebTrail(comment = "Коэффициент", nameProperties = "id", view = "entityView-e2_vocFondV015.do")
+@Comment("Медицинская специальность")
+@WebTrail(comment = "Медицинская специальность", nameProperties = "code", view = "entityView-e2_vocFondV015.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 public class VocE2FondV015Form extends IdEntityForm {
 

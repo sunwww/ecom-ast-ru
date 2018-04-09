@@ -88,8 +88,8 @@
                     <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityDelete-e2_entryList" name="Удалить" roles="/Policy/E2/Delete" />
                     <msh:sideLink action="/javascript:showImportFileBillDialog()" name="Импортировать ответ фонда" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:exportDefectNewListEntry()" name="Выгрузить дефекты в новое заполнение" roles="/Policy/E2/Edit" />
-                    <msh:sideLink action="/javascript:markAsReSend(true)" name="Пометить как первую подачу" roles="/Policy/E2/Edit" />
-                    <msh:sideLink action="/javascript:markAsReSend(false)" name="Пометить как повторную подачу" roles="/Policy/E2/Edit" />
+                    <msh:sideLink action="/javascript:markAsReSend(false)" name="Пометить как первую подачу" roles="/Policy/E2/Edit" />
+                    <msh:sideLink action="/javascript:markAsReSend(true)" name="Пометить как повторную подачу" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:closeListEntry(true)" name="Закрыть заполнение" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:addHistoryNumberToList()" name="Добавить в заполнение госпитализацию" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:showUnionUnionDialog()" name="Объединить с другим заполнением" roles="/Policy/E2/Edit" />

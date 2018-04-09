@@ -19,8 +19,8 @@ import javax.persistence.Entity;
  */
 @EntityForm
 @EntityFormPersistance(clazz = VocE2FondV012.class)
-@Comment("Коэффициент")
-@WebTrail(comment = "Коэффициент", nameProperties = "id", view = "entityView-e2_vocFondV012.do")
+@Comment("Исход заболевания")
+@WebTrail(comment = "Исход заболевания", nameProperties = "code", view = "entityView-e2_vocFondV012.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 public class VocE2FondV012Form extends IdEntityForm {
 

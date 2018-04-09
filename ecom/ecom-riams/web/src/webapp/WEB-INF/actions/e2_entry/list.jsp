@@ -68,7 +68,7 @@ select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
         left join vocksg ksg on ksg.id=e.ksg_id
         left join entrydiagnosis d on d.entry_id=e.id and d.priority_id=1
         left join vocidc10 mkb on mkb.id=d.mkb_id
-        left join e2entrysanction es on es.entry_id=e.id and es.isMainDefect='1'
+        left join e2entrysanction es on es.entry_id=e.id and es.isMainDefect='1' and (es.isDeleted is null or es.isDeleted='0')
  where e.listentry_id=${param.id} ${entryTypeSql} ${serviceStreamSql} ${billNumberSql} ${sqlAdd} ${defectSql}  ${filterSql} and (e.isDeleted is null or e.isDeleted='0')
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
         , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend
