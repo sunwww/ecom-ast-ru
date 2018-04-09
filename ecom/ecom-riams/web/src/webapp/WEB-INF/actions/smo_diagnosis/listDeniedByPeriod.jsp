@@ -30,7 +30,7 @@
   
 
   %>
-    <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
+    <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="POST" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <msh:panel>
 		<msh:row>
         	<msh:separator label="Выбор режима" colSpan="7" />
@@ -77,7 +77,8 @@
 	        
 		</msh:row>
 		<msh:row>
-			<ecom:oneToManyOneAutocomplete label="Раб.функции для выборки" vocName="vocWorkFunction" property="vocWorkFunctions" colSpan="5"/>
+			<%--<ecom:oneToManyOneAutocomplete label="Раб.функции для выборки" vocName="vocWorkFunction" property="vocWorkFunctions" colSpan="5"/>--%>
+			<msh:autoComplete label="Раб.функция для выборки" vocName="vocWorkFunction" property="vocWorkFunctions" size="100"/>
 		</msh:row>
 		<msh:row>
 			<msh:autoComplete property="vocWorkFunction" horizontalFill="true" vocName="vocWorkFunction" label="Раб.функция для генерации" fieldColSpan="5"/>
@@ -205,9 +206,9 @@ group by wf.id,vwf.name,wp.lastname
     </msh:section> 
     <%
     }
-    String date = (String)request.getParameter("dateBegin") ;
+    String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
-    	String finishDate = (String)request.getParameter("dateEnd") ;
+    	String finishDate = request.getParameter("dateEnd") ;
     	if (finishDate==null||finishDate.equals("")) {
     		request.setAttribute("finishDate", date) ;
     	} else {
@@ -222,7 +223,7 @@ group by wf.id,vwf.name,wp.lastname
     	} else {
     		
     	}*/
-    	String dep = (String)request.getParameter("department") ;
+    	String dep = request.getParameter("department") ;
     	if (dep!=null && !dep.trim().equals("") && !dep.equals("0")) {
     		request.setAttribute("departmentSql", " and sls.department_id="+dep) ;
     		request.setAttribute("department",dep) ;
@@ -236,7 +237,7 @@ group by wf.id,vwf.name,wp.lastname
     	} else {
     		request.setAttribute("workFunction","0") ;
     	}*/
-    	String servStream = (String)request.getParameter("serviceStream") ;
+    	String servStream = request.getParameter("serviceStream") ;
     	if (servStream!=null && !servStream.equals("") && !servStream.equals("0")) {
     		request.setAttribute("serviceStreamSql", " and sls.serviceStream_id="+servStream) ;
     		request.setAttribute("serviceStream", servStream) ;
@@ -310,6 +311,7 @@ group by wf.id,vwf.name,wp.lastname
 	 from MedCase sls
 left join mislpu ml on ml.id=sls.department_id
 left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join vocidc10 mkb on mkb.id=diag.idc10_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is not null
 and sls.medicalAid='1'
@@ -347,6 +349,7 @@ left join worker w on w.id=wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocworkfunction vwf on vwf.id=wf.workFunction_id
 left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id
 left join workfunction dwf on dwf.id=diag.medicalWorker_id
 left join worker dw on dw.id=dwf.worker_id
@@ -382,7 +385,9 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
         	StringBuilder paramSql= new StringBuilder() ;
           	StringBuilder paramHref= new StringBuilder() ;
           	//--old---paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
-          	paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
+          	//paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
+          	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
+
           	//paramSql.append(" ").append(ActionUtil.setParameterFilterSql("vocWorkFunction", "vwf.id", request)) ;
           	paramSql.append(" ").append(ActionUtil.setParameterFilterMkb("filterMkb","filterMkb", "mkb.code", request)) ;
           	 if (typeDiag.equals("1")) {
@@ -403,7 +408,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     <msh:sectionTitle>Свод по дневникам</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
-    select ${vocWorkFunctionsSqlId} as vwfid,vwf.name as vwfname
+    select cast('${vocWorkFunctionsSqlId}' as varchar) as vwfid,vwf.name as vwfname
     ,count(distinct sls.id) as cntSls
     ,count(distinct case when diag.id is null then sls.id else null end) as notdiag
     ,count(distinct case when diag.id is not null ${filterMkbSql} then sls.id else null end) as diagFilter
@@ -411,10 +416,11 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
 	 left join diary d on d.medcase_id=sls.id
 left join mislpu ml on ml.id=sls.department_id
 left join diagnosis diag on diag.medcase_id=sls.id and diag.registrationType_id in (1,4)
+left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join workFunction wf on wf.id=d.specialist_id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-and sls.deniedHospitalizating_id is not null
+and sls.deniedHospitalizating_id is not null ${filterMkbSql}
 and sls.medicalAid='1'
  ${vocWorkFunctionsSql}
  ${serviceStreamSql}
@@ -429,6 +435,7 @@ and sls.medicalAid='1'
       <msh:tableColumn columnName="Отделение" property="2" />
       <msh:tableColumn columnName="Кол-во отказов" property="3" isCalcAmount="true" />
       <msh:tableColumn columnName="из них без диагноза" property="4" isCalcAmount="true" />
+      <msh:tableColumn columnName="С подходящим диагнозом" property="5" isCalcAmount="true" />
     </msh:table>${datelist_sql}
     </msh:sectionContent>
     </msh:section> 
@@ -438,7 +445,7 @@ and sls.medicalAid='1'
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
 select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
@@ -477,7 +484,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
       <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
       <msh:tableColumn columnName="Диагноз" property="7"/>
-    </msh:table>
+    </msh:table>${datelist_sql}
     </msh:sectionContent>
     </msh:section>
     <% } %>         
@@ -519,7 +526,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
             	window.location = 'js-smo_spo-createNewVisitByDenied.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value+"&department="+$('department').value ;
       	   } else {
       		   
-      		 var obj = JSON.parse($('vocWorkFunctions').value) ;
+      		/* var obj = JSON.parse($('vocWorkFunctions').value) ;
       		
       		var sb ="" ;
       		for (var i = 0; i < obj.childs.length; i++) {
@@ -528,11 +535,11 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
       				sb+="," ;
       			}
       			sb += child.value ;
-      		} 
+      		} */
       		//alert(sb) ;
       		 window.location = 'js-smo_spo-createNewVisitByDeniedDiary.do?dateBegin='+$('dateBegin').value +'&dateEnd='+$('dateEnd').value
       				 +"&vocWorkFunction="+$('vocWorkFunction').value
-      				 +"&vocWorkFunctions="+sb
+      				 +"&vocWorkFunctions="+$('vocWorkFunctions').value
       				 +"&filterMkb="+$('filterMkb').value 
       				 ;
       	   }
