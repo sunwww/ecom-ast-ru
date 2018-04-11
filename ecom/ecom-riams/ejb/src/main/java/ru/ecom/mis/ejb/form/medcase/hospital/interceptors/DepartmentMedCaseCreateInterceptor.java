@@ -78,9 +78,47 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	boolean NoCheckPregnancy = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DontCheckPregnancy") ;
     	if (!NoCheckPregnancy && form.getPrevMedCase()!=null &&!isPregnancyExists(manager, form.getPrevMedCase() )) {
     		throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не заполнены данные по родам!");
-    	} 
+    	}
+    	//lastrelease milamesher 10.04.2018 #97
+		if (form.getPrevMedCase()!=null &&!isRiskCardBornExists(manager, form.getPrevMedCase() ) && !isDsO82(manager, form.getPrevMedCase())) {
+			throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана карта оценки риска!");
+		}
     }
-    
+    //Milamesher не O82 ли диагноз (тогда следующая проверка не нужна)
+	public static boolean isDsO82(EntityManager aManager, Long aMedCaseId) {
+		if (aMedCaseId==null) {return true;}
+		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
+		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
+			String sql = "select count(idc.id) from vocidc10 idc\n" +
+					"left join diagnosis ds on ds.idc10_id=idc.id\n" +
+					"left join medcase mc on mc.id=ds.medcase_id\n" +
+					"where idc.code like 'O82%' and mc.id="+aMedCaseId;
+			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
+			if (Long.valueOf(list.toString())>0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+    //Milamesher существует ли карта оценки риска
+    public static boolean isRiskCardBornExists(EntityManager aManager, Long aMedCaseId) {
+		if (aMedCaseId==null) {return true;}
+		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
+		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
+			String sql = "select count(ac.id) from assessmentCard ac where depmedcase_id= "+aMedCaseId + " and template=7";
+			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
+			if (Long.valueOf(list.toString())>0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
     
     public static boolean isPregnancyExists(EntityManager aManager, Long aMedCaseId) {
     	if (aMedCaseId==null) {return true;}

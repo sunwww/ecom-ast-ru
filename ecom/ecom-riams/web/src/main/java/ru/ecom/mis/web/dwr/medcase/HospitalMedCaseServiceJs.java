@@ -2114,4 +2114,30 @@ public class HospitalMedCaseServiceJs {
 		else res.append("##");
 		return res.toString();
 	}
+	//Milamesher получение настройки по ключу (мб потом в другое место перенесу
+	public String getSettingsKeyValueByKey(String keyvalue, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select keyvalue from  softconfig where key='" + keyvalue + "'";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			WebQueryResult wqr = list.iterator().next() ;
+			res.append(wqr.get1());
+		}
+		else res.append("##");
+		return res.toString();
+	}
+    //Milamesher получение текста шаблона оценки риска по id
+    public String getVocAssesmentCardById(String id, HttpServletRequest aRequest) throws NamingException {
+        StringBuilder res=new StringBuilder();
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        String sql = "select name from assessmentCardTemplate where id=" + id;
+        Collection<WebQueryResult> list = service.executeNativeSql(sql);
+        if (list.size() > 0) {
+            WebQueryResult wqr = list.iterator().next() ;
+            res.append(wqr.get1());
+        }
+        else res.append("##");
+        return res.toString();
+    }
 }

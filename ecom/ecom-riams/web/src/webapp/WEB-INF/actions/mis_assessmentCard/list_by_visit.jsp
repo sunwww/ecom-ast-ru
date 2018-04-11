@@ -6,20 +6,15 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail beginForm="mis_patientForm" guid="helloItle-123" mainMenu="Patient" title="Пациент" />
+        <ecom:titleTrail beginForm="smo_visitForm" guid="helloItle-123" mainMenu="Patient" title="Визит" />
     </tiles:put>
-    <!--tiles:put name="side" type="string"-->
-    <!--msh:sideMenu guid="helloSideMenu-123"-->
-    <!--msh:sideLink guid="helloSideLinkNew" roles="/Policy/Mis/AssessmentCard/Create" key="ALT+N" action="/entityParentPrepareCreate-mis_assessmentCard" name="Создать новую карту" params="id" /-->
-    <!--/msh:sideMenu-->
-    <!--/tiles:put-->
     <tiles:put name="body" type="string">
         <ecom:webQuery name="cardList" nameFldSql="cardList_sql" nativeSql="select ac.id, act.name, to_char(ac.startDate,'dd.MM.yyyy') as priemDate
   ,ac.ballsum as f4_ballsum
   from assessmentCard ac
   left join assessmentcardtemplate act on act.id=ac.template
-  where ac.patient=${param.id} order by ac.startDate desc"/>
-        <msh:section createRoles="/Policy/Mis/AssessmentCard/Create" createUrl="entityParentPrepareCreate-mis_assessmentCard.do?id=${param.id}"
+  where ac.visitmedcase_id=${param.id} order by ac.startDate desc"/>
+        <msh:section createRoles="/Policy/Mis/AssessmentCard/Create" createUrl="entityParentPrepareCreate-mis_assessmentCard.do?id=${param.patient}&visit=${param.id}"
                      title="Карты оценки">
             <msh:table name="cardList" action="entityParentView-mis_assessmentCard.do" idField="1" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
 
@@ -30,4 +25,3 @@
         </msh:section>
     </tiles:put>
 </tiles:insert>
-

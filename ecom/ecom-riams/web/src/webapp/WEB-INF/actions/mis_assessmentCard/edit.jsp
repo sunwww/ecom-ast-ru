@@ -4,6 +4,7 @@
 <%@page import="ru.ecom.ejb.services.query.IWebQueryService"%>
 <%@page import="java.util.Collection"%>
 <%@page import="ru.ecom.web.util.Injection"%>
+<%@ page import="ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -19,6 +20,8 @@
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden guid="hiddenParent" property="patient" />
       <msh:hidden guid="hidden" property="params" />
+      <msh:hidden guid="hidden" property="depMedcase" />
+      <msh:hidden guid="hidden" property="visitMedcase" />
       <msh:panel guid="panel">
       
         <msh:row guid="row1">
@@ -54,11 +57,37 @@
       <div id='dataFieldTitle'> </div>
         <div id='dataField'> </div>
       <%
+          //lastrelease milamesher 09.04.2018 #97
+          String typeCard=request.getParameter("typeCard");
+          request.setAttribute("typeCard", typeCard);
+          String slo=request.getParameter("slo");
+          request.setAttribute("slo", slo);
+          String visit=request.getParameter("visit");
+          request.setAttribute("visit", visit);
+          if (typeCard!=null && !typeCard.equals("")) {
+              %>
+        <msh:ifFormTypeIsCreate formName="mis_assessmentCardForm">
+            <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
+                <script>
+                    window.onload=function load(){
+                        HospitalMedCaseService.getVocAssesmentCardById('${typeCard}',{
+                            callback: function(res) {
+                                if (res!='##') {
+                                    ${"template"}.value='${typeCard}';
+                                    ${"templateName"}.value=res;
+                                    fillDataDiv();
+                                }
+                            }});
+                    }
+                </script>
+        </msh:ifFormTypeIsCreate>
+        <%
+          }
       String id = request.getParameter("id");
       if (id!=null&&!id.equals("")) {
     	  
        %>
-      
+
        <ecom:webQuery name="groupList" nativeSql="select distinct pg.id
 	,pg.name as f2_groupName
 	from assessmentCard ac 
@@ -146,8 +175,9 @@
   <msh:ifFormTypeIsView formName="mis_assessmentCardForm">
     <msh:sideMenu guid="sideMenu-123">
       <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-mis_assessmentCard" name="Изменить" roles="/Policy/Mis/AssessmentCard/Edit" />
-      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
+      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_assessmentCard" name="Удалить" roles="/Policy/Mis/AssessmentCard/Delete" />
       <msh:sideLink guid="sideLinkDelete" key="ALT+E"  action="/javascript:printCard()" name="Печать" roles="/Policy/Mis/AssessmentCard/View" />
+      <msh:sideLink guid="sideLinkEdit" action="/javascript:goBackSloOrVisit()" name="СЛО/Визит/Пациент" roles="/Policy/Mis/AssessmentCard/View" />
     </msh:sideMenu>
     
     <msh:sideMenu title="Перейти" guid="sideMenu-123">
@@ -161,6 +191,16 @@
   function printCard() {
   document.forms[1].submit();
 		//window.document.location="print-ass_card1.do?s=PrintService&m=printAssessmentCard&id=${param.id}&groupFields="+groupFields+"&sqlText"+sql;
+  }
+  function goBackSloOrVisit() {
+      if ($('depMedcase').value!=null && $('depMedcase').value!='' && $('depMedcase').value!='0')
+        window.location.href="entityParentView-stac_slo.do?id="+$('depMedcase').value;
+      else if ($('visitMedcase').value!=null && $('visitMedcase').value!='' && $('visitMedcase').value!='0')
+          window.location.href="entityParentView-smo_visit.do?id="+$('visitMedcase').value;
+      else if ($('patient').value!=null && $('patient').value!='' && $('patient').value!='0')
+          window.location.href="entityView-mis_patient.do.do?id="+$('patient').value;
+      else
+          alert("Нет прикреплённого СЛО или визита!");
   }
   </script>
   </msh:ifFormTypeIsView>
@@ -382,22 +422,26 @@
 			
 		}
 		if (+fldJson.isdoctoredit==0) {
-			if (+$('paramWF').value==0) {
-				isError=true ;
-				errorutil.ShowFieldError($('paramWFName'),"Обязательное поле") ;
-			} else {
-				fldJson.workFunction=$('paramWF').value
-			}
-			
-		}
+            if (+$('paramWF').value == 0) {
+                isError = true;
+                errorutil.ShowFieldError($('paramWFName'), "Обязательное поле");
+            } else {
+                fldJson.workFunction = $('paramWF').value
+            }
+
+        }
 		var str = JSON.stringify(fldJson);
 		//alert(str) ;
 		$('params').value = str;
 		if (!isError) {
-			
 			document.forms['mis_assessmentCardForm'].action='entityParentSaveGoView-mis_assessmentCard.do';
+            if ('${slo}'!=null && '${slo}'!='') {
+                $('depMedcase').value='${slo}';
+            }
+            if ('${visit}'!=null && '${visit}'!='') {
+                $('visitMedcase').value='${visit}';
+            }
 			document.forms['mis_assessmentCardForm'].submit();
-			
 		}
 	} 
   

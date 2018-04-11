@@ -98,4 +98,21 @@ public class AssessmentCardForm extends IdEntityForm{
 	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
 	/** Дата приема */
 	private String theStartDate;
+
+
+	/** СЛО создания */
+	@Comment("СЛО создания")
+	@Persist
+	public Long getDepMedcase() {return theDepMedcase;}
+	public void setDepMedcase(Long aDepMedcase) {theDepMedcase = aDepMedcase;}
+	/** СЛО создания */
+	private Long theDepMedcase;
+
+    /** Визит создания */
+    @Comment("Визит создания")
+    @Persist
+    public Long getVisitMedcase() {return theVisitMedcase;}
+    public void setVisitMedcase(Long aVisitMedcase) {theVisitMedcase = aVisitMedcase;}
+    /** СЛО создания */
+    private Long theVisitMedcase;
 }
