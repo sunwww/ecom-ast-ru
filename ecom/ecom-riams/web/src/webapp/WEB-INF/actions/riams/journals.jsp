@@ -131,6 +131,15 @@
 							<li><msh:link  isReport="false" action="allLn_count_report.do" roles="/Policy/Mis/ArchiveCase/Create">
 								Количество ЛН по отделениям
 							</msh:link></li>
+						<%--<li><msh:link  isReport="false" action="jasper.do" roles="/Policy/Mis/Journal/JasperReports"-->
+							Jasper
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="reportsCharged.do" roles="/Policy/Mis/Journal/JasperReports">
+							Jasper КСГ (платники)
+						</msh:link></li>--%>
+                        <li><msh:link  isReport="false" action="totalReestr.do" roles="/Policy/Mis/Journal/JasperReports">
+                            Реестр на оплату для договоров
+                        </msh:link></li>
 					</ul>
 					</div>
 				</td>

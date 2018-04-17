@@ -2732,6 +2732,14 @@ left join medcase smoP on smoP.owner_id=w.id "
                     queryConvertType="UPPER_CASE"
                     />
     </voc>
+	<!--  Поток обслуживания для КСГ (Milamesher) -->
+	<voc id='vocSstreamE2Entry' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocSstreamE2Entry'
+				names   = 'name'
+				queried = 'name'
+		/>
+	</voc>
     <!--  ПЕРЕЛИВАНИЕ КРОВИ -->
     
     <voc id='vocBloodGroup' type='EntityVocService'>
