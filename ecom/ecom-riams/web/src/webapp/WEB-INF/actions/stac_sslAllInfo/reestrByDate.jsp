@@ -296,7 +296,6 @@
     when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient
     
      from MedCase as m
-     left join Medcase slo on m.id=slo.parent_id
      left join StatisticStub as sc on sc.medCase_id=m.id 
      left outer join Patient pat on m.patient_id = pat.id 
      left join VocDeniedHospitalizating as vdh on vdh.id=m.deniedHospitalizating_id
@@ -495,3 +494,4 @@
   </tiles:put>
 </tiles:insert>
 <!--last release milamesher 04.04.2018 - Реестр отказов от госпитализаций за день -->
+<!--last release milamesher 18.04.2018 - Убран абсолютно ненужный left join, но откуда тогда берётся фрагмент and coalesce(slo.department_id,m.department_id)='220' в логах postgresа? -->
