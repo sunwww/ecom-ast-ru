@@ -104,14 +104,17 @@
                     <td onclick="this.childNodes[1].checked='checked';" colspan="3">
                         <input type="radio" name="typeStacOrNot" value="3"> группировка по отделениям, вывод по типу исследования
                     </td>
+                    <td onclick="this.childNodes[1].checked='checked';radio();" colspan="4">
+                        <input type="radio" name="typeStacOrNot" value="4" id="radio4"> группировка по пациентам, вывод по ВМП за период
+                    </td>
                 </msh:row>
                 <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                     <td class="label" title="Поиск по промежутку  (typeVMPOrNot)" colspan="1"><label for="typeVMPOrNotName" id="typeVMPOrNotLabel">Отобразить ВМП:</label></td>
-                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                    <td onclick="this.childNodes[1].checked='checked';radio();" colspan="1">
                         <input type="radio" name="typeVMPOrNot" value="1"> Всё
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-                        <input type="radio" name="typeVMPOrNot" value="2"> Только ВМП
+                        <input type="radio" name="typeVMPOrNot" value="2" id="radio2vmp"> Только ВМП
                     </td>
                 </msh:row>
                 <msh:row>
@@ -140,11 +143,11 @@
                  from
                 (
                  select ms.code as name1,msPr.name as name2,ms.additionCode as adCode,ms.name as name3,ms.shortname as shname
-                ,case when pt.code is not null ${typeVMPOrNotValueNotNull}  then count(distinct mc.id) else '0' end as totalCnt
-                ,case when pt.code='NOPLAN' ${typeVMPOrNotValueNotNull}  then count(distinct mc.id) else '0' end as noPlanCnt
-                ,case when pt.code='URGENT' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as urgentCnt
-                ,case when pt.code='EMERGENCY' ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as emCnt
-                ,case when (pt.code='PLAN' or pt.code='PLAN_48') ${typeVMPOrNotValueNotNull} then count(distinct mc.id) else '0' end as planCnt
+                ,case when pt.code is not null ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(distinct mc.id) else '0' end as totalCnt
+                ,case when pt.code='NOPLAN' ${typeVMPOrNotValueNotNull} and pr.canceldate is null  then count(distinct mc.id) else '0' end as noPlanCnt
+                ,case when pt.code='URGENT' ${typeVMPOrNotValueNotNull}  and pr.canceldate is null then count(distinct mc.id) else '0' end as urgentCnt
+                ,case when pt.code='EMERGENCY' ${typeVMPOrNotValueNotNull}  and pr.canceldate is null then count(distinct mc.id) else '0' end as emCnt
+                ,case when (pt.code='PLAN' or pt.code='PLAN_48') ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(distinct mc.id) else '0' end as planCnt
                 from MedService ms
                 left join prescription pr on pr.medservice_id=ms.id
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
@@ -159,7 +162,8 @@
                 ${typeVMPOrNotValueLeftJoin}
                 where ${dateT} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
                 and vst.code='LABSURVEY' ${deps} ${depId} ${typeVMPOrNotValueNotNull}
-                group by ms.id,pt.code,msPr.id ${typeVMPOrNotValueGroup}
+                and pr.canceldate is null
+                group by ms.id,pt.code,msPr.id ${typeVMPOrNotValueGroup},pr.id
                 order by ms.id
                  ) as t
                 group by name1,name2,adCode,shname,name3
@@ -196,15 +200,15 @@
                select name,sum(cnt1) as cnt1,sum(cnt2) as cnt2,sum(cnt3) as cnt3,sum(cnt4) as cnt4,sum(cnt5) as cnt5
                 ,sum(cnt6) as cnt6,sum(cnt7) as cnt7 from
                 (select dep.name
-                ,case when msPr.code='Q01' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt1
-                ,case when msPr.code='Q02' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt2
-                ,case when msPr.code='Q03' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt3
-                ,case when msPr.code='Q04' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt4
-                ,case when msPr.code='Q05' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt5
-                ,case when msPr.code='Q06' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt6
+                ,case when msPr.code='Q01' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt1
+                ,case when msPr.code='Q02' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt2
+                ,case when msPr.code='Q03' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt3
+                ,case when msPr.code='Q04' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt4
+                ,case when msPr.code='Q05' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt5
+                ,case when msPr.code='Q06' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt6
                  ,case when vst.code='LABSURVEY'  and (msPr.code='Q01' or msPr.code='Q02' or msPr.code='Q03'
                 or msPr.code='Q03' or msPr.code='Q04' or msPr.code='Q05' or msPr.code='Q06')
-                ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt7
+                ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt7
                 from MedService ms
 		        left join prescription pr on pr.medservice_id=ms.id
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
@@ -219,7 +223,8 @@
                 ${typeVMPOrNotValueLeftJoin}
                 where ${dateT} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
                 ${deps}
-                group by dep.id, mc.emergency,msPr.code,vst.code ${typeVMPOrNotValueGroup}
+                and pr.canceldate is null
+                group by dep.id, mc.emergency,msPr.code,vst.code ${typeVMPOrNotValueGroup},pr.id
                 order by dep.name
                 ) as t
                 group by name
@@ -279,11 +284,11 @@
         and hmc.department_id=dep.id ${typeVMPOrNotValueJustWhere}
         and hmc.emergency='1'
         ) as emergCnt
-        ,case when vst.code='LABSURVEY' and pt.code is not null ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as totalLabCnt
-        ,case when pt.code='NOPLAN' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as noPlanCnt
-        ,case when pt.code='URGENT' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as urgentCnt
-        ,case when pt.code='EMERGENCY' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as emCnt
-        ,case when (pt.code='PLAN' or pt.code='PLAN_48') and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as planCnt
+        ,case when vst.code='LABSURVEY' and pt.code is not null ${typeVMPOrNotValueNotNull}  and pr.canceldate is null then count(mc.id) else '0' end as totalLabCnt
+        ,case when pt.code='NOPLAN' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as noPlanCnt
+        ,case when pt.code='URGENT' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as urgentCnt
+        ,case when pt.code='EMERGENCY' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as emCnt
+        ,case when (pt.code='PLAN' or pt.code='PLAN_48') and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as planCnt
         ,'&depId='||coalesce(dep.id,0) as depId
         from MedService ms
         left join prescription pr on pr.medservice_id=ms.id
@@ -299,7 +304,8 @@
         ${typeVMPOrNotValueLeftJoin}
         where ${dateT} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and dep.id<>0
         ${deps}
-        group by dep.id, mc.emergency,pt.code,vst.code ${typeVMPOrNotValueGroup}
+        and pr.canceldate is null
+        group by dep.id, mc.emergency,pt.code,vst.code ${typeVMPOrNotValueGroup},pr.id
         order by dep.name
         ) as t
         group by name,depId,totalHosp,emergCnt
@@ -332,15 +338,15 @@
                 select name,sum(cnt1) as cnt1,sum(cnt2) as cnt2,sum(cnt3) as cnt3,sum(cnt4) as cnt4,sum(cnt5) as cnt5
                 ,sum(cnt6) as cnt6,sum(cnt7) as cnt7 from
                 (select dep.name
-                ,case when msPr.code='Q01' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt1
-                ,case when msPr.code='Q02' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt2
-                ,case when msPr.code='Q03' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt3
-                ,case when msPr.code='Q04' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt4
-                ,case when msPr.code='Q05' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt5
-                ,case when msPr.code='Q06' ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt6
+                ,case when msPr.code='Q01' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt1
+                ,case when msPr.code='Q02' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt2
+                ,case when msPr.code='Q03' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt3
+                ,case when msPr.code='Q04' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt4
+                ,case when msPr.code='Q05' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt5
+                ,case when msPr.code='Q06' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt6
                 ,case when vst.code='LABSURVEY'  and (msPr.code='Q01' or msPr.code='Q02' or msPr.code='Q03'
                 or msPr.code='Q03' or msPr.code='Q04' or msPr.code='Q05' or msPr.code='Q06')
-                ${typeVMPOrNotValueNotNull} then count(mc.id) else '0' end as cnt7
+                ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as cnt7
                 from MedService ms
 		        left join prescription pr on pr.medservice_id=ms.id
                 left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
@@ -355,7 +361,8 @@
                 ${typeVMPOrNotValueLeftJoin}
                 where mc.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
                 ${deps}
-                group by dep.id, mc.emergency,msPr.code,vst.code ${typeVMPOrNotValueGroup}
+                and pr.canceldate is null
+                group by dep.id, mc.emergency,msPr.code,vst.code ${typeVMPOrNotValueGroup},pr.id
                 order by dep.name
                 ) as t
                 group by name
@@ -380,6 +387,35 @@
         </msh:section>
         <%
             }
+            else if (request.getParameter("typeStacOrNot").equals("4")) {
+        %>
+        <msh:section>
+            <msh:sectionTitle>
+                <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
+                select distinct p.lastname ||' ' ||p.firstname|| ' ' || p.middlename as fio,coalesce(dep.name,dep2.name),dmc.id
+                from hitechmedicalcase highmc
+                left join medcase dmc on highmc.medcase_id=dmc.id
+                left join medcase m on m.id=dmc.parent_id
+                left join patient p on m.patient_id=p.id
+                left join MisLpu dep on dep.id=dmc.department_id
+                left join MisLpu dep2 on dep2.id=m.department_id
+                where m.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') ${deps}
+                order by coalesce(dep.name,dep2.name), fio asc
+"/>
+                <form action="javascript:void(0)" method="post" target="_blank"></form>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table printToExcelButton="Сохранить в excel" name="total"
+                           viewUrl="reportKDL.do"
+                           action="entityParentView-stac_slo.do" idField="3" cellFunction="true" >
+                    <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Отделение" property="1" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Пациент" property="1" addParam="&nul=nul"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <%
+                }
             }
         %>
 <script type="text/javascript">
@@ -397,6 +433,10 @@
         } else {
             chk[+aValue-1].checked='checked' ;
         }
+    }
+    function radio() {
+        if (document.getElementById("radio4").checked==true)
+            document.getElementById("radio2vmp").checked=true;
     }
 </script>
     </tiles:put>
