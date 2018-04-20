@@ -25,7 +25,27 @@
         String[] fields = filter.split(";");
         for (String field: fields) {
             String[] data = field.split(":");
-            filterSql.append(" and e.").append(data[0]).append("='").append(data[1]).append("'");
+            String fldName = data[0], fldValue = data[1];
+            if (fldValue!=null&&!fldValue.trim().equals("")) {
+                if (fldName.equals("lastname")) {
+                    String[] fio = fldValue.split(" ");
+                    filterSql.append(" and e.lastname like upper('%").append(fio[0]).append("%')");
+                    if (fio.length>1) {filterSql.append(" and e.firstname like upper('%").append(fio[1]).append("%')");}
+                    if (fio.length>2) {filterSql.append(" and e.middlename like upper('%").append(fio[2]).append("%')");}
+                    if (fio.length>3) {filterSql.append(" and e.birthday =to_date('").append(fio[3]).append("','dd.MM.yyyy')");}
+                } else {
+                  /*  if (fldName.equals("startDate")) {
+                        String dateType =
+
+                    } else if (fldName.equals("finishDate")) {
+
+                    } else {*/
+                        filterSql.append(" and e.").append(fldName).append("='").append(fldValue).append("'");
+                //    }
+                }
+
+            }
+
         }
     }
     ActionUtil.setParameterFilterSql("entryType","e.entryType",request);
@@ -47,10 +67,19 @@
     request.setAttribute("filterSql",filterSql.toString());
 %>
         <msh:panel>
-            <input type="text" name="lastname" id="lastname" placeholder="Фамилия пациента">
-            <input type="text" name="historyNumber" id="historyNumber" placeholder="Номер ИБ">
+            <input type="text" name="searchField" id="lastname" placeholder="Фамилия пациента">
+            <input type="text" name="searchField" id="historyNumber" placeholder="Номер ИБ">
+            <br>
+            <input type="text" name="searchField" id="startDate" placeholder="Дата начала случая">
+            <input type="radio" name="typeSearchStartDate" value="more#">
+            <input type="radio" name="typeSearchStartDate" value="less#">
+            <input type="radio" name="typeSearchStartDate" value="equals#">
+            <input type="text" name="searchField" id="finishDate" placeholder="Дата окончания случая">
+            <input type="radio" name="typeSearchFinishDate" value="more#">
+            <input type="radio" name="typeSearchFinishDate" value="less#">
+            <input type="radio" name="typeSearchFinishDate" value="equals#">
+            <br>
             <input type="button" value="Найти" onclick="findAndSubmit()">
-            <input type="button" value="Сбросить " onclick="findAndSubmit()">
             <input type="button" value="Сортировать по ФИО" onclick="setOrderBy('e.lastname,e.firstname, e.middlename')">
             <input type="button" value="Сортировать по № ИБ" onclick="setOrderBy('historyNumber')">
             <label><input type="checkbox" id="chkDefect" name="chkDefect">Только дефекты</label>
@@ -105,30 +134,28 @@ select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
                 alert('orderBy='+fld);
                 window.location.href = setGetParameter("orderBy",fld)
             }
+            new dateutil.DateField($('startDate'));
+            new dateutil.DateField($('finishDate'));
             function findAndSubmit() {
                 var url = window.location.href;
                 var filter = "";
-                if ($('lastname').value) {
-                    filter+="lastname:"+$('lastname').value;
-                }
-                if ($('historyNumber').value) {
-                    if (filter){filter+=";"}
-                    filter+="historyNumber:"+$('historyNumber').value;
-                }
-                  url=  setGetParameter("filter",filter);
-             //   alert('url='+url);
+                jQuery("input[name='searchField']").each(function (ind, el) {
+                    if (el.value) {
+                        filter+=el.id+":"+el.value+";";
+                    }
+
+                })
+                  url=  setGetParameter("filter",filter,url);
                 if ($('chkDefect').checked) {
-                    url=setGetParameter("defect","1");
+                    url=setGetParameter("defect","1",url);
                 } else {
-                    url=setGetParameter("defect","");
+                    url=setGetParameter("defect","",url);
                 }
                 window.location.href = url;
-
-
-
             }
-            function setGetParameter(paramName, paramValue){
-                var url = window.location.href;
+
+            function setGetParameter(paramName, paramValue, url){
+                url = url ? url : window.location.href;
                 var hash = location.hash;
                 url = url.replace(hash, '');
                 if (url.indexOf(paramName + "=") >= 0){
