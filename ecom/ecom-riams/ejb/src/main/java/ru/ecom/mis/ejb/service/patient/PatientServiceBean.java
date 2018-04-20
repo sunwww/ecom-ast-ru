@@ -737,7 +737,7 @@ public class PatientServiceBean implements IPatientService {
 				att.setLpu(lpuAtt);
 				att.setAttachedType(attType);
 				if (la!=null) {
-					log.warn("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
+				//	log.warn("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
 					att.setArea(la);
 				} else {
 					//Debug
@@ -764,7 +764,10 @@ public class PatientServiceBean implements IPatientService {
 		} else  { // Обновляем существующее 
 			for (LpuAttachedByDepartment a: attachments) {
 				StringBuilder str = new StringBuilder();
-				String areaSql = areaId!=null?(", area_id="+areaId):"";
+				String areaSql =""; //= areaId!=null?(", area_id="+areaId):"";
+				if (la!=null) {
+					areaSql = ", area_id="+la.getId()+", lpu_id="+la.getLpu().getId();
+				}
 				ret.append("Обновлено прикрепление. Старый тип - " +
 					(a.getAttachedType()!=null?a.getAttachedType().getCode():"") +
 					", дата - "+ DateFormat.formatToDate(a.getDateFrom()) +

@@ -177,11 +177,11 @@ public class FondWebService {
 			} else if (typePat.equals("3")) {
 				pfc.setComment(pfc.getComment()+"Выборочная проверка пациентов");
 			}
-			String defaultLpu =null;
-			Collection<WebQueryResult> listSC = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
-			if (!listSC.isEmpty()) {
-				defaultLpu = listSC.iterator().next().get1().toString();
-			}
+		//	String defaultLpu =null;
+		//	Collection<WebQueryResult> listSC = serviceWQS.executeNativeSql("select sc.keyvalue from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'") ;
+		//	if (!listSC.isEmpty()) {
+		//		defaultLpu = listSC.iterator().next().get1().toString();
+		//	}
 			int i=0;
 			for (WebQueryResult pat: pats) {
 				//if (i==10)break; 

@@ -518,7 +518,7 @@ if (date!=null && !date.equals("")) {
 	      <msh:tableColumn columnName="состоит всего" property="19" />
 	      <msh:tableColumn columnName="состоит матерей" property="20" />
 	      <msh:tableColumn isCalcAmount="true" columnName="к/дней" property="21" />
-	      <msh:tableColumn isCalcAmount="true"columnName="старше труд. возраста" property="25" />
+	      <msh:tableColumn isCalcAmount="true" columnName="старше труд. возраста" property="25" />
 	    </msh:table>
 	    </msh:sectionContent>
 	    </msh:section>
