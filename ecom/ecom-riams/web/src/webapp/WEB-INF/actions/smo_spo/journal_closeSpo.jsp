@@ -190,6 +190,7 @@
     <ecom:webQuery name="datelist" nativeSql="
     select ml.id||'&department='||ml.id,ml.name ,count(distinct spo.patient_id) as cntPat,count(distinct spo.id) as cntSpo  
 	from MedCase spo
+	left join VocServiceStream vss on vss.id=spo.serviceStream_id
 	left join WorkFunction owf on owf.id=spo.ownerFunction_id
 	left join Worker ow on ow.id=owf.worker_id
 	left join MisLpu ml on ow.lpu_id=ml.id 

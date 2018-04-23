@@ -189,7 +189,7 @@ private Boolean isCheckIsRunning = false;
             sluch.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
             sluch.addContent(new Element("LPU_1").setText("30000101")); //Отделение лечения //TODO = сделать высчитываемым
             //PODR
-            sluch.addContent(new Element("VBR").setText("0")); //Признак мобильной бригады //TODO доделать при поликлинике!
+            sluch.addContent(new Element("VBR").setText(isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0")); //Признак мобильной бригады
             sluch.addContent(new Element("PROFIL").setText(profile.getCode())); //Профиль медицинской помощи (V002)
             sluch.addContent(new Element("PROFIL_K").setText(profileK)); //Профиль коек/специальностей (V002_K)
             sluch.addContent(new Element("DET").setText(isChild)); //Признак детского возраста

@@ -24,6 +24,8 @@
         <form-bean name="e2_entryDiagnosisForm" type="ru.ecom.expert2.form.EntryDiagnosisForm"/>
         <form-bean name="e2_polyclinicCoefficientForm" type="ru.ecom.expert2.form.voc.VocE2PolyclinicCoefficientForm"/>
         <form-bean name="e2_vocEntrySubTypeForm" type="ru.ecom.expert2.form.voc.VocE2EntrySubTypeForm"/>
+        <form-bean name="e2_polFinancePlanForm" type="ru.ecom.expert2.form.financeplan.PolyclinicFinancePlanForm"/>
+        <form-bean name="e2_stacFinancePlanForm" type="ru.ecom.expert2.form.financeplan.HospitalFinancePlanForm"/>
 
 
        <form-bean name="exp_vocKindForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationKindForm"/>

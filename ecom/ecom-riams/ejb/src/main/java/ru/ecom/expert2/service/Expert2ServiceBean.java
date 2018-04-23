@@ -760,6 +760,7 @@ private Boolean isCheckIsRunning = false;
                     //Теперь снова находим КСГ, расчитываем цену и коэффициенты
 //                    makeCheckEntry(theManager.find(E2Entry.class,bi.longValue()),updateKsgIfExist);
                 }
+                checkDoubles(aListEntry);
             } else if (listEntryCode.equalsIgnoreCase(POLYCLINICTYPE)) {
                 Long listEntryId = aListEntry.getId();
                deletePolyclinicDoubles(listEntryId );
@@ -782,7 +783,8 @@ private Boolean isCheckIsRunning = false;
     public void makeCheckEntry(Long aEntryId, boolean updateKsgIfExist) {
         if (!theManager.createNativeQuery("select e.id from e2entry e left join e2listentry el on el.id=e.listEntry_id where e.id=:id and el.isClosed='1'").setParameter("id",aEntryId).getResultList().isEmpty()) {throw new IllegalStateException("Заполнение закрыто, проверка невозможна");}
         cleanAllMaps();
-        makeCheckEntry(theManager.find(E2Entry.class, aEntryId),  updateKsgIfExist, true);}
+        makeCheckEntry(theManager.find(E2Entry.class, aEntryId),  updateKsgIfExist, true);
+    }
 
     /** Запустить проверку случая (расчет КСГ, цены, полей для xml) */
     final public void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
@@ -847,7 +849,7 @@ private Boolean isCheckIsRunning = false;
                 code="CONS_"+code; //Для АМОКБ, сделать высчитываемым TODO
             }
             code+="_"+(workPlace!=null?workPlace:"");
-        } else {log.error("Неизвестный тип записи для проставление подтипа. CANT_SET_SUBTYPE"); return;}
+        } else {log.error(aEntry.getId()+" Неизвестный тип записи для проставление подтипа. CANT_SET_SUBTYPE: "+aEntry.getEntryType()); return;}
 
 
         if (code!=null){
@@ -865,6 +867,21 @@ private Boolean isCheckIsRunning = false;
             theManager.persist(e);
         }
 
+    }
+    /** Проверка на дубли с другими заполнениями */
+    private void checkDoubles(E2ListEntry aListEntry) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("select distinct new.id ")
+                .append(" from e2entry  new")
+                .append(" left join e2entry old on old.historyNumber=new.historyNumber and old.listentry_id!=:listEntryId")
+                .append(" left join e2listentry listOld on listOld.id=old.listentry_id")
+                .append(" and (old.isDeleted is null or old.isDeleted='0') and (old.doNotSend is null or old.doNotSend='0')")
+                .append(" where new.listentry_id=:listEntryId and (new.isDeleted is null or new.isDeleted='0') and (new.doNotSend is null or new.doNotSend='0') and (listOld.isDeleted is null or listOld.isDeleted='0')")
+                .append(" and new.startDate<old.finishDate and old.servicestream!='COMPLEXCASE' and new.servicestream!='COMPLEXCASE'");
+        List<BigInteger> list = theManager.createNativeQuery(sql.toString()).setParameter("listEntryId",aListEntry.getId()).getResultList();
+        for(BigInteger id: list) {
+            theManager.persist(new E2EntryError(theManager.find(E2Entry.class,id.longValue()),"DOUBLE_WITH_PREVIOUS Дубль с пред. заполнением!!"));
+        }
     }
     private void checkErrors(E2Entry aEntry) {
         List<E2EntryError> errors = new ArrayList<E2EntryError>();
