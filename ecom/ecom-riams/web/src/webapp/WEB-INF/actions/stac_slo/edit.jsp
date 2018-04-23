@@ -117,6 +117,7 @@
                                   title='Медицинские осмотры'/>
                     <tags:QECriteria name="QECriteria" />
                     <msh:sideLink styleId="viewShort" action="/javascript:showQECriteriaCloseDocument(${param.id})" name='Критерии' title="Просмотр критериев" params="" roles="/Policy/Mis/MedCase/Visit/View" />
+                    <!--msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByPatient('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/-->
                 </msh:sideMenu>
                 <msh:sideMenu title="Печать">
 
@@ -580,7 +581,27 @@ left join Patient pat on pat.id=wan.person_id
                     </msh:sectionContent>
                 </msh:section>
             </msh:ifInRole>
-
+            <msh:ifInRole roles="/Policy/Mis/AssessmentCard/View">
+                <ecom:webQuery name="asCard" nativeSql="  select ac.id, act.name, to_char(ac.startDate,'dd.MM.yyyy') as priemDate
+                  ,ac.ballsum as f4_ballsum
+                  from assessmentCard ac
+                  left join assessmentcardtemplate act on act.id=ac.template
+                  where ac.depmedcase_id=${param.id}
+                order by ac.startDate desc"/>
+                <msh:section>
+                    <msh:sectionTitle>
+                        Карты оценки рисков
+                        <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard()">Добавить карту оценки</a></msh:ifInRole>
+                    </msh:sectionTitle>
+                    <msh:sectionContent>
+                        <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
+                            <msh:tableColumn columnName="Название" property="2" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Дата приема" property="3" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                            <msh:tableColumn columnName="Сумма баллов" property="4" guid="f34e-392-4978-b31f-5e54ff2e45bd" />
+                        </msh:table>
+                    </msh:sectionContent>
+                </msh:section>
+            </msh:ifInRole>
             <msh:ifInRole roles="/Policy/Mis/Calc/Calculation">
                 <ecom:webQuery name="calcs" nativeSql="select cr.id,c.name, cr.result, vmu.name as vmu, cr.resdate
 from calculationsresult cr 
@@ -857,7 +878,14 @@ where m.id ='${param.id}'"/>
                     }
                 }
             }
-
+//last release milamesher 06.04.2018 #97
+            function viewAssessmentCardsByPatient(d) {
+                getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
+            }
+            function goCreateAssessmentCard() {
+                window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&typeCard=7&slo="+${param.id};
+                $('isPrintInfo').checked='checked' ;
+            }
         </script>
 
         <msh:ifFormTypeIsView formName="stac_sloForm">

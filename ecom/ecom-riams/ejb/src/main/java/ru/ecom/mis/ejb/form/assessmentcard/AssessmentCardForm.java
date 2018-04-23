@@ -20,7 +20,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityForm
 @EntityFormPersistance(clazz= AssessmentCard.class)
 @Comment("Карта оценки")
-@WebTrail(comment = "Карта оценки", nameProperties= "id", view="entityParentView-mis_assessmentCard.do" ,list = "entityParentList-mis_assessmentCard.do")
+@WebTrail(comment = "Карта оценки", nameProperties= "id", view="entityParentView-mis_assessmentCard.do" ,list = "entityList-mis_assessmentCard.do")
 @Parent(property = "patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/AssessmentCard")
 public class AssessmentCardForm extends IdEntityForm{
@@ -98,4 +98,21 @@ public class AssessmentCardForm extends IdEntityForm{
 	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
 	/** Дата приема */
 	private String theStartDate;
+
+
+	/** СЛО создания */
+	@Comment("СЛО создания")
+	@Persist
+	public Long getDepMedcase() {return theDepMedcase;}
+	public void setDepMedcase(Long aDepMedcase) {theDepMedcase = aDepMedcase;}
+	/** СЛО создания */
+	private Long theDepMedcase;
+
+    /** Визит создания */
+    @Comment("Визит создания")
+    @Persist
+    public Long getVisitMedcase() {return theVisitMedcase;}
+    public void setVisitMedcase(Long aVisitMedcase) {theVisitMedcase = aVisitMedcase;}
+    /** СЛО создания */
+    private Long theVisitMedcase;
 }

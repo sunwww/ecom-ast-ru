@@ -362,7 +362,7 @@
     	params="id"  action='/javascript:getDefinition("entityParentList-stac_surOperation.do?short=Short&id=${param.id}", null);'  title='Операции'
     	styleId="viewShort"
     	/>
-    	<msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByPatient('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
+    	<msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByVisit('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
        <msh:sideLink styleId="viewShort" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/javascript:getDefinition('entityParentList-expert_card.do?short=Short&id=${param.id}',null)"/>
       </msh:sideMenu>
       <msh:tableNotEmpty name="info_print_list">
@@ -499,7 +499,7 @@
   <script type='text/javascript' src='./dwr/interface/TemplateProtocolService.js'></script>
           <script type="text/javascript">//var theBedFund = $('bedFund').value;
           function goCreateAssessmentCard() {
-  	  		window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value ;
+  	  		window.location.href = "entityParentPrepareCreate-mis_assessmentCard.do?id="+$('patient').value+"&visit="+${param.id};
   			$('isPrintInfo').checked='checked' ;
       }
           function goNewDirectionMine() {
@@ -559,8 +559,8 @@
   function viewExtMedDocumentByPatient(d) {
 	  getDefinition("js-doc_externalDocument-infoMedShortByPatient.do?short=Short&id="+$('patient').value, null);
   }
-  function viewAssessmentCardsByPatient(d) {
-	  getDefinition("js-mis_assessmentCard-listByPatient.do?short=Short&id="+$('patient').value, null);
+  function viewAssessmentCardsByVisit(d) {
+	  getDefinition("js-mis_assessmentCard-listByVisit.do?short=Short&patient="+$('patient').value+"&id="+${param.id}, null);
   }
   </script>
 

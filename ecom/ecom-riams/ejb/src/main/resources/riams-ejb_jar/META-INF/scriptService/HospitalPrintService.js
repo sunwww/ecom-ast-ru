@@ -343,21 +343,24 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 	map.put("pat",patient) ;
 	map.put("statCard",medCase.parent.statisticStub.code) ;
 	//Биологический тест
+	//lastrelease milamesher 02.04.2018 #95
 	var biolTest = new java.lang.StringBuilder() ;
+    var bioprobe = aCtx.manager.createNativeQuery(new java.lang.StringBuilder().append(" select name from vocbloodbioprobprocedure vbp left join transfusion t on t.bloodbioprobprocedure_id=vbp.id where t.id=").append(id)).getResultList().get(0);
+    biolTest.append(bioprobe);
 	if (trans.getIsIllPatientsBT()!=null&&trans.getIsIllPatientsBT().booleanValue()==true) {
-		biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
+		//biolTest.append("Проба на гемолиз (проба Бакстера). Перелито 30 мл. компонента крови струйно, взято 3 мл у реципиента, центрифугирована. Цвет сыворотки: ") ;
 		biolTest.append(trans.getSerumColorBT()!=null?trans.getSerumColorBT().getName():"_________") ;
 	} else {
-		biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
+		//biolTest.append("Перелито 10 мл. компонента крови со скоростью 40-60 кап. в мин, 3 мин.-наблюдения. Данная процедура выполняется дважды.") ;
 		biolTest.append(" PS: ").append(trans.getPulseRateBT()) ;
 		biolTest.append(", AD: ").append(trans.getBloodPressureTopBT()).append("/").append(trans.getBloodPressureLowerBT()) ;
 		biolTest.append(", PS: ").append(trans.getRespiratoryRateBT()!=null?trans.getRespiratoryRateBT():"____") ;
 		biolTest.append(", t: ").append(trans.getTemperatureBT()!=null?trans.getTemperatureBT():"_______") ;
 		if (trans.getStateBT()!=null) {
-			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("1")) {
-				biolTest.append(". Состояние удовлетворительное.") ;
+			if (trans.getStateBT().getCode()!=null&&trans.getStateBT().getCode().equals("2")) {
+				biolTest.append(". Состояние не изменилось.") ;
 			} else {
-				biolTest.append(". Состояние неудовлетворительное. Жалобы:").append(trans.getLamentBT()).append(".") ;
+				biolTest.append(". Состояние изменилось. Жалобы:").append(trans.getLamentBT()).append(".") ;
 			}
 		} else {
 			biolTest.append(". Состояние: ____________________________. Жалобы _____________________________") ;

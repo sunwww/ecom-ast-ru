@@ -7,11 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import ru.ecom.mis.ejb.domain.medcase.voc.VocBloodPreparation;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocRhesusFactor;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionMethodPT;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionTestSerumColor;
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -239,6 +235,31 @@ public class BloodTransfusion extends Transfusion{
 	public VocYesNo getResultGoodPT2() {return theResultGoodPT2;}
 	public void setResultGoodPT2(VocYesNo aResultGoodPT2) {theResultGoodPT2 = aResultGoodPT2;}
 
+	/** Справочник процедур в биологической пробе при переливаниях */
+	@Comment("Справочник процедур в биологической пробе при переливаниях")
+	@OneToOne
+	public VocBloodBioProbProcedure getBloodBioProbProcedure() {return theBloodBioProbProcedure;}
+	public void setBloodBioProbProcedure(VocBloodBioProbProcedure aBloodBioProbProcedure) {theBloodBioProbProcedure=aBloodBioProbProcedure;}
+
+	/** Кровотечение усилилось или нет без видимой причины*/
+	@Comment("Кровотечение усилилось или нет без видимой причины")
+	public Boolean getWasBleedingIncreased() {return theWasBleedingIncreased;}
+	public void setWasBleedingIncreased(Boolean aWasBleedingIncreased) {theWasBleedingIncreased=aWasBleedingIncreased;}
+
+	/** АД снизилось или нет без видимой причины*/
+	@Comment("АД снизилось или нет без видимой причины")
+	public Boolean getWasADDecreased() {return theWasADDecreased;}
+	public void setWasADDecreased(Boolean aWasADDecreased) {theWasADDecreased=aWasADDecreased;}
+
+	/** Пульс участился или нет без видимой причины*/
+	@Comment("Пульс участился или нет без видимой причины")
+	public Boolean getWasPulseIncreased() {return theWasPulseIncreased;}
+	public void setWasPulseIncreased(Boolean aWasPulseIncreased) {theWasPulseIncreased=aWasPulseIncreased;}
+
+	/** Пульс участился или нет без видимой причины*/
+	@Comment("Пульс участился или нет без видимой причины")
+	public Boolean getWasUrineColorChanged() {return theWasUrineColorChanged;}
+	public void setWasUrineColorChanged(Boolean aWasUrineColorChanged) {theWasUrineColorChanged=aWasUrineColorChanged;}
 	/** Результат. Совместима */
 	private VocYesNo theResultGoodPT2;
 	/** 1. Срок годности */
@@ -249,4 +270,16 @@ public class BloodTransfusion extends Transfusion{
 	private String theReagentPT2;
 	/** Метод 1 по инд. совместимости */
 	private VocTransfusionMethodPT theMethodPT2;
+	/** Справочник процедур в биологической пробе при переливаниях */
+	private VocBloodBioProbProcedure theBloodBioProbProcedure;
+	/** Кровотечение усилилось или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasBleedingIncreased;
+	/** АД снизилось или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasADDecreased;
+	/** Пульс участился или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasPulseIncreased;
+	/** Цвет мочи изменился или нет без видимой причины (при переливании под наркозом или в коме)*/
+	private Boolean theWasUrineColorChanged;
 }
+//lastrelease milamesher 30.03.2018 #95
+//added fields

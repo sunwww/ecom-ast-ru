@@ -122,6 +122,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	   <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="Изменить рост/вес/ИМТ"
 					 action='/javascript:showIMTCloseDocument()' title='Изменить рост/вес/ИМТ' styleId="stac_slo"
 	   />
+	   <msh:sideLink roles="/Policy/Mis/Journal/JasperReports" name="Справка о стоимости"
+					 action='/javascript:showReferenceFSS()' title='Справка о стоимости' styleId="stac_slo"
+	   />
 </msh:sideMenu>
 
 
@@ -333,5 +336,21 @@ function gotoNewBornHistory(aMedCase,aUrl) {
 			  }
 			  else alert("Невозможно удалить данные! Выписка должна быть создана не более 2х часов назад. Удалить её может только лечаший врач.");
           }}) ;
+  }
+  function showReferenceFSS() {
+      HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
+          callback: function (res) {
+              var resMas = res.split("#");
+              window.location.href = "entityView-stac_ssl.do?id="+$('id').value;
+              if (res != "##") {
+                  var stat=$('statCardNumber').value;
+                  var year=$('dateStart').value.substring(6,11);
+                  window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F1KSG_at2&standAlone=true&decorate=no"
+                      + "&j_username=" + resMas[1] + "&j_password=" + resMas[2]+"&hn="+stat+"&fy="+year+"&");
+              }
+              else
+                  alert("Нет настройки адреса сервиса!");
+          }
+      });
   }
 </script>

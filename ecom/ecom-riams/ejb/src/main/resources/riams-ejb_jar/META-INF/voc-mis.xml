@@ -1289,8 +1289,8 @@ where wf.dtype='PersonalWorkFunction' -->
 					parentSplitCount='2'
 					names = "ms.code||' '||ms.name"
 					nameId="ms.id"
-					queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1')"
-					join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id '
+					queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1') and vst.code!='OPERATION'"
+					join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join vocServiceType vst on ms.servicetype_id=vst.id'
 					order=''
 					queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
 					groupBy="ms.id, ms.code, ms.name"
@@ -1306,11 +1306,12 @@ where wf.dtype='PersonalWorkFunction' -->
 				parentSplitCount='2'
 				names = "ms.code||' '||ms.name"
 				nameId="ms.id"
-				queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1') and pl.dateto is null and pp.dateto is null"
+				queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1') and pl.dateto is null and pp.dateto is null  and vst.code!='OPERATION'"
 				join="left join pricemedservice pms on pms.priceposition_id=pp.id
 				left join medservice ms on ms.id=pms.medservice_id
  				left join pricelist pl on pl.id=pp.pricelist_id
- 				left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id "
+ 				left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id
+ 				left join vocServiceType vst on ms.servicetype_id=vst.id"
 				order=''
 				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
 				groupBy="ms.id, ms.code, ms.name"
@@ -2731,6 +2732,14 @@ left join medcase smoP on smoP.owner_id=w.id "
                     queryConvertType="UPPER_CASE"
                     />
     </voc>
+	<!--  Поток обслуживания для КСГ (Milamesher) -->
+	<voc id='vocSstreamE2Entry' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocSstreamE2Entry'
+				names   = 'name'
+				queried = 'name'
+		/>
+	</voc>
     <!--  ПЕРЕЛИВАНИЕ КРОВИ -->
     
     <voc id='vocBloodGroup' type='EntityVocService'>
@@ -2764,7 +2773,13 @@ left join medcase smoP on smoP.owner_id=w.id "
                     queried = 'name'
                     />
     </voc>
-    
+	<voc id='vocBloodBioProbProcedure' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodBioProbProcedure'
+				names   = 'name'
+				queried = 'name'
+		/>
+	</voc>
     <voc id='vocRhesusFactor' type='EntityVocService'>
             <EntityVocService
                     entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocRhesusFactor'

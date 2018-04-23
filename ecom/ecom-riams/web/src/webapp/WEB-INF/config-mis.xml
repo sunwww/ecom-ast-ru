@@ -1104,6 +1104,27 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/reportBandage.jsp" />
 		</action>
+		<!--action path='/jasper' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/jasper.jsp" />
+		</action>
+		<action path='/reportsCharged' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/reportsCharged.jsp" />
+		</action-->
+		<action path='/totalReestr' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/totalReestr.jsp" />
+		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
                 validate='false'
@@ -1111,7 +1132,7 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/directory_telephonenumber/list.jsp" />
         </action>
-        
+
 		<action path='/report_timeexecute' type='ru.ecom.web.actions.base.ForwardAction'
 				name='directory_searchForm'
 				validate='false'

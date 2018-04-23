@@ -28,19 +28,19 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class TransfusionReagentForm extends IdEntityForm {
 	/** Реактив */
 	@Comment("Реактив")
-	@Persist @Required
+	@Persist
 	public Long getReagent() {return theReagent;}
 	public void setReagent(Long aReagent) {theReagent = aReagent;}
 
 	/** Серия */
 	@Comment("Серия")
-	@Persist @Required
+	@Persist
 	public String getSeries() {return theSeries;}
 	public void setSeries(String aSeries) {theSeries = aSeries;}
 
 	/** Срок годности */
 	@Comment("Срок годности")
-	@Persist @Required @DoDateString @DateString
+	@Persist @DoDateString @DateString
 	public String getExpirationDate() {return theExpirationDate;}
 	public void setExpirationDate(String aExpirationDate) {theExpirationDate = aExpirationDate;}
 
@@ -66,3 +66,5 @@ public class TransfusionReagentForm extends IdEntityForm {
 	/** Реактив */
 	private Long theReagent;
 }
+//lastrelease milamesher 30.03.2018 #95
+//no required
