@@ -399,3 +399,27 @@ function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassport
 	if (aPassportWhomIssued!=null) {passport=passport+aPassportWhomIssued ;} else {	passport=passport+"______________________________" ;}
 	return passport ;
 }
+//lastrelease milamesher #98 шаблоны лаб. анализов
+function printLabAnalysisTemplateExtra (aCtx, aParams) {
+    var pid = aParams.get("id");
+    var sqlQuery1 ="select distinct mc.contractnumber, cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'') as cpplastname\n" +
+        ",CAST(EXTRACT(YEAR from (cpp.birthday)) as INTEGER) as ycpp\n" +
+        "        from MedContract mc \n" +
+        "        left join ContractAccount ca on mc.id=ca.contract_id\n" +
+        "        left join ContractAccountMedService cams on cams.account_id=ca.id\n" +
+        "        left join ServedPerson sp on cams.servedPerson_id = sp.id\n" +
+        "        left join PriceMedService pms on pms.id=cams.medService_id\n" +
+        "        left join PricePosition pp on pp.id=pms.pricePosition_id\n" +
+        "        left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id\n" +
+        "        left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'\n" +
+        "        left join ContractPerson cp on cp.id=sp.person_id left join patient cpp on cpp.id=cp.patient_id\n" +
+        "        where mc.id='"+pid+"'  and cao.id is null and caos.id is null and  CAST(EXTRACT(YEAR from (cpp.birthday)) as INTEGER) is not null group by mc.id,cpp.id" ;
+    var list1 = aCtx.manager.createNativeQuery(sqlQuery1).getResultList();
+    var obj = list1.size()>0?list1.get(0):null ;
+    if (obj!=null) {
+        map.put("contractNumber", obj[0]);
+        map.put("servedFIO", obj[1]);
+        map.put("servedYear", obj[2]);
+    }
+        return map;
+}
