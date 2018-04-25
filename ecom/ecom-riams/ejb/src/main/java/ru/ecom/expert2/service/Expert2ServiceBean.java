@@ -873,11 +873,11 @@ private Boolean isCheckIsRunning = false;
         StringBuilder sql = new StringBuilder();
         sql.append("select distinct new.id ")
                 .append(" from e2entry  new")
-                .append(" left join e2entry old on old.historyNumber=new.historyNumber and old.listentry_id!=:listEntryId")
+                .append(" left join e2entry old on old.historyNumber=new.historyNumber and old.listentry_id!=:listEntryId and (old.isDeleted is null or old.isDeleted='0') and (old.doNotSend is null or old.doNotSend='0')")
                 .append(" left join e2listentry listOld on listOld.id=old.listentry_id")
-                .append(" and (old.isDeleted is null or old.isDeleted='0') and (old.doNotSend is null or old.doNotSend='0')")
                 .append(" where new.listentry_id=:listEntryId and (new.isDeleted is null or new.isDeleted='0') and (new.doNotSend is null or new.doNotSend='0') and (listOld.isDeleted is null or listOld.isDeleted='0')")
-                .append(" and new.startDate<old.finishDate and old.servicestream!='COMPLEXCASE' and new.servicestream!='COMPLEXCASE'");
+                .append(" and new.startDate<old.finishDate and old.servicestream!='COMPLEXCASE' and new.servicestream!='COMPLEXCASE'")
+                .append(" and old.medhelpprofile_id=new.medhelpprofile_id");
         List<BigInteger> list = theManager.createNativeQuery(sql.toString()).setParameter("listEntryId",aListEntry.getId()).getResultList();
         for(BigInteger id: list) {
             theManager.persist(new E2EntryError(theManager.find(E2Entry.class,id.longValue()),"DOUBLE_WITH_PREVIOUS Дубль с пред. заполнением!!"));

@@ -29,9 +29,9 @@
             if (fldValue!=null&&!fldValue.trim().equals("")) {
                 if (fldName.equals("lastname")) {
                     String[] fio = fldValue.split(" ");
-                    filterSql.append(" and e.lastname like upper('%").append(fio[0]).append("%')");
-                    if (fio.length>1) {filterSql.append(" and e.firstname like upper('%").append(fio[1]).append("%')");}
-                    if (fio.length>2) {filterSql.append(" and e.middlename like upper('%").append(fio[2]).append("%')");}
+                    filterSql.append(" and e.lastname like upper('").append(fio[0]).append("%')");
+                    if (fio.length>1) {filterSql.append(" and e.firstname like upper('").append(fio[1]).append("%')");}
+                    if (fio.length>2) {filterSql.append(" and e.middlename like upper('").append(fio[2]).append("%')");}
                     if (fio.length>3) {filterSql.append(" and e.birthday =to_date('").append(fio[3]).append("','dd.MM.yyyy')");}
                 } else {
                   /*  if (fldName.equals("startDate")) {
