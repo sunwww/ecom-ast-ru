@@ -666,11 +666,24 @@ public class PatientServiceBean implements IPatientService {
 		List<Object> obj =null;
 		Long areaId = null;
 		LpuArea la = null;
-		if (attachedType!=null&&attachedType.equals("1")){
+		if (aDoctorSnils!=null && !aDoctorSnils.trim().equals("")){ // ищем участок по СНИЛС врача
+			obj = theManager.createNativeQuery("select la.id " +
+					" from lpuarea la" +
+					" left join workfunction wf on wf.id=la.workfunction_id" +
+					" left join worker w on w.id=wf.worker_id" +
+					" left join patient wpat on wpat.id=w.person_id" +
+					" where wpat.snils='"+aDoctorSnils.trim()+"'").getResultList();
+			if (obj!=null&&obj.size()>0) {
+				areaId=Long.parseLong(obj.get(0).toString());
+				la = theManager.find(LpuArea.class, areaId);
+			} else {
+				log.error("НЕ Нашли участок по СНИЛС врача");
+			}
+		}
+		if (la==null && attachedType!=null&&attachedType.equals("1")){
 		//	s("Тип прикрепления - территориальный, ищем участок по адресу регистрации");
 			try { 
 				obj = theManager.createNativeQuery("select la.id from patient p" +
-			
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
 					" left join lpuareaaddresstext laat on laat.id=laap.lpuareaaddresstext_id" +
 					" left join lpuarea la on la.id=laat.area_id" +
@@ -679,8 +692,6 @@ public class PatientServiceBean implements IPatientService {
 					" and (laap.housenumber is null or laap.housenumber='' or laap.housenumber=p.housenumber )" +
 					" and (((p.housebuilding is null or p.housebuilding='') and (laap.housebuilding is null or laap.housebuilding='')) or laap.housebuilding=p.housebuilding)" +
 					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getResultList();
-				
-			//	System.out.println("==== ATT= laID = "+obj.toString());
 			} catch (NoResultException e) {
 				log.error("Участок по адресу не найден");
 			} catch (Exception e) {
@@ -693,25 +704,7 @@ public class PatientServiceBean implements IPatientService {
 				la = theManager.find(LpuArea.class, areaId);
 			}
 		}
-		if (la==null && aDoctorSnils!=null && !aDoctorSnils.trim().equals("")){ //Если не нашли подходящий участок по адресу, ищем участок по СНИЛС врача
-		//	s("ищем участок по СНИЛС врача. snils = "+aDoctorSnils);
-			obj = theManager.createNativeQuery("select la.id " +
-					" from lpuarea la" +
-					" left join workfunction wf on wf.id=la.workfunction_id" +
-					" left join worker w on w.id=wf.worker_id" +
-					" left join patient wpat on wpat.id=w.person_id" +
-					" where wpat.snils='"+aDoctorSnils.trim()+"'").getResultList();
-			if (obj!=null&&obj.size()>0) {
-				areaId=Long.parseLong(obj.get(0).toString());
-			//	s("Нашли участок по СНИЛС врача. ИД ="+areaId);
-				la = theManager.find(LpuArea.class, areaId);
-				
-			} else {
-				log.error("НЕ Нашли участок по СНИЛС врача");
-			}
-			
-			
-		}
+
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
 			.setParameter("pat", aPatientId).getResultList();
 			
