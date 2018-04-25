@@ -1216,5 +1216,45 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		
 		return list.isEmpty()?"":""+list.iterator().next().get1() ;
 	}
-
+	//Milamesher получение дополнительных шаблонов
+	public String getLabAnalysisExtra(String id, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select ms.code||' '||ms.name,ms.id\n" +
+				"from VocLabAnalysisExtraPrint vlaep\n" +
+				"left join medservice ms on ms.code=vlaep.medservice\n" +
+				"left join pricemedservice pms on pms.medservice_id=ms.id\n" +
+				"left join ContractAccountMedService cams on cams.medservice_id=pms.id\n" +
+				"left join ContractAccount ca on cams.account_id=ca.id\n" +
+				"left join medcontract mc on ca.contract_id=mc.id\n" +
+				"where mc.id="+ id;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			for (WebQueryResult w : list) {
+				res.append(w.get1()).append("#").append(w.get2()).append("!");
+			}
+		} else res.append("##");
+		return res.toString();
+	}
+	//Milamesher получение шаблона по коду услуги
+	public String getUserTemplateDocForPrintByService(String aMedServiceId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select filename from userDocument where template="+aMedServiceId;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		return list.isEmpty()?"":""+list.iterator().next().get1() ;
+	}
+	//Milamesher получение списка шаблонов по списку услуг
+	public String getAllUserTemplateDocForPrintByService(String[] aMedServiceSId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		for (int i=0; i<aMedServiceSId.length; i++) {
+			String r=getUserTemplateDocForPrintByService(aMedServiceSId[i],aRequest);
+			if (r.equals(""))
+				res.append(aMedServiceSId[i]).append("#").append("*"); //в имени файла не мб *
+			else
+				res.append(aMedServiceSId[i]).append("#").append(r);
+			res.append("!");
+		}
+		return res.toString();
+	}
 }

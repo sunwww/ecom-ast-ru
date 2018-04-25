@@ -82,7 +82,7 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			</msh:panel>
 		</msh:form>
 		<msh:ifFormTypeIsView formName="contract_medContractForm">
-			<msh:section title="Счета на оплату" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
+			<msh:section title="Счета на оплату <a href='javascript:void(0)' onclick='showprintLabAnalysisCloseDocument(${param.id })'> Печать лаб. анализов</a>" createRoles="" createUrl="entityParentPrepareCreate-contract_account_contract.do?id=${param.id}">
 			<ecom:webQuery nativeSql="select ca.id as f1_id
 			, CASE WHEN cp.dtype='NaturalPerson' THEN 'Физ.лицо: '||p.lastname ||' '|| p.firstname|| ' '|| p.middlename||' г.р. '|| to_char(p.birthday,'DD.MM.YYYY') ELSE 'Юрид.лицо: '||cp.name END
 			, sp.dateFrom,sp.dateTo
@@ -296,6 +296,12 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			<msh:sideLink params="id" action="/entityParentList-contract_contractMedPolicy" name="Медицинские полиса" title="Просмотреть медицинские полиса по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_rule" name="Договорные правила" title="Просмотреть договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/View"/>
 		</msh:sideMenu>
-		<tags:contractMenu currentAction="medContract"/>		
+		<tags:contractMenu currentAction="medContract"/>
+		<tags:printLabAnalysis name="printLabAnalysis" />
+		<script type='text/javascript'>
+            function printLabAnalysis() {
+				showprintLabAnalysisCloseDocument($('id').value);
+            }
+		</script>
 	</tiles:put>
 </tiles:insert>

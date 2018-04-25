@@ -129,6 +129,7 @@
                 ].join('');
             };
             function capture() {
+                showException();
                 var img = {
                     image_pro: null
                 };
@@ -140,7 +141,12 @@
                         +checkTime(now.getMilliseconds())+"_" + document.getElementById("current_username_li").innerHTML+".png";
                     ClaimService.postRequestWithErrorScrean(img,fileName,{
                         callback: function (res) {
-                            if (res==true) window.location="entityPrepareCreate-mis_claim.do?img="+fileName+"&description="+document.getElementsByClassName("errorMessage")[0].innerText.substr(7);
+                            if (res==true) {
+                                if (document.getElementsByClassName("errorMessage")[0] != null)
+                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + fileName + "&description=" + document.getElementsByClassName("errorMessage")[0].innerText.substr(7);
+                                else
+                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + fileName + "&description=Описание в скриншоте";
+                            }
                         }
                     });
                 }
