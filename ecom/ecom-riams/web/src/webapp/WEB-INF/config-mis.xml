@@ -147,9 +147,9 @@
 			type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>	
 			
 	
-		<form-bean name="mis_lpuForm"
-			type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
-			
+		<form-bean name="mis_lpuForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
+		<form-bean name="mis_lpuRequisiteForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuRequisiteForm" />
+
 		<form-bean name="voc_orgForm"
 			type="ru.ecom.mis.ejb.form.patient.VocOrgForm" />
 			

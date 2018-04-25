@@ -325,6 +325,17 @@
   			
         </tr>
       </table>
+        <msh:section>
+        <msh:sectionTitle>Реквизиты для печати по ЛПУ <a href='entityParentPrepareCreate-mis_lpuRequisite.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
+        <msh:sectionContent>
+        <ecom:webQuery name="requisites" nativeSql="select id, name, code, value
+        from MisLpuRequisite where lpu_id=${param.id}" />
+        <msh:table name="requisites" action="entityView-mis_lpuRequisite.do" idField="1">
+            <msh:tableColumn columnName="Название" property="2" />
+            <msh:tableColumn columnName="Код" property="3" />
+            <msh:tableColumn columnName="Значение" property="4" />
+        </msh:table>
+        </msh:sectionContent></msh:section>
     </msh:ifFormTypeIsView>
     <tags:addressTag />
   </tiles:put>

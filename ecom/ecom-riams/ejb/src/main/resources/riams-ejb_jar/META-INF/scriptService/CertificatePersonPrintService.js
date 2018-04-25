@@ -42,6 +42,22 @@ function issueRefund(aCtx, aId) {
 
 }
 
+function printDefaultLpuRequisites(aCtx, aFldName) {
+	var lpu =aCtx.manager.createNativeQuery( "select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
+	if (lpu.size()>0) {
+		printLpuRequisites(aCtx,+lpu.get(0),aFldName);
+	}
+}
+function printLpuRequisites(aCtx, aLpuId, aFldName) {
+	var sql = "select code, value, name from MisLpuRequisite where lpu_id="+aLpuId;
+	var list = aCtx.manager.createNativeQuery(sql).getResultList();
+	for (var i=0;i<list.size();i++) {
+		var obj = list.get(i);
+		map.put(aFldName+"_"+obj[0],""+obj[1]);
+		//throw ""+aFldName+"_"+obj[0]+"<>"+map.get(aFldName+"_"+obj[0]);
+		map.put(aFldName+"_"+obj[0]+"Name",""+obj[2]);
+	}
+}
 function printPriceList(aCtx,aParams) {
 	var priceList = aParams.get("id") ;
 	var mainGroupSql = "select pg.id,pg.code,pg.name from PricePosition pg" 
@@ -66,8 +82,7 @@ function getGroup(aCtx,aPriceList,aParent) {
 	var wqM = new Packages.ru.ecom.ejb.services.query.WebQueryResult()  ;
 	var childGroup = new java.util.ArrayList() ;
 	var childPosition = new java.util.ArrayList() ;
-	
-	var groupSql = "select pg.id,pg.code,pg.name,case when trim(pg.comment)='' then null else pg.comment end from PricePosition pg" 
+	var groupSql = "select pg.id,pg.code,pg.name,case when trim(pg.comment)='' then null else pg.comment end from PricePosition pg"
 		+" where pg.priceList_id = '"+aPriceList+"' and pg.dtype='PriceGroup' and pg.parent_id = '"+aParent+"'"
 		+" order by pg.code" ;
 	var list2 = aCtx.manager.createNativeQuery(groupSql).getResultList();
@@ -113,6 +128,7 @@ function getGroup(aCtx,aPriceList,aParent) {
 }
 function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 	var pid = aParams.get("id");
+    var lpuId = 0;
 	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
 		+"	,cams.countMedService*cams.cost as sumNoAccraulMedService"
 		+"  ,round((cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as costDisc" 
@@ -215,7 +231,7 @@ function printDogovogByNoPrePaidServicesMedServise(aCtx, aParams) {
 		map.put("customer.addressRegistration","____________________________________________________________________________________________________________") ;
 		map.put("customer.passportInfo","____________________________________________________________________________________________________________") ;
 	}
-
+    printDefaultLpuRequisites(aCtx,"DefaultLpu");
 	return map;
 }
 function printAttorney (aCtx) {
@@ -355,8 +371,8 @@ function printContractByAccrual(aCtx, aParams) {
 		map.put("customer.addressRegistration","____________________________________________________________________________________________________________") ;
 		map.put("customer.pasportInfo","____________________________________________________________________________________________________________") ;
 	}
-	
-	
+
+    printDefaultLpuRequisites(aCtx,"DefaultLpu");
 	return map;
 }
 function parseInt(aValue1,aDiscount,aValue2) {
