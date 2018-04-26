@@ -1,19 +1,5 @@
 package ru.nuzmsh.web.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import ru.ecom.diary.ejb.service.protocol.field.TextField;
-import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.format.DateFormat;
-import ru.nuzmsh.web.tags.decorator.ITableDecorator;
-import ru.nuzmsh.web.tags.helper.JavaScriptContext;
-import ru.nuzmsh.web.tags.helper.RolesHelper;
-import ru.nuzmsh.web.util.DemoModeUtil;
-import ru.nuzmsh.web.util.IdeTagHelper;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -21,6 +7,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.format.DateFormat;
+import ru.nuzmsh.web.tags.decorator.ITableDecorator;
+import ru.nuzmsh.web.tags.helper.JavaScriptContext;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
+import ru.nuzmsh.web.util.DemoModeUtil;
+import ru.nuzmsh.web.util.IdeTagHelper;
 
 /**
  * @jsp.tag
@@ -33,10 +34,10 @@ public class TableTag extends AbstractGuidSupportTag {
 
     private final static Log LOG = LogFactory.getLog(TableTag.class) ;
     @SuppressWarnings("unused")
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+	private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
 
     @SuppressWarnings("unused")
-    private static final String VERSION = "1.2";
+	private static final String VERSION = "1.2";
 
     /**
      * Не выводить шапку таблицы
@@ -44,28 +45,28 @@ public class TableTag extends AbstractGuidSupportTag {
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-    public boolean getHideTitle() {
-        return theHideTitle;
-    }
+	public boolean getHideTitle() {
+		return theHideTitle;
+	}
 
-    public void setHideTitle(boolean aHideTitle) {
-        theHideTitle = aHideTitle;
-    }
+	public void setHideTitle(boolean aHideTitle) {
+		theHideTitle = aHideTitle;
+	}
 
-    /** Не выводить шапку таблицы */
-    private boolean theHideTitle = false;
-
-    /** Отображение по каждой ячейке
+	/** Не выводить шапку таблицы */
+	private boolean theHideTitle = false;
+	
+	/** Отображение по каждой ячейке 
      * @jsp.attribute   description = "Не выводить шапку таблицы"
      *                     required = "false"
      *                  rtexprvalue = "true"
-     * */
-    public boolean getCellFunction() {return theCellFunction;}
-    public void setCellFunction(boolean aCellFunction) {theCellFunction = aCellFunction;}
+	 * */
+	public boolean getCellFunction() {return theCellFunction;}
+	public void setCellFunction(boolean aCellFunction) {theCellFunction = aCellFunction;}
 
-    /** Отображение по каждой ячейке */
-    private boolean theCellFunction;
-
+	/** Отображение по каждой ячейке */
+	private boolean theCellFunction;
+	
     /**
      * Запретить поддержку клавиш
      * @jsp.attribute   description = "Запретить поддержку клавиш"
@@ -84,33 +85,33 @@ public class TableTag extends AbstractGuidSupportTag {
     public String getSelection() { return theSelection ; }
     public void setSelection(String aSelection) { theSelection = aSelection ; }
 
-    /**
-     * Url просмотра записи
+    /** 
+     * Url просмотра записи 
      * @jsp.attribute   description = "Url просмотра записи"
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-    public String getViewUrl() {return theViewUrl;}
-    public void setViewUrl(String aViewUrl) {theViewUrl = aViewUrl;}
+	public String getViewUrl() {return theViewUrl;}
+	public void setViewUrl(String aViewUrl) {theViewUrl = aViewUrl;}
 
-    /** Url печати
+	/** Url печати 
      * @jsp.attribute   description = "Url печати записи"
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-    public String getPrintUrl() {return thePrintUrl;}
-    public void setPrintUrl(String aPrintUrl) {thePrintUrl = aPrintUrl;}
+	public String getPrintUrl() {return thePrintUrl;}
+	public void setPrintUrl(String aPrintUrl) {thePrintUrl = aPrintUrl;}
 
-    /**
-     * Url удаления записи
+	/** 
+	 * Url удаления записи
      * @jsp.attribute   description = "Url удаления записи"
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-    public String getDeleteUrl() {return theDeleteUrl;}
-    public void setDeleteUrl(String aDeleteUrl) {theDeleteUrl = aDeleteUrl;}
+	public String getDeleteUrl() {return theDeleteUrl;}
+	public void setDeleteUrl(String aDeleteUrl) {theDeleteUrl = aDeleteUrl;}
 
-    /**
+	/**
      * Поле с идентификатором
      * @jsp.attribute   description="Поле с идентификатором"
      *                  required="false"
@@ -135,23 +136,23 @@ public class TableTag extends AbstractGuidSupportTag {
 
     /** Декоратор для класса стиля Css (ITableDecorator) */
     private String theDecorator;
-
-    /**
-     * Стиль строк
-     * @jsp.attribute description="Стиль строк"
+    
+    /** 
+     * Стиль строк 
+      * @jsp.attribute description="Стиль строк"
      *                  required="false"
      *                  rtexprvalue="true"
      * */
     public String getStyleRow() {
-        return theStyleRow;
-    }
+		return theStyleRow;
+	}
 
-    public void setStyleRow(String aStyleRow) {
-        theStyleRow = aStyleRow;
-    }
+	public void setStyleRow(String aStyleRow) {
+		theStyleRow = aStyleRow;
+	}
 
-    /** Стиль строк */
-    private String theStyleRow;
+	/** Стиль строк */
+	private String theStyleRow;
     /**
      * Название атррибута в request или в session
      *
@@ -204,42 +205,35 @@ public class TableTag extends AbstractGuidSupportTag {
 
     @SuppressWarnings("unchecked")
     public void add(Object aTag,String aRole) {
-        boolean isView =true ;
-        try {
-            if (aRole!=null &&!aRole.equals("")) isView = RolesHelper.checkRoles(aRole, (HttpServletRequest)pageContext.getRequest()) ;
-        }catch (Exception e) {
-            isView=false ;
-        }
-        if (isView) {
-            if (aTag instanceof TableColumnTag) {
-                TableColumnTag tag = (TableColumnTag) aTag ;
-                theCells.add(
-
-                        new Column(tag.getProperty(), tag.getColumnName()
-                                , tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam())
-
-                );
-            } else if (aTag instanceof TableButtonTag) {
-                TableButtonTag tag = (TableButtonTag) aTag ;
-                theCells.add(
-                        new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
-                                , tag.getButtonFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest()
-                        )
-
-                );
-            } else if (aTag instanceof TableTextfieldTag){
-                TableTextfieldTag tag = (TableTextfieldTag) aTag;
-                theCells.add(
-                        new Textfield(tag.getProperty(), tag.getTextfieldShortName(), tag.getTextfieldName()
-                                , tag.getTextfieldFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
-                );
-            }
-        }
+    	boolean isView =true ;
+		try {
+			if (aRole!=null &&!aRole.equals("")) isView = RolesHelper.checkRoles(aRole, (HttpServletRequest)pageContext.getRequest()) ;
+		}catch (Exception e) {
+			isView=false ;
+		}
+		if (isView) {
+			if (aTag instanceof TableColumnTag) {
+				TableColumnTag tag = (TableColumnTag) aTag ;
+				theCells.add(
+    			
+					new Column(tag.getProperty(), tag.getColumnName()
+    					, tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
+    					, tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam())
+    			
+    			);
+	    	} else if (aTag instanceof TableButtonTag) {
+	    		TableButtonTag tag = (TableButtonTag) aTag ;
+	    		theCells.add(
+	                    new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
+	                    		, tag.getButtonFunction()
+	                    		, tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest()
+	                            )
+	                    
+	            );
+	    	}
+		}
     }
-
+    
 
     /**
      * Сообщение об отсутствии данных
@@ -254,69 +248,69 @@ public class TableTag extends AbstractGuidSupportTag {
     public void setNoDataMessage(String aNoDataMessage) {
         theNoDataMessage = aNoDataMessage;
     }
-
-    /**
+    
+    /** 
      * Url редактировать
      * @jsp.attribute   description = "Url редактирования записи"
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-    public String getEditUrl() {return theEditUrl;}
-    public void setEditUrl(String aEditUrl) {theEditUrl = aEditUrl;}
+	public String getEditUrl() {return theEditUrl;}
+	public void setEditUrl(String aEditUrl) {theEditUrl = aEditUrl;}
 
-    /** Url редактировать */
-    private String theEditUrl;
+	/** Url редактировать */
+	private String theEditUrl;
 
     public int doStartTag() throws JspException {
-        printIdeStart("Table");
-        try {
-            if(theDecorator!=null && theIdField!=null) {
-                throw new JspException("Нужно установить только одно поле из двух: idField или decorator") ;
-            }
-
-            createGoFunctionName(theAction);
-
-
-
-            Collection col = getCollection();
-
-            boolean isEmpty;
-            if (col == null) {
-                throw new JspException("Нет Collection в request.getAttribute(" + theName + ")");
-            } else {
-                if (col.size() == 0) {
-                    JspWriter out = pageContext.getOut();
-                    try {
-                        out.print("<p>");
-                        out.print(theNoDataMessage != null ? theNoDataMessage : "Нет данных");
-                        out.println("</p>");
-                        isEmpty = true;
-                    } catch (IOException e) {
-                        throw new JspException(e);
-                    }
-                } else {
-                    isEmpty = false;
-                }
-            }
-
-            theCells.clear();
-
-            if (!isEmpty) {
-                try {
-                    JspWriter out = pageContext.getOut();
-                    out.println("<form>") ;
-                    if (thePrintToExcelButton!=null&&!thePrintToExcelButton.equals("")) { //Если есть кнопка "Сохранить в excel", будем сохранять
-                        out.println("<input type='button' onclick='mshSaveNextTableToExcel(this)' value='"+thePrintToExcelButton+"'>");
-                    }
-                    out.println("<table border='1' class='tabview sel tableArrow'>");
-                } catch (Exception e) {
-                    new JspException(e);
-                }
-            }
-            theIsEmpty = isEmpty ;
-        } catch (Exception e) {
-            showException(e);
+    	printIdeStart("Table");
+    	try {
+        if(theDecorator!=null && theIdField!=null) {
+            throw new JspException("Нужно установить только одно поле из двух: idField или decorator") ;
         }
+
+        createGoFunctionName(theAction,theOpenNewWindow!=null?theOpenNewWindow:false);
+        
+        
+
+        Collection col = getCollection();
+
+        boolean isEmpty;
+        if (col == null) {
+            throw new JspException("Нет Collection в request.getAttribute(" + theName + ")");
+        } else {
+            if (col.size() == 0) {
+                JspWriter out = pageContext.getOut();
+                try {
+                    out.print("<p>");
+                    out.print(theNoDataMessage != null ? theNoDataMessage : "Нет данных");
+                    out.println("</p>");
+                    isEmpty = true;
+                } catch (IOException e) {
+                    throw new JspException(e);
+                }
+            } else {
+                isEmpty = false;
+            }
+        }
+
+        theCells.clear();
+        
+        if (!isEmpty) {
+            try {
+                JspWriter out = pageContext.getOut();
+                out.println("<form>") ;
+                if (thePrintToExcelButton!=null&&!thePrintToExcelButton.equals("")) { //Если есть кнопка "Сохранить в excel", будем сохранять
+                	out.println("<input type='button' onclick='mshSaveNextTableToExcel(this)' value='"+thePrintToExcelButton+"'>");
+                }
+                out.println("<table border='1' class='tabview sel tableArrow'>");
+            } catch (Exception e) {
+                new JspException(e);
+            }
+        }
+        theIsEmpty = isEmpty ;
+    	} catch (Exception e) {
+    		showException(e);
+    	}
         return EVAL_BODY_INCLUDE;
     }
 
@@ -328,37 +322,37 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     @SuppressWarnings("unchecked")
-    public Collection getCollection() {
+	public Collection getCollection() {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         Object attr = request.getAttribute(theName);
         if(attr instanceof Object[]) {
-            Object[] arr = (Object[]) attr ;
-            ArrayList list = new ArrayList(arr.length) ;
-            for(Object o : arr) {
-                list.add(o);
-            }
-            return list ;
+        	Object[] arr = (Object[]) attr ;
+        	ArrayList list = new ArrayList(arr.length) ;
+        	for(Object o : arr) {
+        		list.add(o);
+        	}
+        	return list ;
         } else {
-            return (Collection) attr ;
+        	return (Collection) attr ; 
         }
     }
     private void printCellView(JspWriter aOut,String aValue, String aGoFunctionName) throws IOException {
-        String styleClass = "";
-
-        aOut.print("<td width='14px' onclick=\"");
-        aOut.print(aGoFunctionName) ;
-        //aOut.print("('") ;
-        //aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-        //aOut.print(aId) ;
-        //aOut.print("')");
-        aOut.print("\"");
-        aOut.print(" class='") ;
-        aOut.print(styleClass);
-        aOut.print(' ');
-        aOut.print("'>");
-
-        aOut.print(aValue);
-        aOut.println("</td>");
+    	String styleClass = "";
+    	
+    	aOut.print("<td width='14px' onclick=\"");
+    	aOut.print(aGoFunctionName) ;
+    	//aOut.print("('") ;
+    	//aOut.print(URLEncoder.encode(aId, "utf-8")) ;
+    	//aOut.print(aId) ;
+    	//aOut.print("')");
+    	aOut.print("\"");
+    	aOut.print(" class='") ;
+    	aOut.print(styleClass);
+    	aOut.print(' ');
+    	aOut.print("'>");
+    	
+    	aOut.print(aValue);
+    	aOut.println("</td>");
     }
 
     private String theFunctionGoName = null;
@@ -367,61 +361,62 @@ public class TableTag extends AbstractGuidSupportTag {
     //private synchronized void createGoFunctionName() {
     //    theFunctionGoName = "go_" + theFunctionGoIndex++;
     //}
-    private synchronized void createGoFunctionName(String aAction) {
-        theFunctionGoName = new StringBuilder().append("goToPage('").append(aAction).append("',").toString();
+    private synchronized void createGoFunctionName1(String aAction) {createGoFunctionName(aAction,false);}
+    private synchronized void createGoFunctionName(String aAction, Boolean aOpenNewWindow) {
+        theFunctionGoName = new StringBuilder().append("goToPage"+(aOpenNewWindow?"NewWindow":"")+"('").append(aAction).append("',").toString();
     }
     private synchronized void createDeleteFunctionName(String aDeleteAction) {
-        theFunctionDeleteName="if (confirm('Удалить?')) goToPage('" + aDeleteAction+"',";
+    	theFunctionDeleteName="if (confirm('Удалить?')) goToPage('" + aDeleteAction+"',";
     }
     private synchronized void createEditFunctionName(String aAction) {
-        theFunctionEditName="goToPage('" + aAction+"','";
+    	theFunctionEditName="goToPage('" + aAction+"','";
     }
     private synchronized void createPrintFunctionName(String aAction) {
-        theFunctionPrintName="goToPage('" + aAction+"','";
+    	theFunctionPrintName="goToPage('" + aAction+"','";
     }
     private synchronized void createViewFunctionName(String aAction) {
-        if (aAction.indexOf("?")==-1) {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("?id=").toString();
-        } else if(aAction.endsWith("&")) {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("id=").toString();
-        } else {
-            theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("&id=").toString();
-        }
+    	if (aAction.indexOf("?")==-1) {
+    		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("?id=").toString();
+    	} else if(aAction.endsWith("&")) {
+    		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("id=").toString();
+    	} else {
+    		theFunctionViewName=new StringBuilder().append("getDefinition('").append(aAction).append("&id=").toString();
+    	}
     }
     private static String getGoFunctionName(String theFunctionGoName, Object aParam,String aAddParam) {
-        return new StringBuilder().append(theFunctionGoName)
-                .append("('").append(aParam).append("'")
-                .append(aAddParam!=null&&!aAddParam.equals("")?","+aAddParam:"")
-                .append(")").toString() ;
+    	return new StringBuilder().append(theFunctionGoName)
+    			.append("('").append(aParam).append("'")
+    			.append(aAddParam!=null&&!aAddParam.equals("")?","+aAddParam:"")
+    			.append(")").toString() ;
     }
-
+    
     private String getDeleteFunctionName(String aId) {
-        return new StringBuilder().append(theFunctionDeleteName).append("'").append(aId).append("');").toString();
+    	return new StringBuilder().append(theFunctionDeleteName).append("'").append(aId).append("');").toString();
     }
     private String getGoFunctionName(String aId) {
-        return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("');").toString();
+    	return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("');").toString();
     }
     private String getGoFunctionCellName(String aId,String aCellName) {
-        return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("','").append(aCellName).append("');").toString();
+    	return new StringBuilder().append(theFunctionGoName).append("'").append(aId).append("','").append(aCellName).append("');").toString();
     }
-
+    
     private String getViewFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
-        if (theFunctionViewName==null) {
-            createViewFunctionName(theViewUrl) ;
-        }
-        return new StringBuilder().append(theFunctionViewName).append(aId).append("',event); ").toString();
+    	//onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
+    	if (theFunctionViewName==null) {
+    		createViewFunctionName(theViewUrl) ;
+    	}
+    	return new StringBuilder().append(theFunctionViewName).append(aId).append("',event); ").toString();
     }
     private String getEditFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
-        return new StringBuilder().append(theFunctionEditName).append(aId).append("'); ").toString();
+    	//onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
+    	return new StringBuilder().append(theFunctionEditName).append(aId).append("'); ").toString();
     }
     private String getPrintFunctionName(String aId) {
-        //onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
+    	//onclick='entityShortView-mis_patient.do?id=45", event); return false ;' ondblclick='javascript:goToPage("entityView-mis_patient.do","45")'>
         return new StringBuilder().append(theFunctionPrintName).append(aId).append("'); ").toString();
     }
-
-
+    
+    
     //private String getGoFunctionName() {
     //    return theFunctionGoName;
     //}
@@ -442,72 +437,69 @@ public class TableTag extends AbstractGuidSupportTag {
                     if (col.size() == 0) {
                         return EVAL_PAGE;
                     }
-
+                    
                     // шапка таблицы
                     if(!theHideTitle) {
                         out.println("<tr>");
                         if(theSelection!=null) {
                             //out.println("<th></th>") ;
-
+                            
                             out.println("<th>") ;
                             String typeId = theName ;
                             out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickAll(this)' title='Выделить все'/>") ;
                             out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClickInvert(this)' title='Инвертировать все'/>") ;
                             out.println("</th>") ;
-
-                        }
+                            
+                           }
                         if (theViewUrl!=null) {
-                            out.println("<th  width='14px'>") ;
-                            out.println("&nbsp;") ;
-                            out.println("</th>") ;
-                            createViewFunctionName(theViewUrl);
+                        	out.println("<th  width='14px'>") ;
+                        	out.println("&nbsp;") ;
+                        	out.println("</th>") ;
+                        	createViewFunctionName(theViewUrl);
                         }
                         if (thePrintUrl!=null) {
-                            out.println("<th  width='14px'>") ;
-                            out.println("&nbsp;") ;
-                            out.println("</th>") ;
-                            createPrintFunctionName(thePrintUrl);
+                        	out.println("<th  width='14px'>") ;
+                        	out.println("&nbsp;") ;
+                        	out.println("</th>") ;
+                        	createPrintFunctionName(thePrintUrl);
                         }
                         if (theEditUrl!=null) {
-                            out.println("<th  width='14px'>") ;
-                            out.println("&nbsp;") ;
-                            out.println("</th>") ;
-                            createEditFunctionName(theEditUrl);
+                        	out.println("<th  width='14px'>") ;
+                        	out.println("&nbsp;") ;
+                        	out.println("</th>") ;
+                        	createEditFunctionName(theEditUrl);
                         }
                         if (theDeleteUrl!=null) {
-                            createDeleteFunctionName(theDeleteUrl);
-                            out.println("<th  width='14px'>") ;
-                            out.println("&nbsp;") ;
-                            out.println("</th>") ;
+                        	createDeleteFunctionName(theDeleteUrl);
+                        	out.println("<th  width='14px'>") ;
+                        	out.println("&nbsp;") ;
+                        	out.println("</th>") ;
                         }
                         for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
-                            Object obj = iterator.next();
-                            if (obj instanceof Button) {
-                                Button button = (Button) obj;
-                                button.printHeader(out);
-                            } else if (obj instanceof Column) {
-                                Column column = (Column) obj;
-                                column.printHeader(out);
-                            } else if (obj instanceof Textfield){
-                                Textfield textfield = (Textfield) obj;
-                                textfield.printHeader(out);
-                            }
+                        	Object obj = iterator.next();
+                        	if (obj instanceof Button) {
+								Button button = (Button) obj;
+	                        	button.printHeader(out);
+							} else if (obj instanceof Column) {
+								Column column = (Column) obj;
+	                            column.printHeader(out);
+							}
                         }
                         out.println("</tr>");
                     }
-
+                    
                     String firstId = null;
                     String lastId = null;
                     Object rowSum = null ;
                     boolean isFirstRow = true ;
                     boolean isSumColumn = false ;
                     for (Iterator colIter = col.iterator(); colIter.hasNext();) {
-                        Object row = colIter.next();
-                        if (isFirstRow) {
-                            rowSum = row ;
-                            //isFirstRow = false ;
-                        }
-
+                    	Object row = colIter.next();
+                    	if (isFirstRow) {
+                    		rowSum = row ;
+                    		//isFirstRow = false ;
+                    	}
+                        
                         //Tablable tablable = (Tablable) row ;
                         String currentId = decorator != null ? decorator.getId(row)
                                 : getIdByIdField(row) ;
@@ -538,74 +530,69 @@ public class TableTag extends AbstractGuidSupportTag {
                             out.println("<input id='"+typeId+"' name='"+typeId+"' type='checkbox' onclick='theTableArrow.onCheckBoxClick(this)'/>") ;
                             out.println("</td>") ;
                         }
-
-
-
+                        
+                        
+                       
                         if (theViewUrl!=null) {
-                            String goFunctionViewName=getViewFunctionName(currentId) ;
-                            //out.println() ;
-                            printCellView(out,"<img src='/skin/images/main/view1.png' alt='Просмотр записи' title='Просмотр записи' height='14' width='14'/>", goFunctionViewName) ;
+                        	String goFunctionViewName=getViewFunctionName(currentId) ;
+                        	//out.println() ;
+                        	printCellView(out,"<img src='/skin/images/main/view1.png' alt='Просмотр записи' title='Просмотр записи' height='14' width='14'/>", goFunctionViewName) ;
                         }
                         if (thePrintUrl!=null) {
-                            String goFunctionPrintName=getPrintFunctionName(currentId) ;
-                            printCellView(out,"<img src='/skin/images/main/print.png' alt='Печать записи' title='Печать записи' height='14' width='14'/>", goFunctionPrintName) ;
+                        	String goFunctionPrintName=getPrintFunctionName(currentId) ;
+                        	printCellView(out,"<img src='/skin/images/main/print.png' alt='Печать записи' title='Печать записи' height='14' width='14'/>", goFunctionPrintName) ;
                         }
                         if (theEditUrl!=null) {
-                            String goFunctionEditName=getEditFunctionName(currentId) ;
-                            printCellView(out,"<img src='/skin/images/main/edit.png' alt='Редактирование записи' title='Редактирование записи' height='14' width='14'/>", goFunctionEditName) ;
+                        	String goFunctionEditName=getEditFunctionName(currentId) ;
+                        	printCellView(out,"<img src='/skin/images/main/edit.png' alt='Редактирование записи' title='Редактирование записи' height='14' width='14'/>", goFunctionEditName) ;
                         }
                         if (theDeleteUrl!=null) {
-                            //out.println() ;
-                            String goFunctionDeleteName=getDeleteFunctionName(currentId) ;
-                            printCellView(out,"<img src='/skin/images/main/delete.png' alt='Удалить запись' title='Удалить запись' height='14' width='14'/>", goFunctionDeleteName) ;
-
+                        	//out.println() ;
+                        	String goFunctionDeleteName=getDeleteFunctionName(currentId) ;
+                        	printCellView(out,"<img src='/skin/images/main/delete.png' alt='Удалить запись' title='Удалить запись' height='14' width='14'/>", goFunctionDeleteName) ;
+                        	
                         }
-
+                        
                         String goFunctionMainName = getGoFunctionName(currentId) ;
-
+                        
                         for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
-                            Object obj = iterator.next();
-                            if (obj instanceof Button) {
-                                Button button = (Button) obj;
-                                button.printFunction(out, row);
-                            }
-                            else if (obj instanceof Textfield){
-                                Textfield textfield = (Textfield) obj;
-                                textfield.printFunction(out,row,currentId);
-                            }
-                            else if (obj instanceof Column) {
-                                Column column = (Column) obj;
-                                Object valueC ;
-                                if (theCellFunction) {
-                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName);
-                                } else {
-                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null);
-                                }
-                                if (!isFirstRow) {
-                                    if (valueC!=null) {
-                                        rowSum = column.amountCell(out, rowSum, valueC) ;
-                                        isSumColumn = true ;
-                                    }
-                                }
-                            }
+                        	Object obj = iterator.next();
+                        	if (obj instanceof Button) {
+								Button button = (Button) obj;
+								button.printFunction(out, row);
+							} else if (obj instanceof Column) {
+								Column column = (Column) obj;
+								Object valueC ;
+	                            if (theCellFunction) {
+	                            	valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName);
+	                            } else {
+	                            	valueC = column.printCell(out, row, goFunctionMainName, currentId,null);
+	                            }
+	                        	if (!isFirstRow) {
+	                        		if (valueC!=null) {
+	                        			rowSum = column.amountCell(out, rowSum, valueC) ;
+	                        			isSumColumn = true ;
+	                        		}
+	                        	}
+							}
                         }
 
-
+                        
                         //System.out.println("--->");
                         out.println("</tr>");
-                        if (isFirstRow) {
-                            //rowSum = row ;
-                            isFirstRow = false ;
-                        }
+                    	if (isFirstRow) {
+                    		//rowSum = row ;
+                    		isFirstRow = false ;
+                    	}
                     }
                     if (isSumColumn) {
-                        out.println("<tr>");
-                        if(theSelection!=null) {
+	                    out.println("<tr>");
+	                    if(theSelection!=null) {
                             out.println("<td>&nbsp;</td>") ;
                         }
-                        if (theViewUrl!=null) {
-                            out.println("<td>&nbsp;</td>") ;
-                        }
+	                    if (theViewUrl!=null) {
+	                    	out.println("<td>&nbsp;</td>") ;
+	                    }
                         if (thePrintUrl!=null) {
                             out.println("<td>&nbsp;</td>") ;
                         }
@@ -617,18 +604,14 @@ public class TableTag extends AbstractGuidSupportTag {
                         }
                         for (Iterator iterator = theCells.iterator(); iterator.hasNext();) {
                             Object obj = iterator.next();
-                            if (obj instanceof Button) {
-                                out.println("<td>&nbsp;</td>") ;
-                            }
-                            else if (obj instanceof Textfield) {
-                                out.println("<td>&nbsp;</td>") ;
-                            }
-                            else if (obj instanceof Column) {
-                                Column column = (Column) obj;
-                                column.printSumCell(out, rowSum, "", "");
-                            }
+	                    	if (obj instanceof Button) {
+	                    		out.println("<td>&nbsp;</td>") ;
+							} else if (obj instanceof Column) {
+								Column column = (Column) obj;
+								column.printSumCell(out, rowSum, "", "");
+							}
                         }
-                        out.println("</tr>");
+	                    out.println("</tr>");
                     }
 
                     if (theNavigationAction != null) {
@@ -653,29 +636,29 @@ public class TableTag extends AbstractGuidSupportTag {
             catch (Exception e) {
                 showException(e);
             } finally {
-                theCells.clear();
+            	theCells.clear();
             }
         }
         printIdeEnd();
         return EVAL_PAGE;
     }
     private Object getValueByProperty(Object aObject,String aProperty) {
-        Object value;
-        try {
-            value = PropertyUtil.getPropertyValue(aObject, aProperty) ;
-        } catch (Exception e) {
-            value = e + "";
-        }
-        return value ;
+    	Object value;
+    	try {
+    		value = PropertyUtil.getPropertyValue(aObject, aProperty) ;
+    	} catch (Exception e) {
+    		value = e + "";
+    	}
+    	return value ;
     }
     private String getIdByIdField(Object aRow) throws JspException {
         try {
-            return String.valueOf(PropertyUtil.getPropertyValue(aRow, theIdField));
+        	return String.valueOf(PropertyUtil.getPropertyValue(aRow, theIdField));
         } catch (Exception e) {
-
+        	
             throw new JspException("Ошибка получения свойства "+theIdField+ " у объекта "+
-                    aRow+" класса "
-                    +(aRow!=null?aRow.getClass().getName() : "NULL" ), e) ;
+            		aRow+" класса "
+            		+(aRow!=null?aRow.getClass().getName() : "NULL" ), e) ;
         }
     }
 
@@ -712,12 +695,12 @@ public class TableTag extends AbstractGuidSupportTag {
         StringBuffer sb = new StringBuffer(theNavigationAction) ;
         if(theNavigationAction.indexOf(".do")>=0) {
             if(theNavigationAction.indexOf('?')>=0) {
-                sb.append("&amp;") ;
+            	sb.append("&amp;") ;
             } else {
-                sb.append("?") ;
+            	sb.append("?") ;
             }
         } else {
-            sb.append(".do?") ;
+        	sb.append(".do?") ;
         }
         theNavigationAction=sb.toString() ;
 
@@ -744,225 +727,119 @@ public class TableTag extends AbstractGuidSupportTag {
 
             ITableDecorator decorator = (ITableDecorator) request.getAttribute(theDecorator);
             if(decorator==null) {
-                try {
-                    Class clazz = Class.forName(theDecorator) ;
-                    decorator = (ITableDecorator) clazz.newInstance() ;
-                } catch (Exception e) {
-                    throw new IllegalStateException("В request нет аттрибута "+theDecorator+". Ошибка при попытке из класса сделать объект: "+e.getMessage(),e) ;
-                }
+            	try {
+					Class clazz = Class.forName(theDecorator) ;
+					decorator = (ITableDecorator) clazz.newInstance() ;
+				} catch (Exception e) {
+					throw new IllegalStateException("В request нет аттрибута "+theDecorator+". Ошибка при попытке из класса сделать объект: "+e.getMessage(),e) ;
+				}
             }
             return decorator;
         }
     }
 
     static final class Button {
-        public Button(String aProperty,String aButtonShortName, String aButtonName
-                , String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
-            theProperty = aProperty;
-            theButtonName = aButtonName;
-            theCssClass = aCssClass;
-            theServleRequest = aRequest ;
-            if (aAddParam==null) aAddParam="" ;
-            theAddParam =aAddParam ;
-            theButtonFunction = aButtonFunction ;
-            theButtonShortName = aButtonShortName ;
-            theHideIfEmpty = aHideIfEmpty ;
-        }
+    	public Button(String aProperty,String aButtonShortName, String aButtonName
+    			, String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
+    		theProperty = aProperty;
+    		theButtonName = aButtonName;
+    		theCssClass = aCssClass;
+    		theServleRequest = aRequest ;
+    		if (aAddParam==null) aAddParam="" ;
+    		theAddParam =aAddParam ; 
+    		theButtonFunction = aButtonFunction ;
+    		theButtonShortName = aButtonShortName ;
+    		theHideIfEmpty = aHideIfEmpty ;
+    	}
+    	
+    	
+    	private void printHeader(JspWriter aOut) throws IOException {
+    		if (theCssClass != null) {
+    			aOut.print("<th");
+    			aOut.print(" class='");
+    			aOut.print(theCssClass);
+    			aOut.print("'>");
+    		} else {
+    			aOut.print("<th>");
+    		}
+    		//IdeTagHelper.getInstance().printMarker(, aJspContext)
+    		//aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
+    		//aOut.print(theButtonName);
+    		aOut.println("</th>");
+    	}
+    	
 
-
-
-
-        private void printHeader(JspWriter aOut) throws IOException {
-            if (theCssClass != null) {
-                aOut.print("<th");
-                aOut.print(" class='");
-                aOut.print(theCssClass);
-                aOut.print("'>");
-            } else {
-                aOut.print("<th>");
-            }
-            //IdeTagHelper.getInstance().printMarker(, aJspContext)
-            //aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
-            //aOut.print(theButtonName);
-            aOut.println("</th>");
-        }
-
-
-        private Object printFunction(JspWriter aOut, Object aObject) throws IOException {
-            String styleClass = "";
-
-            Object value;
-            //Object valueSum = null ;
-            try {
-                // value = PropertyUtils.getProperty(aObject, theProperty);
-                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+    	private Object printFunction(JspWriter aOut, Object aObject) throws IOException {
+    		String styleClass = "";
+    		
+    		Object value;
+    		//Object valueSum = null ;
+    		try {
+    			// value = PropertyUtils.getProperty(aObject, theProperty);
+    			value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
 //                System.out.println("value.getClass() = " + value.getClass());
-                if (value instanceof Time) {
-                    value = DateFormat.formatToTime((Time) value);
+    			if (value instanceof Time) {
+    				value = DateFormat.formatToTime((Time) value);
+    				
+    			} else  if (value instanceof Date) {
+    				value = DateFormat.formatToDate((Date) value);
+    				
+    			} else if (value instanceof Boolean) {
+    				Boolean booleanValue = (Boolean) value ;
+    				if(booleanValue!=null && booleanValue) {
+    					value = "1" ;
+    				} else {
+    					value = "0" ;
+    				}
+    			}
+    			
+    		} catch (Exception e) {
+    			value = e + "";
+    		}
+    		if (theCssClass != null) {
+    			styleClass += " " + theCssClass;
+    		}
+    		aOut.print("<td ");
+    		
+    		if (theButtonName!=null) {
+    			aOut.print("title=\"");
+    			aOut.print(theButtonName) ;
+    			aOut.print("\" ");
+    		}
+    		aOut.print(" class='") ;
+    		aOut.print(styleClass);
+    		aOut.print(' ');
+    		aOut.print(theProperty);
+    		aOut.print("'>");
+    		if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
+	    		aOut.print("<input type='button' onclick=\"");
+	    		aOut.print(getGoFunctionName(theButtonFunction,value != null ? value : "",theAddParam)) ;
+	    		aOut.print("\" value=\""+theButtonShortName+"\"") ;
+	    		if (theButtonName!=null) {
+	    			aOut.print(" title=\"");
+	    			aOut.print(theButtonName) ;
+	    			aOut.print("\" ");
+	    		}
+	    		aOut.println(">"); 
+	    	}
+    		aOut.print("</td>");
+    		
+    		return "" ;
+    	}
+    	
+    	
+    	private final String theProperty;
+    	private final String theButtonShortName;
+    	private final String theButtonName;
+    	private final String theButtonFunction;
+    	private final boolean theHideIfEmpty;
 
-                } else  if (value instanceof Date) {
-                    value = DateFormat.formatToDate((Date) value);
-
-                } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
-                        value = "1" ;
-                    } else {
-                        value = "0" ;
-                    }
-                }
-
-            } catch (Exception e) {
-                value = e + "";
-            }
-            if (theCssClass != null) {
-                styleClass += " " + theCssClass;
-            }
-            aOut.print("<td ");
-
-            if (theButtonName!=null) {
-                aOut.print("title=\"");
-                aOut.print(theButtonName) ;
-                aOut.print("\" ");
-            }
-            aOut.print(" class='") ;
-            aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print(theProperty);
-            aOut.print("'>");
-            if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
-                aOut.print("<input type='button' onclick=\"");
-                aOut.print(getGoFunctionName(theButtonFunction,value != null ? value : "",theAddParam)) ;
-                aOut.print("\" value=\""+theButtonShortName+"\"") ;
-                if (theButtonName!=null) {
-                    aOut.print(" title=\"");
-                    aOut.print(theButtonName) ;
-                    aOut.print("\" ");
-                }
-                aOut.println(">");
-            }
-            aOut.print("</td>");
-
-            return "" ;
-        }
-
-
-        private final String theProperty;
-        private final String theButtonShortName;
-        private final String theButtonName;
-        private final String theButtonFunction;
-        private final boolean theHideIfEmpty;
-
-        private final String theCssClass;
-        private final HttpServletRequest theServleRequest ;
-        private final String theAddParam ;
-
-
-    }
-
-    static final class Textfield {
-
-        public Textfield(String aProperty,String aTextfieldShortName, String aTextfieldName
-                , String aTextfieldFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
-            theProperty = aProperty;
-            theTextfieldName = aTextfieldName;
-            theCssClass = aCssClass;
-            theServleRequest = aRequest ;
-            if (aAddParam==null) aAddParam="" ;
-            theAddParam =aAddParam ;
-            theTextfieldFunction = aTextfieldFunction ;
-            theTextfieldShortName = aTextfieldShortName ;
-            theHideIfEmpty = aHideIfEmpty ;
-        }
-
-
-        private void printHeader(JspWriter aOut) throws IOException {
-            if (theCssClass != null) {
-                aOut.print("<th");
-                aOut.print(" class='");
-                aOut.print(theCssClass);
-                aOut.print("'>");
-            } else {
-                aOut.print("<th>");
-            }
-            aOut.println("</th>");
-        }
-
-
-        private Object printFunction(JspWriter aOut, Object aObject,String aGoFunctionName) throws IOException {
-            String styleClass = "";
-
-            Object value;
-            //Object valueSum = null ;
-            try {
-                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
-                if (value instanceof Time) {
-                    value = DateFormat.formatToTime((Time) value);
-
-                } else  if (value instanceof Date) {
-                    value = DateFormat.formatToDate((Date) value);
-
-                } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
-                        value = "1" ;
-                    } else {
-                        value = "0" ;
-                    }
-                }
-
-            } catch (Exception e) {
-                value = e + "";
-            }
-            if (theCssClass != null) {
-                styleClass += " " + theCssClass;
-            }
-            aOut.print("<td ");
-
-            if (theTextfieldName!=null) {
-                aOut.print("title=\"");
-                aOut.print(theTextfieldName) ;
-                aOut.print("\" ");
-            }
-            aOut.print(" class='") ;
-            aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print(theProperty);
-            aOut.print("'>");
-            if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
-                aOut.print("<input type='text' onclick=\"");
-                aOut.print(aGoFunctionName) ;
-                aOut.print(getGoFunctionName(theTextfieldFunction,value != null ? value : "",theAddParam)) ;
-                aOut.print("\" value=\""+theTextfieldShortName+"\"") ;
-                if (theTextfieldName!=null) {
-                    aOut.print(" title=\"");
-                    aOut.print(theTextfieldName) ;
-                    aOut.print("\" ");
-                }
-
-                //aOut.print("'");
-                aOut.print("id=\"text_");
-                aOut.print(aGoFunctionName);
-                aOut.print("\"");
-                aOut.println(">");
-            }
-            aOut.print("</td>");
-
-            return "" ;
-        }
-
-
-        private final String theProperty;
-        private final String theTextfieldShortName;
-        private final String theTextfieldName;
-        private final String theTextfieldFunction;
-        private final boolean theHideIfEmpty;
-
-        private final String theCssClass;
-        private final HttpServletRequest theServleRequest ;
-        private final String theAddParam;
-    }
-
+    	private final String theCssClass;
+    	private final HttpServletRequest theServleRequest ;
+    	private final String theAddParam ;
+    	
+    	
+   }
     static final class Column {
         public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam) {
             theProperty = aProperty;
@@ -973,12 +850,12 @@ public class TableTag extends AbstractGuidSupportTag {
             theGuid = aGuid ;
             theIsCalcAmount = aIsCalcAmount ;
             if (aAddParam==null) aAddParam="" ;
-            theAddParam =aAddParam ;
-
+            theAddParam =aAddParam ; 
+            
         }
 
         @SuppressWarnings("unused")
-        private boolean isIdColumn() {
+		private boolean isIdColumn() {
             return theIdColumn;
         }
 
@@ -998,93 +875,93 @@ public class TableTag extends AbstractGuidSupportTag {
         }
 
         @SuppressWarnings("unused")
-        private void printCellView(JspWriter aOut,String aValue, String aGoFunctionName) throws IOException {
-            String styleClass = " viewButton ";
-
-            aOut.print("<td onclick=\"");
-            aOut.print(aGoFunctionName) ;
-            //aOut.print("('") ;
+		private void printCellView(JspWriter aOut,String aValue, String aGoFunctionName) throws IOException {
+        	String styleClass = " viewButton ";
+        	
+        	aOut.print("<td onclick=\"");
+        	aOut.print(aGoFunctionName) ;
+        	//aOut.print("('") ;
 //            aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-            //aOut.print(aId) ;
-            //aOut.print("')");
-            aOut.print("\"");
-            aOut.print(" class='") ;
-            aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print("'>");
-            aOut.print(aValue);
-            aOut.println("</td>");
+        	//aOut.print(aId) ;
+        	//aOut.print("')");
+        	aOut.print("\"");
+        	aOut.print(" class='") ;
+        	aOut.print(styleClass);
+        	aOut.print(' ');
+        	aOut.print("'>");
+        	aOut.print(aValue);
+        	aOut.println("</td>");
         }
-
+        
         private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle) throws IOException {
-            String styleClass = "";
-
-            Object value;
-            Object valueSum = null ;
-            try {
-                // value = PropertyUtils.getProperty(aObject, theProperty);
-                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+        	String styleClass = "";
+        	
+        	Object value;
+        	Object valueSum = null ;
+        	try {
+        		// value = PropertyUtils.getProperty(aObject, theProperty);
+        		value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
 //                System.out.println("value.getClass() = " + value.getClass());
-                if (value instanceof Time) {
-                    value = DateFormat.formatToTime((Time) value);
-                    styleClass = "time";
-                } else  if (value instanceof Date) {
-                    value = DateFormat.formatToDate((Date) value);
-                    styleClass = "date";
-                } else if (value instanceof Number) {
-                    styleClass = "number";
-                } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue!=null && booleanValue) {
-                        value = "Да" ;
-                        styleClass = "boolean";
-                    } else {
-                        value = "Нет" ;
-                        styleClass = "boolean booleanNoValue";
-                    }
-                } else if(value instanceof String) {
-                    if(DemoModeUtil.isInDemoMode(theServleRequest)) {
-                        value = DemoModeUtil.secureValue(value);
-                    }
-                }
-
-            } catch (Exception e) {
-                value = e + "";
-            }
-            if (theCssClass != null) {
-                styleClass += " " + theCssClass;
-            }
-            aOut.print("<td ");
-            if (aTitle!=null) {
-                aOut.print("title=\"");
-                aOut.print(aTitle) ;
-                aOut.print("\" ");
-            }
-            aOut.print("onclick=\"");
-            aOut.print(aGoFunctionName) ;
-            //aOut.print("('") ;
+        		if (value instanceof Time) {
+        			value = DateFormat.formatToTime((Time) value);
+        			styleClass = "time";
+        		} else  if (value instanceof Date) {
+        			value = DateFormat.formatToDate((Date) value);
+        			styleClass = "date";
+        		} else if (value instanceof Number) {
+        			styleClass = "number";
+        		} else if (value instanceof Boolean) {
+        			Boolean booleanValue = (Boolean) value ;
+        			if(booleanValue!=null && booleanValue) {
+        				value = "Да" ;
+        				styleClass = "boolean";
+        			} else {
+        				value = "Нет" ;
+        				styleClass = "boolean booleanNoValue"; 
+        			}
+        		} else if(value instanceof String) {
+        			if(DemoModeUtil.isInDemoMode(theServleRequest)) {
+        				value = DemoModeUtil.secureValue(value);
+        			}
+        		}
+        		
+        	} catch (Exception e) {
+        		value = e + "";
+        	}
+        	if (theCssClass != null) {
+        		styleClass += " " + theCssClass;
+        	}
+        	aOut.print("<td ");
+        	if (aTitle!=null) {
+	        	aOut.print("title=\"");
+	        	aOut.print(aTitle) ;
+	        	aOut.print("\" ");
+        	}
+        	aOut.print("onclick=\"");
+        	aOut.print(aGoFunctionName) ;
+        	//aOut.print("('") ;
 //            aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-            //aOut.print(aId) ;
-            //aOut.print("')");
-            aOut.print("\"");
-            aOut.print(" class='") ;
-            aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print(theProperty);
-            aOut.print("'>");
-            aOut.print(value != null ? value : "&nbsp;");
-            aOut.println("</td>");
-            if (theIsCalcAmount) {
-                valueSum = value ;
-            }
-            return valueSum ;
+        	//aOut.print(aId) ;
+        	//aOut.print("')");
+        	aOut.print("\"");
+        	aOut.print(" class='") ;
+        	aOut.print(styleClass);
+        	aOut.print(' ');
+        	aOut.print(theProperty);
+        	aOut.print("'>");
+        	aOut.print(value != null ? value : "&nbsp;");
+        	aOut.println("</td>");
+        	if (theIsCalcAmount) {
+        		valueSum = value ;
+        	}
+        	return valueSum ;
         }
         private void printSumCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId) throws IOException {
             String styleClass = "";
             Object value;
             try {
                 // value = PropertyUtils.getProperty(aObject, theProperty);
-                value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
+            	value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
 //                System.out.println("value.getClass() = " + value.getClass());
                 if (value instanceof Time) {
                     value = DateFormat.formatToTime((Time) value);
@@ -1101,12 +978,12 @@ public class TableTag extends AbstractGuidSupportTag {
                         styleClass = "boolean";
                     } else {
                         value = "Нет" ;
-                        styleClass = "boolean booleanNoValue";
+                        styleClass = "boolean booleanNoValue"; 
                     }
                 } else if(value instanceof String) {
-                    if(DemoModeUtil.isInDemoMode(theServleRequest)) {
-                        value = DemoModeUtil.secureValue(value);
-                    }
+                	if(DemoModeUtil.isInDemoMode(theServleRequest)) {
+                		value = DemoModeUtil.secureValue(value);
+                	}
                 }
 
             } catch (Exception e) {
@@ -1127,34 +1004,34 @@ public class TableTag extends AbstractGuidSupportTag {
             if (theIsCalcAmount) {
                 aOut.print(value != null ? value : "&nbsp;");
             } else {
-                aOut.print("&nbsp;");
+            	aOut.print("&nbsp;");
             }
             aOut.println("</td>");
         }
         private Object amountCell(JspWriter aOut, Object aObject, Object aValue) throws IOException {
             Object value;
             try {
-                BigDecimal val1 = new BigDecimal(aValue!=null?""+aValue:"0") ;
+            	BigDecimal val1 = new BigDecimal(aValue!=null?""+aValue:"0") ;
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
                 BigDecimal val2 ;
                 if (value instanceof Number) {
-                    val2 = new BigDecimal(value!=null?""+value:"0") ;
+                	val2 = new BigDecimal(value!=null?""+value:"0") ;
                 } else if (value instanceof String) {
-                    val2 = new BigDecimal((String)value) ;
+                	val2 = new BigDecimal((String)value) ;
                 } else {
-                    val2 = new BigDecimal((String)value);
+                	val2 = new BigDecimal((String)value);
                 }
                 //val2 = val1+val2 ;
                 String val3 = new StringBuilder().append(val1.add(val2)).toString() ;
-
+            	
                 PropertyUtil.setPropertyValue(aObject, theProperty, val3) ;
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
                 //System.out.println("val1="+val1+" val2="+val2+" val3="+val3+" valSum="+value) ;
             } catch (Exception e) {
-                e.printStackTrace();
-            }
+				e.printStackTrace();
+			}
             return aObject ;
-//
+//              
         }
 
         private final String theProperty;
@@ -1182,22 +1059,22 @@ public class TableTag extends AbstractGuidSupportTag {
     private String theIdField ;
     /** Тип выделения */
     private String theSelection ;
+    
 
 
-
-    /** Url печати */
-    private String thePrintUrl;
+	/** Url печати */
+	private String thePrintUrl;
     /** Url удаления записи */
-    private String theDeleteUrl;
-    /** Url просмотра записи */
-    private String theViewUrl;
+	private String theDeleteUrl;
+	/** Url просмотра записи */
+	private String theViewUrl;
     /** Запретить поддержку клавиш */
     private boolean theDisableKeySupport = false ;
     String theFunctionDeleteName ;
     String theFunctionEditName ;
     String theFunctionPrintName ;
     String theFunctionViewName ;
-
+    
 
     /**
      * Аттрибут для кнопки отправки таблицы в excel
@@ -1205,8 +1082,21 @@ public class TableTag extends AbstractGuidSupportTag {
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-    public String getPrintToExcelButton() {return thePrintToExcelButton;}
-    public void setPrintToExcelButton(String aPrintToExcelButton) {thePrintToExcelButton = aPrintToExcelButton;}
-    /** Кнопка для печати */
-    String thePrintToExcelButton;
+	public String getPrintToExcelButton() {return thePrintToExcelButton;}
+	public void setPrintToExcelButton(String aPrintToExcelButton) {thePrintToExcelButton = aPrintToExcelButton;}
+	/** Кнопка для печати */
+	String thePrintToExcelButton;
+
+    /**
+     * Открывать ссылки в новом окне
+     * @jsp.attribute   description = "Открывтаь ссылку в новом окне"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+    public Boolean getOpenNewWindow() {return theOpenNewWindow;}
+    public void setOpenNewWindow(Boolean aOpenNewWindow) {theOpenNewWindow = aOpenNewWindow;}
+    /** Открыть ссылку в новом окне */
+    Boolean theOpenNewWindow;
+
+
 }
