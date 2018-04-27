@@ -171,7 +171,6 @@ public class PharmnetServiceJs {
             goodsLeaveEntities.add(goodsLeaveEntity);
         }
 
-        //StringBuilder result =new StringBuilder();
         Float qnt = Float.valueOf(amountMedserv);
         for(PharmnetComplectRowEntity c:pharmnetComplectRowEntityList ) {
             for (GoodsLeaveEntity g: goodsLeaveEntities) {
@@ -192,13 +191,98 @@ public class PharmnetServiceJs {
         return "";
     }
 
+    /** получить остаток для инвентаризации */
+    public String getGoodsleave(String goodsLeaveId,HttpServletRequest aRequest) throws NamingException {
+
+        Collection<WebQueryResult> goodsl = Injection.find(aRequest)
+                .getService(IWebQueryService.class)//gl.qntost ,gl.uqntost,
+                .executeNativeSql("select  vg.drug,vg.form," +
+                        " cast(gl.qntost as text) as qn," +
+                        " cast(gl.uqntost as text) as uqn," +
+                        " cast(vg.countinpack as text) as countinpack" +
+                        " from goodsleave  gl\n" +
+                        " left join vocgoods vg on vg.regid = gl.regid\n" +
+                        " where gl.id="+goodsLeaveId);
+
+        StringBuilder html = new StringBuilder();
+        html.append("<table><tbody>");
+        for(WebQueryResult wqr : goodsl){
+            html.append("<input size=\"1\" name=\"department\" value=\""+wqr.get5()+"\" id=\"countinpack\" type=\"hidden\">");
+            html.append("<tr> " +
+                    "<td colspan=\"1\" class=\"label\"> <label> Наименование: </label></td> "+
+                    "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\""+wqr.get1()+"\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>" +
+                    "</tr> ");
+            html.append("<tr> " +
+                    "<td colspan=\"1\" class=\"label\"> <label> Форма: </label></td> "+
+                    "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\""+wqr.get2()+"\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>" +
+                    "</tr> ");
+            html.append("<tr> " +
+                    "<td colspan=\"1\" class=\"label\"> <label> Количество: </label></td> "+
+                    "<td colspan=\"1\" class=\"label\"> <input id=\"qcount\" size=\"55\" value=\""+wqr.get3()+"\" type=\"text\"></td>" +
+                    "</tr> ");
+            html.append("<tr> " +
+                    "<td colspan=\"1\" class=\"label\"> <label> Количество упаковок: </label></td> "+
+                    "<td colspan=\"1\" class=\"label\"> <input id=\"ucount\" size=\"55\" value=\""+wqr.get4()+"\" type=\"text\"></td>" +
+                    "</tr> ");
+        }
+        html.append("</tbody></table>");
+        return html.toString();
+    }
+
+
+    /** сохранить результат инвентаризации*/
+    public String saveInvent(String goodleavId,String qcount,String uqount,String username,HttpServletRequest aRequest)
+            throws NamingException {
+
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder sql = new StringBuilder();
+        sql.append("select PharmnetInventorEdit ("+goodleavId+",'"+username+"','"+qcount+"','"+uqount+"')");
+
+        System.out.println(sql.toString());
+        service.executeNativeSql(sql.toString());
+        return "";
+    }
+    /** получить список для инвентаризации */
+    public String getInventTable(String storId,HttpServletRequest aRequest)
+            throws NamingException {
+        Collection<WebQueryResult> goodsl = Injection.find(aRequest)
+                .getService(IWebQueryService.class)
+                .executeNativeSql("select gl.regid, vg.drug,vg.form, cast(gl.qntost as text),cast(gl.uqntost as text),to_char(gl.srokg,'dd.MM.yyyy') as srok, gl.id from goodsleave gl\n" +
+                        "left join vocgoods vg on vg.regid = gl.regid\n" +
+                        "where gl.nextstate is null and gl.storageid = "+storId);
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("<table class='tabview sel tableArrow' border='1'><tbody><tr>");
+        sql.append("<th class='idetag tagnameCol'>Id</th>" +
+                "<th class='idetag tagnameCol'>Наименование</th>" +
+                "<th class='idetag tagnameCol'>Форма</th>" +
+                "<th class='idetag tagnameCol'>Количество</th>" +
+                "<th class='idetag tagnameCol'>Кол-во упаковок</th>" +
+                "<th class='idetag tagnameCol'>Срок годности</th>" +
+                "</tr>");
+        for (WebQueryResult wqr: goodsl) {
+            String tempId = "onclick=\"showMyPharmInventory('"+wqr.get7()+"')\"";
+            sql.append("<tr"+tempId+"><td "+tempId+">");
+            sql.append(wqr.get1()+"</td><td "+tempId+">");
+            sql.append(wqr.get2()+"</td><td "+tempId+">");
+            sql.append(wqr.get3()+"</td><td "+tempId+">");
+            sql.append(wqr.get4()+"</td><td "+tempId+">");
+            sql.append(wqr.get5()+"</td><td "+tempId+">");
+            sql.append(wqr.get6()+"</td>");
+            sql.append("</td></tr>");
+        }
+
+        sql.append("</tbody></table>");
+        return sql.toString();
+
+    }
     public String getBalance(String storId,HttpServletRequest aRequest)
             throws NamingException {
         Collection<WebQueryResult> goodsl = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
                 .executeNativeSql("select gl.regid, vg.drug,vg.form, cast(gl.qntost as text),cast(gl.uqntost as text),to_char(gl.srokg,'dd.MM.yyyy') as srok from goodsleave gl\n" +
                         "left join vocgoods vg on vg.regid = gl.regid\n" +
-                        "where gl.storageid = "+storId);
+                        "where gl.nextstate and gl.storageid = "+storId);
 
         StringBuilder sql = new StringBuilder();
 
