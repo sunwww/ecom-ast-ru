@@ -270,20 +270,23 @@ function printAttorney (aCtx) {
 }
 function printContractByAccrual(aCtx, aParams) {
 	var pid = aParams.get("id");
-	var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService" 
-		+"	, cams.countMedService*cams.cost as sumNoAccraulMedService"
-		+"  ,round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc" 
-		+"  ,round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc"
-		+", cao.discount"
-		+"		from MedContract mc "
-		+"		left join ContractAccount ca on ca.contract_id = mc.id"
-		+"		left join ContractAccountMedService cams on cams.account_id=ca.id"
-		+"		left join PriceMedService pms on pms.id=cams.medService_id"
-		+"		left join PricePosition pp on pp.id=pms.pricePosition_id"
-		+"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
-		+"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'"
-		+"		where cao.id='"+pid+"'"
-		+"		group by  cams.id, pp.code, pp.name,pp.printComment , cams.countMedService,cams.cost,cao.discount";
+    var sqlQuery ="select cams.id, pp.code,pp.name||' '||coalesce(pp.printComment,'') as ppname,cams.cost,cams.countMedService"
+        +"	,cams.countMedService*cams.cost as sumNoAccraulMedService"
+        +"  ,round((cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as costDisc"
+        +"  ,round(cams.countMedService*(cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as sumNoAccraulMedServiceDisc"
+        +" ,ca.discountDefault as cadiscountDefault"
+        +" ,priv.serialdoc||' '||priv.numberdoc||' ('||vpc.name||')' as privil" +
+        " ,cams.cost*cams.countMedService as tarif "
+        +"		from ContractAccount ca"
+        +"		left join ContractAccountMedService cams on cams.account_id=ca.id"
+        +"		left join PriceMedService pms on pms.id=cams.medService_id"
+        +"		left join PricePosition pp on pp.id=pms.pricePosition_id"
+        +"		left join ContractAccountOperationByService caos on caos.accountMedService_id=cams.id"
+        +"		left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'" +
+        "	    left join privilege priv on priv.id = ca.privilege_id" +
+        " 		left join vocprivilegecategory vpc on vpc.id = priv.category_id"
+        +"		where ca.id='"+pid+"' and cao.id is null and caos.id is null"
+        +"		group by  cams.id, pp.code, pp.name, pp.printComment , cams.countMedService,cams.cost,ca.discountDefault,priv.numberdoc,priv.serialdoc,vpc.name";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
 	
