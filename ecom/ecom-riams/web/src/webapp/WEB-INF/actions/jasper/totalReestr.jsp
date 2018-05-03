@@ -40,7 +40,7 @@
                                 var sstream=document.getElementById("serviceStreamName").value;
                                 if (sstream[sstream.length-1]==' ') sstream=sstream.substring(0,sstream.length-1);
                                 window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F2KSG&standAlone=true&decorate=no"
-                                    + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&sstream="+ sstream + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value);
+                                    + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&sstream="+ sstream + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML);
                             }
                             else
                                 alert("Нет настройки адреса сервиса!");

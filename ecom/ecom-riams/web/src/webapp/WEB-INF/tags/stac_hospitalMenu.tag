@@ -346,7 +346,7 @@ function gotoNewBornHistory(aMedCase,aUrl) {
                   var stat=$('statCardNumber').value;
                   var year=$('dateStart').value.substring(6,11);
                   window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F1KSG_at2&standAlone=true&decorate=no"
-                      + "&j_username=" + resMas[1] + "&j_password=" + resMas[2]+"&hn="+stat+"&fy="+year+"&");
+                      + "&j_username=" + resMas[1] + "&j_password=" + resMas[2]+"&hn="+stat+"&fy="+year+ "&user=" + document.getElementById('current_username_li').innerHTML);
               }
               else
                   alert("Нет настройки адреса сервиса!");
