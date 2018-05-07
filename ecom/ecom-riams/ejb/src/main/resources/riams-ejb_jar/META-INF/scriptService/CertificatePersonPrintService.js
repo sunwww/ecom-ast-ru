@@ -274,8 +274,6 @@ function printContractByAccrual(aCtx, aParams) {
         ", cams.countMedService*cams.cost as sumNoAccraulMedService\n" +
         ",round((cams.cost*(100-coalesce(cao.discount,0))/100),2) as costDisc \n" +
         ",round(cams.countMedService*(cams.cost*(100-coalesce(cao.discount,0))/100),2) as sumNoAccraulMedServiceDisc\n" +
-        ", cao.discount\n" +
-        ",round(cams.countMedService*(cams.cost*(100-coalesce(ca.discountDefault,0))/100),2) as sumNoAccraulMedServiceDisc\n" +
         ",ca.discountDefault as cadiscountDefault\n" +
         ",priv.serialdoc||' '||priv.numberdoc||' ('||vpc.name||')' as privil \n" +
         ",cams.cost*cams.countMedService as tarif \n" +
@@ -288,7 +286,7 @@ function printContractByAccrual(aCtx, aParams) {
         "left join ContractAccountOperation cao on cao.id=caos.accountOperation_id and cao.dtype='OperationAccrual'\n" +
         "left join privilege priv on priv.id = ca.privilege_id \n" +
         "left join vocprivilegecategory vpc on vpc.id = priv.category_id\n" +
-        "where cao.id="+pid+ "\n" +
+        "where cao.id="+pid+"\n" +
         "group by  cams.id, pp.code, pp.name, pp.printComment , cams.countMedService,cams.cost,ca.discountDefault,priv.numberdoc,priv.serialdoc,vpc.name,cao.discount";
 	var list = aCtx.manager.createNativeQuery(sqlQuery).getResultList();
 	var servisec = new java.util.ArrayList() ;
