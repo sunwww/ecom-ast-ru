@@ -2948,4 +2948,14 @@ left join medcase smoP on smoP.owner_id=w.id "
 			queried = 'name'
 		/>
 	</voc>
+
+	<voc id="vocBranch" type="NativeVocService">
+		<NativeVocService
+				from="vocbranch vb "
+				nameId="vb.branchid"
+				join=" " order=""
+				names="vb.branch"
+				queried=" upper(vb.branch) like upper(:query) "
+		/>
+	</voc>
 </vocconfig>

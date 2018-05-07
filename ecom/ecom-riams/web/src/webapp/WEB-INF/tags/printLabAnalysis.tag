@@ -52,13 +52,13 @@
                     if (res!="##") {
                         var all = res.split('!') ;
                         var table = document.getElementById('table1');
-                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Услуга</th><th align=\"center\" width=\"150\">Печатать?  <input type=\"checkbox\" id=\"allChb${name}\" onclick=\"javascript:checkAllChanged${name}CloseDocument()\"/></th></tr>";
+                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Услуга</th><th align=\"center\" width=\"150\">Печатать?  <input type=\"checkbox\" checked id=\"allChb${name}\" onclick=\"javascript:checkAllChanged${name}CloseDocument()\"/></th></tr>";
                         for (var i=0; i<all.length-1; i++) {
                             var result=all[i].split('#');
                             var tr = document.createElement('tr');
                             var td1 = document.createElement('td');
                             var td2 = document.createElement('td');
-                            td1.innerHTML = result[0];td2.innerHTML = "<input type=\"checkbox\" id="+ result[1]+" name="+result[0]+">";
+                            td1.innerHTML = result[0];td2.innerHTML = "<input type=\"checkbox\" checked id="+ result[1]+" name="+result[0]+">";
                             td1.align = "center"; td2.align = "center";
                             tr.appendChild(td1);tr.appendChild(td2);
                             table.appendChild(tr);

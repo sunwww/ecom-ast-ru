@@ -150,19 +150,18 @@
                         window.onload = function() {
                             if ($('screenFileName').value!=null && $('screenFileName').value!="") {
                                 var image = document.getElementById("fileinfo") ;
-                                image.src="/screenShotDir/"+$('screenFileName').value;
+                                image.src=$('screenFileName').value;
                                 image.removeAttribute("hidden");
                             }
-                        }
+                        };
                         <msh:ifFormTypeIsNotView formName="mis_claimForm">
                         window.onload = function() {
                             ($('description')).setAttribute("readonly","false"); //не даёт сохранить - просто перезагружает страницу (при viewOnlyField=true)
                             if ($('screenFileName').value!=null && $('screenFileName').value!="") {
                                 var image = document.getElementById("fileinfo") ;
-                                image.src="/screenShotDir/"+$('screenFileName').value;
+                                image.src=$('screenFileName').value;
                                 image.removeAttribute("hidden");
-                            }
-                        }
+                        };
                         </msh:ifFormTypeIsNotView>
                     </script>
                 </msh:ifFormTypeAreViewOrEdit>

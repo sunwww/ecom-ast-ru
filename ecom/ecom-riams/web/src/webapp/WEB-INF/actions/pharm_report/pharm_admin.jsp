@@ -12,10 +12,9 @@
     <tiles:put name="side" type="string">
     <msh:sideMenu title="Администрирование">
         <msh:sideLink styleId="viewShort" action="/entityList-pharmnet_complect" name="Комплекты" title="Перейти к списку отделений"/>
-        <msh:sideLink styleId="viewShort" action="/pharm_balance.do" name='Остатки по складам' title="Просмотр остатков" params=""/>
-     <%--   <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='Инвентаризация' title="Просмотр визитов по пациенту" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-        <msh:sideLink styleId="viewShort" action="/javascript:viewOtherVisitsByPatient('.do')" name='Склады' title="Просмотр визитов по пациенту" params="" roles="/Policy/Mis/MedCase/Visit/View" />
-    --%>
+       <%-- <msh:sideLink styleId="viewShort" action="/pharm_balance.do" name='Остатки по складам' title="Просмотр остатков" params=""/>--%>
+        <msh:sideLink styleId="viewShort" action="/pharm_inventar.do" name='Инвентаризация' title="Инвентаризация" params=""/>
+        <msh:sideLink styleId="viewShort" action="/entityList-pharmnet_storage.do" name='Склады' title="Просмотр скалдов" params=""/>
     </msh:sideMenu>
     </tiles:put>
 
