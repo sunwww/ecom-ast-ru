@@ -141,11 +141,11 @@
                         +checkTime(now.getMilliseconds())+"_" + document.getElementById("current_username_li").innerHTML+".png";
                     ClaimService.postRequestWithErrorScrean(img,fileName,{
                         callback: function (res) {
-                            if (res==true) {
+                            if (res!=null) {
                                 if (document.getElementsByClassName("errorMessage")[0] != null)
-                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + fileName + "&description=" + document.getElementsByClassName("errorMessage")[0].innerText.substr(7);
+                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=" + document.getElementsByClassName("errorMessage")[0].innerText.substr(7);
                                 else
-                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + fileName + "&description=Описание в скриншоте";
+                                    window.location = "entityPrepareCreate-mis_claim.do?img=" + res + "&description=Описание в скриншоте";
                             }
                         }
                     });

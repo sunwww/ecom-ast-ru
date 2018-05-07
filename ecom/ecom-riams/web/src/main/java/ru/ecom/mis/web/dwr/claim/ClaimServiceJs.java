@@ -137,9 +137,11 @@ public class ClaimServiceJs {
 		else res.append("##");
 		return res.toString();
 	}
-	//lastrealease milamesher 14.03.2018 #77
-	//Сохранение скриншота ошибки
-	public Boolean postRequestWithErrorScrean(String file,String filename,HttpServletRequest aRequest) throws IOException {
+	//lastrealease milamesher 07.05.2018 #77:
+	// Сохранение скриншота ошибки
+	// Переименование папки для единообразия всех настроек
+	// Один метод сохранения файла на сервер (по полному пути из настроек), который возвращает его относительный путь
+	public String postRequestWithErrorScrean(String file,String filename,HttpServletRequest aRequest) throws IOException {
 		String base64Image = file.split(",")[1];
 		BufferedImage image = null;
 		byte[] imageByte;
@@ -150,10 +152,14 @@ public class ClaimServiceJs {
 		image = ImageIO.read(bis);
 		bis.close();
 		EjbEcomConfig cnf = EjbEcomConfig.getInstance();
-		String fileway=cnf.get("tomcat.screeenShot.dir","/opt/tomcat/webapps/screenShotDir");
+		String fileway=cnf.get("tomcat.screenshot.dir","/opt/tomcat/webapps/screenshotdir/");
+		String retVal=fileway;
 		fileway=fileway.equals("")? fileway:fileway+"/";
 		File outputfile = new File(fileway+filename);
 		ImageIO.write(image, "png", outputfile);
-		return true;
+        //в конце должна быть папка /имя_конечной_папки/
+        if (!retVal.startsWith("/")) retVal="/"+retVal;
+        if (retVal.endsWith("/")) retVal=retVal.substring(0,retVal.length()-1);
+		return retVal.substring(retVal.lastIndexOf("/"))+"/"+filename;
 	}
 }
