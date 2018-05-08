@@ -20,7 +20,7 @@ import ru.nuzmsh.forms.validator.validators.MaxLength;
 @Entity
 @AIndexes({
 		@AIndex(properties="patient")
-		,@AIndex(properties="depMedCase")
+		,@AIndex(properties="depMedcase")
 })
 @Table(schema="SQLUser")
 public class AssessmentCard extends BaseEntity {
