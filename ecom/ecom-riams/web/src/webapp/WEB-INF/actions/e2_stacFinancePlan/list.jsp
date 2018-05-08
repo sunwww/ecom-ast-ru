@@ -24,7 +24,7 @@
             ,fp.startDate, mhp.code||' '||mhp.name as profile
             ,ml.name as department
             ,ksg.code||' '||ksg.name as ksg
-            ,fp.amount
+            ,fp.count
             ,fp.cost
              from financePlan fp
              left join vocksg ksg on ksg.id=fp.ksg_id
