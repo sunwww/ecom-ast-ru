@@ -5,12 +5,10 @@ import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.expert2.domain.voc.VocListEntryType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 
 /**
  * Список записей (заполнение
@@ -92,7 +90,6 @@ public class E2ListEntry extends BaseEntity {
         theCreateTime=new java.sql.Time(currentTime);
         theIsDeleted=false;
         theIsClosed=false;
-
     }
 
     /** Удаленная запись */
@@ -101,5 +98,13 @@ public class E2ListEntry extends BaseEntity {
     public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
     /** Удаленная запись */
     private Boolean theIsDeleted ;
+
+    /** Список записей по заполнению */
+    @Comment("Список записей по заполнению")
+    @OneToMany(mappedBy = "listEntry",cascade = CascadeType.REMOVE)
+    public List<E2Entry> getEntryList() {return theEntryList;}
+    public void setEntryList(List<E2Entry> aEntryList) {theEntryList = aEntryList;}
+    /** Список записей по заполнению */
+    private List<E2Entry> theEntryList ;
 
 }

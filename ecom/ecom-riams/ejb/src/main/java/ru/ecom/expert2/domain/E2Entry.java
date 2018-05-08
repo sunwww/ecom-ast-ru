@@ -206,7 +206,7 @@ public class E2Entry extends BaseEntity {
 
     /** Родительский случай */
     @Comment("Родительский случай")
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     public E2Entry getParentEntry() {return theParentEntry;}
     public void setParentEntry(E2Entry aParentEntry) {theParentEntry = aParentEntry;}
     /** Родительский случай */
@@ -214,7 +214,7 @@ public class E2Entry extends BaseEntity {
 
      /** Сложность лечения пациента */
      @Comment("Сложность лечения пациента")
-     @OneToMany(mappedBy = "entry")
+     @OneToMany(mappedBy = "entry", cascade = CascadeType.REMOVE)
      public List<E2CoefficientPatientDifficultyEntryLink> getPatientDifficulty() {return thePatientDifficulty;}
      public void setPatientDifficulty(List<E2CoefficientPatientDifficultyEntryLink> aPatientDifficulty) {thePatientDifficulty = aPatientDifficulty;}
      /** Сложность лечения пациента */
@@ -245,24 +245,24 @@ public class E2Entry extends BaseEntity {
      /** Способ оплаты медицинской помощи */
      private VocE2FondV010 theIDSP ;
 
-     /** ТИп записи */ //стационар, ВМП, пол-ка, подушевка, ДД
-     @Comment("ТИп записи")
+     /** Тип записи */ //стационар, ВМП, пол-ка, подушевка, ДД
+     @Comment("Тип записи")
      public String getEntryType() {return theEntryType;}
      public void setEntryType(String aEntryType) {theEntryType = aEntryType;}
-     /** ТИп записи */
+     /** Тип записи */
      private String theEntryType ;
 
      /** Тип заполнения */
      @Comment("Тип заполнения")
      @Transient
      public String getEntryListType() {return theListEntry.getEntryType().getCode();}
+
     /** Многоплодная беременность */
     @Comment("Многоплодная беременность")
     public Boolean getMultiplyBirth() {return theMultiplyBirth;}
     public void setMultiplyBirth(Boolean aMultiplyBirth) {theMultiplyBirth = aMultiplyBirth;}
     /** Многоплодная беременность */
     private Boolean theMultiplyBirth ;
-
 
      /** Специальность врача по фонду */
      @Comment("Специальность врача по фонду")
@@ -340,7 +340,6 @@ public class E2Entry extends BaseEntity {
      /** Признак исправленной записи */
      private Boolean thePRNOV ;
 
-
      /** Номер счета */
      @Comment("Номер счета")
      public String getBillNumber() {return theBillNumber;}
@@ -361,8 +360,6 @@ public class E2Entry extends BaseEntity {
      public void setCommonNumber(String aCommonNumber) {theCommonNumber = aCommonNumber;}
      /** Единый номер пациента (представителя) */
      private String theCommonNumber ;
-
-
 
      /** Тип полиса OMC*/
      @Comment("Тип полиса OMC")
@@ -615,6 +612,7 @@ public class E2Entry extends BaseEntity {
     public void setPassportDateIssued(Date aPassportDateIssued) {thePassportDateIssued = aPassportDateIssued;}
     /** Дата выдачи паспорта */
     private Date thePassportDateIssued ;
+
     /** Кем выдан паспорт */
     @Comment("Кем выдан паспорт")
     public String getPassportWhomIssued() {return thePassportWhomIssued;}
@@ -762,7 +760,7 @@ public class E2Entry extends BaseEntity {
 
     /** Заполнение */
     @Comment("Заполнение")
-    @OneToOne
+    @ManyToOne
     public E2ListEntry getListEntry() {return theListEntry;}
     public void setListEntry(E2ListEntry aListEntry) {theListEntry = aListEntry;}
     /** Заполнение */
@@ -964,5 +962,19 @@ public class E2Entry extends BaseEntity {
         if (theNoOmcDepartment==null) {theNoOmcDepartment=false;}
 
     }
+    /** Санкции */
+    @Comment("Санкции")
+    @OneToMany(mappedBy = "entry", cascade = CascadeType.REMOVE)
+    public List<E2EntrySanction> getSanctionList() {return theSanctionList;}
+    public void setSanctionList(List<E2EntrySanction> aSanctionList) {theSanctionList = aSanctionList;}
+    /** Санкции */
+    private List<E2EntrySanction> theSanctionList ;
 
+    /** Ошибки проверки */
+    @Comment("Ошибки проверки")
+    @OneToMany(mappedBy = "entry",cascade = CascadeType.REMOVE)
+    public List<E2EntryError> getErrorList() {return theErrorList;}
+    public void setErrorList(List<E2EntryError> aErrorList) {theErrorList = aErrorList;}
+    /** Ошибки проверки */
+    private List<E2EntryError> theErrorList ;
 }

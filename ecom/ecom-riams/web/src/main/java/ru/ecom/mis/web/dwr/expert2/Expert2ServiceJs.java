@@ -17,7 +17,7 @@ public class Expert2ServiceJs {
     /** Журнал сформированных пакетов/счетов */
     public String getPacketJournalByBillNumber(String aBillNumber, String aBillDate, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String sql = "select billNumber, to_char(billDate,'dd.MM.yyyy') as billdate,  filename, to_char(createdate,'dd.MM.yyyy')||' '||cast(createtime as varchar) as createdate" +
+        String sql = "select billNumber, to_char(billDate,'dd.MM.yyyy') as billdate,  filename, to_char(createdate,'dd.MM.yyyy')||' '||cast(createtime as varchar(5)) as createdatetime" +
                 " from E2ExportPacketJournal";
 
         if (!StringUtil.isNullOrEmpty(aBillNumber)) {
@@ -26,7 +26,7 @@ public class Expert2ServiceJs {
                 sql+=" and billDate=to_date('"+aBillDate+"','dd.MM.yyyy')";
             }
         }
-        sql +=" order by createdate, createtime";
+        sql +=" order by createdate desc, createtime desc";
     return service.executeNativeSqlGetJSON(new String[]{"billNumber","billDate","filename","createDate"},sql,10);
     }
     /** Объединить заполнение (перенос записей из старого в новое и пометка старого как удаленного */
