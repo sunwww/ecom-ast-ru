@@ -6,7 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">Реестр КСГ</msh:title>
+        <msh:title mainMenu="StacJournal">Реестр по платникам</msh:title>
     </tiles:put>
     <tiles:put name='side' type='string'>
     </tiles:put>
@@ -19,6 +19,9 @@
             </msh:row>
             <msh:row>
                 <msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true" label="Поток обслуживания" vocName="vocSstreamE2Entry"/>
+            </msh:row>
+            <msh:row>
+                <msh:autoComplete property="hospType" fieldColSpan="4" horizontalFill="true" label="Тип помощи" vocName="vocTypeHelpJReport"/>
             </msh:row>
             <msh:row>
                 <td colspan="3">
@@ -35,7 +38,7 @@
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
                         callback: function (res) {
                             var resMas = res.split("#");
-                            window.location.href = "totalReestr.do?dateBegin="+$('dateBegin').value+"&dateEnd="+$('dateEnd').value+"&serviceStream="+$('serviceStream').value;
+                            window.location.href = "totalReestr.do?dateBegin="+$('dateBegin').value+"&dateEnd="+$('dateEnd').value+"&serviceStream="+$('serviceStream').value+"&hospType="+$('hospType').value;
                             if (res != "##") {
                                 var sstream=document.getElementById("serviceStreamName").value;
                                 if (sstream[sstream.length-1]==' ') sstream=sstream.substring(0,sstream.length-1);
@@ -43,7 +46,8 @@
                                     callback: function (res) {
                                         if (res != "##") {
                                             window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F2KSG&standAlone=true&decorate=no"
-                                                + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&sstream="+ res + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML);
+                                                + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&sstream="+ res + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML
+                                            + "&type=" + $('hospType').value);
                                         }
                                     }
                                 });
