@@ -1220,7 +1220,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 	public String getLabAnalysisExtra(String id, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select ms.code||' '||ms.name,ms.id\n" +
+		String sql = "select distinct ms.code||' '||ms.name,ms.id\n" +
 				"from VocLabAnalysisExtraPrint vlaep\n" +
 				"left join medservice ms on ms.code=vlaep.medservice\n" +
 				"left join pricemedservice pms on pms.medservice_id=ms.id\n" +
