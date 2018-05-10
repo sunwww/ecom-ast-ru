@@ -161,8 +161,7 @@ private Boolean isCheckIsRunning = false;
              //   pat.addContent(new Element("SMO_OK").setText(aEntry.getInsuranceCompanyTerritory()));
                 pat.addContent(new Element("SMO_NAM").setText(aEntry.getInsuranceCompanyName()));
             }
-            pat.addContent(new Element("NOVOR").setText(makeNovorString(aEntry)))
-            ;
+            pat.addContent(new Element("NOVOR").setText(makeNovorString(aEntry)))            ;
             zap.addContent(pat); //Добавили данные по пациенту
 
             String edCol;
@@ -201,8 +200,8 @@ private Boolean isCheckIsRunning = false;
             sluch = addIfNotNull(sluch, "VNOV_D", aEntry.getNewbornWeight()); // Вес при рождении
             if (isHosp&&aEntry.getKsg()!=null) {
                 sluch.addContent(new Element("CODE_MES1").setText(aEntry.getKsg().getCode())); // Код КСГ, не для ВМП
+                sluch=addIfNotNull(sluch,"KSG_KRIT",aEntry.getDopKritKSG());
             }
-            sluch=addIfNotNull(sluch,"KSG_KRIT",aEntry.getDopKritKSG());
             sluch.addContent(new Element("RSLT").setText(aEntry.getFondResult().getCode())); // Результат обращения
             sluch.addContent(new Element("ISHOD").setText(aEntry.getFondIshod().getCode())); // Исход случая.
             sluch.addContent(new Element("PRVS").setText(aEntry.getFondDoctorSpec().getCode())); // специальность лечащего врача (V015)
@@ -240,7 +239,6 @@ private Boolean isCheckIsRunning = false;
   //          sluch.addContent(sank); //Добавляем информацию о санкциях в запись (хз зачем)
             int uslCnt = 1;
             if (aEntry.getReanimationEntry()!=null) {
-                E2Entry rean = aEntry.getReanimationEntry();
                 Element usl = new Element("USL");
                 usl.addContent(new Element("IDSERV").setText(""+uslCnt));
                 usl.addContent(new Element("PROFIL_U").setText(profileK));
@@ -258,13 +256,14 @@ private Boolean isCheckIsRunning = false;
             //Информация об услугах
             if (isPoliclinic &&children!=null) { //Для поликлиники - кол-во визитов
                 for (E2Entry child: children) {
+                    String uslDate = dateToString(child.getStartDate());
                     Element usl = new Element("USL");
                     usl.addContent(new Element("IDSERV").setText(""+uslCnt));
                     usl.addContent(new Element("PROFIL_U").setText(profileK));
                     usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
                     usl.addContent(new Element("IDDOKT_U").setText(child.getDoctorSnils()));
-                    usl.addContent(new Element("DATE_1_U").setText(dateToString(child.getStartDate())));
-                    usl.addContent(new Element("DATE_2_U").setText(dateToString(child.getStartDate())));
+                    usl.addContent(new Element("DATE_1_U").setText(uslDate));
+                    usl.addContent(new Element("DATE_2_U").setText(uslDate));
                     usl.addContent(new Element("DS_U").setText(isNotNull(child.getMainMkb())?child.getMainMkb():sluch.getChildText("DS1")));
                     //usl.addContent(new Element("COD_DUSL_U").setText(medService.getCode()));
                     usl.addContent(new Element("ED_COL_U").setText("1"));

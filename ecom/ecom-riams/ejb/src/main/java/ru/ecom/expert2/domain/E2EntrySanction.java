@@ -6,6 +6,7 @@ import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 /** Санкции к случаю*/
@@ -14,7 +15,7 @@ import javax.persistence.OneToOne;
 public class E2EntrySanction extends BaseEntity {
     /** Запись */
     @Comment("Запись")
-    @OneToOne
+    @ManyToOne
     public E2Entry getEntry() {return theEntry;}
     public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
     /** Запись */

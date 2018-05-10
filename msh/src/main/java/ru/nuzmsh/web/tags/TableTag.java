@@ -1209,4 +1209,17 @@ public class TableTag extends AbstractGuidSupportTag {
     public void setPrintToExcelButton(String aPrintToExcelButton) {thePrintToExcelButton = aPrintToExcelButton;}
     /** Кнопка для печати */
     String thePrintToExcelButton;
+
+    /**
+     * Открывать ссылки в новом окне
+     * @jsp.attribute   description = "Открывтаь ссылку в новом окне"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+    public Boolean getOpenNewWindow() {return theOpenNewWindow;}
+    public void setOpenNewWindow(Boolean aOpenNewWindow) {theOpenNewWindow = aOpenNewWindow;}
+    /** Открыть ссылку в новом окне */
+    Boolean theOpenNewWindow;
+
+
 }

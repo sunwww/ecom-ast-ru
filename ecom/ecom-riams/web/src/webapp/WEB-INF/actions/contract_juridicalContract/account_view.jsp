@@ -154,7 +154,7 @@ select cams.mainparent,cams.lastname||' '||cams.firstname||' '||cams.middlename
 	</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
-		<ecom:titleTrail mainMenu="Contract" beginForm="contract_juridiralAccountForm"/>
+		<ecom:titleTrail mainMenu="Contract" beginForm="contract_account_contractForm"/>
 	</tiles:put>
 	<tiles:put name="side" type="string">
 	</tiles:put>

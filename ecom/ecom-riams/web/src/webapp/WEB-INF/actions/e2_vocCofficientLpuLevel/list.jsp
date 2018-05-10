@@ -21,13 +21,17 @@
 
         <msh:hideException>
             <msh:section title='Результат поиска'>
-                <ecom:webQuery name="listAll" nativeSql="select voc.id, voc.value, dep.name, vmhp.profilek||' '||vmhp.name from VocCoefficient voc
+                <ecom:webQuery name="listAll" nativeSql="select voc.id, voc.value, dep.name, vmhp.profilek||' '||vmhp.name
+    ,voc.startDate as startDate, voc.finishdate
+                from VocCoefficient voc
   left join MisLpu dep on dep.id=voc.department_id left join VocE2MedHelpProfile vmhp on vmhp.id=voc.helpprofile_id
-  where dtype='VocCoefficientLpuLevel' order by voc.id "/>
+  where dtype='VocCoefficientLpuLevel' order by cast(vmhp.profilek as int),voc.startDate  "/>
                 <msh:table  name="listAll" action="entityView-e2_vocCofficientLpuLevel.do" idField="1" disableKeySupport="true">
                     <msh:tableColumn columnName="Профиль помощи (К)" property="4" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Отделение"  property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                     <msh:tableColumn columnName="Коэффициент"  property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Период с"  property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Период по"  property="6" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 </msh:table>
 
             </msh:section>

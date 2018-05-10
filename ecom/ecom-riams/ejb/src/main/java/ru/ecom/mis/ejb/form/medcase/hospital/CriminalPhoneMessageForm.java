@@ -220,6 +220,7 @@ public class CriminalPhoneMessageForm extends PhoneMessageForm {
 	/** Район */
 	@Comment("Район")
 	@Persist
+	@Required
 	public Long getRayon() {return theRayon;}
 	public void setRayon(Long aRayon) {theRayon = aRayon;}
 

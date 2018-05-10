@@ -248,7 +248,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		JSONArray childs = obj.getJSONArray("childs");
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder sb1 = new StringBuilder() ;
-		sb1.append("{");
+		sb1.append("%7B");
 		sb1.append("&quot;childs&quot;%3A[") ;
 		for (int i = 0; i < childs.length(); i++) {
 			JSONObject child = (JSONObject) childs.get(i);
@@ -256,9 +256,9 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 				sb.append(",") ;sb1.append(",");
 			}
 			sb.append(child.get("value")) ;
-			sb1.append("{&quot;value&quot;%3A&quot;").append(child.get("value")).append("&quot;}") ;
+			sb1.append("%7B&quot;value&quot;%3A&quot;").append(child.get("value")).append("&quot;%7D") ;
 		}
-		sb1.append("]}") ;
+		sb1.append("]%7D") ;
 		
 		if (childs.length()>0 && sb.length()>0) {
 			
@@ -274,7 +274,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 			aRequest.setAttribute(aAttributeName,"") ;
 			
 		}
-		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"={&quot;childs&quot;%3A[{&quot;value&quot;:&quot;'||"+aFldId+"||'&quot;}]}'") ;
+		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"=%7B&quot;childs&quot;%3A[%7B&quot;value&quot;:&quot;'||"+aFldId+"||'&quot;%7D]%7D'") ;
 		return sql ;
 	}
 	public static String setParameterFilterSql(String aParameter,String aAttributeName,String aFldId,HttpServletRequest aRequest) {
