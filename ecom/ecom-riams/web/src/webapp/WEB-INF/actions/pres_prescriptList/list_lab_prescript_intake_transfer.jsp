@@ -144,11 +144,13 @@
 		sqlAdd.append(" and p.intakeDate is null ") ;
 	}
     if (typeTransfer!=null && typeTransfer.equals("1")) {
-		sqlAdd.append(" and p.transferDate is not null and p.cancelDate is null") ;
+		sqlAdd.append(" and p.transferDate is not null ") ;
+		//sqlAdd.append(" and p.transferDate is not null and p.cancelDate is null") ;
 	} else if (typeTransfer!=null && (typeTransfer.equals("2")||typeTransfer.equals("4"))) {
 		sqlAdd.append(" and p.transferDate is null and p.cancelDate is null") ;
 	} else if (typeTransfer!=null && typeTransfer.equals("3")) {
-		sqlAdd.append(" and p.transferDate is null and p.cancelDate is not null ") ;
+		sqlAdd.append(" and p.cancelDate is not null ") ;
+		//sqlAdd.append(" and p.transferDate is null and p.cancelDate is not null ") ; //Пока будем выводить все забракованные (лаборатория от 11-05-2018
 	}
     if (typeDate!=null&&typeDate.equals("1")) {
     	request.setAttribute("dateSql", "p.planStartDate") ;
@@ -184,7 +186,7 @@
             	select 
     p.id as pid,
     case 
-    when p.cancelDate is not null then 'ОТМЕНЕНО' 
+    when p.cancelDate is not null then 'ОТМЕНЕНО/БРАК'
     when p.intakeDate is null then 'Назначено'
     when p.transferDate is null then 'Взят биоматериал в отделении'
     when p.prescriptCabinet_id is null then 'Передан биоматериал в лабораторию'
@@ -296,7 +298,7 @@
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
-       ,coalesce(wfCab.groupName)||' '||to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f14dttransfer
+       ,coalesce(wfCab.groupName,'')||' '||to_char(p.transferDate,'dd.mm.yyyy')||' '||cast(p.transferTime as varchar(5)) as f14dttransfer
        ,to_char(p.cancelDate,'dd.mm.yyyy')||' '||cast(p.cancelTime as varchar(5)) as f15dtcancel
   , case when p.barcodeNumber is not null then 'ШК №'||p.barcodeNumber end as f16_barcode
     from prescription p

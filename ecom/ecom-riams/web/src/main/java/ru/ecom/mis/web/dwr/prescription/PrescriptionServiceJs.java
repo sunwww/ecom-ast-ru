@@ -1,18 +1,16 @@
 package ru.ecom.mis.web.dwr.prescription;
 
-import org.apache.ecs.html.Col;
 import org.jdom.IllegalDataException;
 import org.json.JSONException;
 import ru.ecom.diary.ejb.service.template.ITemplateProtocolService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.mis.ejb.domain.prescription.Prescription;
-import ru.ecom.mis.ejb.domain.prescription.ServicePrescription;
 import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
@@ -599,6 +597,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 
 	/**
 	 *  Брак назначений. Заполняет поля кто и когда аннулировал лаб. назначения
+	 *  upd. 11.05.2018 При отмене назначения в лаборатории без приема, отмечаем что прием был. Чтобы лаборатория видела это назначение
 	 * @param aPrescripts Строка с ИД назначений (prescription) разделенная запятами
 	 * @param aReasonId ИД причины отмены
 	 * @param aReason Текст причины отмены
@@ -613,12 +612,22 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
-		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("', cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time),cancelUsername='").append(username).append("' where id in (").append(aPrescripts).append(")");
+		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("'")
+				.append(", cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time)")
+				.append(", transferDate=coalesce(transferDate,to_date('").append(formatD.format(date)).append("','dd.mm.yyyy')),transferTime=coalesce(transferTime,cast('").append(formatT.format(date)).append("' as time))")
+				.append(",transferUsername=coalesce(transferUsername,'").append(username).append("')")
+				.append(",cancelUsername='").append(username).append("' where id in (").append(aPrescripts).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		
 		sql = new StringBuilder() ;
 		sql.append("update medcase set datestart = current_date, noactuality='1' where id in (select medcase_id from prescription where id in ("+aPrescripts+"))");
 		service.executeUpdateNativeSql(sql.toString()) ;
+		String reasonText ="";
+		if (aReasonId!=null&&aReasonId>0) {
+			Collection<WebQueryResult> list = service.executeNativeSql("select name from VocPrescriptCancelReason where id="+aReasonId);
+			reasonText=list.size()>0?list.iterator().next().get1().toString():"";
+		}
+		reasonText+=StringUtil.isNullOrEmpty(aReason)?"":" "+aReason;
 		List<Object[]> list = service.executeNativeSqlGetObj("select pl.id,p.createusername,to_char(p.planstartdate,'dd.mm.yyyy')  as dt,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ms.code||' '||ms.name from prescription p left join medservice ms on ms.id=p.medservice_id left join prescriptionlist pl on pl.id=p.prescriptionlist_id left join medcase mc on mc.id=pl.medcase_id left join patient pat on pat.id=mc.patient_id where p.id in ("+aPrescripts+")") ;
 		if (list.size()>0) {
 			Object[] obj = list.get(0) ;
@@ -628,10 +637,20 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			
 			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
 				.append(",dispatchDate,dispatchTime,username,messageUrl)") 
-				.append("values ('").append("Брак биоматериала").append("','")
+				.append("values ('").append("Брак биоматериала: ").append(reasonText).append("','")
 				.append(obj[2]).append(" пациент ").append(obj[3]).append(" услуга ").append(obj[4]).append("','").append(usernameO)
 				.append("',current_date,current_time,'").append(username).append("','")
 				.append("entityView-pres_prescriptList.do?id="+obj[0]).append("')") ;
+			service.executeUpdateNativeSql(sql.toString()) ;
+			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
+				.append(",dispatchDate,dispatchTime,username,messageUrl,isEmergency)")
+				.append("values ('")
+					.append("Брак биоматериала: ").append(reasonText).append("','")
+				.append(obj[2]).append(" пациент ").append(obj[3]).append(" услуга ").append(obj[4]).append("','").append(usernameO)
+				.append("',current_date,current_time,'").append(username).append("','")
+				.append("entityView-pres_prescriptList.do?id="+obj[0]).append("')")
+				.append(",'1'")
+				.append(")") ;
 			service.executeUpdateNativeSql(sql.toString()) ;
 		}
 
