@@ -1220,7 +1220,7 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 	public String getLabAnalysisExtra(String id, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select distinct ms.code||' '||ms.name,ms.id\n" +
+		String sql = "select ms.code||' '||ms.name,ms.id\n" +
 				"from VocLabAnalysisExtraPrint vlaep\n" +
 				"left join medservice ms on ms.code=vlaep.medservice\n" +
 				"left join pricemedservice pms on pms.medservice_id=ms.id\n" +
@@ -1250,10 +1250,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		for (int i=0; i<aMedServiceSId.length; i++) {
 			String r=getUserTemplateDocForPrintByService(aMedServiceSId[i],aRequest);
 			if (r.equals(""))
-				res.append(aMedServiceSId[i]).append("#").append("*"); //в имени файла не мб *
-			else
-				res.append(aMedServiceSId[i]).append("#").append(r);
-			res.append("!");
+				res.append(aMedServiceSId[i]).append("#").append("*").append("!"); //в имени файла не мб *
+			else if (res.indexOf(r)==-1)
+				res.append(aMedServiceSId[i]).append("#").append(r).append("!");
 		}
 		return res.toString();
 	}
