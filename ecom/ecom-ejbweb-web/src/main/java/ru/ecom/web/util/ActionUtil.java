@@ -170,7 +170,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 		try {
 			if (aAttributeName==null) aAttributeName=aParameter ;
 			String param = (String)aRequest.getParameter(aParameter) ;
-			System.out.println(aParameter+"="+param) ;
+			//System.out.println(aParameter+"="+param) ;
 	    	if (param!=null && !param.equals("") && !param.equals("0")) {
 	    		service = Injection.find(aRequest).getService(IWebQueryService.class);
 	    		aSql = aSql.replaceAll(":id", param) ;
