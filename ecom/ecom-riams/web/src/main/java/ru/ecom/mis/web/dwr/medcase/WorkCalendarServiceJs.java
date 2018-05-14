@@ -1155,8 +1155,7 @@ public class WorkCalendarServiceJs {
 			.append(" ,wct.medCase_id");
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
-		sql.append("") ;
-		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||list(coalesce(case when ms.shortname='' then null else ms.shortname end,ms.name,'')) as f7_fio") ;
+		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||(select list(coalesce(ms.shortname,ms.name)) from medcase servMc left join medservice ms on ms.id=servMc.medservice_id where servMc.parent_id=vis.id ) as f7_fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as f12_patid")
