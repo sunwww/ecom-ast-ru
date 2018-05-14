@@ -14,7 +14,7 @@
     <msh:sideMenu>
         <msh:sideLink key='ALT+0' params="" action=' javascript:capture()' name="Заявка в ТП"/>
     	<msh:sideLink key='ALT+1' params="" action=' javascript:backException(".do")' name="Отмена"/>
-    	<msh:sideLink key='ALT+2' action=' javascript:showException(".do")' roles="/Policy/Config/ViewError" name="Ошибка" title="Показать ошибку"/>
+    	<msh:sideLink key='ALT+2' params="" action=' javascript:showException(".do")' roles="/Policy/Config/ViewError" name="Ошибка" title="Показать ошибку"/>
     </msh:sideMenu>
     
     </tiles:put>
