@@ -490,15 +490,15 @@ group by vs.name, vs.id
                <msh:tableColumn columnName="Пол" property="13" addParam=""/>
             <msh:tableColumn columnName="от 0 до 17 лет" property="1" addParam="&addCell=age1" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="7" addParam="" />
-            <msh:tableColumn columnName="18 - 45 лет" property="2" addParam="&addCell=age2"isCalcAmount="true"/>
+            <msh:tableColumn columnName="18 - 45 лет" property="2" addParam="&addCell=age2" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="8" addParam="" />
-            <msh:tableColumn columnName="46 - 60 лет" property="3" addParam="&addCell=age3"isCalcAmount="true"/>
+            <msh:tableColumn columnName="46 - 60 лет" property="3" addParam="&addCell=age3" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="9" addParam="" />
-            <msh:tableColumn columnName="61 - 75 лет" property="4" addParam="&addCell=age4"isCalcAmount="true"/>
+            <msh:tableColumn columnName="61 - 75 лет" property="4" addParam="&addCell=age4" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="10" addParam="" />
-            <msh:tableColumn columnName="76 лет и более" property="5" addParam="&addCell=age5"isCalcAmount="true"/>
+            <msh:tableColumn columnName="76 лет и более" property="5" addParam="&addCell=age5" isCalcAmount="true"/>
             <msh:tableColumn columnName="%" property="11" addParam="" />
-            <msh:tableColumn columnName="Итого" property="6" addParam=""isCalcAmount="true" addParam="&addCell=allAge"/>
+            <msh:tableColumn columnName="Итого" property="6" isCalcAmount="true" addParam="&addCell=allAge"/>
             
        </msh:table>
     </msh:sectionContent>
