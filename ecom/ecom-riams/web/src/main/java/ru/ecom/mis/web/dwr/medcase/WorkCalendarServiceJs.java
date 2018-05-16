@@ -1155,7 +1155,7 @@ public class WorkCalendarServiceJs {
 			.append(" ,wct.medCase_id");
 		sql.append(" ,coalesce(pat.lastname||' '||pat.firstname||' '||coalesce(pat.middlename,'Х')||coalesce(' '||pat.phone,'')||coalesce(' ('||pat.patientSync||')','')") ;
 		sql.append(", prepat.lastname ||' '||prepat.firstname||' '||coalesce(prepat.middlename,'Х')||coalesce(' тел. '||wct.phone,' тел. '||prepat.phone,'')||coalesce(' ('||prepat.patientSync||')','')") ;
-		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||(select list(coalesce(ms.shortname,ms.name)) from medcase servMc left join medservice ms on ms.id=servMc.medservice_id where servMc.parent_id=vis.id ) as f7_fio") ;
+		sql.append(",wct.prepatientInfo||' '||coalesce('тел. '||wct.phone,'')) ||' '||case when wct.service is not null then coalesce(ms.shortname,ms.name) else (select list(coalesce(ms.shortname,ms.name)) from medcase servMc left join medservice ms on ms.id=servMc.medservice_id where servMc.parent_id=vis.id ) end as f7_fio") ;
 		sql.append(", prepat.id as prepatid,vis.dateStart as visdateStart") ;
 		sql.append(",coalesce(prepat.lastname,wct.prepatientInfo) as prepatLast") ;
 		sql.append(",pat.lastname as patLast,coalesce(pat.id,prepat.id) as f12_patid")
@@ -1182,8 +1182,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" from WorkCalendarTime wct") ;
 		sql.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id");
 		sql.append(" left join MedCase vis on vis.id=wct.medCase_id");
-		sql.append(" left join MedCase servMc on servMc.parent_id=vis.id");
-		sql.append(" left join MedService ms on case when servMc.medservice_id is not null then servMc.medservice_id else wct.service end =ms.id");
+		sql.append(" left join MedService ms on wct.service=ms.id");
 		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id")
 			.append(" left join SecUser su on su.login=wct.createPreRecord ") 
 			.append(" left join SecUser su1 on su1.login=vis.username ");
@@ -1206,7 +1205,7 @@ public class WorkCalendarServiceJs {
 		if (isRemoteUser) {
 			sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0') ");
 		}
-		sql.append(" group by vis.id,wct.id,pat.id,prepat.id,su.id,su1.id,vsrt.id,vss.id");
+	//	sql.append(" group by vis.id,wct.id,pat.id,prepat.id,su.id,su1.id,vsrt.id,vss.id");
 
 		if (isRemoteUser) {
 			sql.append(",sw.lpu_id,notViewRetomeUser1,notViewRetomeUser2");
