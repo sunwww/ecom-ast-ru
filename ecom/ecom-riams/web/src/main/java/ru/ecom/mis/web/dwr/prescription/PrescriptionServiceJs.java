@@ -158,7 +158,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		String username=""+obj[5] ;
 		
 		sql = new StringBuilder() ;
-		
+
 		sql.append("insert into CustomMessage (messageTitle,messageText,recipient")
 			.append(",dispatchDate,dispatchTime,username,messageUrl)") 
 			.append("values ('").append("Аннулирование результатов исследование").append("','")
@@ -642,6 +642,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				.append("',current_date,current_time,'").append(username).append("','")
 				.append("entityView-pres_prescriptList.do?id="+obj[0]).append("')") ;
 			service.executeUpdateNativeSql(sql.toString()) ;
+			sql = new StringBuilder();
 			sql.append("insert into CustomMessage (messageText,messageTitle,recipient")
 				.append(",dispatchDate,dispatchTime,username,messageUrl,isEmergency)")
 				.append("values ('")
