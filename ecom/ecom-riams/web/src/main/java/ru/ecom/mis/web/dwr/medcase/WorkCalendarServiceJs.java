@@ -1207,9 +1207,9 @@ public class WorkCalendarServiceJs {
 		}
 	//	sql.append(" group by vis.id,wct.id,pat.id,prepat.id,su.id,su1.id,vsrt.id,vss.id");
 
-		if (isRemoteUser) {
+		/*if (isRemoteUser) {
 			sql.append(",sw.lpu_id,notViewRetomeUser1,notViewRetomeUser2");
-		}
+		}*/
 		sql.append(" order by wct.timeFrom");
 		StringBuilder res = new StringBuilder() ;
 
