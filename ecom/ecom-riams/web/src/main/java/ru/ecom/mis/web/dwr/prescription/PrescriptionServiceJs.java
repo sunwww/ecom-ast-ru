@@ -1296,7 +1296,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 
 		try{
 			ITemplateProtocolService service1 = Injection.find(aRequest).getService(ITemplateProtocolService.class) ;
-			service1.sendProtocolToExternalResource(aProtocol,aSmoId,"",null);
+			service1.sendProtocolToExternalResource(aProtocol,aSmoId,null,null);
 		} catch (Exception e) {e.printStackTrace();}
 
 		return "" ;
