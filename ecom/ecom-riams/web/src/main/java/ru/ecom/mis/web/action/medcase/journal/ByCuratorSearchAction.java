@@ -41,7 +41,7 @@ public class ByCuratorSearchAction extends ListAction{
         	
         }
         if (curator!=null && curator!=0) { 
-	        System.out.println("curator ="+curator) ;
+	    //    System.out.println("curator ="+curator) ;
 	        aRequest.setAttribute("curator",curator) ;
 	        String curatorinfo = service.getWorkFunctionInfo(curator) ;
 	        aRequest.setAttribute("curatorInfo",curatorinfo) ;

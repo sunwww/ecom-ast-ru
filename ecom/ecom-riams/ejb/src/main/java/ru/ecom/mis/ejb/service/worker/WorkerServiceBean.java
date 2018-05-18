@@ -62,7 +62,7 @@ public class WorkerServiceBean implements IWorkerService{
 		MisLpu lpu =list.get(0).getLpuRegister() ;
 		
 		if (lpu!=null) {
-				System.out.println("lpu="+lpu.getId()) ;
+			//	System.out.println("lpu="+lpu.getId()) ;
 				return lpu.getId() ;
 		}
 		System.out.println("Not found") ;
