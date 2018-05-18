@@ -28,7 +28,10 @@ public class E2EntryForm extends IdEntityForm {
 
 
 
+
 //----------все поля ниже добавлены на jsp!!!
+    /** Счет */
+    private Long theBill ;
     /** Консультативно-диагностическое обращение */
     private Boolean theIsDiagnosticSpo ;
     /** Количество календарных дней */
@@ -871,7 +874,10 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
     public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
-
+    @Comment("Счет")
+    @Persist
+    public Long getBill() {return theBill;}
+    public void setBill(Long aBill) {theBill = aBill;}
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */

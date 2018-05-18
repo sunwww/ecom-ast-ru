@@ -1,7 +1,9 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.expert2.domain.voc.VocE2ExtDispService;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
+import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -33,7 +35,7 @@ public class EntryMedService extends BaseEntity {
         theEntry=aEntry;theMedService=aMedService;
     }
     public EntryMedService(E2Entry aEntry, EntryMedService aMedService) {
-        theEntry=aEntry;theMedService=aMedService.getMedService();
+        theEntry=aEntry;theMedService=aMedService.getMedService();theServiceDate=aMedService.getServiceDate();theSpeciality=aMedService.getSpeciality();theMkb=aMedService.getMkb();
     }
 
     /** Дата оказания мед. услуги */
@@ -50,6 +52,23 @@ public class EntryMedService extends BaseEntity {
     public void setSpeciality(VocE2FondV015 aSpeciality) {theSpeciality = aSpeciality;}
     /** Специальность врача, оказавшего услугу */
     private VocE2FondV015 theSpeciality ;
+
+    /** Диагноз, выявленный при оказании услуги */
+    @Comment("Диагноз, выявленный при оказании услуги")
+    @OneToOne
+    public VocIdc10 getMkb() {return theMkb;}
+    public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
+    /** Диагноз, выявленный при оказании услуги */
+    private VocIdc10 theMkb ;
+
+    /** Услуга доп. диспансеризации */
+    @Comment("Услуга доп. диспансеризации")
+    @OneToOne
+    public VocE2ExtDispService getExtDispService() {return theExtDispService;}
+    public void setExtDispService(VocE2ExtDispService aExtDispService) {theExtDispService = aExtDispService;}
+    /** Услуга доп. диспансеризации */
+    private VocE2ExtDispService theExtDispService ;
+
     public EntryMedService(){}
 
 

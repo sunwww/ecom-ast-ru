@@ -20,7 +20,7 @@
 
         <form action="javascript:void(0) ;" id="formId">
             <table width="100%" cellspacing="0" cellpadding="4">
-                <tr>expert2ser
+                <tr>
                     <td align="right" width="100">Номер счета:</td>
                     <td><input type="text" id="${name}BillNumber" maxlength="50" size="20"></td>
                 </tr>
@@ -63,16 +63,20 @@ function cancel${name}BillNumber() {
 }
 //Сохранение
 function save${name}BillNumber() {
-    if (''+$(${name}BillNumber).value==''||''+$(${name}BillDate).value=='') {
-        alert('Укажите номер и дату счета');
-        return;
+    var newBillNumber=$(${name}BillNumber).value;
+    var newBillDate=$(${name}BillDate).value;
+    if (newBillNumber==''||newBillDate=='') {
+        if (!confirm('Вы хотите очистить информацию о счете?')) {
+            alert('Укажите номер и дату счета');
+            return;
+        }
     }
     var dt =the${name}someData.split("&");
 var type = dt[1].split("=")[1];
 var oldBillDate= dt[2].split("=")[1];
 var oldBillNumber= dt[3].split("=")[1];
 var serviceStream = dt[4].split("=")[1];
-    Expert2Service.saveBillDateAndNumber(${param.id},type,serviceStream,oldBillNumber, oldBillDate,$(${name}BillNumber).value,$(${name}BillDate).value, {
+    Expert2Service.saveBillDateAndNumber(${param.id},type,serviceStream,oldBillNumber, oldBillDate,newBillNumber,newBillDate, {
         callback: function (a) {
             cancel${name}BillNumber();
             window.location.reload();

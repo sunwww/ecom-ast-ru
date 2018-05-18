@@ -56,10 +56,35 @@ import ru.nuzmsh.util.format.DateFormat;
 public class Expert2ServiceBean implements IExpert2Service {
 private Boolean isCheckIsRunning = false;
     private final Logger log = Logger.getLogger(Expert2ServiceBean.class);
-    private final  String HOSPITALTYPE="HOSPITAL";
-    private final  String HOSPITALPEREVODTYPE="HOSPITALPEREVOD";
-    private final  String POLYCLINICTYPE="POLYCLINIC";
-    private final  String VMPTYPE="VMP";
+    private final String HOSPITALTYPE="HOSPITAL";
+    private final String HOSPITALPEREVODTYPE="HOSPITALPEREVOD";
+    private final String POLYCLINICTYPE="POLYCLINIC";
+    private final String VMPTYPE="VMP";
+    private final String EXTDISPTYPE="EXTDISP";
+
+    /** Находим или создаем счет*/
+    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate) {
+        E2Bill bill = null;
+        String sql = "select id from e2bill where billNumber=:number and billDate=to_date(:date,'dd.MM.yyyy') ";
+        List<BigInteger> list = theManager.createNativeQuery(sql).setParameter("number",aBillNumber).setParameter("date",aBillDate).getResultList();
+        if (list.isEmpty()) { //Создаем новый счет. статус - черновик
+            try {
+                bill = new E2Bill();
+                bill.setBillNumber(aBillNumber);
+                bill.setBillDate(DateFormat.parseSqlDate(aBillDate,"dd.MM.yyyy"));
+                bill.setStatus((VocE2BillStatus)getActualVocByClassName(VocE2BillStatus.class,null,"code='DRAFT'"));
+                theManager.persist(bill);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else if (list.size()>1) {
+            log.error("Найдено более 1 счета с указанным номером и датой!!");
+        } else {
+            bill = theManager.find(E2Bill.class,list.get(0).longValue());
+        }
+
+        return bill;
+    }
 
     /** Клонируем запись*/
     private E2Entry cloneEntity(E2Entry aSourceObject) {
@@ -632,6 +657,22 @@ private Boolean isCheckIsRunning = false;
             fillListEntry(theManager.find(E2ListEntry.class, aListEntryId), aHistoryNumber);
         }
     }
+
+    /** Переформировывание заполнения */
+    public void reFillListEntry(Long aListEntryId)  {
+        E2ListEntry list =theManager.find(E2ListEntry.class,aListEntryId);
+        //String ids = (String) theManager.createNativeQuery("select list(''||id) from e2entry where listEntry_id =:id").setParameter("id",aListEntryId).getSingleResult();
+        theManager.createNativeQuery("delete from e2entryerror where listentry_id=:id").setParameter("id",aListEntryId).executeUpdate();
+        theManager.createNativeQuery("update e2entry set isDeleted='1' where listEntry_id =:id").setParameter("id",aListEntryId).executeUpdate();
+        try {
+            fillListEntry(list,null);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Запускаем процесс формирования заполнения
      *
@@ -639,6 +680,7 @@ private Boolean isCheckIsRunning = false;
      * @throws NamingException
      * @throws SQLException
      */
+
     public void fillListEntry(E2ListEntry aListEntry, String aHistoryNumbers) throws NamingException, SQLException {
         String listEntryType = aListEntry.getEntryType() != null ? aListEntry.getEntryType().getCode() : null;
 
@@ -648,7 +690,7 @@ private Boolean isCheckIsRunning = false;
         }
 
         String resourceName;
-        if (listEntryType.equals("ExtDisp")) {
+        if (listEntryType.equals(EXTDISPTYPE)) {
             resourceName = "ExtDisp.sql";
         } else if (listEntryType.equalsIgnoreCase(HOSPITALTYPE)) {
             resourceName = "Hospital.sql";
@@ -666,7 +708,6 @@ private Boolean isCheckIsRunning = false;
             throw new IllegalStateException("Не удалось обнаружить файл с запросом! "+resourceName);
         }
 
-        //TODO импорт по номеру истории болезни
         StringBuilder sqlHistory = new StringBuilder();
         if (isNotNull(aHistoryNumbers)) {
             String[] histories = aHistoryNumbers.split(",");
@@ -680,12 +721,9 @@ private Boolean isCheckIsRunning = false;
         } else {
             sqlHistory.append("");
         }
-        log.info("SQL0 = " + searchSql);
         while(searchSql.indexOf("##dateStart##")>-1) {searchSql=searchSql.replace("##dateStart##", toSQlDateString(aListEntry.getStartDate())); }
         while(searchSql.indexOf("##dateEnd##")>-1) {searchSql=searchSql.replace("##dateEnd##", toSQlDateString(aListEntry.getFinishDate()));}
         searchSql+=sqlHistory.toString();
-
-
         log.info("SQL = " + searchSql);
 
         Statement statement = createStatement();
@@ -920,7 +958,7 @@ private Boolean isCheckIsRunning = false;
              calculateHospitalEntryPrice(aEntry);
         } else if (entryType.equalsIgnoreCase(POLYCLINICTYPE)) {
              calculatePolyclinicEntryPrice(aEntry);
-        } else if (entryType.equals("EXTDISP")) {
+        } else if (entryType.equals(EXTDISPTYPE)) {
              calculateExtDispEntryPrice(aEntry);
         } else {
             throw new IllegalStateException("Неизвестный тип реестра");
@@ -1133,6 +1171,14 @@ private Boolean isCheckIsRunning = false;
                                 doctor = (VocE2FondV015)resultMap.get(key);
                             }
                             if (doctor!=null) ms.setSpeciality(doctor);
+                        }
+                        if (service.has("diagnosisCode")) {
+                            String mkb = service.getString("diagnosisCode");
+                            if(isNotNull(mkb)) {ms.setMkb((VocIdc10) getEntityByCode(mkb, VocIdc10.class, false));}
+                        }
+                        if (service.has("extDispServiceCode")) {
+                            String serviceCode =service.getString("extDispServiceCode");
+                            if (isNotNull(serviceCode)) {ms.setExtDispService((VocE2ExtDispService)getEntityByCode(serviceCode,VocE2ExtDispService.class,false));}
                         }
 
                         theManager.persist(ms);
@@ -1668,9 +1714,6 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             }
         }
 
-
-
-
         E2CoefficientPatientDifficultyEntryLink link;
         //calc 10
         long sluchDuration = aEntry.getBedDays()!=null?aEntry.getBedDays():1;
@@ -1978,6 +2021,8 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             aCode=VMPTYPE;
         } else if (aCode.equalsIgnoreCase(HOSPITALPEREVODTYPE)) {
             aCode=HOSPITALTYPE;
+        } else if (aCode.equals(EXTDISPTYPE)) {
+            aCode=EXTDISPTYPE;
         }
         if (isNotNull(aEntry.getInsuranceCompanyCode())) {aCode+="_INOG";} //Если код страх. компании не пустой - иногородний.
         aEntry.setEntryType(aCode.toUpperCase());
@@ -2245,9 +2290,10 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         String bedSubType = aEntry.getBedSubType();
         List<BigInteger> list;
         Date actualDate = aEntry.getFinishDate();
-        boolean stacCase = entryType.equalsIgnoreCase(HOSPITALTYPE)||entryType.equalsIgnoreCase(VMPTYPE)?true:false;
-        boolean vmpCase = entryType.equalsIgnoreCase(VMPTYPE)?true:false;
-        boolean polyclinicCase = entryType.equalsIgnoreCase(POLYCLINICTYPE)?true:false;
+        boolean stacCase = entryType.equals(HOSPITALTYPE)||entryType.equals(VMPTYPE)?true:false;
+        boolean vmpCase = entryType.equals(VMPTYPE)?true:false;
+        boolean polyclinicCase = entryType.equals(POLYCLINICTYPE)?true:false;
+        boolean extDispCase = entryType.equals(EXTDISPTYPE)?true:false;
         if (!isNotNull(aEntry.getResult())) {theManager.persist(new E2EntryError(aEntry,"NO_RESULT"));return;}
         String[] dischargeData = aEntry.getResult().split("#", -1); //vho.code||'#'||vrd.code||'#'||vhr.code
 
@@ -2428,7 +2474,70 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 aEntry.setIDSP((VocE2FondV010)resultMap.get(key));
             }
 
-        } else if (entryType.equals("ExtDisp")) { // TODО реализовать для ДД
+        } else if (extDispCase) { // TODО реализовать для ДД
+            //_vidpom
+
+            //for_pom
+
+            //vbr
+
+            //профиль_К
+
+            //<DS1_PR>1</DS1_PR>
+
+            //Result <RSLT>
+            if (aEntry.getFondResult()==null||forceUpdate) {
+                String resultCode ="#"+aEntry.getResult()+"#";
+                /* в зависимости от типа ДД, группа здоровья */
+                key = "EXTDISP#RESULT"+resultCode;
+                if (!resultMap.containsKey(key)) {resultMap.put(key,getActualVocByClassName(VocE2FondV009.class, actualDate, "extDispCodes like '%"+resultCode+"%'"));}
+                aEntry.setFondResult((VocE2FondV009)resultMap.get(key));
+            }
+
+
+            //Исход
+            if (aEntry.getFondIshod()==null||forceUpdate) {
+                String ishodCode = "306";
+                key = "EXTDISP#ISHOD#" + ishodCode;
+                if (!resultMap.containsKey(key)) {resultMap.put(key, getActualVocByClassName(VocE2FondV012.class, actualDate, "code='" + ishodCode + "'"));}
+                aEntry.setFondIshod((VocE2FondV012) resultMap.get(key));
+            }
+
+
+            //Профиль мед. помощи
+            if (aEntry.getMedHelpProfile()==null||forceUpdate) {
+                if (aEntry.getFondDoctorSpec()!=null) { //Обновляем профиль мед. помощи по профилю врача
+                    aEntry.setMedHelpProfile(aEntry.getFondDoctorSpec().getPolicProfile());
+                }
+            }
+
+            //Вид медицинской помощи
+            if (aEntry.getMedHelpKind()==null||forceUpdate) {
+                String v008Code = "12"; //ПЕРВИЧНАЯ ВРАЧЕБНАЯ МЕДИКО-САНИТАРНАЯ ПОМОЩЬ
+                key = "V008#"+v008Code;
+                if (!resultMap.containsKey(key)) {
+                    resultMap.put(key,getActualVocByClassName(VocE2FondV008.class, actualDate,"code='"+v008Code+"'"));
+                }
+                aEntry.setMedHelpKind((VocE2FondV008)resultMap.get(key));
+            }
+
+
+            //Условия оказания мед. помощи (V006)
+            //    if (aEntry.getMedHelpUsl()==null||forceUpdate) {
+            VocE2EntrySubType entrySubType =aEntry.getSubType();
+            if (entrySubType==null) {
+                theManager.persist(new E2EntryError(aEntry,"NO_ENTRY_SUBTYPE"));
+            } else {
+                aEntry.setMedHelpUsl(entrySubType.getUslOk());
+            }
+
+            //Способ оплаты медицинской помощи
+            if (aEntry.getIDSP()==null||forceUpdate) {
+                String idspCode="11";
+                key = "IDSP#"+idspCode;
+                if (!resultMap.containsKey(key)) {resultMap.put(key, getActualVocByClassName(VocE2FondV010.class,actualDate ," code='"+idspCode+"'"));}
+                aEntry.setIDSP((VocE2FondV010)resultMap.get(key));
+            }
 
         } else {
             //   usl="4"; //скорая помощь

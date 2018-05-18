@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.expert2;
 
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expert2.service.IExpert2XmlService;
 import ru.ecom.web.util.Injection;
@@ -13,6 +14,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
+
+    /** Пересчитать заполнение (удаляем существующие записи и формируем новые в существующее заполнение) */
+    public void refillListEntry(Long aListEntryId, HttpServletRequest aRequest) throws NamingException {
+        Injection.find(aRequest).getService(IExpert2Service.class).reFillListEntry(aListEntryId);
+    }
 
     /** Журнал сформированных пакетов/счетов */
     public String getPacketJournalByBillNumber(String aBillNumber, String aBillDate, HttpServletRequest aRequest) throws NamingException {
@@ -130,14 +136,22 @@ public class Expert2ServiceJs {
 
     public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber, String aBillDate, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        IExpert2Service expert2Service= Injection.find(aRequest).getService(IExpert2Service.class);
+        String sql ;
         if (aType==null||aType.trim().equals("")) {return false;}
         if (aServiceStream==null||aServiceStream.trim().equals("")) {return false;}
-        if (aBillNumber==null||aBillNumber.trim().equals("")) {return false;}
 
-        String sql = "update e2entry set billNumber='"+aBillNumber+"', billDate=to_date('"+aBillDate+"','dd.MM.yyyy')" +
-                " where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"'";
-        if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";}
-        if (aOldBillNumber!=null&&!aOldBillNumber.equals("")) {sql+=" and billNumber='"+aOldBillNumber+"'";}
+        if (aBillNumber==null||aBillNumber.trim().equals("")) { //Удалить информацию о номере счета.
+            sql = "update e2entry set bill_id=null, billNumber='', billDate=null where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"'";
+            if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {return false;}
+            if (aOldBillNumber!=null&&!aOldBillNumber.equals("")) {sql+=" and billNumber='"+aOldBillNumber+"'";}else {return false;}
+        } else {
+            E2Bill bill = expert2Service.getBillEntryByDateAndNumber(aBillNumber,aBillDate);
+            sql = "update e2entry set bill_id="+bill.getId()+", billNumber='"+aBillNumber+"', billDate=to_date('"+aBillDate+"','dd.MM.yyyy')" +
+                    " where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"'";
+            if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";}
+            if (aOldBillNumber!=null&&!aOldBillNumber.equals("")) {sql+=" and billNumber='"+aOldBillNumber+"'";}
+        }
         System.out.println("sql="+sql);
         service.executeUpdateNativeSql(sql);
         return true;
