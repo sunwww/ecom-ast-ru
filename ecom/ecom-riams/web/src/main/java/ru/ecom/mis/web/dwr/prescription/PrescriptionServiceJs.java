@@ -649,7 +649,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 					.append("Брак биоматериала: ").append(reasonText).append("','")
 				.append(obj[2]).append(" пациент ").append(obj[3]).append(" услуга ").append(obj[4]).append("','").append(usernameO)
 				.append("',current_date,current_time,'").append(username).append("','")
-				.append("entityView-pres_prescriptList.do?id="+obj[0]).append("')")
+				.append("entityView-pres_prescriptList.do?id="+obj[0]).append("'")
 				.append(",'1'")
 				.append(")") ;
 			service.executeUpdateNativeSql(sql.toString()) ;
