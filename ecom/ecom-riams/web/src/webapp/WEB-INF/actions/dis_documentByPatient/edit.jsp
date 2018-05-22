@@ -181,22 +181,30 @@
     
     <script type="text/javascript">
         function getFreeNumber (aButton){
-            aButton.value="Подождите...";
-            aButton.disabled=true;
-            if ($('number').value!="") {
-                alert ("Поле \"Номер\" уже заполнено");
-                return;
-            }
-            DisabilityService.getFreeNumberForDisabilityDocument({
-                callback: function (num) {
-                    if (num!=null&&num!="") {
-                        $('number').value=num;
-                        $('number').className="viewOnly";
-                        aButton.style.display="none";
-                    } else {
-                        alert ("Не удалось получить номер больничного листа");
-                    }
 
+            DisabilityService.getSnils(${param.id},{
+                callback: function (snils) {
+                    //alert(snils);
+                    if(snils==null || snils=='1' || snils==''){ alert("У пациента отсутствует СНИЛС!\nДобавьте СНИЛС и попробуйте ещё раз!");
+                    }else{
+                        aButton.value="Подождите...";
+                        aButton.disabled=true;
+                        if ($('number').value!="") {
+                            alert ("Поле \"Номер\" уже заполнено");
+                            return;
+                        }
+                        DisabilityService.getFreeNumberForDisabilityDocument({
+                            callback: function (num) {
+                                if (num!=null&&num!="") {
+                                    $('number').value=num;
+                                    $('number').className="viewOnly";
+                                    aButton.style.display="none";
+                                } else {
+                                    alert ("Не удалось получить номер больничного листа");
+                                }
+
+                            }
+                        });}
                 }
             });
         }
