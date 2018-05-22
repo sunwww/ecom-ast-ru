@@ -274,7 +274,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 throw new JspException("Нужно установить только одно поле из двух: idField или decorator") ;
             }
 
-            createGoFunctionName(theAction);
+            createGoFunctionName(theAction,theOpenNewWindow);
 
 
 
@@ -367,9 +367,12 @@ public class TableTag extends AbstractGuidSupportTag {
     //private synchronized void createGoFunctionName() {
     //    theFunctionGoName = "go_" + theFunctionGoIndex++;
     //}
-    private synchronized void createGoFunctionName(String aAction) {
-        theFunctionGoName = new StringBuilder().append("goToPage('").append(aAction).append("',").toString();
+
+    private synchronized void createGoFunctionName(String aAction) {createGoFunctionName(aAction,false);}
+    private synchronized void createGoFunctionName(String aAction, Boolean aOpenNewWindow) {
+        theFunctionGoName = new StringBuilder().append("goToPage"+((aOpenNewWindow!=null&&aOpenNewWindow)?"NewWindow":"")+"('").append(aAction).append("',").toString();
     }
+
     private synchronized void createDeleteFunctionName(String aDeleteAction) {
         theFunctionDeleteName="if (confirm('Удалить?')) goToPage('" + aDeleteAction+"',";
     }
@@ -1209,4 +1212,17 @@ public class TableTag extends AbstractGuidSupportTag {
     public void setPrintToExcelButton(String aPrintToExcelButton) {thePrintToExcelButton = aPrintToExcelButton;}
     /** Кнопка для печати */
     String thePrintToExcelButton;
+
+    /**
+     * Открывать ссылки в новом окне
+     * @jsp.attribute   description = "Открывтаь ссылку в новом окне"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+    public Boolean getOpenNewWindow() {return theOpenNewWindow;}
+    public void setOpenNewWindow(Boolean aOpenNewWindow) {theOpenNewWindow = aOpenNewWindow;}
+    /** Открыть ссылку в новом окне */
+    Boolean theOpenNewWindow;
+
+
 }

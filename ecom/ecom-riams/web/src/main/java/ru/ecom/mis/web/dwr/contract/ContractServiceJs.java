@@ -1250,10 +1250,9 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		for (int i=0; i<aMedServiceSId.length; i++) {
 			String r=getUserTemplateDocForPrintByService(aMedServiceSId[i],aRequest);
 			if (r.equals(""))
-				res.append(aMedServiceSId[i]).append("#").append("*"); //в имени файла не мб *
-			else
-				res.append(aMedServiceSId[i]).append("#").append(r);
-			res.append("!");
+				res.append(aMedServiceSId[i]).append("#").append("*").append("!"); //в имени файла не мб *
+			else if (res.indexOf(r)==-1)
+				res.append(aMedServiceSId[i]).append("#").append(r).append("!");
 		}
 		return res.toString();
 	}

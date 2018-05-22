@@ -92,10 +92,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			String aWeight, String aHeadSize, String aAnalysesText,
 			String aZOJReccomend, String aReccomend, String divideNum, String aLpu) throws ParseException,
 			NamingException {
-		try{
-//		System.out.println("DEBUG ------------ExportOrph---------------");
-//		System.out.println("DEBUG ----- aHeadSize='"+aHeadSize+"'");
-//		System.out.println("DEBUG ----- divideNum='"+divideNum+"'");
+		try {
 		if (aStartDate==null || aStartDate.equals("")||aFinishDate==null || aFinishDate.equals("")) {
 			return null;
 		}
@@ -205,11 +202,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					
 					
 		}
-	
-	private DataSource findDataSource() throws NamingException {
-		return ApplicationDataSourceHelper.getInstance().findDataSource();
-	}
-	
+
 	public void find_data(String SQLReq,
 			String aFizGroup, String aHeight,
 			String aWeight, String aHeadSize, String aAnalysesText,
@@ -221,7 +214,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		badCards.setLength(0);
 		try
 		{
-			DataSource ds = findDataSource();
+			DataSource ds = ApplicationDataSourceHelper.getInstance().findDataSource();
 			Connection dbh = ds.getConnection();
 			statement = dbh.createStatement();
 			
@@ -341,13 +334,11 @@ public class ExtDispServiceBean implements IExtDispService {
 						+ "and edc.servicedate is not null and vedc.orphcode is not null "; //Есть ли даты у услуг
 								
 				ResultSet rs_issled = statement.executeQuery(SQLissled);
-					while (rs_issled.next())
-					{	
-					card_basic.addContent(new Element("record")
-						.addContent(new Element("id").addContent(rs_issled.getString("iss_id")))
+					while (rs_issled.next()) {
+						card_basic.addContent(new Element("record")
+							.addContent(new Element("id").addContent(rs_issled.getString("iss_id")))
 							.addContent(new Element("date").addContent(rs_issled.getString("date")))
-							.addContent(new Element("result").addContent(card_issl_result))
-						);
+							.addContent(new Element("result").addContent(card_issl_result)));
 					}
 				
 				if (!card_basic.getChildren().isEmpty()) {
@@ -368,8 +359,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					while (rs_osmotri.next()) {
 					card_osmotri.addContent(new Element("record")
 						.addContent(new Element("id").addContent(rs_osmotri.getString("iss_id")))
-							.addContent(new Element("date").addContent(rs_osmotri.getString("date")))
-						);
+						.addContent(new Element("date").addContent(rs_osmotri.getString("date"))));
 					}
 					if (card_osmotri.getChildren().isEmpty()) {
 						badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У пациента нет ни одного осмотра врачом!").append("#");
@@ -377,25 +367,25 @@ public class ExtDispServiceBean implements IExtDispService {
 					}
 				
 				Element currPat = new Element ("child")
-				.addContent(new Element("idInternal").addContent(rs.getString("pid")))
-				.addContent(new Element("idType").addContent(p_idType)) 
-				.addContent(new Element("name")
+					.addContent(new Element("idInternal").addContent(rs.getString("pid")))
+					.addContent(new Element("idType").addContent(p_idType))
+					.addContent(new Element("name")
 					.addContent(new Element("last").addContent(rs.getString("lastname")))
 					.addContent(new Element("first").addContent(rs.getString("firstname")))
 					.addContent(new Element("middle").addContent(rs.getString("middlename"))))
-				.addContent(new Element("idSex").addContent(sex))
-				.addContent(new Element("dateOfBirth").addContent(toDate(rs.getString("birthday"))))
-				.addContent(new Element("idCategory").addContent(p_idCategory))
-				.addContent(new Element("idDocument").addContent(passID))
-				.addContent(new Element("documentSer").addContent(rs.getString("passSer")))
-				.addContent(new Element("documentNum").addContent(rs.getString("passNum")))
-				//.addContent(new Element("snils").addContent("000-000-000-00"))//rs.getString("snils")))
-				//.addContent(new Element("polisSer").addContent(""))
-				.addContent(new Element("polisNum").addContent(commonNumber))
-				.addContent(new Element("idInsuranceCompany").addContent(InsuranceCompany))
-				.addContent(new Element("medSanName").addContent(lpuName))
-				.addContent(new Element("medSanAddress").addContent(lpuAddress))
-				.addContent(new Element("address"));
+					.addContent(new Element("idSex").addContent(sex))
+					.addContent(new Element("dateOfBirth").addContent(toDate(rs.getString("birthday"))))
+					.addContent(new Element("idCategory").addContent(p_idCategory))
+					.addContent(new Element("idDocument").addContent(passID))
+					.addContent(new Element("documentSer").addContent(rs.getString("passSer")))
+					.addContent(new Element("documentNum").addContent(rs.getString("passNum")))
+					//.addContent(new Element("snils").addContent("000-000-000-00"))//rs.getString("snils")))
+					//.addContent(new Element("polisSer").addContent(""))
+					.addContent(new Element("polisNum").addContent(commonNumber))
+					.addContent(new Element("idInsuranceCompany").addContent(InsuranceCompany))
+					.addContent(new Element("medSanName").addContent(lpuName))
+					.addContent(new Element("medSanAddress").addContent(lpuAddress))
+					.addContent(new Element("address"));
 				String fullAddress = rs.getString("fullAddress");
 				if (fullAddress!=null&&!fullAddress.equals("0")&&!fullAddress.equals("")) {
 					String[] arrAddress = fullAddress.split(":"); //postIndex:kladrNP:kladrStr:house:building:appartment
@@ -440,63 +430,57 @@ public class ExtDispServiceBean implements IExtDispService {
 //								.addContent(new Element("problem").addContent(""))
 //								);
 //							
-				if (monthLet<fiveLet)
-						{
-							card.addContent(new Element("pshycDevelopment") //Оценка возраста психического развития для детей от 0 до 4 лет в месяцах (по умолчанию - кол-во месяцев)
-									.addContent(new Element("poznav").addContent(String.valueOf(monthLet*12))) // познавательная функция
-									.addContent(new Element("motor").addContent(String.valueOf(monthLet*12))) //моторная функция
-									.addContent(new Element("emot").addContent(String.valueOf(monthLet*12)))	//эмоциональная и социальная (контакт с окружающим миром) функции		
-									.addContent(new Element("rech").addContent(String.valueOf(monthLet*12))) //предречевое и речевое развитие
-								);
-						}
-					else
-						{
-							card.addContent(new Element("pshycState") //Оценка состояния психического развития для детей от 5 лет (0 - в норме)
-									.addContent(new Element("psihmot").addContent("0")) //Психомоторная сфера
-									.addContent(new Element("intel").addContent("0")) // Интеллект
-									.addContent(new Element("emotveg").addContent("0")) //Эмоционально-вегетативная сфера
-								);
-						}
-					if (monthLet>=tenLet)
-						{
-							if (sex.equals("1"))
-							{
-							card.addContent(new Element("sexFormulaMale")  //Половая формула (муж.) старше 10 лет
-								.addContent(new Element("P").addContent("1"))
-								.addContent(new Element("Ax").addContent("1"))
-								.addContent(new Element("Fa").addContent("1"))
-							);
-							}
-							else 
-							{
-							card.addContent(new Element("sexFormulaFemale") // Половая формула (жен.)
-								.addContent(new Element("P").addContent("1"))
-								.addContent(new Element("Ma").addContent("1"))
-								.addContent(new Element("Ax").addContent("1"))
-								.addContent(new Element("Me").addContent("1"))
-							);
-							card.addContent(new Element("menses") //  Менструальная функция
-								.addContent(new Element("menarhe").addContent("144"))
-								.addContent(new Element("characters")
-									.addContent(new Element("char").addContent("1"))
-								)
-							);
-							}
-						}
-								card.addContent(new Element("healthGroupBefore").addContent(health_G)) //Группа здоровья до проведения обследования (числом)
-								.addContent(new Element("fizkultGroupBefore").addContent(fizkult_G)) // Медицинская группа для занятий физической культурой
-								.addContent(new Element("diagnosisBefore")
-									.addContent(new Element("diagnosis")
-										.addContent(new Element("mkb").addContent(rs.getString("mkbcode")))
-										.addContent(new Element("dispNablud").addContent("3")) //Диспансерное наблюдение (1-ранее, 2 - впервые, 3 - не установлено)
-								//		.addContent(new Element("lechen") //Лечение назначено
-										//	.addContent(new Element("condition").addContent("1")) //условия (1,2,3)1 - амбулаторно
-										//	.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
-										//	.addContent(new Element("notDone").addContent("") //Причина невыполнения
-										//		.addContent(new Element("reason").addContent(""))
-										//		.addContent(new Element("reasonOther").addContent(""))
-										//	)
-								//		)
+				if (monthLet<fiveLet) {
+					String defaultAge = String.valueOf(monthLet*12);
+					card.addContent(new Element("pshycDevelopment") //Оценка возраста психического развития для детей от 0 до 4 лет в месяцах (по умолчанию - кол-во месяцев)
+						.addContent(new Element("poznav").addContent(defaultAge)) // познавательная функция
+						.addContent(new Element("motor").addContent(defaultAge)) //моторная функция
+						.addContent(new Element("emot").addContent(defaultAge))	//эмоциональная и социальная (контакт с окружающим миром) функции
+						.addContent(new Element("rech").addContent(defaultAge)) //предречевое и речевое развитие
+					);
+				} else {
+					card.addContent(new Element("pshycState") //Оценка состояния психического развития для детей от 5 лет (0 - в норме)
+						.addContent(new Element("psihmot").addContent("0")) //Психомоторная сфера
+						.addContent(new Element("intel").addContent("0")) // Интеллект
+						.addContent(new Element("emotveg").addContent("0")) //Эмоционально-вегетативная сфера
+					);
+				}
+				if (monthLet>=tenLet) {
+					if (sex.equals("1")) {
+						card.addContent(new Element("sexFormulaMale")  //Половая формула (муж.) старше 10 лет
+							.addContent(new Element("P").addContent("1"))
+							.addContent(new Element("Ax").addContent("1"))
+							.addContent(new Element("Fa").addContent("1"))
+						);
+					} else {
+						card.addContent(new Element("sexFormulaFemale") // Половая формула (жен.)
+							.addContent(new Element("P").addContent("1"))
+							.addContent(new Element("Ma").addContent("1"))
+							.addContent(new Element("Ax").addContent("1"))
+							.addContent(new Element("Me").addContent("1"))
+						);
+						card.addContent(new Element("menses") //  Менструальная функция
+							.addContent(new Element("menarhe").addContent("144"))
+							.addContent(new Element("characters")
+								.addContent(new Element("char").addContent("1"))
+							)
+						);
+					}
+				}
+				card.addContent(new Element("healthGroupBefore").addContent(health_G)) //Группа здоровья до проведения обследования (числом)
+				.addContent(new Element("fizkultGroupBefore").addContent(fizkult_G)) // Медицинская группа для занятий физической культурой
+				.addContent(new Element("diagnosisBefore")
+					.addContent(new Element("diagnosis")
+						.addContent(new Element("mkb").addContent(rs.getString("mkbcode")))
+						.addContent(new Element("dispNablud").addContent("3")) //Диспансерное наблюдение (1-ранее, 2 - впервые, 3 - не установлено)
+				//		.addContent(new Element("lechen") //Лечение назначено
+						//	.addContent(new Element("condition").addContent("1")) //условия (1,2,3)1 - амбулаторно
+						//	.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
+						//	.addContent(new Element("notDone").addContent("") //Причина невыполнения
+						//		.addContent(new Element("reason").addContent(""))
+						//		.addContent(new Element("reasonOther").addContent(""))
+						//	)
+				//		)
 //										.addContent(new Element("reabil").addContent("") //Лечение назначено
 //											.addContent(new Element("condition").addContent("1")) //условия стационар?(1,2,3)
 //											.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
@@ -505,23 +489,20 @@ public class ExtDispServiceBean implements IExtDispService {
 //												.addContent(new Element("reasonOther").addContent(""))
 //											)
 //										)
-										.addContent(new Element("vmp").addContent("0")) //ВМП рекоменд. и оказана (1), рек+не ок(2), не рек(0)
-									));
-									if (health_G.equals("1"))
-									{
-										card.addContent(new Element("healthyMKB").addContent(rs.getString("mkbcode"))); //Код осмотра, если ребёнок здоров (Z00-Z99)
-									}
-									else
-									{
-									card.addContent(new Element("diagnosisAfter").addContent("")
-											.addContent(new Element("diagnosis").addContent("")
-												.addContent(new Element("mkb").addContent(rs.getString("mkbcode")))
-												.addContent(new Element("firstTime").addContent("0")) //выявлен впервые? 1,0
-												.addContent(new Element("dispNablud").addContent("0")) //Диспансерное наблюдение (0 - не установлено, 1 - ранее, 2 - впервые)
-										//		.addContent(new Element("lechen")
-										//			.addContent(new Element("condition").addContent("1")) //условия стационар?(1-амб,2,3)
-										//			.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
-										//		)
+						.addContent(new Element("vmp").addContent("0")) //ВМП рекоменд. и оказана (1), рек+не ок(2), не рек(0)
+					));
+					if (health_G.equals("1")) {
+						card.addContent(new Element("healthyMKB").addContent(rs.getString("mkbcode"))); //Код осмотра, если ребёнок здоров (Z00-Z99)
+					} else {
+						card.addContent(new Element("diagnosisAfter").addContent("")
+							.addContent(new Element("diagnosis").addContent("")
+								.addContent(new Element("mkb").addContent(rs.getString("mkbcode")))
+								.addContent(new Element("firstTime").addContent("0")) //выявлен впервые? 1,0
+								.addContent(new Element("dispNablud").addContent("0")) //Диспансерное наблюдение (0 - не установлено, 1 - ранее, 2 - впервые)
+						//		.addContent(new Element("lechen")
+						//			.addContent(new Element("condition").addContent("1")) //условия стационар?(1-амб,2,3)
+						//			.addContent(new Element("organ").addContent("2")) //организация (2 - ГБУЗ)
+						//		)
 //												.addContent(new Element("reabil")
 //													.addContent(new Element("condition").addContent("")) //условия стационар?(1,2,3)
 //													.addContent(new Element("organ").addContent("")) //организация (2 - ГБУЗ)
@@ -531,13 +512,13 @@ public class ExtDispServiceBean implements IExtDispService {
 //													.addContent(new Element("organ").addContent("")) //организация (2 - ГБУЗ)
 //													.addContent(new Element("state").addContent("")) //Консультации выполнены или не выполнены (0,1,2).
 //												)
-												.addContent(new Element("needVMP").addContent("0")) //Рекомендована ВМП (0-1)
-												.addContent(new Element("needSMP").addContent("0")) //Рекомендована СМП (0-1)
-												.addContent(new Element("needSKL").addContent("0")) //Рекомендовано СКЛ (0-1)
-												.addContent(new Element("recommendNext").addContent(card_reccomend)) //Рекомендации по диспансерному наблюдению, лечению, 
-											)
-									);
-									}
+								.addContent(new Element("needVMP").addContent("0")) //Рекомендована ВМП (0-1)
+								.addContent(new Element("needSMP").addContent("0")) //Рекомендована СМП (0-1)
+								.addContent(new Element("needSKL").addContent("0")) //Рекомендовано СКЛ (0-1)
+								.addContent(new Element("recommendNext").addContent(card_reccomend)) //Рекомендации по диспансерному наблюдению, лечению,
+							)
+						);
+					}
 //									.addContent(new Element("invalid").addContent("")
 //											.addContent(new Element("type").addContent("")) //  Вид инвалидности ( с рождения/нет 1-2)
 //											.addContent(new Element("dateFirstDetected").addContent("")) //Дата первого освидетельствования
@@ -549,39 +530,38 @@ public class ExtDispServiceBean implements IExtDispService {
 //													.addContent(new Element("defect").addContent(""))
 //											)
 //									);
-							
-									card.addContent(card_issled);
-									card.addContent(new Element("healthGroup").addContent(health_G));
-									card.addContent(new Element("fizkultGroup").addContent(fizkult_G)); // группа занятия физкультурой
-									card.addContent(new Element("zakluchDate").addContent(toDate(rs.getString("edcFinishDate"))));
-									card.addContent(new Element("zakluchVrachName")
-											.addContent(new Element("last").addContent(vrach_l))
-											.addContent(new Element("first").addContent(vrach_f))
-											.addContent(new Element("middle").addContent(vrach_m))
-									);
-									
-									card.addContent(card_osmotri);
-									cards.addContent(card);
-									currPat.addContent(cards);
-									card.addContent(new Element("recommendZOZH").addContent(card_recommendZOZH));
+
+					card.addContent(card_issled);
+					card.addContent(new Element("healthGroup").addContent(health_G));
+					card.addContent(new Element("fizkultGroup").addContent(fizkult_G)); // группа занятия физкультурой
+					card.addContent(new Element("zakluchDate").addContent(toDate(rs.getString("edcFinishDate"))));
+					card.addContent(new Element("zakluchVrachName")
+							.addContent(new Element("last").addContent(vrach_l))
+							.addContent(new Element("first").addContent(vrach_f))
+							.addContent(new Element("middle").addContent(vrach_m))
+					);
+					card.addContent(card_osmotri);
+					cards.addContent(card);
+					currPat.addContent(cards);
+					card.addContent(new Element("recommendZOZH").addContent(card_recommendZOZH));
 //									card.addContent(new Element("reabilitation")
 //											.addContent(new Element("date"))
 //											.addContent(new Element("state"))
 //									);
-									card.addContent(new Element("privivki")
-											.addContent(new Element("state").addContent("1")) // Привит по возрасту
+					card.addContent(new Element("privivki")
+							.addContent(new Element("state").addContent("1")) // Привит по возрасту
 //											.addContent(new Element("privs")
 //													.addContent(new Element("priv")))
-								);
-									card.addContent(new Element("oms").addContent("0"));
+				);
+					card.addContent(new Element("oms").addContent("0"));
 
-									rootElement.addContent(currPat);
-					if (divideNumber!=0 && numRight%divideNumber==0){ 
-						//System.out.println("-------------------ExtDispServiceBean, Пришло время разделяться!!!");
-						createFile(rootElement);
-						rootElement = new Element("children");
-					}
-					setIsExported(card_id);
+								rootElement.addContent(currPat);
+				if (divideNumber!=0 && numRight%divideNumber==0){
+					//System.out.println("-------------------ExtDispServiceBean, Пришло время разделяться!!!");
+					createFile(rootElement);
+					rootElement = new Element("children");
+				}
+				setIsExported(card_id);
 				}
 			dbh.close();
 			if (!rootElement.getChildren().isEmpty()) {
@@ -594,26 +574,22 @@ public class ExtDispServiceBean implements IExtDispService {
 	//		return theArchiveFileName;
 			}
 			
-		catch (SQLException e)
-			{
+		catch (SQLException e) {
 			if (CAN_DEBUG) LOG.debug("Find data = ERROR");
-	        System.out.println(e.getMessage());
+	        e.printStackTrace();
 	        System.out.println(badCards.toString());
-	        rootElement.addContent(new Element("ERROR!!!!"+e.getMessage()));
+	        //rootElement.addContent(new Element("ERROR!!!!"+e.getMessage()));
 			//return rootElement;
 	        }	
 	//		return theArchiveFileName;
 		}
 	
 	public void createFile(Element aElement) {
-		
 		try {
-			
 			org.jdom.output.XMLOutputter outputter = new org.jdom.output.XMLOutputter();
 			String fileName="orph-"+theFileSuffix+theFinishDate+"_"+aElement.hashCode()+".xml";
 			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 			String outputFile=workDir+"/"+fileName;
 			FileWriter fwrt = new FileWriter(outputFile);
 			Document pat = new Document(aElement);
@@ -633,7 +609,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		SimpleDateFormat nDate = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat nDate2 = new SimpleDateFormat("dd.MM.yyyy");
 		
-		return nDate.format(nDate2.parse(args)).toString();
+		return nDate.format(nDate2.parse(args));
 	}
 	
 
@@ -642,7 +618,7 @@ public class ExtDispServiceBean implements IExtDispService {
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     public String setOrphCodes() throws NamingException {
-    	DataSource ds = findDataSource();
+    	DataSource ds =  ApplicationDataSourceHelper.getInstance().findDataSource();
     	String SQLReq = "select veds.code, veds.id from vocextdispservice veds ";
 		Statement statement;
 		HashMap <String, String> codeMap = new HashMap<String, String>();

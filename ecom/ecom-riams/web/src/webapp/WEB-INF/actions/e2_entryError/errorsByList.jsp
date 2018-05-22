@@ -20,7 +20,7 @@
 String listId = request.getParameter("id");
 String errorCode = request.getParameter("errorCode");
 String dontShowComplexCase=request.getParameter("dontShow");
-StringBuilder sqlAdd = new StringBuilder().append("");
+StringBuilder sqlAdd = new StringBuilder();
 if (listId!=null) {
     if (errorCode!=null&&!errorCode.equals("")) { //Реестр записей по ошибке
         sqlAdd.append(" err.errorcode='"+errorCode+"'");
@@ -43,7 +43,7 @@ if (listId!=null) {
         , e.historyNumber as statNumber, e.serviceStream as serviceStream
                 from e2entryerror err
                 left join e2entry e on e.id=err.entry_id
-                where e.listentry_id=${param.id} and (err.isdeleted='0' or err.isdeleted='0') and ${sqlAdd}
+                where err.listentry_id=${param.id} and (err.isdeleted='0' or err.isdeleted='0') and ${sqlAdd}
                 group by e.id ,e.lastname,e.firstname, e.middlename,e.birthdate
                 order by e.lastname, e.firstname, e.middlename"/>
         <msh:table idField="1" name="entriesReestr" action="entityParentView-e2_entry.do" noDataMessage="Нет случаев по ошибке">
@@ -59,7 +59,7 @@ if (listId!=null) {
                 from e2entryerror err
                 left join VocE2EntryError ve on ve.code=err.errorcode
                 where err.listentry_id=${param.id} and (err.isdeleted='0' or err.isdeleted='0') group by err.errorcode, ve.name"/>
-            <msh:table idField="1" name="entriesList" action="e2_errorsByList.do" noDataMessage="Нет ошибок по заполнению">
+            <msh:table idField="1" name="entriesList" action="entityParentList-e2_entry.do" noDataMessage="Нет ошибок по заполнению">
                 <msh:tableColumn columnName="Ошибка" property="2" />
                 <msh:tableColumn columnName="Кол-во записей с ощшибкой" property="3"/>
             </msh:table>

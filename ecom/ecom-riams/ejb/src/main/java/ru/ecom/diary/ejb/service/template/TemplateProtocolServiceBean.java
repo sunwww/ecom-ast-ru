@@ -400,41 +400,41 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 
 				if (mc instanceof HospitalMedCase) { //Если стационар - выгружаем выписной эпикриз
 					if (d==null ||d instanceof DischargeEpicrisis) {
-					//log.info("1=getEpicrisis 0");
-					//recordText = HospitalMedCaseViewInterceptor.getDischargeEpicrisis(mc.getId(), aManager);
-					//log.info("1=getEpicrisis 1 " + aRecord);
-					HospitalMedCase hosp = (HospitalMedCase) mc;
-					serviceType = "DISCHARGE";
-					externalCaseId = lpuCode+"#"+serviceType+"#"+hosp.getId();
-					medcaseDate = "" + hosp.getDateFinish();
-					medcaseTime = "" + hosp.getDischargeTime();
-					List<Object[]> list = aManager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
-							+ ", coalesce(vwfd.code||' ','')||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename as worker"
-							+ ",d.name as dname,d.id as did"
-							+ ", coalesce(wf.code,'') as worker"
-							+ ", case when d.IsNoOmc='1' then '1' else null end as IsNoOmc"
-							+ " from MedCase dmc "
-							+ " left join MisLpu d on d.id=dmc.department_id "
-							+ " left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
-							+ " left join VocWorkFunction vwf on wf.workFunction_id=vwf.id "
-							+ " left join VocAcademicDegree vwfd on wf.degrees_id=vwfd.id "
-							+ " left join Worker w on w.id=wf.worker_id "
-							+ " left join Patient p on p.id=w.person_id "
-							+ " where dmc.parent_id='" + hosp.getId() + "' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart,dmc.entranceTime ").getResultList();
+						//log.info("1=getEpicrisis 0");
+						//recordText = HospitalMedCaseViewInterceptor.getDischargeEpicrisis(mc.getId(), aManager);
+						//log.info("1=getEpicrisis 1 " + aRecord);
+						HospitalMedCase hosp = (HospitalMedCase) mc;
+						serviceType = "DISCHARGE";
+						externalCaseId = lpuCode+"#"+serviceType+"#"+hosp.getId();
+						medcaseDate = "" + hosp.getDateFinish();
+						medcaseTime = "" + hosp.getDischargeTime();
+						List<Object[]> list = aManager.createNativeQuery("select d.name as depname,to_char(dmc.dateStart,'DD.MM.YYYY') as dateStart,COALESCE(to_char(dmc.dateFinish,'DD.MM.YYYY'),to_char(dmc.transferDate,'DD.MM.YYYY'),'____.____.______г.') as dateFinish"
+								+ ", coalesce(vwfd.code||' ','')||vwf.name||' '||p.lastname||' '|| p.firstname ||' '||p.middlename as worker"
+								+ ",d.name as dname,d.id as did"
+								+ ", coalesce(wf.code,'') as worker"
+								+ ", case when d.IsNoOmc='1' then '1' else null end as IsNoOmc"
+								+ " from MedCase dmc "
+								+ " left join MisLpu d on d.id=dmc.department_id "
+								+ " left join WorkFunction wf on wf.id=dmc.ownerFunction_id "
+								+ " left join VocWorkFunction vwf on wf.workFunction_id=vwf.id "
+								+ " left join VocAcademicDegree vwfd on wf.degrees_id=vwfd.id "
+								+ " left join Worker w on w.id=wf.worker_id "
+								+ " left join Patient p on p.id=w.person_id "
+								+ " where dmc.parent_id='" + hosp.getId() + "' and dmc.DTYPE='DepartmentMedCase' order by dmc.dateStart,dmc.entranceTime ").getResultList();
 
-					for (int i = 0; i < list.size(); i++) {
-						Object[] dep = list.get(i);
-						if (hosp.getResult() != null && (hosp.getResult().getCode().equals("11") || hosp.getResult().getCode().equals("15"))) {
-							if (dep[7] == null) {
+						for (int i = 0; i < list.size(); i++) {
+							Object[] dep = list.get(i);
+							if (hosp.getResult() != null && (hosp.getResult().getCode().equals("11") || hosp.getResult().getCode().equals("15"))) {
+								if (dep[7] == null) {
+									executor = dep[3].toString();
+								}
+							} else {
 								executor = dep[3].toString();
 							}
-						} else {
-							executor = dep[3].toString();
 						}
-					}
-				} else {
-						return;
-					}
+					} else {
+							return;
+						}
 				} else if (mc instanceof DepartmentMedCase) { //Дневники специалистов в отделении не трогаем
 					return;
 				} else if (mc instanceof Visit) { //Дневники визитов не выгружаем. Выгружаем только документ "Выписка из амбулаторной карты"
@@ -471,17 +471,15 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						medcaseDate = "" +  d.getDateRegistration();//vis.getDateStart();
 						medcaseTime = "" + d.getTimeRegistration();//vis.getTimeExecute();
 						executor = d.getSpecialist().getWorkFunction().getName() + " " + d.getSpecialist().getWorkerInfo();
+						aRecord=d.getRecord();
 					} else {
 						medcaseDate = "" +vis.getDateStart();
 						medcaseTime = "" +vis.getTimeExecute();
 						executor = vis.getWorkFunctionExecute().getWorkFunction().getName() + " " + vis.getWorkFunctionExecute().getWorkerInfo();
 					}
-					if (aRecord==null){
+					if (StringUtil.isNullOrEmpty(aRecord)){
 						aRecord= d!=null?d.getRecord():"";
 					}
-
-
-
 				}
 				//Заполнили все данные, начинаем формирование json
 				service.put("caseid", externalCaseId);

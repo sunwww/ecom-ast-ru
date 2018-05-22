@@ -402,7 +402,7 @@ group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,
 
 ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="Дата посещения" property="2"/>            
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
@@ -497,7 +497,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
   
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
@@ -611,7 +611,7 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
     </msh:sectionTitle>
     <msh:sectionContent>
   
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>

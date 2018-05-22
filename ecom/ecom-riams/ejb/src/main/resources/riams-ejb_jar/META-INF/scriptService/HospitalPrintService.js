@@ -1585,7 +1585,10 @@ function recordMedCaseDefaultInfo(medCase,aCtx) {
 			recordDiagnosis(aCtx,slsId,"3","4","diagnosis.clinic.complication") ;
 			map.put("ambtype","СТАЦИОНАРНОГО") ;
 		} else {
-			recordDiagnosis(aCtx,slsId,"1","1","diagnosis.clinic.main") ;
+            //milamesher 1105 если есть клинический, беру его, нет - беру направительный
+			recordDiagnosis(aCtx,slsId,"4","1","diagnosis.clinic.main") ;
+			if (map.get("diagnosis.clinic.main.mkb")==null || map.get("diagnosis.clinic.main.mkb").equals(""))
+                recordDiagnosis(aCtx, slsId, "1", "1", "diagnosis.clinic.main");
 			recordDiagnosis(aCtx,slsId,"1","3","diagnosis.clinic.related") ;
 			recordDiagnosis(aCtx,slsId,"1","4","diagnosis.clinic.complication") ;
 			map.put("ambtype","АМБУЛАТОРНОГО") ;

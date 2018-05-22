@@ -50,15 +50,17 @@
                     coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'')||'&serviceStream='||e.serviceStream as id
                 ,e.entryType as f2
                 ,e.billDate as f3
-                ,e.billNumber as f4
+                ,e.billNumber||max(case when vocbill.id is not null then ' ('||vocbill.name||')' else '' end ) as f4
                 ,count(*) as f5_cnt
                 ,count(case when e.isDefect='1' then e.id else null end) as f6_cntDefect
                 ,e.serviceStream as f7
                  from e2entry e
+                 left join e2bill bill on bill.id=e.bill_id
+                 left join voce2billstatus vocbill on vocbill.id=bill.status_id
                 where e.listentry_id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
                 group by e.entryType, e.billDate, e.billNumber ,e.serviceStream
                  order by e.entryType, e.serviceStream, e.billDate, e.billNumber  "/>
-                <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do" noDataMessage="Нет записей по заполнению" >
+                <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do" ex noDataMessage="Нет записей по заполнению" >
                     <msh:tableColumn columnName="Тип записи" property="2"/>
                     <msh:tableColumn columnName="Источник финансирования" property="7"/>
                     <msh:tableColumn columnName="Дата счета" property="3"/>
@@ -90,12 +92,13 @@
                     <msh:sideLink action="/javascript:exportDefectNewListEntry()" name="Выгрузить дефекты в новое заполнение" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:markAsReSend(false)" name="Пометить как первую подачу" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:markAsReSend(true)" name="Пометить как повторную подачу" roles="/Policy/E2/Edit" />
-                    <msh:sideLink action="/javascript:closeListEntry(true)" name="Закрыть заполнение" roles="/Policy/E2/Edit" />
+                    <msh:sideLink action="/javascript:closeListEntry(true)" name="Закрыть заполнение" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:addHistoryNumberToList()" name="Добавить в заполнение госпитализацию" roles="/Policy/E2/Edit" />
-                    <msh:sideLink action="/javascript:showUnionUnionDialog()" name="Объединить с другим заполнением" roles="/Policy/E2/Edit" />
+                    <msh:sideLink action="/javascript:showUnionUnionDialog()" name="Объединить с другим заполнением" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:showUnionExportHistory()" name="Журнал пакетов по счетам" roles="/Policy/E2/Edit" />
+                    <msh:sideLink action="/javascript:refillListEntry()" name="Переформировать заполнение" roles="/Policy/E2/Admin" />
                 </msh:tableNotEmpty>
-                <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/View" />
+                <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
@@ -103,6 +106,17 @@
         <msh:ifFormTypeIsView formName="e2_entryListForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
+
+                function refillListEntry() {
+                    if (confirm('Вы действительно хотите пересчитать заполнение?')) {
+                        Expert2Service.refillListEntry($('id').value, {
+                            callback: function () {
+                                alert('Заполнение пересчитан');
+                            }
+                        });
+                        jQuery.toast('Пересчет заполнения запущен!');
+                    }
+                }
                 function addHistoryNumberToList() {
                     var list = prompt("Введите номера ИБ");
                     if (list) {

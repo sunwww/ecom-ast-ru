@@ -135,26 +135,42 @@ var funcemergencymessage = {
 		    } ) ;
 		}
 }
+function showToastMessage(aMessage,aJson) {
+	if (aJson) {
+        jQuery.toast({
+            position: aJson.position?aJson.position:'mid-center'
+            ,heading:aJson.title?aJson.title:"Сообщение"
+            ,text:aJson.text
+        });
+	} else {
+		jQuery.toast(aMessage);
+	}
+}
 function viewEmergencyUserMessage(aJsonId) {
 	var fldJson = JSON.parse(aJsonId) ;
 	var cnt = fldJson.params.length ;
-	var txt="";var ids = "" ;
 	if (cnt>0) {
 	    for (var ind=0;ind<cnt;ind++) {
 	    	var param = fldJson.params[ind] ;
-	    	txt += param.messageTitle+" "+param.messageText+" от "+param.infoReceipt+".\n" ;
-	    	if (ids!="") ids += "," ; ids+=param.id ;
+	    	jQuery.toast({
+                position: 'mid-center'
+				,heading:"Cрочное сообщение: "+param.messageTitle
+				,text:param.messageText+(param.messageUrl?"\n<a href='"+param.messageUrl+"' target='_blank'>Перейти</a>":"")
+				,hideAfter: false
+                ,bgColor: '#ff0000'
+				,icon:"warning"
+				,afterHidden:function(){checkEmergencyMessage(param.id);}
+			});
 	    }
-	    
-	    VocService.checkEmergencyMessages(ids,txt, {
-	        callback: function(aName) {
-	        	alert(txt) ;
-	        	--theDefaultTimeOutCnt ;
-	        	if (theDefaultTimeOutCnt>0) theDefaultTimeOut = setTimeout(funcemergencymessage.func,180000) ;
-	        }}
-	    ) ;
-	    
 	}
+}
+function checkEmergencyMessage(aId) {
+    VocService.checkEmergencyMessages(aId,'', {
+        callback: function(aName) {
+            --theDefaultTimeOutCnt ;
+            if (theDefaultTimeOutCnt>0) theDefaultTimeOut = setTimeout(funcemergencymessage.func,180000) ;
+        }}
+    ) ;
 }
 function hideUserMessage(aId) {
 	VocService.hiddenMessage(aId, {

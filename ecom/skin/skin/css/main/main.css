@@ -1,4 +1,5 @@
 @charset "utf-8";
+@import "../jquery/jquerytoast.css";
 @media print {
 	div#header ul#mainMenu,div#header ul#user,div#side { display: none; }
 	div#content {margin-left: 0em;}
