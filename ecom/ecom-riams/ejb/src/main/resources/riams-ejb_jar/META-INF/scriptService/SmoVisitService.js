@@ -291,7 +291,7 @@ function createNewVisitByDeniedDiary(aContext,aVocWorkFunctions,aVocWorkFunction
 		//+" order by p.lastname,p.firstname,p.middlename" ;
 	manager.createNativeQuery(sql).executeUpdate() ;
 	// Список талонов
-	sql = "select sls.serviceStream_id,case when sls.emergency='1' then '1' else '0' end as emergency"
+	sql = "select coalesce(sls.serviceStream_id,1) as serviceStream,case when sls.emergency='1' then '1' else '0' end as emergency"
 		+" ,to_char(sls.datestart,'dd.mm.yyyy') as dateStart,sls.entranceTime,wf.id as wfNid"
 		+" ,max(mp.id) as medcard,sls.patient_id,coalesce(sls.hospitalization_id,'1')"
 		+" ,max(diag.id) as diagid" //Берем самый последний установленный специалистом диагноз
