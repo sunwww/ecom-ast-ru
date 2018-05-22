@@ -57,4 +57,11 @@ public class VocExtDispService extends VocBaseEntity{
 		public void setMainCode(String aMainCode) {theMainCode = aMainCode;}
 		/** Код главной услуги */
 		private String theMainCode;
+
+		/** Код ФОМС */
+		@Comment("Код ФОМС")
+		public String getOmcCode() {return theOmcCode;}
+		public void setOmcCode(String aOmcCode) {theOmcCode = aOmcCode;}
+		/** Код ФОМС */
+		private String theOmcCode ;
 }

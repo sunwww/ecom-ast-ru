@@ -33,8 +33,15 @@ import java.util.List;
 public class E2Entry extends BaseEntity {
 
 
-    //Все поля ниже размещены в EntityForm!
 
+    //Все поля ниже размещены в EntityForm!
+    /** Счет */
+    @Comment("Счет")
+    @OneToOne
+    public E2Bill getBill() {return theBill;}
+    public void setBill(E2Bill aBill) {theBill = aBill;}
+    /** Счет */
+    private E2Bill theBill ;
     /** Консультативно-диагностическое обращение */
     @Comment("Консультативно-диагностическое обращение")
     public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
@@ -960,7 +967,6 @@ public class E2Entry extends BaseEntity {
         if (theIsEmergency==null) {theIsEmergency=false;}
         if (theIsCriminalMessage==null) {theIsCriminalMessage=false;}
         if (theNoOmcDepartment==null) {theNoOmcDepartment=false;}
-
     }
     /** Санкции */
     @Comment("Санкции")
@@ -977,4 +983,47 @@ public class E2Entry extends BaseEntity {
     public void setErrorList(List<E2EntryError> aErrorList) {theErrorList = aErrorList;}
     /** Ошибки проверки */
     private List<E2EntryError> theErrorList ;
+
+    /** Тип доп. диспансеризации */
+    @Comment("Тип доп. диспансеризации")
+    public String getExtDispType() {return theExtDispType;}
+    public void setExtDispType(String aExtDispType) {theExtDispType = aExtDispType;}
+    /** Тип доп. диспансеризации */
+    private String theExtDispType ;
+
+    /** Возраст доп. диспансеризации */
+    @Comment("Возраст доп. диспансеризации")
+    public String getExtDispAge() {return theExtDispAge;}
+    public void setExtDispAge(String aExtDispAge) {theExtDispAge = aExtDispAge;}
+    /** Возраст доп. диспансеризации */
+    private String theExtDispAge ;
+
+    /** Группа здоровья доп. диспансеризации */
+    @Comment("Группа здоровья доп. диспансеризации")
+    public String getExtDispHealthGroup() {return theExtDispHealthGroup;}
+    public void setExtDispHealthGroup(String aExtDispHealthGroup) {theExtDispHealthGroup = aExtDispHealthGroup;}
+    /** Группа здоровья доп. диспансеризации */
+    private String theExtDispHealthGroup ;
+
+    /** Социальная группа доп. диспансеризации */
+    @Comment("Социальная группа доп. диспансеризации")
+    public String getExtDispSocialGroup() {return theExtDispSocialGroup;}
+    public void setExtDispSocialGroup(String aExtDispSocialGroup) {theExtDispSocialGroup = aExtDispSocialGroup;}
+    /** Социальная группа доп. диспансеризации */
+    private String theExtDispSocialGroup ;
+
+    /** Назначения доп. диспансеризации */
+    @Comment("Назначения доп. диспансеризации")
+    public String getExtDispAppointments() {return theExtDispAppointments;}
+    public void setExtDispAppointments(String aExtDispAppointments) {theExtDispAppointments = aExtDispAppointments;}
+    /** Назначения доп. диспансеризации */
+    private String theExtDispAppointments ;
+
+    /** Направлен на след. этап ДД */
+    @Comment("Направлен на след. этап ДД")
+    public Boolean getExtDispNextStage() {return theExtDispNextStage;}
+    public void setExtDispNextStage(Boolean aExtDispNextStage) {theExtDispNextStage = aExtDispNextStage;}
+    /** Направлен на след. этап ДД */
+    private Boolean theExtDispNextStage ;
+
 }

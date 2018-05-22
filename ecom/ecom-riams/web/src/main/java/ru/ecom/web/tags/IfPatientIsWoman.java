@@ -65,7 +65,7 @@ public class IfPatientIsWoman extends AbstractGuidSimpleSupportTag {
 				System.out.println(e.getMessage()) ;
 				System.out.println("</span>") ;
 			}
-			System.out.println("womanIs="+womanIs) ;
+			//System.out.println("womanIs="+womanIs) ;
 			if (womanIs) {
 				getJspBody().invoke(out);
 			}

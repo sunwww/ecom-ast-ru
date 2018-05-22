@@ -70,7 +70,7 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
         } else {
             try {
                 lpu = service.getWorkingLpu() ;
-                System.out.println("lpu="+lpu) ;
+             //   System.out.println("lpu="+lpu) ;
             } catch(Exception e) {
             	System.out.println("lpu not found") ;
             	return aMapping.findForward("successerror");
@@ -78,7 +78,7 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
         	
         }
         if (lpu!=null && lpu!=0) { 
-	        System.out.println("lpu="+lpu) ;
+	      //  System.out.println("lpu="+lpu) ;
 	        aRequest.setAttribute("department",lpu) ;
 	        String lpuinfo = service.getWorkingLpuInfo(lpu) ;
 	        aRequest.setAttribute("departmentInfo",lpuinfo) ;

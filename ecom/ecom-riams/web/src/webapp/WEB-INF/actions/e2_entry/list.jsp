@@ -124,7 +124,7 @@ select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
  and (e.isDeleted is null or e.isDeleted='0')
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
         , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend
-  order by ${orderBySql} "/> ${entriesSql}
+  order by ${orderBySql} "/>
         <msh:hideException>
             <msh:section title='Результат поиска ${searchTitle}'>
                 <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="14" cellFunction="true" openNewWindow="true">
@@ -143,9 +143,6 @@ select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
                     <msh:tableColumn columnName="Профиль" property="11" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Результат" property="13" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Дефект" property="15" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-
-
-
                 </msh:table>
             </msh:section>
         </msh:hideException>

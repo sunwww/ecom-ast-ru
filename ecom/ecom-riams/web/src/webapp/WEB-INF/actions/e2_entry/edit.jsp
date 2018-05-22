@@ -209,7 +209,11 @@
                 <msh:row>
                <msh:textField property="costFormulaString" size="100" fieldColSpan="4"/>
                 </msh:row>
-            </msh:row><msh:row>
+            </msh:row>
+                <msh:row>
+                    <msh:hidden property="bill" />
+                </msh:row>
+                <msh:row>
                     <msh:textField property="billNumber" size="50"/>
                     <msh:textField property="billDate"/>
             </msh:row>
@@ -356,8 +360,8 @@ where link.entry_id=${param.id}"/>
                         return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
                     }
 
-            function gotoSlo() {
-                window.open('entityParentView-stac_slo.do?id='+$('externalId').value);
+            function gotoMedcase() {
+                window.open('entitySubclassView-mis_medCase.do?id='+$('externalId').value);
             }
             function makeCheck() {
                 var recalcKsg=false;
@@ -416,13 +420,15 @@ where link.entry_id=${param.id}"/>
         <msh:ifFormTypeIsView formName="e2_entryForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
             <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
                 <msh:sideLink action="/javascript:window.history.back()" name="Назад" roles="/Policy/E2/Edit" />
+                <msh:IfPropertyIsFalse formName="some_shit" propertyName="doNotSend">
                 <msh:sideLink params="id" action="/entityParentEdit-e2_entry" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-e2_entry" name="Удалить" roles="/Policy/E2/Delete" />
                 <msh:sideLink action="/javascript:makeCheck()" name="Пересчитать случай" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:makeMPFromRecord()" name="Сделать файл из случая" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:unionByHospitalMedCase()" name="Объединить случай" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:showDiagnosisAddServiceDialog()" name="Добавить диагноз/услугу" roles="/Policy/E2" />
-                <msh:sideLink action="/javascript:gotoSlo()" name="Перейти к СЛО" roles="/Policy/E2" />
+                </msh:IfPropertyIsFalse>
+                <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
