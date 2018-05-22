@@ -423,7 +423,7 @@ function getPassportInfo(aPassportType,aPassportSeries,aPassportNumber,aPassport
 function printLabAnalysisTemplateExtra (aCtx, aParams) {
     var pid = aParams.get("id");
     var sqlQuery1 ="select distinct mc.contractnumber, cpp.lastname||' '||cpp.firstname||' '||coalesce(cpp.middlename,'') as cpplastname\n" +
-        ",CAST(EXTRACT(YEAR from (cpp.birthday)) as INTEGER) as ycpp\n" +
+        ",CAST(EXTRACT(YEAR from (cpp.birthday)) as INTEGER) as ycpp,cpp.id as cppid\n" +
         "        from MedContract mc \n" +
         "        left join ContractAccount ca on mc.id=ca.contract_id\n" +
         "        left join ContractAccountMedService cams on cams.account_id=ca.id\n" +
@@ -440,6 +440,8 @@ function printLabAnalysisTemplateExtra (aCtx, aParams) {
         map.put("contractNumber", obj[0]);
         map.put("servedFIO", obj[1]);
         map.put("servedYear", obj[2]);
+        var servedPerson = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,java.lang.Long(obj[3])) ;
+        map.put("address",servedPerson.addressRegistration);
     }
         return map;
 }
