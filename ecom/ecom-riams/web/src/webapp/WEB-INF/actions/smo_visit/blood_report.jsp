@@ -93,7 +93,6 @@
     		request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("dateBegin"),request.getParameter("dateEnd"),request));
     		
     		StringBuilder sqlAdd = new StringBuilder();
-    		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;		
     		if (typeDate.equals("1")) {
     			request.setAttribute("dateSql", "sls.dateStart") ;
     		} else {
@@ -175,7 +174,7 @@ order by p.lastname, p.firstname, p.middlename
     </msh:sectionTitle>
 
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="ФИО пациента" property="2"/>            
             <msh:tableColumn columnName="Адрес проживания пациента" property="3"/>
