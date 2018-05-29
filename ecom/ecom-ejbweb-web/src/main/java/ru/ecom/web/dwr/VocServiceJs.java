@@ -100,7 +100,6 @@ public class VocServiceJs {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		System.out.println("emer message json = "+root.toString());
     	return root.toString() ;
     }
     private String str(String aValue) {
