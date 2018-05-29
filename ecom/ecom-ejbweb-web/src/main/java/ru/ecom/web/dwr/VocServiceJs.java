@@ -5,6 +5,9 @@ import java.util.Collection;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -75,32 +78,30 @@ public class VocServiceJs {
 		.append(dispatchTime)
 		.append("' as time)) or validitydate is null)");
     	Collection<WebQueryResult> list = service.executeNativeSql(sqlA.toString(),10);
-    	StringBuilder sb = new StringBuilder() ;
-    	sb.append("{");
-		sb.append("\"params\":[") ;
-		boolean firstPassed = false ;
+		JSONArray params = new JSONArray() ;
 		String[][] props = {{"1","id"},{"2","messageTitle"},{"3","messageText"},{"4","infoReceipt"},{"5","messageUrl"}} ;
 		for(WebQueryResult wqr : list) {
-			StringBuilder par = new StringBuilder() ;
-			par.append("{") ;
-			boolean isFirtMethod = false ;
+			JSONObject param = new JSONObject();
 			try {
 				for(String[] prop : props) {
 					Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
 					String strValue = value!=null?value.toString():"";
-					if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
-					par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
+					param.put(prop[1],strValue);
 				}
+				params.put(param);
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
-			par.append("}") ;
-			if(firstPassed) sb.append(", ") ;else firstPassed=true;
-			sb.append(par) ;
 		}
-		sb.append("]") ;
-		sb.append("}") ;
-    	return sb.toString() ;
+		JSONObject root = new JSONObject();
+		try {
+			root.put("params",params);
+			//return root.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		System.out.println("emer message json = "+root.toString());
+    	return root.toString() ;
     }
     private String str(String aValue) {
     	if (aValue.indexOf("\"")!=-1) {
