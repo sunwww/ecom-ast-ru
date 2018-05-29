@@ -18,6 +18,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Mkb;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
@@ -175,6 +176,7 @@ public class VisitProtocolForm extends ProtocolForm {
 
 	/** Код МКБ-10 диагноза */
 	@Comment("Код МКБ-10 диагноза")
+	@Mkb
 	public Long getDiagnosisIdc10() {return theDiagnosisIdc10;}
 	public void setDiagnosisIdc10(Long aDiagnosisIdc10) {theDiagnosisIdc10 = aDiagnosisIdc10;}
 	/** Код МКБ-10 диагноза */
