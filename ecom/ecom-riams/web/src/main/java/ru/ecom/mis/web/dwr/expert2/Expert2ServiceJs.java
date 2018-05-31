@@ -14,7 +14,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
+    /**  Копируем финансовый план на несколько месяцев (MM.dddd)*/
+    public void copyFinancePlanNextMonth(String aCurrentMonth, String aStartMonth, String aFinishMonth) {
 
+
+    }
     /** Пересчитать заполнение (удаляем существующие записи и формируем новые в существующее заполнение) */
     public void refillListEntry(Long aListEntryId, HttpServletRequest aRequest) throws NamingException {
         Injection.find(aRequest).getService(IExpert2Service.class).reFillListEntry(aListEntryId);
@@ -88,7 +92,7 @@ public class Expert2ServiceJs {
         if (aErrorCode!=null&&!aErrorCode.equals("")) { //меняем записи по ошибке
 
             sql.append(" where id in (select distinct entry_id from e2entryerror err where err.listentry_id=")
-                    .append(aEntryListId).append(" and err.errorcode='").append(aErrorCode).append("' and err.isDeleted='0')");
+                    .append(aEntryListId).append(" and err.errorcode='").append(aErrorCode).append("' and (err.isDeleted is null or err.isDeleted='0') )");
 
             if (aOldValue!=null&&!aOldValue.equals("")) {
                 sql.append(" and ").append(fieldName).append(" ='").append(aOldValue).append("'");
@@ -101,7 +105,7 @@ public class Expert2ServiceJs {
             }
 
         }
-
+sql.append(" and (isDeleted is null or isDeleted='0')");
         System.out.println("SQL for update field = "+sql);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 

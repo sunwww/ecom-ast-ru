@@ -31,10 +31,16 @@
                 <msh:separator colSpan="8" label="Общие"/>
                <msh:row>
                    <msh:textField property="name" size="100"/>
+                   <msh:checkBox property="isDraft"/>
                 </msh:row><msh:row>
                    <msh:textField property="startDate"/>
                    <msh:textField property="finishDate"/>
-            </msh:row><msh:row>
+            </msh:row>
+                <msh:row>
+                    <msh:textField property="checkDate" viewOnlyField="true"/>
+                    <msh:textField property="checkTime" viewOnlyField="true"/>
+                </msh:row>
+                <msh:row>
                    <msh:autoComplete property="entryType" vocName="vocE2ListEntryType" size="100"/>
                 </msh:row>
                 <msh:row>
@@ -60,7 +66,7 @@
                 where e.listentry_id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
                 group by e.entryType, e.billDate, e.billNumber ,e.serviceStream
                  order by e.entryType, e.serviceStream, e.billDate, e.billNumber  "/>
-                <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do" ex noDataMessage="Нет записей по заполнению" >
+                <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do"  noDataMessage="Нет записей по заполнению" >
                     <msh:tableColumn columnName="Тип записи" property="2"/>
                     <msh:tableColumn columnName="Источник финансирования" property="7"/>
                     <msh:tableColumn columnName="Дата счета" property="3"/>
@@ -111,7 +117,7 @@
                     if (confirm('Вы действительно хотите пересчитать заполнение?')) {
                         Expert2Service.refillListEntry($('id').value, {
                             callback: function () {
-                                alert('Заполнение пересчитан');
+                                jQuery.toast({text:'Заполнение пересчитано!',icon:'Info', hideAfter: false });
                             }
                         });
                         jQuery.toast('Пересчет заполнения запущен!');

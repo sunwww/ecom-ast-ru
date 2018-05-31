@@ -105,8 +105,18 @@ String listId=request.getParameter("id");
             <input type="button" value="Сортировать по ФИО" onclick="setOrderBy('e.lastname,e.firstname, e.middlename')">
             <input type="button" value="Сортировать по № ИБ" onclick="setOrderBy('historyNumber')">
             <label><input type="checkbox" id="chkDefect" name="chkDefect">Только дефекты</label>
+            <br>
+            <select id="replaceSelect">
+                <option value="SERVICESTREAM">Поток обслуживания</option>
+                <option value="SNILS_DOCTOR">СНИЛС лечащего врача</option>
+            </select>
+            <input type="text" name="replaceFrom" id="replaceFrom" placeholder="Заменить с">
+            <input type="text" name="replaceTo" id="replaceTo" placeholder="Заменить на">
+            <input type="button" id="replaceClick" value="Заменить" onclick="replaceValue(this)">
+            <input type="checkbox" id="dontShowComplexCase" name="dontShowComplexCase" onclick="dontShow(this)">
 
-    </msh:panel>
+
+        </msh:panel>
         <ecom:webQuery nameFldSql="entriesSql" name="entries" nativeSql="
 select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
         , e.departmentName as f7_depName, ksg.code||' '||ksg.name as f8_ksg ,e.historyNumber as f9_hisNum, e.cost as f10_cost, vbt.code||' '||vbt.name as f11_bedType
@@ -150,12 +160,33 @@ select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <script type="text/javascript">
+            function replaceValue(btn) {
+                btn.disabled=true;
+                var errorCode = '${param.errorCode}';
+                alert (errorCode);
+                if (!errorCode) {alert('NOT_ALLOWED TEST');return;}
+
+                var fld = $('replaceSelect').value;
+                if (fld &&$('replaceTo').value) {
+                    alert (${param.id}+"$$"+errorCode+"$$"+fld+"$$"+ $('replaceFrom').value+"$$"+ $('replaceTo').value);
+                    Expert2Service.replaceFieldByError(${param.id},errorCode,fld, $('replaceFrom').value, $('replaceTo').value, {
+                        callback: function (a) {
+                            alert(a);
+                            window.document.location.reload();
+                        }
+                    });
+                } else {
+                    alert ('Выберите поле для замены и на что менять');
+                }
+            }
+
             function setOrderBy(fld) {
                 alert('orderBy='+fld);
                 window.location.href = setGetParameter("orderBy",fld)
             }
             new dateutil.DateField($('startDate'));
             new dateutil.DateField($('finishDate'));
+
             function findAndSubmit() {
                 var url = window.location.href;
                 var filter = "";

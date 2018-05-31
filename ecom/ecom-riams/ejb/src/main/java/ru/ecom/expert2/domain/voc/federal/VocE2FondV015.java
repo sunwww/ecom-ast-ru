@@ -48,4 +48,11 @@ public class VocE2FondV015 extends VocBaseFederal {
     public void setPolicProfile(VocE2MedHelpProfile aPolicProfile) {thePolicProfile = aPolicProfile;}
     /** Профиль мед. помощи для подачи по поликлинике */
     private VocE2MedHelpProfile thePolicProfile ;
+
+    /** Главный специалист в диагностическом СПО */
+    @Comment("Главный специалист в диагностическом СПО")
+    public Boolean getIsKdoChief() {return theIsKdoChief;}
+    public void setIsKdoChief(Boolean aIsKdoChief) {theIsKdoChief = aIsKdoChief;}
+    /** Главный специалист в диагностическом СПО */
+    private Boolean theIsKdoChief ;
 }

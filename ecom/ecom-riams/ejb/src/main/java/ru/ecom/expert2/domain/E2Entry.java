@@ -34,7 +34,15 @@ public class E2Entry extends BaseEntity {
 
 
 
+
     //Все поля ниже размещены в EntityForm!
+    /** Признак детского возраст */
+    @Comment("Признак детского возраст")
+    public Boolean getIsChild() {return theIsChild;}
+    public void setIsChild(Boolean aIsChild) {theIsChild = aIsChild;}
+    /** Признак детского возраст */
+    private Boolean theIsChild ;
+
     /** Счет */
     @Comment("Счет")
     @OneToOne

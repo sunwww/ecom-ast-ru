@@ -30,6 +30,8 @@ public class E2EntryForm extends IdEntityForm {
 
 
 //----------все поля ниже добавлены на jsp!!!
+    /** Признак детского возраст */
+    private Boolean theIsChild ;
     /** Счет */
     private Long theBill ;
     /** Консультативно-диагностическое обращение */
@@ -878,6 +880,12 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     public Long getBill() {return theBill;}
     public void setBill(Long aBill) {theBill = aBill;}
+
+    @Comment("Признак детского возраст")
+    @Persist
+    public Boolean getIsChild() {return theIsChild;}
+    public void setIsChild(Boolean aIsChild) {theIsChild = aIsChild;}
+
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */

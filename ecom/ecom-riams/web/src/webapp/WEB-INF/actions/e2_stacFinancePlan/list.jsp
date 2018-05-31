@@ -18,10 +18,35 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
+<msh:textField property="copyStartDate"/>
+<msh:textField property="copyFinishDate"/>
+        <%
+        String month = request.getParameter("month");
 
+        if (month==null||month.equals("")) {
+            //Список месяцов, в которых есть планы
+            %>
+        <ecom:webQuery name="entryList" nativeSql="select to_char(fp.startDate,'MM.yyyy') as period,'&month='||to_char(fp.startDate,'MM.yyyy') as url
+             from financePlan fp
+              where fp.dtype='HospitalFinancePlan'
+              group by to_char(fp.startDate,'MM.yyyy')
+              order by to_char(fp.startDate,'MM.yyyy')"/>
+        <msh:section title='Результат поиска'>
+            <msh:table  name="entryList" action="entityList-e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
+                <msh:tableColumn columnName="Период" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+
+            </msh:table>
+        </msh:section>
+
+        <% } else {
+            String startDateSql =" and '"+month+"'=to_char(fp.startDate,'MM.yyyy')";
+            request.setAttribute("startDateSql",startDateSql);
+
+        %>
+        <input type="button" onclick="copyPlanNextMonth()"/>
         <msh:hideException>
             <ecom:webQuery name="entryList" nativeSql="select fp.id
-            ,fp.startDate, mhp.code||' '||mhp.name as profile
+            ,to_char(fp.startDate,'MM.yyyy') as date, mhp.code||' '||mhp.name as profile
             ,ml.name as department
             ,ksg.code||' '||ksg.name as ksg
             ,fp.count
@@ -30,8 +55,8 @@
              left join vocksg ksg on ksg.id=fp.ksg_id
              left join VocE2MedHelpProfile mhp on mhp.id=fp.profile_id
              left join mislpu ml on ml.id=fp.department_id
-              where fp.dtype='HospitalFinancePlan'
-              order by startDate "/>
+              where fp.dtype='HospitalFinancePlan' ${startDateSql}
+              order by fp.startDate "/>
             <msh:section title='Результат поиска'>
                 <msh:table  name="entryList" action="entityView-e2_stacFinancePlan.do" idField="1" disableKeySupport="true" styleRow="6">
                     <msh:tableColumn columnName="Период" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
@@ -43,5 +68,22 @@
                 </msh:table>
             </msh:section>
         </msh:hideException>
+        <% }%>
     </tiles:put>
+    <tiles:put name="javascript" type="string">
+        <script type="text/javascript">
+
+            function copyPlanNextMonth() {
+                var month='${param.month}';
+                var startCopyMonth=$('copyStartDate').value;
+                var finishCopyMonth=$('copyFinishDate').value;
+Expert2Service.copyPlanNextMonth(month, startCopyMonth,finishCopyMonth, {
+
+});
+                //Копируем финансовый план на следующий месяц
+
+
+            }
+        </script>
+            </tiles:put>
 </tiles:insert>
