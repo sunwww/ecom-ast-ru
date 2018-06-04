@@ -112,6 +112,7 @@
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="isEmergency"/>
+                    <msh:checkBox property="isChild"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="workPlace" vocName="vocWorkPlaceTypeCode"/>
@@ -420,14 +421,14 @@ where link.entry_id=${param.id}"/>
         <msh:ifFormTypeIsView formName="e2_entryForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
             <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
                 <msh:sideLink action="/javascript:window.history.back()" name="Назад" roles="/Policy/E2/Edit" />
-                <msh:IfPropertyIsFalse formName="some_shit" propertyName="doNotSend">
+                 <%--<msh:IfPropertyIsFalse formName="some_shit" propertyName="doNotSend">--%>
                 <msh:sideLink params="id" action="/entityParentEdit-e2_entry" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-e2_entry" name="Удалить" roles="/Policy/E2/Delete" />
                 <msh:sideLink action="/javascript:makeCheck()" name="Пересчитать случай" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:makeMPFromRecord()" name="Сделать файл из случая" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:unionByHospitalMedCase()" name="Объединить случай" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:showDiagnosisAddServiceDialog()" name="Добавить диагноз/услугу" roles="/Policy/E2" />
-                </msh:IfPropertyIsFalse>
+                <%--</msh:IfPropertyIsFalse>--%>
                 <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>

@@ -21,7 +21,7 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 	public void check(String aPolicyAction, Object aId, InterceptorContext aContext) {
 		
 		
-		System.out.println("check "+aId+" "+aPolicyAction+" "+aContext.getTarget());
+	//	System.out.println("check "+aId+" "+aPolicyAction+" "+aContext.getTarget());
 		if(!aContext.getSessionContext().isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck")) {
 			boolean canCheck = 
 				("View".equals(aPolicyAction) && aContext.getTarget().equals(ElementType.METHOD))

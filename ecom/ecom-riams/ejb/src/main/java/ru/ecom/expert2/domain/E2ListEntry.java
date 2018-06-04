@@ -25,6 +25,12 @@ public class E2ListEntry extends BaseEntity {
         theLpuOmcCode=aListEntry.theLpuOmcCode;
 
     }
+    /** Черновик */
+    @Comment("Черновик")
+    public Boolean getIsDraft() {return theIsDraft;}
+    public void setIsDraft(Boolean aIsDraft) {theIsDraft = aIsDraft;}
+    /** Черновик */
+    private Boolean theIsDraft ;
 
     /** Закрыто для редакторирования */
     @Comment("Закрыто для редакторирования")
@@ -106,5 +112,22 @@ public class E2ListEntry extends BaseEntity {
     public void setEntryList(List<E2Entry> aEntryList) {theEntryList = aEntryList;}
     /** Список записей по заполнению */
     private List<E2Entry> theEntryList ;
+
+    /** Дата последней проверки */
+    @Comment("Дата последней проверки")
+    public Date getCheckDate() {return theCheckDate;}
+    public void setCheckDate(Date aCheckDate) {theCheckDate = aCheckDate;}
+    /** Дата последней проверки */
+    private Date theCheckDate ;
+
+    /** Время последней проверки */
+    @Comment("Время последней проверки")
+    public Time getCheckTime() {return theCheckTime;}
+    public void setCheckTime(Time aCheckTime) {theCheckTime = aCheckTime;}
+    /** Время последней проверки */
+    private Time theCheckTime ;
+
+
+
 
 }

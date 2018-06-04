@@ -39,7 +39,7 @@ public class ActionUtil {
 	} 
 	public static List<Object[]> getListObjFromNativeQuery(String aSql, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		System.out.println(aSql) ; 
+	//	System.out.println(aSql) ;
 		return service.executeNativeSqlGetObj(aSql) ;
 	}
 	 public static String getContentOfHTTPPage(String pageAddress, String codePage) throws Exception {
@@ -241,7 +241,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 
 	public static String setParameterManyFilterSql(String aParameter,String aAttributeName,String aFldId,HttpServletRequest aRequest) throws JSONException {
 		if (aAttributeName==null) aAttributeName=aParameter ;
-		String param = (String)aRequest.getParameter(aParameter) ;
+		String param = aRequest.getParameter(aParameter) ;
 		String sql ="" ;
 		if (param!=null) {
 		JSONObject obj = new JSONObject(param) ;
@@ -306,7 +306,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 	}
 	public static void setUpperLikeSql(String aParameter,String aAttributeName,String aFldId,HttpServletRequest aRequest) {
 		if (aAttributeName==null) aAttributeName=aParameter ;
-		String param = (String)aRequest.getParameter(aParameter) ;
+		String param = aRequest.getParameter(aParameter) ;
 		if (param!=null && !param.equals("") && !param.equals("0")) {
 			aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
 			aRequest.setAttribute(aAttributeName+"Sql", " and upper("+aFldId+") like upper('%"+param+"%')") ;
@@ -318,7 +318,7 @@ public static String updateParameter(String aSession, String aNameParameter, Str
 	}
 	public static void setLikeSql(String aParameter,String aAttributeName,String aFldId,HttpServletRequest aRequest) {
 		if (aAttributeName==null) aAttributeName=aParameter ;
-		String param = (String)aRequest.getParameter(aParameter) ;
+		String param = aRequest.getParameter(aParameter) ;
     	if (param!=null && !param.equals("") && !param.equals("0")) {
     		aRequest.setAttribute(aAttributeName+"SqlId", "'&"+aParameter+"="+param+"'") ;
     		aRequest.setAttribute(aAttributeName+"Sql", " and "+aFldId+" like '%"+param+"%'") ;

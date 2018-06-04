@@ -663,7 +663,7 @@ public class PatientServiceBean implements IPatientService {
 		
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
 		//s(" ЛПУ наше, создаем прикрепления!!");
-		List<Object> obj =null;
+		List<Object> obj ;
 		Long areaId = null;
 		LpuArea la = null;
 		if (aDoctorSnils!=null && !aDoctorSnils.trim().equals("")){ // ищем участок по СНИЛС врача
@@ -673,15 +673,14 @@ public class PatientServiceBean implements IPatientService {
 					" left join worker w on w.id=wf.worker_id" +
 					" left join patient wpat on wpat.id=w.person_id" +
 					" where wpat.snils='"+aDoctorSnils.trim()+"'").getResultList();
-			if (obj!=null&&obj.size()>0) {
+			if (obj!=null&&obj.size()==1) { //Не найшли участок или нашли больше 1 участка - не проставляем участок!
 				areaId=Long.parseLong(obj.get(0).toString());
-				la = theManager.find(LpuArea.class, areaId);
 			} else {
 				log.error("НЕ Нашли участок по СНИЛС врача");
 			}
 		}
-		if (la==null && attachedType!=null&&attachedType.equals("1")){
-		//	s("Тип прикрепления - территориальный, ищем участок по адресу регистрации");
+		if (attachedType!=null&&attachedType.equals("1")){
+			obj=null;
 			try { 
 				obj = theManager.createNativeQuery("select la.id from patient p" +
 					" left join lpuareaaddresspoint laap on laap.address_addressid=p.address_addressid" +
@@ -696,21 +695,16 @@ public class PatientServiceBean implements IPatientService {
 				log.error("Участок по адресу не найден");
 			} catch (Exception e) {
 				e.printStackTrace();
-			}		
-			
-			if (obj!=null&&obj.size()>0) {
+			}
+			if (obj!=null&&obj.size()==1) {
 				areaId=Long.parseLong(obj.get(0).toString());
-			//	s("Участок нашли, ИД="+areaId);
-				la = theManager.find(LpuArea.class, areaId);
 			}
 		}
-
+		if (areaId!=null) {la = theManager.find(LpuArea.class,areaId);}
 		List<LpuAttachedByDepartment> attachments = theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null")
 			.setParameter("pat", aPatientId).getResultList();
-			
-		VocAttachedType attType = (VocAttachedType) (!theManager.createQuery("from VocAttachedType where code=:code")
-			.setParameter("code", attachedType).getResultList().isEmpty()?theManager.createQuery("from VocAttachedType where code=:code")
-			.setParameter("code", attachedType).getResultList().get(0):null);
+			List<VocAttachedType> attachedTypeList = theManager.createQuery("from VocAttachedType where code=:code").setParameter("code", attachedType).getResultList();
+		VocAttachedType attType = (VocAttachedType) (!attachedTypeList.isEmpty()?attachedTypeList.get(0):null);
 
 		if (attType==null) {
 			return "Прикрепление не создано, не распознан тип прикрепления: "+attachedType;
@@ -729,13 +723,8 @@ public class PatientServiceBean implements IPatientService {
 				att.setPatient(theManager.find(Patient.class, aPatientId));
 				att.setLpu(lpuAtt);
 				att.setAttachedType(attType);
-				if (la!=null) {
-				//	log.warn("=== участок найден! Patinet = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
 					att.setArea(la);
-				} else {
-					//Debug
-					//	System.out.println("=== Почему же не найден участок? PID = "+aPatientId+" area = " +areaId +" attType = "+ attachedType);
-				}
+
 				try {
 					att.setDateFrom(DateFormat.parseSqlDate(attachedDate));
 					att.setCompany(insCompany);

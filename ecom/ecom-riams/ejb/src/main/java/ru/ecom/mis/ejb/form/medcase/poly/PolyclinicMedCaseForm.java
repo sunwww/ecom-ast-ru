@@ -26,6 +26,14 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Spo")
 public class PolyclinicMedCaseForm extends MedCaseForm {
 
+	/** Признак консультативно-диагностического обращения */
+	@Comment("Признак консультативно-диагностического обращения")
+	@Persist
+	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
+	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
+	/** Признак консультативно-диагностического обращения */
+	private Boolean theIsDiagnosticSpo ;
+
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist	@DateString @DoDateString

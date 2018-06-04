@@ -12,7 +12,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.TimeString;
 
 /**
  * Список записей (заполнение
@@ -27,6 +29,31 @@ import ru.nuzmsh.forms.validator.validators.DateString;
         @AEntityFormInterceptor(EntryListCreateInterceptor.class)
 })
 public class E2EntryListForm extends IdEntityForm {
+
+    /** Дата последней проверки */
+    @Comment("Дата последней проверки")
+    @Persist
+    @DateString @DoDateString
+    public String getCheckDate() {return theCheckDate;}
+    public void setCheckDate(String aCheckDate) {theCheckDate = aCheckDate;}
+    /** Дата последней проверки */
+    private String theCheckDate ;
+
+    /** Время последней проверки */
+    @Comment("Время последней проверки")
+    @Persist
+    @TimeString @DoTimeString
+    public String getCheckTime() {return theCheckTime;}
+    public void setCheckTime(String aCheckTime) {theCheckTime = aCheckTime;}
+    /** Время последней проверки */
+    private String theCheckTime ;
+
+    /** Черновик */
+    @Comment("Черновик")
+    public Boolean getIsDraft() {return theIsDraft;}
+    public void setIsDraft(Boolean aIsDraft) {theIsDraft = aIsDraft;}
+    /** Черновик */
+    private Boolean theIsDraft ;
 
     /** Закрыто для редакторирования */
     @Comment("Закрыто для редакторирования")
