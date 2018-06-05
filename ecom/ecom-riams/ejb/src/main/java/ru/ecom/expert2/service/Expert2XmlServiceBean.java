@@ -435,7 +435,7 @@ private Boolean isCheckIsRunning = false;
     public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry) {
         try {
         if (isCheckIsRunning) {
-            log.warn("Формирование чего-то уже запущено, выходим");
+            log.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
             // return "Формирование чего-то уже запущено, выходим";
         }
         Date periodDate;
@@ -463,7 +463,7 @@ private Boolean isCheckIsRunning = false;
         }
         packetDateAdd = dateToString(periodDate, "yyMM");
         String packetType;
-        if (aType.equalsIgnoreCase(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE)||aType.equals(POLYCLINICKDOTYPE) || aType.equalsIgnoreCase(HOSPITALPEREVODTYPE)) {
+        if (aType.equals(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE) || aType.equals(POLYCLINICKDOTYPE) || aType.equals(HOSPITALPEREVODTYPE)) {
             packetType = "Z";
         } else if (aType.equals(VMPTYPE)) {
             packetType = "T";
