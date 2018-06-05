@@ -183,6 +183,12 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			.append("	where vqemC.criterion_id=vqec.id and qeC.expertType='Coeur'")
 			.append(") as CoeurAct")
 			//.append(" ,qecBM.id as branchManager,qecE.id as Expert,qecC.id as Coeur")
+				 //Milamesher 04062018 комментарии заведующего
+				 .append(",")
+				 .append(" (select qecBM.comment from qualityestimationcrit qecBM")
+				 .append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCardId).append("'  and qecBM.estimation_id=qeBM.id")
+				 .append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+				 .append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='BranchManager') as commentbranchManager")
 			.append(" from VocQualityEstimationCrit vqec") 
 			.append(" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqec.id")
 			//.append(" left join qualityestimationcrit qecBM on qecBM.mark_id=vqem.id")
@@ -230,12 +236,13 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 table.append("<th rowspan=2>№№п/п</th>") ;
 		 table.append("<th rowspan=2 colspan=2>Критерии качества медицинской помощи</th>") ;
 		 table.append("<th colspan=3>Оценочные баллы</th>") ;
+		table.append("<th>Комментарии</th>") ;
 		 table.append("</tr>") ;
 		 table.append("<tr>") ;
 		 table.append("<th>зав. отд</th>") ;
 		 table.append("<th>эксперт</th>") ;
 		 table.append("<th>КЭР</th>") ;
-		 
+		table.append("<th>Комм. зав.</th>") ;
 		 table.append("</tr>") ;
 		 List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {
@@ -249,7 +256,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 cntSubsection = ConvertSql.parseLong(row[4]).intValue() ;
 					 cntPart++;
 					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'><b><i>").append(row[1]).append(".</i></b></td>") ;
-					 table.append("<td colspan=5 align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
+					 table.append("<td colspan=6 align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
 					 table.append("</tr>") ;
 					 table.append("<tr>") ;
 					 firststr = true ;
@@ -280,8 +287,14 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
 					 }				 
 					 table.append(recordExpert(row[0],row[8], valMarkId, row[11],cntPart, cntSection, cntSubsection, "Coeur", aTypeSpecialist, firststr, aView) );
-					 
-					 
+
+
+				 }
+				 //Milamesher 04062018 комментарии зав.
+				 if (i%2==0) {  //только 1 из оценок, чтобы без дублей
+					 StringBuilder comments = new StringBuilder();
+					 if (row[15] != null) comments.append(row[15]);
+					 table.append("<td rowspan=\"2\">").append(comments.toString()).append("</td>");
 				 }
 				 table.append("</tr>") ;
 				 firststr =false ;
@@ -480,6 +493,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
 				 }
 				 table.append(recordExpertShort(row[0],row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView) );
+				 //Milamesher 04062018 - комментарий по желанию
+				 table.append("<td colspan=6 align='center'><input onclick=\"showYesNoCommentFromBean(").append((cntPart - 1)).append(")\" type=\"button\" value=\"Комм. зав.\" /></td>");
 				 table.append("</tr>") ;
 			 }
 		 }

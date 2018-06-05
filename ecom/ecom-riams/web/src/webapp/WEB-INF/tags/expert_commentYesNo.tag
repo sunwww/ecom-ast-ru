@@ -39,6 +39,8 @@
     var  the${name}Ii;
     var the${name}Type;
     var the${name}CommentYesNoDialog = new msh.widget.Dialog($('${name}CommentYesNoDialog')) ;
+    //Milamesher 04062018 flag - что не надо убирать оценку при комментарии по кнопке
+    var the${name}Flag ;
 
     function save${name}CommentYesNo() {
         the${name}Comment=document.getElementById("reasonYesNo");
@@ -63,18 +65,21 @@
     // Отмена
     function cancel${name}CommentYesNo() {
         the${name}CommentYesNoDialog.hide() ;
-       $('criterion'+the${name}Ii+'Name').value='';
-        $('criterion'+the${name}Ii).value='';
+        the${name}CommentYesNoDialog.hide() ;
+        if (the${name}Flag) {
+            $('criterion'+the${name}Ii+'Name').value='';
+            $('criterion'+the${name}Ii).value='';
+        }
     }
 
     // инициализация диалогового окна
-    function show${name}CommentYesNo(comment, mark,i,type) {
+    function show${name}CommentYesNo(comment, mark,i,type,flag) {
         the${name}Mark=mark;
         the${name}Comment=comment;
         the${name}Ii=i;
         the${name}Type=type;
         the${name}CommentYesNoDialog.show() ;
         document.getElementById('reasonYesNo').value=the${name}Comment;
+        the${name}Flag=flag;
     }
-</script>
 </script>
