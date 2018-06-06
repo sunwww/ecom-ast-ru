@@ -118,11 +118,11 @@ String listId=request.getParameter("id");
 
         </msh:panel>
         <ecom:webQuery nameFldSql="entriesSql" name="entries" nativeSql="
-select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
-        , e.departmentName as f7_depName, ksg.code||' '||ksg.name as f8_ksg ,e.historyNumber as f9_hisNum, e.cost as f10_cost, vbt.code||' '||vbt.name as f11_bedType
-        , list(coalesce(e.mainMkb,mkb.code)) as f12_diagnosis, rslt.code||' '||rslt.name as f13_result
-        ,case when e.isDefect='1' then 'color:blue' when (e.doNotSend is null or e.doNotSend='0') then '' else 'color: red' end as f14_style
-        ,list (es.dopCode) as f15_defects
+select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||to_char(e.birthDate,'dd.MM.yyyy') as f2_fio, e.startDate as f3_startDate, e.finishDate as f4_finishDate
+        , e.departmentName as f5_depName, ksg.code||' '||ksg.name as f6_ksg ,e.historyNumber as f7_hisNum, e.cost as f8_cost, vbt.code||' '||vbt.name as f9_bedType
+        , list(coalesce(e.mainMkb,mkb.code)) as f10_diagnosis, rslt.code||' '||rslt.name as f11_result
+        ,case when e.isDefect='1' then 'color:blue' when (e.doNotSend is null or e.doNotSend='0') then '' else 'color: red' end as f12_style
+        ,list (es.dopCode) as f13_defects
         ${searchFromSql}
         left join voce2medhelpprofile vbt on vbt.id=e.medhelpprofile_id
         left join VocE2FondV009 rslt on rslt.id=e.fondresult_id
@@ -140,19 +140,17 @@ select e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
                 <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="14" cellFunction="true" openNewWindow="true">
                     <msh:tableColumn columnName="№" property="sn" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="ИД" property="1" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Фамилия" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Имя" property="3" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Отчество" property="4" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="ИБ" property="9" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Отделение" property="7" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дата начала" identificator="5" property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="Дата окончания" identificator="6" property="6" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                    <msh:tableColumn columnName="КСГ" property="8" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Диагноз" property="12" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Цена случая" property="10" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Профиль" property="11" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Результат" property="13" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дефект" property="15" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Фамилия Имя Отчество" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="ИБ" property="7" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Отделение" property="5" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Дата начала"  property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="Дата окончания"  property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                    <msh:tableColumn columnName="КСГ" property="6" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Диагноз" property="10" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Цена случая" property="8" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Профиль" property="9" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Результат" property="11" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="Дефект" property="13" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

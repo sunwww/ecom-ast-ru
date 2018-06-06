@@ -25,6 +25,13 @@ public class E2ListEntry extends BaseEntity {
         theLpuOmcCode=aListEntry.theLpuOmcCode;
 
     }
+
+    /** ИД монитора процесса проверки */
+    @Comment("ИД монитора процесса проверки")
+    public Long getMonitorId() {return theMonitorId;}
+    public void setMonitorId(Long aMonitorId) {theMonitorId = aMonitorId;}
+    /** ИД монитора процесса проверки */
+    private Long theMonitorId ;
     /** Черновик */
     @Comment("Черновик")
     public Boolean getIsDraft() {return theIsDraft;}

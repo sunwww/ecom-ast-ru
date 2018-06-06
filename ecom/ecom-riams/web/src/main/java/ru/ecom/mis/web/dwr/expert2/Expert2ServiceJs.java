@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.expert2;
 
+import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.service.IExpert2Service;
@@ -105,7 +106,7 @@ public class Expert2ServiceJs {
             }
 
         }
-sql.append(" and (isDeleted is null or isDeleted='0')");
+        sql.append(" and (isDeleted is null or isDeleted='0')");
         System.out.println("SQL for update field = "+sql);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
@@ -123,10 +124,19 @@ sql.append(" and (isDeleted is null or isDeleted='0')");
         IExpert2XmlService service = Injection.find(aRequest).getService(IExpert2XmlService.class);
         return service.makeMPFIle(aEntryListId,aType, aBillNumber,new java.sql.Date(format.parse(aBillDate).getTime()),aEntryId,calcAllListEntry);
     }
-    public void checkListEntry(Long aListEntryId, boolean forceUpdateKsg, String aParams, HttpServletRequest aRequest) throws NamingException {
+    public long checkListEntry(final Long aListEntryId, final boolean forceUpdateKsg, final String aParams, HttpServletRequest aRequest) throws NamingException {
         System.out.println("start checkEntryList "+forceUpdateKsg);
-        Injection.find(aRequest).getService(IExpert2Service.class).checkListEntry(aListEntryId,forceUpdateKsg,aParams);
-        System.out.println("finish checkEntryList ");
+        IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+        final long monitorId = monitorService.createMonitor();
+        final IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
+        new Thread() {
+            public void run() {
+                System.out.println("start check new Thread");
+                service.checkListEntry(aListEntryId, forceUpdateKsg, aParams, monitorId);
+                System.out.println("finish checkEntryList ");
+            }
+            }.start();
+        return monitorId;
     }
     public void checkEntry (Long aEntryId, boolean forceUpdateKsg, HttpServletRequest aRequest) throws NamingException {
         System.out.println("start checkEntry ");

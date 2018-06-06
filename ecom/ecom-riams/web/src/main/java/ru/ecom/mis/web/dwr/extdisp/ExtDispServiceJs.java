@@ -92,7 +92,6 @@ public class ExtDispServiceJs {
 
 		}
 		sql.append(" order by ").append(aTypeSort!=null&&aTypeSort.equals("2")?" random() ":" pat.patientinfo ");
-		System.out.println("SQL = "+sql.toString());
 		//if (aLimit!=null&&aYear>0) { sql.append(" and to_char(pat.birthday,'yyyy')='").append(aYear).append("'");}
 		IWebQueryService service= Injection.find(aRequest).getService(IWebQueryService.class);
 		String ret =service.executeNativeSqlGetJSON(new String[]{"id", "name","area"},sql.toString(),aLimit);
@@ -123,13 +122,9 @@ public class ExtDispServiceJs {
 		 		" and (edc.notpaid is null or edc.notpaid='0')"+
 		 		(aDispCardId!=null&&aDispCardId!=0?(" and edc.id!="+aDispCardId):"")+
 		 		" and vedc.disableAgeDoubles='1' ").iterator().next().get1().toString());
-		 
-		 if(haveDis!=null&&haveDis>0)
-		 {
-			 return "1";
-			 
-		 }else return "0";
-		 
+
+		 return haveDis!=null&&haveDis>0?"1":"0";
+
 	}
 	// Проверка услуги ДД на: выходной день, дубль со стационаром, дубль с визитом, входит в период ДД	
 	// 0 - если всё в порядке, 1 - предупреждение, 2 - запрет на создание
@@ -141,16 +136,13 @@ public class ExtDispServiceJs {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-		}		
+		}
 		String res = "";
-		
 		
 		if (aDispCardId!=null&& !aDispCardId.equals(Long.valueOf(0))){
 			if (isInDispPeriod(aDate, aDispCardId, aRequest)) {res = "1Дата услуги ("+aDate+") выходит за период диспансеризации";}
 			if (isAfterDispPeriod(aDate, aDispCardId, aRequest)) {res = "2Услуга оказана позже окончания диспансеризации";}
 		} else {
-			System.out.println("=== Пришло время проверить полис!");
 			if (!isMedPolicyExists(aPatientId,aDate,aRequest)) {
 				res = "2У пациета отсутствует актуальный полис ОМС, создание карты невозможно!";
 			}
@@ -167,15 +159,11 @@ public class ExtDispServiceJs {
 	
 	public boolean isMedPolicyExists(Long aPatientId, String aDate, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String sql = "select id from medpolicy where patient_id="+aPatientId+" and dtype='MedPolicyOmc' " +
+		String sql = "select id from medpolicy where patient_id="+aPatientId+" and (dtype='MedPolicyOmc' or dtype='MedPolicyOmcForeign') " +
 				"and (actualdateto is null or to_date('"+aDate+"','dd.MM.yyyy') between actualdatefrom and actualdateto)";
 		Collection <WebQueryResult> wqr = service.executeNativeSql(sql);
-	//	System.out.println("=== Check policy sql = "+sql);
 		if (!wqr.isEmpty()) {
-			//if (Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if (Long.parseLong(wqr.iterator().next().get1().toString())>0) {
 				return true;
-			}
 		} else {
 			sql = "select kinsman_id from kinsman where person_id="+aPatientId;
 			wqr = service.executeNativeSql(sql);
@@ -190,12 +178,7 @@ public class ExtDispServiceJs {
 	public boolean isHoliday (String aDate) throws ParseException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(ru.nuzmsh.util.format.DateFormat.parseDate(aDate));
-		 if (cal.get(java.util.Calendar.DAY_OF_WEEK)==1) {
-	//		 System.out.println("is Holiday = true");
-			 return true;
-		 }
-		// System.out.println("is Holiday = false");
-		return false;
+		 return cal.get(java.util.Calendar.DAY_OF_WEEK)==1;
 	}
 	
 	public boolean isAfterDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {

@@ -12,7 +12,7 @@ public interface IExpert2Service {
     E2Bill getBillEntryByDateAndNumber(String sBillNumber, String aBillDate);
   boolean exportDefectNewListEntry(Long alistEntryId);
    //  void addMedServiceToEntry(Long aEntryId, Long aMedServiceId);
-     void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams);
+     void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId);
      void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType);
     void makeCheckEntry (Long aEntryId, boolean updateKsgIfExist);
      VocKsg getBestKSG(E2Entry aEntry, boolean updateKsgIfExist);
