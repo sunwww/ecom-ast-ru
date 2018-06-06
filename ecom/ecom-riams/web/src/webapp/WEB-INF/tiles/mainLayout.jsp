@@ -9,6 +9,12 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+
+<%
+    String username = LoginInfo.find(request.getSession()).getUsername();
+    request.setAttribute("username", username);
+%>
 
 <html:html xhtml="true" locale="true">
  <head>
@@ -25,10 +31,31 @@
 <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
 <!-- Дополнительное определение стиля -->
 <tiles:insert attribute="style" ignore='true'/>
-
+    <style type="text/css">
+     #message {
+         margin-left: 30%;
+         font-size: 30px;
+         margin-bottom: 10px;
+     }
+    </style>
 <!-- Дополнительное определение стиля END -->
 
+     <script type="text/javascript">
+         jQuery(document).ready(function() {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'GetMessageFromFile?username=${username}', false);
+             xhr.send();
+             if (xhr.status != 200) {
+                 alert( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
+             } else {
+                 //alert(xhr.responseText); // responseText -- текст ответа.
+                 var t = document.getElementById('message');
+                 t.innerHTML=xhr.responseText
+             }
+         });
 
+
+     </script>
  </head>
     <%
     //Date curDate = new Date() ;
@@ -176,6 +203,8 @@
     </div>
 
     <div id="content">
+        <div id="message"></div>
+
         <tiles:insert attribute="title" ignore="true"/>
         <msh:errorMessage/>
         <msh:infoMessage/>
@@ -226,8 +255,11 @@
 <msh:ifInRole roles="/Policy/Config/EmergencyMessage">
 <script type="text/javascript">
 theDefaultTimeOut = setTimeout(funcemergencymessage.func,12000) ;
+
+
 </script>
 </msh:ifInRole>
+
 <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 
 id="gToday:datetime::gfPop1:plugins_time.js" 
 src="/skin/ext/cal/themes/DateTime/ipopeng.htm" 
