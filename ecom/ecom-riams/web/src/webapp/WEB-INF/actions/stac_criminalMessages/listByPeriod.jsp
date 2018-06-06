@@ -142,6 +142,9 @@
         <msh:row>
         	<msh:autoComplete property="department" fieldColSpan="7" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
+        <msh:row>
+            <msh:autoComplete property="filterAdd" fieldColSpan="8" horizontalFill="true" label="Район" vocName="vocRayon"/>
+        </msh:row>
       <msh:row>
            <td colspan="11">
             <input type="submit" onclick="find()" value="Найти" />
@@ -293,6 +296,12 @@
     		request.setAttribute("paramDate","pm.phoneDate") ;
     		request.setAttribute("paramDateInfo","Дата регистрации сообщения") ;
     	}
+        String rayon="" ;
+        String r = request.getParameter("filterAdd") ;
+        if (r!=null && !r.equals("") && !r.equals("0")) {
+            rayon=" and rayon.id='"+r+"'";
+        }
+        request.setAttribute("rayonSql", rayon) ;
     	%>
     	<%if (view!=null && (view.equals("1"))) {
     	String typeGroup = request.getParameter("typeGroup") ;
@@ -313,6 +322,7 @@
             ,list(pm.diagnosis) as pmdiagnosis
             ,coalesce(vdh.name,'СК №'||ss.code||' от '||to_char(m.dateStart,'dd.mm.yyyy')||' '||cast(m.entranceTime as varchar(5))) as sscode
             ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as discharge
+            ,rayon.name as rname
             from PhoneMessage pm 
             left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
             left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -330,12 +340,13 @@
         	left join SecUser su on su.login=m.username
         	left join WorkFunction wf1 on wf1.secUser_id=su.id
         	left join Worker w1 on w1.id=wf1.worker_id
-        	left join MisLpu ml1 on ml1.id=w1.lpu_id     
+        	left join MisLpu ml1 on ml1.id=w1.lpu_id
+        	left join Vocrayon rayon on rayon.id=pm.rayon_id
             where pm.dtype='CriminalPhoneMessage'
             and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
         and ( m.noActuality is null or m.noActuality='0')
         ${period}
-        ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql}
+        ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql} ${rayonSql}
             group by m.id,p.lastname,p.firstname,p.middlename,p.birthday,ss.code,vdh.name
             ,m.dateFinish,m.dischargeTime,m.dateStart,m.entranceTime
             order by p.lastname
@@ -368,6 +379,7 @@
               <msh:tableColumn columnName="Диагноз" property="11" />
               <msh:tableColumn columnName="Исход" property="7" />
               <msh:tableColumn columnName="Дата выписки" property="13" />
+              <msh:tableColumn columnName="Район" property="14" />
             </msh:table>
             </msh:sectionContent>
             </msh:section>
@@ -389,6 +401,7 @@
     ,coalesce(vpmorg.name,pm.phone,pm.recieverOrganization) as organization
     ,pm.diagnosis as pmdiagnosis
     ,to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) as datedischarge
+    ,rayon.name as rname
     from PhoneMessage pm 
     left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
     left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -404,12 +417,13 @@
 	left join SecUser su on su.login=m.username
 	left join WorkFunction wf1 on wf1.secUser_id=su.id
 	left join Worker w1 on w1.id=wf1.worker_id
-	left join MisLpu ml1 on ml1.id=w1.lpu_id     
+	left join MisLpu ml1 on ml1.id=w1.lpu_id
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql} ${rayonSql}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <form action="print-stac_criminalMessage_1.do" method="post" target="_blank">
@@ -438,6 +452,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
       <msh:tableColumn columnName="Диагноз" property="11" />
       <msh:tableColumn columnName="Исход" property="7" />
       <msh:tableColumn property="12" columnName="Дата выписки"/>
+      <msh:tableColumn columnName="Район" property="13" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -482,7 +497,8 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
      , case when m.emergency='1' then 'ДА' else 'НЕТ' end as emergency
      ,vss.name as vssname
      ,pol.commonNumber as commonNumber
-     ,case when m.dateFinish is not null then (select list(distinct mkb.code) from Diagnosis diag
+     ,case when m.dateFinish is not null then (select list(distinct mkb.code)
+      from Diagnosis diag
 		left join VocIdc10 mkb on mkb.id=diag.idc10_id
 		left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
@@ -492,6 +508,7 @@ where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as m
 		left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 		left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as mkbAftername
+,rayon.name as rname
     from PhoneMessage pm 
     left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
     left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -518,12 +535,13 @@ where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as m
     left join SecUser su on su.login=m.username
     left join WorkFunction wf1 on wf1.secUser_id=su.id
     left join Worker w1 on w1.id=wf1.worker_id
-    left join MisLpu ml1 on ml1.id=w1.lpu_id     
+    left join MisLpu ml1 on ml1.id=w1.lpu_id
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -564,6 +582,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
       <msh:tableColumn columnName="Диагноз" property="13" />
       <msh:tableColumn columnName="Исход лечения" property="14" />
       <msh:tableColumn columnName="Вид м/помощи" property="15" />
+      <msh:tableColumn columnName="Район" property="21" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -582,12 +601,13 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     ,count(distinct m.id) as cntObr
     from PhoneMessage pm 
     left join medcase m on m.id=pm.medCase_id
-    left join MisLpu as ml on ml.id=m.department_id 
+    left join MisLpu as ml on ml.id=m.department_id
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by ${paramDate}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -616,12 +636,13 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     left join VocPhoneMessageType vpmt on vpmt.id=pm.phoneMessageType_id
     left join medcase m on m.id=pm.medCase_id
     left join mislpu ml on ml.id=m.department_id
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is null
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -649,12 +670,13 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     left join VocPhoneMessageType vpmt on vpmt.id=pm.phoneMessageType_id
     left join medcase m on m.id=pm.medCase_id
     left join mislpu ml on ml.id=m.department_id
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 and m.deniedHospitalizating_id is not null
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -683,11 +705,12 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     left join VocPhoneMessageType vpmt on vpmt.id=pm.phoneMessageType_id
     left join medcase m on m.id=pm.medCase_id
     left join mislpu ml on ml.id=m.department_id
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by m.department_id,ml.name,vpmt.id,vpmt.name
     order by ml.name,vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -734,6 +757,7 @@ where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as m
     ,case when m.dateFinish is null then 'На лечении' 
     else coalesce(to_char(m.dateFinish,'dd.mm.yyyy'),'')||' '||
     case when vhr.code!='11' then vho.name else 'смерть' end end as vphoname
+    ,rayon.name as rname
     from PhoneMessage pm 
     left join VocPhoneMessageType vpht on vpht.id=pm.phoneMessageType_id
     left join VocPhoneMessageSubType vpmst on vpmst.id=pm.phoneMessageSubType_id
@@ -750,12 +774,12 @@ where m.id=diag.medcase_id and vdrt.code='3' and vpd.code='1' ) else '' end as m
     left join Patient p on p.id=m.patient_id
     left join VocSex vs on vs.id=p.sex_id
     left join MisLpu as ml on ml.id=m.department_id
-     
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and m.deniedHospitalizating_id is null and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     order by ${paramDate}
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
     <msh:sectionTitle>
@@ -783,6 +807,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
       <msh:tableColumn columnName="Код диагноза по МКБ при выписке (переводе, смерти)" property="7" />
       <msh:tableColumn columnName="Тяжесть состояния" property="8" />
       <msh:tableColumn columnName="Исход" property="9" />
+      <msh:tableColumn columnName="Район" property="10" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -823,11 +848,12 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     left join medcase m on m.id=pm.medCase_id
     left join mislpu ml on ml.id=m.department_id
     left join Patient p on p.id=m.patient_id
+    left join Vocrayon rayon on rayon.id=pm.rayon_id
     where pm.dtype='CriminalPhoneMessage'
     and ${paramDate} between to_date('${param.dateBegin}','dd.mm.yyyy')  and to_date('${dateEnd}','dd.mm.yyyy')  
 and ( m.noActuality is null or m.noActuality='0')
 ${period}
-${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql}
+${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${rayonSql}
     group by vpmt.id,vpmt.name
     order by vpmt.name
     " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
@@ -890,3 +916,4 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     
   </tiles:put>
 </tiles:insert>
+<!--lastrelease milamesher 06062018 rayon-->
