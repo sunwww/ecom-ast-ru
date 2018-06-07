@@ -135,7 +135,7 @@ var funcemergencymessage = {
 		    } ) ;
 		}
 }
-function showToastMessage(aMessage,aJson) {
+function showToastMessage(aMessage,aJson,aAutoClose) {
 	if (aJson) {
         jQuery.toast({
             position: aJson.position?aJson.position:'mid-center'
@@ -143,7 +143,11 @@ function showToastMessage(aMessage,aJson) {
             ,text:aJson.text
         });
 	} else {
-		jQuery.toast(aMessage);
+
+		jQuery.toast({
+			text:aMessage
+			,hideAfter:aAutoClose?true:false
+		});
 	}
 }
 function viewEmergencyUserMessage(aJsonId) {
@@ -153,14 +157,16 @@ function viewEmergencyUserMessage(aJsonId) {
 	    for (var ind=0;ind<cnt;ind++) {
 	    	var param = fldJson.params[ind] ;
 	    	jQuery.toast({
-                position: 'mid-center'
+                position: 'bottom-center'
 				,heading:"Cрочное сообщение: "+param.messageTitle
 				,text:param.messageText+(param.messageUrl?"\n<a href='"+param.messageUrl+"' target='_blank'>Перейти</a>":"")
 				,hideAfter: false
                 ,bgColor: '#ff0000'
 				,icon:"warning"
-				,afterHidden:function(){checkEmergencyMessage(param.id);}
+				,beforeShow: function () {checkEmergencyMessage(param.id);}
+				,stack:cnt
 			});
+	    	//alert("close json id = "+param.id);
 	    }
 	}
 }
