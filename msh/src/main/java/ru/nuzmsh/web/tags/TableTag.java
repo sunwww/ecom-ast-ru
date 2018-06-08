@@ -217,7 +217,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
                         new Column(tag.getProperty(), tag.getColumnName()
                                 , tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam())
+                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth())
 
                 );
             } else if (aTag instanceof TableButtonTag) {
@@ -580,9 +580,9 @@ public class TableTag extends AbstractGuidSupportTag {
                                 Column column = (Column) obj;
                                 Object valueC ;
                                 if (theCellFunction) {
-                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName);
+                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName,column.theWidth);
                                 } else {
-                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null);
+                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null,column.theWidth);
                                 }
                                 if (!isFirstRow) {
                                     if (valueC!=null) {
@@ -967,7 +967,7 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
@@ -977,7 +977,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theIsCalcAmount = aIsCalcAmount ;
             if (aAddParam==null) aAddParam="" ;
             theAddParam =aAddParam ;
-
+            theWidth=aWidth;
         }
 
         @SuppressWarnings("unused")
@@ -992,7 +992,9 @@ public class TableTag extends AbstractGuidSupportTag {
                 aOut.print(theCssClass);
                 aOut.print("'>");
             } else {
-                aOut.print("<th>");
+                if (theWidth!=null && !theWidth.equals(""))
+                    aOut.print("<th width=\""+theWidth+"%\">");
+                else aOut.print("<th>");
             }
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
@@ -1011,6 +1013,8 @@ public class TableTag extends AbstractGuidSupportTag {
             //aOut.print(aId) ;
             //aOut.print("')");
             aOut.print("\"");
+            if (theWidth!=null && !theWidth.equals(""))
+                aOut.print(" width=\""+theWidth+"%\"");
             aOut.print(" class='") ;
             aOut.print(styleClass);
             aOut.print(' ');
@@ -1019,7 +1023,7 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.println("</td>");
         }
 
-        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle) throws IOException {
+        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle,String aWidth) throws IOException {
             String styleClass = "";
 
             Object value;
@@ -1058,6 +1062,8 @@ public class TableTag extends AbstractGuidSupportTag {
                 styleClass += " " + theCssClass;
             }
             aOut.print("<td ");
+            if (aWidth!=null && !aWidth.equals(""))
+                aOut.print(" width=\""+aWidth+"%\"");
             if (aTitle!=null) {
                 aOut.print("title=\"");
                 aOut.print(aTitle) ;
@@ -1168,6 +1174,8 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theGuid ;
         private final boolean theIsCalcAmount ;
         private final String theAddParam ;
+        //Milamesher 31052018 - ширина столбца в процентах
+        private final String theWidth;
     }
 
 
