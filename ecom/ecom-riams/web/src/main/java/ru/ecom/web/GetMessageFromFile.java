@@ -27,7 +27,8 @@ public class GetMessageFromFile extends HttpServlet {
 
         //response.setContentType("text/html");
         response.setContentType("text/plain");
-
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Headers","x-requested-with,origin, content-type, accept, authorization");
         response.setHeader("Access-Control-Allow-Credentials", "true");
