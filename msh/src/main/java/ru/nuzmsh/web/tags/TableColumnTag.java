@@ -109,4 +109,19 @@ public class TableColumnTag extends AbstractGuidSupportTag {
 
  	/** Роль */
  	private String theRole;
+
+
+    /**
+     * Ширина столбца
+     * @jsp.attribute   description="Ширина столбца"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     */
+    public String getWidth() {return theWidth;}
+    public void setWidth(String aWidth) {theWidth = aWidth;}
+
+    /** Ширина столбца */
+    private String theWidth;
+
 }
+//lastrelease Milamesher 08062018 ширина столбца
