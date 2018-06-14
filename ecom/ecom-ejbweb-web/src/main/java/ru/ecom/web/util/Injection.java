@@ -58,7 +58,10 @@ public class Injection {
         theEnv = env;
     }
     public static String getWebName(HttpServletRequest aRequest, String aWebName) {
-    	if (aWebName==null || aWebName.equals("")) {aWebName=aRequest.getContextPath();}
+        String path = aRequest.getContextPath();
+    	if (path ==null||path.equals("")) {aWebName="riams";}
+        if (aWebName==null || aWebName.equals("")) {aWebName=path;}
+
     	return aWebName ;
     }
 
