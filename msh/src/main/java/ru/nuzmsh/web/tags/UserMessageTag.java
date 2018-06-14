@@ -70,7 +70,6 @@ public class UserMessageTag  extends SimpleTagSupport {
 					.append(",icon:'info'")
 				.append("});");
 
-				System.out.println(sql);
 			//	out.println(sql.toString());
 					//.append(",afterHidden:function(){checkEmergencyMessage(param.id);}")
 
