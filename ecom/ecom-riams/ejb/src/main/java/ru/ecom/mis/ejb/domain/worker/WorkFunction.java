@@ -3,11 +3,7 @@ package ru.ecom.mis.ejb.domain.worker;
 import java.sql.Date;
 import java.sql.Time;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -57,6 +53,7 @@ abstract public class WorkFunction extends BaseEntity {
 	/** Рабочий календарь */
 	@Comment("Рабочий календарь")
 	@OneToOne
+	@Deprecated
 	public WorkCalendar getWorkCalendar() {
 		return theWorkCalendar;
 	}
@@ -349,4 +346,11 @@ abstract public class WorkFunction extends BaseEntity {
 	public void setPromedCode_lpusection(String promedCode_lpusection) {
 		this.promedCode_lpusection = promedCode_lpusection;
 	}
+	/** Разрешено записывать на дату без указания времени */
+	@Comment("Разрешено записывать на дату без указания времени")
+	@Column(nullable=false, columnDefinition="boolean default false")
+	public Boolean getIsDirectionNoTime() {return theIsDirectionNoTime;}
+	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
+	/** Разрешено записывать на дату без указания времени */
+	private Boolean theIsDirectionNoTime ;
 }

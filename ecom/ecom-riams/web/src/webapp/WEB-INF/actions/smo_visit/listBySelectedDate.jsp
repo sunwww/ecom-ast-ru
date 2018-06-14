@@ -47,7 +47,7 @@ left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 left join medCase smc on smc.parent_id=v.id and smc.dtype='ServiceMedCase'
 left join MedService ms on ms.id=smc.medservice_id
-where  v.datePlan_id='${calenDayId}' and v.DTYPE='Visit' and (v.noActuality is null or v.noActuality='0') and (v.isPaid is null or v.isPaid='1')
+where  v.datePlan_id='${calenDayId}' and (v.DTYPE='Visit' or v.DTYPE='ShortMedCase') and (v.noActuality is null or v.noActuality='0') and (v.isPaid is null or v.isPaid='1')
 group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,po.lastname,po.firstname,po.middlename,lpuo.name
 ,p.lastname,p.firstname,p.middlename,p.birthday
@@ -55,7 +55,7 @@ group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,vvr.name,v.visitResult_id,mlo.name
 having (v.dateStart is null or (count(d.id)=0 and (vwfe.isNoDiagnosis is null or vwfe.isNoDiagnosis='0')))
 order by wct.timeFrom"/>
-	    <msh:table name="list_no" action="entityEdit-smo_visit.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+	    <msh:table name="list_no" action="entitySubclassEdit-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
 	      <msh:tableColumn columnName="№" identificator="false" property="sn" guid="270ae0dc-e1c6-45c5-b8b8-26d034ec3878" />
 	      <msh:tableColumn columnName="Доп. инф." property="6" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
 	      <msh:tableColumn columnName="Направлен" property="2" guid="de1f591c-02b8-4875-969f-d2698689db5d" />
