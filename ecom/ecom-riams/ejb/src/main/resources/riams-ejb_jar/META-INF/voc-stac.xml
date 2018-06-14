@@ -1,4 +1,14 @@
 <vocconfig>
+	<voc id="vocLeftRight" type="NativeVocService">
+			<NativeVocService
+			    	from="VocLeftRight as voc"
+			    	nameId="voc.id"
+			    	queryAppend=""
+			    	order=""
+			    	queried=""
+			    	names = "voc.name"
+			/>
+		</voc>
 	<voc id="vocAbortationByProfile" type="NativeVocService">
 			<NativeVocService
 			    	from="Surgicalprofileabortation as spa "
@@ -11,7 +21,7 @@
 			    	names = "va.name"
 			/>
 		</voc>
-	
+
 	<voc id="slsByPregnancy" type="NativeVocService">
 		<NativeVocService
 		    	from=" MedCase as sls "

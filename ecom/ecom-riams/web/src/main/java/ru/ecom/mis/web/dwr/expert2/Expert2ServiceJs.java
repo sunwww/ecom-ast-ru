@@ -10,6 +10,7 @@ import ru.nuzmsh.util.StringUtil;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,15 +115,29 @@ public class Expert2ServiceJs {
         return "1_Успешно!";
     }
 
-    public String   makeMPFIle (Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId, Boolean calcAllListEntry, HttpServletRequest aRequest) throws NamingException, ParseException {
-        //System.out.println(aEntryListId+"#"+aType+"#"+aBillNumber+"#"+aBillDate+"#"+ aEntryId);
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+    public long makeMPFIle (final Long aEntryListId,final  String aType, String aBillNumber, String aBillDate,final  Long aEntryId,final  Boolean calcAllListEntry, HttpServletRequest aRequest) throws NamingException {
+        final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         if (aEntryId!=null) {
             aBillNumber=aBillNumber!=null?aBillNumber:"TEST";
             aBillDate=aBillDate!=null&&!aBillDate.equalsIgnoreCase("")?aBillDate:"24.12.1986";
         }
-        IExpert2XmlService service = Injection.find(aRequest).getService(IExpert2XmlService.class);
-        return service.makeMPFIle(aEntryListId,aType, aBillNumber,new java.sql.Date(format.parse(aBillDate).getTime()),aEntryId,calcAllListEntry);
+        final IExpert2XmlService service = Injection.find(aRequest).getService(IExpert2XmlService.class);
+        IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
+        final long monitorId = monitorService.createMonitor();
+        final String finalBillNumber = aBillNumber;
+
+        final String finalBillDate = aBillDate;
+
+        new Thread() {
+            @Override
+            public void run() {
+                Date finalDate = null;
+                try {finalDate = new java.sql.Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
+                service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId);
+            }
+        }.start();
+
+        return monitorId;
     }
     public long checkListEntry(final Long aListEntryId, final boolean forceUpdateKsg, final String aParams, HttpServletRequest aRequest) throws NamingException {
         System.out.println("start checkEntryList "+forceUpdateKsg);
@@ -163,10 +178,10 @@ public class Expert2ServiceJs {
             E2Bill bill = expert2Service.getBillEntryByDateAndNumber(aBillNumber,aBillDate);
             sql = "update e2entry set bill_id="+bill.getId()+", billNumber='"+aBillNumber+"', billDate=to_date('"+aBillDate+"','dd.MM.yyyy')" +
                     " where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"'";
-            if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";}
-            if (aOldBillNumber!=null&&!aOldBillNumber.equals("")) {sql+=" and billNumber='"+aOldBillNumber+"'";}
+            if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {sql+=" and billDate is null";}
+            if (aOldBillNumber==null) {aOldBillNumber="";}
+            sql+=" and billNumber='"+aOldBillNumber+"'";
         }
-        System.out.println("sql="+sql);
         service.executeUpdateNativeSql(sql);
         return true;
     }

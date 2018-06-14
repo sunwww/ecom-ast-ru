@@ -13,12 +13,17 @@
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
                <msh:row>
+                   <msh:textField property="startDate" size="10"/>
+                   <msh:textField property="finishDate" size="10"/>
+                </msh:row>
+                <msh:row>
                    <msh:textField property="code" size="100"/>
                 </msh:row><msh:row>
                    <msh:textField property="name" size="100"/>
             </msh:row><msh:row>
                 <msh:textField property="usl" size="100"/>
             </msh:row><msh:row>
+                <msh:textField property="extDispCodes" size="100"/>
                 </msh:row>
 
 

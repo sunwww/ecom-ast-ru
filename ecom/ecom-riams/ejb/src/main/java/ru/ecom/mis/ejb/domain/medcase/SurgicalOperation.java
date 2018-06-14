@@ -23,15 +23,7 @@ import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAbortion;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesia;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocComplication;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalAspect;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocOperation;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationMethod;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationOutcome;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocOperationTechnology;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalProfile;
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -501,5 +493,13 @@ public class SurgicalOperation extends BaseEntity {
 
 	/** Пользователь, посл. распечат. документ */
 	private String thePrintUsername;
+
+	/** На какой конечности была сделана операция */
+	@Comment("На какой конечности была сделана операция")
+	@OneToOne
+	public VocLeftRight getLeftRight() {return theLeftRight;}
+	public void setLeftRight(VocLeftRight aLeftRight) {theLeftRight = aLeftRight;}
+	/** На какой конечности была сделана операция */
+	private VocLeftRight theLeftRight ;
 
 }

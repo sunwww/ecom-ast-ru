@@ -53,7 +53,7 @@
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
                 <msh:ifFormTypeIsView formName="e2_entryListForm">
                 <ecom:webQuery name="entries" nameFldSql="entries_sql" nativeSql="select '${param.id}&entryType='||e.entryType||'&billDate='||
-                    coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'')||'&serviceStream='||e.serviceStream as id
+                    coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream as id
                 ,e.entryType as f2
                 ,e.billDate as f3
                 ,e.billNumber||max(case when vocbill.id is not null then ' ('||vocbill.name||')' else '' end ) as f4
@@ -112,7 +112,7 @@
         <msh:ifFormTypeIsView formName="e2_entryListForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
-
+                    var monitor = {};
                 function refillListEntry() {
                     if (confirm('Вы действительно хотите пересчитать заполнение?')) {
                         Expert2Service.refillListEntry($('id').value, {
@@ -167,7 +167,7 @@
                         alert('Проверка уже запущена, подождите!');
                         return;
                     }
-                    var oldVal =button.value;
+                 //   var oldVal =button.value;
                     button.value="Подождите...";
                     button.disabled=true;
                     isRun=true;
@@ -175,11 +175,13 @@
                     if (confirm('Пересчитать КСГ для случаев с уже найденным КСГ?')) { recalcKsg=true;}
                  //   if (button) {el.parentNode.removeChild(el);} //удалим элемент чтоб 2 раза не нажимали
                     Expert2Service.checkListEntry(${param.id},recalcKsg,params, {
-                        callback: function() {
-                            alert ('Проверка успещно завершена!');
-                            isRun=false;
-                            button.disabled=false;
-                            button.value=oldVal;
+                        callback: function(monitorId) {
+                            monitor.id=monitorId;
+                            jQuery.toast("Проверка запущена");
+                            //isRun=false;
+                            //button.disabled=false;
+                            //button.value=oldVal;
+                            updateStatus();
                         }
                     });
                 }
@@ -191,7 +193,6 @@
                         return;
                     }
                     isRun=true;
-                    button.value="Подождите...";
                     button.disabled=true;
 
 
@@ -204,16 +205,65 @@
                         useAllListEntry=true;
                     }
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,{
-                        callback: function (a) {
+                        callback: function(monitorId) {
+                            monitor.id=monitorId;
+                            jQuery.toast("Формирование файла запущено");
+                            //isRun=false;
+                            //button.disabled=false;
+                            //button.value=oldVal;
+                            updateStatus();
+                        }
+                       /*     function (a) {
                             button.disabled=false;
                             button.removeAttribute("onClick");
                             button.value="Скачать пакет";
                             button.parentNode.innerHTML="<a href='"+a+"'>"+button.parentNode.innerHTML+"</a>";
                             isRun=false;
-                        }
+                        } */
                     });
 
                 }
+                    var statusToast;
+                function updateStatus() {
+                    var id=monitor.id;
+                    if (id){ //Если есть действующий монитор
+                        if (statusToast) {
+                        } else {
+                            statusToast =jQuery.toast({
+                                heading:"Формирование"
+                                ,text:"Идет расчет..."
+                                ,icon:"info"
+                                ,hideAfter:false
+                            });
+                        }
+                        RemoteMonitorService.getMonitorStatus(id, {
+                            callback: function(aStatus) {
+                                var txt;
+                                if (aStatus.finish) {
+                                 txt="Завеpшено!";
+                                 if (aStatus.finishedParameters) {
+                                     txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
+                                 }
+                                 monitor = {};
+                                } else {
+                                    txt=aStatus.text;
+                                    setTimeout(updateStatus,4000) ;
+                                }
+                                statusToast.update({
+                                    text:txt
+                                });
+                            },
+                            errorHandler:function(message) {
+                                setTimeout(updateStatus,4000) ;
+                            },
+                            warningHandler:function(message) {
+                                setTimeout(updateStatus,4000) ;
+                            }
+                        });
+                    }
+
+                }
+
             </script>
 
         </msh:ifFormTypeIsView>

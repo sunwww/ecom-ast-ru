@@ -487,4 +487,12 @@ public class SurgicalOperationForm extends IdEntityForm{
 
 	/** Длительность */
 	private Integer theAnesthesiaDuration;
+
+	/** На какой конечности была сделана операция */
+	@Comment("На какой конечности была сделана операция")
+	@Persist
+	public Long getLeftRight() {return theLeftRight;}
+	public void setLeftRight(Long aLeftRight) {theLeftRight = aLeftRight;}
+	/** На какой конечности была сделана операция */
+	private Long theLeftRight ;
 }

@@ -8,6 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.Expert2FondUtil;
@@ -24,6 +26,7 @@ import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 
+import javax.annotation.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -141,15 +144,15 @@ private Boolean isCheckIsRunning = false;
         try {
             String entryType = aEntry.getEntryType();
             boolean isHosp = false, isVmp = false, isPoliclinic = false, isExtDisp = false, isPoliclinicKdo=false;
-            if (entryType.equalsIgnoreCase(HOSPITALTYPE)) {isHosp=true;}
-            else if (entryType.equalsIgnoreCase(VMPTYPE)) {isVmp=true;}
-            else if (entryType.equalsIgnoreCase(POLYCLINICTYPE)) {isPoliclinic=true;}
+            if (entryType.equals(HOSPITALTYPE)) {isHosp=true;}
+            else if (entryType.equals(VMPTYPE)) {isVmp=true;}
+            else if (entryType.equals(POLYCLINICTYPE)) {isPoliclinic=true;}
             else if (entryType.equals(EXTDISPTYPE)) {isExtDisp=true;}
             else if (entryType.equals(POLYCLINICKDOTYPE)) {isPoliclinic=true;isPoliclinicKdo=true;}
             else {throw new IllegalStateException("UNKNOWN ENTRYTYPE");}
             Element zap = new Element("ZAP");
             zap.addContent(new Element("N_ZAP").setText(aEntry.getId() + ""));
-            zap.addContent(new Element("PR_NOV").setText(aEntry.getPRNOV() != null && aEntry.getPRNOV() ? "1" : "0"));
+            zap.addContent(new Element("PR_NOV").setText(isNotNull(aEntry.getPRNOV())?"1":"0"));
             Element pat = new Element("PACIENT");
             pat.addContent(new Element("ID_PAC").setText(aEntry.getExternalPatientId() + ""))
                     .addContent(new Element("VPOLIS").setText(aEntry.getMedPolicyType()));
@@ -200,7 +203,7 @@ private Boolean isCheckIsRunning = false;
             sluch.addContent(new Element("PROFIL_K").setText(profileK)); //Профиль коек/специальностей (V002_K)
             sluch.addContent(new Element("DET").setText(isChild)); //Признак детского возраста
             sluch.addContent(new Element("NHISTORY").setText(aEntry.getHistoryNumber())); //Номер истории болезни
-            sluch.addContent(new Element("P_PER").setText(Expert2FondUtil.calculateFondP_PER(aEntry))); //Признак перевода
+            sluch.addContent(new Element("P_PER").setText(isHosp||isVmp?Expert2FondUtil.calculateFondP_PER(aEntry):"1")); //Признак перевода
             sluch.addContent(new Element("DATE_1").setText(startDate)); //Дата начала случая
             sluch.addContent(new Element("DATE_2").setText(finishDate)); //Дата окончания случая
             sluch = setSluchDiagnosis(sluch, aEntry);
@@ -240,11 +243,6 @@ private Boolean isCheckIsRunning = false;
             sluch.addContent(new Element("TARIF").setText(aEntry.getBaseTarif()+"")); // Объединенный тариф  //TODO
             sluch.addContent(new Element("SUMV").setText("" + aEntry.getCost())); // Сумма, выставленная к оплате =SUMV7+ SUMV8
 
-
-            //     log.info("startZApSank");
-//            Element sank = new Element("SANK"); // Сведения о санкциях
-         //   sank.addContent(new Element("S_CODE")).addContent(new Element("S_SUM")).addContent(new Element("S_TIP")).addContent(new Element("S_OSN")).addContent(new Element("S_DOP"));
-  //          sluch.addContent(sank); //Добавляем информацию о санкциях в запись (хз зачем)
             int uslCnt = 0;
             if (aEntry.getReanimationEntry()!=null) {
                 uslCnt++;
@@ -267,9 +265,14 @@ private Boolean isCheckIsRunning = false;
                 for (E2Entry child: children) {
                     uslCnt++;
                     String uslDate = dateToString(child.getStartDate());
+                    if (child.getMedHelpProfile()==null) {
+                        theManager.persist(new E2EntryError(aEntry,"NO_SUBENTRY_PROFILE_Нет профиля у комплексного случая с ИД: "+child.getId()));
+                        log.warn("NO_SUBENTRY_PROFILE_Нет профиля у комплексного случая с ИД: "+child.getId());
+                        continue;
+                    }
                     Element usl = new Element("USL");
                     usl.addContent(new Element("IDSERV").setText(""+uslCnt));
-                    usl.addContent(new Element("PROFIL_U").setText(profileK));
+                    usl.addContent(new Element("PROFIL_U").setText(child.getMedHelpProfile().getProfileK()));
                     usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
                     usl.addContent(new Element("IDDOKT_U").setText(child.getDoctorSnils()));
                     usl.addContent(new Element("DATE_1_U").setText(uslDate));
@@ -431,8 +434,8 @@ private Boolean isCheckIsRunning = false;
     }
 
     /**  Создаем MP файл с данными по стационару */
-    public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId) {return makeMPFIle(aEntryListId,aType,aBillNumber,aBillDate,aEntryId,false);}
-    public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry) {
+    public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, long aMonitorId) {return makeMPFIle(aEntryListId,aType,aBillNumber,aBillDate,aEntryId,false,aMonitorId);}
+    public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry, long aMonitorId) {
         try {
         if (isCheckIsRunning) {
             log.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
@@ -463,11 +466,15 @@ private Boolean isCheckIsRunning = false;
         }
         packetDateAdd = dateToString(periodDate, "yyMM");
         String packetType;
+
         if (aType.equals(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE) || aType.equals(POLYCLINICKDOTYPE) || aType.equals(HOSPITALPEREVODTYPE)) {
             packetType = "Z";
         } else if (aType.equals(VMPTYPE)) {
             packetType = "T";
-        } else {
+        } else if (aType.equals(EXTDISPTYPE)) {
+            //Пока сделаем заглушку
+            packetType="DV";
+        }else {
             throw new IllegalStateException("Неизвестный тип счета: " + aType);
         }
         java.util.Date startStartDate = new java.util.Date();
@@ -496,12 +503,18 @@ private Boolean isCheckIsRunning = false;
             //records = theManager.createNativeQuery("select id from E2Entry where id=:entryId ").setParameter("entryId", aEntryId).getResultList();
         }
         log.info("found " + records.size() + " records");
+            IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;
+            monitor = theMonitorService.startMonitor(aMonitorId,"Формирование xml файла. Размер: ",records.size());
+            monitor.advice(1);
+
         E2Entry entry;
         int i = 0;
         for (BigInteger entryId : records) {
             i++;
             if (i % 100 == 0) {
                 log.info("Сформировано " + i + " записей в счете");
+                monitor.setText("Сформировано " + i + " записей в счете");
+
             }
             entry = theManager.find(E2Entry.class, entryId.longValue());
             if (entry.getDoNotSend() != null && entry.getDoNotSend()) {
@@ -571,6 +584,7 @@ private Boolean isCheckIsRunning = false;
 
         }
         log.info("ok, we made all, let's make files");
+            monitor.setText("Формирование файла завершено, сохраняем архив");
         hRoot = makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum);
         if (aEntryListId != null) { //Меняем статус счета на "выставлен"
             E2Bill bill = new Expert2ServiceBean().getBillEntryByDateAndNumber(aBillNumber, dateToString(aBillDate, "dd.MM.yyyy"),theManager);
@@ -587,18 +601,18 @@ private Boolean isCheckIsRunning = false;
         createXmlFile(lRoot, "L" + fileName);
         //   log.info("deb14");
         log.info("Время формирования файла (минут) = " + ((System.currentTimeMillis() - startStartDate.getTime())) / 60000);
+            monitor.setText("Завершено. Время формирования файла (минут) = " + ((System.currentTimeMillis() - startStartDate.getTime())) / 60000);
+
         if (needCreateArchive) {
             archiveName = createArchive(archiveName, new String[]{"H" + fileName + ".xml", "L" + fileName + ".xml"});
-            log.info("createJ_1");
             E2ExportPacketJournal journal = new E2ExportPacketJournal(aBillNumber, aBillDate, "/rtf/expert2xml/" + archiveName);
-            log.info("createJ_2");
             theManager.persist(journal);
         }
-
-
         log.info("ALL SEEMS GOOD!");
 
         isCheckIsRunning = false;
+            monitor.setText("/rtf/expert2xml/" + archiveName);
+            monitor.finish("/rtf/expert2xml/" + archiveName);
         return "/rtf/expert2xml/" + archiveName;
     } catch (Exception err) {
             err.printStackTrace();
@@ -826,4 +840,6 @@ private Boolean isCheckIsRunning = false;
     }
     private @PersistenceContext
     EntityManager theManager;
+    private @EJB
+    ILocalMonitorService theMonitorService;
 }

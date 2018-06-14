@@ -1,6 +1,8 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
@@ -14,6 +16,9 @@ import javax.persistence.OneToOne;
  * Список диагнозов по записи
  */
 @Entity
+@AIndexes({
+        @AIndex(unique = false, properties = {"entry"})
+})
 public class EntryDiagnosis extends BaseEntity {
 
     /** Запись */
