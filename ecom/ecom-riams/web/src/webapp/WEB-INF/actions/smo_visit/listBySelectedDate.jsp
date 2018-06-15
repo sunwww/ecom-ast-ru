@@ -47,7 +47,8 @@ left join mislpu lpuo on lpuo.id=v.orderLpu_id
 left join VocVisitResult vvr on vvr.id=v.visitResult_id
 left join medCase smc on smc.parent_id=v.id and smc.dtype='ServiceMedCase'
 left join MedService ms on ms.id=smc.medservice_id
-where  v.datePlan_id='${calenDayId}' and (v.DTYPE='Visit' or v.DTYPE='ShortMedCase') and (v.noActuality is null or v.noActuality='0') and (v.isPaid is null or v.isPaid='1')
+left join VocServiceStream vss on vss.id=v.serviceStream_id
+where  v.datePlan_id='${calenDayId}' and (v.DTYPE='Visit' or v.DTYPE='ShortMedCase') and (v.noActuality is null or v.noActuality='0') and ((vss.isPaidConfirmation is null or vss.isPaidConfirmation ='0') or v.isPaid='1')
 group by v.id,wct.timeFrom,v.dateStart,v.timeExecute,vwfe.isNoDiagnosis
 ,po.lastname,po.firstname,po.middlename,lpuo.name
 ,p.lastname,p.firstname,p.middlename,p.birthday
