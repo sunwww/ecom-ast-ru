@@ -132,9 +132,10 @@ public class LoginSaveAction extends LoginExitAction {
                 LOG.debug("next(2) = "+next) ;
                 next = next.substring(next.indexOf('/',2)) ;
                 LOG.debug("next(3) = "+next) ;
-            } catch (Exception e) {
+            } catch (StringIndexOutOfBoundsException ex) { // Если вдруг приложение запущено как корневое
+				next = next.substring(next.indexOf('/')) ;
+			} catch (Exception e) {
             	LOG.warn("next в URLEncode: "+next, e);
-
             	next = form.getNext().substring(form.getNext().indexOf('/',2)) ;
                 LOG.debug("next(4) = "+next) ;
             }
