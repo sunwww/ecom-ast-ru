@@ -17,8 +17,8 @@
 	        <msh:autoComplete property="lpu" fieldColSpan="3" vocName="lpu" horizontalFill="true"/>
         </msh:row>
         <msh:row>
-	        <msh:autoComplete property="roomType" vocName="vocRoomType" horizontalFill="true" label="Уровень палат"/>
-          <msh:textField property="name" label="№палаты"  />
+	        <msh:autoComplete property="roomType" vocName="vocRoomType" horizontalFill="true" label="Уровень палат" size="50"/>
+          <msh:textField property="name" label="№ палаты"  />
         </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocCountBedInHospitalRoom" property="countBed" label="Количество коек"/>
@@ -33,6 +33,15 @@
         
         <msh:submitCancelButtonsRow colSpan="2"/>
       </msh:panel>
+      <ecom:webQuery name="bedList" nameFldSql="claimListSql" nativeSql="
+    select id, name,isNoActuality from WorkPlace where parent_id=${param.id} and dtype='HospitalBed' order by name"/>
+      <msh:section>
+
+        <msh:table name="bedList" action="entityEdit-mis_hospitalBed.do" idField="1">
+          <msh:tableColumn columnName="Номер койки" property="2" />
+          <msh:tableColumn columnName="Не действует" property="3" />
+        </msh:table>
+      </msh:section>
     </msh:form>
   </tiles:put>
   <tiles:put name="side" type="string">

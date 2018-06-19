@@ -13,12 +13,8 @@
       <msh:hidden property="saveType" />
       <msh:hidden property="parent"/>
       <msh:panel>
-        <msh:row>
-	        <msh:autoComplete property="roomType" fieldColSpan="3" vocName="vocRoomType" horizontalFill="true" label="Тип коек"/>
-        </msh:row>
         <msh:row >
-          <msh:textField property="name" label="№койки"  />
-          <msh:textField property="isPlan" label="плановая"  />
+          <msh:textField property="name" label="№ койки"  />
         </msh:row>
         <msh:row>
         	<msh:checkBox property="isNoActuality" label="Запись не действует" fieldColSpan="3"/>

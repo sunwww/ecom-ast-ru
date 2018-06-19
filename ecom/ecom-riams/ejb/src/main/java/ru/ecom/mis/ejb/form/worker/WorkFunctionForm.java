@@ -276,6 +276,14 @@ public class WorkFunctionForm extends IdEntityForm{
 	public void setAttorney(Long aAttorney) {theAttorney = aAttorney;}
 	/** Доверенность */
 	private Long theAttorney;
+
+	/** Разрешено записывать на дату без указания времени */
+	@Comment("Разрешено записывать на дату без указания времени")
+	@Persist
+	public Boolean getIsDirectionNoTime() {return theIsDirectionNoTime;}
+	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
+	/** Разрешено записывать на дату без указания времени */
+	private Boolean theIsDirectionNoTime ;
 	
 }
 

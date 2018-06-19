@@ -352,5 +352,5 @@ abstract public class WorkFunction extends BaseEntity {
 	public Boolean getIsDirectionNoTime() {return theIsDirectionNoTime;}
 	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
 	/** Разрешено записывать на дату без указания времени */
-	private Boolean theIsDirectionNoTime ;
+	private Boolean theIsDirectionNoTime=false ;
 }
