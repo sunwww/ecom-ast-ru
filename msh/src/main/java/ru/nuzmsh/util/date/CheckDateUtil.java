@@ -26,7 +26,7 @@ public class CheckDateUtil {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.YEAR, -aAge);
-        System.out.println("cal = " + cal.getTime());
+     //   System.out.println("cal = " + cal.getTime());
         if(cal.getTime().getTime()>aBirthDate.getTime()) {
             throw new IllegalArgumentException("Возраст не может быть больше "+aAge+" лет") ;
         } else if(aBirthDate.getTime()>date.getTime()) {

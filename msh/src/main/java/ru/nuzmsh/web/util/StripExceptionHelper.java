@@ -24,7 +24,7 @@ public class StripExceptionHelper {
         //message = message.trim() ;
         
         // убираем дублирование сообщений
-        System.out.println(message +" = "+ theHash);
+     //   System.out.println(message +" = "+ theHash);
         if(!theHash.contains(message)) {
             sb.append(message) ;
             theHash.add(message) ;
