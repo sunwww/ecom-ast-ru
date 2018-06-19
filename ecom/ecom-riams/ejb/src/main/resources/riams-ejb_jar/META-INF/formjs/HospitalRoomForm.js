@@ -15,7 +15,7 @@ function onCreate(aForm, aEntity, aCtx) {
 				aCtx.manager.createNativeQuery("update WorkPlace set isNoActuality='1'  where parent_id='"+aEntity.id+"' and dtype='HospitalBed' and cast(name as integer)>"+cnt).executeUpdate() ;
 				aCtx.manager.createNativeQuery("update WorkPlace set isNoActuality='0'  where parent_id='"+aEntity.id+"' and dtype='HospitalBed' and cast(name as integer)<="+cnt).executeUpdate() ;
 			} else if(+obj[0]<cnt){
-				
+			//	throw ""+ obj[0]+"<<>>"+cnt;
 				aCtx.manager.createNativeQuery("update WorkPlace set isNoActuality='0'  where parent_id='"+aEntity.id+"' and dtype='HospitalBed'").executeUpdate() ;
 				//throw ""+obj[0]+" "+obj[1]+" "+cnt ;
 				for (var i=(+obj[0]+1) ; i<=cnt; i++) {
@@ -44,7 +44,8 @@ function onView(aForm, aEntity, aContext) {
 /**
  * При сохранении
  */
-function onSave(aForm, aEntity, aContext) {
+function onSave(aForm, aEntity, aCxt) {
+    onCreate(aForm, aEntity, aCxt) ;
 }
 
 
@@ -52,7 +53,7 @@ function onSave(aForm, aEntity, aContext) {
  * Перед сохранением
  */
 function onPreSave(aForm, aEntity, aCxt) {
-	onCreate(aForm, aEntity, aCxt) ;
+
 }
 
 /**
