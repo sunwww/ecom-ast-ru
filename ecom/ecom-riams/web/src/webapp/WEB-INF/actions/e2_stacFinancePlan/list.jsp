@@ -18,8 +18,8 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-<msh:textField property="copyStartDate"/>
-<msh:textField property="copyFinishDate"/>
+<msh:textField label="Копировать с " property="copyStartDate"/>
+<msh:textField label="Копировать по" property="copyFinishDate"/>
         <%
         String month = request.getParameter("month");
 
@@ -43,7 +43,7 @@
             request.setAttribute("startDateSql",startDateSql);
 
         %>
-        <input type="button" onclick="copyPlanNextMonth()"/>
+        <input type="button" onclick="copyPlanNextMonth()" value="Копировать на месяца"/>
         <msh:hideException>
             <ecom:webQuery name="entryList" nativeSql="select fp.id
             ,to_char(fp.startDate,'MM.yyyy') as date, mhp.code||' '||mhp.name as profile
@@ -71,18 +71,22 @@
         <% }%>
     </tiles:put>
     <tiles:put name="javascript" type="string">
+        <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <script type="text/javascript">
-
+            try {
+                new dateutil.DateField($('copyStartDate'));
+                new dateutil.DateField($('copyFinishDate'));
+            } catch (e) {}
             function copyPlanNextMonth() {
                 var month='${param.month}';
-                var startCopyMonth=$('copyStartDate').value;
-                var finishCopyMonth=$('copyFinishDate').value;
-Expert2Service.copyPlanNextMonth(month, startCopyMonth,finishCopyMonth, {
+                if (!$('copyStartDate').value) {alert('Выберите период на который копировать'); return;}
+                if (!$('copyFinishDate').value) {$('copyFinishDate').value=$('copyStartDate').value;}
 
-});
-                //Копируем финансовый план на следующий месяц
-
-
+                var startCopyMonth=$('copyStartDate').value.substring(3,10);
+                var finishCopyMonth=$('copyFinishDate').value.substring(3,10);
+                Expert2Service.copyFinancePlanNextMonth(month, startCopyMonth,finishCopyMonth, {
+                    callback: function() {alert ("Сделано!");}
+                });
             }
         </script>
             </tiles:put>

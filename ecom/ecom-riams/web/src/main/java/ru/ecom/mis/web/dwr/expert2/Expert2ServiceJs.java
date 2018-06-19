@@ -5,8 +5,10 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expert2.service.IExpert2XmlService;
+import ru.ecom.expert2.service.IFinanceService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +18,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
-    /**  Копируем финансовый план на несколько месяцев (MM.dddd)*/
-    public void copyFinancePlanNextMonth(String aCurrentMonth, String aStartMonth, String aFinishMonth) {
-
+    /**  Копируем финансовый план на несколько месяцев (MM.yyyy)*/
+    public void copyFinancePlanNextMonth(String aCurrentMonth, String aStartMonth, String aFinishMonth, HttpServletRequest aRequest) throws NamingException, ParseException {
+        IFinanceService service = Injection.find(aRequest).getService(IFinanceService.class);
+        SimpleDateFormat format = new SimpleDateFormat("MM.yyyy");
+        Date planDate = new java.sql.Date(format.parse(aCurrentMonth).getTime());
+        Date startDate = new java.sql.Date(format.parse(aStartMonth).getTime());
+        Date finishDate = new java.sql.Date(format.parse(aFinishMonth).getTime());
+        System.out.println("Copy plans!");
+        System.out.println(service.copyFinancePlanNextMonth(null,planDate,startDate,finishDate));
 
     }
     /** Пересчитать заполнение (удаляем существующие записи и формируем новые в существующее заполнение) */
