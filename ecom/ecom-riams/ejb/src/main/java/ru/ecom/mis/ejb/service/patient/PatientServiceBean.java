@@ -1612,11 +1612,11 @@ public class PatientServiceBean implements IPatientService {
 	@SuppressWarnings("unchecked")
 	private void appendNativeToList(Query aQuery, List<PatientForm> ret, String aAddInfo, boolean aNext) {
 		List<Object[]> list = aQuery.setMaxResults(50).getResultList();
-		System.out.println("next="+aNext) ;
+	//	System.out.println("next="+aNext) ;
 		for (int i=0; i<list.size(); i++) {
 			int ind=i ;
 			if (!aNext) ind=list.size()-i-1 ;
-			System.out.println("ind="+ind) ;
+	//		System.out.println("ind="+ind) ;
 			Object[] arr = list.get(ind) ;
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());

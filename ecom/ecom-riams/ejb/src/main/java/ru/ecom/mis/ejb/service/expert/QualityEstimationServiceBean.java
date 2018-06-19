@@ -413,7 +413,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			sql.append(" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqec.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqec.ischild=true) ");
 		}
 		sql.append(" order by vqec.code") ;
-		System.out.println("shortRow="+sql.toString());
+	//	System.out.println("shortRow="+sql.toString());
 		//log(sql);
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {

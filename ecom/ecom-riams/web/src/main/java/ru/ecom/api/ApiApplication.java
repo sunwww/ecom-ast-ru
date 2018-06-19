@@ -1,5 +1,7 @@
 package ru.ecom.api;
 
+import ru.ecom.api.queue.HospitalQueueResource;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ public class ApiApplication extends Application {
         Set<Class<?>> set = new HashSet<Class<?>>();
         set.add(ApiRecordResource.class);
         set.add(ApiLoginResource.class);
+        set.add(HospitalQueueResource.class);
         return set;
     }
 }

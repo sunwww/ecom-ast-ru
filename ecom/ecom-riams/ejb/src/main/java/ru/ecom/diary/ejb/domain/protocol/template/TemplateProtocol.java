@@ -103,9 +103,7 @@ public class TemplateProtocol extends BaseEntity {
 	@Transient
 	public String getCategoriesInfo() {
 		StringBuilder ret = new StringBuilder() ;
-		System.out.println("categInfo:" + theCategories) ;
 		for (TemplateCategory categ : theCategories) {
-			System.out.println("categ= id:"+categ.getId()+" fullname="+categ.getFullname()) ;
 			ret.append(", ").append(categ.getFullname()).append("<br>") ;
 		}
 		

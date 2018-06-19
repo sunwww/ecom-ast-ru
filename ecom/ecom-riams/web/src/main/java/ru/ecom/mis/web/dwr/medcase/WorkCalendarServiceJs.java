@@ -1363,7 +1363,7 @@ public class WorkCalendarServiceJs {
 			,Long aServiceStream,String aPhone, Long aService,HttpServletRequest aRequest
 			) throws NamingException {
 		IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class) ;
-		System.out.println("serve="+aServiceStream) ;
+	//	System.out.println("serve="+aServiceStream) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		service.preRecordByPatient(username, aFunction, aSpec,aDay,aTime,aPatInfo,aPatientId,aServiceStream,
 				aPhone,aService) ;
