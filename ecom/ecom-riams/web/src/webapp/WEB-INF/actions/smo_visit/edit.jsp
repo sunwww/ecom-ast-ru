@@ -24,6 +24,7 @@
       <msh:hidden property="medserviceAmounts" />
       <msh:hidden property="isPreRecord" />
       <msh:hidden property="guarantee" />
+      <msh:hidden property="isPaid" />
       <msh:hidden property="patient" guid="ef57d35d-e9a0-48ba-a00c-b77676505ab2" />
       <msh:panel guid="panel">
                   	<msh:row>
@@ -304,7 +305,7 @@
 <tags:visit_listClosedSpo name="List" title="Изменить ЛПУ направителя" />
   		</msh:sideMenu>
   	</msh:ifFormTypeIsNotView>
-    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_visitForm">
+    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_visitForm">зфшв
       <msh:sideMenu guid="sideMenu-123" title="Визит">
         <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь"
         	roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"
