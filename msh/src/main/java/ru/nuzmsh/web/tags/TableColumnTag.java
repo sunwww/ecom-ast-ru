@@ -122,6 +122,4 @@ public class TableColumnTag extends AbstractGuidSupportTag {
 
     /** Ширина столбца */
     private String theWidth;
-
 }
-//lastrelease Milamesher 08062018 ширина столбца
