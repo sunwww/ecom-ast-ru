@@ -1381,7 +1381,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 			doc.setOtherCloseDate(null) ;
 		}
 
-		System.out.println(reason.getCodeF()+">>>>>>>");
 		if(reason.getCodeF()!=null){
 			if(!reason.getCodeF().equals("31") && !reason.getCodeF().equals("37")) {
 				if (aOtherCloseDate.equals("")) {
@@ -1451,7 +1450,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 				.append(" (dr.id = (select min(dr2.id) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)) ")
 				.append(" group by dr.dateFrom ")
 				.append(" order by dr.dateFrom") ;
-		System.out.println(sql) ;
     	return findDocumentGroupByDate(sql) ;
     }
     
@@ -1496,10 +1494,8 @@ public class DisabilityServiceBean implements IDisabilityService {
 	        	ids.append(",").append(obj) ;
 	        }
 	        ids.substring(1) ;
-	        System.out.println(ids.substring(1)) ;
 	        sql.append("from DisabilityDocument where id in (").append(ids.substring(1)).append(")") ;
-	        System.out.println(sql.toString()) ;
-	        
+
 	        List<DisabilityDocument> list = theManager.createQuery(sql.toString()).setMaxResults(50).getResultList() ;
 	        for (DisabilityDocument doc : list) {
 	            try {
@@ -1545,10 +1541,8 @@ public class DisabilityServiceBean implements IDisabilityService {
 	        	ids.append(",").append(obj) ;
 	        }
 	        ids.substring(1) ;
-	        System.out.println(ids.substring(1)) ;
 	        sql.append("from DisabilityDocument where id in (").append(ids.substring(1)).append(")") ;
-	        System.out.println(sql.toString()) ;
-	        
+
 	        List<DisabilityDocument> list = theManager.createQuery(sql.toString()).setMaxResults(50).getResultList() ;
 	        for (DisabilityDocument doc : list) {
 	            try {
