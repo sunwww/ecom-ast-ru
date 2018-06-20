@@ -109,13 +109,10 @@
         if (wf>0 && ds.length==10) {
             WorkCalendarService.getFreeCalendarTimeForWorkFunction(wf, ds, {
                 callback:function(ret) {
-                    alert("ret="+ret);
                     ret = JSON.parse(ret);
-                    alert("ret="+ret);
                     if (ret.status=="ok") {
                         $('timePlan').value=ret.timeId;
                         $('datePlan').value=ret.calendarDateId;
-                        alert ('Пациент будет записан на '+ret.time+" "+ret.calendarDate);
                     } else {
                         alert ("ERR="+ret.status);
                     }
