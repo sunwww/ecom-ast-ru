@@ -130,7 +130,7 @@ select sls.id
 ,max(case when (ot.id isnull or ot.voc_code!='К') then to_char(sls.datestart,'dd.mm.yyyy') else null end ) as f6_notSMP
 ,to_char(sls.datefinish,'dd.mm.yyyy') as f7_dateFinish
 ,LIST(mkb.code)
-,case when sls.datefinish is null then (select dep.name from medcase slo left join 
+,case when sls.datefinish is null then (select list(dep.name) from medcase slo left join
 	mislpu dep on dep.id=slo.department_id where slo.dtype='DepartmentMedCase' and slo.parent_id=sls.id and slo.transferdate is null) else '' end as f9_dep 
 ,case when sls.datefinish is null then '+' else '-' end as f10_inHospital
 ,max(case when vhr.code='11' then to_char(sls.datefinish,'dd.mm.yyyy') else null end) as f11_isDead
