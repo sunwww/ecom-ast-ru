@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,84 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class WorkCalendarServiceJs {
+
+
+	public String buildSheduleTable(String workFunctionId,String weekplus,HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+
+		String workcalendarId="";
+		Collection<WebQueryResult> list = service.executeNativeSql("select id from workcalendar where workfunction_id="+workFunctionId);
+		if (!list.isEmpty()) {
+			WebQueryResult w = list.iterator().next();
+			workcalendarId = w.get1().toString();
+		}
+
+		int wek = Integer.parseInt(weekplus);
+		String date="", mondey="";
+		list = service.executeNativeSql("select EXTRACT(day  FROM getFirstDay()+"+wek+")||' '||getMonthByDate(getFirstDay()+"+wek+")||" +
+				"' - '|| EXTRACT(day  FROM getFirstDay()+6+"+(wek)+")||' '||getMonthByDate(getFirstDay()+6+"+(wek)+"),getFirstDay()");
+		if (!list.isEmpty()) {
+			WebQueryResult w = list.iterator().next();
+			date = w.get1().toString();
+			mondey = w.get2().toString();
+		}
+
+		String sql ="select " +
+				"getWeekbyDate (wcd.calendardate)," +
+				"prettyDate(wcd.calendardate),  " +
+				"wcd.id," +
+				"getList('select ''<td id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime where workcalendarday_id = '||wcd.id||' order by timefrom','')\n" +
+				"from workcalendarday  wcd\n" +
+				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
+				") and (isdeleted is null or isdeleted = false)\n" +
+				"group by wcd.id\n" +
+				"order by wcd.calendardate\n";
+
+		list = service.executeNativeSql(sql);
+
+		List<String> st = new ArrayList<String>();
+		int i=0;
+		for (WebQueryResult t:list) {
+			st.add(t.get2().toString()+t.get4().toString());
+		}
+
+		String html="<div id=\"head-cont\">" +
+				"<a href=\"#\" id=\"alink\" onClick=\"prevWeek()\" >&#8666; </a>" + date + "<a href=\"#\" id=\"alink\" onClick=\"nextWeek()\"> &#8667;</a></div>" +
+				"<div id=\"body-cont\"><table id=\"schedule-table\">" +
+				"<tbody>";
+		for(String ss:st){
+			html+="<tr>"+ss+"</tr>";
+		}
+		return html+"</tbody></table></div>";
+	}
+
+
+	public String createDateTimes(String dateFrom,String dateTo
+			,Long workFunctionId,String timeFrom,String timeTo
+			, String countVis,String type,HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+
+		String workcalendarId="";
+		Collection<WebQueryResult> wc = service.executeNativeSql("select id from workcalendar where workfunction_id="+workFunctionId);
+		if (!wc.isEmpty()) {
+			WebQueryResult w = wc.iterator().next();
+			workcalendarId = w.get1().toString();
+		}
+
+		//select createSheduleByContinueVis('18.06.2018','20.06.2018',1,'08:00:00','09:00:00','10m')
+
+		if(type.equals("1")) {
+			service.executeNativeSql("select createSheduleByContinueVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m')");
+		}else {
+			service.executeNativeSql("select createSheduleByCountVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "')");
+		}
+		return "yep."+dateFrom+">>"+dateTo+">>"+workcalendarId;
+	}
+
 	public String setAutogenerateByWorkCalendar(Long aWcId,Long aVal, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update WorkCalendar set autoGenerate='"+aVal+"' where id='"+aWcId+"'") ;
