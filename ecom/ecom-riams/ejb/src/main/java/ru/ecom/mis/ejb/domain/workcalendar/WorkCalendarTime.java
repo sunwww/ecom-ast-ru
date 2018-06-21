@@ -265,5 +265,12 @@ public class WorkCalendarTime extends BaseEntity{
 	/** Примечание пациента */
 	private String thePatientComment ;
 
+	@PrePersist
+	void prePersist() {
+		Date currentDate = new Date(System.currentTimeMillis());
+		theCreateDate = currentDate;
+		theCreateTime=new Time(currentDate.getTime());
+	}
+
 	
 }

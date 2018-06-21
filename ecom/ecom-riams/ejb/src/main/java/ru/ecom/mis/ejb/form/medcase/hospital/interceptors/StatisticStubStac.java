@@ -84,7 +84,7 @@ public class StatisticStubStac {
     	} else {
     		ret = true;
     	}
-        System.out.println("return isStatCardNumberMustCreate = " + ret);
+     //   System.out.println("return isStatCardNumberMustCreate = " + ret);
         return ret ;
     }
     public boolean isStatCardMustDelete() {
@@ -94,7 +94,7 @@ public class StatisticStubStac {
     	} else {
     		ret = false;
     	}
-        System.out.println("return isStatCardNumberMustDelete = " + ret);
+    //    System.out.println("return isStatCardNumberMustDelete = " + ret);
         return ret ;
     }
     
@@ -262,9 +262,9 @@ public class StatisticStubStac {
      * стат карты.
      */
     public static boolean isStacStardMustRemove(SessionContext aContext, HospitalMedCase aMedCase) {
-    	System.out.println((!aContext.isCallerInRole(AlwaysStatCardNumber))) ;
-    	System.out.println(aMedCase.getStatisticStub()) ;
-    	System.out.println(aMedCase.getDeniedHospitalizating()) ;
+    //	System.out.println((!aContext.isCallerInRole(AlwaysStatCardNumber))) ;
+    //	System.out.println(aMedCase.getStatisticStub()) ;
+    //	System.out.println(aMedCase.getDeniedHospitalizating()) ;
         return 
         		aMedCase.getStatisticStub() != null 
         		&& (!aContext.isCallerInRole(AlwaysStatCardNumber))

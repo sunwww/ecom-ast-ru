@@ -126,9 +126,11 @@ public class PropertyUtil {
 //        throw new IllegalArgumentException("Нет преобразования из "+aInClass+" в "+aOutClass+ " для значения "+aValue) ;
     	if(aValue==null && aOutClass.equals(Integer.TYPE)) {
     		return 0 ;
-    	} else if(aValue==null && aOutClass.equals(Boolean.TYPE)) {
+    	} else if(aValue==null && aOutClass.equals(Boolean.class)) {
         		return false ;
-    	} else if(aValue==null && aOutClass.equals(Long.TYPE)) {
+    	} else if(aValue==null && aOutClass.equals(Boolean.TYPE)) {
+            return false ;
+        } else if(aValue==null && aOutClass.equals(Long.TYPE)) {
     		return 0L ;
     	} else if(aValue==null) {
             return null ;

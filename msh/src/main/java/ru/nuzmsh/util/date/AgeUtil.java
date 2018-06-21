@@ -83,7 +83,7 @@ public class AgeUtil {
     	}else{ 
     		ageDays = cd.get(Calendar.DAY_OF_MONTH) - bd.get(Calendar.DAY_OF_MONTH) ; 
     	} 
-    	System.out.print("Age of the person : " + ageYears + " year, " + ageMonths + " months and " + ageDays + " days."); 
+    //	System.out.print("Age of the person : " + ageYears + " year, " + ageMonths + " months and " + ageDays + " days.");
     	return ageYears + "." + ageMonths + "." + ageDays; 
     	
     }
@@ -199,7 +199,7 @@ public class AgeUtil {
     	}else{ 
     		ageDays = cd.get(Calendar.DAY_OF_MONTH) - bd.get(Calendar.DAY_OF_MONTH) ; 
     	} 
-    	System.out.print("Age of the person : " + ageYears + " year, " + ageMonths + " months and " + ageDays + " days."); 
+    	//System.out.print("Age of the person : " + ageYears + " year, " + ageMonths + " months and " + ageDays + " days.");
     	return ageYears + ". " + ageMonths + "." + ageDays; 
     }
 }

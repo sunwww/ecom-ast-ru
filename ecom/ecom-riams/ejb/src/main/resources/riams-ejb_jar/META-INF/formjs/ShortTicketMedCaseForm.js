@@ -39,4 +39,15 @@ function onPreCreate(aForm, aCtx) {
 }
 function onCreate(aForm, aEntity, aContext) {
 	aEntity.setPatient(aEntity.medcard.person) ;
+    var timePlan =aEntity.timePlan;
+	//Проверяем - если у рабочей фукнции стоит - разрешить делать направления на дату без указания времени - создаем направление (делаем календарь, workCalendarDay, workCalendarTime), Visit
+	if (aEntity.workFunctionExecute.isDirectionNoTime&&timePlan!=null) {
+	    aEntity.setWorkFunctionPlan(aEntity.getWorkFunctionExecute());
+	    timePlan.setMedCase(aEntity);
+	    aContext.manager.persist(timePlan);
+    }
+}
+
+function onPreDelete() { //Очищать время в расписании
+
 }

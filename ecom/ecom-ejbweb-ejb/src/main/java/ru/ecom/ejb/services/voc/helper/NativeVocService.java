@@ -176,7 +176,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
         		
     	    	List<Object[]> list = query.setMaxResults(aCount)
                 		.getResultList();
-    	    	LOG.info("query done") ;
+    	    //	LOG.info("query done") ;
     	    	return createValues(list,0);
     		//} catch (Exception e) {
     			

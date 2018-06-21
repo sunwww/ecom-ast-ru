@@ -1,6 +1,8 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expert2.domain.voc.VocE2ExtDispService;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
@@ -13,6 +15,9 @@ import javax.persistence.OneToOne;
 import java.sql.Date;
 
 @Entity
+@AIndexes({
+        @AIndex(unique = false, properties = {"entry"})
+})
 public class EntryMedService extends BaseEntity {
 
     /** Запись */

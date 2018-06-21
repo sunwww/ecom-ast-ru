@@ -8,6 +8,8 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.json.JSONObject;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.messages.ClaimMessage;
 import ru.nuzmsh.web.messages.ErrorMessage;
 import ru.nuzmsh.web.messages.UserMessage;
@@ -45,10 +47,33 @@ public class UserMessageTag  extends SimpleTagSupport {
 	        }
         }
         List<UserMessage> messages = UserMessage.findInRequest(ctx.getRequest()) ;
-        if(messages!=null) {
-        	
-        	for (UserMessage message:messages) {
-	            JspWriter out = getJspContext().getOut() ;
+        if(messages!=null&&!messages.isEmpty()) {
+			JspWriter out = getJspContext().getOut() ;
+			StringBuilder sql = new StringBuilder();
+			//out.println("<script type='text/javascript'>");
+			sql.append("<script type='text/javascript'>");
+
+			sql.append("function showUserMessageTagOnce() {msh.effect.FadeEffect.putFade();}")
+				.append("function closeUserMessageTagOnce() {msh.effect.FadeEffect.pushFade();}");
+			//System.out.println("user_messages size = "+messages.size());
+			for (UserMessage message:messages) {
+				 //sql = new StringBuilder();
+				sql.append(" jQuery.toast({")
+					.append(" position: 'top-center'")
+					.append(",heading:'").append(toHtmlString(message.getTitle())).append("'")
+					.append(",text:'"+toHtmlString(message.getMessage())+(!StringUtil.isNullOrEmpty(message.getUrl())?"<a href=\""+message.getUrl()+"\" target=\"_blank\"> Перейти</a>'":"'"))
+					.append(",hideAfter: false")
+						.append(",beforeShow:function(){showUserMessageTagOnce() ;checkUserMessage(").append(message.getId()).append(");}")
+						.append(",afterHidden:function(){closeUserMessageTagOnce() ;}")
+				//	.append(",bgColor: '#ff0000'")
+					.append(",stack:").append(messages.size())
+					.append(",icon:'info'")
+				.append("});");
+
+			//	out.println(sql.toString());
+					//.append(",afterHidden:function(){checkEmergencyMessage(param.id);}")
+
+	            /* //переделываем на jQuery.toast
 	            out.println("<table id='userMessageContainer"+message.getId()+"' class='userMessageContainer' style='margin-left: 4em'><tr><td>");
 	            out.println(" <div class='userMessage'>") ;
 	            out.println(" <a href='javascript:void(0)' class='userMessageClose' title='Убрать сообщение' onclick='checkUserMessage("+message.getId()+")'>Убрать</a>") ;
@@ -63,8 +88,23 @@ public class UserMessageTag  extends SimpleTagSupport {
 	            }
 	            out.println(" </div>") ;
 	            out.println("</td></tr></table>") ;
+	            */
+	            //viewEmergencyUserMessage(aJsonId)
 	        }
+			sql.append("</script>");
+			out.println(sql.toString());
+			UserMessage.setInRequest(ctx.getRequest(),null);
         }
         
     }
+    private String toHtmlString(String aString) {
+    	aString=aString.replaceAll("\n"," ");
+    	aString=aString.replaceAll("\r"," ");
+    	aString=aString.replaceAll("\t"," ");
+    	aString=aString.replaceAll("\"","\\\"");
+    	aString=aString.replaceAll("\'","\\\\'");
+
+
+    	return aString;
+	}
 }

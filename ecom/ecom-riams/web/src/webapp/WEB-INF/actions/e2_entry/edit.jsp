@@ -256,6 +256,18 @@
                 <msh:row>
                     <msh:checkBox property="PRNOV"/>
                 </msh:row>
+                <msh:separator colSpan="4" label="Доп. диспансеризация"/>
+                <msh:row>
+                    <msh:textField property="extDispType" size="50" />
+                    <msh:textField property="extDispAge" size="50" />
+                    </msh:row><msh:row>
+                    <msh:textField property="extDispHealthGroup" size="50" />
+                    <msh:textField property="extDispSocialGroup" size="50" />
+            </msh:row><msh:row>
+                <msh:textField property="extDispAppointments" size="50" />
+                    <msh:checkBox property="extDispNextStage"  />
+                </msh:row>
+
     <msh:separator colSpan="4" label="Служебная информация"/>
             <msh:row>
                 <msh:textField property="hospitalStartDate" size="50" />
@@ -378,12 +390,58 @@ where link.entry_id=${param.id}"/>
             function makeMPFromRecord() {
                 //Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId,
                 Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value,${param.id},false,{
-                    callback: function (filename) {
-                        var hName =  filename.replace(".MP",".xml");hName=hName.replaceAt(16,"H");
-                            window.open("http://"+window.location.host+""+hName);
+                    callback: function (monitorId) {
+                        monitor.id=monitorId;
+                        jQuery.toast("Проверка запущена");
+                        updateStatus();
+
                     }
                 });
             }
+                    var monitor = {};
+                    var statusToast;
+                    function updateStatus() {
+                        var id=monitor.id;
+                        if (id){ //Если есть действующий монитор
+                            if (statusToast) {
+                            } else {
+                                statusToast =jQuery.toast({
+                                    heading:"Формирование"
+                                    ,text:"Идет расчет..."
+                                    ,icon:"info"
+                                    ,hideAfter:false
+                                });
+                            }
+                            RemoteMonitorService.getMonitorStatus(id, {
+                                callback: function(aStatus) {
+                                    var txt;
+                                    if (aStatus.finish) {
+                                        txt="Завеpшено!";
+                                        if (aStatus.finishedParameters) {
+                                            var hName =  aStatus.finishedParameters.replace(".MP",".xml");hName=hName.replaceAt(16,"H");
+                                            //var hName =  filename.replace(".MP",".xml");hName=hName.replaceAt(16,"H");
+                                            window.open("http://"+window.location.host+""+hName);
+                                            //txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
+                                        }
+                                        monitor = {};
+                                    } else {
+                                        txt=aStatus.text;
+                                        setTimeout(updateStatus,4000) ;
+                                    }
+                                    statusToast.update({
+                                        text:txt
+                                    });
+                                },
+                                errorHandler:function(message) {
+                                    setTimeout(updateStatus,4000) ;
+                                },
+                                warningHandler:function(message) {
+                                    setTimeout(updateStatus,4000) ;
+                                }
+                            });
+                        }
+
+                    }
 
             function unionByHospitalMedCase() {
                         var type = $('entryType').value;

@@ -69,7 +69,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
             finally {
                 in.close();
             }
-        LOG.info("Done.") ;
+     //   LOG.info("Done.") ;
 
     }
 	 private VocValue put(Element aElement,VocContext aContext) throws ClassNotFoundException, IllegalAccessException, InstantiationException {

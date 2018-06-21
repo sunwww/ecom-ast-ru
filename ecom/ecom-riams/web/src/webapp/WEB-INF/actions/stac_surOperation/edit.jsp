@@ -188,6 +188,9 @@
         <msh:row>
           <msh:autoComplete property="outcome" label="Исход операции" fieldColSpan="3" horizontalFill="true" vocName="vocOperationOutcome" />
         </msh:row>
+             <msh:row>
+                 <msh:autoComplete property="leftRight" label="Конечность" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight" />
+             </msh:row>
         </msh:ifNotInRole>
                 <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>

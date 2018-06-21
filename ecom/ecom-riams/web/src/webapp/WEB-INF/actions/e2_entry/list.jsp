@@ -8,7 +8,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Expert2">Реестры омс</msh:title>
+        <ecom:titleTrail beginForm="e2_entryListForm" mainMenu="Expert2" title="Записи по заполнению" guid="3c259ba8-b962-4333-9aab-3316f984fdde" />
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -79,7 +79,7 @@ String listId=request.getParameter("id");
         searchWhereSql=" e.listentry_id="+listId
             +(request.getAttribute("entryTypeSql")!=null?request.getAttribute("entryTypeSql"):"")
             +(request.getAttribute("serviceStreamSql")!=null?request.getAttribute("serviceStreamSql"):"")
-            +(request.getAttribute("billNumberSql")!=null?request.getAttribute("billNumberSql"):"")
+            +(request.getAttribute("billNumberSql")!=null?request.getAttribute("billNumberSql"):" and e.billNumber=''")
             + (request.getAttribute("defectSql")!=null?request.getAttribute("defectSql"):"")
             +sqlAdd;
         request.setAttribute("searchTitle"," ");
@@ -161,13 +161,13 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
             function replaceValue(btn) {
                 btn.disabled=true;
                 var errorCode = '${param.errorCode}';
-                alert (errorCode);
-                if (!errorCode) {alert('NOT_ALLOWED TEST');return;}
+               // alert (errorCode);
+              //  if (!errorCode) {alert('NOT_ALLOWED TEST');return;}
 
                 var fld = $('replaceSelect').value;
                 if (fld &&$('replaceTo').value) {
-                    alert (${param.id}+"$$"+errorCode+"$$"+fld+"$$"+ $('replaceFrom').value+"$$"+ $('replaceTo').value);
-                    Expert2Service.replaceFieldByError(${param.id},errorCode,fld, $('replaceFrom').value, $('replaceTo').value, {
+                  //  alert (${param.id}+"$$"+errorCode+"$$"+fld+"$$"+ $('replaceFrom').value+"$$"+ $('replaceTo').value);
+                    Expert2Service.replaceFieldByError(${param.id},errorCode?errorCode:null,fld, $('replaceFrom').value, $('replaceTo').value, {
                         callback: function (a) {
                             alert(a);
                             window.document.location.reload();
@@ -192,14 +192,9 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
                     if (el.value) {
                         filter+=el.id+":"+el.value+";";
                     }
-
                 })
-                  url=  setGetParameter("filter",filter,url);
-                if ($('chkDefect').checked) {
-                    url=setGetParameter("defect","1",url);
-                } else {
-                    url=setGetParameter("defect","",url);
-                }
+                url=setGetParameter("filter",filter,url);
+                url=setGetParameter("defect",$('chkDefect').checked?"1":"",url);
                 window.location.href = url;
             }
 
@@ -221,11 +216,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
                     }
                 }
                 return url;
-
-
             }
         </script>
     </tiles:put>
-
-
 </tiles:insert>

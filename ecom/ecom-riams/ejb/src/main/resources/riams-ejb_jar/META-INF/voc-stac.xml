@@ -1,4 +1,14 @@
 <vocconfig>
+	<voc id="vocLeftRight" type="NativeVocService">
+			<NativeVocService
+			    	from="VocLeftRight as voc"
+			    	nameId="voc.id"
+			    	queryAppend=""
+			    	order=""
+			    	queried=""
+			    	names = "voc.name"
+			/>
+		</voc>
 	<voc id="vocAbortationByProfile" type="NativeVocService">
 			<NativeVocService
 			    	from="Surgicalprofileabortation as spa "
@@ -11,7 +21,7 @@
 			    	names = "va.name"
 			/>
 		</voc>
-	
+
 	<voc id="slsByPregnancy" type="NativeVocService">
 		<NativeVocService
 		    	from=" MedCase as sls "
@@ -109,7 +119,7 @@
 		    	parent='wp.lpu_id=:parent'
 		    	nameId="wp.id"
 		    	join=" left join WorkPlace wp1 on wp1.id=wp.parent_id"
-		    	queryAppend=" wp.dtype='HospitalRoom'"
+		    	queryAppend=" wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')"
 		    	order=""
 		    	queried=" upper(wp.name) like upper(:query) "
 		    	names = "'№'||wp.name||' ('||wp1.name||')'"

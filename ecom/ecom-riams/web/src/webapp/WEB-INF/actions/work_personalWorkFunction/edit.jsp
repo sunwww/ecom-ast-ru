@@ -53,6 +53,9 @@
         <msh:row>
         	<msh:checkBox property="isNoDirectSelf" label="Запрет на создание направление к самому себе" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
+          <msh:row>
+              <msh:checkBox property="isDirectionNoTime" label="Разрешить создавать направления без указания времени" fieldColSpan="3" horizontalFill="true"/>
+          </msh:row>
         <msh:ifFormTypeIsCreate formName="work_personalWorkFunctionForm">
         	<msh:row>
         		<msh:checkBox property="isCalendarCreate" label="Создавать календарь"/>
@@ -136,7 +139,6 @@
   		<script type="text/javascript">
   			function generationCalendar(){
   				WorkCalendarService.generateBySpecialist(
-					//Long aCalendarDay, String aCalendarTime, Boolean aMinIs,
 					${param.id},
 			     {
 						callback: function(aTime) {

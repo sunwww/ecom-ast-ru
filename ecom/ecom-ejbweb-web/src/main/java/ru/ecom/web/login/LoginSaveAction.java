@@ -132,9 +132,10 @@ public class LoginSaveAction extends LoginExitAction {
                 LOG.debug("next(2) = "+next) ;
                 next = next.substring(next.indexOf('/',2)) ;
                 LOG.debug("next(3) = "+next) ;
-            } catch (Exception e) {
+            } catch (StringIndexOutOfBoundsException ex) { // Если вдруг приложение запущено как корневое
+				next = next.substring(next.indexOf('/')) ;
+			} catch (Exception e) {
             	LOG.warn("next в URLEncode: "+next, e);
-
             	next = form.getNext().substring(form.getNext().indexOf('/',2)) ;
                 LOG.debug("next(4) = "+next) ;
             }
@@ -189,16 +190,15 @@ public class LoginSaveAction extends LoginExitAction {
     }
     
     
-    
+    /** Поиск сообщений при входе в систему */
     public static void checkMessage(HttpServletRequest aRequest,String aUsername) throws JspException, NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
         ILoginService serviceLogin = Injection.find(aRequest).getService(ILoginService.class) ;
     	StringBuilder sqlA = new StringBuilder() ;
 		sqlA.append("select id,messagetitle,messageText,to_char(datereceipt,'dd.mm.yyyy')||' '||cast(timereceipt as varchar(5)) as inforeceipt,messageUrl,username from CustomMessage") ;
 		sqlA.append(" where recipient='").append(aUsername).append("'") ;
-		sqlA.append(" and readDate is null");
 		sqlA.append(" and username!='system_message' ");
-		sqlA.append(" and (validitydate is null or validitydate>=current_date) and (isEmergency is null or isEmergency='0')");
+		sqlA.append(" and ((validitydate is null and readDate is null) or validitydate>=current_date) and (isEmergency is null or isEmergency='0')");
 	
 		Collection<WebQueryResult> list1 =service.executeNativeSql(sqlA.toString()) ;
 		//StringBuilder res = new StringBuilder() ;
@@ -209,7 +209,7 @@ public class LoginSaveAction extends LoginExitAction {
 		    	UserMessage.addMessage(aRequest,id,""+wqr.get2(),""+wqr.get3(),wqr.get5()!=null?""+wqr.get5():null) ;
 	    	}
 		}
-		if (RolesHelper.checkRoles("/Policy/Mis/Claim/View", aRequest)) {
+		if (RolesHelper.checkRoles("/Policy/Mis/Claim/View", aRequest)) { //Поиск выполненых заявок (но не подтвержденных)
 			sqlA= new StringBuilder() ;
 			sqlA.append("select cl.id,cl.description,to_char(cl.createdate,'dd.mm.yyyy') as createdate from claim cl left join workfunction wf on wf.id=cl.workfunction left join secuser su on su.id=wf.secuser_id where su.login='")
 				.append(aUsername).append("' and cl.finishdate is not null and cl.completeconfirmed is null");
@@ -237,7 +237,7 @@ public class LoginSaveAction extends LoginExitAction {
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/ShortProtocol", aRequest)) {
     		StringBuilder sql = new StringBuilder() ;
     		String cntDays = ActionUtil.getDefaultParameterByConfig("message_cnt_days_by_protocol", "2",service); 
-    		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
+    		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) { //Нет записей по стац. пациента более  Х (2) дней
     			sql.append("select")
     			.append(" case when wf.isAdministrator='1' then owp.lastname||' '||owp.firstname||' '||owp.middlename else '' end as lechvr")
     			.append(" ,count(distinct slo.id) as cntSlo")
@@ -344,7 +344,7 @@ public class LoginSaveAction extends LoginExitAction {
     		}
     		
     	}
-    	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/DirectMedicalCommission", aRequest)) {
+    	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/DirectMedicalCommission", aRequest)) { //Превышены сроки ожидания направления на ВК
     		StringBuilder sql = new StringBuilder() ;
     		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
 	    		sql.append("select")
@@ -403,7 +403,7 @@ public class LoginSaveAction extends LoginExitAction {
 	    	}
 	    	
     	}
-    	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/ReceivedWithoutPolicy", aRequest)) {
+    	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/ReceivedWithoutPolicy", aRequest)) { //Лежащие в стационаре без полисов
     		StringBuilder sql = new StringBuilder() ;
     		sql.append("select case when dmc.id is not null then ml1.name else ml.name end as mlname, count(distinct hmc.id) ")
 	    		.append(" ,count(distinct case when current_date-hmc.dateStart>3 then hmc.id else null end) ")
@@ -581,10 +581,11 @@ public class LoginSaveAction extends LoginExitAction {
     }
 
 	private void logLoginUserInvironment(HttpServletRequest aRequest) {
+    	//Уберем для тестов 31-05-2018
         //System.out.println("Login user env : {") ;
-        for(Map.Entry entry : createUserEnvironmentInfo(aRequest).entrySet() ) {
-        	System.out.println("    "+entry.getKey()+" = "+entry.getValue()) ;
-        }
+    //    for(Map.Entry entry : createUserEnvironmentInfo(aRequest).entrySet() ) {
+      //  	System.out.println("    "+entry.getKey()+" = "+entry.getValue()) ;
+     //   }
         //System.out.println("}") ;
 		
 	}

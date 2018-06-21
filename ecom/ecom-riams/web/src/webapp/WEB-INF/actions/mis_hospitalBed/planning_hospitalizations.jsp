@@ -151,6 +151,7 @@ left join patient pp on pp.id=wchb.patient_id
 
 where wp.dtype='HospitalRoom' ${department}
 ${roomType} ${countBed}
+and (wp.isNoActuality is null or wp.isNoActuality='0')
 and (slo.datefinish is null or coalesce(slo.datefinish,slo.transferdate,current_date) between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy'))
 group by wp.id,wp.name,vcbihr.name
 order by case when length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(wp.name,'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9',''))=0 then cast(wp.name as int) else 100 end

@@ -64,6 +64,14 @@ public class VocE2FondV009Form  extends IdEntityForm {
     public void setUsl(String aUsl) {theUsl = aUsl;}
     /** Условия оказания помощи */
     private String theUsl ;
+
+    /** Коды исхода доп. диспансеризации */
+    @Comment("Коды исхода доп. диспансеризации")
+    @Persist
+    public String getExtDispCodes() {return theExtDispCodes;}
+    public void setExtDispCodes(String aExtDispCodes) {theExtDispCodes = aExtDispCodes;}
+    /** Коды исхода доп. диспансеризации */
+    private String theExtDispCodes ;
     
   
 }

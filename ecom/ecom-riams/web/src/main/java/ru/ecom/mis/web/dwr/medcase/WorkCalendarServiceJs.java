@@ -15,6 +15,7 @@ import javax.servlet.jsp.JspException;
 
 import org.jdom.IllegalDataException;
 
+import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -28,6 +29,10 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class WorkCalendarServiceJs {
+	/** Возвращаем/создаем первое свободное время по рабочей функции и дню */
+	public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException, JSONException {
+		return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId,aCalendarDay);
+	}
 
 
 	public String buildSheduleTable(String workFunctionId,String weekplus,HttpServletRequest aRequest) throws NamingException {

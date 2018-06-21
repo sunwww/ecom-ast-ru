@@ -215,7 +215,12 @@
         <NativeVocService
                 from = ' grouperksgposition gkp '
                 parent=' gkp.ksgvalue_id=:parent '
-                names=" gkp.code||' DS:'||coalesce(gkp.mainmkb,'-')||' Усл:'||coalesce(gkp.servicecode,'-')||' Пол:'||coalesce(gkp.sex,'-')||' Возраст:'||coalesce(''||gkp.age,'-')||' Длит:'||coalesce(''||gkp.duration,'-')||' Доп.МКБ:'||coalesce(gkp.anothermkb,'-')"
+                names=" gkp.code|| case when coalesce(gkp.mainmkb,'')!='' then ', DS: '||gkp.mainmkb else '' end ||
+                        case when coalesce(gkp.servicecode,'')!='' then ', Усл: '||gkp.servicecode else '' end ||
+                        case when coalesce(gkp.sex,'')!='' then ', Пол:'||gkp.sex else '' end ||
+                        case when gkp.age is not null then ', Возраст: '||gkp.age else '' end ||
+                        case when gkp.duration is not null then ', Длит:'||gkp.duration else '' end ||
+                        case when coalesce(gkp.anothermkb,'')!='' then ', Доп.МКБ:'||gkp.anothermkb else '' end"
                 nameId=" gkp.id "
                 queried=" ( upper(gkp.mainmkb) like upper(:query) or upper(gkp.servicecode) like upper(:query) )"
                 queryAppend=""

@@ -23,7 +23,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = E2ListEntry.class)
 @Comment("Заполнение")
-@WebTrail(comment = "Заполнение", nameProperties = "id", view = "entityView-e2_entryList.do")
+@WebTrail(comment = "Заполнение", nameProperties = {"id","name"}, view = "entityView-e2_entryList.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @ACreateInterceptors({
         @AEntityFormInterceptor(EntryListCreateInterceptor.class)
@@ -50,6 +50,7 @@ public class E2EntryListForm extends IdEntityForm {
 
     /** Черновик */
     @Comment("Черновик")
+    @Persist
     public Boolean getIsDraft() {return theIsDraft;}
     public void setIsDraft(Boolean aIsDraft) {theIsDraft = aIsDraft;}
     /** Черновик */

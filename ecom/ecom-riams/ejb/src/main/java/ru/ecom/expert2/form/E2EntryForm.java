@@ -26,10 +26,19 @@ import javax.persistence.OneToOne;
 @EntityFormSecurityPrefix("/Policy/E2")
 public class E2EntryForm extends IdEntityForm {
 
-
-
-
 //----------все поля ниже добавлены на jsp!!!
+    /** Тип доп. диспансеризации */
+    private String theExtDispType ;
+    /** Возраст доп. диспансеризации */
+    private String theExtDispAge ;
+    /** Группа здоровья доп. диспансеризации */
+    private String theExtDispHealthGroup ;
+    /** Социальная группа доп. диспансеризации */
+    private String theExtDispSocialGroup ;
+    /** Назначения доп. диспансеризации */
+    private String theExtDispAppointments ;
+    /** Направлен на след. этап ДД */
+    private Boolean theExtDispNextStage ;
     /** Признак детского возраст */
     private Boolean theIsChild ;
     /** Счет */
@@ -886,6 +895,35 @@ public class E2EntryForm extends IdEntityForm {
     public Boolean getIsChild() {return theIsChild;}
     public void setIsChild(Boolean aIsChild) {theIsChild = aIsChild;}
 
+    @Comment("Тип доп. диспансеризации")
+    @Persist
+    public String getExtDispType() {return theExtDispType;}
+    public void setExtDispType(String aExtDispType) {theExtDispType = aExtDispType;}
+
+    @Comment("Возраст доп. диспансеризации")
+    @Persist
+    public String getExtDispAge() {return theExtDispAge;}
+    public void setExtDispAge(String aExtDispAge) {theExtDispAge = aExtDispAge;}
+
+    @Comment("Группа здоровья доп. диспансеризации")
+    @Persist
+    public String getExtDispHealthGroup() {return theExtDispHealthGroup;}
+    public void setExtDispHealthGroup(String aExtDispHealthGroup) {theExtDispHealthGroup = aExtDispHealthGroup;}
+
+    @Comment("Социальная группа доп. диспансеризации")
+    @Persist
+    public String getExtDispSocialGroup() {return theExtDispSocialGroup;}
+    public void setExtDispSocialGroup(String aExtDispSocialGroup) {theExtDispSocialGroup = aExtDispSocialGroup;}
+
+    @Comment("Назначения доп. диспансеризации")
+    @Persist
+    public String getExtDispAppointments() {return theExtDispAppointments;}
+    public void setExtDispAppointments(String aExtDispAppointments) {theExtDispAppointments = aExtDispAppointments;}
+
+    @Comment("Направлен на след. этап ДД")
+    @Persist
+    public Boolean getExtDispNextStage() {return theExtDispNextStage;}
+    public void setExtDispNextStage(Boolean aExtDispNextStage) {theExtDispNextStage = aExtDispNextStage;}
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */

@@ -1,7 +1,9 @@
 package ru.ecom.expert2;
 
 import org.apache.log4j.Logger;
+import ru.ecom.expert2.domain.E2CoefficientPatientDifficultyEntryLink;
 import ru.ecom.expert2.domain.E2Entry;
+import ru.ecom.expert2.domain.voc.E2Enumerator;
 import ru.nuzmsh.util.date.AgeUtil;
 
 import java.util.List;
@@ -51,6 +53,8 @@ public class Expert2FondUtil {
          2 – в документе, удостоверяющем личность пациента /родителя (представителя) пациента, отсутствует отчество.
          9 – противоправные действия
          10 - аборт по мед. показаниям
+         21(22) - парная операция на правом(левом) органе,
+         23 - внутрибольничное инфицирование
 
          */
         String ret= "";
@@ -65,6 +69,15 @@ public class Expert2FondUtil {
         }
         if (aEntry.getMedicalAbort()!=null&&aEntry.getMedicalAbort()) {
             ret+=ret.length()>0?";10":"10";
+        }
+        if (aEntry.getEntryType().equals(E2Enumerator.HOSPITALTYPE)||aEntry.getEntryType().equals(E2Enumerator.VMPTYPE)) { //Только для стац
+            List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
+            for (E2CoefficientPatientDifficultyEntryLink diff: list) {
+                if (diff.getDifficulty().getCode().equals("11")) {
+                    ret+=ret.length()>0?";21;22":"21;22";
+                    break;
+                }
+            }
         }
         //TODO сделать признак ДТП
         //if (ret!=null) log.info("calc OSLUCH. ID = "+aEntry.getId()+", sluch="+ret);

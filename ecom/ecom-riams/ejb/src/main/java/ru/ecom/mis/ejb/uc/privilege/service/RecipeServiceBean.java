@@ -127,7 +127,7 @@ public class RecipeServiceBean {
 		CountRowWriter countRow = new CountRowWriter() ;
 		RecipeServiceBean service = new RecipeServiceBean() ;
 		service.convertExcelToDbf(c, file, countRow) ;
-		System.out.println("count = "+countRow.getCount());
+	//	System.out.println("count = "+countRow.getCount());
 		
 		LinkedList<ColumnMapping> all = new LinkedList<ColumnMapping>() ;
 		service.append(all, c.getDetailsColumns()) ;

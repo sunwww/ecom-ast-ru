@@ -326,7 +326,12 @@
 
 
 	<action-mappings>
-
+		<action path='/kiosk' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/kiosk.jsp" />
+		</action>
 
 		<action path='/extDispPlanAdd' type='ru.ecom.web.actions.base.ForwardAction'
 				name='mis_attachmentForm'
