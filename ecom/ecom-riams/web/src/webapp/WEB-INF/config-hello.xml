@@ -135,6 +135,15 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/dis_document/listOpenByDate.jsp" />
         </action>
+
+      <action path='/createNewTime' type='ru.ecom.web.actions.base.ForwardAction'
+              name='work_timeBySpecialistForm'
+              validate='true'
+              scope="request"
+              input='/WEB-INF/actions/smo_direction/createNewTime.jsp'
+      >
+          <forward name="success" redirect="false" path="/WEB-INF/actions/smo_direction/createNewTime.jsp" />
+      </action>
  
   </action-mappings>
 </struts-config>
