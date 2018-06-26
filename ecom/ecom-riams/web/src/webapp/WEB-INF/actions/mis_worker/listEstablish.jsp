@@ -5,6 +5,14 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
+	<tiles:put name="style" type="string">
+	<style type="text/css">
+		.tempmessage{
+			font-family: 'Times New Roman', Times, serif;
+			font-size: 250%;
+		}
+	</style>
+	</tiles:put>
   <tiles:put name="title" type="string">
     <ecom:titleTrail beginForm="mis_lpuForm" mainMenu="Lpu" title="Шаблоны расписания сотрудников" guid="e51b1bad-82ba-4906-9829-7d9148b1174a" />
   </tiles:put>
@@ -12,6 +20,8 @@
     <msh:sideMenu guid="360e85c3-7aa1-4a04-8c1d-a9c0a6739efa" title="Добавить">
       <msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-mis_worker" name="Добавить сотрудника" guid="0fd18715-d91c-422d-87e7-aafe9a3c0ca8" roles="/Policy/Mis/Worker/Worker/Create" />
     </msh:sideMenu>
+
+
     <msh:sideMenu title="Перейти" guid="720b3f9b-02cd-4235-a1ba-dc12a6dc356b">
       <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/Create" key="ALT+2" params="id" action="/entityParentList-work_groupWorkFunction" name="К списку рабочих групп" title="Перейти к списку рабочих групп" guid="712b4156-54e2-4e7b-b0da-a46821eba3de" />
       <msh:sideLink roles="/Policy/Mis/Worker/WorkFunction/View" key="ALT+3" params="id" action="/js-mis_worker-archives" name="К списку архивных рабочих функций" title="Перейти к списку архивных рабочих групп" guid="712b4156-54e2-4e7b-b0da-a46821eba3de" />
@@ -22,6 +32,8 @@
     </msh:sideMenu>
   </tiles:put>
   <tiles:put name="body" type="string">
+	  	  <div class="tempmessage"> На данный момент существует более простой способ создания расписания,
+		  который находится <a href="createNewTime.do?">здесь</a></div>
   <msh:section title="Рабочие функции">
   	<ecom:webQuery name="listPerson" nativeSql="
   	select wf.id

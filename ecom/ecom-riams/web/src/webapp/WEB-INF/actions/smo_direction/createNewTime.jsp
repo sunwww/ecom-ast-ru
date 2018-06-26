@@ -33,7 +33,7 @@
                 text-decoration: none;
                 padding: 5px 10px;
             }
-            #schedule-table{
+            #table{
                 -moz-user-select: none;
                 text-align: center;
                 font-family: 'Roboto', sans-serif;
@@ -46,34 +46,33 @@
                 max-width: 1024px !important;
             }
 
+            .r0{
+                background: #a6ffea;
+            }
             .r3{
                 color:black;
                 background: #ff9de0
             }
-
             .r2{
                 color:black;
                 background:#ffcc00
             }
-
             .r4{
                 color:black;
                 background: #668ceb
             }
-            .rt5{
+            .r5{
                 color:white;
                 background: #4134eb
             }
-            .r0{
-                background: #a6ffea;
-            }
+
 
             td:hover {
                 cursor: pointer;
                 user-select: none;
 
             }
-            th{
+            .th{
                 background:#BBCCFF;
             }
         </style>
@@ -107,6 +106,7 @@
                 </msh:row>
 
                 <msh:row>
+                    <td></td>
                     <td onclick="this.childNodes[1].checked='checked';chkchange(1)"> <input class="radio" name="rdMode" id="rdMode" value="1" type="radio" >длительность визита (минут)</td>
                     <td onclick="this.childNodes[1].checked='checked';chkchange(2)"> <input class="radio" name="rdMode" id="rdMode" value="2" type="radio" >кол-во визитов</td>
                     <br>
@@ -114,48 +114,149 @@
                         <msh:textField property="countVisits" label="Кол-во"/>
                     </msh:row>
 
+                    <msh:row>
+                        <msh:autoComplete size="100" fieldColSpan="7" vocName="vocServiceReserveType" property="reserveType" label="Тип резерва" horizontalFill="true"/>
+                    </msh:row>
                 </msh:row>
 
             </msh:panel>
         </msh:form>
-        <input type="button" onclick="createDateTimes()" value="Создать" />
+        <input type="button" onclick="createDateTimes(this)" value="Создать" />
         <div id="schedule">
-
+            <menuitem label="УДАЛИТЬ РЕЗЕРВ" onclick="changeReserve('0');"></menuitem>
+            <menuitem label="ПРОМЕД" onclick="changeReserve('PROMED');"></menuitem>
+            <menuitem label="ПЛАТНЫЙ" onclick="changeReserve('PAYMENT');"></menuitem>
+            <menuitem label="ДМС" onclick="changeReserve('DMC');"></menuitem>
+            <menuitem label="СТАЦИОНАР" onclick="changeReserve('STAC');"></menuitem>
+            <menuitem label="БЕРЕМЕННЫЕ" onclick="changeReserve('BIRTH');"></menuitem>
+            <menuitem label="УДАЛЕНЫЙ РАЙОН" onclick="changeReserve('UDR');"></menuitem>
         </div>
-        <div id="newTab"> </div>
+
+        <menu id="menu" class="menu">
+            <li class="menu-item submenu">
+                <button type="button" class="menu-btn">
+                    <i class="fa fa-users"></i>
+                    <span class="menu-text">Изменить резерв</span>
+                </button>
+                <menu class="menu">
+            <li class="menu-item">
+                <button type="button" class="menu-btn"  onclick="changeReserve('0')">
+                    <i class="fa fa-comment"></i>
+                    <span class="menu-text">Удалить резерв</span>
+                </button>
+            </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="changeReserve('PROMED');">
+                    <i class="fa fa-comment"></i>
+                    <span class="menu-text">ПРОМЕД</span>
+                </button>
+            </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="changeReserve('PAYMENT');">
+                    <i class="fa fa-comment"></i>
+                    <span class="menu-text">ПЛАТНЫЙ</span>
+                </button>
+            </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="changeReserve('DMC');">
+                    <i class="fa fa-comment"></i>
+                    <span class="menu-text">ДМС</span>
+                </button>
+            </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="changeReserve('STAC');">
+                    <i class="fa fa-comment"></i>
+                    <span class="menu-text">СТАЦИОНАР</span>
+                </button>
+            </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="changeReserve('BIRTH');">
+                    <i class="fa fa-comment"></i>
+                    <span class="menu-text">БЕРЕМЕННЫЕ</span>
+                </button>
+            </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="changeReserve('UDR');">
+                    <i class="fa fa-comment"></i>
+                    <span class="menu-text">УДАЛЕНЫЙ РАЙОН</span>
+                </button>
+            </li>
+                 </menu>
+        </li>
+        <li class="menu-separator"></li>
+        <li class="menu-item">
+            <button type="button" class="menu-btn" onclick="deleteTime()">
+                <i class="fa fa-reply"></i>
+                <span class="menu-text">Удалить время</span>
+            </button>
+        </li>
+        <li class="menu-item disabled" disabled>
+            <button type="button" class="menu-btn" onclick="editRecord()">
+                <i class="fa fa-reply"></i>
+                <span class="menu-text">Редактировать</span>
+            </button>
+        </li>
+        <li class="menu-item">
+            <button type="button" class="menu-btn" onclick="updateTable()">
+                <i class="fa fa-star"></i>
+                <span class="menu-text">Обновить</span>
+            </button>
+        </li>
+        </menu>
+
+
+        <menu id="menu2" class="menu">
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="deleteDay()">
+                    <i class="fa fa-download"></i>
+                    <span class="menu-text" >Удалить день</span>
+                </button>
+            </li>
+        </menu>
+
+        <div id='newt'></div>
     </tiles:put>
 
     <tiles:put type="string" name="javascript">
+        <link rel="stylesheet" type="text/css" href="css/contextMenu.css">
+        <script type="text/javascript" src="js/contextMenu.js"></script>
         <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
+
         <script type='text/javascript'>
 
+
+            var thisCell;
             var weekplus=0;
             document.forms[0].rdMode[0].checked=true ;
             var checkedRadio=1;
 
             function chkchange(value) {
-
                 checkedRadio = value;
-                if(document.forms[0].rdMode[0].checked)
-                {
+                if(document.forms[0].rdMode[0].checked){
                     checkedRadio=1;
                 }else {
                     checkedRadio=2;
                 }
-
-                //alert(checkedRadio);
             }
 
-            function createDateTimes() {
+            function createDateTimes(ths) {
+
+                ths.value="Подождите...";
+                ths.disabled=true;
+
                 WorkCalendarService.createDateTimes($('dateFrom').value,$('dateTo').value,
                     $('specialist').value,$('timeFrom').value,$('timeTo').value,
-                    $('countVisits').value,checkedRadio,{
+                    $('countVisits').value,checkedRadio,$('reserveType').value,{
                         callback: function(aResult) {
-                            alert(aResult) ;
+                            //alert(aResult) ;
                             updateTable();
+                            ths.disabled=false;
+                            ths.value="Создать";
                         },
                         errorHandler: function(aMessage) {
-                            alert("Не удалось создать! "+aMessage) ;
+                            alert("Не удалось создать! " +aMessage) ;
+                            ths.disabled=false;
+                            ths.value="Создать";
                         }
                     }) ;
             }
@@ -174,7 +275,7 @@
                     callback: function(aResult) {
                         var t = document.getElementById("schedule");
                         t.innerHTML=aResult;
-                        //alert(aResult) ;
+                        tranetable();
                     },
                     errorHandler: function(aMessage) {
                         alert("Не удалось отобразить! "+aMessage) ;
@@ -182,39 +283,114 @@
                 });
             }
 
+
             specialistAutocomplete.addOnChangeCallback(function(){
                 updateTable();
-
-                //tranetable();
             });
 
+           /* window.document.onclick = function (e) {
+                if(e.target.getAttribute('class')=='th'){
+                    setMenu("menu2");
+                    thisCell = e.target;
+                    document.addEventListener('contextmenu', onContextMenu, true);
+                }
 
-            /*function tranetable() {
+                if(e.target.getAttribute('class')!='th' && e.target.nodeName=='TD'){
+                    setMenu("menu");
+                  thisCell = e.target;
+                  document.addEventListener('contextmenu', onContextMenu, true);
+                }
+            };*/
 
-                var myTable = document.getElementById('schedule-table');
+            window.document.oncontextmenu = function (e) {
+                if(e.target.getAttribute('class')=='th'){
+                    setMenu("menu2");
+                    thisCell = e.target;
+                    onContextMenu(e);
+                }
+
+                if(e.target.getAttribute('class')!='th' && e.target.nodeName=='TD'){
+                    setMenu("menu");
+                    thisCell = e.target;
+                    onContextMenu(e);
+                }
+            };
+
+            function changeReserve(type) {
+                WorkCalendarService.changeScheduleElementReserve(thisCell.getAttribute('id'),type,{
+                    callback: function(aResult) {
+                        updateTable();
+
+                    },
+                    errorHandler: function(aMessage) {
+                        alert("Не удалось отобразить! "+aMessage) ;
+                    }
+                });
+            }
+
+            function deleteTime() {
+                WorkCalendarService.setScheduleElementIsDelete(thisCell.getAttribute('id'),{
+                    callback: function(aResult) {
+                        updateTable();
+                    },
+                    errorHandler: function(aMessage) {
+                        alert("Не удалось отобразить! "+aMessage) ;
+                    }
+                });
+            }
+
+            function deleteDay() {
+                WorkCalendarService.setScheduleDayIsDelete(thisCell.getAttribute('id'),{
+                    callback: function(aResult) {
+                        updateTable();
+                    },
+                    errorHandler: function(aMessage) {
+                        alert("Не удалось отобразить! "+aMessage) ;
+                    }
+                });
+            }
+
+            function editRecord() {
+                var id = thisCell.getAttribute('id');
+                var t = document.getElementById(id).innerHTML;
+                document.getElementById(id).innerHTML ="<input id='edit' style='display: block;' value='"+t+"'>";
+                document.getElementById(id).focus();
+            }
+
+            function tranetable() {
+
+                var myTable = document.getElementById('table');
                 var newTable = document.createElement('table');
-                var maxColumns = 0;
+                newTable.id = myTable.id;
+                var maxCells = 0;
+                var maxRows = (myTable.rows.length);
                 for(var r = 0; r < myTable.rows.length; r++) {
-                    if(myTable.rows[r].cells.length > maxColumns) {
-                        maxColumns = myTable.rows[r].cells.length;
+                    if(myTable.rows[r].cells.length > maxCells) {
+                        maxCells = myTable.rows[r].cells.length;
                     }
                 }
-                for(var c = 0; c < maxColumns; c++) {
-                    newTable.insertRow(c);
-                    for(var r = 0; r < myTable.rows.length; r++) {
-                        if(myTable.rows[r].length <= c) {
-                            newTable.rows[c].insertCell(r);
-                            newTable.rows[c].cells[r] = '-';
-                        }
-                        else {
-                            newTable.rows[c].insertCell(r);
-                            newTable.rows[c].cells[r].innerHTML = myTable.rows[r].cells[c].innerHTML;
+
+                for(var i = 0; i < maxCells; i++) {
+                    newTable.insertRow(i);
+                    for(var j = 0; j < maxRows; j++) {
+
+                        //alert(i+" "+j);
+                        if(myTable.rows[j].cells[i] == undefined){
+                            newTable.rows[i].insertCell(j);
+                            newTable.rows[i].cells[j] = '-';
+                        }else{
+                            newTable.rows[i].insertCell(j);
+                            newTable.rows[i].cells[j].innerHTML = myTable.rows[j].cells[i].innerHTML;
+                            newTable.rows[i].cells[j].className = myTable.rows[j].cells[i].className;
+                            newTable.rows[i].cells[j].id = myTable.rows[j].cells[i].id;
                         }
                     }
                 }
-                var div = document.getElementById('newTab');
+
+                var div = document.getElementById('body-cont');
+                div.innerHTML="";
                 div.appendChild(newTable);
-            }*/
+            }
         </script>
     </tiles:put>
 </tiles:insert>
