@@ -627,4 +627,11 @@ public class MisLpuForm extends IdNameEntityForm {
 	/** В архиве */
 	private Boolean theIsArchive;
 
+	/** Обсервационное? */
+	@Comment("Обсервационное?")
+	@Persist
+	public Boolean getIsObservable() {return theIsObservable;}
+	public void setIsObservable(Boolean aIsObservable) {theIsObservable = aIsObservable;}
+	/** В архиве */
+	private Boolean theIsObservable;
 }

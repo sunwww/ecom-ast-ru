@@ -28,9 +28,11 @@
         	<msh:checkBox property="isNoActuality" label="Запись не действует" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
+          <msh:checkBox property="defaultRoom" label="Палата по умолчанию" fieldColSpan="3"/>
+        </msh:row>
+        <msh:row>
           <msh:textArea property="comment" label="Комментарий" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
-        
         <msh:submitCancelButtonsRow colSpan="2"/>
       </msh:panel>
       <ecom:webQuery name="bedList" nameFldSql="claimListSql" nativeSql="
