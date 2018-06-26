@@ -2,9 +2,7 @@
  * Вывод списка в виде таблицы
  */
 msh.widget.AutocompleteTableView = function(theElement, theDiv) {
-
-    var theLastSelectedIndex = 0 ;
-
+   // var srcEventElement;
     ///////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS
     //
@@ -48,14 +46,17 @@ msh.widget.AutocompleteTableView = function(theElement, theDiv) {
         var id = getValue(aXml, "requestId") ;
 //        alert(id) ;
         var table = document.createElement("table") ;
+        table.setAttribute("id", "doc_table1");//doc_table + 1 - если по строке, 0 - прокрутить вверх, 2 - прокрутить вниз
         var tbody = document.createElement("tbody") ;
         var rows = aXml.getElementsByTagName("row") ;
         if(rows.length==0) {
-            var tr = createTr(0, null) ;
+            var tr = createTr(0, null,null) ;//если одна строка (когда пустой справочник), выводить не нужно кнопки
             tbody.appendChild(tr);
         } else {
             for (var i = 0; i < rows.length; i++) {
-                var tr = createTr(i, rows[i]) ;
+                var flag=(i===rows.length-1 && rows.length>1)? true:false;  //надо чтоб не всегда выводились кнопки прокрутки
+                if (rows.length==1) flag=null; //чтобы не выводились при поиске
+                var tr = createTr(i, rows[i],flag) ;
                 tbody.appendChild(tr);
             }
         }
@@ -81,7 +82,6 @@ msh.widget.AutocompleteTableView = function(theElement, theDiv) {
 //        theDiv.innerHTML = "<table><tr><td>heradf</td><td>asdf</td></tr></table>";
 
     }
-
     this.hide = function() {
         theDiv.innerHTML = "";
         theDiv.style.visibility = 'hidden';
@@ -146,13 +146,11 @@ msh.widget.AutocompleteTableView = function(theElement, theDiv) {
         return tr.myId ;
     }
 
-
-
     /////////////////////////////////////////////////////////
     // PRIVATE
     //
-
     function setSelected(aIndex) {
+        setSrcEventElement(1);
         theLastSelectedIndex = aIndex;
         var lis = theDiv.getElementsByTagName("tr") ;
         var selected = false ;
@@ -166,12 +164,25 @@ msh.widget.AutocompleteTableView = function(theElement, theDiv) {
         }
         return selected;
     }
+    //проставить id в table
+    function setSrcEventElement(id) {
+        var table = document.getElementById("doc_table0");
+        if (table!=null)  table.id="doc_table"+id;
+        else {
+            table = document.getElementById("doc_table1");
+            if (table!=null)table.id="doc_table"+id;
+            else {
+                table = document.getElementById("doc_table2");
+                if (table!=null) table.id="doc_table"+id;
+            }
+        }
+    }
 
     function test123() {
         alert("hello") ;
     }
 
-    function createTr(aIndex,aXmlRow) {
+    function createTr(aIndex,aXmlRow,aFlag) {
         var name = getValue(aXmlRow, 'name') ;
         if(name=="") name="-" ; // НЕТ STAC-109
         var id = getValue(aXmlRow, 'id') ;
@@ -192,13 +203,17 @@ msh.widget.AutocompleteTableView = function(theElement, theDiv) {
 
         tr.appendChild(tdId) ;
         tr.appendChild(tdName) ;
-
-//        tdId.onclick = onSelectByMouse ;
-//        tdName.onclick = onSelectByMouse ;
-
-        tr.onmousedown = setSelected.bind(this, aIndex) ;
-//        eventutil.addEventListener(tr, "mouseover", setSelected.bind(this, aIndex)) ;
-
+        if (aFlag!=null) {
+            if (aIndex==0 || aFlag) {
+                var tdButton=document.createElement("td") ;
+                tdButton.style.width="5px";
+                tdButton.innerHTML=(aIndex===0)? "<input padding=\"0\" margin='0' width='100%' height='100%' type=\"button\" value=\"ʌ\">":"<input type=\"button\" value=\"v\">";
+                tr.appendChild(tdButton) ;
+                tdButton.onmousedown = (aIndex===0)? setSrcEventElement.bind(this,0) : setSrcEventElement.bind(this,2); //0 - вверх, 1 - выбор, 2 - вниз
+            }
+        }
+        tdId.onmousedown = setSelected.bind(this, aIndex) ;
+        tdName.onmousedown = setSelected.bind(this, aIndex) ;
         return tr ;
     }
 
@@ -214,6 +229,4 @@ msh.widget.AutocompleteTableView = function(theElement, theDiv) {
             return "";
         }
     }
-
-
 }
