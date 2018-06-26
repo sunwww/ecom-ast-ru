@@ -748,7 +748,13 @@ where m.id ='${param.id}'"/>
                     }
 
                 }
-                setDefaultWorkPlaceByDepartment($('department').value);  //если отделение уже проставлено
+                if (isFunction(window["setDefaultWorkPlaceByDepartment"])) //если ф-я существует (т.е. если создание)
+                    setDefaultWorkPlaceByDepartment($('department').value);  //если отделение уже проставлено
+            }
+            // isFunction
+            function isFunction(functionToCheck)  {
+                var getType = {};
+                return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
             }
             function addDiag(aDiagType,aCheck) {
                 var addRowF="";
