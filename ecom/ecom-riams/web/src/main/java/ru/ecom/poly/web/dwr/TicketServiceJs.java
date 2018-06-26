@@ -59,7 +59,7 @@ public class TicketServiceJs {
 	public Collection<WebQueryResult> getPatients (String aAgeFrom, String aAgeTo, String aDateTo, String aSexId, String aLpu, int maxResults, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
 		String sexSql = (aSexId!=null&&!aSexId.equals(""))?" and pat.sex_id="+aSexId:"";
-		System.out.println("getPatient, age = "+aAgeTo+" : "+aAgeFrom);
+	//	System.out.println("getPatient, age = "+aAgeTo+" : "+aAgeFrom);
 		if (aDateTo!=null && !aDateTo.equals("")) {
 			aDateTo = "to_date('"+aDateTo+"','dd.MM.yyyy')";
 		} else {
@@ -73,7 +73,7 @@ public class TicketServiceJs {
 				" left join lpuattachedbydepartment att on att.patient_id=pat.id" +
 				" where  cast(to_char("+aDateTo+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char("+aDateTo+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char("+aDateTo+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between "+aAgeFrom + " and "+aAgeTo
 				+" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')"+sexSql+" order by random()";
-		System.out.println("==Find persons: "+sql);
+	//	System.out.println("==Find persons: "+sql);
 		Collection<WebQueryResult> l = service.executeNativeSql(sql,maxResults);
 		return l;
 	}
@@ -104,7 +104,7 @@ public class TicketServiceJs {
 				if (cal.getTime().after(finishDate)) break;			
 			}
 			if (allDates.length()>0) {}else {return "" ;}
-			System.out.println("DATES = "+allDates);
+			//System.out.println("DATES = "+allDates);
 			Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, recordCount.intValue(), aRequest);
 			if (pats.isEmpty()) return "";
 			String mainPriority = service.executeNativeSql("select id from vocprioritydiagnosis where code='1'").iterator().next().get1().toString();
@@ -151,7 +151,7 @@ public class TicketServiceJs {
 			ids.append("&ds = "+dsId+"\n");
 			}
 			}
-			System.out.print(ids);
+		//	System.out.print(ids);
 		
 		return ids.toString();
 		
@@ -178,7 +178,6 @@ public class TicketServiceJs {
 			WebQueryResult r = (WebQueryResult)res.iterator().next();
 			result = r.get1().toString() + ":" + r.get2().toString() + ":" + r.get3().toString();
 		}
-		System.out.println("STRRRRRR" + result);
 		return result;
 	}
 	public String getUetByService(Long aService, HttpServletRequest aRequest) throws NamingException {
@@ -634,7 +633,7 @@ public class TicketServiceJs {
 			boolean isClosedPeriod = checkPermission(service, "ShortMedCase", "dateClosePeriod", aIdTicket, aRequest) ;
 			if (isClosedPeriod) {
 				boolean isEditClose = checkPermission(service, "ShortMedCase", "editDataClosePeriod", aIdTicket, aRequest); 
-				System.out.println("isEditClose="+isEditClose) ;
+			//	System.out.println("isEditClose="+isEditClose) ;
 				return  isEditClose?"1":"0#Период закрыт на редактирование";
 			} else {
 				return "1" ;
