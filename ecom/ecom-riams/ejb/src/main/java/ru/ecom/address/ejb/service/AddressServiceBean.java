@@ -104,7 +104,6 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     	if (CAN_DEBUG)
 			LOG.debug("getAddressString: aAddressPk = " + aAddressPk); 
 
-        Long address = aAddressPk ;
     	String sql = "select a.fullname,a.name,at1.shortName,a.parent_addressid,a.addressid from Address2 a left join AddressType at1 on at1.id=a.type_id  where a.addressid=" ;
     	List<Object[]> list = theEntityManager.createNativeQuery(sql+aAddressPk) 
     			.setMaxResults(1).getResultList() ;
@@ -116,21 +115,10 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
 	        if (fullname!=null && !fullname.equals("")) {
 	        	sb.append(fullname) ;
 	        } else {
-	        	
-		        while(list.size()>0) {
-		            StringBuilder s = new StringBuilder();
-		            s.append(" ") ;
-		            s.append(obj[2]!=null?obj[2]:"") ;
-		            s.append(" ") ;
-		            s.append(obj[1]!=null?obj[1]:"") ;
-		            s.append(", ") ;
-		            //sb.insert(0, s) ;
-		            sb.insert(0,s) ;
-		//            System.out.println("s = " + sb);
-		            long oldId = aAddressPk;
-		            address = ConvertSql.parseLong(obj[3]) ;
-		            if(address==null || address.longValue()==oldId) address = null ;
-		        }
+				sb.append(obj[2]!=null?obj[2]:"") ;
+				sb.append(" ") ;
+				sb.append(obj[1]!=null?obj[1]:"") ;
+				sb.append(", ") ;
 	        }
         }
     	if (aZipCode!=null && !aZipCode.equals("")) sb.insert(0,", ").insert(0,aZipCode).insert(0,"Индекс ") ;
