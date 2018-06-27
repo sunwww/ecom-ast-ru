@@ -2153,4 +2153,24 @@ public class HospitalMedCaseServiceJs {
         else res.append("##");
         return res.toString();
     }
+    //Milamesher #101 проставить палата по умолчанию по отделению
+	public String getDefaultWorkPlaceByDepartment(String slo, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select wp.id as wpid,'№'||wp.name||' ('||wp1.name||')' as wpname, wp2.id as wp2id,wp2.name as wp2name\n" +
+				"from workplace wp\n" +
+				"left join WorkPlace wp1 on wp1.id=wp.parent_id\n" +
+				"left join workplace wp2 on wp2.parent_id=wp.id \n" +
+				"where wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')\n" +
+				"and wp2.dtype='HospitalBed' and (wp2.isnoactuality is null or wp2.isnoactuality='0') \n" +
+				"and wp.defaultroom=true\n" +
+				"and wp.lpu_id=" + slo + " limit 1";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			WebQueryResult w = list.iterator().next() ;
+			res.append(w.get1()).append("#").append(w.get2()).append("#").append(w.get3()).append("#").append(w.get4());
+		}
+		else res.append("##");
+		return res.toString();
+	}
 }

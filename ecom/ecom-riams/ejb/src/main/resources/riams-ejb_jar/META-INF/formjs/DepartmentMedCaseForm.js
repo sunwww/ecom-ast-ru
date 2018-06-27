@@ -270,6 +270,21 @@ function onCreate(aForm, aEntity, aContext) {
 	
 	//aEntity.setCreateTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 	onSave(aForm, aEntity, aContext) ;
+    transferObservRoomToChild(aForm, aEntity, aContext) ;
+}
+//Milamesher #101 проставить палату матери в обсервац. её новорождённым детям
+function transferObservRoomToChild(aForm, aEntity, aContext) {
+    if (aEntity.prevMedCase!=null && aEntity.department.getIsObservable()) { //если это перевод в обсервационное
+        aContext.manager.createNativeQuery("update medcase set roomnumber_id=" + aEntity.roomNumber.id + "\n" +
+            ",bednumber_id= " + aEntity.bedNumber.id + " \n" +
+            "where id=ANY(select dmc2.id from medcase dmc\n" +
+            "left join ChildBirth chb on chb.medcase_id=dmc.id\n" +
+            "left join newborn nb on nb.childbirth_id=chb.id\n" +
+            "left join patient pat on pat.id=nb.patient_id\n" +
+            "left join medcase hmc on hmc.patient_id=pat.id\n" +
+            "left join medcase dmc2 on dmc2.parent_id=hmc.id\n" +
+            "where hmc.datestart=nb.birthdate and dmc2.id is not null and dmc.id= " + aEntity.prevMedCase.id + " )\n").executeUpdate();
+	}
 }
 function onSave(aForm, aEntity, aContext) {
 	var dat =(new java.util.Date()).getTime() ;

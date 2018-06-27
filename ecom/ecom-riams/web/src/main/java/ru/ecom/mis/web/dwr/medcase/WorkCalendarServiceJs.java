@@ -29,12 +29,52 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 public class WorkCalendarServiceJs {
+
 	/** Возвращаем/создаем первое свободное время по рабочей функции и дню */
 	public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException, JSONException {
 		return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId,aCalendarDay);
 	}
 
+	/** Изменяем тип резерва для времени по его id */
+	public String changeScheduleElementReserve(String wcdId,String reserveTypeCode,HttpServletRequest aRequest) throws NamingException {
 
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String reserveTypeId = "";
+		if(!reserveTypeCode.equals("0")) {
+			//String sql = "select id from vocservicereservetype where code = '" + reserveTypeCode + "'";
+			//System.out.println(sql);
+			Collection<WebQueryResult> list = service.executeNativeSql("select id from vocservicereservetype where code = '" + reserveTypeCode + "'");
+
+			if (!list.isEmpty()) {
+				WebQueryResult w = list.iterator().next();
+				reserveTypeId = w.get1().toString();
+			}
+			service.executeUpdateNativeSql("update workcalendartime set reservetype_id="+reserveTypeId+" where id="+wcdId);
+		}else service.executeUpdateNativeSql("update workcalendartime set reservetype_id=null where id="+wcdId);
+
+
+		return "0";
+	}
+
+	/** Помечаем время как удаленное по его id */
+	public String setScheduleElementIsDelete(String wctId,HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		int i = service.executeUpdateNativeSql("update workcalendartime set isdeleted=true where id="+wctId);
+		return i+"";
+	}
+
+	/** Помечаем день как удаленный по его id */
+	public String setScheduleDayIsDelete(String wcdId,HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update workcalendartime set isdeleted=true where workcalendarday_id="+wcdId);
+		int i = service.executeUpdateNativeSql("update workcalendarday set isdeleted=true where id="+wcdId);
+		return i+"";
+	}
+
+	/** Строим таблицу с расписанием врача по раб.функции на нужную неделю*/
 	public String buildSheduleTable(String workFunctionId,String weekplus,HttpServletRequest aRequest) throws NamingException {
 
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -58,9 +98,10 @@ public class WorkCalendarServiceJs {
 
 		String sql ="select " +
 				"getWeekbyDate (wcd.calendardate)," +
-				"prettyDate(wcd.calendardate),  " +
+				"prettyDate(wcd.calendardate,wcd.id),  " +
 				"wcd.id," +
-				"getList('select ''<td id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime where workcalendarday_id = '||wcd.id||' order by timefrom','')\n" +
+				"getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime " +
+				"where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
 				"from workcalendarday  wcd\n" +
 				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
 				") and (isdeleted is null or isdeleted = false)\n" +
@@ -77,7 +118,7 @@ public class WorkCalendarServiceJs {
 
 		String html="<div id=\"head-cont\">" +
 				"<a href=\"#\" id=\"alink\" onClick=\"prevWeek()\" >&#8666; </a>" + date + "<a href=\"#\" id=\"alink\" onClick=\"nextWeek()\"> &#8667;</a></div>" +
-				"<div id=\"body-cont\"><table id=\"schedule-table\">" +
+				"<div id=\"body-cont\"><table id=\"table\">" +
 				"<tbody>";
 		for(String ss:st){
 			html+="<tr>"+ss+"</tr>";
@@ -86,10 +127,15 @@ public class WorkCalendarServiceJs {
 	}
 
 
+	/** Создание дат и времен по заданному количеству визитов или по длительности визита*/
 	public String createDateTimes(String dateFrom,String dateTo
 			,Long workFunctionId,String timeFrom,String timeTo
-			, String countVis,String type,HttpServletRequest aRequest) throws NamingException {
+			, String countVis,String type,String reserveType,HttpServletRequest aRequest) throws NamingException {
 
+		System.out.println(reserveType);
+		if(reserveType.equals("")){
+			reserveType=null;
+		}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 
 		String workcalendarId="";
@@ -103,10 +149,10 @@ public class WorkCalendarServiceJs {
 
 		if(type.equals("1")) {
 			service.executeNativeSql("select createSheduleByContinueVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m')");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+")");
 		}else {
 			service.executeNativeSql("select createSheduleByCountVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "')");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+")");
 		}
 		return "yep."+dateFrom+">>"+dateTo+">>"+workcalendarId;
 	}

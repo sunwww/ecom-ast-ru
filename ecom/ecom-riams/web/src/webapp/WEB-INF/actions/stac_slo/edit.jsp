@@ -748,7 +748,13 @@ where m.id ='${param.id}'"/>
                     }
 
                 }
-
+                if (isFunction(window["setDefaultWorkPlaceByDepartment"])) //если ф-я существует (т.е. если создание)
+                    setDefaultWorkPlaceByDepartment($('department').value);  //если отделение уже проставлено
+            }
+            // isFunction
+            function isFunction(functionToCheck)  {
+                var getType = {};
+                return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
             }
             function addDiag(aDiagType,aCheck) {
                 var addRowF="";
@@ -1039,6 +1045,24 @@ where m.id ='${param.id}'"/>
                     }) ;
 
             }
+            //Milamesher #101 25.06.2018 проставляется палата по умолчанию
+            function setDefaultWorkPlaceByDepartment(dep) {
+                if (+dep != 0) {
+                    HospitalMedCaseService.getDefaultWorkPlaceByDepartment(dep, {
+                        callback: function (aResult) {
+                            if (aResult != '##') {
+                                var roomArr = aResult.split('#');
+                                if (+roomArr[0] != 0 && +roomArr[3] != 0) {
+                                    $('roomNumber').value = roomArr[0];
+                                    $('roomNumberName').value = roomArr[1];
+                                    $('bedNumber').value = roomArr[2];
+                                    $('bedNumberName').value = roomArr[3];
+                                }
+                            }
+                        }
+                    });
+                }
+            }
             </script>
 
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/OwnerFunction">
@@ -1065,6 +1089,7 @@ where m.id ='${param.id}'"/>
                             //		$('kindHighCareName').value = "" ;
                             //		kindHighCareAutocomplete.setParentId(+newid) ;
                             //	}
+                            setDefaultWorkPlaceByDepartment($('department').value);
                         });
                     } catch (e) {
                     }
@@ -1101,6 +1126,7 @@ where m.id ='${param.id}'"/>
                                         }
                                     }
                                 })
+                            setDefaultWorkPlaceByDepartment($('department').value);
                         });
                     } catch (e) {
                     }

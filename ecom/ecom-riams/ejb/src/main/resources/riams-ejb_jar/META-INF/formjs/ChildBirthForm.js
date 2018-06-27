@@ -275,7 +275,7 @@ function onCreate(aForm, aEntity, aCtx) {
 			}
 			newBorn.setPatient(patient) ;			
 			}
-			else if (newBorn.getLiveBorn().getCode()=='2') {  //если мёртвый
+			else if (newBorn.getLiveBorn().getCode()=='2') {  //Milamesher #74: если ребёнок - мёртвый
 				var dcase = new Packages.ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 				dcase.setDeathDate(newBorn.birthDate);
                 dcase.setDeathTime(newBorn.birthTime);

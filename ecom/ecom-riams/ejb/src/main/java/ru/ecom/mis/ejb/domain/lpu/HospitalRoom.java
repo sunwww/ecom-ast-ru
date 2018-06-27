@@ -13,7 +13,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 public class HospitalRoom extends WorkPlace {
-	/** Количество коек */
+	/**
+	 * Количество коек
+	 */
 	@Comment("Количество коек")
 	public Long getBedCapacity() {
 		return theBedCapacity;
@@ -22,8 +24,10 @@ public class HospitalRoom extends WorkPlace {
 	public void setBedCapacity(Long aBedCapacity) {
 		theBedCapacity = aBedCapacity;
 	}
-	
-	/** Тип коек */
+
+	/**
+	 * Тип коек
+	 */
 	@Comment("Тип коек")
 	@OneToOne
 	public VocRoomType getRoomType() {
@@ -34,25 +38,55 @@ public class HospitalRoom extends WorkPlace {
 		theRoomType = aRoomType;
 	}
 
-	/** Пол */
+	/**
+	 * Пол
+	 */
 	@Comment("Пол")
 	@OneToOne
-	public VocSex getSex() {return theSex;}
-	public void setSex(VocSex aSex) {theSex = aSex;}
+	public VocSex getSex() {
+		return theSex;
+	}
 
-	/** Пол */
+	public void setSex(VocSex aSex) {
+		theSex = aSex;
+	}
+
+	/**
+	 * Пол
+	 */
 	private VocSex theSex;
-	/** Тип коек */
+	/**
+	 * Тип коек
+	 */
 	private VocRoomType theRoomType;
-	/** Количество коек */
+	/**
+	 * Количество коек
+	 */
 	private Long theBedCapacity;
-	/** Кол-во коек в палате */
+
+	/**
+	 * Кол-во коек в палате
+	 */
 	@Comment("Кол-во коек в палате")
 	@OneToOne
-	public VocCountBedInHospitalRoom getCountBed() {return theCountBed;}
-	public void setCountBed(VocCountBedInHospitalRoom aCountBed) {theCountBed = aCountBed;}
+	public VocCountBedInHospitalRoom getCountBed() {
+		return theCountBed;
+	}
 
-	/** Кол-во коек в палате */
+	public void setCountBed(VocCountBedInHospitalRoom aCountBed) {
+		theCountBed = aCountBed;
+	}
+
+	/**
+	 * Кол-во коек в палате
+	 */
 	private VocCountBedInHospitalRoom theCountBed;
-	
+
+	/** Признак палаты по умолчанию (для новорожденных) */
+	@Comment("Признак палаты по умолчанию (для новорожденных)")
+	public Boolean getDefaultRoom() { return theDefaultRoom; }
+	public void setDefaultRoom(Boolean aDefaultRoom) {theDefaultRoom = aDefaultRoom;}
+
+	/** Признак палаты по умолчанию (для новорожденных) */
+	private Boolean theDefaultRoom;
 }
