@@ -1,3 +1,4 @@
+var map = new java.util.HashMap() ;
 /**Печать произвольных реквизитов для ЛПУ по умолчанию*/
 function printDefaultLpuRequisites(aCtx, aFldName) {
     var lpu =aCtx.manager.createNativeQuery( "select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
