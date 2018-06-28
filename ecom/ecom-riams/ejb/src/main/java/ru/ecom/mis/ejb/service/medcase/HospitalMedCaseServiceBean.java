@@ -4588,7 +4588,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append("update MedCase set dischargeTime=null,dateFinish=null")
 				.append(" where (id=:idMC and DTYPE='HospitalMedCase')")
 				.append(" or (parent_id=:idMC and DTYPE='DepartmentMedCase' and dateFinish is not null)");
-		LOG.info("SQL delete discharge: "+sql) ;
+		//LOG.info("SQL delete discharge: "+sql) ;
 		int result = theManager.createNativeQuery(sql.toString()).setParameter("idMC", aMedCaseId).executeUpdate() ;
 		return "Запрос выполнен: "+result ;
 	}
