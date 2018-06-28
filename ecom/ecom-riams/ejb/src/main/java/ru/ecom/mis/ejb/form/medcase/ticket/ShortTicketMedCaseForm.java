@@ -118,4 +118,12 @@ public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	public void setDatePlan(Long aNewProperty) {theDatePlan = aNewProperty;	}
 	private Long theDatePlan;
 
+	/** Планируемая рабочая функция исполнения */
+	@Comment("Планируемая рабочая функция исполнения")
+	@Persist
+	public Long getWorkFunctionPlan() {return theWorkFunctionPlan;}
+	public void setWorkFunctionPlan(Long aNewProperty) {theWorkFunctionPlan = aNewProperty;}
+	/** Планируемая рабочая функция исполнения */
+	private Long theWorkFunctionPlan;
+
 }

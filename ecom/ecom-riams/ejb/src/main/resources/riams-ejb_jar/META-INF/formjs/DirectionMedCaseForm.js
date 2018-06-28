@@ -176,6 +176,7 @@ function onPreDelete(aId,aCtx) {
 }
 function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 		 aTableSql) {
+	if (aJsonString==null||aJsonString=='') {return;}
 	var obj = new Packages.org.json.JSONObject(aJsonString) ;
 	var ar = obj.getJSONArray("childs");
 	var ids = new Packages.java.lang.StringBuilder() ;
