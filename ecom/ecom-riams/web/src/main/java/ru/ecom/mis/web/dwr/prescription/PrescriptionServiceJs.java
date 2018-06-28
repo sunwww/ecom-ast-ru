@@ -611,12 +611,17 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		java.util.Date date = new java.util.Date() ;
 		SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 		SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
-		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		String sqlAnnul="select id from workfunction where dtype='GroupWorkFunction' and code='LAB_BRAK'";
+		Collection<WebQueryResult> defaultAnnulCabinets =  service.executeNativeSql(sqlAnnul);
+		if (!defaultAnnulCabinets.isEmpty()) {
+			sqlAnnul=" ,prescriptcabinet_id="+defaultAnnulCabinets.iterator().next().get1();
+		} else {sqlAnnul="";}
 		sql.append("update Prescription set cancelReason_id='"+aReasonId+"', cancelReasonText='").append(aReason).append("'")
 				.append(", cancelDate=to_date('").append(formatD.format(date)).append("','dd.mm.yyyy'),cancelTime=cast('").append(formatT.format(date)).append("' as time)")
 				.append(", transferDate=coalesce(transferDate,to_date('").append(formatD.format(date)).append("','dd.mm.yyyy')),transferTime=coalesce(transferTime,cast('").append(formatT.format(date)).append("' as time))")
 				.append(",transferUsername=coalesce(transferUsername,'").append(username).append("')")
-				.append(",cancelUsername='").append(username).append("' where id in (").append(aPrescripts).append(")");
+				.append(",cancelUsername='").append(username).append("'").append(sqlAnnul).append(" where id in (").append(aPrescripts).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
 		
 		sql = new StringBuilder() ;
