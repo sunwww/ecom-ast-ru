@@ -3,13 +3,13 @@ package ru.ecom.mis.ejb.service.extdisp;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.ejb.Local;
@@ -26,7 +26,6 @@ import org.jdom.Element;
 
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.mis.ejb.service.addresspoint.AddressPointServiceBean;
 @Stateless
 @Local(IExtDispService.class)
 @Remote(IExtDispService.class)
@@ -39,15 +38,13 @@ import ru.ecom.mis.ejb.service.addresspoint.AddressPointServiceBean;
  *
  */
 public class ExtDispServiceBean implements IExtDispService {
-	StringBuilder badCards =new StringBuilder();
-	String theFinishDate="";
-	String theFileSuffix="";
+    private StringBuilder  badCards =new StringBuilder();
+    private String theFinishDate="";
+    private String theFileSuffix="";
 //	String theArchiveFileName="";
-	String aFileNames = "";
+private String aFileNames = "";
 	public String getBadCards () {
-		if (badCards.length()>0) return badCards.toString();
-		else return "";
-		
+	    return badCards.length()>0?badCards.toString():"";
 	}
 	
 	public void setIsExported(String aId) {
@@ -65,10 +62,10 @@ public class ExtDispServiceBean implements IExtDispService {
 	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 			StringBuilder sb = new StringBuilder();
 			sb.append("zip -r -j -9 ").append(workDir).append("/").append(archiveName).append(" ") ;
-			for (int i=0;i<fileNames.length;i++) {				
-				sb.append(workDir).append("/").append(fileNames[i]).append(" ");
-			//	sb.append(fileNames[i]).append(" ");
-			}
+            for (String fileName : fileNames) {
+                sb.append(workDir).append("/").append(fileName).append(" ");
+                //	sb.append(fileNames[i]).append(" ");
+            }
 			//System.out.println("--------dir: "+sb) ;
 	    	try {
 	    //		System.out.println("-------------------EXTDISP_createArchive="+sb.toString());
@@ -90,8 +87,7 @@ public class ExtDispServiceBean implements IExtDispService {
 	public String exportOrph(String aStartDate, String aFinishDate,
 			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
 			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend, String divideNum, String aLpu) throws ParseException,
-			NamingException {
+			String aZOJReccomend, String aReccomend, String divideNum, String aLpu)  {
 		try {
 		if (aStartDate==null || aStartDate.equals("")||aFinishDate==null || aFinishDate.equals("")) {
 			return null;
@@ -209,7 +205,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			String aZOJReccomend, String aReccomend, String divideNum) throws ParseException,
 			NamingException {
 		int divideNumber = Integer.valueOf(divideNum);
-		Statement statement = null;
+		Statement statement;
 		Element rootElement = new Element("children"); 
 		badCards.setLength(0);
 		try
@@ -255,7 +251,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				String vrach_f=rs.getString("vrach_f"); //ФИО врача
 				String vrach_l=rs.getString("vrach_l");
 				String vrach_m=rs.getString("vrach_m");
-				String pid = rs.getString("pid");
+			//	String pid = rs.getString("pid");
 				String lpuName = rs.getString("lpuName");
 				String lpuAddress = rs.getString("lpuAddress");
 				
@@ -269,11 +265,11 @@ public class ExtDispServiceBean implements IExtDispService {
 				}
 				
 				if (lpuAddress==null || lpuAddress.equals("")) {
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У ЛПУ не заполнено поле - адрес. ЛПУ - "+lpuName).append("#");
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("У ЛПУ не заполнено поле - адрес. ЛПУ - ").append(lpuName).append("#");
 					continue;
 				}
 				if (passID == null || (!passID.equals("3") && !passID.equals("14"))) {
-					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Неправильный тип документа УЛ ("+passID+")(должен быть либо паспорт, либо свид. о рождении)").append("#");
+					badCards.append(card_id).append(":").append(patientInfo).append(":").append(diagnosis).append(":").append("Неправильный тип документа УЛ (").append(passID).append(")(должен быть либо паспорт, либо свид. о рождении)").append("#");
 					continue;
 				}
 				if (!diagnosis.startsWith("Z") && health_G.equals("1")) { //Если 1 группа здоровья и диагноз !=Z (система выбросит)
@@ -587,7 +583,7 @@ public class ExtDispServiceBean implements IExtDispService {
 	public void createFile(Element aElement) {
 		try {
 			org.jdom.output.XMLOutputter outputter = new org.jdom.output.XMLOutputter();
-			String fileName="orph-"+theFileSuffix+theFinishDate+"_"+aElement.hashCode()+".xml";
+			String fileName="orph_"+theFileSuffix+theFinishDate+"_"+aElement.hashCode()+".xml";
 			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 			String outputFile=workDir+"/"+fileName;
@@ -617,10 +613,7 @@ public class ExtDispServiceBean implements IExtDispService {
     private final static Logger LOG = Logger.getLogger(ExtDispServiceBean.class);
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
-    public String setOrphCodes() throws NamingException {
-    	DataSource ds =  ApplicationDataSourceHelper.getInstance().findDataSource();
-    	String SQLReq = "select veds.code, veds.id from vocextdispservice veds ";
-		Statement statement;
+    public String setOrphCodes()  {
 		HashMap <String, String> codeMap = new HashMap<String, String>();
 		codeMap.put("N1_021","1"); //Анализ крови
 		codeMap.put("N1_022","2"); //Анали мочи
@@ -644,7 +637,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		codeMap.put("N1_014","15"); //Аудиологический скрининг
 									//16 = Анализ кала на яйца глистов
 		codeMap.put("N1_033","17"); //Анализ оскиуглерода
-									//18 - УЗИ почек
+		codeMap.put("N1_034","18"); //18 - УЗИ почек
 									//19 - УЗИ печени
 		codeMap.put("N1_001","1"); //Педиатр
 		codeMap.put("N1_002","2"); //Невролог
@@ -659,28 +652,10 @@ public class ExtDispServiceBean implements IExtDispService {
 		codeMap.put("N1_010","10"); //Уролог-андролог
 		codeMap.put("N1_009","11"); //Акушер-гинеколог
 
-		
-		
-		try {
-			Connection dbh = ds.getConnection();
-			statement = dbh.createStatement();
-			Statement statement2 = null;
-			ResultSet rs = statement.executeQuery(SQLReq);
-			
-			while (rs.next()) {
-				if (codeMap.get(rs.getString(1))!=null) {
-				 statement2 = dbh.createStatement();
-					String sqlReq="update vocextdispservice set orphcode='"+codeMap.get(rs.getString(1))+"' where code = '"+rs.getString(1) +"' ";
-//					System.out.println(sqlReq);
-					statement2.executeUpdate(sqlReq);
-				} 
-			}
-			statement.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return "Произошла ошибка";
+		for (Map.Entry<String, String> map: codeMap.entrySet()) {
+			theManager.createNativeQuery("update VocExtDispService set orphCode=:orphCode where code=:code").setParameter("orphCode",map.getValue()).setParameter("code",map.getKey()).executeUpdate();
 		}
+
 		return "Коды для экспорта успешно добавлены.";
 	}
 
