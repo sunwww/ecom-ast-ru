@@ -7,6 +7,7 @@ function printDefaultLpuRequisites(aCtx, aFldName) {
 }
 /** Печать произвольных реквизитов по ЛПУ*/
 function printLpuRequisites(aCtx, aLpuId, aFldName) {
+    var map = new java.util.HashMap() ;
     var sql = "select code, value, name from MisLpuRequisite where lpu_id="+aLpuId;
     var list = aCtx.manager.createNativeQuery(sql).getResultList();
     for (var i=0;i<list.size();i++) {
