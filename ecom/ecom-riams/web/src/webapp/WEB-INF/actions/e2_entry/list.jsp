@@ -50,9 +50,10 @@
     }
     ActionUtil.setParameterFilterSql("entryType","e.entryType",request);
     ActionUtil.setParameterFilterSql("serviceStream","e.serviceStream",request);
-    ActionUtil.setParameterFilterSql("billNumber","e.billNumber",request);
+    String billNumber = request.getParameter("billNumber");
+
     ActionUtil.setParameterFilterSql("defect","e.isDefect",request);
-String listId=request.getParameter("id");
+    String listId=request.getParameter("id");
     String billDate = request.getParameter("billDate");
     StringBuilder sqlAdd = new StringBuilder();
     //if (entryType!=null&&!entryType.equals("")) {sqlAdd.append(" and e.entryType='").append(entryType).append("'");}
@@ -79,7 +80,7 @@ String listId=request.getParameter("id");
         searchWhereSql=" e.listentry_id="+listId
             +(request.getAttribute("entryTypeSql")!=null?request.getAttribute("entryTypeSql"):"")
             +(request.getAttribute("serviceStreamSql")!=null?request.getAttribute("serviceStreamSql"):"")
-            +(request.getAttribute("billNumberSql")!=null?request.getAttribute("billNumberSql"):" and e.billNumber=''")
+            +(billNumber!=null?" and e.billNumber='"+billNumber+"'":"")
             + (request.getAttribute("defectSql")!=null?request.getAttribute("defectSql"):"")
             +sqlAdd;
         request.setAttribute("searchTitle"," ");
@@ -135,7 +136,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
         , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend
   order by ${orderBySql} "/>
-        <msh:hideException>
+        <msh:hideException>${entriesSql}
             <msh:section title='Результат поиска ${searchTitle}'>
                 <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="14" cellFunction="true" openNewWindow="true">
                     <msh:tableColumn columnName="№" property="sn" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />

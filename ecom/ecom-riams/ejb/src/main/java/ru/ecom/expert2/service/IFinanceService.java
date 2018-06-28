@@ -4,4 +4,5 @@ import java.sql.Date;
 
 public interface IFinanceService {
     String copyFinancePlanNextMonth (String aType, Date aMonthPlan, Date aStartMonth, Date aFinishMonth);
+    void splitFinancePlan(String aType, String aYearPlan);
 }

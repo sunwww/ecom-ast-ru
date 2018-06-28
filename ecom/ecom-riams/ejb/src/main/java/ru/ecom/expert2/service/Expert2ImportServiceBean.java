@@ -8,12 +8,15 @@ import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.E2EntrySanction;
+import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
 
+import javax.annotation.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -27,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Stateless
@@ -89,6 +94,11 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             org.jdom.Element root = doc.getRootElement();
             List<Element> zaps= root.getChildren("ZAP");
             String nSchet = root.getChild("SCHET").getChildText("NSCHET");
+            String dSchet = root.getChild("SCHET").getChildText("DSCHET");
+            SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
+            E2Bill bill = theExpertService.getBillEntryByDateAndNumber(nSchet,toFormat.format(fromFormat.parse(dSchet)));
+            bill.setStatus((VocE2BillStatus)getActualVocByCode(VocE2BillStatus.class,null,"code='PAID'"));
             int i=0;
             log.info("Найдено "+zaps.size()+" записей. Обновляем!");
             for (Element zap:zaps) {
@@ -99,6 +109,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
             theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
             entry.setBillNumber(nSchet);
+            entry.setBill(bill);
 
             Element pac = zap.getChild("PACIENT");
 
@@ -145,6 +156,8 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         //Распаковываем mp файл в папку
@@ -238,4 +251,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
     private @PersistenceContext
     EntityManager theManager;
+    private @EJB
+    IExpert2Service theExpertService;
 }

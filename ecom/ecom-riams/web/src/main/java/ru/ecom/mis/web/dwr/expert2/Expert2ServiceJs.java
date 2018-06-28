@@ -18,6 +18,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
+
+    /***/
+    public void splitFinancePlan(String aType, String aYear, HttpServletRequest aRequest) throws NamingException {
+        IFinanceService service = Injection.find(aRequest).getService(IFinanceService.class);
+        System.out.println("start split");
+        service.splitFinancePlan(aType,aYear);
+        System.out.println("finish split");
+    }
     /**  Копируем финансовый план на несколько месяцев (MM.yyyy)*/
     public void copyFinancePlanNextMonth(String aCurrentMonth, String aStartMonth, String aFinishMonth, HttpServletRequest aRequest) throws NamingException, ParseException {
         IFinanceService service = Injection.find(aRequest).getService(IFinanceService.class);
