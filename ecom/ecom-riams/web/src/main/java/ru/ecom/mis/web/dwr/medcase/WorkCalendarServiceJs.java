@@ -42,8 +42,6 @@ public class WorkCalendarServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String reserveTypeId = "";
 		if(!reserveTypeCode.equals("0")) {
-			//String sql = "select id from vocservicereservetype where code = '" + reserveTypeCode + "'";
-			//System.out.println(sql);
 			Collection<WebQueryResult> list = service.executeNativeSql("select id from vocservicereservetype where code = '" + reserveTypeCode + "'");
 
 			if (!list.isEmpty()) {
@@ -130,8 +128,9 @@ public class WorkCalendarServiceJs {
 	/** Создание дат и времен по заданному количеству визитов или по длительности визита*/
 	public String createDateTimes(String dateFrom,String dateTo
 			,Long workFunctionId,String timeFrom,String timeTo
-			, String countVis,String type,String reserveType,HttpServletRequest aRequest) throws NamingException {
+			, String countVis,String type,String reserveType,String evenodd,HttpServletRequest aRequest) throws NamingException {
 
+		System.out.println(evenodd);
 		System.out.println(reserveType);
 		if(reserveType.equals("")){
 			reserveType=null;
@@ -144,15 +143,13 @@ public class WorkCalendarServiceJs {
 			WebQueryResult w = wc.iterator().next();
 			workcalendarId = w.get1().toString();
 		}
-
 		//select createSheduleByContinueVis('18.06.2018','20.06.2018',1,'08:00:00','09:00:00','10m')
-
 		if(type.equals("1")) {
 			service.executeNativeSql("select createSheduleByContinueVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+")");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+","+evenodd+")");
 		}else {
 			service.executeNativeSql("select createSheduleByCountVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+")");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+","+evenodd+")");
 		}
 		return "yep."+dateFrom+">>"+dateTo+">>"+workcalendarId;
 	}
