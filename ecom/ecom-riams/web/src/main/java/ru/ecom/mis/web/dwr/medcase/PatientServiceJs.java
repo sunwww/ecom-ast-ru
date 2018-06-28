@@ -520,16 +520,16 @@ public class PatientServiceJs {
 			calF.setTime(finishDate) ;
 			boolean reMonth = (calF.get(Calendar.MONTH) == calB.get(Calendar.MONTH)) ;
 			String age=AgeUtil.getAgeCache(finishDate, birthday, 1);
-			System.out.println("age:"+age) ;
+		//	System.out.println("age:"+age) ;
 			int sb1 = age.indexOf(".") ;
 			int sb2 = age.indexOf(".",sb1+1) ;
 			
 			//int yearDif = Integer.valueOf(age.substring(0,sb1)).intValue() ;
 			int yearDif = Integer.parseInt(age.substring(0,sb1)) ;
-			System.out.println("yearDif:"+yearDif) ;
+		//	System.out.println("yearDif:"+yearDif) ;
 			//int monthDif = Integer.valueOf(age.substring(sb1+1, sb2)).intValue();
 			int monthDif = Integer.parseInt(age.substring(sb1+1, sb2));
-			System.out.println("monthDif:"+monthDif) ;
+		//	System.out.println("monthDif:"+monthDif) ;
 			//int dayDif =  Integer.valueOf(age.substring(sb2+1)).intValue() ;
 			if (yearDif==2){
 				if (monthDif>=6) {
@@ -559,8 +559,8 @@ public class PatientServiceJs {
 				int year2=Integer.parseInt(aFinishDate.substring(6)) ;
 				if (year2<20) year2=year2+2000 ;
 				if (year2<100) year2=year2+1900 ;
-				System.out.println("year1="+year1) ;
-				System.out.println("year2="+year2) ;
+			//	System.out.println("year1="+year1) ;
+			//	System.out.println("year2="+year2) ;
 				return ""+(year2-year1) ;
 			}
 			
@@ -584,7 +584,7 @@ public class PatientServiceJs {
 		.append(" select vdp.id,vdp.factorOfProduction from VocDocumentProfession vdp ")
 		.append(" where ")
 		.append(" vdp.id='").append(aProfession).append("'") ;
-		System.out.println(sql) ;
+	//	System.out.println(sql) ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
 		if (!list.isEmpty()) {
 			WebQueryResult wqr = list.iterator().next() ;
@@ -604,7 +604,7 @@ public class PatientServiceJs {
 		.append(" where ")
 		.append(" ter.id='").append(aArea)
 		.append("' and com.id='").append(aCompany).append("'");
-		System.out.println(sql) ;
+	//	System.out.println(sql) ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(),1);
 		if (!list.isEmpty()) {
 			WebQueryResult wqr = list.iterator().next() ;
