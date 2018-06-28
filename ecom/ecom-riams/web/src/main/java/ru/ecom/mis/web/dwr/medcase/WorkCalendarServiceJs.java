@@ -38,7 +38,6 @@ public class WorkCalendarServiceJs {
 	/** Изменяем тип резерва для времени по его id */
 	public String changeScheduleElementReserve(String wcdId,String reserveTypeCode,HttpServletRequest aRequest) throws NamingException {
 
-
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String reserveTypeId = "";
 		if(!reserveTypeCode.equals("0")) {
@@ -50,7 +49,6 @@ public class WorkCalendarServiceJs {
 			}
 			service.executeUpdateNativeSql("update workcalendartime set reservetype_id="+reserveTypeId+" where id="+wcdId);
 		}else service.executeUpdateNativeSql("update workcalendartime set reservetype_id=null where id="+wcdId);
-
 
 		return "0";
 	}
@@ -130,8 +128,6 @@ public class WorkCalendarServiceJs {
 			,Long workFunctionId,String timeFrom,String timeTo
 			, String countVis,String type,String reserveType,String evenodd,HttpServletRequest aRequest) throws NamingException {
 
-		System.out.println(evenodd);
-		System.out.println(reserveType);
 		if(reserveType.equals("")){
 			reserveType=null;
 		}

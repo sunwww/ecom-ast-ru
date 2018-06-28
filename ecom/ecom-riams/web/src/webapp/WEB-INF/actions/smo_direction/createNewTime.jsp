@@ -229,7 +229,7 @@
             document.forms[0].rdMode[0].checked=true ;
             document.forms[0].chetnechet[0].checked=true ;
             var checkedRadio=1;
-            var checkedRadioevenodd=1;
+            var checkedRadioevenodd=3;
 
             function chkchange(value) {
                 checkedRadio = value;
