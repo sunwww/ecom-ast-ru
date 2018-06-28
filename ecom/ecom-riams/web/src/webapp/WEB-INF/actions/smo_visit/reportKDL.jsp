@@ -119,7 +119,7 @@
                 </msh:row>
                 <msh:row>
                     <td colspan="3">
-                        <input type="button" onclick="find()" value="Найти" />
+                        <input type="button" onclick="this.disabled=true;find();" value="Найти" />
                     </td>
                 </msh:row>
             </msh:panel>
@@ -420,8 +420,15 @@
         %>
 <script type="text/javascript">
     function find() {
-        var frm = document.forms[0];
-        frm.submit();
+        var parts1 =($('dateBegin')).value.split('.');
+        var bDate = new Date(parts1[2], parts1[1] - 1, parts1[0]);
+        var parts2 =($('dateEnd')).value.split('.');
+        var fDate = new Date(parts2[2], parts2[1] - 1, parts2[0]);
+        if (Math.abs(bDate- fDate)/ (1000*60*60*24)<=31) {
+            var frm = document.forms[0];
+            frm.submit();
+        }
+        else alert("К сожалению, пока можно формировать отчёт максимум за месяц! Более длительные сроки находятся в разработке и пока недоступны.")
     }
     checkFieldUpdate('typeVMPOrNot','${typeVMPOrNot}',1) ;
     checkFieldUpdate('typeStacOrNot','${typeStacOrNot}',1) ;
