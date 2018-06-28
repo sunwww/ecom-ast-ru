@@ -1,4 +1,21 @@
-
+/**Печать произвольных реквизитов для ЛПУ по умолчанию*/
+function printDefaultLpuRequisites(aCtx, aFldName) {
+    var lpu =aCtx.manager.createNativeQuery( "select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
+    if (lpu.size()>0) {
+        printLpuRequisites(aCtx,+lpu.get(0),aFldName);
+    }
+}
+/** Печать произвольных реквизитов по ЛПУ*/
+function printLpuRequisites(aCtx, aLpuId, aFldName) {
+    var sql = "select code, value, name from MisLpuRequisite where lpu_id="+aLpuId;
+    var list = aCtx.manager.createNativeQuery(sql).getResultList();
+    for (var i=0;i<list.size();i++) {
+        var obj = list.get(i);
+        map.put(aFldName+"_"+obj[0],""+obj[1]);
+        //throw ""+aFldName+"_"+obj[0]+"<>"+map.get(aFldName+"_"+obj[0]);
+        map.put(aFldName+"_"+obj[0]+"Name",""+obj[2]);
+    }
+}
 
 function printInfoPatientByMedcase(aCtx, aParams) {
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
@@ -13,11 +30,13 @@ function getDefaultParameterByConfig(aParameter, aValueDefault, aCtx) {
 		return l.get(0)[1] ;
 	}
 }
+
 function printInfoByPatient(aPatient,aCtx) {
 	var map = new java.util.HashMap() ;
 	
 	var polList = aCtx.manager.createQuery("from MedPolicy where patient_id="+aPatient.id+" and actualDateTo is null order by actualDateFrom").getResultList() ; 
 	var policy = null ;
+    printDefaultLpuRequisites(aCtx,"DefaultLpu");
 	map.put("address_lpu",getDefaultParameterByConfig("address_lpu","___________________",aCtx)) ;
 	map.put("name_lpu",getDefaultParameterByConfig("name_lpu","___________________",aCtx)) ;
 	map.put("ogrn_lpu",getDefaultParameterByConfig("ogrn_lpu","___________________",aCtx)) ;

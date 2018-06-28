@@ -1,3 +1,23 @@
+/**Печать произвольных реквизитов для ЛПУ по умолчанию*/
+function printDefaultLpuRequisites(aCtx, aFldName) {
+    var lpu =aCtx.manager.createNativeQuery( "select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
+    if (lpu.size()>0) {
+        printLpuRequisites(aCtx,+lpu.get(0),aFldName);
+    }
+}
+/** Печать произвольных реквизитов по ЛПУ*/
+function printLpuRequisites(aCtx, aLpuId, aFldName) {
+    var sql = "select code, value, name from MisLpuRequisite where lpu_id="+aLpuId;
+    var list = aCtx.manager.createNativeQuery(sql).getResultList();
+    for (var i=0;i<list.size();i++) {
+        var obj = list.get(i);
+        map.put(aFldName+"_"+obj[0],""+obj[1]);
+        //throw ""+aFldName+"_"+obj[0]+"<>"+map.get(aFldName+"_"+obj[0]);
+        map.put(aFldName+"_"+obj[0]+"Name",""+obj[2]);
+    }
+}
+
+
 var map = new java.util.HashMap() ;
 /* Печать протокола КИЛИ */
 function printKiliProtocol (aCtx, aParams) {
@@ -1777,8 +1797,9 @@ function printStatCardInfo(aCtx, aParams) {
 	getDiagnos("sls.diagnosisClinical",medCase.diagnosClinical) ;
 	recordSloBySls(aCtx,slsId,"listSlo") ;
 	recordSurgicalOperationBySls(aCtx,slsId,"listOper") ;
-	
-	return map ;
+    printDefaultLpuRequisites(aCtx,"DefaultLpu");
+
+    return map ;
 }
 function recordDisability(aContext,aSlsId,aField) {
 	var sql="select dc.id,dd.id,dd.number,to_char(min(dr.dateFrom),'dd.mm.yyyy') as dateFrom,to_char(max(dr.dateTo),'dd.mm.yyyy') as dateTo,vddcr.name as vddcrname"
