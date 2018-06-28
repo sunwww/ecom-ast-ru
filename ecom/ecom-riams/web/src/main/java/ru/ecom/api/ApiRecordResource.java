@@ -26,12 +26,11 @@ public class ApiRecordResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String getMessageById(@Context HttpServletRequest aRequest, @PathParam("lastname") String lastname, @WebParam(name="token") String aToken) {
         String message = "Hello "+lastname;
-        //66405d38-a173-4cb7-a1b6-3ada51c16ac5
         if (aToken!=null) {ApiUtil.login(aToken,aRequest);}
 
         try {
             IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-            return service.executeNativeSqlGetJSON(new String[]{"id,name"},"select id, patientinfo from patient where lastname='"+lastname+"'",10);
+            return service.executeNativeSqlGetJSON(new String[]{"id","name"},"select id, patientinfo from patient where lastname='"+lastname+"'",10);
         } catch (NamingException e) {
             e.printStackTrace();
         }
