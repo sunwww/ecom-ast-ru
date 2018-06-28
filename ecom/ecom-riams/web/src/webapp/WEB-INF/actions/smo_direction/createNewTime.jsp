@@ -101,6 +101,12 @@
                     <msh:textField property="dateTo" label="Конечная дата"/>
                 </msh:row>
                 <msh:row>
+                    <td></td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(3)"> <input class="radio" name="chetnechet" id="chetnechet" value="3" type="radio" >все</td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(0)"> <input class="radio" name="chetnechet" id="chetnechet" value="0" type="radio" >четные</td>
+                    <td onclick="this.childNodes[1].checked='checked';chkchangeChet(1)"> <input class="radio" name="chetnechet" id="chetnechet" value="1" type="radio" >нечетные</td>
+                </msh:row>
+                <msh:row>
                     <msh:textField property="timeFrom" label="Начальное время"/>
                     <msh:textField property="timeTo" label="Конечное время"/>
                 </msh:row>
@@ -123,13 +129,6 @@
         </msh:form>
         <input type="button" onclick="createDateTimes(this)" value="Создать" />
         <div id="schedule">
-            <menuitem label="УДАЛИТЬ РЕЗЕРВ" onclick="changeReserve('0');"></menuitem>
-            <menuitem label="ПРОМЕД" onclick="changeReserve('PROMED');"></menuitem>
-            <menuitem label="ПЛАТНЫЙ" onclick="changeReserve('PAYMENT');"></menuitem>
-            <menuitem label="ДМС" onclick="changeReserve('DMC');"></menuitem>
-            <menuitem label="СТАЦИОНАР" onclick="changeReserve('STAC');"></menuitem>
-            <menuitem label="БЕРЕМЕННЫЕ" onclick="changeReserve('BIRTH');"></menuitem>
-            <menuitem label="УДАЛЕНЫЙ РАЙОН" onclick="changeReserve('UDR');"></menuitem>
         </div>
 
         <menu id="menu" class="menu">
@@ -228,7 +227,9 @@
             var thisCell;
             var weekplus=0;
             document.forms[0].rdMode[0].checked=true ;
+            document.forms[0].chetnechet[0].checked=true ;
             var checkedRadio=1;
+            var checkedRadioevenodd=1;
 
             function chkchange(value) {
                 checkedRadio = value;
@@ -238,6 +239,9 @@
                     checkedRadio=2;
                 }
             }
+            function chkchangeChet(value) {
+                checkedRadioevenodd = value;
+            }
 
             function createDateTimes(ths) {
 
@@ -246,7 +250,7 @@
 
                 WorkCalendarService.createDateTimes($('dateFrom').value,$('dateTo').value,
                     $('specialist').value,$('timeFrom').value,$('timeTo').value,
-                    $('countVisits').value,checkedRadio,$('reserveType').value,{
+                    $('countVisits').value,checkedRadio,$('reserveType').value,checkedRadioevenodd,{
                         callback: function(aResult) {
                             //alert(aResult) ;
                             updateTable();
