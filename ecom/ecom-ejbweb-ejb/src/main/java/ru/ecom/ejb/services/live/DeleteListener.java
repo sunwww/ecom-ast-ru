@@ -39,13 +39,10 @@ public class DeleteListener {
 	
 	@PostRemove
 	public void check_remove(Object aObject) {
-		System.out.println("post delete....") ;
-		
 		ILiveService service = EjbInjection.getInstance().getLocalService(ILiveService.class) ;
 		LiveTransactionContext ctx = LiveTransactionContext.get() ;
 		//String username = service.getUsername() ;
-		
-				
+
 		if(ctx.getEntityManager()==null) { // начинаем транзакцию
 			ctx.setEntityManager(service.getEntityManagerFactory().createEntityManager()) ;
 			theManager = ctx.getEntityManager() ;
@@ -57,7 +54,6 @@ public class DeleteListener {
 		theUsername = service.getUsername() ;
 		Object entityId = theEntityHelper.getEntityId(aObject) ;
 		
-		System.out.println("-----object="+entityId) ;
 		String clazzHib = theEntityHelper.getHibernateName(clazz) ;
 		List<DeleteJournal>list = theManager.createQuery("from DeleteJournal where objectId=:entityId and className=:className and loginName=:username order by id desc")
 			.setParameter("entityId", String.valueOf(entityId))
@@ -65,7 +61,6 @@ public class DeleteListener {
 			.setParameter("username",theUsername)
 			.setMaxResults(1).getResultList();
 		if (!list.isEmpty()) {
-			System.out.println("-------------edit status") ;
 			DeleteJournal deleteJournal = list.iterator().next();
 			deleteJournal.setStatus(Long.valueOf(1)) ;
 			theManager.persist(deleteJournal) ;
@@ -140,7 +135,7 @@ public class DeleteListener {
 				LOG.error("ERROR... "+e.getMessage()) ;
 			}
 			DeleteJournal dj = new DeleteJournal() ;
-			System.out.println("        -pre------DeleteListener."+clazz.getName()+"."+theUsername+"."+entityId) ;
+			//System.out.println("        -pre------DeleteListener."+clazz.getName()+"."+theUsername+"."+entityId) ;
 			String keyAttribute = new StringBuilder().append("DeleteListener.")
 				.append(clazz.getName()).append(".").append(theUsername)
 				.append(".").append(entityId).toString() ;

@@ -157,7 +157,7 @@ public class SecUserServiceBean implements ISecUserService {
 
     public void exportRolesProperties(String aFilename) throws IOException {
         PrintWriter out = new PrintWriter(new FileWriter(aFilename));
-        System.out.println("---Begin") ;
+        System.out.println("---Begin ExportRoles") ;
         Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
         try {
             List<SecUser> users = theManager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
@@ -179,17 +179,17 @@ public class SecUserServiceBean implements ISecUserService {
                 	if (listRole.contains(idP)) {
                 		
                 	} else {
-                		log("Добавление..") ;
+                	//	log("Добавление..") ;
                 		listRole.add(idP) ;
                 		out.print(createPoliciesString(user,role,hash)) ;
                 		
                         for (SecRole childRole: role.getChildren()) {
                         	Long idC = childRole.getId() ;
-                        	log("...child="+idC) ;
+                      //  	log("...child="+idC) ;
                         	if (listRole.contains(idC)) {
                         		
                         	} else {
-                        		log("....Добавление..") ;
+                      //  		log("....Добавление..") ;
                         		listRole.add(idC) ;
                         		out.print(createPoliciesString(user,childRole,hash)) ;
                         	}

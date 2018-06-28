@@ -1,6 +1,7 @@
 package ru.ecom.api;
 
 import ru.ecom.api.queue.HospitalQueueResource;
+import ru.ecom.api.queue.TicketQueueResource;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -17,6 +18,7 @@ public class ApiApplication extends Application {
         set.add(ApiRecordResource.class);
         set.add(ApiLoginResource.class);
         set.add(HospitalQueueResource.class);
+        set.add(TicketQueueResource.class);
         return set;
     }
 }

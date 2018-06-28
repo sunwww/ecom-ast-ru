@@ -95,7 +95,8 @@ private Boolean isCheckIsRunning = false;
     }
 
     /** Клонируем запись*/
-    private E2Entry cloneEntity(E2Entry aSourceObject) {
+    private E2Entry cloneEntity(E2Entry aSourceObject) {return cloneEntity(aSourceObject,false);}
+    private E2Entry cloneEntity(E2Entry aSourceObject, boolean needPersist) {
         try {
         Method[] methodList = aSourceObject.getClass().getMethods();
             E2Entry newEntity = new E2Entry();
@@ -112,6 +113,7 @@ private Boolean isCheckIsRunning = false;
                         }
                 }
             }
+            if (needPersist){theManager.persist(newEntity);}
             return newEntity;
         } catch (Exception e) {
             e.printStackTrace();
@@ -387,7 +389,7 @@ private Boolean isCheckIsRunning = false;
                 Long id = Long.valueOf(idd.trim());
                 E2Entry entry = theManager.find(E2Entry.class,id);
                 if (mainEntry==null) {
-                    mainEntry=cloneEntity(entry);
+                    mainEntry=cloneEntity(entry, true);
                     createDiagnosis(mainEntry);
 
                 }
@@ -528,9 +530,7 @@ private Boolean isCheckIsRunning = false;
         List<Object[]> res = theManager.createNativeQuery(sql.toString()).getResultList();
         if (res.isEmpty()) {return;}
         for (Object[] o:res) {
-            String sqlU  = "update e2entry set parentEntry_id="+o[1].toString()+" where id="+o[0].toString();
-            log.warn("set parent="+sqlU);
-            theManager.createNativeQuery(sqlU).executeUpdate();
+            theManager.createNativeQuery("update e2entry set parentEntry_id="+o[1].toString()+" where id="+o[0].toString()).executeUpdate();
         }
         setRightParent(aListEntryId,aHospitalMedCaseId);
     }
@@ -1670,8 +1670,36 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
      * @return
      */
     private HashMap<String, BigDecimal> cusmoMap = new HashMap<String, BigDecimal>();
+    public BigDecimal calculateCusmo(String bedSubTypeCode, Long aDepartmentId, Long aProfileId, Date aDate) {
+        if (aProfileId==null) {log.error("Не указан профиль мед. помощи, невозможно найти КУСмо! NO_PROFILE_FOR_CUSMO"); return null;}
+        // log.warn("calculateCusmo +"+aEntry.getId());
+        String key;
+        if (bedSubTypeCode != null && bedSubTypeCode.equals("2")) { //Для дневного стационара возвращаем жестко зашитый коэффициент
+            key=E2Enumerator.DAYTIMEHOSP;
+            if (!cusmoMap.containsKey(key)) {
+                String ret = getExpertConfigValue("DAYTIMEHOSP_CUSMO");
+                cusmoMap.put(key,new BigDecimal(ret));
+            }
+        } else {
+            key = aProfileId+"#"+aDepartmentId;
+            if (!cusmoMap.containsKey(key)) {
+                StringBuilder sqlAdd = new StringBuilder();
+                sqlAdd.append("select distinct cusmo.id from VocCoefficient cusmo")
+                        .append(" where cusmo.helpProfile_id='").append(aProfileId).append("' and cusmo.dtype='VocCoefficientLpuLevel' and (cusmo.department_id is null");
+                if (aDepartmentId != null && aDepartmentId > 0L) {
+                    sqlAdd.append(" or cusmo.department_id='").append(aDepartmentId).append("'");
+                }
+                sqlAdd.append(")")
+                        .append(" and '").append(aDate).append("' between cusmo.startDate and coalesce(cusmo.finishDate,current_date)");
+                VocCoefficientLpuLevel cusmo = getActualVocBySqlString(VocCoefficientLpuLevel.class, sqlAdd.toString());
+                cusmoMap.put(key, cusmo!=null?cusmo.getValue():null);
+            }
+        }
+        return cusmoMap.get(key);
+    }
     private BigDecimal calculateCusmo(E2Entry aEntry) {
-        if (aEntry.getMedHelpProfile()==null) {log.error("Не указан профиль мед. помощи, невозможно найти КУСмо! NO_PROFILE_FOR_CUSMO"); return null;}
+        return calculateCusmo(aEntry.getBedSubType(),aEntry.getDepartmentId(),aEntry.getMedHelpProfile()!=null?aEntry.getMedHelpProfile().getId():null,aEntry.getFinishDate());
+     /*   if (aEntry.getMedHelpProfile()==null) {log.error("Не указан профиль мед. помощи, невозможно найти КУСмо! NO_PROFILE_FOR_CUSMO"); return null;}
         // log.warn("calculateCusmo +"+aEntry.getId());
         String key;
         if (aEntry.getBedSubType() != null && aEntry.getBedSubType().equals("2")) { //Для дневного стационара возвращаем жестко зашитый коэффициент
@@ -1695,7 +1723,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 cusmoMap.put(key, cusmo!=null?cusmo.getValue():null);
             }
         }
-        return cusmoMap.get(key);
+        return cusmoMap.get(key); */
     }
 
 
@@ -1763,7 +1791,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
     }
     /** Нахождение актуального управленческого коэффициента по КСГ и дате визита*/
     private HashMap<String,E2KsgCoefficientHistory> ksgCoefficientMap = new HashMap<String, E2KsgCoefficientHistory>();
-    private BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate) {
+    public BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate) {
         E2KsgCoefficientHistory coefficientHistory;
                 String sql = "select id from E2KsgCoefficientHistory where ksg_id=:ksg and to_date('"+aFinishDate+"','yyyy-MM-dd') between startDate and coalesce(finishDate, current_date)";
                 String key = "KSG#COEFF#"+sql.hashCode();
@@ -1772,7 +1800,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 } else {
                     List<Long> list = theManager.createQuery(sql).setParameter("ksg",aKsg.getId()).getResultList();
                     if (list.size()==0||list.size()>1) {
-                        log.error("Больше 1 коэффициента КСГ(MORE_1_KSG_COEFFICIENT) "+sql);
+                        log.error(aKsg.getId()+ " найдено _"+list.size()+"_ коэффициентов КСГ(MORE_1_KSG_COEFFICIENT) "+sql);
                         return null;
                     }
                     coefficientHistory = theManager.find(E2KsgCoefficientHistory.class,list.get(0));
@@ -2347,7 +2375,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
 
     }
 
-    private <T> T getActualVocByClassName(Class aClass, Date aActualDate, String aSqlAdd) {
+    public <T> T getActualVocByClassName(Class aClass, Date aActualDate, String aSqlAdd) {
         String sql = " from "+aClass.getName()+" where ";
         List<T> list;
         if (aActualDate!=null) {

@@ -15,6 +15,7 @@
       <msh:hidden property="patient" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:hidden property="datePlan" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
       <msh:hidden property="timePlan" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
+      <msh:hidden property="workFunctionPlan" guid="34911b70-6c2c-43f2-bbf4-c58fed9a296e" />
 
       <msh:panel>
         <msh:row guid="59560d9f-0765-4df0-bfb7-9a90b5eed824">
@@ -113,8 +114,9 @@
                     if (ret.status=="ok") {
                         $('timePlan').value=ret.timeId;
                         $('datePlan').value=ret.calendarDateId;
-                    } else {
-                        alert ("ERR="+ret.status);
+                        $('mainForm').name="smo_directionForm";
+                        $('workFunctionPlan').value=$('workFunctionExecute').value;
+                        oldaction="entitySaveGoView-smo_direction.do";
                     }
                 }
             });

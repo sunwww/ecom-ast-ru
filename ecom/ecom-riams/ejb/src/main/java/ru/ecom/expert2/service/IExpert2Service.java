@@ -6,6 +6,8 @@ import ru.ecom.expert2.domain.E2ListEntry;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 
 import javax.naming.NamingException;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.SQLException;
 
 public interface IExpert2Service {
@@ -22,4 +24,7 @@ public interface IExpert2Service {
      void addMedHelpProfileBedType (Long aMedHelpId, Long aBedTypeId);
       Boolean addDiagnosisAndServiceToEntry(Long aEntryId, String aData) ;
     void addHospitalMedCaseToList(String aHistoryNumber, Long aListEntryId) throws SQLException, NamingException;
+    BigDecimal calculateCusmo(String bedSubTypeCode, Long aDepartmentId, Long aProfileId, Date aDate);
+    BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate);
+    <T> T getActualVocByClassName(Class aClass, Date aActualDate, String aSqlAdd);
 }
