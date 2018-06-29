@@ -475,7 +475,9 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
         theView.hide(); enableScroll();
         if(canSendChangeEvent && theOnChangeCallback) theOnChangeCallback() ;
     }
-
+function searchParentNode(name) {
+        return name.replace("Name","")+"Div";
+    }
     function select() {
         var doc_table_id;
         //просто autocomplete
@@ -490,6 +492,11 @@ msh_autocomplete.Actions = function(aElement, aIdField, aView, aUrl, theVocKey, 
             aElement.parentNode.childNodes[1].childNodes.length>=1 &&
             aElement.parentNode.childNodes[1].childNodes[0]!=null)
                 doc_table_id=aElement.parentNode.childNodes[1].childNodes[0].id;
+        //cлучай с экспертными картами, например
+        else {  //когда дети внешнего div в любом порядке - ищу просто по Name Div
+            var el = document.getElementById(searchParentNode(aElement.id));
+            if (el!=null && el!==undefined && el.childNodes[0]!=null) doc_table_id=el.childNodes[0].id;
+        }
         if (doc_table_id!=null) {
             if (doc_table_id == "doc_table1") {
                 theCanShow = false;
