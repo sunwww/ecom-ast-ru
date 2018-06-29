@@ -959,11 +959,10 @@ where m.id ='${param.id}'"/>
             if ($('modeName')) {
                 $('modeName').style="color: blue ; background-color:#FFFFA0;";
             }
-            //Milamesher 29.06.2018 автофокус тут не нужен (со слов Назарян)
-            /*if (+$('prevMedCase').value==0) {
+            if (+$('prevMedCase').value==0) {
                 $('serviceStreamName').select() ;
                 $('serviceStreamName').focus() ;
-            }*/
+            }
             var lpuDate ;
 
             try {

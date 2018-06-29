@@ -497,6 +497,12 @@ function searchParentNode(name) {
             var el = document.getElementById(searchParentNode(aElement.id));
             if (el!=null && el!==undefined && el.childNodes[0]!=null) doc_table_id=el.childNodes[0].id;
         }
+        /*if (doc_table_id===undefined) {
+            setTimeout(function () {
+                aElement.click()
+            }, 10);
+
+        }*/
         if (doc_table_id!=null) {
             if (doc_table_id == "doc_table1") {
                 theCanShow = false;
@@ -536,9 +542,30 @@ function searchParentNode(name) {
                 setTimeout(function () {
                     aElement.focus()
                 }, 10);
-                setTimeout(function () {
-                    aElement.click()
-                }, 10);
+                theCanShow = false;
+                var canSendChangeEvent = false;
+                if (isBoxShowed()) {
+                    var id = theView.getSelectedId();
+                    var name = theView.getSelectedName();
+                    if (name == null) name = "";
+                    canSendChangeEvent = theIdField.value != id;
+                    if (theShowIdInName) {
+                        if (id != null && id != "") {
+                            theElement.value = "(" + id + ") " + name;
+                        } else {
+                            theElement.value = name;
+                        }
+                    } else {
+                        theElement.value = name;
+                    }
+                    theIdField.value = id;
+                    theLastText = theElement.value;
+
+                }
+                setBoxShowed(false);
+                theView.hide();
+                enableScroll();
+                if (canSendChangeEvent && theOnChangeCallback) theOnChangeCallback();
             }
         }
     }
