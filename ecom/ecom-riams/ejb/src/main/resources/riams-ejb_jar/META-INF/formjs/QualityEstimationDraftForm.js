@@ -13,26 +13,28 @@ function onCreate(aForm, aEntity, aContext){
         for (var i=0; i<crits.length; i++) {
             var param = crits[i].split(":") ;
             var qec = new Packages.ru.ecom.mis.ejb.domain.expert.QualityEstimationCrit() ;
-            var mark = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark,java.lang.Long.valueOf(param[1]));
-            var crit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit,java.lang.Long.valueOf(param[0]));
-            if (param[3]!=null) {
-                qec.setComment(param[3]);
-            }
-            qec.setMark(mark) ;
-            qec.setEstimation(aEntity) ;
-            qec.setCriterion(crit) ;
-            aContext.manager.persist(qec) ;
-            if (param.length>2&&(""+param[2]!="")) { //Проставляем дефекты
-                var defects = (""+param[2]).split(",");
-
-                for (var j=0;j<defects.length;j++) {
-                    var def = new Packages.ru.ecom.mis.ejb.domain.expert.QualityEstimationCritDefect();
-                    def.setCriterion(qec.id);
-                    def.setDefect(+defects[j]);
-                    aContext.manager.persist(def) ;
+            if (param.length!=0 && param[1]!=null && param[1]!==undefined) {
+                var mark = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark, java.lang.Long.valueOf(param[1]));
+                var crit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit, java.lang.Long.valueOf(param[0]));
+                if (param[3] != null) {
+                    qec.setComment(param[3]);
                 }
+                qec.setMark(mark);
+                qec.setEstimation(aEntity);
+                qec.setCriterion(crit);
+                aContext.manager.persist(qec);
+                if (param.length > 2 && ("" + param[2] != "")) { //Проставляем дефекты
+                    var defects = ("" + param[2]).split(",");
+
+                    for (var j = 0; j < defects.length; j++) {
+                        var def = new Packages.ru.ecom.mis.ejb.domain.expert.QualityEstimationCritDefect();
+                        def.setCriterion(qec.id);
+                        def.setDefect(+defects[j]);
+                        aContext.manager.persist(def);
+                    }
+                }
+                critsMap.put(+mark.criterion.id, (mark.isIgnore != null && mark.isIgnore.equals(java.lang.Boolean.TRUE)) ? null : mark.mark);
             }
-            critsMap.put(+mark.criterion.id,(mark.isIgnore!=null&&mark.isIgnore.equals(java.lang.Boolean.TRUE))?null:mark.mark) ;
         }
 
         var list1 = aContext.manager.createNativeQuery("select vqec.id as vqecid "
