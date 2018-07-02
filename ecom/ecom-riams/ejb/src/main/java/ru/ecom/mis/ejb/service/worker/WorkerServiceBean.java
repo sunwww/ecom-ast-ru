@@ -281,7 +281,7 @@ public class WorkerServiceBean implements IWorkerService{
 	public String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null  and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;
-		System.out.println("minIs="+aMinIs) ;
+	//	System.out.println("minIs="+aMinIs) ;
 		if (aMinIs!=null && aMinIs.equals(Long.valueOf(1))) {
 			sql.append(" order by timeFrom asc") ;
 		} else {

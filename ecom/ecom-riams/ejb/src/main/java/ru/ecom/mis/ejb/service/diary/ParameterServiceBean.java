@@ -128,11 +128,11 @@ public class ParameterServiceBean implements IParameterService{
 	
 	public String getActionByDocument(Long aId,
 			String aDocument) throws IOException {
-		LOG.info(new StringBuilder().append("Loading ").append(theFileDocumentParameter).append(" ...").toString());
+	//	LOG.info(new StringBuilder().append("Loading ").append(theFileDocumentParameter).append(" ...").toString());
 		InputStream in = null;
 		try {
 			in = getInputStream(theFileDocumentParameter) ;
-			LOG.info(new StringBuilder().append("		file=").append(in).toString());
+		//	LOG.info(new StringBuilder().append("		file=").append(in).toString());
 			Document doc = new SAXBuilder().build(in);
 			Element parConfigElement = doc.getRootElement();
 			for (Object o : parConfigElement.getChildren()) {
@@ -153,18 +153,18 @@ public class ParameterServiceBean implements IParameterService{
 		finally {
 			in.close();
 		}
-		LOG.info("Done.") ;
+	//	LOG.info("Done.") ;
 		
 		
 		return null ;
 	}
 	private ParameterPage loadParameterFromFile(String aResourceString,Long aId,
 			ParameterForm aParameterForm, ActionErrors aErrors) throws IOException {
-        LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
+     //   LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
         InputStream in = null;
         try {
         	in = getInputStream(aResourceString) ;
-                LOG.info(new StringBuilder().append("		file=").append(in).toString());
+     //           LOG.info(new StringBuilder().append("		file=").append(in).toString());
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
                 for (Object o : parConfigElement.getChildren()) {
@@ -188,17 +188,17 @@ public class ParameterServiceBean implements IParameterService{
                 in.close();
                
             }
-        LOG.info("Done.") ;
+    //    LOG.info("Done.") ;
 
     
 		return null ;
 	}
 	private void loadFile( String aResourceString,List<ParameterType> aList) throws IOException  {
-        LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
+     //   LOG.info(new StringBuilder().append("Loading ").append(aResourceString).append(" ...").toString());
         InputStream in = null;
         try {
         	in = getInputStream(aResourceString) ;
-                LOG.info(new StringBuilder().append("		file=").append(in).toString());
+    //            LOG.info(new StringBuilder().append("		file=").append(in).toString());
                	Document doc = new SAXBuilder().build(in);
                 Element parConfigElement = doc.getRootElement();
                 for (Object o : parConfigElement.getChildren()) {
@@ -217,7 +217,7 @@ public class ParameterServiceBean implements IParameterService{
             finally {
                 in.close();
             }
-        LOG.info("Done.") ;
+     //   LOG.info("Done.") ;
 
     }
 	private ParameterPage loadParameter(Element aElement,ParameterForm aParameterForm, ActionErrors aErrors) {
