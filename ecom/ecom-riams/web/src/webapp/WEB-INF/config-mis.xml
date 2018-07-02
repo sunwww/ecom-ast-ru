@@ -1130,6 +1130,20 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/totalReestr.jsp" />
 		</action>
+		<action path='/finPlanByProfile' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/finPlanByProfile.jsp" />
+		</action>
+		<action path='/finPlanByDep' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/finPlanByDep.jsp" />
+		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
                 validate='false'
