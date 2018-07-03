@@ -53,9 +53,6 @@
           <msh:autoComplete vocName="vocWorkCalendarDayByWorkFunction" property="datePlan" label="Направлен на дату" guid="d7f4bef5-0f84-4d3c-b7d9-b7c7c5d51907" horizontalFill="true" parentAutocomplete="workFunctionPlan" />
           <msh:autoComplete vocName="vocWorkCalendarTimeWorkCalendarDay" property="timePlan" label="Время" guid="1d6b9712-62cc-4c67-a2d8-77bfef298ff3" parentAutocomplete="datePlan" />
         </msh:row>
-          <msh:row guid="altDatePlanDiv">
-              <msh:textField property="anyDatePlan"/>
-          </msh:row>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Direction/CreateDirectionOnCourseTreatment">
          <msh:row> 
         <msh:textField property="countDays"  label="Кол-во дней записи" />
@@ -306,7 +303,7 @@
       //new dateutil.DateField($('datePlanName'));
       //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
-   	 var canRecordAnyDate = false;
+   //	 var canRecordAnyDate = false;
       document.forms[0].action = 'javascript:isExistTicket()';
      // if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
       function isExistTicket() {
@@ -407,18 +404,18 @@
 	  	) ;
       
       workFunctionPlanAutocomplete.addOnChangeCallback(function(){
-          WorkCalendarService.checkIsCanRecordAnyDate($('workFunctionPlan').value, {
-              callback: function(ret) {
-                  canRecordAnyDate =ret.canRecordAnyDate;
-                  if (canRecordAnyDate) { //Спрячем раздел с выбором времени и даты из справочников
-                      //Можно направлять на раб. функцию на любую дату. Прячем дату и время, показываем текстовое поле.
-                      jQuery('#')
+     //     WorkCalendarService.checkIsCanRecordAnyDate($('workFunctionPlan').value, {
+     //         callback: function(ret) {
+     //             canRecordAnyDate =ret.canRecordAnyDate;
+     //             if (canRecordAnyDate) { //Спрячем раздел с выбором времени и даты из справочников
+     //                 //Можно направлять на раб. функцию на любую дату. Прячем дату и время, показываем текстовое поле.
+      //                jQuery('#')
 
-                  } else { //Всё как было
+      //            } else { //Всё как было
                       updateDefaultDate() ;
-                  }
-              }
-          });
+       //           }
+       //       }
+       //   });
 
   		
   		}) ;
