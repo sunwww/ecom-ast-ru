@@ -160,7 +160,7 @@ if (type!=null&&type.equals("reestr")) {
 	request.setAttribute("sqlAdd", sqlAdd);
 	%> 
 	 <msh:section>
-    <ecom:webQuery isReportBase="${isReportBase}" name="Report32_reestr" nameFldSql="Report32_reestr_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="Report32_reestr" nameFldSql="Report32_reestr_sql" nativeSql="
 select case when pat.id is null then mthr.id else pat.id end pat_id
 ,case when pat.id is null then mthr.lastname || ' X ' || to_char(nb.birthdate, 'dd.mm.yyyy') else pat.patientinfo end pat_info
 ,cast('&type=reestr' as char) as fldId
@@ -199,7 +199,7 @@ order by pat_info
     </msh:section>
    
     <msh:section>
-    <ecom:webQuery isReportBase="${isReportBase}" name="Report32" nameFldSql="Report32_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="Report32" nameFldSql="Report32_sql" nativeSql="
 select '1) Родился живым' as f1_name
 , count(nb.id) as f2_cntAll
 ,count(case when nb.birthweight between 500 and 749 then nb.id else null end) as f3_749

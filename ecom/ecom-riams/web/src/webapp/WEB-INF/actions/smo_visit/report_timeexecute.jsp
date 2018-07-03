@@ -66,26 +66,25 @@
 				request.setAttribute("SQLDate", SQLDate);
 		%>
 
-		<ecom:webQuery name = "elnList" nativeSql="
-select 
-vwf.name,
-p.lastname||' '||p.firstname||' '||p.middlename as fio,
-to_char((coalesce(wct.createdateprerecord,m.createdate)),'dd.MM.yyyy')||' '||to_char((coalesce(wct.createtimeprerecord,m.createtime)),'HH24:MI:ss') as whenrecord,
-to_char((wcd.calendardate),'dd.MM.yyyy')||' '||wct.timefrom as onRec,
-CAST(CAST(wcd.calendardate + wct.timefrom AS timestamp)-CAST(coalesce(wct.createdateprerecord,m.createdate)+coalesce(wct.createtimeprerecord,m.createtime) AS timestamp) as text) as executeTime,
-to_char((m.datestart),'dd.MM.yyyy')||' '||m.timeexecute as exect,
-CAST(CAST(m.datestart+m.timeexecute AS timestamp) -CAST(wcd.calendardate + wct.timefrom AS timestamp) as text) as executeTime2
-from workcalendartime  wct
-left join workcalendarday wcd on wcd.id = wct.workcalendarday_id
-left join medcase m on m.id = wct.medcase_id
-left join patient p on p.id = m.patient_id
-left join workcalendar wc on wc.id = wcd.workcalendar_id
-left join workfunction wf on wf.id = wc.workfunction_id
-left join vocworkfunction vwf on vwf.id = wf.workfunction_id
-where
-m.id is not null 
-${SQLDate} between to_date('${dateStart}','dd.MM.yyyy') and to_date('${dateFinish}','dd.MM.yyyy')
-${SQL}" />
+		<ecom:webQuery isReportBase="true" name = "elnList" nativeSql="select
+		vwf.name,
+		p.lastname||' '||p.firstname||' '||p.middlename as fio,
+		to_char((coalesce(wct.createdateprerecord,m.createdate)),'dd.MM.yyyy')||' '||to_char((coalesce(wct.createtimeprerecord,m.createtime)),'HH24:MI:ss') as whenrecord,
+		to_char((wcd.calendardate),'dd.MM.yyyy')||' '||wct.timefrom as onRec,
+		CAST(CAST(wcd.calendardate + wct.timefrom AS timestamp)-CAST(coalesce(wct.createdateprerecord,m.createdate)+coalesce(wct.createtimeprerecord,m.createtime) AS timestamp) as text) as executeTime,
+		to_char((m.datestart),'dd.MM.yyyy')||' '||m.timeexecute as exect,
+		CAST(CAST(m.datestart+m.timeexecute AS timestamp) -CAST(wcd.calendardate + wct.timefrom AS timestamp) as text) as executeTime2
+		from workcalendartime  wct
+		left join workcalendarday wcd on wcd.id = wct.workcalendarday_id
+		left join medcase m on m.id = wct.medcase_id
+		left join patient p on p.id = m.patient_id
+		left join workcalendar wc on wc.id = wcd.workcalendar_id
+		left join workfunction wf on wf.id = wc.workfunction_id
+		left join vocworkfunction vwf on vwf.id = wf.workfunction_id
+		where
+		m.id is not null
+		${SQLDate} between to_date('${dateStart}','dd.MM.yyyy') and to_date('${dateFinish}','dd.MM.yyyy')
+		${SQL}" />
 		* - разница между датой, когда был записан и на какую дату записан пациент; <br>
 		** - разница между датой записи и датой исполнения;
 		<msh:section>

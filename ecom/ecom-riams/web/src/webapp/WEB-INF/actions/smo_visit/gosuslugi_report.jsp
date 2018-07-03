@@ -99,7 +99,7 @@
     
 <%if(typeGroup.equals("1")){ %> 
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select 
 count (wct.id) as cntAll
 , count (case when wct.medcase_id is not null then 1 else null end) as cntRemote, wct.createprerecord as who
@@ -123,7 +123,7 @@ group by wct.createprerecord
     <%}%> 
 <%if(typeGroup.equals("2")){ %> 
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select 
 count (wct.id) as cntAll
 , count (case when su.isremoteuser='1' then 1 else null end) as cntRemote
