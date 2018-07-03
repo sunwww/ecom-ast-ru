@@ -64,7 +64,7 @@
 %>
 			<msh:separator colSpan="8" label="Записи в плане"/>
 			<msh:section title="Пациенты в плане" >
-				<ecom:webQuery name="records" nameFldSql="recordsSql" nativeSql=" select rec.id as f1_id
+				<ecom:webQuery isReportBase="true" name="records" nameFldSql="recordsSql" nativeSql=" select rec.id as f1_id
 				,pat.patientinfo as f2_pat
 				,to_char(rec.planDispDate,'MM.yyyy') as planDispDate
 
@@ -88,7 +88,7 @@ ${recordsSql}
 <%  } else  if (typeView.equals("2")){  //Группировка по месяцам %>
 		<msh:separator colSpan="8" label="Записи в плане"/>
 		<msh:section title="Свод по месяцам" >
-		<ecom:webQuery name="records" nameFldSql="recordsSql" nativeSql=" select
+		<ecom:webQuery isReportBase="true" name="records" nameFldSql="recordsSql" nativeSql=" select
 		 count(case when to_char(rec.planDispDate,'MM')='01' then rec.id end) as cnt1
 		,count(case when to_char(rec.planDispDate,'MM')='02' then rec.id end) as cnt2
 		,count(case when to_char(rec.planDispDate,'MM')='03' then rec.id end) as cnt3
@@ -129,7 +129,7 @@ ${recordsSql}
 <%  }  else if (typeView.equals("1")){ %>
 		<msh:separator colSpan="8" label="Записи в плане"/>
 		<msh:section title="Свод по кварталам" >
-			<ecom:webQuery name="records" nameFldSql="recordsSql" nativeSql=" select
+			<ecom:webQuery isReportBase="true" name="records" nameFldSql="recordsSql" nativeSql=" select
 		 count(case when to_char(rec.planDispDate,'MM') in ('01','02','03') then rec.id end) as cnt1
 		,count(case when to_char(rec.planDispDate,'MM') in ('04','05','06') then rec.id end) as cnt2
 		,count(case when to_char(rec.planDispDate,'MM') in ('07','08','09') then rec.id end) as cnt3
