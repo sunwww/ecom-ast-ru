@@ -34,7 +34,7 @@
         %>
         <input id="getExcel2" class="button" name="submit" value="Печать" onclick="mshSaveTableToExcelById()" role="button" type="submit">
         <div id="myTemp">
-            <ecom:webQuery name = "elnList" nameFldSql="listSQL"
+            <ecom:webQuery isReportBase="true" name = "elnList" nameFldSql="listSQL"
                            nativeSql="select (select lpu.name from disabilityrecord dr
                             left join workfunction wf on dr.workfunction_id = wf.id
                             left join worker w on w.id = wf.worker_id

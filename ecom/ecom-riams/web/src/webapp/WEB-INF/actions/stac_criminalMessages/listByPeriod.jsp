@@ -310,7 +310,7 @@
             
             <msh:section>
             <msh:sectionTitle>
-            <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
+            <ecom:webQuery isReportBase="true" name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
             select m.id, list(to_char(pm.phoneDate,'dd.mm.yyyy')) as pmphone
             ,list(vpht.name||coalesce(' '||vpmst.name,'')) as vphtnamevpmstname
             ,list(to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5))) as whenevent
@@ -390,7 +390,7 @@
     
     <msh:section>
     <msh:sectionTitle>
-    <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
     select pm.id, pm.phoneDate
     ,vpht.name||coalesce(' '||vpmst.name,'') as vphtnamevpmstname
     ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent
@@ -462,7 +462,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     if (view!=null && (view.equals("2"))) {%>
     
     <msh:section>
-    <ecom:webQuery nameFldSql="journal_militia_sql" name="journal_militia" nativeSql="
+    <ecom:webQuery isReportBase="true" nameFldSql="journal_militia_sql" name="journal_militia" nativeSql="
     select pm.id, 
     p.lastname||' '||p.firstname||' '||p.middlename as fiopat
     ,pol.series||' '||polNumber as seriesPolicy
@@ -592,7 +592,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     <msh:section>
     <msh:sectionTitle>Свод по дням с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_militia" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_militia" nativeSql="
     select '&dateBegin='||to_char(${paramDate},'dd.mm.yyyy')||'&dateEnd='||to_char(${paramDate},'dd.mm.yyyy') as id
     ,to_char(${paramDate},'dd.mm.yyyy') as dateSearch
     , count(pm.id) as cntMessages
@@ -629,7 +629,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     <msh:section>
     <msh:sectionTitle>Свод по госпитализациям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_militia" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_militia" nativeSql="
     select '&department='||coalesce(m.department_id,0)||'&phoneMessageType='||coalesce(vpmt.id,0) as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
     ,count(distinct m.id) as cntHosp
     from PhoneMessage pm 
@@ -661,7 +661,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     <msh:section>
     <msh:sectionTitle>Свод по отказам с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_militia" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_militia" nativeSql="
     select '&department='||coalesce(m.department_id,0)||'&phoneMessageType='||coalesce(vpmt.id,0) as id
     ,ml.name as mlname,vpmt.name as vpmtname
     ,count(pm.id) as cntPm
@@ -696,7 +696,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     <msh:section>
     <msh:sectionTitle>Свод по обращениям с ${param.dateBegin} по ${param.dateEnd}.</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_militia" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_militia" nativeSql="
     select '&department='||coalesce(m.department_id,0)||'&phoneMessageType='||coalesce(vpmt.id,0) as id,ml.name as mlname,vpmt.name as vpmtname, count(pm.id) as cntPm
     , count(distinct case when m.deniedHospitalizating_id is null then m.id else null end) as cntHosp
     , count(distinct case when m.deniedHospitalizating_id is not null then m.id else null end) as cntDenied
@@ -731,7 +731,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     if (view!=null && (view.equals("7"))) {%>
     
     <msh:section >
-    <ecom:webQuery nameFldSql="journal_militia_sql" name="journal_militia" nativeSql="
+    <ecom:webQuery isReportBase="true" nameFldSql="journal_militia_sql" name="journal_militia" nativeSql="
     select pm.id, ss.code as sscode,
     p.lastname||' '||p.firstname||' '||p.middlename ||' '|| to_char(p.birthday,'dd.mm.yyyy') as pbirthday
     ,to_char(m.dateStart,'dd.mm.yyyy') ||' '||cast(m.entranceTime as varchar(5)) as mdateStart
@@ -819,7 +819,7 @@ ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMess
     %>
     <msh:section>
     <msh:sectionTitle>
-    <ecom:webQuery name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_militia" nameFldSql="journal_militia_sql" nativeSql="
     select '&typeEmergency=${typeEmergency}&paramDate=${typeDate1}'
     	||'&pigeonHole=${param.pigeonHole}'||'&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}'
     	||'&department=${param.department}'||'&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}'
