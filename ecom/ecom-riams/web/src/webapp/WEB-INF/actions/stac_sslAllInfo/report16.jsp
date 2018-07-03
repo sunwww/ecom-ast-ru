@@ -213,7 +213,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>016/у-02 форма. Реестр пациентов</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}"  name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+	    <ecom:webQuery isReportBase="true"  name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select
 	    slo.id
 	    ,ss.code as sscode
 	    ,pat.lastname||' '||pat.middlename||' '||pat.firstname||' '||to_char(pat.birthday,'dd.mm.yyyy') as patfio
@@ -533,7 +533,7 @@ if (date!=null && !date.equals("")) {
 	    
 	    <msh:section>
 	    <msh:sectionTitle>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+	    <ecom:webQuery isReportBase="true" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select
 	    '&department=${param.department}&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&bedFund='||slo.bedfund_id as vbstid,
 	    vbt.name||' '||vbst.name as vbstname,vss.name as vssname
 	,count(distinct case when 
@@ -859,7 +859,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Реестр состоящих на начало отчетного периода</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem01" nativeSql="select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem01" nativeSql="select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio
 	    	,to_char(slo.dateStart,'dd.mm.yyyy') ||' '|| cast(slo.entrancetime as varchar(5)) as slodateStart
@@ -904,7 +904,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Реестр состоящих на начало конца отчетного периода</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem02" nativeSql="select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem02" nativeSql="select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio
 	    	,to_char(slo.dateStart,'dd.mm.yyyy') ||' '|| cast(slo.entrancetime as varchar(5)) as slodateStart
@@ -965,7 +965,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Реестр поступивших</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem1" nativeSql="select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem1" nativeSql="select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'') as fio
 	    	,to_char(slo.dateStart,'dd.mm.yyyy') ||' '|| cast(slo.entrancetime as varchar(5)) as slodateStart
@@ -1004,7 +1004,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Реестр переведенных из других отделений</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem1" nativeSql="select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem1" nativeSql="select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'') as fio,pdep.name as dep
 	    	,to_char(slo.dateStart,'dd.mm.yyyy') ||' '|| cast(slo.entrancetime as varchar(5)) as slodateStart
@@ -1042,7 +1042,7 @@ if (date!=null && !date.equals("")) {
 	        <msh:section>
 	    <msh:sectionTitle>Реестр поступивших из круглосуточного стационара</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem2" nativeSql=" select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem2" nativeSql=" select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio
 	    	,to_char(slo.dateStart,'dd.mm.yyyy') ||' '|| cast(slo.entrancetime as varchar(5)) as slodateStart
@@ -1081,7 +1081,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Реестр выписанных</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem3" nativeSql="select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem3" nativeSql="select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio
 	    	,to_char(slo.dateStart,'dd.mm.yyyy') ||' '|| cast(slo.entrancetime as varchar(5)) as slodateStart
@@ -1125,7 +1125,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Реестр переведенных в другие отделения</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem4" nativeSql="select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem4" nativeSql="select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio
 	    	,tdep.name as tdepname
@@ -1168,7 +1168,7 @@ if (date!=null && !date.equals("")) {
 	    <msh:section>
 	    <msh:sectionTitle>Реестр умерших</msh:sectionTitle>
 	    <msh:sectionContent>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem4" nativeSql="select slo.id as sloid
+	    <ecom:webQuery isReportBase="true" name="journal_priem4" nativeSql="select slo.id as sloid
 	    	,ss.code as sscode
 	    	,pat.lastname||' '||substring(pat.firstname,1,1)||' '||coalesce(substring(pat.middlename,1,1),'')||' '||case when slo.prevmedcase_id is not null then ' ('||pdep.name||')' else '' end as fio
 	    	,slo.dateStart ||' '|| cast(slo.entrancetime as varchar(5)) as slodateStart
@@ -1248,7 +1248,7 @@ if (date!=null && !date.equals("")) {
 	    		
 	    		    <msh:section>
 	    <msh:sectionTitle>	    
-	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_priem_sql" name="journal_priem" nativeSql="select '&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}&${queryId}||${departmentSqlId} as fldId,${queryField} as fldName,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
+	    <ecom:webQuery isReportBase="true" nameFldSql="journal_priem_sql" name="journal_priem" nativeSql="select '&dateBegin=${dateBegin}&dateEnd=${dateEnd}&serviceStream=${serviceStream}&typeView=${queryGroupNext}&${queryId}||${departmentSqlId} as fldId,${queryField} as fldName,list(distinct vbst.name) as vbstname,list(distinct vss.name) as vssname
 	,count(distinct case when (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
 	or to_date('${dateBegin}','dd.mm.yyyy')>slo.datestart)
 	and (slo.datefinish is null 
@@ -1581,7 +1581,7 @@ if (date!=null && !date.equals("")) {
 	    		%>
 	    		    <msh:section>
 	    <msh:sectionTitle>
-	    <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_priem_sql" name="journal_priem" nativeSql="select '&${queryId}||${departmentSqlId} as f1Id,${queryField} as f2Name
+	    <ecom:webQuery isReportBase="true" nameFldSql="journal_priem_sql" name="journal_priem" nativeSql="select '&${queryId}||${departmentSqlId} as f1Id,${queryField} as f2Name
 	 ,cast((select sum(bf1.amount) from BedFund bf1 where bf1.lpu_id=lpu.id and bf1.dateStart<=to_date('${dateEnd}','dd.mm.yyyy')
 	and (bf1.dateFinish is null or bf1.dateFinish>=to_date('${dateEnd}','dd.mm.yyyy')) ) as int) as cnt3BF
 	,count(distinct case when (slo.datestart = to_date('${dateBegin}','dd.mm.yyyy') and cast('${timeSql}:00' as time)>slo.entrancetime
@@ -1919,7 +1919,7 @@ if (date!=null && !date.equals("")) {
 	    		
 	    		request.setAttribute("departmentBFC",departmentBFC);
 	    		%>
-	    <ecom:webQuery isReportBase="${isReportBase}" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select 
+	    <ecom:webQuery isReportBase="true"  name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="select
 	    ${fldId} as vbstid,
 	    ${fldName} as vbstname,cast('' as varchar)
 	,count(distinct case when 

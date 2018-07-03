@@ -323,7 +323,7 @@
     	<%if (view!=null && (view.equals("1"))) {%>
     
     <msh:section>
-    <ecom:webQuery name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_priem" nameFldSql="journal_priem_sql" nativeSql="
     
     select  
     '&pigeonHole=${param.pigeonHole}&department=${param.department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin='
@@ -422,7 +422,7 @@ order by m.${dateI}
     	if (view!=null && (view.equals("2"))) {%>
     <msh:section>
     <msh:sectionTitle>
-    <ecom:webQuery name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
     
     select '&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
     ||m.department_id 
@@ -502,7 +502,7 @@ order by dep.name
     	<%} 
     	if (view!=null && (view.equals("3"))) {%>
     <msh:section>
-    <ecom:webQuery name="journal_priem_denied" nameFldSql="journal_priem_denied_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_priem_denied" nameFldSql="journal_priem_denied_sql" nativeSql="
     
     select '&pigeonHole=${param.pigeonHole}&department=${department}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&deniedHospitalizating='
     ||m.deniedHospitalizating_id 
@@ -594,7 +594,7 @@ order by vdh.name
    	    	<%if (view!=null && (view.equals("4"))) {%>
     <msh:section>
     <msh:sectionTitle>
-    <ecom:webQuery name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
+    <ecom:webQuery isReportBase="true"  name="journal_priem_otd" nameFldSql="journal_priem_otd_sql" nativeSql="
     
     select '&typeEmergency=${typeEmergency}&pigeonHole=${param.pigeonHole}&typeDate=${typeDate}&dateI=${dateI}&dateBegin=${param.dateBegin}&dateEnd=${dateEnd}&department='
     ||m.department_id 
