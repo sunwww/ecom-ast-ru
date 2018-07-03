@@ -27,6 +27,8 @@ import javax.persistence.OneToOne;
 public class E2EntryForm extends IdEntityForm {
 
 //----------все поля ниже добавлены на jsp!!!
+    /** Иногородний  */
+    private Boolean theIsForeign =false;
     /** Тип доп. диспансеризации */
     private String theExtDispType ;
     /** Возраст доп. диспансеризации */
@@ -243,8 +245,7 @@ public class E2EntryForm extends IdEntityForm {
     private String theAddressRegistration ;
     /** Адрес проживания пациента (представителя) */
     private String theAddressReal ;
-    /** Город проживания (иногородний) */
-    private String theSettlementNonResident ;
+
     /** Тип паспорта (ДУЛ) */
     private Long thePassportType ;
     /** Серия паспорта */
@@ -434,11 +435,6 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     public String getAddressReal() {return theAddressReal;}
     public void setAddressReal(String aAddressReal) {theAddressReal = aAddressReal;}
-
-    @Comment("Город проживания (иногородний)")
-    @Persist
-    public String getSettlementNonResident() {return theSettlementNonResident;}
-    public void setSettlementNonResident(String aSettlementNonResident) {theSettlementNonResident = aSettlementNonResident;}
 
     @Comment("Тип паспорта (ДУЛ)")
     @Persist
@@ -924,6 +920,13 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     public Boolean getExtDispNextStage() {return theExtDispNextStage;}
     public void setExtDispNextStage(Boolean aExtDispNextStage) {theExtDispNextStage = aExtDispNextStage;}
+
+    @Comment("Иногородний ")
+    @Persist
+    public Boolean getIsForeign() {return theIsForeign;}
+    public void setIsForeign(Boolean aIsForeign) {theIsForeign = aIsForeign;}
+
+
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */

@@ -25,8 +25,8 @@
         request.setAttribute("startDateSql",startDateSql);
             %>
         <ecom:webQuery name="entryList" nativeSql="select ksg.id
-            ,ksg.code||' '||ksg.name
-            ,''||ksg.kz
+            ,ksg.code||' '||ksg.name as ksg
+            ,ksg.kz as kz
             , ksg.profile
             ,vbst.name
             ,ksg.isoperation

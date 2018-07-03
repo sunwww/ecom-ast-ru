@@ -27,7 +27,7 @@
         request.setAttribute("startDateSql",startDateSql);
             if (year==null||year.equals("")) { //Список планов по годам.
             %>
-        <ecom:webQuery name="entryList" nativeSql="select to_char(fp.startDate,'yyyy') as year,'&year='||to_char(fp.startDate,'yyyy') as url
+        <ecom:webQuery  name="entryList" nativeSql="select to_char(fp.startDate,'yyyy') as year,'&year='||to_char(fp.startDate,'yyyy') as url
              from financePlan fp
               where fp.dtype='HospitalFinancePlan' ${startDateSql}
               group by to_char(fp.startDate,'yyyy')

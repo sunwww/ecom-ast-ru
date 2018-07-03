@@ -179,7 +179,7 @@ public class Expert2ServiceJs {
         Injection.find(aRequest).getService(IExpert2Service.class).addMedHelpProfileBedType(aMedHelpId,aBedTypeId);
     }
 
-    public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber, String aBillDate, HttpServletRequest aRequest) throws NamingException {
+    public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber, String aBillDate, String isForeign, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         IExpert2Service expert2Service= Injection.find(aRequest).getService(IExpert2Service.class);
         String sql ;
@@ -187,16 +187,17 @@ public class Expert2ServiceJs {
         if (aServiceStream==null||aServiceStream.trim().equals("")) {return false;}
 
         if (aBillNumber==null||aBillNumber.trim().equals("")) { //Удалить информацию о номере счета.
-            sql = "update e2entry set bill_id=null, billNumber='', billDate=null where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"'";
+            sql = "update e2entry set bill_id=null, billNumber='', billDate=null where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
             if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {return false;}
             if (aOldBillNumber!=null&&!aOldBillNumber.equals("")) {sql+=" and billNumber='"+aOldBillNumber+"'";}else {return false;}
         } else {
             E2Bill bill = expert2Service.getBillEntryByDateAndNumber(aBillNumber,aBillDate);
             sql = "update e2entry set bill_id="+bill.getId()+", billNumber='"+aBillNumber+"', billDate=to_date('"+aBillDate+"','dd.MM.yyyy')" +
-                    " where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"'";
+                    " where listEntry_id="+aListEntryId+" and entryType='"+aType+"' and serviceStream='"+aServiceStream+"' and isForeign='"+isForeign+"'";
             if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {sql+=" and billDate is null";}
             if (aOldBillNumber==null) {aOldBillNumber="";}
             sql+=" and billNumber='"+aOldBillNumber+"'";
+            sql+=" and (isDeleted is null or isDeleted='0')";
         }
         service.executeUpdateNativeSql(sql);
         return true;
