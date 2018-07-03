@@ -184,7 +184,7 @@ div#header{display:none;}
         		}
         		request.setAttribute("critSql", sql.toString()) ;
     	%>
-    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="true" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select qec.id
 ,to_char(qec.createdate,'dd.MM.yyyy') as f1_createDate
 ,vwf.name ||' '||wpat.lastname ||' ' || wpat.firstname||' '||wpat.middlename ||' '|| 	wml.name as f2_dep_doctor
@@ -287,7 +287,7 @@ order by ${orderBySql}
         		}
 %>
 
-    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="true" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select ${nameFldId}
 ,${nameFld} as f2_dep_doctor
 ,count(distinct qe.id) as f3_cntExp
@@ -401,7 +401,7 @@ ${sqlAdd}
         		}
 %>
 
-    	<ecom:webQuery name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="true" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select vqec.id as f1_name_id
     	,vqec.code as f2_cntExp
     	,vqec.name as f3_name_crit

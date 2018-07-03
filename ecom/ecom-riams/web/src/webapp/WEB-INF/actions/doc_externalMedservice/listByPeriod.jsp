@@ -151,7 +151,7 @@
     <msh:section>
     <msh:sectionTitle>Разбивка по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select orderlpu,count(*) AS CNTALL,COUNT(CASE WHEN patient_id is null THEN ID ELSE NULL END) AS DEFECTRECORD
 ,COUNT(CASE WHEN patient_id is null THEN ID ELSE NULL END)*100/COUNT(*)
  from document where 
@@ -190,7 +190,7 @@ ${having} order by orderlpu " />
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select orderer,count(*) AS CNTALL,COUNT(CASE WHEN patient_id is null THEN ID ELSE NULL END) AS DEFECTRECORD
 ,COUNT(CASE WHEN patient_id is null THEN ID ELSE NULL END)*100/COUNT(*)
  from document where 
@@ -219,7 +219,7 @@ order by orderer " />
 		<msh:sectionTitle >
 		    Список лабораторных исследований ${url1} ${url2}
 		</msh:sectionTitle>
-			<ecom:webQuery name="list" 
+			<ecom:webQuery isReportBase="true" name="list"
 			nativeSql="select em.id
 			,' Фамилия <b>'||coalesce(em.PatientLastname,'')
 			||'</b> \nимя <b>'||coalesce(em.PatientFirstname,'')||'</b> \nотчество <b>'
