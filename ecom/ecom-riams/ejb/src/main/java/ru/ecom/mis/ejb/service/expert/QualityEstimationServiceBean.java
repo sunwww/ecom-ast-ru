@@ -149,6 +149,15 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		if (!aView && !aFullExpertCard) {
 			return getRowShort(replaceValue,val,kind, aCardId, aTypeSpecialist, cntSection, aView) ;
 		}
+		Boolean ifTypeBool=false;
+		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
+		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
+		if (listkind.size()!=0) {
+			Object one = "1";
+			Object row = listkind.get(0);
+			if (row.equals(one))
+				ifTypeBool = true;
+		}
 		 sql.append("select vqec.id as vqecid,vqec.code as vqeccode,UPPER(vqec.name) as vqecname,vqec.shortname as vqecshortname")
 			.append(" ,(select count(*) from VocQualityEstimationMark vocmark where vocmark.criterion_id=vqec.id),vqem.id as vqemid,vqem.code as vqemcode,vqem.name as vqemname,coalesce(''||vqem.mark,'-') as vqemmark")
 			.append(",")
@@ -181,15 +190,17 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			.append("	left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("' and qecC.estimation_id=qeC.id") 
 			.append(" left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id")
 			.append("	where vqemC.criterion_id=vqec.id and qeC.expertType='Coeur'")
-			.append(") as CoeurAct")
+			.append(") as CoeurAct");
 			//.append(" ,qecBM.id as branchManager,qecE.id as Expert,qecC.id as Coeur")
 				 //Milamesher 04062018 комментарии заведующего
-				 .append(",")
-				 .append(" (select qecBM.comment from qualityestimationcrit qecBM")
-				 .append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCardId).append("'  and qecBM.estimation_id=qeBM.id")
-				 .append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
-				 .append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='BranchManager') as commentbranchManager")
-			.append(" from VocQualityEstimationCrit vqec") 
+		if (ifTypeBool) {
+			sql.append(",")
+					.append(" (select qecBM.comment from qualityestimationcrit qecBM")
+					.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCardId).append("'  and qecBM.estimation_id=qeBM.id")
+					.append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
+					.append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='BranchManager') as commentbranchManager");
+		}
+		sql.append(" from VocQualityEstimationCrit vqec")
 			.append(" left join VocQualityEstimationMark vqem on vqem.criterion_id=vqec.id")
 			//.append(" left join qualityestimationcrit qecBM on qecBM.mark_id=vqem.id")
 			//.append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCardId).append("' and qeBM.expertType='BranchManager' and qecBM.estimation_id=qeBM.id")
@@ -200,14 +211,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 
 		//diagnosis for kind
 		 .append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqec.id");
-		Boolean ifTypeBool=false;
-		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
-		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
-		if (listkind.size()!=0) {
-			Object one = "1";
-			Object row = listkind.get(0) ;
-			if (row.equals(one)) {
-				ifTypeBool=true;
+		if (ifTypeBool) {
 				sql.append(" left join vocidc10 d on d.id=vqecrit_d.vocidc10_id ")
 						//.append(" left join qualityestimation qeC on qeC.card_id='").append(aCardId).append("'")
 						.append(" left join qualityestimationcard qecard on qecard.id='").append(aCardId).append("'")
@@ -217,7 +221,6 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 						.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id ");
 				//учитывание возраста
 				sql.append("  left join patient pat on pat.id=mcase.patient_id ");
-			}
 		}
 
 		sql.append(" where vqec.kind_id='").append(kind).append("'");
@@ -236,13 +239,13 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 table.append("<th rowspan=2>№№п/п</th>") ;
 		 table.append("<th rowspan=2 colspan=2>Критерии качества медицинской помощи</th>") ;
 		 table.append("<th colspan=3>Оценочные баллы</th>") ;
-		table.append("<th>Комментарии</th>") ;
+		 if (ifTypeBool) table.append("<th>Комментарии</th>") ;
 		 table.append("</tr>") ;
 		 table.append("<tr>") ;
 		 table.append("<th>зав. отд</th>") ;
 		 table.append("<th>эксперт</th>") ;
 		 table.append("<th>КЭР</th>") ;
-		table.append("<th>Комм. зав.</th>") ;
+		 if (ifTypeBool) table.append("<th>Комм. зав.</th>") ;
 		 table.append("</tr>") ;
 		 List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (list.size()>0) {
@@ -256,7 +259,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 cntSubsection = ConvertSql.parseLong(row[4]).intValue() ;
 					 cntPart++;
 					 table.append("<td rowspan='").append((cntSubsection+1)).append("' valign='top'><b><i>").append(row[1]).append(".</i></b></td>") ;
-					 table.append("<td colspan=6 align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
+					 int tmp=(ifTypeBool)? 6:5;
+					 table.append("<td colspan="+tmp+" align='center'><b><i>").append(row[2]).append("</i></b></td>") ;
 					 table.append("</tr>") ;
 					 table.append("<tr>") ;
 					 firststr = true ;
@@ -291,10 +295,12 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 
 				 }
 				 //Milamesher 04062018 комментарии зав.
-				 if (i%2==0) {  //только 1 из оценок, чтобы без дублей
-					 StringBuilder comments = new StringBuilder();
-					 if (row[15] != null) comments.append(row[15]);
-					 table.append("<td rowspan=\"2\">").append(comments.toString()).append("</td>");
+				 if (ifTypeBool) {
+					 if (i % 2 == 0) {  //только 1 из оценок, чтобы без дублей
+						 StringBuilder comments = new StringBuilder();
+						 if (row[15] != null) comments.append(row[15]);
+						 table.append("<td rowspan=\"2\">").append(comments.toString()).append("</td>");
+					 }
 				 }
 				 table.append("</tr>") ;
 				 firststr =false ;
@@ -494,8 +500,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 }
 				 table.append(recordExpertShort(row[0],row[8], valMark, cntPart, aCntSection, "Coeur", aTypeSpecialist, aView) );
 				 //Milamesher 04062018 - комментарий по желанию
-				 table.append("<td colspan=6 align='center'><input onclick=\"showYesNoCommentFromBean(").append((cntPart - 1)).append(")\" type=\"button\" value=\"Комм. зав.\" /></td>");
-				 table.append("</tr>") ;
+				 if (ifTypeBool) {
+					 table.append("<td colspan=6 align='center'><input onclick=\"showYesNoCommentFromBean(").append((cntPart - 1)).append(")\" type=\"button\" value=\"Комм. зав.\" /></td>");
+					 table.append("</tr>");
+				 }
 			 }
 		 }
 		 table.append("</table>") ;

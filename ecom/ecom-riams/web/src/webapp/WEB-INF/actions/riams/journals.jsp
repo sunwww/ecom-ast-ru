@@ -140,6 +140,12 @@
                         <li><msh:link  isReport="false" action="totalReestr.do" roles="/Policy/Mis/Journal/JasperReports">
                             Реестр на оплату для договоров
                         </msh:link></li>
+						<li><msh:link  isReport="false" action="finPlanByProfile.do" roles="/Policy/Mis/Journal/JasperReports">
+							Выполнение плана по КСГ по профилю
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="finPlanByDep.do" roles="/Policy/Mis/Journal/JasperReports">
+							Выполнение плана по КСГ по отделению
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
