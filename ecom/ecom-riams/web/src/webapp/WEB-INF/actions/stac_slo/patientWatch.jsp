@@ -49,7 +49,7 @@
                  request.setAttribute("dateBegin", dateBegin);
              }
 	    	%>
-	    	<ecom:webQuery name="patList" nativeSql="select dep.id,dep.name,count(pw.id)
+	    	<ecom:webQuery isReportBase="true"  name="patList" nativeSql="select dep.id,dep.name,count(pw.id)
 			from MisLpu dep left join patientwatch pw on
 			dep.id=(select m.department_id from medcase m where m.parent_id=pw.medcase_id and m.transferdate is null and m.dtype='DepartmentMedCase')
 			where pw.listwatch_id=(select lw.id from listwatch lw
@@ -73,7 +73,7 @@
     		}
 	    else {
 	    	%>
-	    	<ecom:webQuery name="patList" nativeSql="select p.lastname,p.firstname,p.middlename,st.code
+	    	<ecom:webQuery isReportBase="true"  name="patList" nativeSql="select p.lastname,p.firstname,p.middlename,st.code
 	    	from patientwatch pw left join listwatch lw on lw.id=pw.listwatch_id left join medcase mc on
 	    	mc.parent_id=pw.medcase_id  left join patient p on p.id=mc.patient_id left join statisticstub st
 	    	on st.medcase_id=mc.parent_id

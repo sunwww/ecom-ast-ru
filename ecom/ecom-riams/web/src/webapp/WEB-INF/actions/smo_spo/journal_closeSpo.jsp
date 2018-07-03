@@ -187,7 +187,7 @@
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
     select ml.id||'&department='||ml.id,ml.name ,count(distinct spo.patient_id) as cntPat,count(distinct spo.id) as cntSpo  
 	from MedCase spo
 	left join VocServiceStream vss on vss.id=spo.serviceStream_id
@@ -218,7 +218,7 @@
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
     select 
 owf.id||'&department=${department}&specialist='||owf.id as id
 ,ovwf.name as ovwfname,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
@@ -253,7 +253,7 @@ order by owp.lastname,owp.middlename,owp.firstname
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
 select spo.id,spo.dateStart,spo.dateFinish
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
     ,pat.birthday  

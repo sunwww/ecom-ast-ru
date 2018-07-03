@@ -114,7 +114,7 @@
     <msh:section>
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select slo.id as slo_id, ss.code as sscode
     ,pat.lastname||' '||pat.firstname||' '||pat.middlename||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as fio
     , to_char(sls.datestart, 'dd.MM.yyyy') || ' ' || cast(sls.entrancetime as varchar(5)) sls_start

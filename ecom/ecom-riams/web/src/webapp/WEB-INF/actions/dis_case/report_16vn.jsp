@@ -139,7 +139,7 @@
             <msh:section>
             <msh:sectionTitle>Свод по возрастам ${reportInfo}</msh:sectionTitle>
             <msh:sectionContent>
-            <ecom:webQuery name="report16vnswod" nativeSql="
+            <ecom:webQuery isReportBase="true" name="report16vnswod" nativeSql="
             
         select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name ,vrspt.code as vrsptcode, vrspt.sexCode as vrsptsexCode
         ,vrspt.strCode
@@ -293,7 +293,7 @@
             <msh:section>
             <msh:sectionTitle>Список пациентов</msh:sectionTitle>   
             <msh:sectionContent>
-            <ecom:webQuery name="journal_surOperation" nativeSql="
+            <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
             
             
             select 
@@ -395,7 +395,7 @@
     <msh:section>
     <msh:sectionTitle>Свод</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="report16vnswod1" nativeSql="
+    <ecom:webQuery isReportBase="true" name="report16vnswod1" nativeSql="
 
  
 select 
@@ -516,7 +516,7 @@ ${sqlCntDays1}
       <msh:tableColumn columnName="больше 60 лет" property="17"/>
     </msh:table>
     
-    <ecom:webQuery name="report16vnswod" nativeSql="
+    <ecom:webQuery isReportBase="true" name="report16vnswod" nativeSql="
 
  
 select 
@@ -664,7 +664,7 @@ ${sqlCntDays}
     <msh:section>
     <msh:sectionTitle>Список пациентов</msh:sectionTitle>   
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     
     
     select 

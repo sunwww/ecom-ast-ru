@@ -252,10 +252,12 @@
                     $('specialist').value,$('timeFrom').value,$('timeTo').value,
                     $('countVisits').value,checkedRadio,$('reserveType').value,checkedRadioevenodd,{
                         callback: function(aResult) {
-                            //alert(aResult) ;
+                            //alert(aResult);
                             updateTable();
                             ths.disabled=false;
                             ths.value="Создать";
+                            var message ="Успешно создано!";
+                            showToastMessage(message,null,true);
                         },
                         errorHandler: function(aMessage) {
                             alert("Не удалось создать! " +aMessage) ;

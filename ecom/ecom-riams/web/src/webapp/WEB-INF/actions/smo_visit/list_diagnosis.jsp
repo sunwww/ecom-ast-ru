@@ -252,7 +252,7 @@
     		
     		%>
     		<msh:section>
-	<ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="
+	<ecom:webQuery isReportBase="true" name="datelist" nameFldSql="datelist_sql" nativeSql="
 	select vis.id,to_char(vis.dateStart,'dd.mm.yyyy') as datestart
 	,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as fio
 	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,mkb.code,vip.name
@@ -318,7 +318,7 @@
     			%>
     <msh:section>
 
-		<ecom:webQuery name="diag_list" nameFldSql="diag_list_sql" nativeSql="
+		<ecom:webQuery isReportBase="true" name="diag_list" nameFldSql="diag_list_sql" nativeSql="
 		select '&mkbcode='||${mkbCode}||'&priority='||vpd.id as id
 		,vpd.name as vpdname
 		,${mkbCode} as mkb,${mkbName} as mkbname
@@ -421,7 +421,7 @@
     			
     		
     	%>
-		<ecom:webQuery name="diag_list" nativeSql="
+		<ecom:webQuery isReportBase="true" name="diag_list" nativeSql="
 		select '&mkbcode='||${mkbCode}||'&priority='||vpd.id as id
 		,vpd.name as vpdname
 		,${mkbCode} as mkb,${mkbName} as mkbname

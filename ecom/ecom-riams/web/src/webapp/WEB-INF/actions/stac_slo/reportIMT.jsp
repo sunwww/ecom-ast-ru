@@ -124,7 +124,7 @@
     <%
         if (request.getParameter("dateBegin")!=null && !dateBegin.equals("") && request.getParameter("typeInterval")!=null  && request.getParameter("typeDone")!=null) {
     %>
-        <ecom:webQuery name="patList" nativeSql="select distinct m.id,p.lastname||' '||p.firstname||' '||p.middlename,cast(EXTRACT(YEAR FROM p.birthday) as integer),dep.name,st.imt,
+        <ecom:webQuery isReportBase="true" name="patList" nativeSql="select distinct m.id,p.lastname||' '||p.firstname||' '||p.middlename,cast(EXTRACT(YEAR FROM p.birthday) as integer),dep.name,st.imt,
  (select list (idc10.code||' '||idc10.name)
 from diagnosis d2
  left join medcase m2 on d2.medcase_id=m2.id

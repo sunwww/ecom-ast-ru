@@ -214,7 +214,7 @@
 						request.setAttribute("selectSql",selectSql);
     			%>
     			
-    <ecom:webQuery name="reestr" nameFldSql="reestr_sql" nativeSql="
+    <ecom:webQuery isReportBase="true" name="reestr" nameFldSql="reestr_sql" nativeSql="
     select distinct pat.id
     ,pat.lastname,pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday
     ,coalesce(a.fullname)||' ' || case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end 
@@ -280,7 +280,7 @@
 							request.setAttribute("selectSql", "cast('&dateBeginYear="+date+"' as varchar) as id,cast('Все возраста' as varchar) as year");
 						}
 %>
-<ecom:webQuery name="swod" nameFldSql="swod_sql" nativeSql="
+<ecom:webQuery isReportBase="true" name="swod" nameFldSql="swod_sql" nativeSql="
 select 
 ${selectSql} 
 ,count(distinct case when to_char(pat.birthday,'mm')='01' then pat.id else null end) cnt01

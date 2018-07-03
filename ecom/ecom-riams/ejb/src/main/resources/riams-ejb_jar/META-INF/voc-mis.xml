@@ -2740,12 +2740,21 @@ left join medcase smoP on smoP.owner_id=w.id "
 				queried = 'name'
 		/>
 	</voc>
-	<!--  ипы помощи для отчёта jasper по платникам(Milamesher) -->
+	<!--  Типы помощи для отчёта jasper по платникам(Milamesher) -->
 	<voc id='VocTypeHelpJReport' type='EntityVocService'>
 		<EntityVocService
 				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTypeHelpJReport'
 				names   = 'name'
 				queried = 'name'
+		/>
+	</voc>
+	<!--  Типы стационара для фин. отчёта jasper (Milamesher) -->
+	<voc id='vocTypeStacJReport' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType'
+				names   = 'name'
+				queried = 'name'
+				queryAppend = "code='1' or code='2'"
 		/>
 	</voc>
     <!--  ПЕРЕЛИВАНИЕ КРОВИ -->

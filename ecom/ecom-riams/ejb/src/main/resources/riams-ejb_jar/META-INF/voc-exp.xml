@@ -189,6 +189,15 @@
                 queried = 'profileK,name'
         />
     </voc>
+    <!-- Milamesher jasper porfilek (id)+name-->
+    <voc id='vocE2MedHelpProfileJasper' type='NativeVocService'>
+        <NativeVocService
+                from = ' VocE2MedHelpProfile  voc '
+                names="voc.code ||' '|| voc.name"
+                nameId=" voc.code "
+                order="voc.code"
+        />
+    </voc>
     <voc id='vocE2ListEntryType' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.expert2.domain.voc.VocListEntryType'
