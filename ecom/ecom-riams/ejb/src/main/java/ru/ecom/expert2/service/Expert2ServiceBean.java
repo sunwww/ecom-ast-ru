@@ -961,6 +961,7 @@ private Boolean isCheckIsRunning = false;
         }
         try {
             setEntrySubType(aEntry);
+            aEntry.setIsForeign(isNotNull(aEntry.getInsuranceCompanyCode())&&!aEntry.getInsuranceCompanyCode().startsWith("30"));
             aEntry.setBedDays(bedDays > 0 ? bedDays : 1L);
             aEntry.setIsChild(AgeUtil.calcAgeYear(aEntry.getBirthDate(),aEntry.getStartDate())<18);
             aEntry.setCalendarDays(calendarDays);

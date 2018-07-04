@@ -145,7 +145,7 @@
       	<msh:section title="Услуги" 
       	createUrl="entityParentPrepareCreate-smo_direction_medservice.do?id=${param.id}" 
       	createRoles="/Policy/Mis/MedCase/MedService/Create">
-      		<ecom:webQuery name="services" 
+      		<ecom:webQuery name="services"
       		nativeSql="select mc.id,ms.name,mc.medServiceAmount
       		from MedCase mc 
       		left join MedService ms on mc.medService_id=ms.id
@@ -303,6 +303,7 @@
       //new dateutil.DateField($('datePlanName'));
       //new timeutil.TimeField($('timePlanName'));
       var oldaction = document.forms[0].action ;
+   //	 var canRecordAnyDate = false;
       document.forms[0].action = 'javascript:isExistTicket()';
      // if (theOtmoa_medServices) theOtmoa_medServices.setParentId($("workFunctionPlan").value+"#"+$("datePlanName").value) ;
       function isExistTicket() {
@@ -403,7 +404,19 @@
 	  	) ;
       
       workFunctionPlanAutocomplete.addOnChangeCallback(function(){
-  		updateDefaultDate() ;
+     //     WorkCalendarService.checkIsCanRecordAnyDate($('workFunctionPlan').value, {
+     //         callback: function(ret) {
+     //             canRecordAnyDate =ret.canRecordAnyDate;
+     //             if (canRecordAnyDate) { //Спрячем раздел с выбором времени и даты из справочников
+     //                 //Можно направлять на раб. функцию на любую дату. Прячем дату и время, показываем текстовое поле.
+      //                jQuery('#')
+
+      //            } else { //Всё как было
+                      updateDefaultDate() ;
+       //           }
+       //       }
+       //   });
+
   		
   		}) ;
       datePlanAutocomplete.addOnChangeCallback(function(){

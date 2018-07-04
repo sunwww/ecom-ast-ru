@@ -172,7 +172,7 @@
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery name="journal_reestr" nameFldSql="journal_reestr_sql" nativeSql="
+<ecom:webQuery isReportBase="true" name="journal_reestr" nameFldSql="journal_reestr_sql" nativeSql="
 select t.id as tid
 , lpu.name as lpuname
 , vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as wfinfo
@@ -227,7 +227,7 @@ ${queryTextEnd}
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${groupByTitle} ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery name="journal_swod_rayon" nativeSql="
+<ecom:webQuery isReportBase="true" name="journal_swod_rayon" nativeSql="
 ${queryTextBegin}
 , count(distinct t.id) as cntNapr
 
@@ -284,7 +284,7 @@ ${groupBy}
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery name="journal_swod_rayon" nativeSql="
+<ecom:webQuery isReportBase="true" name="journal_swod_rayon" nativeSql="
 ${queryTextBegin}
 , count(distinct t.id) as cntNapr
 ,count(distinct case when vss.code = 'OBLIGATORYINSURANCE' and (select count(*) from medpolicy mp where
@@ -352,7 +352,7 @@ ${groupBy}
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery name="journal_swod_age" nativeSql="
+<ecom:webQuery isReportBase="true" name="journal_swod_age" nativeSql="
 ${queryTextBegin}
 ,count(*) 
 ,count(case when 

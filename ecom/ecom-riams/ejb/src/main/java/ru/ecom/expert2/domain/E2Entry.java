@@ -6,7 +6,6 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
-import ru.ecom.expert2.domain.voc.VocE2Podvid;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -32,6 +31,14 @@ import java.util.List;
 
 })
 public class E2Entry extends BaseEntity {
+    
+    /** Иногородний  */
+    @Comment("Иногородний ")
+    public Boolean getIsForeign() {return theIsForeign;}
+    public void setIsForeign(Boolean aIsForeign) {theIsForeign = aIsForeign;}
+    /** Иногородний  */
+    private Boolean theIsForeign =false;
+    
     /** Тип доп. диспансеризации */
     @Comment("Тип доп. диспансеризации")
     public String getExtDispType() {return theExtDispType;}
@@ -634,13 +641,6 @@ public class E2Entry extends BaseEntity {
     public void setAddressReal(String aAddressReal) {theAddressReal = aAddressReal;}
     /** Адрес проживания пациента (представителя) */
     private String theAddressReal ;
-
-    /** Город проживания (иногородний) */
-    @Comment("Город проживания (иногородний)")
-    public String getSettlementNonResident() {return theSettlementNonResident;}
-    public void setSettlementNonResident(String aSettlementNonResident) {theSettlementNonResident = aSettlementNonResident;}
-    /** Город проживания (иногородний) */
-    private String theSettlementNonResident ;
 
     /** Тип паспорта (ДУЛ) */
     @Comment("Тип паспорта (ДУЛ)")

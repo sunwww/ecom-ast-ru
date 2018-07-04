@@ -122,7 +122,7 @@
     	%>
     
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo} ${param.sloFirst}">
-    <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
+    <ecom:webQuery isReportBase="true" nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ss.code,mlSls.name as mlSls
 ,to_char(sls.dateStart,'dd.mm.yyyy')||' '||cast(sls.entranceTime as varchar(5)) as dateStartSls
 ,ml.name as mlname
@@ -216,7 +216,7 @@ order by pat.lastname
     			%>
     		    
     		    <msh:section title="Свод за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}  ${param.sloFirst}">
-    		    <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
+    		    <ecom:webQuery isReportBase="true" nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
     		select '&sloFirst='||case when slo.prevMedcase_id is null then '' else 'Перевод' end||'&department='||ml.id||'&department1='||coalesce(ml1.id,-1)||'&department2='||coalesce(ml2.id,-1)||'&cntDays='||case
             when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
             when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)
@@ -295,7 +295,7 @@ order by pat.lastname
     		
     		%>
     <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
-    <ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
+    <ecom:webQuery isReportBase="true" nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio,ss.code,mlSls.name as mlSls
 ,to_char(sls.dateStart,'dd.mm.yyyy')||' '||cast(sls.entranceTime as varchar(5)) as dateStartSls
 ,ml.name as mlname
@@ -372,7 +372,7 @@ order by pat.lastname
     	
 		%>
 <msh:section title="Реестр за период ${param.dateBegin}-${param.dateEnd} ${emergencyInfo}">
-<ecom:webQuery nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
+<ecom:webQuery isReportBase="true" nameFldSql="journal_expert_sql" name="journal_expert" nativeSql="
 select '&sloFirst='||case when slo.prevMedcase_id is null then '' else 'Перевод' end||'&department='||ml.id||'&department1='||coalesce(ml1.id,-2)||'&department2='||coalesce(ml2.id,-1)||'&cntDays='||case
             when (coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)=0 then 1
             when bf.addCaseDuration='1' then ((coalesce(slo.dateFinish,slo.transferDate,CURRENT_DATE)-slo.dateStart)+1)

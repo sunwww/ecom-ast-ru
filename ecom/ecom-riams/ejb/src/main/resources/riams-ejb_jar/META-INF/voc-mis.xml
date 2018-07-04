@@ -1946,7 +1946,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			names  = "to_char(wcd.calendarDate,'DD.MM.YYYY')"
     			queried =" (to_char(wcd.calendarDate,'DD.MM.YYYY') like :query ) "
     			queryAppend = "(wcd.isDeleted is null or wcd.isDeleted='0')"
-    			order =''
+    			order ='wcd.calendarDate'
     			nameId='wcd.id'
     			join='left join WorkCalendar as wc on wc.id=wcd.workCalendar_id '
     	/>

@@ -132,7 +132,7 @@
     <msh:section>
     <msh:sectionTitle>Свод по возрастам ${reportInfo}</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="${isReportBase}" name="report13swod" nativeSql="
+    <ecom:webQuery isReportBase="true" name="report13swod" nativeSql="
     select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name,vrspt.strCode ,vrspt.code as vrsptcode,count(distinct so.id) as cntAll
 ,count(distinct case when (
 cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)
@@ -242,7 +242,7 @@ order by vrspt.strCode
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select 
 so.id as soid
 ,list(vrspt1.strCode)

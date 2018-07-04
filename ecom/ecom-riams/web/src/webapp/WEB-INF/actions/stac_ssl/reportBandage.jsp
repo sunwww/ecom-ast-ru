@@ -46,7 +46,7 @@
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
+                <ecom:webQuery isReportBase="true" name="total" nameFldSql="total_sql" nativeSql="
                  select pat.id as pid,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
                  ,count(mm.id) as cnt
                 from medicalmanipulation mm
@@ -72,7 +72,7 @@
                     %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery name="allBandage" nameFldSql="total_sql" nativeSql="
+                <ecom:webQuery isReportBase="true" name="allBandage" nameFldSql="total_sql" nativeSql="
                 select so.id,
             to_char(so.startdate,'dd.mm.yyyy')||' '||coalesce(cast(so.starttime as varchar(5)),'') as datetime,
             a.duration,vam.name as vamname,va.name as vaname,substring(so.text,1,100)||' ...' as text,pat.lastname||' '||pat.firstname||' '||pat.middlename as fioan from medicalmanipulation so

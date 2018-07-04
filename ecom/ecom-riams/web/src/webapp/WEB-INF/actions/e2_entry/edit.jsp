@@ -85,7 +85,7 @@
                     <msh:textField property="addressRegistration" size="50" />
                     <msh:textField property="addressReal" size="50" />
             </msh:row><msh:row>
-                    <msh:textField property="settlementNonResident" size="50" />
+                    <msh:checkBox property="isForeign" />
                 </msh:row>
 
     <msh:separator colSpan="4" label="Медицинский полис"/>

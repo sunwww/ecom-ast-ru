@@ -104,7 +104,7 @@
     	%>
     
     <msh:section>
-<ecom:webQuery nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
+<ecom:webQuery isReportBase="true" nameFldSql="sql_journal_swod" name="journal_swod" nativeSql="
 select ${change}
 ,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='OBLIGATORYINSURANCE'  then m.id end) as visitOMC
 ,count(distinct case when m.dtype='PolyclinicMedCase' and m.dateStart=m.dateFinish and vss.code='BUDGET' then m.id else null end) as visitBUDGET

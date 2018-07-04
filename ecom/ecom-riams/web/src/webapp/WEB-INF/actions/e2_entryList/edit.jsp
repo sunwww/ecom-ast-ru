@@ -53,21 +53,23 @@
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
                 <msh:ifFormTypeIsView formName="e2_entryListForm">
                 <ecom:webQuery name="entries" nameFldSql="entries_sql" nativeSql="select '${param.id}&entryType='||e.entryType||'&billDate='||
-                    coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream as id
+                    coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream||'&isForeign='||case when e.isForeign='1' then '1' else '0' end as id
                 ,e.entryType as f2
                 ,e.billDate as f3
                 ,e.billNumber||max(case when vocbill.id is not null then ' ('||vocbill.name||')' else '' end ) as f4
                 ,count(*) as f5_cnt
                 ,count(case when e.isDefect='1' then e.id else null end) as f6_cntDefect
                 ,e.serviceStream as f7
+                ,case when e.isForeign='1' then 'ИНОГ' else '' end as f8_isFor
                  from e2entry e
                  left join e2bill bill on bill.id=e.bill_id
                  left join voce2billstatus vocbill on vocbill.id=bill.status_id
                 where e.listentry_id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
-                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream
+                group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign
                  order by e.entryType, e.serviceStream, e.billDate, e.billNumber  "/>
                 <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do"  noDataMessage="Нет записей по заполнению" >
                     <msh:tableColumn columnName="Тип записи" property="2"/>
+                    <msh:tableColumn columnName="иногородние" property="8"/>
                     <msh:tableColumn columnName="Источник финансирования" property="7"/>
                     <msh:tableColumn columnName="Дата счета" property="3"/>
                     <msh:tableColumn columnName="Номер счета" property="4"/>

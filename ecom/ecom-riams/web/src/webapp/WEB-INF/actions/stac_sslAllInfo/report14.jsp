@@ -1714,7 +1714,7 @@ order by vrspt.strCode
     
     </msh:sectionTitle>
     <msh:sectionContent>
-    ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
+    ${isReportBase}<ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select 
 so.id as soid
 ,list(vrspt1.strCode)

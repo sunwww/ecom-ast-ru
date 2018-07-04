@@ -164,7 +164,7 @@
     <msh:section>
     <msh:sectionTitle>Разбивка по дням</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select '${departmentSql} :${pathology}:'||to_char(cb.birthFinishDate,'dd.mm.yyyy')||':'||to_char(cb.birthFinishDate,'dd.mm.yyyy'),to_char(cb.birthFinishDate,'dd.mm.yyyy') as cbbirthFinishDate
     , count(cb.id) as cntCb, count(case when cb.isHistologyWithPathology='1' then cb.id else null end) as cntPathology
      from ChildBirth cb where 
@@ -186,7 +186,7 @@
     <msh:section>
     <msh:sectionTitle>Реестр </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="journal_reestr" nativeSql="select 
+    <ecom:webQuery isReportBase="true" name="journal_reestr" nativeSql="select
     cb.id as id,pat.lastname ||' '||pat.firstname ||' '|| pat.middlename as patmiddlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as patbirthday
          	,to_char(cb.birthFinishDate,'dd.mm.yyyy')||' '||cast(cb.birthFinishTime as varchar(5)) as datetimebirthday

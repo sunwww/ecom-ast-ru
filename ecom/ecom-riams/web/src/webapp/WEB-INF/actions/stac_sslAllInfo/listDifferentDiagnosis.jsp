@@ -84,7 +84,7 @@
           </td>
       </msh:row>
       </msh:row>
-    <ecom:webQuery name="datelist" nameFldSql="datelist_sql" nativeSql="    
+    <ecom:webQuery isReportBase="true" name="datelist" nameFldSql="datelist_sql" nativeSql="
 select sls.id, ss.code
 ,pat.patientinfo
 , mkb1.code||' ' ||mkb1.name as dischargedMkb, ${clinicalMkbName} as clinicalMkb 

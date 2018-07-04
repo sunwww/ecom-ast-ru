@@ -337,7 +337,7 @@
     <msh:section>
     <msh:sectionTitle>Период с ${beginDate} по ${finishDate}. ${filterInfo} ${specInfo} ${workFunctionInfo} ${lpuInfo} ${serviceStreamInfo}</msh:sectionTitle>
     <msh:sectionContent>
-<ecom:webQuery maxResult="1500" name="journal_ticket" nativeSql="
+<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nativeSql="
 select smo.id as name
 ,smo.dateStart as nameFld
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -426,7 +426,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     
     	%>
     <msh:section>
-<ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+<ecom:webQuery  isReportBase="true" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 ''||'&medService='||ms.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -543,7 +543,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
 
 
     <msh:section>
-<ecom:webQuery name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+<ecom:webQuery isReportBase="true" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 ''||'&workFunctionGroup='||wfg.id||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld

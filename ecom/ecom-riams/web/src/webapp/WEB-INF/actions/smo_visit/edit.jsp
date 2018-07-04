@@ -305,7 +305,7 @@
 <tags:visit_listClosedSpo name="List" title="Изменить ЛПУ направителя" />
   		</msh:sideMenu>
   	</msh:ifFormTypeIsNotView>
-    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_visitForm">зфшв
+    <msh:ifFormTypeIsView guid="ifFormTypeIsView" formName="smo_visitForm">
       <msh:sideMenu guid="sideMenu-123" title="Визит">
         <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь"
         	roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"
@@ -333,7 +333,7 @@
 <%--         <msh:sideLink params="id" action="/js-smo_visit-addDisabilityByRedirectFromVisit" name="Нетрудоспособность" title="Добавить нетрудоспособность" guid="784c86f1-44e5-4642-ae35-b68c2abd0604" roles="/Policy/Mis/Disability/DisabilityCase/Create" key="ALT+7" /> --%>
         <msh:sideLink params="id" action="/entityParentPrepareCreate-smo_visitPrescriptionBlank" name="Рецептурный бланк" title="Добавить рецептурный бланк" guid="78d-4642-ae35-b6d04" roles="/Policy/Mis/MedCase/PrescriptionBlank/Create" />
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"
-    	name="Направление к план. раб. функции &larr;"   action="/javascript:goNewDirectionMine('.do')"  
+    	name="Направление к себе &larr;"   action="/javascript:goNewDirectionMine('.do')"
     	 title='Направление к план. раб. функции'  />
     	         
             <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create"  key="CTRL+1"

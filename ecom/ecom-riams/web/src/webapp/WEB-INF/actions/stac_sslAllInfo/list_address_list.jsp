@@ -156,7 +156,7 @@
     <msh:section>
     <msh:sectionTitle>Результаты поиска обращений для формирования адресных листков за период с ${param.dateBegin} по ${param.dateEnd}${dateAddInfo}. ${infoSearch} ${printStatus} </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="select m.id
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="select m.id
     ,m.dateStart,m.dateFinish
     ,m.username
     ,stat.code
@@ -220,7 +220,7 @@
 <msh:section>
     <msh:sectionTitle>Результаты поиска обращений для формирования реестра по иногородним и иностранцам за период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${printStatus} </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="select m.id
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="select m.id
     ,m.dateStart,m.dateFinish
     ,m.username
     ,stat.code
@@ -281,7 +281,7 @@
 <msh:section>
     <msh:sectionTitle>Результаты поиска обращений для формирования реестра по иностранцам за период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${printStatus} </msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery name="datelist" nativeSql="select m.id
+    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="select m.id
     ,m.dateStart,m.dateFinish
     ,m.username
     ,stat.code

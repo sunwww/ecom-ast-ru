@@ -180,7 +180,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 		//	System.out.println("workCalend="+aWorkCalendar);
 			
 		//	System.out.println("workCalend1="+workCalen);
-				List<WorkCalendarDay> list = theManager.createQuery("from WorkCalendarDay where workCalendar_id = :workCalend and calendarDate = :date")
+				List<WorkCalendarDay> list = theManager.createQuery("from WorkCalendarDay where workCalendar_id = :workCalend and calendarDate = :date and (isDeleted is null or isDeleted='0')")
 					.setParameter("workCalend", workCalen)
 					.setParameter("date",date)
 					.getResultList() ;
@@ -209,7 +209,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 					+" left join WorkCalendarDay wcd on wcd.id=wct.workCalendarDay_id"
 					+" left join WorkCalendar wc on wc.id=wcd.workCalendar_id"
 					+" where wcd.id=:workCalendarDay and wc.workFunction_id =:workFunction"
-                   +" and wct.medCase_id is null and (wct.prePatient_id is not null or wct.prePatientInfo is not null and wct.prePatientInfo!='')"
+                   +" and wct.medCase_id is null and (wct.prePatient_id is not null or wct.prePatientInfo is not null and wct.prePatientInfo!='') and (wct.isDeleted is null or wct.isDeleted='0')"
 						)
 //						.setParameter("workFunction",aWorkFunction)
                    .setParameter("workFunction",workFunc)
