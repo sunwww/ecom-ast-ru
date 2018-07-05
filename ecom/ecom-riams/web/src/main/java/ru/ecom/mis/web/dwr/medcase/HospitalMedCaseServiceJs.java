@@ -2034,7 +2034,7 @@ public class HospitalMedCaseServiceJs {
 	}
 	//Milamesher проверка перед удалением выписки: что юзер - лечащий врач последнего СЛО что
     //UPD: в течение одного календарного дня
-	public Boolean checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(int hmcId, HttpServletRequest aRequest) throws NamingException {
+	public Boolean checkUserIsALastSloTreatDoctorAndDishargeLess(int hmcId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		String query="select case when (select ownerfunction_id from medcase where transferdate is null \n" +

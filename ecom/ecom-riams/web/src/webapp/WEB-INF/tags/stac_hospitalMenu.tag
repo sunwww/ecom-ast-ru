@@ -247,7 +247,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script> 
 <script type="text/javascript">
     function deleteDischargeCheck(aId) {
-        HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(
+        HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
             aId, {
                 callback: function(res) {
                     if (res==true) {
