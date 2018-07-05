@@ -4,6 +4,16 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
+<style>
+    h2 {display:none;}
+    @media print {
+        h2 {display:inline;}
+        img,div#copyright,h1,ul#ideModeMainMenu, div#ideModeMainMenuClose {display:none;}
+        input#beginDate{display:inline;}
+        div.x-box-mc{display:none;}
+        div#header{display:none;}
+    }
+</style>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
@@ -84,7 +94,6 @@
     <msh:sideMenu>
     	<msh:sideLink  action="/entityParentListRedirect-expert_card.do" params="id" name="Список экспертных карт по СМО" roles="/Policy/Mis/MedCase/QualityEstimationCard/View" title="Список экспертных карт" styleId="selected"/>
     </msh:sideMenu>
-
     <tags:expert_menu currentAction="expert_card_smo"/>
   </tiles:put>
 </msh:ifFormTypeAreViewOrEdit>
