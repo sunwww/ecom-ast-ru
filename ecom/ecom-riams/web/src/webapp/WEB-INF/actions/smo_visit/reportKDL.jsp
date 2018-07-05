@@ -23,11 +23,14 @@
             if (deps!=null && !deps.equals("")) {
                 Matcher m = Pattern.compile("\"value\":[0-9]*,").matcher(deps);
                 StringBuilder depRqst=new StringBuilder();
+                StringBuilder depRqstHosp=new StringBuilder();
                 depRqst.append(" and (dep.id= ");
                 int cnt=0;
                 while (m.find()) {
                     if (cnt!=0) depRqst.append(" or dep.id= ");
-                    depRqst.append(m.group().replace("\"value\":","").replace(",",""));
+                    String res=m.group().replace("\"value\":","").replace(",","");
+                    depRqst.append(res);
+                    depRqstHosp.append(res).append(" ");
                     cnt++;
                 }
                 if (cnt==0) {
@@ -37,14 +40,25 @@
                     cnt=0;
                     while (m.find()) {
                         if (cnt!=0) depRqst.append(" or dep.id= ");
-                        depRqst.append(m.group().replace("\"value\":","").replace("\"",""));
+                        String res=m.group().replace("\"value\":","").replace("\"","");
+                        depRqst.append(res);
+                        depRqstHosp.append(res).append(" ");
                         cnt++;
                     }
                 }
-                if (!depRqst.toString().equals(" and (dep.id= ")) request.setAttribute("deps",depRqst.append(") ").toString());
-                else request.setAttribute("deps","");
+                if (!depRqst.toString().equals(" and (dep.id= ")) {
+                    request.setAttribute("deps",depRqst.append(") ").toString());
+                    request.setAttribute("depsHosp",depRqstHosp.toString());
+                }
+                else {
+                    request.setAttribute("deps","");
+                    request.setAttribute("depsHosp","");
+                }
             }
-            else request.setAttribute("deps","");
+            else {
+                request.setAttribute("deps","");
+                request.setAttribute("depsHosp",""); //для отчёта с данными по госпитализируемым
+            }
             String dateBegin = request.getParameter("dateBegin") ;
             if (dateBegin!=null && !dateBegin.equals("")) {
                 request.setAttribute("dateBegin",dateBegin);
@@ -257,58 +271,8 @@
         <msh:section>
         <msh:sectionTitle>
         <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
-        select name,
-        totalHosp as cnt1,emergCnt as cnt2,sum(totalLabCnt) as labCnt,sum(noPlanCnt) as cnt3,sum(urgentCnt) as cnt4,sum(emCnt) as cnt5,sum(planCnt) as cnt6
-         ,depId from
-        (select dep.name
-        ,(
-        select count(distinct hmc.id)
-        from MedCase hmc
-        left join MedCase dmc on dmc.parent_id=hmc.id
-        ${typeVMPOrNotValueLeftJoin}
-        where hmc.DTYPE='HospitalMedCase'
-        and hmc.datestart between to_date('${dateBegin}','dd.mm.yyyy')
-        and to_date('${dateEnd}','dd.mm.yyyy')
-        and hmc.deniedHospitalizating_id is null
-        and hmc.department_id=dep.id ${typeVMPOrNotValueJustWhere}
-        ) as totalHosp
-        ,(
-        select count(distinct hmc.id)
-        from MedCase hmc
-        left join MedCase dmc on dmc.parent_id=hmc.id
-        ${typeVMPOrNotValueLeftJoin}
-        where hmc.DTYPE='HospitalMedCase'
-        and hmc.datestart between to_date('${dateBegin}','dd.mm.yyyy')
-        and to_date('${dateEnd}','dd.mm.yyyy')
-        and hmc.deniedHospitalizating_id is null
-        and hmc.department_id=dep.id ${typeVMPOrNotValueJustWhere}
-        and hmc.emergency='1'
-        ) as emergCnt
-        ,case when vst.code='LABSURVEY' and pt.code is not null ${typeVMPOrNotValueNotNull}  and pr.canceldate is null then count(mc.id) else '0' end as totalLabCnt
-        ,case when pt.code='NOPLAN' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as noPlanCnt
-        ,case when pt.code='URGENT' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as urgentCnt
-        ,case when pt.code='EMERGENCY' and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as emCnt
-        ,case when (pt.code='PLAN' or pt.code='PLAN_48') and vst.code='LABSURVEY' ${typeVMPOrNotValueNotNull} and pr.canceldate is null then count(mc.id) else '0' end as planCnt
-        ,'&depId='||coalesce(dep.id,0) as depId
-        from MedService ms
-        left join prescription pr on pr.medservice_id=ms.id
-        left join prescriptionlist pl on pr.prescriptionlist_id=pl.id
-        left join medcase mc on mc.id=pr.medcase_id
-        left join medcase dmc on dmc.id=pl.medcase_id
-        left join workfunction wf on wf.id=pr.prescriptspecial_id
-        left join worker w on w.id=wf.worker_id
-        left join MisLpu dep on dep.id=pr.department_id or dep.id=w.lpu_id
-        left join vocprescripttype pt on pt.id=pr.prescripttype_id
-        left join vocservicetype vst on vst.id=ms.servicetype_id
-        left join MedService msPr on msPr.id=ms.parent_id
-        ${typeVMPOrNotValueLeftJoin}
-        where ${dateT} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and dep.id<>0
-        ${deps}
-        and pr.canceldate is null
-        group by dep.id, mc.emergency,pt.code,vst.code ${typeVMPOrNotValueGroup},pr.id
-        order by dep.name
-        ) as t
-        group by name,depId,totalHosp,emergCnt
+        select * from getReportKdlHospReport('${dateBegin}','${dateEnd}','${typeVMPOrNotValueLeftJoin}','${typeVMPOrNotValueNotNull}',
+        '${typeVMPOrNotValueGroup}','${typeVMPOrNotValueJustWhere}','${depsHosp}')
 "/>
             <form action="javascript:void(0)" method="post" target="_blank"></form>
         </msh:sectionTitle>
@@ -420,15 +384,15 @@
         %>
 <script type="text/javascript">
     function find() {
-        var parts1 =($('dateBegin')).value.split('.');
+       /* var parts1 =($('dateBegin')).value.split('.');
         var bDate = new Date(parts1[2], parts1[1] - 1, parts1[0]);
         var parts2 =($('dateEnd')).value.split('.');
         var fDate = new Date(parts2[2], parts2[1] - 1, parts2[0]);
-        if (Math.abs(bDate- fDate)/ (1000*60*60*24)<=31) {
+        if (Math.abs(bDate- fDate)/ (1000*60*60*24)<=31) {*/
             var frm = document.forms[0];
             frm.submit();
-        }
-        else alert("К сожалению, пока можно формировать отчёт максимум за месяц! Более длительные сроки находятся в разработке и пока недоступны.")
+       /* }
+        else alert("К сожалению, пока можно формировать отчёт максимум за месяц! Более длительные сроки находятся в разработке и пока недоступны.")*/
     }
     checkFieldUpdate('typeVMPOrNot','${typeVMPOrNot}',1) ;
     checkFieldUpdate('typeStacOrNot','${typeStacOrNot}',1) ;
