@@ -2173,4 +2173,9 @@ public class HospitalMedCaseServiceJs {
 		else res.append("##");
 		return res.toString();
 	}
+	//Milamesher #83 05072018 проверка админ ли (для удаления выписки в любой момент)
+	public Boolean checkUserIsAdminToDeleteDischarge(HttpServletRequest aRequest) throws JspException {
+		return (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/Delete",aRequest)
+				&& RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin",aRequest));
+	}
 }
