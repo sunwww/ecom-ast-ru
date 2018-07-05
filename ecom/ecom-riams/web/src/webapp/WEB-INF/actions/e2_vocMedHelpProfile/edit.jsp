@@ -43,15 +43,18 @@
             <msh:tableColumn columnName="Дата окончания действия" property="3"/>
         </msh:table>
 
-        <ecom:webQuery name="bedTypes" nativeSql="select mhbt.id, vbt.omccode||' '||vbt.name as name from  E2MedHelpProfileBedType mhbt
+        <ecom:webQuery name="bedTypes" nativeSql="select mhbt.id, vbt.omccode||' '||vbt.name as typeName, vbst.code||' '||vbst.name as subTypeName from  E2MedHelpProfileBedType mhbt
         left join vocbedtype vbt on vbt.id=mhbt.bedtype_id
+        left join vocbedsubtype vbst on vbst.id=mhbt.subtype_id
         where mhbt.profile_id=${param.id} "/>
         <msh:table idField="1" name="bedTypes" action="jabascript:void()" noDataMessage="Нет соответствий с профилем коек" deleteUrl="entityParentDeleteGoParentView-e2_medHelpBedType.do">
             <msh:tableColumn columnName="ИД" property="1"/>
-            <msh:tableColumn columnName="Тип коек" property="2"/>
+            <msh:tableColumn columnName="Профиль коек" property="2"/>
+            <msh:tableColumn columnName="Тип коек" property="3"/>
         </msh:table>
         <msh:separator colSpan="8" label="Привязать койки"/>
         <msh:autoComplete label="Профиль коек" property="newBedType" vocName="vocBedTypeWithCode"  size="100"/>
+        <msh:autoComplete label="Тип коек" property="newBedSubType" vocName="vocBedSubType"  size="100"/>
         <input type="button" onclick="attachNewBedType()" value="Привязать койку" >
     </tiles:put>
     <tiles:put name="title" type="string">
@@ -63,7 +66,7 @@
             <script type="text/javascript">
             function attachNewBedType () {
                 if (jQuery('#newBedType').val()>0) {
-                    Expert2Service.addMedHelpProfileBedType(jQuery('#id').val(),jQuery('#newBedType').val(), {
+                    Expert2Service.addMedHelpProfileBedType(jQuery('#id').val(),jQuery('#newBedType').val(), jQuery('#newBedSubType').val(), {
                         callback: function () {
                                 window.location.reload();
                         }

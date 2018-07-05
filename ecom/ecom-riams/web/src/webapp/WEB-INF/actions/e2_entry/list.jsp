@@ -51,6 +51,7 @@
     ActionUtil.setParameterFilterSql("entryType","e.entryType",request);
     ActionUtil.setParameterFilterSql("serviceStream","e.serviceStream",request);
     String billNumber = request.getParameter("billNumber");
+        String isForeign = request.getParameter("isForeign");
 
     ActionUtil.setParameterFilterSql("defect","e.isDefect",request);
     String listId=request.getParameter("id");
@@ -86,6 +87,7 @@
         request.setAttribute("searchTitle"," ");
     }
     searchWhereSql+=request.getAttribute("filterSql");
+    if (isForeign!=null){searchWhereSql+=" and e.isForeign='"+(isForeign.equals("1")?"1":"0")+"'";}
     request.setAttribute("searchFromSql",searchFromSql);
     request.setAttribute("searchWhereSql",searchWhereSql);
 %>
@@ -138,7 +140,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
   order by ${orderBySql} "/>
         <msh:hideException>${entriesSql}
             <msh:section title='Результат поиска ${searchTitle}'>
-                <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="14" cellFunction="true" openNewWindow="true">
+                <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="12" cellFunction="true" openNewWindow="true">
                     <msh:tableColumn columnName="№" property="sn" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="ИД" property="1" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Фамилия Имя Отчество" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
