@@ -2032,7 +2032,8 @@ public class HospitalMedCaseServiceJs {
 		String query="update statisticstub set dietdone=true where medcase_id ="+id;
 		service.executeUpdateNativeSql(query);
 	}
-	//Milamesher проверка перед удалением выписки: что юзер - лечащий врач последнего СЛО что прошло <2х часов с момента выписки
+	//Milamesher проверка перед удалением выписки: что юзер - лечащий врач последнего СЛО что
+    //UPD: в течение одного календарного дня
 	public Boolean checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(int hmcId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
@@ -2056,11 +2057,11 @@ public class HospitalMedCaseServiceJs {
 					timedisharge=(wqr.get2()!=null)? wqr.get2().toString():"";
 				}
 				if (datefinish!=null && !datefinish.equals("") && timedisharge!=null && !timedisharge.equals("")) {
-					try {
+					//try {
 						Date d = new java.util.Date();
-						Calendar d2=Calendar.getInstance();
+						//Calendar d2=Calendar.getInstance();
 						String dstr=(new SimpleDateFormat("yyyy-MM-dd")).format(d);
-						if (datefinish.equals(dstr)) { //дата сегодняшняя
+						flag = (datefinish.equals(dstr)); /*{ //дата сегодняшняя
 							//проверка, что прошло не более 2х часов
 							d = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(datefinish+ " " + timedisharge);
 							Calendar calD = Calendar.getInstance();
@@ -2068,8 +2069,7 @@ public class HospitalMedCaseServiceJs {
 							long diff = System.currentTimeMillis() - calD.getTimeInMillis();
 							flag=(diff<3600000*2);
 						}
-
-					} catch (ParseException e) {}
+					} catch (ParseException e) {}*/
 				}
 			}
 		}
