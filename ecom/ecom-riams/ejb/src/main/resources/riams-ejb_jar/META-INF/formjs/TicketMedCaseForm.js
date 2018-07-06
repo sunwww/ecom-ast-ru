@@ -169,7 +169,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 		spo.setStartFunction(workFunction) ;
 		spo.setServiceStream(aEntity.getServiceStream()) ;
 		spo.setNoActuality(false) ;
-		if ((aForm.isCloseSpo!=null && aForm.isCloseSpo)||(aForm.emergency!=null && aForm.emergency)
+		if ((aForm.isCloseSpo!=null && aForm.isCloseSpo==true)||(aForm.emergency!=null && aForm.emergency==true)
 				||(aForm.ambulance!=null && aForm.ambulance>0)) {
 			
 			spo.setDateFinish(aEntity.getDateStart()) ;
