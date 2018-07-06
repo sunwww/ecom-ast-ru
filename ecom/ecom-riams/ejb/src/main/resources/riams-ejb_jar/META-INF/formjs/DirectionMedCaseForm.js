@@ -43,10 +43,10 @@ function createOrSave(aForm, aVisit, aCtx) {
 	var workFunc = findLogginedWorkFunction(aCtx) ;
 	aVisit.orderWorkFunction =  workFunc;
 	if(aVisit.parent!=null&&aVisit.parent.dateFinish!=null) {
-		aVisit.parent=null ;}
-	if ((aForm.emergency==null || !aForm.emergency)&&
-			aVisit.workFunctionPlan.emergency!=null &&aVisit.workFunctionPlan.emergency) {
-		aVisit.setEmergency(true) ;
+		aVisit.parent=null ;
+	}
+	if (aForm.emergency==null || !aForm.emergency) {
+		aVisit.setEmergency(aVisit.workFunctionPlan.emergency) ;
 	}
 	// Медицинские услуги
 	saveArray(aVisit, aCtx.manager,aForm.getMedServices()
@@ -125,7 +125,8 @@ function onCreate(aForm, aVisit, aCtx) {
 function setNotPaid(aForm, aEntity, aCtx) {
 		if (aEntity.serviceStream.isPaidConfirmation&&aEntity.isPaid==null) {
 			aEntity.setIsPaid(false);
-		}
+
+	}
 }
 
 function onPreCreate(aForm, aCtx) {
