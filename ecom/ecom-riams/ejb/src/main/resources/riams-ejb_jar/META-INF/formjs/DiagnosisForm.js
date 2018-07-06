@@ -83,9 +83,9 @@ function checkUniqueDiagnosis(aForm,aEntity,aCtx) {
 function checkPolyclinic(aForm,aEntity,aCtx) {
 	var medCase =aEntity.getMedCase() ; 
 	if (medCase!=null) {
-		if (medCase.getClass().getSimpleName().equals('Visit') && medCase.emergency!=null && medCase.emergency) {
+		if (medCase.getClass().getSimpleName().equals('Visit') && medCase.emergency!=null && medCase.emergency==true) {
 			try {
-			//throw ''+medCase.getParent().getId() ;
+			throw ''+medCase.getParent().getId() ;
 			aCtx.serviceInvoke("SmoVisitService", "closeSpoWithoutDiagnosis",medCase.parent.getId(),aForm.idc10) ;
 			} catch(e) {}
 		}

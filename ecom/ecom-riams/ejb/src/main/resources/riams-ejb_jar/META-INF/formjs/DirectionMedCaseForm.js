@@ -45,7 +45,7 @@ function createOrSave(aForm, aVisit, aCtx) {
 	if(aVisit.parent!=null&&aVisit.parent.dateFinish!=null) {
 		aVisit.parent=null ;
 	}
-	if (aForm.emergency==null || !aForm.emergency) {
+	if (aForm.emergency==null || aForm.emergency==false) {
 		aVisit.setEmergency(aVisit.workFunctionPlan.emergency) ;
 	}
 	// Медицинские услуги
