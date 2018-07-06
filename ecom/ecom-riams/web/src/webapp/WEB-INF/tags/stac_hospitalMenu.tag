@@ -185,20 +185,16 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		params="id"  action='/entityParentList-stac_birthCase' title='Просмотр случая рождения'
 		styleId="stac_birthCase"
 		/>
-	<msh:sideLink confirm="Вы действительно желаете удалить данные выписки?"
-			roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
-				  name="Удалить данные выписки"   params="id"  action='/javascript:deleteDischargeIn2Hours()'
-				  title='Удалить данные выписки' styleId="stac_birthCase" />
 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Delete;/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin" 
     	name="Удалить"   params="id"  action="/entityParentDeleteGoParentView-stac_ssl"  
     	key='ALT+DEL' title='Удалить' confirm="Удалить?" />
 </msh:sideMenu>
 <msh:sideMenu title="Администрирование"  >
-	<msh:sideLink action=".javascript:deleteDischarge('${param.id}','.do')"
+	<msh:sideLink action=".javascript:deleteDischargeCheck('${param.id}','.do')"
 		name="Удалить данные выписки"
 		title="Удалить данные выписки"
 		confirm="Вы действительно желаете удалить данные выписки?"
-		roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete"
+		roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
 		styleId="deleteDischarge"
 	/>
 	<msh:sideLink action="/entityPrepareCreate-sec_userPermission.do?type=2&ido=${param.id}"
@@ -247,29 +243,41 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 	  getDefinition("js-doc_externalMedservice-list.do?short=Short&id=${param.id}", null);
   }
   </script>
-  <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DischargeDelete">
-		
-		<script type="text/javascript">
-	
-  		function deleteDischarge(aId) {
-  			HospitalMedCaseService.deleteDischarge(
-     		'${param.id}', {
-     			callback: function(aString) {
-     				if ($('dateFinish')) $('dateFinish').value="" ;
-     				if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
-     				if ($('dischargeTime')) $('dischargeTime').value="" ;
-     				if ($('dischargeTimeReadOnly')) $('dischargeTimeReadOnly').value="" ;
-     				alert("Данные удалены") ;
-     			}
-     		}
-     	);
-  		}
-  	</script>
-  </msh:ifInRole>
 
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script> 
 <script type="text/javascript">
-
+    function deleteDischargeCheck(aId) {
+        HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess(
+            aId, {
+                callback: function(res) {
+                    if (res==true) {
+                        deleteDischarge(${param.id});
+                    }
+                    else {
+                        HospitalMedCaseService.checkUserIsAdminToDeleteDischarge(
+                            {
+                                callback: function(res) {
+                                    if (res==true) {
+                                        deleteDischarge(${param.id});
+                                    }
+                                    else alert("Невозможно удалить данные! Удалить её может только лечаший врач в течение 1го календарного дня после выписки или администратор системы.");
+                                }}) ;
+                    }
+                }}) ;
+    }
+    function deleteDischarge(aId) {
+        HospitalMedCaseService.deleteDischarge(
+            '${param.id}', {
+                callback: function(aString) {
+                    if ($('dateFinish')) $('dateFinish').value="" ;
+                    if ($('dateFinishReadOnly')) $('dateFinishReadOnly').value="" ;
+                    if ($('dischargeTime')) $('dischargeTime').value="" ;
+                    if ($('dischargeTimeReadOnly')) $('dischargeTimeReadOnly').value="" ;
+                    alert("Данные удалены") ;
+                }
+            }
+        );
+    }
 
 function gotoPregHistory(aMedCase,aUrl) {
  	PregnancyService.getPregHistoryByMedCase(
@@ -326,16 +334,6 @@ function gotoNewBornHistory(aMedCase,aUrl) {
 			     }
 			  }
 			}) ;
-  }
-  function deleteDischargeIn2Hours() {
-      HospitalMedCaseService.checkUserIsALastSloTreatDoctorAndDishargeLess2Hours(
-		  ${param.id}, {
-          callback: function(res) {
-              if (res==true) {
-                  deleteDischarge(${param.id});
-			  }
-			  else alert("Невозможно удалить данные! Выписка должна быть создана не более 2х часов назад. Удалить её может только лечаший врач.");
-          }}) ;
   }
   function showReferenceFSS() {
       HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {

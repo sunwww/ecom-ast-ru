@@ -619,4 +619,17 @@ public class QualityEstimationServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update vocqualityestimationcrit set  medservicecodes='' where id=" + aCritId);
 	}
+	//Milamesher #105 получить отделение, за которым закреплён пациент (для ЭК по отказам от госпитализаций
+	public String getFixedDepartmentFromMedcase(String mc, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "select mc.department_id,dep.name from medcase mc left join mislpu dep on dep.id=mc.department_id where mc.id=" + mc;
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (list.size() > 0) {
+			WebQueryResult w = list.iterator().next() ;
+			res.append(w.get1()).append("#").append(w.get2());
+		}
+		else res.append("##");
+		return res.toString();
+	}
 }
