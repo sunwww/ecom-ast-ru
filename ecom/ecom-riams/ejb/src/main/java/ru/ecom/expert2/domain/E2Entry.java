@@ -31,7 +31,14 @@ import java.util.List;
 
 })
 public class E2Entry extends BaseEntity {
-    
+
+    /** Дата направление на лечение */
+    @Comment("Дата направление на лечение")
+    public Date getDirectDate() {return theDirectDate;}
+    public void setDirectDate(Date aDirectDate) {theDirectDate = aDirectDate;}
+    /** Дата направление на лечение */
+    private Date theDirectDate ;
+
     /** Иногородний  */
     @Comment("Иногородний ")
     public Boolean getIsForeign() {return theIsForeign;}
@@ -409,7 +416,7 @@ public class E2Entry extends BaseEntity {
      public String getBillNumber() {return theBillNumber;}
      public void setBillNumber(String aBillNumber) {theBillNumber = aBillNumber;}
      /** Номер счета */
-     private String theBillNumber ;
+     private String theBillNumber="" ;
 
      /** Дата счета */
      @Comment("Дата счета")

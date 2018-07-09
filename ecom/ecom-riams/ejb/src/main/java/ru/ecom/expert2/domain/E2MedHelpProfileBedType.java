@@ -2,6 +2,7 @@ package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -29,4 +30,12 @@ public class E2MedHelpProfileBedType extends BaseEntity {
     public void setBedType(VocBedType aBedType) {theBedType = aBedType;}
     /** Профиль коек */
     private VocBedType theBedType ;
+
+    /** Подтип коек */
+    @Comment("Подтип коек")
+    @OneToOne
+    public VocBedSubType getSubType() {return theSubType;}
+    public void setSubType(VocBedSubType aSubType) {theSubType = aSubType;}
+    /** Подтип коек */
+    private VocBedSubType theSubType ;
 }

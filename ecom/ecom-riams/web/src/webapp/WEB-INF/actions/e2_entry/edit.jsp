@@ -111,6 +111,10 @@
                     <msh:textField property="directLpuType" size="50"/>
                 </msh:row>
                 <msh:row>
+                    <msh:textField property="directDate" size="50"/>
+
+                </msh:row>
+                <msh:row>
                     <msh:checkBox property="isEmergency"/>
                     <msh:checkBox property="isChild"/>
                 </msh:row>

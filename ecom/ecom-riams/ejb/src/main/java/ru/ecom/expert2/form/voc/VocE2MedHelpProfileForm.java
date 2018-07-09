@@ -78,6 +78,14 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
   /** Профиль койки  */
   private Long theNewBedType ;
 
+  /** Тип койки */
+  @Comment("Тип койки")
+  public Long getNewBedSubType() {return theNewBedSubType;}
+  public void setNewBedSubType(Long aNewBedSubType) {theNewBedSubType = aNewBedSubType;}
+  /** Тип койки */
+  private Long theNewBedSubType ;
+
+
     /** Мед. специальность по профилю */
     @Comment("Мед. специальность по профилю")
     @Persist

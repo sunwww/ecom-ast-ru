@@ -21,6 +21,7 @@ import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.services.form.importformat.MyMonitor;
 import ru.ecom.mis.ejb.domain.directory.Entry;
+import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
@@ -447,29 +448,35 @@ private Boolean isCheckIsRunning = false;
          //   E2Entry lastEntry = theManager.find(E2Entry.class,Long.valueOf(entriesIds.get(entriesIds.size()-1)[0].toString())); //Находим последнее СЛО
           //  log.warn("union = SLS = "+aHospitalMedCaseId+", size = "+entriesIds.size());
     //Цикл только для ВМП
+            E2Entry vmpEntry = null;
             for (Object[] o: entriesIds) {
                 if (isNotNull(o[1])&&o[1].toString().equals(VMPTYPE)) { //Если в госпитализации есть случай ВМП, делаем его главным, остальные - неглавные.
                     mainEntry = theManager.find(E2Entry.class,Long.valueOf(o[0].toString()));
                     mainEntry.setStartDate(mainEntry.getHospitalStartDate());
                     mainEntry.setFinishDate(mainEntry.getHospitalFinishDate());
                     mainEntry.setIsUnion(true);
+                    vmpEntry=mainEntry;
 
-                    theManager.createNativeQuery("update e2entry set serviceStream=:serviceStream, parentEntry_id=:parent, isunion='1' where listentry_id=:listEntry and externalparentId=:hospitalId and id!=:id")
-                            .setParameter("serviceStream",E2Enumerator.COMPLEXSERVICESTREAM)
-                            .setParameter("parent",mainEntry.getId()).setParameter("listEntry",aListEntryId).setParameter("hospitalId",aHospitalMedCaseId)
-                            .setParameter("id",mainEntry.getId()).executeUpdate(); //Все остальные записи помечаем как входящие в случай ВМП
-
-                    log.info("Найден случай в ВМП, помечаем его как главный");
+                    log.info("Найден случай в ВМП, помечаем его как главный "+mainEntry.getId());
                     theManager.persist(mainEntry);
-                    return;
+                    //return;
                 }
                 if (isNotNull(o[2].toString())&&o[2].toString().equals("203")) { //В СЛС есть родовое отделение - запускаем функция по объединению родов!
                     unionChildBirthHospital(entriesIds);
                     return;
+                }
+            }
+            if (vmpEntry!=null) {
+                for (Object[]o : entriesIds) {
+                    E2Entry entry = theManager.find(E2Entry.class,Long.valueOf(o[0].toString()));
+                    if (entry.getId()==mainEntry.getId()) {continue;}
+                    entry.setParentEntry(vmpEntry);
+                    entry.setServiceStream(E2Enumerator.COMPLEXSERVICESTREAM);
+                    entry.setIsUnion(true);
+                    theManager.persist(entry);
 
                 }
             }
-
         //На этом этапе мы уверены, что ВМП в случае у нас нет, случай не содержит родов
             //VocE2FondV009 perevodResult =
         for (Object[] objects: entriesIds) {
@@ -675,7 +682,8 @@ private Boolean isCheckIsRunning = false;
         } else  {
             if(!bedTypes.containsKey(key)) { //Если нет в карте - запускаем поиск
                 List<BigInteger> list = theManager.createNativeQuery("select v.id from vocbedtype vbt left join e2medhelpprofilebedtype mhpbt on mhpbt.bedtype_id=vbt.id " +
-                        " left join voce2medhelpprofile v on v.id= mhpbt.profile_id where vbt.omccode=:code and v.id is not null").setParameter("code", bedType).getResultList();
+                        " left join voce2medhelpprofile v on v.id= mhpbt.profile_id left join vocbedsubtype vbst on vbst.id=mhpbt.subtype_id where vbt.omccode=:code and v.id is not null and (mhpbt.subtype_id is null or vbst.code=:subTypeCode )")
+                        .setParameter("code", bedType).setParameter("subTypeCode",aEntry.getBedSubType()).getResultList();
                 if (list.isEmpty()) {
                     E2EntryError error = new E2EntryError(aEntry, "NO_PROFILE");
                     theManager.persist(error);
@@ -720,7 +728,7 @@ private Boolean isCheckIsRunning = false;
 
     /** Добавляем соответствие между профилем мед. помощи и профилем койки */
     //Для ServiceJS------------------------------------------------------------
-    public void addMedHelpProfileBedType(Long aMedHelpId, Long aBedTypeId) {
+    public void addMedHelpProfileBedType(Long aMedHelpId, Long aBedTypeId, Long aBedSubTypeId) {
         VocBedType bedType = theManager.find(VocBedType.class, aBedTypeId);
         if (theManager.createNativeQuery("select e. id from E2MedHelpProfileBedType e left join vocbedType vbt on vbt.id=e.bedtype_id " +
                 " where e.profile_id=:profile and (e.bedtype_id=:bedTypeId or vbt.omcCode=:omcCode)").setParameter("profile",aMedHelpId).setParameter("bedTypeId", aBedTypeId)
@@ -731,6 +739,7 @@ private Boolean isCheckIsRunning = false;
         E2MedHelpProfileBedType mhbt = new E2MedHelpProfileBedType();
         mhbt.setBedType(bedType);
         mhbt.setProfile(theManager.find(VocE2MedHelpProfile.class, aMedHelpId));
+        if (aBedSubTypeId!=null&&aBedSubTypeId>0L) {mhbt.setSubType(theManager.find(VocBedSubType.class,aBedSubTypeId));}
         theManager.persist(mhbt);
     }
 
@@ -1508,6 +1517,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             GrouperKSGPosition pos = null;
             boolean duration = aEntry.getCalendarDays() > 3 ? false : true;
             GrouperKSGPosition therapicKsgPosition = null,surgicalKsgPosition=null ;
+            GrouperKSGPosition cancerKsgPosition = null;
             for (Object o : results) {
                 GrouperKSGPosition ksg = theManager.find(GrouperKSGPosition.class, Long.valueOf(o.toString()));
                 weight = 0; //Вес найденного КСГ
@@ -1518,7 +1528,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                         therapicKsgPosition=(therapicKsgPosition!=null&&therapicKsgPosition.getKSGValue().getKZ()>ksg.getKSGValue().getKZ())?therapicKsgPosition:ksg;
                     }
 
-                } else if (isCancer&&ksg.getMainMKB().equals("C.")) {weight=5;} else if (isNotNull(ksg.getMainMKB())) {continue;}
+                } else if (isCancer&&ksg.getMainMKB().equals("C.")) {cancerKsgPosition=ksg; /*weight=5;*/} else if (isNotNull(ksg.getMainMKB())) {continue;}
 
                 if (serviceCodes.contains(ksg.getServiceCode())) {
                     surgicalKsgPosition=(surgicalKsgPosition!=null&&surgicalKsgPosition.getKSGValue().getKZ()>ksg.getKSGValue().getKZ())?surgicalKsgPosition:ksg;
@@ -1547,6 +1557,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                         pos = ksg;
                     }
                 }
+                if (pos==null&&cancerKsgPosition!=null) {pos=cancerKsgPosition;}
                 if (therapicKsgPosition!=null&&surgicalKsgPosition!=null) { //Если мы нашли хирургическое КСГ, но есть и терапевтическое, то проверим на исключения
                     GrouperKSGPosition exc =  checkIsKsgException(surgicalKsgPosition,therapicKsgPosition);
                     if (exc!=null){pos=exc;}
@@ -2171,7 +2182,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 monitor.setText("Приступаем к объединению случаев. START_UNION");
                 for (BigInteger hospId : hospitalIds) {
                     i++;
-                    if (i%100==0) {log.info("process ... union medcases.... "+i);}
+                    if (i%100==0) {log.info("process ... union medcases.... "+i);monitor.setText("Идет объединение случаев: "+i);}
                     unionHospitalMedCase(listEntryId , hospId.longValue());
                 }
                 log.info("Объединение случаев завершено.FINISH_UNION");
@@ -2216,7 +2227,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     log.info("size KDO = "+theManager.createNativeQuery("select id from e2entry where listentry_id="+aListEntry.getId()+" and (isDeleted is null or isDeleted='0')").getResultList().size());
                     unionPolyclinicKdoMedCase(listEntryId,aEntryList);
                 }
-
+                monitor.setText("Закончили проверять поликлинику.");
             } else if (listEntryCode.equals(EXTDISPTYPE)) { //Пришло время делать ДД
                 log.info("Create DD");
                 int i=0;
@@ -2233,6 +2244,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
 
             }
             log.info("Время выполнения проверки (минут) TOTAL_TIME = "+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
+            monitor.finish("Завершено. Время выполнения проверки (минут) TOTAL_TIME = "+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
             isCheckIsRunning=false;
         } catch (Exception e) {
             e.printStackTrace();
@@ -2479,7 +2491,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             // если прерванный случай - ставим причину неполной оплаты
             ret = calculateBasePrerSluchCoefficient(aEntry); //Прерванным случаям коэффициент = 0.3
             GrouperKSGPosition pos =aEntry.getKsgPosition();
-            if ((pos!=null&&isNotNull(pos.getServiceCode())||isNotNull(aEntry.getDopKritKSG()))) { //Если у КСГ признак "операционного", либо есть доп. критерий КСГ
+            if ((pos!=null&&isNotNull(pos.getServiceCode())/*||isNotNull(aEntry.getDopKritKSG())*/)) { //Если у КСГ признак "операционного", либо есть доп. критерий КСГ * убрано до июля
                 surgicalKsg=true;
             //    if ((aEntry.getOperationList()!=null&&aEntry.getOperationList().indexOf(pos.getServiceCode())>-1)
              //           ||(isNotNull(aEntry.getMainService())&&aEntry.getMainService().equals(pos.getServiceCode()))){ //Если услуга есть в группировщике //TODO упростить!
