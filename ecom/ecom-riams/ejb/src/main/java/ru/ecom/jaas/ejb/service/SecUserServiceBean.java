@@ -175,7 +175,6 @@ public class SecUserServiceBean implements ISecUserService {
                 List<Long> listRole = new ArrayList<Long>() ;
                 for (SecRole role : user.getRoles()) {
                 	Long idP = role.getId() ;
-                	log(idP) ;
                 	if (listRole.contains(idP)) {
                 		
                 	} else {
