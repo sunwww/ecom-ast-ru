@@ -101,7 +101,7 @@ public class ContractServiceBean implements IContractService {
 				root.put("FIO", aKassir);
 			//	log.warn("isTermPayment = "+isTerminalPayment);
 				makeHttpPostRequest(root.toString(), aManager);
-				log.warn(root.toString());
+				//log.warn(root.toString());
 				return "Чек отправлен на печать";
 			} else {
 				return "Произошла ошибка, обратитесь к программистам";
