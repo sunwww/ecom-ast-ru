@@ -348,7 +348,7 @@
         ${period}
         ${hospSql} ${emerIs} ${pigeonHole} ${department} ${phoneMessageType} ${phoneMessageSubType} ${durationSql} ${ageSql} ${deathSql} ${durationSql} ${ageSql} ${rayonSql}
             group by m.id,p.lastname,p.firstname,p.middlename,p.birthday,ss.code,vdh.name
-            ,m.dateFinish,m.dischargeTime,m.dateStart,m.entranceTime
+            ,m.dateFinish,m.dischargeTime,m.dateStart,m.entranceTime,rayon.name
             order by p.lastname
             " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
             
