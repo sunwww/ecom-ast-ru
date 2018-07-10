@@ -65,6 +65,7 @@ public class ContractServiceBean implements IContractService {
 				Double taxSum = 0.00;
 				JSONObject root = new JSONObject();
 				root.put("function", isRefund?"makeRefund":"makePayment");
+				root.put("gotId", aAccountId); //Milamesher #106 10072018 - для проверки со стороны ККМ на печать одинаковых чеков
 				JSONArray arr = new JSONArray();
 				for (Object[] r: l) {
 
@@ -100,6 +101,7 @@ public class ContractServiceBean implements IContractService {
 				root.put("FIO", aKassir);
 			//	log.warn("isTermPayment = "+isTerminalPayment);
 				makeHttpPostRequest(root.toString(), aManager);
+				log.warn(root.toString());
 				return "Чек отправлен на печать";
 			} else {
 				return "Произошла ошибка, обратитесь к программистам";
