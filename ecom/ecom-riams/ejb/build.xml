@@ -65,7 +65,6 @@
 
 		</jar>
 	</target>
-
 	<target name="ejb.sqlUpdater.Run">
 		<delete dir='./target/sqlUpdater'/>
 		<mkdir dir="./target/sqlUpdater"/>
@@ -73,12 +72,5 @@
 			<src path="../ejb/src/main/java/ru/ecom/sql/runBuild"/>
 		</javac>
 		<java classname="ru.ecom.sql.runBuild.SqlUpdateVersion" classpath="target/sqlUpdater"/>
-		<!--<jar destfile="./tarrunBuildtrunBuildtest.jar" basedir="./tarrunBuildtest/">
-        <manifest>
-            <attribute name="Main-Class" valru.ecom.api.sqlUpdater.runBuilduildtest.Test" />
-        </manifest>
-    </jar>
-    <java jar="./tarrunBuildtrunBuildtest.jar"  classpath="Test" fork="true"/>-->
 	</target>
-
 </project>

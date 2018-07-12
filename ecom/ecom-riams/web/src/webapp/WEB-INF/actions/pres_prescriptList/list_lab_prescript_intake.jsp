@@ -166,7 +166,7 @@
     ,coalesce(vsst.name,'---') as f5vsstname
     ,pat.lastname as f6lastname,pat.firstname as f7firstname,pat.middlename as f8middlename
     ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
-   ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies
+   ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||'<br></br>'||'2' else null end) as f10medServicies
    ,list(wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
    ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
        ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
@@ -196,7 +196,8 @@
     where p.dtype='ServicePrescription'
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
-    and vst.code='LABSURVEY' 
+    and vst.code='LABSURVEY'
+    and (p.isunpaid=false or p.isunpaid is null)
     and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
     and p.cancelDate is null ${sqlAdd}
     group by ${addByGroup} pat.id,pat.lastname,pat.firstname,pat.middlename
@@ -220,11 +221,11 @@
     ,coalesce(vsst.name,'---')||' ('||coalesce(vpt.name)||')' as f5vsstname
     ,pat.lastname as f6last,pat.firstname as f7first,pat.middlename as f8middlename 
     ,to_char(pat.birthday,'dd.mm.yyyy') as f9birthday
-    ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies
+    ,list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||<br></br>||'3' else null end) as f10medServicies
     ,list(distinct wp.lastname||' '||wp.firstname||' '||wp.middlename) as f11fioworker
     ,list(distinct iwp.lastname||' '||iwp.firstname||' '||iwp.middlename) as f12intakefioworker
     ,to_char(p.intakeDate,'dd.mm.yyyy')||' '||cast(p.intakeTime as varchar(5)) as f13dtintake
-    ,list(ms.additionCode || (select to_char(pmc.datestart,'dd.mm.yyyy') 
+    ,list(ms.additionCode || (select to_char(pmc.datestart,'dd.mm.yyyy')
     	from medcase mc 
     	left join MedCase pmc on pmc.id=mc.parent_id and pmc.dtype='Visit'
     	where mc.patient_id=slo.patient_id 
@@ -256,7 +257,8 @@
     and p.planStartDate between to_date('${beginDate}','dd.mm.yyyy') 
     and to_date('${endDate}','dd.mm.yyyy')
     and coalesce(p.department_id,w.lpu_id)='${lpu_id}' 
-    and vst.code='LABSURVEY' 
+    and vst.code='LABSURVEY'
+    and (p.isunpaid=false or p.isunpaid is null)
     and p.cancelDate is null ${sqlAdd}
     group by ${addByGroup}pat.id,pat.lastname,pat.firstname,pat.middlename
     ,vsst.name  , ssSls.code,ssslo.code,pl.medCase_id,pl.id

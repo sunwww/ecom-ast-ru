@@ -17,7 +17,6 @@
 			var cost;
 			var count;
 			function addRowWithDir(aId,aName) {
-				//alert(aId) ;
 				var isNew = true ;
 				var cnt = +$('cnt').value ;
 			   for (var i=1; i<=cnt;i++) {
@@ -44,8 +43,6 @@
 						    nameId=aId ;
 						    var count = 1;
 						   	var costName="cost"+cnt;
-						    //cost = document.getElementsByName("cost"+nameId)[0].value;
-						    
 						    // Находим нужную таблицу
 						    var tbody = document.getElementById('tab1').getElementsByTagName('TBODY')[0];
 							if(nameId!="")if(nameId!=null){
@@ -59,11 +56,13 @@
 							    var td2 = document.createElement("TD");
 							    var td3 = document.createElement("TD");
 							    var td4 = document.createElement("TD");
+                                var td5 = document.createElement("TD");
 							    
 							    row.appendChild(td1);
 							    row.appendChild(td2);
 							    row.appendChild(td3);
 							    row.appendChild(td4);
+                                row.appendChild(td5);
 							
 							    // Наполняем ячейки
 							    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='0' type='hidden' >";
@@ -76,10 +75,8 @@
 				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
 				                   }
 				   			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
-				   			    //$('sum'+cnt).readOnly=true ;
-				   			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
-				                eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
-
+                                var attr=1;
+                                td5.innerHTML = "<input  readonly='true' hidden id='attr"+cnt+"' name='attr"+cnt+"' value='"+attr+"' size='9'/ >";
 				   			 checkSum() ;
 							}
 		                }
@@ -87,86 +84,86 @@
 				}
 			   checkSum() ;
 			}
-			function addRow() {
-			    // Считываем значения с формы
-				
-			    //td3.innerHTML = "<input name='count"+nameId+"' value='"+count+"' size='9'>";
-			    var nameId = document.getElementById('priceMedService').value;
-			    ContractService.getCostByPriceMedService(nameId, {
-		               callback: function(aResult) {
-		            	   var cnt=+$('cnt').value+1 ;
-		   					$('cnt').value = cnt;
-		                   //alert(aPosition) ;
-						    var name = document.getElementById('priceMedServiceName').value;
-						    nameId = document.getElementById('priceMedService').value;
-						    var count = document.getElementById('Count').value;
-						   	var costName="cost"+cnt;
-						    //cost = document.getElementsByName("cost"+nameId)[0].value;
-						    
-						    // Находим нужную таблицу
-						    var tbody = document.getElementById('tab1').getElementsByTagName('TBODY')[0];
-							if(nameId!="")if(nameId!=null){
-							    // Создаем строку таблицы и добавляем ее
-							    var row = document.createElement("TR");
-							    tbody.appendChild(row);
-							
-							    // Создаем ячейки в вышесозданной строке
-							    // и добавляем тх
-							    var td1 = document.createElement("TD");
-							    var td2 = document.createElement("TD");
-							    var td3 = document.createElement("TD");
-							    var td4 = document.createElement("TD");
-							    
-							    row.appendChild(td1);
-							    row.appendChild(td2);
-							    row.appendChild(td3);
-							    row.appendChild(td4);
-							
-							    // Наполняем ячейки
-							    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='0' type='hidden' >";
-				                   if (+aResult>0)  {
-				                   	td2.innerHTML =  aResult +"<input id='cost"+cnt+"' name='cost"+cnt+"' value='"+aResult+"' type='hidden' / >";
-				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aResult)*(+count)+"' size='9' readonly='true' />" ;
-				                   	//alert(+(+aResult)*(+count));
-				                   } else {
-				                   	td2.innerHTML = "0" ;
-				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
-				                   }
-				   			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
-				   			    //$('sum'+cnt).readOnly=true ;
-				   			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
-				                eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
+            //milamesher добавление в договор услуг с направлениями
+            function addRow(nameIdp,namep,cntp) {
+                var nameId, name,cnt,count;
+                cnt=+$('cnt').value+1 ;
+                $('cnt').value = cnt;
+                if (nameIdp==-1) {
+                    nameId = document.getElementById('priceMedService').value;
+                    name = document.getElementById('priceMedServiceName').value;
+                    count = document.getElementById('Count').value;
+                }
+                else {
+                    var nameId = nameIdp;
+                    var name = namep;
+                    count = cntp;
+                }
+                ContractService.getCostByPriceMedService(nameId, {
+                        callback: function(aResult) {
+                            // Находим нужную таблицу
+                            var tbody = document.getElementById('tab1').getElementsByTagName('TBODY')[0];
+                            if(nameId!="")if(nameId!=null){
+                                // Создаем строку таблицы и добавляем ее
+                                var row = document.createElement("TR");
+                                tbody.appendChild(row);
 
-				   			 checkSum() ;
-							}
-		                }
-		    		}
-               );
-			
-			}
-	
-	function checkSum() {
-		var costAll = 0;
-		var medServAll = "";
-		var cnt = +$('cnt').value ;
-		for (var i=1; i<=cnt;i++) {
-			if ($('count'+i)) {
-				var count=+$('count'+i).value
-				var cost = +$('cost'+i).value ;
-				var sum = (cost*count) ;
-				costAll = costAll + sum ;
-				$('sum'+i).value=sum ;
-				if (medServAll!='') medServAll=medServAll+"#" ;
-				medServAll = medServAll+$('service'+i).value+":"+count;
-			}
-			
-		}
-		$('priceMedServicies').value=medServAll;
-		$('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>' 
-		$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>' 
-		//$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
-		
-	}
+                                // Создаем ячейки в вышесозданной строке
+                                // и добавляем тх
+                                var td1 = document.createElement("TD");
+                                var td2 = document.createElement("TD");
+                                var td3 = document.createElement("TD");
+                                var td4 = document.createElement("TD");
+                                var td5 = document.createElement("TD");
+
+                                row.appendChild(td1);
+                                row.appendChild(td2);
+                                row.appendChild(td3);
+                                row.appendChild(td4);
+                                row.appendChild(td5);
+
+                                // Наполняем ячейки
+                                td1.innerHTML = name+"<input readonly='true' id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='0' type='hidden' >";
+                                if (+aResult>0)  {
+                                    td2.innerHTML =  aResult +"<input  readonly='true' id='cost"+cnt+"' name='cost"+cnt+"' value='"+aResult+"' type='hidden' / >";
+                                    td4.innerHTML = "<input  readonly='true' id='sum"+cnt+"' name='sum"+cnt+"' value='"+(+aResult)*(+count)+"' size='9' readonly='true' />" ;
+                                    //alert(+(+aResult)*(+count));
+                                } else {
+                                    td2.innerHTML = "0" ;
+                                    td4.innerHTML = "<input  readonly='true' id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
+                                }
+                                td3.innerHTML = "<input  readonly='true' id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
+                                var attr=(nameIdp==-1)? 1:0;
+                                td5.innerHTML = "<input  readonly='true' hidden id='attr"+cnt+"' name='attr"+cnt+"' value='"+attr+"' size='9'/ >";
+                                checkSum() ;
+                            }
+                        }
+                    }
+                );
+            }
+
+            function checkSum() {
+                var costAll = 0;
+                var medServAll = "";
+                var cnt = +$('cnt').value ;
+                for (var i=1; i<=cnt;i++) {
+                    if ($('count' + i) && $('attr' + i)) {
+                        var attr = +$('attr' + i).value;
+                            var count = +$('count' + i).value;
+                            var cost = +$('cost' + i).value;
+                            var sum = (cost * count);
+                            costAll = costAll + sum;
+                            $('sum' + i).value = sum;
+                        if (attr != 0) {
+                            if (medServAll != '') medServAll = medServAll + "#";
+                            medServAll = medServAll + $('service' + i).value + ":" + count;
+                        }
+                    }
+                }
+                $('priceMedServicies').value=medServAll;
+                $('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>';
+                $('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>';
+            }
 	$('autoAccount')
 </script>
 	</tiles:put>
@@ -190,6 +187,8 @@
 			<msh:hidden property="editUsername" />
 			<msh:hidden property="customer" />
 			<msh:hidden property="priceMedServicies" />
+			<msh:hidden property="referralsInfo"/>
+			<msh:hidden property="referralsInfoLab"/>
 			<msh:panel>
 				<msh:row>
 					<msh:autoComplete property="customer" label="Заказчик" viewOnlyField="true" vocName="contractPerson" size="100" horizontalFill="true" fieldColSpan="3"/>
@@ -247,8 +246,10 @@
 			</div>
 			</td>
 			<td>        	
-            <input type="button" name="subm" onclick="addRow();" value="+" tabindex="4" />
+            <input type="button" name="subm" onclick="addRow(-1,'',-1);" value="+" tabindex="4" />
             <input type="button" name="subm" onclick="show1DirMedService();" value="++" tabindex="4" />
+				<input type="button" name="subm" onclick="showAddEditSpecContractOne($('priceList').value);" value="Доб. направление к спец." tabindex="4" />
+			<input type="button" name="subm" onclick="showAddEditPrescContract($('priceList').value);" value="Доб. направление в лаб." tabindex="4" />
             </td>
             </tr>
             </table>
@@ -297,6 +298,8 @@
 				</msh:panel>	
 		</msh:form>
 		<tags:dir_medService name="1" table="PRICEMEDSERVICE" title="Прейскурант" functionAdd="addRowWithDir" addParam="priceList"/>
+		<tags:AddEditPrescContract name="AddEditPrescContract"/>
+		<tags:AddEditSpecContractOne name="AddEditSpecContractOne"/>
 	</tiles:put>
 	<tiles:put name="title" type="string">
 		<ecom:titleTrail mainMenu="Contract" beginForm="contract_medContract_personForm" />

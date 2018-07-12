@@ -2757,6 +2757,49 @@ left join medcase smoP on smoP.owner_id=w.id "
 				queryAppend = "code='1' or code='2'"
 		/>
 	</voc>
+	<voc id='medServiceForSpecPriceList' type='NativeVocService'>
+		<NativeVocService
+				from = 'priceposition pp'
+				parent="wf.id=:par1
+    			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate)
+    			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))
+				and pl.id=:par3"
+				parentSplitCount='3'
+				names = "PP.code || ' ' || PP.name|| ' ('||pp.cost||')'"
+				nameId="pms.id"
+				queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1' and pl.dateto is null and pp.dateto is null"
+				join="left join pricemedservice pms on pms.priceposition_id=pp.id
+				left join medservice ms on ms.id=pms.medservice_id
+ 				left join pricelist pl on pl.id=pp.pricelist_id
+ 				left join WorkFunctionService wfs on wfs.medService_id=ms.id
+ 				left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id
+				left join worker w on w.id=wf.worker_id"
+				order=''
+				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+				groupBy="PP.code, PP.name, pp.cost,pms.id"
+
+		/>
+	</voc>
+	<voc id='medServiceForLabPriceList' type='NativeVocService'>
+		<NativeVocService
+				from = 'priceposition pp'
+				parent="(ms.startDate is null or to_date(:par1,'dd.mm.yyyy')  >=ms.startDate)
+    			and (ms.finishDate is null or ms.finishDate>=to_date(:par1,'dd.mm.yyyy'))
+				and pl.id=:par2 and vsts.code='LABSURVEY'"
+				parentSplitCount='2'
+				names = "PP.code || ' ' || PP.name|| ' ('||pp.cost||')'"
+				nameId="pms.id"
+				queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1' and pl.dateto is null and pp.dateto is null"
+				join="left join pricemedservice pms on pms.priceposition_id=pp.id
+				left join medservice ms on ms.id=pms.medservice_id
+ 				left join pricelist pl on pl.id=pp.pricelist_id
+				left join vocservicetype vsts on vsts.id=ms.servicetype_id"
+				order=''
+				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
+				groupBy="PP.code, PP.name, pp.cost,pms.id"
+
+		/>
+	</voc>
     <!--  ПЕРЕЛИВАНИЕ КРОВИ -->
     
     <voc id='vocBloodGroup' type='EntityVocService'>
