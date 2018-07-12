@@ -1047,7 +1047,7 @@ where m.id ='${param.id}'"/>
             }
             //Milamesher #101 25.06.2018 проставляется палата по умолчанию
             function setDefaultWorkPlaceByDepartment(dep) {
-                if (+dep != 0) {
+                if (+dep != 0 && window.location.href.indexOf("Create")!=-1) {
                     HospitalMedCaseService.getDefaultWorkPlaceByDepartment(dep, {
                         callback: function (aResult) {
                             if (aResult != '##') {

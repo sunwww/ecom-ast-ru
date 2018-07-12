@@ -632,6 +632,14 @@ public class MisLpuForm extends IdNameEntityForm {
 	@Persist
 	public Boolean getIsObservable() {return theIsObservable;}
 	public void setIsObservable(Boolean aIsObservable) {theIsObservable = aIsObservable;}
-	/** В архиве */
+	/** Обсервационное? */
 	private Boolean theIsObservable;
+
+	/** Палата новорождённых? */
+	@Comment("Палата новорождённых?")
+	@Persist
+	public Boolean getIsNewBorn() {return theIsNewBorn;}
+	public void setIsNewBorn(Boolean aIsNewBorn) {theIsNewBorn = aIsNewBorn;}
+	/** Палата новорождённых? */
+	private Boolean theIsNewBorn;
 }

@@ -26,7 +26,11 @@ import javax.persistence.OneToOne;
 @EntityFormSecurityPrefix("/Policy/E2")
 public class E2EntryForm extends IdEntityForm {
 
+
+
 //----------все поля ниже добавлены на jsp!!!
+    /** Дата направление на лечение */
+    private String theDirectDate ;
     /** Иногородний  */
     private Boolean theIsForeign =false;
     /** Тип доп. диспансеризации */
@@ -926,7 +930,10 @@ public class E2EntryForm extends IdEntityForm {
     public Boolean getIsForeign() {return theIsForeign;}
     public void setIsForeign(Boolean aIsForeign) {theIsForeign = aIsForeign;}
 
-
+    @Comment("Дата направление на лечение")
+    @Persist @DateString @DoDateString
+    public String getDirectDate() {return theDirectDate;}
+    public void setDirectDate(String aDirectDate) {theDirectDate = aDirectDate;}
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */

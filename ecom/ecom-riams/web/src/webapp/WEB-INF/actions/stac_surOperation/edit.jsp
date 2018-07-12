@@ -188,10 +188,10 @@
         <msh:row>
           <msh:autoComplete property="outcome" label="Исход операции" fieldColSpan="3" horizontalFill="true" vocName="vocOperationOutcome" />
         </msh:row>
-             <msh:row>
-                 <msh:autoComplete property="leftRight" label="Конечность" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight" />
-             </msh:row>
         </msh:ifNotInRole>
+          <msh:row>
+              <msh:autoComplete property="leftRight" label="Конечность" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight" />
+          </msh:row>
                 <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>
           <msh:label property="createUsername" label="пользователь" guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />

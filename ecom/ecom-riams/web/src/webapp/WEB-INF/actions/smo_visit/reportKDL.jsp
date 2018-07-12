@@ -152,7 +152,7 @@
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
+                <ecom:webQuery isReportBase="true" name="total" nameFldSql="total_sql" nativeSql="
                 select  name1 as name1,name2 as name2, adCode as adCode,name3 as name3, shname as shname,sum(totalCnt),sum(noPlanCnt) as noPlanCnt,sum(urgentCnt) as urgentCnt,sum(emCnt) as emCnt,sum(planCnt) as planCnt
                  from
                 (
@@ -210,7 +210,7 @@
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery name="totalName" nameFldSql="totalName_sql" nativeSql="
+                <ecom:webQuery isReportBase="true" name="totalName" nameFldSql="totalName_sql" nativeSql="
                select name,sum(cnt1) as cnt1,sum(cnt2) as cnt2,sum(cnt3) as cnt3,sum(cnt4) as cnt4,sum(cnt5) as cnt5
                 ,sum(cnt6) as cnt6,sum(cnt7) as cnt7 from
                 (select dep.name
@@ -270,7 +270,7 @@
         %>
         <msh:section>
         <msh:sectionTitle>
-        <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
+        <ecom:webQuery isReportBase="true" name="total" nameFldSql="total_sql" nativeSql="
         select * from getReportKdlHospReport('${dateBegin}','${dateEnd}','${typeVMPOrNotValueLeftJoin}','${typeVMPOrNotValueNotNull}',
         '${typeVMPOrNotValueGroup}','${typeVMPOrNotValueJustWhere}','${depsHosp}')
 "/>
@@ -298,7 +298,7 @@
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
+                <ecom:webQuery isReportBase="true" name="total" nameFldSql="total_sql" nativeSql="
                 select name,sum(cnt1) as cnt1,sum(cnt2) as cnt2,sum(cnt3) as cnt3,sum(cnt4) as cnt4,sum(cnt5) as cnt5
                 ,sum(cnt6) as cnt6,sum(cnt7) as cnt7 from
                 (select dep.name
@@ -355,7 +355,7 @@
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery name="total" nameFldSql="total_sql" nativeSql="
+                <ecom:webQuery isReportBase="true" name="total" nameFldSql="total_sql" nativeSql="
                 select distinct p.lastname ||' ' ||p.firstname|| ' ' || p.middlename as fio,coalesce(dep.name,dep2.name),dmc.id
                 from hitechmedicalcase highmc
                 left join medcase dmc on highmc.medcase_id=dmc.id

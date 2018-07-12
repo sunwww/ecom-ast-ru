@@ -579,9 +579,16 @@ public class MisLpu extends BaseEntity {
 	private Boolean theIsArchive;
 
 	/** Обсервационное? */
-	@Comment("Обсервационное")
+	@Comment("Обсервационное?")
 	public Boolean getIsObservable() {return theIsObservable;}
 	public void setIsObservable(Boolean aIsObservable) {theIsObservable = aIsObservable;}
-	/** Обсервационное */
+	/** Обсервационное? */
 	private Boolean theIsObservable;
+
+	/** Палата новорождённых? */
+	@Comment("Палата новорождённых?")
+	public Boolean getIsNewBorn() {return theIsNewBorn;}
+	public void setIsNewBorn(Boolean aIsNewBorn) {theIsNewBorn = aIsNewBorn;}
+	/** Палата новорождённых? */
+	private Boolean theIsNewBorn;
 }

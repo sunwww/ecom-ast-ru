@@ -170,13 +170,13 @@ public class Expert2ServiceJs {
         return monitorId;
     }
     public void checkEntry (Long aEntryId, boolean forceUpdateKsg, HttpServletRequest aRequest) throws NamingException {
-        System.out.println("start checkEntry ");
+        System.out.println("start checkEntry "+aEntryId);
         Injection.find(aRequest).getService(IExpert2Service.class).makeCheckEntry(aEntryId,forceUpdateKsg);
         System.out.println("finish checkEntry ");
     }
 
-    public void addMedHelpProfileBedType (Long aMedHelpId, Long aBedTypeId,HttpServletRequest aRequest ) throws NamingException {
-        Injection.find(aRequest).getService(IExpert2Service.class).addMedHelpProfileBedType(aMedHelpId,aBedTypeId);
+    public void addMedHelpProfileBedType (Long aMedHelpId, Long aBedTypeId, Long aBedSubTypeId, HttpServletRequest aRequest ) throws NamingException {
+        Injection.find(aRequest).getService(IExpert2Service.class).addMedHelpProfileBedType(aMedHelpId,aBedTypeId, aBedSubTypeId);
     }
 
     public boolean saveBillDateAndNumber(Long aListEntryId, String aType, String aServiceStream, String aOldBillNumber, String aOldBillDate,String aBillNumber, String aBillDate, String isForeign, HttpServletRequest aRequest) throws NamingException {
