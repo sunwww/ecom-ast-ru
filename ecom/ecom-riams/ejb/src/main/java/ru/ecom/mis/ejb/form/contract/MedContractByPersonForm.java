@@ -56,19 +56,6 @@ public class MedContractByPersonForm extends MedContractForm {
 	public String getDiscountDefault() {return theDiscountDefault;}
 	public void setDiscountDefault(String aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
 
-
-	/** Информация о направлениях к специалисту*/
-	@Comment("Информация о направлениях к специалисту")
-	public String getReferralsInfo() {return theReferralsInfo;}
-	public void setReferralsInfo(String aReferralsInfo) {theReferralsInfo = aReferralsInfo;}
-
-
-	/** Информация о направлениях в лабораторию*/
-	@Comment("Информация о направлениях в лабораторию")
-	public String getReferralsInfoLab() {return theReferralsInfoLab;}
-	public void setReferralsInfoLab(String aReferralsInfoLab) {theReferralsInfoLab = aReferralsInfoLab;}
-
-
 	/** Скидка по умолчанию */
 	private String theDiscountDefault;
 	/** Услуг */
@@ -79,9 +66,4 @@ public class MedContractByPersonForm extends MedContractForm {
 	private Boolean theAutoAccount;
 	/** Обслуживаемая персона */
 	private Long theServedPerson;
-	/** Информация о направлениях к специалисту*/
-	private String theReferralsInfo;
-	/** Информация о направлениях  в лабораторию*/
-	private String theReferralsInfoLab;
 }
-//lastrelease milameser 220518 #99

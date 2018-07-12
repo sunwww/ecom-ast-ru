@@ -184,7 +184,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
            var giveBack = cash-totalPrice;
            if (cash&& cash>0) {
         	   try {
-        		   if (giveBack>=0) { //milamesher #99 без сдачи, ровная стоимость, сдача 0
+        		   if (giveBack>0) {
         			   $('cashGiveBackCount').innerHTML ="<b> "+ (cash-totalPrice) +" руб</b>";   
         		   } else {
         			   $('cashGiveBackCount').innerHTML ="<b> Нужно больше денег!</b>";

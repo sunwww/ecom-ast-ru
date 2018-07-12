@@ -14,7 +14,6 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -311,13 +310,4 @@ public class ContractAccountMedService extends BaseEntity{
 
 	/** Пациент */
 	private Long thePatient;
-
-	/** Визит */
-	@Comment("Визит")
-	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-	/** СМО */
-	private MedCase theMedCase;
 }
-//last release milamesher #99

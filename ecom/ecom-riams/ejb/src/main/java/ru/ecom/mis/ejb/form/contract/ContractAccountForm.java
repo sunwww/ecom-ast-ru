@@ -225,20 +225,5 @@ public class ContractAccountForm extends IdEntityForm{
 	 */
 	private Long thePriceList;
 
-	/** Информация о направлениях к специалисту*/
-	@Comment("Информация о направлениях к специалисту")
-	public String getReferralsInfo() {return theReferralsInfo;}
-	public void setReferralsInfo(String aReferralsInfo) {theReferralsInfo = aReferralsInfo;}
 
-	/** Информация о направлениях к специалисту*/
-	private String theReferralsInfo;
-
-	/** Информация о направлениях в лабораторию*/
-	@Comment("Информация о направлениях в лабораторию")
-	public String getReferralsInfoLab() {return theReferralsInfoLab;}
-	public void setReferralsInfoLab(String aReferralsInfoLab) {theReferralsInfoLab = aReferralsInfoLab;}
-
-	/** Информация о направлениях  в лабораторию*/
-	private String theReferralsInfoLab;
 }
-//lastrelease milameser 150518 #99

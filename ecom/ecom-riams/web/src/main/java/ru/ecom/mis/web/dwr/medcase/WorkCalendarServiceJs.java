@@ -1849,11 +1849,4 @@ public class WorkCalendarServiceJs {
 		return service.getDayBySpec(aFuncId);
 		
 	}
-	//Milamesher #99 28052018 резервирование времени после выбора услуг ДО создания договора
-	public void setPrePatientBeforeContract(Long wctId, Long servedPersonId,HttpServletRequest aRequest) throws NamingException {
-		if (wctId!=null&&!wctId.equals("") && servedPersonId!=null&&!servedPersonId.equals("")) {
-			IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-			service.executeUpdateNativeSql("update workcalendartime set prepatient_id=(select cp.patient_id from ContractPerson cp where cp.id='"+servedPersonId+"') where id='"+wctId+"'");
-		}
-	}
 }

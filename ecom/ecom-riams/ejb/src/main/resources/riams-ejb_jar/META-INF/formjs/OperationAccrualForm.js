@@ -67,7 +67,6 @@ function onCreate(aForm, aEntity, aCtx) {
         aEntity.account.setReservationSum(new java.math.BigDecimal(balSum));
     }
     setMedCasesPaid(aEntity, aCtx);
-    setPrescsPaid(aEntity, aCtx);
 
     // Отправляем запрос на ККМ
     if (aCtx.getSessionContext().isCallerInRole("/Policy/Config/KKMWork")) {
@@ -89,19 +88,4 @@ function setMedCasesPaid(aEntity, aCtx) {
 	//Отмечаем все направления как оплаченные
 	var sql = "update medcase m set isPaid='1' where m.patient_id in (select cp.patient_id from contractperson cp left join servedperson sp on sp.person_id=cp.id where sp.account_id="+accountId+" and sp.contract_id="+contractId+") and m.dtype='Visit' and m.dateStart is null and m.isPaid='0'";
 	aCtx.manager.createNativeQuery(sql).executeUpdate();
-}
-//Milamesher #99 29052018 проставляем признак оплаты для неоплаченных лаб. исследований
-function setPrescsPaid(aEntity, aCtx) {
-    var contractId = aEntity.account.contract.id;
-    var accountId = aEntity.account.id;
-    //Отмечаем все направления в лабораторию как оплаченные (т.е. как НЕ неоплаченные)
-    var sql = "UPDATE prescription SET isunpaid = '0'\n" +
-        "WHERE id IN (\n" +
-        "SELECT p.id FROM prescription p\n" +
-        "left join prescriptionlist pl on pl.id=p.prescriptionlist_id\n" +
-        "left join medcase m on m.id=pl.medcase_id\n" +
-        "where m.patient_id in (select cp.patient_id from contractperson cp\n" +
-        "left join servedperson sp on sp.person_id=cp.id where sp.account_id="+accountId+" and sp.contract_id="+contractId+")\n" +
-        "and m.dtype='Visit' and m.dateStart is null and p.isunpaid='1')";
-    aCtx.manager.createNativeQuery(sql).executeUpdate();
 }

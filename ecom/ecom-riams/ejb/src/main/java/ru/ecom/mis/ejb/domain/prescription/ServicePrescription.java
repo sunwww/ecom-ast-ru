@@ -53,11 +53,5 @@ public class ServicePrescription extends Prescription{
 	    	return sb.toString();
 	}
 
-	/** Не оплачено? */
-	@Comment("Не оплачено?")
-	public Boolean getIsUnPaid() {return theIsUnPaid;}
-	public void setIsUnPaid(Boolean aIsUnPaid) {theIsUnPaid = aIsUnPaid;}
-	/** Не оплачено? */
-	private Boolean theIsUnPaid;
+	
 }
-//lastrelease milamesher #99 28.05.2018

@@ -1,9 +1,13 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import java.sql.Date;
+
+import javax.persistence.OneToOne;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
+import ru.ecom.mis.ejb.domain.contract.ServedPerson;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -124,12 +128,5 @@ public class ContractAccountMedServiceForm extends IdEntityForm{
 	/** Дата окончания */
 	private String theDateTo;
 
-	/** Визит */
-	@Comment("Визит")
-	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-	/** СМО */
-	private Long theMedCase;
+	
 }
-//last release milamesher #99
