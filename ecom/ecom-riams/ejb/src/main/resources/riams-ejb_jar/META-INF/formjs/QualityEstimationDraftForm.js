@@ -53,10 +53,6 @@ function onCreate(aForm, aEntity, aContext){
             +"\n WHERE vqec.kind_id=1"+"\n and vqec.parent_id is null"
             +"\n "+"\n group by vqec.id"+"\n having count(vqem.id)=0").getResultList() ;
         saveParentCriterion(list1,aEntity,aContext) ;
-        //Milamesher 12072018 если под заведующим создаётся - сразу не черновик
-        if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/QualityEstimationCard/View")){
-            aEntity.setIsDraft(false);
-        }
     } else {
         throw "-----------";
     }
