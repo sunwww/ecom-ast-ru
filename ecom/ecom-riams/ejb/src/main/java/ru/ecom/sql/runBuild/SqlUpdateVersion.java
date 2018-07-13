@@ -27,7 +27,7 @@ public class SqlUpdateVersion {
 
         for(File f:list){
             String filename= f.getName().toString();
-            if(filename.contains(".sql")){
+            if(filename.contains(".sql") || filename.contains(".SQL")){
 
                 String file = ReadFile(path+"/"+f.getName());
                 if(file.contains("{version}")){
