@@ -33,7 +33,7 @@ public class SqlUpdateVersion {
                 if(file.contains("{version}")){
 
                     System.out.println(filename+" - is update");
-                    file =file.replace("{version}",""+getUnixTime());
+                    file =file.replace("{version}",""+getUnixTime()+"#");
                     FileOutputStream fileOut = new FileOutputStream(path+"/"+f.getName());
                     fileOut.write(file.getBytes());
                     fileOut.close();
