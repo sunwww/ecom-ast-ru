@@ -333,7 +333,7 @@ select
     left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where
       (slo.parent_id='${param.id}' or slo.id='${param.id}')
-      and pp.id is not null
+      and pp.id is not null and (pms.dateto is null or pms.dateto>=so.operationDate)
       "/>
     <msh:table name="list" action="javascript:void(0)" idField="1" noDataMessage="Не найдено" guid="b0e1aebf-a031-48b1-bc75-ce1fbeb6c6db">
       <msh:tableColumn columnName="#" property="sn" />
