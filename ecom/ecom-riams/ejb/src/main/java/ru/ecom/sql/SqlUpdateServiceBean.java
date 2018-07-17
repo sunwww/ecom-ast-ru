@@ -42,6 +42,7 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
 
         List<String> files = getListFiles();
         for(String s : files){
+            LOG.info(">>>Work with file: "+s);
             InputStream in = getClass().getResourceAsStream("/"+s);
             String sql = convertStreamToString(in);
             String tmp[] = sql.split("#");
@@ -109,7 +110,7 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
                         break;
                     String name = e.getName();
                     if (name.startsWith("META-INF/sql/")) {
-                        if(name.contains(".sql")){
+                        if(name.contains(".sql") || name.contains(".SQL")){
                             fileNames.add(name);
                         }
                     }

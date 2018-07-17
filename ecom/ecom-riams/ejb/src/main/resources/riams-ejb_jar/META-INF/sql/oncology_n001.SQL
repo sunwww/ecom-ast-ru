@@ -1,0 +1,9 @@
+1531818079#
+alter table VocContraindicationAndRejection_N001 alter column id set default nextval('VocContraindicationAndRejection_N001_sequence');
+
+INSERT INTO VocContraindicationAndRejection_N001 (name,id_voc,startdate,finishdate) VALUES ('Противопоказания к проведению хирургического лечения','1','01.09.2018',null),
+('Противопоказания к проведению химиотерапевтического лечения','2','01.09.2018',null),
+('Противопоказания к проведению лучевой терапии','3','01.09.2018',null),
+('Отказ от проведения хирургического лечения','4','01.09.2018',null),
+('Отказ от проведения химиотерапевтического лечения','5','01.09.2018',null),
+('Отказ от проведения лучевой терапии','6','01.09.2018',null);
