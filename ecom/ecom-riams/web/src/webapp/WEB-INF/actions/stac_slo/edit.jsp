@@ -1054,9 +1054,9 @@ where m.id ='${param.id}'"/>
                                 var roomArr = aResult.split('#');
                                 if (+roomArr[0] != 0 && +roomArr[3] != 0) {
                                     $('roomNumber').value = roomArr[0];
-                                    $('roomNumberName').value = roomArr[1];
+                                    if ($('roomNumberName')!=null) $('roomNumberName').value = roomArr[1];
                                     $('bedNumber').value = roomArr[2];
-                                    $('bedNumberName').value = roomArr[3];
+                                    if ($('bedNumberName')!=null) $('bedNumberName').value = roomArr[3];
                                 }
                             }
                         }
@@ -1070,10 +1070,10 @@ where m.id ='${param.id}'"/>
                     try {
                         //departmentAutocomplete.setParentId($('lpu').value) ;
                         departmentAutocomplete.addOnChangeCallback(function() {
-                            try {
-                                roomNumberAutocomplete.setParentId($('department').value) ;
+                            try {//Milamesher 17072018 ошибка на roomNumberAutocomplete и roomNumberName при ShortEnter
+                                if (typeof(roomNumberAutocomplete)!== 'undefined') roomNumberAutocomplete.setParentId($('department').value) ;
                                 $('roomNumber').value='0' ;
-                                $('roomNumberName').value='' ;
+                                if ($('roomNumberName')!=null) $('roomNumberName').value='' ;
                                 $('ownerFunction').value="0";
                                 $('ownerFunctionName').value="";
 
@@ -1100,10 +1100,11 @@ where m.id ='${param.id}'"/>
                     try {
                         //departmentAutocomplete.setParentId($('lpu').value) ;
                         departmentAutocomplete.addOnChangeCallback(function() {
+                            try { //Milamesher 17072018 ошибка на roomNumberAutocomplete и roomNumberName при ShortEnter
                             updateLpuAndDate() ;
-                            roomNumberAutocomplete.setParentId($('department').value) ;
+                            if (typeof(roomNumberAutocomplete)!== 'undefined') roomNumberAutocomplete.setParentId($('department').value) ;
                             $('roomNumber').value='0' ;
-                            $('roomNumberName').value='' ;
+                            if ($('roomNumberName')!=null) $('roomNumberName').value='' ;
                             ownerFunctionAutocomplete.setParentId($('department').value) ;
                             HospitalMedCaseService.getDefaultInfoBySlo($('parent').value
                                 , $('department').value, $('serviceStream').value
@@ -1127,7 +1128,9 @@ where m.id ='${param.id}'"/>
                                     }
                                 })
                             setDefaultWorkPlaceByDepartment($('department').value);
-                        });
+                        }catch (e) {
+                            }}
+                        );
                     } catch (e) {
                     }
                 </script>
