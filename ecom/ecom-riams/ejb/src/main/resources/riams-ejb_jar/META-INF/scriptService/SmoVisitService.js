@@ -162,38 +162,40 @@ function printDirectionByPatient(aCtx,aParams) {
 * Не явка пациента на прием
 */
 function visitNoPatient(aContext, aVisitId) {
-	var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
-	.iterator().next() ;
-	var username = aContext.getSessionContext().getCallerPrincipal().toString() ;
-	var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
-		, java.lang.Long.valueOf(aVisitId)) ;
-	if (visit.timeExecute==null && visit.timePlan!=null) visit.timeExecute = visit.timePlan.timeFrom ;
-	if (visit.dateStart==null && visit.datePlan!=null) visit.dateStart = visit.datePlan.calendarDate ;
-	var list = aContext.manager.createQuery("from VocVisitResult where omcCode='-1'").getResultList() ;
-	if (list.size()>0) {
-		visit.visitResult = list.get(0) ;
-		visit.noActuality = true ;
-	} else {
-		visit.noActuality = true ;
-	}
-	
-	if (visit.timePlan!=null) {
-		visit.timePlan.medCase = null ;
-		if (visit.timePlan.prescription!=null) {
-			cancelPrescriptionByVisit(aContext, visit);
-			visit.timePlan.prescription = null;
-		}
-		visit.timePlan = null;
-	}
-	
-	/*
-	if(visit.startWorker==null) {
-		visit.startWorker = aContext.serviceInvoke("WorkerService", "findLogginedWorker") ;
-	}*/
-	// FIXME определять функцию правильно
-	if(visit.workFunctionExecute==null) {
-		visit.workFunctionExecute = startWF ;
-	}
+	if (!checkIfLabAlreadyTransfered(aContext, aVisitId)) {
+        var startWF= aContext.serviceInvoke("WorkerService", "findLogginedWorkFunctionList")
+            .iterator().next();
+        var username = aContext.getSessionContext().getCallerPrincipal().toString();
+        var visit = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit
+            , java.lang.Long.valueOf(aVisitId));
+        if (visit.timeExecute==null && visit.timePlan!=null) visit.timeExecute = visit.timePlan.timeFrom;
+        if (visit.dateStart==null && visit.datePlan!=null) visit.dateStart = visit.datePlan.calendarDate;
+        var list = aContext.manager.createQuery("from VocVisitResult where omcCode='-1'").getResultList();
+        if (list.size()>0) {
+            visit.visitResult = list.get(0);
+            visit.noActuality = true;
+        } else {
+            visit.noActuality = true;
+        }
+
+        if (visit.timePlan!=null) {
+            visit.timePlan.medCase = null;
+            if (visit.timePlan.prescription!=null) {
+                cancelPrescriptionByVisit(aContext, visit);
+                visit.timePlan.prescription = null;
+            }
+            visit.timePlan = null;
+        }
+
+        /*
+        if(visit.startWorker==null) {
+            visit.startWorker = aContext.serviceInvoke("WorkerService", "findLogginedWorker") ;
+        }*/
+        // FIXME определять функцию правильно
+        if (visit.workFunctionExecute == null) {
+            visit.workFunctionExecute = startWF;
+        }
+    }
 	return visit.getId();
 }
 /**
@@ -213,6 +215,25 @@ function cancelPrescriptionByVisit (aContext, aVisit) {
 	return;
 }
 
+/**
+ * Milamesher 17072018 если есть лаб. назначения, которые переданы в лабораторию, ставить неявку на приём нельзя
+ */
+
+function checkIfLabAlreadyTransfered(aContext, aVisitId) {
+    var list = aContext.manager.createNativeQuery("\n" +
+        "select case when exists(\n" +
+        "select pr.id from prescription pr\n" +
+        "left join prescriptionlist pl on pl.id=pr.prescriptionlist_id\n" +
+        "left join medcase vis on vis.id=pl.medcase_id\n" +
+        "where vis.id=" + aVisitId + " and pr.transferdate is not null) then '1' else '0' end ").getResultList() ;
+    if (list.size()>0) {
+    	if (+list.get(0)==1) {
+    		throw "Лабораторные направления, сделанные в этом визите, уже переданы в лабораторию. Поставить неявку на приём нельзя.";
+    		return true;
+        }
+    }
+    return false;
+}
 
 /**
  * Закрыть СПО по визиту

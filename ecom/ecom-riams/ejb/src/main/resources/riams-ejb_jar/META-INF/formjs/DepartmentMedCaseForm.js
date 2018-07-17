@@ -274,7 +274,7 @@ function onCreate(aForm, aEntity, aContext) {
 }
 //Milamesher #101 проставить палату матери в обсервац. её новорождённым детям
 function transferObservRoomToChild(aForm, aEntity, aContext) {
-    if (aEntity.prevMedCase!=null && aEntity.department.getIsObservable()) { //если это перевод в обсервационное
+    if (aEntity.prevMedCase!=null && aEntity.department.getIsObservable() && aEntity.roomNumber!=null && aEntity.bedNumber!=null) { //если это перевод в обсервационное
         //Нужно брать палаты и койки по наименованию, но отделение - новорождённых
         var list = aContext.manager.createNativeQuery("select wp.id as wpid,wpBed.id as wpbid from workplace wp\n" +
             "left join mislpu lpu on lpu.id=wp.lpu_id\n" +
