@@ -358,7 +358,7 @@ select
       left join medcase slo on slo.id=so.medcase_id
       left join vocservicestream vss on vss.id=so.servicestream_id
       left join medservice ms on ms.id=so.medservice_id
-    left join pricemedservice pms on pms.medservice_id=so.medservice_id
+    left join pricemedservice pms on pms.medservice_id=so.medservice_id and pms.dateto is null or pms.dateto>=so.operationdate
     left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='${priceList}'
       where
       (slo.parent_id='${param.id}' or slo.id='${param.id}')
