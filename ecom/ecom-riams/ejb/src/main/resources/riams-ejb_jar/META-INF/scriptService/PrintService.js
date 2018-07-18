@@ -145,8 +145,10 @@ function printGroupColumnNativeQuery(aCtx,aParams) {
     //Milamesher #102 услуги на разных строках без запятой
     sqlText=sqlText.replace("list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end) as f10medServicies",
 		"replace(list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name else null end),', ','') as f10medServicies");
-    sqlText=sqlText.replace("list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name","list(case when vst.code='LABSURVEY' then ms.name||'##'");
-	var sqlInfo = aParams.get("sqlInfo");
+    sqlText=sqlText.replace("list(case when vst.code='LABSURVEY' then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name"
+	//Milamesher #102 определённые услуги должны быть с кодами
+	,"list(case when vst.code='LABSURVEY' then case when ms.printCodeLabReestr=true then ms.code||' ' ||ms.name||'##' else ms.name||'##' end");
+    var sqlInfo = aParams.get("sqlInfo");
 	var printSql = aParams.get("printSql");
 	var printId = +aParams.get("printId") ;
 	var isupdate=false ;
