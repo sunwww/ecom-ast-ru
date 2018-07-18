@@ -281,4 +281,14 @@ public class MedService extends BaseEntity{
 	public void setPromedCode(String promedCode) {
 		this.promedCode = promedCode;
 	}
+
+	/** Отображать код услуги при печати в реестре назначений для лаборатории */
+	private Boolean printCodeLabReestr;
+	@Comment("Отображать код услуги при печати в реестре назначений для лаборатории")
+	public Boolean getPrintCodeLabReestr() {
+		return printCodeLabReestr;
+	}
+	public void setPrintCodeLabReestr(Boolean printCodeLabReestr) {
+		this.printCodeLabReestr = printCodeLabReestr;
+	}
 }
