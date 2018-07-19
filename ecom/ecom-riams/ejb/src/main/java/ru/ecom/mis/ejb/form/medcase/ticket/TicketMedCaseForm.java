@@ -202,6 +202,17 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
     public Long getDispRegistration() {return theDispRegistration;}
     public void setDispRegistration(Long aVocDispanseryRegistration) {theDispRegistration = aVocDispanseryRegistration;}
 
+	/** Дата следующего визита */
+	@Comment("Дата следующего визита")
+	@DateString @DoDateString @Persist @MaxDateCurrent
+	public String getNextVisitDate() {
+		return theNextVisitDate;
+	}
+
+	public void setNextVisitDate(String aNextVisitDate) {
+		theNextVisitDate = aNextVisitDate;
+	}
+
     /** Скорая помощь */
 	@Comment("Скорая помощь")
 	@Persist
@@ -219,6 +230,8 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 	@Persist @DateString @DoDateString @MaxDateCurrent @Required
 	public String getDateStart() {return theDateStart;}
 	public void setDateStart(String aNewProperty) {theDateStart = aNewProperty;}
+	/** Дата следующего визита */
+	private String theNextVisitDate;
 	/** Дата начала */
 	private String theDateStart;
 	/** Исход визита */

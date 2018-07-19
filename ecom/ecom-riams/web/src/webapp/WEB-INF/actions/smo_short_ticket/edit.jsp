@@ -103,7 +103,6 @@
     <script type="text/javascript">
     var oldaction = document.forms[0].action ;
     document.forms[0].action = 'javascript:isExistTicket(this)';
-
     function getFreeTimeForWorkfunction() {
         var wf = +$("workFunctionExecute").value ;
         var ds = $("dateFinish").value ;
@@ -118,6 +117,8 @@
                         $('workFunctionPlan').value=$('workFunctionExecute').value;
                         oldaction="entitySaveGoView-smo_direction.do";
                     }
+                    document.forms[0].action = oldaction ;
+                    document.forms[0].submit() ;
                 }
             });
         }
@@ -125,7 +126,7 @@
 
     workFunctionExecuteAutocomplete.addOnChangeCallback(function() {
     	getInfoByWorker();
-    	getFreeTimeForWorkfunction();
+    //	getFreeTimeForWorkfunction();
 	});
 
     function isExistTicket() {
@@ -154,8 +155,8 @@
 	                    if (aResult) {
 					    		showTicketDouble(aResult) ;
 	                     } else {
-	                    	 document.forms[0].action = oldaction ;
-					    	 document.forms[0].submit() ;
+                            getFreeTimeForWorkfunction();
+
 	                     }
 	                 }
 		        	}
