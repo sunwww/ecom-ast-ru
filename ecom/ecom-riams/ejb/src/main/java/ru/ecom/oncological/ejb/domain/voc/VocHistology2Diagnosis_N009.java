@@ -3,9 +3,11 @@ package ru.ecom.oncological.ejb.domain.voc;
 
 import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**N009 - классификатор соответсвия гистологии диагнозам*/
 @Entity
+@Table(schema="SQLUser")
 public class VocHistology2Diagnosis_N009 extends VocBaseFederal {
 
     private Integer id_voc;

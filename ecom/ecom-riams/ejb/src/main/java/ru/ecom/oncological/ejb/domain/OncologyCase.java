@@ -40,7 +40,7 @@ public class OncologyCase extends BaseEntity {
 
     /**Сведения об услуге при онкологического заболевания */
     /**Сведения о проведении консилиума*/
-    private VocOncologyConsilium consilium;
+   // private VocOncologyConsilium consilium;
     /**Тип услуги*/
     private VocTypeTreatment_N013 typeTreatment;
     /**Тип хирургического лечения*/
@@ -69,14 +69,14 @@ public class OncologyCase extends BaseEntity {
         this.medCase = medCase;
     }
 
-    @Comment("Повод обращения")
+  /*  @Comment("Повод обращения")
     @OneToOne
     public VocOncologyReasonTreat getVocOncologyReasonTreat() {
         return vocOncologyReasonTreat;
     }
     public void setVocOncologyReasonTreat(VocOncologyReasonTreat vocOncologyReasonTreat) {
         this.vocOncologyReasonTreat = vocOncologyReasonTreat;
-    }
+    }*/
 
     @Comment("Стадия заболевания")
     @OneToOne
@@ -130,6 +130,7 @@ public class OncologyCase extends BaseEntity {
         this.sumDose = sumDose;
     }
 
+    /*
     @Comment("Сведения о проведении консилиума")
     @OneToOne
     public VocOncologyConsilium getConsilium() {
@@ -137,7 +138,7 @@ public class OncologyCase extends BaseEntity {
     }
     public void setConsilium(VocOncologyConsilium consilium) {
         this.consilium = consilium;
-    }
+    }*/
 
     @Comment("Тип услуги")
     @OneToOne

@@ -1,10 +1,11 @@
 package ru.ecom.oncological.ejb.domain;
 
-import org.hibernate.annotations.Entity;
+
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.oncological.ejb.domain.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 

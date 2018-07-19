@@ -3,9 +3,11 @@ package ru.ecom.oncological.ejb.domain.voc;
 
 import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**N002 - классификатор стадий Stad*/
 @Entity
+@Table(schema="SQLUser")
 public class VocStad_N002 extends VocBaseFederal {
 
     private Integer id_voc;

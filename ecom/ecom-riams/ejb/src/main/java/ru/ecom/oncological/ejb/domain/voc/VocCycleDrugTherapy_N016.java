@@ -3,9 +3,11 @@ package ru.ecom.oncological.ejb.domain.voc;
 
 import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**N016 - классификатор циклов лекарственной терапии*/
 @Entity
+@Table(schema="SQLUser")
 public class VocCycleDrugTherapy_N016 extends VocBaseFederal {
 
     private Integer id_voc;
