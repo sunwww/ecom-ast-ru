@@ -24,13 +24,13 @@ public class OncologyCase extends BaseEntity {
     /**Повод обращения*/
     private VocOncologyReasonTreat vocOncologyReasonTreat;
     /**Стадия заболевания*/
-    private VocStad_N002 stad;
+    private VocOncologyN002 stad;
     /**Значение Tumor*/
-    private VocTumor_N003 tumor;
+    private VocOncologyN003 tumor;
     /**Значение Nodus*/
-    private VocNodus_N004 nodus;
+    private VocOncologyN004 nodus;
     /**Значение Metastasis_*/
-    private VocMetastasis_N005 metastasis;
+    private VocOncologyN005 metastasis;
     /**Признак отдаленных метастазов*/
     private Boolean isDistantMetastasis;
     /**Суммарная очаговая доза*/
@@ -40,17 +40,17 @@ public class OncologyCase extends BaseEntity {
 
     /**Сведения об услуге при онкологического заболевания */
     /**Сведения о проведении консилиума*/
-   // private VocOncologyConsilium consilium;
+    private VocOncologyConsilium consilium;
     /**Тип услуги*/
-    private VocTypeTreatment_N013 typeTreatment;
+    private VocOncologyN013 typeTreatment;
     /**Тип хирургического лечения*/
-    private VocTypeSurgTreatment_N014 surgTreatment;
+    private VocOncologyN014 surgTreatment;
     /**Линия лекарственной терамии*/
-    private VocLineDrugTherapy_N015 lineDrugTherapy;
+    private VocOncologyN015 lineDrugTherapy;
     /**Цикл лекарственной терапии*/
-    private VocCycleDrugTherapy_N016 cycleDrugTherapy;
+    private VocOncologyN016 cycleDrugTherapy;
     /**Тип лучевой терапии*/
-    private VocTypeRadTherapy_N017 typeRadTherapy;
+    private VocOncologyN017 typeRadTherapy;
 
     @Comment("Подозрение на онкологию")
     public Boolean getSuspicionOncologist() {
@@ -69,48 +69,48 @@ public class OncologyCase extends BaseEntity {
         this.medCase = medCase;
     }
 
-  /*  @Comment("Повод обращения")
+    @Comment("Повод обращения")
     @OneToOne
     public VocOncologyReasonTreat getVocOncologyReasonTreat() {
         return vocOncologyReasonTreat;
     }
     public void setVocOncologyReasonTreat(VocOncologyReasonTreat vocOncologyReasonTreat) {
         this.vocOncologyReasonTreat = vocOncologyReasonTreat;
-    }*/
+    }
 
     @Comment("Стадия заболевания")
     @OneToOne
-    public VocStad_N002 getStad() {
+    public VocOncologyN002 getStad() {
         return stad;
     }
-    public void setStad(VocStad_N002 stad) {
+    public void setStad(VocOncologyN002 stad) {
         this.stad = stad;
     }
 
     @Comment("Значение Tumor")
     @OneToOne
-    public VocTumor_N003 getTumor() {
+    public VocOncologyN003 getTumor() {
         return tumor;
     }
-    public void setTumor(VocTumor_N003 tumor) {
+    public void setTumor(VocOncologyN003 tumor) {
         this.tumor = tumor;
     }
 
     @Comment("Значение Nodus")
     @OneToOne
-    public VocNodus_N004 getNodus() {
+    public VocOncologyN004 getNodus() {
         return nodus;
     }
-    public void setNodus(VocNodus_N004 nodus) {
+    public void setNodus(VocOncologyN004 nodus) {
         this.nodus = nodus;
     }
 
     @Comment("Значение Metastasis")
     @OneToOne
-    public VocMetastasis_N005 getMetastasis() {
+    public VocOncologyN005 getMetastasis() {
         return metastasis;
     }
-    public void setMetastasis(VocMetastasis_N005 metastasis) {
+    public void setMetastasis(VocOncologyN005 metastasis) {
         this.metastasis = metastasis;
     }
 
@@ -130,7 +130,7 @@ public class OncologyCase extends BaseEntity {
         this.sumDose = sumDose;
     }
 
-    /*
+
     @Comment("Сведения о проведении консилиума")
     @OneToOne
     public VocOncologyConsilium getConsilium() {
@@ -138,50 +138,50 @@ public class OncologyCase extends BaseEntity {
     }
     public void setConsilium(VocOncologyConsilium consilium) {
         this.consilium = consilium;
-    }*/
+    }
 
     @Comment("Тип услуги")
     @OneToOne
-    public VocTypeTreatment_N013 getTypeTreatment() {
+    public VocOncologyN013 getTypeTreatment() {
         return typeTreatment;
     }
-    public void setTypeTreatment(VocTypeTreatment_N013 typeTreatment) {
+    public void setTypeTreatment(VocOncologyN013 typeTreatment) {
         this.typeTreatment = typeTreatment;
     }
 
     @Comment("Тип хирургического лечения")
     @OneToOne
-    public VocTypeSurgTreatment_N014 getSurgTreatment() {
+    public VocOncologyN014 getSurgTreatment() {
         return surgTreatment;
     }
-    public void setSurgTreatment(VocTypeSurgTreatment_N014 surgTreatment) {
+    public void setSurgTreatment(VocOncologyN014 surgTreatment) {
         this.surgTreatment = surgTreatment;
     }
 
     @Comment("Линия лекарственной терамии")
     @OneToOne
-    public VocLineDrugTherapy_N015 getLineDrugTherapy() {
+    public VocOncologyN015 getLineDrugTherapy() {
         return lineDrugTherapy;
     }
-    public void setLineDrugTherapy(VocLineDrugTherapy_N015 lineDrugTherapy) {
+    public void setLineDrugTherapy(VocOncologyN015 lineDrugTherapy) {
         this.lineDrugTherapy = lineDrugTherapy;
     }
 
     @Comment("Цикл лекарственной терапии")
     @OneToOne
-    public VocCycleDrugTherapy_N016 getCycleDrugTherapy() {
+    public VocOncologyN016 getCycleDrugTherapy() {
         return cycleDrugTherapy;
     }
-    public void setCycleDrugTherapy(VocCycleDrugTherapy_N016 cycleDrugTherapy) {
+    public void setCycleDrugTherapy(VocOncologyN016 cycleDrugTherapy) {
         this.cycleDrugTherapy = cycleDrugTherapy;
     }
 
     @Comment("Тип лучевой терапии")
     @OneToOne
-    public VocTypeRadTherapy_N017 getTypeRadTherapy() {
+    public VocOncologyN017 getTypeRadTherapy() {
         return typeRadTherapy;
     }
-    public void setTypeRadTherapy(VocTypeRadTherapy_N017 typeRadTherapy) {
+    public void setTypeRadTherapy(VocOncologyN017 typeRadTherapy) {
         this.typeRadTherapy = typeRadTherapy;
     }
 

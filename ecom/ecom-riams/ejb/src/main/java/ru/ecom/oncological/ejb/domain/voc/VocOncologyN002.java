@@ -5,10 +5,10 @@ import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-/**N005 - классификатор Metastasis*/
+/**N002 - классификатор стадий Stad*/
 @Entity
 @Table(schema="SQLUser")
-public class VocMetastasis_N005 extends VocBaseFederal {
+public class VocOncologyN002 extends VocBaseFederal {
 
     private Integer id_voc;
     private String ds;

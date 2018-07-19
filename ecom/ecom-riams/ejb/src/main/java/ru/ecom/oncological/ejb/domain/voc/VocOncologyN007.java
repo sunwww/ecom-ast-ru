@@ -5,10 +5,10 @@ import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-/**N017 - классификатор типов лучевой терапии*/
+/**N007 - классификатор гистологии*/
 @Entity
 @Table(schema="SQLUser")
-public class VocTypeRadTherapy_N017 extends VocBaseFederal {
+public class VocOncologyN007 extends VocBaseFederal {
 
     private Integer id_voc;
 

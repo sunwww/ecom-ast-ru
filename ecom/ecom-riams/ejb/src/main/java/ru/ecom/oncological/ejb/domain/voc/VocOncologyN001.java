@@ -8,7 +8,7 @@ import javax.persistence.Table;
 /**​N001 - классификатор противопоказаний и отказов*/
 @Entity
 @Table(schema="SQLUser")
-public class VocContraindicationAndRejection_N001 extends VocBaseFederal {
+public class VocOncologyN001 extends VocBaseFederal {
 
     private Integer id_voc;
 

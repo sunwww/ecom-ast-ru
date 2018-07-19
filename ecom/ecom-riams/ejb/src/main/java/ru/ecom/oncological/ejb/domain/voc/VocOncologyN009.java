@@ -5,12 +5,13 @@ import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-/**N008 - классификатор гистологии*/
+/**N009 - классификатор соответсвия гистологии диагнозам*/
 @Entity
 @Table(schema="SQLUser")
-public class VocResultHistiology_N008 extends VocBaseFederal {
+public class VocOncologyN009 extends VocBaseFederal {
 
     private Integer id_voc;
+    private String ds;
     private Integer id_histology;
 
     public Integer getId_voc() {
@@ -18,6 +19,13 @@ public class VocResultHistiology_N008 extends VocBaseFederal {
     }
     public void setId_voc(Integer id_voc) {
         this.id_voc = id_voc;
+    }
+
+    public String getDs() {
+        return ds;
+    }
+    public void setDs(String ds) {
+        this.ds = ds;
     }
 
     public Integer getId_histology() {

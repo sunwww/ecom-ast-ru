@@ -2,7 +2,7 @@ package ru.ecom.oncological.ejb.domain;
 
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.oncological.ejb.domain.voc.VocContraindicationAndRejection_N001;
+import ru.ecom.oncological.ejb.domain.voc.VocOncologyN001;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -21,7 +21,7 @@ public class OncologyContra extends BaseEntity {
     /**Случай онкологического лечения */
     private OncologyCase oncologyCase;
     /** Код противопоказания */
-    private VocContraindicationAndRejection_N001 contraindicationAndRejection;
+    private VocOncologyN001 contraindicationAndRejection;
     /** Дата регистрации противопоказания или отказа*/
     private Date date;
 
@@ -37,10 +37,10 @@ public class OncologyContra extends BaseEntity {
 
     @Comment("Код противопоказания")
     @OneToOne
-    public VocContraindicationAndRejection_N001 getContraindicationAndRejection() {
+    public VocOncologyN001 getContraindicationAndRejection() {
         return contraindicationAndRejection;
     }
-    public void setContraindicationAndRejection(VocContraindicationAndRejection_N001 contraindicationAndRejection) {
+    public void setContraindicationAndRejection(VocOncologyN001 contraindicationAndRejection) {
         this.contraindicationAndRejection = contraindicationAndRejection;
     }
 
