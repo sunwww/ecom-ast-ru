@@ -5,13 +5,13 @@ import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-/**N003 - классификатор Tumor*/
+/**N011 - классификатор значений маркеров*/
 @Entity
 @Table(schema="SQLUser")
-public class VocTumor_N003 extends VocBaseFederal {
+public class VocOncologyN011 extends VocBaseFederal {
 
     private Integer id_voc;
-    private String ds;
+    private Integer id_marker;
 
     public Integer getId_voc() {
         return id_voc;
@@ -20,10 +20,10 @@ public class VocTumor_N003 extends VocBaseFederal {
         this.id_voc = id_voc;
     }
 
-    public String getDs() {
-        return ds;
+    public Integer getId_marker() {
+        return id_marker;
     }
-    public void setDs(String ds) {
-        this.ds = ds;
+    public void setId_marker(Integer id_marker) {
+        this.id_marker = id_marker;
     }
 }

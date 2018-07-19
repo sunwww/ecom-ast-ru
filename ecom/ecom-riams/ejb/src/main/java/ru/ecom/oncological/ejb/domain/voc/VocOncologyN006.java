@@ -8,7 +8,7 @@ import javax.persistence.Table;
 /**N006 - справочник соответсвия стадий (Stad+Tumor+Nodus+Metastasis)*/
 @Entity
 @Table(schema="SQLUser")
-public class VocConformityStady_N006 extends VocBaseFederal {
+public class VocOncologyN006 extends VocBaseFederal {
 
     private Integer id_voc;
     private String ds;

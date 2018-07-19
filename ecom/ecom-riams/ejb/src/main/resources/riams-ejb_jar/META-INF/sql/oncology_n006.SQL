@@ -1,7 +1,7 @@
-1531818079#
-alter table VocConformityStady_N006 alter column id set default nextval('VocConformityStady_N006_sequence');
+1531985361#
+alter table VocOncologyN006 alter column id set default nextval('VocOncologyN006_sequence');
 
-INSERT INTO VocConformityStady_N006 (id_voc,ds,id_stad,id_tumor,id_nodus,id_metastasis,startdate) VALUES
+INSERT INTO VocOncologyN006 (id_voc,ds,id_stad,id_tumor,id_nodus,id_metastasis,startdate) VALUES
 ('1','C16','1','3','2','1','01.09.2018'),
 ('2','C16','2','4','2','1','01.09.2018'),
 ('3','C16','3','7','2','1','01.09.2018'),

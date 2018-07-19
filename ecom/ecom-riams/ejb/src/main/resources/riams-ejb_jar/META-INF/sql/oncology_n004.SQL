@@ -1,8 +1,8 @@
-1531818079#
-alter table VocNodus_N004 alter column id set default nextval('VocNodus_N004_sequence');
-ALTER TABLE VocNodus_N004 ALTER COLUMN name Type character varying(1000);
+1531985361#
+alter table VocOncologyN004 alter column id set default nextval('VocOncologyN004_sequence');
+ALTER TABLE VocOncologyN004 ALTER COLUMN name Type character varying(1000);
 
-INSERT INTO VocNodus_N004 (id_voc,ds,code,name,startdate) VALUES
+INSERT INTO VocOncologyN004 (id_voc,ds,code,name,startdate) VALUES
 ('1','C16','Nx','Недостаточно данных для оценки регионарных лимфатических узлов','01.09.2018'),
 ('2','C16','N0','Нет признаков метастатического поражения регионарных лимфатических узлов','01.09.2018'),
 ('3','C16','N1','От 1 до 2 пораженных лимфатических узлов','01.09.2018'),

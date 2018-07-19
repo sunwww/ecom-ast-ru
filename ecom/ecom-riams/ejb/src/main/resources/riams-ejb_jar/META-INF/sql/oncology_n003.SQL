@@ -1,8 +1,8 @@
-1531818079#
-ALTER TABLE VocTumor_N003 alter column id set default nextval('VocTumor_N003_sequence');
-ALTER TABLE VocTumor_N003 ALTER COLUMN name Type character varying(1000);
+1531985361#
+ALTER TABLE VocOncologyN003 alter column id set default nextval('VocOncologyN003_sequence');
+ALTER TABLE VocOncologyN003 ALTER COLUMN name Type character varying(1000);
 
-INSERT INTO VocTumor_N003 (id_voc,ds,code,name,startdate) VALUES ('1','C16','Tx','Недостаточно данных для оценки первичной опухоли','01.09.2018'),
+INSERT INTO VocOncologyN003 (id_voc,ds,code,name,startdate) VALUES ('1','C16','Tx','Недостаточно данных для оценки первичной опухоли','01.09.2018'),
 ('2','C16','T0','Данных о наличии первичной опухоли не выявлено','01.09.2018'),
 ('3','C16','Tis','Карцинома insitu (опухоль в пределах слизистой без инвазии собственной пластинки). Тяжелая дисплазия','01.09.2018'),
 ('4','C16','T1','Собственная пластинка или мышечная пластинка слизистой оболочки, подслизистый слой','01.09.2018'),

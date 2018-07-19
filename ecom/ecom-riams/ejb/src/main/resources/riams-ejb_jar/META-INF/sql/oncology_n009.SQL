@@ -1,8 +1,8 @@
-1531818079#
+1531985361#
 
-alter table VocHistology2Diagnosis_N009 alter column id set default nextval('VocHistology2Diagnosis_N009_sequence');
+alter table VocOncologyN009 alter column id set default nextval('VocOncologyN009_sequence');
 
-INSERT INTO VocHistology2Diagnosis_N009 (id_voc,ds,id_histology,startdate) VALUES
+INSERT INTO VocOncologyN009 (id_voc,ds,id_histology,startdate) VALUES
 ('1','C16','1','01.09.2018'),
 ('2','C56','1','01.09.2018'),
 ('3','C56','3','01.09.2018'),

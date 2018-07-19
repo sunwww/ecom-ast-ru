@@ -1,8 +1,8 @@
-1531818079#
+1531985361#
 
-alter table VocResultHistiology_N008 alter column id set default nextval('VocResultHistiology_N008_sequence');
+alter table VocOncologyN009 alter column id set default nextval('VocOncologyN009_sequence');
 
-INSERT INTO VocResultHistiology_N008 (id_voc,id_histology,name,startdate) VALUES
+INSERT INTO VocOncologyN009 (id_voc,id_histology,name,startdate) VALUES
 ('1','1','Эпителиальный','01.09.2018'),
 ('2','1','Неэпителиальный','01.09.2018'),
 ('3','2','Светлоклеточный','01.09.2018'),
