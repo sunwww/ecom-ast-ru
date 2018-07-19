@@ -1,7 +1,7 @@
 1531985361#
 alter table VocOncologyN011 alter column id set default nextval('VocOncologyN011_sequence');
 
-INSERT INTO VocOncologyN011 (id_voc,id_marker,code,name,startdate) VALUES
+INSERT INTO VocOncologyN011 (code,marker,value,name,startdate) VALUES
 ('1','1','+','Гиперэкспрессия белка HER2','01.09.2018'),
 ('2','1','-','Отсутствие гиперэкспрессии белка HER2','01.09.2018'),
 ('3','1','Не определён','Исследование не проводилось','01.09.2018'),

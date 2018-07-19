@@ -1,7 +1,7 @@
 1531985361#
 alter table VocOncologyN014 alter column id set default nextval('VocOncologyN014_sequence');
 
-INSERT INTO VocOncologyN014 (id_voc,name,startdate) VALUES
+INSERT INTO VocOncologyN014 (code,name,startdate) VALUES
 ('1','Первичной опухоли, в том числе с удалением регионарных лимфатических узлов','01.09.2018'),
 ('2','Метастазов','01.09.2018'),
 ('3','Симптоматическое','01.09.2018'),
