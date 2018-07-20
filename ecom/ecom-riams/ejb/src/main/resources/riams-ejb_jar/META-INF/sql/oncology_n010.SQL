@@ -1,7 +1,7 @@
 1531985361#
 alter table VocOncologyN010 alter column id set default nextval('VocOncologyN010_sequence');
 
-INSERT INTO VocOncologyN010 (id_voc,code,name,startdate) VALUES
+INSERT INTO VocOncologyN010 (code,markerCode,name,startdate) VALUES
 ('1','НЕR2','Уровень экспрессии белка HER2','01.09.2018'),
 ('2','BRAF','Наличие мутаций в гене BRAF','01.09.2018'),
 ('3','c-Kit','Наличие мутаций в гене c-Kit','01.09.2018'),

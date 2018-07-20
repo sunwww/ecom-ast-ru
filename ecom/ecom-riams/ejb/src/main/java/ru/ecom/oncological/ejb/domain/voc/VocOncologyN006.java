@@ -2,6 +2,8 @@ package ru.ecom.oncological.ejb.domain.voc;
 /** Created by rkurbanov on 17.07.2018. */
 
 import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -10,19 +12,7 @@ import javax.persistence.Table;
 @Table(schema="SQLUser")
 public class VocOncologyN006 extends VocBaseFederal {
 
-    private Integer id_voc;
     private String ds;
-    private Integer id_stad;
-    private Integer id_tumor;
-    private Integer id_nodus;
-    private Integer id_metastasis;
-
-    public Integer getId_voc() {
-        return id_voc;
-    }
-    public void setId_voc(Integer id_voc) {
-        this.id_voc = id_voc;
-    }
 
     public String getDs() {
         return ds;
@@ -31,31 +21,37 @@ public class VocOncologyN006 extends VocBaseFederal {
         this.ds = ds;
     }
 
-    public Integer getId_stad() {
-        return id_stad;
-    }
-    public void setId_stad(Integer id_stad) {
-        this.id_stad = id_stad;
-    }
+     /** Стадия */
+     @Comment("Стадия")
+     public String getStad() {return theStad;}
+     public void setStad(String aStad) {theStad = aStad;}
+     /** Стадия */
+     private String theStad ;
 
-    public Integer getId_tumor() {
-        return id_tumor;
-    }
-    public void setId_tumor(Integer id_tumor) {
-        this.id_tumor = id_tumor;
-    }
+     /** Tumor */
+     @Comment("Tumor")
+     public String getTumor() {return theTumor;}
+     public void setTumor(String aTumor) {theTumor = aTumor;}
+     /** Tumor */
+     private String theTumor ;
 
-    public Integer getId_nodus() {
-        return id_nodus;
-    }
-    public void setId_nodus(Integer id_nodus) {
-        this.id_nodus = id_nodus;
-    }
+     /** Nodus */
+     @Comment("Nodus")
+     public String getNodus() {return theNodus;}
+     public void setNodus(String aNodus) {theNodus = aNodus;}
+     /** Nodus */
+     private String theNodus ;
 
-    public Integer getId_metastasis() {
-        return id_metastasis;
-    }
-    public void setId_metastasis(Integer id_metastasis) {
-        this.id_metastasis = id_metastasis;
-    }
+     /** Metastasis */
+     @Comment("Metastasis")
+     public String getMetastasis() {return theMetastasis;}
+     public void setMetastasis(String aMetastasis) {theMetastasis = aMetastasis;}
+     /** Metastasis */
+     private String theMetastasis ;
+
+
+
+
+
+
 }

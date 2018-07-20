@@ -1,0 +1,275 @@
+<vocconfig>
+    <voc id='vocOncologyN001' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN001'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN001Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN001 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN002' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN002'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN002Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN002 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN003' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN003'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN003Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN003 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN004' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN004'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN004Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN004 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN005' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN005'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN005Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN005 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+
+    <voc id='vocOncologyN006' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN006'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN006Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN006 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN007' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN007'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN007Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN007 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN008' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN008'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN008Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN008 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN009' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN009'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN009Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN009 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN010' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN010'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN010Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN010 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN011' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN011'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN011Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN011 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN012' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN012'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN012Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN012 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN013' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN013'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN013Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN013 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN014' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN014'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN014Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN014 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN015' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN015'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN015Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN015 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN016' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN016'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN016Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN016 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN017' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN017'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyN017Code" type="NativeVocService">
+        <NativeVocService
+                from="VocOncologyN017 voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+</vocconfig>

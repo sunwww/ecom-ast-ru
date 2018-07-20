@@ -10,15 +10,7 @@ import javax.persistence.Table;
 @Table(schema="SQLUser")
 public class VocOncologyN002 extends VocBaseFederal {
 
-    private Integer id_voc;
     private String ds;
-
-    public Integer getId_voc() {
-        return id_voc;
-    }
-    public void setId_voc(Integer id_voc) {
-        this.id_voc = id_voc;
-    }
 
     public String getDs() {
         return ds;

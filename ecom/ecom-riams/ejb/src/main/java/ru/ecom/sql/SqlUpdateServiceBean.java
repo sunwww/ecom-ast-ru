@@ -49,9 +49,9 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
             Integer currScriptVersion = Integer.valueOf(tmp[0]);
             if(databaseVersion<currScriptVersion){
                 execute(tmp[1]);
-            }
-            if(min<currScriptVersion){
-                min=currScriptVersion;
+                if(min<currScriptVersion){
+                    min=currScriptVersion;
+                }
             }
         }
 

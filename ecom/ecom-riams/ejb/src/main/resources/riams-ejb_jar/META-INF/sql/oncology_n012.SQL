@@ -1,7 +1,7 @@
 1531985361#
 alter table VocOncologyN012 alter column id set default nextval('VocOncologyN012_sequence');
 
-INSERT INTO VocOncologyN012 (id_voc,ds,id_marker,startdate) VALUES
+INSERT INTO VocOncologyN012 (code,ds,marker,startdate) VALUES
 ('1','C16','1','01.09.2018'),
 ('2','C43','2','01.09.2018'),
 ('3','C43','3','01.09.2018'),

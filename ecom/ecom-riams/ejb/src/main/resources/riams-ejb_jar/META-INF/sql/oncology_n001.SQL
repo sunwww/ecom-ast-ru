@@ -1,7 +1,7 @@
 1531985361#
 alter table VocOncologyN001 alter column id set default nextval('VocOncologyN001_sequence');
 
-INSERT INTO VocOncologyN001 (name,id_voc,startdate,finishdate) VALUES ('Противопоказания к проведению хирургического лечения','1','01.09.2018',null),
+INSERT INTO VocOncologyN001 (name,code,startdate,finishdate) VALUES ('Противопоказания к проведению хирургического лечения','1','01.09.2018',null),
 ('Противопоказания к проведению химиотерапевтического лечения','2','01.09.2018',null),
 ('Противопоказания к проведению лучевой терапии','3','01.09.2018',null),
 ('Отказ от проведения хирургического лечения','4','01.09.2018',null),
