@@ -34,7 +34,7 @@ public class DirectionPreCreateInterceptor implements IParentFormInterceptor {
 		List<Object[]> hospInfo = manager.createNativeQuery("select list(to_char(mc.dateStart,'dd.mm.yyyy')||' '||ml.name),list(ml.name) as mlname from MedCase mc left join MisLpu ml on ml.id=mc.department_id where mc.patient_id='"+aParentId+"' and mc.dtype='HospitalMedCase' and mc.dischargetime is null and mc.deniedHospitalizating_id is null group by mc.patient_id").getResultList() ;
 		String errorInfo = null ;
 		if (hospInfo.size()>0) {
-			errorInfo = "Пацинет ГОСПИТАЛИЗИРОВАН в стационар. "+hospInfo.get(0)[0] ;
+			errorInfo = "Пациент ГОСПИТАЛИЗИРОВАН в стационар. "+hospInfo.get(0)[0] ;
 
 			if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Direction/CreateDirectionInHospital")) {
 				throw new IllegalArgumentException(errorInfo+". Создание направления возможно только через лист назначения!" ) ;
