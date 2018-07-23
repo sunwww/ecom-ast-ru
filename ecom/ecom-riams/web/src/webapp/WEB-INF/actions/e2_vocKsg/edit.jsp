@@ -38,7 +38,7 @@
   order by c.startDate"/>
         <msh:section title='КУКСГ' createUrl="entityParentPrepareCreate-e2_vocKsgKuksg.do?id=${param.id}">
 
-            <msh:table name="kuksgList" printToExcelButton="в excel" action="entityParentEdit-e2_vocKsgKuksg.do" idField="1" >
+            <msh:table deleteUrl="entityDelete-e2_vocKsgKuksg.do" name="kuksgList" printToExcelButton="в excel" action="entityParentEdit-e2_vocKsgKuksg.do" idField="1" >
                 <msh:tableColumn property="2" columnName="Дата начала действия" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                 <msh:tableColumn property="3" columnName="Дата окончания действия" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                 <msh:tableColumn property="4" columnName="Значение" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />

@@ -206,7 +206,9 @@
                     if (confirm("Формировать файл по счету по всем заполнениям?")){
                         useAllListEntry=true;
                     }
-                    Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,{
+                    var ver = "3.0";
+                    if (confirm("Формировать в новом формате?")) {ver="3.1";}
+                    Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,{
                         callback: function(monitorId) {
                             monitor.id=monitorId;
                             jQuery.toast("Формирование файла запущено");

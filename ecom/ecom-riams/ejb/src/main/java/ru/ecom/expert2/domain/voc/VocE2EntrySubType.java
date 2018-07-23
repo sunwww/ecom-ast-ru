@@ -37,4 +37,12 @@ public class VocE2EntrySubType extends VocBaseEntity {
   public void setIsConsultation(Boolean aIsConsultation) {theIsConsultation = aIsConsultation;}
   /** Посещение в консультативной поликлинике */
   private Boolean theIsConsultation ;
+  
+  /** Вид случая */
+  @Comment("Вид случая")
+  @OneToOne
+  public VocE2VidSluch getVidSluch() {return theVidSluch;}
+  public void setVidSluch(VocE2VidSluch aVidSluch) {theVidSluch = aVidSluch;}
+  /** Вид случая */
+  private VocE2VidSluch theVidSluch ;
 }

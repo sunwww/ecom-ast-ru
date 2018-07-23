@@ -11,5 +11,6 @@ import java.sql.SQLException;
 public interface IExpert2XmlService {
  //    String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, long aMonitorId);
      String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry, long aMonitorId);
+    String makeMPFIleV2(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry, long aMonitorId);
 
 }

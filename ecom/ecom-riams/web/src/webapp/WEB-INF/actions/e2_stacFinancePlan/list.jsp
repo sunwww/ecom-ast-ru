@@ -25,6 +25,17 @@
         String year = request.getParameter("year");
         String startDateSql = " and to_char(fp.startDate,'MM')='01' and to_char(fp.finishDate,'MM')='12'";
         request.setAttribute("startDateSql",startDateSql);
+        String[][] filters = {{"department","fp.department_id"},{"profile","fp.profile_id"},{"ksg","fp.ksg_id"},{"bedsubtype","fp.bedsubtype_id"}};
+        StringBuilder sqlAppend = new StringBuilder();
+        for (String[] filter: filters) {
+            String par = request.getParameter(filter[0]);
+            if (par!=null&&!par.equals("")) {
+                sqlAppend.append(" and ").append(filter[1]).append("='").append(par).append("'");
+            }
+        }
+        request.setAttribute("sqlAppend",sqlAppend.toString());
+
+
             if (year==null||year.equals("")) { //Список планов по годам.
             %>
         <ecom:webQuery  name="entryList" nativeSql="select to_char(fp.startDate,'yyyy') as year,'&year='||to_char(fp.startDate,'yyyy') as url
@@ -32,20 +43,25 @@
               where fp.dtype='HospitalFinancePlan' ${startDateSql}
               group by to_char(fp.startDate,'yyyy')
               order by to_char(fp.startDate,'yyyy')"/>
-        <msh:section title='Результат поиска'>
+        <msh:section title='Планы по годам'>
             <msh:table  name="entryList" action="entityList-e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Период" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Месяц" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
             </msh:table>
         </msh:section>
         <%
         } else if (month==null||month.equals("")) {
             String isReestr = request.getParameter("reestr");
-            if (isReestr!=null&&!isReestr.equals("")) {    //План на год
+            if (isReestr!=null) {    //План на год
         %>
+        <msh:autoComplete property="department" vocName="lpu"/>
+        <msh:autoComplete property="ksg" vocName="vocKsg"/>
+        <msh:autoComplete property="profile" vocName="vocE2MedHelpProfile"/>
+        <msh:autoComplete property="bedsubtype" vocName="vocBedSubType"/>
+        <input type="submit" value="Найти">
         <ecom:webQuery name="entryList" nativeSql="select fp.id
             ,to_char(fp.startDate,'yyyy') as date
             ,ksg.code||' '||ksg.name as f5_ksg
-            , mhp.code||' '||mhp.name as profile
+            , mhp.profilek||' '||mhp.name as profile
             ,ml.name as f4_department
             ,fp.count as f6
             ,fp.cost as f7
@@ -55,10 +71,10 @@
              left join VocE2MedHelpProfile mhp on mhp.id=fp.profile_id
              left join mislpu ml on ml.id=fp.department_id
              left join vocbedsubtype vbt on vbt.id=fp.bedsubtype_id
-              where fp.dtype='HospitalFinancePlan' ${startDateSql}
+              where fp.dtype='HospitalFinancePlan' ${startDateSql} ${sqlAppend}
               order by fp.startDate, cast(ksg.code as int), ml.name, vbt.name "/>
         <input type="button" onclick="splitFinancePlan()" value="Раскидать по месяцам">
-        <msh:section title='Результат поиска'>
+        <msh:section title='Результат поиска по ${param.year} году'>
             <msh:table  name="entryList" action="entityView-e2_stacFinancePlan.do" idField="1" disableKeySupport="true" styleRow="6">
                 <msh:tableColumn columnName="Период" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 <msh:tableColumn columnName="КСГ" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
@@ -103,7 +119,7 @@
             <ecom:webQuery name="entryList" nativeSql="select fp.id
             ,to_char(fp.startDate,'MM.yyyy') as date
             ,ksg.code||' '||ksg.name as ksg
-            , mhp.code||' '||mhp.name as profile
+            , mhp.profilek||' '||mhp.name as profile
             ,ml.name as department
 
             ,fp.count
@@ -114,7 +130,7 @@
              left join VocE2MedHelpProfile mhp on mhp.id=fp.profile_id
              left join mislpu ml on ml.id=fp.department_id
              left join vocbedsubtype vbt on vbt.id=fp.bedsubtype_id
-              where fp.dtype='HospitalFinancePlan' ${startDateSql}
+              where fp.dtype='HospitalFinancePlan' ${startDateSql} ${sqlAppend}
               order by fp.startDate, cast(ksg.code as int), ml.name, vbt.name  "/>
             <msh:section title='Результат поиска'>
                 <msh:table  name="entryList" action="entityView-e2_stacFinancePlan.do" idField="1" disableKeySupport="true" styleRow="6">

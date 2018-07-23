@@ -27,8 +27,15 @@ import javax.persistence.OneToOne;
 public class E2EntryForm extends IdEntityForm {
 
 
-
 //----------все поля ниже добавлены на jsp!!!
+    /** Раковый случай */
+    private Boolean theIsCancer ;
+    /** Цель посещения */
+    private Long theVisitPurpose ;
+    /** Вид случая (справочник VID_SLUCH) */
+    private Long theVidSluch ;
+    /** Дата планируемой госпитализации */
+    private String  thePlanHospDate ;
     /** Дата направление на лечение */
     private String theDirectDate ;
     /** Иногородний  */
@@ -934,6 +941,35 @@ public class E2EntryForm extends IdEntityForm {
     @Persist @DateString @DoDateString
     public String getDirectDate() {return theDirectDate;}
     public void setDirectDate(String aDirectDate) {theDirectDate = aDirectDate;}
+
+    @Comment("Вид случая (справочник VID_SLUCH)")
+    @Persist
+    public Long getVidSluch() {return theVidSluch;}
+    public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
+
+    @Comment("Дата планируемой госпитализации")
+    @Persist
+    @DateString @DoDateString
+    public String getPlanHospDate() {return thePlanHospDate;}
+    public void setPlanHospDate(String  aPlanHospDate) {thePlanHospDate = aPlanHospDate;}
+
+    @Comment("Цель посещения")
+    @Persist
+    public Long getVisitPurpose() {return theVisitPurpose;}
+    public void setVisitPurpose(Long aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
+
+    @Comment("Раковый случай")
+    @Persist
+    public Boolean getIsCancer() {return theIsCancer;}
+    public void setIsCancer(Boolean aIsCancer) {theIsCancer = aIsCancer;}
+
+
+
+
+
+
+
+
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */

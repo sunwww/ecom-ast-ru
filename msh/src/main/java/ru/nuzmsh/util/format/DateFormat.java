@@ -171,5 +171,10 @@ public static String convertOtherFormat(String aDate, String aFromFormat, String
    
     public static String formatToTime(Time aTime) {
         return aTime!=null ? new SimpleDateFormat("HH:mm").format(aTime) : null;
-    }     
+    }
+
+    public static String formatToDateTime(Date aDateTime){
+    	SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    	return format.format(aDateTime);
+	}
 }

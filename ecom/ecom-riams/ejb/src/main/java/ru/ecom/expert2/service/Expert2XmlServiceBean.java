@@ -6,6 +6,7 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.json.JSONException;
 import org.json.JSONObject;
+import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
@@ -32,6 +33,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.io.*;
@@ -123,6 +125,9 @@ private Boolean isCheckIsRunning = false;
     /** Добавляем в переданный элемент новый элемент со значением, в случае, если значение не пустое */
     private Element addIfNotNull(Element aElement, String aElementName, Object  aValue) {
         if (isNotNull(aValue)) {
+            if (aValue instanceof Boolean) {
+                aValue= ((Boolean) aValue)?"1":"0";
+            }
             aElement.addContent(new Element(aElementName).setText(aValue.toString()));
         }
         return aElement;
@@ -137,6 +142,411 @@ private Boolean isCheckIsRunning = false;
         }
         return ret;
 
+    }
+
+
+    /** Создаем тэг с информацией о госпитализации*/
+    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt) {
+        String startDate = dateToString(aEntry.getHospitalStartDate()), finishDate = dateToString(aEntry.getHospitalFinishDate());
+
+        Element z = new Element("Z_SL");
+        z.addContent(new Element("IDCASE").setText(aEntry.getExternalParentId()+""));
+        z.addContent(new Element("VID_SLUCH").setText(aEntry.getVidSluch().getCode()));
+        z.addContent(new Element("USL_OK").setText(aEntry.getMedHelpUsl().getCode())); //дневной-круглосуточный-поликлиника
+        z.addContent(new Element("VIDPOM").setText(aEntry.getMedHelpKind().getCode()));
+        z.addContent(new Element("FOR_POM").setText(isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic?"2":"1") : "3")); //форма помощи V014
+        z.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
+        z.addContent(new Element("VBR").setText(isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0")); //Признак мобильной бригады
+        //If (mother) VNOV_M - weight rebenka
+        z.addContent(new Element("OS_SLUCH").setText(Expert2FondUtil.calculateFondOsSluch(aEntry))); // Особый случай //TODO!!! ALL SLO_SSS
+        if (!isPoliclinic)z.addContent(new Element("VB_P").setText(slCnt>1?"1":"0")); // Признак внутрибольничного перевода
+        z.addContent(new Element("SL_TEMPLATE")); // Список случаев
+      if (!isPoliclinic)  z.addContent(new Element("KD_Z").addContent(aEntry.getCalendarDays()+"")); // Продолжительность госпитализации
+        z.addContent(new Element("DATE_Z_1").setText(startDate)); //Дата начала случая
+        z.addContent(new Element("DATE_Z_2").setText(finishDate)); //Дата окончания случая
+        z.addContent(new Element("RSLT").setText(aEntry.getFondResult().getCode())); // Результат обращения
+        //z.addContent(new Element("RSLT_D")); // Результат диспансеризации
+        z.addContent(new Element("ISHOD").setText(aEntry.getFondIshod().getCode())); // Исход случая.
+        //z.addContent(new Element("P_OTK")); // Отказ от ДД
+        //z.addContent(new Element("SGROUP")); // Социальная группа в ДД
+        z.addContent(new Element("IDSP").setText(aEntry.getIDSP().getCode())); // Способ оплаты медицинской помощи (V010)
+        z=add(z,"SUMV",aEntry.getCost()); // Сумма, выставленная к оплате =SUMV7+ SUMV8
+
+
+
+        return z;
+    }
+
+    private Element add(Element el, String aFieldname, Object aValue) {
+        el.addContent(new Element(aFieldname).setText(aValue!=null?aValue.toString():""));
+        return el;
+    }
+    /** Создааем информацию по случаю мед. обслуживания (пока только стационар) для версии от июля 2018
+     * aEntry - случай госпитализации
+     * entriesList - строка с ИД СЛО
+     * */
+        private Element createSlElements(E2Entry aEntry, String entriesString, int cnt) {
+        try {
+            String entryType = aEntry.getEntryType();
+            boolean isHosp = false, isVmp = false, isPoliclinic = false, isExtDisp = false, isPoliclinicKdo=false;
+            if (entryType.equals(HOSPITALTYPE)) {isHosp=true;}
+            else if (entryType.equals(VMPTYPE)) {isVmp=true;}
+            else if (entryType.equals(POLYCLINICTYPE)) {isPoliclinic=true;}
+            else if (entryType.equals(EXTDISPTYPE)) {isExtDisp=true;}
+            else if (entryType.equals(POLYCLINICKDOTYPE)) {isPoliclinic=true;isPoliclinicKdo=true;}
+            else {throw new IllegalStateException("UNKNOWN ENTRYTYPE");}
+            Element zap = new Element("ZAP");
+            zap.addContent(new Element("N_ZAP").setText(aEntry.getId() + ""));
+            zap.addContent(new Element("PR_NOV").setText(isNotNull(aEntry.getPRNOV())?"1":"0"));
+            Element pat = new Element("PACIENT");
+            pat.addContent(new Element("ID_PAC").setText(aEntry.getExternalPatientId() + ""))
+                    .addContent(new Element("VPOLIS").setText(aEntry.getMedPolicyType()));
+            if (aEntry.getMedPolicyType() != null && !aEntry.getMedPolicyType().equals("3")) {
+                pat = addIfNotNull(pat, "SPOLIS", aEntry.getMedPolicySeries()); //Если полис не нового образца - добавляем серию полиса
+                pat.addContent(new Element("NPOLIS").setText(aEntry.getMedPolicyNumber()));
+            } else {
+                pat.addContent(new Element("NPOLIS").setText(aEntry.getCommonNumber()));
+            }
+
+            if (isNotNull(aEntry.getInsuranceCompanyCode())) {
+                pat.addContent(new Element("SMO").setText(aEntry.getInsuranceCompanyCode()));
+            }  else {
+                pat.addContent(new Element("SMO_OGRN").setText(aEntry.getInsuranceCompanyOgrn()));
+                //   pat.addContent(new Element("SMO_OK").setText(aEntry.getInsuranceCompanyTerritory()));
+                pat.addContent(new Element("SMO_NAM").setText(aEntry.getInsuranceCompanyName()));
+            }
+            pat.addContent(new Element("NOVOR").setText(makeNovorString(aEntry)))            ;
+            zap.addContent(pat); //Добавили данные по пациенту
+
+            String edCol;
+            List<E2Entry> children=null;
+            String isChild = aEntry.getIsChild()!=null&&aEntry.getIsChild()?"1":"0";
+            if (isPoliclinic) {
+                children = theManager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0')").setParameter("id",aEntry.getId()).getResultList();
+                edCol=""+(children.size()>0?children.size():1);
+            } else {
+                edCol=aEntry.getBedDays() + ""; // Количество единиц оплаты мед. помощи
+            }
+
+            String[] slIds = entriesString.split(",");
+            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length);
+            int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
+
+            for (String slId:slIds) {
+
+                Element sl = new Element("SL");
+                E2Entry currentEntry = theManager.find(E2Entry.class,Long.valueOf(slId.trim()));
+                Boolean isCancer = currentEntry.getIsCancer(), cancerSluch;
+                E2CancerEntry cancerEntry = null;
+                if (isCancer) {
+                    cancerEntry= (E2CancerEntry) theManager.createQuery("from E2CancerEntry where entry=:entry").setParameter("entry",currentEntry).getResultList().get(0);
+                    //if (cancerEntry!=null)isCancer=!cancerEntry.getMaybeCancer();
+                }
+                if (isCancer&& currentEntry.getVisitPurpose()!=null&&currentEntry.getVisitPurpose().getCode().equals("1.3")) {isCancer=false;}
+
+
+                VocE2MedHelpProfile profile = currentEntry.getMedHelpProfile();
+                String profileK = profile.getProfileK();
+
+                String startDate = dateToString(currentEntry.getStartDate()), finishDate = dateToString(currentEntry.getFinishDate());
+                sl=add(sl,"SL_ID",slId);
+                sl=add(sl,"LPU_1","30000101");
+                //PODR
+                sl=addIfNotNull(sl,"NPR_MO",currentEntry.getDirectLpu()); //Направившее ЛПУ
+                sl=addIfNotNull(sl,"NPR_DATE",currentEntry.getDirectDate()); //Дата направления на лечение ***
+                sl=addIfNotNull(sl,"NPR_N",currentEntry.getTicket263Number()); // Номер направления на портале ФОМС
+                sl=addIfNotNull(sl,"NPR_P",currentEntry.getPlanHospDate()); // Номер направления на портале ФОМС
+                //PRN_MO
+                if (isVmp) {
+                    sl=add(sl,"TAL_D",currentEntry.getVMPTicketDate()); // Дата выдачи талона ВМП
+                    sl=add(sl,"TAL_N",currentEntry.getVMPTicketNumber()); // Номер выдачи ВМП
+                    sl=add(sl,"TAL_P",dateToString(currentEntry.getVMPPlanHospDate())); // Дата планируемой госпитализации
+                    sl=add(sl,"VID_HMP",currentEntry.getVMPKind()); // Вид ВМП
+                    sl=add(sl,"METOD_HMP",currentEntry.getVMPMethod()); // Метод ВМП
+                }
+                //TELEMED
+                if (isPoliclinic) {
+                    sl=add(sl,"P_CEL",currentEntry.getVisitPurpose().getCode()); // Цель посещения
+                }
+                sl=add(sl,"DET",isChild); //Признак детского возраста
+                sl=add(sl,"PROFIL",profileK); //Профиль коек/специальностей (V002_K)
+               if (isHosp){
+                   sl=add(sl,"PROFIL_K",profileK); //Профиль коек/специальностей (V002_K)
+               }
+                sl=add(sl,"NHISTORY",currentEntry.getHistoryNumber()); //Номер истории болезни
+                if (isHosp||isVmp) {
+                    sl=add(sl,"P_PER",Expert2FondUtil.calculateFondP_PER(currentEntry)); //Признак перевода
+                    sl=add(sl,"KD",currentEntry.getCalendarDays()); //Признак перевода
+                }
+                sl = setSluchDiagnosis(sl, currentEntry);
+                sl=add(sl,"DATE_1",startDate); //Дата начала случая
+                sl=add(sl,"DATE_2",finishDate); //Дата окончания случая
+                sl=add(sl,"NPL",isNotNull(currentEntry.getNotFullPaymentReason())?currentEntry.getNotFullPaymentReason():"0"); // Неполный объем //TODO
+                //DS_ONK
+                //DN
+                //DN_DP
+                if (isHosp) {
+                    sl=add(sl,"CODE_MES1",currentEntry.getKsg().getCode()); // Код КСГ, не для ВМП
+                    //CODE_MES2
+                    //sluch=addIfNotNull(sluch,"KSG_KRIT",currentEntry.getDopKritKSG());
+
+                }
+                if (isCancer){
+                    if (cancerEntry==null) {log.error("Не найден раковый случай для записи с ИД"+currentEntry.getId());continue;}
+                    Element onkSl = new Element("ONK_SL");
+                    onkSl=addIfNotNull(onkSl,"DS1_T",cancerEntry.getOccasion());
+                    onkSl=add(onkSl,"STAD",cancerEntry.getStage());
+                    onkSl=add(onkSl,"ONK_T",cancerEntry.getTumor());
+                    onkSl=add(onkSl,"ONK_N",cancerEntry.getNodus());
+                    onkSl=add(onkSl,"ONK_M",cancerEntry.getMetastasis());
+                    onkSl=addIfNotNull(onkSl,"MTSTZ",cancerEntry.getIsMetastasisFound());
+                    List<E2CancerDiagnostic> directions= theManager.createQuery("from E2CancerDiagnostic where cancerEntry=:cancer").setParameter("cancer",cancerEntry).getResultList();
+                    for (E2CancerDiagnostic direction: directions){
+                        Element dir = new Element("B_DIAG");
+                        dir=add(dir,"DIAG_TIP",direction.getType());
+                        dir=add(dir,"DIAG_CODE",direction.getCode());
+                        dir=add(dir,"DIAG_RSLT",direction.getResult());
+                        onkSl.addContent(dir);
+                    }
+                    List<E2CancerRefusal> prots = theManager.createQuery("from E2CancerRefusal where cancerEntry=:cancer").setParameter("cancer",cancerEntry).getResultList();
+                    for (E2CancerRefusal prot: prots){
+                        Element pr = new Element("B_PROT");
+                        pr=add(pr,"PROT",prot.getCode());
+                        pr=add(pr,"D_PROT",prot.getDate());
+                        onkSl.addContent(pr);
+                    }
+                    onkSl=addIfNotNull(onkSl,"SOD",cancerEntry.getSod());
+                    sl.addContent(onkSl);
+                }
+                //REAB
+
+                if (isHosp){//KSG_KGP
+                    Element ksgKpg=new Element("KSG_KPG");
+                    VocKsg ksg = currentEntry.getKsg();
+                    ksgKpg=add(ksgKpg,"N_KSG",ksg.getCode());
+                    ksgKpg=add(ksgKpg,"VER_KSG","2018");
+                    ksgKpg=add(ksgKpg,"KSG_PG","0");
+                    ksgKpg=add(ksgKpg,"KOEF_Z",ksg.getKZ());
+                    ksgKpg=add(ksgKpg,"KOEF_UP",theExpertService.getActualKsgUprCoefficient(ksg,currentEntry.getFinishDate()));
+                    ksgKpg=add(ksgKpg,"BZTSZ",currentEntry.getBaseTarif());
+                    ksgKpg=add(ksgKpg,"KOEF_D","1"); //TODO
+                    ksgKpg=add(ksgKpg,"KOEF_U","1"); //TODO
+                    ksgKpg=addIfNotNull(ksgKpg,"DKK1",currentEntry.getDopKritKSG());
+                    //DKK2
+                    //
+                    List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = theManager.createQuery("from E2CoefficientPatientDifficultyEntryLink where entry=:entry")
+                            .setParameter("entry",currentEntry).getResultList();
+                    if (difficultyEntryLinks.size()>0){
+                        ksgKpg=add(ksgKpg,"SL_K","1");
+                        ksgKpg=add(ksgKpg,"IT_SL",theExpertService.calculateResultDifficultyCoefficient(currentEntry));
+                        for (E2CoefficientPatientDifficultyEntryLink link: difficultyEntryLinks){
+                            Element slKoef = new Element("SL_KOEF");
+                            slKoef=add(slKoef,"IDSL",link.getDifficulty().getCode());
+                            slKoef=add(slKoef,"Z_SL",link.getValue()!=null?link.getValue():link.getDifficulty().getValue());
+                            ksgKpg.addContent(slKoef);
+                        }
+                        //
+                    } else {
+                        ksgKpg=add(ksgKpg,"SL_K","0");
+                    }
+                    sl.addContent(ksgKpg);
+                }
+                String prvs = currentEntry.getFondDoctorSpecV021()!=null?currentEntry.getFondDoctorSpecV021().getCode():
+                        (profile.getMedSpecV021()!=null?profile.getMedSpecV021().getCode():
+                                (currentEntry.getFondDoctorSpec().getMedSpecV021()!=null?currentEntry.getFondDoctorSpec().getMedSpecV021().getCode():"V015_"+currentEntry.getFondDoctorSpec().getCode()));
+                sl=add(sl,"PRVS",prvs); //Специальность лечащего врача
+                sl=add(sl,"VERS_SPEC","V021");
+                sl=add(sl,"IDDOKT",currentEntry.getDoctorSnils()); // СНИЛС лечащего врача
+                sl=add(sl,"ED_COL",edCol);
+                sl=add(sl,"TARIF",currentEntry.getCost());
+                sl=add(sl,"SUM_M",currentEntry.getCost());
+
+                //USL start
+                int uslCnt = 0;
+                if (currentEntry.getReanimationEntry()!=null) { //Реанимационная услуга
+                    uslCnt++;
+                    Element usl = new Element("USL");
+                    usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                    usl.addContent(new Element("LPU_U").setText("300001"));
+                    usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
+                    usl.addContent(new Element("PROFIL_U").setText(profileK));
+                    usl.addContent(new Element("IDDOKT_U").setText(currentEntry.getDoctorSnils()));
+                    usl.addContent(new Element("PRVS_U").setText("0"));
+                    usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
+                    usl.addContent(new Element("COD_DUSL_U").setText("B03.003.005"));
+                    usl.addContent(new Element("KOL_USL").setText("1"));
+                    usl.addContent(new Element("DATE_1_U").setText(startDate));
+                    usl.addContent(new Element("DATE_2_U").setText(finishDate));
+                    usl.addContent(new Element("SUMV_USL").setText("0"));
+                    sl.addContent(usl);
+
+                }
+                //Информация об услугах
+                if (isPoliclinic &&children!=null) { //Для поликлиники - кол-во визитов
+                    for (E2Entry child: children) {
+                        uslCnt++;
+                        String uslDate = dateToString(child.getStartDate());
+                        if (child.getMedHelpProfile()==null) {
+                            theManager.persist(new E2EntryError(aEntry,"NO_SUBENTRY_PROFILE_Нет профиля у комплексного случая с ИД: "+child.getId()));
+                            log.warn("NO_SUBENTRY_PROFILE_Нет профиля у комплексного случая с ИД: "+child.getId());
+                            continue;
+                        }
+                        prvs = child.getFondDoctorSpecV021()!=null?currentEntry.getFondDoctorSpecV021().getCode():
+                                (profile.getMedSpecV021()!=null?profile.getMedSpecV021().getCode():profile.getMedSpec().getMedSpecV021().getCode());
+                        Element usl = new Element("USL");
+                        usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                        usl.addContent(new Element("LPU_U").setText("300001"));
+                        usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
+                        usl.addContent(new Element("PROFIL_U").setText(child.getMedHelpProfile().getProfileK()));
+                        usl.addContent(new Element("IDDOKT_U").setText(child.getDoctorSnils()));
+                        usl.addContent(new Element("PRVS_U").setText(prvs));
+                        usl.addContent(new Element("DS_U").setText(isNotNull(child.getMainMkb())?child.getMainMkb():sl.getChildText("DS1")));
+                        //P_OTK
+                        if (isPoliclinicKdo &&isNotNull(child.getMainService())) usl.addContent(new Element("COD_DUSL_U").setText(child.getMainService()));
+                        usl.addContent(new Element("KOL_USL").setText("1"));
+                        usl.addContent(new Element("DATE_1_U").setText(uslDate));
+                        usl.addContent(new Element("DATE_2_U").setText(uslDate));
+                        usl.addContent(new Element("SUMV_USL").setText("0"));
+                        sl.addContent(usl);
+                    }
+                    if (isPoliclinicKdo) { //Для КДО находим все услуги помимо дочерних визитов
+                        List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id), servicedate,max(id) as cnt from EntryMedService where entry_id=:id group by medservice_id, servicedate").setParameter("id",aEntry.getId()).getResultList();
+                        if (list.size()>0) {
+                            for (Object[] ms: list) {
+                                uslCnt++;
+                                EntryMedService ems = theManager.find(EntryMedService.class,Long.valueOf(ms[3].toString()));
+                                VocMedService medService = ems.getMedService(); //theManager.find(VocMedService.class,Long.valueOf(ms[0].toString()));
+                                String serviceDate = dateToString(ems.getServiceDate());
+
+                                Element usl = new Element("USL");
+                                usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                                usl.addContent(new Element("LPU_U").setText("300001"));
+                                usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
+                                usl.addContent(new Element("PROFIL_U").setText(profileK));
+                                usl.addContent(new Element("IDDOKT_U").setText(currentEntry.getDoctorSnils()));
+                                usl.addContent(new Element("PRVS_U").setText(prvs));
+                                usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
+                                usl.addContent(new Element("COD_DUSL_U").setText(medService.getCode()));
+                                usl.addContent(new Element("KOL_USL").setText(ms[1].toString()));
+                                usl.addContent(new Element("DATE_1_U").setText(serviceDate));
+                                usl.addContent(new Element("DATE_2_U").setText(serviceDate));
+                                usl.addContent(new Element("SUMV_USL").setText("0"));
+                                sl.addContent(usl);
+
+                            }
+                            sl.getChild("ED_COL").setText(""+uslCnt);
+                           // log.info("XML_KDO_CHILD="+uslCnt);
+                        }
+                    }
+                } else if (isExtDisp) { //TODO
+                 /*   List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id) as cnt from EntryMedService where entry_id=:id group by medservice_id").setParameter("id",aEntry.getId()).getResultList();
+                    if (list.size()>0) {
+                        for (Object[] ms: list) {
+                            VocMedService medService = theManager.find(VocMedService.class,Long.valueOf(ms[0].toString()));
+                            Element usl = new Element("USL");
+                            usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                            usl.addContent(new Element("PROFIL_U").setText(profileK));
+                            usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
+                            usl.addContent(new Element("IDDOKT_U").setText(aEntry.getDoctorSnils()));
+                            usl.addContent(new Element("DATE_1_U").setText(startDate));
+                            usl.addContent(new Element("DATE_2_U").setText(startDate));
+                            usl.addContent(new Element("DS_U").setText(sluch.getChildText("DS1")));
+                            usl.addContent(new Element("COD_DUSL_U").setText(medService.getCode()));
+                            usl.addContent(new Element("ED_COL_U").setText(ms[1].toString()));
+                            usl.addContent(new Element("PRVS_U").setText("0"));
+                            sluch.addContent(usl);
+                            uslCnt++;
+                        }
+                    } */
+                } else {
+                    List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id) as cnt from EntryMedService where entry_id=:id group by medservice_id").setParameter("id",aEntry.getId()).getResultList();
+                    if (list.size()>0) {
+                        boolean first = true;
+                        for (Object[] ms: list) {
+
+                            uslCnt++;
+                            VocMedService medService = theManager.find(VocMedService.class,Long.valueOf(ms[0].toString()));
+                            Element usl = new Element("USL");
+                            usl.addContent(new Element("IDSERV").setText(""+uslCnt));
+                            usl.addContent(new Element("LPU_U").setText("300001"));
+                            usl.addContent(new Element("DET_U").setText(isChild)); //Возраст на момент начала случая (<18 лет =1)
+                            usl.addContent(new Element("PROFIL_U").setText(profileK));
+                            usl.addContent(new Element("IDDOKT_U").setText(aEntry.getDoctorSnils()));
+                            usl.addContent(new Element("PRVS_U").setText("0"));
+                            usl.addContent(new Element("DS_U").setText(sl.getChildText("DS1")));
+                            usl.addContent(new Element("COD_DUSL_U").setText(medService.getCode()));
+                            usl.addContent(new Element("KOL_USL").setText(ms[1].toString()));
+                            usl.addContent(new Element("DATE_1_U").setText(startDate));
+                            usl.addContent(new Element("DATE_2_U").setText(startDate));
+                            usl.addContent(new Element("SUMV_USL").setText("0"));
+                            if (first){
+                                if (isCancer&&cancerEntry!=null) {
+                                    if (cancerEntry.getMaybeCancer()) {
+                                        List<E2CancerDirection> directions = theManager.createQuery("from E2CancerDirection where cancerEntry=:cancere").setParameter("cancer", cancerEntry).getResultList();
+                                        if (directions.isEmpty()) {
+                                            log.error("Не указаны направления в то время, когда они должны быть указаны!" + currentEntry.getId() + " " + currentEntry.getHistoryNumber());
+                                        }
+                                        for (E2CancerDirection direction : directions) {
+                                            Element napr = new Element("NAPR");
+                                            napr = add(napr, "NAPR_DATE", direction.getDate());
+                                            napr = add(napr, "NAPR_V", direction.getType());
+                                            napr = addIfNotNull(napr, "NAPR_ISSL", direction.getSurveyMethod());
+                                            napr = addIfNotNull(napr, "NAPR_USL", direction.getMedService());
+                                            usl.addContent(napr);
+                                        }
+                                    } else {
+                                        Element onkUsl = new Element("ONK_USL");
+                                        onkUsl = addIfNotNull(onkUsl, "PR_CONS", cancerEntry.getConsiliumResult());
+                                        onkUsl = add(onkUsl, "USL_TIP", cancerEntry.getServiceType());
+                                        onkUsl = add(onkUsl, "HIR_TIP", cancerEntry.getSurgicalType());
+                                        onkUsl = addIfNotNull(onkUsl, "LEK_TIP_L", cancerEntry.getDrugLine());
+                                        onkUsl = addIfNotNull(onkUsl, "LEK_TIP_V", cancerEntry.getDrugCycle());
+                                        onkUsl = addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy());
+                                        usl.addContent(onkUsl);
+                                    }
+                                }
+                                first=false;
+                            }
+                            sl.addContent(usl);
+
+                        }
+                    }
+                }
+
+                // USL finish
+                zSl.addContent(indSl,sl);
+            }
+            zSl.removeChild("SL_TEMPLATE");
+
+            //Кажися, эти поля не используем
+        //  if (isChild.equals("0")){  sluch = addIfNotNull(sluch, "VNOV_M", aEntry.getNewbornWeight());} // Вес при рождении (для мамы)
+            //if (isNotNull(aEntry.getNewbornAmount())) { // Количество рожденных детей
+             //   sluch.addContent(new Element("KOL_DET").setText(aEntry.getNewbornAmount() + ""));
+           // }
+           // sluch.addContent(new Element("PR_D_N").setText("0")); //TODO Признак диспансерного наблюдения
+            // Количество единиц оплаты мед. помощи
+            //      sluch.addContent(new Element("IDGOSP").setText(Expert2FondUtil.calculateFondIDGOSP(aEntry))); // Способ госпитализации
+         //   sluch.addContent(new Element("KOEF").setText(aEntry.getTotalCoefficient()+"")); // Итоговый коэффициент в рамках объединенного тарифа  //TODO
+         //   sluch.addContent(new Element("TARIF").setText(aEntry.getBaseTarif()+"")); // Объединенный тариф  //TODO
+
+
+            //   comentSl.addContent(new Element("COD_OPL").setText("0")); //Код источника финансирования
+            //   comentSl.addContent(new Element("PODVID").setText(aEntry.getPodvid() != null ? aEntry.getPodvid().getCode() : "---")); //Подвид медицинской помощи
+            //   comentSl.addContent(new Element("CS").setText("0")); //Дополнительный признак // TODO
+            //   if (aEntry.getUseLowerCoefficient() != null && aEntry.getUseLowerCoefficient()) {
+            //       comentSl.addContent(new Element("CS2").setText("1")); //Второй дополнительный признак
+            //   }
+            // * comentSl.addContent(new Element("CS3").setText(aEntry.getPodvid().getCode())); //Третий дополнительный признак
+
+
+            //   sluch.addContent(new Element("NAZ"));
+            zap.addContent(zSl); //Добавляем информацию о случае в запись
+            return zap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("EEEE = " + e);
+            throw new IllegalStateException("some unknown error!");
+        }
     }
 
     /** Создааем информацию по случаю мед. обслуживания (пока только стационар) */
@@ -389,11 +799,12 @@ private Boolean isCheckIsRunning = false;
         return root;
     }
 
+
     /** Создаем заголовок для H файла (информация о мед. услугах) */
-    private Element makeHTitle(Element root, Date aDocumentDate, String aFilename, int count, String aBillNumber, Date aBillDate, BigDecimal aTotalSum) {
+    private Element makeHTitle(Element root, Date aDocumentDate, String aFilename, int count, String aBillNumber, Date aBillDate, BigDecimal aTotalSum, String aVersion) {
         aDocumentDate = aDocumentDate != null ? aDocumentDate : new Date(new java.util.Date().getTime());
         Element zglv = new Element("ZGLV");
-        zglv.addContent(new Element("VERSION").setText("3.0"));
+        zglv.addContent(new Element("VERSION").setText(aVersion));
         zglv.addContent(new Element("DATA").setText(dateToString(aDocumentDate)));
         zglv.addContent(new Element("FILENAME").setText(aFilename));
         zglv.addContent(new Element("SD_Z").setText(count + ""));
@@ -428,6 +839,8 @@ private Boolean isCheckIsRunning = false;
             return aField!=null;
         } else if (aField instanceof BigDecimal) {
             return aField != null&&((BigDecimal) aField).compareTo(new BigDecimal(0))==1;
+        } else if (aField instanceof BaseEntity) {
+            return true;
         }else {
             throw new IllegalStateException("Нет преобразования для объекта " + aField);
         }
@@ -437,189 +850,451 @@ private Boolean isCheckIsRunning = false;
     public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, long aMonitorId) {return makeMPFIle(aEntryListId,aType,aBillNumber,aBillDate,aEntryId,false,aMonitorId);}
     public String makeMPFIle(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry, long aMonitorId) {
         try {
-        if (isCheckIsRunning) {
-            log.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
-            // return "Формирование чего-то уже запущено, выходим";
-        }
-        Date periodDate;
-        isCheckIsRunning = true;
-        String packetDateAdd;
-        String cntNumber = null;
-        boolean needCreateArchive = false;
-        if (aEntryListId != null) {
-            needCreateArchive = true;
-            E2ListEntry listEntry = theManager.find(E2ListEntry.class, aEntryListId);
-            periodDate = listEntry.getFinishDate();
-            if (!isNotNull(aBillDate) || !isNotNull(aBillNumber)) {
-                return "Необходимо указать номер и дату счета!";
+            if (isCheckIsRunning) {
+                log.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
+                // return "Формирование чего-то уже запущено, выходим";
             }
-            if (listEntry.getCheckDate()==null||listEntry.getCheckTime()==null) {
-                return "Необходимо выполнить проверку перед формированием пакета";
+            Date periodDate;
+            isCheckIsRunning = true;
+            String packetDateAdd;
+            String cntNumber = null;
+            boolean needCreateArchive = false;
+            if (aEntryListId != null) {
+                needCreateArchive = true;
+                E2ListEntry listEntry = theManager.find(E2ListEntry.class, aEntryListId);
+                periodDate = listEntry.getFinishDate();
+                if (!isNotNull(aBillDate) || !isNotNull(aBillNumber)) {
+                    return "Необходимо указать номер и дату счета!";
+                }
+                if (listEntry.getCheckDate()==null||listEntry.getCheckTime()==null) {
+                    return "Необходимо выполнить проверку перед формированием пакета";
+                }
+            } else { //Сделано для теста.
+                E2Entry entry = theManager.find(E2Entry.class, aEntryId);
+                periodDate = entry.getFinishDate();
+                aBillDate = aBillDate != null ? aBillDate : periodDate;
+                aBillNumber = aBillNumber != null ? aBillNumber : "TEST";
+                cntNumber = "00";
+
             }
-        } else { //Сделано для теста.
-            E2Entry entry = theManager.find(E2Entry.class, aEntryId);
-            periodDate = entry.getFinishDate();
-            aBillDate = aBillDate != null ? aBillDate : periodDate;
-            aBillNumber = aBillNumber != null ? aBillNumber : "TEST";
-            cntNumber = "00";
+            packetDateAdd = dateToString(periodDate, "yyMM");
+            String packetType;
 
-        }
-        packetDateAdd = dateToString(periodDate, "yyMM");
-        String packetType;
-
-        if (aType.equals(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE) || aType.equals(POLYCLINICKDOTYPE) || aType.equals(HOSPITALPEREVODTYPE)) {
-            packetType = "Z";
-        } else if (aType.equals(VMPTYPE)) {
-            packetType = "T";
-        } else if (aType.equals(EXTDISPTYPE)) {
-            //Пока сделаем заглушку
-            packetType="DV";
-        }else {
-            throw new IllegalStateException("Неизвестный тип счета: " + aType);
-        }
-        java.util.Date startStartDate = new java.util.Date();
-        String regNumber = getExpertConfigValue("LPU_REG_NUMBER", "300001");
-        String fileName = "M" + regNumber + "T30_" + packetDateAdd; // M300001 T30_171227
-        SequenceHelper sequenceHelper = SequenceHelper.getInstance();
-        if (cntNumber == null) {
-            cntNumber = sequenceHelper.startUseNextValueNoCheck(packetType + "#" + fileName, "", theManager);
-        }
-        fileName += cntNumber;
-        log.info("create new FileName = " + fileName);
-        Element hRoot = new Element("ZL_LIST");  // данные о мед. помощи
-        Element lRoot = new Element("PERS_LIST");  // данные о пациенте
-        List<Long> patientIdsList = new ArrayList<Long>();
-        BigDecimal totalSum = new BigDecimal(0);
-        List<Element> zaps = new ArrayList<Element>();
-        List<Element> perss = new ArrayList<Element>();
-        int cnt = 0;
-        List<BigInteger> records;
-        if (aEntryId == null) {
-            records = theManager.createNativeQuery("select id from E2Entry where " + (calcAllListEntry ? "" : "listEntry_id=" + aEntryListId + " and") + " (isDeleted is null or isDeleted='0') and billNumber=:billNumber and billDate=:billDate ")
-                    .setParameter("billNumber", aBillNumber).setParameter("billDate", aBillDate).getResultList();
-        } else {
-            records = new ArrayList<BigInteger>();
-            records.add(new BigInteger(aEntryId.toString()));
-            //records = theManager.createNativeQuery("select id from E2Entry where id=:entryId ").setParameter("entryId", aEntryId).getResultList();
-        }
-        log.info("found " + records.size() + " records");
+            if (aType.equals(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE) || aType.equals(POLYCLINICKDOTYPE) || aType.equals(HOSPITALPEREVODTYPE)) {
+                packetType = "Z";
+            } else if (aType.equals(VMPTYPE)) {
+                packetType = "T";
+            } else if (aType.equals(EXTDISPTYPE)) {
+                //Пока сделаем заглушку
+                packetType="DV";
+            }else {
+                throw new IllegalStateException("Неизвестный тип счета: " + aType);
+            }
+            java.util.Date startStartDate = new java.util.Date();
+            String regNumber = getExpertConfigValue("LPU_REG_NUMBER", "300001");
+            String fileName = "M" + regNumber + "T30_" + packetDateAdd; // M300001 T30_171227
+            SequenceHelper sequenceHelper = SequenceHelper.getInstance();
+            if (cntNumber == null) {
+                cntNumber = sequenceHelper.startUseNextValueNoCheck(packetType + "#" + fileName, "", theManager);
+            }
+            fileName += cntNumber;
+            log.info("create new FileName = " + fileName);
+            Element hRoot = new Element("ZL_LIST");  // данные о мед. помощи
+            Element lRoot = new Element("PERS_LIST");  // данные о пациенте
+            List<Long> patientIdsList = new ArrayList<Long>();
+            BigDecimal totalSum = new BigDecimal(0);
+            List<Element> zaps = new ArrayList<Element>();
+            List<Element> perss = new ArrayList<Element>();
+            int cnt = 0;
+            List<BigInteger> records;
+            if (aEntryId == null) {
+                records = theManager.createNativeQuery("select id from E2Entry where " + (calcAllListEntry ? "" : "listEntry_id=" + aEntryListId + " and") + " (isDeleted is null or isDeleted='0') and (doNotSend is null or doNotSend='0') and billNumber=:billNumber and billDate=:billDate ")
+                        .setParameter("billNumber", aBillNumber).setParameter("billDate", aBillDate).getResultList();
+            } else {
+                records = new ArrayList<BigInteger>();
+                records.add(new BigInteger(aEntryId.toString()));
+                //records = theManager.createNativeQuery("select id from E2Entry where id=:entryId ").setParameter("entryId", aEntryId).getResultList();
+            }
+            log.info("found " + records.size() + " records");
             IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;
             monitor = theMonitorService.startMonitor(aMonitorId,"Формирование xml файла. Размер: ",records.size());
             monitor.advice(1);
 
-        E2Entry entry;
-        int i = 0;
-        for (BigInteger entryId : records) {
-            i++;
-            if (i % 100 == 0) {
-                log.info("Сформировано " + i + " записей в счете");
-                monitor.setText("Сформировано " + i + " записей в счете");
+            E2Entry entry;
+            int i = 0;
+            for (BigInteger entryId : records) {
+                i++;
+                if (i % 100 == 0) {
+                    log.info("Сформировано " + i + " записей в счете");
+                    monitor.setText("Сформировано " + i + " записей в счете");
+
+                }
+                entry = theManager.find(E2Entry.class, entryId.longValue());
+                if (entry.getDoNotSend() != null && entry.getDoNotSend()) {
+                    continue;
+                } //Есть галочка - не выгружать - не выгружаем
+                StringBuilder err = new StringBuilder();
+                Boolean isError = false;
+                if (entry.getFondResult() == null) {
+                    err.append("НЕ РАСЧИТАН РЕЗУЛЬТАТ СЛУЧАЯ;");
+                    isError = true;
+                }
+                if (entry.getFondIshod() == null) {
+                    err.append("НЕ РАСЧИТАН ИСХОД СЛУЧАЯ;");
+                    isError = true;
+                }
+                if (entry.getMedHelpProfile() == null) {
+                    err.append("НЕ УКАЗАН ПРОФИЛЬ МЕД. ПОМОЩИ;");
+                    isError = true;
+                }
+                if (entry.getFondDoctorSpec() == null) {
+                    err.append("НЕ РАСЧИТАНА СПЕЦИАЛЬНОСТЬ ВРАЧА;");
+                    isError = true;
+                }
+                if (entry.getCost() == null) {
+                    err.append("НЕ РАСЧИТАНА ЦЕНА СЛУЧАЯ;");
+                    isError = true;
+                }
+                if (entry.getBaseTarif() == null) {
+                    err.append("НЕ РАСЧИТАН БАЗОВЫЙ ТАРИФ;");
+                    isError = true;
+                }
+                if (entry.getIDSP() == null) {
+                    err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
+                    isError = true;
+                }
+                if (!isNotNull(entry.getMedPolicyType())) {
+                    err.append("НЕ УКАЗАН ВИД ПОЛИСА;");
+                    isError = true;
+                }
+                if (!isNotNull(entry.getMedPolicyNumber())) {
+                    err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
+                    isError = true;
+                }
+                if (entry.getEntryType().equals(POLYCLINICTYPE) && !isNotNull(entry.getMainMkb())) {
+                    err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
+                    isError = true;
+                }
+                if (!isNotNull(entry.getHistoryNumber())) {
+                    err.append("НЕ ЗАПОЛНЕН НОМЕР ИСТОРИИ БОЛЕЗНИ");
+                    isError = true;
+                }
+                if (isError) {
+                    E2EntryError error = new E2EntryError(entry, "NO_FOND_FIELDS:" + err.toString());
+                    theManager.persist(error);
+                    log.error("Запись с ИД " + entryId + " не будет выгружена в xml!");
+                    //     entry.setDoNotSend(true); theManager.persist(entry);
+                    continue;
+                }
+                cnt++;
+                Long personId = entry.getExternalPatientId();
+                if (!patientIdsList.contains(personId)) { //Если нет пациента в Л файле - добавляем.
+                    perss.add(createPERSElement(entry));
+                    patientIdsList.add(personId);
+                }
+                zaps.add(createZapElement(entry, cnt));
+                totalSum = totalSum.add(entry.getCost());
 
             }
-            entry = theManager.find(E2Entry.class, entryId.longValue());
-            if (entry.getDoNotSend() != null && entry.getDoNotSend()) {
-                continue;
-            } //Есть галочка - не выгружать - не выгружаем
-            StringBuilder err = new StringBuilder();
-            Boolean isError = false;
-            if (entry.getFondResult() == null) {
-                err.append("НЕ РАСЧИТАН РЕЗУЛЬТАТ СЛУЧАЯ;");
-                isError = true;
-            }
-            if (entry.getFondIshod() == null) {
-                err.append("НЕ РАСЧИТАН ИСХОД СЛУЧАЯ;");
-                isError = true;
-            }
-            if (entry.getMedHelpProfile() == null) {
-                err.append("НЕ УКАЗАН ПРОФИЛЬ МЕД. ПОМОЩИ;");
-                isError = true;
-            }
-            if (entry.getFondDoctorSpec() == null) {
-                err.append("НЕ РАСЧИТАНА СПЕЦИАЛЬНОСТЬ ВРАЧА;");
-                isError = true;
-            }
-            if (entry.getCost() == null) {
-                err.append("НЕ РАСЧИТАНА ЦЕНА СЛУЧАЯ;");
-                isError = true;
-            }
-            if (entry.getBaseTarif() == null) {
-                err.append("НЕ РАСЧИТАН БАЗОВЫЙ ТАРИФ;");
-                isError = true;
-            }
-            if (entry.getIDSP() == null) {
-                err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
-                isError = true;
-            }
-            if (!isNotNull(entry.getMedPolicyType())) {
-                err.append("НЕ УКАЗАН ВИД ПОЛИСА;");
-                isError = true;
-            }
-            if (!isNotNull(entry.getMedPolicyNumber())) {
-                err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
-                isError = true;
-            }
-            if (entry.getEntryType().equals(POLYCLINICTYPE) && !isNotNull(entry.getMainMkb())) {
-                err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
-                isError = true;
-            }
-            if (!isNotNull(entry.getHistoryNumber())) {
-                err.append("НЕ ЗАПОЛНЕН НОМЕР ИСТОРИИ БОЛЕЗНИ");
-                isError = true;
-            }
-            if (isError) {
-                E2EntryError error = new E2EntryError(entry, "NO_FOND_FIELDS:" + err.toString());
-                theManager.persist(error);
-                log.error("Запись с ИД " + entryId + " не будет выгружена в xml!");
-                //     entry.setDoNotSend(true); theManager.persist(entry);
-                continue;
-            }
-            cnt++;
-            Long personId = entry.getExternalPatientId();
-            if (!patientIdsList.contains(personId)) { //Если нет пациента в Л файле - добавляем.
-                perss.add(createPERSElement(entry));
-                patientIdsList.add(personId);
-            }
-            zaps.add(createZapElement(entry, cnt));
-            totalSum = totalSum.add(entry.getCost());
-
-        }
-        log.info("ok, we made all, let's make files");
+            log.info("ok, we made all, let's make files");
             monitor.setText("Формирование файла завершено, сохраняем архив");
-        hRoot = makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum);
-        if (aEntryListId != null) { //Меняем статус счета на "выставлен"
-            E2Bill bill = new Expert2ServiceBean().getBillEntryByDateAndNumber(aBillNumber, dateToString(aBillDate, "dd.MM.yyyy"),theManager);
-            if (bill != null) {
-                bill.setStatus((VocE2BillStatus) getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
-                theManager.persist(bill);
+            hRoot = makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum,"3.0");
+            if (aEntryListId != null) { //Меняем статус счета на "выставлен"
+                E2Bill bill = new Expert2ServiceBean().getBillEntryByDateAndNumber(aBillNumber, dateToString(aBillDate, "dd.MM.yyyy"));
+                if (bill != null) {
+                    bill.setStatus((VocE2BillStatus) getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
+                    theManager.persist(bill);
+                }
             }
-        }
-        lRoot = makeLTitle(lRoot, periodDate, "L" + fileName);
-        lRoot.addContent(perss);
-        hRoot.addContent(zaps);
-        String archiveName = packetType + fileName + ".MP";
-        createXmlFile(hRoot, "H" + fileName);
-        createXmlFile(lRoot, "L" + fileName);
-        //   log.info("deb14");
-        log.info("Время формирования файла (минут) = " + ((System.currentTimeMillis() - startStartDate.getTime())) / 60000);
+            lRoot = makeLTitle(lRoot, periodDate, "L" + fileName);
+            lRoot.addContent(perss);
+            hRoot.addContent(zaps);
+            String archiveName = packetType + fileName + ".MP";
+            createXmlFile(hRoot, "H" + fileName);
+            createXmlFile(lRoot, "L" + fileName);
+            //   log.info("deb14");
+            log.info("Время формирования файла (минут) = " + ((System.currentTimeMillis() - startStartDate.getTime())) / 60000);
             monitor.setText("Завершено. Время формирования файла (минут) = " + ((System.currentTimeMillis() - startStartDate.getTime())) / 60000);
 
-        if (needCreateArchive) {
-            archiveName = createArchive(archiveName, new String[]{"H" + fileName + ".xml", "L" + fileName + ".xml"});
-            E2ExportPacketJournal journal = new E2ExportPacketJournal(aBillNumber, aBillDate, "/rtf/expert2xml/" + archiveName);
-            theManager.persist(journal);
-        }
-        log.info("ALL SEEMS GOOD!");
+            if (needCreateArchive) {
+                archiveName = createArchive(archiveName, new String[]{"H" + fileName + ".xml", "L" + fileName + ".xml"});
+                E2ExportPacketJournal journal = new E2ExportPacketJournal(aBillNumber, aBillDate, "/rtf/expert2xml/" + archiveName);
+                theManager.persist(journal);
+            }
+            log.info("ALL SEEMS GOOD!");
 
-        isCheckIsRunning = false;
+            isCheckIsRunning = false;
             monitor.setText("/rtf/expert2xml/" + archiveName);
             monitor.finish("/rtf/expert2xml/" + archiveName);
-        return "/rtf/expert2xml/" + archiveName;
-    } catch (Exception err) {
+            return "/rtf/expert2xml/" + archiveName;
+        } catch (Exception err) {
             err.printStackTrace();
             return "ERR";
         }
     }
 
+    /*Делаем новую версию пакета ***/
+    public String makeMPFIleV2(Long aEntryListId, String aType, String aBillNumber, Date aBillDate, Long aEntryId, Boolean calcAllListEntry, long aMonitorId) {
+
+        try {
+            if (isCheckIsRunning) {
+                log.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
+                // return "Формирование чего-то уже запущено, выходим";
+            }
+            Date periodDate;
+            isCheckIsRunning = true;
+            String packetDateAdd;
+            String cntNumber = null;
+            boolean needCreateArchive = false;
+            E2Entry entry=null;
+            if (aEntryListId != null) {
+                needCreateArchive = true;
+                E2ListEntry listEntry = theManager.find(E2ListEntry.class, aEntryListId);
+                periodDate = listEntry.getFinishDate();
+                if (!isNotNull(aBillDate) || !isNotNull(aBillNumber)) {
+                    return "Необходимо указать номер и дату счета!";
+                }
+                if (listEntry.getCheckDate()==null||listEntry.getCheckTime()==null) {
+                    return "Необходимо выполнить проверку перед формированием пакета";
+                }
+            } else { //Сделано для теста.
+              entry = theManager.find(E2Entry.class, aEntryId);
+                periodDate = entry.getFinishDate();
+                aBillDate = aBillDate != null ? aBillDate : periodDate;
+                aBillNumber = aBillNumber != null ? aBillNumber : "TEST";
+                cntNumber = "00";
+
+            }
+            packetDateAdd = dateToString(periodDate, "yyMM");
+            String packetType;
+
+            if (aType.equals(HOSPITALTYPE) || aType.equals(POLYCLINICTYPE) || aType.equals(POLYCLINICKDOTYPE) || aType.equals(HOSPITALPEREVODTYPE)) {
+                packetType = "Z";
+            } else if (aType.equals(VMPTYPE)) {
+                packetType = "T";
+            } else if (aType.equals(EXTDISPTYPE)) {
+                //Пока сделаем заглушку
+                packetType="DV";
+            }else {
+                throw new IllegalStateException("Неизвестный тип счета: " + aType);
+            }
+            java.util.Date startStartDate = new java.util.Date();
+            String regNumber = getExpertConfigValue("LPU_REG_NUMBER", "300001");
+            String fileName = "M" + regNumber + "T30_" + packetDateAdd; // M300001 T30_171227
+            SequenceHelper sequenceHelper = SequenceHelper.getInstance();
+            if (cntNumber == null) {
+                cntNumber = sequenceHelper.startUseNextValueNoCheck(packetType + "#" + fileName, "", theManager);
+            }
+            fileName += cntNumber;
+            log.info("create new FileName = " + fileName);
+            Element hRoot = new Element("ZL_LIST");  // данные о мед. помощи
+            Element lRoot = new Element("PERS_LIST");  // данные о пациенте
+            List<Long> patientIdsList = new ArrayList<Long>();
+            BigDecimal totalSum = new BigDecimal(0);
+            List<Element> zaps = new ArrayList<Element>();
+            List<Element> perss = new ArrayList<Element>();
+            int cnt = 0;
+            List<Object[]> records;
+            if (aEntryId == null) {
+                records = theManager.createNativeQuery("select list(''||id) as ids, externalparentid, count(id) as cnt from E2Entry where " + (calcAllListEntry ? "" : "listEntry_id=" + aEntryListId + " and") + " (isDeleted is null or isDeleted='0') " +
+                        " and billNumber=:billNumber and billDate=:billDate " +
+                        " and (isDeleted is null or isDeleted='0') " +
+                        " and serviceStream!='COMPLEXCASE'" +
+                        " and (doNotSend is null or doNotSend='0') group by externalparentid")
+                        .setParameter("billNumber", aBillNumber).setParameter("billDate", aBillDate).getResultList();
+            } else {
+                records = new ArrayList<Object[]>();
+                Object[] e= {""+aEntryId,entry!=null?entry.getExternalParentId():0L};
+                records.add(e);
+                //records = theManager.createNativeQuery("select id from E2Entry where id=:entryId ").setParameter("entryId", aEntryId).getResultList();
+            }
+            log.info("found " + records.size() + " records");
+            IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;
+            monitor = theMonitorService.startMonitor(aMonitorId,"Формирование xml файла. Размер: ",records.size());
+            monitor.advice(1);
+
+            int i = 0;
+            /*Вот тут - 1 строка - список записей по 1 госпитализация */
+            for (Object[] hosps : records) {
+                int cntSlo = Integer.valueOf(hosps[2].toString());
+                if (cntSlo>1) {
+                    entry = calculateHospitalEntry(Long.valueOf(hosps[1].toString()), hosps[0].toString());
+                } else {
+                    entry = theManager.find(E2Entry.class,Long.valueOf(hosps[0].toString().trim()));
+                }
+
+                i++;
+                if (i % 100 == 0) {
+                    log.info("Сформировано " + i + " записей в счете");
+                    monitor.setText("Сформировано " + i + " записей в счете");
+
+                }
+                if (entry.getDoNotSend() != null && entry.getDoNotSend()) {
+                    continue;
+                } //Есть галочка - не выгружать - не выгружаем
+                StringBuilder err = new StringBuilder();
+                Boolean isError = false;
+                if (entry.getFondResult() == null) {
+                    err.append("НЕ РАСЧИТАН РЕЗУЛЬТАТ СЛУЧАЯ;");
+                    isError = true;
+                }
+                if (entry.getFondIshod() == null) {
+                    err.append("НЕ РАСЧИТАН ИСХОД СЛУЧАЯ;");
+                    isError = true;
+                }
+                if (entry.getMedHelpProfile() == null) {
+                    err.append("НЕ УКАЗАН ПРОФИЛЬ МЕД. ПОМОЩИ;");
+                    isError = true;
+                }
+                if (entry.getFondDoctorSpec() == null) {
+                    err.append("НЕ РАСЧИТАНА СПЕЦИАЛЬНОСТЬ ВРАЧА;");
+                    isError = true;
+                }
+                if (entry.getCost() == null) {
+                    err.append("НЕ РАСЧИТАНА ЦЕНА СЛУЧАЯ;");
+                    isError = true;
+                }
+                if (entry.getBaseTarif() == null) {
+                    err.append("НЕ РАСЧИТАН БАЗОВЫЙ ТАРИФ;");
+                    isError = true;
+                }
+                if (entry.getIDSP() == null) {
+                    err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
+                    isError = true;
+                }
+                if (!isNotNull(entry.getMedPolicyType())) {
+                    err.append("НЕ УКАЗАН ВИД ПОЛИСА;");
+                    isError = true;
+                }
+                if (!isNotNull(entry.getMedPolicyNumber())) {
+                    err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
+                    isError = true;
+                }
+                if (entry.getEntryType().equals(POLYCLINICTYPE)) {
+                    if (!isNotNull(entry.getMainMkb())){
+                        err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
+                        isError = true;
+                    }
+
+
+                }
+                if (!isNotNull(entry.getHistoryNumber())) {
+                    err.append("НЕ ЗАПОЛНЕН НОМЕР ИСТОРИИ БОЛЕЗНИ");
+                    isError = true;
+                }
+                if (!isNotNull(entry.getVidSluch())) {
+                    err.append("НЕ ЗАПОЛНЕН ВИД СЛУЧАЯ");
+                    isError = true;
+                }
+                if (isError) {
+                  //  E2EntryError error = new E2EntryError(entry, "NO_FOND_FIELDS:" + err.toString());
+                   // theManager.persist(error);
+                    log.error("Запись с ИД " + entry.getId() + " не будет выгружена в xml: "+err);
+                    //     entry.setDoNotSend(true); theManager.persist(entry);
+                    continue;
+                }
+                cnt++;
+                Long personId = entry.getExternalPatientId();
+                if (!patientIdsList.contains(personId)) { //Если нет пациента в Л файле - добавляем.
+                    perss.add(createPERSElement(entry));
+                    patientIdsList.add(personId);
+                }
+
+                zaps.add(createSlElements(entry, hosps[0].toString(),cnt));
+              //  zaps.add(createZapElement(entry, cnt));
+                totalSum = totalSum.add(entry.getCost());
+
+            }
+            log.info("ok, we made all, let's make files");
+            monitor.setText("Формирование файла завершено, сохраняем архив");
+            hRoot = makeHTitle(hRoot, periodDate, "H" + fileName, cnt, aBillNumber, aBillDate, totalSum,"3.1");
+            if (aEntryListId != null) { //Меняем статус счета на "выставлен"
+                E2Bill bill =theManager.find(E2Bill.class, theExpertService.getBillIdByDateAndNumber(aBillNumber, dateToString(aBillDate, "dd.MM.yyyy")));
+                if (bill != null) {
+                    bill.setStatus((VocE2BillStatus) getActualVocBySqlString(VocE2BillStatus.class, "select id from VocE2BillStatus where code='SENT'"));
+                    theManager.persist(bill);
+                }
+            }
+            lRoot = makeLTitle(lRoot, periodDate, "L" + fileName);
+            lRoot.addContent(perss);
+            hRoot.addContent(zaps);
+            String archiveName = packetType + fileName + ".MP";
+            createXmlFile(hRoot, "H" + fileName);
+            createXmlFile(lRoot, "L" + fileName);
+            //   log.info("deb14");
+            log.info("Время формирования файла (минут) = " + ((System.currentTimeMillis() - startStartDate.getTime())) / 60000);
+            monitor.setText("Завершено. Время формирования файла (минут) = " + ((System.currentTimeMillis() - startStartDate.getTime())) / 60000);
+
+            if (needCreateArchive) {
+                archiveName = createArchive(archiveName, new String[]{"H" + fileName + ".xml", "L" + fileName + ".xml"});
+                E2ExportPacketJournal journal = new E2ExportPacketJournal(aBillNumber, aBillDate, "/rtf/expert2xml/" + archiveName);
+                theManager.persist(journal);
+            }
+            log.info("ALL SEEMS GOOD!");
+
+            isCheckIsRunning = false;
+            monitor.setText("/rtf/expert2xml/" + archiveName);
+            monitor.finish("/rtf/expert2xml/" + archiveName);
+            return "/rtf/expert2xml/" + archiveName;
+        } catch (Exception err) {
+            err.printStackTrace();
+            return "ERR";
+        }
+    }
+
+    /*Формируем случай с госпитализацией (не сохраняя в БД)*/
+    private E2Entry calculateHospitalEntry(Long aHospitalMedcaseId, String aIds) {
+        E2Entry hospital =null;//=theExpertService.cloneEntity(aEntry);
+        List<E2Entry> slo = theManager.createQuery("from E2Entry where id in ("+aIds+") and externalParentId=:parent and serviceStream!='COMPLEXCASE' " +
+                "and ((isDeleted is null or isDeleted='0') and (doNotSend is null or doNotSend='0')) order by startDate").setParameter("parent",aHospitalMedcaseId)
+                .getResultList();
+        if (slo.size()>0) {
+
+            hospital = cloneEntity(slo.get(0),false);
+            E2Entry lastEntry = slo.get(slo.size()-1);
+            hospital.setFondResult(lastEntry.getFondResult());
+            hospital.setFondIshod(lastEntry.getFondIshod());
+            hospital.setCalendarDays(AgeUtil.calculateDays(hospital.getHospitalStartDate(), hospital.getHospitalFinishDate()));
+            hospital.setCalendarDays(hospital.getCalendarDays()>0?hospital.getCalendarDays()+1:1);
+            BigDecimal cost = new BigDecimal(0);
+            for (E2Entry e:slo) {
+                if (e.getCost()!=null){
+                    cost=cost.add(e.getCost());
+                } else {
+                    log.warn("entry ID ="+e.getId()+" NO COST");
+                }
+
+            }
+            hospital.setCost(cost);
+        }
+        return hospital;
+    }
+    private E2Entry cloneEntity(E2Entry aSourceObject, boolean needPersist) {
+        try {
+            Method[] methodList = aSourceObject.getClass().getMethods();
+            E2Entry newEntity = new E2Entry();
+            //Object newEntity = aClass.newInstance();
+            for (Method setterMethod: methodList) {
+                String methodName =setterMethod.getName();
+                if (methodName.startsWith("set")) {
+                    if (methodName.equals("setId")) {continue;}
+                    if (setterMethod.isAnnotationPresent(OneToMany.class)) {continue;}
+                    String propertyName = PropertyUtil.getPropertyName(setterMethod);
+                    try {
+                        Object val = PropertyUtil.getPropertyValue(aSourceObject,propertyName);
+                        PropertyUtil.setPropertyValue(newEntity,propertyName,val);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            if (needPersist){theManager.persist(newEntity);}
+            return newEntity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
     private String getWorkDir() {
         EjbEcomConfig config = EjbEcomConfig.getInstance();
         return config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
@@ -842,4 +1517,6 @@ private Boolean isCheckIsRunning = false;
     EntityManager theManager;
     private @EJB
     ILocalMonitorService theMonitorService;
+
+    private @EJB IExpert2Service theExpertService;
 }

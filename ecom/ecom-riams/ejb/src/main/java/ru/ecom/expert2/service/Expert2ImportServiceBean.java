@@ -97,8 +97,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             String dSchet = root.getChild("SCHET").getChildText("DSCHET");
             SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
-            E2Bill bill = theExpertService.getBillEntryByDateAndNumber(nSchet,toFormat.format(fromFormat.parse(dSchet)));
+            E2Bill bill = theManager.find(E2Bill.class,theExpertService.getBillIdByDateAndNumber(nSchet,toFormat.format(fromFormat.parse(dSchet))));
             bill.setStatus((VocE2BillStatus)getActualVocByCode(VocE2BillStatus.class,null,"code='PAID'"));
+
             int i=0;
             log.info("Найдено "+zaps.size()+" записей. Обновляем!");
             for (Element zap:zaps) {
@@ -109,6 +110,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
             theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
             entry.setBillNumber(nSchet);
+            entry.setBillDate(bill.getBillDate());
             entry.setBill(bill);
 
             Element pac = zap.getChild("PACIENT");
@@ -149,6 +151,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 }
                 theManager.persist(entry);
             }
+            theManager.persist(bill);
             log.info("Обновление закончено!");
 
         } catch (JDOMException e) {
@@ -158,6 +161,8 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //Распаковываем mp файл в папку

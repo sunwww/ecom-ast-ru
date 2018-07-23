@@ -110,10 +110,7 @@
                     <msh:textField property="directLpu" size="50"/>
                     <msh:textField property="directLpuType" size="50"/>
                 </msh:row>
-                <msh:row>
-                    <msh:textField property="directDate" size="50"/>
 
-                </msh:row>
                 <msh:row>
                     <msh:checkBox property="isEmergency"/>
                     <msh:checkBox property="isChild"/>
@@ -124,6 +121,10 @@
                 <msh:row>
                     <msh:textField property="historyNumber" size="50"/>
                     <msh:textField property="ticket263Number" size="50"/>
+                </msh:row>
+                <msh:row>
+                    <msh:textField property="planHospDate" size="50"/>
+                    <msh:textField property="directDate" size="50"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="helpKind" size="50" />
@@ -176,6 +177,7 @@
                 </msh:row>
                <msh:row>
                 <msh:textField property="result" size="50"/>
+                <msh:checkBox property="isCancer" />
             </msh:row><msh:row>
                 <msh:textField property="reachedResult" size="50"/>
                 <msh:textField property="reHospitalization" size="50"/>
@@ -234,6 +236,10 @@
                     <msh:autoComplete property="fondDoctorSpec" size="50" vocName="vocE2FondV015"/>
                     <msh:autoComplete property="medHelpProfile" size="50" vocName="vocE2MedHelpProfile"/>
                 </msh:row><msh:row>
+                <msh:autoComplete property="vidSluch" size="50" vocName="vocE2VidSluch"/>
+                <msh:autoComplete property="visitPurpose" size="50" vocName="vocE2FondV025"/>
+
+                </msh:row><msh:row>
 
             </msh:row>
                 <msh:row>
@@ -248,7 +254,7 @@
                 <msh:checkBox property="isUnion"/>
                 </msh:row>
                 <msh:row>
-                <msh:textArea property="fondComment"/>
+                <msh:textArea property="fondComment" fieldColSpan="4"/>
                 </msh:row>
             <msh:row>
                 <msh:textField property="reanimationEntry"/>
@@ -347,6 +353,16 @@ where link.entry_id=${param.id}"/>
             <msh:tableColumn columnName="Уровень сложности" property="2"/>
             <msh:tableColumn columnName="Коэффициент" property="3"/>
         </msh:table>
+
+            <msh:separator colSpan="4" label="Случаи онкологического лечения"/>
+            <ecom:webQuery name="cancerEntry" nativeSql="select cancer.id, cancer.serviceType
+from E2CancerEntry cancer
+where cancer.entry_id=${param.id}"/>
+            <msh:table  idField="1" name="cancerEntry" action="entityEdit-e2_cancerEntry.do" noDataMessage="Нет онкослучаев">
+                <msh:tableColumn columnName="ИД" property="1"/>
+                <msh:tableColumn columnName="Уровень сложности" property="2"/>
+                <msh:tableColumn columnName="Коэффициент" property="3"/>
+            </msh:table>
 
             <msh:separator colSpan="4" label="Дефекты оплаты"/>
             <ecom:webQuery name="sanctionList" nativeSql="select es.dopcode , vs.osn|| ' '||vs.name

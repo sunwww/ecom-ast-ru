@@ -6,6 +6,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -32,6 +33,38 @@ import java.util.List;
 })
 public class E2Entry extends BaseEntity {
 
+    /** Раковый случай */
+    @Comment("Раковый случай")
+    public Boolean getIsCancer() {return theIsCancer;}
+    public void setIsCancer(Boolean aIsCancer) {theIsCancer = aIsCancer;}
+    /** Раковый случай */
+    private Boolean theIsCancer ;
+
+    //Все поля ниже размещены в EntityForm!
+    /** Вид случая (справочник VID_SLUCH) */
+    @Comment("Вид случая (справочник VID_SLUCH)")
+    @OneToOne
+    public VocE2VidSluch getVidSluch() {return theVidSluch;}
+    public void setVidSluch(VocE2VidSluch aVidSluch) {theVidSluch = aVidSluch;}
+    /** Вид случая (справочник VID_SLUCH) */
+    private VocE2VidSluch theVidSluch ;
+
+    /** Цель посещения */
+    @Comment("Цель посещения")
+    @OneToOne
+    public VocE2FondV025 getVisitPurpose() {return theVisitPurpose;}
+    public void setVisitPurpose(VocE2FondV025 aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
+    /** Цель посещения */
+    private VocE2FondV025 theVisitPurpose ;
+
+
+    /** Дата планируемой госпитализации */
+    @Comment("Дата планируемой госпитализации")
+    public Date getPlanHospDate() {return thePlanHospDate;}
+    public void setPlanHospDate(Date aPlanHospDate) {thePlanHospDate = aPlanHospDate;}
+    /** Дата планируемой госпитализации */
+    private Date thePlanHospDate ;
+
     /** Дата направление на лечение */
     @Comment("Дата направление на лечение")
     public Date getDirectDate() {return theDirectDate;}
@@ -45,7 +78,7 @@ public class E2Entry extends BaseEntity {
     public void setIsForeign(Boolean aIsForeign) {theIsForeign = aIsForeign;}
     /** Иногородний  */
     private Boolean theIsForeign =false;
-    
+
     /** Тип доп. диспансеризации */
     @Comment("Тип доп. диспансеризации")
     public String getExtDispType() {return theExtDispType;}
@@ -88,14 +121,11 @@ public class E2Entry extends BaseEntity {
     /** Направлен на след. этап ДД */
     private Boolean theExtDispNextStage ;
 
-
-
-    //Все поля ниже размещены в EntityForm!
-    /** Признак детского возраст */
-    @Comment("Признак детского возраст")
+    /** Признак детского возраста */
+    @Comment("Признак детского возраста")
     public Boolean getIsChild() {return theIsChild;}
     public void setIsChild(Boolean aIsChild) {theIsChild = aIsChild;}
-    /** Признак детского возраст */
+    /** Признак детского возраста */
     private Boolean theIsChild ;
 
     /** Счет */
@@ -219,8 +249,7 @@ public class E2Entry extends BaseEntity {
     public void setMedHelpUsl(VocE2FondV006 aMedHelpUsl) {theMedHelpUsl = aMedHelpUsl;}
     /** Условия оказания мед. помощи */
     private VocE2FondV006 theMedHelpUsl ;
-    
-    
+
     /** Вид медицинской помощи */
     @Comment("Вид медицинской помощи")
     @OneToOne
@@ -341,6 +370,14 @@ public class E2Entry extends BaseEntity {
      public void setFondDoctorSpec(VocE2FondV015 aFondDoctorSpec) {theFondDoctorSpec = aFondDoctorSpec;}
      /** Специальность врача по фонду */
      private VocE2FondV015 theFondDoctorSpec ;
+
+    /** Специальность врача по фонду V021 */
+    @Comment("Специальность врача по фонду V021")
+    @OneToOne
+    public VocE2FondV021 getFondDoctorSpecV021() {return theFondDoctorSpecV021;}
+    public void setFondDoctorSpecV021(VocE2FondV021 aFondDoctorSpecV021) {theFondDoctorSpecV021 = aFondDoctorSpecV021;}
+    /** Специальность врача по фонду */
+    private VocE2FondV021 theFondDoctorSpecV021 ;
 
      /** Исход случая */
      @Comment("Исход случая")

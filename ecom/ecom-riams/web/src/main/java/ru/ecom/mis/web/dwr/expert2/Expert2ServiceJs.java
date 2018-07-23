@@ -131,7 +131,7 @@ public class Expert2ServiceJs {
         return "1_Успешно!";
     }
 
-    public long makeMPFIle (final Long aEntryListId,final  String aType, String aBillNumber, String aBillDate,final  Long aEntryId,final  Boolean calcAllListEntry, HttpServletRequest aRequest) throws NamingException {
+    public long makeMPFIle (final Long aEntryListId,final  String aType, String aBillNumber, String aBillDate,final  Long aEntryId,final  Boolean calcAllListEntry, final String aVersion, HttpServletRequest aRequest) throws NamingException {
         final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         if (aEntryId!=null) {
             aBillNumber=aBillNumber!=null?aBillNumber:"TEST";
@@ -149,7 +149,12 @@ public class Expert2ServiceJs {
             public void run() {
                 Date finalDate = null;
                 try {finalDate = new java.sql.Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
-                service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId);
+                if (aVersion.equals("3.0")){
+                    service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId);
+                } else {
+                    service.makeMPFIleV2(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId);
+                }
+
             }
         }.start();
 

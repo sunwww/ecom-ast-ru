@@ -24,6 +24,9 @@
                    <msh:autoComplete  property="uslOk" vocName="vocE2FondV006" size="100"/>
                 </msh:row>
                <msh:row>
+                   <msh:autoComplete  property="vidSluch" vocName="vocE2VidSluch" size="100"/>
+                </msh:row>
+               <msh:row>
                    <msh:checkBox  property="isConsultation"/>
                 </msh:row>
 

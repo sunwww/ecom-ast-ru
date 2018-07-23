@@ -71,32 +71,32 @@ private Boolean isCheckIsRunning = false;
     private final String POLYCLINICKDOTYPE="POLYCLINICKDO";
 
     /** Находим или создаем счет*/
-    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate) {return getBillEntryByDateAndNumber(aBillNumber,aBillDate,theManager);}
-    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate, EntityManager aManager) {
+    public Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate) {return  getBillEntryByDateAndNumber(aBillNumber,aBillDate).getId();}
+    public E2Bill getBillEntryByDateAndNumber(String aBillNumber, String aBillDate) {
         E2Bill bill = null;
         String sql = "select id from e2bill where billNumber=:number and billDate=to_date(:date,'dd.MM.yyyy') ";
-        List<BigInteger> list = aManager.createNativeQuery(sql).setParameter("number",aBillNumber).setParameter("date",aBillDate).getResultList();
+        List<BigInteger> list = theManager.createNativeQuery(sql).setParameter("number",aBillNumber).setParameter("date",aBillDate).getResultList();
         if (list.isEmpty()) { //Создаем новый счет. статус - черновик
             try {
                 bill = new E2Bill();
                 bill.setBillNumber(aBillNumber);
                 bill.setBillDate(DateFormat.parseSqlDate(aBillDate,"dd.MM.yyyy"));
                 bill.setStatus((VocE2BillStatus)getActualVocByClassName(VocE2BillStatus.class,null,"code='DRAFT'"));
-                aManager.persist(bill);
+                theManager.persist(bill);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         } else if (list.size()>1) {
             log.error("Найдено более 1 счета с указанным номером и датой!!");
         } else {
-            bill = aManager.find(E2Bill.class,list.get(0).longValue());
+            bill = theManager.find(E2Bill.class,list.get(0).longValue());
         }
 
         return bill;
     }
 
     /** Клонируем запись*/
-    private E2Entry cloneEntity(E2Entry aSourceObject) {return cloneEntity(aSourceObject,false);}
+    public E2Entry cloneEntity(E2Entry aSourceObject) {return cloneEntity(aSourceObject,false);}
     private E2Entry cloneEntity(E2Entry aSourceObject, boolean needPersist) {
         try {
         Method[] methodList = aSourceObject.getClass().getMethods();
@@ -292,14 +292,14 @@ private Boolean isCheckIsRunning = false;
         deletePolyclinicDoubles(aListEntryId,true);
     }
     private void deletePolyclinicDoubles(Long aListEntryId, boolean deleteEmergency) {
-        log.info(aListEntryId+" deletingDoubles...");
+        log.info(aListEntryId+" deletingDoubles... emergency="+deleteEmergency);
         StringBuilder searchSql = new StringBuilder();
         searchSql.append("select max(e2.id), e2.externalpatientid , medhelpprofile_id,startdate, servicestream from e2entry e2 where e2.listentry_id =:listId")
                 .append(" and e2.entryType='POLYCLINIC' and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'")
                 .append(" and (e2.isMobilePolyclinic is null or e2.isMobilePolyclinic='0') and (e2.isEmergency is null or e2.isEmergency='0')")
                 .append(deleteEmergency?" and e2.isEmergency ='1'":" and (e2.isEmergency is null or e2.isEmergency='0')")
 
-                .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') ")
+                .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') and medhelpprofile_id is not null ")
                 .append(" group by e2.externalpatientid , medhelpprofile_id, startdate, servicestream")
                 .append(" having count(e2.id)>1");
         List<Object[]> list = theManager.createNativeQuery(searchSql.toString()).setParameter("listId",aListEntryId).getResultList();
@@ -307,8 +307,13 @@ private Boolean isCheckIsRunning = false;
         if (list.size()>0) {
             for (Object[] o:list) {
                 theManager.createNativeQuery("update e2entry set isDeleted='1' where id="+o[0].toString()).executeUpdate();
+                /*
+                E2Entry doubleEntry = theManager.find(E2Entry.class, Long.valueOf(o[0].toString()));
+                doubleEntry.setIsDeleted(true);
+                theManager.persist(doubleEntry);
+                */
             }
-            deletePolyclinicDoubles(aListEntryId);
+            deletePolyclinicDoubles(aListEntryId, deleteEmergency);
         }
     }
     /** Формирует КДО из СПО */
@@ -383,10 +388,13 @@ private Boolean isCheckIsRunning = false;
         List<Object[]> list = theManager.createNativeQuery(searchSql.toString()).setParameter("listId",aListEntryId).getResultList();
         log.info("sql = "+searchSql+", size = "+list.size());
         for (Object[] spo: list){
+            log.info("unionPol: "+spo[0]+":"+spo[1]+":"+spo[2]+":"+spo[3]+":"+spo[4]+":");
             //Создаем новую запись, все существущие помечаем как COMPLEXCASE
             String[] ids = spo[4].toString().split(",");
+            log.info("pol ids = "+ids.toString());
             E2Entry mainEntry = null;
             for (String idd: ids) {
+                log.info("pol ids_I = "+idd);
                 Long id = Long.valueOf(idd.trim());
                 E2Entry entry = theManager.find(E2Entry.class,id);
                 if (mainEntry==null) {
@@ -476,6 +484,7 @@ private Boolean isCheckIsRunning = false;
                     theManager.persist(entry);
 
                 }
+                return;
             }
         //На этом этапе мы уверены, что ВМП в случае у нас нет, случай не содержит родов
             //VocE2FondV009 perevodResult =
@@ -870,10 +879,14 @@ private Boolean isCheckIsRunning = false;
                   if (par.contains("=")) {
                       String parr[] = par.split("=");
                       if (parr.length<2||parr[1]==null||parr[1].trim().equals("")) {continue;}
-                      if (parr[0].toUpperCase().indexOf("DATE")>-1) { //ищем дату
-                          sql.append(" and ").append(parr[0]).append("=").append("to_date('"+parr[1]+"','dd.MM.yyyy') ");
-                      } else { //ищем строку
-                          sql.append(" and upper(").append(parr[0]).append(")=").append("'"+parr[1].toUpperCase()+"' ");
+                      String fldName = parr[0], val=parr[1];
+                      if (fldName.toUpperCase().indexOf("DATE")>-1) { //ищем дату
+                          sql.append(" and ").append(fldName).append("=").append("to_date('"+val+"','dd.MM.yyyy') ");
+                      } else if (fldName.startsWith("is")) { //Булево значение
+                          sql.append(" and (").append(fldName).append(val.equals("1")?" ='1')":" is null or ").append(fldName).append("='0')");
+
+                      }else { //ищем строку
+                          sql.append(" and upper(").append(fldName).append(")=").append("'"+val.toUpperCase()+"' ");
                       }
                   }
               }
@@ -1041,7 +1054,13 @@ private Boolean isCheckIsRunning = false;
             if(!entrySubTypeHashMap.containsKey(code)) {
                 entrySubTypeHashMap.put(code,(VocE2EntrySubType) getEntityByCode(code, VocE2EntrySubType.class,true));
             }
-            aEntry.setSubType(entrySubTypeHashMap.get(code));
+            VocE2EntrySubType subType =entrySubTypeHashMap.get(code);
+            aEntry.setSubType(subType);
+            if (subType.getVidSluch()!=null) {
+                aEntry.setVidSluch(subType.getVidSluch());
+            } else {
+                log.error("Не заполнен вид случая для записей с типом "+subType.getCode()+" "+subType.getName());
+            }
         }
         theManager.persist(aEntry);
     }
@@ -1140,7 +1159,9 @@ private Boolean isCheckIsRunning = false;
 
     HashMap<String, Object > diagnosisMap = new HashMap<String, Object>();
     private List<EntryDiagnosis> getDiagnosis(E2Entry aEntry) {return   theManager.createQuery("from EntryDiagnosis where entry_id=:id").setParameter("id", aEntry.getId()).getResultList();}
-    /** Создаем список диагнозов из строки с диагнозами +устанавливаем основной диагноз */ //делаем разово
+    /** Создаем список диагнозов из строки с диагнозами +устанавливаем основной диагноз
+     *  UPD 18-07-2018 Помечаем случай как раковый
+     * */ //делаем разово
     private void createDiagnosis(E2Entry aEntry) {
         try {
             String diagnosisList = aEntry.getDiagnosisList();
@@ -1151,11 +1172,13 @@ private Boolean isCheckIsRunning = false;
              ///   String mainMkb = null;
                 boolean foundClinical=false, foundDischarge = false;
                 List<Long> clinicalIds = new ArrayList<Long>();
+                boolean isCancer=false;
                 for (String ds : diagnosiss) { //(0)МКБ#(1)приоритет#(2)первичность#(3)острота#(4)тип_регистрации#(5)ДТП#(6)характер_заболевания#(7)доп_код_ожоги
                     String[] data = ds.split("#",-1);
                     mkb = data[0];
                     regType = data[4];
                     priority=data[1];
+                    if (mkb.startsWith("C")) {isCancer=true;}
                     boolean isClinical=false,isDischarge=false;
                     if (!diagnosisMap.containsKey("MKB_"+mkb)) {
                         diagnosisMap.put("MKB_"+mkb, getEntityByCode(mkb, VocIdc10.class, false));
@@ -1193,6 +1216,7 @@ private Boolean isCheckIsRunning = false;
                     theManager.persist(diagnosis);
                     if (isClinical) {clinicalIds.add(diagnosis.getId());}
                 }
+                if (isCancer){aEntry.setIsCancer(true);theManager.persist(aEntry);}
                 if (foundClinical&&foundDischarge) { //Если нашли и клинический и выписной диагноз - удаляем клинический.
                     for (Long id:clinicalIds) {
                         theManager.createNativeQuery("delete from EntryDiagnosis where id=:id").setParameter("id",id).executeUpdate();
@@ -1924,7 +1948,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         }
     }
     /** Считаем коэффициент сложности лечения пациента */
-    private BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry) {
+    public BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry) {
         BigDecimal one = new BigDecimal(1);
         if(aEntry.getEntryType().equals(HOSPITALTYPE)&&!aEntry.getBedSubType().equals("1")) { return one;}
       //  log.info("start calc difficult");
@@ -1956,9 +1980,9 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         BigDecimal one = new BigDecimal(1);
         VocE2EntrySubType subType =aEntry.getSubType();
         String tariffCode = subType.getTariffCode();
-        if (tariffCode ==null) {log.warn("Cant calc polyclinic price");return;}
+        if (tariffCode ==null) {/*log.warn("Cant calc polyclinic tariff: "+aEntry.getId()+"<>"+subType.getId()+""+subType.getCode());*/return;}
        Long profileId = aEntry.getMedHelpProfile()!=null?aEntry.getMedHelpProfile().getId():null;
-        if (profileId==null) {log.error("Нет профиля для определения цены");return;}
+        if (profileId==null) {log.error("Нет профиля для определения цены: "+aEntry.getId()+"<>"+aEntry.getServiceStream());return;}
         String key;
         String sql = "";
         VocE2PolyclinicCoefficient coefficient = null;
@@ -2049,7 +2073,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 types[i] = metaData.getColumnType(i + 1);
             }
             E2Entry entity;
-            List<E2Entry> entries = new ArrayList<E2Entry>();
+          //  List<E2Entry> entries = new ArrayList<E2Entry>();
             int j=0;
             while (aResultSet.next()) { // Для каждой строки (кортежа)
                 j++;
@@ -2113,7 +2137,11 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 createServices(entity); //Запускаем один лишь раз
                 //makeCheckEntry(entity);
                 theManager.persist(entity);
-                entries.add(entity);
+                if (entity.getEntryType().equals(POLYCLINICTYPE)||entity.getEntryType().equals(POLYCLINICKDOTYPE)) {
+                    makeCheckEntry(entity,false, false);
+                }
+
+            //    entries.add(entity);
             }
             //checkListEntryFirst(aListEntry, entries); //Проверку будем запускать отдельно.
             log.info("Success!");
@@ -2200,15 +2228,19 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                         makeCheckEntry(entry,true, true);
                     }
                 }
+
             } else if (listEntryCode.equals(POLYCLINICTYPE)||listEntryCode.equals(POLYCLINICKDOTYPE)) {
+                //Проверка поликлинических случаев
                 if (listEntryCode.equals(POLYCLINICTYPE)) {
                     monitor.setText("Удаляем дубли в поликлинике");
                     deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
                 }
+                log.info("entryList.size="+aEntryList.size());
+                aEntryList = theManager.createQuery("from E2Entry where listEntry=:list and (isDeleted is null or isDeleted='0')").setParameter("list",aListEntry).getResultList();
+                log.info("2_entryList.size="+aEntryList.size());
                 int i=0;
                 log.info("POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.");
                 monitor.setText("POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.");
-
                 for(E2Entry entry : aEntryList) {
                     i++;
                     if (i%100==0) {
@@ -2218,6 +2250,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                         makeCheckEntry(entry,false, true);
                 }
                 log.info("Поликлиника. Закончили нахождение цены и проставление полей фонда."+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
+                monitor.setText("Поликлиника. Закончили нахождение цены и проставление полей фонда."+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
                 log.info("Поликлиника. приступаем к объединению случаев.");
                 monitor.setText("Поликлиника. приступаем к объединению случаев.");
                 if (listEntryCode.equals(POLYCLINICTYPE)) {
@@ -2228,6 +2261,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     unionPolyclinicKdoMedCase(listEntryId,aEntryList);
                 }
                 monitor.setText("Закончили проверять поликлинику.");
+
             } else if (listEntryCode.equals(EXTDISPTYPE)) { //Пришло время делать ДД
                 log.info("Create DD");
                 int i=0;
@@ -2553,7 +2587,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 setProfileByBedType(aEntry);
             }
         }
-        //Расчитывает Специальность лечащего врача/ врача, закрывшего талон (v015)
+        //Расчитывает Специальность лечащего врача/ врача, закрывшего талон (v015) . UPD 18-07-2018 * Специальность врача по справочнику V021
         if (aEntry.getFondDoctorSpec() == null || forceUpdate) {
             if (stacCase && aEntry.getMedHelpProfile() != null && aEntry.getMedHelpProfile().getMedSpec() != null) {  /* от 09-02-2018 Если у профиля мед. помощи указана специальность врача, указываем ее. Только для стационара */
                 aEntry.setFondDoctorSpec(aEntry.getMedHelpProfile().getMedSpec());
@@ -2577,6 +2611,9 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     resultMap.put(key, list.isEmpty() ? null : theManager.find(VocE2FondV015.class, list.get(0).longValue()));
                 }
                 aEntry.setFondDoctorSpec((VocE2FondV015) resultMap.get(key));
+                if (aEntry.getFondDoctorSpec().getMedSpecV021()!=null) {
+                    aEntry.setFondDoctorSpecV021(aEntry.getFondDoctorSpec().getMedSpecV021());
+                }
             }
         }
         if (stacCase) { //Заполняем поля для стационара

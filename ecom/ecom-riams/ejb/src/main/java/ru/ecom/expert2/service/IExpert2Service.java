@@ -12,7 +12,8 @@ import java.sql.SQLException;
 
 public interface IExpert2Service {
     E2Bill getBillEntryByDateAndNumber(String sBillNumber, String aBillDate);
-  boolean exportDefectNewListEntry(Long alistEntryId);
+    Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate);
+    boolean exportDefectNewListEntry(Long alistEntryId);
    //  void addMedServiceToEntry(Long aEntryId, Long aMedServiceId);
      void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId);
      void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType);
@@ -27,4 +28,6 @@ public interface IExpert2Service {
     BigDecimal calculateCusmo(String bedSubTypeCode, Long aDepartmentId, Long aProfileId, Date aDate);
     BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate);
     <T> T getActualVocByClassName(Class aClass, Date aActualDate, String aSqlAdd);
+    E2Entry cloneEntity(E2Entry aSourceObject);
+    BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry);
 }

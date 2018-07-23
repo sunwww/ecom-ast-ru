@@ -55,4 +55,12 @@ public class VocE2FondV015 extends VocBaseFederal {
     public void setIsKdoChief(Boolean aIsKdoChief) {theIsKdoChief = aIsKdoChief;}
     /** Главный специалист в диагностическом СПО */
     private Boolean theIsKdoChief ;
+
+    /** Мед. специальность V021 по профилю */
+    @Comment("Мед. специальность V021 по профилю")
+    @OneToOne
+    public VocE2FondV021 getMedSpecV021() {return theMedSpecV021;}
+    public void setMedSpecV021(VocE2FondV021 aMedSpecV021) {theMedSpecV021 = aMedSpecV021;}
+    /** Мед. специальность по профилю */
+    private VocE2FondV021 theMedSpecV021 ;
 }

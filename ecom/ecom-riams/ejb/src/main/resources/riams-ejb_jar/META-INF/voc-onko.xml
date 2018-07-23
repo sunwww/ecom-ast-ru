@@ -272,4 +272,36 @@
         />
     </voc>
 
+    <voc id='vocOncologyReasonTreat' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyReasonTreatCode" type="NativeVocService">
+        <NativeVocService
+                from="vocOncologyReasonTreat voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyConsilium' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+    <voc id="vocOncologyConsiliumCode" type="NativeVocService">
+        <NativeVocService
+                from="vocOncologyConsilium voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+
 </vocconfig>

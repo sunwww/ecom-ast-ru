@@ -72,10 +72,12 @@ public class Expert2FondUtil {
         }
         if (aEntry.getEntryType().equals(E2Enumerator.HOSPITALTYPE)||aEntry.getEntryType().equals(E2Enumerator.VMPTYPE)) { //Только для стац
             List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
-            for (E2CoefficientPatientDifficultyEntryLink diff: list) {
-                if (diff.getDifficulty().getCode().equals("11")) {
-                    ret+=ret.length()>0?";21;22":"21;22";
-                    break;
+            if (list!=null) {
+                for (E2CoefficientPatientDifficultyEntryLink diff: list) {
+                    if (diff.getDifficulty().getCode().equals("11")) {
+                        ret+=ret.length()>0?";21;22":"21;22";
+                        break;
+                    }
                 }
             }
         }
