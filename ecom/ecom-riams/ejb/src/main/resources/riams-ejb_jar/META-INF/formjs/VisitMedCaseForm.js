@@ -135,7 +135,26 @@ function onPreSave(aForm,aEntity, aCtx) {
 	aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setEditTime(Packages.ru.nuzmsh.util.format.DateFormat.formatToTime(new java.sql.Time (date.getTime()))) ;
 	aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
+    checkHospitBetween2VisitsAt1Spo(aForm,aEntity, aCtx);
 }
+
+//Milamesher #108 проверка на наличие госпитализации между визитами в СПО
+function checkHospitBetween2VisitsAt1Spo(aForm,aEntity, aCtx) {
+	if (aEntity.dateStart!=null && aEntity.dateStart!='' && aForm.parent!=null && aForm.parent!='' && aEntity.patient!=null) {
+        var spo = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase, new java.lang.Long(aForm.parent));
+        if (spo!=null && spo.dateStart!=null) {
+        	var spoDateStart=spo.dateStart;
+        	var dateNow=aEntity.dateStart;
+        	var patId=aEntity.patient.id;
+            var list = aCtx.manager.createNativeQuery("select hmc.id from medcase hmc\n" +
+                "left join patient pat on pat.id=hmc.patient_id\n" +
+                "where hmc.datefinish is not null and hmc.datestart between to_date('"+spoDateStart+"','yyyy-MM-dd') and to_date('"+dateNow+"','yyyy-MM-dd')\n" +
+                "and hmc.deniedHospitalizating_id is null and hmc.dtype='HospitalMedCase' and pat.id="+patId).getResultList() ;
+            if (list.size()>0) throw "С момента начала выбранного СПО у пациента была госпитализация, необходимо открыть новый СПО!";
+		}
+	}
+}
+
 function onPreCreate(aForm, aCtx) {
 	var date = new java.util.Date();
 	aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
