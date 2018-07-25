@@ -1,4 +1,4 @@
-package ru.ecom.api.record;
+package ru.ecom.api;
 
 /** Created by rkurbanov on 16.05.2018. */
 
