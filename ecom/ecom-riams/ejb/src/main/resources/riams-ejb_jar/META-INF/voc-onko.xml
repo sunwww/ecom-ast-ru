@@ -3,7 +3,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN001'
                 names   = 'name'
-                queried = 'code,name'
+                queried = 'name'
         />
     </voc>
     <voc id="vocOncologyN001Code" type="NativeVocService">
@@ -100,7 +100,7 @@
         <EntityVocService
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN007'
                 names   = 'name'
-                queried = 'code,name'
+                queried = 'name'
         />
     </voc>
     <voc id="vocOncologyN007Code" type="NativeVocService">
@@ -269,6 +269,46 @@
                 nameId="voc.code"
                 order="voc.name"
                 names="voc.code||' '||voc.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyConsilium' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+
+    <voc id='vocOncologyDiagType' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyDiagType'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+
+    <voc id='vocOncologyMethodDiagTreat' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyMethodDiagTreat'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+
+    <voc id='vocOncologyReasonTreat' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
+                names   = 'name'
+                queried = 'code,name'
+        />
+    </voc>
+
+    <voc id='vocOncologyTypeDirection' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyTypeDirection'
+                names   = 'name'
+                queried = 'code,name'
         />
     </voc>
 
