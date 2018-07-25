@@ -1,7 +1,5 @@
 package ru.ecom.api;
 
-import ru.ecom.api.record.IApiService;
-
 import javax.annotation.Resource;
 import javax.ejb.Local;
 import javax.ejb.Remote;
