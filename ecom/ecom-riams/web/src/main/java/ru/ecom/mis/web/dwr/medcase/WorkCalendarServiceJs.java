@@ -1,20 +1,6 @@
 package ru.ecom.mis.web.dwr.medcase;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
 import org.jdom.IllegalDataException;
-
 import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -27,6 +13,18 @@ import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 public class WorkCalendarServiceJs {
 
@@ -100,9 +98,9 @@ public class WorkCalendarServiceJs {
 				"where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
 				"from workcalendarday  wcd\n" +
 				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
-				") and (isdeleted is null or isdeleted = false)\n" +
-				"group by wcd.id\n" +
-				"order by wcd.calendardate\n";
+				") and (isdeleted is null or isdeleted = false) \n" +
+				"group by wcd.id,wcd.calendardate \n" +
+				"order by wcd.calendardate \n";
 
 		list = service.executeNativeSql(sql);
 

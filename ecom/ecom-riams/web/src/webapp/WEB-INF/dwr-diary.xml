@@ -62,6 +62,10 @@
 		<create creator="new" javascript="PharmnetService" scope="application">
 			<param name="class" value="ru.ecom.mis.web.dwr.pharmnet.PharmnetServiceJs"/>
 		</create>
+
+		<create creator="new" javascript="OncologyService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.oncology.OncologyServiceJs"/>
+		</create>
     </allow>
 
     <signatures>

@@ -143,25 +143,17 @@
 		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
 		<form-bean name="mis_encodingAccordanceForm" type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
 		<form-bean name="ecom_deleteJournalForm" type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
-		<form-bean name="mis_kinsmanForm"
-			type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>	
-			
-	
+		<form-bean name="mis_kinsmanForm" type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>
 		<form-bean name="mis_lpuForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
 		<form-bean name="mis_lpuRequisiteForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuRequisiteForm" />
 
-		<form-bean name="voc_orgForm"
-			type="ru.ecom.mis.ejb.form.patient.VocOrgForm" />
+		<form-bean name="voc_orgForm" type="ru.ecom.mis.ejb.form.patient.VocOrgForm" />
 			
-		<form-bean name="voc_drugUNForm"
-			type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugUnlicensedNameForm"/>
+		<form-bean name="voc_drugUNForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugUnlicensedNameForm"/>
 			
-		<form-bean name="voc_operationForm"
-			type="ru.ecom.mis.ejb.form.medcase.hospital.VocSurgicalOperationForm"/>
-		<form-bean name="voc_workFunctionForm"
-			type="ru.ecom.mis.ejb.form.worker.VocWorkFunctionForm"/>
-		<form-bean name="voc_postForm"
-			type="ru.ecom.mis.ejb.form.worker.VocPostForm"/>
+		<form-bean name="voc_operationForm" type="ru.ecom.mis.ejb.form.medcase.hospital.VocSurgicalOperationForm"/>
+		<form-bean name="voc_workFunctionForm" type="ru.ecom.mis.ejb.form.worker.VocWorkFunctionForm"/>
+		<form-bean name="voc_postForm" type="ru.ecom.mis.ejb.form.worker.VocPostForm"/>
 
 		<form-bean name="mis_lpuAreaForm"
 			type="ru.ecom.mis.ejb.form.lpu.LpuAreaForm" />
@@ -319,7 +311,12 @@
 		<form-bean name="licence_documentParameterGroupForm" type="ru.ecom.mis.ejb.form.licence.DocumentParameterGroupForm" />
 		 -->
 		<form-bean name="doc_externalMedserviceForm" type="ru.ecom.mis.ejb.form.licence.ExternalMedserviceForm" />
-	
+
+		<!-- Онкологическое лечение -->
+		<form-bean name="oncology_caseForm" type="ru.ecom.oncological.ejb.form.OncologyCaseForm"/>
+		<form-bean name="oncology_contraForm" type="ru.ecom.oncological.ejb.form.OncologyContraForm"/>
+		<form-bean name="oncology_diagnosticForm" type="ru.ecom.oncological.ejb.form.OncologyDiagnosticForm"/>
+		<form-bean name="oncology_directionForm" type="ru.ecom.oncological.ejb.form.OncologyDirectionForm"/>
 	</form-beans>
 
 	<global-forwards></global-forwards>
