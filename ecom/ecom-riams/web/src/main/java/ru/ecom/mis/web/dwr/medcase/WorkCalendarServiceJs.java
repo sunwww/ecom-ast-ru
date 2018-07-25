@@ -98,9 +98,9 @@ public class WorkCalendarServiceJs {
 				"where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
 				"from workcalendarday  wcd\n" +
 				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
-				") and (isdeleted is null or isdeleted = false)\n" +
-				"group by wcd.id,wcd.calendardate\n" +
-				"order by wcd.calendardate\n";
+				") and (isdeleted is null or isdeleted = false) \n" +
+				"group by wcd.id,wcd.calendardate \n" +
+				"order by wcd.calendardate \n";
 
 		list = service.executeNativeSql(sql);
 
