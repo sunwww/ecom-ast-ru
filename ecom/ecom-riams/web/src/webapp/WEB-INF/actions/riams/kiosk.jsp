@@ -77,7 +77,11 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
 } else if (kioskType.equals("QUEUE")) {
     //Делаем таблицу на всё окно. В таблице каждая ячейка - очередь. При щелчке на очереди выходит талончик
     %>
-<table id="queueTable" border="1">
+<div id="ticketDiv" style="display: none; width: 100px; height: 200px">
+
+
+</div>
+<table id="queueTable" border="1" style="width: 100%; height: 100%">
 
 </table>
 
@@ -106,7 +110,7 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
                     //if (i%2==0) {
 
                     //}
-                    tbl.append("<tr style='"+color+"'><td onclick='getNewTicket("+qId+")'>"+qName+"</td></tr>");
+                    tbl.append("<tr style='"+color+"'><td align='center' onclick='getNewTicket("+qId+")'>"+qName+"</td></tr>");
                 }//60-90 - yellow
             }
             setTimeout(getQueueList,1800000);
@@ -119,10 +123,29 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
             ,data:{token:theToken,queue:queueId}
         }).done (function(json) {
             if (json!=null)  {
-                alert ("Ваш номер: "+json.fullNumber+", печатать на инфомате я пока не умею");
+                //alert ("Ваш номер: "+json.fullNumber+", печатать на инфомате я пока не умею");
+                var html ="<p align='center'>Очередь: "+json.queueName+"</p>";
+                html +="<p align='center'>"+json.queueDate+"</p>";
+                html +="<p align='center'>Номер "+json.fullNumber+"</p>";
+                html +="<p align='center'>"+json.ticketDate+"</p>";
+                jQuery('#ticketDiv').html(html);
+            printHtml(jQuery('#ticketDiv').html());
+
             }
 
         });
+    }
+    function printHtml(el) {
+        var mywindow = window.open('', 'my div', 'height=200,width=200');
+        mywindow.document.write('<html><head><title>my div</title>');
+        mywindow.document.write('</head><body >');
+        mywindow.document.write(el);
+        mywindow.document.write('</body></html>');
+        mywindow.document.close(); // necessary for IE >= 10
+        mywindow.focus(); // necessary for IE >= 10
+        mywindow.print();
+      mywindow.close();
+        return true;
     }
 </script>
 <%

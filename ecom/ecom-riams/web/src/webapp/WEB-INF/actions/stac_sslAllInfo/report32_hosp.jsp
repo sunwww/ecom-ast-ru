@@ -137,7 +137,10 @@ if (type!=null&&type.equals("reestr")) {
                 sqlAdd+=" and nb.birthweight between 3500 and 3999";
                 break;
             case 9:
-                sqlAdd+=" and nb.birthweight >= 4000";
+                sqlAdd+=" and nb.birthweight >= 4500";
+                break;
+            case 18:
+                sqlAdd+="and nb.birthweight between 4000 and 4499";
                 break;
             case 10:
                 sqlAdd+=" and vnbm.code!='DONOSH' ";
@@ -182,8 +185,8 @@ order by pat_info
     <input type="button" value="Печать списка" onclick="print()" >
     <msh:table name="Report32_reestr" action="entityView-mis_patient.do" idField="1">
         <msh:tableColumn property="sn"/>
-      <msh:tableColumn columnName="ИД пациента" property="1" />
-      <msh:tableColumn columnName="Fam" property="2" addParam=""  />
+      <msh:tableColumn columnName="ИД" property="1" />
+      <msh:tableColumn columnName="ФИО ребенка" property="2"  />
     </msh:table>
     
     </msh:sectionContent>
@@ -210,7 +213,7 @@ select '1) Родился живым' as f1_name
 ,count(case when nb.birthweight between 2500 and 2999 then nb.id else null end) as f8_2999
 ,count(case when nb.birthweight between 3000 and 3499 then nb.id else null end) as f9_3499
 ,count(case when nb.birthweight between 3500 and 3999 then nb.id else null end) as f10_3999
-,count(case when nb.birthweight > 3999 then nb.id else null end) as f11_4000 
+,count(case when nb.birthweight >= 4500 then nb.id else null end) as f11_4500
 ,count(case when vnbm.code!='DONOSH' then nb.id else null end) as f12_nedonos
 ,count(case when vnbm.code!='DONOSH' and cb.durationpregnancy <28.00 then nb.id else null end) as f13_nedonos_28
 ,count(case when vlb.code='1' and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp),
@@ -221,6 +224,7 @@ cast(to_char(birthdate, 'yyyy-mm-dd') || ' ' || to_char(birthtime, 'hh:mi:00') a
 between 24 and 168 then nb.id end) as f15_death168
 , 'alive' as idLld
 ,count(case when nb.birthweight <500 then nb.id else null end) as f17_499
+,count(case when nb.birthweight between 4000 and 4499 then nb.id else null end) as f18_4000
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
@@ -245,7 +249,7 @@ else '2) Родился и выжил' end as f1_name
 ,count(case when nb.birthweight between 2500 and 2999 then nb.id else null end) as f8_2999
 ,count(case when nb.birthweight between 3000 and 3499 then nb.id else null end) as f9_3499
 ,count(case when nb.birthweight between 3500 and 3999 then nb.id else null end) as f10_3999
-,count(case when nb.birthweight > 3999 then nb.id else null end) as f11_4000 
+,count(case when nb.birthweight >=4500 then nb.id else null end) as f11_4500
 ,count(case when vnbm.code!='DONOSH' then nb.id else null end) as f12_nedonos
 ,count(case when vnbm.code!='DONOSH' and cb.durationpregnancy <28.00 then nb.id else null end) as f13_nedonos_28
 ,count(case when vlb.code='1' and mc.result_id=6 and (extract(epoch from age(cast(to_char(mc.datefinish, 'yyyy-mm-dd') || ' ' || to_char(mc.dischargetime, 'hh:mi:00') as timestamp),
@@ -262,6 +266,7 @@ when vlb.code='2' and nb.deadbeforelabors='1' then 'deadbefore'
 else 'stayalive' end
 ) as idLld
 ,count(case when nb.birthweight <500 then nb.id else null end) as f17_499
+,count(case when nb.birthweight between 4000 and 4499 then nb.id else null end) as f18_4000
 from newborn nb
 left join vocnewbornmaturity vnbm on vnbm.id=nb.maturity_id
 left join vocliveborn vlb on vlb.id=nb.liveborn_id
@@ -301,7 +306,8 @@ group by f1_name order by f1_name
       <msh:tableColumn columnName="2500-2999" property="8" addParam="&weight=6"/>
       <msh:tableColumn columnName="3000-3499" property="9" addParam="&weight=7"/>
       <msh:tableColumn columnName="3500-3999" property="10" addParam="&weight=8"/>
-      <msh:tableColumn columnName="4000 и выше" property="11" addParam="&weight=9"/>
+      <msh:tableColumn columnName="4000-4499" property="18" addParam="&weight=18"/>
+      <msh:tableColumn columnName="4500 и выше" property="11" addParam="&weight=9"/>
       <msh:tableColumn columnName="Недоношенные" property="12" addParam="&weight=10"/>
       <msh:tableColumn columnName="Недон. до 28 нед." property="13" addParam="&weight=11"/>
       <msh:tableColumn columnName="Умерли в I сутки" property="14" addParam="&weight=12"/>

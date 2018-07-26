@@ -9,6 +9,26 @@
     <description>РИАМС</description>
 
     <servlet>
+        <servlet-name>nologin</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>
+                /WEB-INF/config-nologin.xml
+            </param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>nologin</servlet-name>
+        <url-pattern>*.nl</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>nologin</servlet-name>
+        <url-pattern>/kiosk.nl</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>GetMessageFromFile</servlet-name>
         <servlet-class>ru.ecom.web.GetMessageFromFile</servlet-class>
     </servlet>
