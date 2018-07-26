@@ -917,8 +917,9 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join MisLpu m2 on m2.id=w.lpu_id") ; 
 		sql.append(" left join WorkCalendar wc on wc.workFunction_id=wf.id") ;
 		sql.append(" left join WorkCalendarDay wcd on wcd.workCalendar_id=wc.id") ;
- 
-		sql.append(" where wcd.calendarDate>=Current_date");
+		sql.append(" left join WorkCalendarTime wct on wct.workCalendarDay_id=wcd.id") ;
+		sql.append(" where wcd.calendarDate>=Current_date and (wcd.isDeleted is null or wcd.isDeleted='0')");
+		sql.append(" and wct.medcase_id is null and (wct.isDeleted is null or wct.isDeleted='0')");
 		if (remoteUser) sql.append(" and (wf.DTYPE='PersonalWorkFunction' and (m2.isNoViewRemoteUser is null or m2.isNoViewRemoteUser='0') or wf.dtype='GroupWorkFunction' and (m1.isNoViewRemoteUser is null or m1.isNoViewRemoteUser='0')) and (wf.isNoViewRemoteUser is null or wf.isNoViewRemoteUser='0')") ;
 		sql.append(" group by vwf.id,vwf.code,vwf.name") ;
 		sql.append(" order by vwf.name") ;
