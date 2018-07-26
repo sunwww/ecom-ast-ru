@@ -204,6 +204,43 @@ order by vis.dateStart
         </msh:table>
       </msh:section>
       </msh:ifInRole>
+      <msh:ifInRole roles="/Policy/Mis/Oncology/Case/View">
+      <msh:section title="Случай онкологического лечения">
+        <ecom:webQuery name="list" nativeSql="
+                    select oc.id,
+                    case when oc.suspiciononcologist=true then 'Да' else 'Нет' end as sus,
+                    ort.name as reason,
+                    case when oc.distantmetastasis=true then 'Да' else 'Нет' end as disy,
+                    n02.name as stad,
+                    n03.name as tumor,
+                    n04.name as nodus,
+                    n05.name as metastasis,
+                    cons.name as consil,
+                    n13.name as typetreat
+                    from oncologycase oc
+                    left join vocOncologyReasonTreat ort on ort.id = oc.vocOncologyReasonTreat_id
+                    left join vocOncologyN002 n02 on n02.id = oc.stad_id
+                    left join vocOncologyN003 n03 on n03.id = oc.tumor_id
+                    left join vocOncologyN004 n04 on n04.id = oc.nodus_id
+                    left join vocOncologyN005 n05 on n05.id = oc.metastasis_id
+                    left join voconcologyconsilium cons on cons.id = oc.consilium_id
+                    left join vocOncologyN013 n13 on n13.id = oc.typeTreatment_id
+                    where medcase_id = ${param.id}"/>
+        <msh:table viewUrl="entityView-oncology_case.do?short=Short" name="list"
+                   action="entityParentView-oncology_case.do" idField="1" >
+          <msh:tableColumn columnName="#" property="sn"/>
+          <msh:tableColumn columnName="Подозрение на онкологию" property="2"/>
+          <msh:tableColumn columnName="Причина обращения" property="3"/>
+          <msh:tableColumn columnName="Удаленные метастазы" property="4"/>
+          <msh:tableColumn columnName="Стадия" property="5"/>
+          <msh:tableColumn columnName="Tumor" property="6"/>
+          <msh:tableColumn columnName="Nodus" property="7"/>
+          <msh:tableColumn columnName="Metastasis" property="8"/>
+          <msh:tableColumn columnName="Консилиум" property="9"/>
+          <msh:tableColumn columnName="Тип лечения" property="10"/>
+        </msh:table>
+      </msh:section>
+      </msh:ifInRole>
     </msh:ifFormTypeIsView>
   </tiles:put>
   <tiles:put name="title" type="string">
@@ -214,12 +251,11 @@ order by vis.dateStart
       <msh:sideMenu guid="sideMenu-123" title="СПО">
         <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-smo_spo" name="Изменить" roles="/Policy/Mis/MedCase/Spo/Edit" />
         <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-smo_spo" name="Удалить" roles="/Policy/Mis/MedCase/Spo/Delete" />
-        <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь"
-        	roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"
-        />
-		<msh:sideLink params="id" action="/js-smo_spo-reopenSpo" name="Открыть СПО" title="Открыть СПО" confirm="Открыть СПО?" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Reopen" />
+        <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь" roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"/>
+        <msh:sideLink params="id" action="/js-smo_spo-reopenSpo" name="Открыть СПО" title="Открыть СПО" confirm="Открыть СПО?" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Reopen" />
 		<msh:sideLink params="id" action="/js-smo_spo-closeSpo" name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" guid="d84659f7-7ea9-4400-a11c-c83e7d5c578d" key="ALT+5" roles="/Policy/Mis/MedCase/Spo/Close" />
-      	<tags:mis_choiceSpo hiddenNewSpo="1" method="unionSpos" methodGetPatientByPatient="getOpenSpoBySmo" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Объединить с другим СПО" />
+        <msh:sideLink key="ALT+1" params="id" action="/entityParentPrepareCreate-oncology_case.do" name="Создать онкологический случай" roles="/Policy/Mis/Oncology/Case/Create"/>
+        <tags:mis_choiceSpo hiddenNewSpo="1" method="unionSpos" methodGetPatientByPatient="getOpenSpoBySmo" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Объединить с другим СПО" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-smo_spo-cost_case.do?short=Short&id=${param.id}','.do')" name='Цена' title="Просмотр стоимости услуг"         	roles="/Policy/Mis/Contract/Journals/AnalisisMedServices" />
             <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуги"  
     	styleId="viewShort" action="/javascript:getDefinition('entityParentList-smo_medService.do?short=Short&id=${param.id}','.do')"  title='Мед.услуги'
@@ -240,6 +276,24 @@ order by vis.dateStart
   </tiles:put>
   <tiles:put name="javascript" type="string">
  <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
+    <script type="text/javascript" src="./dwr/interface/OncologyService.js"></script>
+    <script type="text/javascript" >
+      <msh:ifFormTypeIsView formName="smo_spoForm">
+      var btn = document.getElementById("ALT_1");
+      btn.style.display  = "none";
+        OncologyService.checkSPO(${param.id},{
+            callback : function(res) {
+               if(res=="true"){
+                    var isAdmin = confirm("Требуется создать онкологический случай");
+                    if(isAdmin){
+                        document.location.replace("entityParentPrepareCreate-oncology_case.do?id=${param.id}");
+                    }
+                   btn.style.display  = "block";
+                }
+            }
+        });
+      </msh:ifFormTypeIsView>
+    </script>
   </tiles:put>
 </tiles:insert>
 

@@ -114,8 +114,6 @@ public class OncologyServiceJs {
         service.executeUpdateNativeSql("update oncologycontra set oncologycase_id="+newId_case+" where oncologycase_id="+id_case);
     }
 
-
-
     public String LoadView(Long caseId, HttpServletRequest aRequest) throws NamingException, ParseException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> res = service.executeNativeSql("select suspicionOncologist, distantmetastasis from oncologycase where id="+caseId);
@@ -141,11 +139,10 @@ public class OncologyServiceJs {
         return code+","+name;
     }
 
-
     /////--------------
     public String getCode(Long idDir, String vocName, HttpServletRequest aRequest) throws NamingException, ParseException {
 
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);//voconcologytypedirection
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> res = service.executeNativeSql("select code from "+vocName+" where id="+idDir);
         String code="";
         for (WebQueryResult wqr : res) {
@@ -166,5 +163,35 @@ public class OncologyServiceJs {
         return null;
     }
 
+    public String checkSPO(Long id_medcase, HttpServletRequest aRequest) throws NamingException {
 
+       IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+       Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + id_medcase);
+       int count = !res.isEmpty() ? Integer.parseInt(res.iterator().next().get1().toString()) : 0;
+
+       String result="false";
+        if (count == 0) {
+
+            res  = service.executeNativeSql("select dateFinish,idc10_id from medcase  where id=" + id_medcase);
+            String finishdate = "";
+            String idc10_id = "";
+
+            for (WebQueryResult wqr : res) {
+                if(wqr.get1()!=null) finishdate = wqr.get1().toString();
+                if(wqr.get2()!=null) idc10_id = wqr.get2().toString();
+            }
+            if (finishdate != null && !finishdate.equals("")) {
+                if (idc10_id != null && !idc10_id.equals("")) {
+                    res = service.executeNativeSql("select case when count(id)>0 then true else false end  \n" +
+                            "from vocidc10  where  code like 'C%' and id=" + idc10_id);
+
+                    for (WebQueryResult wqr : res) {
+                        result = wqr.get1().toString();
+                    }
+                    return result;
+                }
+            }
+        }
+        return result;
+    }
 }
