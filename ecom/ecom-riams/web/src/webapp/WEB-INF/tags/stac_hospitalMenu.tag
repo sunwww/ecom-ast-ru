@@ -37,9 +37,15 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/MedPolicy/Show" name="Полисы" params="id"  
     	action='/stac_policiesEdit'  key='Alt+4' 
     	styleId="stac_policies"
-    	title='Полисы данного случая лечения в стационаре!'/> 
-    	
-   </msh:sideMenu>
+    	title='Полисы данного случая лечения в стационаре!'/>
+
+	<msh:sideLink key="ALT+1"
+				  params="id"
+				  action="/entityParentPrepareCreate-oncology_case.do"
+				  name="Создать онкологический случай"
+				  roles="/Policy/Mis/Oncology/Case/Create"/>
+
+</msh:sideMenu>
   
    <msh:sideMenu title="Показать">
     <msh:sideLink roles="/Policy/Mis/MedCase/QualityEstimationCard/View" name="Экспертные карты" params="id" action="/entityParentList-expert_card"/>
