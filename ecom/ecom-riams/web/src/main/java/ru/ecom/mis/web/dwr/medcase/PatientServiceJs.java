@@ -769,4 +769,26 @@ public class PatientServiceJs {
 		service.setAddParamByMedCase(aParam,aMedCase,aStatus);
 		return true ;
 	}
+
+	public boolean checkSLSonDepartment(String id_medcase,HttpServletRequest aRequest)throws Exception  {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		int id=0;
+		Collection<WebQueryResult> res = service.executeNativeSql("select count(c.id) from Certificate c " +
+				"where dtype='ShortConfinementCertificate' and medcase_id = "+id_medcase);
+		int count = !res.isEmpty() ? Integer.parseInt(res.iterator().next().get1().toString()) : 0;
+
+		if(count==0){
+			res = service.executeNativeSql("select department_id from medcase where id =" + id_medcase);
+			id = !res.isEmpty() ? Integer.parseInt(res.iterator().next().get1().toString()) : 0;
+
+			res = service.executeNativeSql("select keyvalue from softconfig  where key = 'BirthDepId'");
+			int dep_id =  !res.isEmpty() ? Integer.parseInt(res.iterator().next().get1().toString()) : 0;
+
+			if(dep_id==id){
+				return true;
+			}else return false;
+		}
+
+		return false;
+	}
 }
