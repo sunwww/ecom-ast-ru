@@ -39,12 +39,17 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	styleId="stac_policies"
     	title='Полисы данного случая лечения в стационаре!'/>
 
-	<msh:sideLink key="ALT+1"
+	<msh:sideLink key="ALT+5"
 				  params="id"
 				  action="/entityParentPrepareCreate-oncology_case.do"
 				  name="Создать онкологический случай"
 				  roles="/Policy/Mis/Oncology/Case/Create"/>
 
+	<msh:sideLink key="ALT+6"
+				  params="id"
+				  action="/entityParentPrepareCreate-preg_shortConfCertificate.do"
+				  name="Добавить родовый сертификат"
+				  roles="/Policy/Mis/Pregnancy/ConfinementCertificate"/>
 </msh:sideMenu>
   
    <msh:sideMenu title="Показать">

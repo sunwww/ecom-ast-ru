@@ -291,19 +291,43 @@
                     </msh:table>
                 </msh:section>
             </msh:ifInRole>
+
+            <mis:ifPatientIsWoman guid="some" classByObject="Patient" idObject="stac_sslForm.patient" roles="/Policy/Mis/Pregnancy/ConfinementCertificate">
+                <msh:section createUrl="entityParentPrepareCreate-preg_shortConfCertificate.do?id=${param.id}"
+                             title="Родовый сертификат">
+                    <ecom:webQuery name="list" nativeSql="
+                    select c.id, c.number from Certificate c
+                    where c.dtype='ShortConfinementCertificate' and c.medcase_id = ${param.id}"/>
+                    <msh:table viewUrl="entityView-preg_shortConfCertificate.do?short=Short" name="list"
+                               action="entityParentView-preg_shortConfCertificate.do" idField="1" >
+                        <msh:tableColumn columnName="#" property="sn"/>
+                        <msh:tableColumn columnName="Номер" property="2"/>
+                    </msh:table>
+                </msh:section>
+            </mis:ifPatientIsWoman>
         </msh:ifFormTypeIsView>
         <tags:stac_infoBySls form="stac_sslForm"/>
     </tiles:put>
-
-
-    <%--<tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="stac_sslForm">
-            <msh:sideLink key="ALT+5" params="id" action="/entityParentPrepareCreate-oncology_case.do" name="Создать онкологический случай" roles="/Policy/Mis/Oncology/Case/Create"/>
-        </msh:ifFormTypeIsView>
-    </tiles:put>--%>
     <tiles:put name="javascript" type="string">
         <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
         <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+
+        <script type="text/javascript" >
+            <msh:ifInRole roles="/Policy/Mis/Pregnancy/ConfinementCertificate">
+            <msh:ifFormTypeIsView formName="stac_sslForm">
+            PatientService.checkSLSonDepartment(${param.id},{
+                callback : function(res) {
+                    if(res==true){
+                        var isAdmin = confirm("Требуется добавить родовый сертификат!");
+                        if(isAdmin){
+                            document.location.replace("entityParentPrepareCreate-preg_shortConfCertificate.do?id=${param.id}");
+                        }
+                    }
+                }
+            });
+            </msh:ifFormTypeIsView>
+            </msh:ifInRole>
+        </script>
     </tiles:put>
 </tiles:insert>
 
