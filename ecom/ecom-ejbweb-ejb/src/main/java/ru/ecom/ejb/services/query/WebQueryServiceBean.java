@@ -162,8 +162,8 @@ public class WebQueryServiceBean implements IWebQueryService {
 			list=query.getResultList();
 		}
 		try {
+			JSONArray ret = new JSONArray();
 			if (list.size()>0) {
-				JSONArray ret = new JSONArray();
 				boolean first = true;
 				for (Object rowO: list) {
 					if (rowO instanceof Object[]){
@@ -181,8 +181,8 @@ public class WebQueryServiceBean implements IWebQueryService {
 						ret.put(el);
 					}
 				}
-				return ret.toString();
 			}
+			return ret.toString();
 		} catch (JSONException e) {
 			System.out.println("Ошибка executeNativeSqlGetJSON "+e);
 			e.printStackTrace();
