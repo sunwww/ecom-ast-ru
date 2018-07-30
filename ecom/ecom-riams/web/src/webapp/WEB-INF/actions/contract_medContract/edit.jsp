@@ -275,6 +275,8 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_medContract" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/Edit"/>
 			<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить контракт?" params="id" 
 			action="/entityParentDeleteGoSubclassView-contract_medContract_person" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/Delete"/>
+			<msh:sideLink action="/javascript:showCContractPerson()" name="Изменить обслуживаемую персону по договору"
+						  title="Изменить обслуживаемую персону по договору" roles="/Policy/Mis/Contract/MedContract/Edit"/>
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-contract_servedPerson" name="Обслуживаемые персоны" title="Обслуживаемые персоны" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create"/>
@@ -296,12 +298,15 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			<msh:sideLink params="id" action="/entityParentList-contract_contractMedPolicy" name="Медицинские полиса" title="Просмотреть медицинские полиса по договору" roles="/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy/View"/>
 			<msh:sideLink params="id" action="/entityParentList-contract_rule" name="Договорные правила" title="Просмотреть договорные правила по договору" roles="/Policy/Mis/Contract/MedContract/ContractRule/View"/>
 		</msh:sideMenu>
+		<tags:contractChangeServedPerson name="C" contract="${param.id}"/>
 		<tags:contractMenu currentAction="medContract"/>
 		<tags:printLabAnalysis name="printLabAnalysis" />
+		<script type='text/javascript' src="ContractService.js" />
 		<script type='text/javascript'>
             function printLabAnalysis() {
 				showprintLabAnalysisCloseDocument($('id').value);
             }
+
 		</script>
 	</tiles:put>
 </tiles:insert>

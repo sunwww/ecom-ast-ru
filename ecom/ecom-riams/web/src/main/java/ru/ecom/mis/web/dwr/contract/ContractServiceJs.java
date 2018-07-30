@@ -36,6 +36,17 @@ public class ContractServiceJs {
 	
 	public static Logger log = Logger.getLogger(ContractServiceJs.class);
 
+	/**Замена обслуживаемой персоны по всем счетам договора */
+	public void changeServedPerson(Long aConractId, Long aPersonId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql = "update servedPerson set person_id="+aPersonId+" where contract_id="+aConractId;
+		service.executeUpdateNativeSql(sql);
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		sql = "insert into AdminChangeJournal (cType, createDate, createTime, createUsername, annulRecord) " +
+				"values ('CHANGESERVEDPERSON',current_date, current_time, '"+username+"', 'Обслуживаемая персона по договору "+aConractId+" изменена на "+aPersonId+"'); ";
+		service.executeUpdateNativeSql(sql);
+	}
+
 	public String getSpecializations(String aServiceStream, HttpServletRequest aRequest) throws NamingException, JSONException {
 		log.error("Всё отлично: "+aServiceStream);
 		if (aServiceStream==null) return null;
