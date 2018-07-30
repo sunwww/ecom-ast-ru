@@ -30,7 +30,6 @@ public class WorkCalendarHospitalBedSave implements IFormInterceptor {
 						number="0"+number;
 					}
 					code +=number;
-					System.out.println("create hospitalnumber, code = "+code);
 					form.setInternalCode(code);
 					hospitalBed.setInternalCode(code);
 					manager.persist(hospitalBed);

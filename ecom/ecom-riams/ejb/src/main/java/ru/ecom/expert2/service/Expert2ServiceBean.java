@@ -1006,7 +1006,12 @@ private Boolean isCheckIsRunning = false;
             } else if (aEntry.getBedSubType().equals("1")) {
                 code="ALLTIMEHOSP";
             } else if (aEntry.getBedSubType().equals("2")){
-                code="DAYTIMEHOSP";
+                if (aEntry.getDepartmentId()==382L) { //Дневной стационар при АПУ *пока только для АМОКБ
+                    code="POLDAYTIMEHOSP";
+                } else { //Дневной стационар при стационаре
+                    code="DAYTIMEHOSP";
+                }
+
             } else {
                 code="UNKNOWNTIMEHOSP";
             }
@@ -1061,6 +1066,8 @@ private Boolean isCheckIsRunning = false;
             } else {
                 log.error("Не заполнен вид случая для записей с типом "+subType.getCode()+" "+subType.getName());
             }
+            aEntry.setVisitPurpose(subType.getVisitPurpose()); //Цель посещения (V025)
+            aEntry.setMedHelpUsl(subType.getUslOk()); //Условия оказания находим согласно подтипу записи (V006)
         }
         theManager.persist(aEntry);
     }
@@ -2611,7 +2618,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     resultMap.put(key, list.isEmpty() ? null : theManager.find(VocE2FondV015.class, list.get(0).longValue()));
                 }
                 aEntry.setFondDoctorSpec((VocE2FondV015) resultMap.get(key));
-                if (aEntry.getFondDoctorSpec().getMedSpecV021()!=null) {
+                if (aEntry.getFondDoctorSpec()!=null&&aEntry.getFondDoctorSpec().getMedSpecV021()!=null) {
                     aEntry.setFondDoctorSpecV021(aEntry.getFondDoctorSpec().getMedSpecV021());
                 }
             }
@@ -2664,9 +2671,9 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
 
 
 
-            //Вид медицинской помощи (для расчета нужен профиль МП
-            String v008Code = entryType.equals(VMPTYPE)?"32":"31";
-            if (aEntry.getBedSubType()!=null&&aEntry.getBedSubType().equals("2")&& (aEntry.getDepartmentId()!=null&&aEntry.getDepartmentId()==382L)) {
+            //Вид медицинской помощи (для расчета нужен профиль МП)
+            String v008Code = vmpCase?"32":"31";
+            if (aEntry.getSubType()!=null&&aEntry.getSubType().getCode().equals("POLDAYTIMEHOSP")) {
                 v008Code=aEntry.getMedHelpProfile().getProfileK().equals("97")?"12":"13"; // TODO = переделать
             }
             key = "V008#"+v008Code;
@@ -2678,29 +2685,12 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
 
             //Способ оплаты мед. помощи IDSP //TODO Пока считаем только круглосуточный и дневной стационар
             String idspCode = bedSubType.equals("1")?"33":"43"; //TODO реализовать нормально
-            if (entryType.equals(VMPTYPE)) {idspCode="13";} //Если ВМП, то способ оплаты = 13
+            if (vmpCase) {idspCode="13";} //Если ВМП, то способ оплаты = 13
             key = "IDSP#"+idspCode;
             if (!resultMap.containsKey(key)) {
                 resultMap.put(key, getActualVocByClassName(VocE2FondV010.class,actualDate ," code='"+idspCode+"'"));
             }
             aEntry.setIDSP((VocE2FondV010)resultMap.get(key));
-
-            //Условия оказания мед. помощи (V006)
-            String v006Code = null;
-            if (aEntry.getBedSubType()!=null&&aEntry.getBedSubType().equals("1")) {
-                v006Code="101";
-            } else if (aEntry.getBedSubType()!=null&&aEntry.getBedSubType().equals("2")) {
-                v006Code=aEntry.getDepartmentId()!=null&&aEntry.getDepartmentId()==382L?"202":"201"; // TODO = переделать
-            }
-            if (v006Code!=null) {
-                key = "V006#"+v006Code;
-                if (!resultMap.containsKey(key)) {
-                    resultMap.put(key,getActualVocByClassName(VocE2FondV006.class, actualDate,"code='"+v006Code+"'"));
-                }
-                aEntry.setMedHelpUsl((VocE2FondV006)resultMap.get(key));
-            } else {
-                E2EntryError error = new E2EntryError(aEntry,"NO_USL_OKAZANIYA");theManager.persist(error);
-            }
 
         } else if (polyclinicCase) { //Заполняем поля для пол-ки
             String resultCode=dischargeData[0], ishodCode=dischargeData[1];
@@ -2734,17 +2724,6 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 }
                 aEntry.setMedHelpKind((VocE2FondV008)resultMap.get(key));
             }
-
-
-            //Условия оказания мед. помощи (V006)
-        //    if (aEntry.getMedHelpUsl()==null||forceUpdate) {
-                VocE2EntrySubType entrySubType =aEntry.getSubType();
-                if (entrySubType==null) {
-                    theManager.persist(new E2EntryError(aEntry,"NO_ENTRY_SUBTYPE"));
-                } else {
-                    aEntry.setMedHelpUsl(entrySubType.getUslOk());
-                }
-         //   }
 
             //Способ оплаты медицинской помощи
             if (aEntry.getIDSP()==null||forceUpdate) {

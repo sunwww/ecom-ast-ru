@@ -71,4 +71,12 @@ public class VocE2EntrySubTypeForm extends IdEntityForm {
     public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
     /** Вид случая */
     private Long theVidSluch ;
+
+    /** Цель посещения */
+    @Comment("Цель посещения")
+    @Persist
+    public Long getVisitPurpose() {return theVisitPurpose;}
+    public void setVisitPurpose(Long aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
+    /** Цель посещения */
+    private Long theVisitPurpose ;
 }

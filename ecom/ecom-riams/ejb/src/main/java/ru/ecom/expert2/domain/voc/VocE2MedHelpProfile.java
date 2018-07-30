@@ -2,6 +2,7 @@ package ru.ecom.expert2.domain.voc;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV020;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -58,4 +59,12 @@ public class VocE2MedHelpProfile  extends VocBaseEntity{
     public void setMedSpecV021(VocE2FondV021 aMedSpecV021) {theMedSpecV021 = aMedSpecV021;}
     /** Мед. специальность по профилю */
     private VocE2FondV021 theMedSpecV021 ;
+
+    /** Профиль койки V020 */
+    @Comment("Профиль койки V020 ")
+    @OneToOne
+    public VocE2FondV020 getProfileBed() {return theProfileBed;}
+    public void setProfileBed(VocE2FondV020 aProfileBed) {theProfileBed = aProfileBed;}
+    /** Профиль койки V020 */
+    private VocE2FondV020 theProfileBed ;
 }

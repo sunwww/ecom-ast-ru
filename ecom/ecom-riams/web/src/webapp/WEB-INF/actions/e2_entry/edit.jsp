@@ -409,7 +409,7 @@ where cancer.entry_id=${param.id}"/>
             }
             function makeMPFromRecord() {
                 //Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId,
-                Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value,${param.id},false,{
+                Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value,${param.id},false,"3.1",{
                     callback: function (monitorId) {
                         monitor.id=monitorId;
                         jQuery.toast("Проверка запущена");

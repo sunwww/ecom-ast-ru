@@ -26,9 +26,13 @@
                <msh:row>
                    <msh:autoComplete  property="vidSluch" vocName="vocE2VidSluch" size="100"/>
                 </msh:row>
+                <msh:row>
+                    <msh:autoComplete  property="visitPurpose" vocName="vocE2FondV025" size="100" />
+                </msh:row>
                <msh:row>
                    <msh:checkBox  property="isConsultation"/>
                 </msh:row>
+
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
             </msh:panel>

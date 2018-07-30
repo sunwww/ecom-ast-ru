@@ -236,7 +236,7 @@ private Boolean isCheckIsRunning = false;
 
                 Element sl = new Element("SL");
                 E2Entry currentEntry = theManager.find(E2Entry.class,Long.valueOf(slId.trim()));
-                Boolean isCancer = currentEntry.getIsCancer(), cancerSluch;
+                Boolean isCancer = currentEntry.getIsCancer()!=null?currentEntry.getIsCancer():false, cancerSluch;
                 E2CancerEntry cancerEntry = null;
                 if (isCancer) {
                     cancerEntry= (E2CancerEntry) theManager.createQuery("from E2CancerEntry where entry=:entry").setParameter("entry",currentEntry).getResultList().get(0);
@@ -271,7 +271,12 @@ private Boolean isCheckIsRunning = false;
                 sl=add(sl,"DET",isChild); //Признак детского возраста
                 sl=add(sl,"PROFIL",profileK); //Профиль коек/специальностей (V002_K)
                if (isHosp){
-                   sl=add(sl,"PROFIL_K",profileK); //Профиль коек/специальностей (V002_K)
+                   if (profile.getProfileBed()==null) {
+                       log.error("Нет профиля койки для профиля: "+profile.getProfileK());
+                       theManager.persist(new E2EntryError(currentEntry,"NO_FOND_FIELD: Нет профиля койки"));
+                       return null;
+                   }
+                   sl=add(sl,"PROFIL_K",profile.getProfileBed().getCode()); //Профиль коек/специальностей (V002_K)
                }
                 sl=add(sl,"NHISTORY",currentEntry.getHistoryNumber()); //Номер истории болезни
                 if (isHosp||isVmp) {
@@ -1096,17 +1101,22 @@ private Boolean isCheckIsRunning = false;
             int cnt = 0;
             List<Object[]> records;
             if (aEntryId == null) {
-                records = theManager.createNativeQuery("select list(''||id) as ids, externalparentid, count(id) as cnt from E2Entry where " + (calcAllListEntry ? "" : "listEntry_id=" + aEntryListId + " and") + " (isDeleted is null or isDeleted='0') " +
+                records = theManager.createNativeQuery("select list(''||id) as ids, externalparentid, count(id) as cnt from E2Entry where " + (calcAllListEntry ? "" : "listEntry_id=" + aEntryListId + " and")  +
                         " and billNumber=:billNumber and billDate=:billDate " +
                         " and (isDeleted is null or isDeleted='0') " +
                         " and serviceStream!='COMPLEXCASE'" +
+
                         " and (doNotSend is null or doNotSend='0') group by externalparentid")
                         .setParameter("billNumber", aBillNumber).setParameter("billDate", aBillDate).getResultList();
             } else {
-                records = new ArrayList<Object[]>();
-                Object[] e= {""+aEntryId,entry!=null?entry.getExternalParentId():0L};
-                records.add(e);
-                //records = theManager.createNativeQuery("select id from E2Entry where id=:entryId ").setParameter("entryId", aEntryId).getResultList();
+                String sql = "select list(''||id) as ids, externalparentid, count(id) as cnt from E2Entry where listEntry_id=" + entry.getListEntry().getId()  +
+                        " and (isDeleted is null or isDeleted='0') " +
+                        " and serviceStream!='COMPLEXCASE'" +
+                        " and externalparentid="+entry.getExternalParentId()+
+
+                        " and (doNotSend is null or doNotSend='0') group by externalparentid";
+                log.info("sql="+sql);
+                records = theManager.createNativeQuery(sql).getResultList();
             }
             log.info("found " + records.size() + " records");
             IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Расчет цены случаев в звполнении") ;

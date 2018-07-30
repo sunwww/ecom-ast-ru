@@ -38,7 +38,7 @@ public class E2Entry extends BaseEntity {
     public Boolean getIsCancer() {return theIsCancer;}
     public void setIsCancer(Boolean aIsCancer) {theIsCancer = aIsCancer;}
     /** Раковый случай */
-    private Boolean theIsCancer ;
+    private Boolean theIsCancer=false ;
 
     //Все поля ниже размещены в EntityForm!
     /** Вид случая (справочник VID_SLUCH) */

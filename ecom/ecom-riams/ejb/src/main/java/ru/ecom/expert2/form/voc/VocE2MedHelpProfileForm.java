@@ -1,18 +1,13 @@
 package ru.ecom.expert2.form.voc;
 
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
-import ru.ecom.expert2.form.E2EntryListForm;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 
-import javax.persistence.Entity;
-import java.sql.Date;
 
 /**
  * Справочник профилей медицинской помощи
@@ -93,4 +88,12 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     public void setMedSpec(Long aMedSpec) {theMedSpec = aMedSpec;}
     /** Мед. специальность по профилю */
     private Long theMedSpec ;
+
+    /** Профиль койки V020 */
+    @Comment("Профиль койки V020 ")
+    @Persist
+    public Long getProfileBed() {return theProfileBed;}
+    public void setProfileBed(Long aProfileBed) {theProfileBed = aProfileBed;}
+    /** Профиль койки V020 */
+    private Long theProfileBed ;
 }

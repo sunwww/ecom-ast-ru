@@ -190,7 +190,7 @@
         </msh:row>
         </msh:ifNotInRole>
           <msh:row>
-              <msh:autoComplete property="leftRight" label="Конечность" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight" />
+              <msh:autoComplete property="leftRight" label="Сторона (для парных органов)" fieldColSpan="3" horizontalFill="true" vocName="vocLeftRight" />
           </msh:row>
                 <msh:row>
         	<msh:label property="createDate" label="Дата создания"/>

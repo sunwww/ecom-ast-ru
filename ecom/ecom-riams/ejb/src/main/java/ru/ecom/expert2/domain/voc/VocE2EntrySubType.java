@@ -2,6 +2,7 @@ package ru.ecom.expert2.domain.voc;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV006;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV025;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -45,4 +46,12 @@ public class VocE2EntrySubType extends VocBaseEntity {
   public void setVidSluch(VocE2VidSluch aVidSluch) {theVidSluch = aVidSluch;}
   /** Вид случая */
   private VocE2VidSluch theVidSluch ;
+  
+  /** Цель посещения */
+  @Comment("Цель посещения")
+  @OneToOne
+  public VocE2FondV025 getVisitPurpose() {return theVisitPurpose;}
+  public void setVisitPurpose(VocE2FondV025 aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
+  /** Цель посещения */
+  private VocE2FondV025 theVisitPurpose ;
 }
