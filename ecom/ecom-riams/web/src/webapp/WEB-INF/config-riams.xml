@@ -16,6 +16,7 @@
     <form-bean name="preg_newBornInformationForm" type="ru.ecom.mis.ejb.form.birth.NewBornInformationForm"/>
     <form-bean name="preg_pregHistoryForm" type="ru.ecom.mis.ejb.form.birth.PregnancyHistoryForm"/>
     <form-bean name="preg_confCertificateForm" type="ru.ecom.document.ejb.form.certificate.ConfinementCertificateForm"/>
+    <form-bean name="preg_shortConfCertificateForm" type="ru.ecom.document.ejb.form.certificate.ShortConfinementCertificateForm"/>
 
     <form-bean name="preg_pregInspectionForm" type="ru.ecom.mis.ejb.form.birth.PregnanInspectionForm"/>
     <form-bean name="preg_confInspectionForm" type="ru.ecom.mis.ejb.form.birth.ConfinedInspectionForm"/>

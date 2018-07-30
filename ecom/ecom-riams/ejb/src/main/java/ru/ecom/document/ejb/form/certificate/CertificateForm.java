@@ -34,7 +34,7 @@ public class CertificateForm extends IdEntityForm {
 
 	/** Серия документа */
 	@Comment("Серия документа")
-	@Persist @Required
+	@Persist
 	public String getSeries() {return theSeries;}
 	public void setSeries(String aSeries) {theSeries = aSeries;}
 	
@@ -47,7 +47,6 @@ public class CertificateForm extends IdEntityForm {
 	/** Дата выдачи документа */
 	@Comment("Дата выдачи документа")
 	@Persist @DateString @DoDateString
-	@Required
 	public String getDateIssue() {return theDateIssue;}
 	public void setDateIssue(String aDateIssue) {theDateIssue = aDateIssue;}
 
