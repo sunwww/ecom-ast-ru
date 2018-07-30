@@ -91,7 +91,7 @@ select pat.id as patId
 from childbirth cb
 left join medcase slo on slo.id=cb.medcase_id
 left join patient pat on pat.id=slo.patient_id
-where cb.pangsstartdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 ${sqlAdd}
 order by pat.patientinfo
 " />
