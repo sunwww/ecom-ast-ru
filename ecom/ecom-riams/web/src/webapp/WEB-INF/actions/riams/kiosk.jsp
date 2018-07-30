@@ -53,8 +53,9 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
         jQuery.ajax({
             url:"api/queue/hospital/emergencyQueue"
             ,data:{token:theToken}
-            }).done (function(array) {
-                if (array.length==0)  {
+            ,error: function(jqXHR,ex){console.log(ex);setTimeout(getQueue,60000);}
+            ,success: function(array) {
+                if (!array||array.length==0)  {
                     tbl.html("Нет пациентов в очереди");
                 } else {
                     tbl.html("");
@@ -67,9 +68,8 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
                     }//60-90 - yellow
                 }
                 setTimeout(getQueue,60000);
-        });
-
-
+        }
+    });
     }
 
 </script>

@@ -57,6 +57,19 @@ public class ApiRecordResource {
         return array.toString();
     }
 
+    /**Получение ЛПУ либо подразделения */
+    @GET
+    @Path("/getLpu")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getLpu(@Context HttpServletRequest aRequest
+            , @QueryParam("serviceStream") String serviceStream
+            , @QueryParam("token") String aToken
+    ) throws NamingException {
+        ApiUtil.init(aRequest,aToken);
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        return new ApiRecordUtil().getDepartments(serviceStream,service);
+    }
+
    /** Список специальностей врачей по потоку обслуживания */
     @GET
     @Path("/getSpecializations")
@@ -64,10 +77,11 @@ public class ApiRecordResource {
     public String getSpecializations(@Context HttpServletRequest aRequest
             , @QueryParam("serviceStream") String serviceStream
             , @QueryParam("token") String aToken
+            ,@QueryParam("lpu") String aLpu
     ) throws NamingException {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getSpecializations(serviceStream,service);
+        return new ApiRecordUtil().getSpecializations(serviceStream,aLpu, service);
 
     }
 
@@ -78,10 +92,11 @@ public class ApiRecordResource {
     public String getDoctors(@Context HttpServletRequest aRequest
             , @QueryParam("vocWorkfunction_id") String vocWorkfunction
             , @QueryParam("serviceStream") String serviceStream
+            , @QueryParam("lpu") String aLpu
             , @QueryParam("token") String aToken) throws NamingException {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getDoctors(serviceStream,vocWorkfunction,service);
+        return new ApiRecordUtil().getDoctors(serviceStream,vocWorkfunction,aLpu,service);
     }
 
     /** Список свободных дат по врачу или его профилю*/
@@ -92,15 +107,16 @@ public class ApiRecordResource {
             , @QueryParam("workfunction_id") String workfunction
             , @QueryParam("vocWorkfunction_id") String vocWorkfunction
             , @QueryParam("serviceStream") String serviceStream
+            , @QueryParam("lpu") String aLpu
             , @QueryParam("token") String aToken) throws NamingException {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getFreeCalendarDaysByWorkFunction(workfunction,vocWorkfunction,serviceStream,service);
+        return new ApiRecordUtil().getFreeCalendarDaysByWorkFunction(workfunction,vocWorkfunction,serviceStream,aLpu,service);
     }
 
     /** Список свободных времен по дате */
     @GET
-    @Path("getFreeCalendarTime")
+    @Path("/getFreeCalendarTime")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFreeCalendarTimes(@Context HttpServletRequest aRequest
             , @QueryParam("workfunction_id") String workfunction
@@ -108,10 +124,11 @@ public class ApiRecordResource {
             , @QueryParam("serviceStream") String serviceStream
             , @QueryParam("calendarDay_id") String calendarDay_id
             , @QueryParam("calendarDate") String calendarDate
+            , @QueryParam("lpu") String aLpu
             , @QueryParam("token") String aToken) throws NamingException {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getFreeCalendarTimesByCalendarDate(calendarDay_id,vocWorkfunction,calendarDate,serviceStream,service);
+        return new ApiRecordUtil().getFreeCalendarTimesByCalendarDate(calendarDay_id,vocWorkfunction,calendarDate,serviceStream,aLpu,service);
     }
 
     /** Запись пациента на время */
@@ -144,6 +161,7 @@ public class ApiRecordResource {
         String birthday = getJsonField(root,"birthday");
         String patientGUID = getJsonField(root,"patient_uid");
         String patientComment = getJsonField(root,"comment");
+        String patientPhone = getJsonField(root,"phone");
         String debug = getJsonField(root,"debug");
         String token = getJsonField(root,"token");
         String annul = getJsonField(root,"annul");
@@ -155,7 +173,7 @@ public class ApiRecordResource {
             list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
         } else {
             System.out.println("start record, debug="+debug);
-            list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,patientComment,service);
+            list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,patientComment,patientPhone,service);
             if (list==null) {
                 list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
             } else { //Записали успешно, пишем файл

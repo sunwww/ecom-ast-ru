@@ -73,7 +73,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
      * @param aPatientGUID
      * @return
      */
-    public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment) {
+    public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, String aPhone) {
         log.warn("RECORD_PATIENT = "+aPatientLastname);
         StringBuilder sql = new StringBuilder();
         StringBuilder sqlAdd = new StringBuilder();
@@ -84,11 +84,12 @@ public class ApiRecordServiceBean implements IApiRecordService {
             patient = getPatientByFIO(aPatientFirstname,aPatientLastname,aPatientMiddlename,aPatientBirthday);
         } else {
             return getErrorJson("Необходимо указать ФИО либо GUID пациента","NO_PATIENT");
-        }String prePatientInfo="";
+        }
+        String prePatientInfo="";
         if (patient!=null) { //Нашли однозначное совпадение
             log.info("patient found");
         } else if (aPatientLastname!=null&&aPatientFirstname!=null&&aPatientBirthday!=null){
-            prePatientInfo=aPatientLastname+ " "+aPatientFirstname+" "+aPatientMiddlename+" "+DateFormat.formatToDate(aPatientBirthday);
+            prePatientInfo=aPatientLastname+ " "+aPatientFirstname+" "+aPatientMiddlename+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null?" тел."+aPhone:"");
         } else {
             return getErrorJson("При неуказании GUID пациента необходимо указать его ФИО и дату рождения","WRONG_PAR");
         }
@@ -273,7 +274,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         JSONObject ret = null;
         try {
             ret = new JSONObject();
-            if (aElementName!=null) {ret.put(aElementName, new JSONArray(aJsonData));}
+            if (aElementName!=null) {ret.put(aElementName, aJsonData);}
             ret.put("status",aErrorCode!=null?"error":"ok");
             if (aErrorCode!=null) {
                 ret.put("error_code",aErrorCode);

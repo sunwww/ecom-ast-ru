@@ -67,7 +67,7 @@ public class QueueServiceBean implements IQueueService {
     private Integer getFreeNumberByQueue(Queue aQueue){
         Long key = aQueue.getId();
 
-        Integer ret = lastTicketNumberMap.containsKey(key)?lastTicketNumberMap.get(key):1;
+        Integer ret = lastTicketNumberMap.containsKey(key)?lastTicketNumberMap.get(key):0;
         log.info("key="+key+", value="+ret);
         lastTicketNumberMap.put(key,++ret);
         log.info("key="+key+", new value="+lastTicketNumberMap.get(key));
