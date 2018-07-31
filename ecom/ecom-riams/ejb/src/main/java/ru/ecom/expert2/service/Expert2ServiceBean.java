@@ -765,6 +765,7 @@ private Boolean isCheckIsRunning = false;
         //String ids = (String) theManager.createNativeQuery("select list(''||id) from e2entry where listEntry_id =:id").setParameter("id",aListEntryId).getSingleResult();
         theManager.createNativeQuery("delete from e2entryerror where listentry_id=:id").setParameter("id",aListEntryId).executeUpdate();
         theManager.createNativeQuery("update e2entry set isDeleted='1' where listEntry_id =:id").setParameter("id",aListEntryId).executeUpdate();
+        log.info("start refill ListEntry_"+aListEntryId);
         try {
             list.setCheckDate(null);
             list.setCheckTime(null);
