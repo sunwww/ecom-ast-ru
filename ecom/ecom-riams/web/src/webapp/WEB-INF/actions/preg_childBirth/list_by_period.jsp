@@ -135,7 +135,7 @@
     group by slo.id, ss.code, pat.lastname, pat.firstname, pat.middlename, pat.birthday, sls.datestart, 
     sls.entrancetime, slo.datestart, cb.birthfinishdate
     order by slo.datestart, pat.lastname, pat.firstname, pat.middlename" />
-    <msh:table name="journal_surOperation" viewUrl="entitySubclassView-mis_medCase.do?short=Short"  action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table printToExcelButton="сохранить в excel" name="journal_surOperation" viewUrl="entitySubclassView-mis_medCase.do?short=Short"  action="entitySubclassView-mis_medCase.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
     <msh:tableColumn property="sn" columnName="#"/>
     <msh:tableColumn property="2" columnName="№ и/б"/>
     <msh:tableColumn property="3" columnName="Пациент"/>

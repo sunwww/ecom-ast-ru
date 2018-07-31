@@ -99,7 +99,7 @@ order by pat.patientinfo
             </msh:sectionTitle>
             <msh:sectionContent>
                 <input type="button" value="Печать списка" onclick="print()" >
-                <msh:table name="ReportMotherAgeReestr" action="entityView-mis_patient.do" idField="1">
+                <msh:table printToExcelButton="excel" name="ReportMotherAgeReestr" action="entityView-mis_patient.do" idField="1">
                     <msh:tableColumn property="sn"/>
                     <msh:tableColumn columnName="ФИО пациента" property="2" addParam=""  />
                 </msh:table>
@@ -118,7 +118,7 @@ order by pat.patientinfo
         <msh:section>
             <ecom:webQuery isReportBase="true" name="ReportMotherAge" nameFldSql="ReportMotherAgeSql" nativeSql="
 select
-count(pat.id)
+count(cb.id)
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 <19 then cb.id end) as f1_less19
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 19 and 24 then cb.id end) as f2_19_24
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 25 and 29 then cb.id end) as f3_25_29
@@ -128,11 +128,11 @@ count(pat.id)
 from childbirth cb
 left join medcase slo on slo.id=cb.medcase_id
 left join patient pat on pat.id=slo.patient_id
-where cb.pangsstartdate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
 
 " />
             <msh:sectionContent>
-                <msh:table name="ReportMotherAge"
+                <msh:table printToExcelButton="excel" name="ReportMotherAge"
 
                            action="stac_report_32motherAge.do?short=Short&type=reestr&dateBegin=${dateBegin}&dateEnd=${dateEnd}" idField="1"
                            cellFunction="true"
