@@ -2,7 +2,6 @@ package ru.nuzmsh.web.tags;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import ru.ecom.diary.ejb.service.protocol.field.TextField;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.decorator.ITableDecorator;
@@ -225,7 +224,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
                                 , tag.getButtonFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest()
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(),tag.getGuid(), (HttpServletRequest)pageContext.getRequest()
                         )
 
                 );
@@ -308,7 +307,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     if (thePrintToExcelButton!=null&&!thePrintToExcelButton.equals("")) { //Если есть кнопка "Сохранить в excel", будем сохранять
                         out.println("<input type='button' onclick='mshSaveNextTableToExcel(this)' value='"+thePrintToExcelButton+"'>");
                     }
-                    out.println("<table border='1' class='tabview sel tableArrow'>");
+                    out.println("<table border='1' class='tabview sel tableArrow'"+(getGuid()!=null?"id='"+getGuid()+"'":"")+">");
                 } catch (Exception e) {
                     new JspException(e);
                 }
@@ -760,7 +759,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
     static final class Button {
         public Button(String aProperty,String aButtonShortName, String aButtonName
-                , String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty, HttpServletRequest aRequest) {
+                , String aButtonFunction, String aCssClass, String aAddParam,boolean aHideIfEmpty,String aGuid,HttpServletRequest aRequest) {
             theProperty = aProperty;
             theButtonName = aButtonName;
             theCssClass = aCssClass;
@@ -770,6 +769,7 @@ public class TableTag extends AbstractGuidSupportTag {
             theButtonFunction = aButtonFunction ;
             theButtonShortName = aButtonShortName ;
             theHideIfEmpty = aHideIfEmpty ;
+            theGuid = aGuid ;
         }
 
 
@@ -785,7 +785,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 aOut.print("<th>");
             }
             //IdeTagHelper.getInstance().printMarker(, aJspContext)
-            //aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
+            aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             //aOut.print(theButtonName);
             aOut.println("</th>");
         }
@@ -830,8 +830,8 @@ public class TableTag extends AbstractGuidSupportTag {
             }
             aOut.print(" class='") ;
             aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print(theProperty);
+            //aOut.print(' ');
+            aOut.print("_"+theProperty);
             aOut.print("'>");
             if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
                 aOut.print("<input type='button' onclick=\"");
@@ -859,8 +859,7 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theCssClass;
         private final HttpServletRequest theServleRequest ;
         private final String theAddParam ;
-
-
+        private final String theGuid ;
     }
 
     static final class Textfield {
@@ -929,8 +928,8 @@ public class TableTag extends AbstractGuidSupportTag {
             }
             aOut.print(" class='") ;
             aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print(theProperty);
+            //aOut.print(' ');
+            aOut.print("_"+theProperty);
             aOut.print("'>");
             if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
                 aOut.print("<input type='text' onclick=\"");
@@ -1078,8 +1077,8 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.print("\"");
             aOut.print(" class='") ;
             aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print(theProperty);
+            //aOut.print(' ');
+            aOut.print("_"+theProperty);
             aOut.print("'>");
             aOut.print(value != null ? value : "&nbsp;");
             aOut.println("</td>");
@@ -1130,8 +1129,8 @@ public class TableTag extends AbstractGuidSupportTag {
             //aOut.print("\"");
             aOut.print(" class='sumTd ") ;
             aOut.print(styleClass);
-            aOut.print(' ');
-            aOut.print(theProperty);
+            //aOut.print(' ');
+            aOut.print("_"+theProperty);
             aOut.print("'>");
             if (theIsCalcAmount) {
                 aOut.print(value != null ? value : "&nbsp;");
