@@ -831,7 +831,7 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.print(" class='") ;
             aOut.print(styleClass);
             //aOut.print(' ');
-            aOut.print("_"+theProperty);
+            aOut.print(" _"+theProperty);
             aOut.print("'>");
             if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
                 aOut.print("<input type='button' onclick=\"");
@@ -929,7 +929,7 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.print(" class='") ;
             aOut.print(styleClass);
             //aOut.print(' ');
-            aOut.print("_"+theProperty);
+            aOut.print(" _"+theProperty);
             aOut.print("'>");
             if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
                 aOut.print("<input type='text' onclick=\"");
@@ -1078,7 +1078,7 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.print(" class='") ;
             aOut.print(styleClass);
             //aOut.print(' ');
-            aOut.print("_"+theProperty);
+            aOut.print(" _"+theProperty);
             aOut.print("'>");
             aOut.print(value != null ? value : "&nbsp;");
             aOut.println("</td>");
@@ -1130,7 +1130,7 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.print(" class='sumTd ") ;
             aOut.print(styleClass);
             //aOut.print(' ');
-            aOut.print("_"+theProperty);
+            aOut.print(" _"+theProperty);
             aOut.print("'>");
             if (theIsCalcAmount) {
                 aOut.print(value != null ? value : "&nbsp;");
