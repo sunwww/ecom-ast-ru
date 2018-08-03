@@ -204,7 +204,7 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 
 	/** Дата следующего визита */
 	@Comment("Дата следующего визита")
-	@DateString @DoDateString @Persist @MaxDateCurrent
+	@DateString @DoDateString @Persist
 	public String getNextVisitDate() {
 		return theNextVisitDate;
 	}
