@@ -53,7 +53,7 @@
 </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript"><!--
      var theIs${name}CloseDisDocumentDialogInitialized = false ;
      var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog')) ;
      // Показать
@@ -66,6 +66,7 @@
          theTableArrow = null ;
          the${name}CloseDisDocumentDialog.show() ;
          $("${name}Seria").focus() ;
+
      }
 
      // Отмена
@@ -73,41 +74,45 @@
          the${name}CloseDisDocumentDialog.hide() ;
          theTableArrow = new tablearrow.TableArrow('tab1') ;
      }
-
      function ${name}Docum() {
+    	 
      }
 
      // Сохранение данных
      function save${name}CloseDocument() {
-         if ($('${name}Reason').value==0) {
-             alert("Не выбрана причина закрытия") ;
-             $("${name}ReasonName").focus() ;
-         } else if ($('${name}Number').value=="") {
-             alert("Поле номер является обязательным") ;
-             $("${name}Number").focus() ;
-         } else {
-             DisabilityService.closeDisabilityDocument(
-                 '${param.id}',$('${name}Reason').value, $('${name}Seria').value,$('${name}Number').value
-                 ,$('${name}OtherCloseDate').value, {
-                     callback: function(aString) {
-                         $('${reason}').value=$('${name}Reason').value ;
-                         $('${reason}ReadOnly').value=aString ;
-                         $('${seria}').value=$('${name}Seria').value ;
-                         $('${seria}ReadOnly').value=$('${name}Seria').value ;
-                         $('${number}').value=$('${name}Number').value ;
-                         $('${number}ReadOnly').value=$('${name}Number').value ;
-                         $('${otherCloseDate}ReadOnly').value=$('${name}OtherCloseDate').value ;
-                         $('isClose').checked=true ;
+     	if ($('${name}Reason').value==0) {
+     		alert("Не выбрана причина закрытия") ;
+     		$("${name}ReasonName").focus() ;
+     	//} else if ($('${name}Seria').value=="") {
+     	//	alert("Поле серия является обязательным") ;
+     	//	$("${name}Seria").focus() ;
+     	} else if ($('${name}Number').value=="") {
+     		alert("Поле номер является обязательным") ;
+     		$("${name}Number").focus() ;
+     	} else {
+	     	DisabilityService.closeDisabilityDocument(
+	     		'${param.id}',$('${name}Reason').value, $('${name}Seria').value,$('${name}Number').value
+	     		 ,$('${name}OtherCloseDate').value, {
+	                   callback: function(aString) {
+	                       $('${reason}').value=$('${name}Reason').value ;
+	                       $('${reason}ReadOnly').value=aString ;
+	                       $('${seria}').value=$('${name}Seria').value ;
+	                       $('${seria}ReadOnly').value=$('${name}Seria').value ;
+	                       $('${number}').value=$('${name}Number').value ;
+	                       $('${number}ReadOnly').value=$('${name}Number').value ;
+	                       $('${otherCloseDate}ReadOnly').value=$('${name}OtherCloseDate').value ;
+	                       $('isClose').checked=true ;
+	                       
+	                       cancel${name}CloseDocument() ;
+	                       $('ALT_3').style.display = 'none' ;
+	                       $('ALT_7').style.display = 'none' ;
+	                       $('ALT_6').style.display = 'block' ;
+	                       theTableArrow = new tablearrow.TableArrow('tab1') ;
+	                       //window.document.location.reload()  ;
+	                    }
+	                }
+	         ) ;
 
-                         cancel${name}CloseDocument() ;
-                         $('ALT_3').style.display = 'none' ;
-                         $('ALT_7').style.display = 'none' ;
-                         $('ALT_6').style.display = 'block' ;
-                         theTableArrow = new tablearrow.TableArrow('tab1');
-                         //window.document.location.reload()  ;
-                     }
-                 }
-             ) ;
          }
      }
 

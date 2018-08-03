@@ -5,13 +5,6 @@ import ru.nuzmsh.commons.auth.ILoginInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Map;
 
 public class ApiUtil {
     public static final String key = ILoginInfo.class.getName() ;
@@ -37,63 +30,5 @@ public class ApiUtil {
 
     public static String logout(HttpServletRequest aRequest) {
         aRequest.getSession().removeAttribute(key);return "success";
-    }
-
-
-    /**
-     * @param endpoint eg.: http://127.0.0.1:8080
-     * @param path eg.: record/getDoctor
-     * @param params eg.: ( ?doctor_id=100500)
-     *               HashMap<String, String> params = new HashMap<>();
-                     params.put("doctor_id",100500);
-     * @return JSON response
-     */
-    public static String createGetRequest(String endpoint,String path, Map<String, String> params){
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(endpoint);
-        target = target.path(path);
-        for (Map.Entry entry : params.entrySet()) {
-            target = target.queryParam(entry.getKey().toString(),entry.getValue().toString());
-        }
-        Response response = target.request(MediaType.APPLICATION_JSON).get();
-        System.out.println(response);
-        return  response.readEntity(String.class);
-    }
-
-    public static String creteGetRequest(String endpoint,String path, String mediaType){
-
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(endpoint);
-        target = target.path(path);
-
-        Response response = target.request(mediaType)
-                .header("Access-Control-Allow-Headers","X-Requested-With, content-type")
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .get();
-
-        System.out.println(response);
-        return  response.readEntity(String.class);
-    }
-
-    /**
-     * @param endpoint
-     * @param path
-     * @param json
-     * @return JSON response
-     */
-    public static String cretePostRequest(String endpoint, String path, String json,String mediaType){
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(endpoint);
-        target = target.path(path);
-        //Response response = target.request(MediaType.APPLICATION_JSON)
-        Response response = target.request(mediaType)
-                .header("Access-Control-Allow-Headers","X-Requested-With, content-type")
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .post(Entity.json(json));
-
-        System.out.println(response);
-        return  response.readEntity(String.class);
     }
 }
