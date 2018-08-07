@@ -53,18 +53,25 @@
                 json  = JSON.parse(json);
                 var resultHTML="<p class='#res'>" +
                     "<span style='font-size: medium; color: #2d2d2b; '>" +
+                    "#TEXT" +
                     "#ЭЛН:"+json.lncode +"<br>"+
                     "Ответ:"+json.message +"<br>"+
                     "Номер запроса:"+json.requestId +"<br><br>";
 
                 if(json.status==0){
                     resultHTML = resultHTML.replace("#res","error");
+                    resultHTML = resultHTML.replace("#TEXT","Были найдены ошибки:");
                     json.errors.forEach(
                         function(entry) {
                             resultHTML+="Ошибка: "+entry.errmess+"<br>";
                         });
 
                 }else {
+                    alert(json.hash);
+                    resultHTML = resultHTML.replace("#TEXT","ЭЛН успешно выгружен");
+                    DisabilityService.updateInformationELN('${documentId}',json.hash, {
+                        callback: function(json) {
+                        }});
                     resultHTML = resultHTML.replace("#res","ok");
                 }
 

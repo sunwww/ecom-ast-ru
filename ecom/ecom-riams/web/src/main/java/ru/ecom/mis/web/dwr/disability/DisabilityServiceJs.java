@@ -93,8 +93,23 @@ public class DisabilityServiceJs {
 		return ret;
 	}
 
+	public void updateInformationELN(String aDocumentId, String hash, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service =Injection.find(aRequest).getService(IWebQueryService.class);
+		service.executeUpdateNativeSql("update disabilitydocument set lnhash = '"+hash+"' where id = "+aDocumentId);
+		service.executeUpdateNativeSql("update disabilitysign set export = true where disabilitydocumentid_id = "+aDocumentId);
+		service.executeUpdateNativeSql("update disabilityrecord set isexport = true where disabilitydocument_id = "+aDocumentId);
+
+	}
+
+	public void saveLog(HttpServletRequest aRequest){
+		/*
+		result respnsecode status disabilitydocument, requestcode requstdate requesttime requesttype request_id
+		 */
+
+	}
 	public String exportDisabilityDoc(String aDocumentId, HttpServletRequest aRequest)
 			throws NamingException, SQLException, JSONException {
+
 
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
