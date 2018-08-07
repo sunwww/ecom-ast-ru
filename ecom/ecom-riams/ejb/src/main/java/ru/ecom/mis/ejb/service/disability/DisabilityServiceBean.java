@@ -135,7 +135,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 		return exportDisabilityDocumentOrGetNumberRangeOrAnnulSheet("annullSheet", aDocumentId, null, aReasonAnnulId, textReason, snils);
 	}
 
-	private String getSoftConfigValue(String aKey, String aDefaultValue) {
+	public String getSoftConfigValue(String aKey, String aDefaultValue) {
 		List<Object[]> list = theManager.createNativeQuery("select sc.id, sc.keyvalue from softconfig sc where sc.key='" + aKey + "'").getResultList();
 		if (list.isEmpty()) {
 			return aDefaultValue;

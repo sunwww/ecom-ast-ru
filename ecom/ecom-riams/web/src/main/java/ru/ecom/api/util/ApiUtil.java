@@ -96,4 +96,6 @@ public class ApiUtil {
         System.out.println(response);
         return  response.readEntity(String.class);
     }
+
+
 }

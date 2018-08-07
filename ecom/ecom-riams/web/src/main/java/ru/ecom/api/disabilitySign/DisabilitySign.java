@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import ru.ecom.api.IApiService;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.web.util.Injection;
 
@@ -19,6 +20,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.sql.SQLException;
+import java.util.Collection;
 
 import static ru.ecom.api.util.ApiUtil.cretePostRequest;
 import static ru.ecom.api.util.ApiUtil.login;
@@ -27,10 +29,19 @@ import static ru.ecom.api.util.ApiUtil.login;
 @Path("/disabilitySign")
 public class DisabilitySign {
 
-    //TODO IP
-    //select keyvalue from softconfig  where key = 'FSS_PROXY_SERVICE'
-    String endpoint = "http://192.168.2.45:999";
+    @Deprecated
+    private String getEndpoint(@Context HttpServletRequest aRequest) throws NamingException {
 
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list= service.executeNativeSql("select keyvalue from softconfig  where key = 'FSS_PROXY_SERVICE'");
+        String endpoint="";
+        for (WebQueryResult wqr:list) {
+            endpoint= wqr.get1().toString();
+        }
+        return endpoint;
+    }
+
+    @Deprecated
     @GET
     @Path("exportDisabilityDocument")
     @Produces("application/json")
@@ -92,6 +103,7 @@ public class DisabilitySign {
                 ",dd.otherclosedate as other_state_dt\n" +
                 ",dd3.number as NEXT_LN_CODE\n" +
                 ",Case when dd.isClose = '1' then '1' else '0' end as IS_CLOSE\n" +
+                ",dd.lnhash as LN_HASH " +
                 "from disabilitydocument dd\n" +
                 "left join vocdisabilitydocumentclosereason vddcr on vddcr.id = dd.closereason_id\n" +
                 "left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id\n" +
@@ -168,20 +180,14 @@ public class DisabilitySign {
 
         JSONObject body  = new JSONObject(service.executeSqlGetJsonObject(sql1));
 
-        //String body2 = service.executeSqlGetJson(sql2,10);
         JSONArray arr = new JSONArray(service.executeSqlGetJson(sql2,10));
         body.put("treats",arr);
 
         arr = new JSONArray(service.executeSqlGetJson(close,10));
         body.put("close",arr);
 
-        System.out.println(body);
-        //body.put("treats",service.executeSqlGetJsonArray(sql2));
-        //System.out.println(body2);
 
-        cretePostRequest(endpoint,"api/sign/getJsonDisabilityDoc",body.toString(),"text/html");
-
-        return "{\"status\":\"ok\"}";
+        return cretePostRequest(getEndpoint(aRequest),"api/sign/exportDisabilityDocument",body.toString(),"application/json");
     }
 
 
@@ -323,7 +329,7 @@ public class DisabilitySign {
         String json = service.executeSqlGetJson(sql,10,"data").toString();
         System.out.println(json);
 
-        return cretePostRequest(endpoint,"api/sign/getJSON",json,"text/html");
+        return cretePostRequest(getEndpoint(aRequest),"api/sign/getJSON",json,"text/html");
     }
 
 
