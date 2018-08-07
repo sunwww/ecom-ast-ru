@@ -12,6 +12,23 @@
         display: none ;
         position: absolute ;
     }
+
+    .ok {
+         border: 1px dashed #634f36;
+         background: #ebff95;
+         font-family: "Courier New", Courier, monospace;
+         padding: 7px;
+         margin: 0 0 1em;
+         white-space: pre-wrap;
+     }
+    .error {
+        border: 1px dashed #634f36;
+        background: #ffcbd5;
+        font-family: "Courier New", Courier, monospace;
+        padding: 7px;
+        margin: 0 0 1em;
+        white-space: pre-wrap;
+    }
 </style>
 <div id='${name}fssExport' class='dialog'>
     <h2>Процесс отправки больничного листа</h2>
@@ -31,9 +48,27 @@
 
         $('${name}fssExportResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
         the${name}fssExport.show();
-        DisabilityService.exportDisabilityDocument2('${documentId}', {
-            callback: function(a) {
+        DisabilityService.exportDisabilityDoc('${documentId}', {
+            callback: function(json) {
+                json  = JSON.parse(json);
+                var resultHTML="<p class='#res'>" +
+                    "<span style='font-size: medium; color: #2d2d2b; '>" +
+                    "#ЭЛН:"+json.lncode +"<br>"+
+                    "Ответ:"+json.message +"<br>"+
+                    "Номер запроса:"+json.requestId +"<br><br>";
 
+                if(json.status==0){
+                    resultHTML = resultHTML.replace("#res","error");
+                    json.errors.forEach(
+                        function(entry) {
+                            resultHTML+="Ошибка: "+entry.errmess+"<br>";
+                        });
+
+                }else {
+                    resultHTML = resultHTML.replace("#res","ok");
+                }
+
+                $('${name}fssExportResultDiv').innerHTML=resultHTML;
             }
         });
     }

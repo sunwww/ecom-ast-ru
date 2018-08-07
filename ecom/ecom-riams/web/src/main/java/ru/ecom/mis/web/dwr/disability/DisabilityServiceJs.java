@@ -49,7 +49,7 @@ public class DisabilityServiceJs {
 		if (wqr==null||wqr.get1()==null) {return null;}
 		StringBuilder sb = new StringBuilder();
 		//while (true) {
-			//sb.append(wqr.get+i())
+		//sb.append(wqr.get+i())
 		//}
 		return "";
 	}
@@ -85,6 +85,7 @@ public class DisabilityServiceJs {
 		return service.getLNNumberRange(aCount);
 	}
 
+	@Deprecated
 	public String exportDisabilityDocument (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
 		//ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
@@ -92,7 +93,7 @@ public class DisabilityServiceJs {
 		return ret;
 	}
 
-	public String exportDisabilityDocument2(String aDocumentId, HttpServletRequest aRequest)
+	public String exportDisabilityDoc(String aDocumentId, HttpServletRequest aRequest)
 			throws NamingException, SQLException, JSONException {
 
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -235,6 +236,7 @@ public class DisabilityServiceJs {
 		IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
 		String endpoint = service1.getSoftConfigValue("FSS_PROXY_SERVICE","null");
 
+		System.out.println(endpoint);
 		String json = cretePostRequest(endpoint,"api/sign/exportDisabilityDocument",body.toString(),"application/json");
 
 		return json;
@@ -340,9 +342,9 @@ public class DisabilityServiceJs {
 					cal.setTime(reserveDate);
 					cal.add(Calendar.HOUR,1);
 					if (currentDate.getTime()>cal.getTime().getTime()) { //Если за 1 час больничный лист не оформили, забераем его себе.
-					ret = r.get1().toString();
-					needGetNewNumber=false;
-					break;
+						ret = r.get1().toString();
+						needGetNewNumber=false;
+						break;
 					}
 				}
 			}
@@ -390,7 +392,7 @@ public class DisabilityServiceJs {
 		if (l.isEmpty()) {
 			return null ;
 		} else {
-			WebQueryResult wqr = l.iterator().next() ; 
+			WebQueryResult wqr = l.iterator().next() ;
 			return wqr.get2()==null?""+wqr.get1():null ;
 		}
 	}
@@ -412,16 +414,16 @@ public class DisabilityServiceJs {
 	}
 	public String exportLNByDate(String aDateStart, String aDateFinish, String aLpu, String aWorkFunction, String aPacketNumber, String aDateType, HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
-		
+
 		return service.exportLNByDate(aDateStart, aDateFinish,  aLpu, aWorkFunction,  aPacketNumber, aDateType );
 	}
-	
+
 	public String exportLNByNumber (String aNumber,HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
-		
+
 		return service.exportLNByNumber(aNumber);
 	}
-	
+
 	public String getDataByClose(Long aDocId,HttpServletRequest aRequest) throws Exception {
 		System.out.println("doc="+aDocId) ;
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
@@ -448,7 +450,7 @@ public class DisabilityServiceJs {
 		}
 		else {
 			res.append("##");
-			}
+		}
 		return res.toString();
 	}
 	public String getSnils(Long aPatinetId,HttpServletRequest aRequest) throws NamingException {
