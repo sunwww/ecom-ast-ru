@@ -35,11 +35,18 @@ div.button {
 	    	<p class="info">Просмотр прейскуранта по услугам</p>
 	    	<p class="info">специалистов </p>
 	    </div>
+		<br/>
 	    <div class="button fb " onclick="next_gosgarant()">
 	    	<p class="label">Программа гос. гарантий</p>
 	    	<p class="info">Постановление Правительства Астраханской области</p>
-	    	<p class="info">от 28 декабря 2017г №472-П.</p>
+	    	<p class="info">от 29 декабря 2017г №546-П.</p>
 	    </div>
+		<br/>
+		<div class="button fb " onclick="next_jnnvlp()">
+			<p class="label">перечень ЖННВЛП</p>
+			<p class="info">Перечень жизненно необхдимых и важнейших лек. преп.</p>
+			<p class="info">от 23 октября 2017г №2323-р.</p>
+		</div>
     </tiles:put>
     <tiles:put name="javascript" type="string">
     	<script type="text/javascript">
@@ -58,6 +65,9 @@ div.button {
     	function next_gosgarant() {
     		window.location = "step_gosgarant_info.do?infomat=Infomat" ;
     	}
+        function next_jnnvlp() {
+            window.location = "step_jnnvlp.do?infomat=Infomat" ;
+        }
     	</script>
     </tiles:put>
 </tiles:insert>
