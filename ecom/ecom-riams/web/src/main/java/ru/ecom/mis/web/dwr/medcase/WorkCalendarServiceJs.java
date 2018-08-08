@@ -88,9 +88,8 @@ public class WorkCalendarServiceJs {
 				"getWeekbyDate (wcd.calendardate)," +
 				"prettyDate(wcd.calendardate,wcd.id),  " +
 				"wcd.id," +
-				"getList('select ''<td title=\"''||coalesce(vsrt.name,'')||\" contextmenu=\"cell\" id=\"''||wct.id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime wct" +
-				" left join vocServiceReserveType vsrt on vsrt.id=wct.reservetype_id" +
-				"where wct.workcalendarday_id = '||wcd.id||' and (wct.isDeleted is null or wct.isDeleted = false) order by wct.timefrom','')\n" +
+				"getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime " +
+				"where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
 				"from workcalendarday  wcd\n" +
 				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
 				") and (isdeleted is null or isdeleted = false) \n" +
