@@ -24,12 +24,10 @@
                 <msh:row guid="53627d05-8914-48a0-b2ec-792eba5b07d9">
                     <msh:separator label="Параметры поиска" colSpan="7" />
                 </msh:row>
-
                 <msh:row>
                     <msh:textField property="dateBegin" label="Период с" />
                     <msh:textField property="dateEnd" label="по" />
                 </msh:row>
-
                 <msh:row>
                     <td>
                         <input type="submit" value="Найти" />

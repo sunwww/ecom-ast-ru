@@ -28,26 +28,20 @@ import java.util.List;
 
 public class WorkCalendarServiceJs {
 
+	public String getActualReserves (HttpServletRequest aRequest) throws NamingException {
+		String sql = "select id, name, code from VocServiceReserveType";
+		return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSqlGetJSON(new String[]{"id","name","code"},sql,50);
+	}
+
 	/** Возвращаем/создаем первое свободное время по рабочей функции и дню */
 	public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException, JSONException {
 		return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId,aCalendarDay);
 	}
 
 	/** Изменяем тип резерва для времени по его id */
-	public String changeScheduleElementReserve(String wcdId,String reserveTypeCode,HttpServletRequest aRequest) throws NamingException {
-
+	public String changeScheduleElementReserve(Long wcdId,Long reserveTypeId,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String reserveTypeId = "";
-		if(!reserveTypeCode.equals("0")) {
-			Collection<WebQueryResult> list = service.executeNativeSql("select id from vocservicereservetype where code = '" + reserveTypeCode + "'");
-
-			if (!list.isEmpty()) {
-				WebQueryResult w = list.iterator().next();
-				reserveTypeId = w.get1().toString();
-			}
-			service.executeUpdateNativeSql("update workcalendartime set reservetype_id="+reserveTypeId+" where id="+wcdId);
-		}else service.executeUpdateNativeSql("update workcalendartime set reservetype_id=null where id="+wcdId);
-
+			service.executeUpdateNativeSql("update workcalendartime set reservetype_id="+(reserveTypeId>0?reserveTypeId+"":"null")+" where id="+wcdId);
 		return "0";
 	}
 
