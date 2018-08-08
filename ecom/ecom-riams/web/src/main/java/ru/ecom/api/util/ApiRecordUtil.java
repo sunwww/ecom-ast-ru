@@ -73,7 +73,7 @@ public class ApiRecordUtil {
         }
         String selectSql=" wf.id as id, case when wf.dtype='PersonalWorkFunction' then vwf.name else '' end as wfName, case when wf.dtype='PersonalWorkFunction' then p.lastname||' '||p.firstname||' '|| coalesce(p.middlename,'') "
                 +"else wf.groupname end as doctorName";
-        String groupBySql="wf.id, vwf.name, p.lastname ,p.firstname,p.middlename";
+        String groupBySql="wf.id,wf.dtype, vwf.name, p.lastname ,p.firstname,p.middlename";
         String orderBySql="p.lastname ,p.firstname,p.middlename";
         String[] jsonFields = {"workfunction_id","workfunction_name","doctor_name"};
 
