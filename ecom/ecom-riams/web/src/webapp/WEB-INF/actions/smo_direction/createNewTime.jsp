@@ -137,49 +137,7 @@
                     <i class="fa fa-users"></i>
                     <span class="menu-text">Изменить резерв</span>
                 </button>
-                <menu class="menu">
-            <li class="menu-item">
-                <button type="button" class="menu-btn"  onclick="changeReserve('0')">
-                    <i class="fa fa-comment"></i>
-                    <span class="menu-text">Удалить резерв</span>
-                </button>
-            </li>
-            <li class="menu-item">
-                <button type="button" class="menu-btn" onclick="changeReserve('PROMED');">
-                    <i class="fa fa-comment"></i>
-                    <span class="menu-text">ПРОМЕД</span>
-                </button>
-            </li>
-            <li class="menu-item">
-                <button type="button" class="menu-btn" onclick="changeReserve('PAYMENT');">
-                    <i class="fa fa-comment"></i>
-                    <span class="menu-text">ПЛАТНЫЙ</span>
-                </button>
-            </li>
-            <li class="menu-item">
-                <button type="button" class="menu-btn" onclick="changeReserve('DMC');">
-                    <i class="fa fa-comment"></i>
-                    <span class="menu-text">ДМС</span>
-                </button>
-            </li>
-            <li class="menu-item">
-                <button type="button" class="menu-btn" onclick="changeReserve('STAC');">
-                    <i class="fa fa-comment"></i>
-                    <span class="menu-text">СТАЦИОНАР</span>
-                </button>
-            </li>
-            <li class="menu-item">
-                <button type="button" class="menu-btn" onclick="changeReserve('BIRTH');">
-                    <i class="fa fa-comment"></i>
-                    <span class="menu-text">БЕРЕМЕННЫЕ</span>
-                </button>
-            </li>
-            <li class="menu-item">
-                <button type="button" class="menu-btn" onclick="changeReserve('UDR');">
-                    <i class="fa fa-comment"></i>
-                    <span class="menu-text">УДАЛЕНЫЙ РАЙОН</span>
-                </button>
-            </li>
+                <menu class="menu" id="menuSubMenu">
                  </menu>
         </li>
         <li class="menu-separator"></li>
@@ -222,7 +180,36 @@
         <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
 
         <script type='text/javascript'>
+            getReserves();
+function getReserves() {
+    WorkCalendarService.getActualReserves({
+        callback: function(arr) {
+            if (arr) {
+                arr = JSON.parse(arr);
+                var t="";
+                alert(arr.length);
+                for (i=0;i<arr.length;i++) {
+                    r = arr[i];
+                    alert (JSON.stringify(r));
+                     t +="<li class=\"menu-item\">" +
+                        " <button type=\"button\" class=\"menu-btn\" onclick=\"changeReserve('"+r.id+"');\">" +
+                        " <i class=\"fa fa-comment\"></i>" +
+                        " <span class=\"menu-text\">"+r.name+"</span>" +
+                        " </button>" +
+                        " </li>"
+                }
+                t +="<li class=\"menu-item\">" +
+                    " <button type=\"button\" class=\"menu-btn\" onclick=\"changeReserve('0');\">" +
+                    " <i class=\"fa fa-comment\"></i>" +
+                    " <span class=\"menu-text\">Удалить резерв</span>" +
+                    " </button>" +
+                    " </li>"
+                jQuery('#menuSubMenu').html(t);
+            }
+        }
+    });
 
+}
 
             var thisCell;
             var weekplus=0;

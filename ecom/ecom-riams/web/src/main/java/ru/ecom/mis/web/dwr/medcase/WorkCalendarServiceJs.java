@@ -28,26 +28,20 @@ import java.util.List;
 
 public class WorkCalendarServiceJs {
 
+	public String getActualReserves (HttpServletRequest aRequest) throws NamingException {
+		String sql = "select id, name, code from VocServiceReserveType";
+		return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSqlGetJSON(new String[]{"id","name","code"},sql,50);
+	}
+
 	/** Возвращаем/создаем первое свободное время по рабочей функции и дню */
 	public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException, JSONException {
 		return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId,aCalendarDay);
 	}
 
 	/** Изменяем тип резерва для времени по его id */
-	public String changeScheduleElementReserve(String wcdId,String reserveTypeCode,HttpServletRequest aRequest) throws NamingException {
-
+	public String changeScheduleElementReserve(Long wcdId,Long reserveTypeId,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String reserveTypeId = "";
-		if(!reserveTypeCode.equals("0")) {
-			Collection<WebQueryResult> list = service.executeNativeSql("select id from vocservicereservetype where code = '" + reserveTypeCode + "'");
-
-			if (!list.isEmpty()) {
-				WebQueryResult w = list.iterator().next();
-				reserveTypeId = w.get1().toString();
-			}
-			service.executeUpdateNativeSql("update workcalendartime set reservetype_id="+reserveTypeId+" where id="+wcdId);
-		}else service.executeUpdateNativeSql("update workcalendartime set reservetype_id=null where id="+wcdId);
-
+			service.executeUpdateNativeSql("update workcalendartime set reservetype_id="+(reserveTypeId>0?reserveTypeId+"":"null")+" where id="+wcdId);
 		return "0";
 	}
 
@@ -94,8 +88,9 @@ public class WorkCalendarServiceJs {
 				"getWeekbyDate (wcd.calendardate)," +
 				"prettyDate(wcd.calendardate,wcd.id),  " +
 				"wcd.id," +
-				"getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime " +
-				"where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
+				"getList('select ''<td title=\"''||coalesce(vsrt.name,'')||\" contextmenu=\"cell\" id=\"''||wct.id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime wct" +
+				" left join vocServiceReserveType vsrt on vsrt.id=wct.reservetype_id" +
+				"where wct.workcalendarday_id = '||wcd.id||' and (wct.isDeleted is null or wct.isDeleted = false) order by wct.timefrom','')\n" +
 				"from workcalendarday  wcd\n" +
 				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
 				") and (isdeleted is null or isdeleted = false) \n" +

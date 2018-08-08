@@ -358,11 +358,7 @@ function save_form(aForm) {
     removeFromStorage();
     }
     </script>
-    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
-    <script type="text/javascript">
-    setTimeout(checktime,600000) ;
- </script>
-     </msh:ifNotInRole>
+
         <script type="text/javascript">
    if ($('templateProtocol').value>0) {
 	   $('btnEditProt1').style.display='inline' ;
@@ -379,6 +375,11 @@ function save_form(aForm) {
     	}else {setTimeout(checktime,600000); }
     }
     </script>
+			<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
+				<script type="text/javascript">
+                    setTimeout(checktime,600000) ;
+				</script>
+			</msh:ifNotInRole>
 
 			<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
 				<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
