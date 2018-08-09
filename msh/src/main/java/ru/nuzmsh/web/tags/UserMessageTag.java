@@ -1,18 +1,15 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
-import java.util.List;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.web.messages.ClaimMessage;
+import ru.nuzmsh.web.messages.UserMessage;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.json.JSONObject;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.messages.ClaimMessage;
-import ru.nuzmsh.web.messages.ErrorMessage;
-import ru.nuzmsh.web.messages.UserMessage;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Печать сообщения об ошибке
@@ -91,6 +88,13 @@ public class UserMessageTag  extends SimpleTagSupport {
 	            */
 	            //viewEmergencyUserMessage(aJsonId)
 	        }
+
+
+			sql.append("function quickDelMessage(e){ ");
+			sql.append("if(e.keyCode=='27'){" +
+					"document.getElementsByClassName('jq-toast-single jq-has-icon jq-icon-info')[0].style.display = 'none';" +
+					"document.getElementById(\"fadeEffect\").remove();}}");
+			sql.append(" addEventListener(\"keydown\", quickDelMessage);");
 			sql.append("</script>");
 			out.println(sql.toString());
 			UserMessage.setInRequest(ctx.getRequest(),null);
@@ -107,4 +111,5 @@ public class UserMessageTag  extends SimpleTagSupport {
 
     	return aString;
 	}
+
 }
