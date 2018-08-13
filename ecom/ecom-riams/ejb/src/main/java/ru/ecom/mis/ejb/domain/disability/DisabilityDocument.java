@@ -49,6 +49,9 @@ public class DisabilityDocument extends BaseEntity{
 	/** Экспортировано закрытие (ЭЛН)*/
 	private Boolean isCloseExport=false;
 
+	/** Является ли электронным */
+	private Boolean isELN=false;
+
 	private String anotherLpuName;
 	private String anotherLpuAddress;
 	private String anotherLpuOGRN;
@@ -496,5 +499,12 @@ public class DisabilityDocument extends BaseEntity{
 	}
 	public void setLnHash(String lnHash) {
 		this.lnHash = lnHash;
+	}
+
+	public Boolean getELN() {
+		return isELN;
+	}
+	public void setELN(Boolean ELN) {
+		isELN = ELN;
 	}
 }
