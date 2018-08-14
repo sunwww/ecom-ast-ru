@@ -10,7 +10,7 @@
         <%
             String shor = request.getParameter("short");
             String ElnInfo = request.getParameter("ElnInfo");
-            String lpuId = request.getParameter("id");
+            String lpuId = (String)request.getParameter("id");
             String beginDate = request.getParameter("dateBegin");
             if(lpuId!=null && !lpuId.equals(""))request.setAttribute("id", lpuId);
             request.setAttribute("lpuId", lpuId);
@@ -117,8 +117,8 @@
         </msh:section>
         <%}
             if(ElnInfo!=null && !ElnInfo.equals("")){
-                String lpu = request.getParameter("lpuId");
-                request.setAttribute("lpu", lpu);
+                String lpu = (String)request.getParameter("lpuId");
+                if(lpu !=null && !lpu.equals(""))request.setAttribute("lpu", lpu);
         %>
         <ecom:webQuery isReportBase="false" name = "elnDoc" nameFldSql="listSQL"
                        nativeSql="select
