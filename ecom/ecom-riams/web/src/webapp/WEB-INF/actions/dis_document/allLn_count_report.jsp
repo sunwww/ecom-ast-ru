@@ -123,10 +123,13 @@
         <ecom:webQuery isReportBase="false" name = "elnDoc" nameFldSql="listSQL"
                        nativeSql="select
 					   dd.id,
+					     p.lastname||' '||p.firstname||' '||p.middlename as p,
                         dd.number as number,
                         case when edd.id is not null then 'Электронный' else 'Бумажный' end as isEln
                         from disabilitydocument dd
+                        left join disabilitydocument prev on prev.id = dd.prevdocument_id
                         left join disabilityrecord dr on dr.id = (select max(id) from disabilityrecord where disabilitydocument_id =dd.id)
+                        left join patient p on p.id = dd.patient_id or p.id = prev.patient_id
                         left join workfunction wf on dr.workfunction_id = wf.id
                         left join worker w on w.id = wf.worker_id
                         left join patient doc on doc.id = w.person_id
@@ -134,13 +137,13 @@
                         where dd.issuedate  between to_date('${dateStart}','dd.MM.yyyy') and to_date('${dateFinish}','dd.MM.yyyy')
                         and dd.anotherlpu_id is null and w.lpu_id = ${lpu} and doc.id = ${id}
                         order by isEln"/>
-
         <msh:section>
             <msh:sectionContent>
                 <msh:table name="elnDoc" action="entityParentView-dis_document.do" idField="1">
                     <msh:tableColumn columnName="№" identificator="false" property="sn" />
-                    <msh:tableColumn columnName="Номер ЛН" property="2"/>
-                    <msh:tableColumn columnName="Тип ЛН" property="3" isCalcAmount="true"/>
+                    <msh:tableColumn columnName="ФИО пациента" property="2"/>
+                    <msh:tableColumn columnName="Номер ЛН" property="3"/>
+                    <msh:tableColumn columnName="Тип ЛН" property="4"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
