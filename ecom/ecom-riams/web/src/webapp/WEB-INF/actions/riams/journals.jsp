@@ -143,6 +143,9 @@
 						<li><msh:link  isReport="false" action="finPlanTotal.do" roles="/Policy/Mis/Journal/JasperReports">
 							Выполнение финансового плана
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="smo_deniedHospitelByAttach.do" roles="/Policy/Mis/ArchiveCase/Create">
+							Отказы госпитализации по прикрепленным
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
