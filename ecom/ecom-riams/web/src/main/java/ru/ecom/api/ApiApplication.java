@@ -1,5 +1,6 @@
 package ru.ecom.api;
 
+import ru.ecom.api.medcaseMedpolicy.MedcaseMedpolicy;
 import ru.ecom.api.queue.HospitalQueueResource;
 import ru.ecom.api.queue.TicketQueueResource;
 
@@ -22,6 +23,7 @@ public class ApiApplication extends Application {
         set.add(HospitalQueueResource.class);
         set.add(TicketQueueResource.class);
         set.add(DisabilitySign.class);
+        set.add(MedcaseMedpolicy.class);
         return set;
     }
 }
