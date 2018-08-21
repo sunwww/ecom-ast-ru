@@ -468,7 +468,14 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			return true;
 		}
 		return false;
-		
+
+	}
+	//Milamesher #112 проверка на визит ли
+	public boolean  isMedcaseIsVisit(String aId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql("select dtype from medcase where id="+aId);
+		String dtype = !res.isEmpty()?res.iterator().next().get1().toString():null;
+		return (dtype!=null&&dtype.equals("Visit"));
 	}
 	public boolean isMedcaseIsDepartment(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -691,9 +698,11 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		String plId = null;
 		if (wrt.size()>0) {
 			WebQueryResult obj = wrt.iterator().next();
-			plId = (isMedcaseClosed?"0":"1") + obj.get1().toString();
+			if (isMedcaseIsVisit(aMedcase, aRequest) && isMedcaseClosed) plId="2"+obj.get1().toString();  //если закрыт визит
+			else
+				plId = (isMedcaseClosed?"0":"1") + obj.get1().toString();
 		} else {
-			if (isMedcaseClosed) { return plId;}
+			if (isMedcaseClosed && !isMedcaseIsVisit(aMedcase, aRequest)) { return plId;}
 			java.util.Date date = new java.util.Date() ;
 			SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
 			SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
@@ -703,7 +712,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 				wf = service.executeNativeSql("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+username+"'").iterator().next().get1().toString();
 			} catch (Exception e) {e.printStackTrace(); throw new IllegalDataException(e.toString());}
 			if (wf==null) {throw new IllegalDataException("Нет рабочей функции!!!");}
-			
+
 			String sqlCreate = "insert into prescriptionlist (dtype,medcase_id, createusername, createdate, createtime, workfunction_id) values ('PrescriptList',"
 					+aMedcase+", '"+username+"',to_date('"+formatD.format(date)+"','dd.MM.yyyy')"
 					+", cast('"+formatT.format(date)+"' as time), "+wf+")";
