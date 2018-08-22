@@ -91,6 +91,9 @@
           <msh:textField property="upperWatersQuality" label="Качество передних вод"  />
           <msh:textField property="downWatersQuality" label="Качество задних вод"  />
         </msh:row>
+          <msh:row>
+              <msh:autoComplete property="paritet" label="Паритет" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
+          </msh:row>
         <msh:row styleId="rwSam1"><msh:separator label="Второй период родовой деятельности" colSpan="4"/>
         </msh:row>
         <msh:row styleId="rwSam6">
