@@ -598,4 +598,13 @@ public class ChildBirthForm extends IdEntityForm {
 
 	/** Показания */
 	private Long theEmergency;
+
+	/** Паритет */
+	@Comment("Паритет")
+	@Persist @Required
+	public Long getParitet() {return theParitet;}
+	public void setParitet(Long aParitet) {theParitet = aParitet;}
+
+	/** Паритет */
+	private Long theParitet;
 }

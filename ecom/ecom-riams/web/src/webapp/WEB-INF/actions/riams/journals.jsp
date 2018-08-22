@@ -230,6 +230,9 @@
 	                    <li><msh:link isReport="true" action="mis_assessment_risk_report.do" roles="/Policy/Mis/Pregnancy/Report/RiskReport">
 	                            Отчет по рискам
 	                    </msh:link></li>
+						<li><msh:link action="stac_report_Term_and_Paritet.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
+							Отчет по срокам и паритету
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>			

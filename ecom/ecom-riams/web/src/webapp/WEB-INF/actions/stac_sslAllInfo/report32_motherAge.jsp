@@ -98,7 +98,7 @@ order by pat.patientinfo
             <msh:sectionContent>
                 <input type="button" value="Печать списка" onclick="print()" >
                 <msh:table printToExcelButton="excel" name="ReportMotherAgeReestr" action="entityView-mis_patient.do" idField="1">
-                    <msh:tableColumn property="sn"/>
+                    <msh:tableColumn columnName="##" property="sn"/>
                     <msh:tableColumn columnName="ФИО пациента" property="2" addParam=""  />
                 </msh:table>
 
@@ -117,12 +117,13 @@ order by pat.patientinfo
             <ecom:webQuery isReportBase="true" name="ReportMotherAge" nameFldSql="ReportMotherAgeSql" nativeSql="
 select
 count(cb.id)
-,count (case when (cb.pangsstartdate-pat.birthday)/365 <19 then cb.id end) as f1_less19
+,count (case when (cb.pangsstartdate-pat.birthday)/365 <=14 then cb.id end) as f1_less15
+,count (case when (cb.pangsstartdate-pat.birthday)/365 between 15 and 19 then cb.id end) as f1_15_19
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 19 and 24 then cb.id end) as f2_19_24
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 25 and 29 then cb.id end) as f3_25_29
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 30 and 34 then cb.id end) as f4_30_34
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 35 and 39 then cb.id end) as f5_35_39
-,count (case when (cb.pangsstartdate-pat.birthday)/365 >=40 then cb.id end) as f6_more40
+,count (case when (cb.pangsstartdate-pat.birthday)/365 between 40 and 99 then cb.id end) as f6_more40
 from childbirth cb
 left join medcase slo on slo.id=cb.medcase_id
 left join patient pat on pat.id=slo.patient_id
@@ -136,12 +137,13 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
                            cellFunction="true"
                 >
                     <msh:tableColumn columnName="Всего рожениц" property="1" addParam=""  />
-                    <msh:tableColumn columnName="Моложе 19 лет " property="2" addParam="&age=0:18"/>
-                    <msh:tableColumn columnName="19-24 года" property="3" addParam="&age=19:24"/>
-                    <msh:tableColumn columnName="25-29 лет" property="4" addParam="&age=25:29"/>
-                    <msh:tableColumn columnName="30-34 года" property="5" addParam="&age=30:34"/>
-                    <msh:tableColumn columnName="35-39 лет" property="6" addParam="&age=35:39"/>
-                    <msh:tableColumn columnName="40 и более" property="7" addParam="&age=40:99"/>
+                    <msh:tableColumn columnName="Моложе 15 лет " property="2" addParam="&age=0:14"/>
+                    <msh:tableColumn columnName="15-19 лет " property="3" addParam="&age=15:19"/>
+                    <msh:tableColumn columnName="19-24 года" property="4" addParam="&age=19:24"/>
+                    <msh:tableColumn columnName="25-29 лет" property="5" addParam="&age=25:29"/>
+                    <msh:tableColumn columnName="30-34 года" property="6" addParam="&age=30:34"/>
+                    <msh:tableColumn columnName="35-39 лет" property="7" addParam="&age=35:39"/>
+                    <msh:tableColumn columnName="40 и более" property="8" addParam="&age=40:99"/>
                 </msh:table>
 
             </msh:sectionContent>
