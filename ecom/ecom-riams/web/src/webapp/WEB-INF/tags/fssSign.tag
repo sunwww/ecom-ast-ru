@@ -46,7 +46,7 @@
         the${name}fssSign.show();
         //TODO LINK
         $('${name}fssSignText')
-            .innerHTML="<iframe src='http://192.168.2.45:8800/riams/api/disabilitySign/sendDisabilityRecordJson?disRecId="+recordid+"&docType="+doctype+"' width='600' height='500' ></iframe>";
+            .innerHTML="<iframe src='/riams/api/disabilitySign/sendDisabilityRecordJson?disRecId="+recordid+"&docType="+doctype+"' width='600' height='500' ></iframe>";
     }
 
     // Отмена
