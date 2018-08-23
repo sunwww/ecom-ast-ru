@@ -29,7 +29,7 @@
             <msh:hidden guid="hiddenId" property="id" />
             <msh:hidden guid="hiddenSaveType" property="saveType" />
             <msh:hidden guid="hiddenParent" property="oncologyCase" />
-
+            <msh:textField property="date" label="Дата направления"/><br>
             <msh:autoComplete  property="typeDirection" label="Вид направления" vocName="vocOncologyTypeDirection" fieldColSpan="3" horizontalFill="true" />
             <msh:autoComplete  property="methodDiagTreat" label="Метод диагностического лечения" vocName="vocOncologyMethodDiagTreat" fieldColSpan="3" horizontalFill="true" />
             <msh:autoComplete  property="medService" label="Мед услуга" vocName="vocMedService" fieldColSpan="3" horizontalFill="true" />

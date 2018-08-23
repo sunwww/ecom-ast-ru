@@ -52,7 +52,7 @@ public class OncologyCase extends BaseEntity {
     /**Тип лучевой терапии*/
     private VocOncologyN017 typeRadTherapy;
 
-    @Comment("Подозрение на онкологию")
+    @Comment("Подозрение на ЗНО")
     public Boolean getSuspicionOncologist() {
         return isSuspicionOncologist;
     }
