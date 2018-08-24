@@ -509,4 +509,20 @@ public class ChildBirth extends BaseEntity{
 
 	/** Паритет */
 	private VocParitet theParitet;
+
+	/** ЭКО? */
+	@Comment("ЭКО?")
+	public Boolean getIsECO() {return theIsECO;}
+	public void setIsECO(Boolean aIsECO) {theIsECO = aIsECO;}
+
+	/** ЭКО? */
+	private Boolean theIsECO;
+
+	/** Состояла на учёте в ЖК? */
+	@Comment("Состояла на учёте в ЖК?")
+	public Boolean getIsRegisteredWithWomenConsultation() {return theIsRegisteredWithWomenConsultation;}
+	public void setIsRegisteredWithWomenConsultation(Boolean aIsRegisteredWithWomenConsultation) {theIsRegisteredWithWomenConsultation = aIsRegisteredWithWomenConsultation;}
+
+	/** Состояла на учёте в ЖК? */
+	private Boolean theIsRegisteredWithWomenConsultation;
 }

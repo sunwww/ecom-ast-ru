@@ -11,3 +11,5 @@ INSERT INTO vocparitet(id,name,code) VALUES(9,'IX','IX');
 INSERT INTO vocparitet(id,name,code) VALUES(10,'X','X');
 INSERT INTO vocparitet(id,name,code) VALUES(11,'XI','XI');
 INSERT INTO vocparitet(id,name,code) VALUES(12,'XII','XII');
+
+update vocparitet set name=''
