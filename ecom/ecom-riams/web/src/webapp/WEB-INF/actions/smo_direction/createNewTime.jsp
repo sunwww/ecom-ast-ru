@@ -187,10 +187,8 @@ function getReserves() {
             if (arr) {
                 arr = JSON.parse(arr);
                 var t="";
-                alert(arr.length);
                 for (i=0;i<arr.length;i++) {
                     r = arr[i];
-                    alert (JSON.stringify(r));
                      t +="<li class=\"menu-item\">" +
                         " <button type=\"button\" class=\"menu-btn\" onclick=\"changeReserve('"+r.id+"');\">" +
                         " <i class=\"fa fa-comment\"></i>" +
