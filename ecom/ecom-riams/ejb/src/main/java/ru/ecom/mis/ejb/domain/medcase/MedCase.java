@@ -1,21 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import static javax.persistence.CascadeType.ALL;
-
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,17 +7,17 @@ import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocKindHighCare;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocMedCaseDefect;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocMethodHighCare;
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.patient.Kinsman;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.poly.ejb.domain.PrescriptionBlank;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Случай медицинского обслуживания
@@ -456,7 +440,7 @@ abstract public class MedCase extends BaseEntity {
 	/** Гарантийное письмо */
 	private ContractGuarantee theGuarantee;
 
-	private Boolean isUpload;
+	private Boolean isUpload=false;
 	@Comment("Выгружено")
 	public Boolean getUpload() {
 		return isUpload;

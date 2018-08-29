@@ -279,7 +279,7 @@
                     <msh:table viewUrl="entityView-oncology_case.do?short=Short" name="list"
                                action="entityParentView-oncology_case.do" idField="1" >
                         <msh:tableColumn columnName="#" property="sn"/>
-                        <msh:tableColumn columnName="Подозрение на онкологию" property="2"/>
+                        <msh:tableColumn columnName="Подозрение на ЗНО" property="2"/>
                         <msh:tableColumn columnName="Причина обращения" property="3"/>
                         <msh:tableColumn columnName="Удаленные метастазы" property="4"/>
                         <msh:tableColumn columnName="Стадия" property="5"/>

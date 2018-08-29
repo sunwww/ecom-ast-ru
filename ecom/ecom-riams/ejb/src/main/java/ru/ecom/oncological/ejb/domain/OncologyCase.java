@@ -8,6 +8,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 
 /**
@@ -34,7 +35,7 @@ public class OncologyCase extends BaseEntity {
     /**Признак отдаленных метастазов*/
     private Boolean isDistantMetastasis;
     /**Суммарная очаговая доза*/
-    private String sumDose;
+    private BigDecimal sumDose;
     /**Подозрение на онкологию*/
     private Boolean isSuspicionOncologist;
 
@@ -52,7 +53,7 @@ public class OncologyCase extends BaseEntity {
     /**Тип лучевой терапии*/
     private VocOncologyN017 typeRadTherapy;
 
-    @Comment("Подозрение на онкологию")
+    @Comment("Подозрение на ЗНО")
     public Boolean getSuspicionOncologist() {
         return isSuspicionOncologist;
     }
@@ -123,10 +124,10 @@ public class OncologyCase extends BaseEntity {
     }
 
     @Comment("Суммарная очаговая доза")
-    public String getSumDose() {
+    public BigDecimal getSumDose() {
         return sumDose;
     }
-    public void setSumDose(String sumDose) {
+    public void setSumDose(BigDecimal sumDose) {
         this.sumDose = sumDose;
     }
 

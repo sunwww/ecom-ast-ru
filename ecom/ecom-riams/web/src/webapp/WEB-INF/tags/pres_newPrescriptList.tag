@@ -118,6 +118,8 @@ var isSLSClosed = true;
                      if (isMedcaseClosed=='0') {
                          disableButtons();
                          alert ('Пациент выписан, добавление назначений невоможно!');
+                     } else if (isMedcaseClosed=='2') {
+                         alert("В визите можно создавать лист назначений в закрытом СПО текущим числом.");
                      }
                      plId = aPresID.substring(1);
                      PrescriptionService.isPrescriptListCanBeChangedFromSLS('${parentID}', {

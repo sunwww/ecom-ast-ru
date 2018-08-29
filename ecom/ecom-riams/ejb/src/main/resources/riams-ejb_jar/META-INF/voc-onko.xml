@@ -15,13 +15,15 @@
         />
     </voc>
 
-    <voc id='vocOncologyN002' type='EntityVocService'>
+    <voc id='vocOncologyN002' type='NativeVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN002'
-                names   = 'name'
-                queried = 'code,name'
+                from = "voconcologyn002 voc"
+                nameId= "voc.id"
+                order = "voc.ds"
+                names = "voc.name||'(' ||voc.ds|| ')'"
         />
     </voc>
+
     <voc id="vocOncologyN002Code" type="NativeVocService">
         <NativeVocService
                 from="VocOncologyN002 voc"

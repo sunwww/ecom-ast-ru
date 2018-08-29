@@ -9,9 +9,17 @@
     @media print {
         h2 {display:inline;}
         img,div#copyright,h1,ul#ideModeMainMenu, div#ideModeMainMenuClose {display:none;}
-        input#beginDate{display:inline;}
-        div.x-box-mc{display:none;}
+        div#beginDate{display:inline;}
+        span#kindLabel{display:none;}
+        span#createUsernameLabel{display:none;}
+        span#createDateLabel{display:none;}
+        input#kindReadOnly{display:none;}
+        input#createUsernameReadOnly{display:none;}
+        input#createDateReadOnly{display:none;}
+        .formInfoMessage{display:none;}
+       .titleTrail{display:none;}
         div#header{display:none;}
+        div#gotoUpDown{display:none;}
     }
 </style>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
@@ -56,7 +64,7 @@
         	<msh:textField property="diagnosis"  horizontalFill="true" label="Диагноз" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete viewOnlyField="true" property="doctorCase" vocName="workFunction" fieldColSpan="3" label="Лечащий врач" horizontalFill="true"/>
+        	<msh:autoComplete property="doctorCase" vocName="workFunction" fieldColSpan="3" label="Лечащий врач" horizontalFill="true"/>
         </msh:row>
         <msh:row>
         	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
@@ -183,66 +191,77 @@
 							     	infoBySlo() ;
 							  	}
 						}
-	  				
+
 		  			);
   			}
 		  	function infoBySlo() {
 		  		QualityEstimationService.getInfoBySlo($('medcase').value,$('medcase').value
 		  				,{
 							 callback: function(aRow) {
-							     	//alert(aRow) ;
-							     	if (aRow!=null) {
-							     		var res = aRow.split("#");
-							     		  //var ind1,ind2,ind3,ind4,ind5,ind6 ;
-							     		  //ind1=aRow.indexOf('#') ;
-							     		  //ind2=aRow.indexOf('#',ind1+1) ;
-							     		  //ind3=aRow.indexOf('#',ind2+1) ;
-							     		  //ind4=aRow.indexOf('#',ind3+1) ;
-							     		  //ind5=aRow.indexOf('#',ind4+1) ;
-							     		  //ind6=aRow.indexOf('#',ind5+1) ;
-							     		  $('doctorCase').value = res[0];
-							     		  if ($('doctorCase').value!="") $('doctorCaseReadOnly').value = res[1] ;
-							     		  $('idc10').value = res[2];
-							     		  $('idc10Name').value = res[3];
-							     		  $('diagnosis').value = res[4] ; //($('diagnosisReadOnly').value =res[4];
-							     		  $('department').value =res[5] ;
-							     		  $('departmentReadOnly').value = res[6] ;
-							     		  if (res.length>7) {
-							     			  $('kind').value=res[7];
-							     			  $('kindName').value=res[8];
-							     		  }
-							     		  
-							     	} else {
-							     		  $('doctorCase').value = "" ;$('doctorCaseReadOnly').value = "" ;
-							     		  $('idc10').value = "" ;$('idc10ReadOnly').value = "" ;
-							     		  $('diagnosis').value = "" ;
-							     		  $('department').value = "" ;$('departmentReadOnly').value = "" ;
-							     	}
+                                 if (aRow != null) {
+                                     var res = aRow.split("#");
+                                     //var ind1,ind2,ind3,ind4,ind5,ind6 ;
+                                     //ind1=aRow.indexOf('#') ;
+                                     //ind2=aRow.indexOf('#',ind1+1) ;
+                                     //ind3=aRow.indexOf('#',ind2+1) ;
+                                     //ind4=aRow.indexOf('#',ind3+1) ;
+                                     //ind5=aRow.indexOf('#',ind4+1) ;
+                                     //ind6=aRow.indexOf('#',ind5+1) ;
+                                     $('doctorCase').value = res[0];
+                                     if ($('doctorCase').value != "") $('doctorCaseName').value = res[1];
+                                     $('idc10').value = res[2];
+                                     $('idc10Name').value = res[3];
+                                     $('diagnosis').value = res[4]; //($('diagnosisReadOnly').value =res[4];
+                                     $('department').value = res[5];
+                                     $('departmentReadOnly').value = res[6];
+                                     if (res.length > 7) {
+                                         $('kind').value = res[7];
+                                         $('kindName').value = res[8];
+                                     }
+
+                                 } else {
+                                     $('doctorCase').value = "";
+                                     $('doctorCaseName').value = "";
+                                     $('idc10').value = "";
+                                     $('idc10ReadOnly').value = "";
+                                     $('diagnosis').value = "";
+                                     $('department').value = "";
+                                     $('departmentReadOnly').value = "";
+                                 }
                                  //Milamesher 05.07.2018 #105 значения в случае undefined
                                  //Отделение, за которым закрепили
-							     	if ( $('department').value == "undefined") {
-                                        QualityEstimationService.getFixedDepartmentFromMedcase ($('medcase').value,{
-                                            callback: function(aRow) {
-                                                if (aRow!="##") {
-                                                    var res = aRow.split("#");
-                                                    $('department').value = res[0];
-                                                    $('departmentReadOnly').value = res[1];
-                                                }
-                                            }});
-                                    }
-                                    //Диагноз, если проставлен, сделать недоступным
+                                 if ($('department').value == "undefined") {
+                                     QualityEstimationService.getFixedDepartmentFromMedcase($('medcase').value, {
+                                         callback: function (aRow) {
+                                             if (aRow != "##") {
+                                                 var res = aRow.split("#");
+                                                 $('department').value = res[0];
+                                                 $('departmentReadOnly').value = res[1];
+                                             }
+                                         }
+                                     });
+                                 }
+                                 //Диагноз, если проставлен, сделать недоступным
                                  if ($('idc10Name').value == "undefined") {
-							     	    $('idc10Name').value="";
-                                        $('idc10').value="";
+                                     $('idc10Name').value = "";
+                                     $('idc10').value = "";
                                  }
                                  else { //если диагноз есть
-                                     $('idc10Name').setAttribute("class","viewOnly horizontalFill");
-                                     $('diagnosis').setAttribute("class","viewOnly horizontalFill");
-                                     $('idc10Name').setAttribute("disabled","true");
-                                     $('diagnosis').setAttribute("readonly","true");
+                                     $('idc10Name').setAttribute("class", "viewOnly horizontalFill");
+                                     $('diagnosis').setAttribute("class", "viewOnly horizontalFill");
+                                     $('idc10Name').setAttribute("disabled", "true");
+                                     $('diagnosis').setAttribute("readonly", "true");
                                  }
-                                 if ($('diagnosis').value == "undefined") $('diagnosis').value="";
-							  	}
+                                 if ($('diagnosis').value == "undefined") $('diagnosis').value = "";
+                                 //Лечащий врач, если проставлен, сделать недоступным
+                                 if ($('doctorCase').value == "undefined") $('doctorCase').value = "";
+                                 if ($('doctorCase').value != "") {
+                                     $('doctorCase').setAttribute("class", "viewOnly horizontalFill");
+                                     $('doctorCase').setAttribute("readonly", "true");
+                                     $('doctorCaseName').setAttribute("class", "viewOnly horizontalFill");
+                                     $('doctorCaseName').setAttribute("disabled", "true");
+                                 }
+                             }
 						}
 	  				
 		  			);

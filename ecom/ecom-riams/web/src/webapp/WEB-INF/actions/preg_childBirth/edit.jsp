@@ -91,6 +91,13 @@
           <msh:textField property="upperWatersQuality" label="Качество передних вод"  />
           <msh:textField property="downWatersQuality" label="Качество задних вод"  />
         </msh:row>
+          <msh:row>
+              <msh:autoComplete property="paritet" label="Паритет" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
+          </msh:row>
+          <msh:row>
+              <msh:checkBox property="isECO" label="ЭКО?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
+              <msh:checkBox property="isRegisteredWithWomenConsultation" label="Состояла на учёте в ЖК?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="2"/>
+          </msh:row>
         <msh:row styleId="rwSam1"><msh:separator label="Второй период родовой деятельности" colSpan="4"/>
         </msh:row>
         <msh:row styleId="rwSam6">

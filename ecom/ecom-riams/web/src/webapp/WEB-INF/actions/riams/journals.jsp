@@ -143,6 +143,9 @@
 						<li><msh:link  isReport="false" action="finPlanTotal.do" roles="/Policy/Mis/Journal/JasperReports">
 							Выполнение финансового плана
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="smo_deniedHospitelByAttach.do" roles="/Policy/Mis/ArchiveCase/Create">
+							Отказы госпитализации по прикрепленным
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>
@@ -218,15 +221,15 @@
 						<li><msh:link action="stac_report_32.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
 	                            32 форма
 	                        </msh:link></li>
-						<li><msh:link action="stac_report_32motherAge.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
-	                            Отчет по возрастам рожениц
-	                        </msh:link></li>
 						<li><msh:link action="stac_pregnant_hosp_account.do" roles="/Policy/Mis/Pregnancy/Report/PregnantHospAccount">
 	                            Учёт случаев госпитализации беременных
 	                        </msh:link></li>
 	                    <li><msh:link isReport="true" action="mis_assessment_risk_report.do" roles="/Policy/Mis/Pregnancy/Report/RiskReport">
 	                            Отчет по рискам
 	                    </msh:link></li>
+						<li><msh:link action="stac_report_BirthTotal.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
+							Анализ работы родового отделения
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>			

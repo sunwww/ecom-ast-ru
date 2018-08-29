@@ -10,6 +10,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.sql.Date;
 
 /**
  * Направление
@@ -27,6 +28,8 @@ public class OncologyDirection extends BaseEntity {
     private VocOncologyTypeDirection typeDirection;
     /** мед услуга по V001 */
     private VocMedService medService;
+    /** дата направления */
+    private Date date;
 
     @Comment("Случай окологического лечения")
     @OneToOne
@@ -62,5 +65,13 @@ public class OncologyDirection extends BaseEntity {
     }
     public void setMedService(VocMedService medService) {
         this.medService = medService;
+    }
+
+    @Comment("Дата направления")
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

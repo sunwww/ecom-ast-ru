@@ -5,6 +5,8 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.oncological.ejb.domain.OncologyDirection;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 
 /**
  * Created by rkurbanov on 19.07.2018.
@@ -29,9 +31,8 @@ public class OncologyDirectionForm extends IdEntityForm {
     private Long typeDirection;
     /** мед услуга по V001 */
     private Long medService;
-
-
-
+    /** Дата напраления */
+    private String date;
 
     @Persist
     public Long getOncologyCase() {
@@ -63,5 +64,15 @@ public class OncologyDirectionForm extends IdEntityForm {
     }
     public void setMedService(Long medService) {
         this.medService = medService;
+    }
+
+    @Persist
+    @DateString
+    @DoDateString
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
     }
 }

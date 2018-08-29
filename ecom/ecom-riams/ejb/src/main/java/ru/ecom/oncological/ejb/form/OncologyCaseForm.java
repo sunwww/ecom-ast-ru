@@ -6,6 +6,8 @@ import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.oncological.ejb.domain.OncologyCase;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 
 /**
  * Cлучай онкологического лечения
@@ -39,7 +41,7 @@ public class OncologyCaseForm extends IdEntityForm {
     private Boolean isDistantMetastasis;
     /**Суммарная очаговая доза*/
     private String sumDose;
-    /**Подозрение на онкологию*/
+    /**Подозрение на ЗНО*/
     private Boolean isSuspicionOncologist;
 
     /**Сведения об услуге при онкологического заболевания */
@@ -176,13 +178,15 @@ public class OncologyCaseForm extends IdEntityForm {
         this.consilium = consilium;
     }
 
-
+    /** дата направления */
+    private String date;
     /** Метод диагностического лечения */
     private Long methodDiagTreat;
     /** Вид направления */
     private Long typeDirection;
     /** мед услуга по V001 */
     private Long medService;
+
 
     public Long getMethodDiagTreat() {
         return methodDiagTreat;
@@ -203,5 +207,13 @@ public class OncologyCaseForm extends IdEntityForm {
     }
     public void setMedService(Long medService) {
         this.medService = medService;
+    }
+
+    @DateString @DoDateString
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
     }
 }

@@ -73,8 +73,107 @@ function onCreate(aForm, aEntity, aCtx) {
 		}
 		aEntity.setPregnancy(preg) ;
 	}
+    //Milamesher 28.08.2018 #108 - дополнение: при госпитализации пациента все открытые СПО закрываются датой последнего визита
+	//Закрытие всех СПО
+    var listSpoByPat = aCtx.manager.createNativeQuery("select id from medcase where dtype='PolyclinicMedCase' and datefinish is null and patient_id="+aEntity.patient.id).getResultList();
+    for (var ind=0 ; ind< listSpoByPat.size() ; ind++) {
+        var opSpoId = listSpoByPat.get(ind);
+        closeSpo(aCtx,opSpoId);
+    }
 }
+//Закрытие СПО по id (взято с SmoVisitService) - датой последнего визита
+function closeSpo(aContext, aSpoId) {
+    var listOpenVis = aContext.manager.createNativeQuery("select vis.id as visid"
+        +" ,vis.dateStart as mkbid"
+        +" from MedCase vis"
+        +" where vis.parent_id="+aSpoId
+        +" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
+        +" and vis.dateStart is null"
+    ).setMaxResults(1).getResultList() ;
+    var listVisLast = aContext.manager.createNativeQuery("select vis.id as visid"
+        +" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
+        +" from MedCase vis"
+        +"     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id"
+        +"     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
+        +"     left join Worker w on wf.worker_id = w.id"
+        +"     left join Patient pat on w.person_id = pat.id"
+        +" left join VocReason vr on vis.visitReason_id = vr.id"
+        +" left join VocServiceStream vss on vss.id=vis.serviceStream_id"
+        +" left join Diagnosis diag on diag.medcase_id=vis.id"
+        +" left join VocIdc10 mkb on mkb.id=diag.idc10_id"
+        +" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
+        +" left join VocVisitResult vvr on vvr.id=vis.visitResult_id"
+        +" where vis.parent_id="+aSpoId
+        +" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
+        +" and vis.dateStart is not null"
+        +" and (vpd.code='1' or vpd.id is null)"
+        +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
+        +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
+        +" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
+    if (listOpenVis.size()==0&&listVisLast.size()>0) {
+        var listVisFirst = aContext.manager.createNativeQuery("select vis.id as visid"
+            +" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
+            +" from MedCase vis"
+            +"     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id"
+            +"     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
+            +"     left join Worker w on wf.worker_id = w.id"
+            +"     left join Patient pat on w.person_id = pat.id"
+            +" left join VocReason vr on vis.visitReason_id = vr.id"
+            +" left join VocServiceStream vss on vss.id=vis.serviceStream_id"
+            +" left join Diagnosis diag on diag.medcase_id=vis.id"
+            +" left join VocIdc10 mkb on mkb.id=diag.idc10_id"
+            +" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
+            +" left join VocVisitResult vvr on vvr.id=vis.visitResult_id"
+            +" where vis.parent_id="+aSpoId
+            +" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
+            +" and vis.dateStart is not null"
+            +" and (vpd.code='1' or vpd.id is null) "
+            +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
+            +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
+            +" order by vis.dateStart, vis.timeExecute").setMaxResults(1).getResultList() ;
+        var visFirst = listVisFirst.get(0)[0];
+        //var visFirstO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
+        //		, java.lang.Long.valueOf(visFirst)) ;
+        var visLast = listVisLast.get(0)[0];
+        var mkb = listVisLast.get(0)[1];
+        if (mkb==null) {
+            var listMkb = aContext.manager.createNativeQuery("select vis.id as visid"
+                +" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
+                +" from MedCase vis"
+                +"     left join WorkFunction wf on vis.workFunctionExecute_id = wf.id"
+                +"     left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
+                +"     left join Worker w on wf.worker_id = w.id"
+                +"     left join Patient pat on w.person_id = pat.id"
+                +" left join VocReason vr on vis.visitReason_id = vr.id"
+                +" left join VocServiceStream vss on vss.id=vis.serviceStream_id"
+                +" left join Diagnosis diag on diag.medcase_id=vis.id"
+                +" left join VocIdc10 mkb on mkb.id=diag.idc10_id"
+                +" left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
+                +" left join VocVisitResult vvr on vvr.id=vis.visitResult_id"
+                +" where vis.parent_id="+aSpoId
+                +" and (vis.DTYPE='Visit' OR vis.DTYPE='ShortMedCase')"
+                +" and vis.dateStart is not null"
+                +" and (vpd.code='1' or vpd.id is null) and (vis.noActuality='0' or vis.noActuality is null) and mkb.id is not null"
+                +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
+                +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
+                +" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
+            var mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
 
+
+        }
+        var dateStart = listVisFirst.get(0)[2];
+        var dateFinish = listVisLast.get(0)[2];
+        var startWF = listVisFirst.get(0)[3];
+        var finishWF = listVisLast.get(0)[3];
+        aContext.manager.createNativeQuery("update medcase set dateFinish=to_date('"+dateFinish
+            +"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
+            +"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
+            +"'"+(mkb!=null?(",idc10_id='"+mkb+"'"):"")+" where id="+aSpoId).executeUpdate() ;
+    } /*else {
+        if(listVisLast.size()==0) throw "Нет ни одного присоединенного визита к СПО с основным диагнозом!!!" ;
+    }*/
+    return aSpoId;
+}
 function onPreDelete(aMedCaseId, aContext) {
 	throw "Нельзя удалять поступление, удалится весь случай !!!"
 }

@@ -200,13 +200,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report14ds.jsp" />
         </action>
-        <action path='/stac_report_32motherAge' type='ru.ecom.web.actions.base.ForwardAction'
+        <action path='/stac_report_BirthTotal' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"
-                >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/report32_motherAge.jsp" />
-       </action>
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/stac_sslAllInfo/stac_report_BirthTotal.jsp" />
+        </action>
         <action path='/stac_report_32' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
                 validate='false'

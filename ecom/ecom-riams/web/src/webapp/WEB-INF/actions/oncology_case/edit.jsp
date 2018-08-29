@@ -26,9 +26,7 @@
     <tiles:put name="body" type="string">
         <msh:form action="/entitySaveGoView-oncology_case.do" defaultField="hello" title="Случай онкологического лечения">
 
-
-
-            <msh:checkBox property="suspicionOncologist" label="Подозрение на онкологияю:"/><br>
+            <msh:checkBox property="suspicionOncologist" label="Подозрение на ЗНО:"/><br>
             <div class="borderedDiv" id="oncologyCase">
 
                 <msh:hidden guid="hiddenParent" property="medCase" />
@@ -52,6 +50,7 @@
             </div>
 
             <div class="borderedDiv" id="oncologyDirection">
+                <msh:textField property="date" label="Дата направления" fieldColSpan="3" horizontalFill="true"/><br>
                 <msh:autoComplete  property="typeDirection" label="Вид направления" vocName="vocOncologyTypeDirection" horizontalFill="true"/>
                 <msh:autoComplete  property="methodDiagTreat" label="Метод диагностического лечения" vocName="vocOncologyMethodDiagTreat" fieldColSpan="3" horizontalFill="true" />
                 <msh:autoComplete  property="medService" label="Мед услуга" vocName="vocMedService" fieldColSpan="3" horizontalFill="true" />
@@ -251,6 +250,20 @@
                     oncologyCase.style.display  = "block";
                 }
             }
+            document.getElementById("date").className += " required";
+            document.getElementById("stadName").className += " required";
+            document.getElementById("tumorName").className += " required";
+            document.getElementById("nodusName").className += " required";
+            document.getElementById("metastasisName").className += " required";
+            document.getElementById("typeTreatmentName").className += " required";
+
+            document.getElementById("surgTreatmentName").className += " required";
+            document.getElementById("lineDrugTherapyName").className += " required";
+            document.getElementById("cycleDrugTherapyName").className += " required";
+            document.getElementById("sumDose").className += " required";
+            document.getElementById("typeRadTherapyName").className += " required";
+
+
         </script>
     </tiles:put>
 
