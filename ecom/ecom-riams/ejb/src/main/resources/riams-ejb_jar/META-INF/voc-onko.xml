@@ -20,7 +20,7 @@
                 from = "voconcologyn002 voc"
                 nameId= "voc.id"
                 order = "voc.ds"
-                names = "voc.name||'(' ||voc.ds|| ')'"
+                names = "voc.name"
         />
     </voc>
 
