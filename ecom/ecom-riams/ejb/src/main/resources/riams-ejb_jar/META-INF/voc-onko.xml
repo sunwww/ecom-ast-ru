@@ -16,7 +16,7 @@
     </voc>
 
     <voc id='vocOncologyN002' type='NativeVocService'>
-        <EntityVocService
+        <NativeVocService
                 from = "voconcologyn002 voc"
                 nameId= "voc.id"
                 order = "voc.ds"
