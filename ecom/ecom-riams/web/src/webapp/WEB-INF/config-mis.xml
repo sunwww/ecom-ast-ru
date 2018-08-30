@@ -1129,33 +1129,19 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/reportsCharged.jsp" />
 		</action-->
-		<action path='/totalReestr' type='ru.ecom.web.actions.base.ForwardAction'
+		<action path='/reestrNaOplatyDogovorov' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
 				scope="session"
 		>
-			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/totalReestr.jsp" />
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/reestrNaOplatyDogovorov.jsp" />
 		</action>
-		<action path='/finPlanByProfile' type='ru.ecom.web.actions.base.ForwardAction'
+		<action path='/finPlan' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
 				scope="session"
 		>
-			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/finPlanByProfile.jsp" />
-		</action>
-		<action path='/finPlanByDep' type='ru.ecom.web.actions.base.ForwardAction'
-				validate='false'
-				name='stac_admissionJournalForm'
-				scope="session"
-		>
-			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/finPlanByDep.jsp" />
-		</action>
-		<action path='/finPlanTotal' type='ru.ecom.web.actions.base.ForwardAction'
-				validate='false'
-				name='stac_admissionJournalForm'
-				scope="session"
-		>
-			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/finPlanTotal.jsp" />
+			<forward name="success" redirect="false" path="/WEB-INF/actions/jasper/finPlan.jsp" />
 		</action>
         <action path='/directory_search' type='ru.ecom.web.actions.base.ForwardAction'
                 name='directory_searchForm'
