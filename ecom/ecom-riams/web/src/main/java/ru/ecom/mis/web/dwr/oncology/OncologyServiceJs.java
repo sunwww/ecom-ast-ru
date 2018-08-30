@@ -163,6 +163,12 @@ public class OncologyServiceJs {
         return null;
     }
 
+    public String checkSLO(Long id_medcase, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> res = service.executeNativeSql("select count(id) from oncologycase where medcase_id=" + id_medcase);
+        return !res.isEmpty() ? res.iterator().next().get1().toString() : "0";
+    }
+
     public String checkSPO(Long id_medcase, HttpServletRequest aRequest) throws NamingException {
 
        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);

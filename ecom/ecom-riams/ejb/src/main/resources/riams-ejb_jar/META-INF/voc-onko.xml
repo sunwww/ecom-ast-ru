@@ -24,6 +24,15 @@
         />
     </voc>
 
+    <voc id='vocOncologyN002parent' type='NativeVocService'>
+        <NativeVocService
+                from = "voconcologyn002 n002"
+                parent='n002.ds=:parent'
+                nameId= "n002.id"
+                names = "n002.name"
+        />
+    </voc>
+
     <voc id="vocOncologyN002Code" type="NativeVocService">
         <NativeVocService
                 from="VocOncologyN002 voc"
@@ -72,6 +81,16 @@
                 queried = 'code,name'
         />
     </voc>
+
+    <voc id='vocOncologyN005byparent' type='NativeVocService'>
+        <NativeVocService
+                from = "voconcologyn005 n005"
+                parent='n005.ds=:parent'
+                nameId= "n005.id"
+                names = "n005.name"
+        />
+    </voc>
+
     <voc id="vocOncologyN005Code" type="NativeVocService">
         <NativeVocService
                 from="VocOncologyN005 voc"
