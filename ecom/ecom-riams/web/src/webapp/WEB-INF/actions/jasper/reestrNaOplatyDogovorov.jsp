@@ -6,12 +6,12 @@
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="StacJournal">Реестр по платникам</msh:title>
+        <msh:title mainMenu="StacJournal">Реестр на оплату для договоров</msh:title>
     </tiles:put>
     <tiles:put name='side' type='string'>
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:form action="/totalReestr.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+        <msh:form action="/reestrNaOplatyDogovorov.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
         <msh:panel>
             <msh:row>
                 <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -38,7 +38,6 @@
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
                         callback: function (res) {
                             var resMas = res.split("#");
-                            window.location.href = "totalReestr.do?dateBegin="+$('dateBegin').value+"&dateEnd="+$('dateEnd').value+"&serviceStream="+$('serviceStream').value+"&hospType="+$('hospType').value;
                             if (res != "##") {
                                 var sstream=document.getElementById("serviceStreamName").value;
                                 if (sstream[sstream.length-1]==' ') sstream=sstream.substring(0,sstream.length-1);

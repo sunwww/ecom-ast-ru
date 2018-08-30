@@ -350,7 +350,6 @@ function gotoNewBornHistory(aMedCase,aUrl) {
       HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
           callback: function (res) {
               var resMas = res.split("#");
-              window.location.href = "entityView-stac_ssl.do?id="+$('id').value;
               if (res != "##") {
                   var stat=$('statCardNumber').value;
                   var year=$('dateStart').value.substring(6,11);
