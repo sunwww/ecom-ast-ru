@@ -61,6 +61,9 @@
                     <td onclick="this.childNodes[1].checked='checked';" colspan="4">
                         <input type="radio" name="typeGroup" value="9"> показаниям
                     </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="5">
+                        <input type="radio" name="typeGroup" value="10"> выкидышам
+                    </td>
                 </msh:row>
                 <msh:row>
                     <td>
@@ -338,7 +341,7 @@ select
 count(cb.id)
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 <=14 then cb.id end) as f1_less15
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 15 and 19 then cb.id end) as f1_15_19
-,count (case when (cb.pangsstartdate-pat.birthday)/365 between 19 and 24 then cb.id end) as f2_19_24
+,count (case when (cb.pangsstartdate-pat.birthday)/365 between 20 and 24 then cb.id end) as f2_20_24
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 25 and 29 then cb.id end) as f3_25_29
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 30 and 34 then cb.id end) as f4_30_34
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 between 35 and 39 then cb.id end) as f5_35_39
@@ -358,7 +361,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
                     <msh:tableColumn columnName="Всего рожениц" property="1" addParam=""  />
                     <msh:tableColumn columnName="Моложе 15 лет " property="2" addParam="&age=0:14"/>
                     <msh:tableColumn columnName="15-19 лет " property="3" addParam="&age=15:19"/>
-                    <msh:tableColumn columnName="19-24 года" property="4" addParam="&age=19:24"/>
+                    <msh:tableColumn columnName="20-24 года" property="4" addParam="&age=20:24"/>
                     <msh:tableColumn columnName="25-29 лет" property="5" addParam="&age=25:29"/>
                     <msh:tableColumn columnName="30-34 года" property="6" addParam="&age=30:34"/>
                     <msh:tableColumn columnName="35-39 лет" property="7" addParam="&age=35:39"/>
@@ -627,6 +630,33 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
                     <msh:tableColumn columnName="По срочным показаниям " property="4" addParam="&in=3"/>
                     <msh:tableColumn columnName="Индуцированные " property="5" addParam="&in=4"/>
                     <msh:tableColumn columnName="Спонтанные " property="6" addParam="&in=5"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <%
+                    }
+                    //группировка по выкидышам
+                    else if (request.getParameter("typeGroup").equals("10")) {
+        %>
+        <msh:section>
+            <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+        </msh:section>
+
+        <msh:section>
+            <ecom:webQuery isReportBase="true" name="ReportMisbirth" nameFldSql="ReportMisbirthSql" nativeSql="
+select  sls.id as patId, pat.patientinfo
+from medcase sls
+left join patient pat on sls.patient_id=pat.id
+left join medcase sloobserv on sloobserv.parent_id=sls.id
+left join mislpu depobserv on depobserv.id=sloobserv.department_id
+where sls.dtype='HospitalMedCase' and sloobserv.dtype='DepartmentMedCase' and depobserv.isobservable=true
+and (select count(id) from childbirth where medcase_id=ANY(select id from medcase where parent_id=sls.id))=0
+and sls.datestart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+" />
+            <msh:sectionContent>
+                <msh:table printToExcelButton="excel" name="ReportMisbirth" action="entityView-stac_ssl.do" idField="1" cellFunction="true">
+                    <msh:tableColumn columnName="##" property="sn"/>
+                    <msh:tableColumn columnName="ФИО" property="2" addParam=""  />
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
