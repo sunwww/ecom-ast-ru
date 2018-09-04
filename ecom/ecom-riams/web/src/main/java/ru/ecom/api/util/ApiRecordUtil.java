@@ -102,8 +102,8 @@ public class ApiRecordUtil {
         StringBuilder sqlAdd = new StringBuilder();
         StringBuilder selectSql = new StringBuilder();
         String groupBySql, orderBySql;
-        String[] jsonFields = {"calendarDay_id","calendarDate"};
-        selectSql.append(" max(wcd.id) as id, to_char(wcd.calendardate,'yyyy-MM-dd') as calendarDate");
+        String[] jsonFields = {"calendarDay_id","calendarDate", "prettyCalendarDate"};
+        selectSql.append(" max(wcd.id) as id, to_char(wcd.calendardate,'yyyy-MM-dd') as calendarDate, to_char(wcd.calendardate,'dd.MM.yyyy') as prettyCalendarDate");
         if (aWorkfunctionId!=null&&!aWorkfunctionId.equals("")) { //Ищем свободные времена по конкретной раб. функции
             sqlAdd.append(" and wf.id=").append(aWorkfunctionId);
         } else { //Ищем свободные времена по любой раб. функции указанной специальности

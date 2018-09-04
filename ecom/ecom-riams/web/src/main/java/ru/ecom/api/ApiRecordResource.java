@@ -43,7 +43,7 @@ public class ApiRecordResource {
         return "Enter test ID";
     }
 
-    public final String[] serviceStreams = {"OMC","CHARGED"};
+    public final String[][] serviceStreams = {{"OMC","ОМС"},{"CHARGED","Платно"}};
     /** Получаем список поддерживаемых потоков обслуживания*/
     @GET
     @Path("/getServiceStream")
@@ -51,8 +51,8 @@ public class ApiRecordResource {
 
     public String getServiceStream(@Context HttpServletRequest aRequest) throws JSONException {
         JSONArray array = new JSONArray();
-        for (String s: serviceStreams) {
-            array.put(new JSONObject().put("code",s));
+        for (String[] s: serviceStreams) {
+            array.put(new JSONObject().put("code",s[0]).put("name",s[1]));
         }
         return array.toString();
     }
@@ -152,7 +152,7 @@ public class ApiRecordResource {
     }
 
 
-    public String makeRecordOrAnnul(HttpServletRequest aRequest
+    private String makeRecordOrAnnul(HttpServletRequest aRequest
             ,  JSONObject root) throws NamingException, JSONException, ParseException {
         Long calendarTimeId = Long.valueOf((String)getJsonField(root,"calendarTime_id"));
         String lastname = getJsonField(root,"lastname");
