@@ -52,6 +52,8 @@
       <msh:hidden property="medCase" guid="2104232f-62fa-4f0b-84de-7ec4b5f306b3" />
       <msh:hidden property="saveType" guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <msh:hidden property="newBornsInfo"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
+      <msh:hidden property="isECO"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
+      <msh:hidden property="isRegisteredWithWomenConsultation"  guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <input type='hidden' name='deadBorn' id="deadBorn" value='${dead_born}' guid="3ec5c007-f4b1-443c-83b0-b6d93f55c6f2" />
       <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
         <msh:row guid="4bbea36b-255f-441f-8617-35cb54eaf9d0">
@@ -94,10 +96,34 @@
           <msh:row>
               <msh:autoComplete property="paritet" label="Паритет" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
           </msh:row>
-          <msh:row>
-              <msh:checkBox property="isECO" label="ЭКО?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
-              <msh:checkBox property="isRegisteredWithWomenConsultation" label="Состояла на учёте в ЖК?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="2"/>
-          </msh:row>
+          <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
+              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                  <td class="label" title="Поиск по промежутку  (ecoGroup)" colspan="1"><label for="ecoGroupName" id="tecoGroupLabel">Выберите:</label></td>
+                  <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                      <input type="radio" name="ecoGroup" value="1"> ЭКО
+                  </td>
+                  <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                      <input type="radio" name="ecoGroup" value="2"> Без ЭКО
+                  </td>
+              </msh:row>
+              <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                  <td class="label" title="Поиск по промежутку  (gkGroup)" colspan="1"><label for="gkGroupName" id="tgkGroupLabel">Выберите:</label></td>
+                  <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                      <input type="radio" name="gkGroup" value="1"> Состояла на учёте в ЖК
+                  </td>
+                  <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                      <input type="radio" name="gkGroup" value="2"> НЕ состояла на учёте в ЖК
+                  </td>
+              </msh:row>
+          </msh:ifFormTypeIsNotView>
+          <msh:ifFormTypeIsView formName="preg_childBirthForm">
+              <msh:row>
+                  <msh:checkBox property="isECO" label="ЭКО?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
+              </msh:row>
+              <msh:row>
+                  <msh:checkBox property="isRegisteredWithWomenConsultation" label="Учёт в ЖК?" guid="bfc88e8a-d54c-48f9-87e9-6740779e3287" fieldColSpan="1"/>
+              </msh:row>
+          </msh:ifFormTypeIsView>
         <msh:row styleId="rwSam1"><msh:separator label="Второй период родовой деятельности" colSpan="4"/>
         </msh:row>
         <msh:row styleId="rwSam6">
@@ -206,7 +232,7 @@
         	<msh:label property="editUsername" label="пользователь"/>
         </msh:row>
         </msh:ifFormTypeIsView>
-        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm();"/>
+        <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="if (chekECOAndGK()) { this.form.action='entityParentSaveGoView-preg_childBirth.do';checkForm(); } else {  document.forms[0].action = old_action;$('submitButton').disabled = false; }"/>
       </msh:panel>
     </msh:form>
      <tags:preg_childBirthYesNo name="DeadBorn" field="DeadBeforeLabors"/>
@@ -252,7 +278,10 @@
   <msh:ifFormTypeAreViewOrEdit formName="preg_childBirthForm">
   <script type="text/javascript">
   isSaveNewBorns=0;
-  </script>
+  //Milamesher 03092018 radiobuttons ЭКО и ЖК
+  if ($('isECO').value=='true') document.getElementsByName("ecoGroup")[0].checked=true; else document.getElementsByName("ecoGroup")[1].checked=true;
+  if ($('isRegisteredWithWomenConsultation').value=='true') document.getElementsByName("gkGroup")[0].checked=true; else document.getElementsByName("gkGroup")[1].checked=true;
+   </script>
   </msh:ifFormTypeAreViewOrEdit>
   <msh:ifFormTypeIsCreate formName="preg_childBirthForm">
   <script type="text/javascript">
@@ -261,22 +290,34 @@
   </script>
   </msh:ifFormTypeIsCreate>
   <script type="text/javascript">
-   
+      //Milamesher 31082018 проверка на ЭКО и ЖК
+      function chekECOAndGK() {
+          if (!document.getElementsByName("ecoGroup")[0].checked && !document.getElementsByName("ecoGroup")[1].checked)
+              alert("Необходимо установить, было ли проведено ЭКО!");
+          else if (!document.getElementsByName("gkGroup")[0].checked && !document.getElementsByName("gkGroup")[1].checked)
+            alert("Необходимо установить, состояла ли на учёте в женской консультации!");
+         else {
+              $('isECO').value = document.getElementsByName("ecoGroup")[0].checked;
+              $('isRegisteredWithWomenConsultation').value = document.getElementsByName("gkGroup")[0].checked;
+              return true;
+          }
+          return false;
+      }
   function checkForm() {
-		if (isSaveNewBorns) {
-			try {
-			createOtherNewBorns() ;
-			document.forms["mainForm"].action=old_action ;
-			document.forms["mainForm"].submit() ;
-			
-			} catch(e) {
-				alert(e) ;
-				$('submitButton').disabled=false ;
-			}
-		} else {
-			document.forms["mainForm"].action=old_action ; 
-			document.forms["mainForm"].submit() ;
-		}
+          if (isSaveNewBorns) {
+              try {
+                  createOtherNewBorns();
+                  document.forms["mainForm"].action = old_action;
+                  document.forms["mainForm"].submit();
+
+              } catch (e) {
+                  alert(e);
+                  $('submitButton').disabled = false;
+              }
+          } else {
+              document.forms["mainForm"].action = old_action;
+              document.forms["mainForm"].submit();
+          }
 	}
   childBirthTypeAutocomplete.addOnChangeCallback(function() {
 	  checkChildBirth() ;

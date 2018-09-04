@@ -34,12 +34,17 @@ request.setAttribute("pageTitle",title);
 <body>
 <%
 if (kioskType.equals("ADMISSION")) {
+String pigeonHole = request.getParameter("pigeonHole");
+request.setAttribute("pigeonHole",pigeonHole);
+String isEmergency = request.getParameter("isEmergency");
+    request.setAttribute("isEmergency",isEmergency);
     //Показываем информацию об очереди в приемном отделении
     %>
 <table id="patientWaitingTable">
     <th width="20%">Пациент</th>
     <th width="10%">Время ожидания</th>
-    <th width="70%">Время поступления</th>
+    <th width="20%">Время поступления</th>
+    <th width="50%">Отделение</th>
 <tbody id="patientWaitingTableBody" name="patientWaitingTableBody"></tbody>
 </table>
 <script type="text/javascript" src="/skin/ac.js"></script>
@@ -52,7 +57,11 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
     function getQueue() {
         jQuery.ajax({
             url:"api/queue/hospital/emergencyQueue"
-            ,data:{token:theToken}
+            ,data:{
+                token:theToken,
+                emergency:'${isEmergency}',
+                pigeonHole:'${pigeonHole}'
+            }
             ,error: function(jqXHR,ex){console.log(ex);setTimeout(getQueue,60000);}
             ,success: function(array) {
                 if (!array||array.length==0)  {
@@ -64,7 +73,7 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
                         var minutes = el.minutes;
                         var color="";
                         if (minutes>119){color=colors.red} else if (minutes>89){color=colors.orange} else if (minutes>59) {color=colors.yellow} else if (minutes>29){color=colors.blue}
-                        tbl.append("<tr style='"+color+"'><td>"+el.patientInfo+"</td><td>"+el.waitTime+"</td><td>"+el.startTime+"</td></tr>");
+                        tbl.append("<tr style='"+color+"'><td>"+el.patientInfo+"</td><td>"+el.waitTime+"</td><td>"+el.startTime+"</td><td>"+el.departmentName+"</td></tr>");
                     }//60-90 - yellow
                 }
                 setTimeout(getQueue,60000);

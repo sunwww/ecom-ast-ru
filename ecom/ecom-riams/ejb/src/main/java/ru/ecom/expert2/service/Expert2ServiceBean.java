@@ -26,6 +26,10 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
+import ru.ecom.oncological.ejb.domain.OncologyCase;
+import ru.ecom.oncological.ejb.domain.OncologyContra;
+import ru.ecom.oncological.ejb.domain.OncologyDiagnostic;
+import ru.ecom.oncological.ejb.domain.OncologyDirection;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
@@ -61,7 +65,7 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IExpert2Service.class)
 @Remote(IExpert2Service.class)
 public class Expert2ServiceBean implements IExpert2Service {
-private Boolean isCheckIsRunning = false;
+    private Boolean isCheckIsRunning = false;
     private final Logger log = Logger.getLogger(Expert2ServiceBean.class);
     private final String HOSPITALTYPE="HOSPITAL";
     private final String HOSPITALPEREVODTYPE="HOSPITALPEREVOD";
@@ -96,22 +100,27 @@ private Boolean isCheckIsRunning = false;
     }
 
     /** Клонируем запись*/
-    public E2Entry cloneEntity(E2Entry aSourceObject) {return cloneEntity(aSourceObject,false);}
-    private E2Entry cloneEntity(E2Entry aSourceObject, boolean needPersist) {
+    public E2Entry cloneEntity(E2Entry aSourceObject) {return cloneEntity(aSourceObject,null,false);}
+    private E2Entry cloneEntity(E2Entry aSourceObject, E2Entry newEntry, boolean needPersist) {
         try {
-        Method[] methodList = aSourceObject.getClass().getMethods();
-            E2Entry newEntity = new E2Entry();
+            Method[] methodList = aSourceObject.getClass().getMethods();
+            E2Entry newEntity ;
+            if (newEntry!=null) {
+                newEntity = newEntry;
+            } else {
+                newEntity = new E2Entry();
+            }
             //Object newEntity = aClass.newInstance();
             for (Method setterMethod: methodList) {
                 if (setterMethod.getName().startsWith("set")) {
                     if (setterMethod.getName().equals("setId")||setterMethod.getName().startsWith("setId")) {continue;}
                     if (setterMethod.isAnnotationPresent(OneToMany.class)) {continue;}
-                        String propertyName = PropertyUtil.getPropertyName(setterMethod);
-                        try {
-                            Object val = PropertyUtil.getPropertyValue(aSourceObject,propertyName);
-                            PropertyUtil.setPropertyValue(newEntity,propertyName,val);
-                        } catch (Exception e) {
-                        }
+                    String propertyName = PropertyUtil.getPropertyName(setterMethod);
+                    try {
+                        Object val = PropertyUtil.getPropertyValue(aSourceObject,propertyName);
+                        PropertyUtil.setPropertyValue(newEntity,propertyName,val);
+                    } catch (Exception e) {
+                    }
                 }
             }
             if (needPersist){theManager.persist(newEntity);}
@@ -125,20 +134,20 @@ private Boolean isCheckIsRunning = false;
     /** Экспорт дефектов из заполнения в новое заполнение */
     public boolean exportDefectNewListEntry(Long aListEntryId) {
         try {
-        E2ListEntry currentListEntry= theManager.find(E2ListEntry.class,aListEntryId);
-        E2ListEntry newListEntry = new E2ListEntry(currentListEntry, "Дефекты_"+currentListEntry.getName());
-        theManager.persist(newListEntry);
-        List<E2Entry> list = theManager.createQuery("from E2Entry where listEntry_id=:id and isDefect='1' and (isDeleted is null or isDeleted='0')").setParameter("id",aListEntryId).getResultList();
-        log.info("creating defects... defect list size = "+list.size());
+            E2ListEntry currentListEntry= theManager.find(E2ListEntry.class,aListEntryId);
+            E2ListEntry newListEntry = new E2ListEntry(currentListEntry, "Дефекты_"+currentListEntry.getName());
+            theManager.persist(newListEntry);
+            List<E2Entry> list = theManager.createQuery("from E2Entry where listEntry_id=:id and isDefect='1' and (isDeleted is null or isDeleted='0')").setParameter("id",aListEntryId).getResultList();
+            log.info("creating defects... defect list size = "+list.size());
 
             for (E2Entry entry: list) {
                 E2Entry newEntry = cloneEntity(entry);
-            if (newEntry==null) {continue;}
-            newEntry.setListEntry(newListEntry);
-            theManager.persist(newEntry);
-            cloneDiagnosis(entry,newEntry);
-            cloneMedService(entry,newEntry);
-            cloneChildEntries(entry,newEntry);
+                if (newEntry==null) {continue;}
+                newEntry.setListEntry(newListEntry);
+                theManager.persist(newEntry);
+                cloneDiagnosis(entry,newEntry);
+                cloneMedService(entry,newEntry);
+                cloneChildEntries(entry,newEntry);
             }
             log.info("Finish create defects!");
         } catch (Exception e) {
@@ -204,8 +213,12 @@ private Boolean isCheckIsRunning = false;
 
             if (ds.has("DiagnosisMedService")&&isNotNull(ds.getString("DiagnosisMedService"))) {
                 Long medserviceId= toLong(ds.getString("DiagnosisMedService"));
+                String serviceDate = ds.getString("DiagnosisMedServiceDate");
                 VocMedService vocMedService = theManager.find(VocMedService.class,medserviceId);
                 EntryMedService ems = new EntryMedService(entry,vocMedService);
+                if (isNotNull(serviceDate)) {
+                    ems.setServiceDate(DateFormat.parseSqlDate(serviceDate));
+                }
                 theManager.persist(ems);
                 if (ds.has("DiagnosisIsMainService")) {
                     entry.setMainService(vocMedService.getCode());
@@ -224,7 +237,7 @@ private Boolean isCheckIsRunning = false;
 
     /** Объединяем СЛС с родами */
     private void unionChildBirthHospital(List<Object[]> entriesIds) {
-     //   log.warn("unionChildBirth1");
+        //   log.warn("unionChildBirth1");
         E2Entry mainEntry = null; //theManager.find(E2Entry.class,Long.valueOf(entriesIds.get(0)[0].toString()));
         //Логика такая: если в патологии
         //вот тут мы добавляем проверку на роды: если была в патологии больше 5 дней - не объединяем случай со следующим
@@ -235,17 +248,17 @@ private Boolean isCheckIsRunning = false;
             if (mainEntry==null) {mainEntry=currentEntry;}
             if (currentEntry.getHelpKind().equals("14")) { //Если главый случай - патология беременности
                 patEntryid=currentEntry.getId();
-            //    log.warn(i+"patologiya found");
+                //    log.warn(i+"patologiya found");
                 VocE2FondV009 perevodResult =(VocE2FondV009)getActualVocByClassName(VocE2FondV009.class,currentEntry.getFinishDate()," code='104'"); //TODO Колхоз - исправить
                 if (isNotNull(currentEntry.getCalendarDays())&&currentEntry.getCalendarDays()>5) { //Если длительность случая - больше пяти дней - не объединяемъ
-            //        log.warn(i+"patologiya >5 days.");
+                    //        log.warn(i+"patologiya >5 days.");
                     mainEntry.setFondResult(perevodResult); //TODO Колхоз - исправить
                     mainEntry.setIsUnion(true);
                     makeCheckEntry(currentEntry,false,false);
                     mainEntry=null; //считаем что главный случай = текущий случай
                     isBreak=true;
                 } else if (isNotNull(currentEntry.getCalendarDays())&&currentEntry.getCalendarDays()>1) { //Если длительность случая - не менее 2х дней - проверяем диагнозы
-             //       log.warn(i+"patologiya >1 days.");
+                    //       log.warn(i+"patologiya >1 days.");
                     String[] mkbs = {"O14.1","O34.2","O36.3","O36.4","O42.2"}; //диагнозы, при которых можно подать случай
                     String mainMkb =currentEntry.getMainMkb();
                     if (isNotNull(mainMkb)) {
@@ -322,8 +335,8 @@ private Boolean isCheckIsRunning = false;
         //у всех комп. случаев убираем услуги
         StringBuilder sql = new StringBuilder();
         sql.append("select e2.externalparentid, list(''||e2.id) from e2entry e2 where e2.listentry_id=").append(aListEntryId)
-           .append(" and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'")
-           .append(" group by e2.externalparentid");
+                .append(" and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'")
+                .append(" group by e2.externalparentid");
         List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
 
         log.info("union_kdo.list="+list.size()+", sql = "+sql.toString()+", id="+aListEntryId);
@@ -375,35 +388,36 @@ private Boolean isCheckIsRunning = false;
         /** Объединяем
          * Считаем по профилю мед. помощи, потоку обслуживания, классу МКБ
          * */
-    StringBuilder searchSql = new StringBuilder();
-    searchSql.append("select e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1), list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId")
-        .append(" and e2.entryType='POLYCLINIC'")
-        .append(aPatientId!=null&&aPatientId>0?" and e2.externalpatientid="+aPatientId:"")
-        .append(" and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'")
-        .append(" and (e2.isMobilePolyclinic is null or e2.isMobilePolyclinic='0') and (e2.isEmergency is null or e2.isEmergency='0')")
-        .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') ")
-        .append(" group by e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1)")
-        .append(" having count(e2.id)>1");
+        StringBuilder searchSql = new StringBuilder();
+        searchSql.append("select e2.externalpatientid , medhelpprofile_id, servicestream,cast('' as varchar) as empty, list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId") //Не учитываем диагноз *06.08.2018
+                // searchSql.append("select e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1), list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId")
+                .append(" and e2.entryType='POLYCLINIC'")
+                .append(aPatientId!=null&&aPatientId>0?" and e2.externalpatientid="+aPatientId:"")
+                .append(" and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'")
+                .append(" and (e2.isMobilePolyclinic is null or e2.isMobilePolyclinic='0') and (e2.isEmergency is null or e2.isEmergency='0')")
+                .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') ")
+                .append(" and e2.medhelpprofile_id is not null ")
+                //.append(" group by e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1)")
+                .append(" group by e2.externalpatientid , medhelpprofile_id, servicestream")
+                .append(" having count(e2.id)>1 and count(case when substring(e2.mainmkb,1,1)='Z'then 1 else null end)<count(e2.id)");
 
         List<Object[]> list = theManager.createNativeQuery(searchSql.toString()).setParameter("listId",aListEntryId).getResultList();
         log.info("sql = "+searchSql+", size = "+list.size());
         for (Object[] spo: list){
-            log.info("unionPol: "+spo[0]+":"+spo[1]+":"+spo[2]+":"+spo[3]+":"+spo[4]+":");
             //Создаем новую запись, все существущие помечаем как COMPLEXCASE
             String[] ids = spo[4].toString().split(",");
-            log.info("pol ids = "+ids.toString());
             E2Entry mainEntry = null;
             for (String idd: ids) {
-                log.info("pol ids_I = "+idd);
                 Long id = Long.valueOf(idd.trim());
                 E2Entry entry = theManager.find(E2Entry.class,id);
                 if (mainEntry==null) {
-                    mainEntry=cloneEntity(entry, true);
+                    mainEntry=cloneEntity(entry,null, true);
                     createDiagnosis(mainEntry);
-
                 }
                 mainEntry = unionPolyclinic(mainEntry,entry);
+
             }
+
             makeCheckEntry(mainEntry,false,true);
         }
     }
@@ -412,13 +426,22 @@ private Boolean isCheckIsRunning = false;
         E2Entry mainEntry, secondaryEntry;//mainEntry - latest entry
         if (aMainMedcase.getStartDate().getTime()>aSecondMedcase.getStartDate().getTime()){
             aMainMedcase.setStartDate(aSecondMedcase.getStartDate());
+            aMainMedcase.setStartTime(aSecondMedcase.getStartTime());
         }
-        if (aMainMedcase.getFinishDate().getTime()<aSecondMedcase.getFinishDate().getTime()){
+        if (aMainMedcase.getFinishDate().getTime()<aSecondMedcase.getFinishDate().getTime()){ //неглавное - последнее СЛО
             aMainMedcase.setFinishDate(aSecondMedcase.getFinishDate());
+            aMainMedcase.setFinishTime(aSecondMedcase.getFinishTime());
+            aMainMedcase.setFondResult(aSecondMedcase.getFondResult());
+            aMainMedcase.setFondIshod(aSecondMedcase.getFondIshod());
         }
         aSecondMedcase.setParentEntry(aMainMedcase);
         aSecondMedcase.setServiceStream("COMPLEXCASE");
         aSecondMedcase.setIsUnion(true);
+        List<E2Entry> childs = theManager.createQuery(" from E2Entry where parentEntry=:entry").setParameter("entry",aSecondMedcase).getResultList();
+        for (E2Entry child: childs) {
+            child.setParentEntry(aMainMedcase);
+            theManager.persist(child);
+        }
         theManager.persist(aMainMedcase);
         theManager.persist(aSecondMedcase);
         return aMainMedcase;
@@ -436,7 +459,7 @@ private Boolean isCheckIsRunning = false;
     /** Объединеяем все записи по СЛС *Логика объединения тут */
     private void unionHospitalMedCase (Long aListEntryId, Long aHospitalMedCaseId) {
 
-      //  log.warn("union "+aListEntryId +",hosp="+aHospitalMedCaseId);
+        //  log.warn("union "+aListEntryId +",hosp="+aHospitalMedCaseId);
         /**
          * Если у двух случаев равный КЗ, берем данным (врач, отделение, койки) последнего случая
          * Если классы МКБ совпадают, берем СЛО с наибольшим КЗ, из второго СЛО добавляем дни и услуги.
@@ -453,9 +476,9 @@ private Boolean isCheckIsRunning = false;
         E2Entry mainEntry = null;
         E2Entry currentEntry;
         if (entriesIds.size() > 1) { //Работаем если только найдено больше 1 СЛО
-         //   E2Entry lastEntry = theManager.find(E2Entry.class,Long.valueOf(entriesIds.get(entriesIds.size()-1)[0].toString())); //Находим последнее СЛО
-          //  log.warn("union = SLS = "+aHospitalMedCaseId+", size = "+entriesIds.size());
-    //Цикл только для ВМП
+            //   E2Entry lastEntry = theManager.find(E2Entry.class,Long.valueOf(entriesIds.get(entriesIds.size()-1)[0].toString())); //Находим последнее СЛО
+            //  log.warn("union = SLS = "+aHospitalMedCaseId+", size = "+entriesIds.size());
+            //Цикл только для ВМП
             E2Entry vmpEntry = null;
             for (Object[] o: entriesIds) {
                 if (isNotNull(o[1])&&o[1].toString().equals(VMPTYPE)) { //Если в госпитализации есть случай ВМП, делаем его главным, остальные - неглавные.
@@ -486,63 +509,84 @@ private Boolean isCheckIsRunning = false;
                 }
                 return;
             }
-        //На этом этапе мы уверены, что ВМП в случае у нас нет, случай не содержит родов
+            //На этом этапе мы уверены, что ВМП в случае у нас нет, случай не содержит родов
             //VocE2FondV009 perevodResult =
-        for (Object[] objects: entriesIds) {
-
-            Long entryId = Long.valueOf(objects[0].toString());
-          //  log.warn("unionCnt = "+entryId);
-            if (mainEntry == null) { //находим первую запись, считаем её главной
-            //    log.warn("unionCntFirst = "+entryId);
-                mainEntry = theManager.find(E2Entry.class, entryId);
-                continue;
-            }
-            currentEntry = theManager.find(E2Entry.class,entryId);
-          //  log.warn("unionCntNotFirst = "+entryId);
-            if (currentEntry.getNoOmcDepartment()!=null&&currentEntry.getNoOmcDepartment()) { //Если реанимация - смело объединаем с главным случаем.
-           //     log.warn("unionCntNotFirstReanimation = "+entryId);
-                mainEntry.setReanimationEntry(currentEntry);
-                unionEntries(mainEntry,currentEntry);
-            } else { //например - кардиология - сосуд. хирургия (вторая - главная
-                //Если
-                if (isDiagnosisGroupAreEquals(mainEntry,currentEntry)) { //Если классы МКБ сходятся
-                    if (mainEntry.getCost()==null&&currentEntry.getCost()==null) {
-                        log.error("Невозможно объеинить случаи: нет цены ни в одном из случаев");
-                        continue;
-                    } else if (mainEntry.getDepartmentId()==currentEntry.getDepartmentId()) { //Если ИД отделения равны - не учитываем цену
-                        unionEntries(currentEntry,mainEntry); //последнее отделение - главное
-                    } else {
-                        if (currentEntry.getCost()==null|| (mainEntry.getCost()!=null&&mainEntry.getCost().compareTo(currentEntry.getCost())>0)) { //Если у первого случая цена больше второго, первый - главный.
-                            unionEntries(mainEntry,currentEntry);
-                        } else {
-                            unionEntries(currentEntry, mainEntry); //Если цена текущего случая больше или равно главному случаю, то текущий случай становится главный
-                            mainEntry = currentEntry;
-                            continue;
-                        }
-                    }
-
-                } else { //Если классы МКБ не сходятся, текущее СЛО становится главным
-                    String ss = mainEntry.getBedSubType(); //Текущему случаю ставим результат - перевод на другой профиль коек
-                    mainEntry.setFondResult((VocE2FondV009)getActualVocByClassName(VocE2FondV009.class,null," code='"+ss+"04'")); //TODO Колхоз - исправить
-                    theManager.persist(mainEntry);
-                    mainEntry = currentEntry;
+            int i=0;
+            for (Object[] objects: entriesIds) {
+                i++;
+                Long entryId = Long.valueOf(objects[0].toString());
+                //   log.warn(i+" unionCnt = "+entryId);
+                if (mainEntry == null) { //находим первую запись, считаем её главной
+                    //       log.warn(i+"unionCntFirst = "+entryId);
+                    mainEntry = theManager.find(E2Entry.class, entryId);
                     continue;
                 }
+                currentEntry = theManager.find(E2Entry.class,entryId);
+                //    log.warn(i+"unionCntNotFirst = "+entryId);
+                if (currentEntry.getNoOmcDepartment()!=null&&currentEntry.getNoOmcDepartment()) { //Если реанимация - смело объединаем с главным случаем.
+                    //       log.warn(i+"попался случай с реанимацией = "+entryId);
+                    mainEntry.setReanimationEntry(currentEntry);
+                    unionEntries(mainEntry,currentEntry);
+                    //        log.info(i+"Главный случай с реаним"+mainEntry.getId());
+                    continue;
+                } else { //например - кардиология - сосуд. хирургия (вторая - главная
+                    //        log.info(i+"Случай - не реанимация!");
+                    if (mainEntry.getDepartmentId().equals(currentEntry.getDepartmentId())) { //Если ИД отделения равны - не учитываем цену
+                        //            log.info("ИД Отделения равны, последний случай - главный");
+                        unionEntries(currentEntry,mainEntry); //последнее отделение - главное
+                        mainEntry=currentEntry;
+                        continue;
+                    } else if (isDiagnosisGroupAreEquals(mainEntry,currentEntry)) { //Если классы МКБ сходятся
+                        if (mainEntry.getCost()==null&&currentEntry.getCost()==null) {
+                            log.error("Невозможно объеинить случаи: нет цены ни в одном из случаев");
+                            continue;
+                        }  else {
+                            if (currentEntry.getCost()==null|| (mainEntry.getCost()!=null&&mainEntry.getCost().compareTo(currentEntry.getCost())>0)) { //Если у первого случая цена больше второго, первый - главный.
+                                unionEntries(mainEntry,currentEntry);
+                                continue;
+                            } else {
+                                unionEntries(currentEntry, mainEntry); //Если цена текущего случая больше или равно главному случаю, то текущий случай становится главный
+                                mainEntry = currentEntry;
+                                continue;
+                            }
+                        }
+                    } else { //Если классы МКБ не сходятся, текущее СЛО становится главным
+                        String ss = mainEntry.getBedSubType(); //Текущему случаю ставим результат - перевод на другой профиль коек
+                        mainEntry.setFondResult((VocE2FondV009)getActualVocByClassName(VocE2FondV009.class,null," code='"+ss+"04'")); //TODO Колхоз - исправить
+                        theManager.persist(mainEntry);
+                        mainEntry = currentEntry;
+                        continue;
+                    }
+                }
             }
+            if (entriesIds.size()>2) {setRightParent(aListEntryId,aHospitalMedCaseId);}
+
         }
-        if (entriesIds.size()>2) {setRightParent(aListEntryId,aHospitalMedCaseId);}
 
     }
+    /**Делаем правильных родителей для поликлиники*/
+    private void setRightParentPolyclinic(Long aMainEntryId, String ids) { //Пока не используем
+        String sql = "select ''||subchild.id from e2entry child left join e2entry subchild on subchild.parententry_id = child.id where child.parententry_id in ("+ids+") ";
+        List<String> list = theManager.createNativeQuery(sql).getResultList();
+        if (!list.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (Object o: list) {
+                if (sb.length()>0) {sb.append(",");}
+                sb.append(o);
+                theManager.createNativeQuery("update e2entry set parentEntry_id="+aMainEntryId+" where id="+o).executeUpdate();
+            }
+            setRightParentPolyclinic(aMainEntryId,sb.toString());
+        }
 
     }
     /** Делаем правильных родителей для комплексных случаев */
     private void setRightParent(Long aListEntryId, Long aHospitalMedCaseId) { //находим все "комплексные" случаи, у которых есть дочерние случаи и делаем дочерние случаи дочерними случаями родителя "комплексного" случая
         StringBuilder sql = new StringBuilder();
         sql.append("select eChild.id, e.parentEntry_id ")
-        .append(" from e2entry e")
-        .append(" left join e2entry eChild on eChild.parentEntry_id=e.id")
-        .append(" where e.listentry_id=").append(aListEntryId).append(" and e.externalParentId=").append(aHospitalMedCaseId)
-        .append(" and eChild.id is not null and e.serviceStream='COMPLEXCASE' and (e.isDeleted is null or e.isDeleted='0')");
+                .append(" from e2entry e")
+                .append(" left join e2entry eChild on eChild.parentEntry_id=e.id")
+                .append(" where e.listentry_id=").append(aListEntryId).append(" and e.externalParentId=").append(aHospitalMedCaseId)
+                .append(" and eChild.id is not null and e.serviceStream='COMPLEXCASE' and (e.isDeleted is null or e.isDeleted='0')");
         List<Object[]> res = theManager.createNativeQuery(sql.toString()).getResultList();
         if (res.isEmpty()) {return;}
         for (Object[] o:res) {
@@ -553,33 +597,36 @@ private Boolean isCheckIsRunning = false;
 
     /** тупо объединяем, не думаем */
     public void unionEntries(E2Entry aMainEntry, E2Entry aNotMainEntry) { //Функционал по объединению случаев
-         if (aMainEntry==null||aNotMainEntry==null) {throw new IllegalStateException("UNOIN = entry=null");}
-        if (aMainEntry.getStartDate().getTime()>aNotMainEntry.getStartDate().getTime()||(aMainEntry.getStartDate().getTime()==aNotMainEntry.getStartDate().getTime()&&aMainEntry.getStartTime().after(aNotMainEntry.getStartTime()))) {
+        if (aMainEntry==null||aNotMainEntry==null) {throw new IllegalStateException("UNOIN = entry=null");}
+        if (aMainEntry.getStartDate().getTime()>aNotMainEntry.getStartDate().getTime()
+                ||(aMainEntry.getStartDate().getTime() == aNotMainEntry.getStartDate().getTime() && aMainEntry.getStartTime().after(aNotMainEntry.getStartTime()))) {
             //Если дата+время начала главного случая позднее даты и время начала неглавного случая
             aMainEntry.setStartDate(aNotMainEntry.getStartDate());//Дата начала главного случая = дате начала текущего случая
 
             aMainEntry.setStartTime(aNotMainEntry.getStartTime());//Время начала главного случая = времени окончания начала текущего случая
-        } else if (aNotMainEntry.getFinishDate().getTime()>aMainEntry.getFinishDate().getTime()||(aNotMainEntry.getFinishDate().getTime()==aMainEntry.getFinishDate().getTime()&&aNotMainEntry.getFinishTime().after(aMainEntry.getFinishTime()))) {
+        } else if (aNotMainEntry.getFinishDate().getTime()>aMainEntry.getFinishDate().getTime()
+                ||(aNotMainEntry.getFinishDate().getTime()==aMainEntry.getFinishDate().getTime() && aNotMainEntry.getFinishTime().after(aMainEntry.getFinishTime()))) {
             //Если дата и время окончания неглавного случая позже даты и время окончания главного случая
             aMainEntry.setFinishDate(aNotMainEntry.getFinishDate());//Дата окончания главного случая = дате окончания текущего случая
             aMainEntry.setFinishTime(aNotMainEntry.getFinishTime());//Время окончания главного случая = времени окончания текущего случая
         } else {
+            log.warn("Что-то пошло не так. Если это не ВМП, то, видимо, программист что-то напутал...main = "+aMainEntry.getId()+", not main ="+aNotMainEntry.getId());
             //В случаях, если есть ВМП в не первом случае, возможно и такое (текущий СЛО находится между датами С и ПО главного случая. Пропускаем...
         }
         if (aNotMainEntry.getReanimationEntry()!=null) {aMainEntry.setReanimationEntry(aNotMainEntry);} //Если в объединяемом случае была реанимация - она будет в главном случае
-       // theManager.createNativeQuery("update entrydiagnosis set entry_id=:mainId where entry_id=:notMainId").setParameter("mainId", aMainEntry.getId()).setParameter("notMainId",aNotMainEntry.getId()).executeUpdate(); //убрано 03-04-2018
+        // theManager.createNativeQuery("update entrydiagnosis set entry_id=:mainId where entry_id=:notMainId").setParameter("mainId", aMainEntry.getId()).setParameter("notMainId",aNotMainEntry.getId()).executeUpdate(); //убрано 03-04-2018
         //log.warn("move services size="+theManager.createNativeQuery("update entrymedservice set entry_id=:mainId where entry_id=:notMainId").setParameter("mainId", aMainEntry.getId()).setParameter("notMainId",aNotMainEntry.getId()).executeUpdate());
         List<EntryMedService> serviceList =theManager.createQuery("from EntryMedService where entry_id=:id").setParameter("id",aNotMainEntry.getId()).getResultList();// aNotMainEntry.getMedServices();
 
-         if (serviceList==null||serviceList.isEmpty()) {
-         } else {
-             int i=0;
-             for (EntryMedService service: serviceList) {
-                 i++;
-                 service.setEntry(aMainEntry);
-                 theManager.persist(service);
-             }
-         }
+        if (serviceList==null||serviceList.isEmpty()) {
+        } else {
+            int i=0;
+            for (EntryMedService service: serviceList) {
+                i++;
+                service.setEntry(aMainEntry);
+                theManager.persist(service);
+            }
+        }
 
         //Удаляем дубли диагнозов по случаю
         /*
@@ -661,7 +708,7 @@ private Boolean isCheckIsRunning = false;
         }
     }
 
-       private String getWorkDir() {
+    private String getWorkDir() {
         EjbEcomConfig config = EjbEcomConfig.getInstance();
         return config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     }
@@ -673,7 +720,7 @@ private Boolean isCheckIsRunning = false;
         String key = bedType;
         String sqlAdd="";
         VocE2MedHelpProfile profile;
-        if (bedType.equals("0M")&&aEntry.getDepartmentId()==266) {
+        if (bedType.equals("0M")&&aEntry.getDepartmentId().equals(266L)) {
             //Если неврология 2 и профиль  - неврологические = профиль = 310
             key=bedType+"#"+aEntry.getDepartmentId();
             if (!bedTypes.containsKey(key)) {
@@ -681,7 +728,7 @@ private Boolean isCheckIsRunning = false;
                 bedTypes.put(key,profile);
             }
 
-        } else if (bedType.equals("01")&&isNotNull(aEntry.getDepartmentId())&&aEntry.getDepartmentId()==262) {
+        } else if (bedType.equals("01")&&isNotNull(aEntry.getDepartmentId())&&aEntry.getDepartmentId().equals(262L)) {
             //Если кардиология2 и профиль  - кардиологический профиль = 309
             key=bedType+"#"+aEntry.getDepartmentId();
             if (!bedTypes.containsKey(key)) {
@@ -709,7 +756,7 @@ private Boolean isCheckIsRunning = false;
             }
         }
 
-         profile = bedTypes.get(key);
+        profile = bedTypes.get(key);
         if (isNotNull(aEntry.getVMPKind())) {
             if (profile!=null&&profile.getCode().equals("29")) { // TODO Если ВМП в кардиологических койках, меняем профиль коек на 81
                 key = "VMP#" + profile.getCode();
@@ -731,7 +778,7 @@ private Boolean isCheckIsRunning = false;
 
         }
         aEntry.setMedHelpProfile(profile); //null так null
-       theManager.persist(aEntry);
+        theManager.persist(aEntry);
 
     }
 
@@ -765,6 +812,7 @@ private Boolean isCheckIsRunning = false;
         //String ids = (String) theManager.createNativeQuery("select list(''||id) from e2entry where listEntry_id =:id").setParameter("id",aListEntryId).getSingleResult();
         theManager.createNativeQuery("delete from e2entryerror where listentry_id=:id").setParameter("id",aListEntryId).executeUpdate();
         theManager.createNativeQuery("update e2entry set isDeleted='1' where listEntry_id =:id").setParameter("id",aListEntryId).executeUpdate();
+        log.info("start refill ListEntry_"+aListEntryId);
         try {
             list.setCheckDate(null);
             list.setCheckTime(null);
@@ -832,7 +880,6 @@ private Boolean isCheckIsRunning = false;
         while(searchSql.indexOf("##dateEnd##")>-1) {searchSql=searchSql.replace("##dateEnd##", toSQlDateString(aListEntry.getFinishDate()));}
         searchSql+=sqlHistory.toString();
         log.info("SQL = " + searchSql);
-
         Statement statement = createStatement();
         ResultSet foundCases = statement.executeQuery(searchSql);
 
@@ -874,24 +921,25 @@ private Boolean isCheckIsRunning = false;
             StringBuilder sqlAdd = new StringBuilder();
             if (isNotNull(aParams)) {
                 log.warn(aParams);
-              String[] params = aParams.split("&") ;
-              for(String par:params) {
-                  if (par.contains("=")) {
-                      String parr[] = par.split("=");
-                      if (parr.length<2||parr[1]==null||parr[1].trim().equals("")) {continue;}
-                      String fldName = parr[0], val=parr[1];
-                      if (fldName.toUpperCase().indexOf("DATE")>-1) { //ищем дату
-                          sql.append(" and ").append(fldName).append("=").append("to_date('"+val+"','dd.MM.yyyy') ");
-                      } else if (fldName.startsWith("is")) { //Булево значение
-                          sql.append(" and (").append(fldName).append(val.equals("1")?" ='1')":" is null or ").append(fldName).append("='0')");
+                String[] params = aParams.split("&") ;
+                for(String par:params) {
+                    if (par.contains("=")) {
+                        String parr[] = par.split("=");
+                        if (parr.length<2||parr[1]==null||parr[1].trim().equals("")) {continue;}
+                        String fldName = parr[0], val=parr[1];
+                        if (fldName.toUpperCase().indexOf("DATE")>-1) { //ищем дату
+                            sql.append(" and ").append(fldName).append("=").append("to_date('"+val+"','dd.MM.yyyy') ");
+                        } else if (fldName.startsWith("is")) { //Булево значение
+                            sql.append(" and (").append(fldName).append(val.equals("1")?" ='1')":" is null or "+fldName+"='0')");
 
-                      }else { //ищем строку
-                          sql.append(" and upper(").append(fldName).append(")=").append("'"+val.toUpperCase()+"' ");
-                      }
-                  }
-              }
+                        }else { //ищем строку
+                            sql.append(" and upper(").append(fldName).append(")=").append("'"+val.toUpperCase()+"' ");
+                        }
+                    }
+                }
             }
             theManager.createNativeQuery("delete from e2entryerror  where listentry_id=:id").setParameter("id",aListEntry.getId()).executeUpdate(); //Все ошибки удалим
+            log.info("sql="+sql);
             List<BigInteger> list = theManager.createNativeQuery(sql.toString()).setParameter("id",aListEntry.getId()).getResultList();
 
             if (list.isEmpty()) {log.warn("Случаев для проверки не найдено "+sql.toString());return;}
@@ -904,27 +952,27 @@ private Boolean isCheckIsRunning = false;
             String listEntryCode =aListEntry.getEntryType().getCode();
             if (listEntryCode.equals(HOSPITALTYPE)||listEntryCode.equals(HOSPITALPEREVODTYPE)) {
                 int i=0;
-            //    Thread[] threads = new Thread[3];
+                //    Thread[] threads = new Thread[3];
 //Добавить
                 for(BigInteger bi : list) {
                     i++;
                     final E2Entry entry = theManager.find(E2Entry.class,bi.longValue());
-                 //   boolean isCheckIsStarted = false;
-                //    while (!isCheckIsStarted) {
-                  //      for (Thread thread: threads) {
-                  //          if (thread ==null||!thread.isAlive())  {
-                   //             thread = new Thread() {public synchronized void run(){
-                                    makeCheckEntry(entry,updateKsgIfExist, true);
-                     //           }};
-                         //       thread.start();
-                   //             isCheckIsStarted=true;
-                      //          break;
+                    //   boolean isCheckIsStarted = false;
+                    //    while (!isCheckIsStarted) {
+                    //      for (Thread thread: threads) {
+                    //          if (thread ==null||!thread.isAlive())  {
+                    //             thread = new Thread() {public synchronized void run(){
+                    makeCheckEntry(entry,updateKsgIfExist, true);
+                    //           }};
+                    //       thread.start();
+                    //             isCheckIsStarted=true;
+                    //          break;
 
 
-                  //      Thread.sleep(1000);
-                 //   }
+                    //      Thread.sleep(1000);
+                    //   }
                     if (i%100==0) {log.info("process hosp ... makeCheckEntry.... "+i);
-                    monitor.setText("Расчитано "+i+ " записей (СТАЦИОНАР)");
+                        monitor.setText("Расчитано "+i+ " записей (СТАЦИОНАР)");
                     }
                     //Теперь снова находим КСГ, расчитываем цену и коэффициенты
 //                    makeCheckEntry(theManager.find(E2Entry.class,bi.longValue()),updateKsgIfExist);
@@ -933,15 +981,15 @@ private Boolean isCheckIsRunning = false;
                 checkDoubles(aListEntry);
             } else if (listEntryCode.equals(POLYCLINICTYPE)||listEntryCode.equals(POLYCLINICKDOTYPE)) {
                 Long listEntryId = aListEntry.getId();
-               if (listEntryCode.equals(POLYCLINICTYPE)){
-                   monitor.setText("Удаление дублей в поликлинике");
-                   deletePolyclinicDoubles(listEntryId );
-                   monitor.setText("Склеивание случаев поликлинического обслуживания");
-                   unionPolyclinicMedCase(listEntryId ,null);
-               } else if (listEntryCode.equals(POLYCLINICKDOTYPE)) {
-                   monitor.setText("Формируем случаи КДО");
-                   unionPolyclinicKdoMedCase(listEntryId,null);
-               }
+                if (listEntryCode.equals(POLYCLINICTYPE)){
+                    monitor.setText("Удаление дублей в поликлинике");
+                    deletePolyclinicDoubles(listEntryId );
+                    monitor.setText("Склеивание случаев поликлинического обслуживания");
+                    unionPolyclinicMedCase(listEntryId ,null);
+                } else if (listEntryCode.equals(POLYCLINICKDOTYPE)) {
+                    monitor.setText("Формируем случаи КДО");
+                    unionPolyclinicKdoMedCase(listEntryId,null);
+                }
 
                 int i=0;
                 for(BigInteger bi : list) {
@@ -1000,13 +1048,14 @@ private Boolean isCheckIsRunning = false;
     private void setEntrySubType(E2Entry aEntry){
         String code;
         String entryType=aEntry.getEntryType();
+        if (entryType==null||entryType.equals("")) {entryType=aEntry.getListEntry().getEntryType().getCode();aEntry.setEntryType(entryType);}
         if (entryType.equals(HOSPITALTYPE)) {
             if (isNotNull(aEntry.getVMPKind())) {
                 code="VMP";
             } else if (aEntry.getBedSubType().equals("1")) {
                 code="ALLTIMEHOSP";
             } else if (aEntry.getBedSubType().equals("2")){
-                if (aEntry.getDepartmentId()==382L) { //Дневной стационар при АПУ *пока только для АМОКБ
+                if (aEntry.getDepartmentId().equals(382L)) { //Дневной стационар при АПУ *пока только для АМОКБ
                     code="POLDAYTIMEHOSP";
                 } else { //Дневной стационар при стационаре
                     code="DAYTIMEHOSP";
@@ -1075,7 +1124,7 @@ private Boolean isCheckIsRunning = false;
     private void saveErrors(List<E2EntryError> errors) {
         if (errors!=null&&!errors.isEmpty()) {
             for(E2EntryError e: errors)
-            theManager.persist(e);
+                theManager.persist(e);
         }
 
     }
@@ -1102,18 +1151,18 @@ private Boolean isCheckIsRunning = false;
     }
     private void checkErrors(E2Entry aEntry) {
         List<E2EntryError> errors = new ArrayList<E2EntryError>();
-    if (isNotNull(aEntry.getServiceStream())&&aEntry.getServiceStream().equals("OBLIGATORYINSURANCE")) { //Проверка только для ОМС *05.06.2018
-        //Дата выписки не входит в период
-        if (aEntry.getFinishDate().getTime()>aEntry.getListEntry().getFinishDate().getTime()
-                ||aEntry.getFinishDate().getTime()<aEntry.getListEntry().getStartDate().getTime()) {
-            errors.add(new E2EntryError(aEntry,E2EntryErrorCode.DISCHARGE_DATE_NOT_IN_PERIOD));
-        }
-        if (aEntry.getEntryType().equals(HOSPITALTYPE)&& aEntry.getKsg()==null){
-            errors.add(new E2EntryError(aEntry,E2EntryErrorCode.NO_KSG));
-        }
+        if (isNotNull(aEntry.getServiceStream())&&aEntry.getServiceStream().equals("OBLIGATORYINSURANCE")) { //Проверка только для ОМС *05.06.2018
+            //Дата выписки не входит в период
+            if (aEntry.getFinishDate().getTime()>aEntry.getListEntry().getFinishDate().getTime()
+                    ||aEntry.getFinishDate().getTime()<aEntry.getListEntry().getStartDate().getTime()) {
+                errors.add(new E2EntryError(aEntry,E2EntryErrorCode.DISCHARGE_DATE_NOT_IN_PERIOD));
+            }
+            if (aEntry.getEntryType().equals(HOSPITALTYPE)&& aEntry.getKsg()==null){
+                errors.add(new E2EntryError(aEntry,E2EntryErrorCode.NO_KSG));
+            }
 
-        if (errors.size()>0){saveErrors(errors);}
-    }
+            if (errors.size()>0){saveErrors(errors);}
+        }
 
     }
 
@@ -1125,11 +1174,11 @@ private Boolean isCheckIsRunning = false;
     public void calculateEntryPrice(E2Entry aEntry) {
         String entryType = aEntry.getEntryListType(); //Переделать на aEntry.getEntryType();
         if (entryType.equals(HOSPITALTYPE)||entryType.equals(HOSPITALPEREVODTYPE)) {
-             calculateHospitalEntryPrice(aEntry);
+            calculateHospitalEntryPrice(aEntry);
         } else if (entryType.equals(POLYCLINICTYPE)||entryType.equals(POLYCLINICKDOTYPE)) {
-             calculatePolyclinicEntryPrice(aEntry);
+            calculatePolyclinicEntryPrice(aEntry);
         } else if (entryType.equals(EXTDISPTYPE)) {
-             calculateExtDispEntryPrice(aEntry);
+            calculateExtDispEntryPrice(aEntry);
         } else {
             throw new IllegalStateException("Неизвестный тип реестра");
         }
@@ -1163,6 +1212,78 @@ private Boolean isCheckIsRunning = false;
         return ret;
     }
 
+    /*Находим онкологический случай по СЛС */
+    private void findCancerEntry(E2Entry aEntry) {
+        List<BigInteger> oncologyCases = theManager.createNativeQuery("select id from OncologyCase where medCase_id="+aEntry.getExternalParentId()).getResultList();
+        if (oncologyCases.size()>0) {
+            try {
+                log.info("oncologyList>0!");
+                OncologyCase oncologyCase = theManager.find(OncologyCase.class,oncologyCases.get(0).longValue());
+                E2CancerEntry cancerEntry = new E2CancerEntry(aEntry);
+                cancerEntry.setMaybeCancer(oncologyCase.getSuspicionOncologist());
+                if (cancerEntry.getMaybeCancer()) { //Подозрение на онкологию, ищем только направления
+                    List<OncologyDirection> directions = theManager.createQuery("from OncologyDirection where oncologyCase=:case").setParameter("case",oncologyCase).getResultList();
+                    log.info("Нашли "+directions.size()+" направлений ");
+                    for (OncologyDirection direction: directions) {
+                        E2CancerDirection cancerDirection = new E2CancerDirection(cancerEntry);
+                        cancerDirection.setDate(direction.getDate());
+                        cancerDirection.setType(direction.getTypeDirection()!=null?direction.getTypeDirection().getCode():"");
+                        cancerDirection.setMedService(direction.getMedService()!=null?direction.getMedService().getCode():"");
+                        cancerDirection.setSurveyMethod(direction.getMethodDiagTreat()!=null?direction.getMethodDiagTreat().getCode():"");
+                        theManager.persist(cancerDirection);
+                    }
+                    theManager.persist(cancerEntry);
+                } else { //Случай онкологического лечения
+                    cancerEntry.setOccasion(oncologyCase.getVocOncologyReasonTreat()!=null?oncologyCase.getVocOncologyReasonTreat().getCode():"");
+                    cancerEntry.setStage(oncologyCase.getStad()!=null?oncologyCase.getStad().getCode():"");
+                    cancerEntry.setTumor(oncologyCase.getTumor()!=null?oncologyCase.getTumor().getCode():"");
+                    cancerEntry.setNodus(oncologyCase.getNodus()!=null?oncologyCase.getNodus().getCode():"");
+                    cancerEntry.setMetastasis(oncologyCase.getMetastasis()!=null?oncologyCase.getMetastasis().getCode():"");
+                    cancerEntry.setIsMetastasisFound(oncologyCase.getDistantMetastasis());
+                    cancerEntry.setSod(oncologyCase.getSumDose());
+                    cancerEntry.setConsiliumResult(oncologyCase.getConsilium()!=null?oncologyCase.getConsilium().getCode():"");
+                    cancerEntry.setServiceType(oncologyCase.getTypeTreatment()!=null?oncologyCase.getTypeTreatment().getCode():"");
+                    cancerEntry.setSurgicalType(oncologyCase.getSurgTreatment()!=null?oncologyCase.getSurgTreatment().getCode():"");
+                    cancerEntry.setDrugLine(oncologyCase.getLineDrugTherapy()!=null?oncologyCase.getLineDrugTherapy().getCode():"");
+                    cancerEntry.setDrugCycle(oncologyCase.getCycleDrugTherapy()!=null?oncologyCase.getCycleDrugTherapy().getCode():"");
+                    cancerEntry.setRadiationTherapy(oncologyCase.getTypeRadTherapy()!=null?oncologyCase.getTypeRadTherapy().getCode():"");
+                    theManager.persist(cancerEntry);
+
+                    List<OncologyContra> prots = theManager.createQuery("from OncologyContra where oncologyCase=:case").setParameter("case",oncologyCase).getResultList();
+                    log.info("Нашли "+prots.size()+" противопоказаний ");
+                    for (OncologyContra prot:prots) {
+                        E2CancerRefusal refusal = new E2CancerRefusal(cancerEntry);
+                        refusal.setCode(prot.getContraindicationAndRejection().getCode());
+                        refusal.setDate(prot.getDate());
+                        theManager.persist(refusal);
+                    }
+
+                    List<OncologyDiagnostic> diags  =theManager.createQuery("from OncologyDiagnostic where oncologyCase=:case").setParameter("case",oncologyCase).getResultList();
+                    log.info("Нашли "+diags.size()+" диагностических блоков");
+                    for (OncologyDiagnostic diag:diags) {
+                        E2CancerDiagnostic cancerDiagnostic = new E2CancerDiagnostic(cancerEntry);
+                        String diagnosticType = diag.getVocOncologyDiagType()!=null?diag.getVocOncologyDiagType().getCode():null;
+                        if (diagnosticType !=null) {
+                            cancerDiagnostic.setType(diagnosticType);
+                            if (diagnosticType.equals("1")){
+                                cancerDiagnostic.setCode(diag.getHistiology().getCode());
+                                cancerDiagnostic.setResult(diag.getResultHistiology().getCode());
+                            } else if (diagnosticType.equals("2")) {
+                                cancerDiagnostic.setCode(diag.getMarkers().getCode());
+                                cancerDiagnostic.setResult(diag.getValueMarkers().getCode());
+                            }
+                            theManager.persist(cancerDiagnostic);
+                        }
+
+                    }
+                }
+
+
+
+            }catch (Exception e) {log.error("Не смог создать раковый случай "+e);e.printStackTrace();}
+
+        }
+    }
 
     HashMap<String, Object > diagnosisMap = new HashMap<String, Object>();
     private List<EntryDiagnosis> getDiagnosis(E2Entry aEntry) {return   theManager.createQuery("from EntryDiagnosis where entry_id=:id").setParameter("id", aEntry.getId()).getResultList();}
@@ -1176,7 +1297,7 @@ private Boolean isCheckIsRunning = false;
             if (diagnosisList != null && !diagnosisList.trim().equals("")) { //Создаем диагнозы для каждой записи
                 String[] diagnosiss = diagnosisList.split(",");
                 String mkb, regType,priority;
-             ///   String mainMkb = null;
+                ///   String mainMkb = null;
                 boolean foundClinical=false, foundDischarge = false;
                 List<Long> clinicalIds = new ArrayList<Long>();
                 boolean isCancer=false;
@@ -1185,7 +1306,11 @@ private Boolean isCheckIsRunning = false;
                     mkb = data[0];
                     regType = data[4];
                     priority=data[1];
-                    if (mkb.startsWith("C")) {isCancer=true;}
+                    if (mkb.startsWith("C")) {
+                        isCancer=true;
+                        log.info("Нашли случай с раком!!! "+aEntry.getId());
+                        findCancerEntry(aEntry);
+                    }
                     boolean isClinical=false,isDischarge=false;
                     if (!diagnosisMap.containsKey("MKB_"+mkb)) {
                         diagnosisMap.put("MKB_"+mkb, getEntityByCode(mkb, VocIdc10.class, false));
@@ -1210,7 +1335,7 @@ private Boolean isCheckIsRunning = false;
                     diagnosis.setRegistrationType((VocDiagnosisRegistrationType) diagnosisMap.get("REGTYPE_"+regType));
                     diagnosis.setPriority((VocPriorityDiagnosis) diagnosisMap.get("PRIORITY_"+priority));
                     diagnosis.setIllnessPrimary(data[6]);
-                  //  log.warn("entryId = "+aEntry.getId()+"found diagnosis "+(diagnosis.getRegistrationType()!=null)+"#"+diagnosis.getRegistrationType().getCode()+"#"+diagnosis.getPriority().getCode());
+                    //  log.warn("entryId = "+aEntry.getId()+"found diagnosis "+(diagnosis.getRegistrationType()!=null)+"#"+diagnosis.getRegistrationType().getCode()+"#"+diagnosis.getPriority().getCode());
                     if (!isNotNull(aEntry.getMainMkb())&&diagnosis.getRegistrationType()!=null && diagnosis.getRegistrationType().getCode().equals("4")&&diagnosis.getPriority()!=null&&diagnosis.getPriority().getCode().equals("1")) {
                         aEntry.setMainMkb(mkb);
                         theManager.persist(aEntry);
@@ -1249,7 +1374,7 @@ private Boolean isCheckIsRunning = false;
             if (isNotNull(operationJson)) {
                 services = new JSONArray(operationJson);
                 //Делаем проверку на роды. Если отделение - родовое, диагнозы входят в список, то создаем услуги
-                if (isNotNull(aEntry.getDepartmentId())&& aEntry.getDepartmentId()==203) {
+                if (isNotNull(aEntry.getDepartmentId()) && aEntry.getDepartmentId()==203) {
                     if (isNotNull(aEntry.getMainMkb())) {
                         String patologicDs = "O60.1,O60.2,O84.0";
                         String fiziologicDs = "O80.0,O80.1";
@@ -1257,20 +1382,19 @@ private Boolean isCheckIsRunning = false;
                             if (operationJson.indexOf("B01.001.006")==-1){ //И в списке услуг нет нужной услуги - добавим её
                                 JSONObject pat = new JSONObject();
                                 pat.put("serviceCode","B01.001.006");
+                                pat.put("serviceDate",aEntry.getStartDate());
                                 services.put(pat);
                             }
                         } else if (fiziologicDs.indexOf(aEntry.getMainMkb())>-1) {
                             if (operationJson.indexOf("B01.001.009")==-1){
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("serviceCode","B01.001.009");
+                                jsonObject.put("serviceDate",aEntry.getStartDate());
                                 services.put(jsonObject);
                             }
                         }
                     }
                 }
-    /*    if (aEntry.getNoOmcDepartment()!=null&&aEntry.getNoOmcDepartment()) { //Пока уберем, будем поле добавлять при формировании счета
-            services.add("B03.003.005");  //Если был в реанимации - добавляем услугу
-        }*/
                 if (services != null&&services.length()>0) {
                     if (services.length()==1) { //Если ТОЛЬКО одна услуга/операция в СЛО, её и считаем главной
                         aEntry.setMainService(services.getJSONObject(0).getString("serviceCode")); theManager.persist(aEntry);
@@ -1320,45 +1444,45 @@ private Boolean isCheckIsRunning = false;
                 services =new JSONArray(aEntry.getServices());
                 if (services!=null&&services.length()>0) {
                     String dateFrormat ="yyyy-MM-dd";
-                        for (int i=0;i<services.length();i++) {
-                            JSONObject service = services.getJSONObject(i);
-                            String code = null;
-                            if (service.has("serviceCode")) {code = service.getString("serviceCode");}
+                    for (int i=0;i<services.length();i++) {
+                        JSONObject service = services.getJSONObject(i);
+                        String code = null;
+                        if (service.has("serviceCode")) {code = service.getString("serviceCode");}
 
-                            if (!serviceList.containsKey(code)) {
-                                serviceList.put(code, (VocMedService) getEntityByCode(code, VocMedService.class, false));
-                            }
-                            EntryMedService ms =new EntryMedService(aEntry,serviceList.get(code));
-                            String serviceDate =service.has("serviceDate")?service.getString("serviceDate"):null;
-                            if (isNotNull(serviceDate)) {ms.setServiceDate(DateFormat.parseSqlDate(serviceDate,dateFrormat));}
-                            String workfunction = service.has("workfunctionCode")?service.getString("workfunctionCode"):null;
-                            if (isNotNull(workfunction)) {
-                                VocE2FondV015 doctor = null;
-                                String key = "DOCTOR#"+workfunction;
-                                if (!resultMap.containsKey(key)) {
-                                    StringBuilder sb = new StringBuilder();
-                                    sb.append("select  v015.id from E2FondMedSpecLink link left join VocE2FondV015 v015 on v015.id=link.medSpec_id where link.medosWorkFunction='")
-                                            .append(workfunction).append("'");
-                                    List<BigInteger> list = theManager.createNativeQuery(sb.toString()).getResultList(); //Находим исход случая (V015 PRVS)
-                                    if (!list.isEmpty()) {
-                                        doctor=theManager.find(VocE2FondV015.class,list.get(0).longValue());
-                                    }
-                                } else {
-                                    doctor = (VocE2FondV015)resultMap.get(key);
-                                }
-                                if (doctor!=null) ms.setSpeciality(doctor);
-                            }
-                            if (service.has("diagnosisCode")) {
-                                String mkb = service.getString("diagnosisCode");
-                                if(isNotNull(mkb)) {ms.setMkb((VocIdc10) getEntityByCode(mkb, VocIdc10.class, false));}
-                            }
-                            if (service.has("extDispServiceCode")) {
-                                String serviceCode =service.getString("extDispServiceCode");
-                                if (isNotNull(serviceCode)) {ms.setExtDispService((VocE2ExtDispService)getEntityByCode(serviceCode,VocE2ExtDispService.class,false));}
-                            }
-
-                            theManager.persist(ms);
+                        if (!serviceList.containsKey(code)) {
+                            serviceList.put(code, (VocMedService) getEntityByCode(code, VocMedService.class, false));
                         }
+                        EntryMedService ms =new EntryMedService(aEntry,serviceList.get(code));
+                        String serviceDate =service.has("serviceDate")?service.getString("serviceDate"):null;
+                        if (isNotNull(serviceDate)) {ms.setServiceDate(DateFormat.parseSqlDate(serviceDate,dateFrormat));}
+                        String workfunction = service.has("workfunctionCode")?service.getString("workfunctionCode"):null;
+                        if (isNotNull(workfunction)) {
+                            VocE2FondV015 doctor = null;
+                            String key = "DOCTOR#"+workfunction;
+                            if (!resultMap.containsKey(key)) {
+                                StringBuilder sb = new StringBuilder();
+                                sb.append("select  v015.id from E2FondMedSpecLink link left join VocE2FondV015 v015 on v015.id=link.medSpec_id where link.medosWorkFunction='")
+                                        .append(workfunction).append("'");
+                                List<BigInteger> list = theManager.createNativeQuery(sb.toString()).getResultList(); //Находим исход случая (V015 PRVS)
+                                if (!list.isEmpty()) {
+                                    doctor=theManager.find(VocE2FondV015.class,list.get(0).longValue());
+                                }
+                            } else {
+                                doctor = (VocE2FondV015)resultMap.get(key);
+                            }
+                            if (doctor!=null) ms.setSpeciality(doctor);
+                        }
+                        if (service.has("diagnosisCode")) {
+                            String mkb = service.getString("diagnosisCode");
+                            if(isNotNull(mkb)) {ms.setMkb((VocIdc10) getEntityByCode(mkb, VocIdc10.class, false));}
+                        }
+                        if (service.has("extDispServiceCode")) {
+                            String serviceCode =service.getString("extDispServiceCode");
+                            if (isNotNull(serviceCode)) {ms.setExtDispService((VocE2ExtDispService)getEntityByCode(serviceCode,VocE2ExtDispService.class,false));}
+                        }
+
+                        theManager.persist(ms);
+                    }
 
                 }
             }
@@ -1397,55 +1521,54 @@ private Boolean isCheckIsRunning = false;
         aEntry.setInsuranceCompanyName(policyData[3]);
         aEntry.setInsuranceCompanyOgrn(policyData[5]);
 
-        if (!isNotNull(policyData[19])) {
+/*        if (!isNotNull(policyData[19])) {
             E2EntryError error = new E2EntryError(aEntry,"NO_MEDPOLICY_TYPE");theManager.persist(error);
-        }
-        aEntry.setMedPolicyType(policyData[19]);
+        } */
+        aEntry.setMedPolicyType(isNotNull(policyData[19])?policyData[19]:"3"); //По умолчанию ставим тип полиса - полис нового образца *28-08-2018
         aEntry.setMedPolicySeries(policyData[15]);
         aEntry.setMedPolicyNumber(policyData[13]);
 
 
-      //  log.info("Данные полиса сохранены");
         theManager.persist(aEntry);
 
     }
     /** Находим, является ли КСГ политравмой */
     private static final String[] politravmaMainList = {"S02.7","S12.7","S22.1","S27.7","S29.7","S31.7","S32.7","S36.7","S38.1","S39.6","S39.7","S37.7","S42.7","S49.7","T01.1","T01.8","T01.9","T02.0","T02.1","T02.2","T02.3","T02.4","T02.5","T02.6","T02.7","T02.8","T02.9","T04.0","T04.1","T04.2","T04.3","T04.4","T04.7","T04.8","T04.9","T05.0","T05.1","T05.2","T05.3","T05.4","T05.5","T05.6","T05.8","T05.9","T06.0","T06.1","T06.2","T06.3","T06.4","T06.5","T06.8","T07"};
     private static final String[] politravmaSeconaryList = {"J94.2","J94.8","J94.9","J93","J93.0","J93.1","J93.8","J93.9","J96.0","N17","T79.4","R57.1","R57.8"};
-private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> aOtherDisagnosisList) {
-    boolean foundMain=false, foundOther=false;
-    for (String main: aMainDisagnosisList) {
-        for(String d:politravmaMainList) {
-            if (main.equals(d)) {
-                foundMain=true;
-                break;
-            }
-        }
-    }
-
-    if (foundMain) { //Если нашли главный диагноз, ищем сопутствующий
-        for (String other: aOtherDisagnosisList) {
-            for(String d:politravmaSeconaryList) {
-                if (other.equals(d)) {
-                    foundOther=true;
+    private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> aOtherDisagnosisList) {
+        boolean foundMain=false, foundOther=false;
+        for (String main: aMainDisagnosisList) {
+            for(String d:politravmaMainList) {
+                if (main.equals(d)) {
+                    foundMain=true;
                     break;
                 }
             }
         }
 
-    }
-    if (foundMain&&foundOther) {
-        return getActualVocByClassName(VocKsg.class,null,"code='233'");
-    }
-    return null;
+        if (foundMain) { //Если нашли главный диагноз, ищем сопутствующий
+            for (String other: aOtherDisagnosisList) {
+                for(String d:politravmaSeconaryList) {
+                    if (other.equals(d)) {
+                        foundOther=true;
+                        break;
+                    }
+                }
+            }
 
-}
+        }
+        if (foundMain&&foundOther) {
+            return getActualVocByClassName(VocKsg.class,null,"code='233'");
+        }
+        return null;
+
+    }
     /** Нахождение КСГ с бОльшим коэффициентом трудозатрат для случая */
     HashMap<String, List<Object>> ksgMap = new HashMap<String, List<Object>>();
     public VocKsg getBestKSG(E2Entry aEntry, boolean updateKsgIfExist) {
-        if (aEntry.getEntryType()==null||!aEntry.getEntryType().equals(HOSPITALTYPE)) {return null;}
-        if (!updateKsgIfExist&&aEntry.getKsg()!=null) {return aEntry.getKsg();} //Не проверяем КСГ у записей с уже найденным КСГ
-        if (aEntry.getIsManualKsg() != null && aEntry.getIsManualKsg()) { return aEntry.getKsg();} //Если стоит признак ручного ввода КСГ, не расчитываем КСГ
+        if (aEntry.getEntryType()==null || !aEntry.getEntryType().equals(HOSPITALTYPE)) {return null;}
+        if (!updateKsgIfExist && aEntry.getKsg()!=null) {return aEntry.getKsg();} //Не проверяем КСГ у записей с уже найденным КСГ
+        if (isNotNull(aEntry.getIsManualKsg())) { return aEntry.getKsg();} //Если стоит признак ручного ввода КСГ, не расчитываем КСГ
         try {
             List<EntryDiagnosis> diagnosisList = getDiagnosis(aEntry);
 
@@ -1458,12 +1581,15 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             String dopmkb = null;
             Boolean isCancer=false;
             for (EntryDiagnosis ed: diagnosisList) {
-                if(isNotNull(ed.getDopMkb())) {
-                    dopmkb=ed.getDopMkb();
+                if (ed.getPriority().getCode().equals("1")){
+                    if(isNotNull(ed.getDopMkb())) {
+                        dopmkb=ed.getDopMkb();
+                    }
+                    if (ed.getMkb().getCode().startsWith("C")) {
+                        isCancer=true;
+                    }
                 }
-                if (ed.getMkb().getCode().startsWith("C")) {
-                    isCancer=true;
-                }
+
             }
 
             List<String> mainDiagnosis = findDiagnosisCodes(diagnosisList, "3","1"); //Тип регистрации:1,2-при поступлении, 3  - выписной, 4 = клинический
@@ -1514,7 +1640,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             }
             sql.append(" and ((gkp.anothermkb is null or gkp.anothermkb ='') ").append(isNotNull(dopmkb)?" or gkp.anothermkb='"+dopmkb+"')":")"); //Ищем по доп. коду
 
-       StringBuilder serviceSql = new StringBuilder();
+            StringBuilder serviceSql = new StringBuilder();
             if (!serviceCodes.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 for (String d : serviceCodes) {
@@ -1528,14 +1654,14 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 serviceSql.append(" and (gkp.servicecode is null or gkp.servicecode='')");
             }
             sql.append(serviceSql);
-         //   log.info("sql for best KSG = "+sql.toString());
+            //   log.info("sql for best KSG = "+sql.toString());
             List<Object> results;
             String key = mainDiagnosis.hashCode()+"#SQL#"+sql.toString().hashCode(); //bedType+"#"+aEntry.getMainMkb()+"#"+(dopmkb!=null?dopmkb:"");
-         //   log.warn("sql for ksg = "+sql.toString());
+            //   log.warn("sql for ksg = "+sql.toString());
             if (!ksgMap.containsKey(key)) {
-              //  log.info(key+" not found new sql ="+sql);
+                //  log.info(key+" not found new sql ="+sql);
                 results = theManager.createNativeQuery(sql.toString()).getResultList();
-               ksgMap.put(key,results);
+                ksgMap.put(key,results);
                 if (results.isEmpty()) {
                     log.warn(key+" Не смог найти КСГ для случая с ИД="+aEntry.getId()+" по запросу: "+sql);
                 }
@@ -1555,17 +1681,21 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 if (isNotNull(ksg.getDopPriznak())&&isNotNull(aEntry.getDopKritKSG())&&ksg.getDopPriznak().equals(aEntry.getDopKritKSG())) {weight=6;} else if (isNotNull(ksg.getDopPriznak())) {continue;}
                 if (isNotNull(ksg.getSex())&&ksg.getSex().equals(aEntry.getSex())) {} else if (isNotNull(ksg.getSex())) {continue;}
                 if (mainDiagnosis.contains(ksg.getMainMKB())) {
+                    weight++;
                     if (!isNotNull(ksg.getServiceCode())) { //Находим терапевтичесое КСГ
                         therapicKsgPosition=(therapicKsgPosition!=null&&therapicKsgPosition.getKSGValue().getKZ()>ksg.getKSGValue().getKZ())?therapicKsgPosition:ksg;
                     }
 
-                } else if (isCancer&&ksg.getMainMKB().equals("C.")) {cancerKsgPosition=ksg; /*weight=5;*/} else if (isNotNull(ksg.getMainMKB())) {continue;}
+                } else if (isCancer&&ksg.getMainMKB().equals("C.")) {cancerKsgPosition=ksg;weight++; /*weight=5;*/} else if (isNotNull(ksg.getMainMKB())) {continue;}
 
                 if (serviceCodes.contains(ksg.getServiceCode())) {
+                    weight++;
                     surgicalKsgPosition=(surgicalKsgPosition!=null&&surgicalKsgPosition.getKSGValue().getKZ()>ksg.getKSGValue().getKZ())?surgicalKsgPosition:ksg;
                     //Если коронарография и у нас есть диагноз, берем дешевое КСГ! 09-02-2018
                     if (isNotNull(ksg.getServiceCode())&&ksg.getServiceCode().equals("A16.12.033")) {
                         if (mainDiagnosis.contains(ksg.getMainMKB())) {weight=5;}
+                    } else if (ksg.getMainMKB().equals("N18.5")||ksg.getMainMKB().equals("N18.4")) {
+                        weight=5;
                     }
 
                 } else if (isNotNull(ksg.getServiceCode())) {continue;}
@@ -1579,20 +1709,20 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 if (ksg.getAge() != null && ksg.getAge().equals(ksgAge)) {weight++;} else if (ksg.getAge()!=null) {weight=-5;}
                 if (ksg.getDuration() != null  && duration) {weight++;} else if (ksg.getDuration() != null ) {weight=-5;}
                 */
-                    double currentKZ = ksg.getKSGValue().getKZ();
-                    if (weight>maxWeight|| (weight == maxWeight && currentKZ > maxKZ)) {
-                        //  log.warn("if happens"+ksg.getId());
-                        //  log.info("maxksg = " + currentKZ);
-                        maxWeight=weight;
-                        maxKZ = currentKZ;
-                        pos = ksg;
-                    }
+                double currentKZ = ksg.getKSGValue().getKZ();
+                if (weight>maxWeight|| (weight == maxWeight && currentKZ > maxKZ)) {
+                    //  log.warn("if happens"+ksg.getId());
+                    //  log.info("maxksg = " + currentKZ);
+                    maxWeight=weight;
+                    maxKZ = currentKZ;
+                    pos = ksg;
                 }
-                if (pos==null&&cancerKsgPosition!=null) {pos=cancerKsgPosition;}
-                if (therapicKsgPosition!=null&&surgicalKsgPosition!=null) { //Если мы нашли хирургическое КСГ, но есть и терапевтическое, то проверим на исключения
-                    GrouperKSGPosition exc =  checkIsKsgException(surgicalKsgPosition,therapicKsgPosition);
-                    if (exc!=null){pos=exc;}
-                }
+            }
+            if (pos==null&&cancerKsgPosition!=null) {pos=cancerKsgPosition;}
+            if (therapicKsgPosition!=null&&surgicalKsgPosition!=null) { //Если мы нашли хирургическое КСГ, но есть и терапевтическое, то проверим на исключения
+                GrouperKSGPosition exc =  checkIsKsgException(surgicalKsgPosition,therapicKsgPosition);
+                if (exc!=null){pos=exc;}
+            }
 
             if (pos != null)  {
                 VocKsg ksg = pos.getKSGValue();
@@ -1615,13 +1745,13 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
     private final String[] ksgExceptions = {"9#11","9#12","10#11","18#76","18#77","179#173","300#301","207#301","242#245","244#35","271#256"}; //терапевтическая#Хирургическая
     private GrouperKSGPosition checkIsKsgException(GrouperKSGPosition aSurgicalKsgPosition, GrouperKSGPosition aTherapicalKsgPosition) {
         String key = aTherapicalKsgPosition.getKSGValue().getCode()+"#"+aSurgicalKsgPosition.getKSGValue().getCode();
-      //  log.warn("ekseption.sql="+key);
+        //  log.warn("ekseption.sql="+key);
         for (String str:ksgExceptions) {
             if (str.equals(key)) { //Если есть хир. КСГ, подаем его
                 return aSurgicalKsgPosition;
             }
         }
-    return null;
+        return null;
     }
 
     /**  Нахождение возраста для КСГ */
@@ -1656,12 +1786,12 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         // Приорите - основной(1), сопутствующий(3)
         if (aList.isEmpty()) {return new ArrayList<String>();}
         List<String> diagnosisList = new ArrayList<String>();
- if (aRegType==null&&aPriority==null) {return null;}
+        if (aRegType==null&&aPriority==null) {return null;}
         for (EntryDiagnosis diagnosis : aList) {
             if ( //проверить!
                     (aRegType==null||(aRegType!=null&&aRegType.indexOf(diagnosis.getRegistrationType().getCode())>-1))
-                    &&(aPriority==null||aPriority!=null&&aPriority.indexOf(diagnosis.getPriority().getCode())>-1)
-                ) {
+                            &&(aPriority==null||aPriority!=null&&aPriority.indexOf(diagnosis.getPriority().getCode())>-1)
+                    ) {
                 diagnosisList.add(diagnosis.getMkb().getCode());
             }
         }
@@ -1684,8 +1814,8 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
 
         } else if (entryType.equals(POLYCLINICTYPE)||entryType.equals(POLYCLINICKDOTYPE)) {
             String tariffCode=aEntry.getSubType()!=null?aEntry.getSubType().getTariffCode():"_NULLENTRYSUBTYPE_";
-                key = POLYCLINICTYPE+"#"+tariffCode+"";
-                sqlAdd=" type.code='"+tariffCode+"' ";
+            key = POLYCLINICTYPE+"#"+tariffCode+"";
+            sqlAdd=" type.code='"+tariffCode+"' ";
 
         }  else {
             log.error("Не могу расчитать тариф для записи с типом: CANT_CALC_TARIFF_"+entryType);
@@ -1696,7 +1826,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         if (!tariffMap.containsKey(key)) {
             VocE2BaseTariff tariff = getActualVocByClassName(VocE2BaseTariff.class, aEntry.getFinishDate(), sqlAdd);
             if (tariff == null) {
-               // throw new IllegalStateException("Не удалось найти тариф по случаю с ИД = " + aEntry.getId()+". Необходимо установить тариф с кодом: "+key);
+                // throw new IllegalStateException("Не удалось найти тариф по случаю с ИД = " + aEntry.getId()+". Необходимо установить тариф с кодом: "+key);
             } else {
                 tariffMap.put(key,tariff.getValue());
             }
@@ -1783,7 +1913,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             if (isNotNull(aEntry.getVMPKind())) { //Если есть ВМП - цена случая = цене метода ВМП
                 key = "VMP#"+aEntry.getVMPKind();
                 BigDecimal cost;
-              //  log.info("calc VMP-1");
+                //  log.info("calc VMP-1");
                 if (!hospitalCostMap.containsKey(key)) {
                     List<BigDecimal> costs = theManager.createNativeQuery("select cost from vockindhighcare where code=:code and cost is not null").setParameter("code", aEntry.getVMPKind()).getResultList();
                     if (costs.size()>0) {
@@ -1825,7 +1955,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     aEntry.setTotalCoefficient(totalCoefficient);
                     aEntry.setCost(cost);
                 }
-        }
+            }
             theManager.persist(aEntry);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1836,19 +1966,19 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
     private HashMap<String,E2KsgCoefficientHistory> ksgCoefficientMap = new HashMap<String, E2KsgCoefficientHistory>();
     public BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate) {
         E2KsgCoefficientHistory coefficientHistory;
-                String sql = "select id from E2KsgCoefficientHistory where ksg_id=:ksg and to_date('"+aFinishDate+"','yyyy-MM-dd') between startDate and coalesce(finishDate, current_date)";
-                String key = "KSG#COEFF#"+sql.hashCode();
-                if (ksgCoefficientMap.containsKey(key)) {
-                    coefficientHistory=ksgCoefficientMap.get(key);
-                } else {
-                    List<Long> list = theManager.createQuery(sql).setParameter("ksg",aKsg.getId()).getResultList();
-                    if (list.size()==0||list.size()>1) {
-                        log.error(aKsg.getId()+ " найдено _"+list.size()+"_ коэффициентов КСГ(MORE_1_KSG_COEFFICIENT) "+sql);
-                        return null;
-                    }
-                    coefficientHistory = theManager.find(E2KsgCoefficientHistory.class,list.get(0));
-                }
-                return coefficientHistory.getValue();
+        String sql = "select id from E2KsgCoefficientHistory where ksg_id=:ksg and to_date('"+aFinishDate+"','yyyy-MM-dd') between startDate and coalesce(finishDate, current_date)";
+        String key = "KSG#COEFF#"+sql.hashCode();
+        if (ksgCoefficientMap.containsKey(key)) {
+            coefficientHistory=ksgCoefficientMap.get(key);
+        } else {
+            List<Long> list = theManager.createQuery(sql).setParameter("ksg",aKsg.getId()).getResultList();
+            if (list.size()==0||list.size()>1) {
+                log.error(aKsg.getId()+ " найдено _"+list.size()+"_ коэффициентов КСГ(MORE_1_KSG_COEFFICIENT) "+sql);
+                return null;
+            }
+            coefficientHistory = theManager.find(E2KsgCoefficientHistory.class,list.get(0));
+        }
+        return coefficientHistory.getValue();
 
     }
     /** Расчитываем коэффициент сложности лечения пациента */
@@ -1864,16 +1994,16 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
 
         //Сложность лечения пациента //TODO нужны справочники
         /**
-       +  1*	Сложность лечения пациента, связанная с возрастом (госпитализация детей до 1 года). Кроме КСГ, относящихся к профилю «неонатология» (107-113)	1,1
-       +  2*	Сложность лечения пациента, связанная с возрастом (госпитализация детей от 1 до 4)	1,1
-         3	Необходимость предоставления спального места и питания законному представителю (дети до 4) 	1,05
-       +  4*	Сложность лечения пациента, связанная с возрастом (лица старше 75 лет) 	1,08
+         +  1*	Сложность лечения пациента, связанная с возрастом (госпитализация детей до 1 года). Кроме КСГ, относящихся к профилю «неонатология» (107-113)	1,1
+         +  2*	Сложность лечения пациента, связанная с возрастом (госпитализация детей от 1 до 4)	1,1
+         +  3*	Необходимость предоставления спального места и питания законному представителю (дети до 4) 	1,05
+         +  4*	Сложность лечения пациента, связанная с возрастом (лица старше 75 лет) 	1,08
          5	Необходимость предоставления спального места и питания законному представителю пациента возраста старше 75 лет с индексом Бартела ≤ 60 баллов (для осуществления ухода) при наличии медицинских показаний 	1,02
          6*	Наличие у пациента тяжелой сопутствующей патологии, осложнений заболеваний, сопутствующих заболеваний, влияющих на сложность лечения пациента. Таблица 'Диагнозы КСЛП' 	1,1
          7	Необходимость развертывания индивидуального поста по медицинским показаниям 	1,1
          8	Необходимость предоставления спального места и питания законному представителю ребенка после достижения им возраста 4 лет при наличии медицинских показаний 	1,05
          9	Проведение в рамках одной госпитализации в полном объеме нескольких видов противоопухолевого лечения, относящихся к разным КСГ (перечень возможных сочетаний КСГ представлен в Инструкции) 	1,3
-     +    9*	Сверхдлительные сроки госпитализации, обусловленные медицинскими показаниями	Согласно формуле
+         +    9*	Сверхдлительные сроки госпитализации, обусловленные медицинскими показаниями	Согласно формуле
          10*	Проведение сочетанных хирургических вмешательств. Таблица 'Сочетанные операции' 	1,2
          11*	Проведение однотипных операций на парных органах. Таблица 'Парные операции' 	1,2
          * - используется в АМОКБ
@@ -1887,12 +2017,13 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         } else if (ageDays>27394) { //Если возраст более 75 лет
             ret.add("4");
         }
+        if (isNotNull(aEntry.getHotelServices())) {ret.add("3");}
         Date actualDate = aEntry.getFinishDate();
         //6
         List<EntryDiagnosis> list = theManager.createQuery("from EntryDiagnosis where entry_id=:id ").setParameter("id",aEntry.getId()).getResultList();
         List<String> anotherMkb = findDiagnosisCodes(list,null,"3");
         for(String ds: anotherMkb) {
-            if (ds.startsWith("E10")) {
+            if (ds.startsWith("E10")||ds.startsWith("E11")) {
                 ret.add("6");
                 break;
             }
@@ -1918,7 +2049,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             if (!theManager.createNativeQuery("select id from VocCombinedOperations where medservice1_id in ("+sbb+") and medservice2_id in ("+sbb+") and coalesce(finishDate,current_date)>=:actualDate ")
                     .setParameter("actualDate",actualDate)
                     .getResultList().isEmpty()
-               ) {
+                    ) {
                 ret.add("10");
             }
         }
@@ -1958,7 +2089,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
     public BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry) {
         BigDecimal one = new BigDecimal(1);
         if(aEntry.getEntryType().equals(HOSPITALTYPE)&&!aEntry.getBedSubType().equals("1")) { return one;}
-      //  log.info("start calc difficult");
+        //  log.info("start calc difficult");
         List<E2CoefficientPatientDifficultyEntryLink> list = theManager.createQuery(" from E2CoefficientPatientDifficultyEntryLink where entry=:entry").setParameter("entry",aEntry).getResultList();
         BigDecimal ret = new BigDecimal(1);
 
@@ -1969,7 +2100,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 boolean first = true;
                 for (E2CoefficientPatientDifficultyEntryLink link: list) { //Если несколько, возвращаем К1+(К2-1)+(Кн-1)
                     if (first){
-                       ret = link.getValue();
+                        ret = link.getValue();
                         first=false;
                     } else {
                         ret=ret.add(link.getValue()).add(one.negate());
@@ -1988,20 +2119,19 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         VocE2EntrySubType subType =aEntry.getSubType();
         String tariffCode = subType.getTariffCode();
         if (tariffCode ==null) {/*log.warn("Cant calc polyclinic tariff: "+aEntry.getId()+"<>"+subType.getId()+""+subType.getCode());*/return;}
-       Long profileId = aEntry.getMedHelpProfile()!=null?aEntry.getMedHelpProfile().getId():null;
+        Long profileId = aEntry.getMedHelpProfile()!=null?aEntry.getMedHelpProfile().getId():null;
         if (profileId==null) {log.error("Нет профиля для определения цены: "+aEntry.getId()+"<>"+aEntry.getServiceStream());return;}
         String key;
         String sql = "";
         VocE2PolyclinicCoefficient coefficient = null;
+        boolean isKdo =isNotNull(aEntry.getIsDiagnosticSpo());
+        boolean isEmergency = isNotNull(aEntry.getIsEmergency());
+        boolean isMobilePolyclinic = isNotNull(aEntry.getIsMobilePolyclinic());
         //находим Кз
-        if (isNotNull(aEntry.getIsDiagnosticSpo())) { //Находим Кз обращения
+        if (isKdo) { //Находим Кз обращения
             key="KZ#KDO#";
         } else {
-            if (isNotNull(aEntry.getIsEmergency())) { //ytn Rp
-                key="KZ#EMERGENCY##";
-            } else {
-                key = "KZ#" + profileId + "#" + tariffCode;
-            }
+            key = isEmergency?"KZ#EMERGENCY##":"KZ#" + profileId + "#" + tariffCode;
         }
         sql ="profile_id="+profileId+" and entryType.tariffCode='"+tariffCode+"'";
         key+=sql;
@@ -2016,26 +2146,26 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         BigDecimal kz = coefficient!=null?coefficient.getValue():one;
 
         //Находим Кп/Кпд
-         sql = "";
-        if (isNotNull(aEntry.getIsDiagnosticSpo())) { //находим КДО
+        sql = "";
+        if (isKdo) { //находим КДО
             sql+=" and isDiagnosticSpo='1'";
-        } else if (isNotNull(aEntry.getIsEmergency())) { //Неотложна
+        } else if (isEmergency) { //Неотложна
             key="KP#EMERGENCY##";
             sql+=" and 1=2";
         } else { //поликлиника (мобильная ., консультативная)
-            if (isNotNull(aEntry.getIsMobilePolyclinic())) {
+            if (isMobilePolyclinic) {
                 sql += " and isMobilePolyclinic='1'";
             }
             if (isNotNull(subType.getIsConsultation())) {
                 sql += " and isConsultation='1'";
             }
         }
-            sql="profile_id="+profileId+sql+" and entryType is null "+sql;
-            key ="KP#"+sql; //Находим коэффициент для конс. поликлиники
-            if (!polyclinicCasePrice.containsKey(key)) {
-                coefficient=getActualVocByClassName(VocE2PolyclinicCoefficient.class,aEntry.getFinishDate(),sql);
-                polyclinicCasePrice.put(key,coefficient);
-            }
+        sql="profile_id="+profileId+sql+" and entryType is null "+sql;
+        key ="KP#"+sql; //Находим коэффициент для конс. поликлиники
+        if (!polyclinicCasePrice.containsKey(key)) {
+            coefficient=getActualVocByClassName(VocE2PolyclinicCoefficient.class,aEntry.getFinishDate(),sql);
+            polyclinicCasePrice.put(key,coefficient);
+        }
         coefficient = polyclinicCasePrice.get(key);
         BigDecimal kp = coefficient!=null?coefficient.getValue():one;
 
@@ -2080,7 +2210,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 types[i] = metaData.getColumnType(i + 1);
             }
             E2Entry entity;
-          //  List<E2Entry> entries = new ArrayList<E2Entry>();
+            //  List<E2Entry> entries = new ArrayList<E2Entry>();
             int j=0;
             while (aResultSet.next()) { // Для каждой строки (кортежа)
                 j++;
@@ -2148,7 +2278,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     makeCheckEntry(entity,false, false);
                 }
 
-            //    entries.add(entity);
+                //    entries.add(entity);
             }
             //checkListEntryFirst(aListEntry, entries); //Проверку будем запускать отдельно.
             log.info("Success!");
@@ -2176,10 +2306,10 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             }
             isCheckIsRunning=true;
 //            StringBuilder sql = new StringBuilder();
-         //   sql.append("from E2Entry where listEntry_id=:id and (isDeleted is null or isDeleted='0')");
-        //    StringBuilder sqlAdd = new StringBuilder();
+            //   sql.append("from E2Entry where listEntry_id=:id and (isDeleted is null or isDeleted='0')");
+            //    StringBuilder sqlAdd = new StringBuilder();
 
-          //  theManager.createNativeQuery("update e2entryerror set isdeleted='1' where listentry_id=:id").setParameter("id",aListEntry.getId()).executeUpdate(); //Все ошибки удалим
+            //  theManager.createNativeQuery("update e2entryerror set isdeleted='1' where listentry_id=:id").setParameter("id",aListEntry.getId()).executeUpdate(); //Все ошибки удалим
             if (aEntryList==null) {
                 aEntryList = theManager.createQuery("from E2Entry where listEntry=:list and (isDeleted is null or isDeleted='0')").setParameter("list",aListEntry).getResultList();
             }
@@ -2242,9 +2372,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     monitor.setText("Удаляем дубли в поликлинике");
                     deletePolyclinicDoubles(listEntryId ); //Удалим дубли при первой проверке
                 }
-                log.info("entryList.size="+aEntryList.size());
                 aEntryList = theManager.createQuery("from E2Entry where listEntry=:list and (isDeleted is null or isDeleted='0')").setParameter("list",aListEntry).getResultList();
-                log.info("2_entryList.size="+aEntryList.size());
                 int i=0;
                 log.info("POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.");
                 monitor.setText("POL_START_Поликлиника. Приступаем к нахождению цены и проставлению полей фонда.");
@@ -2254,7 +2382,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                         log.info("process ... checking entry.... "+i);
                         monitor.setText("Проверяем записи по поликлинике: "+i);
                     }
-                        makeCheckEntry(entry,false, true);
+                    makeCheckEntry(entry,false, true);
                 }
                 log.info("Поликлиника. Закончили нахождение цены и проставление полей фонда."+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
                 monitor.setText("Поликлиника. Закончили нахождение цены и проставление полей фонда."+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
@@ -2444,14 +2572,14 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             }
         } else if (isNotNull(aSqlAdd)){
             sql+=aSqlAdd;
-         list = theManager.createQuery(sql).getResultList();
+            list = theManager.createQuery(sql).getResultList();
         } else {
             throw new IllegalStateException("Необходимо указать дату актуальности либо другое условие");
         }
         if (list.isEmpty()) {
-                log.error("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
-                return null;
-                //throw new IllegalStateException("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
+            log.error("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
+            return null;
+            //throw new IllegalStateException("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
         } else if (list.size() > 1) {
             log.error("Найдено несколько действующих значений справочника " + aClass.getCanonicalName()+" с условием "+sql);
             return null;
@@ -2476,7 +2604,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         return new BigDecimal(1); //TODO пока оставим так для производительности
     }
 
-     /** Расчет причины неполной оплаты случая (коэффициент прерванного случая) */
+    /** Расчет причины неполной оплаты случая (коэффициент прерванного случая) */
 
     /**
      * Указывается причина, по которой услуга не оказана или оказана не в полном объёме.
@@ -2485,6 +2613,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
      3 – прочие причины (умер, переведён в другое отделение и пр.)
      4 – ранее проведённые услуги в пределах установленных сроков.
      */
+List<String> ksgFullPaymentChildsList = new ArrayList<String>();
 
     private BigDecimal calculateNoFullMedCaseCoefficient (E2Entry aEntry) { //Считаем коэффициент Кпр.+    //  log.info("start calculateNoFullMedCaseCoefficient");
         String  npl = aEntry.getNotFullPaymentReason();
@@ -2503,11 +2632,12 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         String otherLpuResult = "102,103,202,203";
         String lpuLikeResult = "108,208";
         String patientLikeResult = "107,207";
-        String ksgFullPaymentChilds="107,108,109,110,111,112,113"; //при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
+       // String ksgFullPaymentChilds="107,108";//,109,110,111,112,113"; //при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
+        ksgFullPaymentChildsList.add("107");ksgFullPaymentChildsList.add("108");
         String notFullReason = aEntry.getNotFullPaymentReason();
 
         if (otherLpuResult.indexOf(result) > -1) { //Переведен в другой стационар
-            if (aEntry.getKsg()!=null&&ksgFullPaymentChilds.indexOf(aEntry.getKsg().getCode())>-1) {
+            if (aEntry.getKsg()!=null&&ksgFullPaymentChildsList.contains(aEntry.getKsg().getCode())) {
                 isPrerSluch = false;
             } else {
                 isPrerSluch = true;
@@ -2517,16 +2647,19 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             //    npl="3";
         } else if (patientLikeResult.indexOf(result) > -1) { //выписан по желанию пациента
             isPrerSluch = true;
-           //    npl="1";
+            //    npl="1";
         } else if (deadResult.indexOf(result) > -1) { //Смерть пациента
             isPrerSluch = true;
         }  //else
         if (aEntry.getCalendarDays() < 4) {  //Если длительность случая менее 4 дней. //28-02-2018 4 целых дня.
+            if (!isPrerSluch && aEntry.getKsg() != null && isNotNull(aEntry.getKsg().getIsFullPayment())) { //Если У КСГ признак полной оплаты - то это не прер. случай
+                isPrerSluch = false;
+            } else {
                 isPrerSluch = true;
+            }
+
         }
-        if (isPrerSluch&&aEntry.getKsg() != null && isNotNull(aEntry.getKsg().getIsFullPayment())) { //Если У КСГ признак полной оплаты - то это не прер. случай
-            isPrerSluch = false;
-        }
+
         boolean surgicalKsg = false;
         if (isPrerSluch) {
             // если прерванный случай - ставим причину неполной оплаты
@@ -2534,32 +2667,32 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             GrouperKSGPosition pos =aEntry.getKsgPosition();
             if ((pos!=null&&isNotNull(pos.getServiceCode())/*||isNotNull(aEntry.getDopKritKSG())*/)) { //Если у КСГ признак "операционного", либо есть доп. критерий КСГ * убрано до июля
                 surgicalKsg=true;
-            //    if ((aEntry.getOperationList()!=null&&aEntry.getOperationList().indexOf(pos.getServiceCode())>-1)
-             //           ||(isNotNull(aEntry.getMainService())&&aEntry.getMainService().equals(pos.getServiceCode()))){ //Если услуга есть в группировщике //TODO упростить!
-              //      if ((pos.getKSGValue().getIsOperation()!=null&&pos.getKSGValue().getIsOperation())||isNotNull(aEntry.getDopKritKSG())) { //Если операция или есть доп. критерий КСГ
-                        if (aEntry.getCalendarDays()<4) { //операция участвует в нахождении КСГ, случай короткий, коэф. 0.9
-                            ret = new BigDecimal(0.9);
-                        } else { //операция участвует в нахождении КСГ, случай больше 3х дней, коэф. 1
-                            ret = new BigDecimal(1); //0.9
-                        //   if (!npl.equals("1")) {npl="0";} //Если пациент выписался по собств. желанию, то всегда NPL = 1
-                        }
+                //    if ((aEntry.getOperationList()!=null&&aEntry.getOperationList().indexOf(pos.getServiceCode())>-1)
+                //           ||(isNotNull(aEntry.getMainService())&&aEntry.getMainService().equals(pos.getServiceCode()))){ //Если услуга есть в группировщике //TODO упростить!
+                //      if ((pos.getKSGValue().getIsOperation()!=null&&pos.getKSGValue().getIsOperation())||isNotNull(aEntry.getDopKritKSG())) { //Если операция или есть доп. критерий КСГ
+                if (aEntry.getCalendarDays()<4) { //операция участвует в нахождении КСГ, случай короткий, коэф. 0.9
+                    ret = new BigDecimal(0.9);
+                } else { //операция участвует в нахождении КСГ, случай больше 3х дней, коэф. 1
+                    ret = new BigDecimal(1); //0.9
+                    //   if (!npl.equals("1")) {npl="0";} //Если пациент выписался по собств. желанию, то всегда NPL = 1
+                }
                 //    }
+            }
+            if (aEntry.getKsg().getCode().equals("233")) { //Если политравма и есть любая операция, то Кпр=1 *07.05.2018
+                if (theManager.createNativeQuery("select id from entrymedservice where entry_id=:id").setParameter("id",aEntry.getId()).getResultList().size()>0) {
+                    ret = new BigDecimal(1);
                 }
-                if (aEntry.getKsg().getCode().equals("233")) { //Если политравма и есть любая операция, то Кпр=1 *07.05.2018
-                    if (theManager.createNativeQuery("select id from entrymedservice where entry_id=:id").setParameter("id",aEntry.getId()).getResultList().size()>0) {
-                        ret = new BigDecimal(1);
-                    }
-                }
-     //       }
+            }
+            //       }
         }
         if (isNotNull(npl)&&!npl.equals("0")) {
             ret=surgicalKsg?new BigDecimal(0.9):new BigDecimal(0.3);
         }
 
-       if (!isNotNull(npl)) aEntry.setNotFullPaymentReason("0");
+        if (!isNotNull(npl)) aEntry.setNotFullPaymentReason("0");
         aEntry.setIsBreakedCase(isPrerSluch);
         theManager.persist(aEntry);
-     //   log.info("finish calculateNoFullMedCaseCoefficient");
+        //   log.info("finish calculateNoFullMedCaseCoefficient");
         return ret.setScale(2, RoundingMode.HALF_UP);
     }
     private BigDecimal calculateBasePrerSluchCoefficient(E2Entry aEntry) { //TODO = переделать нормально
@@ -2595,7 +2728,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             }
         }
         //Расчитывает Специальность лечащего врача/ врача, закрывшего талон (v015) . UPD 18-07-2018 * Специальность врача по справочнику V021
-        if (aEntry.getFondDoctorSpec() == null || forceUpdate) {
+        if (aEntry.getFondDoctorSpecV021() == null || forceUpdate) {
             if (stacCase && aEntry.getMedHelpProfile() != null && aEntry.getMedHelpProfile().getMedSpec() != null) {  /* от 09-02-2018 Если у профиля мед. помощи указана специальность врача, указываем ее. Только для стационара */
                 aEntry.setFondDoctorSpec(aEntry.getMedHelpProfile().getMedSpec());
             } else {
@@ -2618,9 +2751,12 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                     resultMap.put(key, list.isEmpty() ? null : theManager.find(VocE2FondV015.class, list.get(0).longValue()));
                 }
                 aEntry.setFondDoctorSpec((VocE2FondV015) resultMap.get(key));
-                if (aEntry.getFondDoctorSpec()!=null&&aEntry.getFondDoctorSpec().getMedSpecV021()!=null) {
-                    aEntry.setFondDoctorSpecV021(aEntry.getFondDoctorSpec().getMedSpecV021());
-                }
+
+            }
+            if (aEntry.getFondDoctorSpec()!=null&&aEntry.getFondDoctorSpec().getMedSpecV021()!=null) {
+                aEntry.setFondDoctorSpecV021(aEntry.getFondDoctorSpec().getMedSpecV021());
+            } else if (aEntry.getMedHelpProfile()!=null&&aEntry.getMedHelpProfile().getMedSpecV021()!=null) {
+                aEntry.setFondDoctorSpecV021(aEntry.getMedHelpProfile().getMedSpecV021());
             }
         }
         if (stacCase) { //Заполняем поля для стационара
@@ -2726,10 +2862,10 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
             }
 
             //Способ оплаты медицинской помощи
-            if (aEntry.getIDSP()==null||forceUpdate) {
+      //      if (aEntry.getIDSP()==null||forceUpdate) {
                 String idspCode;
                 if (polyclinicKdoCase) {
-                   idspCode="30";
+                    idspCode="30";
                 } else {
                     if (isNotNull(aEntry.getIsEmergency())) { //Экстренно? тоды неотложная помощь
                         idspCode="41";
@@ -2741,7 +2877,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
                 key = "IDSP#"+idspCode;
                 if (!resultMap.containsKey(key)) {resultMap.put(key, getActualVocByClassName(VocE2FondV010.class,actualDate ," code='"+idspCode+"'"));}
                 aEntry.setIDSP((VocE2FondV010)resultMap.get(key));
-            }
+        //    }
 
         } else if (extDispCase) { // TODО реализовать для ДД
             //_vidpom
@@ -2811,7 +2947,7 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
         } else {
             //   usl="4"; //скорая помощь
         }
-    theManager.persist(aEntry);
+        theManager.persist(aEntry);
     }
 
     public  String addSql(String aField, String aValue) {
@@ -2819,15 +2955,15 @@ private VocKsg getPolitravmaKsg(List<String> aMainDisagnosisList, List<String> a
     }
     private void cleanAllMaps(){
         entrySubTypeHashMap = new HashMap<String, VocE2EntrySubType>();
-      //  diagnosisMap = new HashMap<String, Object>();
-       // serviceList = new HashMap<String, VocMedService>();
+        //  diagnosisMap = new HashMap<String, Object>();
+        // serviceList = new HashMap<String, VocMedService>();
         ksgMap = new HashMap<String, List<Object>>();
         tariffMap = new HashMap<String, BigDecimal>();
-      //  cusmoMap = new HashMap<String, BigDecimal>();
-      //  hospitalCostMap = new HashMap<String, BigDecimal>();
+        //  cusmoMap = new HashMap<String, BigDecimal>();
+        //  hospitalCostMap = new HashMap<String, BigDecimal>();
         difficultyHashMap = new HashMap<String, VocE2CoefficientPatientDifficulty>();
         polyclinicCasePrice = new HashMap<String, VocE2PolyclinicCoefficient>();
-     //   resultMap = new HashMap<String, Object>(); //результат госпитализации
+        //   resultMap = new HashMap<String, Object>(); //результат госпитализации
     }
     private @PersistenceContext EntityManager theManager;
     private @EJB ILocalMonitorService theMonitorService;

@@ -2,7 +2,6 @@ package ru.ecom.api.record;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -57,7 +56,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         }
         List<BigInteger> list = theManager.createNativeQuery(findSql.toString()).getResultList();
         if (list.isEmpty()||list.size()>1) {
-            log.warn("sql for patient = "+findSql+".res = "+list.size());
+            log.warn("search patient sql = "+findSql+" .found = "+list.size());
             return null;
         }
         return theManager.find(Patient.class,list.get(0).longValue());
@@ -75,8 +74,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
      */
     public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, String aPhone) {
         log.warn("RECORD_PATIENT = "+aPatientLastname);
-        StringBuilder sql = new StringBuilder();
-        StringBuilder sqlAdd = new StringBuilder();
+
         Patient patient ;
         if (aPatientGUID!=null) { //Считаем, что записываем из приложения
             patient=getPatientByGuid(aPatientGUID);
@@ -89,7 +87,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         if (patient!=null) { //Нашли однозначное совпадение
             log.info("patient found");
         } else if (aPatientLastname!=null&&aPatientFirstname!=null&&aPatientBirthday!=null){
-            prePatientInfo=aPatientLastname+ " "+aPatientFirstname+" "+aPatientMiddlename+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null?" тел."+aPhone:"");
+            prePatientInfo=aPatientLastname+ " "+aPatientFirstname+" "+(aPatientMiddlename!=null?aPatientMiddlename:"")+" "+DateFormat.formatToDate(aPatientBirthday)+(aPhone!=null?" тел."+aPhone:"");
         } else {
             return getErrorJson("При неуказании GUID пациента необходимо указать его ФИО и дату рождения","WRONG_PAR");
         }
@@ -103,14 +101,19 @@ public class ApiRecordServiceBean implements IApiRecordService {
             return getErrorJson("Невозможно записаться на время - время уже занято","BUSY_TIME");
         }
         Long currentDateLong = System.currentTimeMillis();
+        Date currentDate = new Date(currentDateLong);
+        Time currentTime = new Time(currentDateLong);
         String username = "ApiClient "+theContext.getCallerPrincipal().getName();
+        StringBuilder recordLogInfo = new StringBuilder().append("Записан пациент через API. Пользователь: ").append(username).append(", дата создания:")
+                .append(currentDate).append(" время:").append(currentTime).append(", WCT_ID").append(aCalendarTimeId).append(". Дата записи:").append(wct.getWorkCalendarDay().getCalendarDate())
+                .append(", время:").append(wct.getTimeFrom());
         if (wct.getReserveType()!=null&&wct.getReserveType().getIsNoPreRecord()!=null&&wct.getReserveType().getIsNoPreRecord()&&patient!=null) { //Создаем визит
             log.info("TIME_TO_CREATE_VISITI");
             VocServiceStream serviceStream =getServiceStreamByWorkCalendarTime(wct);
             Visit visit = new Visit();
             visit.setUsername(username);
-            visit.setCreateDate(new Date(currentDateLong));
-            visit.setCreateTime(new Time(currentDateLong));
+            visit.setCreateDate(currentDate);
+            visit.setCreateTime(currentTime);
             visit.setNoActuality(false);
             visit.setServiceStream(serviceStream);
             visit.setDatePlan(wct.getWorkCalendarDay());
@@ -121,22 +124,27 @@ public class ApiRecordServiceBean implements IApiRecordService {
             visit.setPatient(patient);
             theManager.persist(visit);
             wct.setMedCase(visit);
+            recordLogInfo.append("Пациент: ").append(patient.getPatientInfo()).append(". Создан визит c ИД:").append(visit.getId());
         } else { //Создаем предварительную запись
             wct.setCreatePreRecord(username);
             wct.setCreateDatePreRecord(new java.sql.Date(currentDateLong));
             wct.setCreateTimePreRecord(new java.sql.Time(currentDateLong));
             if (patient!=null) {
                 wct.setPrePatient(patient);
+                recordLogInfo.append(". Пациент ").append(patient.getPatientInfo());
             } else {
-                wct.setPrePatientInfo(prePatientInfo);
+                wct.setPrePatientInfo(prePatientInfo.toUpperCase());
+                recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             }
             if (StringUtil.isNullOrEmpty(aComment)) {
                 wct.setPatientComment(aComment);
             }
-
+            recordLogInfo.append(".Создана предварительная запись");
             log.info("RECORD_MAKE!!!");
         }
         theManager.persist(wct);
+        theManager.persist(new ApiRecordJournal(recordLogInfo.toString()));
+
             return wct!=null?createJson("successCalendarTimeId",wct.getId()+"",null,null):getErrorJson("Неизвестная ошибка при записи, обратитесь к программистам","SOME_UNKNOWN_ERROR");
 
 

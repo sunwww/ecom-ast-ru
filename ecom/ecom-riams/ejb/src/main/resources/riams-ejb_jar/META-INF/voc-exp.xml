@@ -105,6 +105,15 @@
                 queried="voc.voc_code like :querId or upper(voc.name) like upper(:query) "
         />
     </voc>
+    <voc id="vocMedServiceCode" type="NativeVocService">
+        <NativeVocService
+                from="VocMedService voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.name"
+                queried="voc.code like :querId or upper(voc.name) like upper(:query) "
+        />
+    </voc>
     <voc id="vocSocialStatusCode" type="NativeVocService">
         <NativeVocService
                 from="vocSocialStatus voc"

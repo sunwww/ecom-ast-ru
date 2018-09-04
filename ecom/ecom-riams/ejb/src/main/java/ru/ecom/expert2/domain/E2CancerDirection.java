@@ -46,6 +46,9 @@ public class E2CancerDirection extends BaseEntity {
     public void setMedService(String aMedService) {theMedService = aMedService;}
     /** Медицинская услуга */
     private String theMedService ;
+
+    public E2CancerDirection() {}
+    public E2CancerDirection (E2CancerEntry aCancerEntry) {theCancerEntry=aCancerEntry;}
     
 
 }

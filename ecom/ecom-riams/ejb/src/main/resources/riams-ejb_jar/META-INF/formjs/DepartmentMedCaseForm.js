@@ -208,7 +208,7 @@ function onPreSave(aForm,aEntity, aContext) {
 	if (aForm!=null && prev!=null 
 			&& aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/CantTransferReanimationToReanimation")) { 
 		var lpu = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.MisLpu,aForm.department); 
-		if (lpu.getIsNoOmc() && prev.department.getIsNoOmc())
+		if (true==lpu.getIsNoOmc() && true==prev.department.getIsNoOmc())
 			throw "Нельзя переводить из одной реанимации в другую реанимацию!";
 	}
 }

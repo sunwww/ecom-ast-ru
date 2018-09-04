@@ -30,7 +30,11 @@
         <form-bean name="e2_litteAmountMonthForm" type="ru.ecom.expert2.form.financeplan.MonthLittleAmountTableForm"/>
         <form-bean name="e2_vocKsgForm" type="ru.ecom.expert2.form.VocKsgForm"/>
         <form-bean name="e2_vocKsgKuksgForm" type="ru.ecom.expert2.form.E2KsgCoefficientHistoryForm"/>
+
         <form-bean name="e2_cancerEntryForm" type="ru.ecom.expert2.form.E2CancerEntryForm"/>
+        <form-bean name="e2_cancerDirectionForm" type="ru.ecom.expert2.form.E2CancerDirectionForm"/>
+        <form-bean name="e2_cancerRefusalForm" type="ru.ecom.expert2.form.E2CancerRefusalForm"/>
+        <form-bean name="e2_cancerDiagnosticForm" type="ru.ecom.expert2.form.E2CancerDiagnosticForm"/>
 
        <form-bean name="exp_vocKindForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationKindForm"/>
        <form-bean name="exp_vocCritForm" type="ru.ecom.mis.ejb.form.expert.voc.VocQualityEstimationCritForm"/>

@@ -1,8 +1,6 @@
 package ru.ecom.api.queue;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.web.util.Injection;
@@ -22,29 +20,36 @@ public class HospitalQueueResource {
     @GET
     @Path("emergencyQueue")
     @Produces(MediaType.APPLICATION_JSON)
-    /** Список пациентов, поступивших и состоящих в приемном отделении */
-    public String getEmergencyHospitalQueue(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("emergency") String isEmergency) throws NamingException, JSONException {
+    /** Список пациентов, поступивших и состоящих в приемном отделении
+     * token - Токен
+     * emergency - Экстренно / планово
+     * pigeonHole - код приемника */
+    public String getEmergencyHospitalQueue(@Context HttpServletRequest aRequest
+            , @QueryParam("token") String token
+            , @QueryParam("emergency") String isEmergency
+            ,@QueryParam("pigeonHole") String pigeonHole
+    ) throws NamingException, JSONException {
         ApiUtil.login(token,aRequest);
+        if (isEmergency==null) {isEmergency="";}
         String sql = " select sls.id, pat.lastname||' '|| substring (pat.firstname,1,1)||' '||substring (pat.middlename,1,1)" +
                 " ,cast(cast(current_timestamp - cast ((sls.dateStart||' '||sls.entranceTime) as timestamp) as time)as varchar(5)) as waitTime" +
                 " ,to_char(sls.dateStart,'dd.MM.yyyy')||' '||cast(sls.entranceTime as varchar(5)) as startDateTime"+
-                ",cast(extract(epoch from age(current_timestamp,cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount "+
+                ",cast(extract(epoch from age(current_timestamp,cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount " +
+                ", dep.name as departmentName"+
                 " from medcase sls " +
                 " left join patient pat on pat.id=sls.patient_id" +
                 " left join medcase slo on slo.parent_id = sls.id and slo.dtype='DepartmentMedCase'" +
+                " left join mislpu dep on dep.id=sls.department_id" +
+                " left join vocpigeonhole vph on vph.id=dep.pigeonhole_id " +
+                " left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id" +
                 " where sls.dtype='HospitalMedCase'" +
-                " and sls.deniedhospitalizating_id is null and slo.id is null" +
-                (isEmergency!=null&&isEmergency.equals("0")?" and (sls.emergency is null or sls.emergency='0')":" and sls.emergency='1'") +
+                " and (sls.deniedhospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') and slo.id is null" +
+                (isEmergency.equals("")?"":(isEmergency.equals("0")?" and (sls.emergency is null or sls.emergency='0')":" and sls.emergency='1'")) +
+                (pigeonHole!=null&&!pigeonHole.equals("")?" and vph.code='"+pigeonHole+"'":"") +
                 " order by sls.dateStart, sls.entranceTime ";
-        System.out.println(sql);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String[] fields = {"id","patientInfo","waitTime","startTime","minutes"};
-        String ret =service.executeNativeSqlGetJSON(fields,sql,null);
-        return ret;
-        /*JSONArray arr  = new JSONArray(ret);
-        if (arr.length()>0) {
-            return arr.getJSONObject(0);
-        }
-    return new JSONObject("{\"status\":\"error\"}");*/
+        String[] fields = {"id","patientInfo","waitTime","startTime","minutes", "departmentName"};
+        System.out.println("sql queue = "+sql);
+        return service.executeNativeSqlGetJSON(fields,sql,null);
     }
 }

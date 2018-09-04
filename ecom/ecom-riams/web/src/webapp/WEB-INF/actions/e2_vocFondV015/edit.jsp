@@ -26,6 +26,9 @@
                 <msh:row>
                     <msh:autoComplete property="stacProfile" vocName="vocE2MedHelpProfile" size="100"/>
                 </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="medSpecV021" vocName="vocE2FondV021" size="100"/>
+                </msh:row>
 
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />

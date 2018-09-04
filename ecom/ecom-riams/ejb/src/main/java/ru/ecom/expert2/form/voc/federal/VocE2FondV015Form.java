@@ -91,4 +91,12 @@ public class VocE2FondV015Form extends IdEntityForm {
     public void setPolicProfile(Long aPolicProfile) {thePolicProfile = aPolicProfile;}
     /** Профиль мед. помощи для подачи по поликлинике */
     private Long thePolicProfile ;
+
+    /** Мед. специальность V021 по профилю */
+    @Comment("Мед. специальность V021 по профилю")
+    @Persist
+    public Long getMedSpecV021() {return theMedSpecV021;}
+    public void setMedSpecV021(Long aMedSpecV021) {theMedSpecV021 = aMedSpecV021;}
+    /** Мед. специальность по профилю */
+    private Long theMedSpecV021 ;
 }
