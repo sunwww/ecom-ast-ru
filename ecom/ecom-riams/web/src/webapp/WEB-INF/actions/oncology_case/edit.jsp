@@ -2,9 +2,9 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
-
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
     <tiles:put name="style" type="string">
         <style>
             .borderedDiv {
@@ -35,10 +35,10 @@
 
                 <msh:autoComplete  property="vocOncologyReasonTreat" label="Повод обращения" vocName="vocOncologyReasonTreat" fieldColSpan="3" horizontalFill="true" />
                 <br><msh:checkBox property="distantMetastasis" label="Удаленные метастазы:"/><br>
-                <msh:autoComplete  property="stad" label="Стадия заболевания" vocName="vocOncologyN002" horizontalFill="true"/>
+                <msh:autoComplete  property="stad" label="Стадия заболевания" vocName="vocOncologyN002parent" horizontalFill="true" parentId="C16"/>
                 <msh:autoComplete  property="tumor" label="Значение Tumor" vocName="vocOncologyN003" fieldColSpan="3" horizontalFill="true" />
                 <msh:autoComplete  property="nodus" label="Значение Nodus" vocName="vocOncologyN004" fieldColSpan="3" horizontalFill="true" />
-                <msh:autoComplete  property="metastasis" label="Значение Metastasis" vocName="vocOncologyN005" fieldColSpan="3" horizontalFill="true" />
+                <msh:autoComplete  property="metastasis" label="Значение Metastasis" vocName="vocOncologyN005byparent" parentId="C16" fieldColSpan="3" horizontalFill="true" />
                 <msh:autoComplete  property="consilium" label="Сведения о проведении консилиума" vocName="vocOncologyConsilium" fieldColSpan="3" horizontalFill="true" />
                 <msh:autoComplete  property="typeTreatment" label="Тип услуги" vocName="vocOncologyN013" fieldColSpan="3" horizontalFill="true" />
                 <msh:autoComplete  property="surgTreatment" label="Тип хирургического лечения" vocName="vocOncologyN014" fieldColSpan="3" horizontalFill="true" />
@@ -154,6 +154,7 @@
 
             typeTreatmentAutocomplete.addOnChangeCallback(function(){
                 if(typeTreatment.value!=null && typeTreatment.value!=""){
+
                     OncologyService.getCode(typeTreatment.value,"vocOncologyN013", {
                         callback : function(code) {
                             disableAllElements();
@@ -175,6 +176,29 @@
                     });
                 }
             });
+
+            if(typeTreatment.value!=null && typeTreatment.value!=""){
+
+                OncologyService.getCode(typeTreatment.value,"vocOncologyN013", {
+                    callback : function(code) {
+                        disableAllElements();
+                        if(code=='1') {
+                            enableAutocomplete("surgTreatment");
+                        }
+                        if(code=='2'){
+                            enableAutocomplete("lineDrugTherapy");
+                            enableAutocomplete("cycleDrugTherapy");
+                            enableElement("sumDose");
+                        }
+                        if(code=='3') {
+                            enableElement("sumDose");
+                        }
+                        if(code=='3' || code=='4'){
+                            enableAutocomplete("typeRadTherapy");
+                        }
+                    }
+                });
+            }
 
             function saveDirection() {
                 var obj = {
@@ -262,6 +286,7 @@
             document.getElementById("cycleDrugTherapyName").className += " required";
             document.getElementById("sumDose").className += " required";
             document.getElementById("typeRadTherapyName").className += " required";
+            document.getElementById("typeDirectionName").className += " required";
 
 
         </script>
@@ -271,7 +296,7 @@
         <msh:ifFormTypeIsView formName="oncology_caseForm">
             <msh:sideMenu guid="sideMenu-123" title="Действия">
                 <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityEdit-oncology_case" name="Изменить" roles="/Policy/Mis/Oncology/Case/Edit" />
-                <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="deleteOncologyCase(${param.id})" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
+                <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-oncology_case" name="Удалить" roles="/Policy/Mis/Oncology/Case/Delete" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
