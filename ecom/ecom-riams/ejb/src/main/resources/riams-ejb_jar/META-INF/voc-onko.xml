@@ -17,7 +17,7 @@
 
     <voc id='vocOncologyN002' type='NativeVocService'>
         <NativeVocService
-                from = "voconcologyn002 voc"
+                from = "VocOncologyN002 voc"
                 nameId= "voc.id"
                 order = "voc.ds"
                 names = "voc.name"
@@ -323,6 +323,14 @@
                 names="voc.code||' '||voc.name"
         />
     </voc>
+    <voc id="vocOncologyDiagTypeCode" type="NativeVocService">
+        <NativeVocService
+                from="vocOncologyDiagType voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
     <voc id='vocOncologyConsilium' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
@@ -360,6 +368,25 @@
                 entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyTypeDirection'
                 names   = 'name'
                 queried = 'code,name'
+        />
+    </voc>
+
+
+
+    <voc id="vocOncologyTypeDirectionCode" type="NativeVocService">
+        <NativeVocService
+                from="vocOncologyTypeDirection voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+        />
+    </voc>
+    <voc id="vocOncologyMethodDiagTreatCode" type="NativeVocService">
+        <NativeVocService
+                from="vocOncologyMethodDiagTreat voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
         />
     </voc>
 </vocconfig>

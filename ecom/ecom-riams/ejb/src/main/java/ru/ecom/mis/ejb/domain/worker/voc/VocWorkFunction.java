@@ -128,4 +128,11 @@ public class VocWorkFunction extends VocBaseEntity{
 	public void setPromedCode_stac(String promedCode_stac) {
 		this.promedCode_stac = promedCode_stac;
 	}
+
+	/** Не подавать по ОМС */
+	@Comment("Не подавать по ОМС")
+	public Boolean getIsNoOmc() {return theIsNoOmc;}
+	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
+	/** Не подавать по ОМС */
+	private Boolean theIsNoOmc=false ;
 }

@@ -5,6 +5,8 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2CancerEntry;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoDateString;
+import ru.nuzmsh.forms.validator.validators.DateString;
 
 /**
  * Случай онкологического лечения
@@ -105,12 +107,12 @@ public class E2CancerEntryForm extends IdEntityForm {
     /** Тип услуги */
     private String theServiceType ;
 
-    /** Тип хиругрического лечения */
-    @Comment("Тип хиругрического лечения")
+    /** Тип хирургического лечения */
+    @Comment("Тип хирургического лечения")
     @Persist
     public String getSurgicalType() {return theSurgicalType;}
     public void setSurgicalType(String aSurgicalType) {theSurgicalType = aSurgicalType;}
-    /** Тип хиругрического лечения */
+    /** Тип хирургического лечения */
     private String theSurgicalType ;
 
     /** Линия лекарственной терапии */
@@ -136,5 +138,76 @@ public class E2CancerEntryForm extends IdEntityForm {
     public void setRadiationTherapy(String aRadiationTherapy) {theRadiationTherapy = aRadiationTherapy;}
     /** Тип лучевой терапии */
     private String theRadiationTherapy ;
+
+    //Поля чисто для формы
+
+    //Направление
+    @Comment("Дата направления")
+    @DateString @DoDateString
+    public String getDirectionDate() {return theDirectionDate;}
+    public void setDirectionDate(String aDirectionDate) {theDirectionDate = aDirectionDate;}
+    /** Дата направления */
+    private String theDirectionDate ;
+
+    /** Вид направление */
+    @Comment("Вид направление")
+    public String getDirectionType() {return theDirectionType;}
+    public void setDirectionType(String aDirectionType) {theDirectionType = aDirectionType;}
+    /** Вид направление */
+    private String theDirectionType ;
+
+    /** Метод диагностического исследования */
+    @Comment("Метод диагностического исследования")
+    public String getDirectionSurveyMethod() {return theDirectionSurveyMethod;}
+    public void setDirectionSurveyMethod(String aDirectionSurveyMethod) {theDirectionSurveyMethod = aDirectionSurveyMethod;}
+    /** Метод диагностического исследования */
+    private String theDirectionSurveyMethod ;
+
+    /** Медицинская услуга */
+    @Comment("Медицинская услуга")
+    public String getDirectionMedService() {return theDirectionMedService;}
+    public void setDirectionMedService(String aDirectionMedService) {theDirectionMedService = aDirectionMedService;}
+    /** Медицинская услуга */
+    private String theDirectionMedService ;
+
+    //Противопоказания
+    /** Код противопоказания */
+    @Comment("Код противопоказания")
+    public String getRefusalCode() {return theRefusalCode;}
+    public void setRefusalCode(String aRefusalCode) {theRefusalCode = aRefusalCode;}
+    /** Код противопоказания */
+    private String theRefusalCode ;
+
+    /** Дата регистрации противопоказания */
+    @Comment("Дата регистрации противопоказания")
+    @DateString @DoDateString
+    public String getRefusalDate() {return theRefusalDate;}
+    public void setRefusalDate(String aRefusalDate) {theRefusalDate = aRefusalDate;}
+    /** Дата регистрации противопоказания */
+    private String theRefusalDate ;
+
+    //Диагностика
+    /** Тип показателя */
+    @Comment("Тип показателя")
+    public String getDiagnosticType() {return theDiagnosticType;}
+    public void setDiagnosticType(String aDiagnosticType) {theDiagnosticType = aDiagnosticType;}
+    /** Тип показателя */
+    private String theDiagnosticType ;
+
+    /** Код показателя */
+    @Comment("Код показателя")
+    public String getDiagnosticCode() {return theDiagnosticCode;}
+    public void setDiagnosticCode(String aDiagnosticCode) {theDiagnosticCode = aDiagnosticCode;}
+    /** Код показателя */
+    private String theDiagnosticCode ;
+
+    /** Результат показателя */
+    @Comment("Результат показателя")
+    public String getDiagnosticResult() {return theDiagnosticResult;}
+    public void setDiagnosticResult(String aDiagnosticResult) {theDiagnosticResult = aDiagnosticResult;}
+    /** Результат показателя */
+    private String theDiagnosticResult ;
+
+
 
 }

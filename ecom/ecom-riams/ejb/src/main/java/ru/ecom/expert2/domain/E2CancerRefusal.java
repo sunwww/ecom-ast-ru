@@ -33,4 +33,7 @@ public class E2CancerRefusal extends BaseEntity {
     public void setDate(Date aDate) {theDate = aDate;}
     /** Дата регистрации противопоказания */
     private Date theDate ;
+
+    public E2CancerRefusal(){}
+    public E2CancerRefusal(E2CancerEntry aCancerEntry) {theCancerEntry=aCancerEntry;}
 }

@@ -15,6 +15,7 @@ import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -39,7 +40,7 @@ import java.util.*;
 @Remote(IExpert2ImportService.class)
 public class Expert2ImportServiceBean implements IExpert2ImportService {
     private final Logger log = Logger.getLogger(Expert2ImportServiceBean.class);
-    static EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    private static EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     private static String theXmlDir =config.get("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/riams/expert2xml");
 
     public String getConfigValue (String aKeyName, String aDefaultName) {
@@ -57,14 +58,28 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 i++;
                 if (i%100==0) {log.info("Обработано "+i+" записей");}
                 String num = el.getChildText("N_NPR");
+                String planHospDate = el.getChildText("DATE_1");
+                String directDate = el.getChildText("D_NPR");
                 String historyNumber = el.getChildText("NHISTORY");
                 String sql = "from E2Entry where listentry_id="+aListEntryId+" and historyNumber='"+historyNumber+"'";
                 List<E2Entry> list = theManager.createQuery(sql).getResultList();
+
                 for (E2Entry entry: list) {
+                    boolean persist = false;
+
                     if (StringUtil.isNullOrEmpty(entry.getTicket263Number())) {
                         entry.setTicket263Number(num);
-                        theManager.persist(entry);
+                        persist=true;
                     }
+                    if (null==entry.getPlanHospDate()) {
+                        entry.setPlanHospDate(DateFormat.parseSqlDate(planHospDate,"yyyy-MM-dd"));
+                        persist=true;
+                    }
+                    if (null==entry.getDirectDate()) {
+                        entry.setDirectDate(DateFormat.parseSqlDate(directDate,"yyyy-MM-dd"));
+                        persist=true;
+                    }
+                    if (persist)theManager.persist(entry);
                 }
             }
             return "success";
@@ -76,7 +91,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
     /** Загружаем MP файл (ответ от фонда)*/
 
-    HashMap<String, VocE2Sanction> sanctionMap = new HashMap<String, VocE2Sanction>();
+    private HashMap<String, VocE2Sanction> sanctionMap = new HashMap<String, VocE2Sanction>();
     public String importFondMPAnswer(String aMpFilename) {
         //filename вида *.mp *.mpi
         //String outputDir = unZip(aMpFilename);
@@ -98,59 +113,68 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
             E2Bill bill = theManager.find(E2Bill.class,theExpertService.getBillIdByDateAndNumber(nSchet,toFormat.format(fromFormat.parse(dSchet))));
-            bill.setStatus((VocE2BillStatus)getActualVocByCode(VocE2BillStatus.class,null,"code='PAID'"));
+            bill.setStatus(getActualVocByCode(VocE2BillStatus.class,null,"code='PAID'"));
 
             int i=0;
             log.info("Найдено "+zaps.size()+" записей. Обновляем!");
+            BigDecimal totalSum = new BigDecimal("0");
             for (Element zap:zaps) {
                 i++;
                 if (i%100==0) {log.info("Обработано "+i+" записей");}
-                Long entryId = Long.parseLong(zap.getChildText("N_ZAP"));
-                E2Entry entry= theManager.find(E2Entry.class,entryId);
-                if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
-            theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
-            entry.setBillNumber(nSchet);
-            entry.setBillDate(bill.getBillDate());
-            entry.setBill(bill);
+                Element zsl = zap.getChild("Z_SL");
+                List<Element> sl_s = zsl.getChildren("SL");
+                Element pac = zap.getChild("PACIENT");
+                for (Element sl: sl_s) {
+                    Long entryId = Long.parseLong(sl.getChildText("SL_ID"));
+                    E2Entry entry= theManager.find(E2Entry.class,entryId);
 
-            Element pac = zap.getChild("PACIENT");
+                    if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
+                    theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
+                    entry.setBillNumber(nSchet);
+                    entry.setBillDate(bill.getBillDate());
+                    entry.setBill(bill);
 
-            //Проставляем данные о мед. полисе
-            entry.setMedPolicyType(pac.getChildText("VPOLIS"));
-            if (pac.getChild("SPOLIS")!=null) {entry.setMedPolicySeries(pac.getChildText("SPOLIS"));} else {entry.setMedPolicySeries("");}
-                entry.setMedPolicyNumber(pac.getChildText("NPOLIS"));
-                entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
+                    //Проставляем данные о мед. полисе
+                    entry.setMedPolicyType(pac.getChildText("VPOLIS"));
+                    if (pac.getChild("SPOLIS")!=null) {entry.setMedPolicySeries(pac.getChildText("SPOLIS"));} else {entry.setMedPolicySeries("");}
+                    entry.setMedPolicyNumber(pac.getChildText("NPOLIS"));
+                    entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
 
-                //Добавляем сведения о санкциях
-                Element sluch = zap.getChild("SLUCH");
-                if (sluch.getChild("SANK_IT")!=null&&!sluch.getChildText("SANK_IT").equalsIgnoreCase("0.00")) { //
-                    List<Element> sanks =sluch.getChildren("SANK");
-                    for (Element sank: sanks) {
-                        String key = sank.getChildText("S_OSN") ;
-                        if (!sanctionMap.containsKey(key)) {
-                            sanctionMap.put(key,(VocE2Sanction)getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
+                    //Добавляем сведения о санкциях
+                    if (zsl.getChild("SANK_IT")!=null&&!zsl.getChildText("SANK_IT").equalsIgnoreCase("0.00")) { //
+                        List<Element> sanks =sl.getChildren("SANK");
+                        for (Element sank: sanks) {
+                            String key = sank.getChildText("S_OSN") ;
+                            if (!sanctionMap.containsKey(key)) {
+                                sanctionMap.put(key,(VocE2Sanction)getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
+                            }
+                            boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
+                            E2EntrySanction s = new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),isMain);theManager.persist(s);
                         }
-                        boolean isMain = sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true;
-                        E2EntrySanction s = new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),isMain);theManager.persist(s);
-                    }
-                    Element commentCalc = sluch.getChild("COMMENT_CALC");
-                    if (commentCalc!=null&&commentCalc.getChild("root")!=null) {
+                    /*    Element commentCalc = sluch.getChild("COMMENT_CALC");
+                        if (commentCalc!=null&&commentCalc.getChild("root")!=null) {
 
-                        Element ебаныйРусскийТэг = commentCalc.getChild("root");
-                        List<Element> ерт = ебаныйРусскийТэг.getChildren();
-                        StringBuilder commentError = new StringBuilder();
-                        for (Element еб:ерт) {
-                            commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
-                        }
-                        entry.setFondComment(commentError.toString());
+                            Element ебаныйРусскийТэг = commentCalc.getChild("root");
+                            List<Element> ерт = ебаныйРусскийТэг.getChildren();
+                            StringBuilder commentError = new StringBuilder();
+                            for (Element еб:ерт) {
+                                commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
+                            }
+                            entry.setFondComment(commentError.toString());
+                        } */
+                        entry.setIsDefect(true);
+                    } else {
+                        totalSum.add(entry.getCost());
+                        entry.setIsDefect(false);
+                        entry.setFondComment(null);
                     }
-                    entry.setIsDefect(true);
-                } else {
-                    entry.setIsDefect(false);
-                    entry.setFondComment(null);
+                    theManager.persist(entry);
                 }
-                theManager.persist(entry);
+
+
+
             }
+            bill.setSum(totalSum);
             theManager.persist(bill);
             log.info("Обновление закончено!");
 
@@ -187,6 +211,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             log.warn("Похоже, у нас Виндовс. Попробуем запустить 7-zip");
             sb = new StringBuilder().append("\"C:\\Program Files\\7-Zip\\7z.exe\" e ").append(theXmlDir).append("\\").append(aZipFile).append(" -o").append(outputDir);
             try {
+                System.out.println("sb="+sb+", dir="+outputDir);
                 Runtime.getRuntime().exec(sb.toString());
                 Thread.sleep(5000); //Заснем, чтобы точно всё распаковалось
             } catch (Exception e1) {log.warn("NE SMOG :-(");}

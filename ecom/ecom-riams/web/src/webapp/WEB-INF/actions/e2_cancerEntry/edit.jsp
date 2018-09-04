@@ -6,21 +6,34 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name="body" type="string">
-        <tags:E2ServiceAdd name="Diagnosis"/>
-        <msh:form action="/entityParentSaveGoParentView-e2_cancerEntry.do" defaultField="lastname" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
+        <msh:form action="/entityParentSaveGoParentView-e2_cancerEntry.do" defaultField="maybeCancer" guid="05d29ef5-3f3c-43b5-bc22-e5d5494c5762">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:hidden property="entry" />
             <msh:panel>
-     <msh:separator colSpan="4" label="Общие"/>
+
                 <msh:row>
-                <msh:checkBox property="maybeCancer"/>
+
                   </msh:row>
+                <msh:separator label="Направление" colSpan="4"/>
+                    <msh:row>
+                        <msh:checkBox property="maybeCancer"/>
+                    </msh:row>
+                    <msh:row>
+                        <msh:textField property="directionDate"/>
+                        <msh:autoComplete property="directionType" vocName="vocOncologyTypeDirectionCode" size="50"/>
+                    </msh:row>
+                    <msh:row>
+                        <msh:autoComplete property="directionSurveyMethod" vocName="vocOncologyMethodDiagTreatCode" size="50"/>
+                        <msh:autoComplete property="directionMedService" vocName="vocMedServiceCode" size="50"/>
+
+                    </msh:row>
+                <msh:separator colSpan="4" label="Общие"/>
                 <msh:row>
                   </msh:row>
                 <msh:row>
                     <msh:autoComplete property="occasion" vocName="vocOncologyReasonTreatCode" size="50"/>
-                    <msh:autoComplete property="stage" vocName="vocOncologyN012Code" size="50"/>
+                    <msh:autoComplete property="stage" vocName="vocOncologyN002Code" size="50"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="tumor" vocName="vocOncologyN003Code" size="50"/>
@@ -34,35 +47,73 @@
                     <msh:textField property="sod" />
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="consiliumResult" vocName="vocOncologyConsiliumCode"/>
+                    <msh:autoComplete property="consiliumResult" vocName="vocOncologyConsiliumCode" size="50"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="serviceType" vocName="vocOncologyN013Code"/>
-                    <msh:autoComplete property="surgicalType" vocName="vocOncologyN014Code"/>
+                    <msh:autoComplete property="serviceType" vocName="vocOncologyN013Code" size="50"/>
+                    <msh:autoComplete property="surgicalType" vocName="vocOncologyN014Code" size="50"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="drugLine" vocName="vocOncologyN015Code"/>
-                    <msh:autoComplete property="drugCycle" vocName="vocOncologyN016Code"/>
+                    <msh:autoComplete property="drugLine" vocName="vocOncologyN015Code" size="50"/>
+                    <msh:autoComplete property="drugCycle" vocName="vocOncologyN016Code" size="50"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="radiationTherapy" vocName="vocOncologyN017Code"/>
+                    <msh:autoComplete property="radiationTherapy" vocName="vocOncologyN017Code" size="50"/>
                 </msh:row>
-
+                <msh:separator label="Противопоказания" colSpan="4"/>
+                <msh:row>
+                <msh:textField property="refusalDate"/>
+                <msh:autoComplete property="refusalCode" vocName="vocOncologyN001Code" size="50"/>
+                </msh:row>
+                <msh:separator label="Диагностика" colSpan="4"/>
+                <msh:row>
+                <msh:autoComplete property="diagnosticType" vocName="vocOncologyDiagTypeCode" size="50"/>
+                <msh:autoComplete property="diagnosticCode" vocName="vocOncologyN007Code" size="50"/>
+                </msh:row> <msh:row>
+                <msh:autoComplete property="diagnosticResult" vocName="vocOncologyN008Code" size="50"/>
+                </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
             </msh:panel>
         </msh:form>
-        <ecom:webQuery name="directions" nativeSql="select link.id, vd.code||' '||vd.name as name, coalesce(link.value, vd.value) as value
-from E2CoefficientPatientDifficultyEntryLink link
-left join VocE2CoefficientPatientDifficulty vd on vd.id=link.difficulty_id
-where link.entry_id=${param.id}"/>
-        Направления
-        <msh:table  idField="1" name="directions" action="/javascript:void()" noDataMessage="Нет уровней сложности">
-            <msh:tableColumn columnName="ИД" property="1"/>
-            <msh:tableColumn columnName="Уровень сложности" property="2"/>
-            <msh:tableColumn columnName="Коэффициент" property="3"/>
-        </msh:table>
+<msh:ifFormTypeIsView formName="e2_cancerEntryForm">
+    <msh:section title="Направления">
+        <ecom:webQuery name="directionList" nativeSql="select d.id, d.date, d.medservice
+        ,d.surveymethod
+        from e2cancerdirection d
+  where d.cancerentry_id=${param.id} "/>
+        <msh:tableNotEmpty  name="directionList"  >
+            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDirection.do" idField="1" name="directionList" action="entityEdit-e2_cancerDirection.do" >
+                <msh:tableColumn columnName="Дата направления" property="2"/>
+                <msh:tableColumn columnName="Услуга" property="3"/>
+                <msh:tableColumn columnName="Метод" property="4"/>
+            </msh:table>
+        </msh:tableNotEmpty>
+    </msh:section>
+    <msh:section title="Противопоказания">
+        <ecom:webQuery name="refusalList" nativeSql="select d.id, d.date, d.code
+        from e2cancerrefusal d
+  where d.cancerentry_id=${param.id} "/>
+        <msh:tableNotEmpty name="refusalList"  >
+            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerRefusal.do" idField="1" name="refusalList" action="entityEdit-e2_cancerRefusal.do" >
+                <msh:tableColumn columnName="Дата отказа" property="2"/>
+                <msh:tableColumn columnName="Код" property="3"/>
+            </msh:table>
+        </msh:tableNotEmpty>
+    </msh:section>
 
-
+    <msh:section title="Диагностика">
+        <ecom:webQuery name="diagnosticList" nativeSql="select d.id, d.type, d.code, d.result
+        from e2cancerdiagnostic d
+  where d.cancerentry_id=${param.id} "/>
+        <msh:tableNotEmpty  name="diagnosticList"  >
+            <msh:table deleteUrl="entityParentDeleteGoParentView-e2_cancerDiagnostic.do" idField="1" name="diagnosticList" action="entityEdit-e2_cancerDiagnostic.do" >
+                <msh:tableColumn columnName="Тип" property="2"/>
+                <msh:tableColumn columnName="Код" property="3"/>
+                <msh:tableColumn columnName="Результат" property="4"/>
+            </msh:table>
+        </msh:tableNotEmpty>
+    </msh:section>
+</msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="title" type="string">
         <ecom:titleTrail mainMenu="Expert2" beginForm="e2_cancerEntryForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
@@ -72,20 +123,28 @@ where link.entry_id=${param.id}"/>
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
 
                 <script type="text/javascript">
+                    diagnosticTypeAutocomplete.addOnChangeCallback(function() {
+                        if ($('diagnosticType').value=="1") {
+                            diagnosticCodeAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN007Code');
+                            diagnosticResultAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN008Code');
+                        } else if ($('diagnosticType').value=="2") {
+                            diagnosticCodeAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN010Code');
+                            diagnosticResultAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN011Code');
+                        }
+                    });
+                    //if diagnosticType==1 DiagnosticCode = vocOncologyN007Code , DiagnosticResult = VocOncologyN008Code
+                    //if diagnosticType==2 DiagnosticCode = VocOncologyN010Code , DiagnosticResult = VocOncologyN011Code
+                </script>
 
-
-            function gotoMedcase() {
-                window.open('entitySubclassView-mis_medCase.do?id='+$('externalId').value);
-            }
-
-        </msh:ifFormTypeIsView>
+          </msh:ifFormTypeIsView>
 
     </tiles:put>
 
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="e2_cancerEntryForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
             <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
-                <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
+                <msh:sideLink params="id" action="/entityParentEdit-e2_cancerEntry" name="Изменить" roles="/Policy/E2/Edit" />
+                <msh:sideLink params="id" action="/entityParentDelete-e2_cancerEntry" name="Удалить" roles="/Policy/E2/Delete" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>

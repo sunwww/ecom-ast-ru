@@ -3,20 +3,12 @@ package ru.ecom.expert2.form;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2Entry;
-import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
-import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV006;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV008;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV009;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV010;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.TimeString;
-
-import javax.persistence.OneToOne;
 
 @EntityForm
 @EntityFormPersistance(clazz = E2Entry.class)
@@ -964,6 +956,13 @@ public class E2EntryForm extends IdEntityForm {
     public void setIsCancer(Boolean aIsCancer) {theIsCancer = aIsCancer;}
 
 
+    /** Специальность врача по фонду V021 */
+    @Comment("Специальность врача по фонду V021")
+    @Persist
+    public Long getFondDoctorSpecV021() {return theFondDoctorSpecV021;}
+    public void setFondDoctorSpecV021(Long aFondDoctorSpecV021) {theFondDoctorSpecV021 = aFondDoctorSpecV021;}
+    /** Специальность врача по фонду */
+    private Long theFondDoctorSpecV021 ;
 
 
 

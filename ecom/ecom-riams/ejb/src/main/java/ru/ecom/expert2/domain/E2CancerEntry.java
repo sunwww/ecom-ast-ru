@@ -89,11 +89,11 @@ public class E2CancerEntry extends BaseEntity {
   /** Тип услуги */
   private String theServiceType ;
   
-  /** Тип хиругрического лечения */
-  @Comment("Тип хиругрического лечения")
+  /** Тип хирургического лечения */
+  @Comment("Тип хирургического лечения")
   public String getSurgicalType() {return theSurgicalType;}
   public void setSurgicalType(String aSurgicalType) {theSurgicalType = aSurgicalType;}
-  /** Тип хиругрического лечения */
+  /** Тип хирургического лечения */
   private String theSurgicalType ;
   
   /** Линия лекарственной терапии */
@@ -117,5 +117,7 @@ public class E2CancerEntry extends BaseEntity {
   /** Тип лучевой терапии */
   private String theRadiationTherapy ;
 
+  public E2CancerEntry(){}
+  public E2CancerEntry(E2Entry aEntry) {theEntry=aEntry;}
 
 }

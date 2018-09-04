@@ -38,4 +38,7 @@ public class E2CancerDiagnostic extends BaseEntity {
     /** Результат показателя */
     private String theResult ;
 
+    public E2CancerDiagnostic(){}
+    public E2CancerDiagnostic(E2CancerEntry aCancerEntry){theCancerEntry=aCancerEntry;}
+
 }

@@ -22,7 +22,7 @@
         <msh:hideException>
             <ecom:webQuery name="entryList" nativeSql="select id, name, startDate, finishDate, createDate||' '|| createTime
             ,case when isClosed='1' then 'color:blue' else '' end as color
-             from e2listentry where isDeleted='0' or isDeleted is null order by createDate,createtime "/>
+             from e2listentry where isDeleted='0' or isDeleted is null order by createDate desc,createtime desc "/>
             <msh:section title='Результат поиска'>
                 <msh:table  name="entryList" action="entityView-e2_entryList.do" idField="1" disableKeySupport="true" styleRow="6">
                     <msh:tableColumn columnName="Название" property="2" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />

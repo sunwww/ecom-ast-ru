@@ -236,6 +236,10 @@
                     <msh:autoComplete property="fondDoctorSpec" size="50" vocName="vocE2FondV015"/>
                     <msh:autoComplete property="medHelpProfile" size="50" vocName="vocE2MedHelpProfile"/>
                 </msh:row><msh:row>
+            </msh:row><msh:row>
+                    <msh:autoComplete property="fondDoctorSpecV021" size="50" vocName="vocE2FondV021"/>
+
+                </msh:row><msh:row>
                 <msh:autoComplete property="vidSluch" size="50" vocName="vocE2VidSluch"/>
                 <msh:autoComplete property="visitPurpose" size="50" vocName="vocE2FondV025"/>
 
@@ -333,6 +337,7 @@
                     <msh:tableColumn columnName="Доп. код" property="5"/>
                 </msh:table>
             </msh:section>
+
             <msh:separator colSpan="4" label="Услуги по случаю"/>
                 <ecom:webQuery name="servicesList" nativeSql="select ms.id, vms.code ||' '|| coalesce(vms.name,'Нет наименования'), ms.serviceDate as name from entryMedService ms left join VocMedService vms on vms.id=ms.medservice_id
                      where ms.entry_id=${param.id}"/>
@@ -354,17 +359,17 @@ where link.entry_id=${param.id}"/>
             <msh:tableColumn columnName="Коэффициент" property="3"/>
         </msh:table>
 
-            <msh:separator colSpan="4" label="Случаи онкологического лечения"/>
+            <msh:section title="Случаи онкологического лечения" createUrl="entityParentPrepareCreate-e2_cancerEntry.do?id=${param.id}">
             <ecom:webQuery name="cancerEntry" nativeSql="select cancer.id, cancer.serviceType
 from E2CancerEntry cancer
 where cancer.entry_id=${param.id}"/>
-            <msh:table  idField="1" name="cancerEntry" action="entityEdit-e2_cancerEntry.do" noDataMessage="Нет онкослучаев">
+            <msh:table idField="1" name="cancerEntry" action="entityEdit-e2_cancerEntry.do" noDataMessage="Нет онкослучаев">
                 <msh:tableColumn columnName="ИД" property="1"/>
-                <msh:tableColumn columnName="Уровень сложности" property="2"/>
+                <msh:tableColumn columnName="тип услуги" property="2"/>
                 <msh:tableColumn columnName="Коэффициент" property="3"/>
             </msh:table>
-
-            <msh:separator colSpan="4" label="Дефекты оплаты"/>
+            </msh:section>
+            <msh:section title="Дефекты оплаты">
             <ecom:webQuery name="sanctionList" nativeSql="select es.dopcode , vs.osn|| ' '||vs.name
             , case when es.ismainDefect='1' then 'background-color:red' else '' end as f3_style
   from e2entrysanction es
@@ -376,7 +381,7 @@ where cancer.entry_id=${param.id}"/>
                 <msh:tableColumn columnName="Дефект" property="2"/>
                 </msh:table>
             </msh:tableNotEmpty>
-
+            </msh:section>
         </msh:ifFormTypeIsView>
 
     </tiles:put>

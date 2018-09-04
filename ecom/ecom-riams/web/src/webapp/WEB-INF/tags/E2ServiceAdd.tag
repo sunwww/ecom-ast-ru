@@ -47,6 +47,9 @@
                 </tr>
                 <msh:autoComplete property="${name}MedService" vocName="vocMedService" size="50" label="Добавить услугу"  horizontalFill="true" fieldColSpan="3"/>
                 <tr>
+                  <msh:textField property="${name}MedServiceDate" label="Дата услуги"/>
+                </tr>
+                <tr>
                     <td colspan="4"><label><input type="checkbox" name="${name}IsMainService" id="${name}IsMainService" />Услуга является главной в случае?</label></td>
                 </tr>
 
@@ -66,6 +69,7 @@ var the${name}AddServiceDialog = new msh.widget.Dialog($('${name}AddServiceDialo
 var the${name}someData;
 // Показать
 function show${name}AddServiceDialog() {
+    new dateutil.DateField($('${name}MedServiceDate'));
     the${name}AddServiceDialog.show() ;
 
 }

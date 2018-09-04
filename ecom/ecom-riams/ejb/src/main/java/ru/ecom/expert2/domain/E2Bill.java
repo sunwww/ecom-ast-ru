@@ -7,6 +7,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
@@ -41,4 +42,11 @@ public class E2Bill extends BaseEntity {
     public void setCompany(RegInsuranceCompany aCompany) {theCompany = aCompany;}
     /** Страховая компания */
     private RegInsuranceCompany theCompany ;
+
+    /** Сумма счета */
+    @Comment("Сумма счета")
+    public BigDecimal getSum() {return theSum;}
+    public void setSum(BigDecimal aSum) {theSum = aSum;}
+    /** Сумма счета */
+    private BigDecimal theSum ;
 }
