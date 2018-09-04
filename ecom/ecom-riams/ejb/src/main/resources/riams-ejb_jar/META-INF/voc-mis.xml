@@ -606,7 +606,7 @@ where wf.dtype='PersonalWorkFunction' -->
 				join="left join privilege p on p.person_id=cp.patient_id and (p.enddate >= current_date or p.enddate is null) or p.person_id is null
 				      left join vocprivilegecategory vpc on vpc.id = p.category_id"
 				order="p.id"
-				names= "case when p.serialdoc is null and p.category_id is null then p.numberdoc else p.serialdoc||' '||p.numberdoc||' ('||vpc.name||')' end"
+				names= "max(case when p.serialdoc is null and p.category_id is null then p.numberdoc else p.serialdoc||' '||p.numberdoc||' ('||vpc.name||')' end)"
 				queried="upper(p.numberdoc) like upper(:query)"
 				groupBy="p.id,vpc.name"
 		/>
