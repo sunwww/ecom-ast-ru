@@ -1,5 +1,9 @@
 package ru.ecom.mis.web.dwr.disability;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -105,11 +109,10 @@ public class DisabilityServiceJs {
 		/*
 		result respnsecode status disabilitydocument, requestcode requstdate requesttime requesttype request_id
 		 */
-
 	}
+
 	public String exportDisabilityDoc(String aDocumentId, HttpServletRequest aRequest)
 			throws NamingException, SQLException, JSONException {
-
 
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
@@ -241,19 +244,61 @@ public class DisabilityServiceJs {
 				"and dr.dateto =  (select max(dateto) from disabilityrecord  where disabilitydocument_id = "+aDocumentId+")";
 
 		JSONObject body  = new JSONObject(service.executeSqlGetJsonObject(sql1));
-
 		JSONArray arr = new JSONArray(service.executeSqlGetJson(sql2,10));
+
 		body.put("treats",arr);
+		arr = new JSONArray(service.executeSqlGetJson(close, 10));
+		body.put("close", arr);
 
-		arr = new JSONArray(service.executeSqlGetJson(close,10));
-		body.put("close",arr);
+		int code=0;
+		JsonParser parser =new JsonParser();
+		JsonObject jparsr = parser.parse(body.toString()).getAsJsonObject();
+		JsonArray treats = jparsr.getAsJsonArray("treats");
 
-		IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
-		String endpoint = service1.getSoftConfigValue("FSS_PROXY_SERVICE","null");
+		String isclose="0";
+		if(jparsr.has("is_close")){
+			isclose =jparsr.get("is_close").toString();
+		}
 
-		System.out.println(endpoint);
-		String json = cretePostRequest(endpoint,"api/sign/exportDisabilityDocument",body.toString(),"application/json");
+		for (JsonElement el : treats) {
+			JsonObject jtreat = el.getAsJsonObject();
+			if(!jtreat.has("signdoc")){
+				code=1;
+			}
+			if(jtreat.has("treat_chairman_role") && !jtreat.has("signvk")){
+				code=2;
+			}
+		}
 
+		JsonArray closes = jparsr.getAsJsonArray("close");
+		if(isclose.equals("1") && closes.size()==0){
+			code=3;
+		}
+		String json="";
+
+		if(code==0){
+			IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
+			String endpoint = service1.getSoftConfigValue("FSS_PROXY_SERVICE", "null");
+			System.out.println(endpoint);
+			json = cretePostRequest(endpoint, "api/sign/exportDisabilityDocument", body.toString(), "application/json");
+		}
+
+		//TODO RESPONSE BUILDER NEEDED
+		if(code==1){
+			json= new JSONObject()
+					.put("code","1")
+					.put("error","Не найдена подпись врача в периоде").toString();
+		}
+		if(code==2){
+			json= new JSONObject()
+					.put("code","2")
+					.put("error","Не найдена подпись вк в периоде").toString();
+		}
+		if(code==3){
+			json= new JSONObject()
+					.put("code","3")
+					.put("error","Не найдена подпись врача в закрытии").toString();
+		}
 		return json;
 	}
 

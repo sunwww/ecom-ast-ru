@@ -38,6 +38,8 @@
     function save${name}Oncology() {
         document.getElementById('iframe').contentDocument.forms["mainForm"].submit();
         the${name}OncologyDialog.hide();
+        var message ="Успешно создано!";
+        showToastMessage(message,null,true);
     }
     // инициализация диалогового окна
     function init${name}Oncology() {

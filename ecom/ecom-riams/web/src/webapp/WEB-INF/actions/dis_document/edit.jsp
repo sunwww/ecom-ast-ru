@@ -4,7 +4,11 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%
+    String username = LoginInfo.find(request.getSession()).getUsername();
+    request.setAttribute("username", username);
+%>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
     <tiles:put name="style" type="string">
         <style type="text/css">
@@ -288,7 +292,7 @@
             </msh:ifInRole>
             <tags:fssJournal name="Journal" documentId="${param.id}"/>
             <tags:fssExport name="Export" documentId="${param.id}"/>
-            <tags:fssSign name="Journal"/>
+            <tags:fssSign name="Journal" username="${username}"/>
         </msh:ifFormTypeIsView>
     </tiles:put>
     <tiles:put name="title" type="string">
@@ -297,14 +301,12 @@
     <tiles:put name="javascript" type="string">
         <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
         <script type="text/javascript">
-
             function printDoc(aTemplate) {
                 DisabilityService.getPrefixForLN({
                     callback: function(aResult) {
                         document.location.href = "print-disability_"+aTemplate+aResult+".do?s=DisabilityService&m=printDocument&id=${param.id}";
                     }
                 }) ;
-
             }
         </script>
         <msh:ifFormTypeIsView formName="dis_documentForm">

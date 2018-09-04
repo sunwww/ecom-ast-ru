@@ -4,6 +4,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="username" required="true" description="Пользователь" %>
 
 <style type="text/css">
     #${name}fssSign {
@@ -44,9 +45,8 @@
     // Показать
     function show${name}fssSign(recordid,doctype) {
         the${name}fssSign.show();
-        //TODO LINK
         $('${name}fssSignText')
-            .innerHTML="<iframe src='/riams/api/disabilitySign/sendDisabilityRecordJson?disRecId="+recordid+"&docType="+doctype+"' width='600' height='500' ></iframe>";
+            .innerHTML="<iframe src='/riams/api/disabilitySign/sendDisabilityRecordJson?disRecId="+recordid+"&docType="+doctype+"&username=${username}' width='600' height='500' ></iframe>";
     }
 
     // Отмена

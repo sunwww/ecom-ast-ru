@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -25,27 +24,19 @@ import static ru.ecom.api.util.ApiUtil.cretePostRequest;
 import static ru.ecom.api.util.ApiUtil.login;
 
 /** Created by rkurbanov on 04.05.2018. */
+
 @Path("/disabilitySign")
 public class DisabilitySign {
 
-    @Deprecated
-    private String getEndpoint(@Context HttpServletRequest aRequest) throws NamingException {
-
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list= service.executeNativeSql("select keyvalue from softconfig  where key = 'FSS_PROXY_SERVICE'");
-        String endpoint="";
-        for (WebQueryResult wqr:list) {
-            endpoint= wqr.get1().toString();
-        }
-        return endpoint;
-    }
-
-    @Deprecated
+    private static String usename;
+    //TODO логин экспортировавшего пользователя
     @GET
     @Path("exportDisabilityDocument")
     @Produces("application/json")
-    public String exportDisabilityDocument(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken,
-                                           @QueryParam("disDoc") String disDoc) throws SQLException, NamingException, JSONException {
+    public String exportDisabilityDocument(@Context HttpServletRequest aRequest,
+                                           @WebParam(name="token") String aToken,
+                                           @QueryParam("disDoc") String disDoc)
+            throws SQLException, NamingException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
         DisabilityServiceJs serviceJs = new DisabilityServiceJs();
@@ -53,25 +44,24 @@ public class DisabilitySign {
     }
 
 
-
     /**
      * Принимает JSON от удаленного сервиса
      * @param aRequest
-     * @param data
+     * @param json
      */
     @POST
     @Path("getJson")
-    public void getJson(@Context HttpServletRequest aRequest, String data) {
+    public void getJson(@Context HttpServletRequest aRequest,
+                        String json) {
 
         try {
-            login("rkurbanov", aRequest);
+            login("66405d38-a173-4cb7-a1b6-3ada51c16ac5", aRequest);
             JsonParser parser = new JsonParser();
-            JsonObject jparse = parser.parse(data).getAsJsonObject();
+            JsonObject jparse = parser.parse(json).getAsJsonObject();
 
             DisabilityDocument disabilityDocument = new DisabilityDocument();
             disabilityDocument.setId(Long.parseLong(get(jparse, "DisabilityId")));
 
-            System.out.println("FROM XML>>>" + data);
             ru.ecom.mis.ejb.domain.disability.DisabilitySign disabilitySign = new ru.ecom.mis.ejb.domain.disability.DisabilitySign();
             disabilitySign.setDisabilityDocumentId(disabilityDocument);
             disabilitySign.setCertificate(get(jparse, "Certificate"));
@@ -80,8 +70,7 @@ public class DisabilitySign {
             disabilitySign.setDigestValue(get(jparse, "DigestValue"));
             disabilitySign.setSignatureValue(get(jparse, "SignatureValue"));
             disabilitySign.setElnNumber(get(jparse, "ELN"));
-            disabilitySign.setExport(false);
-            disabilitySign.setNoactual(false);
+            disabilitySign.setСreateUsername(usename);
 
             if (get(jparse, "AnotherId") != null && !get(jparse, "AnotherId").equals("")) {
                 disabilitySign.setExternalId(Long.valueOf(get(jparse, "AnotherId")));
@@ -90,24 +79,12 @@ public class DisabilitySign {
             try {
                 IApiService service = Injection.find(aRequest).getService(IApiService.class);
                 service.persistEntity(disabilitySign);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-
-    private String get(JsonObject obj, String name){
-        if(obj.has(name)){
-            System.out.println("has "+name);
-            if(obj!=null && obj.get(name)!=null && !obj.get(name).getAsString().equals("")){
-                return obj.get(name).getAsString();
-            }
-        }
-        return null;
     }
 
     /**
@@ -125,10 +102,10 @@ public class DisabilitySign {
     @GET
     @Path("/sendDisabilityRecordJson")
     @Produces("text/html")
-    //@Produces(MediaType.APPLICATION_JSON)
     public String getTest(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken,
                           @QueryParam("disRecId") String disRecId,
                           @QueryParam("docType") String docType,
+                          @QueryParam("username") String username,
                           @Context HttpServletResponse response) throws NamingException, SQLException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
@@ -189,14 +166,12 @@ public class DisabilitySign {
         response.setHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS, HEAD");
 
         String json = service.executeSqlGetJson(sql,10,"data").toString();
-        System.out.println(json);
-
+        usename = username;
         return cretePostRequest(getEndpoint(aRequest),"api/sign/getJSON",json,"text/html");
     }
 
 
-
-    @GET
+    /*@GET
     @Path("/executeSQL")
     @Produces(MediaType.APPLICATION_JSON)
     public String executeSQL(@QueryParam("sql") String sql,
@@ -206,5 +181,25 @@ public class DisabilitySign {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         return service.executeSqlGetJson(sql,limit).toString();
+    }*/
+
+    private String getEndpoint(@Context HttpServletRequest aRequest) throws NamingException {
+
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list= service.executeNativeSql("select keyvalue from softconfig  where key = 'FSS_PROXY_SERVICE'");
+        String endpoint="";
+        for (WebQueryResult wqr:list) {
+            endpoint= wqr.get1().toString();
+        }
+        return endpoint;
+    }
+
+    private String get(JsonObject obj, String name){
+        if(obj.has(name)){
+            if(obj!=null && obj.get(name)!=null && !obj.get(name).getAsString().equals("")){
+                return obj.get(name).getAsString();
+            }
+        }
+        return null;
     }
 }

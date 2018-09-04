@@ -49,8 +49,14 @@
         $('${name}fssExportResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
         the${name}fssExport.show();
         DisabilityService.exportDisabilityDoc('${documentId}', {
+
             callback: function(json) {
                 json  = JSON.parse(json);
+                if(json.error!=null && json.code!=null){
+
+                    $('${name}fssExportResultDiv').innerHTML=json.error+"<br> Обновите страницу и попробуйте еще раз";
+
+                }else {
                 var resultHTML="<p class='#res'>" +
                     "<span style='font-size: medium; color: #2d2d2b; '>" +
                     "#TEXT" +
@@ -67,7 +73,6 @@
                         });
 
                 }else {
-                    alert(json.hash);
                     resultHTML = resultHTML.replace("#TEXT","ЭЛН успешно выгружен");
                     DisabilityService.updateInformationELN('${documentId}',json.hash, {
                         callback: function(json) {
@@ -76,6 +81,7 @@
                 }
 
                 $('${name}fssExportResultDiv').innerHTML=resultHTML;
+                }
             }
         });
     }
