@@ -3,7 +3,13 @@ package ru.ecom.mis.ejb.domain.disability;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * Подпись нетрудоспособности
@@ -25,6 +31,12 @@ public class DisabilitySign extends BaseEntity {
     private String certificate;
     private Boolean isExport=false;
     private Boolean isNoactual=false;
+    private Timestamp dateCreate;
+    private String сreateUsername;
+
+    public DisabilitySign() {
+        this.dateCreate = new Timestamp(System.currentTimeMillis());
+    }
 
     @Comment("Ссылка на документ")
     @OneToOne
@@ -107,4 +119,19 @@ public class DisabilitySign extends BaseEntity {
         isNoactual = noactual;
     }
 
+    @Comment("Время создания")
+    public Timestamp getDateCreate() {
+        return dateCreate;
+    }
+    public void setDateCreate(Timestamp dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    @Comment("Пользователь создавший запись")
+    public String getСreateUsername() {
+        return сreateUsername;
+    }
+    public void setСreateUsername(String сreateUsername) {
+        this.сreateUsername = сreateUsername;
+    }
 }
