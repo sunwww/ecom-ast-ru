@@ -4,4 +4,5 @@ package ru.ecom.api;
 
 public interface IApiService {
     void persistEntity(Object object);
+    Object persistEntityObj(Object object);
 }

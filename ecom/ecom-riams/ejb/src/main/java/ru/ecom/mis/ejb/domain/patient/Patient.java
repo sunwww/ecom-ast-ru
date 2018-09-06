@@ -1000,4 +1000,14 @@ public class Patient extends BaseEntity{
 	/** Цветовая характеристика */
 	private Boolean theColorType;
 
+	private PatientFond patientFond;
+
+	@Comment("Актуальая проверка по фонду")
+	@OneToOne
+	public PatientFond getPatientFond() {
+		return patientFond;
+	}
+	public void setPatientFond(PatientFond patientFond) {
+		this.patientFond = patientFond;
+	}
 }

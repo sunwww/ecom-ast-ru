@@ -1,10 +1,12 @@
 package ru.ecom.api;
 
+import ru.ecom.api.fondCheck.FondCheck;
 import ru.ecom.api.medcaseMedpolicy.MedcaseMedpolicy;
 import ru.ecom.api.queue.HospitalQueueResource;
 import ru.ecom.api.queue.TicketQueueResource;
 
 import ru.ecom.api.disabilitySign.DisabilitySign;
+import ru.ecom.api.sсheduler.ScheduleTasks;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -24,6 +26,8 @@ public class ApiApplication extends Application {
         set.add(TicketQueueResource.class);
         set.add(DisabilitySign.class);
         set.add(MedcaseMedpolicy.class);
+        set.add(FondCheck.class);
+        set.add(ScheduleTasks.class);
         return set;
     }
 }
