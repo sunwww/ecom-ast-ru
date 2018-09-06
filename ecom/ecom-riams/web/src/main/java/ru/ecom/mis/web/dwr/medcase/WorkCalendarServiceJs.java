@@ -1293,8 +1293,9 @@ public class WorkCalendarServiceJs {
 			sql.append(",cast('-' as varchar(1)) as emp1,cast('-' as varchar(1)) as emp2");
 		}
 
-		sql.append(" ,case when vis.username is not null then vis.username||' '||to_char(vis.createdate,'dd.MM.yyyy')||' '||cast(vis.createtime as varchar(5)) ") ;
-		sql.append(" else case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5)) end end as f19_prerecord_info") ;
+		sql.append(" ,case when vis.username is not null then case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5))||cast(' (предв. зап.)' as char(15)) else '' end") ;
+		sql.append(" ||' '||vis.username||' '||to_char(vis.createdate,'dd.MM.yyyy')||' '||cast(vis.createtime as varchar(5))||cast(' (напр.)' as char(9)) ");
+		sql.append(" else case when wct.createdateprerecord is not null then wct.createprerecord||' '||to_char(wct.createdateprerecord,'dd.MM.yyyy')||' '||cast(wct.createtimePrerecord as varchar(5))||cast(' (предв. зап.)' as char(15)) end end as f19_prerecord_info") ;
 		sql.append(" from WorkCalendarTime wct") ;
 		sql.append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id");
 		sql.append(" left join MedCase vis on vis.id=wct.medCase_id");
