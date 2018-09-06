@@ -23,6 +23,7 @@ import java.util.List;
 public class UserMessageTag  extends SimpleTagSupport {
 
     public void doTag() throws JspException, IOException {
+
         PageContext ctx = (PageContext) getJspContext() ;
         List<ClaimMessage> claim_messages = ClaimMessage.findInRequest(ctx.getRequest()) ;
         if(claim_messages!=null) {
@@ -92,22 +93,22 @@ public class UserMessageTag  extends SimpleTagSupport {
 
 			sql.append("function quickDelMessage(e){ ");
 			sql.append("if(e.keyCode=='27'){" +
-					"document.getElementsByClassName('jq-toast-single jq-has-icon jq-icon-info')[0].style.display = 'none';" +
+					"document.getElementsByClassName('jq-toast-wrap')[0].style.display = 'none';" +
 					"document.getElementById(\"fadeEffect\").remove();}}");
 			sql.append(" addEventListener(\"keydown\", quickDelMessage);");
 			sql.append("</script>");
 			out.println(sql.toString());
 			UserMessage.setInRequest(ctx.getRequest(),null);
         }
-        
     }
+
     private String toHtmlString(String aString) {
+
     	aString=aString.replaceAll("\n"," ");
     	aString=aString.replaceAll("\r"," ");
     	aString=aString.replaceAll("\t"," ");
     	aString=aString.replaceAll("\"","\\\"");
     	aString=aString.replaceAll("\'","\\\\'");
-
 
     	return aString;
 	}
