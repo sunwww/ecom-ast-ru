@@ -1,18 +1,12 @@
 package ru.ecom.mis.ejb.form.disability;
 
-import java.sql.Date;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
 import ru.ecom.mis.ejb.domain.disability.DisabilityDocument;
 import ru.ecom.mis.ejb.form.disability.interceptors.DocumentPreCreate;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
@@ -36,7 +30,18 @@ import ru.nuzmsh.forms.validator.validators.Required;
         @AParentEntityFormInterceptor(DocumentPreCreate.class)
 )
 public class DisabilityDocumentForm extends IdEntityForm{
-	
+
+
+	private Boolean isELN;
+	@Comment("Электронный")
+	@Persist
+	public Boolean getELN() {
+		return isELN;
+	}
+	public void setELN(Boolean ELN) {
+		isELN = ELN;
+	}
+
 	/** Первичность предыдущего листа нетрудоспособности  */
 	@Comment("Первичность предыдущего листа нетрудоспособности ")
 	public String getAnotherPrevPrimarity() {return theAnotherPrevPrimarity;}

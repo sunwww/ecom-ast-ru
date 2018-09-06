@@ -38,6 +38,7 @@
           <msh:textField property="number" label="Номер" size="30" />
           <msh:ifFormTypeIsCreate formName="dis_documentByPatientForm">
             <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber(this)" value="Получить номер"></td>
+            <msh:checkBox property="ELN" label="Электронный"/>
           </msh:ifFormTypeIsCreate>
         </msh:row>
         
@@ -180,6 +181,7 @@
     <msh:ifFormTypeIsNotView formName="dis_documentByPatientForm">
     
     <script type="text/javascript">
+        //document.getElementById('ELN').disabled="disabled";
         function getFreeNumber (aButton){
 
             DisabilityService.getSnils(${param.id},{
@@ -199,6 +201,9 @@
                                     $('number').value=num;
                                     $('number').className="viewOnly";
                                     aButton.style.display="none";
+                                    var a = document.getElementById('ELN');
+                                    a.checked=true;
+                                    a.disabled="disabled";
                                 } else {
                                     alert ("Не удалось получить номер больничного листа");
                                 }
