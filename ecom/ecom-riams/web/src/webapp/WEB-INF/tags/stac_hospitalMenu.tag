@@ -50,6 +50,12 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 				  action="/entityParentPrepareCreate-preg_shortConfCertificate.do"
 				  name="Добавить родовый сертификат"
 				  roles="/Policy/Mis/Pregnancy/ConfinementCertificate"/>
+
+	<msh:sideLink key="ALT+7"
+				  params=""
+				  action=".javascript:setOutOfReceivingDep('${param.id}','.do')"
+				  name="Пациент выбыл из приёмника"
+				  roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
 </msh:sideMenu>
   
    <msh:sideMenu title="Показать">
@@ -361,4 +367,21 @@ function gotoNewBornHistory(aMedCase,aUrl) {
           }
       });
   }
+  //Milamesher #118 06092018 - проставить отметку, что пациент выбыл из приёмника
+	function setOutOfReceivingDep(aMedCase) {
+        HospitalMedCaseService.setOutOfReceivingDep(aMedCase, {
+            callback: function (res) {
+                if (res!="##") {
+                    var resMas = res.split("#");
+                    if (resMas[0]!=null && resMas[0]!='' && resMas[1]!=null && resMas[1]!='') {
+                        if ($('transferDate')) $('transferDate').value=resMas[0];
+                        if ($('transferDateReadOnly')) $('transferDateReadOnly').value=resMas[0];
+                        if ($('transferTime')) $('transferTime').value=resMas[1];
+                        if ($('transferTimeReadOnly')) $('transferTimeReadOnly').value=resMas[1];
+                        if (!$('transferDate')) alert("Отмечено: пациент выбыл из приёмника"); //если из СЛС, чтобы видно было
+					}
+				}
+            }
+        });
+	}
 </script>

@@ -2178,4 +2178,18 @@ public class HospitalMedCaseServiceJs {
 		return (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/Delete",aRequest)
 				&& RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin",aRequest));
 	}
+	//Milamesher #118 06092018 - проставить отметку, что пациент выбыл из приёмника
+	public String setOutOfReceivingDep(String id,HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res = new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql = "UPDATE medcase mc SET transferDate = CASE WHEN transferDate IS NULL THEN current_date ELSE transferDate END, \n" +
+				"transferTime=CASE WHEN transferTime IS NULL THEN current_time ELSE transferTime END where id=" + id;
+		service.executeUpdateNativeSql(sql);
+		Collection<WebQueryResult> list = service.executeNativeSql("select to_char(transferDate,'dd.MM.yyyy') as d,to_char(transferTime,'HH24:MI') as t from medcase where id=" + id);
+		if (list.size() > 0) {
+			WebQueryResult w = list.iterator().next();
+			res.append(w.get1()).append("#").append(w.get2());
+		} else res.append("##");
+		return res.toString();
+	}
 }
