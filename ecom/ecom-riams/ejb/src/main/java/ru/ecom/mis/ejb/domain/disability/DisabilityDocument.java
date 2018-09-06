@@ -43,7 +43,7 @@ public class DisabilityDocument extends BaseEntity{
 	/** Предыдущий номер (ЭЛН) **/
 	private String pervElnNumber;
 	/** Хэш (ЭЛН) **/
-	private String lnHash=null;
+	private String lnHash="null";
 	/** Диагноз из импорта(ЭЛН) **/
 	private String theDiagnos;
 	/** Экспортировано закрытие (ЭЛН)*/
