@@ -181,6 +181,7 @@ function onPreDelete(aMedCaseId, aContext) {
 function onSave(aForm,aEntity,aCtx) {
 	//aEntity.setEditTime(new java.sql.Time ((new java.util.Date()).getTime())) ;
 
+
 	var sql = "update MedCase set dateStart=:dateStart,entranceTime=:entranceTime,department_id=:dep, lpu_id=:lpu where parent_id=:idSLS and DTYPE='DepartmentMedCase' and prevMedCase_id is null"
 	
 	aCtx.manager.createNativeQuery(sql)
@@ -193,7 +194,8 @@ function onSave(aForm,aEntity,aCtx) {
 	var aStatCardNumber = aForm.statCardNumber ;
 }
 
-function onPreSave(aForm,aEntity, aCtx) { 
+function onPreSave(aForm,aEntity, aCtx) {
+    chekIfOutOfReceivingDep(aForm,aEntity,aCtx);
 	var pat = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
 	if (pat.getDeathDate()!=null) {
 		
@@ -384,4 +386,18 @@ function sendMsg(aForm,aEntity, aCtx,user) {
 				
 	    	}
 	 }
+}
+//Milamesher 06092018 проверка на выбыл ли пациент из приёмника
+//выбывает в случае, если меняется поле отказа с null на не null и наоборот
+function chekIfOutOfReceivingDep(aForm,aEntity, aCtx) {
+	if (aEntity!=null) {
+        var list = aCtx.manager.createNativeQuery("select deniedhospitalizating_id from medcase where id=" + aEntity.id).setMaxResults(1).getResultList();
+        var oldVal = list.size() > 0 ? list.get(0) : null;
+        var newVal = aForm.deniedHospitalizating;
+        var date = new java.util.Date();
+        if (oldVal == null && newVal != '0' || oldVal != null && newVal == '0') {
+            aForm.setTransferDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
+            aForm.setTransferTime(new java.sql.Time(date.getTime()));
+        }
+    }
 }
