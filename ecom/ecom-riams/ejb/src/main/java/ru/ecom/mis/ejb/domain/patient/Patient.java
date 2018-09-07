@@ -1010,4 +1010,14 @@ public class Patient extends BaseEntity{
 	public void setPatientFond(PatientFond patientFond) {
 		this.patientFond = patientFond;
 	}
+
+	private Boolean isCheckFondError=false;
+
+	@Comment("Пациент не найден по базе фонда")
+	public Boolean getIsCheckFondError() {
+		return isCheckFondError;
+	}
+	public void setIsCheckFondError(Boolean isCheckFondError) {
+		this.isCheckFondError = isCheckFondError;
+	}
 }
