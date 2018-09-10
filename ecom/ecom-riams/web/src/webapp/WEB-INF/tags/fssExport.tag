@@ -53,9 +53,7 @@
             callback: function(json) {
                 json  = JSON.parse(json);
                 if(json.error!=null && json.code!=null){
-
                     $('${name}fssExportResultDiv').innerHTML=json.error+"<br> Обновите страницу и попробуйте еще раз";
-
                 }else {
                 var resultHTML="<p class='#res'>" +
                     "<span style='font-size: medium; color: #2d2d2b; '>" +
@@ -71,15 +69,10 @@
                         function(entry) {
                             resultHTML+="Ошибка: "+entry.errmess+"<br>";
                         });
-
                 }else {
                     resultHTML = resultHTML.replace("#TEXT","ЭЛН успешно выгружен");
-                    DisabilityService.updateInformationELN('${documentId}',json.hash, {
-                        callback: function(json) {
-                        }});
                     resultHTML = resultHTML.replace("#res","ok");
                 }
-
                 $('${name}fssExportResultDiv').innerHTML=resultHTML;
                 }
             }
