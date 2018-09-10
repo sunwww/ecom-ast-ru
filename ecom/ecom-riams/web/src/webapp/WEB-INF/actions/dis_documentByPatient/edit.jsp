@@ -7,7 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
-    <!-- 
+    <!--
     	  - Документ нетрудоспособности
     	  -->
   <msh:ifFormTypeIsView formName="dis_documentByPatientForm">
@@ -41,7 +41,7 @@
             <msh:checkBox property="ELN" label="Электронный"/>
           </msh:ifFormTypeIsCreate>
         </msh:row>
-        
+
         <msh:row guid="e1b2ffa3-e51c-46ef-9a21-6b6c19b60831">
           <msh:autoComplete parentId="dis_documentByPatientForm.disabilityCase" vocName="disabilityDocumentByCase" property="prevDocument" label="Предыдущий документ" guid="c431085f-265a-40ab-9581-a1c8b5babeff" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -51,12 +51,12 @@
         <msh:row>
         	<msh:textField property="job" fieldColSpan="3" label="Место работы" horizontalFill="true"/>
         </msh:row>
-        
+
         <msh:ifFormTypeIsNotView formName="dis_documentByPatientForm">
         	<msh:row>
         		<msh:textField property="otherNumber" fieldColSpan="3" horizontalFill="true"
         			label="Место рабо (29 сим.)" viewOnlyField="true"/>
-        		
+
         	</msh:row>
 	        <msh:row>
 	        	<msh:checkBox property="isUpdateWork" fieldColSpan="3" horizontalFill="Обновить сокращенное название организации"/>
@@ -84,7 +84,7 @@
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocDisabilityReason" property="disabilityReasonChange" label="Изм. причины нетруд." fieldColSpan="3" horizontalFill="true"/>
-        </msh:row>        
+        </msh:row>
         <msh:row>
           <msh:autoComplete vocName="vocIdc10" property="idc10" label="Диагноз первич." fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -95,13 +95,13 @@
         	<msh:separator label="Больной по уходу" colSpan="4"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanByDis" 
+        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanByDis"
         		property="nursingPerson1" label="Лицо по уходу 1" fieldColSpan="3"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanByDis" 
+        	<msh:autoComplete horizontalFill="true" parentId="dis_documentByPatientForm.patient" vocName="kinsmanByDis"
         		property="nursingPerson2" label="Лицо по уходу 2" fieldColSpan="3"/>
-        </msh:row>        
+        </msh:row>
         <msh:row guid="3972e779-80b6-45cb-8004-df6bcb22da38">
           <msh:separator label="Период нетрудоспособности" colSpan="4" guid="819b1c93-689a-404c-bd28-c18025b03fe4" />
         </msh:row>
@@ -113,9 +113,9 @@
         	<msh:row>
         		<msh:textField property="info" labelColSpan="2" fieldColSpan="2" horizontalFill="true"
         			label="Количество дней нетрудоспособности" viewOnlyField="true"/>
-        		
+
         	</msh:row>
-        </msh:ifFormTypeIsNotView>        
+        </msh:ifFormTypeIsNotView>
         <msh:row>
           <msh:autoComplete vocName="vocDisabilityRegime" property="regime" label="Режим" guid="a0252f86-792b-4992-a278-5cb0d1a1bc27" fieldColSpan="3" horizontalFill="true" />
         </msh:row>
@@ -160,10 +160,10 @@
         <msh:row guid="ef70bf08-f8aa-4283-ae1d-fcc5fa8692de">
           <msh:separator label="Закрытие" colSpan="4" guid="c03fc1ea-c2ab-472e-8d52-3f70b7efbd08" />
         </msh:row>
-        
+
         <msh:row guid="e46a3-e51c-46ef-9a21-6bvb60831">
           <msh:autoComplete vocName="vocDisabilityDocumentCloseReason" property="closeReason" label="Причина закрытия" guid="c425f-265a-40ab-9581-a8ff" horizontalFill="true" size="40" />
-        </msh:row> 
+        </msh:row>
         <msh:row>
         	<msh:textField property="otherCloseDate" label="Иная дата закрытия для причин 32, 33, 34, 36" labelColSpan="3"/>
         </msh:row>
@@ -179,14 +179,11 @@
   <tiles:put name="javascript" type="string" >
 	<script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
     <msh:ifFormTypeIsNotView formName="dis_documentByPatientForm">
-    
-    <script type="text/javascript">
-        //document.getElementById('ELN').disabled="disabled";
-        function getFreeNumber (aButton){
 
+    <script type="text/javascript">
+        function getFreeNumber (aButton){
             DisabilityService.getSnils(${param.id},{
                 callback: function (snils) {
-                    //alert(snils);
                     if(snils==null || snils=='1' || snils==''){ alert("У пациента отсутствует СНИЛС!\nДобавьте СНИЛС и попробуйте ещё раз!");
                     }else{
                         aButton.value="Подождите...";
@@ -203,7 +200,6 @@
                                     aButton.style.display="none";
                                     var a = document.getElementById('ELN');
                                     a.checked=true;
-                                    a.disabled="disabled";
                                 } else {
                                     alert ("Не удалось получить номер больничного листа");
                                 }
@@ -229,8 +225,8 @@
     });
   	idc10Autocomplete.addOnChangeCallback(function() {
  	 	 if ($('idc10Final').value==""){
- 	 		$('idc10Final').value = $('idc10').value ; 
- 	 		$('idc10FinalName').value = $('idc10Name').value ; 
+ 	 		$('idc10Final').value = $('idc10').value ;
+ 	 		$('idc10FinalName').value = $('idc10Name').value ;
  	 	 }
 	 });
   	regimeAutocomplete.addOnChangeCallback(function() {
@@ -239,7 +235,7 @@
 	 		 $('sanatoriumDateTo').value = $('dateTo').value;
 	 		 $('hospitalizedFrom').value = "";
 	 		 $('hospitalizedTo').value = "";
-	 		 
+
 	 	 }
 	 	 if ($('regimeName').value.indexOf('СТАЦИОНАР')!=-1) {
 	 		 $('hospitalizedFrom').value = $('dateFrom').value;
@@ -247,51 +243,51 @@
 	 		 $('sanatoriumDateFrom').value = "";
 	 		 $('sanatoriumDateTo').value = "";
 	 	 }
-	 	 
-	 		 
+
+
 	 });
-  	eventutil.addEventListener($('job'), eventutil.EVENT_KEY_DOWN, 
+  	eventutil.addEventListener($('job'), eventutil.EVENT_KEY_DOWN,
   		  	function() {
 	  		setJob() ;
   		  	}) ;
-  	eventutil.addEventListener($('job'), eventutil.EVENT_KEY_UP, 
+  	eventutil.addEventListener($('job'), eventutil.EVENT_KEY_UP,
   		  	function() {
 	  		setJob() ;
   		  	}) ;
-  	eventutil.addEventListener($('job'), "change", 
+  	eventutil.addEventListener($('job'), "change",
   		  	function() {
   		  		setJob() ;
   		  	}) ;
-  	
-  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_DOWN, 
+
+  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_DOWN,
   		  	function() {
 	  			setPeriod() ;
   		  	}) ;
-  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_UP, 
+  	eventutil.addEventListener($('dateFrom'), eventutil.EVENT_KEY_UP,
   		  	function() {
   				setPeriod() ;
   		  	}) ;
-  	eventutil.addEventListener($('dateFrom'), "change", 
+  	eventutil.addEventListener($('dateFrom'), "change",
   		  	function() {
   				setPeriod() ;
   		  	}) ;
-  	eventutil.addEventListener($('dateFrom'), "blur", 
+  	eventutil.addEventListener($('dateFrom'), "blur",
   		  	function() {
   				setPeriod() ;
   		  	}) ;
-  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_DOWN, 
+  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_DOWN,
   		  	function() {
 	  			setPeriod() ;
   		  	}) ;
-  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_UP, 
+  	eventutil.addEventListener($('dateTo'), eventutil.EVENT_KEY_UP,
   		  	function() {
   				setPeriod() ;
   		  	}) ;
-  	eventutil.addEventListener($('dateTo'), "change", 
+  	eventutil.addEventListener($('dateTo'), "change",
   		  	function() {
   				setPeriod() ;
   		  	}) ;
-  	eventutil.addEventListener($('dateTo'), "blur", 
+  	eventutil.addEventListener($('dateTo'), "blur",
   		  	function() {
   				setPeriod() ;
   		  	}) ;
@@ -308,12 +304,12 @@
   		}
   	}
   	function setJob() {
-  		$('otherNumberReadOnly').value=$('job').value.substring(0,29).toUpperCase() ;	
+  		$('otherNumberReadOnly').value=$('job').value.substring(0,29).toUpperCase() ;
   	}
-  	
+
   	setJob() ;
   	setPeriod() ;
-  	
+
   	</script>
      </msh:ifFormTypeIsNotView>
   </tiles:put>
