@@ -20,68 +20,62 @@ import java.sql.Time;
         ,@AIndex(unique = false, properties = {"disabilityDocument"})
 })
 public class ExportFSSLog extends BaseEntity {
-    /** Результат */
+
+    private String result ;
+    private String responseCode ;
+    private String status ;
+    private Long disabilityDocument ;
+    private String disabilityNumber ;
+    private String requestCode ;
+    private Date requestDate ;
+    private Time requestTime ;
+    private String requestType ;
+    private String request_id;
+
     @Comment("Результат")
     @Column(length= ColumnConstants.TEXT_MAXLENGHT)
-    public String getResult() {return theResult;}
-    public void setResult(String aResult) {theResult = aResult;}
-    /** Результат */
-    private String theResult ;
+    public String getResult() {return result;}
+    public void setResult(String aResult) {result = aResult;}
 
-    /** Текст ответа */
     @Comment("Текст ответа")
     @Column(length= ColumnConstants.TEXT_MAXLENGHT)
-    public String getResponseCode() {return theResponseCode;}
-    public void setResponseCode(String aResponseCode) {theResponseCode = aResponseCode;}
-    /** Текст ответа */
-    private String theResponseCode ;
+    public String getResponseCode() {return responseCode;}
+    public void setResponseCode(String aResponseCode) {responseCode = aResponseCode;}
 
-    /** Статус */
     @Comment("Статус")
-    public String getStatus() {return theStatus;}
-    public void setStatus(String aStatus) {theStatus = aStatus;}
-    /** Статус */
-    private String theStatus ;
+    public String getStatus() {return status;}
+    public void setStatus(String aStatus) {status = aStatus;}
 
-    /** ИД больничного листа */
     @Comment("ИД больничного листа")
-    public Long getDisabilityDocument() {return theDisabilityDocument;}
-    public void setDisabilityDocument(Long aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
-    /** ИД больничного листа */
-    private Long theDisabilityDocument ;
+    public Long getDisabilityDocument() {return disabilityDocument;}
+    public void setDisabilityDocument(Long aDisabilityDocument) {disabilityDocument = aDisabilityDocument;}
 
-    /** Номер больничного листа */
     @Comment("Номер больничного листа")
-    public String getDisabilityNumber() {return theDisabilityNumber;}
-    public void setDisabilityNumber(String aDisabilityNumber) {theDisabilityNumber = aDisabilityNumber;}
-    /** Номер больничного листа */
-    private String theDisabilityNumber ;
+    public String getDisabilityNumber() {return disabilityNumber;}
+    public void setDisabilityNumber(String aDisabilityNumber) {disabilityNumber = aDisabilityNumber;}
 
-    /** Код запроса */
     @Comment("Код запроса")
     @Column(length= ColumnConstants.TEXT_MAXLENGHT)
-    public String getRequestCode() {return theRequestCode;}
-    public void setRequestCode(String aRequestCode) {theRequestCode = aRequestCode;}
-    /** Код запроса */
-    private String theRequestCode ;
-    /** Дата запроса */
-    @Comment("Дата запроса")
-    public Date getRequestDate() {return theRequestDate;}
-    public void setRequestDate(Date aRequestDate) {theRequestDate = aRequestDate;}
-    /** Дата запроса */
-    private Date theRequestDate ;
+    public String getRequestCode() {return requestCode;}
+    public void setRequestCode(String aRequestCode) {requestCode = aRequestCode;}
 
-    /** Время запроса */
+    @Comment("Дата запроса")
+    public Date getRequestDate() {return requestDate;}
+    public void setRequestDate(Date aRequestDate) {requestDate = aRequestDate;}
+
     @Comment("Время запроса")
-    public Time getRequestTime() {return theRequestTime;}
-    public void setRequestTime(Time aRequestTime) {theRequestTime = aRequestTime;}
-    /** Время запроса */
-    private Time theRequestTime ;
-    
-    /** Тип запроса */
+    public Time getRequestTime() {return requestTime;}
+    public void setRequestTime(Time aRequestTime) {requestTime = aRequestTime;}
+
     @Comment("Тип запроса")
-    public String getRequestType() {return theRequestType;}
-    public void setRequestType(String aRequestType) {theRequestType = aRequestType;}
-    /** Тип запроса */
-    private String theRequestType ;
+    public String getRequestType() {return requestType;}
+    public void setRequestType(String aRequestType) {requestType = aRequestType;}
+
+    @Comment("Присвоенный id запроса")
+    public String getRequest_id() {
+        return request_id;
+    }
+    public void setRequest_id(String request_id) {
+        this.request_id = request_id;
+    }
 }
