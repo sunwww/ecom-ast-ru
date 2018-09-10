@@ -294,7 +294,7 @@
     ,vdh.name as vdhname
     , case when (ok.voc_code is not null and ok.voc_code!='643') then 'ИНОСТ'  
     when (pvss.omccode='И0' or adr.kladr is not null and adr.kladr not like '30%') then 'ИНОГ' else '' end as typePatient
-    
+    , ml.name as f8_depName
      from MedCase as m
      left join StatisticStub as sc on sc.medCase_id=m.id 
      left outer join Patient pat on m.patient_id = pat.id 
@@ -315,7 +315,7 @@
       ${addPat}
        order by m.${dateI},pat.lastname,pat.firstname,pat.middlename
       " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-    <msh:table name="journal_priem"  viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_priem"  viewUrl="entityShortView-stac_ssl.do" action="entityParentView-stac_ssl.do" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="#" property="sn" guid="34a9f56ab-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Стат.карта" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
@@ -323,6 +323,7 @@
       <msh:tableColumn columnName="Экстрено" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Причина отказа" property="6" guid="e29229e1-d243-47d6-a5c7-997df74eaf73" />
       <msh:tableColumn columnName="Пациент" property="7"/>
+      <msh:tableColumn columnName="Отделение" property="8"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    <% }
