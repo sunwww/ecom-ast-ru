@@ -1,5 +1,7 @@
 package ru.ecom.api.sсheduler;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +16,9 @@ public class Task implements Runnable {
         services.add(service);
     }
 
-    public String getService(){
+    public String getService() throws JSONException {
         ServiceTasks serv =services.get(0);
-        return serv.toString();
+        return serv.getInfo();
     }
 
     public List<ServiceTasks> getServices() {
@@ -29,7 +31,7 @@ public class Task implements Runnable {
 
     public void run() {
         for (ServiceTasks service : services) {
-            service.doSomebody();
+            service.doRequest();
         }
     }
 

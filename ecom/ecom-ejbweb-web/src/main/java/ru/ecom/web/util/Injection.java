@@ -1,23 +1,21 @@
 package ru.ecom.web.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Properties;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import ru.ecom.web.login.LoginInfo;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContextEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.ecom.web.login.LoginInfo;
-import ru.nuzmsh.util.StringUtil;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  *
@@ -106,6 +104,33 @@ public class Injection {
     	aWebName = getWebName(aRequest, aWebName) ;
     	return Injection.class.getName()+aWebName ;
     }
+
+    public static Injection find(ServletContextEvent contextEvent, String aWebName,String token) {
+
+        Injection injection = (Injection) contextEvent.getServletContext().getAttribute(Injection.class.getName()+aWebName);
+        try {
+            Properties prop = loadAppProperties(aWebName);
+            if (injection == null) {
+                       LoginInfo loginInfo = new LoginInfo(token,token);
+                try {
+                    injection = new Injection(aWebName, prop.getProperty("ejb-app-name")
+                            , prop.getProperty("java.naming.provider.url")
+                            , loginInfo
+                            , prop.getProperty("java.naming.factory.initial")
+                            , prop.getProperty("java.naming.security.protocol", "other")
+                    );
+                } catch (NamingException e) {
+                    throw new IllegalStateException("Ошибка подключение к серверу: " + e.getMessage(), e);
+                }
+            } else {
+
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Ошибка настройки приложения: " + e.getMessage(), e);
+        }
+        return injection;
+    }
+
     public static Injection find(HttpServletRequest aRequest, String aWebName) {
     	aWebName = getWebName(aRequest, aWebName) ;
     	Injection injection = (Injection) aRequest.getSession().getAttribute(getKeyDefault(aRequest,aWebName));

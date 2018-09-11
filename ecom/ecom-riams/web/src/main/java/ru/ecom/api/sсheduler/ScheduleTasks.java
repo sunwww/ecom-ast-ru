@@ -12,6 +12,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -30,17 +34,13 @@ public class ScheduleTasks {
     @Produces("application/json;charset=UTF-8")
     public String startThread(@Context HttpServletRequest aRequest,
                               @WebParam(name="token") String aToken,
+                              @QueryParam("id") String id,
                               @QueryParam("name") String name,
-                              @QueryParam("everySeconds") Integer sec) throws InterruptedException, JSONException {
+                              @QueryParam("link") String link,
+                              @QueryParam("time") String time) throws InterruptedException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
-        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        Task task = new Task();
-        task.addService(new ServiceTasks(name));
-        scheduledExecutorService.scheduleAtFixedRate(task, 0, sec, TimeUnit.SECONDS);
-        map.put(scheduledExecutorService,task);
-        return new JSONObject().put(name,"isStart").toString();
-
+        return  startThread(id,name,link,time);
     }
 
     @GET
@@ -50,25 +50,15 @@ public class ScheduleTasks {
                                     @WebParam(name="token") String aToken) throws InterruptedException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
-        JSONArray jsonArray = new JSONArray();
-
-        for (Map.Entry entry : map.entrySet()) {
-            Task workerThread = (Task)entry.getValue();
-            ScheduledExecutorService scheduledExecutorService = (ScheduledExecutorService)entry.getKey();
-
-            jsonArray.put(new JSONObject()
-                    .put("name",workerThread.getService())
-                    .put("isShutdawn",scheduledExecutorService.isShutdown()));
-        }
-        return new JSONObject().put("Array",jsonArray).toString();
+        return showActiveThreads();
     }
 
     @GET
     @Path("/shutdownTask")
     @Produces("application/json;charset=UTF-8")
-    public String shtdwn(@Context HttpServletRequest aRequest,
-                         @WebParam(name="token") String aToken,
-                         @QueryParam("name") String name) throws InterruptedException, JSONException {
+    public String shutdown(@Context HttpServletRequest aRequest,
+                           @WebParam(name="token") String aToken,
+                           @QueryParam("name") String name) throws InterruptedException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
 
@@ -82,5 +72,56 @@ public class ScheduleTasks {
         }
 
         return new JSONObject().put(name,"isStopped").toString();
+    }
+
+
+    private String startThread(String id,String name,String link,String atTime) throws JSONException {
+
+        String[] times = atTime.split(":");
+        link = link.replace("*","&");
+
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        Task task = new Task();
+        task.addService(new ServiceTasks(Long.valueOf(id) ,name,link));
+        scheduledExecutorService.scheduleAtFixedRate(task, timeInit(times[0],times[1],times[2]), 24*60*60, TimeUnit.SECONDS);
+        map.put(scheduledExecutorService,task);
+
+        return new JSONObject().put(name,"isStart").toString();
+    }
+
+    public HashMap<ScheduledExecutorService,Task> startThread(Long id,String name,String link,String atTime) throws JSONException {
+        startThread(id.toString(),name,link,atTime);
+        return map;
+    }
+
+    private Long timeInit(String hour,String  minute,String second){
+        LocalDateTime localNow = LocalDateTime.now();
+        ZoneId currentZone = ZoneId.of("Europe/Moscow");
+        ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+        ZonedDateTime zonedNext5 ;
+
+        zonedNext5 = zonedNow
+                .withHour(Integer.parseInt(hour))
+                .withMinute(Integer.parseInt(minute))
+                .withSecond(Integer.parseInt(second));
+
+        if(zonedNow.compareTo(zonedNext5) > 0)
+            zonedNext5 = zonedNext5.plusDays(1);
+
+        Duration duration = Duration.between(zonedNow, zonedNext5);
+        return duration.getSeconds();
+    }
+
+    public String showActiveThreads() throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Map.Entry entry : map.entrySet()) {
+            Task workerThread = (Task)entry.getValue();
+            ScheduledExecutorService scheduledExecutorService = (ScheduledExecutorService)entry.getKey();
+
+            jsonArray.put(new JSONObject(workerThread.getService())
+                    .put("isShutdawn",scheduledExecutorService.isShutdown()));
+        }
+        return new JSONObject().put("Array",jsonArray).toString();
     }
 }
