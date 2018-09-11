@@ -1,44 +1,41 @@
 package ru.ecom.api.sсheduler;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import static ru.ecom.api.util.ApiUtil.createGetRequest;
 
-/**
- * Created by rkurbanov on 04.09.2018.
- */
+/** Created by rkurbanov on 04.09.2018. */
 public class Task implements Runnable {
 
-    private List<ServiceTasks> services = new ArrayList();
+    private Long id;
+    private String serviceName;
+    private String link;
 
-    public void addService(ServiceTasks service) {
-        services.add(service);
+
+    public Task(Long id,String serviceName,String link) {
+        this.id = id;
+        this.serviceName = serviceName;
+        this.link = link;
     }
 
-    public String getService() throws JSONException {
-        ServiceTasks serv =services.get(0);
-        return serv.getInfo();
+    public String getName() throws JSONException {
+        return serviceName;
     }
 
-    public List<ServiceTasks> getServices() {
-        return services;
+    public Long getId() throws JSONException {
+        return id;
     }
 
-    public void setServices(List<ServiceTasks> services) {
-        this.services = services;
+    public String getServiceInfo() throws JSONException {
+        return new JSONObject()
+                .put("id",String.valueOf(id))
+                .put("serviceName",serviceName)
+                .put("link",link).toString();
     }
 
     public void run() {
-        for (ServiceTasks service : services) {
-            service.doRequest();
-        }
-    }
-
-    void shutdown() {
-        for (final ServiceTasks service : services) {
-            System.out.println("Shutting down service " + service);
-        }
+        createGetRequest(link);
     }
 
 }

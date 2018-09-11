@@ -40,17 +40,17 @@ public class ScheduleTasks {
                               @QueryParam("time") String time) throws InterruptedException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
-        return  startThread(id,name,link,time);
+        return startThread(id,name,link,time);
     }
 
     @GET
-    @Path("/showActiveTasks")
+    @Path("/showTasks")
     @Produces("application/json;charset=UTF-8")
-    public String showActiveThreads(@Context HttpServletRequest aRequest,
+    public String showTasks(@Context HttpServletRequest aRequest,
                                     @WebParam(name="token") String aToken) throws InterruptedException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
-        return showActiveThreads();
+        return showTasks();
     }
 
     @GET
@@ -58,20 +58,19 @@ public class ScheduleTasks {
     @Produces("application/json;charset=UTF-8")
     public String shutdown(@Context HttpServletRequest aRequest,
                            @WebParam(name="token") String aToken,
-                           @QueryParam("name") String name) throws InterruptedException, JSONException {
+                           @QueryParam("id") String id) throws InterruptedException, JSONException {
 
         ApiUtil.init(aRequest,aToken);
 
         for (Map.Entry entry : map.entrySet()) {
-            Task workerThread = (Task) entry.getValue();
-            if(name.equals(workerThread.getService())){
+            Task task = (Task) entry.getValue();
+            if(id.equals(task.getId().toString())){
                 ScheduledExecutorService scheduledExecutorService = (ScheduledExecutorService)entry.getKey();
                 scheduledExecutorService.shutdownNow();
                 scheduledExecutorService.shutdown();
             }
         }
-
-        return new JSONObject().put(name,"isStopped").toString();
+        return new JSONObject().put(id,"isStopped").toString();
     }
 
 
@@ -81,15 +80,16 @@ public class ScheduleTasks {
         link = link.replace("*","&");
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        Task task = new Task();
-        task.addService(new ServiceTasks(Long.valueOf(id) ,name,link));
+        Task task = new Task(Long.valueOf(id) ,name,link);
         scheduledExecutorService.scheduleAtFixedRate(task, timeInit(times[0],times[1],times[2]), 24*60*60, TimeUnit.SECONDS);
         map.put(scheduledExecutorService,task);
 
         return new JSONObject().put(name,"isStart").toString();
     }
 
-    public HashMap<ScheduledExecutorService,Task> startThread(Long id,String name,String link,String atTime) throws JSONException {
+    public HashMap<ScheduledExecutorService,Task> startThread(Long id,String name,String link,String atTime)
+            throws JSONException {
+
         startThread(id.toString(),name,link,atTime);
         return map;
     }
@@ -112,14 +112,14 @@ public class ScheduleTasks {
         return duration.getSeconds();
     }
 
-    public String showActiveThreads() throws JSONException {
+    private String showTasks() throws JSONException {
         JSONArray jsonArray = new JSONArray();
 
         for (Map.Entry entry : map.entrySet()) {
-            Task workerThread = (Task)entry.getValue();
+            Task task = (Task)entry.getValue();
             ScheduledExecutorService scheduledExecutorService = (ScheduledExecutorService)entry.getKey();
 
-            jsonArray.put(new JSONObject(workerThread.getService())
+            jsonArray.put(new JSONObject(task.getServiceInfo())
                     .put("isShutdawn",scheduledExecutorService.isShutdown()));
         }
         return new JSONObject().put("Array",jsonArray).toString();
