@@ -29,10 +29,10 @@ function onPreCreate(aForm, aCtx) {
 	aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
 	aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 	aForm.setTime(new java.sql.Time (date.getTime())) ;
-	if (!aForm.username.equals(aForm.editUsername)) {
+	if (aForm.editUsername!=null && aForm.editUsername!="" && !aForm.username.equals(aForm.editUsername)) {
 		//aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'"+aForm.username+"- -"+aForm.editUsername+"','"+aForm.medCase+"')").executeUpdate() ;
 		throw "Не удалось сохранить протокол: <br/><pre>"+aForm.record+"</pre><br/> Попробуйте сохранить протокол еще раз. При возникновении данной ошибки повторно, обращайтесь в службу технической поддержки."+
-        "<br><br> Пользователь:"+aForm.username+" протокол был начат"+aForm.editUsername ;
+        "<br><br> Текущий пользователь: "+aForm.username+", протокол был создан пользователем: "+aForm.editUsername ;
 	}
 	var wfe =aCtx.manager.createNativeQuery("select id,workFunctionExecute_id from MedCase where id = :medCase")
 		.setParameter("medCase", aForm.medCase).getResultList() ;
