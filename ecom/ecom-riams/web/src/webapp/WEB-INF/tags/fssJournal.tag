@@ -32,7 +32,7 @@
                 </msh:row>
             </msh:panel>
             <msh:row><td colspan="6">
-               <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSJournal()'/>
+                <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSJournal()'/>
             </td></msh:row>
         </form>
     </div>
@@ -48,47 +48,44 @@
 
 <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 <script type="text/javascript">
-var theIs${name}FSSJournalInitialized = false ;
-var the${name}FSSJournal = new msh.widget.Dialog($('${name}FSSJournal')) ;
-var the${name}FSSProgress= new msh.widget.Dialog($('${name}FSSProgress')) ;
+    var theIs${name}FSSJournalInitialized = false ;
+    var the${name}FSSJournal = new msh.widget.Dialog($('${name}FSSJournal')) ;
+    var the${name}FSSProgress= new msh.widget.Dialog($('${name}FSSProgress')) ;
 
-function show${name}FSSProgress() {
+    function show${name}FSSProgress() {
 
-    $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
-    the${name}FSSProgress.show();
-    DisabilityService.exportDisabilityDocument('${documentId}', {
-        callback: function(a) {
-            $('${name}FSSProgressResultDiv').innerHTML=a;
+        $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
+        the${name}FSSProgress.show();
+        DisabilityService.exportDisabilityDocument('${documentId}', {
+            callback: function(a) {
+                $('${name}FSSProgressResultDiv').innerHTML=a;
 
-        }
-    });
-}
-// Показать
-function show${name}FSSJournal() {
-DisabilityService.getExportJournalById('${documentId}', {
-    callback: function (res) {
-        if (res!=null) {
-            $('${name}FSSJournalText').innerHTML = res ;
-        } else {
-            $('${name}FSSJournalText').innerHTML = "ДАННЫЕ ПО ЭКСПОРТУ НЕ НАЙДЕНЫ" ;
-        }
+            }
+        });
     }
-});
+    // Показать
+    function show${name}FSSJournal() {
+        DisabilityService.getExportJournalById('${documentId}', {
+            callback: function (res) {
+                if (res!=null) {
+                    $('${name}FSSJournalText').innerHTML = res ;
+                } else {
+                    $('${name}FSSJournalText').innerHTML = "ДАННЫЕ ПО ЭКСПОРТУ НЕ НАЙДЕНЫ" ;
+                }
+            }
+        });
 
+        the${name}FSSJournal.show() ;
+    }
 
+    // Отмена
+    function cancel${name}FSSJournal() {
+        the${name}FSSJournal.hide() ;
+        msh.effect.FadeEffect.pushFadeAll();
+    }
 
-    the${name}FSSJournal.show() ;
-
-}
-
-// Отмена
-function cancel${name}FSSJournal() {
-    the${name}FSSJournal.hide() ;
-    msh.effect.FadeEffect.pushFadeAll();
-}
-
-function cancel${name}FSSProgress() {
-    the${name}FSSProgress.hide() ;
-    msh.effect.FadeEffect.pushFadeAll();
-}
+    function cancel${name}FSSProgress() {
+        the${name}FSSProgress.hide() ;
+        msh.effect.FadeEffect.pushFadeAll();
+    }
 </script>

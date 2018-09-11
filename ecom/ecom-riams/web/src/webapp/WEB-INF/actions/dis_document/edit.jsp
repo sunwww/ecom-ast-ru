@@ -58,6 +58,7 @@
                     <msh:textField property="number" label="Номер"  size="20" fieldColSpan="30" />
                     <msh:ifFormTypeIsCreate formName="dis_documentForm">
                         <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber('number',this)" value="Получить номер"></td>
+                        <msh:checkBox property="ELN" label="Электронный"/>
                     </msh:ifFormTypeIsCreate>
                 </msh:row>
                 <msh:row>
@@ -338,6 +339,8 @@
                                 $(aField).className="viewOnly";
                                 $(aField).disabled=true;
                                 aButton.style.display="none";
+                                var a = document.getElementById('ELN');
+                                a.checked=true;
                             } else {
                                 alert ("Не удалось получить номер больничного листа");
                             }
@@ -349,21 +352,6 @@
         </msh:ifFormTypeIsView>
         <msh:ifFormTypeIsCreate formName="dis_documentForm">
             <script type="text/javascript">
-
-                jQuery(document).ready(function() {
-                    jQuery.ajax({
-                        type:"POST",
-                        // url: "http://localhost:8800/riams/GetMessageFromFile",
-                        url: "GetMessageFromFile",
-                        success: function (response) {
-                            alert(response);
-                        },
-                        error: function (jqXHR, exception) {
-                            alert(jqXHR.status);
-                        }
-                    });
-                });
-
                 function getFreeNumber (aField, aButton){
                     if (""+aField=="") {
                         aField="number";
@@ -378,6 +366,8 @@
                                 $(aField).value=num;
                                 $(aField).className="viewOnly";
                                 aButton.style.display="none";
+                                var a = document.getElementById('ELN');
+                                a.checked=true;
                             } else {
                                 alert ("Не удалось получить номер больничного листа");
                             }

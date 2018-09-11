@@ -8,8 +8,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import ru.ecom.api.IApiService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.mis.ejb.domain.disability.ExportFSSLog;
 import ru.ecom.mis.ejb.service.disability.IDisabilityService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
@@ -92,23 +94,8 @@ public class DisabilityServiceJs {
 	@Deprecated
 	public String exportDisabilityDocument (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-		//ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
 		String ret = service.exportDisabilityDocument(aDocumentId);
 		return ret;
-	}
-
-	public void updateInformationELN(String aDocumentId, String hash, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service =Injection.find(aRequest).getService(IWebQueryService.class);
-		service.executeUpdateNativeSql("update disabilitydocument set lnhash = '"+hash+"' where id = "+aDocumentId);
-		service.executeUpdateNativeSql("update disabilitysign set export = true where disabilitydocumentid_id = "+aDocumentId);
-		service.executeUpdateNativeSql("update disabilityrecord set isexport = true where disabilitydocument_id = "+aDocumentId);
-
-	}
-
-	public void saveLog(HttpServletRequest aRequest){
-		/*
-		result respnsecode status disabilitydocument, requestcode requstdate requesttime requesttype request_id
-		 */
 	}
 
 	public String exportDisabilityDoc(String aDocumentId, HttpServletRequest aRequest)
@@ -277,13 +264,14 @@ public class DisabilityServiceJs {
 		String json="";
 
 		if(code==0){
+
 			IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
 			String endpoint = service1.getSoftConfigValue("FSS_PROXY_SERVICE", "null");
-			System.out.println(endpoint);
-			json = cretePostRequest(endpoint, "api/sign/exportDisabilityDocument", body.toString(), "application/json");
+
+			json = cretePostRequest(endpoint, "api/export/exportDisabilityDocument", body.toString(), "application/json");
+			saveLog(json,aRequest);
 		}
 
-		//TODO RESPONSE BUILDER NEEDED
 		if(code==1){
 			json= new JSONObject()
 					.put("code","1")
@@ -302,6 +290,67 @@ public class DisabilityServiceJs {
 		return json;
 	}
 
+	private void saveLog(String json, HttpServletRequest aRequest) throws NamingException {
+
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		JsonParser parser =new JsonParser();
+		JsonObject obj = parser.parse(json).getAsJsonObject();
+		String message="";
+
+		String elnumber = obj.get("lncode").getAsString();
+		String disdocId=null;
+		Collection<WebQueryResult> list = service.executeNativeSql("select dd.id from disabilitydocument dd where dd.number = '"+elnumber+"'");
+		if (!list.isEmpty()) {
+			for (WebQueryResult wqr : list) {
+				disdocId = wqr.get1().toString();
+			}
+		}
+		ExportFSSLog exportFSSLog  =new ExportFSSLog();
+
+		exportFSSLog.setDisabilityDocument(Long.valueOf((disdocId)));
+		exportFSSLog.setDisabilityNumber(elnumber);
+		exportFSSLog.setStatus(obj.get("status").getAsString());
+		exportFSSLog.setRequest_id(obj.get("requestId").getAsString());
+
+		message+=obj.get("message").getAsString();
+		if(obj.has("errors")){
+			JsonArray errors = obj.getAsJsonArray("errors");
+			for (JsonElement err : errors) {
+				JsonObject error = err.getAsJsonObject();
+				message+=error.get("errmess").getAsString();
+			}
+		}
+		exportFSSLog.setRequestDate(new java.sql.Date(System.currentTimeMillis()));
+		exportFSSLog.setRequestTime(new java.sql.Time(System.currentTimeMillis()));
+		exportFSSLog.setResult(message);
+		exportFSSLog.setRequestType("prParseFilelnlpu");
+
+		IApiService persist = Injection.find(aRequest).getService(IApiService.class);
+		persist.persistEntity(exportFSSLog);
+
+		if(obj.get("status").getAsString().equals("1")){
+			updateInformationELN(disdocId, obj.get("hash").getAsString(), obj.get("lnstate").getAsString(), aRequest);
+		}
+	}
+
+	private void updateInformationELN(String aDocumentId, String hash, String code, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service =Injection.find(aRequest).getService(IWebQueryService.class);
+		service.executeUpdateNativeSql("update disabilitydocument set lnhash = '"+hash+"' where id = "+aDocumentId);
+		service.executeUpdateNativeSql("update disabilitysign set export = true where disabilitydocumentid_id = "+aDocumentId);
+		service.executeUpdateNativeSql("update disabilityrecord set isexport = true where disabilitydocument_id = "+aDocumentId);
+		String id = "";
+		Collection<WebQueryResult> list = service.executeNativeSql("select id from vocdisabilitydocumentexportstatus where code='"+code+"'");
+		if (!list.isEmpty()) {
+			for (WebQueryResult wqr : list) {
+				id = wqr.get1().toString();
+			}
+		}
+		service.executeUpdateNativeSql("update electronicdisabilitydocumentnumber set exportdate='"+new java.sql.Date(System.currentTimeMillis())+"'," +
+				"status_id="+id+", lasthash='"+hash+"'," +
+				"exporttime='"+new java.sql.Time(System.currentTimeMillis())+"' where disabilitydocument_id = "+aDocumentId);
+
+
+	}
 
 	@Deprecated
 	/**
