@@ -73,7 +73,7 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
                         var minutes = el.minutes;
                         var color="";
                         if (minutes>119){color=colors.red} else if (minutes>89){color=colors.orange} else if (minutes>59) {color=colors.yellow} else if (minutes>29){color=colors.blue}
-                        tbl.append("<tr style='"+color+"'><td>"+el.patientInfo+"</td><td>"+el.waitTime+"</td><td>"+el.startTime+"</td><td>"+el.departmentName+"</td></tr>");
+                        tbl.append("<tr onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\"style='"+color+"'><td>"+el.patientInfo+"</td><td>"+el.waitTime+"</td><td>"+el.startTime+"</td><td>"+el.departmentName+"</td></tr>");
                     }//60-90 - yellow
                 }
                 setTimeout(getQueue,60000);

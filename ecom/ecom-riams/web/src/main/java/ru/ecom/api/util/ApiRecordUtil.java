@@ -262,8 +262,6 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
         sql.append(" having count(wct.id)>0");
         if (aOrderBy!=null) {sql.append(" order by ").append(aOrderBy);}
         String jsonData = aService.executeNativeSqlGetJSON(aJsonFields,sql.toString(),aMaxResult);
-        log.info("getData="+sql);
-        System.out.println("getData="+sql);
         return createJson("data",jsonData);
     }
 
@@ -275,7 +273,6 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
         JSONObject ret = null;
             try {
                 ret = new JSONObject();
-                System.out.println(">>>"+aJsonData);
                 if (aElementName!=null) {ret.put(aElementName, aJsonData!=null?new JSONArray(aJsonData):new JSONArray());}
                 ret.put("status",aErrorCode!=null?"error":"ok");
                 if (aErrorCode!=null) {

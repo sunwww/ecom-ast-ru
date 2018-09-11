@@ -32,7 +32,7 @@ public class HospitalQueueResource {
         ApiUtil.login(token,aRequest);
         if (isEmergency==null) {isEmergency="";}
         String sql = " select sls.id, pat.lastname||' '|| substring (pat.firstname,1,1)||' '||substring (pat.middlename,1,1)" +
-                " ,cast(cast(current_timestamp - cast ((sls.dateStart||' '||sls.entranceTime) as timestamp) as time)as varchar(5)) as waitTime" +
+                " ,cast(cast(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp) - cast ((sls.dateStart||' '||sls.entranceTime) as timestamp) as time)as varchar(5)) as waitTime" +
                 " ,to_char(sls.dateStart,'dd.MM.yyyy')||' '||cast(sls.entranceTime as varchar(5)) as startDateTime"+
                 ",cast(extract(epoch from age(current_timestamp,cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) as minutesCount " +
                 ", dep.name as departmentName"+
@@ -44,6 +44,7 @@ public class HospitalQueueResource {
                 " left join VocDeniedHospitalizating vdh on vdh.id=sls.deniedHospitalizating_id" +
                 " where sls.dtype='HospitalMedCase'" +
                 " and (sls.deniedhospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') and slo.id is null" +
+                " and sls.transferdate is null and sls.transfertime is null" +
                 (isEmergency.equals("")?"":(isEmergency.equals("0")?" and (sls.emergency is null or sls.emergency='0')":" and sls.emergency='1'")) +
                 (pigeonHole!=null&&!pigeonHole.equals("")?" and vph.code='"+pigeonHole+"'":"") +
                 " order by sls.dateStart, sls.entranceTime ";

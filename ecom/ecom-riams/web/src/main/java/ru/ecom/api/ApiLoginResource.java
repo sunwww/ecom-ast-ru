@@ -38,7 +38,7 @@ public class ApiLoginResource {
     public String getChildCount(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("date") String aDate) throws NamingException, JSONException {
         ApiUtil.login(token,aRequest);
         if (aDate==null||aDate.equals("")) {
-            aDate= " nb.birthdate = current_date";
+            aDate=" nb.birthdate = current_date";
         } else if (aDate.equals("-1")){
             aDate=" nb.birthdate = current_date-1";
         } else if (aDate.split("-").length>1) {

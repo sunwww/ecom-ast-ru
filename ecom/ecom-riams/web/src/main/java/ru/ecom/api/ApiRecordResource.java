@@ -172,7 +172,6 @@ public class ApiRecordResource {
         if (!StringUtil.isNullOrEmpty(annul)) {
             list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
         } else {
-            System.out.println("start record, debug="+debug);
             list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,patientComment,patientPhone,service);
             if (list==null) {
                 list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
