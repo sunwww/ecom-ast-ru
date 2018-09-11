@@ -152,7 +152,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" ").append(addSql).append(" and lp.dateto is null") ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;
-		System.out.println("SQL FILL DISPPLAN = "+sql);
+	//	System.out.println("SQL FILL DISPPLAN = "+sql);
         	listPat = theManager.createNativeQuery(sql.toString())
         			.setMaxResults(90000).getResultList() ;
         	for (int i=0;i<listPat.size();i++) {

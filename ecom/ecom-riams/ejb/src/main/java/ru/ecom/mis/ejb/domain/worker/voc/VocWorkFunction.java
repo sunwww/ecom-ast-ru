@@ -2,13 +2,10 @@ package ru.ecom.mis.ejb.domain.worker.voc;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.mis.ejb.domain.worker.WorkFunctionService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -135,4 +132,12 @@ public class VocWorkFunction extends VocBaseEntity{
 	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
 	/** Не подавать по ОМС */
 	private Boolean theIsNoOmc=false ;
+
+	/** Профиль медицинской помощи */
+	@Comment("Профиль медицинской помощи")
+	@OneToOne
+	public VocE2MedHelpProfile getMedHelpProfile() {return theMedHelpProfile;}
+	public void setMedHelpProfile(VocE2MedHelpProfile aMedHelpProfile) {theMedHelpProfile = aMedHelpProfile;}
+	/** Профиль медицинской помощи */
+	private VocE2MedHelpProfile theMedHelpProfile ;
 }

@@ -126,7 +126,7 @@ private Boolean isCheckIsRunning = false;
     /** Расчет строки с признаком новорожденного */
     private String makeNovorString(E2Entry aEntry) {
         String ret = "0";
-        if (!StringUtil.isNullOrEmpty(aEntry.getKinsmanLastname())) {
+        if (isNotNull(aEntry.getKinsmanLastname())) {
             SimpleDateFormat format = new SimpleDateFormat("ddMMyy");
             ret = aEntry.getSex() + ""+format.format(aEntry.getBirthDate())+"" + (isNotNull(aEntry.getBirthOrder())?aEntry.getBirthOrder():1); //TODO = порядковый номер ребенка
         }
@@ -136,7 +136,7 @@ private Boolean isCheckIsRunning = false;
 
 
     /** Создаем тэг с информацией о госпитализации*/
-    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase) {
+    private Element createZSl(E2Entry aEntry, boolean isPoliclinic, int slCnt, int zslIdCase, boolean isNedonosh) {
     //    String startDate = dateToString(aEntry.getHospitalStartDate()), finishDate = dateToString(aEntry.getHospitalFinishDate()!=null?aEntry.getHospitalFinishDate():aEntry.getFinishDate());
 
         Element z = new Element("Z_SL");
@@ -148,7 +148,8 @@ private Boolean isCheckIsRunning = false;
         z.addContent(new Element("FOR_POM").setText(isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic?"2":"1") : "3")); //форма помощи V014
         z.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
         z.addContent(new Element("VBR").setText(isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0")); //Признак мобильной бригады
-        //If (mother) VNOV_M - weight rebenka
+
+        if (isNedonosh) z.addContent(new Element("VNOV_M").setText(aEntry.getNewbornWeight()+""));
         z.addContent(new Element("OS_SLUCH").setText(Expert2FondUtil.calculateFondOsSluch(aEntry))); // Особый случай //TODO!!! ALL SLO_SSS
         if (!isPoliclinic)z.addContent(new Element("VB_P").setText(slCnt>1?"1":"0")); // Признак внутрибольничного перевода
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
@@ -180,8 +181,9 @@ private Boolean isCheckIsRunning = false;
         try {
             String entryType = aEntry.getEntryType();
             boolean isHosp = false, isVmp = false, isPoliclinic = false, isExtDisp = false, isPoliclinicKdo=false;
-            if (entryType.equals(HOSPITALTYPE)) {isHosp=true;}
-            else if (entryType.equals(VMPTYPE)) {isVmp=true;}
+            boolean isNedonosh = false;
+            if (entryType.equals(HOSPITALTYPE)) {isHosp=true; isNedonosh=",107,108,".contains(","+aEntry.getKsg().getCode()+",");} //Малая масса тела
+            else if (entryType.equals(VMPTYPE)) {isVmp=true; isNedonosh=aEntry.getIsChild();}
             else if (entryType.equals(POLYCLINICTYPE)) {isPoliclinic=true;}
             else if (entryType.equals(EXTDISPTYPE)) {isExtDisp=true;}
             else if (entryType.equals(POLYCLINICKDOTYPE)) {isPoliclinic=true;isPoliclinicKdo=true;}
@@ -206,7 +208,12 @@ private Boolean isCheckIsRunning = false;
                 //   pat.addContent(new Element("SMO_OK").setText(aEntry.getInsuranceCompanyTerritory()));
                 pat.addContent(new Element("SMO_NAM").setText(aEntry.getInsuranceCompanyName()));
             }
-            pat.addContent(new Element("NOVOR").setText(makeNovorString(aEntry)))            ;
+            String novorString =makeNovorString(aEntry);
+            pat.addContent(new Element("NOVOR").setText(novorString));
+            if (isNedonosh && novorString.equals("0")) {
+                pat.addContent(new Element("VNOV_D").setText(aEntry.getNewbornWeight()+""));
+            }
+
             zap.addContent(pat); //Добавили данные по пациенту
 
 
@@ -216,13 +223,14 @@ private Boolean isCheckIsRunning = false;
           //  edCol="1"; //06-08-2018 Ед кол больше не равно 1 !
 
             String[] slIds = entriesString.split(",");
-            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt);
+            Element zSl = createZSl(aEntry,isPoliclinic,slIds.length,cnt, isNedonosh && !novorString.equals("0"));
             int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
             Date startHospitalDate = null, finishHospitalDate=null;
             int kdz=0;
 
             /** Вот тут создаем Sl*/
             boolean isDiagnosisFill=false, isLongCase=slIds.length>1;
+            boolean isKdoServicesSet = false;
         //    Element justDiagnosis = setSluchDiagnosis(new Element("z"),aEntry);
 //            List<Object> dss =justDiagnosis.getChildren();
         //    Set<Object> sett = dss.stream().collect(Collectors.toSet());
@@ -232,7 +240,7 @@ private Boolean isCheckIsRunning = false;
                 E2Entry currentEntry = theManager.find(E2Entry.class,Long.valueOf(slId.trim()));
                 String edCol;
                 if (isPoliclinic) {
-                    children = theManager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0')").setParameter("id",currentEntry.getId()).getResultList();
+                    children = theManager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0') and (doNotSend is null or DoNotSend='0')").setParameter("id",currentEntry.getId()).getResultList();
                     edCol=""+(children.size()>0?children.size():1);
                 } else {
                     kdz+=currentEntry.getBedDays().intValue();
@@ -407,7 +415,7 @@ private Boolean isCheckIsRunning = false;
                 sl=add(sl,"IDDOKT",currentEntry.getDoctorSnils()); // СНИЛС лечащего врача
                 sl=add(sl,"ED_COL",edCol);
                if (isPoliclinicKdo) {
-                    if (isNotNull(currentEntry.getFondDoctorSpec().getIsKdoChief())) {
+                    if (isNotNull(currentEntry.getFondDoctorSpec().getIsKdoChief()) && !isKdoServicesSet) {
                         sl=add(sl,"TARIF",aEntry.getCost());
                         sl=add(sl,"SUM_M",aEntry.getCost());
                     } else {
@@ -478,7 +486,7 @@ private Boolean isCheckIsRunning = false;
                         usl.addContent(new Element("SUMV_USL").setText("0"));
                         sl.addContent(usl);
                     }
-                    if (isPoliclinicKdo && isNotNull(currentEntry.getFondDoctorSpec().getIsKdoChief())) { //Для КДО находим все услуги помимо дочерних визитов
+                    if (isPoliclinicKdo && isNotNull(currentEntry.getFondDoctorSpec().getIsKdoChief()) && !isKdoServicesSet) { //Для КДО находим все услуги помимо дочерних визитов
                         List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id), servicedate,max(id) as cnt from EntryMedService where entry_id=:id group by medservice_id, servicedate").setParameter("id",aEntry.getId()).getResultList();
                         if (list.size()>0) {
                             for (Object[] ms: list) {
@@ -506,6 +514,7 @@ private Boolean isCheckIsRunning = false;
                             sl.getChild("ED_COL").setText(""+uslCnt); //ED_COL всегда равен 1 *** 02-08-2018
                            // log.info("XML_KDO_CHILD="+uslCnt);
                         }
+                        isKdoServicesSet = true;
                     }
                 }  /* else if (isExtDisp) { //TODO
                   List<Object[]> list = theManager.createNativeQuery("select medservice_id||'' as ms, ''||count(id) as cnt from EntryMedService where entry_id=:id group by medservice_id").setParameter("id",aEntry.getId()).getResultList();
@@ -986,7 +995,7 @@ private Boolean isCheckIsRunning = false;
                 records = theManager.createNativeQuery("select id from E2Entry where " + (calcAllListEntry ? "" : "listEntry_id=" + aEntryListId + " and") + " (isDeleted is null or isDeleted='0') and (doNotSend is null or doNotSend='0') and billNumber=:billNumber and billDate=:billDate ")
                         .setParameter("billNumber", aBillNumber).setParameter("billDate", aBillDate).getResultList();
             } else {
-                records = new ArrayList<BigInteger>();
+                records = new ArrayList<>();
                 records.add(new BigInteger(aEntryId.toString()));
                 //records = theManager.createNativeQuery("select id from E2Entry where id=:entryId ").setParameter("entryId", aEntryId).getResultList();
             }
@@ -1201,7 +1210,7 @@ private Boolean isCheckIsRunning = false;
                         .setParameter("billNumber", aBillNumber).setParameter("billDate", aBillDate).getResultList();
             } else {
                 sql = "select "+selectSqlAdd+" from E2Entry e" +
-                        " left join e2entry child on child.parentEntry_id=e.id" +
+                        " left join e2entry child on child.parentEntry_id=e.id and (child.isDeleted is null or child.isDeleted='0')" +
                         " where e.listEntry_id=" + entry.getListEntry().getId()  +
                         " and e.listEntry_id="+aEntryListId+
                         " and (e.isDeleted is null or e.isDeleted='0') " +

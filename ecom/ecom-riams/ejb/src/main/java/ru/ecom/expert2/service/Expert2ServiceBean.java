@@ -304,6 +304,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         deletePolyclinicDoubles(aListEntryId,false);
         deletePolyclinicDoubles(aListEntryId,true);
     }
+
+    /**Удаляем дубли по поликлинике */
     private void deletePolyclinicDoubles(Long aListEntryId, boolean deleteEmergency) {
         log.info(aListEntryId+" deletingDoubles... emergency="+deleteEmergency);
         StringBuilder searchSql = new StringBuilder();
@@ -329,6 +331,10 @@ public class Expert2ServiceBean implements IExpert2Service {
             deletePolyclinicDoubles(aListEntryId, deleteEmergency);
         }
     }
+
+    private void deleteCrossSpo(Long aListEntryId) {
+        String sql = "";
+    }
     /** Формирует КДО из СПО */
     private void unionPolyclinicKdoMedCase(Long aListEntryId, List<E2Entry> aEntryList) {
         //Находим СПО, находим визит к "главному специалисту", создаем копию, визиты - входящие в компл. случай
@@ -341,7 +347,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         log.info("union_kdo.list="+list.size()+", sql = "+sql.toString()+", id="+aListEntryId);
         if (list.isEmpty()) {
-            log.error("KDO_LIST_IS_EMPTY");
+            log.error("KDO_LIST_IS_EMPTY, может, уже склеивали");
             list = theManager.createNativeQuery("select *  from e2entry where id="+(aEntryList!=null?aEntryList.get(0).getId():0)).getResultList();
             log.info("ENTRY MUST BE! id1="+aEntryList.get(0).getId()+", size = "+list.size());
             for (Object[] o:list) {
@@ -356,10 +362,11 @@ public class Expert2ServiceBean implements IExpert2Service {
             for (String id:ids) {
                 Long currentId = toLong(id);
                 currentEntry = theManager.find(E2Entry.class,currentId);
-                if (currentEntry.getFondDoctorSpec()!=null&&currentEntry.getFondDoctorSpec().getIsKdoChief()!=null&&currentEntry.getFondDoctorSpec().getIsKdoChief()){
+                if (currentEntry.getFondDoctorSpec()!=null&&isNotNull(currentEntry.getFondDoctorSpec().getIsKdoChief())){
                     log.info("KDO = found main entry");
                     //Нашли визит главного специалиста в КДО
                     mainEntry = cloneEntity(currentEntry);
+                    mainEntry.setIsUnion(true);
                     theManager.persist(mainEntry);
                     cloneMedService(currentEntry,mainEntry);
                     cloneDiagnosis(currentEntry,mainEntry);
@@ -988,7 +995,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     unionPolyclinicMedCase(listEntryId ,null);
                 } else if (listEntryCode.equals(POLYCLINICKDOTYPE)) {
                     monitor.setText("Формируем случаи КДО");
-                    unionPolyclinicKdoMedCase(listEntryId,null);
+                    //unionPolyclinicKdoMedCase(listEntryId,null);
                 }
 
                 int i=0;
@@ -2635,7 +2642,7 @@ List<String> ksgFullPaymentChildsList = new ArrayList<String>();
        // String ksgFullPaymentChilds="107,108";//,109,110,111,112,113"; //при переводе детей в другое ЛПУ не считаем прерванным случаем *30-05-2018
         ksgFullPaymentChildsList.add("107");ksgFullPaymentChildsList.add("108");
         String notFullReason = aEntry.getNotFullPaymentReason();
-
+        boolean planDischarge = false;
         if (otherLpuResult.indexOf(result) > -1) { //Переведен в другой стационар
             if (aEntry.getKsg()!=null&&ksgFullPaymentChildsList.contains(aEntry.getKsg().getCode())) {
                 isPrerSluch = false;
@@ -2650,9 +2657,9 @@ List<String> ksgFullPaymentChildsList = new ArrayList<String>();
             //    npl="1";
         } else if (deadResult.indexOf(result) > -1) { //Смерть пациента
             isPrerSluch = true;
-        }  //else
-        if (aEntry.getCalendarDays() < 4) {  //Если длительность случая менее 4 дней. //28-02-2018 4 целых дня.
-            if (!isPrerSluch && aEntry.getKsg() != null && isNotNull(aEntry.getKsg().getIsFullPayment())) { //Если У КСГ признак полной оплаты - то это не прер. случай
+        } else {planDischarge=true;}  //Плановая выписка
+        if (!isPrerSluch && aEntry.getCalendarDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
+            if (aEntry.getKsg() != null && isNotNull(aEntry.getKsg().getIsFullPayment())) { //Если У КСГ признак полной оплаты - то это не прер. случай
                 isPrerSluch = false;
             } else {
                 isPrerSluch = true;
@@ -2665,7 +2672,7 @@ List<String> ksgFullPaymentChildsList = new ArrayList<String>();
             // если прерванный случай - ставим причину неполной оплаты
             ret = calculateBasePrerSluchCoefficient(aEntry); //Прерванным случаям коэффициент = 0.3
             GrouperKSGPosition pos =aEntry.getKsgPosition();
-            if ((pos!=null&&isNotNull(pos.getServiceCode())/*||isNotNull(aEntry.getDopKritKSG())*/)) { //Если у КСГ признак "операционного", либо есть доп. критерий КСГ * убрано до июля
+            if ((pos!=null&&isNotNull(pos.getServiceCode())||  aEntry.getKsg().getCode().equals("233") /*||isNotNull(aEntry.getDopKritKSG())*/)) { //Если у КСГ признак "операционного", либо есть доп. критерий КСГ * убрано до июля
                 surgicalKsg=true;
                 //    if ((aEntry.getOperationList()!=null&&aEntry.getOperationList().indexOf(pos.getServiceCode())>-1)
                 //           ||(isNotNull(aEntry.getMainService())&&aEntry.getMainService().equals(pos.getServiceCode()))){ //Если услуга есть в группировщике //TODO упростить!
@@ -2678,7 +2685,7 @@ List<String> ksgFullPaymentChildsList = new ArrayList<String>();
                 }
                 //    }
             }
-            if (aEntry.getKsg().getCode().equals("233")) { //Если политравма и есть любая операция, то Кпр=1 *07.05.2018
+            if (planDischarge && aEntry.getKsg().getCode().equals("233")) { //Если политравма и есть любая операция, то Кпр=1 *07.05.2018
                 if (theManager.createNativeQuery("select id from entrymedservice where entry_id=:id").setParameter("id",aEntry.getId()).getResultList().size()>0) {
                     ret = new BigDecimal(1);
                 }
