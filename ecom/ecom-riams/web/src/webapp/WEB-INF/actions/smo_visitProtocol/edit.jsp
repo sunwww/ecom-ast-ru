@@ -243,7 +243,7 @@ horizontalFill="true" />
 	<tiles:put name='javascript' type='string'>
 
 
-//Скрипты тут выполняются всегда!
+
 		<script type="text/javascript">
             function printProtocol() {
                 HospitalMedCaseService.getPrefixByProtocol(${param.id},
@@ -260,8 +260,6 @@ horizontalFill="true" />
 
 		</script>
 
-
-		<!-- Вот тут все глобальные функции, без ролей.-->
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
 			<script type="text/javascript">
                 var oldaction = document.smo_visitProtocolForm.action;
