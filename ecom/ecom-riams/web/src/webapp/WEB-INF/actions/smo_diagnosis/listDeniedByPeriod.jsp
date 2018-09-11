@@ -342,6 +342,7 @@ select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
 ,case when mcmp.policies_id is not null then 'Да' else '' end  as policies
+, ml.name as f7_depname
  from MedCase sls
 left join patient p on p.id=sls.patient_id
 left join workfunction wf on wf.id=sls.ownerFunction_id
@@ -356,6 +357,7 @@ left join worker dw on dw.id=dwf.worker_id
 left join patient dwp on dwp.id=dw.person_id
 left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
+left join mislpu ml on ml.id=sls.department_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is not null
 and sls.department_id='${department}' and sls.medicalAid='1'
@@ -372,6 +374,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
+      <msh:tableColumn columnName="Отделение" property="7"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
@@ -452,6 +455,7 @@ select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
 ,case when mcmp.policies_id is not null then 'Да' else '' end  as policies
 ,case when diag.id is not null ${filterMkbSql} then mkb.code else null end as diag
+,ml.name as f8_depName
  from MedCase sls
 left join patient p on p.id=sls.patient_id
 left join diary d on d.medcase_id=sls.id
@@ -466,6 +470,7 @@ left join worker dw on dw.id=dwf.worker_id
 left join patient dwp on dwp.id=dw.person_id
 left join vocworkfunction dvwf on dvwf.id=dwf.workFunction_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
+left join mislpu ml on ml.id=sls.department_id
 where sls.dtype='HospitalMedCase' and sls.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 and sls.deniedHospitalizating_id is not null
  and sls.medicalAid='1'
@@ -484,6 +489,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
       <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
       <msh:tableColumn columnName="Диагноз" property="7"/>
+		<msh:tableColumn columnName="Отделение" property="8"/>
     </msh:table>${datelist_sql}
     </msh:sectionContent>
     </msh:section>

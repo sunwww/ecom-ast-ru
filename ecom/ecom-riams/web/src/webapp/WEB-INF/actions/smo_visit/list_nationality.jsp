@@ -203,7 +203,7 @@
   	<msh:section title="Поликлиника">
 
   	
-	    <ecom:webQuery isReportBase="true" name="list_yes" nameFldSql="list_yes_sql" maxResult="1000" nativeSql="select m.id
+	    <ecom:webQuery isReportBase="true" name="list_yes" nameFldSql="list_yes_sql" maxResult="100000" nativeSql="select m.id
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY')||' '||cast(m.timeExecute as varchar(5)) as dateStart
 
@@ -249,7 +249,7 @@ order by p.lastname,p.firstname,p.middlename"/>
   	<msh:section title="Стационар">
 
   	
-	    <ecom:webQuery name="list_stac" maxResult="1000" nativeSql="select smo.id
+	    <ecom:webQuery name="list_stac" maxResult="100000" nativeSql="select smo.id
 	    
 	    ,to_char(smo.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(smo.dateFinish,'DD.MM.YYYY') as dateFinish
@@ -288,7 +288,7 @@ order by p.lastname,p.firstname,p.middlename"/>
   	<msh:section title="Отказы от госпитализаций">
 
   	
-	    <ecom:webQuery isReportBase="true" name="list_stac1" maxResult="1000" nativeSql="select m.id
+	    <ecom:webQuery isReportBase="true" name="list_stac1" maxResult="100000" nativeSql="select m.id
 	    
 	    ,to_char(m.dateStart,'DD.MM.YYYY') as dateStart
 	    ,to_char(m.dateFinish,'DD.MM.YYYY') as dateFinish
@@ -330,7 +330,7 @@ order by p.lastname,p.firstname,p.middlename"/>
       	<msh:section title="Поликлиника">
 
       	
-    	    <ecom:webQuery isReportBase="true" name="list_yes" maxResult="1000" nativeSql="select
+    	    <ecom:webQuery isReportBase="true" name="list_yes" maxResult="100000" nativeSql="select
     	    p.id as pid
     	    ,count(distinct m.id)
 
@@ -380,7 +380,7 @@ ${groupSqlAdd}
       	<msh:section title="Стационар">
 
       	
-    	    <ecom:webQuery isReportBase="true" name="list_stac" maxResult="1000" nativeSql="select
+    	    <ecom:webQuery isReportBase="true" name="list_stac" maxResult="100000" nativeSql="select
     	    p.id as pid
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
@@ -425,7 +425,7 @@ ${groupSqlAdd}
       	<msh:section title="Отказы от госпитализаций">
 
       	
-    	    <ecom:webQuery isReportBase="true" name="list_stac1" maxResult="1000" nativeSql="select p.id
+    	    <ecom:webQuery isReportBase="true" name="list_stac1" maxResult="100000" nativeSql="select p.id
     	    ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     	    ,to_char(p.birthday,'DD.MM.YYYY') as birthday
     	    ,vn.name as vnname
