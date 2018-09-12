@@ -7,6 +7,8 @@
 	<form-beans>
 		<form-bean name="extDispPlan_recordForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationRecordForm"/>
 		<form-bean name="extDispPlan_planForm"			type="ru.ecom.mis.ejb.form.extdispplan.ExtDispPlanPopulationForm"/>
+		<form-bean name="mis_dispensaryCardForm"			type="ru.ecom.mis.ejb.form.patient.DispensaryCardForm"/>
+		<form-bean name="mis_dispensaryCardJournalForm"			type="ru.ecom.mis.web.action.patient.DispensaryJournalForm"/>
 
 	<!-- Справочник -->
 	<form-bean name="directory_entryForm"			type="ru.ecom.mis.ejb.form.directory.EntryForm"/>
@@ -323,6 +325,13 @@
 
 
 	<action-mappings>
+		<action path='/exportDispensary' type='ru.ecom.web.actions.base.ForwardAction'
+				name="mis_dispensaryCardJournalForm"
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/mis_dispensaryCard/export.jsp" />
+		</action>
 		<action path='/kiosk' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				scope="request"

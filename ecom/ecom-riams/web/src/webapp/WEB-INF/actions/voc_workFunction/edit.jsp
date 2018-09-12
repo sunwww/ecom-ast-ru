@@ -30,6 +30,10 @@
         	<msh:checkBox property="isNoDiagnosis" label="Не заполняется диагноз"/>
         	<msh:checkBox property="isNo039" label="Не включать в 039 форму"/>
         </msh:row>
+        <msh:row>
+          <msh:autoComplete property="medHelpProfile" label="Профиль мед. помощи" vocName="vocE2MedHelpProfile" size="50"/>
+
+        </msh:row>
         <msh:row guid="10e684ef-5a8d-45dd-ab3d-c5bae516a73e">
           <msh:autoComplete horizontalFill="true" property="vocPost" vocName="vocPost" label="Должность" fieldColSpan="3" viewAction="entityView-voc_post.do" guid="351c87de-9b9a-46ee-80c9-b65d6256fd0c" />
         </msh:row>

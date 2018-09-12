@@ -861,7 +861,8 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink roles="/Policy/Mis/Patient/AttachedByDepartment/Create" params="id" action="/entityParentPrepareCreate-mis_lpuAttachedByDepartment" name="Специальное прикрепление" guid="9fc8edbb-dcbb-4134-b33c-f4e9ca033cfc" />
 		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_assessmentCard" name="Карту оценки"  title="Добавить карту оценки" roles="/Policy/Mis/AssessmentCard/Create" />
 		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_invalidity" name="Инвалидность"  title="Добавить инвалидность" roles="/Policy/Mis/Patient/Invalidity/Create" />
-        <%-- 
+		<msh:sideLink params="id" action="/entityParentPrepareCreate-mis_dispensaryCard" name="Карту Д учета"  title="Добавить карту Д учета" roles="/Policy/Mis/Patient/Dispensary/Create" />
+        <%--
         <msh:sideLink params="id" action="/entityParentPrepareCreate-work_award" name="Награду" title="Добавить награду" guid="bbdd4af8-7978-476f-a23c-618d3bbc2b6a" roles="/Policy/Mis/Worker/Award/Create" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_education" name="Образование" title="Добавить образование" guid="ac6aa3fc-47d3-4d9f-a5ce-0e1ff7651f99" roles="/Policy/Mis/Worker/Education/Create" />
         <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_qualification" name="Квалификацию" title="Добавить квалификацию" guid="4c1b636f-7338-48d2-9835-26e1f491fd0a" roles="/Policy/Mis/Worker/Qualification/Create" />
@@ -889,6 +890,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         <msh:sideLink params="id" action="/entityParentList-mis_kinsman" name="Родственников (представителей)"  title="Показать всех родственников (представителей)" roles="/Policy/Mis/Patient/Kinsman/View"/>
         <msh:sideLink params="id" action="/js-mis_assessmentCard-listByPatient" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/>
         <msh:sideLink params="id" action="/entityParentList-mis_patientExternalServiceAccount" name="Согласие на передачу данных"  title="Согласие на передачу данных" roles="/Policy/Mis/Patient/PatientExternalServiceAccount/View"/>
+        <msh:sideLink params="id" action="/entityParentList-mis_dispensaryCard" name="Карты Д учета"  title="Карты Д учета" roles="/Policy/Mis/Patient/Dispensary/View"/>
         </msh:sideMenu>
       <msh:sideMenu title="Печать" guid="157c0645-4549-461e-acf7-34072c393951">
         <msh:sideLink params="id" action="/print-ambcard.do?s=PatientPrintService&amp;m=printInfo" 

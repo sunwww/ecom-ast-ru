@@ -6,21 +6,30 @@ left join Patient as p on p.id=w.person_id
 where wf.dtype='PersonalWorkFunction' -->
 
 
-<voc id="vocEntry" type="NativeVocService">
+<voc id="vocDispensaryEndReason" type="NativeVocService">
 	<NativeVocService 
+	from="VocDispensaryEnd as voc"
+
+	names="voc.name ||' '||voc.comment"
+	nameId="voc.id"
+	queried ="(voc.code like :query or voc.name like :query)"
+/>	
+</voc>
+<voc id="vocEntry" type="NativeVocService">
+	<NativeVocService
 	from="entry as e"
 	join="left join WorkFunction as wf on wf.id= e.person_id
 		left join Worker as w on w.id=wf.worker_id
 		left join Patient as p on p.id=w.person_id
 		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
 		left join department d on d.id=e.department_id
-		left join mislpu m on m.id=d.department_id" 
-	queryAppend="wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')" 
-	names="e.comment||' - '||p.lastname||' '||p.firstname||' '||p.middlename||'('||m.name||')' as name" 
+		left join mislpu m on m.id=d.department_id"
+	queryAppend="wf.dtype='PersonalWorkFunction' and (wf.archival is null or wf.archival='0')"
+	names="e.comment||' - '||p.lastname||' '||p.firstname||' '||p.middlename||'('||m.name||')' as name"
 	nameId="e.id"
 	queriedSplitCount="3"
-	queried =" (cast(e.id as varchar(20))= :querInd or e.comment like UPPER(:quer1) or p.lastname like :quer1 or m.name like :quer2"
-/>	
+	queried =" voc.name like :querInd or voc.code like "
+/>
 </voc>
 
 

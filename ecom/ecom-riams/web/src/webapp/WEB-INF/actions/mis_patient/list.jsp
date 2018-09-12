@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -59,23 +58,7 @@
   request.setAttribute("remoteAddress" , request.getRemoteAddr()) ;
   request.setAttribute("username" , LoginInfo.find(request.getSession(true)).getUsername()) ;
   %>
-  <ecom:webQuery name="comport_list" nativeSql="
-  select wp.comPort,wp.id from workPlace wp left join SecUser su on su.id=wp.user_id where wp.dtype='UserComputer' and (wp.remoteAddress='${remoteAddress}' or wp.dynamicIp='1' and su.login='${username}')
-  "/>
-  <%
-  ActionUtil.getValueByListDef("comport_list", "port_com","COM3", request) ;
-  %>
-    <msh:ifInRole roles="/Policy/Mis/Patient/FindByBarcode">
-
-	<object id="cadesplugin"  class="hiddenObject" type="application/x-cades">
-    </object>
-    <applet code="CommRead" archive="js-mis_patient-CommRead.do, js-mis_patient-jssc.do, js-mis_patient-barcode.do" width=1 height=1>
-    <param name = "MAYSCRIPT" value = "TRUE">
-    <param name = "comport" value = "${port_com}">
-    <param name = "initial_focus" value = "false">
-    </applet>
-    </msh:ifInRole>
-  <msh:ifNotInRole roles="/Policy/MainMenu/Patient">
+   <msh:ifNotInRole roles="/Policy/MainMenu/Patient">
 	    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/View" 
 	    	styleId="stac_findSlsByStatCard"
 	    	action="/stac_findSlsByStatCard" name="Поиск по номеру стат.карты"

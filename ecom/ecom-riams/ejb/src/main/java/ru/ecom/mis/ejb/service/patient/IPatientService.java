@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.service.patient;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.util.List;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
@@ -12,9 +8,14 @@ import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 
+import java.sql.Date;
+import java.text.ParseException;
+import java.util.List;
+
 /**
  */
 public interface IPatientService {
+	String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber);
 	public String getAddressByOkato (String aOkato, String aStreet);
 	public void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId);
 	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate

@@ -2,17 +2,7 @@ package ru.ecom.mis.ejb.form.worker;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
-import ru.ecom.jaas.ejb.form.interceptor.SecPolicySaveInterceptor;
-import ru.ecom.jaas.ejb.form.interceptor.SecPolicyViewInterceptor;
-import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
-import ru.ecom.mis.ejb.form.worker.interceptor.VocWorkFunctionSaveInterceptor;
-import ru.ecom.mis.ejb.form.worker.interceptor.VocWorkFunctionViewInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
@@ -111,4 +101,12 @@ public class VocWorkFunctionForm extends IdEntityForm {
 
 	/** Не включать в 039 форму */
 	private Boolean theIsNo039;
+
+	/** Профиль медицинской помощи */
+	@Comment("Профиль медицинской помощи")
+	@Persist
+	public Long getMedHelpProfile() {return theMedHelpProfile;}
+	public void setMedHelpProfile(Long aMedHelpProfile) {theMedHelpProfile = aMedHelpProfile;}
+	/** Профиль медицинской помощи */
+	private Long theMedHelpProfile ;
 }

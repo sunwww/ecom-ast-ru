@@ -1,13 +1,43 @@
 package ru.ecom.mis.ejb.service.patient;
 
-import java.lang.reflect.Method;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
+import org.jboss.annotation.security.SecurityDomain;
+import org.jdom.Element;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import ru.ecom.address.ejb.domain.address.Address;
+import ru.ecom.alg.common.IsChild;
+import ru.ecom.ejb.services.entityform.EntityFormException;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.ejb.xml.XmlUtil;
+import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
+import ru.ecom.jaas.ejb.domain.SoftConfig;
+import ru.ecom.jaas.ejb.service.SoftConfigServiceBean;
+import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
+import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
+import ru.ecom.mis.ejb.domain.licence.TemplateExternalDocument;
+import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
+import ru.ecom.mis.ejb.domain.lpu.LpuArea;
+import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
+import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.PatientFond;
+import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
+import ru.ecom.mis.ejb.domain.patient.voc.*;
+import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
+import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
+import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.ecom.mis.ejb.form.patient.VocOrgForm;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -20,46 +50,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.apache.log4j.Logger;
-import org.jboss.annotation.security.SecurityDomain;
-
-import ru.ecom.address.ejb.domain.address.Address;
-import ru.ecom.alg.common.IsChild;
-import ru.ecom.ejb.services.entityform.EntityFormException;
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
-import ru.ecom.jaas.ejb.domain.SoftConfig;
-import ru.ecom.jaas.ejb.service.SoftConfigServiceBean;
-import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
-import ru.ecom.mis.ejb.domain.licence.ExternalDocument;
-import ru.ecom.mis.ejb.domain.licence.TemplateExternalDocument;
-import ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType;
-import ru.ecom.mis.ejb.domain.lpu.LpuArea;
-import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint;
-import ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
-import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.PatientFond;
-import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
-import ru.ecom.mis.ejb.domain.patient.voc.VocAttachedType;
-import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
-import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
-import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
-import ru.ecom.mis.ejb.form.lpu.interceptors.LpuAreaDynamicSecurity;
-import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
-import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.ecom.mis.ejb.form.patient.VocOrgForm;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.format.DateFormat;
+import java.lang.reflect.Method;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Сервис пациента
@@ -70,6 +68,107 @@ import ru.nuzmsh.util.format.DateFormat;
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
 	private  final Logger log = Logger.getLogger(PatientServiceBean.class);
+
+	/**Выгружаем список карт Д наблюдения */
+	public String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber)  {
+		JSONObject ret = new JSONObject();
+		try {
+			StringBuilder sqlWhere = new StringBuilder();
+			if (aDateFrom!=null) {
+				SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
+				sqlWhere.append(" where coalesce(d.finishDate, d.startDate) ");
+				if (aDateTo!=null) {
+					sqlWhere.append(" between '").append(yyyyMMdd.format(aDateFrom)).append("' and '").append(yyyyMMdd.format(aDateTo)).append("'");
+				} else{
+					sqlWhere.append(">='").append(yyyyMMdd.format(aDateFrom)).append("'");
+				}
+				if (aDateChanged!=null) {
+				    sqlWhere.append(" and coalesce(d.editDate, d.createDate)>='").append(yyyyMMdd.format(aDateChanged)).append("'");
+                }
+			}
+			while(aPacketNumber.length()<4) {aPacketNumber="0"+aPacketNumber;}
+			SimpleDateFormat yyddmm = new SimpleDateFormat("yyMMdd");
+			String defaultLpuCode = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE","123456",theManager);
+			String filename ="DNM"+defaultLpuCode+"T30_"+yyddmm.format(aDateTo)+"_"+aPacketNumber;
+			StringBuilder sql = new StringBuilder();
+			String[] flds = {"N_ZAP", "FAM",  "IM", "OT", "DR", "TEL", "IDCASE", "PROFIL", "DS", "D_BEG", "D_END", "END_RES","YEAR"};
+			sql.append("select " +
+					" pat.id as N_ZAP" +
+					" ,pat.lastname as FAM" +
+					" ,pat.firstname AS IM " +
+					" ,pat.middlename AS OT" +
+					" ,to_char(pat.birthday,'yyyy-MM-dd') as DR " +
+					" ,coalesce(pat.phone,'') as TEL" +
+					" ,d.id as IDCASE" +
+					" ,coalesce(profile.profilek,'') as PROFIL" +
+					" ,coalesce(mkb.code,'') as DS" +
+					" ,coalesce(to_char(d.startdate,'yyyy-MM-dd'),'') AS D_BEG" +
+					" ,coalesce(to_char(d.finishdate,'yyyy-MM-dd'),'') AS D_END" +
+					" ,coalesce(vde.code,'') AS END_RES" +
+					" ,to_char(coalesce(d.finishDate, d.startDate),'yyyy') as YEAR" +
+					" from dispensarycard d" +
+					" left join vocdispensaryend vde on vde.id=d.endreason_id" +
+					" left join workfunction wf on wf.id=d.workfunction_id" +
+					" left join vocworkfunction vwf on vwf.id=wf.workfunction_id" +
+					" left join voce2medhelpprofile profile on profile.id=vwf.medhelpprofile_id" +
+					" left join patient pat on pat.id=d.patient_id" +
+					" left join vocidc10 mkb on mkb.id=d.diagnosis_id" +
+					sqlWhere.toString()+
+					" order by pat.id");
+			JSONArray arr = new JSONArray(theWebQueryService.executeNativeSqlGetJSON(flds,sql.toString(),null));
+			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+			Element dn = new Element("DN");
+			dn.addContent(new Element("FNAME").setText(filename));
+			filename+=".xml";
+			if (arr.length()==0) {ret.put("status","error").put("errorCode","Записей не найдено"); return ret.toString();}
+			Element zap= null;
+			String lastPatId = null;
+			for (int i=0;i<arr.length();i++) {
+				JSONObject pat = arr.getJSONObject(i);
+				String patId =pat.getString("N_ZAP");
+
+				if (lastPatId!=null && lastPatId.equals(patId)) { //Создаем несколько карт Д учета одному пациенту.
+					log.info("У пациента несколько Д карт, попробуем стримы");
+					//List<Element> list =dn.getChildren("ZAP");
+				//	zap = new Element("ZAP"); //list.stream().filter(z->z.getChildText("N_ZAP").equals(patId)).findFirst().get();
+					log.info("Hello, i found element by stream!!!");
+				} else {
+				//	patients.add(patId);
+					zap = new Element("ZAP");
+					zap.addContent(new Element("N_ZAP").setText(patId));
+					zap.addContent(new Element("YEAR").setText(pat.getString("YEAR")));
+					zap.addContent(new Element("FAM").setText(pat.getString("FAM")));
+					zap.addContent(new Element("IM").setText(pat.getString("IM")));
+					zap.addContent(new Element("OT").setText(pat.getString("OT")));
+					zap.addContent(new Element("DR").setText(pat.getString("DR")));
+					zap.addContent(new Element("TEL").setText(pat.getString("TEL")));
+					dn.addContent(zap);
+					lastPatId=patId;
+				}
+				Element zapDn = new Element("DN");
+				zapDn.addContent(new Element("IDCASE").setText(pat.getString("IDCASE")));
+				zapDn.addContent(new Element("PROFIL").setText(pat.getString("PROFIL")));
+				zapDn.addContent(new Element("DS").setText(pat.getString("DS")));
+				zapDn.addContent(new Element("D_BEG").setText(pat.getString("D_BEG")));
+				zapDn.addContent(new Element("D_END").setText(pat.getString("D_END")));
+				zapDn.addContent(new Element("END_RES").setText(pat.getString("END_RES")));
+				zap.addContent(zapDn);
+			}
+			XmlUtil.createXmlFile(dn,workDir+"/"+filename);
+			ret.put("status","ok").put("filename",filename);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			try {
+				ret.put("status","error").put("errorCode",e.toString());
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();}
+
+
+		return ret.toString();
+	}
 	public void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId) {
 		theManager.createNativeQuery("update medpolicy set dtype=(select vmp.code from vocmedpolicy vmp" +
 				" where vmp.id="+aNewPolicyTypeId+") where id="+aPolicyId).executeUpdate();
@@ -1817,18 +1916,15 @@ public class PatientServiceBean implements IPatientService {
 		aFirstname = aFirstname.toUpperCase().trim() ;
 		aMiddlename = aMiddlename.toUpperCase().trim() ;
 		aLastname = aLastname.toUpperCase().trim() ;
-		sql.append("")
-			.append(" from Patient p")
+		sql.append(" from Patient p")
 			.append(" where (")
 			.append(" (p.lastname =:lastname and p.firstname = :firstname and p.middlename=:middlename and ");
 		String birthyear ;
 		if (!aIsFullBirthdayCheck) {
 			birthyear= aBirthday.substring(6) ;
-			System.out.println("birthyear="+birthyear) ;
 			sql.append("to_char(p.birthday,'yyyy')=:birthyear)") ;
 		} else {
 			birthyear= aBirthday ;
-			System.out.println("birthyear="+birthyear) ;
 			sql.append("p.birthday=to_date(:birthyear,'dd.mm.yyyy'))") ;
 		}
 		if (aSnils!=null && !aSnils.equals("") && !aSnils.equals("999-999-999 99")) {
@@ -1920,7 +2016,8 @@ public class PatientServiceBean implements IPatientService {
 	}
 
 	private @EJB ILocalEntityFormService theEntityFormService;
-
+private @EJB
+	IWebQueryService theWebQueryService;
 	private @PersistenceContext EntityManager theManager;
 
 	private final LpuAreaDynamicSecurity theLpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
