@@ -117,8 +117,8 @@ public class FondCheck {
 
         if(limit==null) limit="100";
 
-        String sql="select id,lastname,firstname,middlename,birthday,snils from patient where patientfond_id is null and isCheckFondError=false limit "+limit;
-        if(patient_id!=null)  sql ="select id,lastname,firstname,middlename,birthday,snils from patient where id="+patient_id+" limit "+limit;
+        String sql="select id,lastname,firstname,middlename,birthday,snils from patient where patientfond_id is null and (isCheckFondError=false or isCheckFondError is null) limit "+limit;
+        if(patient_id!=null)  sql ="select id,lastname,firstname,middlename,birthday,snils from patient where id="+patient_id;
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
