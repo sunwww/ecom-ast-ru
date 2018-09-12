@@ -1,13 +1,14 @@
 package ru.ecom.mis.ejb.domain.contract;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 	/**
 	 * Физическое лицо
 	 */
@@ -39,4 +40,7 @@ public class NaturalPerson extends ContractPerson{
 	public String getInformation() {
 		return new StringBuilder().append("Физ. лицо: ").append(thePatient!=null ? thePatient.getFio() : "").toString() ; 
 	}
+
+	public NaturalPerson(){}
+	public NaturalPerson(Patient aPatient){thePatient=aPatient;}
 }

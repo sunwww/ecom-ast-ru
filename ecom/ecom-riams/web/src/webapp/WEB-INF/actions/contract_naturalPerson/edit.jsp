@@ -85,7 +85,7 @@ order by mc.dateFrom desc
   <tiles:put name="side" type="string">
     <msh:sideMenu guid="dea2e8ca-c7db-4592-a9ec-727f6d330ad1">
       <msh:sideLink key="ALT+2" params="id" action="/entityEdit-contract_naturalPerson" name="Изменить" title="Изменить" roles="" guid="6050d629-20dd-4945-83f5-f0821ad67497" />
-      <msh:sideLink key="ALT+DEL" params="id" action="/entityDelete-contract_naturalPerson" name="Удалить" title="Удалить" roles="" guid="91812d50-84d8-428a-a624-d1c59d868dfa" />
+      <msh:sideLink key="ALT+DEL" params="id" action="/entityParentDeleteGoParentView-contract_naturalPerson" name="Удалить" title="Удалить" roles="" guid="91812d50-84d8-428a-a624-d1c59d868dfa" />
     </msh:sideMenu>
     <tags:contractMenu currentAction="naturalPerson" />
   </tiles:put>
