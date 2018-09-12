@@ -19,11 +19,11 @@ public class Task implements Runnable {
         this.link = link;
     }
 
-    public String getName() throws JSONException {
+    public String getName(){
         return serviceName;
     }
 
-    public Long getId() throws JSONException {
+    public Long getId() {
         return id;
     }
 
