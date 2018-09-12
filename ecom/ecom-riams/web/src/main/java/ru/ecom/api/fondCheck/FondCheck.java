@@ -124,18 +124,23 @@ public class FondCheck {
 
         Collection<WebQueryResult> list = service.executeNativeSql(sql);
         List<Patient> patients = new ArrayList<>();
+
+
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) {
+
                 Patient patient = new Patient();
                 patient.setId(((BigInteger) wqr.get1()).longValue());
                 patient.setLastname(wqr.get2().toString());
                 patient.setFirstname(wqr.get3().toString());
                 patient.setMiddlename(wqr.get4().toString());
-                patient.setBirthday((Date) wqr.get5());
-                patient.setSnils(wqr.get6().toString());
+                if(wqr.get5()!=null) patient.setBirthday((Date) wqr.get5());
+                if(wqr.get6()!=null) patient.setSnils(wqr.get6().toString());
+
                 patients.add(patient);
             }
         }
+
 
         JSONArray jsonArray = new JSONArray();
         for (Patient patient:patients){
