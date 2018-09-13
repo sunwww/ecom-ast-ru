@@ -31,14 +31,11 @@ public class ApiUtil {
         if (aToken!=null) {
             login(aToken,aRequest);
         }
-
-
     }
 
     public static String logout(HttpServletRequest aRequest) {
         aRequest.getSession().removeAttribute(key);return "success";
     }
-
 
     /**
      * @param endpoint eg.: http://127.0.0.1:8080
@@ -55,6 +52,14 @@ public class ApiUtil {
         for (Map.Entry entry : params.entrySet()) {
             target = target.queryParam(entry.getKey().toString(),entry.getValue().toString());
         }
+        Response response = target.request(MediaType.APPLICATION_JSON).get();
+        System.out.println(response);
+        return  response.readEntity(String.class);
+    }
+
+    public static String createGetRequest(String path){
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(path);
         Response response = target.request(MediaType.APPLICATION_JSON).get();
         System.out.println(response);
         return  response.readEntity(String.class);
