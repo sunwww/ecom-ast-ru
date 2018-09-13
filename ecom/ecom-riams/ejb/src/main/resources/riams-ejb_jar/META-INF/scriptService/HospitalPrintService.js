@@ -1760,7 +1760,10 @@ function printStatCardInfo(aCtx, aParams) {
 	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
 		, new java.lang.Long(slsId)) ;
 	if (+check>0) checkAllDiagnosis (aCtx, slsId) ;
-	
+	if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Discharge/NoPrintDischargeWithoutDischargeTime")
+	 	&& null==medCase.dischargeTime) {
+		throw ("Необходимо заполнить время выписки");
+	}
 	recordPolicy(aCtx.manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", medCase).getResultList()) ;
 	recordPatient(medCase,aCtx) ;
 	recordMedCaseDefaultInfo(medCase,aCtx) ;
