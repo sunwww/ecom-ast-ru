@@ -28,14 +28,15 @@ public class ScheduleTaskListener  implements ServletContextListener {
         System.out.println("ScheduleTaskListener is start");
 
         try {
-            IDisabilityService service1 = Injection.find(event,"riams", "66405d38-a173-4cb7-a1b6-3ada51c16ac5")
+            IDisabilityService service1 = Injection.find(event,"riams")
                     .getService(IDisabilityService.class);
             String endpoint = service1.getSoftConfigValue("EndpointApi", "null");
 
             endpoint = "http://"+endpoint.split("/")[2];
             if(getEndPoints().contains(endpoint)) {
                 System.out.println("This is TRUE server");
-                IWebQueryService service = Injection.find(event, "riams", "66405d38-a173-4cb7-a1b6-3ada51c16ac5")
+
+                IWebQueryService service = Injection.find(event, "riams")
                         .getService(IWebQueryService.class);
                 Collection<WebQueryResult> list = service.executeNativeSql("select id,name,link, time from ScheduleTask");
                 ScheduleTasks scheduleTasks = new ScheduleTasks();
