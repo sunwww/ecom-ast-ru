@@ -1,13 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -19,6 +11,13 @@ import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.util.format.DateConverter;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -171,6 +170,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         	aForm.setDepartment(aMedCase.getDepartment().getId());
         	aForm.setServiceStream(aMedCase.getServiceStream()!=null?aMedCase.getServiceStream().getId():null);
         	aForm.addDisabledField("department");
+        	aForm.addDisabledField("serviceStream");
         	aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCase.getHospType())) ;
         }
         
@@ -226,6 +226,10 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
             if (diag!=null){
             	aForm.setConcomitantDiagnos(diag.getName());
 				if (diag.getIdc10()!=null) aForm.setConcomitantMkb(diag.getIdc10()) ;;
+			}
+			if (aMedCaseParent.getServiceStream()!=null) {
+            	aForm.setServiceStream(aMedCaseParent.getServiceStream().getId());
+				aForm.addDisabledField("serviceStream");
 			}
     		
     	} else {
