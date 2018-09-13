@@ -181,11 +181,11 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 		function getGiveBack (){
            var cash = +$('cashCount').value;
            var totalPrice = +$('costInfo').innerHTML;
-           var giveBack = cash-totalPrice;
+           var giveBack = (cash-totalPrice).toFixed(2);
            if (cash&& cash>0) {
         	   try {
         		   if (giveBack>0) {
-        			   $('cashGiveBackCount').innerHTML ="<b> "+ (cash-totalPrice) +" руб</b>";   
+        			   $('cashGiveBackCount').innerHTML ="<b> "+ giveBack +" руб</b>";
         		   } else {
         			   $('cashGiveBackCount').innerHTML ="<b> Нужно больше денег!</b>";
         		   }

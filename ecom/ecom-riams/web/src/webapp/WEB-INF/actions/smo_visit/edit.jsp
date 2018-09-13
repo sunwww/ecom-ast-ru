@@ -407,14 +407,14 @@
   			var wf = +$("workFunctionExecute").value;
     		if (wf=='') {wf=0;}
   			 if (theOtmoa_medServices) theOtmoa_medServices.setParentId(wf+"#"+$("dateStart").value) ;
-    		 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
-    		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-	      	 		callback: function(aResult) {
-	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
-	      	 			if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
+    	//	 if (theOtmoa_medServices) theOtmoa_medServices.clearData() ;
+    	//	 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
+	      //	 		callback: function(aResult) {
+	      	 		//	if (theOtmoa_medServices) theOtmoa_medServices.setIds(aResult) ;
+	      	 		//	if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
 	      	 		  	
-	      	 		}
-	      	 	}) ;
+	    //  	 		}
+	 //     	 	}) ;
   		}
   	}) ;
   	function updateService() {

@@ -133,3 +133,11 @@ function updateAddress(aForm) {
 		aForm.rayon=aForm.realRayon ;
 	}
 }
+
+function onCreate(aForm, aEntity, aCtx) {
+    if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/Contract/ContractPerson/NaturalPerson/Create")) {
+    	//Создаем юридическое лицо при создании пациента
+		aCtx.manager.persist(new Packages.ru.ecom.mis.ejb.domain.contract.NaturalPerson(aEntity));
+	}
+
+}

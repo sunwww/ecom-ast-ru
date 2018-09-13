@@ -7,6 +7,9 @@
     </init>
 
     <allow>
+        <create creator="new" javascript="DispensaryService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.dispensary.DispensaryServiceJs"/>
+        </create>
         <!-- Сервис для экспертизы -->
         <create creator="new" javascript="Expert2Service" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.expert2.Expert2ServiceJs"/>
