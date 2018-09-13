@@ -1,27 +1,20 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
-import org.json.JSONObject;
-import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class AdmissionSaveInterceptor implements IFormInterceptor {
 
@@ -119,30 +112,12 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				//medCase.setDiagnosis(diagList);
 			}
 		}
-		List<Object[]> rec = manager.createNativeQuery("select pat.lastname||' '||substring(pat.firstname,1,1)||''||substring(coalesce(pat.middlename,' '),1,1) as f1_name , pr.phonenumber " +
-				" from patientlistrecord pr left join patient pat on pat.id=pr.patient where pr.patient="+medCase.getPatient().getId()+" and pr.phoneNumber is not null").getResultList();
-		if (rec.size()>0) {
-			Object[] r = rec.get(0);
-			try {
-				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-				String address =config.get("ru.amokb.patientcabinetaddress", null) ;
-				if (address!=null){
-					String method = "SendSms";
-					SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-					String wfName = medCase.getDepartment().getName();
-					String message = "Пациент "+r[0].toString()+" госпитализирован в "+wfName;
-					String phone = r[1].toString();
-					JSONObject json = new JSONObject();
-					json.put("phonenumber",phone);
-					json.put("message",message);
-					TemplateProtocolServiceBean bean = new TemplateProtocolServiceBean();
-					//bean.makePOSTRequest(json.toString(),address,method,null,null,manager);
-				}
 
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (medCase.getDeniedHospitalizating()==null && medCase.getTransferDate()==null) {
+			//При отказе от госпитализации считаем что пациент выбыл из приемника (сразу направлен в отделение)
+			Long currentDate = new Date().getTime();
+			medCase.setTransferDate(new java.sql.Date(currentDate));
+			medCase.setTransferTime(new java.sql.Time(currentDate));
 		}
 	}
 
