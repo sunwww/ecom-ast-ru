@@ -13,6 +13,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import ru.ecom.api.IApiService;
+import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientFond;
 import ru.ecom.web.util.Injection;
 
@@ -24,11 +27,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by rkurbanov on 07.09.2018.
@@ -38,6 +41,77 @@ public class FondCheckUtil {
     private static String theAddress = "http://192.168.4.3" ;
     private static String theLpu = "1";
 
+    public static JSONArray syncByHospitalDenied(HttpServletRequest aRequest, String dateStart, String dateEnd)
+            throws NamingException, ParserConfigurationException, SAXException, JSONException, IOException {
+
+        String sql="select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.snils\n" +
+                "from medcase m\n" +
+                "left join patient p on p.id = m.patient_id\n" +
+                "where m.dtype = 'HospitalMedCase' \n" +
+                "and m.deniedhospitalizating_id is not null \n" +
+                "and m.datestart between '"+dateStart+"' and '"+dateEnd+"'\n" +
+                "and p.patientfond_id is null";
+
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        List<Patient> patients = getPatients(service.executeNativeSql(sql));
+
+        return FondCheckUtil.sync(aRequest,patients);
+    }
+
+    public static List<Patient> getPatients(Collection<WebQueryResult> list){
+        List<Patient> patients = new ArrayList<>();
+        if (!list.isEmpty()) {
+            for (WebQueryResult wqr : list) {
+
+                Patient patient = new Patient();
+                patient.setId(((BigInteger) wqr.get1()).longValue());
+                patient.setLastname(wqr.get2().toString());
+                patient.setFirstname(wqr.get3().toString());
+                patient.setMiddlename(wqr.get4().toString());
+                if(wqr.get5()!=null) patient.setBirthday((Date) wqr.get5());
+                if(wqr.get6()!=null) patient.setSnils(wqr.get6().toString());
+
+                patients.add(patient);
+            }
+        }
+        return patients;
+    }
+    public static JSONArray sync(HttpServletRequest aRequest, List<Patient> patients) throws ParserConfigurationException,
+            IOException, SAXException, JSONException, NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        JSONArray jsonArray = new JSONArray();
+        for (Patient patient:patients){
+            String returnJson=FondCheckUtil.sync(aRequest,patient.getSnils(),"","","",patient.getLastname(),patient.getFirstname(),
+                    patient.getMiddlename(), String.valueOf(patient.getBirthday()));
+
+            JsonParser parser = new JsonParser();
+            JsonObject mainObject = parser.parse(returnJson).getAsJsonObject();
+
+            if(!mainObject.has("error")){
+                String patientFond_id = mainObject.get("patientFond_id").getAsString();
+                service.executeUpdateNativeSql("update patient set patientfond_id="+patientFond_id+" where id="+patient.getId());
+                jsonArray.put(new JSONObject().put("patient_id",patient.getId()));
+
+            }else {
+                service.executeUpdateNativeSql("update patient set isCheckFondError=true where id="+patient.getId());
+                jsonArray.put(new JSONObject().put("patient_id",patient.getId()).put("error","1"));
+            }
+        }
+        return jsonArray;
+    }
+
+    /**
+     * Проверка по базе фонда с сохранением
+     * @param snils
+     * @param series
+     * @param number
+     * @param type
+     * @param lastname
+     * @param firstname
+     * @param middlename
+     * @param birthday
+     * @return JSON
+     */
     protected static String sync(HttpServletRequest aRequest, String snils, String series, String number,
                                  String type, String lastname, String firstname, String middlename, String birthday)
             throws ParserConfigurationException, NamingException,
@@ -58,6 +132,18 @@ public class FondCheckUtil {
         }
     }
 
+    /**
+     * Проверка по базе фонда без сохранения
+     * @param snils
+     * @param series
+     * @param number
+     * @param type
+     * @param lastname
+     * @param firstname
+     * @param middlename
+     * @param birthday
+     * @return JSON
+     */
     public static String check(String snils,
                                String series,
                                String number,
@@ -100,6 +186,11 @@ public class FondCheckUtil {
             return json.toString();
         }
         return new JSONObject().put("error","1").toString();
+    }
+
+    public static String getDate(Integer day){
+        Date today = new java.sql.Date(System.currentTimeMillis());
+        return (new Date(today.getTime() + ( (day * 1000) * 60 * 60 * 24))).toString();
     }
 
     private static PatientFond parseJSON(String json){

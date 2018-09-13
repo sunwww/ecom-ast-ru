@@ -170,19 +170,6 @@ public class DisabilitySign {
         return cretePostRequest(getEndpoint(aRequest),"api/sign/getJSON",json,"text/html");
     }
 
-
-    /*@GET
-    @Path("/executeSQL")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String executeSQL(@QueryParam("sql") String sql,
-                             @QueryParam("limit") @DefaultValue("100") Integer limit,
-                             @Context HttpServletRequest aRequest, @WebParam(name="token") String aToken) throws NamingException, SQLException {
-
-        ApiUtil.init(aRequest,aToken);
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return service.executeSqlGetJson(sql,limit).toString();
-    }*/
-
     private String getEndpoint(@Context HttpServletRequest aRequest) throws NamingException {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);

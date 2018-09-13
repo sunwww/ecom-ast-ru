@@ -1,14 +1,10 @@
 package ru.ecom.api.fondCheck;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.web.util.Injection;
 
@@ -22,16 +18,37 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+
+import static ru.ecom.api.fondCheck.FondCheckUtil.getDate;
+import static ru.ecom.api.fondCheck.FondCheckUtil.getPatients;
 
 /** Created by rkurbanov on 21.08.2018. */
 
 @Path("/foncCheck")
 public class FondCheck {
+
+    /**
+     * Проверка по фонду по отказам
+     * @param dateStart
+     * @param dateEnd
+     * @return
+     */
+    @GET
+    @Path("syncByHospitalDenied")
+    @Produces("application/json")
+    public String syncByHospitalDenied(@Context HttpServletRequest aRequest,
+                        @WebParam(name="token") String aToken,
+                        @QueryParam("dateStart") String dateStart,
+                        @QueryParam("dateEnd") String dateEnd
+                        ) throws ParserConfigurationException,
+            SAXException, IOException, JSONException, NamingException {
+
+        if(dateStart==null || dateStart.equals("")) dateStart=getDate(-7);
+        if(dateEnd==null || dateEnd.equals("")) dateEnd=getDate(0);
+        ApiUtil.init(aRequest,aToken);
+        return String.valueOf(FondCheckUtil.syncByHospitalDenied(aRequest,dateStart,dateEnd));
+    }
 
     /**
      * Проверить по фонду
@@ -122,28 +139,10 @@ public class FondCheck {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
-        Collection<WebQueryResult> list = service.executeNativeSql(sql);
-        List<Patient> patients = new ArrayList<>();
+        List<Patient> patients = getPatients(service.executeNativeSql(sql));
 
-
-        if (!list.isEmpty()) {
-            for (WebQueryResult wqr : list) {
-
-                Patient patient = new Patient();
-                patient.setId(((BigInteger) wqr.get1()).longValue());
-                patient.setLastname(wqr.get2().toString());
-                patient.setFirstname(wqr.get3().toString());
-                patient.setMiddlename(wqr.get4().toString());
-                if(wqr.get5()!=null) patient.setBirthday((Date) wqr.get5());
-                if(wqr.get6()!=null) patient.setSnils(wqr.get6().toString());
-
-                patients.add(patient);
-            }
-        }
-
-
-        JSONArray jsonArray = new JSONArray();
-        for (Patient patient:patients){
+        //JSONArray jsonArray = new JSONArray();
+        /*for (Patient patient:patients){
             String returnJson=FondCheckUtil.sync(aRequest,patient.getSnils(),"","","",patient.getLastname(),patient.getFirstname(),
                     patient.getMiddlename(), String.valueOf(patient.getBirthday()));
 
@@ -151,7 +150,6 @@ public class FondCheck {
             JsonObject mainObject = parser.parse(returnJson).getAsJsonObject();
 
             if(!mainObject.has("error")){
-
                 String patientFond_id = mainObject.get("patientFond_id").getAsString();
                 service.executeUpdateNativeSql("update patient set patientfond_id="+patientFond_id+" where id="+patient.getId());
                 jsonArray.put(new JSONObject().put("patient_id",patient.getId()));
@@ -160,9 +158,9 @@ public class FondCheck {
                 service.executeUpdateNativeSql("update patient set isCheckFondError=true where id="+patient.getId());
                 jsonArray.put(new JSONObject().put("patient_id",patient.getId()).put("error","1"));
             }
-        }
+        }*/
 
-        return new JSONObject().put("patients",jsonArray).toString();
+        return new JSONObject().put("patients",FondCheckUtil.sync(aRequest,patients)).toString();
     }
 
     /**
