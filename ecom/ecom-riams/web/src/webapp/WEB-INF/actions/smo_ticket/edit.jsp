@@ -658,11 +658,6 @@
 		  			var wf = +$("workFunctionExecute").value;
 		    		if (wf=='') {wf=0;}
 		  			 medServiceAutocomplete.setParentId(wf+"#"+$("dateStart").value) ;
-		    		 TicketService.getMedServiceBySpec(wf,$('dateStart').value,{
-			      	 		callback: function(aResult) {
-			      	 			//medServiceAutocomplete.setId(aResult) ;
-			      	 		}
-			      	 	}) ;
 		  		}
 		  	}) ;
 		function changeParentMedService() {

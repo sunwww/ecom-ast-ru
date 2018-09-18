@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.expert2;
 
+import org.json.JSONException;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.expert2.domain.E2Bill;
@@ -8,7 +9,6 @@ import ru.ecom.expert2.service.IExpert2XmlService;
 import ru.ecom.expert2.service.IFinanceService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.format.DateFormat;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,12 +19,17 @@ import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
 
+    public String fillAggregateTable(String aType, String aStartDate, String aFinishDate, String aServiceStream, HttpServletRequest aRequest) throws NamingException, JSONException, ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        java.sql.Date startDate = new java.sql.Date(format.parse(aStartDate).getTime());
+        java.sql.Date finishDate = new java.sql.Date(format.parse(aFinishDate).getTime());
+        return Injection.find(aRequest).getService(IFinanceService.class).fillAggregateTable(aType,startDate,finishDate,aServiceStream);
+    }
+
     /***/
     public void splitFinancePlan(String aType, String aYear, HttpServletRequest aRequest) throws NamingException {
         IFinanceService service = Injection.find(aRequest).getService(IFinanceService.class);
-        System.out.println("start split");
         service.splitFinancePlan(aType,aYear);
-        System.out.println("finish split");
     }
     /**  Копируем финансовый план на несколько месяцев (MM.yyyy)*/
     public void copyFinancePlanNextMonth(String aCurrentMonth, String aStartMonth, String aFinishMonth, HttpServletRequest aRequest) throws NamingException, ParseException {

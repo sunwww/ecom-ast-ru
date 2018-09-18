@@ -20,16 +20,16 @@
                         <msh:textField property="startDate" />
                     </msh:row>
                     <msh:row>
-                        <msh:autoComplete vocName="vocIdc10" property="diagnosis" size="50"/>
+                        <msh:autoComplete vocName="vocIdc10" property="diagnosis" size="50" fieldColSpan="5"/>
                     </msh:row>
                 <msh:row>
-                    <msh:autoComplete vocName="workFunction" size="50"  property="workFunction" label="Кто установил Д наблюдение" horizontalFill="true" />
+                    <msh:autoComplete vocName="workFunction" size="50"  property="workFunction" label="Кто установил Д наблюдение" fieldColSpan="5" horizontalFill="true" />
                 </msh:row>
                 <msh:row>
                         <msh:textField property="finishDate" />
                     </msh:row>
                 <msh:row>
-                        <msh:autoComplete property="endReason" vocName="vocDispensaryEndReason" size="50"/>
+                        <msh:autoComplete property="endReason" vocName="vocDispensaryEndReason" size="50" fieldColSpan="5"/>
                     </msh:row>
 
                 <msh:row>
@@ -43,7 +43,7 @@
                     <msh:textField property="editUsername" viewOnlyField="true"/>
                 </msh:row>
             </msh:panel>
-            <msh:submitCancelButtonsRow colSpan="4"/>
+            <msh:submitCancelButtonsRow colSpan="6"/>
         </msh:form>
     </tiles:put>
 
@@ -51,7 +51,7 @@
         <msh:ifFormTypeAreViewOrEdit formName="mis_dispensaryCardForm">
             <msh:sideMenu>
                 <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-mis_dispensaryCard" name="Изменить" roles="/Policy/Mis/Patient/Dispensary/Edit" />
-                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentPrepareDelete-mis_dispensaryCard" name="Удалить" confirm="Уверены что делаете?" roles="/Policy/Mis/Patient/Dispensary/Delete" />
+                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentDelete-mis_dispensaryCard" name="Удалить" confirm="Уверены что делаете?" roles="/Policy/Mis/Patient/Dispensary/Delete" />
             </msh:sideMenu>
         </msh:ifFormTypeAreViewOrEdit>
     </tiles:put>

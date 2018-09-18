@@ -78,7 +78,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         Patient patient ;
         if (aPatientGUID!=null) { //Считаем, что записываем из приложения
             patient=getPatientByGuid(aPatientGUID);
-        } else if (aPatientLastname!=null&&aPatientFirstname!=null&&aPatientBirthday!=null) { //Запись через сайт или другие источники.
+        } else if (aPatientLastname!=null && aPatientFirstname!=null && aPatientBirthday!=null) { //Запись через сайт или другие источники.
             patient = getPatientByFIO(aPatientFirstname,aPatientLastname,aPatientMiddlename,aPatientBirthday);
         } else {
             return getErrorJson("Необходимо указать ФИО либо GUID пациента","NO_PATIENT");
