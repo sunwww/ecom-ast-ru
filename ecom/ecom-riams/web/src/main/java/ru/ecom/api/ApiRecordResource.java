@@ -152,55 +152,63 @@ public class ApiRecordResource {
     }
 
 
-    private String makeRecordOrAnnul(HttpServletRequest aRequest
-            ,  JSONObject root) throws NamingException, JSONException, ParseException {
-        Long calendarTimeId = Long.valueOf((String)getJsonField(root,"calendarTime_id"));
-        String lastname = getJsonField(root,"lastname");
-        String firstname = getJsonField(root,"firstname");
-        String middlename = getJsonField(root,"middlename");
-        String birthday = getJsonField(root,"birthday");
-        String patientGUID = getJsonField(root,"patient_uid");
-        String patientComment = getJsonField(root,"comment");
-        String patientPhone = getJsonField(root,"phone");
-        String debug = getJsonField(root,"debug");
-        String token = getJsonField(root,"token");
-        String annul = getJsonField(root,"annul");
-        String list;
+    private String makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
 
-        ApiUtil.init(aRequest,token);
-        IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
-        if (!StringUtil.isNullOrEmpty(annul)) {
-            list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
-        } else {
-            list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,patientComment,patientPhone,service);
-            if (list==null) {
-                list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
-            } else { //Записали успешно, пишем файл
-                JSONObject recordInfo = new JSONObject(list);
-                if (!recordInfo.has("error_code")) {
-                    String medcaseID = getJsonField(recordInfo, "medcaseId");
-                    String patientID = getJsonField(recordInfo, "patientId");
-                    if (root.has("files")) {
-                        JSONArray files = root.getJSONArray("files");
-                        for (int i = 0; i < files.length(); i++) {
-                            JSONObject file = files.getJSONObject(i);
-                            String filename = getJsonField(file,"filename");
-                            String file64String = getJsonField(file,"filebase64");
-                            String fileDocType = getJsonField(file,"fileDocType");
-                            service.saveExternalDodument(filename, file64String, patientID!=null?Long.valueOf(patientID):null, medcaseID!=null?Long.valueOf(medcaseID):null, Long.valueOf(calendarTimeId), fileDocType);
+        try {
+            System.out.println("json record = "+root.toString());
+            Long calendarTimeId = Long.valueOf((String)getJsonField(root,"calendarTime_id"));
+            String lastname = getJsonField(root,"lastname");
+            String firstname = getJsonField(root,"firstname");
+            String middlename = getJsonField(root,"middlename");
+            String birthday = getJsonField(root,"birthday");
+            String patientGUID = getJsonField(root,"patient_uid");
+            String patientComment = getJsonField(root,"comment");
+            String patientPhone = getJsonField(root,"phone");
+            String debug = getJsonField(root,"debug");
+            String token = getJsonField(root,"token");
+            String annul = getJsonField(root,"annul");
+            String list;
+
+            ApiUtil.init(aRequest,token);
+            IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
+            if (!StringUtil.isNullOrEmpty(annul)) {
+                list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
+            } else {
+                list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,patientComment,patientPhone,service);
+                if (list==null) {
+                    list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
+                } else { //Записали успешно, пишем файл
+                    JSONObject recordInfo = new JSONObject(list);
+                    if (!recordInfo.has("error_code")) {
+                        String medcaseID = getJsonField(recordInfo, "medcaseId");
+                        String patientID = getJsonField(recordInfo, "patientId");
+                        if (root.has("files")) {
+                            JSONArray files = root.getJSONArray("files");
+                            for (int i = 0; i < files.length(); i++) {
+                                JSONObject file = files.getJSONObject(i);
+                                String filename = getJsonField(file,"filename");
+                                String file64String = getJsonField(file,"filebase64");
+                                String fileDocType = getJsonField(file,"fileDocType");
+                                service.saveExternalDodument(filename, file64String, patientID!=null?Long.valueOf(patientID):null, medcaseID!=null?Long.valueOf(medcaseID):null, Long.valueOf(calendarTimeId), fileDocType);
+                            }
+                        } else {
+                            String fileContent = getJsonField(root,"filebase64");
+                            String filename = getJsonField(root,"filename");
+                            service.saveFile(filename, fileContent);
                         }
-                    } else {
-                        String fileContent = getJsonField(root,"filebase64");
-                        String filename = getJsonField(root,"filename");
-                        service.saveFile(filename, fileContent);
+
+
                     }
-
-
                 }
-            }
 
-        }
-        return list;
+            }
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+            String ret ="{\"status\":\"error\",\"error_name\":\""+e.getLocalizedMessage()+"\",\"error_code\":\""+e.toString()+"\"}";
+            System.out.println(ret);
+            return ret;
+            }
     }
 
     private <T>T getJsonField(JSONObject obj, String aProperty) {

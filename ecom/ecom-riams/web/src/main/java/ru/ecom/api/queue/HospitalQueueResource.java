@@ -50,7 +50,6 @@ public class HospitalQueueResource {
                 " order by sls.dateStart, sls.entranceTime ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         String[] fields = {"id","patientInfo","waitTime","startTime","minutes", "departmentName"};
-        System.out.println("sql queue = "+sql);
         return service.executeNativeSqlGetJSON(fields,sql,null);
     }
 }
