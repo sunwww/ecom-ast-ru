@@ -143,7 +143,7 @@
                 <msh:tableColumn columnName="Рабочая функция" property="2" isCalcAmount="true"/>
                 <msh:tableColumn columnName="Самообращений" property="3" isCalcAmount="true"/>
                 <msh:tableColumn columnName="Каретой С/П" property="4" isCalcAmount="true"/>
-                <msh:tableColumn columnName="Другой ЛПУ" property="5" isCalcAmount="true"/>
+                <msh:tableColumn columnName="Другим ЛПУ" property="5" isCalcAmount="true"/>
             </msh:table>
         </div>
         <% }}else{ %>
