@@ -55,7 +55,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 				  params=""
 				  action=".javascript:setOutOfReceivingDep('${param.id}','.do')"
 				  name="Пациент выбыл из приёмника"
-				  roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+				  roles="/NOEXTIST/Policy/Mis/MedCase/Stac/Ssl/View"/>
 </msh:sideMenu>
   
    <msh:sideMenu title="Показать">

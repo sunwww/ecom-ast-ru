@@ -20,16 +20,16 @@
                         <msh:textField property="startDate" />
                     </msh:row>
                     <msh:row>
-                        <msh:autoComplete vocName="vocIdc10" property="diagnosis" size="50"/>
+                        <msh:autoComplete vocName="vocIdc10" property="diagnosis" size="50" fieldColSpan="5"/>
                     </msh:row>
                 <msh:row>
-                    <msh:autoComplete vocName="workFunction" size="50"  property="workFunction" label="Кто установил Д наблюдение" horizontalFill="true" />
+                    <msh:autoComplete vocName="workFunction" size="50"  property="workFunction" label="Кто установил Д наблюдение" fieldColSpan="5" horizontalFill="true" />
                 </msh:row>
                 <msh:row>
                         <msh:textField property="finishDate" />
                     </msh:row>
                 <msh:row>
-                        <msh:autoComplete property="endReason" vocName="vocDispensaryEndReason" size="50"/>
+                        <msh:autoComplete property="endReason" vocName="vocDispensaryEndReason" size="50" fieldColSpan="5"/>
                     </msh:row>
 
                 <msh:row>
@@ -43,7 +43,7 @@
                     <msh:textField property="editUsername" viewOnlyField="true"/>
                 </msh:row>
             </msh:panel>
-            <msh:submitCancelButtonsRow colSpan="4"/>
+            <msh:submitCancelButtonsRow colSpan="6"/>
         </msh:form>
     </tiles:put>
 

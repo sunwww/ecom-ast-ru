@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
+<%@ taglib prefix="ecom" uri="http://www.ecom-ast.ru/tags/ecom" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">Карты диспансерного наблюденияу</msh:title>
+        <msh:title mainMenu="Lpu">Карты диспансерного наблюдения</msh:title>
     </tiles:put>
 
     <tiles:put name='side' type='string'>
@@ -15,9 +16,24 @@
     </tiles:put>
 
     <tiles:put name='body' type='string' >
-        <msh:table name="list" action="entityView-mis_dispensaryCard.do" idField="id">
-            <msh:tableColumn columnName="Дата постановки на учет" property="startDate" />
-            <msh:tableColumn columnName="Диагноз" property="diagnosis" />
+        <ecom:webQuery name="dlist"
+                       nativeSql="select d.id, d.startdate, d.finishdate, mkb.code, vwf.name||' '||wpat.lastname
+                    , vde.name
+                    ,case when d.finishdate is not null then 'color: red' else 'color: green' end as styleRow
+                    from dispensarycard d
+                    left join vocidc10 mkb on mkb.id=d. diagnosis_id
+                    left join workfunction wf on wf.id=d.workfunction_id
+                    left join worker w on w.id=wf.worker_id
+                    left join patient wpat on wpat.id=w.person_id
+                    left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+                    left join vocdispensaryend vde on vde.id=d.endreason_id
+                    order by d.finishdate desc, d.startdate "/>
+        <msh:table name="dlist" action="entityView-mis_dispensaryCard.do" idField="1" styleRow="7">
+            <msh:tableColumn columnName="Дата постановки на учет" property="2" />
+            <msh:tableColumn columnName="Диагноз" property="4" />
+            <msh:tableColumn columnName="Врач установивший наблюдение" property="5" />
+            <msh:tableColumn columnName="Дата снятия с Д учета" property="3" />
+            <msh:tableColumn columnName="Причина снятия с Д учета" property="6" />
         </msh:table>
     </tiles:put>
     
