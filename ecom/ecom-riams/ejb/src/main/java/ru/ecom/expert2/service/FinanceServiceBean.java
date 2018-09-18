@@ -1,6 +1,8 @@
 package ru.ecom.expert2.service;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.expert2.domain.financeplan.FinancePlan;
 import ru.ecom.expert2.domain.financeplan.HospitalFinancePlan;
@@ -8,16 +10,16 @@ import ru.ecom.expert2.domain.financeplan.MonthLittleAmountTable;
 import ru.ecom.expert2.domain.voc.VocE2BaseTariff;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.OneToMany;
+import javax.persistence.PersistenceContext;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -35,14 +37,14 @@ public class FinanceServiceBean implements IFinanceService {
     public void splitFinancePlan(String aType, String aYearPlan) {
         //try {
             //TODO учитывать тип плана (стационар, поликлиника, ВМП
-            String sql = "select id from FinancePlan fp where dtype='" + aType + "' and to_char(fp.startDate,'MM.yyyy')='01." + aYearPlan + "' and to_char(fp.finishDate,'MM.yyyy')='12." + aYearPlan + "'";
+            String sql = "select id from FinancePlan fp where dtype='" + aType + "' and to_char(fp.startDate,'MM.yyyy')='01" + aYearPlan + "' and to_char(fp.finishDate,'MM.yyyy')='12." + aYearPlan + "'";
             log.info("sql0=" + sql);
             List<Long> plans = theManager.createQuery(sql).getResultList();
             if (plans == null || plans.isEmpty()) {
                 log.error("Не найдено планов на год");
                 return;
             }
-            sql = "delete from FinancePlan where  dtype='" + aType + "' and to_char(startDate,'MM')= to_char(finishDate,'MM') and to_char(startDate,'yyyy')='" + aYearPlan + "'";
+            sql = "delete from FinancePlan where  dtype='" + aType + "' and to_char(startDate,'MM.yyyy')= to_char(finishDate,'MM.yyyy') and to_char(startDate,'yyyy')='" + aYearPlan + "'";
             log.info("sql1=" + sql);
             theManager.createNativeQuery(sql).executeUpdate();
             FinancePlan yearPlan;
@@ -64,24 +66,26 @@ public class FinanceServiceBean implements IFinanceService {
                 String priceKey;
                 BigDecimal cost;
                 startFromCalendar.setTimeInMillis(yearPlan.getStartDate().getTime());
-                log.info(planCnt+"<<>>"+planId+", startFromTime = "+startFromCalendar.getTime());
+                log.info(planCnt+"<<>>"+planId);
                 HospitalFinancePlan monthPlan;
                 Date currentMonth;
+                Long yearCount = yearPlan.getCount();
+                Long count = yearPlan.getCount();
+                Long cnt12 = count%12;
                 for (int i = 0; i < 12; i++) {
                     currentMonth = new java.sql.Date(startFromCalendar.getTimeInMillis());
                     monthPlan = (HospitalFinancePlan) cloneEntity(yearPlan, false);
                     monthPlan.setStartDate(currentMonth);
                     monthPlan.setFinishDate(currentMonth);
 
-                    Long count = yearPlan.getCount();
-                    if (count > 11) {
-                        count = count / 12;
-                    } else {
-                        //Включаем режим поиска подходит ли месяц
+                    count=yearCount>11? yearCount/12 : 0;
+
+                    if (yearCount<12 || cnt12>0){
+                        //Включаем режим поиска подходит ли месяц +
                         try {
-                            count = littleAmountMonth.get(count).indexOf(month.format(currentMonth)) > -1 ? 1L : 0L;
+                            count += littleAmountMonth.get(cnt12).contains(month.format(currentMonth)) ? 1L : 0L;
                         } catch (Exception e) {
-                            count = 0L;
+                            e.printStackTrace();
                         }
                     }
                     monthPlan.setCount(count);
@@ -105,7 +109,6 @@ public class FinanceServiceBean implements IFinanceService {
                         }
 
                         cost=cost.multiply(new BigDecimal(count)).setScale(2,RoundingMode.HALF_UP);
-                        log.info("total cost = "+cost);
                         monthPlan.setCost(cost);
                         theManager.persist(monthPlan);
                     } else {
@@ -149,6 +152,73 @@ public class FinanceServiceBean implements IFinanceService {
         }
 
 return "good";
+    }
+
+    /**Заполняем агг. таблицу с планом и фактом */
+    public String fillAggregateTable(String aType, Date aStartDate, Date aFinishDate, String aServiceStream) throws JSONException {
+        if (aStartDate.getTime()>aFinishDate.getTime()) {return new JSONObject().put("status","error").put("error_code","Дата окончания больше даты начала").toString();}
+        StringBuilder sql ;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(aStartDate.getTime());
+        SimpleDateFormat yyyyMM = new SimpleDateFormat("yyyy-MM");
+        int ret=0;
+        while (calendar.getTimeInMillis()<=aFinishDate.getTime()) {
+            sql = new StringBuilder();
+            String finishDate =yyyyMM.format(calendar.getTime());
+            log.info("Ищем данные за месяц"+finishDate+" > "+calendar.getTimeInMillis());
+            if (aServiceStream==null) {aServiceStream="OBLIGATORYINSURANCE";}
+            sql.append("insert into aggregatevolumesfinanceplan  (month, year,medhelpprofile, department, bedsubtype, ksg, plancount, plancost, factcount, factcost)( ");
+            sql.append("select cast(date_part('month',plan.startdate) as int) as d1, cast (date_part('year',plan.startdate) as int) as d2, plan.profile_id, plan.department_id, plan.bedsubtype_id, plan.ksg_id as f5_ksg" +
+                    ", plan.count as planCount, plan.cost as planCost " +
+                    " ,count(case when bill.status_id=3 then e.id else null end)  as factCount" +
+                    " ,sum(case when bill.status_id=3 then e.cost else null end) as f9_factCost" +
+                    " from financeplan plan" +
+                    " left join e2entry e on e.medhelpprofile_id=plan.profile_id" +
+                    " and e.departmentid=plan.department_id" +
+                    " and e.bedsubtype=''||plan.bedsubtype_id" +
+                    " and e.ksg_id=plan.ksg_id" +
+                    " and (e.isDeleted is null or e.isDeleted='0')" +
+                    " and (e.doNotSend is null or e.doNotSend='0')" +
+                    " and e.servicestream='"+aServiceStream+"'" +
+                    " and to_char(e.finishdate,'yyyy-MM') ='" + finishDate+"'" +
+                    " left join e2bill bill on bill.id=e.bill_id" +
+                    " where to_char(plan.startdate,'mm.yyyy') = to_char(plan.finishdate,'mm.yyyy')" +
+                    " and plan.dtype='HospitalFinancePlan'" +
+                    " and to_char(plan.startdate,'yyyy-MM')='"+finishDate+"' " +
+                    " group by cast(date_part('month',plan.startdate) as int),cast (date_part('year',plan.startdate) as int), plan.profile_id, plan.department_id, plan.bedsubtype_id, plan.ksg_id, plan.count, plan.cost" +
+                    " union select cast(date_part('month',ee.finishDate)as int) , cast(date_part('year',ee.finishDate)as int), ee.medhelpprofile_id, cast(ee.departmentid as int), cast(ee.bedsubtype as int), ee.ksg_id,0,0, count(ee.id), sum(ee.cost)" +
+                    " from e2entry ee" +
+                    " left join e2bill bill on bill.id=ee.bill_id" +
+                    " left join financeplan fp on ee.medhelpprofile_id=fp.profile_id" +
+                    " and ee.departmentid=fp.department_id" +
+                    " and ee.bedsubtype=''||fp.bedsubtype_id" +
+                    " and ee.ksg_id=fp.ksg_id" +
+                    " where to_char(ee.finishdate,'yyyy-MM') ='" + finishDate+"'" +
+                    " and ee.entrytype='HOSPITAL' and (ee.isDeleted is null or ee.isDeleted='0')" +
+                    " and (ee.doNotSend is null or ee.doNotSend='0')" +
+                    " and ee.servicestream='"+aServiceStream+"'" +
+                    " and bill.status_id=3 and fp.id is null" +
+                    " group by cast(date_part('month',ee.finishDate)as int) , cast(date_part('year',ee.finishDate)as int), ee.medhelpprofile_id, cast(ee.departmentid as int), cast(ee.bedsubtype as int), ee.ksg_id");
+            sql.append(")");
+            log.info("sql="+sql.toString());
+            cleanAggregateTable(calendar.getTime());
+             ret += theManager.createNativeQuery(sql.toString()).executeUpdate();
+             calendar.add(Calendar.MONTH,1);
+        }
+
+
+        return new JSONObject().put("status","ok").put("count",ret).toString();
+
+    }
+    public void cleanAggregateTable(java.util.Date aMonthDate) {
+        SimpleDateFormat mm = new SimpleDateFormat("MM");
+        SimpleDateFormat yyyy= new SimpleDateFormat("yyyy");
+        log.info("Очищаем сведения о факте-плане за "+aMonthDate+" месяц");
+        String sql = "delete from aggregatevolumesfinanceplan where month="+mm.format(aMonthDate)+" and year="+yyyy.format(aMonthDate);
+        log.info("sqql="+sql);
+        theManager.createNativeQuery(sql).executeUpdate();
+
     }
 
     /** Клонируем запись*/
