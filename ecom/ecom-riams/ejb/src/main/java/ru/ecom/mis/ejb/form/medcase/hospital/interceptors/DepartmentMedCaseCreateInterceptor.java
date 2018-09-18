@@ -170,7 +170,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         	aForm.setDepartment(aMedCase.getDepartment().getId());
         	aForm.setServiceStream(aMedCase.getServiceStream()!=null?aMedCase.getServiceStream().getId():null);
         	aForm.addDisabledField("department");
-        	aForm.addDisabledField("serviceStream");
+        	//aForm.addDisabledField("serviceStream");
         	aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCase.getHospType())) ;
         }
         
@@ -227,10 +227,10 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
             	aForm.setConcomitantDiagnos(diag.getName());
 				if (diag.getIdc10()!=null) aForm.setConcomitantMkb(diag.getIdc10()) ;;
 			}
-			if (aMedCaseParent.getServiceStream()!=null) {
+			/*if (aMedCaseParent.getServiceStream()!=null) {
             	aForm.setServiceStream(aMedCaseParent.getServiceStream().getId());
 				aForm.addDisabledField("serviceStream");
-			}
+			}*/
     		
     	} else {
     		throw new IllegalStateException("Нет случая лечения в отделении оформленного для перевода") ;
