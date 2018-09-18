@@ -8,13 +8,20 @@
 
     <msh:ifFormTypeIsView formName="${form}" guid="48eb9700-d07d-4115-a476-a5a439731d3e">
       <msh:ifInRole roles="/Policy/Mis/MedPolicy/View,/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit">
-        <ecom:webQuery nativeSql="select mp.id, case when (mp.DTYPE='MedPolicyOmc') then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign') then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc') then 'ДМС' else 'ОМС иногороднего' end, ri.name as riname,mp.polnumber,mp.series,mp.actualDateFrom,mp.actualDateTo from MedCase_MedPolicy as mc left join MedPolicy as mp on mp.id=mc.policies_id left join reg_ic as ri on ri.id=mp.company_id where mc.MedCase_id=${param.id}" name="policies" guid="12ed9815-1a16-441a-8d89-36bb94761f9b" />
+        <ecom:webQuery nativeSql="select mp.id, case when (mp.DTYPE='MedPolicyOmc')
+        then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign')
+        then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc')
+        then 'ДМС' else 'ОМС иногороднего' end, ri.name as riname,mp.polnumber,mp.series,mp.actualDateFrom,mp.actualDateTo
+        ,case when mc.datesync is not null then '&#9989;' else '&#x2716;' end as actually
+        from MedCase_MedPolicy as mc left join MedPolicy as mp on mp.id=mc.policies_id
+        left join reg_ic as ri on ri.id=mp.company_id where mc.MedCase_id=${param.id}"
+                       name="policies" guid="12ed9815-1a16-441a-8d89-36bb94761f9b" />
           <msh:section guid="746b6d8a-b92f-4bd0-9899-d32855f3aa95">
           <msh:sectionTitle>
           <msh:link action="stac_policiesEdit.do?id=${param.id}"  >Прикрепленные полисы к случаю</msh:link>
           </msh:sectionTitle>
           <msh:sectionContent>
-            <msh:table name="policies" hideTitle="false" action="entitySubclassView-mis_medPolicy.do" idField="1" guid="86ef8e69-6d58-4e49-961a-f2f463e02f80">
+            <msh:table name="policies" hideTitle="false" action="entitySubclassView-mis_medPolicy.do" idField="1" guid="polices">
               <msh:tableColumn property="sn" columnName="#" />
               <msh:tableColumn property="2" columnName="Тип" />
               <msh:tableColumn property="3" columnName="Страховая компания" />
@@ -22,6 +29,7 @@
               <msh:tableColumn property="5" columnName="Серия"/>
               <msh:tableColumn property="6" columnName="Дата начала" />
               <msh:tableColumn property="7" columnName="Дата окончания" />
+              <msh:tableColumn property="8" columnName="Проверка"/>
             </msh:table>
           </msh:sectionContent>
           </msh:section>
