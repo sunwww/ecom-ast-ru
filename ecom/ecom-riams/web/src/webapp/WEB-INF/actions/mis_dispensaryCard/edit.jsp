@@ -51,7 +51,7 @@
         <msh:ifFormTypeAreViewOrEdit formName="mis_dispensaryCardForm">
             <msh:sideMenu>
                 <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentEdit-mis_dispensaryCard" name="Изменить" roles="/Policy/Mis/Patient/Dispensary/Edit" />
-                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentPrepareDelete-mis_dispensaryCard" name="Удалить" confirm="Уверены что делаете?" roles="/Policy/Mis/Patient/Dispensary/Delete" />
+                <msh:sideLink guid="sideLinkEdit" key="ALT+2" params="id" action="/entityParentDelete-mis_dispensaryCard" name="Удалить" confirm="Уверены что делаете?" roles="/Policy/Mis/Patient/Dispensary/Delete" />
             </msh:sideMenu>
         </msh:ifFormTypeAreViewOrEdit>
     </tiles:put>

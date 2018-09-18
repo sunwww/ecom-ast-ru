@@ -6,10 +6,13 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
-        <msh:title mainMenu="Lpu">Карты диспансерного наблюдения</msh:title>
+            <ecom:titleTrail beginForm="mis_patientForm" mainMenu="Patient" title="Карты диспансерного наблюдения" guid="3c259ba8-b962-4333-9aab-3316f984fdde" />
     </tiles:put>
 
     <tiles:put name='side' type='string'>
+        <msh:sideMenu title="Добавить" guid="fdcda21a-c1c6-4e0e-a74e-1bf843a8c1c8">
+             <msh:sideLink params="id" action="/entityParentPrepareCreate-mis_dispensaryCard" name="Карту Д учета"  title="Добавить карту Д учета" roles="/Policy/Mis/Patient/Dispensary/Create" />
+        </msh:sideMenu>
         <msh:sideMenu>
            
         </msh:sideMenu>
@@ -27,6 +30,7 @@
                     left join patient wpat on wpat.id=w.person_id
                     left join vocworkfunction vwf on vwf.id=wf.workfunction_id
                     left join vocdispensaryend vde on vde.id=d.endreason_id
+                    where d.patient_id=${param.id}
                     order by d.finishdate desc, d.startdate "/>
         <msh:table name="dlist" action="entityView-mis_dispensaryCard.do" idField="1" styleRow="7">
             <msh:tableColumn columnName="Дата постановки на учет" property="2" />
