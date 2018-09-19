@@ -40,24 +40,21 @@ public class MedcaseMedpolicy {
         if(limit!=null){limit=" limit "+limit;}
         if(limit==null || limit.equals("")){limit="";}
 
-        if(startdate==null || startdate.equals("")){
-            startdate = "DATE_TRUNC('day', CURRENT_DATE - INTERVAL '1  month') ";
-        }else startdate = "'"+startdate+"'";
-        if(finishdate==null || finishdate.equals(""))
-        {
-            finishdate= "current_date";
-        }else finishdate = "'"+finishdate+"'";
+        if(startdate==null || startdate.equals("")) startdate = "DATE_TRUNC('day', CURRENT_DATE - INTERVAL '1  month') ";
+        else startdate = "'"+startdate+"'";
+
+        if(finishdate==null || finishdate.equals(""))finishdate= "current_date";
+        else finishdate = "'"+finishdate+"'";
 
 
         String sql = " select mp.id,mp.medcase_id,mp.policies_id " +
                 " from medcase m " +
                 " left join medcase_medpolicy mp on mp.medcase_id = m.id " +
                 " left join vocservicestream vss on vss.id = m.servicestream_id " +
-                " where datestart  between  "+startdate+"' and  "+finishdate+
+                " where m.datestart  between  "+startdate+" and  "+finishdate+
                 " and m.dtype='HospitalMedCase' " +
                 " and vss.omccode='1' " +
                 " and m.deniedhospitalizating_id is null and mp.datesync is null " +limit;
-
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> list= service.executeNativeSql(sql);
