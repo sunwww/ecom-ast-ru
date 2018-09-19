@@ -119,7 +119,7 @@
   </tiles:put>
   
     <tiles:put name="javascript" type="string">
-        <msh:ifFormTypeIsView formName="mis_medPolicyOmcForm">
+        <msh:ifFormTypeIsView formName="mis_medPolicyOmcForeignForm">
             <script type="text/javascript">
                 function setPolisChecked(id) {
                     PatientService.polisIsChecked(id,{
