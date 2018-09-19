@@ -131,6 +131,7 @@
             </script>
         </msh:ifFormTypeIsView>
     <msh:ifFormTypeIsNotView formName="mis_medPolicyOmcForeignForm">
+        <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
     	<script type="text/javascript">
     		insuranceCompanyCodeAutocomplete.addOnChangeCallback(function() {
 	      	 	update() ;
