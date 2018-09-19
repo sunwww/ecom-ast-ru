@@ -107,7 +107,7 @@ where scg.dtype='WfConsultation' ${typeSql}
             function checkFieldUpdate(aField,aValue,aDefault) {
                 eval('var chk =  document.forms[0].'+aField) ;
                 var max = chk.length ;
-                if ((+aValue)==0 || (+aValue)>(+aMax)) {
+                if ((+aValue)==0 || (+aValue)>(+max)) {
                     chk[+aDefault-1].checked='checked' ;
                 } else {
                     chk[+aValue-1].checked='checked' ;
