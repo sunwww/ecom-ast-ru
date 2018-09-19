@@ -33,19 +33,26 @@ public class ScheduleTaskListener  implements ServletContextListener {
             String endpoint = service1.getSoftConfigValue("EndpointApi", "null");
 
             endpoint = "http://"+endpoint.split("/")[2];
-            if(getEndPoints().contains(endpoint)) {
-                System.out.println("This is TRUE server");
 
-                IWebQueryService service = Injection.find(event, "riams")
-                        .getService(IWebQueryService.class);
-                Collection<WebQueryResult> list = service.executeNativeSql("select id,name,link, time from ScheduleTask");
-                ScheduleTasks scheduleTasks = new ScheduleTasks();
-                for (WebQueryResult wqr : list) {
-                    Long id = Long.valueOf(wqr.get1().toString());
-                    map = scheduleTasks.startThread(id, wqr.get2().toString(), wqr.get3().toString(), wqr.get4().toString());
+            List<String> endpoints = getEndPoints();
+
+            for(String endp: endpoints){
+                if(endp.equals(endpoint)) {
+                    System.out.println(endp+" This is TRUE server");
+
+                    IWebQueryService service = Injection.find(event, "riams")
+                            .getService(IWebQueryService.class);
+                    Collection<WebQueryResult> list = service.executeNativeSql("select id,name,link, time from ScheduleTask");
+                    ScheduleTasks scheduleTasks = new ScheduleTasks();
+                    for (WebQueryResult wqr : list) {
+                        Long id = Long.valueOf(wqr.get1().toString());
+                        map = scheduleTasks.startThread(id, wqr.get2().toString(), wqr.get3().toString(), wqr.get4().toString());
+                    }
+                    break;
+                }else {
+                    System.out.println(endp+" this is FALSE server");
                 }
             }
-
         }catch (NamingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
