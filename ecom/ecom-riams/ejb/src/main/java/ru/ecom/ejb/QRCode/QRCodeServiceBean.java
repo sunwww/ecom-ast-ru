@@ -1,7 +1,5 @@
 package ru.ecom.ejb.QRCode;
 
-import ru.ecom.api.IApiService;
-
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -19,8 +17,8 @@ import java.io.*;
  * Для работы с QR-кодами.
  */
 @Stateless
-@Local(IApiService.class)
-@Remote(IApiService.class)
+@Local(IQRCodeService.class)
+@Remote(IQRCodeService.class)
 public class QRCodeServiceBean implements IQRCodeService {
     private String QR_CODE_filename="tmpFileForQRCode";
     //Метод возвращает qr-код с текстом, размерами QR_w и QR_h. default QR_TYPE PNG

@@ -2192,4 +2192,18 @@ public class HospitalMedCaseServiceJs {
 		} else res.append("##");
 		return res.toString();
 	}
+	//Milamesher #121 проставляет отметку о том, что консультация была передана врачу
+	public String setWfConsultingIsTransfered(int id, HttpServletRequest aRequest) throws NamingException {
+		String res="0";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select case when transferdate is null then '1' else '0' end from prescription where id="+id) ;
+		if (l.size()>0){
+			if (l.iterator().next().get1().toString().equals("1")) {
+				service.executeUpdateNativeSql("update prescription set transferdate=current_date,transferusername='" +
+                        LoginInfo.find(aRequest.getSession(true)).getUsername() + "' where id=" + id);
+				res="1";
+			}
+		}
+		return res;
+	}
 }
