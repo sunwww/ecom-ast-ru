@@ -29,15 +29,11 @@ public class ScheduleTaskListener  implements ServletContextListener {
             IDisabilityService service1 = Injection.find(event,"riams")
                     .getService(IDisabilityService.class);
             String endpoint = service1.getSoftConfigValue("EndpointApi", "null");
-
             endpoint = (endpoint.split("/")[2]).split(":")[0];
-
             List<String> endpoints = getEndPoints();
-            System.out.println("Real endpoint="+endpoint);
             for(String endp: endpoints){
                 if(endp.equals(endpoint)) {
                     System.out.println(endp+" This is TRUE server");
-
                     IWebQueryService service = Injection.find(event, "riams")
                             .getService(IWebQueryService.class);
                     Collection<WebQueryResult> list = service.executeNativeSql("select id,name,link, time from ScheduleTask");
@@ -47,8 +43,6 @@ public class ScheduleTaskListener  implements ServletContextListener {
                         map = scheduleTasks.startThread(id, wqr.get2().toString(), wqr.get3().toString(), wqr.get4().toString());
                     }
                     break;
-                }else {
-                    System.out.println(endp+" this is FALSE server");
                 }
             }
         }catch (NamingException e) {
