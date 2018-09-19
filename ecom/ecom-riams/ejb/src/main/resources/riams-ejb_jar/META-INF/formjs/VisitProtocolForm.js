@@ -72,6 +72,21 @@ function onCreate(aForm, aEntity, aCtx) {
     createServiceMedCase(aForm, aEntity, aCtx);
     var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
     bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
+    //Milamesher #121 19092018 если есть переданные, но не выполненные консультации в этом сло e текущего пользователя, то проставить diary_id
+    var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
+        "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
+        "left join medcase slo on slo.id=pl.medcase_id\n" +
+        "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
+        "where scg.transferdate is not null and scg.diary_id is null and \n" +
+        "wf.id='"+ aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction").id +
+        "' and slo.id='"+aForm.getMedCase()+"'").getResultList();
+    if (res.size()>0) {
+        if (res.get(0)!=null) {
+            var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
+            presc.setDiary(aEntity);
+            aCtx.manager.persist(presc);
+        }
+    }
 }
 function createServiceMedCase(aForm, aEntity, aCtx) {
     if (aForm.medService !== null && +aForm.medService > 0) {

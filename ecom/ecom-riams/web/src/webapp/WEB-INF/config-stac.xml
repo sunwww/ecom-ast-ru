@@ -19,6 +19,7 @@
         <!--<form-bean name="stac_newBornSloForm"              type="ru.ecom.mis.ejb.form.medcase.hospital.NewBornMedCaseForm" />-->
         <form-bean name="stac_sloForm"                     type="ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm" />
         <form-bean name="stac_surOperationForm"            type="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm" />
+        <form-bean name="pres_wfConsultationForm"            type="ru.ecom.mis.ejb.form.prescription.WfConsultationForm" />
 		<form-bean name="stac_diagnosisForm"               type="ru.ecom.mis.ejb.form.medcase.hospital.DiagnosisForm"/>
 		<form-bean name="stac_infectiousMessagesForm"      type="ru.ecom.mis.ejb.form.medcase.hospital.InfectiousPhoneMessageForm"/>
 		<form-bean name="stac_criminalMessagesForm"         type="ru.ecom.mis.ejb.form.medcase.hospital.CriminalPhoneMessageForm"/>

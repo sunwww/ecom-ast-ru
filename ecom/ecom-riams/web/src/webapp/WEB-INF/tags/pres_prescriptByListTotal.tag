@@ -192,4 +192,29 @@ where ${field}
     		</msh:table>
     	</msh:sectionContent>
     </msh:section>
-
+<msh:section>
+	<ecom:webQuery name="pres" nativeSql="select scg.id,vtype.code||' '||vtype.name as f00,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as f01,scg.createusername as f1,scg.createdate as f2,scg.editusername as f3,scg.editdate as f4, scg.transferusername as f5,scg.transferdate as f6
+from prescription scg
+left join PrescriptionList pl on pl.id=scg.prescriptionList_id
+left join workfunction wf on wf.id=scg.prescriptcabinet_id
+left join vocworkFunction vwf on vwf.id=wf.workFunction_id
+left join worker w on w.id = wf.worker_id
+left join patient wp on wp.id=w.person_id
+left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
+left join medcase sls on sls.id=pl.medcase_id
+where ${field} and scg.dtype='WfConsultation'"/>
+	<msh:sectionTitle>Список консультаций</msh:sectionTitle>
+	<msh:sectionContent>
+		<msh:table name="pres" action="entityParentView-pres_wfConsultation.do" idField="1">
+			<msh:tableColumn columnName="#" property="sn"/>
+			<msh:tableColumn columnName="Тип" property="2"/>
+			<msh:tableColumn columnName="Специалист" property="3"/>
+			<msh:tableColumn columnName="Пользователь, который создал" property="4" cssClass="preCell"/>
+			<msh:tableColumn columnName="Дата создания" property="5"/>
+			<msh:tableColumn columnName="Пользователь, который отредактировал" property="6" cssClass="preCell"/>
+			<msh:tableColumn columnName="Дата редактирования" property="7"/>
+			<msh:tableColumn columnName="Пользователь, который передал" property="8" cssClass="preCell"/>
+			<msh:tableColumn columnName="Дата передачи" property="9"/>
+		</msh:table>
+	</msh:sectionContent>
+</msh:section>
