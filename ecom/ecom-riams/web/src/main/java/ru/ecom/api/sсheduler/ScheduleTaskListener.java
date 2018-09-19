@@ -6,14 +6,13 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.disability.IDisabilityService;
 import ru.ecom.web.util.Injection;
 
-import javax.management.*;
 import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -26,16 +25,15 @@ public class ScheduleTaskListener  implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent event) {
         System.out.println("ScheduleTaskListener is start");
-
         try {
             IDisabilityService service1 = Injection.find(event,"riams")
                     .getService(IDisabilityService.class);
             String endpoint = service1.getSoftConfigValue("EndpointApi", "null");
 
-            endpoint = "http://"+endpoint.split("/")[2];
+            endpoint = (endpoint.split("/")[2]).split(":")[0];
 
             List<String> endpoints = getEndPoints();
-
+            System.out.println("Real endpoint="+endpoint);
             for(String endp: endpoints){
                 if(endp.equals(endpoint)) {
                     System.out.println(endp+" This is TRUE server");
@@ -71,23 +69,20 @@ public class ScheduleTaskListener  implements ServletContextListener {
 
     private List<String> getEndPoints() {
         try {
-            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-            Set<ObjectName> objs = mbs.queryNames( new ObjectName( "*:type=Connector,*" ),
-                    Query.match( Query.attr( "protocol" ), Query.value( "HTTP/1.1" ) ) );
-            String hostname = InetAddress.getLocalHost().getHostName();
-            InetAddress[] addresses = InetAddress.getAllByName( hostname );
+            Enumeration e = NetworkInterface.getNetworkInterfaces();
             ArrayList<String> endPoints = new ArrayList<>();
-            for ( ObjectName obj : objs ) {
-                String scheme = mbs.getAttribute( obj, "scheme" ).toString();
-                String port = obj.getKeyProperty( "port" );
-                for ( InetAddress addr : addresses ) {
-                    String host = addr.getHostAddress();
-                    String ep = scheme + "://" + host + ":" + port;
-                    endPoints.add( ep );
+            while(e.hasMoreElements())
+            {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
+                Enumeration ee = n.getInetAddresses();
+                while (ee.hasMoreElements())
+                {
+                    InetAddress i = (InetAddress) ee.nextElement();
+                    endPoints.add(i.getHostAddress());
                 }
             }
             return endPoints;
-        } catch ( MalformedObjectNameException | UnknownHostException | MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException ex ) {
+        } catch (  SocketException ex ) {
             ex.printStackTrace();
             return new ArrayList<>();
         }
