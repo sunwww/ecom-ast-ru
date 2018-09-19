@@ -82,7 +82,7 @@
         		order by m.dateStart"/>
         		<msh:tableNotEmpty name="list_sls">
 	        		<msh:section title="Прикрепленные случаи лечения госпитализации">
-		        		<msh:table name="list_sls" action="entityParentView-stac_ssl.do" idField="1">
+		        		<msh:table guid="listSLS" name="list_sls" action="entityParentView-stac_ssl.do" idField="1">
 		        			<msh:tableColumn property="2" columnName="Пациент" />
 		        			<msh:tableColumn property="3" columnName="Отделение" />
 		        			<msh:tableColumn property="4" columnName="Номер стат.карты" />
