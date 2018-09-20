@@ -36,6 +36,31 @@ import static ru.ecom.api.util.ApiUtil.cretePostRequest;
 public class DisabilityServiceJs {
 	public static Logger log = Logger.getLogger(DisabilityServiceJs.class);
 
+
+	public String unattachEln(Long disabilityDocumentId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+
+		Collection<WebQueryResult> list = service.executeNativeSql("select exportdate " +
+				"from electronicdisabilitydocumentnumber where disabilitydocument_id="+disabilityDocumentId);
+		if (list.size()>0) {
+			WebQueryResult wqr = list.iterator().next();
+			if(wqr.get1()!=null && !wqr.get1().toString().equals("")){
+				return "Документ уже экспортирован! Невозможно его отвязать";
+			}else {
+
+				service.executeUpdateNativeSql("update electronicdisabilitydocumentnumber " +
+						"set disabilitydocument_id=null " +
+						"where disabilitydocument_id = "+disabilityDocumentId);
+
+				service.executeUpdateNativeSql("update disabilitydocument " +
+						"set number='0'" +
+						"where id = "+disabilityDocumentId);
+				return "Номер отвязан";
+			}
+		}
+		return "Что-то пошло не так. Крайне высока вероятность того, что это не ЭЛН";
+	}
+
 	/**
 	 *
 	 * @param aDisabilityDocumentId - ID документа нетрудоспособности

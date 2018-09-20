@@ -302,6 +302,15 @@
     <tiles:put name="javascript" type="string">
         <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
         <script type="text/javascript">
+
+            function unattachEln(aTemplate) {
+                DisabilityService.unattachEln(${param.id},{
+                    callback: function(aString) {
+                        showToastMessage(aString,null,true);
+                        jQuery("#mainForm").load("entityParentView-dis_document.do?id=${param.id} #mainForm");
+                    }});
+            }
+
             function printDoc(aTemplate) {
                 DisabilityService.getPrefixForLN({
                     callback: function(aResult) {
@@ -484,6 +493,7 @@
             <msh:sideMenu title="Документ нетрудоспобности" guid="c21230e7-e6fa-462b-b0cd-b1305ecd0ade">
                 <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-dis_document" name="Изменить" roles="/Policy/Mis/Disability/Case/Document/Edit" guid="d8ee3597-d55e-4f08-a868-c58d8dfc57c4" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-dis_document" name="Удалить" roles="/Policy/Mis/Disability/Case/Document/Delete" guid="4565603e-337e-48eb-82eb-79bd40cd5108" />
+                <msh:sideLink confirm="Действительно?" params="id" action="/javascript:unattachEln()" name="Отвязать ЭЛН" roles="/Policy/Mis/Disability/ElectronicDisability/UnattachEln"/>
                 <tags:closeDisDocument reason="closeReason"
                                        roles="/Policy/Mis/Disability/Case/Document/Edit" key="ALT+3"
                                        name="doc" title="Закрыть" otherCloseDate="otherCloseDate"
