@@ -346,7 +346,10 @@
 						<li><msh:link  isReport="true" action="reportBandage.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Отчет по перевязкам
 						</msh:link></li>
-	                        
+						<li><msh:link  isReport="false" action="journal_svetofor.do?mode=ADMISSION" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+							Светофор
+						</msh:link></li>
+
 					</ul>
 					</div>
 				</td>

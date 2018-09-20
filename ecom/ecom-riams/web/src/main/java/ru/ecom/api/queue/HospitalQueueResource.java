@@ -1,6 +1,5 @@
 package ru.ecom.api.queue;
 
-import org.json.JSONException;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.web.util.Injection;
@@ -28,7 +27,7 @@ public class HospitalQueueResource {
             , @QueryParam("token") String token
             , @QueryParam("emergency") String isEmergency
             ,@QueryParam("pigeonHole") String pigeonHole
-    ) throws NamingException, JSONException {
+    ) throws NamingException {
         ApiUtil.login(token,aRequest);
         if (isEmergency==null) {isEmergency="";}
         String sql = " select sls.id, pat.lastname||' '|| substring (pat.firstname,1,1)||' '||substring (pat.middlename,1,1)" +
@@ -45,7 +44,8 @@ public class HospitalQueueResource {
                 " where sls.dtype='HospitalMedCase'" +
                 " and (sls.deniedhospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') and slo.id is null" +
                 " and sls.transferdate is null and sls.transfertime is null" +
-                (isEmergency.equals("")?"":(isEmergency.equals("0")?" and (sls.emergency is null or sls.emergency='0')":" and sls.emergency='1'")) +
+                (isEmergency.equals("0")?" and (sls.emergency is null or sls.emergency='0')":isEmergency.equals("1")?" and sls.emergency='1'":"")+
+
                 (pigeonHole!=null&&!pigeonHole.equals("")?" and vph.code='"+pigeonHole+"'":"") +
                 " order by sls.dateStart, sls.entranceTime ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
