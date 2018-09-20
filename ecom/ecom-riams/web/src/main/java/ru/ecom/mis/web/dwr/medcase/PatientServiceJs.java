@@ -22,6 +22,11 @@ import java.util.List;
 
 public class PatientServiceJs {
 
+	public void polisIsChecked(String medcaseId,HttpServletRequest request) throws NamingException {
+		IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
+		service.executeUpdateNativeSql("update medcase_medpolicy " +
+				"set datesync = current_date where medcase_id="+medcaseId);
+	}
 
 	public String getPaid(String aPatientId,HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder();

@@ -5,4 +5,5 @@ package ru.ecom.ejb.QRCode;
  */
 public interface IQRCodeService {
     String generateQRCodeImageBase64(String QR_text, int QR_w, int QR_h, String QR_TYPE);
+    Boolean createInsertQRCode(String QR_text,int QR_w, int QR_h, String QR_TYPE,String template,String replacesource);
 }
