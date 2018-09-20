@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <html>
 <%
 String kioskType = request.getParameter("mode");
@@ -34,12 +35,41 @@ request.setAttribute("pageTitle",title);
 <body>
 <%
 if (kioskType.equals("ADMISSION")) {
+    System.out.println("URI="+request.getRequestURI());
+    System.out.println("URI="+request.getPathInfo());
+    System.out.println("URI="+request.getQueryString());
+    System.out.println("URI="+request.getContextPath());
+
+    System.out.println("URI="+request.getPathTranslated());
 String pigeonHole = request.getParameter("pigeonHole");
 request.setAttribute("pigeonHole",pigeonHole);
 String isEmergency = request.getParameter("isEmergency");
     request.setAttribute("isEmergency",isEmergency);
+    String token = request.getParameter("token");
+    token="66405d38-a173-4cb7-a1b6-3ada51c16ac5";
+    //System.out.println("URI="+request.getContextPath());
+    if (1==1 ||token!=null) {
+        request.setAttribute("token","token:'"+token+"',");
+    } else {
+        request.setAttribute("token","");
+    }
     //Показываем информацию об очереди в приемном отделении
     %>
+<msh:panel>
+<msh:row>
+    <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
+    <td onclick="this.childNodes[1].checked='checked'; reloadPage();">
+        <input type="radio" name="isEmergency" value="1">  Экстренные
+    </td>
+    <td onclick="this.childNodes[1].checked='checked';reloadPage();">
+        <input type="radio" name="isEmergency" value="0">  Плановые
+    </td>
+    <td onclick="this.childNodes[1].checked='checked';reloadPage();">
+        <input type="radio" name="isEmergency" value="-1">  Все
+    </td>
+</msh:row>
+</msh:panel>
+
 <table id="patientWaitingTable">
     <th width="20%">Пациент</th>
     <th width="10%">Время ожидания</th>
@@ -49,16 +79,19 @@ String isEmergency = request.getParameter("isEmergency");
 </table>
 <script type="text/javascript" src="/skin/ac.js"></script>
 <script type="text/javascript">
-    var theToken = "66405d38-a173-4cb7-a1b6-3ada51c16ac5";
 var colors={red:"background-color:red;", orange:"background-color: orange;", yellow:"background-color: yellow;",blue:"background-color: lightblue;"}
     var tbl =jQuery('#patientWaitingTableBody');
     tbl.html("Подождите...");
     getQueue();
+    function reloadPage() {
+        var em = jQuery('input:radio[name=isEmergency]:checked').val();
+        window.location.search="mode=ADMISSION&isEmergency="+em;
+    }
     function getQueue() {
         jQuery.ajax({
             url:"api/queue/hospital/emergencyQueue"
             ,data:{
-                token:theToken,
+               ${token}
                 emergency:'${isEmergency}',
                 pigeonHole:'${pigeonHole}'
             }
@@ -80,6 +113,14 @@ var colors={red:"background-color:red;", orange:"background-color: orange;", yel
         }
     });
     }
+checkFieldUpdate("isEmergency",'${param.isEmergency}','1');
+function checkFieldUpdate(aField,aValue,aDefaultValue) {
+    if (jQuery(":radio[name="+aField+"][value='"+aValue+"']").val()!=undefined) {
+        jQuery(":radio[name="+aField+"][value='"+aValue+"']").prop('checked',true);
+    } else {
+        jQuery(":radio[name="+aField+"][value='"+aDefaultValue+"']").prop('checked',true);
+    }
+}
 
 </script>
 <%

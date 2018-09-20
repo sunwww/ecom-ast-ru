@@ -332,6 +332,12 @@
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/mis_dispensaryCard/export.jsp" />
 		</action>
+		<action path='/journal_svetofor' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/kiosk.jsp" />
+		</action>
 		<action path='/kiosk' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				scope="request"

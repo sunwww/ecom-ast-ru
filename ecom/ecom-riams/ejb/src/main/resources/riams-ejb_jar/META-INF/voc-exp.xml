@@ -1,4 +1,11 @@
 <vocconfig>
+    <voc id='vocE2BillStatus' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.VocE2BillStatus'
+                names   = 'name'
+                queried = 'code, name'
+        />
+    </voc>
     <voc id='vocE2EntrySubType' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.expert2.domain.voc.VocE2EntrySubType'

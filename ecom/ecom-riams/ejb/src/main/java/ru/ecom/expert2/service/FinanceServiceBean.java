@@ -180,6 +180,7 @@ return "good";
                     " and e.ksg_id=plan.ksg_id" +
                     " and (e.isDeleted is null or e.isDeleted='0')" +
                     " and (e.doNotSend is null or e.doNotSend='0')" +
+                    " and (e.isDefect is null or e.isDefect='0')" +
                     " and e.servicestream='"+aServiceStream+"'" +
                     " and to_char(e.finishdate,'yyyy-MM') ='" + finishDate+"'" +
                     " left join e2bill bill on bill.id=e.bill_id" +
@@ -197,6 +198,7 @@ return "good";
                     " where to_char(ee.finishdate,'yyyy-MM') ='" + finishDate+"'" +
                     " and ee.entrytype='HOSPITAL' and (ee.isDeleted is null or ee.isDeleted='0')" +
                     " and (ee.doNotSend is null or ee.doNotSend='0')" +
+                    " and (ee.isDefect is null or ee.isDefect='0')" +
                     " and ee.servicestream='"+aServiceStream+"'" +
                     " and bill.status_id=3 and fp.id is null" +
                     " group by cast(date_part('month',ee.finishDate)as int) , cast(date_part('year',ee.finishDate)as int), ee.medhelpprofile_id, cast(ee.departmentid as int), cast(ee.bedsubtype as int), ee.ksg_id");
@@ -206,7 +208,7 @@ return "good";
              ret += theManager.createNativeQuery(sql.toString()).executeUpdate();
              calendar.add(Calendar.MONTH,1);
         }
-
+log.info("Закончили формировать факты/планы");
 
         return new JSONObject().put("status","ok").put("count",ret).toString();
 
