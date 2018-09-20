@@ -11,6 +11,10 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import sun.misc.BASE64Encoder;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import org.odftoolkit.simple.TextDocument;
+import org.odftoolkit.simple.common.navigation.TextNavigation;
+import org.odftoolkit.simple.common.navigation.TextSelection;
+import java.net.URI;
 
 /**
  * Created by Milamesher on 14.09.2018.
@@ -52,5 +56,51 @@ public class QRCodeServiceBean implements IQRCodeService {
             e.printStackTrace();
         }
         return imageString;
+    }
+    //Milamesher #120 19092018 метод вставки qr-кода в файл
+    public Boolean createInsertQRCode(String QR_text,int QR_w, int QR_h, String QR_TYPE,String template,String replacesource) {
+        Boolean flag=true;
+        /*if (QR_w==0) QR_w=300;
+        if (QR_h==0) QR_h=300;
+        if (replacesource==null || replacesource.equals("")) replacesource="replacesource";*/
+        if (QR_TYPE==null || QR_TYPE.equals("")) QR_TYPE="PNG";
+        String QR_CODE_IMAGE_PATH = QR_CODE_filename+"."+QR_TYPE;
+        try {
+            MatrixToImageWriter.writeToStream(new QRCodeWriter().encode(QR_text, BarcodeFormat.QR_CODE, QR_w, QR_h),QR_TYPE,new FileOutputStream(QR_CODE_IMAGE_PATH));
+            File file = new File(QR_CODE_IMAGE_PATH);
+            if (file.exists()) {
+                try {
+                    flag=putQRImage(file.toURI(),template,replacesource);
+                }
+                catch (Exception e) {
+                    e.printStackTrace(); flag=false;
+                }
+            }
+            //Files.deleteIfExists(Paths.get(QR_CODE_IMAGE_PATH));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace(); flag=false;
+        } catch (IOException e) {
+            e.printStackTrace(); flag=false;
+        }  catch (Exception e) {
+            e.printStackTrace(); flag=false;
+        }
+        return flag;
+    }
+    //Milamesher #120 130092018  метод замены кодового слова на QR-код
+    private Boolean putQRImage(URI uri,String template, String replacesource) {
+        try {
+            TextDocument textdoc=(TextDocument)TextDocument.loadDocument(template);
+            TextNavigation search = new TextNavigation(replacesource, textdoc);
+            while (search.hasNext()) {
+                TextSelection item= (TextSelection) search.nextSelection();
+                item.replaceWith(uri);
+            }
+            textdoc.save(template);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
