@@ -3,7 +3,6 @@ package ru.ecom.expert2.service;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.domain.E2Bill;
@@ -21,12 +20,9 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -122,10 +118,12 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 Element pac = zap.getChild("PACIENT");
                 boolean isComplexCase=false;
                 for (Element sl: sl_s) {
+                    if (isComplexCase) {break;}
                     Long entryId = Long.parseLong(sl.getChildText("SL_ID"));
                     E2Entry entry= theManager.find(E2Entry.class,entryId);
                     if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
                     if (entry.getParentEntry()!=null) {entry=entry.getParentEntry();isComplexCase=true;}
+                    //log.info(j+" record id "+entry.getId()+" ");
                     theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
                     entry.setBillNumber(nSchet);
                     entry.setBillDate(bill.getBillDate());
@@ -138,7 +136,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
 
                     //Добавляем сведения о санкциях
-                    if (zsl.getChild("SANK_IT")!=null&&!zsl.getChildText("SANK_IT").equalsIgnoreCase("0.00")) { //
+                    if (zsl.getChild("SANK_IT")!=null&&!zsl.getChildText("SANK_IT").equals("0.00")) { //
                         List<Element> sanks =sl.getChildren("SANK");
                         for (Element sank: sanks) {
                             String key = sank.getChildText("S_OSN") ;
@@ -148,17 +146,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
                             E2EntrySanction s = new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),isMain);theManager.persist(s);
                         }
-                    /*    Element commentCalc = sluch.getChild("COMMENT_CALC");
-                        if (commentCalc!=null&&commentCalc.getChild("root")!=null) {
-
-                            Element ебаныйРусскийТэг = commentCalc.getChild("root");
-                            List<Element> ерт = ебаныйРусскийТэг.getChildren();
-                            StringBuilder commentError = new StringBuilder();
-                            for (Element еб:ерт) {
-                                commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
-                            }
-                            entry.setFondComment(commentError.toString());
-                        } */
                         entry.setIsDefect(true);
                     } else {
                         totalSum.add(entry.getCost());
@@ -166,25 +153,13 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         entry.setFondComment(null);
                     }
                     theManager.persist(entry);
-                    if (isComplexCase) {break;}
                 }
-
-
-
             }
             bill.setSum(totalSum);
             theManager.persist(bill);
             log.info("Обновление закончено!");
 
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
+        }  catch (Exception e) {
             e.printStackTrace();
         }
         //Распаковываем mp файл в папку
@@ -192,10 +167,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         return null;
     }
 
-    /** Обновляем запись */
-    private void updateEntryByFondAnswer(Element aSluch, Long aListEntryId) {
-
-    }
     /** распаковка архива */
     private String unZip(String aZipFile){
         StringBuilder sb = new StringBuilder();
