@@ -53,8 +53,6 @@
                 if(typeView.equals("1")){
                 if(shortForm==null || shortForm.equals("")) {
         %>
-        <input id="getExcel2" class="button" name="submit" value="Печать" onclick="mshSaveTableToExcelById()" role="button" type="submit">
-        <div id="allByLpu">
             <ecom:webQuery isReportBase="false" name = "allByLpu" nameFldSql="listSQL"
                            nativeSql="select max(lpu.id) as lpuid,
                             max(case when p.patientfond_id is null then 'Прикрепление неизвестно' else lpu.name end) as lpuname
@@ -69,17 +67,15 @@
                             group by pf.lpuattached
                             order by counts desc"/>
 
-            <msh:table name="allByLpu" cellFunction="true" action="smo_deniedHospitelByAttach.do?dateBegin=${dateStart}&dateEnd=${dateFinish}&short=Short" idField="1">
+            <msh:table printToExcelButton="Сохранить в excel" name="allByLpu" cellFunction="true" action="smo_deniedHospitelByAttach.do?dateBegin=${dateStart}&dateEnd=${dateFinish}&short=Short" idField="1">
                 <msh:tableColumn columnName="№" identificator="false" property="sn" />
                 <msh:tableColumn columnName="ЛПУ прикрепления" property="2"/>
                 <msh:tableColumn columnName="Отказов" property="3" isCalcAmount="true"/>
             </msh:table>
-        </div>
+
         <%}else {
             String lpuId = request.getParameter("id");
             if(lpuId!=null && !lpuId.equals(""))request.setAttribute("id", lpuId); %>
-        <input id="getExcel2" class="button" name="submit" value="Печать" onclick="mshSaveTableToExcelById()" role="button" type="submit">
-        <div id="allByLpu">
             <ecom:webQuery isReportBase="false" name = "allByLpu" nameFldSql="listSQL"
                            nativeSql="select
                             dep.id,dep.name as depname,
@@ -100,16 +96,13 @@
                             group by depname,dep.id
                             order by counts desc"/>
 
-            <msh:table name="allByLpu" cellFunction="true" action="smo_deniedHospitelByAttach.do?dateBegin=${dateStart}&dateEnd=${dateFinish}&short=Short&lpuId=${lpuId}" idField="1">
+            <msh:table printToExcelButton="Сохранить в Excel" name="allByLpu" cellFunction="true" action="smo_deniedHospitelByAttach.do?dateBegin=${dateStart}&dateEnd=${dateFinish}&short=Short&lpuId=${lpuId}" idField="1">
                 <msh:tableColumn columnName="№" identificator="false" property="sn" />
                 <msh:tableColumn columnName="Отделение" property="2"/>
                 <msh:tableColumn columnName="Кол-во отказов" property="3" isCalcAmount="true"/>
             </msh:table>
-        </div>
         <%}
         }else{ %>
-        <input id="getExcel2" class="button" name="submit" value="Печать" onclick="mshSaveTableToExcelById()" role="button" type="submit">
-        <div id="allByLpu">
             <ecom:webQuery isReportBase="false" name = "allByLpu" nameFldSql="listSQL"
                            nativeSql="
                     select
@@ -137,7 +130,7 @@
                     group by vwf.name,lpuname,lpu.id
                     order by lpuname"/>
 
-            <msh:table name="allByLpu" cellFunction="true" action="smo_deniedHospitelByAttach.do?dateBegin=${dateStart}&dateEnd=${dateFinish}&short=Short&lpuId=${lpuId}" idField="1">
+            <msh:table printToExcelButton="Сохранить в Excel" name="allByLpu" cellFunction="true" action="smo_deniedHospitelByAttach.do?dateBegin=${dateStart}&dateEnd=${dateFinish}&short=Short&lpuId=${lpuId}" idField="1">
                 <msh:tableColumn columnName="№" identificator="false" property="sn" />
                 <msh:tableColumn columnName="ЛПУ прикр." property="1"/>
                 <msh:tableColumn columnName="Рабочая функция" property="2" isCalcAmount="true"/>
@@ -145,7 +138,6 @@
                 <msh:tableColumn columnName="Каретой С/П" property="4" isCalcAmount="true"/>
                 <msh:tableColumn columnName="Другим ЛПУ" property="5" isCalcAmount="true"/>
             </msh:table>
-        </div>
         <% }}else{ %>
         <i>Выберите параметры поиска и нажмите "Найти" </i>
         <%}%>
@@ -156,7 +148,7 @@
             function mshPrintTextToExcelTable (html) {
                 window.location.href='data:application/vnd.ms-excel,'+'\uFEFF'+encodeURIComponent(html); }
             function mshSaveTableToExcelById() {
-                mshPrintTextToExcelTable(document.getElementById("eln").outerHTML);}
+                mshPrintTextToExcelTable(document.getElementById("allByLpu").outerHTML);}
 
             checkFieldUpdate('typeView','${typeView}',1) ;
 
