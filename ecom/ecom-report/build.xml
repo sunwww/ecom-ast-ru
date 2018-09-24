@@ -5,7 +5,7 @@
     <property name="appname" value="ecom-report"/>
     <property name='dirname' value="ecom/report"/>
 
-    <import file="../../ant-support/property-skeleton.xml" />
+    <import file="../ant-support/property-skeleton.xml" />
 
     <fileset id="compile.fileset" dir="${libdir}/">
         <include name="msh/util/msh-util.jar"/>
@@ -15,7 +15,31 @@
         <include name="log4j/log4j.jar"/>
         <include name="jxl/jxl.jar"/>
         <include name="jdom/jdom.jar"/>
+
+        <include name='jersey/ext/javax.inject-1.jar' />
+        <include name='jersey/ext/javax.inject-2.5.0-b42.jar' />
+        <include name='jersey/ext/javax.json-1.1.jar' />
+        <include name='jersey/ext/javax.json-api-1.1.jar' />
+        <include name='jersey/ext/javax.json.bind-api-1.0.jar' />
+        <include name='jersey/ext/javax.servlet-api-3.0.1.jar' />
+        <include name="qr/android-core-3.3.0.jar"/>
+        <include name="qr/commons-lang3-3.8.jar"/>
+        <include name="qr/commons-validator-1.6.jar"/>
+        <include name="qr/core-3.3.0.jar"/>
+        <include name="qr/jai-imageio-core-1.3.1.jar"/>
+        <include name="qr/java-rdfa-0.4.2.jar"/>
+        <include name="qr/javase-3.3.0.jar"/>
+        <include name="qr/jcommander-1.48.jar"/>
+        <include name="qr/jena-2.6.4.jar"/>
+        <include name="qr/jena-iri-0.9.1.jar"/>
+        <include name="qr/odfdom-java-0.8.7.jar"/>
+        <include name="qr/odfdom-java-0.8.11-incubating.jar"/>
+        <include name="qr/openoffice-unoil-2.0.3.jar"/>
+        <include name="qr/simple-odf-0.8.2-incubating.jar"/>
+        <include name="qr/slf4j-api-1.5.6.jar"/>
+        <include name="qr/slf4j-log4j12-1.6.4.jar"/>
+        <include name="qr/javax.ejb.jar"/>
 	</fileset>
 
-    <import file="../../ant-support/lib-skeleton.xml" />
+    <import file="../ant-support/lib-skeleton.xml" />
 </project>
