@@ -17,14 +17,18 @@
         <msh:section title="Консультации специалистов. 
         <a href='entityParentPrepareCreate-pres_wfConsultation.do?id=${param.id }'> Добавить новую консультацию специалиста</a>
         " guid="1f21294-8ea0-4b66-a0f3-62713c1">
-            <ecom:webQuery name="consultations"  nativeSql="
-     select scg.id,vtype.code||' '||vtype.name as f00,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as f01,scg.createusername as f1,scg.createdate as f2,scg.editusername as f3,scg.editdate as f4, scg.transferusername as f5,scg.transferdate as f6
-from prescription scg
-left join PrescriptionList pl on pl.id=scg.prescriptionList_id
+            <ecom:webQuery name="consultations"  nativeSql="select scg.id,vtype.code||' '||vtype.name as f00,
+vwf.name as f01,scg.createusername as f1
+,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4,
+scg.transferusername as f5 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'hh:mm:ss') as f6,
+vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'hh:mm:ss') as f8
+from prescription scg left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
 left join vocworkFunction vwf on vwf.id=wf.workFunction_id
-left join worker w on w.id = wf.worker_id
-left join patient wp on wp.id=w.person_id
+left join workfunction wf2 on wf2.id=scg.intakespecial_id
+left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
+left join worker w2 on w2.id = wf2.worker_id
+left join patient wp2 on wp2.id=w2.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 where scg.dtype='WfConsultation' and scg.prescriptionlist_id='${param.id}'"/>
 
@@ -33,11 +37,13 @@ where scg.dtype='WfConsultation' and scg.prescriptionlist_id='${param.id}'"/>
                 <msh:tableColumn columnName="Тип" property="2"/>
                 <msh:tableColumn columnName="Специалист" property="3"/>
                 <msh:tableColumn columnName="Пользователь, который создал" property="4" cssClass="preCell"/>
-                <msh:tableColumn columnName="Дата создания" property="5"/>
+                <msh:tableColumn columnName="Дата и время создания" property="5"/>
                 <msh:tableColumn columnName="Пользователь, который отредактировал" property="6" cssClass="preCell"/>
-                <msh:tableColumn columnName="Дата редактирования" property="7"/>
+                <msh:tableColumn columnName="Дата и время редактирования" property="7"/>
                 <msh:tableColumn columnName="Пользователь, который передал" property="8" cssClass="preCell"/>
-                <msh:tableColumn columnName="Дата передачи" property="9"/>
+                <msh:tableColumn columnName="Дата и время передачи" property="9"/>
+                <msh:tableColumn columnName="Пользователь, который выполнил" property="10" cssClass="preCell"/>
+                <msh:tableColumn columnName="Дата и время выполнения" property="11"/>
             </msh:table>
 
         </msh:section>

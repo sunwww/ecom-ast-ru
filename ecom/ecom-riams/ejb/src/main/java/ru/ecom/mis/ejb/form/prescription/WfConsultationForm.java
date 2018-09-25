@@ -5,8 +5,12 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.prescription.WfConsultation;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
+import ru.nuzmsh.forms.validator.validators.TimeString;
+
+import java.sql.Time;
 
 /**
  * Created by Milamesher on 14.09.2018.
@@ -39,6 +43,18 @@ public class WfConsultationForm extends IdEntityForm {
     private Long thePrescriptionList;
     /** Специалист */
     private Long thePrescriptCabinet;
+    /** Время создания */
+    private String theCreateTime;
+    /** Время редактрования */
+    private String theEditTime;
+    /** Время передачи */
+    private String theTransferTime;
+    /** Дата выполнения */
+    private String theIntakeDate;
+    /** Время выполнения */
+    private String theIntakeTime;
+    /** Пользователь, который выполнил */
+    private Long theIntakeSpecial;
 
     /** Тип консультации */
     @Comment("Тип консультации")
@@ -103,4 +119,40 @@ public class WfConsultationForm extends IdEntityForm {
     public void setPrescriptCabinet(Long aPrescriptCabinet) {
         thePrescriptCabinet = aPrescriptCabinet;
     }
+
+    /** Время создания */
+    @Comment("Время создания")
+    @TimeString @DoTimeString @Persist
+    public String getCreateTime() {return theCreateTime;}
+    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+
+    /** Время редактрования */
+    @Comment("Время редактрования")
+    @TimeString @DoTimeString @Persist
+    public String getEditTime() {return theEditTime;}
+    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+
+    /** Время передачи */
+    @Comment("Время передачи")
+    @TimeString @DoTimeString @Persist
+    public String getTransferTime() {return theTransferTime;}
+    public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
+
+    /** Дата выполнения */
+    @Comment("Дата выполнения")
+    @Persist @DateString
+    public String getIntakeDate() { return theIntakeDate; }
+    public void setIntakeDate(String aIntakeDate) { theIntakeDate = aIntakeDate; }
+
+    /** Время выполнения */
+    @Comment("Время выполнения")
+    @TimeString @DoTimeString @Persist
+    public String getIntakeTime() {return theIntakeTime;}
+    public void setIntakeTime(String aIntakeTime) {theIntakeTime = aIntakeTime;}
+
+    /** Пользователь, который выполнил */
+    @Comment("Пользователь, который выполнил")
+    @Persist
+    public Long getIntakeSpecial() { return theIntakeSpecial; }
+    public void setIntakeSpecial(Long aIntakeSpecial) { theIntakeSpecial = aIntakeSpecial; }
 }

@@ -2199,7 +2199,7 @@ public class HospitalMedCaseServiceJs {
 		Collection<WebQueryResult> l= service.executeNativeSql("select case when transferdate is null then '1' else '0' end from prescription where id="+id) ;
 		if (l.size()>0){
 			if (l.iterator().next().get1().toString().equals("1")) {
-				service.executeUpdateNativeSql("update prescription set transferdate=current_date,transferusername='" +
+				service.executeUpdateNativeSql("update prescription set transferdate=current_date,transfertime=current_time,transferusername='" +
                         LoginInfo.find(aRequest.getSession(true)).getUsername() + "' where id=" + id);
 				res="1";
 			}
