@@ -28,11 +28,12 @@ public class WebQueryServiceBean implements IWebQueryService {
 
 		if(limit==null || limit==0 || limit>100 ) limit=100;
 
-		//Integer count = 0;
 		DataSource ds =findDataSource();
-		Connection connection = ds.getConnection();
-		Statement statement = connection.createStatement();
+		Connection connection = null;
+		Statement statement = null;
 		try {
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.setMaxRows(limit);
 			ResultSet resultSet = statement.executeQuery(aQuery);
 			ResultSetMetaData rsmd = resultSet.getMetaData();
@@ -44,8 +45,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 				}
 				array.put(temp);
 			}
-			statement.close();
-			connection.close();
+
 
 			if(nameArray.equals("")){
 				return array.toString();
@@ -53,7 +53,12 @@ public class WebQueryServiceBean implements IWebQueryService {
 				return new JSONObject().put(nameArray, array).toString();
 			}
 
-		}catch (Exception e){e.printStackTrace();}
+		}catch (JSONException | SQLException e){
+			e.printStackTrace();
+		} finally {
+			statement.close();
+			connection.close();
+		}
 		return null;
 	}
 	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException, SQLException {
