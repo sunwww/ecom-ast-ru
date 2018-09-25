@@ -63,9 +63,13 @@
         <msh:section>
             <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные
                 <ecom:webQuery isReportBase="true" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select scg.id,vtype.code||' '||vtype.name as f00,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as f01,
+select scg.id,vtype.code||' '||vtype.name as f00,vwf.name as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
-scg.createusername as f1,scg.createdate as f2,scg.editusername as f3,scg.editdate as f4, scg.transferusername as f5,scg.transferdate as f6
+scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
+,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
+,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'hh:mm:ss') as f6,
+     vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7
+     ,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'hh:mm:ss') as f8
 , case
     when scg.diary_id is not null then 'background:#90EE90;color:black'
     else case when scg.transferdate is not null  then 'background:yellow;color:black'
@@ -80,22 +84,28 @@ left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
 left join patient pat on slo.patient_id=pat.id
+left join workfunction wf2 on wf2.id=scg.intakespecial_id
+left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
+left join worker w2 on w2.id = wf2.worker_id
+left join patient wp2 on wp2.id=w2.person_id
 where scg.dtype='WfConsultation' ${typeSql}
 "/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityView-pres_wfConsultation.do" idField="1" styleRow="11">
+                <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityView-pres_wfConsultation.do" idField="1" styleRow="13">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Тип" property="2"/>
                     <msh:tableColumn columnName="Специалист" property="3"/>
                     <msh:tableColumn columnName="Пациент" property="4"/>
                     <msh:tableColumn columnName="Создал" property="5"/>
-                    <msh:tableColumn columnName="Дата создания" property="6"/>
+                    <msh:tableColumn columnName="Дата и время создания" property="6"/>
                     <msh:tableColumn columnName="Отредактировал" property="7"/>
-                    <msh:tableColumn columnName="Дата редактирования" property="8"/>
+                    <msh:tableColumn columnName="Дата и время редактирования" property="8"/>
                     <msh:tableColumn columnName="Передал" property="9"/>
-                    <msh:tableColumn columnName="Дата передачи" property="10"/>
+                    <msh:tableColumn columnName="Дата и время передачи" property="10"/>
+                    <msh:tableColumn columnName="Пользователь, который выполнил" property="11"/>
+                    <msh:tableColumn columnName="Дата и время выполнения" property="12"/>
                     <msh:tableButton property="1" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
                 </msh:table>
             </msh:sectionContent>

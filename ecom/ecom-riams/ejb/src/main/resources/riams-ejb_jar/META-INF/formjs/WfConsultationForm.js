@@ -1,6 +1,7 @@
 function onPreSave(aForm,aEntity, aCtx) {
     var date = new java.util.Date();
     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+    aForm.setEditTime(new java.sql.Time (date.getTime())) ;
     aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
     var res = aCtx.manager.createNativeQuery("select case when transferdate is null then '1' else '0' end from prescription where id=" + aEntity.id).getResultList();
     if (res.size()>0) {
@@ -12,6 +13,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 function onPreCreate(aForm, aCtx) {
     var date = new java.util.Date();
     aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+    aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
     aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
 }
 function onPreDelete(aEntityId, aContext) {
