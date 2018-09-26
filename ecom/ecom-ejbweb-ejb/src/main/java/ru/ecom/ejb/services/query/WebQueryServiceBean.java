@@ -54,9 +54,9 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}catch (JSONException | SQLException e){
 			e.printStackTrace();
 		} finally {
-			if(connection!=null) connection.close();
-			if(statement!=null) statement.close();
-		}
+            if(connection!=null && !connection.isClosed()) connection.close();
+            if(statement!=null && !statement.isClosed()) statement.close();
+        }
 		return null;
 	}
 	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException, SQLException {
