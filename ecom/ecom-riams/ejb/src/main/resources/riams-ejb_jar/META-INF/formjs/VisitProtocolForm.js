@@ -108,8 +108,8 @@ function onCreate(aForm, aEntity, aCtx) {
             var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
             presc.setDiary(aEntity);
             var currentDate = new java.util.Date();
-            presc.setIntakeDate(new java.sql.Date(currentDate.getTime()));
-            presc.setIntakeTime(new java.sql.Time (currentDate.getTime()));
+            presc.setIntakeDate(aEntity.dateRegistration);
+            presc.setIntakeTime(aEntity.timeRegistration);
             presc.setIntakeSpecial(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction"));
             aCtx.manager.persist(presc);
         }
