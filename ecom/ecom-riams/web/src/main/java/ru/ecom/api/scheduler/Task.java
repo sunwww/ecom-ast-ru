@@ -1,4 +1,4 @@
-package ru.ecom.api.sсheduler;
+package ru.ecom.api.scheduler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
