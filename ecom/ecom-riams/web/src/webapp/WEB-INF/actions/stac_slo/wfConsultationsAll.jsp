@@ -67,9 +67,9 @@ select scg.id,vtype.code||' '||vtype.name as f00,vwf.name as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
-,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'hh:mm:ss') as f6,
+,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'HH24:MI:SS') as f6,
      vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7
-     ,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'hh:mm:ss') as f8
+     ,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
 , case
     when scg.diary_id is not null then 'background:#90EE90;color:black'
     else case when scg.transferdate is not null  then 'background:yellow;color:black'
