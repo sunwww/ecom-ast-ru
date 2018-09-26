@@ -6,7 +6,7 @@ import ru.ecom.api.queue.HospitalQueueResource;
 import ru.ecom.api.queue.TicketQueueResource;
 
 import ru.ecom.api.disabilitySign.DisabilitySign;
-import ru.ecom.api.sсheduler.ScheduleTasks;
+import ru.ecom.api.scheduler.ScheduleTasks;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

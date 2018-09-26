@@ -1,4 +1,4 @@
-package ru.ecom.api.sсheduler;
+package ru.ecom.api.scheduler;
 
 import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -28,7 +28,8 @@ public class ScheduleTaskListener  implements ServletContextListener {
         try {
             IDisabilityService service1 = Injection.find(event,"riams")
                     .getService(IDisabilityService.class);
-            String endpoint = service1.getSoftConfigValue("EndpointApi", "null");
+            String endpoint = service1.getSoftConfigValue("EndpointApi", null);
+            if(endpoint!=null){
             endpoint = (endpoint.split("/")[2]).split(":")[0];
             List<String> endpoints = getEndPoints();
             for(String endp: endpoints){
@@ -44,7 +45,7 @@ public class ScheduleTaskListener  implements ServletContextListener {
                     }
                     break;
                 }
-            }
+            }}
         }catch (NamingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
