@@ -195,8 +195,8 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
 	<ecom:webQuery name="pres" nativeSql="select scg.id,vtype.code||' '||vtype.name as f00,
 vwf.name as f01,scg.createusername as f1
 ,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4,
-scg.transferusername as f5 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'hh:mm:ss') as f6,
-vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'hh:mm:ss') as f8
+scg.transferusername as f5 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'HH24:MI:SS') as f6,
+vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
 from prescription scg left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
 left join vocworkFunction vwf on vwf.id=wf.workFunction_id
