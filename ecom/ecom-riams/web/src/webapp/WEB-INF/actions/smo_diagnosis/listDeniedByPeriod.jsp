@@ -452,7 +452,7 @@ and sls.medicalAid='1'
 select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
-,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
+,dvwf.name||' '||dwp.lastname||' '||dwp.firstname||' '||dwp.middlename as worker
 ,case when mcmp.policies_id is not null then 'Да' else '' end  as policies
 ,case when diag.id is not null ${filterMkbSql} then mkb.code else null end as diag
 ,ml.name as f8_depName
@@ -486,7 +486,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
       <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Деж. врач" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Деж. врач (поставил диагноз)" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
       <msh:tableColumn columnName="Диагноз" property="7"/>
 		<msh:tableColumn columnName="Отделение" property="8"/>

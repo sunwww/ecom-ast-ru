@@ -22,6 +22,22 @@ function onPreDelete(aEntityId, aCtx) {
     }
 
     aCtx.manager.createNativeQuery("delete from forminputprotocol where docprotocol_id=" + aEntityId).executeUpdate();
+    //Milamesher #121 очищение данных в конслультации об этом дневнике: сам diary_id,и кто-когда-во сколько
+    var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
+        "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
+        "left join medcase slo on slo.id=pl.medcase_id\n" +
+        "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
+        "where scg.transferdate is not null and scg.diary_id='" + aEntityId + "'").getResultList();
+    if (res.size()>0) {
+        if (res.get(0)!=null) {
+            var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
+            presc.setDiary(null);
+            presc.setIntakeSpecial(null);
+            presc.setIntakeDate(null);
+            presc.setIntakeTime(null);
+            aCtx.manager.persist(presc);
+        }
+    }
 }
 function onPreCreate(aForm, aCtx) {
 
@@ -72,18 +88,28 @@ function onCreate(aForm, aEntity, aCtx) {
     createServiceMedCase(aForm, aEntity, aCtx);
     var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
     bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
-    //Milamesher #121 19092018 если есть переданные, но не выполненные консультации в этом сло e текущего пользователя, то проставить diary_id
+    //Milamesher #121 19092018 если есть переданные, но не выполненные консультации в этом сло текущего пользователя, то проставить diary_id
     var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
         "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
         "left join medcase slo on slo.id=pl.medcase_id\n" +
         "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
         "where scg.transferdate is not null and scg.diary_id is null and \n" +
-        "wf.id='"+ aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction").id +
-        "' and slo.id='"+aForm.getMedCase()+"'").getResultList();
+        "wf.id=ANY(select wf.id from WorkFunction wf\n" +
+        "left join Worker w on w.id=wf.worker_id\n" +
+        "left join Worker sw on sw.person_id=w.person_id\n" +
+        "left join WorkFunction swf on swf.worker_id=sw.id\n" +
+        "left join SecUser su on su.id=swf.secUser_id\n" +
+        "where su.login='"+ aCtx.getSessionContext().getCallerPrincipal().toString() +
+        "' and (wf.archival is null or wf.archival='0'))" +
+        " and scg.dtype='WfConsultation' and slo.id='"+aForm.getMedCase()+"'").getResultList();
     if (res.size()>0) {
         if (res.get(0)!=null) {
             var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
             presc.setDiary(aEntity);
+            var currentDate = new java.util.Date();
+            presc.setIntakeDate(new java.sql.Date(currentDate.getTime()));
+            presc.setIntakeTime(new java.sql.Time (currentDate.getTime()));
+            presc.setIntakeSpecial(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction"));
             aCtx.manager.persist(presc);
         }
     }

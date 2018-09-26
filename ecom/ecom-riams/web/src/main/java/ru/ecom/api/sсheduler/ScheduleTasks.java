@@ -80,7 +80,7 @@ public class ScheduleTasks {
         link = link.replace("*","&");
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        Task task = new Task(Long.valueOf(id) ,name,link);
+        Task task = new Task(Long.valueOf(id) ,name,link,atTime);
         scheduledExecutorService.scheduleAtFixedRate(task, timeInit(times[0],times[1],times[2]), 24*60*60, TimeUnit.SECONDS);
         map.put(scheduledExecutorService,task);
 

@@ -27,7 +27,7 @@ import ru.ecom.report.replace.ReplaceHelper;
 import ru.ecom.report.replace.SetValueException;
 import ru.nuzmsh.util.zip.JarUtil;
 
-public class OdtPrintFileDriver implements IPrintFileDriver {
+public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 	
 	public OdtPrintFileDriver(String aExtension) {
 		theExtension = aExtension ;
@@ -190,7 +190,32 @@ public class OdtPrintFileDriver implements IPrintFileDriver {
     	Element convElem = new Element(aElement.getName(),aElement.getNamespacePrefix(),aElement.getNamespaceURI()) ;
     	//log(aElement.getName()+"--"+aElement.getNamespacePrefix()+"--"+aElement.getNamespaceURI());
     	copyAttribute(aElement, convElem);
-    	String text = aNotEditText?aElement.getText():convertText(aElement.getText(),aValueGetter, aReplaceHelper) ;
+		//Milamesher #120 24092018 вставка qr-кода
+		String text = "";  //по умолчанию - если не получится создать qr-код, просто будет пустая строка вместо него
+		if (aElement.getText().contains(theReplaceString)) {
+			String aLine = aElement.getText();
+			int index1=aLine.indexOf("("), index2=aLine.indexOf(")");
+			if (index1!=-1 && index2!=-1) {
+				String params=aLine.substring(index1+1,index2);
+				String pars[] = params.split(",");
+				if (pars.length==3) {
+					String qr_text = convertText(pars[0],aValueGetter, aReplaceHelper);
+					int qr_w=0,qr_h=0;
+					try {
+						qr_w = Integer.valueOf(pars[1]);
+						qr_h = Integer.valueOf(pars[2]);
+						if (qr_w != 0 && qr_h != 0 && qr_text != null && !qr_text.equals("")) {
+							theQR_text=qr_text;
+							theQR_w=qr_w;
+							theQR_h=qr_h;
+							text=theReplaceString;
+						}
+					}
+					catch (Exception e) {}
+				}
+			}
+		}
+		else text = aNotEditText?aElement.getText():convertText(aElement.getText(),aValueGetter, aReplaceHelper) ;
     	//Text text = new Text() ;
     	//convElem.addContent() ;
     	setTextByTag(convElem,text) ;
@@ -357,6 +382,15 @@ public class OdtPrintFileDriver implements IPrintFileDriver {
 	public String getLogin() {return theLogin;}
 	public void setLogin(String aLogin) {theLogin = aLogin;}
 
+    public String getQR_text() { return theQR_text; }
+
+	public int getQR_w() { return theQR_w; }
+
+    public int getQR_h() { return theQR_h; }
+
+	public String getReplaceString() { return theReplaceString; }
+
+	public String getExtension() { return theExtension; }
 	/** Логин */
 	private String theLogin;
     private String theExtension ;
@@ -364,5 +398,12 @@ public class OdtPrintFileDriver implements IPrintFileDriver {
 	private File theTemplateDir ;
 	private String theKey ;
 	private File theWorkDir ;
-
+	/** Текст в qr-коде */
+	private static String theQR_text;
+	/** Ширина qr-кода */
+	private static int theQR_w;
+	/** Высота qr-кода */
+	private static int theQR_h;
+	/** Строка для замены */
+	private static String theReplaceString="printQRCode";
 }

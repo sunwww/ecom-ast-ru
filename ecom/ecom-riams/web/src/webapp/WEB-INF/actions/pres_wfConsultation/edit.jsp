@@ -34,26 +34,34 @@
                 </msh:row>
                 <msh:ifFormTypeIsCreate formName="pres_wfConsultationForm" guid="e20545-4285-a21c-3bb9b4569efc">
                     <msh:row>
-                        <msh:autoComplete label="Специалист" property="prescriptCabinet" vocName="workFunction"    horizontalFill="true" fieldColSpan="3"/>
+                        <msh:autoComplete label="Направлен к" property="prescriptCabinet" vocName="workFunctionCons"    horizontalFill="true" fieldColSpan="3"/>
                     </msh:row>
                 </msh:ifFormTypeIsCreate>
                 <msh:ifFormTypeAreViewOrEdit formName="pres_wfConsultationForm" guid="e20545-4285-a21c-3bb9b4569efc">
                     <msh:row>
-                        <msh:autoComplete label="Специалист" property="prescriptCabinet" vocName="workFunction"  viewOnlyField="true"  horizontalFill="true" fieldColSpan="3"/>
+                        <msh:autoComplete label="Направлен к" property="prescriptCabinet" vocName="workFunctionCons"  viewOnlyField="true"  horizontalFill="true" fieldColSpan="3"/>
                     </msh:row>
                 </msh:ifFormTypeAreViewOrEdit>
 
                 <msh:row guid="d1744869-a80c-4e09-ada3-22a87b8e40b3">
                     <msh:textField property="createDate" label="Дата создания" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
+                    <msh:textField property="createTime" label="Время создания" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
                     <msh:textField property="createUsername" label="Пользователь" viewOnlyField="true" guid="4eac72aa-0de9-427e-b2db-15635bb16fe0" />
                 </msh:row>
                 <msh:row guid="d1744869-a80c-4e09-ada3-22a87b8e40b3">
                     <msh:textField property="editDate" label="Дата редак." viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
+                    <msh:textField property="editTime" label="Время редак." viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
                     <msh:textField property="editUsername" label="Пользователь" viewOnlyField="true" guid="4eac72aa-0de9-427e-b2db-15635bb16fe0" />
                 </msh:row>
                 <msh:row>
                     <msh:textField property="transferDate" label="Дата передачи специалисту" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
+                    <msh:textField property="transferTime" label="Время передачи специалисту" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
                     <msh:textField property="transferUsername" label="Пользователь" viewOnlyField="true" guid="4eac72aa-0de9-427e-b2db-15635bb16fe0" />
+                </msh:row>
+                <msh:row>
+                    <msh:textField property="intakeDate" label="Дата выполнения" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
+                    <msh:textField property="intakeTime" label="Время выполнения" viewOnlyField="true" guid="76b0f8ed-caa9-496b-a1bd-9a0081c69198" />
+                    <msh:autoComplete label="Пользователь" property="intakeSpecial" vocName="workFunction"  viewOnlyField="true"  horizontalFill="true" fieldColSpan="3" size="150"/>
                 </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="3" />
             </msh:panel>
