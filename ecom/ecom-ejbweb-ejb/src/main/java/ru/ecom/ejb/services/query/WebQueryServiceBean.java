@@ -23,7 +23,6 @@ import java.util.List;
 @Remote(IWebQueryService.class)
 public class WebQueryServiceBean implements IWebQueryService {
 
-
 	public String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException, SQLException {
 
 		if(limit==null || limit==0 || limit>100 ) limit=100;
@@ -46,7 +45,6 @@ public class WebQueryServiceBean implements IWebQueryService {
 				array.put(temp);
 			}
 
-
 			if(nameArray.equals("")){
 				return array.toString();
 			}else {
@@ -56,39 +54,14 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}catch (JSONException | SQLException e){
 			e.printStackTrace();
 		} finally {
-			statement.close();
-			connection.close();
+			if(connection!=null) connection.close();
+			if(statement!=null) statement.close();
 		}
 		return null;
 	}
 	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException, SQLException {
 		return executeSqlGetJson(aQuery,limit,"");
 	}
-
-
-	/*public JSONArray executeSqlGetJsonArray(String aQuery) throws SQLException, NamingException {
-		DataSource ds =findDataSource();
-		Connection dbh = ds.getConnection();
-		Statement statement = dbh.createStatement();
-		JSONArray array = new JSONArray();
-		try {
-
-			ResultSet resultSet = statement.executeQuery(aQuery);
-			ResultSetMetaData rsmd = resultSet.getMetaData();
-			while (resultSet.next()) {
-				JSONObject temp = new JSONObject();
-				for (int j = 1; j <= resultSet.getMetaData().getColumnCount(); j++) {
-					temp.put(rsmd.getColumnName(j),resultSet.getString(j));
-				}
-				array.put(temp);
-			}
-
-			dbh.close();
-			return array;
-
-		}catch (Exception e){e.printStackTrace();}
-		return null;
-	}*/
 
 	public String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException {
 
@@ -111,28 +84,6 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}catch (Exception e){e.printStackTrace();}
 		return null;
 	}
-
-	/*public String executeSqlGetJsonArray(String aQuery) throws SQLException, NamingException {
-
-		DataSource ds =findDataSource();
-		Connection dbh = ds.getConnection();
-		Statement statement = dbh.createStatement();
-
-		try {
-			ResultSet resultSet = statement.executeQuery(aQuery);
-			ResultSetMetaData rsmd = resultSet.getMetaData();
-			JSONArray array = new JSONArray();
-			while (resultSet.next()) {
-				JSONObject jsonObject = new JSONObject();
-				for (int j = 1; j <= resultSet.getMetaData().getColumnCount(); j++) {
-					jsonObject.put(rsmd.getColumnName(j),resultSet.getString(j));
-				}
-				array.put(jsonObject);
-			}
-			return new JSONObject().put("data",array).toString();
-		}catch (Exception e){e.printStackTrace();}
-		return null;
-	}*/
 
 	private DataSource findDataSource() throws NamingException {
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
@@ -233,20 +184,8 @@ public class WebQueryServiceBean implements IWebQueryService {
 					try {
 						Method ejbSetterMethod = clazz.getMethod("set"+(ii+1), obj_clazz);
 						ejbSetterMethod.invoke(result, row[ii]) ;
-					} catch (SecurityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
+					} catch (SecurityException | InvocationTargetException |
+							IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
 						e.printStackTrace();
 					}
 				}
@@ -259,6 +198,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}
 		return ret ;
 	}
+
 	/**
 	 * Выполняет запрос на HQL
 	 * @param aQuery
