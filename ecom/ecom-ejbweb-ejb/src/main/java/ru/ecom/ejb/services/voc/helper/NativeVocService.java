@@ -1,33 +1,20 @@
 package ru.ecom.ejb.services.voc.helper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.ejb.SessionContext;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.util.ClassLoaderHelper;
-import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.ejb.services.voc.IVocContextService;
 import ru.ecom.ejb.services.voc.IVocServiceManagement;
 import ru.ecom.ejb.services.voc.VocContext;
-
-import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
-import sun.awt.windows.ThemeReader;
+
+import javax.persistence.Query;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class NativeVocService implements IVocContextService, IVocServiceManagement {
 

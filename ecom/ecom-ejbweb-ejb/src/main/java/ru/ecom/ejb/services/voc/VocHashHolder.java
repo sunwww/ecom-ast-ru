@@ -1,14 +1,12 @@
 package ru.ecom.ejb.services.voc;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.destroy.DestroyContext;
 import ru.ecom.ejb.services.destroy.IDestroyable;
 import ru.ecom.ejb.services.util.IPersistenceContextRequired;
-import ru.nuzmsh.util.voc.IVocService;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 public class VocHashHolder implements IDestroyable {
 

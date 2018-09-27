@@ -1,10 +1,8 @@
 package ru.ecom.ejb.services.quickquery;
 
-import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 
-import com.sun.accessibility.internal.resources.accessibility_zh_CN;
 
 public class QuickQueryContext {
 

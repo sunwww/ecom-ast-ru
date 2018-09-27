@@ -1,8 +1,7 @@
 package ru.ecom.ejb.services.entityjslistener;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import org.apache.log4j.Logger;
+import org.mozilla.javascript.*;
 
 import javax.annotation.Resource;
 import javax.ejb.Local;
@@ -10,17 +9,9 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.apache.log4j.Logger;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.Script;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.Undefined;
-
-import ru.ecom.ejb.services.util.JBossConfigUtil;
-import ru.ecom.ejb.util.injection.EjbInjection;
-import sun.reflect.generics.scope.Scope;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 @Local(IEntityJsListenerService.class)
 @Stateless

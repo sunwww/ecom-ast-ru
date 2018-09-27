@@ -1,10 +1,5 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.*;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,11 +11,10 @@ import ru.ecom.mis.ejb.domain.worker.voc.VocAcademicDegree;
 import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.transforms.DoTimeString;
-import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.TimeString;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Место работы
@@ -30,6 +24,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AIndexes({
 	//@AIndex(properties="archival")
 	@AIndex(properties="workFunction")
+		,@AIndex(properties = "secuser")
 	//,@AIndex(properties={"archival","workFunction"})
 	,@AIndex(properties={"code"})
 })
