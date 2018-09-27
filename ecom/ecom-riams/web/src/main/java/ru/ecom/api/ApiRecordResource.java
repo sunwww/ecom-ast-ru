@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.text.ParseException;
+
 
 @Path("/record")
 public class ApiRecordResource {
@@ -136,7 +136,7 @@ public class ApiRecordResource {
     @Path("makeRecord")
     @Produces(MediaType.APPLICATION_JSON)
     public String makeRecord(@Context HttpServletRequest aRequest
-            ,  String jsonData) throws NamingException, JSONException, ParseException {
+            ,  String jsonData) throws JSONException {
         return makeRecordOrAnnul(aRequest,new JSONObject(jsonData));
     }
 
@@ -145,7 +145,7 @@ public class ApiRecordResource {
     @Path("annulRecord")
     @Produces(MediaType.APPLICATION_JSON)
     public String annulRecord(@Context HttpServletRequest aRequest
-            ,  String jsonData) throws NamingException, JSONException, ParseException {
+            ,  String jsonData) throws JSONException {
         JSONObject root = new JSONObject(jsonData);
         root.put("annul","annul");
         return makeRecordOrAnnul(aRequest,root);
@@ -155,7 +155,11 @@ public class ApiRecordResource {
     private String makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
 
         try {
-            System.out.println("json record = "+root.toString());
+
+            if (root==null) {
+                System.out.println("json record  __________ROOOOOOT IS NULLLLLL!!!!! : - ( ");
+                return  "{\"status\":\"error\",\"error_name\":\"JSONObject is null\",\"error_code\":\"NULL_JSON_OBJECT\"}";
+            }
             Long calendarTimeId = Long.valueOf((String)getJsonField(root,"calendarTime_id"));
             String lastname = getJsonField(root,"lastname");
             String firstname = getJsonField(root,"firstname");
