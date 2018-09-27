@@ -193,7 +193,7 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
 </msh:section>
 <msh:section>
 	<ecom:webQuery name="pres" nativeSql="select scg.id,vtype.code||' '||vtype.name as f00,
-vwf.name as f01,scg.createusername as f1
+wf.groupname as f01,scg.createusername as f1
 ,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4,
 scg.transferusername as f5 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'HH24:MI:SS') as f6,
 vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
@@ -213,11 +213,11 @@ where ${field } and scg.dtype='WfConsultation'"/>
 			<msh:tableColumn columnName="Тип" property="2"/>
 			<msh:tableColumn columnName="Специалист" property="3"/>
 			<msh:tableColumn columnName="Пользователь, который создал" property="4" cssClass="preCell"/>
-			<msh:tableColumn columnName="Дата создания" property="5"/>
+			<msh:tableColumn columnName="Дата и время создания" property="5"/>
 			<msh:tableColumn columnName="Пользователь, который отредактировал" property="6" cssClass="preCell"/>
-			<msh:tableColumn columnName="Дата редактирования" property="7"/>
+			<msh:tableColumn columnName="Дата и время редактирования" property="7"/>
 			<msh:tableColumn columnName="Пользователь, который передал" property="8" cssClass="preCell"/>
-			<msh:tableColumn columnName="Дата передачи" property="9"/>
+			<msh:tableColumn columnName="Дата и время передачи" property="9"/>
 			<msh:tableColumn columnName="Пользователь, который выполнил" property="10" cssClass="preCell"/>
 			<msh:tableColumn columnName="Дата и время выполнения" property="11"/>
 		</msh:table>

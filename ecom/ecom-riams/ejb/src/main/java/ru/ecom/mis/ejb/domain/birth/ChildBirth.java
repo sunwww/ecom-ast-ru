@@ -501,13 +501,13 @@ public class ChildBirth extends BaseEntity{
 	private VocChildEmergency theEmergency;
 
 
-	/** Паритет */
-	@Comment("Паритет")
+	/** Паритет родов */
+	@Comment("Паритет родов")
 	@OneToOne
 	public VocParitet getParitet() {return theParitet;}
 	public void setParitet(VocParitet aParitet) {theParitet = aParitet;}
 
-	/** Паритет */
+	/** Паритет родов */
 	private VocParitet theParitet;
 
 	/** ЭКО? */
@@ -525,4 +525,13 @@ public class ChildBirth extends BaseEntity{
 
 	/** Состояла на учёте в ЖК? */
 	private Boolean theIsRegisteredWithWomenConsultation;
+
+	/** Паритет беременностей */
+	@Comment("Паритет беременностей")
+	@OneToOne
+	public VocParitet getParitetPregn() {return theParitetPregn;}
+	public void setParitetPregn(VocParitet aParitetPregn) {theParitetPregn = aParitetPregn;}
+
+	/** Паритет беременностей */
+	private VocParitet theParitetPregn;
 }

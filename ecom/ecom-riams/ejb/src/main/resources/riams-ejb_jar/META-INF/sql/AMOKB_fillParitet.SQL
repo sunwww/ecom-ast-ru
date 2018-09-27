@@ -13,3 +13,6 @@ INSERT INTO vocparitet(id,name,code) VALUES(11,'XI','XI');
 INSERT INTO vocparitet(id,name,code) VALUES(12,'XII','XII');
 
 update vocparitet set name=''
+
+
+INSERT INTO vocparitet(id,name,code) VALUES(13,'','XX');

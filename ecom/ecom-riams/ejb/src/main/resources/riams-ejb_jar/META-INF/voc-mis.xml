@@ -2105,14 +2105,14 @@ where wf.dtype='PersonalWorkFunction' -->
 		<NativeVocService
 				from = 'WorkFunction as wf '
 				parent = ''
-				names  = "vwf.name"
+				names  = "wf.groupname"
 				queried =" (cast(wf.id as varchar(20))= :querInd or
     			upper(vwf.name) like UPPER(:query)  )"
 				queryAppend = "wf.dtype='GroupWorkFunction' and (wf.archival is null or wf.archival='0')
 				and (vwf.isfuncdiag  is null or vwf.isfuncdiag='0')
 				and (vwf.islab  is null or vwf.islab='0')
 				and (vwf.isradiationdiagnosis  is null or vwf.isradiationdiagnosis='0')
-				and vlf.code='4'
+				and vlf.code='3'
 				"
 				queriedSplitCount="3"
 

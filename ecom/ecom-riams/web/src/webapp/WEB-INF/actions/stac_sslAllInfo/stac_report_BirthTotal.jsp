@@ -112,6 +112,9 @@
                         String paritet = request.getParameter("paritet");
                         if (paritet != null && !paritet.equals(""))
                             sqlAdd = " and cb.paritet_id=(select id from vocparitet where code='" + paritet + "') ";
+                        String paritetpregn = request.getParameter("paritetpregn");
+                        if (paritetpregn != null && !paritetpregn.equals(""))
+                            sqlAdd = " and cb.paritetpregn_id=(select id from vocparitet where code='" + paritetpregn + "') ";
                         String age =  request.getParameter("age");
                         if (age!=null&&!age.equals("")) {
                             String[] ages=age.split(":");
@@ -278,7 +281,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         else if (request.getParameter("typeGroup").equals("2")) {
         %>
         <msh:section>
-            <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+            <msh:sectionTitle>Результаты поиска по паритету по РОДАМ за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
         </msh:section>
         <msh:section>
             <ecom:webQuery isReportBase="true" name="ReportParitetPregnancy" nameFldSql="ReportParitetPregnancySql" nativeSql="
@@ -296,6 +299,7 @@ count(cb.id)
 ,count (case when par.code='X' then cb.id end) as f9
 ,count (case when par.code='XI' then cb.id end) as f10
 ,count (case when par.code='XII' then cb.id end) as f11
+,count (case when par.code='XX' then cb.id end) as f12
 from childbirth cb
 left join medcase slo on slo.id=cb.medcase_id
 left join patient pat on pat.id=slo.patient_id
@@ -322,6 +326,58 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
                     <msh:tableColumn columnName="Паритет X" property="11" addParam="&paritet=X"/>
                     <msh:tableColumn columnName="Паритет XI" property="12" addParam="&paritet=XI"/>
                     <msh:tableColumn columnName="Паритет XII" property="13" addParam="&paritet=XII"/>
+                    <msh:tableColumn columnName="Более 12" property="14" addParam="&paritet=XX"/>
+                </msh:table>
+
+            </msh:sectionContent>
+        </msh:section>
+        <msh:section>
+            <msh:sectionTitle>Результаты поиска по паритету по БЕРЕМЕННОСТЯМ за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
+        </msh:section>
+        <msh:section>
+            <ecom:webQuery isReportBase="true" name="ReportParitetPregnancy" nameFldSql="ReportParitetPregnancySql" nativeSql="
+select
+count(cb.id)
+,count (case when par.code='I' then cb.id end) as f0
+,count (case when par.code='II' then cb.id end) as f1
+,count (case when par.code='III' then cb.id end) as f2
+,count (case when par.code='IV' then cb.id end) as f3
+,count (case when par.code='V' then cb.id end) as f4
+,count (case when par.code='VI' then cb.id end) as f5
+,count (case when par.code='VII' then cb.id end) as f6
+,count (case when par.code='VIII' then cb.id end) as f7
+,count (case when par.code='IX' then cb.id end) as f8
+,count (case when par.code='X' then cb.id end) as f9
+,count (case when par.code='XI' then cb.id end) as f10
+,count (case when par.code='XII' then cb.id end) as f11
+,count (case when par.code='XX' then cb.id end) as f12
+from childbirth cb
+left join medcase slo on slo.id=cb.medcase_id
+left join patient pat on pat.id=slo.patient_id
+left join vocparitet par on cb.paritetpregn_id=par.id
+where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+
+" />
+            <msh:sectionContent>
+                <msh:table printToExcelButton="excel" name="ReportParitetPregnancy"
+
+                           action="stac_report_BirthTotal.do?short=Short&type=reestr&dateBegin=${dateBegin}&dateEnd=${dateEnd}&typeGroup=2" idField="1"
+                           cellFunction="true"
+                >
+                    <msh:tableColumn columnName="Всего рожениц" property="1" addParam=""  />
+                    <msh:tableColumn columnName="Паритет I" property="2" addParam="&paritetpregn=I"/>
+                    <msh:tableColumn columnName="Паритет II" property="3" addParam="&paritetpregn=II"/>
+                    <msh:tableColumn columnName="Паритет III" property="4" addParam="&paritetpregn=III"/>
+                    <msh:tableColumn columnName="Паритет IV" property="5" addParam="&paritetpregn=IV"/>
+                    <msh:tableColumn columnName="Паритет V" property="6" addParam="&paritetpregn=V"/>
+                    <msh:tableColumn columnName="Паритет VI" property="7" addParam="&paritetpregn=VI"/>
+                    <msh:tableColumn columnName="Паритет VII" property="8" addParam="&paritetpregn=VII"/>
+                    <msh:tableColumn columnName="Паритет VIII" property="9" addParam="&paritetpregn=VIII"/>
+                    <msh:tableColumn columnName="Паритет IX" property="10" addParam="&paritetpregn=IX"/>
+                    <msh:tableColumn columnName="Паритет X" property="11" addParam="&paritetpregn=X"/>
+                    <msh:tableColumn columnName="Паритет XI" property="12" addParam="&paritetpregn=XI"/>
+                    <msh:tableColumn columnName="Паритет XII" property="13" addParam="&paritetpregn=XII"/>
+                    <msh:tableColumn columnName="Более 12" property="14" addParam="&paritetpregn=XX"/>
                 </msh:table>
 
             </msh:sectionContent>

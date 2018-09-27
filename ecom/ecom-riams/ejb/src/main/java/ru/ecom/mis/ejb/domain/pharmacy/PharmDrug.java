@@ -19,10 +19,12 @@ public class PharmDrug extends BaseEntity  {
     private PharmStorage pharmStorage;
     private VocDrug drug;
     private Date bestBefore;
+    private Date dateIncome;
     private Float amount;
     private PharmDrug lastState;
     private PharmDrug nextState;
 
+    @Comment("Склад")
     @OneToOne
     public PharmStorage getPharmStorage() {
         return pharmStorage;
@@ -31,6 +33,7 @@ public class PharmDrug extends BaseEntity  {
         this.pharmStorage = pharmStorage;
     }
 
+    @Comment("Лекарство")
     @OneToOne
     public VocDrug getDrug() {
         return drug;
@@ -46,11 +49,20 @@ public class PharmDrug extends BaseEntity  {
         this.amount = amount;
     }
 
+    @Comment("Срок годности")
     public Date getBestBefore() {
         return bestBefore;
     }
     public void setBestBefore(Date bestBefore) {
         this.bestBefore = bestBefore;
+    }
+
+    @Comment("Дата прихода")
+    public Date getDateIncome() {
+        return dateIncome;
+    }
+    public void setDateIncome(Date dateIncome) {
+        this.dateIncome = dateIncome;
     }
 
     @Comment("Предыдущее состояние")

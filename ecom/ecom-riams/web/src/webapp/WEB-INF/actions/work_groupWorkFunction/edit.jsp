@@ -47,6 +47,9 @@
         	<msh:checkBox property="emergency" label="Экстр. пункт"/>
         </msh:row>
         <msh:row>
+          <msh:checkBox property="archival" label="Недействительность"/>
+        </msh:row>
+        <msh:row>
         	<msh:checkBox property="isNoDirectSelf" label="Запрет на создание направление к самому себе" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
         <msh:row>
