@@ -49,7 +49,7 @@
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1)
 			else (CURRENT_DATE-sls.dateStart)
 		  end as cnt1
-    	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper
+    	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms1.name) as oper
     ,	  case
 			when (CURRENT_DATE-m.dateStart)=0 then 1
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-m.dateStart)+1)
@@ -78,11 +78,13 @@
 	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
 
     left join MedCase as sls on sls.id = m.parent_id
+    left join medcase sloAll on sloAll.parent_id=sls.id and sloAll.dtype='DepartmentMedCase'
     left join bedfund as bf on bf.id=m.bedfund_id
     left join StatisticStub as sc on sc.medCase_id=sls.id
-    left join SurgicalOperation so on so.medCase_id =m.id
+    left join SurgicalOperation so on so.medCase_id =sloAll.id
     left join SurgicalOperation so1 on so1.medCase_id =sls.id
     left join medservice ms on ms.id=so.medService_id
+    left join medservice ms1 on ms1.id=so1.medService_id
     left join WorkFunction wf on wf.id=m.ownerFunction_id
     left join Worker w on w.id=wf.worker_id
     left join Patient wp on wp.id=w.person_id
@@ -111,7 +113,7 @@
          <ecom:webQuery name="datelist_r" nameFldSql="datelist_r_sql" nativeSql="
     select m.id,to_char(m.dateStart,'dd.mm.yyyy')||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
     	,to_char(pat.birthday,'dd.mm.yyyy') as birthday,sc.code as sccode
-    	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name)||' '||list((current_Date-so1.operationDate)||' дн. после операции: '||ms.name) as oper
+    	,list((current_Date-so.operationDate)||' дн. после операции: '||ms.name) as oper
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
     ,	  case
 			when (CURRENT_DATE-sls.dateStart)=0 then 1
@@ -128,10 +130,10 @@
     left join MisLpu lp1 on lp1.id=prev1.department_id
     left join MisLpu lp2 on lp2.id=prev2.department_id
     left join MedCase as sls on sls.id = m.parent_id
+    left join medcase sloAll on sloAll.parent_id=sls.id and sloAll.dtype='DepartmentMedCase'
     left join bedfund as bf on bf.id=m.bedfund_id
     left join StatisticStub as sc on sc.medCase_id=sls.id
-    left join SurgicalOperation so on so.medCase_id =m.id
-    left join SurgicalOperation so1 on so1.medCase_id =sls.id
+    left join SurgicalOperation so on so.medCase_id =sloAll.id
     left join medservice ms on ms.id=so.medService_id
     left join WorkFunction wf on wf.id=m.ownerFunction_id
     left join Worker w on w.id=wf.worker_id
