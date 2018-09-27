@@ -1,9 +1,8 @@
 package ru.ecom.ejb.util.injection;
 
-import javax.naming.InitialContext;
-
 import ru.ecom.ejb.services.script.IScriptService;
-import sun.awt.windows.ThemeReader;
+
+import javax.naming.InitialContext;
 
 public class EjbInjection {
 
