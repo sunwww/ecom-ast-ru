@@ -24,7 +24,6 @@ import java.sql.Time;
 @AIndexes({
 	//@AIndex(properties="archival")
 	@AIndex(properties="workFunction")
-		,@AIndex(properties = "secUser")
 	//,@AIndex(properties={"archival","workFunction"})
 	,@AIndex(properties={"code"})
 })
