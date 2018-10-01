@@ -38,6 +38,18 @@
                         <input type="radio" name="typeGroup" value="3"> общий финансовый план
                     </td>
                 </msh:row>
+                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                    <td class="label" title="Поиск по типу  (typeGroup2)" colspan="1"><label for="typeGroup2Name" id="ttypeGroupLabel2">Выберите:</label></td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                        <input type="radio" name="typeGroup2" value="1" checked> HospitalFinancePlan
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup2" value="2"> VmpFinancePlan
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup2" value="3"> PolyclinicFinancePlan
+                    </td>
+                </msh:row>
                 <msh:row>
                     <td colspan="3">
                         <input type="button" onclick="report()" value="Отчёт" />
@@ -49,6 +61,8 @@
         <script type="text/javascript">
             eval('var chk =  document.forms[0].typeGroup') ;
             chk[0].checked='checked' ;
+            eval('var chk =  document.forms[0].typeGroup2') ;
+            chk[0].checked='checked' ;
             function report() {
                 if ($('dateBegin').value!=null && $('dateBegin').value!="" && $('dateEnd').value!=null && $('dateEnd').value!="") {
                     HospitalMedCaseService.getSettingsKeyValueByKey("jasperServerUrl", {
@@ -59,9 +73,10 @@
                                 var profilek=($('filterAdd').value!="")? "&prname=" + $('filterAdd').value:"";
                                 var lpu=($('department').value!="")? "&lpu=" + $('department').value:"";
                                 var type=getValue('typeGroup');
+                                var type2=getText('typeGroup2');
                                 url="http://" + resMas[0] + "/jasperserver/flow.html?_flowIddepartment=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F"+"NAMEREPORT"+"&standAlone=true&decorate=no"
                                     + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML
-                                    +"&type="+"TYPEREPORT" + bdt;
+                                    +"&type="+"TYPEREPORT" + bdt + "&fpplan="+type2;
                                 url=url.replace("TYPEREPORT", type);
                                 if (type=='1')
                                     url = url.replace("NAMEREPORT", "generalFinPlan")+ profilek;
@@ -83,6 +98,12 @@
                 eval('var chk =  document.forms[0].'+aField) ;
                 var val=2;
                 if (chk[0].checked) val=1; else if (chk[1].checked) val=2; else if (chk[2].checked) val=3;
+                return val;
+            }
+            function getText(aField) {
+                eval('var chk =  document.forms[0].'+aField) ;
+                var val='';
+                if (chk[0].checked) val='HospitalFinancePlan'; else if (chk[1].checked) val='VmpFinancePlan'; else if (chk[2].checked) val='PolyclinicFinancePlan';
                 return val;
             }
         </script>
