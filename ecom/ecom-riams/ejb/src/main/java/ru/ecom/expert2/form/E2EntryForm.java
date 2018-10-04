@@ -13,14 +13,14 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityForm
 @EntityFormPersistance(clazz = E2Entry.class)
 @Comment("Случай в заполнении")
-@WebTrail(comment = "Запись в заполнении", nameProperties = "id", view = "entityView-e2_entry.do")
+@WebTrail(comment = "Запись в заполнении", nameProperties = {"id","lastname","historyNumber"}, view = "entityView-e2_entry.do")
 @Parent(property = "listEntry", parentForm = E2EntryListForm.class)
 @EntityFormSecurityPrefix("/Policy/E2")
 public class E2EntryForm extends IdEntityForm {
 
 
 //----------все поля ниже добавлены на jsp!!!
-    /** Раковый случай */
+    /** Онкологический случай */
     private Boolean theIsCancer ;
     /** Цель посещения */
     private Long theVisitPurpose ;
@@ -950,7 +950,7 @@ public class E2EntryForm extends IdEntityForm {
     public Long getVisitPurpose() {return theVisitPurpose;}
     public void setVisitPurpose(Long aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
 
-    @Comment("Раковый случай")
+    @Comment("Онкологический случай")
     @Persist
     public Boolean getIsCancer() {return theIsCancer;}
     public void setIsCancer(Boolean aIsCancer) {theIsCancer = aIsCancer;}

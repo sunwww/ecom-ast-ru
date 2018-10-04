@@ -2,6 +2,7 @@ package ru.ecom.expert2.domain.financeplan;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -59,5 +60,14 @@ public class FinancePlan extends BaseEntity {
     public void setCost(BigDecimal aCost) {theCost = aCost;}
     /** Цена случая */
     private BigDecimal theCost ;
+
+    /** Вид случай */
+    @Comment("Вид случай")
+    @OneToOne
+    public VocE2VidSluch getVidSluch() {return theVidSluch;}
+    public void setVidSluch(VocE2VidSluch aVidSluch) {theVidSluch = aVidSluch;}
+    /** Вид случай */
+    private VocE2VidSluch theVidSluch ;
+
 
 }

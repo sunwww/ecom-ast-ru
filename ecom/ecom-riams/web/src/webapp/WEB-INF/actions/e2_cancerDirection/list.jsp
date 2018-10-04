@@ -73,11 +73,11 @@
     request.setAttribute("filterSql",filterSql.toString());
 
     if (errorCode!=null&&!errorCode.equals("")) {
-        searchFromSql=", list(err.comment) as errComment from e2entryerror err left join e2entry e on e.id=err.entry_id";
+        searchFromSql=" from e2entryerror err left join e2entry e on e.id=err.entry_id";
         searchWhereSql=" err.listentry_id="+listId+" and err.errorCode='"+errorCode+"'";
         request.setAttribute("searchTitle"," по ошибке: "+errorCode);
     } else {
-        searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
+        searchFromSql=" from e2entry e";
         searchWhereSql=" e.listentry_id="+listId
             +(request.getAttribute("entryTypeSql")!=null?request.getAttribute("entryTypeSql"):"")
             +(request.getAttribute("serviceStreamSql")!=null?request.getAttribute("serviceStreamSql"):"")
@@ -125,7 +125,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         , e.departmentName as f5_depName, ksg.code||' '||ksg.name as f6_ksg ,e.historyNumber as f7_hisNum, e.cost as f8_cost, vbt.code||' '||vbt.name as f9_bedType
         , list(coalesce(e.mainMkb,mkb.code)) as f10_diagnosis, rslt.code||' '||rslt.name as f11_result
         ,case when e.isDefect='1' then 'color:blue' when (e.doNotSend is null or e.doNotSend='0') then '' else 'color: red' end as f12_style
-
+        ,list (es.dopCode) as f13_defects
         ${searchFromSql}
         left join voce2medhelpprofile vbt on vbt.id=e.medhelpprofile_id
         left join VocE2FondV009 rslt on rslt.id=e.fondresult_id

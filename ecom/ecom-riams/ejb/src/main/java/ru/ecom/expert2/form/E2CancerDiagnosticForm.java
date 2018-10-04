@@ -3,19 +3,16 @@ package ru.ecom.expert2.form;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2CancerDiagnostic;
-import ru.ecom.expert2.domain.E2CancerDirection;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.validators.DateString;
 
 /**
  *
  */
 @EntityForm
 @EntityFormPersistance(clazz = E2CancerDiagnostic.class)
-@Comment("Диагностический блок ")
-@WebTrail(comment = "Направление на онк. лечение", nameProperties = "id", view = "entityView-e2_cancerDiagnostic.do")
+@Comment("Диагностический блок")
+@WebTrail(comment = "Диагностический блок", nameProperties = "id", view = "entityView-e2_cancerDiagnostic.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "cancerEntry", parentForm = E2CancerEntryForm.class)
 public class E2CancerDiagnosticForm extends IdEntityForm {

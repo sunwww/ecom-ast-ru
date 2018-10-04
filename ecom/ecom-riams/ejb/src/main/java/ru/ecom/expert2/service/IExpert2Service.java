@@ -3,6 +3,8 @@ package ru.ecom.expert2.service;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.E2ListEntry;
+import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 
 import javax.naming.NamingException;
@@ -11,7 +13,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 public interface IExpert2Service {
+    BigDecimal calculatePolyclinicEntryPrice(VocE2VidSluch aVidSluch, Date aFinishDate, VocE2MedHelpProfile aMedHelpProfile);
     E2Bill getBillEntryByDateAndNumber(String sBillNumber, String aBillDate);
+    E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate);
     Long getBillIdByDateAndNumber(String aBillNumber, String aBillDate);
     boolean exportDefectNewListEntry(Long alistEntryId);
    //  void addMedServiceToEntry(Long aEntryId, Long aMedServiceId);
@@ -28,6 +32,7 @@ public interface IExpert2Service {
     BigDecimal calculateCusmo(String bedSubTypeCode, Long aDepartmentId, Long aProfileId, Date aDate);
     BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate);
     <T> T getActualVocByClassName(Class aClass, Date aActualDate, String aSqlAdd);
+    <T> T getActualVocBySqlString(Class aClass, String aSql);
     E2Entry cloneEntity(E2Entry aSourceObject);
     BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry);
 }

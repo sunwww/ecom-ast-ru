@@ -105,6 +105,7 @@
                     <msh:sideLink action="/javascript:showUnionUnionDialog()" name="Объединить с другим заполнением" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:showUnionExportHistory()" name="Журнал пакетов по счетам" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:refillListEntry()" name="Переформировать заполнение" roles="/Policy/E2/Admin" />
+                    <msh:sideLink action="/javascript:setDirectAndPlanHospDate()" name="Заполнить пустые даты направления и даты пред. госпитализации" roles="/Policy/E2/Admin" />
                 </msh:tableNotEmpty>
                 <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
@@ -268,6 +269,14 @@
 
                 }
 
+                function setDirectAndPlanHospDate() {
+                    Expert2Service.fillDirectDatePlanHosp(${param.id}, {
+                       callback: function(){
+                           jQuery.toast("Проставление даты направления и даты пред. госпитализации закончено");
+                       }
+                    });
+                    jQuery.toast("Подождите...");
+                }
             </script>
 
         </msh:ifFormTypeIsView>

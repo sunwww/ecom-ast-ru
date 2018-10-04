@@ -19,7 +19,18 @@ import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
 
-    public String fillAggregateTable(String aType, String aStartDate, String aFinishDate, String aServiceStream, HttpServletRequest aRequest) throws NamingException, JSONException, ParseException {
+    public void fillDirectDatePlanHosp(Long aListEntryId, HttpServletRequest aRequest) throws NamingException {
+        String sql = "update e2entry set directDate = startDate where listentry_id="+aListEntryId+" " +
+                " and entryType='HOSPITAL' and directDate is null and (isEmergency is null or isEmergency='0') and (isDeleted is null or isDeleted='0')";
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql(sql);
+        sql = "update e2entry set planHospDate = startDate where listentry_id="+aListEntryId+" " +
+                " and entryType in ('VMP','HOSPITAL') and planHospDate is null and (isEmergency is null or isEmergency='0') and (isDeleted is null or isDeleted='0')";
+        service.executeUpdateNativeSql(sql);
+
+    }
+
+   public String fillAggregateTable(String aType, String aStartDate, String aFinishDate, String aServiceStream, HttpServletRequest aRequest) throws NamingException, JSONException, ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         java.sql.Date startDate = new java.sql.Date(format.parse(aStartDate).getTime());
         java.sql.Date finishDate = new java.sql.Date(format.parse(aFinishDate).getTime());

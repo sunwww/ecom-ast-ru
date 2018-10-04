@@ -1,14 +1,23 @@
 package ru.ecom.expert2.domain.financeplan;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 
 @Entity
 /** Аггрегированная таблица с выполнением финансового плана*/
 public class AggregateVolumesFinancePlan extends BaseEntity {
+
+    /** Тип финансового плана */
+    @Comment("Тип финансового плана")
+    public String getType() {return theType;}
+    public void setType(String aType) {theType = aType;}
+    /** Тип финансового плана */
+    private String theType ;
     /** Год */
     @Comment("Год")
     public Integer getYear() {return theYear;}
@@ -106,5 +115,28 @@ public class AggregateVolumesFinancePlan extends BaseEntity {
     public void setFactCost(BigDecimal aFactCost) {theFactCost = aFactCost;}
     /** Сумма по факту */
     private BigDecimal theFactCost ;
+
+    /** Вид случая */
+    @Comment("Вид случая")
+    @OneToOne
+    public VocE2VidSluch getVidSluch() {return theVidSluch;}
+    public void setVidSluch(VocE2VidSluch aVidSluch) {theVidSluch = aVidSluch;}
+    /** Вид случая */
+    private VocE2VidSluch theVidSluch ;
+
+    /** Метод ВМП */
+    @Comment("Метод ВМП")
+    public String getVmp() {return theVmp;}
+    public void setVmp(String aVmp) {theVmp = aVmp;}
+    /** Метод ВМП */
+    private String theVmp ;
+
+    /** Метод ВМП (название) */
+    @Comment("Метод ВМП (название)")
+    public String getVmpName() {return theVmpName;}
+    public void setVmpName(String aVmpName) {theVmpName = aVmpName;}
+    /** Метод ВМП (название) */
+    private String theVmpName ;
+
 
 }

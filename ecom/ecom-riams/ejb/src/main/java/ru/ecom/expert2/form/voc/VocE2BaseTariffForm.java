@@ -2,7 +2,10 @@ package ru.ecom.expert2.form.voc;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocE2BaseTariff;
-import ru.nuzmsh.commons.formpersistence.annotation.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 @EntityForm
@@ -35,5 +38,14 @@ public class VocE2BaseTariffForm extends VocCoefficientForm {
     public void setType(Long aType) {theType = aType;}
     /** Тип тарифа */
     private Long theType ;
+
+
+    /** Вид случая */
+    @Comment("Вид случая")
+    @Persist
+    public Long getVidSluch() {return theVidSluch;}
+    public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
+    /** Вид случая */
+    private Long theVidSluch ;
 
 }

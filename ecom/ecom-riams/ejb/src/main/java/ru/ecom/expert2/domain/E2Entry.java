@@ -33,11 +33,11 @@ import java.util.List;
 })
 public class E2Entry extends BaseEntity {
 
-    /** Раковый случай */
-    @Comment("Раковый случай")
+    /** Онкологический случай */
+    @Comment("Онкологический случай")
     public Boolean getIsCancer() {return theIsCancer;}
     public void setIsCancer(Boolean aIsCancer) {theIsCancer = aIsCancer;}
-    /** Раковый случай */
+    /** Онкологический случай */
     private Boolean theIsCancer=false ;
 
     //Все поля ниже размещены в EntityForm!
