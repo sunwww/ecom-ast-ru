@@ -131,7 +131,6 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
 			<msh:tableColumn property="8" columnName="Место забора"/>
 			<msh:tableColumn property="4" columnName="Дата начала"/>
 			<msh:tableColumn property="12" columnName="Дата выполнения"/>
-			<msh:tableColumn property="5" columnName="Дата окончания"/>
 			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
 			<msh:tableColumn property="9" columnName="Причина брака"/>
 			<msh:tableColumn property="11" columnName="Результат"/>
