@@ -54,7 +54,7 @@ div#header{display:none;}
         <msh:autoComplete property="workFunction" vocName="workFunctionByLpu" parentAutocomplete="department" label="Врач" fieldColSpan="30" size="50" />
       </msh:row> 
        <msh:row>
-        <msh:autoComplete property="expert" vocName="workFunction" label="Эксперт" fieldColSpan="30" size="50" />
+        <msh:autoComplete property="expert" vocName="workFunctionAllForExpert" label="Эксперт" fieldColSpan="30" size="50" />
       </msh:row> 
       <msh:row>
         <msh:textField property="dateBegin" />

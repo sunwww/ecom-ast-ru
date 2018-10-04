@@ -2123,6 +2123,29 @@ where wf.dtype='PersonalWorkFunction' -->
 				left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id'
 		/>
 	</voc>
+	<voc id='workFunctionAllForExpert' type='NativeVocService'>
+		<NativeVocService
+				from = 'WorkFunction as wf '
+				parent = ''
+				names  = "vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename ||' ' ||case when wf.dtype='PersonalWorkFunction' then ml2.name else ml1.name end"
+				queried =" (cast(wf.id as varchar(20))= :querInd or
+    			upper(vwf.name) like UPPER(:query) or
+    			 (upper(p.lastname) like upper(:quer1)
+    			 and (:quer2 is null or upper(p.firstname) like upper(:quer2))
+    			and (:quer3 is null or upper(p.middlename) like upper(:quer3))) )"
+				queryAppend = " wf.dtype='PersonalWorkFunction'"
+				queriedSplitCount="3"
+
+				order =''
+				nameId='wf.id'
+				join='left join Worker as w on w.id=wf.worker_id
+    			left join MisLpu ml1 on ml1.id=wf.lpu_id
+    			left join MisLpu ml2 on ml2.id=w.lpu_id
+
+    			left join Patient as p on p.id=w.person_id
+    			left join VocWorkFunction vwf on vwf.id=wf.workFunction_id'
+		/>
+	</voc>
 	<voc id='workFunctionByDirect' type='NativeVocService'>
     	<NativeVocService
     			from = 'WorkFunction as wf '
