@@ -73,6 +73,7 @@ public class PatientFond extends BaseEntity{
 
 	public PatientFond() {
 		this.dateTimeCreate = new Timestamp(System.currentTimeMillis());
+		this.theCheckDate=new java.sql.Date(System.currentTimeMillis());
 	}
 
 	@Comment("Фамилия")
