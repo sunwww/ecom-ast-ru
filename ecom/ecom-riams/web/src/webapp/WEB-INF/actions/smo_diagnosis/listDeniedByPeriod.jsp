@@ -1,8 +1,8 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -38,7 +38,7 @@
 		<msh:row>
 			<td class="label" title="Режим отображения (typeMode)" colspan="1"><label for="typeModeName" id="typeModeLabel">Режим:</label></td>
 	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;">
-	        	<input type="radio" name="typeMode" value="1"> по отделению(ям)
+	        	<input type="radio" name="typeMode" value="1333"> по отделению(ям)
 	        </td>
 	        <td onclick="this.childNodes[1].checked='checked';checkMode() ;" colspan="2">
 	        	<input type="radio" name="typeMode" value="2" > по дневникам
@@ -134,7 +134,7 @@
     </msh:form>
     <script type="text/javascript">
     checkFieldUpdate('typeView','${typeView}',1) ;
-    checkFieldUpdate('typeMode','${typeMode}',1) ;
+    checkFieldUpdate('typeMode','${typeMode}',2) ;
     checkFieldUpdate('typeDiag','${typeDiag}',1) ;
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
