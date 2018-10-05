@@ -65,7 +65,7 @@
                 <ecom:webQuery isReportBase="true" name="totalName" nameFldSql="totalName_sql" nativeSql="
 select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
-scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
+dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'HH24:MI:SS') as f6,
      vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7
@@ -88,6 +88,7 @@ left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
 left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
+left join mislpu dep on dep.id=slo.department_id
 where scg.dtype='WfConsultation' ${typeSql}
 "/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
@@ -95,10 +96,11 @@ where scg.dtype='WfConsultation' ${typeSql}
             <msh:sectionContent>
                 <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityView-pres_wfConsultation.do" idField="1" styleRow="13">
                     <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableButton property="1" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
                     <msh:tableColumn columnName="Тип" property="2"/>
                     <msh:tableColumn columnName="Специалист" property="3"/>
                     <msh:tableColumn columnName="Пациент" property="4"/>
-                    <msh:tableColumn columnName="Создал" property="5"/>
+                    <msh:tableColumn columnName="Создал, отделение" property="5"/>
                     <msh:tableColumn columnName="Дата и время создания" property="6"/>
                     <msh:tableColumn columnName="Отредактировал" property="7"/>
                     <msh:tableColumn columnName="Дата и время редактирования" property="8"/>
@@ -106,7 +108,6 @@ where scg.dtype='WfConsultation' ${typeSql}
                     <msh:tableColumn columnName="Дата и время передачи" property="10"/>
                     <msh:tableColumn columnName="Пользователь, который выполнил" property="11"/>
                     <msh:tableColumn columnName="Дата и время выполнения" property="12"/>
-                    <msh:tableButton property="1" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
