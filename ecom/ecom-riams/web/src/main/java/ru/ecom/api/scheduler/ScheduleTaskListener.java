@@ -22,7 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 public class ScheduleTaskListener  implements ServletContextListener {
 
     private static Map<ScheduledExecutorService,Task> map = new HashMap<>();
-
     public void contextInitialized(ServletContextEvent event) {
         System.out.println("ScheduleTaskListener is start");
         try {
