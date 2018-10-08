@@ -150,7 +150,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 						  action="/patientWatch.do" name="Пациенты под наблюдением"
 			/>
 			<msh:sideLink styleId="journal_doc_externalMedService"
-						  roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal"
+						  roles="/Policy/Mis/MedCase/Stac/Ssl/View"
 						  action="/wfConsultationsAll.do" name="Консультации в стационаре"
 			/>
 	    </msh:sideMenu>
