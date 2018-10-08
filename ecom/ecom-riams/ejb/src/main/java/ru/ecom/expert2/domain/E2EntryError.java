@@ -4,7 +4,10 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2EntryError;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 
 @Entity
 public class E2EntryError extends BaseEntity {
@@ -56,5 +59,19 @@ public class E2EntryError extends BaseEntity {
         this.theErrorCode=aCode;
         this.theListEntry=aEntry.getListEntry();
     }
+    public E2EntryError(E2Entry aEntry, String aCode, String aComment) {
+        this.theEntry=aEntry;
+        this.theErrorCode=aCode;
+        this.theListEntry=aEntry.getListEntry();
+        theComment = aComment;
+    }
+
+    /** Примечание */
+    @Comment("Примечание")
+    public String getComment() {return theComment;}
+    public void setComment(String aComment) {theComment = aComment;}
+    /** Примечание */
+    private String theComment ;
+
 
 }

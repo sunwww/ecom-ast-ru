@@ -2,10 +2,8 @@ package ru.ecom.expert2.form.voc;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocE2PolyclinicCoefficient;
-import ru.ecom.expert2.form.voc.federal.VocE2FondV015Form;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.validators.Required;
 
 /**
  * Тариф случая поликлинического обслуживания
@@ -27,7 +25,7 @@ public class VocE2PolyclinicCoefficientForm extends VocCoefficientForm {
 
     /** Тип случая */
     @Comment("Тип случая")
-    @Persist
+    @Persist @Deprecated
     public Long getEntryType() {return theEntryType;}
     public void setEntryType(Long aEntryType) {theEntryType = aEntryType;}
     /** Тип случая */
@@ -56,4 +54,12 @@ public class VocE2PolyclinicCoefficientForm extends VocCoefficientForm {
     public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
     /** Для консультативно-диагностического обращений */
     private Boolean theIsDiagnosticSpo ;
+
+    /** Вид случая */
+    @Comment("Вид случая")
+    @Persist
+    public Long getVidSluch() {return theVidSluch;}
+    public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
+    /** Вид случая */
+    private Long theVidSluch ;
 }

@@ -28,4 +28,11 @@ public class FinancePlanJournalForm extends BaseValidatorForm {
     /** Тип коек */
     private Long theBedSubType ;
 
+    /** Вид случая */
+    public Long getVidSluch() {return theVidSluch;}
+    public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
+    /** Вид случая */
+    private Long theVidSluch ;
+
+
 }

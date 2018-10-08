@@ -15,6 +15,9 @@
                 <msh:row>
                     <msh:autoComplete  property="type" vocName="vocE2BaseTariffType" size="100"/>
                 </msh:row>
+                <msh:row>
+                    <msh:autoComplete  property="vidSluch" vocName="vocE2VidSluch" size="100"/>
+                </msh:row>
                <msh:row>
                    <msh:textField property="startDate"/>
                    <msh:textField property="finishDate"/>

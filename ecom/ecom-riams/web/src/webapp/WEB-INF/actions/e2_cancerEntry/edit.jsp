@@ -15,6 +15,7 @@
                 <msh:row>
 
                   </msh:row>
+                <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
                 <msh:separator label="Направление" colSpan="4"/>
                     <msh:row>
                         <msh:checkBox property="maybeCancer"/>
@@ -28,6 +29,7 @@
                         <msh:autoComplete property="directionMedService" vocName="vocMedServiceCode" size="50"/>
 
                     </msh:row>
+                </msh:ifFormTypeIsCreate>
                 <msh:separator colSpan="4" label="Общие"/>
                 <msh:row>
                   </msh:row>
@@ -60,11 +62,14 @@
                 <msh:row>
                     <msh:autoComplete property="radiationTherapy" vocName="vocOncologyN017Code" size="50"/>
                 </msh:row>
+                <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
                 <msh:separator label="Противопоказания" colSpan="4"/>
                 <msh:row>
                 <msh:textField property="refusalDate"/>
                 <msh:autoComplete property="refusalCode" vocName="vocOncologyN001Code" size="50"/>
                 </msh:row>
+                </msh:ifFormTypeIsCreate>
+                <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
                 <msh:separator label="Диагностика" colSpan="4"/>
                 <msh:row>
                 <msh:autoComplete property="diagnosticType" vocName="vocOncologyDiagTypeCode" size="50"/>
@@ -72,11 +77,12 @@
                 </msh:row> <msh:row>
                 <msh:autoComplete property="diagnosticResult" vocName="vocOncologyN008Code" size="50"/>
                 </msh:row>
+                </msh:ifFormTypeIsCreate>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="1" />
             </msh:panel>
         </msh:form>
 <msh:ifFormTypeIsView formName="e2_cancerEntryForm">
-    <msh:section title="Направления">
+    <msh:section title="Направления" createUrl="entityParentPrepareCreate-e2_cancerDirection.do?id=${param.id}">
         <ecom:webQuery name="directionList" nativeSql="select d.id, d.date, d.medservice
         ,d.surveymethod
         from e2cancerdirection d
@@ -89,7 +95,7 @@
             </msh:table>
         </msh:tableNotEmpty>
     </msh:section>
-    <msh:section title="Противопоказания">
+    <msh:section title="Противопоказания" createUrl="entityParentPrepareCreate-e2_cancerRefusal.do?id=${param.id}">
         <ecom:webQuery name="refusalList" nativeSql="select d.id, d.date, d.code
         from e2cancerrefusal d
   where d.cancerentry_id=${param.id} "/>
@@ -101,7 +107,7 @@
         </msh:tableNotEmpty>
     </msh:section>
 
-    <msh:section title="Диагностика">
+    <msh:section title="Диагностика" createUrl="entityParentPrepareCreate-e2_cancerDiagnostic.do?id=${param.id}">
         <ecom:webQuery name="diagnosticList" nativeSql="select d.id, d.type, d.code, d.result
         from e2cancerdiagnostic d
   where d.cancerentry_id=${param.id} "/>
@@ -119,15 +125,15 @@
         <ecom:titleTrail mainMenu="Expert2" beginForm="e2_cancerEntryForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
     </tiles:put>
     <tiles:put name="javascript" type="string">
-        <msh:ifFormTypeIsView formName="e2_cancerEntryForm">
+        <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
 
                 <script type="text/javascript">
                     diagnosticTypeAutocomplete.addOnChangeCallback(function() {
-                        if ($('diagnosticType').value=="1") {
+                        if ($('diagnosticType') && $('diagnosticType').value==1) {
                             diagnosticCodeAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN007Code');
                             diagnosticResultAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN008Code');
-                        } else if ($('diagnosticType').value=="2") {
+                        } else if ($('diagnosticType') && $('diagnosticType').value==2) {
                             diagnosticCodeAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN010Code');
                             diagnosticResultAutocomplete.setUrl('simpleVocAutocomplete/vocOncologyN011Code');
                         }
@@ -136,17 +142,17 @@
                     //if diagnosticType==2 DiagnosticCode = VocOncologyN010Code , DiagnosticResult = VocOncologyN011Code
                 </script>
 
-          </msh:ifFormTypeIsView>
+          </msh:ifFormTypeIsCreate>
 
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="e2_cancerEntryForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
+        <msh:ifFormTypeAreViewOrEdit formName="e2_cancerEntryForm" guid="22417d8b-beb9-42c6-aa27-14f794d73b32">
             <msh:sideMenu guid="32ef99d6-ea77-41c6-93bb-aeffa8ce9d55">
                 <msh:sideLink params="id" action="/entityParentEdit-e2_cancerEntry" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink params="id" action="/entityParentDelete-e2_cancerEntry" name="Удалить" roles="/Policy/E2/Delete" />
             </msh:sideMenu>
-        </msh:ifFormTypeIsView>
+        </msh:ifFormTypeAreViewOrEdit>
     </tiles:put>
 </tiles:insert>
 

@@ -20,7 +20,19 @@
 
         <msh:form action="e2-ImportFile.do" defaultField="file" fileTransferSupports="true">
             <input type="hidden" name="objectId" id="objectId" value="${param.id}">
+            <input type="hidden" name="dirName" id="dirName" value="">
+
+            <div id="dirNameName" name="dirNameName"></div>
+
             <table width="100%" cellspacing="0" cellpadding="4">
+                <tr>
+                    <td>
+                        <input type="button" value="Создать заполнение из файла" onclick="setAction('createEntry','СОЗДАЕМ НОВОЕ ЗАПОЛНЕНИЕ')">
+                        <input type="button" value="Импорт дефектов" onclick="setAction('','ИМПОРТ ДЕФЕКТОВ')">
+                        <input type="button" value="Импорт N5" onclick="setAction('','ИМПОРТ N5')">
+                    </td>
+
+                </tr>
                 <tr>
                     <td align="right" width="100">Выберите файл:</td>
                     <td><input type="file" id="file" name="file" ></td>
@@ -42,6 +54,14 @@
 
 var theIs${name}BillDialogInitialized = false ;
 var the${name}BillDialog = new msh.widget.Dialog($('${name}BillDialog')) ;
+function setAction(val, label) {
+    if (val) {
+        $('dirName').value=val;
+    } else {
+        $('dirName').value="";
+    }
+    $('dirNameName').innerHTML=label;
+}
 
 // Показать
 function show${name}BillDialog() {

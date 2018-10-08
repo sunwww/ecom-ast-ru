@@ -1,6 +1,5 @@
 package ru.ecom.expert2.domain.voc;
 
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -21,6 +20,7 @@ public class VocE2PolyclinicCoefficient extends VocCoefficient {
     /** Тип случая */
     @Comment("Тип случая")
     @OneToOne
+    @Deprecated
     public VocE2EntrySubType getEntryType() {return theEntryType;}
     public void setEntryType(VocE2EntrySubType aEntryType) {theEntryType = aEntryType;}
     /** Тип случая */
@@ -46,4 +46,5 @@ public class VocE2PolyclinicCoefficient extends VocCoefficient {
     public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
     /** Для консультативно-диагностического обращений */
     private Boolean theIsDiagnosticSpo ;
+
 }

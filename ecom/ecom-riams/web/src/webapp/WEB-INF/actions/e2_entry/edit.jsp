@@ -363,7 +363,7 @@ where link.entry_id=${param.id}"/>
             <ecom:webQuery name="cancerEntry" nativeSql="select cancer.id, cancer.serviceType
 from E2CancerEntry cancer
 where cancer.entry_id=${param.id}"/>
-            <msh:table idField="1" name="cancerEntry" action="entityEdit-e2_cancerEntry.do" noDataMessage="Нет онкослучаев">
+            <msh:table idField="1" deleteUrl="entityParentDeleteGoParentView-e2_cancerEntry.do" name="cancerEntry" action="entityView-e2_cancerEntry.do" noDataMessage="Нет онкослучаев">
                 <msh:tableColumn columnName="ИД" property="1"/>
                 <msh:tableColumn columnName="тип услуги" property="2"/>
                 <msh:tableColumn columnName="Коэффициент" property="3"/>

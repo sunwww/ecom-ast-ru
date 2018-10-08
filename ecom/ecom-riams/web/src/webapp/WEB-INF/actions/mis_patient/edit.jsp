@@ -996,16 +996,17 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     function checkIsAttachedOrDead(isDead, isAttached) {
     	PatientService.checkPatientAttachedOrDead($('id').value,isDead, isAttached, {
     		callback: function (aResult) {
-    			if (aResult){
-    			if (aResult.substring(0,1)=='1') {
+    			if (aResult && aResult!=null){
+    			    aResult = JSON.parse(aResult);
+    			if (aResult.statusCode=='1') {
     				$('syncRow').style.backgroundColor="green";
     				$('syncRow').style.color="white";
-    			} else if (aResult.substring(0,1)=='0'){
+    			} else if (aResult.statusCode=='0'){
     				$('syncRow').style.backgroundColor="yellow";
-    			} else if (aResult.substring(0,1)=='2'){
+    			} else if (aResult.statusCode=='2'){
     				$('syncRow').style.backgroundColor="red";
     			}
-    			$('syncRow').innerHTML="<p>"+aResult.substring(1)+"</p>";
+    			$('syncRow').innerHTML="<p>"+aResult.statusName+"</p>";
     			}
     		}
     	});

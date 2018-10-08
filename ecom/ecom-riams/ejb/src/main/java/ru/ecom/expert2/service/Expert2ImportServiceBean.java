@@ -8,8 +8,11 @@ import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.E2EntrySanction;
+import ru.ecom.expert2.domain.E2ListEntry;
 import ru.ecom.expert2.domain.voc.VocE2BillStatus;
+import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
+import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
@@ -23,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +38,125 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     private final Logger log = Logger.getLogger(Expert2ImportServiceBean.class);
     private static EjbEcomConfig config = EjbEcomConfig.getInstance() ;
     private static String theXmlDir =config.get("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/riams/expert2xml");
+    private Date toDate(String aDate) throws ParseException {
+        return new java.sql.Date(new SimpleDateFormat("yyy-MM-dd").parse(aDate).getTime());
+    }
+
+    private Element getPatient(List<Element> patients, String aKey) {
+        for (Element patient: patients) {
+            if (patient.getChildText("ID_PAC").equals(aKey)) {
+                return patient;
+            }
+        }
+        return null;
+
+    }
+    public String createEntryByFondXml(String aMpFilename)  {
+        try {
+            E2ListEntry le = new E2ListEntry();
+            le.setName("IMPORT_"+aMpFilename);
+            theManager.persist(le);
+            String dir = unZip(aMpFilename);
+            String hFilename = aMpFilename.replace(".MP",".XML");
+            String lFilename="L"+hFilename.substring(1);
+            hFilename="H"+hFilename.substring(1);
+            File hFile = new File(dir+"/"+hFilename);
+
+            Document doc = new SAXBuilder().build(hFile);
+            Element root = doc.getRootElement();
+            String ver = root.getChild("ZGLV").getChildText("VERSION");
+            SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Document patDoc = new SAXBuilder().build(new File(dir+"/"+lFilename));
+            List<Element> patients = patDoc.getRootElement().getChildren("PERS");
+            int i = 0;
+            if (ver.equals("3.0")) { //Импорт ответа в старом формате
+                //Только поликлиника.
+                Element eBill = root.getChild("SCHET");
+                String billDate = eBill.getChildText("DSCHET");
+                String billNumber = eBill.getChildText("NSCHET");
+                E2Bill bill = theExpertService.getBillEntryByDateAndNumber(billNumber, toFormat.parse(billDate));
+                if (eBill.getChild("SUMMAP")!=null) {
+                    BigDecimal sum = new BigDecimal(eBill.getChildText("SUMMAP"));
+                    bill.setSum(sum);
+                    theManager.persist(bill);
+                }
+
+                List<Element> zaps = root.getChildren("ZAP");
+                E2Entry e;
+                log.info("start import "+hFilename+", found "+zaps.size()+" records");
+                for (Element zap : zaps) {
+                    if (i%100==0) {log.info("improt " +i+" records");}
+                    i++;
+                    e = new E2Entry();
+                    e.setListEntry(le);
+                    Element pat = zap.getChild("PACIENT");
+                    Element sluch = zap.getChild("SLUCH");
+                    e.setMedPolicyType(pat.getChildText("VPOLIS"));
+                    e.setMedPolicyNumber(pat.getChildText(pat.getChildText("NPOLIS")));
+                    e.setInsuranceCompanyCode(pat.getChildText("SMO"));
+                    Date startDate = toDate(sluch.getChildText("DATE_1"));
+                    Date finishDate = toDate(sluch.getChildText("DATE_2"));
+                    pat = getPatient(patients, pat.getChildText("ID_PAC"));
+                    e.setLastname(pat.getChildText("FAM"));
+                    e.setFirstname(pat.getChildText("IM"));
+                    e.setMiddlename(pat.getChildText("OT"));
+                    e.setBirthDate(toDate(pat.getChildText("DR")));
+                    e.setSex(pat.getChildText("W"));
+                    if (isNotNull(sluch.getChildText("FAM_P"))) {
+                        e.setKinsmanLastname(pat.getChildText("FAM_P"));
+                        e.setKinsmanFirstname(pat.getChildText("IM_P"));
+                        e.setKinsmanMiddlename(pat.getChildText("OT_P"));
+                        e.setKinsmanBirthDate(toDate(pat.getChildText("DR_P")));
+                        e.setKinsmanSex(pat.getChildText("W_P"));
+                        e.setKinsmanSnils(pat.getChildText("SNILS"));
+                    } else {
+                        e.setPatientSnils(pat.getChildText("SNILS"));
+                    }
+                    e.setOkatoReg(pat.getChildText("OKATOG"));
+                    e.setCommonNumber(pat.getChildText("ENP"));
+                    e.setPassportType(pat.getChildText("DOCTYPE"));
+                    e.setPassportSeries(pat.getChildText("DOCSER"));
+                    e.setPassportNumber(pat.getChildText("DOCNUM"));
+
+                    e.setStartDate(startDate);
+                    e.setFinishDate(finishDate);
+                    e.setServiceStream("OBLIGATORYINSURANCE");
+                    e.setBill(bill);
+                    e.setBillNumber(bill.getBillNumber());
+                    e.setBillDate(bill.getBillDate());
+                    e.setMedHelpUsl(getVocByCode(VocE2FondV006.class, finishDate, sluch.getChildText("USL_OK")));
+                    e.setMedHelpKind(getVocByCode(VocE2FondV008.class, finishDate, sluch.getChildText("VIDPOM")));
+                    e.setIsEmergency(sluch.getChildText("FOR_POM").equals("3") ? false : true);
+                    e.setDirectLpu(sluch.getChildText("NPR_MO"));
+                    e.setIsMobilePolyclinic(sluch.getChildText("VBR").equals("1") ? true : false);
+                    VocE2MedHelpProfile profile = getActualVocByCode(VocE2MedHelpProfile.class, finishDate, "profilek='" + sluch.getChildText("PROFIL_K") + "'");
+                    e.setMedHelpProfile(profile);
+                    e.setHistoryNumber(sluch.getChildText("NHISTORY"));
+                    e.setMainMkb(sluch.getChildText("DS1"));
+                    e.setFondResult(getVocByCode(VocE2FondV009.class, finishDate, sluch.getChildText("RSLT")));
+                    e.setFondIshod(getVocByCode(VocE2FondV012.class, finishDate, sluch.getChildText("ISHOD")));
+                    e.setFondDoctorSpec(getVocByCode(VocE2FondV015.class, finishDate, sluch.getChildText("PRVS")));
+                    e.setDoctorSnils(sluch.getChildText("IDDOKT"));
+                    e.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, sluch.getChildText("IDSP")));
+                    e.setTotalCoefficient(new BigDecimal(sluch.getChildText("KOEF")));
+                    e.setCost(new BigDecimal(sluch.getChildText("SUMV")));
+                    theManager.persist(e);
+
+                }
+                return "ok: " + i;
+
+            } else if (ver.equals("3.1")) { //импорт ответа в новом формате
+
+            } else {
+                log.error("Unknown version to import");
+            }
+
+            return "0";
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public String getConfigValue (String aKeyName, String aDefaultName) {
         return config.get(aKeyName,aDefaultName);
@@ -124,7 +247,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
                     if (entry.getParentEntry()!=null) {entry=entry.getParentEntry();isComplexCase=true;}
                     //log.info(j+" record id "+entry.getId()+" ");
-                    theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
+                    theManager.createNativeQuery("delete from E2EntrySanction where entry_id="+entryId).executeUpdate();
                     entry.setBillNumber(nSchet);
                     entry.setBillDate(bill.getBillDate());
                     entry.setBill(bill);
@@ -245,6 +368,33 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 //throw new IllegalStateException("Найдено несколько действующих значений справочника " + aClass.getCanonicalName()+" с условием "+sql);
             }
             return list.get(0);
+
+
+    }
+
+    private <T> T getVocByCode(Class aClass, Date aActualDate, String aCode) {
+        if (!isNotNull(aCode)) {return null;}
+        String sql = " from "+aClass.getName()+" where ";
+        List<T> list;
+        if (aActualDate!=null) {
+            sql += " :actualDate between startDate and finishDate and";
+        }
+            sql+=" code='"+aCode+"'";
+            list = theManager.createQuery(sql).setParameter("actualDate",aActualDate).getResultList();
+            if (list.isEmpty()){
+                list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null and code='" + aCode+"'").getResultList();
+            }
+
+        if (list.isEmpty()) {
+            log.error("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
+            return null;
+            //throw new IllegalStateException("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием "+sql);
+        } else if (list.size() > 1) {
+            log.error("Найдено несколько действующих значений справочника " + aClass.getCanonicalName()+" с условием "+sql);
+            return null;
+            //throw new IllegalStateException("Найдено несколько действующих значений справочника " + aClass.getCanonicalName()+" с условием "+sql);
+        }
+        return list.get(0);
 
 
     }

@@ -128,10 +128,9 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
 		<msh:table styleRow="10" name="pres" action="entityView-pres_servicePrescription.do" idField="1">
 			<msh:tableColumn property="3" columnName="Исследование"/>
 			<msh:tableColumn property="7" columnName="Тип назначения"/>
-			<msh:tableColumn property="8" columnName="Место забора"/>
+			<msh:tableColumn property="8" columnName ="Место забора"/>
 			<msh:tableColumn property="4" columnName="Дата начала"/>
 			<msh:tableColumn property="12" columnName="Дата выполнения"/>
-			<msh:tableColumn property="5" columnName="Дата окончания"/>
 			<msh:tableColumn property="6" columnName="ИД биоматериала"/>
 			<msh:tableColumn property="9" columnName="Причина брака"/>
 			<msh:tableColumn property="11" columnName="Результат"/>

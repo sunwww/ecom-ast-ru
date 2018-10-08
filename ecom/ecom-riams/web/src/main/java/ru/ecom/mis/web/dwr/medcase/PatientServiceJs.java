@@ -1,5 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -426,19 +428,23 @@ public class PatientServiceJs {
 		
 		return FondWebService.checkAllPatientsByFond(updPatient, updDocument, updPolicy, updAttachment, aType, aPatientList, aRequest).toString(); 
 	}
-	public String checkDispAttached (String aDispTypeId, String aPatientId, HttpServletRequest aRequest) throws NamingException {
+	public String checkDispAttached (String aDispTypeId, String aPatientId, HttpServletRequest aRequest) throws NamingException, JSONException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String isDispAttachment = service.executeNativeSql("select case when attachmentpopulation ='1' then '1' else '0' end " +
 				"from vocextdisp where id='"+aDispTypeId+"'", 1).iterator().next().get1().toString();
-		String isPatAttached = isPatientAttached(aPatientId, aRequest);
-		if (isDispAttachment.equals("1")&&isPatAttached.substring(0,1).equals("0")) {
+		JSONObject isPatAttached = new JSONObject(isPatientAttached(aPatientId, aRequest));
+
+		if (isDispAttachment.equals("1")&&isPatAttached.getString("statusCode").equals("0")) {
 			return "0";
-		} else return "1";
+		} else {
+			return "1";
+		}
 	}
-	public String checkPatientAttachedOrDead(String aPatientId, String isDeath, String isAttached, HttpServletRequest aRequest) throws NamingException {
+	public String checkPatientAttachedOrDead(String aPatientId, String isDeath, String isAttached, HttpServletRequest aRequest) throws NamingException, JSONException {
 		boolean checkDeath = (isDeath!=null&&isDeath.equals("1"))?true:false;
 		boolean checkAttachment = (isAttached!=null&&isAttached.equals("1"))?true:false;
-		String res = "-";
+		JSONObject ret = new JSONObject();
+		String statusCode="0", statusName = "-";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 			Collection<WebQueryResult> list = service.executeNativeSql("select coalesce(pf.lpuattached,'') as lpuAttached" +
 					", to_char(pf.checkdate,'dd.mm.yyyy') as checkDate" +
@@ -451,41 +457,49 @@ public class PatientServiceJs {
 				String defaultLpu = null, defaultLpuName = null;
 			if (checkAttachment) {
 				if (defLpu.isEmpty()) {
-					return "0Необходимо указать ЛПУ по умолчанию в настройках (DEFAULT_LPU_OMCCODE)";
+					ret.put("status","0");
+					ret.put("statusName","Необходимо указать ЛПУ по умолчанию в настройках (DEFAULT_LPU_OMCCODE)");
+					return ret.toString();
 				} else {
 					WebQueryResult wqr =defLpu.iterator().next();
-					defaultLpu = wqr.get1().toString();
-					defaultLpuName = wqr.get2().toString();
+					defaultLpu = wqr.get1()!=null?wqr.get1().toString():"";
+					defaultLpuName = wqr.get2()!=null?wqr.get2().toString():"";
 				}
 			}
 			if (!list.isEmpty()) {
 				WebQueryResult wqr = list.iterator().next();
 				String lastAttachment = wqr.get1().toString();
-				String checkDate = wqr.get2().toString();
-				String deathDate = wqr.get3().toString();
-				String doctorSnils = wqr.get4().toString();
+				String checkDate = wqr.get2()!=null?wqr.get2().toString():"";
+				String deathDate = wqr.get3()!=null?wqr.get3().toString():"";
+				String doctorSnils = wqr.get4()!=null?wqr.get4().toString():"";
 					if (checkAttachment) {
 						if (lastAttachment.equals(defaultLpu)) {
 							if (doctorSnils==null||doctorSnils.trim().equals("")) {
-								res = " Внимание! ФОНД не имеет информации о прикреплении пациента к участку!";
+								statusName = " Внимание! ФОНД не имеет информации о прикреплении пациента к участку!";
 							}
-							res = "1По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName+"."+res;
+							statusCode="1";
+							statusName= "По данным ФОМС на "+checkDate+" пациент прикреплен к ЛПУ "+defaultLpuName+"."+statusName;
 						} else {
-							res =  "0По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName+".";
+							statusCode="0";
+							statusName =  "По данным ФОМС на "+checkDate+" пациент не прикреплен к ЛПУ "+defaultLpuName+".";
 						}
 					}
 					if (checkDeath&&deathDate!=null&&deathDate.length()==10) {
-						res= "2По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
+						statusCode="2";
+						statusName= "По данным ФОМС на "+checkDate+" пациент умер "+deathDate;
 					}
 			} else {
 				if (checkAttachment) {
-					res = "0Необходимо выполнить проверку по базе ФОМС";
+					statusCode="0";
+					statusName = "Необходимо выполнить проверку по базе ФОМС";
 				}
 			}
-			return res;
+			ret.put("statusCode",statusCode);
+			ret.put("statusName",statusName);
+			return ret.toString();
 		}
 	
-	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException {
+	public String isPatientAttached (String aPatientId, HttpServletRequest aRequest) throws NamingException, JSONException {
 		return checkPatientAttachedOrDead(aPatientId,"0","1",aRequest);
 	}
 	

@@ -33,16 +33,27 @@ public class Expert2FileImportAction extends BaseAction{
 			}
 			String fileName=ffile.getFileName();
 			System.out.println("filename = "+fileName);
-			if (fileName.startsWith("N5")&&fileName.endsWith(".xml")) { //Импортируем файл для проставления номеров направления фонда
-				System.out.println("start import N5");
-				Long entryListId = form.getObjectId();
+			String action = form.getDirName();
+			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/data");
+			if (action!=null && !action.equals("")) {
+				if (action.equals("createEntry") && (fileName.endsWith(".mp") || fileName.endsWith(".MP"))) {
+					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
+					System.out.println("import MP file");
+					expert2service.createEntryByFondXml(fileName);
+				}
+			} else {
+				if (fileName.startsWith("N5")&&fileName.endsWith(".xml")) { //Импортируем файл для проставления номеров направления фонда
+					System.out.println("start import N5");
+					Long entryListId = form.getObjectId();
 
-				System.out.println(expert2service.importN5File(new SAXBuilder().build(ffile.getInputStream()),entryListId));
-			} else { //Загружаем ответ фонда
-				String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/data");
+					System.out.println(expert2service.importN5File(new SAXBuilder().build(ffile.getInputStream()),entryListId));
+				} else { //Загружаем ответ фонда
 
-				saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-				expert2service.importFondMPAnswer(fileName) ;
+
+					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
+					expert2service.importFondMPAnswer(fileName) ;
+				}
+
 			}
 
     		return aMapping.findForward("success") ;

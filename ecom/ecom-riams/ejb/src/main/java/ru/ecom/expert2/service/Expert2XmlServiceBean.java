@@ -4,23 +4,20 @@ import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
-import org.json.JSONException;
-import org.json.JSONObject;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.Expert2FondUtil;
 import ru.ecom.expert2.domain.*;
-import ru.ecom.expert2.domain.voc.*;
+import ru.ecom.expert2.domain.voc.VocE2BillStatus;
+import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 
 import javax.annotation.EJB;
@@ -30,14 +27,17 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 @Local(IExpert2XmlService.class)
@@ -249,6 +249,7 @@ private Boolean isCheckIsRunning = false;
                 }
 
                 Boolean isCancer = currentEntry.getIsCancer()!=null?currentEntry.getIsCancer():false;
+                if (isCancer && currentEntry.getMedHelpProfile().getCode().equals("12")) {isCancer=false;} //Убрать колхоз
                 E2CancerEntry cancerEntry = null;
                 if (isCancer) {
                     try {
@@ -333,12 +334,20 @@ private Boolean isCheckIsRunning = false;
                     //sluch=addIfNotNull(sluch,"KSG_KRIT",currentEntry.getDopKritKSG());
 
                 } */
-                if (isCancer){
+                if (isCancer ){
                     if (cancerEntry==null) {
                         log.error("Не найден раковый случай для записи с ИД"+currentEntry.getId());
-                    } else {
+                    } else if (!cancerEntry.getMaybeCancer()){
                         Element onkSl = new Element("ONK_SL");
                         onkSl=addIfNotNull(onkSl,"DS1_T",cancerEntry.getOccasion());
+                        if (cancerEntry.getStage()== null
+                                || cancerEntry.getTumor()== null
+                                || cancerEntry.getNodus()== null
+                                || cancerEntry.getMetastasis()== null
+                                ) {
+                            theManager.persist(new E2EntryError(currentEntry,"NO_CANCERINFO"));
+                            return null;
+                        }
                         onkSl=add(onkSl,"STAD",cancerEntry.getStage());
                         onkSl=add(onkSl,"ONK_T",cancerEntry.getTumor());
                         onkSl=add(onkSl,"ONK_N",cancerEntry.getNodus());
@@ -560,7 +569,7 @@ private Boolean isCheckIsRunning = false;
                             if (first){
                                 if (isCancer&&cancerEntry!=null) {
                                     if (cancerEntry.getMaybeCancer()) {
-                                        List<E2CancerDirection> directions = theManager.createQuery("from E2CancerDirection where cancerEntry=:cancere").setParameter("cancer", cancerEntry).getResultList();
+                                        List<E2CancerDirection> directions = theManager.createQuery("from E2CancerDirection where cancerEntry=:cancer").setParameter("cancer", cancerEntry).getResultList();
                                         if (directions.isEmpty()) {
                                             log.error("Не указаны направления в то время, когда они должны быть указаны!" + currentEntry.getId() + " " + currentEntry.getHistoryNumber());
                                         }
@@ -576,7 +585,7 @@ private Boolean isCheckIsRunning = false;
                                         Element onkUsl = new Element("ONK_USL");
                                         onkUsl = addIfNotNull(onkUsl, "PR_CONS", cancerEntry.getConsiliumResult());
                                         onkUsl = add(onkUsl, "USL_TIP", cancerEntry.getServiceType());
-                                        onkUsl = add(onkUsl, "HIR_TIP", cancerEntry.getSurgicalType());
+                                        onkUsl = addIfNotNull(onkUsl, "HIR_TIP", cancerEntry.getSurgicalType());
                                         onkUsl = addIfNotNull(onkUsl, "LEK_TIP_L", cancerEntry.getDrugLine());
                                         onkUsl = addIfNotNull(onkUsl, "LEK_TIP_V", cancerEntry.getDrugCycle());
                                         onkUsl = addIfNotNull(onkUsl, "LUCH_TIP", cancerEntry.getRadiationTherapy());

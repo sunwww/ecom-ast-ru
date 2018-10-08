@@ -37,7 +37,8 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink action="/entityList-e2_vocFondV015.do" name="Справочник V015" title="Справочник V015" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV025.do" name="Справочник V025" title="Справочник V025" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocEntrySubType.do" name="Подтипы случая" title="Подтипы случая" roles="/Policy/E2" />
-			<msh:sideLink action="/entityList-e2_polFinancePlan.do" name="Финансовый планы по пол-ке" title="Финансовый планы по пол-ке" roles="/Policy/E2" />
+			<msh:sideLink action="/e2_stacFinancePlan.do?type=PolyclinicFinancePlan" name="Финансовый планы по пол-ке" title="Финансовый планы по пол-ке" roles="/Policy/E2" />
+			<msh:sideLink action="/e2_stacFinancePlan.do?type=VmpFinancePlan" name="Финансовый планы по ВМП" title="Финансовый планы по ВМП" roles="/Policy/E2" />
 			<msh:sideLink action="/e2_stacFinancePlan.do" name="Финансовый планы по стационару" title="Финансовый планы по стационару" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_litteAmountMonth.do" name="Настроечная табличка" title="Настроечная табличка" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocKsg.do" name="Справочник КСГ" title="Справочник КСГ" roles="/Policy/E2" />

@@ -21,6 +21,22 @@
 
 
         <%
+            String dtype= request.getParameter("type");
+            String formType = "e2_nothinToDo";
+            if (dtype==null || dtype.equals("") ) {dtype="HospitalFinancePlan";}
+            switch (dtype) {
+                case "HospitalFinancePlan":
+                    formType="e2_stacFinancePlan";
+                    break;
+                case "PolyclinicFinancePlan":
+                    formType="e2_polFinancePlan";
+                    break;
+                case "VmpFinancePlan":
+                    formType="e2_vmpFinancePlan";
+                    break;
+            }
+            request.setAttribute("formName",formType);
+            request.setAttribute("dtype",dtype);
         String month = request.getParameter("month");
         String year = request.getParameter("year");
         String startDateSql  = " and to_char(fp.startDate,'MM')='01' and to_char(fp.finishDate,'MM')='12'";
@@ -29,8 +45,11 @@
                             ,{"profile","fp.profile_id"}
                             ,{"ksg","fp.ksg_id"}
                             ,{"bedSubType","fp.bedsubtype_id"}
+                            ,{"method","fp.method_id"}
+                            ,{"vidSluch","fp.vidSluch_id"}
+                            ,{"type","fp.dtype"}
                     };
-        request.setAttribute("filterJson","['department','profile','ksg','bedSubType','year','month','reestr']");
+        request.setAttribute("filterJson","['department','profile','ksg','bedSubType','year','month','reestr','method','vidSluch','type']");
 
         StringBuilder sqlAppend = new StringBuilder();
         for (String[] filter: filters) {
@@ -44,14 +63,14 @@
 
             if (year==null||year.equals("")) { //Список планов по годам.
             %>
-        <ecom:webQuery name="entryList" nativeSql="select to_char(fp.startDate,'yyyy') as year,'&year='||to_char(fp.startDate,'yyyy') as url
+        <ecom:webQuery name="entryList" nativeSql="select to_char(fp.startDate,'yyyy') as year,'&type=${dtype}&year='||to_char(fp.startDate,'yyyy') as url
              from financePlan fp
-              where fp.dtype='HospitalFinancePlan' ${startDateSql}
+              where fp.dtype='${dtype}' ${startDateSql}
               group by to_char(fp.startDate,'yyyy')
               order by to_char(fp.startDate,'yyyy')"/>
         <msh:section title='Планы по годам'>
             <msh:table  name="entryList" action="e2_stacFinancePlan.do" idField="2" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="Месяц" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Год" property="1" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
             </msh:table>
         </msh:section>
         <%
@@ -76,6 +95,8 @@
             <input type="hidden" value="${param.reestr}" id="reestr" name="reestr">
             <input type="hidden" value="${param.year}" id="year" name="year">
             <input type="hidden" value="${param.month}" id="month" name="month">
+            <input type="hidden" value="${param.type}" id="type" name="month">
+            <input type="hidden" value="" id="method" name="method">
             </td></msh:row>
             <msh:row>
                 <msh:autoComplete property="department" vocName="lpu" label="Отделение" size="50"/>
@@ -85,7 +106,9 @@
                 <msh:autoComplete property="profile" vocName="vocE2MedHelpProfile" label="Профиль мед. помощи" size="50"/>
             </msh:row><msh:row>
                 <msh:autoComplete property="bedSubType" vocName="vocBedSubType" label="Тип коек" size="50"/>
-            </msh:row><msh:row><td>
+            </msh:row><msh:row>
+            <msh:autoComplete property="vidSluch" vocName="vocE2VidSluch" label="Вид случая" size="50"/>
+        </msh:row><msh:row><td>
                      <input type="button" value="Применить фильтр" onclick="applyFilters()">
                 </td>
             </msh:row>
@@ -99,20 +122,22 @@
             ,fp.count as f6
             ,fp.cost as f7
             ,vbt.name as f8
+            ,vs.name as f9_vidSluch
              from financePlan fp
              left join vocksg ksg on ksg.id=fp.ksg_id
              left join VocE2MedHelpProfile mhp on mhp.id=fp.profile_id
              left join mislpu ml on ml.id=fp.department_id
              left join vocbedsubtype vbt on vbt.id=fp.bedsubtype_id
-              where fp.dtype='HospitalFinancePlan' ${startDateSql} ${sqlAppend}
+             left join voce2vidSluch vs on vs.id=fp.vidsluch_id
+              where fp.dtype='${dtype}' ${startDateSql} ${sqlAppend}
               order by fp.startDate, cast(ksg.code as int), ml.name, vbt.name "/>
         <msh:section title='Результат поиска по ${param.year} ${param.month} году'>
-            <msh:table  name="entryList" action="entityView-e2_stacFinancePlan.do" idField="1" disableKeySupport="true" styleRow="6">
+            <msh:table  name="entryList" action="entityView-${formName}.do" idField="1" disableKeySupport="true" styleRow="6">
                 <msh:tableColumn columnName="Период" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Вид случая" property="9" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 <msh:tableColumn columnName="КСГ" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 <msh:tableColumn columnName="Профиль" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 <msh:tableColumn columnName="Отделение" property="5" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
-                <msh:tableColumn columnName="тип коек" property="8" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 <msh:tableColumn columnName="Кол-во случаев" property="6" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 <msh:tableColumn columnName="Цена" property="7" isCalcAmount="true" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
             </msh:table>
@@ -133,9 +158,9 @@
             </td>
             </msh:row>
         </msh:panel>
-        <ecom:webQuery name="entryList" nativeSql="select to_char(fp.startDate,'MM.yyyy') as period,'&reestr=1&year=${param.year}&month='||to_char(fp.startDate,'MM.yyyy') as url
+        <ecom:webQuery name="entryList" nativeSql="select to_char(fp.startDate,'MM.yyyy') as period,'&type=${dtype}&reestr=1&year=${param.year}&month='||to_char(fp.startDate,'MM.yyyy') as url
              from financePlan fp
-              where fp.dtype='HospitalFinancePlan' and to_char(fp.startDate,'MM')= to_char(fp.finishDate,'MM') and to_char(fp.startDate,'yyyy')='${param.year}'
+              where fp.dtype='${dtype}' and to_char(fp.startDate,'MM')= to_char(fp.finishDate,'MM') and to_char(fp.startDate,'yyyy')='${param.year}'
               group by to_char(fp.startDate,'MM.yyyy')
               order by to_char(fp.startDate,'MM.yyyy')"/>
 
@@ -185,17 +210,19 @@
             }
 
             function splitFinancePlan() {
-                Expert2Service.splitFinancePlan('HospitalFinancePlan','${param.year}', {
+                Expert2Service.splitFinancePlan('${dtype}','${param.year}', {
                     callback: function(){alert('MISSION IS POSSIBLE');}
                 });
             }
 
             function fillAggregateTable() {
-                Expert2Service.fillAggregateTable(null, $('copyStartDate').value, $('copyFinishDate').value, null, {
+                Expert2Service.fillAggregateTable('${dtype}', $('copyStartDate').value, $('copyFinishDate').value, null, {
                     callback: function(ret) {
                         ret = JSON.parse(ret);
                         if (ret.status=="ok") {
                             showToastMessage("Формирование чего-то там успешно завершено. Сформированино "+ret.count+" записей",null,false);
+                        } else {
+                            alert("Что-то пошло не так, обратитесь к программситу"+ret.status);
                         }
                     }
                 });

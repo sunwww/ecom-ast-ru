@@ -235,6 +235,7 @@ public class FondCheckUtil {
                     if (get(policy, "dateEarlyEnd") != null)
                         patientFond.setPolicyDateTo((getDate(policy.get("dateEarlyEnd").getAsString())));
                     if (get(policy, "sk") != null) patientFond.setCompanyCode((policy.get("sk").getAsString()));
+                    break;
                 }
             }
 
@@ -266,8 +267,6 @@ public class FondCheckUtil {
 
                 if (get(address, "block") != null) patientFond.setHouseBuilding(address.get("block").getAsString());
                 if (get(address, "aparment") != null) patientFond.setFlat(address.get("aparment").getAsString());
-                if (get(address, "middlename") != null)
-                    patientFond.setMiddlename(address.get("middlename").getAsString());
 
             }
         return patientFond;
@@ -459,7 +458,7 @@ public class FondCheckUtil {
     }
 
     protected static boolean is(String var){
-        return var!=null&&!var.equals("")&&!var.equals("0")?true:false;
+        return var!=null&&!var.trim().equals("")&&!var.equals("0");
     }
 
     protected static Date getDate(String datetime){
