@@ -16,7 +16,3 @@ INSERT INTO VocOncologyN012 (code,ds,marker,startdate) VALUES
 ('12','C50','10','01.09.2018'),
 ('13','C50','11','01.09.2018'),
 ('14','C50','12','01.09.2018');
-INSERT INTO VocOncologyN012 (code,ds,marker,startdate) VALUES
-('15','C18','2','01.09.2018'),
-('16','C19','2','01.09.2018'),
-('17','C20','2','01.09.2018');
