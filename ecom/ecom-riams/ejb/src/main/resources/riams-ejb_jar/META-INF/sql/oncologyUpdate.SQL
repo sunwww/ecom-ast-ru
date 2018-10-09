@@ -1,4 +1,4 @@
-{version}
+1539077880#
 
 INSERT INTO VocOncologyN002 (code,ds,name,startdate) VALUES
  ('162','C97','Нет','01.09.2018'),
