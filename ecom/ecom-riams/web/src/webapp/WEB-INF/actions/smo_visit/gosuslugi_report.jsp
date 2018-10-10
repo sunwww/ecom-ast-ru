@@ -23,6 +23,7 @@
             String typeDate=ActionUtil.updateParameter("BloodReport","typeDate","1", request);
             String typeGroup =ActionUtil.updateParameter("BloodReport","typeGroup","2", request) ;
             String typeRemote =ActionUtil.updateParameter("BloodReport","typeRemote","1", request) ;
+            String typeSvod =ActionUtil.updateParameter("BloodReport","typeSvod","1", request) ;
         %>
         <msh:form action="/gosuslugi_report.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
             <input type="hidden" name="id" id="id"/>
@@ -43,7 +44,17 @@
                 </msh:row>
                 <msh:row>
                     <td class="label" title="Отображать" colspan="1">
-                        <label for="typeDateName" id="typeDateLabel">Отобразить:</label></td>
+                        <label for="typeSvodName" id="typeSvodLabel">Отобразить:</label></td>
+                    <td onclick="this.childNodes[1].checked='checked';checkSvod();" id="tdsvod1">
+                        <input type="radio" name="typeSvod" value="1" id="svod1"> общий свод
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';checkSvod();" id="tdsvod2">
+                        <input type="radio" name="typeSvod" value="2" id="svod2">  свод по поликлиникам
+                    </td>
+                </msh:row>
+                <msh:row>
+                    <td class="label" title="Отображать" colspan="1">
+                        <label for="typeDateName" id="typeDateLabel"></label></td>
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeDate" value="1"> Дата создания пред. направления
                     </td>
@@ -51,35 +62,31 @@
                         <input type="radio" name="typeDate" value="2" >  Дата направления
                     </td>
                 </msh:row>
-                <msh:row>
-                    <td class="label" title="Поиск по пациентам (typeGroup)" colspan="1">
-                        <label for="typeGroupName" id="typeGroupLabel">Группировать по пользователям:</label></td>
-                    <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeGroup" value="1"> Группировать
-                    </td>
-                    <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeGroup" value="2"> Не группировать
-                    </td>
+                    <msh:row>
+                        <td class="label" title="Поиск по пациентам (typeGroup)" colspan="1">
+                            <label for="typeGroupName" id="typeGroupLabel">Группировать по пользователям:</label></td>
+                        <td onclick="if (!document.getElementById('grouprb').disabled) this.childNodes[1].checked='checked';">
+                            <input type="radio" name="typeGroup" value="1" id="grouprb"> Группировать
+                        </td>
+                        <td onclick="if (!document.getElementById('donotgrouprb').disabled) this.childNodes[1].checked='checked';">
+                            <input type="radio" name="typeGroup" value="2" id="donotgrouprb"> Не группировать
+                        </td>
+                    </msh:row>
+                    <msh:row>
+                        <td class="label" title="Поиск по сайту (typeRemote)" colspan="1">
+                            <label for="typeRemoteName" id="typeRemoteLabel">Найти:</label></td>
+                        <td onclick="if (!document.getElementById('totalrb').disabled) this.childNodes[1].checked='checked';">
+                            <input type="radio" name="typeRemote" value="1" id="totalrb"> Всё
+                        </td>
+                        <td onclick="if (!document.getElementById('robotrb').disabled) this.childNodes[1].checked='checked';">
+                            <input type="radio" name="typeRemote" value="2" id="robotrb"> Только робот
+                        </td>
+                        <td onclick="if (!document.getElementById('siterb').disabled) this.childNodes[1].checked='checked';">
+                            <input type="radio" name="typeRemote" value="3" id="siterb"> Только сайт
+                        </td>
                 </msh:row>
-                <msh:row>
-                    <td class="label" title="Поиск по сайту (typeRemote)" colspan="1">
-                        <label for="typeRemoteName" id="typeRemoteLabel">Найти:</label></td>
-                    <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeRemote" value="1"> Всё
-                    </td>
-                    <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeRemote" value="2"> Только робот
-                    </td>
-                    <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeRemote" value="3"> Только сайт
-                    </td>
-                </msh:row>
-                <msh:row>
                     <msh:submitCancelButtonsRow labelSave="Сформировать" doNotDisableButtons="cancel" labelSaving="Формирование..." colSpan="4"/>
-
-                </msh:row>
-
-            </msh:panel>
+                </msh:panel>
             <%} %>
         </msh:form>
 
@@ -118,10 +125,7 @@
                 request.setAttribute ("appendSQL", sqlAdd.toString());
                 request.setAttribute ("sqlAddNew", sqlAddNew.toString());
         %>
-
-
-
-
+<% if (typeSvod.equals("1")) {%>
         <%if(typeGroup.equals("1")){ %>
         <msh:section>
             ${isReportBase}<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
@@ -169,19 +173,76 @@ where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dat
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-        <% }%>
-
-
-
-        <% }  else {%>
+        <%}
+        else {%>
         <i>Выберите параметры поиска и нажмите "Найти" </i>
-        <% }   %>
+        <% }
+        }
+        else if (typeSvod.equals("2")) {%>
+        <msh:section>
+            ${isReportBase}<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+select  1, case when t.lpuname is not null then t.lpuname else '-' end as lpuname,
+sum(t.total) as total,
+sum(t.cnt1)||' ('||case when sum(t.total)<>0 then round(sum(t.cnt1)/sum(t.total)*100.0,2)||'%' else '0%' end||')' as promed,
+sum(t.cnt2)||' ('||case when sum(t.total)<>0 then round(sum(t.cnt2)/sum(t.total)*100.0,2)||'%' else '0%' end||')' as robot,
+sum(t.cnt3)||' ('||case when sum(t.total)<>0 then round(sum(t.cnt3)/sum(t.total)*100.0,2)||'%' else '0%' end||')' as site
+ from (select lpu.name as lpuname
+,count(wct.id) as total
+,case when (wct.createprerecord ='IntegrationBot') then count(wct.id) else '0' end as cnt1
+,case when (wct.createprerecord ='MedVox') then count(wct.id) else '0' end as cnt2
+,case when (wct.createprerecord like 'ApiClient%' or wct.createprerecord='FromSite') then count(wct.id) else '0' end as cnt3
+from workcalendartime wct
+left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
+left join medcase mc on mc.id=wct.medcase_id
+left join mislpu lpu on lpu.id=mc.orderlpu_id
+where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy')
+group by lpu.name,wct.createprerecord) as t
+group by t.lpuname
+" guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
+
+            <msh:sectionTitle>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table
+                        name="journal_ticket" action="/javascript:void()" idField="1" noDataMessage="Не найдено">
+                    <msh:tableColumn columnName="Поликлиника" property="2"/>
+                    <msh:tableColumn columnName="Записано всего" property="3"/>
+                    <msh:tableColumn columnName="Через промед" property="4"/>
+                    <msh:tableColumn columnName="Через робота" property="5"/>
+                    <msh:tableColumn columnName="Через сайт" property="6"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <% }}  else {%>
+        <i>Выберите параметры поиска и нажмите "Найти" </i>
+        <% } %>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
+            function checkSvod() {
+                var svod1 = document.getElementById("svod1");
+                var svod2 = document.getElementById("svod2");
+                if (svod2.checked) {
+                    document.getElementById("donotgrouprb").setAttribute("disabled", true);
+                    document.getElementById("totalrb").setAttribute("disabled", true);
+                    document.getElementById("grouprb").setAttribute("disabled", true);
+                    document.getElementById("robotrb").setAttribute("disabled", true);
+                    document.getElementById("siterb").setAttribute("disabled", true);
+                    document.getElementById("donotgrouprb").checked = document.getElementById("totalrb").checked = 'checked';
+                }
+                else if (svod1.checked) {
+                    document.getElementById("donotgrouprb").removeAttribute("disabled");
+                    document.getElementById("totalrb").removeAttribute("disabled");
+                    document.getElementById("grouprb").removeAttribute("disabled");
+                    document.getElementById("robotrb").removeAttribute("disabled");
+                    document.getElementById("siterb").removeAttribute("disabled");
+                }
+            }
             checkFieldUpdate('typeDate','${typeDate}',1) ;
             checkFieldUpdate('typeGroup','${typeGroup}',2) ;
             checkFieldUpdate('typeRemote','${typeRemote}',1) ;
+            checkFieldUpdate('typeSvod','${typeSvod}',1) ;
+
 
             function checkFieldUpdate(aField,aValue,aDefault) {
 
@@ -193,7 +254,7 @@ where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dat
                     chk[+aValue-1].checked='checked' ;
                 }
             }
-
+            checkSvod();
         </script>
     </tiles:put>
 
