@@ -124,7 +124,6 @@
     , list(''||durationPregnancy) as f8_gestatsiya
     , paritet.code as f9_paritet
     ,  (cb.pangsstartdate-pat.birthday)/365 as f10_age
-    , (select count(id) from newBorn where childBirth_id=cb.id) as f11_plods
     , rayon.name as f12_rayon
     , case when cb.iseco=true then '+' else '-' end as f13_eco
     , case when cb.isRegisteredWithWomenConsultation=true then '+' else '-' end as f14_gk
@@ -158,12 +157,11 @@
     <msh:tableColumn property="8" columnName="Срок гестации"/>
     <msh:tableColumn property="9" columnName="Паритет"/>
     <msh:tableColumn property="10" columnName="Возраст"/>
-    <msh:tableColumn property="11" columnName="Кол-во плодов"/>
-    <msh:tableColumn property="12" columnName="Район"/>
-    <msh:tableColumn property="13" columnName="ЭКО"/>
-    <msh:tableColumn property="14" columnName="Учёт в ЖК"/>
-    <msh:tableColumn property="15" columnName="Место родов"/>
-    <msh:tableColumn property="16" columnName="Показания"/>
+    <msh:tableColumn property="11" columnName="Район"/>
+    <msh:tableColumn property="12" columnName="ЭКО"/>
+    <msh:tableColumn property="13" columnName="Учёт в ЖК"/>
+    <msh:tableColumn property="14" columnName="Место родов"/>
+    <msh:tableColumn property="15" columnName="Показания"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
