@@ -90,13 +90,14 @@ function onCreate(aForm, aEntity, aCtx) {
     bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
     //Milamesher #121 19092018 если есть переданные, но не выполненные консультации в этом сло текущего пользователя (с любой раб. ф-ей), то проставить diary_id
     //upd Milamesher 11102018 и не отменённые
-    //upd2 и не текущего СЛО и любого СЛО, у кого СЛС - parent текущего СЛО
+    //upd2 и не текущего СЛО, а любого СЛО, у кого СЛС - parent текущего СЛО
+    //upd3 можно и без transferdate
     var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
         "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
         "left join medcase slo on slo.id=pl.medcase_id\n" +
         "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
         "left join vocworkfunction vwf on vwf.id=wf.workfunction_id\n" +
-        "where scg.transferdate is not null and scg.diary_id is null\n" +
+        "where scg.diary_id is null\n" +
         "and vwf.id=ANY(select wf.workfunction_id from WorkFunction wf\n" +
         "left join Worker w on w.id=wf.worker_id\n" +
         "left join Worker sw on sw.person_id=w.person_id\n" +
