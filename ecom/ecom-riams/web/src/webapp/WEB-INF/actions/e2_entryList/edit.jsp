@@ -207,24 +207,14 @@
                     if (confirm("Формировать файл по счету по всем заполнениям?")){
                         useAllListEntry=true;
                     }
-                    var ver = "3.0";
-                    if (confirm("Формировать в новом формате?")) {ver="3.1";}
+                    var ver = "3.1";
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,{
                         callback: function(monitorId) {
                             monitor.id=monitorId;
                             jQuery.toast("Формирование файла запущено");
-                            //isRun=false;
-                            //button.disabled=false;
-                            //button.value=oldVal;
                             updateStatus();
                         }
-                       /*     function (a) {
-                            button.disabled=false;
-                            button.removeAttribute("onClick");
-                            button.value="Скачать пакет";
-                            button.parentNode.innerHTML="<a href='"+a+"'>"+button.parentNode.innerHTML+"</a>";
-                            isRun=false;
-                        } */
+
                     });
 
                 }
@@ -250,6 +240,7 @@
                                      txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
                                  }
                                  monitor = {};
+                                    isRun=false;
                                 } else {
                                     txt=aStatus.text;
                                     setTimeout(updateStatus,4000) ;

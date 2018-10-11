@@ -55,6 +55,9 @@
 
     ActionUtil.setParameterFilterSql("defect","e.isDefect",request);
     String listId=request.getParameter("id");
+    if (listId!=null&& listId.equals("0")) { //Нет листа - ищем все оплаченные случаи
+        listId=null;
+    }
     String billDate = request.getParameter("billDate");
     StringBuilder sqlAdd = new StringBuilder();
     //if (entryType!=null&&!entryType.equals("")) {sqlAdd.append(" and e.entryType='").append(entryType).append("'");}
@@ -62,7 +65,7 @@
    // if (billNumber!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billNumber='").append(billNumber).append("'");}
     if (billDate!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billDate=to_date('").append(billDate).append("','dd.MM.yyyy')");}
     if (orderBy==null||orderBy.equals("")) {
-      orderBy = "e.lastname, e.firstname, e.middlename"  ;
+      orderBy = "e.lastname, e.firstname, e.middlename, e.finishDate"  ;
     }
     String errorCode = request.getParameter("errorCode");
     String searchFromSql ,searchWhereSql;
@@ -71,14 +74,20 @@
     request.setAttribute("orderBySql",orderBy);
     //request.setAttribute("sqlAdd",sqlAdd.toString());
     request.setAttribute("filterSql",filterSql.toString());
-
+String defectColumnName = "Дефект";
     if (errorCode!=null&&!errorCode.equals("")) {
         searchFromSql=", list(err.comment) as errComment from e2entryerror err left join e2entry e on e.id=err.entry_id";
-        searchWhereSql=" err.listentry_id="+listId+" and err.errorCode='"+errorCode+"'";
+        searchWhereSql=(listId!=null?" err.listentry_id="+listId:"")+" and err.errorCode='"+errorCode+"'";
         request.setAttribute("searchTitle"," по ошибке: "+errorCode);
     } else {
-        searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
-        searchWhereSql=" e.listentry_id="+listId
+        if (listId==null) {
+            searchFromSql=" ,e.billNumber||' от '||to_char(e.billDate,'dd.MM.yyyy') as f13_billNumber from e2entry e";
+            defectColumnName="Счет";
+        } else {
+            searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
+        }
+
+        searchWhereSql=(listId!=null?" e.listentry_id="+listId:" vbs.code='PAID' ")
             +(request.getAttribute("entryTypeSql")!=null?request.getAttribute("entryTypeSql"):"")
             +(request.getAttribute("serviceStreamSql")!=null?request.getAttribute("serviceStreamSql"):"")
             +(billNumber!=null?" and e.billNumber='"+billNumber+"'":"")
@@ -86,10 +95,12 @@
             +sqlAdd;
         request.setAttribute("searchTitle"," ");
     }
+    request.setAttribute("defectColumnName",defectColumnName);
     searchWhereSql+=request.getAttribute("filterSql");
     if (isForeign!=null){searchWhereSql+=" and e.isForeign='"+(isForeign.equals("1")?"1":"0")+"'";}
     request.setAttribute("searchFromSql",searchFromSql);
     request.setAttribute("searchWhereSql",searchWhereSql);
+    System.out.println(searchWhereSql);
 %>
         <msh:panel>
             <input type="text" name="searchField" id="lastname" placeholder="Фамилия пациента">
@@ -133,12 +144,14 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join entrydiagnosis d on d.entry_id=e.id and d.priority_id=1
         left join vocidc10 mkb on mkb.id=d.mkb_id
         left join e2entrysanction es on es.entry_id=e.id and es.isMainDefect='1' and (es.isDeleted is null or es.isDeleted='0')
+        left join e2bill bill on bill.id=e.bill_id
+        left join voce2billstatus vbs on vbs.id=bill.status_id
  where ${searchWhereSql}
  and (e.isDeleted is null or e.isDeleted='0')
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
         , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend
   order by ${orderBySql} "/>
-        <msh:hideException>${entriesSql}
+        <msh:hideException>
             <msh:section title='Результат поиска ${searchTitle}'>
                 <msh:table name="entries" printToExcelButton="в excel" action="entityParentView-e2_entry.do" idField="1" disableKeySupport="true" styleRow="12" cellFunction="true" openNewWindow="true">
                     <msh:tableColumn columnName="№" property="sn" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
@@ -153,7 +166,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
                     <msh:tableColumn columnName="Цена случая" property="8" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Профиль" property="9" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Результат" property="11" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
-                    <msh:tableColumn columnName="Дефект" property="13" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
+                    <msh:tableColumn columnName="${defectColumnName}" property="13" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                 </msh:table>
             </msh:section>
         </msh:hideException>

@@ -873,6 +873,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
       </msh:sideMenu>
       <msh:sideMenu title="Показать все" guid="9f390953-ddd1-426b-bf16-5198c38f449b">
         
+        <msh:sideLink roles="/Policy/E2/View" params="id" action="/javascript:showAllE2EntriesByPatient()" name="Экономические случаи ОМС" title="Показать все экономические случаи по ОМС"/>
         <msh:sideLink key="SHIFT+1" roles="/Policy/Mis/MedCase/Stac/Ssl/View" params="id" action="/stac_sslList" name="СЛС" title="Показать все случаи лечения в стационаре" guid="ca5196e9-9239-47e3-aec4-9a0336e47144" />
         <msh:sideLink params="id" action="/entityParentList-smo_spo" name="СПО" title="Показать все случаи поликлинического обслуживания" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/MedCase/Spo/View" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-extDisp_card-listByPatient.do?id=${param.id}&short=Short')" name="Доп.дисп." title="Показать все случаи дополнительной диспансеризации" guid="dd2ad6a3-5fb2-4586-a24e-1a0f1b796397" roles="/Policy/Mis/ExtDisp/Card/View" />
@@ -1262,10 +1263,13 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 		}
 		//$('attachedByDepartment').style.visibility = 'hidden' ;
 		//$('attachedByDepartmentLabel').style.visibility = 'hidden' ;
-	//]]></script>
+	</script>
     <!-- При просмотре -->
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
-      <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript">
+          function showAllE2EntriesByPatient() {
+              window.open("entityList-e2_entry.do?id=0&filter=commonnumber:"+$('commonNumber').value);
+          }
 		$('buttonShowAddress').style.display = 'none';
     	showRow('tableNewOmcPolicy',false) ;
     	showRow('tableNewAttachedByDepartment',false) ;
@@ -1277,7 +1281,6 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
         	//alert(!$('attachedByPolicy').checked) ;
         	showRow('rowLpuAreaAddressText', ! $('attachedByPolicy').checked) ;
         	*/
-		//]]>
       </script>
     </msh:ifFormTypeIsView>
     
@@ -1285,12 +1288,10 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0ac15607-1ca6-4aa0-b9f0-ff3b31cb5a46">
         <script type="text/javascript">// <![CDATA[//
             var isTableNewAttachedByDepartment = null ;                                       
-        //]]>
         </script>
         <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/Create" guid="308cce42-ff6f-43a0-a8ae-6e445dfe187a">
         <script type="text/javascript">// <![CDATA[//
            isTableNewAttachedByDepartment = 1 ;                                       
-        //]]>
         </script>
     	</msh:ifInRole>
       <script type="text/javascript">// <![CDATA[//

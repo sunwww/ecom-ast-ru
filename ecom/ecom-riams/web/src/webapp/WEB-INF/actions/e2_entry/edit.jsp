@@ -475,6 +475,11 @@ where cancer.entry_id=${param.id}"/>
                     callback: function (a) {alert(a);}
                 });
             }
+            function showAllEntriesByPatient() {
+                window.open("entityList-e2_entry.do?id=0&filter=commonnumber:"+$('commonNumber').value);
+
+
+            }
                 </script>
 
         </msh:ifFormTypeIsView>
@@ -513,6 +518,7 @@ where cancer.entry_id=${param.id}"/>
                 <msh:sideLink action="/javascript:showDiagnosisAddServiceDialog()" name="Добавить диагноз/услугу" roles="/Policy/E2" />
                 <%--</msh:IfPropertyIsFalse>--%>
                 <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
+                <msh:sideLink action="/javascript:showAllEntriesByPatient()" name="Показать все случаи по пациенту" roles="/Policy/E2" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
