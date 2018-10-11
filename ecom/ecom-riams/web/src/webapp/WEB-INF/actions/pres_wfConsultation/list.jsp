@@ -30,7 +30,7 @@ left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
 left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
-where scg.dtype='WfConsultation' and scg.prescriptionlist_id='${param.id}'"/>
+where scg.dtype='WfConsultation' and scg.canceldate is null and scg.prescriptionlist_id='${param.id}'"/>
 
             <msh:table hideTitle="false" idField="1" name="consultations" action="entityParentView-pres_wfConsultation.do" guid="d0267-9aec-4ee0-b20a-4f26b37">
                 <msh:tableColumn columnName="#" property="sn"/>

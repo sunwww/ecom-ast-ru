@@ -50,6 +50,36 @@
                         <input type="radio" name="typeGroup3" value="3"> plan
                     </td>
                 </msh:row>
+                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                    <td class="label" title="Показать  (typeGroup4)" colspan="1"><label for="typeGroup4Name" id="typeGroup4Label"></label></td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                        <input type="radio" name="typeGroup4" value="1" checked> все
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup4" value="2"> за сегодня
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup4" value="3"> за вчера
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup4" value="4"> за сегодня и вчера
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup4" value="5"> ранее
+                    </td>
+                </msh:row>
+                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                    <td class="label" title="Показать  (typeGroup5)" colspan="1"><label for="typeGroup5Name" id="typeGroup5Label"></label></td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                        <input type="radio" name="typeGroup5" value="1" checked> все
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup5" value="2"> актуальные
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup5" value="3"> отменённые
+                    </td>
+                </msh:row>
                 <msh:row>
                     <td colspan="3">
                         <input type="button" onclick="this.disabled=true;find();" value="Найти" />
@@ -74,14 +104,28 @@
                 if (type3.equals("2")) typeSql.append(" and vtype.code='cito'");
                 if (type3.equals("3")) typeSql.append(" and vtype.code='plan'");
             }
+            String type4 = (String)request.getParameter("typeGroup4");
+            if (type4!=null && !type4.equals("")) {
+                if (type4.equals("2")) typeSql.append(" and scg.createdate=current_date");
+                if (type4.equals("3")) typeSql.append(" and scg.createdate=current_date-1");
+                if (type4.equals("4")) typeSql.append(" and (scg.createdate=current_date or scg.createdate=current_date-1)");
+                if (type4.equals("5")) typeSql.append(" and scg.createdate<current_date-1");
+            }
+            String type5 = (String)request.getParameter("typeGroup5");
+            if (type5!=null && !type5.equals("")) {
+                if (type5.equals("2")) typeSql.append(" and scg.canceldate is null");
+                if (type5.equals("3")) typeSql.append(" and scg.canceldate is not null");
+            }
             request.setAttribute("typeSql",typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
             request.setAttribute("typeGroup3",type3);
+            request.setAttribute("typeGroup4",type4);
+            request.setAttribute("typeGroup5",type5);
         %>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
         <msh:section>
-            <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные
+            <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
                 <ecom:webQuery name="totalName" nameFldSql="totalName_sql" nativeSql="
 select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
@@ -92,9 +136,10 @@ dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' 
      ,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
 , case
     when scg.diary_id is not null then 'background:#90EE90;color:black'
+    else case when scg.canceldate is not null  then 'background:#C0C0C0;color:black'
     else case when scg.transferdate is not null  then 'background:yellow;color:black'
     else case when scg.transferdate is null  then 'background:#CD5C5C;color:black'
-    else '' end end end as f10style
+    else '' end end end end as f10style
 from prescription scg
 left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
@@ -110,6 +155,7 @@ left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
 left join mislpu dep on dep.id=slo.department_id
 where scg.dtype='WfConsultation' ${typeSql}
+order by wf.groupname
 "/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
@@ -138,7 +184,7 @@ where scg.dtype='WfConsultation' ${typeSql}
         %>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
             <msh:section>
-                <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные
+                <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
                     <ecom:webQuery name="totalName" nameFldSql="totalName_sql" nativeSql="
 select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
@@ -149,9 +195,10 @@ dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' 
      ,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
 , case
     when scg.diary_id is not null then 'background:#90EE90;color:black'
+    else case when scg.canceldate is not null  then 'background:#C0C0C0;color:black'
     else case when scg.transferdate is not null  then 'background:yellow;color:black'
     else case when scg.transferdate is null  then 'background:#CD5C5C;color:black'
-    else '' end end end as f10style
+    else '' end end end end as f10style
 from prescription scg
 left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
@@ -174,6 +221,7 @@ left join WorkFunction swf on swf.worker_id=sw.id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 left join SecUser su on su.id=swf.secUser_id
 where su.login='${login}') and (wf.archival is null or wf.archival='0') and scg.dtype='WfConsultation'
+order by wf.groupname
 "/>
                     <form action="javascript:void(0)" method="post" target="_blank"></form>
                 </msh:sectionTitle>
@@ -200,6 +248,8 @@ where su.login='${login}') and (wf.archival is null or wf.archival='0') and scg.
             checkFieldUpdate('typeGroup','${typeGroup}',3) ;
             checkFieldUpdate('typeGroup2','${typeGroup2}',1) ;
             checkFieldUpdate('typeGroup3','${typeGroup3}',1) ;
+            checkFieldUpdate('typeGroup4','${typeGroup4}',4) ;
+            checkFieldUpdate('typeGroup5','${typeGroup5}',1) ;
             function checkFieldUpdate(aField,aValue,aDefault) {
                 eval('var chk =  document.forms[0].'+aField) ;
                 var max = chk.length ;
@@ -217,7 +267,7 @@ where su.login='${login}') and (wf.archival is null or wf.archival='0') and scg.
                 HospitalMedCaseService.setWfConsultingIsTransfered(
                     id, {
                         callback: function (res) {
-                            if (res=="1") location.reload(); else alert("Консультация уже была отмечена, как переданная врачу! Повторно сделать это нельзя.")
+                            if (res=="1") location.reload(); else alert("Консультация либо отменена, либо уже была отмечена, как переданная врачу! Повторно сделать это нельзя.")
                         }
                     }
                 );

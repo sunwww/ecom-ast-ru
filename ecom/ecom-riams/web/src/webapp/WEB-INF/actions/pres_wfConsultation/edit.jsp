@@ -6,6 +6,7 @@
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
+    <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
     <tiles:put name="body" type="string">
         <!--
         - Конcультация специалиста
@@ -15,6 +16,7 @@
             <msh:ifFormTypeIsView formName="pres_wfConsultationForm" guid="e20545-4285-a21c-3bb9b4569efc">
                 <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Конcультация специалиста">
                     <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-pres_wfConsultation" name="Изменить" roles="/Policy/Mis/Prescription/ServicePrescription/Edit" guid="5a1450f5-7629-4458-b5a5-e5566af6a914" />
+                    <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="" action="/javascript:cancelWFPrescription()" name="Отменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
                     <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-pres_wfConsultation" name="Удалить" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" guid="7767f5b6-c131-47f4-b8a0-2604050c450f" />
                      </msh:sideMenu>
                 <msh:sideMenu title="Перейти" guid="67f8ha758-3ad2-4e6f-a791-4839460955" >
@@ -71,5 +73,17 @@
         <ecom:titleTrail mainMenu="StacJournal" beginForm="pres_wfConsultationForm" guid="fb43e71c-1ba9-4e61-8632-a6f4a72b461c" />
     </tiles:put>
     <tiles:put name="javascript" type="string">
+        <msh:ifFormTypeIsView formName="pres_wfConsultationForm">
+            <script type="text/javascript">
+                function cancelWFPrescription() {
+                    var reason = ''+ prompt('Введите причину отмены');
+                    PrescriptionService.cancelWFPrescription($('id').value, reason, {
+                        callback:function (a) {
+                            alert(a);
+                        }
+                    }) ;
+                }
+            </script>
+        </msh:ifFormTypeIsView>
     </tiles:put>
 </tiles:insert>

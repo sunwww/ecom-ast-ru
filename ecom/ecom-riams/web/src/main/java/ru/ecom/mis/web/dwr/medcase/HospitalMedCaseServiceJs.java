@@ -2199,7 +2199,7 @@ public class HospitalMedCaseServiceJs {
 	public String setWfConsultingIsTransfered(int id, HttpServletRequest aRequest) throws NamingException {
 		String res="0";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> l= service.executeNativeSql("select case when transferdate is null then '1' else '0' end from prescription where id="+id) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select case when transferdate is null and canceldate is null then '1' else '0' end from prescription where id="+id) ;
 		if (l.size()>0){
 			if (l.iterator().next().get1().toString().equals("1")) {
 				service.executeUpdateNativeSql("update prescription set transferdate=current_date,transfertime=current_time,transferusername='" +

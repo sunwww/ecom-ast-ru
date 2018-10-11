@@ -89,12 +89,15 @@ function onCreate(aForm, aEntity, aCtx) {
     var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
     bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
     //Milamesher #121 19092018 если есть переданные, но не выполненные консультации в этом сло текущего пользователя (с любой раб. ф-ей), то проставить diary_id
+    //upd Milamesher 11102018 и не отменённые
+    //upd2 и не текущего СЛО, а любого СЛО, у кого СЛС - parent текущего СЛО
+    //upd3 можно и без transferdate
     var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
         "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
         "left join medcase slo on slo.id=pl.medcase_id\n" +
         "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
         "left join vocworkfunction vwf on vwf.id=wf.workfunction_id\n" +
-        "where scg.transferdate is not null and scg.diary_id is null\n" +
+        "where scg.diary_id is null\n" +
         "and vwf.id=ANY(select wf.workfunction_id from WorkFunction wf\n" +
         "left join Worker w on w.id=wf.worker_id\n" +
         "left join Worker sw on sw.person_id=w.person_id\n" +
@@ -102,7 +105,9 @@ function onCreate(aForm, aEntity, aCtx) {
         "left join SecUser su on su.id=swf.secUser_id\n" +
         "where su.login='"+ aCtx.getSessionContext().getCallerPrincipal().toString() +
         "' and (wf.archival is null or wf.archival='0'))" +
-        " and scg.dtype='WfConsultation' and slo.id='"+aForm.getMedCase()+"' order by scg.id").getResultList();
+        " and scg.dtype='WfConsultation' and scg.canceldate is null and slo.id=ANY\n" +
+        "(select id from medcase where dtype='DepartmentMedCase' and parent_id=(select parent_id from medcase where id='"
+        +aForm.getMedCase()+"')) order by scg.id").getResultList();
     if (res.size()>0) {
         if (res.get(0)!=null) {
             var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
