@@ -1,26 +1,11 @@
 package ru.ecom.mis.web.dwr.medcase;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.imageio.IIOException;
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
-import org.jboss.ejb3.dd.Inject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
-import ru.ecom.mis.ejb.service.prescription.IPrescriptionService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.poly.web.dwr.TicketServiceJs;
 import ru.ecom.web.login.LoginInfo;
@@ -28,11 +13,29 @@ import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Сервис по случаю лечения в стационаре
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+
+	public boolean isAbortRequiredByOperation(Long aMedServiceId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String ret = null;
+				try{ret=service.executeNativeSql("select case when isAbortRequired='1' then '1' else '0' end from medservice where id="+aMedServiceId).iterator().next().get1().toString();} catch (Exception e) {}
+		return ret!=null&&ret.equals("1");
+	}
+
 
 	public String getDiagnosisAndModelByVMPMethod(Long aMethodId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;

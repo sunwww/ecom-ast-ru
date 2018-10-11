@@ -1,21 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -28,6 +12,12 @@ import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 @Entity
 @Comment("Хирургическая операция")
@@ -62,7 +52,7 @@ public class SurgicalOperation extends BaseEntity {
 
 	/** Операция */
 	@Comment("Операция")
-	@OneToOne
+	@OneToOne @Deprecated
 	public VocOperation getOperation() {return theOperation;}
 	public void setOperation(VocOperation aOperation) {theOperation = aOperation;}
 

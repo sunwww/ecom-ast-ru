@@ -62,6 +62,11 @@ function onPreCreate(aForm, aCtx) {
 			}
 		}
 	} else {throw "Необходимо указать была анестезия или нет!!!" ;}
+
+	var medService = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService,aForm.medService) ;
+	if (medService.isAbortRequired &&  true==medService.isAbortRequired &&!+aForm.abortion>0) {
+		throw "Для операции "+medService.code+" "+medService.name+" необходимо заполнить тип аборта!";
+	}
 }
 
 
