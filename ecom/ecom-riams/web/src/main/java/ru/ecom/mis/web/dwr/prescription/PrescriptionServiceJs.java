@@ -1515,4 +1515,32 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		return false;
 	}
+	//Milamesher 11102018 отмена назначения на консультацию
+	//плановые - пока не выполнено, экстренные - пока не передано
+	public String cancelWFPrescription(String aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
+		if (aReason == null || aReason.trim().equals("")) {
+			return "Необходимо указать причину аннулирования!";
+		}
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String permSql="select case when t.code='plan' and wf.intakeDate is null or t.code='cito' and wf.transferdate is null then '1' else '0' end\n" +
+				"from prescription wf\n" +
+				"left join vocconsultingtype t on wf.vocconsultingtype_id=t.id\n" +
+				"where cancelDate is null and wf.id="+aPresctiptionId;
+		Collection <WebQueryResult> wrt = service.executeNativeSql(permSql, 1);
+		if (wrt.size()>0 && wrt.iterator().next().get1().equals("1")) {
+			String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+			String canAnnulSql = "update prescription " +
+					"set cancelDate = current_date, " +
+					"canceltime = current_time, " +
+					"cancelReasonText = '" + aReason + "' ," +
+					"cancelusername = '" + username + "' ," +
+					"cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='" + username + "') " +
+					"where id=" + aPresctiptionId;
+			service.executeUpdateNativeSql(canAnnulSql); //Отметили назначение как аннулированное
+			return "Назначение отменено.";
+		}
+		else {
+			return "Невозможно отменить назначение! Уже было отменено или находится в работе. Можно отменять плановые назначения, пока они не выполнены и экстренные назначения, пока они не переданы.";
+		}
+	}
 }
