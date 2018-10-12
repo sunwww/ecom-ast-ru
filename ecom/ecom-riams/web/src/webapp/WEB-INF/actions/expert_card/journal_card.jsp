@@ -1,8 +1,7 @@
-<%@page import="ru.nuzmsh.util.PropertyUtil"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Collection"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.util.PropertyUtil"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -321,8 +320,9 @@ group by ${groupBy}
 order by ${orderBySql}
 "
     	/>
-    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2> 
-    	<table border="1px solid">
+    	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2>
+		<input type='button' onclick="mshSaveTableToExcelById('journalExpertTable')" value='Сохранить в excel'>
+    	<table border="1px solid" id="journalExpertTable">
            <tr>
          		<th rowspan="2">#</th>
          		<th rowspan="2">${nameTitle}</th>
@@ -435,8 +435,8 @@ order by vqec.code
     	<h2>Журнал внутреннего контроля качества оказания медицинской помощи. ${titleInfo}</h2>
     	<h3>Кол-во проведенных экспертиз: ${cntCards_view}</h3>
     	<h3>из них без дефектов: ${cntCards_view_no_def}</h3>
-    	 
-    	<table border="1px solid">
+		<input type='button' onclick="mshSaveTableToExcelById('journalExpertTable2')" value='Сохранить в excel'>
+    	<table border="1px solid" id="journalExpertTable2">
            <tr>
          		<th>Код</th>
          		<th>Наименование дефекта</th>
