@@ -126,7 +126,7 @@
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
         <msh:section>
             <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
-                <ecom:webQuery name="totalName" nameFldSql="totalName_sql" nativeSql="
+                <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
 select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
@@ -185,7 +185,7 @@ order by wf.groupname
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
             <msh:section>
                 <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
-                    <ecom:webQuery name="totalName" nameFldSql="totalName_sql" nativeSql="
+                    <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
 select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
