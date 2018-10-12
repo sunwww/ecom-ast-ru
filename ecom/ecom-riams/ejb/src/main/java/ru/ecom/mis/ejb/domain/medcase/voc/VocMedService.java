@@ -1,14 +1,15 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.Date;
+
 /**
  * Справочник медицинских услуг
- * @author azviagin,stkacheva
+ * @author azviagin,stkacheva,vtsybulin
  *
  */
 @Comment("Справочник медицинских услуг")
@@ -35,6 +36,18 @@ public class VocMedService extends VocBaseEntity{
 	public Boolean getIsOmc() {return theIsOmc;}
 	public void setIsOmc(Boolean aIsOmc) {theIsOmc = aIsOmc;}
 
+	/** Дата начала действия */
+	@Comment("Дата начала действия")
+	public Date getStartDate() {return theStartDate;}
+	public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
+
+
+	/** Дата окончания действия */
+	@Comment("Дата окончания действия")
+	public Date getFinishDate() {return theFinishDate;}
+	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
+
+
 	/** Входит в омс */
 	private Boolean theIsOmc;
 	/** Тип услуги */
@@ -43,4 +56,8 @@ public class VocMedService extends VocBaseEntity{
 	private String theComment;
 	/** Полное название */
 	private String theLongName;
+	/** Дата начала действия */
+	private Date theStartDate ;
+	/** Дата окончания действия */
+	private Date theFinishDate ;
 }
