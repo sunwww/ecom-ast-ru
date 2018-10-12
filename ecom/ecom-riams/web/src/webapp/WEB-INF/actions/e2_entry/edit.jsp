@@ -512,10 +512,10 @@ where cancer.entry_id=${param.id}"/>
                  <%--<msh:IfPropertyIsFalse formName="some_shit" propertyName="doNotSend">--%>
                 <msh:sideLink params="id" action="/entityParentEdit-e2_entry" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-e2_entry" name="Удалить" roles="/Policy/E2/Delete" />
-                <msh:sideLink action="/javascript:makeCheck()" name="Пересчитать случай" roles="/Policy/E2" />
-                <msh:sideLink action="/javascript:makeMPFromRecord()" name="Сделать файл из случая" roles="/Policy/E2" />
-                <msh:sideLink action="/javascript:unionByHospitalMedCase()" name="Объединить случай" roles="/Policy/E2" />
-                <msh:sideLink action="/javascript:showDiagnosisAddServiceDialog()" name="Добавить диагноз/услугу" roles="/Policy/E2" />
+                <msh:sideLink action="/javascript:makeCheck()" name="Пересчитать случай" roles="/Policy/E2/Edit" />
+                <msh:sideLink action="/javascript:makeMPFromRecord()" name="Сделать файл из случая" roles="/Policy/E2/Edit" />
+                <msh:sideLink action="/javascript:unionByHospitalMedCase()" name="Объединить случай" roles="/Policy/E2/Edit" />
+                <msh:sideLink action="/javascript:showDiagnosisAddServiceDialog()" name="Добавить диагноз/услугу" roles="/Policy/E2/Edit" />
                 <%--</msh:IfPropertyIsFalse>--%>
                 <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:showAllEntriesByPatient()" name="Показать все случаи по пациенту" roles="/Policy/E2" />

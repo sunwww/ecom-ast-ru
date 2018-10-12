@@ -25,7 +25,7 @@
         String[] fields = filter.split(";");
         for (String field: fields) {
             String[] data = field.split(":");
-            String fldName = data[0], fldValue = data[1];
+            String fldName = data[0], fldValue = data.length>1?data[1]:"";
             if (fldValue!=null&&!fldValue.trim().equals("")) {
                 if (fldName.equals("lastname")) {
                     String[] fio = fldValue.split(" ");
