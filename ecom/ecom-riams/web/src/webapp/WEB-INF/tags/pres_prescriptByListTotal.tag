@@ -207,7 +207,7 @@ left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on sls.id=slo.parent_id
+left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
 where ${field} and scg.canceldate is null and scg.dtype='WfConsultation'"/>
 	<msh:sectionTitle>Список консультаций</msh:sectionTitle>
 	<msh:sectionContent>
