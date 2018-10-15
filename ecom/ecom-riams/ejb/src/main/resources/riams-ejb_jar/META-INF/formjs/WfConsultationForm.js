@@ -11,6 +11,20 @@ function onPreSave(aForm,aEntity, aCtx) {
     }
 }
 function onPreCreate(aForm, aCtx) {
+    //Только одно не выполненное, активное направление к одному специалисту может быть
+    if (aForm.getPrescriptCabinet()!=null && aForm.getPrescriptionList()!=null) {
+        var res = aCtx.manager.createNativeQuery("select skg.id  from prescription skg\n" +
+            "left join prescriptionlist pl on pl.id=" + aForm.getPrescriptionList() + "\n" +
+            "left join medcase slo on slo.id=pl.medcase_id\n" +
+            "left join medcase sls on sls.id=slo.parent_id\n" +
+            "where skg.prescriptcabinet_id=" + aForm.getPrescriptCabinet() + " and skg.prescriptionlist_id=\n" +
+            "ANY(select id from prescriptionlist where medcase_id=ANY(select id from medcase where parent_id=sls.id))\n" +
+            "and skg.intakedate is null and skg.canceldate is null limit 1").getResultList();
+        if (res.size()>0) {
+            throw "Уже есть активное, не выполненное направление к этому специалисту! Вы можете изменить его тип или отменить его: " +
+            " <a href='entityParentView-pres_wfConsultation.do?id="+res.get(0)+"'>Направление</a><br/>";
+        }
+    }
     var date = new java.util.Date();
     aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
     aForm.setCreateTime(new java.sql.Time (date.getTime())) ;
