@@ -230,7 +230,7 @@ return "good";
             log.info("Ищем данные за месяц"+finishDate+" > "+calendar.getTimeInMillis());
             if (aServiceStream==null) {aServiceStream="OBLIGATORYINSURANCE";}
             sql.append("insert into aggregatevolumesfinanceplan (type, vidSluch_id, month, year,medhelpprofile, department, bedsubtype, ksg, plancount, plancost, factcount, factcost, vmp, vmpName)( ");
-            sql.append("select '"+aType+"',e.vidSluch_id, cast(date_part('month',plan.startdate) as int) as d1, cast (date_part('year',plan.startdate) as int) as d2, plan.profile_id, plan.department_id" +
+            sql.append("select '"+aType+"',plan.vidSluch_id, cast(date_part('month',plan.startdate) as int) as d1, cast (date_part('year',plan.startdate) as int) as d2, plan.profile_id, plan.department_id" +
                     ", plan.bedsubtype_id, plan.ksg_id as f5_ksg" +
                     ", plan.count as planCount, plan.cost as planCost " +
                     " ,count(case when bill.status_id=3 then e.id else null end)  as factCount" +
@@ -253,16 +253,15 @@ return "good";
                     " where to_char(plan.startdate,'mm.yyyy') = to_char(plan.finishdate,'mm.yyyy')" +
                     " and plan.dtype='"+aType+"'" +
                     " and to_char(plan.startdate,'yyyy-MM')='"+finishDate+"' " +
-                    " group by e.vidSluch_id, cast(date_part('month',plan.startdate) as int),cast (date_part('year',plan.startdate) as int), plan.profile_id, plan.department_id, plan.bedsubtype_id, plan.ksg_id, plan.count, plan.cost, vmp.code, vmp.name" +
+                    " group by plan.vidSluch_id, cast(date_part('month',plan.startdate) as int),cast (date_part('year',plan.startdate) as int), plan.profile_id, plan.department_id, plan.bedsubtype_id, plan.ksg_id, plan.count, plan.cost, vmp.code, vmp.name" +
 
                     " union select '"+aType+"', e.vidSluch_id, cast(date_part('month',e.finishDate)as int) , cast(date_part('year',e.finishDate)as int), e.medhelpprofile_id, cast('0'||e.departmentid as int), cast('0'||e.bedsubtype as int), e.ksg_id,0,0, count(e.id), sum(e.cost)" +
                     " ,vmp.code as f10_vmpCode "  +
                     " ,vmp.name as f11_vmpName " +
                     " from e2entry e" +
                     " left join e2bill bill on bill.id=e.bill_id" +
-                    " left join financeplan plan on e.medhelpprofile_id=plan.profile_id and plan.vidsluch_id=e.vidsluch_id" +
+                    " left join financeplan plan on e.medhelpprofile_id=plan.profile_id and plan.vidsluch_id=e.vidsluch_id and (plan.department_id is null or plan.department_id=e.departmentid)" +
                     " left join vocmethodhighcare vmp on vmp.id=plan.method_id" +
-                    " and e.departmentid=plan.department_id" +
                     sqlAdd.toString() +
                     " where to_char(e.finishdate,'yyyy-MM') ='" + finishDate+"'" +
                     " and e.entrytype " +entryType+ " and (e.isDeleted is null or e.isDeleted='0')" +
