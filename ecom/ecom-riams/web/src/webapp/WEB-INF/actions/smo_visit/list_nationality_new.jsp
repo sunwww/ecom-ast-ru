@@ -7,7 +7,6 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -138,7 +137,7 @@ ${groupSql}"
 /> 
 
     <msh:sectionContent>
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_swod" action="journal_nationality_new.do?beginDate=${beginDate}&finishDate=${finishDate}&typeView=1&typeGroup=${typeGroup}&typePatient=${typePatient}&typeEmergency=${typeEmergency}&typeDate=${typeDate}" idField="1" noDataMessage="Не найдено">
 
             <msh:tableNotEmpty>
