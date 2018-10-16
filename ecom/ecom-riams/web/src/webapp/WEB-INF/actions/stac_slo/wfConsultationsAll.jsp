@@ -126,8 +126,8 @@
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
         <msh:section>
             <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
-                <ecom:webQuery name="totalName" nameFldSql="totalName_sql" nativeSql="
-select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+                <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
+select sls.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
@@ -148,6 +148,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
+left join medcase sls on slo.parent_id=sls.id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
@@ -160,7 +161,7 @@ order by wf.groupname
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityView-pres_wfConsultation.do" idField="1" styleRow="13">
+                <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityParentView-stac_ssl.do" idField="1" styleRow="13">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableButton property="1" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
                     <msh:tableColumn columnName="Тип" property="2"/>
@@ -185,8 +186,8 @@ order by wf.groupname
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
             <msh:section>
                 <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
-                    <ecom:webQuery name="totalName" nameFldSql="totalName_sql" nativeSql="
-select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+                    <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
+select sls.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
@@ -207,6 +208,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
+left join medcase sls on slo.parent_id=sls.id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
@@ -226,7 +228,7 @@ order by wf.groupname
                     <form action="javascript:void(0)" method="post" target="_blank"></form>
                 </msh:sectionTitle>
                 <msh:sectionContent>
-                    <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityView-pres_wfConsultation.do" idField="1" styleRow="13">
+                    <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityParentView-stac_ssl.do" idField="1" styleRow="13">
                         <msh:tableColumn columnName="#" property="sn"/>
                        <msh:tableColumn columnName="Тип" property="2"/>
                         <msh:tableColumn columnName="Специалист" property="3"/>
