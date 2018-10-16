@@ -217,6 +217,17 @@ function check(aForm, aCtx) {
             if (dtype == 'HospitalMedCase' && (aForm.journalText == null || aForm.journalText.equals(""))) {
                 throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -";
             }
+            //Milamesher 16102018 - создание дневника специалиста приёмного отделения по времени - только ДО создания СЛО
+            if (dtype == 'HospitalMedCase' && aForm.getDateRegistration() != null && aForm.getDateRegistration() != '') {
+                var list = aCtx.manager.createNativeQuery("select case when dmc.id is null then '0' else case when (dmc.dateStart>to_date('"
+                    +aForm.dateRegistration+"','dd.mm.yyyy') or dmc.dateStart=to_date('"+aForm.dateRegistration+"','dd.mm.yyyy') and dmc.entranceTime>'"
+                    +aForm.timeRegistration+"' ) then '0' else '1' end end\n" +
+                    "from medcase hmc \n" +
+                    "left join medcase dmc on hmc.id=dmc.parent_id\n" +
+                    "where hmc.id="+aForm.medCase+" order by dmc.id limit 1 ").getResultList();
+                if (!list.isEmpty())
+                    if (list.get(0)=='1') throw "Нельзя создавать дневник специалиста приёмного отделения с датой регистрации больше начала СЛО! Нужно изменить дату и время регистрации либо создать дневник в случае лечения в отделении.";
+            }
             var isCheck = null;
 
             var param1 = new java.util.HashMap();
