@@ -105,14 +105,14 @@ function onCreate(aForm, aEntity, aCtx) {
         "left join SecUser su on su.id=swf.secUser_id\n" +
         "where su.login='"+ aCtx.getSessionContext().getCallerPrincipal().toString() +
         "' and (wf.archival is null or wf.archival='0'))" +
-        " and scg.dtype='WfConsultation' and scg.canceldate is null and slo.id=ANY\n" +
+        " and scg.dtype='WfConsultation' and scg.canceldate is null and (slo.id=ANY\n" +
         "(select id from medcase where dtype='DepartmentMedCase' and parent_id=(select parent_id from medcase where id='"
-        +aForm.getMedCase()+"')) order by scg.id").getResultList();
+        +aForm.getMedCase()+"')) or slo.id="+aForm.getMedCase()+")  order by scg.id").getResultList();
     if (res.size()>0) {
         if (res.get(0)!=null) {
             var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
             presc.setDiary(aEntity);
-            var currentDate = new java.util.Date();
+            presc.setIntakeUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
             presc.setIntakeDate(aEntity.dateRegistration);
             presc.setIntakeTime(aEntity.timeRegistration);
             presc.setIntakeSpecial(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction"));
@@ -223,7 +223,7 @@ function check(aForm, aCtx) {
                     +aForm.dateRegistration+"','dd.mm.yyyy') or dmc.dateStart=to_date('"+aForm.dateRegistration+"','dd.mm.yyyy') and dmc.entranceTime>'"
                     +aForm.timeRegistration+"' ) then '0' else '1' end end\n" +
                     "from medcase hmc \n" +
-                    "left join medcase dmc on hmc.id=dmc.parent_id\n" +
+                    "left join medcase dmc on hmc.id=dmc.parent_id and dmc.dtype='DepartmentMedCase'\n" +
                     "where hmc.id="+aForm.medCase+" order by dmc.id limit 1 ").getResultList();
                 if (!list.isEmpty())
                     if (list.get(0)=='1') throw "Нельзя создавать дневник специалиста приёмного отделения с датой регистрации больше начала СЛО! Нужно изменить дату и время регистрации либо создать дневник в случае лечения в отделении.";
