@@ -1,5 +1,3 @@
-<%@page import="org.apache.ecs.xhtml.param"%>
-<%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -20,8 +18,9 @@
   <%
 	String typeDate =ActionUtil.updateParameter("Report_nationality","typeDate","1", request) ;
 	String typePatient =ActionUtil.updateParameter("Report_nationality","typePatient","1", request) ;
-	String typeGroup =ActionUtil.updateParameter("Report_nationality","typeGroup","2", request) ;
-	String typeView =ActionUtil.updateParameter("Report_nationality","typeView","3", request) ;
+	//String typeGroup =ActionUtil.updateParameter("Report_nationality","typeGroup","2", request) ;
+	String typeDepartment =ActionUtil.updateParameter("Report_nationality","typeDepartment","2", request) ;
+	//String typeView =ActionUtil.updateParameter("Report_nationality","typeView","3", request) ;
   %>
     <msh:form action="/journal_nationality_new.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
     <input type="hidden" name="m" id="m" value="categoryForeignNationals"/>
@@ -50,6 +49,16 @@
         	<input type="radio" name="typePatient" value="2">  иногородние
         </td>
       </msh:row>
+        <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+            <td class="label" title="Поиск по пациентам (typeDepartment)" colspan="1"><label for="typePatientName" id="typeDepartmentLabel">Группировать по отделению:</label></td>
+            <td onclick="this.childNodes[1].checked='checked';">
+                <input type="radio" name="typeDepartment" value="1">  да
+            </td>
+            <td onclick="this.childNodes[1].checked='checked';">
+                <input type="radio" name="typeDepartment" value="2">  нет
+            </td>
+        </msh:row>
+        <msh:autoComplete property="serviceStream" vocName="vocServiceStream" label="Поток обслуживания" fieldColSpan="5"/>
    
       <msh:row>
         	<msh:textField property="beginDate"  label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
@@ -67,6 +76,7 @@
 
 	String date = (String)request.getParameter("beginDate");
 	String dateEnd = (String)request.getParameter("finishDate");
+	String serviceStream = request.getParameter("serviceStream");
 
 	if (date!=null && !date.equals("")){
 	    
@@ -77,21 +87,22 @@
 	  
 	 request.setAttribute("beginDate",date);
 	 request.setAttribute("finishDate",dateEnd);
-
+String groupSql="",change="",address="",names="", selectDepSql=",cast('' as varchar) as f16", whereSql="";
+if (serviceStream!=null&& !serviceStream.trim().equals("") && !serviceStream.equals("0")) {
+    whereSql=" and m.serviceStream_id="+serviceStream;
+}
     if (typePatient.equals("1")) {
     	
-    	request.setAttribute("groupSql", " and (oo.id is not null and oo.voc_code!='643') group by oo.name order by oo.name");
-		request.setAttribute("change", "oo.name as vnname");
-		request.setAttribute("address", "");
-    	request.setAttribute("names", "Страна, где зарегистрирован гражданин");
+    	groupSql= " and (oo.id is not null and oo.voc_code!='643') group by ##GROUP oo.name order by oo.name";
+		change= "oo.name as vnname";
+		address= "";
+    	names= "Страна, где зарегистрирован гражданин";
     	
 	} else if (typePatient.equals("2")) {
-	
-
-	    request.setAttribute("groupSql", " and ar.kladr not like '30%' and (oo.id is null or oo.voc_code='643') group by ar.name order by ar.name");
-		request.setAttribute("change", "ar.name as vnname");
-		request.setAttribute("address", " left join address2 a on a.addressid=p.address_addressid left join Address2 ar on ar.addressid=a.region_addressid");
-		request.setAttribute("names", "Cубъект РФ, где зарегистрирован гражданин");
+	    groupSql= " and ar.kladr not like '30%' and (oo.id is null or oo.voc_code='643') group by ##GROUP ar.name order by ar.name";
+		change= "ar.name as vnname";
+		address= " left join address2 a on a.addressid=p.address_addressid left join Address2 ar on ar.addressid=a.region_addressid";
+		names= "Cубъект РФ, где зарегистрирован гражданин";
 
 	}
     if (typeDate.equals("1")) {
@@ -99,6 +110,20 @@
     } else {
     	request.setAttribute("dateFld", "dateFinish") ;
     }
+
+    if (typeDepartment.equals("1")) { //группировка по отделению
+        address+=" left join mislpu dep on dep.id=smo.department_id";
+        selectDepSql=",coalesce(dep.name,'Поликлиника') as f_16 ";
+        groupSql=groupSql.replace("##GROUP","dep.name, ");
+    }
+        groupSql=groupSql.replace("##GROUP","");
+        request.setAttribute("groupSql",groupSql);
+        request.setAttribute("change",change);
+        request.setAttribute("address",address);
+        request.setAttribute("names",names);
+        request.setAttribute("selectDepSql",selectDepSql);
+        request.setAttribute("whereSql",whereSql);
+
     if (date!=null && dateEnd!=null) {
     	%>
     
@@ -117,10 +142,10 @@ select ${change}
 ,count(distinct case when m.dtype='HospitalMedCase' and vss.code='OBLIGATORYINSURANCE' and vbs.code='2'  then m.id else null end) as daystatOMC
 ,count(distinct case when m.dtype='HospitalMedCase' and vss.code='BUDGET' and vbs.code='2' then m.id else null end) as daystatBudget
 ,count(distinct case when m.dtype='HospitalMedCase' and (vss.code='CHARGED' or vss.code='PRIVATEINSURANCE' or vss.code='DOGOVOR') and vbs.code='2' then  m.id else null end) as daystatPatient
-,0,0
+,0,0 ${selectDepSql}
 from medcase m
-left join medcase smo on smo.parent_id = m.id  
-left join VocServiceStream vss on vss.id=m.serviceStream_id 
+left join medcase smo on smo.parent_id = m.id
+left join VocServiceStream vss on vss.id=m.serviceStream_id
 left join Patient p on p.id=m.patient_id
 ${address}
 left join Omc_Oksm oo on oo.id=p.nationality_id 
@@ -132,7 +157,7 @@ where m.dateStart between to_date('${beginDate}','dd.mm.yyyy') and to_date('${fi
 AND case when m.dtype = 'HospitalMedCase' then case when m.deniedHospitalizating_id is not null then '0' else '1' end else '1' end = '1'
 and (smo.dtype in ('Visit', 'ShortMedCase') or smo.dtype='DepartmentMedCase' and smo.transferDate is null)
 and m.dtype in ('HospitalMedCase', 'PolyclinicMedCase')
-and vss.code in ('OBLIGATORYINSURANCE', 'BUDGET', 'CHARGED', 'PRIVATEINSURANCE','DOGOVOR')
+and vss.code in ('OBLIGATORYINSURANCE', 'BUDGET', 'CHARGED', 'PRIVATEINSURANCE','DOGOVOR') ${whereSql}
 ${groupSql}"
 /> 
 
@@ -142,7 +167,7 @@ ${groupSql}"
 
             <msh:tableNotEmpty>
               <tr>
-                <th colspan="2" rowspan="2" />
+                <th colspan="3" rowspan="2" />
                 <th colspan="6" class="rightBold">Количество пациентов, получивших медицинскую помощь в амбулаторных условиях</th>
                 <th colspan="3" rowspan="2" class="rightBold">Количество пациентов, получивших медицинскую помощь в стационарных условиях</th>
                 <th colspan="3" rowspan="2" class="rightBold">Количество пациентов, получивших медицинскую помощь в условиях дневного стационара</th>
@@ -155,6 +180,7 @@ ${groupSql}"
             </msh:tableNotEmpty>            
             <msh:tableColumn columnName="#" property="sn"/>
             <msh:tableColumn columnName="${names}" property="1"/>            
+            <msh:tableColumn columnName="Отделение" property="16"/>
             <msh:tableColumn columnName="за счет ОМС" property="2" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет бюджета" property="3" isCalcAmount="true"/>
             <msh:tableColumn columnName="за счет личных средств граждан, договору и ДМС" property="4" isCalcAmount="true"/>
@@ -184,6 +210,7 @@ ${groupSql}"
   	
     checkFieldUpdate('typePatient','${typePatient}',1) ;
     checkFieldUpdate('typeDate','${typeDate}',1) ;
+    checkFieldUpdate('typeDepartment','${typeDepartment}',2) ;
 
   	function checkFieldUpdate(aField,aValue,aDefault) {
   		aValue=+aValue ;
