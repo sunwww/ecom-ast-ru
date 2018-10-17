@@ -140,6 +140,7 @@ dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' 
     else case when scg.transferdate is not null  then 'background:yellow;color:black'
     else case when scg.transferdate is null  then 'background:#CD5C5C;color:black'
     else '' end end end end as f10style
+    ,scg.id as scgid
 from prescription scg
 left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
@@ -148,7 +149,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on slo.parent_id=sls.id
+left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
@@ -163,7 +164,7 @@ order by wf.groupname
             <msh:sectionContent>
                 <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityParentView-stac_ssl.do" idField="1" styleRow="13">
                     <msh:tableColumn columnName="#" property="sn"/>
-                    <msh:tableButton property="1" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
+                    <msh:tableButton property="14" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
                     <msh:tableColumn columnName="Тип" property="2"/>
                     <msh:tableColumn columnName="Специалист" property="3"/>
                     <msh:tableColumn columnName="Пациент" property="4"/>
@@ -208,7 +209,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on slo.parent_id=sls.id
+left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
