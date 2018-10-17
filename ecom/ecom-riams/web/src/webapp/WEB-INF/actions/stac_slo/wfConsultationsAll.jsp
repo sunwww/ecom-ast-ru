@@ -149,7 +149,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on slo.parent_id=sls.id
+left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
@@ -209,7 +209,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on slo.parent_id=sls.id
+left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
