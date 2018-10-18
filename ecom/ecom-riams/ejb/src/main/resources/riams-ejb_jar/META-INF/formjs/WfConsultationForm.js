@@ -106,7 +106,8 @@ function onCreate(aForm,aEntity, aCtx) {
                         "left join medcase slo on slo.id=pl.medcase_id\n" +
                         "left join patient pat on slo.patient_id=pat.id\n" +
                         "left join mislpu dep on dep.id=slo.department_id\n" +
-                        "where gwf.id=" + aEntity.prescriptCabinet.id + " and (wf.archival is null or wf.archival='0') \n" +
+                        "where wf.group_id is not null and gwf.id=" + aEntity.prescriptCabinet.id +
+                        " and (wf.archival is null or wf.archival='0') \n" +
                         "and su.login is not null order by su.login \n").getResultList();
                     for (var i = 0; i < list.size(); i++) {
                         var msg = list.get(i)[2];
