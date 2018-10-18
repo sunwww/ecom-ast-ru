@@ -127,7 +127,7 @@
         <msh:section>
             <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
                 <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select sls.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+select case when sls.id is not null then sls.id else slo.id end as slsid,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
@@ -149,7 +149,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
+left join medcase sls on sls.id=slo.parent_id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
@@ -188,7 +188,7 @@ order by wf.groupname
             <msh:section>
                 <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
                     <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select sls.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+select case when sls.id is not null then sls.id else slo.id end as slsid,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
@@ -209,7 +209,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
+left join medcase sls on sls.id=slo.parent_id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
