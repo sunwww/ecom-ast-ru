@@ -65,14 +65,14 @@ public class ContractServiceBean implements IContractService {
 
 					sum = new BigDecimal(r[5].toString());
 					tax = new BigDecimal(r[7]!=null?r[7].toString():"0.00");
-					totalSum.add(sum);
-					taxSum.add(tax);
+					totalSum=totalSum.add(sum);
+					taxSum=taxSum.add(tax);
 					JSONObject record = new JSONObject();
 					record.put("code", r[1]);
 					record.put("name", r[2]);
 					record.put("count", r[3]);
 					record.put("price", r[4].toString());
-					record.put("sum", ""+sum.setScale(2,RoundingMode.HALF_UP));
+					record.put("sum", sum.setScale(2,RoundingMode.HALF_UP).toString());
 					//	record.put("price", 0);
 					//	record.put("sum", 0);
 					if (r[6]!=null&&!(""+r[6]).equals("")) {
@@ -84,13 +84,11 @@ public class ContractServiceBean implements IContractService {
 
 				root.put("isTerminalPayment", isTerminalPayment);
 				if (isRefund) {
-					root.put("totalRefundSum", ""+totalSum.setScale(2,RoundingMode.HALF_UP));
+					root.put("totalRefundSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString());
 				} else {
 					root.put("pos", arr) ;
-					root.put("totalPaymentSum", ""+totalSum.setScale(2,RoundingMode.HALF_UP)) ;
-					if (taxSum.compareTo(new BigDecimal(0))==1) {
-						root.put("totalTaxSum", ""+ taxSum.setScale(2, RoundingMode.HALF_UP).toString()+"") ;
-					}
+					root.put("totalPaymentSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString()) ;
+					root.put("totalTaxSum", taxSum.setScale(2, RoundingMode.HALF_UP).toString()) ;
 				}
 				//root.put("isTerminalPayment", isTerminalPayment);
 				root.put("FIO", aKassir);
