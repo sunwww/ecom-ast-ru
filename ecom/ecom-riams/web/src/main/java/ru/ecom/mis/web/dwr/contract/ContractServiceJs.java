@@ -1,35 +1,28 @@
 package ru.ecom.mis.web.dwr.contract;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
-import java.math.RoundingMode; 
-import java.net.URL; 
-import java.util.Collection;
-import java.util.List;
-
-import javax.naming.NamingException;
-import java.net.HttpURLConnection;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
-import org.apache.ecs.xhtml.a;
 import org.apache.log4j.Logger;
-import org.json.JSONArray; 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
-
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 
 
 public class ContractServiceJs {
@@ -256,76 +249,7 @@ private String getOperatorInfoByUsername(HttpServletRequest aRequest) throws Nam
 	//Не должно нигде использоваться, убираем
 	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, HttpServletRequest aRequest) {
 		log.error("Вызов makeKKMPaymentOrRefund там, где его быть не должно!");
-		if (1==1) {return "Вызов makeKKMPaymentOrRefund там, где его быть не должно!";}
-	try {		
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		
-		String discontSql = "cams.cost";
-		if (aDiscont!=null&&!aDiscont.equals("")) {
-		//	log.info("=== Send KKM, discont = "+aDiscont);
-			discontSql = "round(cams.cost*(100-"+aDiscont+")/100,2)";
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append("select pp.id, pp.code as f2_code, pp.name as f3_name, cams.countmedservice as f4_count, cast("+discontSql+" as varchar) as f5_cost, cast("+discontSql+"*cams.countmedservice as varchar) as f6_sum")
-			.append(",case when pp.isVat='1' then 'Ставка налога НДС '||coalesce(vv.taxrate,0) ||'%' end as f7_taxName") 
-			.append(",case when pp.isVat='1' then cast(round("+discontSql+"*cams.countmedservice*vv.taxrate/100,2) as varchar) end as f8_taxSum")
-			.append(" from contractaccount  ca")
-			.append(" left join contractaccountmedservice cams on cams.account_id=ca.id")
-			.append(" left join pricemedservice pms on pms.id=cams.medservice_id")
-			.append(" left join priceposition pp on pp.id=pms.priceposition_id")
-			.append(" left join vocvat vv on vv.id=pp.tax_id")
-			.append(" where ca.id=").append(aAccountId);
-		List<Object[]> l = service.executeNativeSqlGetObj(sb.toString());
-		//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
-		if (!l.isEmpty()) {
-			String kassir = getOperatorInfoByUsername(aRequest);
-		//	System.out.println("not empty");
-			Double totalSum = 0.00;
-			Double taxSum = 0.00;
-			JSONObject root = new JSONObject();
-			root.put("function", isRefund?"makeRefund":"makePayment"); 
-			JSONArray arr = new JSONArray();
-			for (Object[] r: l) {
-				
-				Double sum = Double.valueOf(r[5].toString());
-				Double tax = Double.valueOf(r[7]!=null?r[7].toString():"0.00");
-				totalSum+=sum;
-				taxSum+=tax;
-				JSONObject record = new JSONObject();
-				record.put("code", r[1]);
-				record.put("name", r[2]);
-				record.put("count", r[3]);
-				record.put("price", r[4].toString());
-				record.put("sum", r[5].toString());
-			//	record.put("price", 0);
-			//	record.put("sum", 0);
-				if (r[6]!=null&&!(""+r[6]).equals("")) {
-					record.put("taxName", "");
-					record.put("taxSum", r[7]!=null?r[7].toString():"");
-				}
-				arr.put(record);
-			}
-			root.put("isTerminalPayment", isTerminalPayment);
-			if (isRefund) {
-				root.put("totalRefundSum", totalSum) ;
-			} else {
-				root.put("pos", arr) ;
-				root.put("totalPaymentSum", ""+totalSum+"") ;
-				if (taxSum>0) {
-					root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_EVEN).toString()+"") ;
-				}
-			}
-			root.put("isTerminalPayment", isTerminalPayment);
-			root.put("FIO", kassir);
-			makeHttpPostRequest(root.toString(), aRequest);
-			return "Чек отправлен на печать";
-		} else {
-			return "Произошла ошибка, обратитесь к программистам";
-		}
-	} catch (Exception e) {
-		e.printStackTrace();
-		return e.getMessage();
-	}
+		return "Вызов makeKKMPaymentOrRefund там, где его быть не должно!";
 }
 	/**
 	 * Проверяем, нужно ли гарантийное письмо для выбранного потока обслуживания. Если нужно - находим. 
