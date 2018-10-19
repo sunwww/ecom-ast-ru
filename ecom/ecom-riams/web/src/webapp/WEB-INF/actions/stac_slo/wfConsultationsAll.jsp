@@ -14,6 +14,9 @@
     <tiles:put name="body" type="string">
         <msh:form action="/wfConsultationsAll.do" defaultField="dateBegin" disableFormDataConfirm="true" method="POST">
             <msh:panel>
+                <msh:row>
+                    <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
+                </msh:row>
                 <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                     <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Показать:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
@@ -116,12 +119,15 @@
                 if (type5.equals("2")) typeSql.append(" and scg.canceldate is null");
                 if (type5.equals("3")) typeSql.append(" and scg.canceldate is not null");
             }
+            String department = request.getParameter("department") ;
+            if (department!=null && !department.equals(""))  typeSql.append(" and dep.id="+department);
             request.setAttribute("typeSql",typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
             request.setAttribute("typeGroup3",type3);
             request.setAttribute("typeGroup4",type4);
             request.setAttribute("typeGroup5",type5);
+            request.setAttribute("department",department);
         %>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
         <msh:section>
