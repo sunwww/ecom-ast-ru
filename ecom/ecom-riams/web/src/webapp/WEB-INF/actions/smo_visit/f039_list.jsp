@@ -1,11 +1,9 @@
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@page import="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"%>
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 
     <tiles:put name='title' type='string'>
@@ -176,7 +174,7 @@ ${queryTextBegin}
 
 ${queryTextEnd}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
@@ -253,7 +251,7 @@ ${queryTextBegin}
 
 ${queryTextEnd}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
@@ -331,7 +329,7 @@ ${queryTextBegin}
 
 ${queryTextEnd}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
@@ -408,7 +406,7 @@ ${queryTextBegin}
 
 ${queryTextEnd}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
@@ -486,7 +484,7 @@ ${queryTextEnd}
 	then 1 else null end) as cntAll61
 ${queryTextEnd}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
@@ -556,7 +554,7 @@ ${queryTextBegin}
 
 ${queryTextEnd}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" /> 
-        <msh:table
+        <msh:table printToExcelButton="Сохранить в excel"
          name="journal_ticket" action="entityView-poly_ticket.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="${groupByTitle}" property="2"/>            
             <msh:tableColumn isCalcAmount="true" columnName="Кол-во посещ" property="3"/>
