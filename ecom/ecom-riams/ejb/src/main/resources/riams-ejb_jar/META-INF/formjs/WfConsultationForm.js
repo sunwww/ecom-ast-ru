@@ -37,8 +37,8 @@ function onCreate(aForm,aEntity, aCtx) {
     //если в приёмнике сделана консультация, то в отделении назначенные заявки надо выполнять опять, автоматом не будет
     //если в СЛО, то смотрим все СЛО этого СЛС
     var t=false;
-    if (aEntity.prescriptionList!=null) {
-        var res = aCtx.manager.createNativeQuery("select d.id,d.dateregistration,d.timeregistration from diary d\n" +
+    if (aEntity.prescriptionList!=null && aEntity.prescriptCabinet!=null) {
+        var res = aCtx.manager.createNativeQuery("select d.id,d.dateregistration,d.timeregistration,d.specialist_id as spec,d.username as user from diary d\n" +
             "left join workfunction wf on wf.id=d.specialist_id\n" +
             "left join vocworkfunction vwf on vwf.id=wf.workfunction_id\n" +
             "left join medcase mc on d.medcase_id=mc.id \n" +
@@ -48,21 +48,16 @@ function onCreate(aForm,aEntity, aCtx) {
             "else case when mc.dtype='DepartmentMedCase' then mc.id=pl.medcase_id \n" +
             "or mc.id=ANY(select id from medcase where dtype='DepartmentMedCase'\n" +
             "and parent_id=(select parent_id from medcase where id=pl.medcase_id)) end end \n" +
-            "and pl.id=" + aEntity.prescriptionList.id + " and vwf.id=ANY(select wf.workfunction_id from WorkFunction wf\n" +
-            "left join Worker w on w.id=wf.worker_id\n" +
-            "left join Worker sw on sw.person_id=w.person_id\n" +
-            "left join WorkFunction swf on swf.worker_id=sw.id\n" +
-            "left join SecUser su on su.id=swf.secUser_id\n" +
-            "where su.login='"+aCtx.getSessionContext().getCallerPrincipal().toString()+
-            "' and (wf.archival is null or wf.archival='0'))\n" +
+            "and pl.id=" + aEntity.prescriptionList.id + " and wf.group_id="+aEntity.prescriptCabinet.id+
+            " and (wf.archival is null or wf.archival='0')\n" +
             "and (select count(id) from prescription where diary_id=d.id)=0").getResultList();
         if (res.size() > 0) {
             if (res.get(0) !=null && res.get(0) != "") {
                 aEntity.setDiary(aCtx.manager.find(Packages.ru.ecom.diary.ejb.domain.Diary, java.lang.Long.valueOf(res.get(0)[0])));
-                aEntity.setIntakeUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+                aEntity.setIntakeUsername(res.get(0)[4]);
                 aEntity.setIntakeDate(res.get(0)[1]);
                 aEntity.setIntakeTime(res.get(0)[2]);
-                aEntity.setIntakeSpecial(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction"));
+                aEntity.setIntakeSpecial(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, java.lang.Long.valueOf(res.get(0)[3])));
                 aCtx.manager.persist(aEntity);
                 t=true;
             }
@@ -106,7 +101,7 @@ function onCreate(aForm,aEntity, aCtx) {
                         "left join medcase slo on slo.id=pl.medcase_id\n" +
                         "left join patient pat on slo.patient_id=pat.id\n" +
                         "left join mislpu dep on dep.id=slo.department_id\n" +
-                        "where wf.group_id is not null and gwf.id=" + aEntity.prescriptCabinet.id +
+                        "where wf.group_id  =gwf.id and gwf.id=" + aEntity.prescriptCabinet.id +
                         " and (wf.archival is null or wf.archival='0') \n" +
                         "and su.login is not null order by su.login \n").getResultList();
                     for (var i = 0; i < list.size(); i++) {

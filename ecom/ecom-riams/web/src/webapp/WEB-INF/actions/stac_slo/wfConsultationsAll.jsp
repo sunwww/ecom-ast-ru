@@ -163,7 +163,7 @@ left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
 left join mislpu dep on dep.id=slo.department_id
 where scg.dtype='WfConsultation' ${typeSql}
-order by wf.groupname
+order by wf.groupname,scg.createdate desc,dep.id
 "/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
