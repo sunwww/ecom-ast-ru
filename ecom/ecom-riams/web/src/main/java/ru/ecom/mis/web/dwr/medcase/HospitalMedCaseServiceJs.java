@@ -2209,4 +2209,22 @@ public class HospitalMedCaseServiceJs {
 		}
 		return res;
 	}
+	//Milamesher #122 ДМС ли?
+	public String getIfPrivateInsurance(Long id, Boolean ifMc, HttpServletRequest aRequest) throws NamingException {
+		String res="0";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql=(ifMc)? "select case when ss.code='PRIVATEINSURANCE' then '1' else '0' end\n" +
+				" from vocservicestream ss\n" +
+				"left join medcase mc on mc.servicestream_id=ss.id\n" +
+				"where mc.id="+id : "select case when ss.code='PRIVATEINSURANCE' then '1' else '0' end\n" +
+				" from vocservicestream ss\n" +
+				"left join medcase mc on mc.servicestream_id=ss.id\n" +
+				"left join diary d on mc.id=d.medcase_id\n" +
+				"where d.id="+id;
+		Collection<WebQueryResult> l= service.executeNativeSql(sql) ;
+		if (l.size()>0){
+			if (l.iterator().next().get1().toString().equals("1")) res="1";
+		}
+		return res;
+	}
 }

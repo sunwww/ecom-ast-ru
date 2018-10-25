@@ -245,6 +245,7 @@ horizontalFill="true" />
 
 
 		<script type="text/javascript">
+            var isDMS=false;
             function printProtocol() {
                 HospitalMedCaseService.getPrefixByProtocol(${param.id},
                     {
@@ -339,24 +340,47 @@ horizontalFill="true" />
     			var flag=0;
 
 				function save_form() {
-				    $('submitButton').disabled=true;
-					TemplateProtocolService.getUsername({
-						callback: function(aValue) {
-							if (aValue!="") {
-								removeFromStorage();
-								var frm = document.smo_visitProtocolForm;
-								frm.action= oldaction;
-								frm.submit();
-							} else {
-								$('submitButton').disabled=false;
-								 if (confirm("Возникли проблемы с авторизацией. Вы хотите ввести логин и пароль в новом окне?")) {
-									 showLoginAutorization() ;
-								 };
-							}
-						 }
-					 }
-					) ;
-				}
+				    <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
+                    if (!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
+						&& document.getElementById("typeName").value != ""
+                        && document.getElementById("diagnosisPriorityName").value != ""
+                        && document.getElementById("diagnosisIdc10Name").value != "")
+                        && document.getElementById("diagnosisRegistrationTypeName").value != ""
+                        && document.getElementById("diagnosisIllnessPrimaryName").value != "") {
+					</msh:ifFormTypeIsCreate>
+                        <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+                        if (!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
+                            && document.getElementById("typeName").value != "")) {
+						</msh:ifFormTypeAreViewOrEdit>
+                        	TemplateProtocolService.getUsername({
+                                callback: function (aValue) {
+                                    if (aValue != "") {
+                                        removeFromStorage();
+                                        var frm = document.smo_visitProtocolForm;
+                                        frm.action = oldaction;
+                                        frm.submit();
+                                    } else {
+                                        $('submitButton').disabled = false;
+                                        if (confirm("Возникли проблемы с авторизацией. Вы хотите ввести логин и пароль в новом окне?")) {
+                                            showLoginAutorization();
+                                        }
+                                        ;
+                                    }
+                                }
+                            }
+                        );
+                    }
+                    else {
+                        <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
+                        	alert("Поток обслуживания ДМС - при создании проотокола необходимо указать мед. услугу, тип протокола и данные по диагнозу!");
+                        </msh:ifFormTypeIsCreate>
+						<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+                        	alert("Поток обслуживания ДМС - при редактировании протокола необходимо указать мед. услугу и тип протокола!");
+						</msh:ifFormTypeAreViewOrEdit>
+                        $('submitButton').disabled = false;
+                        $('submitButton').value = (location.href.indexOf('entityParentPrepareCreate')==-1)? 'Сохранить изменения':'Создать';
+                    }
+                }
 
    if ($('templateProtocol').value>0) {
 	   $('btnEditProt1').style.display='inline' ;
@@ -522,7 +546,22 @@ horizontalFill="true" />
                                 }
                             });
 				</script>
-
+            <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+                <script type="text/javascript">
+                    //Milamesher 18102018 #122
+                    HospitalMedCaseService.getIfPrivateInsurance(${param.id},false,{
+                            callback: function(res) {
+                                if (res=="1") {
+                                    isDMS=true;
+                                    document.getElementById("medServiceName").className = "autocomplete horizontalFill required";
+                                    document.getElementById("typeName").className = "autocomplete horizontalFill required";
+                                    document.getElementById("isCreateDiagnosis").setAttribute("disabled",true);
+                                }
+                            }
+                        }
+                    );
+                </script>
+            </msh:ifFormTypeIsNotView>
 			</msh:ifFormTypeAreViewOrEdit>
 
 			<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
@@ -543,7 +582,25 @@ horizontalFill="true" />
 		</msh:ifFormTypeAreViewOrEdit>
 
 		<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
-
+            <script type="text/javascript">
+                //Milamesher 18102018 #122
+                HospitalMedCaseService.getIfPrivateInsurance(${param.id},true,{
+                        callback: function(res) {
+                            if (res=="1") {
+                                isDMS=true;
+                                document.getElementById("medServiceName").className = "autocomplete horizontalFill required";
+                                document.getElementById("typeName").className = "autocomplete horizontalFill required";
+                                document.getElementById("isCreateDiagnosis").click();
+                                document.getElementById("isCreateDiagnosis").setAttribute("disabled",true);
+                                $('diagnosisRegistrationTypeName').className = "autocomplete horizontalFill required";
+                                $('diagnosisPriorityName').className = "autocomplete horizontalFill required";
+                                $('diagnosisIdc10Name').className = "autocomplete horizontalFill required";
+                                $('diagnosisIllnessPrimaryName').className = "autocomplete horizontalFill required";
+                            }
+                        }
+                    }
+                );
+            </script>
 			<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
 				<script type="text/javascript">
 				   var btn = document.querySelector('#SKNF');

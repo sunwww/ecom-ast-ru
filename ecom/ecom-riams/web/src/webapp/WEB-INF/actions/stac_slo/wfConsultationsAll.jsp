@@ -14,6 +14,9 @@
     <tiles:put name="body" type="string">
         <msh:form action="/wfConsultationsAll.do" defaultField="dateBegin" disableFormDataConfirm="true" method="POST">
             <msh:panel>
+                <msh:row>
+                    <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
+                </msh:row>
                 <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                     <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Показать:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
@@ -68,18 +71,6 @@
                         <input type="radio" name="typeGroup4" value="5"> ранее
                     </td>
                 </msh:row>
-                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
-                    <td class="label" title="Показать  (typeGroup5)" colspan="1"><label for="typeGroup5Name" id="typeGroup5Label"></label></td>
-                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
-                        <input type="radio" name="typeGroup5" value="1" checked> все
-                    </td>
-                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
-                        <input type="radio" name="typeGroup5" value="2"> актуальные
-                    </td>
-                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
-                        <input type="radio" name="typeGroup5" value="3"> отменённые
-                    </td>
-                </msh:row>
                 <msh:row>
                     <td colspan="3">
                         <input type="button" onclick="this.disabled=true;find();" value="Найти" />
@@ -111,23 +102,21 @@
                 if (type4.equals("4")) typeSql.append(" and (scg.createdate=current_date or scg.createdate=current_date-1)");
                 if (type4.equals("5")) typeSql.append(" and scg.createdate<current_date-1");
             }
-            String type5 = (String)request.getParameter("typeGroup5");
-            if (type5!=null && !type5.equals("")) {
-                if (type5.equals("2")) typeSql.append(" and scg.canceldate is null");
-                if (type5.equals("3")) typeSql.append(" and scg.canceldate is not null");
-            }
+            typeSql.append(" and scg.canceldate is null");
+            String department = request.getParameter("department") ;
+            if (department!=null && !department.equals(""))  typeSql.append(" and dep.id="+department);
             request.setAttribute("typeSql",typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
             request.setAttribute("typeGroup3",type3);
             request.setAttribute("typeGroup4",type4);
-            request.setAttribute("typeGroup5",type5);
+            request.setAttribute("department",department);
         %>
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
         <msh:section>
             <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
                 <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select sls.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+select case when sls.id is not null then sls.id else slo.id end as slsid,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
@@ -149,7 +138,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
+left join medcase sls on sls.id=slo.parent_id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
@@ -157,7 +146,7 @@ left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
 left join mislpu dep on dep.id=slo.department_id
 where scg.dtype='WfConsultation' ${typeSql}
-order by wf.groupname
+order by wf.groupname,scg.createdate desc,dep.id
 "/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
@@ -188,7 +177,7 @@ order by wf.groupname
             <msh:section>
                 <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные, серые - отменённые
                     <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select sls.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+select case when sls.id is not null then sls.id else slo.id end as slsid,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
 dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
@@ -209,7 +198,7 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
+left join medcase sls on sls.id=slo.parent_id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
@@ -223,8 +212,9 @@ left join Worker sw on sw.person_id=w.person_id
 left join WorkFunction swf on swf.worker_id=sw.id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 left join SecUser su on su.id=swf.secUser_id
-where su.login='${login}') and (wf.archival is null or wf.archival='0') and scg.dtype='WfConsultation'
-order by wf.groupname
+where su.login='${login}'and wf.group_id=scg.prescriptcabinet_id and wf.workfunction_id=swf.workfunction_id)
+and (wf.archival is null or wf.archival='0') and scg.dtype='WfConsultation'
+order by scg.createdate desc,dep.id
 "/>
                     <form action="javascript:void(0)" method="post" target="_blank"></form>
                 </msh:sectionTitle>
