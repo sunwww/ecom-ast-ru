@@ -216,7 +216,7 @@ public class TableTag extends AbstractGuidSupportTag {
 
                         new Column(tag.getProperty(), tag.getColumnName()
                                 , tag.isIdentificator(), tag.getCssClass(), (HttpServletRequest)pageContext.getRequest()
-                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth())
+                                , tag.getGuid(),tag.getIsCalcAmount(),tag.getAddParam(),tag.getWidth(),theEscapeSymbols)
 
                 );
             } else if (aTag instanceof TableButtonTag) {
@@ -966,7 +966,7 @@ public class TableTag extends AbstractGuidSupportTag {
     }
 
     static final class Column {
-        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth) {
+        public Column(String aProperty, String aColumnname, boolean aIdColumn, String aCssClass, HttpServletRequest aRequest, String aGuid, boolean aIsCalcAmount,String aAddParam, String aWidth,boolean aEscapeSymbols) {
             theProperty = aProperty;
             theColumnName = aColumnname;
             theIdColumn = aIdColumn;
@@ -977,6 +977,7 @@ public class TableTag extends AbstractGuidSupportTag {
             if (aAddParam==null) aAddParam="" ;
             theAddParam =aAddParam ;
             theWidth=aWidth;
+            theEscapeSymbols=aEscapeSymbols;
         }
 
         @SuppressWarnings("unused")
@@ -1049,6 +1050,12 @@ public class TableTag extends AbstractGuidSupportTag {
                         styleClass = "boolean booleanNoValue";
                     }
                 } else if(value instanceof String) {
+                    if (theEscapeSymbols) {
+                        value = value.toString().replace("<br/>", "\r\n");
+                        value = value.toString().replace("<br>", "\r\n");
+                        value = value.toString().replace("<", "&lt;");
+                        value = value.toString().replace(">", "&gt;");
+                    }
                     if(DemoModeUtil.isInDemoMode(theServleRequest)) {
                         value = DemoModeUtil.secureValue(value);
                     }
@@ -1175,6 +1182,8 @@ public class TableTag extends AbstractGuidSupportTag {
         private final String theAddParam ;
         //Milamesher 31052018 - ширина столбца в процентах
         private final String theWidth;
+        // Milamesher 25102018 экранировать символы
+        private boolean theEscapeSymbols=true;
     }
 
 
@@ -1232,4 +1241,15 @@ public class TableTag extends AbstractGuidSupportTag {
     Boolean theOpenNewWindow;
 
 
+
+    /**
+     * Экранировать символы
+     * @jsp.attribute   description = "Экранировать символы"
+     *                     required = "false"
+     *                  rtexprvalue = "true"
+     */
+    public Boolean getEscapeSymbols() {return theEscapeSymbols;}
+    public void setEscapeSymbols(Boolean aEscapeSymbols) {theEscapeSymbols = aEscapeSymbols;}
+    /** Milamesher 25102018 экранировать символы */
+    private boolean theEscapeSymbols=true;
 }
