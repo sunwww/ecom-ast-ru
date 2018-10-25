@@ -104,7 +104,7 @@ function onCreate(aForm, aEntity, aCtx) {
         "left join WorkFunction swf on swf.worker_id=sw.id\n" +
         "left join SecUser su on su.id=swf.secUser_id\n" +
         "where su.login='"+ aCtx.getSessionContext().getCallerPrincipal().toString() +
-        "' and (wf.archival is null or wf.archival='0'))" +
+        "' and wf.group_id=scg.prescriptcabinet_id and (wf.archival is null or wf.archival='0'))" +
         " and scg.dtype='WfConsultation' and scg.canceldate is null and (slo.id=ANY\n" +
         "(select id from medcase where dtype='DepartmentMedCase' and parent_id=(select parent_id from medcase where id='"
         +aForm.getMedCase()+"')) or slo.id="+aForm.getMedCase()+")  order by scg.id").getResultList();
