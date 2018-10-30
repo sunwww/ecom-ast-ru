@@ -49,8 +49,8 @@ function onCreate(aForm,aEntity, aCtx) {
             "or mc.id=ANY(select id from medcase where dtype='DepartmentMedCase'\n" +
             "and parent_id=(select parent_id from medcase where id=pl.medcase_id)) end end \n" +
             "and pl.id=" + aEntity.prescriptionList.id + " and wf.group_id="+aEntity.prescriptCabinet.id+
-            " and (wf.archival is null or wf.archival='0')\n" +
-            "and (select count(id) from prescription where diary_id=d.id)=0").getResultList();
+            //" and (wf.archival is null or wf.archival='0')\n" +
+            " and (select count(id) from prescription where diary_id=d.id)=0").getResultList();
         if (res.size() > 0) {
             if (res.get(0) !=null && res.get(0) != "") {
                 aEntity.setDiary(aCtx.manager.find(Packages.ru.ecom.diary.ejb.domain.Diary, java.lang.Long.valueOf(res.get(0)[0])));
