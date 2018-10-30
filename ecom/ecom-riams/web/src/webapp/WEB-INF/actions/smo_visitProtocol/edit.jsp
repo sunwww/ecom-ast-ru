@@ -340,19 +340,32 @@ horizontalFill="true" />
     			var flag=0;
 
 				function save_form() {
-				    <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
-                    if (!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
-						&& document.getElementById("typeName").value != ""
+                    if (typeof isDMS  == 'undefined') {
+                        HospitalMedCaseService.getIfPrivateInsurance(${param.id},true,{
+                                callback: function(res) {
+                                    isDMS=(res=="1");
+                                    checkAndSave();
+                            }}
+                        );
+                    }
+					else checkAndSave();
+                }
+                function checkAndSave() {
+                    var flag=false;
+                    <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
+                    flag=(!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
+                        && document.getElementById("typeName").value != ""
                         && document.getElementById("diagnosisPriorityName").value != ""
-                        && document.getElementById("diagnosisIdc10Name").value != "")
+                        && document.getElementById("diagnosisIdc10Name").value != ""
                         && document.getElementById("diagnosisRegistrationTypeName").value != ""
-                        && document.getElementById("diagnosisIllnessPrimaryName").value != "") {
-					</msh:ifFormTypeIsCreate>
-                        <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
-                        if (!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
-                            && document.getElementById("typeName").value != "")) {
-						</msh:ifFormTypeAreViewOrEdit>
-                        	TemplateProtocolService.getUsername({
+                        && document.getElementById("diagnosisIllnessPrimaryName").value != ""));
+                    </msh:ifFormTypeIsCreate>
+                    <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+                    flag=(!isDMS || (isDMS && document.getElementById("medServiceName").value != ""
+                        && document.getElementById("typeName").value != ""));
+                    </msh:ifFormTypeAreViewOrEdit>
+                    if (flag) {
+                        TemplateProtocolService.getUsername({
                                 callback: function (aValue) {
                                     if (aValue != "") {
                                         removeFromStorage();
@@ -372,15 +385,15 @@ horizontalFill="true" />
                     }
                     else {
                         <msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
-                        	alert("Поток обслуживания ДМС - при создании проотокола необходимо указать мед. услугу, тип протокола и данные по диагнозу!");
+                        alert("Поток обслуживания ДМС - при создании проотокола необходимо указать мед. услугу, тип протокола и данные по диагнозу!");
                         </msh:ifFormTypeIsCreate>
-						<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
-                        	alert("Поток обслуживания ДМС - при редактировании протокола необходимо указать мед. услугу и тип протокола!");
-						</msh:ifFormTypeAreViewOrEdit>
+                        <msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+                        alert("Поток обслуживания ДМС - при редактировании протокола необходимо указать мед. услугу и тип протокола!");
+                        </msh:ifFormTypeAreViewOrEdit>
                         $('submitButton').disabled = false;
                         $('submitButton').value = (location.href.indexOf('entityParentPrepareCreate')==-1)? 'Сохранить изменения':'Создать';
                     }
-                }
+				}
 
    if ($('templateProtocol').value>0) {
 	   $('btnEditProt1').style.display='inline' ;
