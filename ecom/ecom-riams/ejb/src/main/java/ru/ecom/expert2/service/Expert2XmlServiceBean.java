@@ -182,7 +182,7 @@ private Boolean isCheckIsRunning = false;
             String entryType = aEntry.getEntryType();
             boolean isHosp = false, isVmp = false, isPoliclinic = false, isExtDisp = false, isPoliclinicKdo=false;
             boolean isNedonosh = false;
-            if (entryType.equals(HOSPITALTYPE)) {isHosp=true; isNedonosh=",107,108,".contains(","+aEntry.getKsg().getCode()+",");} //Малая масса тела
+            if (entryType.equals(HOSPITALTYPE)) {isHosp=true; isNedonosh=aEntry.getKsg()!=null && ",107,108,".contains(","+aEntry.getKsg().getCode()+",");} //Малая масса тела
             else if (entryType.equals(VMPTYPE)) {isVmp=true; isNedonosh=aEntry.getIsChild();}
             else if (entryType.equals(POLYCLINICTYPE)) {isPoliclinic=true;}
             else if (entryType.equals(EXTDISPTYPE)) {isExtDisp=true;}

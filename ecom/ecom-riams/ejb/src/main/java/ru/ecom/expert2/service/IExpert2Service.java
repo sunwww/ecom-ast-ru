@@ -20,7 +20,7 @@ public interface IExpert2Service {
     boolean exportDefectNewListEntry(Long alistEntryId);
    //  void addMedServiceToEntry(Long aEntryId, Long aMedServiceId);
      void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId);
-     void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType);
+     void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType, boolean isGroupSpo);
     void makeCheckEntry (Long aEntryId, boolean updateKsgIfExist);
      VocKsg getBestKSG(E2Entry aEntry, boolean updateKsgIfExist);
      void calculateEntryPrice(E2Entry  aEntry);

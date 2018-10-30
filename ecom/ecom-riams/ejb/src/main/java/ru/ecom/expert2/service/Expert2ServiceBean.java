@@ -406,12 +406,14 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     }
     /** Склеивание поликлинических визитов*/
-    private void unionPolyclinicMedCase(Long aListEntryId, Long aPatientId) {
+    private void unionPolyclinicMedCase(Long aListEntryId, Long aPatientId, boolean isGroupBySpo) {
         /** Объединяем
          * Считаем по профилю мед. помощи, потоку обслуживания, классу МКБ
          * */
         StringBuilder searchSql = new StringBuilder();
-        searchSql.append("select e2.externalpatientid , medhelpprofile_id, servicestream,cast('' as varchar) as empty, list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId") //Не учитываем диагноз *06.08.2018
+        searchSql.append("select ")
+                .append(isGroupBySpo?"e2.externalparentid, cast('' as varchar) as empty, cast('' as varchar) as empty":"e2.externalpatientid , medhelpprofile_id, servicestream")
+                .append(",cast('' as varchar) as empty, list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId") //Не учитываем диагноз *06.08.2018
                 // searchSql.append("select e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1), list(e2.id||'') from e2entry e2 where e2.listentry_id =:listId")
                 .append(" and e2.entryType='POLYCLINIC'")
                 .append(aPatientId!=null&&aPatientId>0?" and e2.externalpatientid="+aPatientId:"")
@@ -420,8 +422,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') ")
                 .append(" and e2.medhelpprofile_id is not null ")
                 //.append(" group by e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1)")
-                .append(" group by e2.externalpatientid , medhelpprofile_id, servicestream")
-                .append(" having count(e2.id)>1 and count(case when substring(e2.mainmkb,1,1)='Z'then 1 else null end)<count(e2.id)");
+                .append(" group by ").append(isGroupBySpo?"e2.externalparentid":"e2.externalpatientid , medhelpprofile_id, servicestream")
+                .append(" having count(e2.id)>1").append(isGroupBySpo?"":"and count(case when substring(e2.mainmkb,1,1)='Z'then 1 else null end)<count(e2.id)");
 
         List<Object[]> list = theManager.createNativeQuery(searchSql.toString()).setParameter("listId",aListEntryId).getResultList();
         log.info("sql = "+searchSql+", size = "+list.size());
@@ -442,7 +444,22 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             makeCheckEntry(mainEntry,false,true);
         }
+        if (isGroupBySpo) {
+            checkDefectPolyclinicCrossSpo(aListEntryId);
+        }
+
     }
+
+    /**В случае группировки по СПО выполняем проверку на наличие в одном СПО визитов к врачам разных специальностей. Помечаем их как дефекты *26.10.2018 */
+    private void checkDefectPolyclinicCrossSpo (Long aListEntryId) {
+        log.info("Находим неправильные случаи с разными профилями врачей в одном СПО");
+            String sql ="select list(e2.id||''),e2.externalparentid,list(''||e2.parententry_id), count(e2.id) from e2entry e2 \n" +
+                "where e2.listentry_id=258 and (isdeleted is null or isdeleted='0') and e2.servicestream='COMPLEXCASE'\n" +
+                "group by e2.externalparentid\n" +
+                "having count(distinct e2.medhelpprofile_id)>1";
+            //TODO
+    }
+
     /** Физическое объединение случая*/
     private E2Entry unionPolyclinic(E2Entry aMainMedcase, E2Entry aSecondMedcase) {
         E2Entry mainEntry, secondaryEntry;//mainEntry - latest entry
@@ -469,10 +486,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         return aMainMedcase;
 
     }
-    public void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType) {
+    public void testUnionMecCase (Long aListEntryId, Long aHospitalMedcaseId, Long aPatientId, String aEntryType, boolean isGroupSpo) {
         if (aEntryType.equals(POLYCLINICTYPE)&&aPatientId!=null) {
             log.info("testUnionPolyclinicMedCase");
-            unionPolyclinicMedCase(aListEntryId,aPatientId);
+            unionPolyclinicMedCase(aListEntryId,aPatientId, isGroupSpo);
         } else if (aHospitalMedcaseId!=null) {
             log.info("testUnionHospitalMedCase");
             unionHospitalMedCase(aListEntryId, aHospitalMedcaseId);
@@ -1001,12 +1018,13 @@ public class Expert2ServiceBean implements IExpert2Service {
                 monitor.setText("Идет процесс удаление дублей");
                 checkDoubles(aListEntry);
             } else if (listEntryCode.equals(POLYCLINICTYPE)||listEntryCode.equals(POLYCLINICKDOTYPE)) {
+                Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
                 Long listEntryId = aListEntry.getId();
                 if (listEntryCode.equals(POLYCLINICTYPE)){
                     monitor.setText("Удаление дублей в поликлинике");
                     deletePolyclinicDoubles(listEntryId );
                     monitor.setText("Склеивание случаев поликлинического обслуживания");
-                    unionPolyclinicMedCase(listEntryId ,null);
+                    unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
                 } else if (listEntryCode.equals(POLYCLINICKDOTYPE)) {
                     monitor.setText("Формируем случаи КДО");
                     //unionPolyclinicKdoMedCase(listEntryId,null);
@@ -1279,21 +1297,26 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
 
                     List<OncologyDiagnostic> diags  =theManager.createQuery("from OncologyDiagnostic where oncologyCase=:case").setParameter("case",oncologyCase).getResultList();
-                    for (OncologyDiagnostic diag:diags) {
-                        E2CancerDiagnostic cancerDiagnostic = new E2CancerDiagnostic(cancerEntry);
-                        String diagnosticType = diag.getVocOncologyDiagType()!=null?diag.getVocOncologyDiagType().getCode():null;
-                        if (diagnosticType !=null) {
-                            cancerDiagnostic.setType(diagnosticType);
-                            if (diagnosticType.equals("1")){
-                                cancerDiagnostic.setCode(diag.getHistiology().getCode());
-                                cancerDiagnostic.setResult(diag.getResultHistiology().getCode());
-                            } else if (diagnosticType.equals("2")) {
-                                cancerDiagnostic.setCode(diag.getMarkers().getCode());
-                                cancerDiagnostic.setResult(diag.getValueMarkers().getCode());
-                            }
-                            theManager.persist(cancerDiagnostic);
-                        }
 
+                    try {
+                        for (OncologyDiagnostic diag:diags) {
+                            E2CancerDiagnostic cancerDiagnostic = new E2CancerDiagnostic(cancerEntry);
+                            String diagnosticType = diag.getVocOncologyDiagType()!=null?diag.getVocOncologyDiagType().getCode():null;
+                            if (diagnosticType !=null) {
+                                cancerDiagnostic.setType(diagnosticType);
+                                if (diagnosticType.equals("1")){
+                                    cancerDiagnostic.setCode(diag.getHistiology().getCode());
+                                    cancerDiagnostic.setResult(diag.getResultHistiology().getCode());
+                                } else if (diagnosticType.equals("2")) {
+                                    cancerDiagnostic.setCode(diag.getMarkers().getCode());
+                                    cancerDiagnostic.setResult(diag.getValueMarkers().getCode());
+                                }
+                                theManager.persist(cancerDiagnostic);
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        log.error("Ошибка при заполнении диагностиеческого блока! "+e.getMessage());
                     }
                 }
 
@@ -2416,7 +2439,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 log.info("Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев. "+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
                 monitor.setText("Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев."+((System.currentTimeMillis()-startStartDate.getTime()))/60000);
                 if (listEntryCode.equals(POLYCLINICTYPE)) {
-                    unionPolyclinicMedCase(listEntryId ,null);
+                    Boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO","0").equals("1");
+                    unionPolyclinicMedCase(listEntryId ,null,isGroupSpo);
                 } else if (listEntryCode.equals(POLYCLINICKDOTYPE)) {
                     monitor.setText("Объединяем КДО");
                     log.info("size KDO = "+theManager.createNativeQuery("select id from e2entry where listentry_id="+aListEntry.getId()+" and (isDeleted is null or isDeleted='0')").getResultList().size());
