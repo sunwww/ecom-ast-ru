@@ -37,7 +37,7 @@ div#header{display:none;}
     String typeMarks = ActionUtil.updateParameter("QualityEstimationCard","typeMarks","3", request) ;
     String typeReport = ActionUtil.updateParameter("QualityEstimationCard","typeReport","1", request) ;
     String typeEstimation = ActionUtil.updateParameter("QualityEstimationCard","typeEstimation","3", request) ;
-		request.setAttribute("isReportBase", ActionUtil.isReportBase(request.getParameter("beginDate"),request.getParameter("finishDate"),request));
+
    %>
     <msh:form action="quality_card_journal.do" defaultField="estimationKindName"  method="get" >
     <msh:panel>
@@ -168,6 +168,7 @@ div#header{display:none;}
         	
             request.setAttribute("sqlAdd", sqlAdd.toString()) ;
             request.setAttribute("titleInfo", title.toString()) ;
+			request.setAttribute("isReportBase", ActionUtil.isReportBase(dateStart,dateEnd,request));
     		%>
     	<ecom:webQuery name="critList" nativeSql="
     	select id,code,name from vocqualityestimationcrit where kind_id=${param.estimationKind} and parent_id is null order by code
@@ -287,7 +288,7 @@ order by ${orderBySql}
         		}
 %>
 
-    	<ecom:webQuery isReportBase="true" name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="${isReportBase}" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select ${nameFldId}
 ,${nameFld} as f2_dep_doctor
 ,count(distinct qe.id) as f3_cntExp
@@ -402,7 +403,7 @@ ${sqlAdd}
         		}
 %>
 
-    	<ecom:webQuery isReportBase="true" name="card_list" nameFldSql="card_list_sql"
+    	<ecom:webQuery isReportBase="${isReportBase}" name="card_list" nameFldSql="card_list_sql"
     	nativeSql="select vqec.id as f1_name_id
     	,vqec.code as f2_cntExp
     	,vqec.name as f3_name_crit
