@@ -2216,11 +2216,11 @@ public class HospitalMedCaseServiceJs {
 		String sql=(ifMc)? "select case when ss.code='PRIVATEINSURANCE' then '1' else '0' end\n" +
 				" from vocservicestream ss\n" +
 				"left join medcase mc on mc.servicestream_id=ss.id\n" +
-				"where mc.id="+id : "select case when ss.code='PRIVATEINSURANCE' then '1' else '0' end\n" +
+				"where (mc.dtype='HospitalMedCase' or mc.dtype='DepartmentMedCase') and mc.id="+id : "select case when ss.code='PRIVATEINSURANCE' then '1' else '0' end\n" +
 				" from vocservicestream ss\n" +
 				"left join medcase mc on mc.servicestream_id=ss.id\n" +
 				"left join diary d on mc.id=d.medcase_id\n" +
-				"where d.id="+id;
+				"where (mc.dtype='HospitalMedCase' or mc.dtype='DepartmentMedCase') and d.id="+id;
 		Collection<WebQueryResult> l= service.executeNativeSql(sql) ;
 		if (l.size()>0){
 			if (l.iterator().next().get1().toString().equals("1")) res="1";
