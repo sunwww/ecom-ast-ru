@@ -163,8 +163,21 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			}
 			
 		</script>
+		<msh:ifFormTypeAreViewOrEdit formName="contract_accountOperationAccrualForm">
+			<script type="text/javascript">
+				function changeIsTerminalPayment() {
+					ContractService.changeIsPaymentTerminal(${param.id}, {
+					callback: function () {
+					alert("Изменено");
+					window.location.reload();
+
+					}
+					});
+				}
+			</script>
+		</msh:ifFormTypeAreViewOrEdit>
 		<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
-		
+
 		<script type="text/javascript">
 		createType=1;
 	
@@ -177,7 +190,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 		eventutil.addEventListener($('discount'),'change',function(){getCostInfo() ;});
 		eventutil.addEventListener($('discount'),'keyup',function(){getCostInfo() ;});
 		eventutil.addEventListener($('cashCount'),'keyup',function(){getGiveBack () ;});
-           
+
 		function getGiveBack (){
            var cash = +$('cashCount').value;
            var totalPrice = +$('costInfo').innerHTML;
@@ -196,7 +209,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
        }
 
 		</script>
-		</msh:ifFormTypeIsCreate>		
+		</msh:ifFormTypeIsCreate>
 		<% 
 		List list= (List)request.getAttribute("sumCost");
 		out.println("<script type='text/javascript'> if (createType>0){");
@@ -224,6 +237,7 @@ select cams.id, pp.code,pp.name,cams.cost,cams.countMedService
 			<msh:sideMenu>
 				<msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-contract_accountOperation" name="Изменить" title="Изменить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Edit"/>
 				<msh:sideLink key="ALT+DEL" confirm="Вы точно хотите удалить начисление?" params="id" action="/entityParentDeleteGoParentView-contract_accountOperation" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/Delete"/>
+				<msh:sideLink confirm="Вы точно хотите изменить вид оплаты?" action="/javascript:changeIsTerminalPayment()" name="Изменить способ оплаты" title="Изменить способ оплаты" roles="/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation/ChangePaymentType"/>
 			</msh:sideMenu>
 			<tags:contractMenu currentAction="medContract"/>
 		</msh:ifFormTypeAreViewOrEdit>

@@ -26,7 +26,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 
 </style>
 <msh:sideMenu></msh:sideMenu>
-	    <msh:sideMenu title="Перейти">
+	    <msh:sideMenu title="Перейти" >
 			<msh:sideLink action="/entityList-e2_vocCofficientLpuLevel.do" name="Коэффициент уровня ЛПУ (отделения)" title="Коэффициент уровня ЛПУ (отделения)" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocMedHelpProfile.do" name="Справочник профилей мед. помощи" title="Справочник профилей мед. помощи" roles="/Policy/E2"/>
 			<msh:sideLink action="/entityList-e2_vocBaseTariff.do" name="Справочник базовых тарифов" title="Справочник базовых тарифов" roles="/Policy/E2"/>
@@ -43,4 +43,23 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink action="/entityList-e2_litteAmountMonth.do" name="Настроечная табличка" title="Настроечная табличка" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocKsg.do" name="Справочник КСГ" title="Справочник КСГ" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_bill.do" name="Список счетов" title="Список счетов" roles="/Policy/E2" />
+			<msh:sideLink action="/javascript:findPersonByCommonnumber()" name="Поиск по RZ (оплаченые счета)" title="Поиск по RZ" roles="/Policy/E2" />
 	    </msh:sideMenu>
+
+<script type="text/javascript" >
+	function findPersonByCommonnumber() {
+	    var txt = prompt("Введите RZ или ФИО_ДР");
+	    if (txt) {
+            txt = txt.split(" ");
+
+            if (txt.length>3) {
+                href="lastname:"+txt[0]+" "+txt[1]+" "+txt[2]+" "+txt[3];
+            } else {
+                href="commonnumber:"+txt[0];
+            }
+            window.open("entityList-e2_entry.do?id=0&filter="+href);
+		}
+
+
+	}
+</script>

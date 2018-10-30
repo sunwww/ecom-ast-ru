@@ -22,6 +22,7 @@
     String filter = request.getParameter("filter");
     StringBuilder filterSql= new StringBuilder();
     if (filter!=null&&!filter.equals("")) {
+        boolean filterFound = false;
         String[] fields = filter.split(";");
         for (String field: fields) {
             String[] data = field.split(":");
@@ -32,7 +33,7 @@
                     filterSql.append(" and e.lastname like upper('").append(fio[0]).append("%')");
                     if (fio.length>1) {filterSql.append(" and e.firstname like upper('").append(fio[1]).append("%')");}
                     if (fio.length>2) {filterSql.append(" and e.middlename like upper('").append(fio[2]).append("%')");}
-                    if (fio.length>3) {filterSql.append(" and e.birthday =to_date('").append(fio[3]).append("','dd.MM.yyyy')");}
+                    if (fio.length>3) {filterSql.append(" and e.birthdate =to_date('").append(fio[3]).append("','dd.MM.yyyy')");}
                 } else {
                   /*  if (fldName.equals("startDate")) {
                         String dateType =
@@ -43,11 +44,13 @@
                         filterSql.append(" and e.").append(fldName).append("='").append(fldValue).append("'");
                 //    }
                 }
-
+                filterFound=true;
             }
 
         }
+      //  if (!filterFound) {filterSql.append("and 1=2");}
     }
+
     ActionUtil.setParameterFilterSql("entryType","e.entryType",request);
     ActionUtil.setParameterFilterSql("serviceStream","e.serviceStream",request);
     String billNumber = request.getParameter("billNumber");
@@ -65,7 +68,7 @@
    // if (billNumber!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billNumber='").append(billNumber).append("'");}
     if (billDate!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billDate=to_date('").append(billDate).append("','dd.MM.yyyy')");}
     if (orderBy==null||orderBy.equals("")) {
-      orderBy = "e.lastname, e.firstname, e.middlename, e.finishDate"  ;
+      orderBy = "e.lastname, e.firstname, e.middlename, e.birthdate, e.finishDate"  ;
     }
     String errorCode = request.getParameter("errorCode");
     String searchFromSql ,searchWhereSql;

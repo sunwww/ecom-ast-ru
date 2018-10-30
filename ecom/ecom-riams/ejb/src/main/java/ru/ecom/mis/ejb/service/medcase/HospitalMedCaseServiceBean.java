@@ -1,45 +1,13 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.io.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.URL;
-import java.net.URLConnection;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.EJB;
-import javax.annotation.Resource;
-import javax.ejb.Remote;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
-
 import org.jdom.IllegalDataException;
 import org.jdom.input.SAXBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
-
 import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
@@ -49,9 +17,7 @@ import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
@@ -77,11 +43,31 @@ import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInt
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
-import ru.ecom.poly.ejb.domain.protocol.Protocol;
 import ru.ecom.poly.ejb.services.MedcardServiceBean;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.annotation.EJB;
+import javax.annotation.Resource;
+import javax.ejb.Remote;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URL;
+import java.net.URLConnection;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 /**
  * Created by IntelliJ IDEA.
  * User: STkacheva
@@ -1299,7 +1285,6 @@ private HashMap getRegions() {
 					} catch (NumberFormatException e) {
 						LOG.error("Не удалось посчитать цену поликлинического случая: "+s(row[5]));
 						totalSum=0.0;
-						e.printStackTrace();
 					}
 				}
 				if (totalSum > 0.0) {
@@ -1328,9 +1313,13 @@ private HashMap getRegions() {
 			//Закончили искать пол-ку
 
 		//Начинаем формировать файл.
-		LOG.warn("====start make file "+allRecords.size());
+			int i=0;
+		LOG.warn("====start make file "+i);
 		for (Map.Entry entry: allRecords.entrySet()) {
-			//LOG.warn("====start make file 1"+ entry.getValue());
+			i++;
+			if (i%100==0) {
+				LOG.info("making "+i+" records");
+			}
 				JSONObject rec = (JSONObject) entry.getValue();
 				if (rec!=null) {
 					txtFile.append(aLpuCode).append("\n")
@@ -1341,7 +1330,7 @@ private HashMap getRegions() {
 							.append(rec.getString("profile")).append("\n")
 							.append(rec.getString("financeSource")).append("\n")
 							.append(rec.getString("patientCount")).append("\n")
-							.append(String.valueOf(new BigDecimal(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_EVEN).doubleValue()).replace(".",",")).append("\n");
+							.append(String.valueOf(new BigDecimal(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".",",")).append("\n");
 				} else {
 					LOG.error("make file object = NULL!!!");
 				}
@@ -1365,6 +1354,7 @@ private HashMap getRegions() {
 			OutputStream os = new FileOutputStream(workDir);
 			os.write(aText.toString().getBytes());
 			os.close();
+			LOG.info("i create file = /rtf/"+aFileName+"."+aFileName);
 			return "/rtf/"+aFileName+"."+aFileName;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
