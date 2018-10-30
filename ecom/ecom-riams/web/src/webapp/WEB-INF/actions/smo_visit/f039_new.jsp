@@ -449,7 +449,7 @@ if (ageR!=null) {
     	%>
     
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" maxResult="5000" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="5000" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select smo.id as name
 ,smo.dateStart as nameFld
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
@@ -564,7 +564,7 @@ ORDER BY ${groupOrder},p.lastname,p.firstname,p.middlename
     	%>
     	
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -722,7 +722,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("2"))) {
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -924,7 +924,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("3"))) {
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1108,7 +1108,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("4"))) {
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1398,7 +1398,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("6"))) {
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1557,7 +1557,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     } else if (typeView!=null && (typeView.equals("7"))) {
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1636,7 +1636,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <%} else if (typeView!=null && (typeView.equals("8"))) {
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld
@@ -1744,7 +1744,7 @@ GROUP BY ${groupGroup} ORDER BY ${groupOrder}
     <%} else if (typeView!=null && (typeView.equals("9"))) {
     	%>
     <msh:section>
-${isReportBase}<ecom:webQuery isReportBase="true" name="journal_ticket" nativeSql="
+${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_ticket" nativeSql="
 select
 ''||${groupSqlId}||${workFunctionSqlId}||${additionStatusSqlId}||${visitReasonSqlId}||${specialistSqlId}||${lpuSqlId}||${serviceStreamSqlId}||${workPlaceTypeSqlId}||${socialStatusSqlId}||'&beginDate=${beginDate}&finishDate=${finishDate}' as name
 ,${groupSql} as nameFld

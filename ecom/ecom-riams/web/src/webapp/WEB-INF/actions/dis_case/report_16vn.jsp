@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -129,6 +128,7 @@
         	
 
             if (date!=null && !date.equals("")) {
+                request.setAttribute("isReportBase", ActionUtil.isReportBase(date,dateEnd,request));
                 
             	%>
             
@@ -139,7 +139,7 @@
             <msh:section>
             <msh:sectionTitle>Свод по возрастам ${reportInfo}</msh:sectionTitle>
             <msh:sectionContent>
-            <ecom:webQuery isReportBase="true" name="report16vnswod" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="report16vnswod" nativeSql="
             
         select vrspt.id||'&strcode='||vrspt.id as vrsptid,vrspt.name ,vrspt.code as vrsptcode, vrspt.sexCode as vrsptsexCode
         ,vrspt.strCode
@@ -288,12 +288,12 @@
             	dateEnd=obj[1];
             	request.setAttribute("dateBegin", dateBegin);
             	request.setAttribute("dateEnd", dateEnd);
-            	
+                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
             		%>
             <msh:section>
             <msh:sectionTitle>Список пациентов</msh:sectionTitle>   
             <msh:sectionContent>
-            <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
             
             
             select 
@@ -395,7 +395,7 @@
     <msh:section>
     <msh:sectionTitle>Свод</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="report16vnswod1" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="report16vnswod1" nativeSql="
 
  
 select 
@@ -516,7 +516,7 @@ ${sqlCntDays1}
       <msh:tableColumn columnName="больше 60 лет" property="17"/>
     </msh:table>
     
-    <ecom:webQuery isReportBase="true" name="report16vnswod" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="report16vnswod" nativeSql="
 
  
 select 
@@ -664,7 +664,7 @@ ${sqlCntDays}
     <msh:section>
     <msh:sectionTitle>Список пациентов</msh:sectionTitle>   
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
     
     
     select 
