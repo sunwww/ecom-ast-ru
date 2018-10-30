@@ -1268,7 +1268,14 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     <msh:ifFormTypeIsView formName="mis_patientForm" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
       <script type="text/javascript">
           function showAllE2EntriesByPatient() {
-              window.open("entityList-e2_entry.do?id=0&filter=commonnumber:"+$('commonNumber').value);
+              var commonNumber = $('commonNumber').value;
+              var href="";
+              if (commonNumber && commonNumber.length==16) {
+                  href="commonnumber:"+commonNumber;
+              } else {
+                  href="lastname:"+$('lastname').value+" "+$('firstname').value+" "+$('middlename').value+" "+$('birthday').value;
+              }
+              window.open("entityList-e2_entry.do?id=0&filter="+href);
           }
 		$('buttonShowAddress').style.display = 'none';
     	showRow('tableNewOmcPolicy',false) ;
@@ -1286,15 +1293,15 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
     
     <!-- Редактирование  -->
     <msh:ifFormTypeIsNotView formName="mis_patientForm" guid="0ac15607-1ca6-4aa0-b9f0-ff3b31cb5a46">
-        <script type="text/javascript">// <![CDATA[//
+        <script type="text/javascript">
             var isTableNewAttachedByDepartment = null ;                                       
         </script>
         <msh:ifInRole roles="/Policy/Mis/Patient/AttachedByDepartment/Create" guid="308cce42-ff6f-43a0-a8ae-6e445dfe187a">
-        <script type="text/javascript">// <![CDATA[//
+        <script type="text/javascript">
            isTableNewAttachedByDepartment = 1 ;                                       
         </script>
     	</msh:ifInRole>
-      <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript">
         showRow('tableNewOmcPolicy',false) ;
     	if (isTableNewAttachedByDepartment) showRow('tableNewAttachedByDepartment',false) ;
 		
@@ -1488,7 +1495,7 @@ order by wcd.calendarDate, wct.timeFrom" guid="624771b1-fdf1-449e-b49e-5fcc34e03
 			eventutil.addEnterSupport('birthPlace', 'buttonShowAddress') ;
 			eventutil.addEnterSupport('foreignRegistrationAddress', 'buttonShowrealAddressAddress') ;
 			
-    //]]></script>
+   </script>
     </msh:ifFormTypeIsNotView>
 
  

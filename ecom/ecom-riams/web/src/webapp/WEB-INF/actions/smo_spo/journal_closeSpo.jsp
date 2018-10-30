@@ -1,8 +1,8 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -90,7 +90,7 @@
     		request.setAttribute("finishDate", finishDate) ;
     	}
     	request.setAttribute("beginDate", date) ;
-    	
+        request.setAttribute("isReportBase", ActionUtil.isReportBase(date,finishDate,request));
     	if (typeView!=null && typeView.equals("1")) {
     		request.setAttribute("additionJoinSql", " left join medcase spo1 on spo1.patient_id=spo.patient_id and spo1.dtype='PolyclinicMedCase'     				left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id     				left join Worker ow1 on ow1.id=owf1.worker_id ") ;
     		request.setAttribute("additionWhereSql", " and spo1.dateFinish between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and owf.workFunction_id=owf1.workFunction_id  and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id ") ;
@@ -187,7 +187,7 @@
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
     select ml.id||'&department='||ml.id,ml.name ,count(distinct spo.patient_id) as cntPat,count(distinct spo.id) as cntSpo  
 	from MedCase spo
 	left join VocServiceStream vss on vss.id=spo.serviceStream_id
@@ -218,7 +218,7 @@
     <msh:section>
     <msh:sectionTitle>Реестр по лечащим врачам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
     select 
 owf.id||'&department=${department}&specialist='||owf.id as id
 ,ovwf.name as ovwfname,owp.lastname||' '||owp.firstname||' '||owp.middlename as lechVr
@@ -253,7 +253,7 @@ order by owp.lastname,owp.middlename,owp.firstname
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
 select spo.id,spo.dateStart,spo.dateFinish
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename
     ,pat.birthday  

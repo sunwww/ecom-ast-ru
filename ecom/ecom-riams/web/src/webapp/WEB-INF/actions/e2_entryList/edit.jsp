@@ -75,9 +75,9 @@
                     <msh:tableColumn columnName="Номер счета" property="4"/>
                     <msh:tableColumn columnName="Количество записей" property="5"/>
                     <msh:tableColumn columnName="Количество дефектов" property="6" addParam="&defect=1"/>
-                    <msh:tableButton property="1" buttonShortName="Присвоить счет" buttonFunction="showE2BillDialog" addParam="this" />
-                    <msh:tableButton property="1" buttonShortName="Сформировать пакет" buttonFunction="createMPFile" addParam="this"/>
-                    <msh:tableButton property="1" buttonShortName="Проверить случаи по записи" buttonFunction="makeCheck" addParam="this"/>
+                    <msh:tableButton property="1" buttonShortName="Присвоить счет" buttonFunction="showE2BillDialog" addParam="this" role="/Policy/E2/Admin"  />
+                    <msh:tableButton property="1" buttonShortName="Сформировать пакет" buttonFunction="createMPFile" addParam="this" role="/Policy/E2/Admin" />
+                    <msh:tableButton property="1" buttonShortName="Проверить случаи по записи" buttonFunction="makeCheck" addParam="this" role="/Policy/E2/Admin" />
 
                 </msh:table>
                 </msh:ifFormTypeIsView>

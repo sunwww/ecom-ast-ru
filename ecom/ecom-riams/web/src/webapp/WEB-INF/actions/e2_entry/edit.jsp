@@ -471,7 +471,8 @@ where cancer.entry_id=${param.id}"/>
             function unionByHospitalMedCase() {
                         var type = $('entryType').value;
                 alert('union '+type);
-                Expert2Service.unionMedCase($('listEntry').value, $('externalParentId').value, $('externalPatientId').value,type, {
+                var isGroupSpo = confirm("Склеивать по СПО?");
+                Expert2Service.unionMedCase($('listEntry').value, $('externalParentId').value, $('externalPatientId').value,type,isGroupSpo, {
                     callback: function (a) {alert(a);}
                 });
             }

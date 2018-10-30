@@ -27,7 +27,7 @@
 	String typeView =ActionUtil.updateParameter("Report_CloseSpo","typeView","1", request) ;
 	String typeMode =ActionUtil.updateParameter("journal_denied_without_diagnosis","typeMode","1", request) ;
 	String typeDiag =ActionUtil.updateParameter("journal_denied_without_diagnosis","typeDiag","2", request) ;
-  
+
 
   %>
     <msh:form action="/stac_journal_denied_without_diagnosis.do" defaultField="beginDate" disableFormDataConfirm="true" method="POST" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -209,12 +209,10 @@ group by wf.id,vwf.name,wp.lastname
     String date = request.getParameter("dateBegin") ;
     if (date!=null && !date.equals(""))  {
     	String finishDate = request.getParameter("dateEnd") ;
-    	if (finishDate==null||finishDate.equals("")) {
-    		request.setAttribute("finishDate", date) ;
-    	} else {
+    	if (finishDate==null||finishDate.equals("")) {finishDate=date;}
     		request.setAttribute("finishDate", finishDate) ;
-    	}
     	request.setAttribute("beginDate", date) ;
+        request.setAttribute("isReportBase", ActionUtil.isReportBase(date,finishDate,request));
     	/*
     	if (typeView!=null && typeView.equals("1")) {
     		request.setAttribute("additionSpoSql", " and (select count(spo1.id) from medcase spo1 left join WorkFunction owf1 on owf1.id=spo1.ownerFunction_id left join Worker ow1 on ow1.id=owf1.worker_id where spo.patient_id=spo1.patient_id and spo1.dtype='PolyclinicMedCase' and owf.workFunction_id=owf1.workFunction_id and spo1.dateFinish between to_date('"+date+"','dd.mm.yyyy') and to_date('"+finishDate+"','dd.mm.yyyy') and ow.lpu_id=ow1.lpu_id and spo1.id!=spo.id)>1") ;
@@ -306,7 +304,7 @@ group by wf.id,vwf.name,wp.lastname
     <msh:section>
     <msh:sectionTitle>Свод по отделениям</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
     select ml.id||'&department='||ml.id,ml.name ,count(distinct sls.id) as cntSls,count(distinct case when diag.id is null then sls.id else null end) as notdiag
 	 from MedCase sls
 left join mislpu ml on ml.id=sls.department_id
@@ -336,7 +334,7 @@ and sls.medicalAid='1'
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="datelist" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nativeSql="
 select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
@@ -410,7 +408,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     <msh:section>
     <msh:sectionTitle>Свод по дневникам</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="datelist" nameFldSql="datelist_sql" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nameFldSql="datelist_sql" nativeSql="
     select cast('${vocWorkFunctionsSqlId}' as varchar) as vwfid,vwf.name as vwfname
     ,count(distinct sls.id) as cntSls
     ,count(distinct case when diag.id is null then sls.id else null end) as notdiag
@@ -448,7 +446,7 @@ and sls.medicalAid='1'
     <msh:section>
     <msh:sectionTitle>Реестр пациентов</msh:sectionTitle>
     <msh:sectionContent>
-    <ecom:webQuery isReportBase="true" name="datelist" nameFldSql="datelist_sql" nativeSql="
+    <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nameFldSql="datelist_sql" nativeSql="
 select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday

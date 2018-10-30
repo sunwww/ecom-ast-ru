@@ -1,6 +1,5 @@
-<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -128,7 +127,7 @@
 <% if (typeSvod.equals("1")) {%>
         <%if(typeGroup.equals("1")){ %>
         <msh:section>
-            ${isReportBase}<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 count (wct.id) as cntAll
 , count (case when wct.medcase_id is not null then 1 else null end) as cntRemote, wct.createprerecord as who
@@ -153,7 +152,7 @@ group by wct.createprerecord
         <%}%>
         <%if(typeGroup.equals("2")){ %>
         <msh:section>
-            ${isReportBase}<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+            ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select
 count (wct.id) as cntAll
 , count (case when su.isremoteuser='1' then 1 else null end) as cntRemote
@@ -180,7 +179,7 @@ where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dat
         }
         else if (typeSvod.equals("2")) {%>
         <msh:section>
-            ${isReportBase}<ecom:webQuery isReportBase="true" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
+            ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" maxResult="1500" name="journal_ticket" nameFldSql="journal_ticket_sql" nativeSql="
 select  1, case when t.lpuname is not null then t.lpuname else '-' end as lpuname,
 sum(t.total) as total,
 sum(t.cnt1)||' ('||case when sum(t.total)<>0 then round(sum(t.cnt1)/sum(t.total)*100.0,2)||'%' else '0%' end||')' as promed,

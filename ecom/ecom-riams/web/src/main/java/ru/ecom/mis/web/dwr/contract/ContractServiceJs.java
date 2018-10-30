@@ -29,6 +29,16 @@ public class ContractServiceJs {
 	
 	public static Logger log = Logger.getLogger(ContractServiceJs.class);
 
+	public void changeIsPaymentTerminal(Long aContractAccountOperationId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		String sql = "update contractaccountoperation set ispaymentterminal = case when ispaymentterminal='1' then false else true end where id="+aContractAccountOperationId;
+		service.executeUpdateNativeSql(sql);
+		sql = "insert into AdminChangeJournal (cType, createDate, createTime, createUsername, annulRecord) " +
+				"values ('CHANGEPAYMENTTYPE',current_date, current_time, '"+username+"', 'Инвертирован метод оплаты по счету с ИД №"+aContractAccountOperationId+"'); ";
+		service.executeUpdateNativeSql(sql);
+	}
+
 	/**Замена обслуживаемой персоны по всем счетам договора */
 	public void changeServedPerson(Long aConractId, Long aPersonId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
