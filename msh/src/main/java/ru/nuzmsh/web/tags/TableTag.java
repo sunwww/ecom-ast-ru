@@ -1053,6 +1053,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     if (theEscapeSymbols) {
                         value = value.toString().replace("<br/>", "\r\n");
                         value = value.toString().replace("<br>", "\r\n");
+                        value = value.toString().replace("<br />", "\r\n");
                         value = value.toString().replace("<", "&lt;");
                         value = value.toString().replace(">", "&gt;");
                     }
