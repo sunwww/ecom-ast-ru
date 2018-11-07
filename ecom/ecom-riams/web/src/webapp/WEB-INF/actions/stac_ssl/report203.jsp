@@ -32,6 +32,7 @@
             if (dateEnd!=null && !dateEnd.equals("")) {
                 request.setAttribute("dateEnd",dateEnd);
             }
+
             if (request.getParameter("short")==null) {
 
         %>
@@ -53,10 +54,11 @@
         </msh:form>
         <%
             if (request.getParameter("dateBegin")!=null &&  !request.getParameter("dateBegin").equals("")) {
+                request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="justdeps" nameFldSql="justdeps_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="justdeps" nameFldSql="justdeps_sql" nativeSql="
  select dep.name, count (mc.id) as discharge
  ,(select count(distinct mc.id) as pr203 from medcase mc
  left join diagnosis ds on ds.medcase_id=mc.id
@@ -174,7 +176,7 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
         </msh:section>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="transfer" nameFldSql="transfer_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="transfer" nameFldSql="transfer_sql" nativeSql="
                  select CAST('Перевод из патологии беременности в родовое' AS varchar(50))
 ,count(distinct slo.id)
 ,(select count(distinct mc.id) as pr203
@@ -315,17 +317,17 @@ end
             }
         </script>
         <%
-            }
-            else {
+            } else {
                 String view = (String)request.getParameter("view") ;
                 request.setAttribute("view", view);
                 if (view.equals("dishAll")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
+                    request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
                 %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="dishAll" nameFldSql="dishAll_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="dishAll" nameFldSql="dishAll_sql" nativeSql="
              select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 from MedCase as mc
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -359,7 +361,7 @@ group by mc.id,pat.id
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="203All" nameFldSql="203All_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="203All" nameFldSql="203All_sql" nativeSql="
                 select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -430,7 +432,7 @@ and dep.id=${param.depId}
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="203EK" nameFldSql="203EK_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="203EK" nameFldSql="203EK_sql" nativeSql="
                select distinct pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
  ,( select min(qec.id)
 from medcase mc1
@@ -487,7 +489,7 @@ group by mc.id,pat.id,qec.id"/>
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="dishAll2" nameFldSql="dishAll2_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="dishAll2" nameFldSql="dishAll2_sql" nativeSql="
              select
 slo.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 from medcase slo
@@ -518,7 +520,7 @@ left join patient pat on slo.patient_id=pat.id
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="203All2" nameFldSql="203All2_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="203All2" nameFldSql="203All2_sql" nativeSql="
 select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
@@ -588,7 +590,7 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
         %>
         <msh:section>
             <msh:sectionTitle>
-                <ecom:webQuery isReportBase="true" name="203EK2" nameFldSql="203EK2_sql" nativeSql="
+                <ecom:webQuery isReportBase="${isReportBase}" name="203EK2" nameFldSql="203EK2_sql" nativeSql="
              select distinct pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
  ,( select min(qec.id)
 from medcase mc1

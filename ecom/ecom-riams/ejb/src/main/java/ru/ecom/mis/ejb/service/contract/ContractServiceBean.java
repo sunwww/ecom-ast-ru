@@ -1,5 +1,20 @@
 package ru.ecom.mis.ejb.service.contract;
 
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.domain.contract.*;
+import ru.nuzmsh.util.format.DateFormat;
+
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,29 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Date;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.mis.ejb.domain.contract.ContractAccount;
-import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
-import ru.ecom.mis.ejb.domain.contract.ContractGuarantee;
-import ru.ecom.mis.ejb.domain.contract.JuridicalPerson;
-import ru.ecom.mis.ejb.domain.contract.MedContract;
-import ru.ecom.mis.ejb.domain.contract.PriceMedService;
-import ru.nuzmsh.util.format.DateFormat;
 
 @Stateless
 @Remote(IContractService.class)
@@ -61,24 +54,25 @@ public class ContractServiceBean implements IContractService {
 			//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
 				//	System.out.println("not empty");
-				Double totalSum = 0.00;
-				Double taxSum = 0.00;
+				BigDecimal totalSum = new BigDecimal(0.00);
+				BigDecimal taxSum = new BigDecimal(0.00);
 				JSONObject root = new JSONObject();
 				root.put("function", isRefund?"makeRefund":"makePayment");
 				root.put("gotId", aAccountId); //Milamesher #106 10072018 - для проверки со стороны ККМ на печать одинаковых чеков
 				JSONArray arr = new JSONArray();
+				BigDecimal sum, tax;
 				for (Object[] r: l) {
 
-					Double sum = Double.valueOf(r[5].toString());
-					Double tax = Double.valueOf(r[7]!=null?r[7].toString():"0.00");
-					totalSum+=sum;
-					taxSum+=tax;
+					sum = new BigDecimal(r[5].toString());
+					tax = new BigDecimal(r[7]!=null?r[7].toString():"0.00");
+					totalSum=totalSum.add(sum);
+					taxSum=taxSum.add(tax);
 					JSONObject record = new JSONObject();
 					record.put("code", r[1]);
 					record.put("name", r[2]);
 					record.put("count", r[3]);
 					record.put("price", r[4].toString());
-					record.put("sum", r[5].toString());
+					record.put("sum", sum.setScale(2,RoundingMode.HALF_UP).toString());
 					//	record.put("price", 0);
 					//	record.put("sum", 0);
 					if (r[6]!=null&&!(""+r[6]).equals("")) {
@@ -87,15 +81,14 @@ public class ContractServiceBean implements IContractService {
 					}
 					arr.put(record);
 				}
+
 				root.put("isTerminalPayment", isTerminalPayment);
 				if (isRefund) {
-					root.put("totalRefundSum", totalSum) ;
+					root.put("totalRefundSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString());
 				} else {
 					root.put("pos", arr) ;
-					root.put("totalPaymentSum", ""+totalSum+"") ;
-					if (taxSum>0) {
-						root.put("totalTaxSum", ""+ new BigDecimal(taxSum).setScale(2, RoundingMode.HALF_UP).toString()+"") ;
-					}
+					root.put("totalPaymentSum", totalSum.setScale(2,RoundingMode.HALF_UP).toString()) ;
+					root.put("totalTaxSum", taxSum.setScale(2, RoundingMode.HALF_UP).toString()) ;
 				}
 				//root.put("isTerminalPayment", isTerminalPayment);
 				root.put("FIO", aKassir);

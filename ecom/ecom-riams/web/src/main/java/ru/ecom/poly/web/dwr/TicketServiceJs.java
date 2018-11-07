@@ -1,20 +1,5 @@
 package ru.ecom.poly.web.dwr;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
@@ -27,6 +12,12 @@ import ru.ecom.template.web.dwr.TemplateProtocolJs;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class TicketServiceJs {
 	
@@ -56,39 +47,43 @@ public class TicketServiceJs {
 		}
 		return ret.toString().split(",");
 	}
-	public Collection<WebQueryResult> getPatients (String aAgeFrom, String aAgeTo, String aDateTo, String aSexId, String aLpu, int maxResults, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
-		String sexSql = (aSexId!=null&&!aSexId.equals(""))?" and pat.sex_id="+aSexId:"";
-	//	System.out.println("getPatient, age = "+aAgeTo+" : "+aAgeFrom);
-		if (aDateTo!=null && !aDateTo.equals("")) {
-			aDateTo = "to_date('"+aDateTo+"','dd.MM.yyyy')";
-		} else {
-			aDateTo = "current_date";	
-		}
-		if (aLpu!=null&&!aLpu.equals("")) {
-			sexSql+=" and att.lpu_id="+aLpu+" and att.dateto is null";
-		}
-		String sql = "select pat.id as patId, mc.id as medId from medcard mc" +
+	private Collection<WebQueryResult> getPatients (String aAgeFrom, String aAgeTo, String aDateTo, String aSexId, String aLpu, String ids, int maxResults, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String sql="select pat.id as patId, mc.id as medId from medcard mc" +
 				" left join patient pat on pat.id=mc.person_id" +
 				" left join lpuattachedbydepartment att on att.patient_id=pat.id" +
-				" where  cast(to_char("+aDateTo+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char("+aDateTo+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char("+aDateTo+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between "+aAgeFrom + " and "+aAgeTo
-				+" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')"+sexSql+" order by random()";
-	//	System.out.println("==Find persons: "+sql);
-		Collection<WebQueryResult> l = service.executeNativeSql(sql,maxResults);
-		return l;
+				" where ";
+		if (ids!=null && !ids.equals("")) {
+			sql+=" pat.id in ("+ids+")";
+		} else {
+			String sexSql = (aSexId!=null&&!aSexId.equals(""))?" and pat.sex_id="+aSexId:"";
+			if (aDateTo!=null && !aDateTo.equals("")) {
+				aDateTo = "to_date('"+aDateTo+"','dd.MM.yyyy')";
+			} else {
+				aDateTo = "current_date";
+			}
+			if (aLpu!=null&&!aLpu.equals("")) {
+				sexSql+=" and att.lpu_id="+aLpu+" and att.dateto is null";
+			}
+			sql += " cast(to_char("+aDateTo+",'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char("+aDateTo+", 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char("+aDateTo+",'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) between "+aAgeFrom + " and "+aAgeTo
+					+" and pat.deathdate is null and (pat.noactuality is null or pat.noactuality='0')"+sexSql+" order by random()";
+			//	System.out.println("==Find persons: "+sql);
+		}
+
+		return service.executeNativeSql(sql,maxResults);
 	}
 	
 	public String generateTalons (String aWorkFunctionIds,String aDateFrom, String aDateTo, String times, Long serviceStream, Long workplace
 			, Long visitReason, Long visitResult, String diagnosis, Long concludingActuity
-			, Long recordCount, String aAgeFrom, String aAgeTo, String aSexId, String aLpu, HttpServletRequest aRequest) throws ParseException, NamingException {
+			, Long recordCount, String aAgeFrom, String aAgeTo, String aSexId, String aLpu, String aPatientIds, boolean isProfOsmotr, HttpServletRequest aRequest) throws ParseException, NamingException {
 		Date startDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateFrom);
 		Date finishDate = ru.nuzmsh.util.format.DateFormat.parseDate(aDateTo);
 
 		
-		IWebQueryService service = (IWebQueryService)Injection.find((HttpServletRequest)aRequest).getService(IWebQueryService.class);
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String username = "ugolovasticov";
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		ITicketService ser = (ITicketService)Injection.find((HttpServletRequest)aRequest).getService(ITicketService.class);
+		ITicketService ser = Injection.find(aRequest).getService(ITicketService.class);
 
 		Calendar cal = new GregorianCalendar();
 			cal.setTime(startDate);
@@ -105,7 +100,7 @@ public class TicketServiceJs {
 			}
 			if (allDates.length()>0) {}else {return "" ;}
 			//System.out.println("DATES = "+allDates);
-			Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, recordCount.intValue(), aRequest);
+			Collection<WebQueryResult> pats = getPatients(aAgeFrom, aAgeTo, aDateTo, aSexId, aLpu, aPatientIds, recordCount.intValue(), aRequest);
 			if (pats.isEmpty()) return "";
 			String mainPriority = service.executeNativeSql("select id from vocprioritydiagnosis where code='1'").iterator().next().get1().toString();
 			
@@ -113,43 +108,47 @@ public class TicketServiceJs {
 			String[] workFunctions = aWorkFunctionIds.replace(" ", "").split(",");
 			String[] dates = allDates.toString().split("#"); 
 			String[] diagnos = getDiagnosisId(diagnosis.replace(" ","").split(","), aRequest);
-			String[] time = times.split(",");
+		//	String[] time = times.split(",");
 			StringBuilder ids = new StringBuilder();
 			for (WebQueryResult pat: pats) {
 				String date = dates[rnd.nextInt(dates.length)];
 				String dsId = diagnos[rnd.nextInt(diagnos.length)];
 				String patId = pat.get1().toString();
 				String medcardId = pat.get2().toString();
-				
+				Long spoId=null;
+				if (isProfOsmotr) {
+					spoId = ser.createMedcase("PolyclinicMedCase"); //Если профосмотр - все визиты в рамках одного осмотра
+				}
 				for (int i=0;i<workFunctions.length;i++) {
-				String aWorkFunctionId = workFunctions[i];
-			
-			Long SPO = ser.createMedcase("PolyclinicMedCase");
-			Long ticketId = ser.createMedcase("ShortMedCase");
-			ids.append("Patient=").append(patId).append("&date=").append(date);
-			ids.append("&wf=").append(aWorkFunctionId);
-			String ticketSql = "update medcase set "
-					+ "username='"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), createdate=current_date"
-					+ ", noactuality='0',parent_id="+SPO+", servicestream_id="+serviceStream+", patient_id="+patId
-					+ ",workfunctionexecute_id="+aWorkFunctionId+", visitresult_id="+visitResult+", visitreason_id="+visitReason 
-					+ ", workplacetype_id="+workplace
-					+ ", createtime=cast('12:35' as time(5)), medcard_id="+medcardId+" where id="+ticketId+" and dtype='ShortMedCase'";
-			String polSql = "update medcase set username = '"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), datefinish=to_date('"+date+"','dd.MM.yyyy') , createdate=current_date" +
-					" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id="+aWorkFunctionId+")" +
-					" ,servicestream_id="+serviceStream+", patient_id="+patId+", ownerfunction_id="+aWorkFunctionId+"" +
-					" ,startfunction_id="+aWorkFunctionId+", finishfunction_id="+aWorkFunctionId+", idc10_id="+dsId+" where id = "+SPO+" and dtype='PolyclinicMedCase'";		
-			ids.append("&ticket = "+ticketId);
-			
-			String diagnosisSql = "insert into diagnosis (name, establishdate, priority_id, idc10_id" +
-					", medcase_id, illnesprimary_id, createusername) (select name , to_date('"+date+"','dd.MM.yyyy') " +
-					", "+mainPriority+","+dsId+","+ticketId+","+concludingActuity+",'"+username+"'"+
-					" from vocidc10 where id = "+dsId+")" ;
-					
-			service.executeUpdateNativeSql(polSql); //Формируем СПО
-			service.executeUpdateNativeSql(ticketSql); //Формируем визит			
-			service.executeUpdateNativeSql(diagnosisSql); //Формируем диагноз по визиту
-			ids.append("&ds = "+dsId+"\n");
-			}
+					String aWorkFunctionId = workFunctions[i];
+					if (!isProfOsmotr) {
+						spoId = ser.createMedcase("PolyclinicMedCase");
+					}
+					Long ticketId = ser.createMedcase("ShortMedCase");
+					ids.append("Patient=").append(patId).append("&date=").append(date);
+					ids.append("&wf=").append(aWorkFunctionId);
+					String ticketSql = "update medcase set "
+							+ "username='"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), createdate=current_date"
+							+ ", noactuality='0',parent_id="+spoId+", servicestream_id="+serviceStream+", patient_id="+patId
+							+ ",workfunctionexecute_id="+aWorkFunctionId+", visitresult_id="+visitResult+", visitreason_id="+visitReason
+							+ ", workplacetype_id="+workplace
+							+ ", createtime=cast('12:35' as time(5)), medcard_id="+medcardId+" where id="+ticketId+" and dtype='ShortMedCase'";
+					String polSql = "update medcase set username = '"+username+"', datestart=to_date('"+date+"','dd.MM.yyyy'), datefinish=to_date('"+date+"','dd.MM.yyyy') , createdate=current_date" +
+							" ,noactuality='0', lpu_id=(select coalesce(wf.lpu_id,w.lpu_id) from workfunction wf left join worker w on w.id=wf.worker_id where wf.id="+aWorkFunctionId+")" +
+							" ,servicestream_id="+serviceStream+", patient_id="+patId+", ownerfunction_id="+aWorkFunctionId+"" +
+							" ,startfunction_id="+aWorkFunctionId+", finishfunction_id="+aWorkFunctionId+", idc10_id="+dsId+" where id = "+spoId+" and dtype='PolyclinicMedCase'";
+					ids.append("&ticket = "+ticketId);
+
+					String diagnosisSql = "insert into diagnosis (name, establishdate, priority_id, idc10_id" +
+							", medcase_id, illnesprimary_id, createusername) (select name , to_date('"+date+"','dd.MM.yyyy') " +
+							", "+mainPriority+","+dsId+","+ticketId+","+concludingActuity+",'"+username+"'"+
+							" from vocidc10 where id = "+dsId+")" ;
+
+					service.executeUpdateNativeSql(polSql); //Формируем СПО
+					service.executeUpdateNativeSql(ticketSql); //Формируем визит
+					service.executeUpdateNativeSql(diagnosisSql); //Формируем диагноз по визиту
+					ids.append("&ds = "+dsId+"\n");
+				}
 			}
 		//	System.out.print(ids);
 		

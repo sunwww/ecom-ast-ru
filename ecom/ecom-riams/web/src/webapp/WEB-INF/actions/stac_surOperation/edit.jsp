@@ -1,6 +1,3 @@
-<%@page import="java.util.Collection"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.awt.print.Printable"%>
 <%@page import="ru.ecom.mis.ejb.form.medcase.hospital.SurgicalOperationForm"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -328,7 +325,6 @@
 	    		});
     		}
     	}
-    	//]]>
     	</script>
     	
   </msh:ifFormTypeIsNotView>
@@ -405,7 +401,18 @@
   	  		setEndoscopyUse() ;
   	  		});
   	} catch(e) {}
-  	 
+
+      medServiceAutocomplete.addOnChangeCallback(function() {
+        HospitalMedCaseService.isAbortRequiredByOperation($('medService').value, {
+            callback: function(isAbort) {
+                if (true==isAbort) {
+                   jQuery('#abortionName').css('background-color','#FFFFA0');
+                } else {
+                    jQuery('#abortionName').css('background-color','#FFFFFF');
+                }
+            }
+        });
+      });
   	 changeParentMedService() ;
   	</script>
     </msh:ifFormTypeIsNotView>

@@ -60,8 +60,8 @@ function onCreate(aForm, aEntity, aCtx) {
     } else {
         var balSumOld = +aEntity.account.balanceSum;
         var balSum = +aEntity.account.balanceSum;
-        var cost = aEntity.cost;
-        if (+aEntity.discost > 0) cost = cost * aEntity.discost / 100;
+        var cost = +aEntity.cost;
+        if (+aForm.discount > 0) {cost = cost-(cost * aForm.discount / 100);};
         balSum = balSum + cost;
         aEntity.account.setBalanceSum(new java.math.BigDecimal(balSum));
         aEntity.account.setReservationSum(new java.math.BigDecimal(balSum));
@@ -75,7 +75,7 @@ function onCreate(aForm, aEntity, aCtx) {
 		var worker = wf.worker.person;
 		var fio = wf.workFunction.name + " " + worker.lastname + " " + worker.firstname.substring(0, 1) + ". " + (worker.middlename != null ? worker.middlename.substring(0, 1) + "." : "");
 		kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false, fio, aCtx.manager);
-}
+    }
     //**** ***//
 }
 function onPreDelete(aId, aCtx) {

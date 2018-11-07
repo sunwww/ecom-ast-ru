@@ -1,3 +1,4 @@
+<%@ page import="ru.ecom.web.login.LoginInfo" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -11,8 +12,11 @@
     <tiles:put name='side' type='string'>
     </tiles:put>
     <tiles:put name="body" type="string">
-        <msh:form action="/wfConsultationsAll.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">
+        <msh:form action="/wfConsultationsAll.do" defaultField="dateBegin" disableFormDataConfirm="true" method="POST">
             <msh:panel>
+                <msh:row>
+                    <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
+                </msh:row>
                 <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                     <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Показать:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
@@ -37,6 +41,36 @@
                         <input type="radio" name="typeGroup2" value="3"> НЕ переданные
                     </td>
                 </msh:row>
+                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                    <td class="label" title="Показать  (typeGroup3)" colspan="1"><label for="typeGroup3Name" id="typeGroup3Label"></label></td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                        <input type="radio" name="typeGroup3" value="1" checked> все
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup3" value="2"> cito
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup3" value="3"> plan
+                    </td>
+                </msh:row>
+                <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
+                    <td class="label" title="Показать  (typeGroup4)" colspan="1"><label for="typeGroup4Name" id="typeGroup4Label"></label></td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="1">
+                        <input type="radio" name="typeGroup4" value="1" checked> все
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="2">
+                        <input type="radio" name="typeGroup4" value="2"> за сегодня
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup4" value="3"> за вчера
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup4" value="4"> за сегодня и вчера
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked';" colspan="3">
+                        <input type="radio" name="typeGroup4" value="5"> ранее
+                    </td>
+                </msh:row>
                 <msh:row>
                     <td colspan="3">
                         <input type="button" onclick="this.disabled=true;find();" value="Найти" />
@@ -47,34 +81,59 @@
         <%
             StringBuilder typeSql=new StringBuilder();
             String type1 = (String)request.getParameter("typeGroup");
+            if (type1==null || type1.equals("")) type1="3";
             if (type1!=null && !type1.equals("")) {
                 if (type1.equals("2")) typeSql.append(" and scg.diary_id is not null");
                 if (type1.equals("3")) typeSql.append(" and scg.diary_id is null");
             }
             String type2 = (String)request.getParameter("typeGroup2");
+            if (type2==null || type2.equals("")) type2="1";
             if (type2!=null && !type2.equals("")) {
                 if (type2.equals("2")) typeSql.append(" and scg.transferdate is not null");
                 if (type2.equals("3")) typeSql.append(" and scg.transferdate is null");
             }
+            String type3 = (String)request.getParameter("typeGroup3");
+            if (type3==null || type3.equals("")) type3="1";
+            if (type3!=null && !type3.equals("")) {
+                if (type3.equals("2")) typeSql.append(" and vtype.code='cito'");
+                if (type3.equals("3")) typeSql.append(" and vtype.code='plan'");
+            }
+            String type4 = (String)request.getParameter("typeGroup4");
+            if (type4==null || type4.equals("")) type4="4";
+            if (type4!=null && !type4.equals("")) {
+                if (type4.equals("2")) typeSql.append(" and scg.createdate=current_date");
+                if (type4.equals("3")) typeSql.append(" and scg.createdate=current_date-1");
+                if (type4.equals("4")) typeSql.append(" and (scg.createdate=current_date or scg.createdate=current_date-1)");
+                if (type4.equals("5")) typeSql.append(" and scg.createdate<current_date-1");
+            }
+            typeSql.append(" and scg.canceldate is null");
+            String department = request.getParameter("department") ;
+            if (department!=null && !department.equals(""))  typeSql.append(" and dep.id="+department);
             request.setAttribute("typeSql",typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
+            request.setAttribute("typeGroup3",type3);
+            request.setAttribute("typeGroup4",type4);
+            request.setAttribute("department",department);
         %>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
         <msh:section>
             <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные
-                <ecom:webQuery isReportBase="true" name="totalName" nameFldSql="totalName_sql" nativeSql="
-select scg.id,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+                <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
+select case when sls.id is not null then sls.id else slo.id end as slsid,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
 pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
-scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
+dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3
 ,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4, scg.transferusername as f5
 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'HH24:MI:SS') as f6,
      vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7
      ,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
 , case
     when scg.diary_id is not null then 'background:#90EE90;color:black'
+    else case when scg.canceldate is not null  then 'background:#C0C0C0;color:black'
     else case when scg.transferdate is not null  then 'background:yellow;color:black'
     else case when scg.transferdate is null  then 'background:#CD5C5C;color:black'
-    else '' end end end as f10style
+    else '' end end end end as f10style
+    ,scg.id as scgid
 from prescription scg
 left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
@@ -83,22 +142,26 @@ left join worker w on w.id = wf.worker_id
 left join patient wp on wp.id=w.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
 left join medcase slo on slo.id=pl.medcase_id
+left join medcase sls on sls.id=slo.parent_id
 left join patient pat on slo.patient_id=pat.id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
 left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
 left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
+left join mislpu dep on dep.id=slo.department_id
 where scg.dtype='WfConsultation' ${typeSql}
+order by wf.groupname,scg.createdate desc,dep.id
 "/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
-                <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityView-pres_wfConsultation.do" idField="1" styleRow="13">
+                <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityParentView-stac_ssl.do" idField="1" styleRow="13">
                     <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableButton property="14" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
                     <msh:tableColumn columnName="Тип" property="2"/>
                     <msh:tableColumn columnName="Специалист" property="3"/>
                     <msh:tableColumn columnName="Пациент" property="4"/>
-                    <msh:tableColumn columnName="Создал" property="5"/>
+                    <msh:tableColumn columnName="Создал, отделение" property="5"/>
                     <msh:tableColumn columnName="Дата и время создания" property="6"/>
                     <msh:tableColumn columnName="Отредактировал" property="7"/>
                     <msh:tableColumn columnName="Дата и время редактирования" property="8"/>
@@ -106,14 +169,77 @@ where scg.dtype='WfConsultation' ${typeSql}
                     <msh:tableColumn columnName="Дата и время передачи" property="10"/>
                     <msh:tableColumn columnName="Пользователь, который выполнил" property="11"/>
                     <msh:tableColumn columnName="Дата и время выполнения" property="12"/>
-                    <msh:tableButton property="1" addParam="this" buttonFunction="setWfConsultingIsTransfered" buttonName="Передать?" buttonShortName="Передать"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
+        </msh:ifInRole>
+        <%
+            String login = LoginInfo.find(request.getSession(true)).getUsername() ;
+            request.setAttribute("login",login);
+        %>
+        <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal">
+            <msh:section>
+                <msh:sectionTitle>Зелёные - выполненные, жёлтые - переданные, красные - не переданные
+                    <ecom:webQuery isReportBase="false" name="totalName" nameFldSql="totalName_sql" nativeSql="
+select case when sls.id is not null then sls.id else slo.id end as slsid,vtype.code||' '||vtype.name as f00,wf.groupname as f01,
+pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.mm.yyyy') as fpat,
+dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,
+     vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7
+     ,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
+, case
+    when scg.diary_id is not null then 'background:#90EE90;color:black'
+    else case when scg.canceldate is not null  then 'background:#C0C0C0;color:black'
+    else case when scg.transferdate is not null  then 'background:yellow;color:black'
+    else case when scg.transferdate is null  then 'background:#CD5C5C;color:black'
+    else '' end end end end as f10style
+from prescription scg
+left join PrescriptionList pl on pl.id=scg.prescriptionList_id
+left join workfunction wf on wf.id=scg.prescriptcabinet_id
+left join vocworkFunction vwf on vwf.id=wf.workFunction_id
+left join worker w on w.id = wf.worker_id
+left join patient wp on wp.id=w.person_id
+left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
+left join medcase slo on slo.id=pl.medcase_id
+left join medcase sls on sls.id=slo.parent_id
+left join patient pat on slo.patient_id=pat.id
+left join workfunction wf2 on wf2.id=scg.intakespecial_id
+left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
+left join worker w2 on w2.id = wf2.worker_id
+left join patient wp2 on wp2.id=w2.person_id
+left join mislpu dep on dep.id=slo.department_id
+where scg.dtype='WfConsultation' ${typeSql}
+and vwf.id=ANY(select vwf.id  from WorkFunction wf
+left join Worker w on w.id=wf.worker_id
+left join Worker sw on sw.person_id=w.person_id
+left join WorkFunction swf on swf.worker_id=sw.id
+left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+left join SecUser su on su.id=swf.secUser_id
+where su.login='${login}'and wf.group_id=scg.prescriptcabinet_id and wf.workfunction_id=swf.workfunction_id)
+and (wf.archival is null or wf.archival='0') and scg.dtype='WfConsultation'
+order by scg.createdate desc,dep.id
+"/>
+                    <form action="javascript:void(0)" method="post" target="_blank"></form>
+                </msh:sectionTitle>
+                <msh:sectionContent>
+                    <msh:table printToExcelButton="Сохранить в excel" name="totalName" viewUrl="wfConsultationsAll.do" action="entityParentView-stac_ssl.do" idField="1" styleRow="9">
+                        <msh:tableColumn columnName="#" property="sn"/>
+                       <msh:tableColumn columnName="Тип" property="2"/>
+                        <msh:tableColumn columnName="Специалист" property="3"/>
+                        <msh:tableColumn columnName="Пациент" property="4"/>
+                        <msh:tableColumn columnName="Создал, отделение" property="5"/>
+                        <msh:tableColumn columnName="Дата и время создания" property="6"/>
+                        <msh:tableColumn columnName="Пользователь, который выполнил" property="7"/>
+                        <msh:tableColumn columnName="Дата и время выполнения" property="8"/>
+                    </msh:table>
+                </msh:sectionContent>
+            </msh:section>
+        </msh:ifNotInRole>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript">
             checkFieldUpdate('typeGroup','${typeGroup}',3) ;
             checkFieldUpdate('typeGroup2','${typeGroup2}',1) ;
+            checkFieldUpdate('typeGroup3','${typeGroup3}',1) ;
+            checkFieldUpdate('typeGroup4','${typeGroup4}',4) ;
             function checkFieldUpdate(aField,aValue,aDefault) {
                 eval('var chk =  document.forms[0].'+aField) ;
                 var max = chk.length ;
@@ -131,7 +257,7 @@ where scg.dtype='WfConsultation' ${typeSql}
                 HospitalMedCaseService.setWfConsultingIsTransfered(
                     id, {
                         callback: function (res) {
-                            if (res=="1") location.reload(); else alert("Консультация уже была отмечена, как переданная врачу! Повторно сделать это нельзя.")
+                            if (res=="1") location.reload(); else alert("Консультация либо отменена, либо уже была отмечена, как переданная врачу! Повторно сделать это нельзя.")
                         }
                     }
                 );

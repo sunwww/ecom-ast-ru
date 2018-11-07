@@ -75,9 +75,9 @@
                     <msh:tableColumn columnName="Номер счета" property="4"/>
                     <msh:tableColumn columnName="Количество записей" property="5"/>
                     <msh:tableColumn columnName="Количество дефектов" property="6" addParam="&defect=1"/>
-                    <msh:tableButton property="1" buttonShortName="Присвоить счет" buttonFunction="showE2BillDialog" addParam="this" />
-                    <msh:tableButton property="1" buttonShortName="Сформировать пакет" buttonFunction="createMPFile" addParam="this"/>
-                    <msh:tableButton property="1" buttonShortName="Проверить случаи по записи" buttonFunction="makeCheck" addParam="this"/>
+                    <msh:tableButton property="1" buttonShortName="Присвоить счет" buttonFunction="showE2BillDialog" addParam="this" role="/Policy/E2/Admin"  />
+                    <msh:tableButton property="1" buttonShortName="Сформировать пакет" buttonFunction="createMPFile" addParam="this" role="/Policy/E2/Admin" />
+                    <msh:tableButton property="1" buttonShortName="Проверить случаи по записи" buttonFunction="makeCheck" addParam="this" role="/Policy/E2/Admin" />
 
                 </msh:table>
                 </msh:ifFormTypeIsView>
@@ -207,24 +207,14 @@
                     if (confirm("Формировать файл по счету по всем заполнениям?")){
                         useAllListEntry=true;
                     }
-                    var ver = "3.0";
-                    if (confirm("Формировать в новом формате?")) {ver="3.1";}
+                    var ver = "3.1";
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,{
                         callback: function(monitorId) {
                             monitor.id=monitorId;
                             jQuery.toast("Формирование файла запущено");
-                            //isRun=false;
-                            //button.disabled=false;
-                            //button.value=oldVal;
                             updateStatus();
                         }
-                       /*     function (a) {
-                            button.disabled=false;
-                            button.removeAttribute("onClick");
-                            button.value="Скачать пакет";
-                            button.parentNode.innerHTML="<a href='"+a+"'>"+button.parentNode.innerHTML+"</a>";
-                            isRun=false;
-                        } */
+
                     });
 
                 }
@@ -250,6 +240,7 @@
                                      txt+=" <a href='"+aStatus.finishedParameters+"'>ПЕРЕЙТИ</a>";
                                  }
                                  monitor = {};
+                                    isRun=false;
                                 } else {
                                     txt=aStatus.text;
                                     setTimeout(updateStatus,4000) ;

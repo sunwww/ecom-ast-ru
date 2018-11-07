@@ -149,7 +149,7 @@ private Boolean isCheckIsRunning = false;
         z.addContent(new Element("LPU").setText("1")); //ЛПУ лечения //TODO = сделать высчитываемым
         z.addContent(new Element("VBR").setText(isNotNull(aEntry.getIsMobilePolyclinic())?"1":"0")); //Признак мобильной бригады
 
-        if (isNedonosh) z.addContent(new Element("VNOV_M").setText(aEntry.getNewbornWeight()+""));
+       // if (isNedonosh) z.addContent(new Element("VNOV_M").setText(aEntry.getNewbornWeight()+""));
         z.addContent(new Element("OS_SLUCH").setText(Expert2FondUtil.calculateFondOsSluch(aEntry))); // Особый случай //TODO!!! ALL SLO_SSS
         if (!isPoliclinic)z.addContent(new Element("VB_P").setText(slCnt>1?"1":"0")); // Признак внутрибольничного перевода
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
@@ -182,7 +182,7 @@ private Boolean isCheckIsRunning = false;
             String entryType = aEntry.getEntryType();
             boolean isHosp = false, isVmp = false, isPoliclinic = false, isExtDisp = false, isPoliclinicKdo=false;
             boolean isNedonosh = false;
-            if (entryType.equals(HOSPITALTYPE)) {isHosp=true; isNedonosh=",107,108,".contains(","+aEntry.getKsg().getCode()+",");} //Малая масса тела
+            if (entryType.equals(HOSPITALTYPE)) {isHosp=true; isNedonosh=aEntry.getKsg()!=null && ",107,108,".contains(","+aEntry.getKsg().getCode()+",");} //Малая масса тела
             else if (entryType.equals(VMPTYPE)) {isVmp=true; isNedonosh=aEntry.getIsChild();}
             else if (entryType.equals(POLYCLINICTYPE)) {isPoliclinic=true;}
             else if (entryType.equals(EXTDISPTYPE)) {isExtDisp=true;}
@@ -210,7 +210,7 @@ private Boolean isCheckIsRunning = false;
             }
             String novorString =makeNovorString(aEntry);
             pat.addContent(new Element("NOVOR").setText(novorString));
-            if (isNedonosh && novorString.equals("0")) {
+            if (isNedonosh){ // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
                 pat.addContent(new Element("VNOV_D").setText(aEntry.getNewbornWeight()+""));
             }
 
@@ -239,13 +239,15 @@ private Boolean isCheckIsRunning = false;
                 Element sl = new Element("SL");
                 E2Entry currentEntry = theManager.find(E2Entry.class,Long.valueOf(slId.trim()));
                 String edCol;
-                if (isPoliclinic) {
+               if (isPoliclinicKdo) {
+                   edCol="1";
+                   children = theManager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0') and (doNotSend is null or DoNotSend='0')").setParameter("id",currentEntry.getId()).getResultList();
+               } else if (isPoliclinic) {
                     children = theManager.createQuery("from E2Entry where parentEntry_id=:id and (isDeleted is null or isDeleted='0') and (doNotSend is null or DoNotSend='0')").setParameter("id",currentEntry.getId()).getResultList();
                     edCol=""+(children.size()>0?children.size():1);
                 } else {
                     kdz+=currentEntry.getBedDays().intValue();
                     edCol= currentEntry.getBedDays()+ ""; // Количество единиц оплаты мед. помощи
-
                 }
 
                 Boolean isCancer = currentEntry.getIsCancer()!=null?currentEntry.getIsCancer():false;
@@ -424,6 +426,7 @@ private Boolean isCheckIsRunning = false;
                 sl=add(sl,"IDDOKT",currentEntry.getDoctorSnils()); // СНИЛС лечащего врача
                 sl=add(sl,"ED_COL",edCol);
                if (isPoliclinicKdo) {
+                   edCol="1";
                     if (isNotNull(currentEntry.getFondDoctorSpec().getIsKdoChief()) && !isKdoServicesSet) {
                         sl=add(sl,"TARIF",aEntry.getCost());
                         sl=add(sl,"SUM_M",aEntry.getCost());
@@ -520,7 +523,7 @@ private Boolean isCheckIsRunning = false;
                                 sl.addContent(usl);
 
                             }
-                            sl.getChild("ED_COL").setText(""+uslCnt); //ED_COL всегда равен 1 *** 02-08-2018
+                            sl.getChild("ED_COL").setText("1"); //ED_COL всегда равен 1 *** 02-08-2018
                            // log.info("XML_KDO_CHILD="+uslCnt);
                         }
                         isKdoServicesSet = true;

@@ -162,6 +162,3 @@ INSERT INTO VocOncologyN002 (code,ds,name,startdate) VALUES ('1','C16','0','01.0
 ('159',null,'IVA','01.09.2018'),
 ('160',null,'IVB','01.09.2018'),
 ('161',null,'IVC','01.09.2018');
-
-
-

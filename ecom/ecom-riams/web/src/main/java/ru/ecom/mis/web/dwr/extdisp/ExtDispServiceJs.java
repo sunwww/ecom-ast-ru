@@ -1,12 +1,5 @@
 package ru.ecom.mis.web.dwr.extdisp;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collection;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -14,6 +7,12 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.extdispplan.IExtDispPlanService;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Collection;
 
 
 
@@ -91,6 +90,7 @@ public class ExtDispServiceJs {
 			}
 
 		}
+		sql.append(" and att.dateTo is null and pat.deathDate is null and (pat.noActuality='0' or pat.noActuality is null) and (select count(*) from medpolicy where dtype='MedPolicyOmc' and patient_id=pat.id and (actualdateto is null or actualdateto>current_date)>0");
 		sql.append(" order by ").append(aTypeSort!=null&&aTypeSort.equals("2")?" random() ":" pat.patientinfo ");
 		//if (aLimit!=null&&aYear>0) { sql.append(" and to_char(pat.birthday,'yyyy')='").append(aYear).append("'");}
 		IWebQueryService service= Injection.find(aRequest).getService(IWebQueryService.class);

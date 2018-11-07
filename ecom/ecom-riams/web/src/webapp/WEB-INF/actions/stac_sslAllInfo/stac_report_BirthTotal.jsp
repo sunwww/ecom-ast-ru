@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -17,6 +16,7 @@
     <tiles:put name="body" type="string">
         <%
             String typeGroup = ActionUtil.updateParameter("stac_report_Term_and_Paritet","typeGroup","1",request);
+
             if (request.getParameter("short")==null||request.getParameter("short").equals("")) {
         %>
         <msh:form action="/stac_report_BirthTotal.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET" guid="d7b31bc2-38f0-42cc-8d6d-19395273168f">
@@ -99,6 +99,7 @@
 
                 request.setAttribute("dateBegin", date);
                 request.setAttribute("dateEnd", dateEnd);
+                request.setAttribute("isReportBase", ActionUtil.isReportBase(date,dateEnd,request));
                 String sqlAdd = "";
                 String type = request.getParameter("type");
 
@@ -189,7 +190,7 @@
                         }
         %>
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportTempPregnancyReestr" nameFldSql="ReportTempPregnancyReestrSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportTempPregnancyReestr" nameFldSql="ReportTempPregnancyReestrSql" nativeSql="
 select pat.id as patId
 , pat.patientinfo
 ,cast('&type=reestr' as char) as fldId
@@ -223,7 +224,7 @@ order by pat.patientinfo
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportTempPregnancy" nameFldSql="ReportTempPregnancySql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportTempPregnancy" nameFldSql="ReportTempPregnancySql" nativeSql="
 select
 count(cb.id)
 ,count (case when cb.durationpregnancy between 22 and 27 then cb.id end) as f0_22_27
@@ -284,7 +285,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
             <msh:sectionTitle>Результаты поиска по паритету по РОДАМ за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
         </msh:section>
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportParitetPregnancy" nameFldSql="ReportParitetPregnancySql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportParitetPregnancy" nameFldSql="ReportParitetPregnancySql" nativeSql="
 select
 count(cb.id)
 ,count (case when par.code='I' then cb.id end) as f0
@@ -335,7 +336,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
             <msh:sectionTitle>Результаты поиска по паритету по БЕРЕМЕННОСТЯМ за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
         </msh:section>
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportParitetPregnancy" nameFldSql="ReportParitetPregnancySql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportParitetPregnancy" nameFldSql="ReportParitetPregnancySql" nativeSql="
 select
 count(cb.id)
 ,count (case when par.code='I' then cb.id end) as f0
@@ -392,7 +393,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
             <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
         </msh:section>
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportMotherAge" nameFldSql="ReportMotherAgeSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportMotherAge" nameFldSql="ReportMotherAgeSql" nativeSql="
 select
 count(cb.id)
 ,count (case when (cb.pangsstartdate-pat.birthday)/365 <=14 then cb.id end) as f1_less15
@@ -437,7 +438,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportFetus" nameFldSql="ReportFetusSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportFetus" nameFldSql="ReportFetusSql" nativeSql="
 select
 count(cb.id)
 ,count (case when(select count(id) from newBorn where childBirth_id=cb.id)=1 then cb.id end) as f1
@@ -475,7 +476,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportEco" nameFldSql="ReportEcoSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportEco" nameFldSql="ReportEcoSql" nativeSql="
 select
 count(cb.id)
 ,count (case when cb.iseco=true then cb.id end) as f1
@@ -509,7 +510,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportGk" nameFldSql="ReportGkSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportGk" nameFldSql="ReportGkSql" nativeSql="
 select
 count(cb.id)
 ,count (case when cb.isregisteredwithwomenconsultation=true then cb.id end) as f1
@@ -543,7 +544,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportPlace" nameFldSql="ReportPlaceSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportPlace" nameFldSql="ReportPlaceSql" nativeSql="
 select
 count(cb.id)
 ,count (case when place.code='1' then cb.id end) as f1
@@ -582,7 +583,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportRayon" nameFldSql="ReportRayonSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportRayon" nameFldSql="ReportRayonSql" nativeSql="
 select
 count(cb.id) as f1
 ,count(case when ok.voc_code='643' and adr.kladr like '30000001%' then cb.id else null end) as cntAstrakhan
@@ -659,7 +660,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportIndic" nameFldSql="ReportIndicSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportIndic" nameFldSql="ReportIndicSql" nativeSql="
 select
 count(cb.id)
 ,count (case when vocem.code='1' then cb.id end) as f1
@@ -699,7 +700,7 @@ where cb.birthFinishDate between to_date('${dateBegin}','dd.MM.yyyy') and to_dat
         </msh:section>
 
         <msh:section>
-            <ecom:webQuery isReportBase="true" name="ReportMisbirth" nameFldSql="ReportMisbirthSql" nativeSql="
+            <ecom:webQuery isReportBase="${isReportBase}" name="ReportMisbirth" nameFldSql="ReportMisbirthSql" nativeSql="
 select  sls.id as patId, pat.patientinfo
 from medcase sls
 left join patient pat on sls.patient_id=pat.id

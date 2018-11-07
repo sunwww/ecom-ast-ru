@@ -218,15 +218,15 @@ public class Expert2ServiceJs {
             if (aOldBillDate!=null&&!aOldBillDate.equals("")) {sql+=" and billDate=to_date('"+aOldBillDate+"','dd.MM.yyyy')";} else {sql+=" and billDate is null";}
             if (aOldBillNumber==null) {aOldBillNumber="";}
             sql+=" and billNumber='"+aOldBillNumber+"'";
-            sql+=" and (isDeleted is null or isDeleted='0')";
         }
+        sql+=" and (isDeleted is null or isDeleted='0')";
         service.executeUpdateNativeSql(sql);
         return true;
     }
 
-    public boolean unionMedCase (Long aListEntryId, Long aHospitalMedCase, Long aPatientId, String aEntryType, HttpServletRequest aRequest) throws NamingException {
+    public boolean unionMedCase (Long aListEntryId, Long aHospitalMedCase, Long aPatientId, String aEntryType,boolean isGroupSpo, HttpServletRequest aRequest) throws NamingException {
         IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
-        service.testUnionMecCase(aListEntryId,aHospitalMedCase,aPatientId, aEntryType);
+        service.testUnionMecCase(aListEntryId,aHospitalMedCase,aPatientId, aEntryType, isGroupSpo);
         return true;
     }
 

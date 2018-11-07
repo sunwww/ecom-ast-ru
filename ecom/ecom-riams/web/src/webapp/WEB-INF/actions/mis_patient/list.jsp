@@ -139,7 +139,7 @@
         <msh:table viewUrl="entityShortView-mis_patient.do" name="list_1" 
         action="entityView-mis_patient.do" idField="id" disableKeySupport="true"
         navigationAction="mis_patients.do?${infoparam}"
-        noDataMessage=""
+        noDataMessage="" escapeSymbols="false"
         >
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
           <msh:tableColumn columnName="Фамилия" property="lastname" guid="87779c74-a164-4c5f-8fa9-5501c300bbf2" />
@@ -153,7 +153,7 @@
         
         <msh:table viewUrl="entityShortView-mis_patient.do" name="list_2" 
         action="entityView-mis_patient.do" idField="id" disableKeySupport="true"
-        noDataMessage=""
+        noDataMessage=""  escapeSymbols="false"
         >
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
           <msh:tableColumn columnName="Фамилия" property="lastname" guid="87779c74-a164-4c5f-8fa9-5501c300bbf2" />
@@ -167,7 +167,7 @@
         
         <msh:table viewUrl="entityShortView-mis_patient.do" name="list_3" 
         action="entityView-mis_patient.do" idField="id" disableKeySupport="true"
-        noDataMessage=""
+        noDataMessage="" escapeSymbols="false"
         >
           <msh:tableColumn columnName="Код" property="patientSync" guid="89c74-a164-4c5f-8fa9-5501c300bbf2" />
           <msh:tableColumn columnName="Фамилия" property="lastname" guid="87779c74-a164-4c5f-8fa9-5501c300bbf2" />

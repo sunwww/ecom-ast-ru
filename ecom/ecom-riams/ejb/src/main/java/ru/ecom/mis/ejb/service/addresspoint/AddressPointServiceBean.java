@@ -1,29 +1,7 @@
 package ru.ecom.mis.ejb.service.addresspoint;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.service.AddressPointCheck;
 import ru.ecom.address.ejb.service.AddressPointCheckHelper;
@@ -42,6 +20,22 @@ import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 /**
  * @author  azviagin
  */
@@ -54,13 +48,6 @@ public class AddressPointServiceBean implements IAddressPointService {
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	Collection<WebQueryResult> errList = new ArrayList<WebQueryResult>();
-
-    StringBuilder def = new StringBuilder();
-    WebQueryResult result = new WebQueryResult();
-     /*   public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix, String aAddSql, Long aLpu, Long aArea, String aDateFrom, String aDateTo, String aPeriodByReestr
-				, String aNReestr, String aNPackage, Long aCompany,  String aPacketType) throws ParserConfigurationException, TransformerException {
-			return exportExtDispPlanAll(aAge,aFilenameAddSuffix,aAddSql,aLpu,aArea,aDateFrom,aDateTo,aPeriodByReestr,aNReestr,aNPackage,aCompany,"");
-		}*/
 
     public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, Long aLpu, Long aArea
@@ -148,7 +135,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	if (aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         //	if (aCompany!=null&&aCompany>0) {sql.append(" mp.company_id=").append(aCompany).append(" and ");}
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
-        	sql.append(" and mp.id is not null and mp.actualdateto is null");
+        	sql.append(" and mp.id is not null and (mp.actualdateto is null or mp.actualdateto >current_date)");
         	sql.append(" ").append(addSql).append(" and lp.dateto is null") ;
         	sql.append(" group by p.id, lp.id, ").append(fldGroup) ;
         	sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday") ;

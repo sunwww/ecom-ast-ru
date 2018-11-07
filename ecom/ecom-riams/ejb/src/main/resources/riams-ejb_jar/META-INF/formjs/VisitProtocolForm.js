@@ -89,25 +89,31 @@ function onCreate(aForm, aEntity, aCtx) {
     var bean = new Packages.ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean();
     bean.sendProtocolToExternalResource(aEntity.getId(),null,null,aCtx.manager);
     //Milamesher #121 19092018 если есть переданные, но не выполненные консультации в этом сло текущего пользователя (с любой раб. ф-ей), то проставить diary_id
+    //upd Milamesher 11102018 и не отменённые
+    //upd2 и не текущего СЛО, а любого СЛО, у кого СЛС - parent текущего СЛО
+    //upd3 можно и без transferdate
+    //30102018 убрана проверка на актуальность раб. ф-ии and (wf.archival is null or wf.archival='0')
     var res = aCtx.manager.createNativeQuery( "select  scg.id from prescription scg\n" +
         "left join PrescriptionList pl on pl.id=scg.prescriptionList_id\n" +
         "left join medcase slo on slo.id=pl.medcase_id\n" +
         "left join workfunction wf on wf.id=scg.prescriptcabinet_id\n" +
         "left join vocworkfunction vwf on vwf.id=wf.workfunction_id\n" +
-        "where scg.transferdate is not null and scg.diary_id is null\n" +
+        "where scg.diary_id is null\n" +
         "and vwf.id=ANY(select wf.workfunction_id from WorkFunction wf\n" +
         "left join Worker w on w.id=wf.worker_id\n" +
         "left join Worker sw on sw.person_id=w.person_id\n" +
         "left join WorkFunction swf on swf.worker_id=sw.id\n" +
         "left join SecUser su on su.id=swf.secUser_id\n" +
         "where su.login='"+ aCtx.getSessionContext().getCallerPrincipal().toString() +
-        "' and (wf.archival is null or wf.archival='0'))" +
-        " and scg.dtype='WfConsultation' and slo.id='"+aForm.getMedCase()+"' order by scg.id").getResultList();
+        "' and wf.group_id=scg.prescriptcabinet_id )" +
+        " and scg.dtype='WfConsultation' and scg.canceldate is null and (slo.id=ANY\n" +
+        "(select id from medcase where dtype='DepartmentMedCase' and parent_id=(select parent_id from medcase where id='"
+        +aForm.getMedCase()+"')) or slo.id="+aForm.getMedCase()+")  order by scg.id").getResultList();
     if (res.size()>0) {
         if (res.get(0)!=null) {
             var presc = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.Prescription,java.lang.Long.valueOf(res.get(0)));
             presc.setDiary(aEntity);
-            var currentDate = new java.util.Date();
+            presc.setIntakeUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
             presc.setIntakeDate(aEntity.dateRegistration);
             presc.setIntakeTime(aEntity.timeRegistration);
             presc.setIntakeSpecial(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction"));
@@ -211,6 +217,17 @@ function check(aForm, aCtx) {
             }
             if (dtype == 'HospitalMedCase' && (aForm.journalText == null || aForm.journalText.equals(""))) {
                 throw "Необходимо заполнить поле Принятые меры для журнала. Если их нет, необходимо ставить: -";
+            }
+            //Milamesher 16102018 - создание дневника специалиста приёмного отделения по времени - только ДО создания СЛО
+            if (dtype == 'HospitalMedCase' && aForm.getDateRegistration() != null && aForm.getDateRegistration() != '') {
+                var list = aCtx.manager.createNativeQuery("select case when dmc.id is null then '0' else case when (dmc.dateStart>to_date('"
+                    +aForm.dateRegistration+"','dd.mm.yyyy') or dmc.dateStart=to_date('"+aForm.dateRegistration+"','dd.mm.yyyy') and dmc.entranceTime>'"
+                    +aForm.timeRegistration+"' ) then '0' else '1' end end\n" +
+                    "from medcase hmc \n" +
+                    "left join medcase dmc on hmc.id=dmc.parent_id and dmc.dtype='DepartmentMedCase'\n" +
+                    "where hmc.id="+aForm.medCase+" order by dmc.id limit 1 ").getResultList();
+                if (!list.isEmpty())
+                    if (list.get(0)=='1') throw "Нельзя создавать дневник специалиста приёмного отделения с датой регистрации больше начала СЛО! Нужно изменить дату и время регистрации либо создать дневник в случае лечения в отделении.";
             }
             var isCheck = null;
 

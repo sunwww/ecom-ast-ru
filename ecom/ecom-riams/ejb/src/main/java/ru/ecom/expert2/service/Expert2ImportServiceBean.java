@@ -3,6 +3,7 @@ package ru.ecom.expert2.service;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.domain.E2Bill;
@@ -23,7 +24,9 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
@@ -222,6 +225,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             Document doc = new SAXBuilder().build(hFile);
             XmlDocument xmlDocError = new XmlDocument() ;
             org.jdom.Element root = doc.getRootElement();
+            String ver = root.getChild("ZGLV").getChildText("VERSION");
+            if (ver.equals("3.0")) {
+                return importFondMPAnswerOld(aMpFilename);
+            }
             List<Element> zaps= root.getChildren("ZAP");
             String nSchet = root.getChild("SCHET").getChildText("NSCHET");
             String dSchet = root.getChild("SCHET").getChildText("DSCHET");
@@ -283,6 +290,98 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             log.info("Обновление закончено!");
 
         }  catch (Exception e) {
+            e.printStackTrace();
+        }
+        //Распаковываем mp файл в папку
+
+        return null;
+    }
+    public String importFondMPAnswerOld(String aMpFilename) {
+        //filename вида *.mp *.mpi
+        //String outputDir = unZip(aMpFilename);
+        try {
+            log.info("filename = "+aMpFilename);
+            String dir = unZip(aMpFilename);
+            String hFilename = aMpFilename.replace(".MP",".XML");
+            hFilename="H"+hFilename.substring(1);
+            File hFile = new File(dir+"/"+hFilename);
+            //log.info(hFile.exists()+"##>>"+dir+"/"+hFilename+"<<");
+
+
+            Document doc = new SAXBuilder().build(hFile);
+            XmlDocument xmlDocError = new XmlDocument() ;
+            org.jdom.Element root = doc.getRootElement();
+            List<Element> zaps= root.getChildren("ZAP");
+            String nSchet = root.getChild("SCHET").getChildText("NSCHET");
+            String dSchet = root.getChild("SCHET").getChildText("DSCHET");
+            SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
+            E2Bill bill = theManager.find(E2Bill.class,theExpertService.getBillIdByDateAndNumber(nSchet,toFormat.format(fromFormat.parse(dSchet))));
+            bill.setStatus((VocE2BillStatus)getActualVocByCode(VocE2BillStatus.class,null,"code='PAID'"));
+
+            int i=0;
+            log.info("Найдено "+zaps.size()+" записей. Обновляем!");
+            for (Element zap:zaps) {
+                i++;
+                if (i%100==0) {log.info("Обработано "+i+" записей");}
+                Long entryId = Long.parseLong(zap.getChildText("N_ZAP"));
+                E2Entry entry= theManager.find(E2Entry.class,entryId);
+                if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
+                theManager.createNativeQuery("update E2EntrySanction set isDeleted='1' where entry_id="+entryId).executeUpdate();
+                entry.setBillNumber(nSchet);
+                entry.setBillDate(bill.getBillDate());
+                entry.setBill(bill);
+
+                Element pac = zap.getChild("PACIENT");
+
+                //Проставляем данные о мед. полисе
+                entry.setMedPolicyType(pac.getChildText("VPOLIS"));
+                if (pac.getChild("SPOLIS")!=null) {entry.setMedPolicySeries(pac.getChildText("SPOLIS"));} else {entry.setMedPolicySeries("");}
+                entry.setMedPolicyNumber(pac.getChildText("NPOLIS"));
+                entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
+
+                //Добавляем сведения о санкциях
+                Element sluch = zap.getChild("SLUCH");
+                if (sluch.getChild("SANK_IT")!=null&&!sluch.getChildText("SANK_IT").equalsIgnoreCase("0.00")) { //
+                    List<Element> sanks =sluch.getChildren("SANK");
+                    for (Element sank: sanks) {
+                        String key = sank.getChildText("S_OSN") ;
+                        if (!sanctionMap.containsKey(key)) {
+                            sanctionMap.put(key,(VocE2Sanction)getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
+                        }
+                        boolean isMain = sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true;
+                        E2EntrySanction s = new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),isMain);theManager.persist(s);
+                    }
+                    Element commentCalc = sluch.getChild("COMMENT_CALC");
+                    if (commentCalc!=null&&commentCalc.getChild("root")!=null) {
+
+                        Element ебаныйРусскийТэг = commentCalc.getChild("root");
+                        List<Element> ерт = ебаныйРусскийТэг.getChildren();
+                        StringBuilder commentError = new StringBuilder();
+                        for (Element еб:ерт) {
+                            commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
+                        }
+                        entry.setFondComment(commentError.toString());
+                    }
+                    entry.setIsDefect(true);
+                } else {
+                    entry.setIsDefect(false);
+                    entry.setFondComment(null);
+                }
+                theManager.persist(entry);
+            }
+            theManager.persist(bill);
+            log.info("Обновление закончено!");
+
+        } catch (JDOMException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //Распаковываем mp файл в папку
