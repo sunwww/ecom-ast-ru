@@ -252,15 +252,13 @@ private Boolean isCheckIsRunning = false;
 
                 Boolean isCancer = currentEntry.getIsCancer()!=null?currentEntry.getIsCancer():false;
                 if (isCancer && currentEntry.getMedHelpProfile().getCode().equals("12")) {isCancer=false;} //Убрать колхоз
+                if (isCancer&& currentEntry.getVisitPurpose()!=null&&currentEntry.getVisitPurpose().getCode().equals("1.3")) {isCancer=false;}
                 E2CancerEntry cancerEntry = null;
                 if (isCancer) {
                     try {
                         cancerEntry= (E2CancerEntry) theManager.createQuery("from E2CancerEntry where entry=:entry").setParameter("entry",currentEntry).getResultList().get(0);
                     } catch (Exception e) {}
-                    //if (cancerEntry!=null)isCancer=!cancerEntry.getMaybeCancer();
                 }
-                if (isCancer&& currentEntry.getVisitPurpose()!=null&&currentEntry.getVisitPurpose().getCode().equals("1.3")) {isCancer=false;}
-
 
                 VocE2MedHelpProfile profile = currentEntry.getMedHelpProfile();
                 String profileK = profile.getProfileK();
@@ -696,7 +694,7 @@ private Boolean isCheckIsRunning = false;
             String profileK = profile.getProfileK();
             sluch.addContent(new Element("IDCASE").setText("" + cnt));
             sluch.addContent(new Element("USL_OK").setText(aEntry.getMedHelpUsl().getCode())); //дневной-круглосуточный-поликлиника
-            sluch.addContent(new Element("VIDPOM").setText(aEntry.getMedHelpKind().getCode())); //TODO = сделать высчитываемым //тип мед. помощи
+            sluch.addContent(new Element("VIDPOM").setText(aEntry.getMedHelpKind().getCode()));
             sluch.addContent(new Element("FOR_POM").setText(isNotNull(aEntry.getIsEmergency()) ? (isPoliclinic?"2":"1") : "3")); //форма помощи V014
             if (!isNotNull(aEntry.getIsEmergency())) sluch.addContent(new Element("NPR_MO").setText(aEntry.getDirectLpu())); //Номер МО, направившей на лечение *Только для плановой помощи
             //NPR_MO - номер принявшей МО

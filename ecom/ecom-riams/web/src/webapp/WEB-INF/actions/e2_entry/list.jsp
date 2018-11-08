@@ -103,7 +103,6 @@ String defectColumnName = "Дефект";
     if (isForeign!=null){searchWhereSql+=" and e.isForeign='"+(isForeign.equals("1")?"1":"0")+"'";}
     request.setAttribute("searchFromSql",searchFromSql);
     request.setAttribute("searchWhereSql",searchWhereSql);
-    System.out.println(searchWhereSql);
 %>
         <msh:panel>
             <input type="text" name="searchField" id="lastname" placeholder="Фамилия пациента">
@@ -146,7 +145,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join vocksg ksg on ksg.id=e.ksg_id
         left join entrydiagnosis d on d.entry_id=e.id and d.priority_id=1
         left join vocidc10 mkb on mkb.id=d.mkb_id
-        left join e2entrysanction es on es.entry_id=e.id and es.isMainDefect='1' and (es.isDeleted is null or es.isDeleted='0')
+        left join e2entrysanction es on es.entry_id=e.id and (es.isDeleted is null or es.isDeleted='0')
         left join e2bill bill on bill.id=e.bill_id
         left join voce2billstatus vbs on vbs.id=bill.status_id
  where ${searchWhereSql}

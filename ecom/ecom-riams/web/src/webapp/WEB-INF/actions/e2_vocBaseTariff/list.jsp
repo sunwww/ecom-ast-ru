@@ -23,6 +23,7 @@
             <msh:section title='Результат поиска'>
                 <ecom:webQuery name="tariffList" nativeSql="select t.id, t.value, t.startDate, t.finishDate, vbst.code||' '||vbst.name as bedType
     ,vocTariff.name as tariffType, vs.code||' '||vs.name as f7_vidSluch
+    ,case when t.finishDate is null or t.finishDate>current_date then 'color:grenn' else 'color:red' end as f8_styleRow
     from VocCoefficient t
     left join vocbedsubtype vbst on vbst.id=t.stacType_id
     left join VocE2FondV015 v015 on v015.id=t.speciality_id
@@ -31,7 +32,7 @@
     where t.dtype='VocE2BaseTariff'
     order by t.startDate desc, vocTariff.name
     " />
-                <msh:table  name="tariffList" action="entityView-e2_vocBaseTariff.do" idField="1" disableKeySupport="true">
+                <msh:table  name="tariffList" action="entityView-e2_vocBaseTariff.do" idField="1" disableKeySupport="true" styleRow="8">
                     <msh:tableColumn columnName="Тип тарифа" property="6" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Тип коек" property="5" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
                     <msh:tableColumn columnName="Вид случая" property="7" guid="8c2a3f9b-89d7-46a9-a8c3-c08029ec047e" />
