@@ -254,7 +254,7 @@
 
         <msh:ifFormTypeIsView formName="stac_sslForm">
             <msh:ifInRole roles="/Policy/Mis/Oncology/Case/View">
-                <msh:section createUrl="entityParentPrepareCreate-oncology_case.do?id=${param.id}"
+                <msh:section createUrl="entityParentPrepareCreate-oncology_case_reestr.do?id=${param.id}"
                              title="Случай онкологического лечения">
                     <ecom:webQuery name="list" nativeSql="
                     select oc.id,
@@ -262,9 +262,9 @@
                     ort.name as reason,
                     case when oc.distantmetastasis=true then 'Да' else 'Нет' end as disy,
                     n02.name as stad,
-                    n03.name as tumor,
-                    n04.name as nodus,
-                    n05.name as metastasis,
+                    case when n03.name is not null and n03.name!='' then n03.name else n03.tumorcode end as tumor,
+                    case when n04.name is not null and n04.name!='' then n04.name else n04.noduscode end as nodus,
+                    case when n05.name is not null and n05.name!='' then n05.name else n05.metastasiscode end as metastasis,
                     cons.name as consil,
                     n13.name as typetreat
                     from oncologycase oc
@@ -276,8 +276,8 @@
                     left join voconcologyconsilium cons on cons.id = oc.consilium_id
                     left join vocOncologyN013 n13 on n13.id = oc.typeTreatment_id
                     where medcase_id = ${param.id}"/>
-                    <msh:table viewUrl="entityView-oncology_case.do?short=Short" name="list"
-                               action="entityParentView-oncology_case.do" idField="1" >
+                    <msh:table viewUrl="entityView-oncology_case_reestr.do?short=Short" name="list"
+                               action="entityParentView-oncology_case_reestr.do" idField="1" >
                         <msh:tableColumn columnName="#" property="sn"/>
                         <msh:tableColumn columnName="Подозрение на ЗНО" property="2"/>
                         <msh:tableColumn columnName="Причина обращения" property="3"/>

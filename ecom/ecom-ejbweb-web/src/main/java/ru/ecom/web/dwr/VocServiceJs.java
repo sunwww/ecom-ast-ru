@@ -118,7 +118,8 @@ public class VocServiceJs {
     	return aValue ;
     }
     
-    public String getAllValueByVocs(String aVocs,HttpServletRequest aRequest) throws NamingException {
+    public String getAllValueByVocs(String aVocs,Boolean isCode,HttpServletRequest aRequest) throws NamingException {
+    	String sql=(isCode)? "select code,name from ":"select id,name from ";
     	StringBuilder sb = new StringBuilder() ;
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
     	sb.append("{");
@@ -129,7 +130,7 @@ public class VocServiceJs {
 		boolean isFistrVoc = true ;
 		for(String voc : vocs) {
 			//System.out.println("voc"+voc) ;
-			Collection<WebQueryResult> list= service.executeNativeSql("select id,name from "+voc) ;
+			Collection<WebQueryResult> list= service.executeNativeSql(sql+voc) ;
 			if (isFistrVoc) {isFistrVoc=false ;} else {sb.append(", ");}
 			sb.append("{\"name\":\"").append(voc).append("\",\"values\":[");
 			boolean firstPassed = true ;

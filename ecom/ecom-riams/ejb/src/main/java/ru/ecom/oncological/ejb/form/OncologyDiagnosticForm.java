@@ -14,7 +14,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
         , view="entityParentView-oncology_diagnostic.do"
         , shortView="entityShortView-oncology_diagnostic.do"
 )
-@Parent(property="oncologyCase", parentForm=OncologyCaseForm.class)
+@Parent(property="oncologyCase", parentForm=OncologyCaseReestrForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Oncology/Diagnostic")
 public class OncologyDiagnosticForm extends IdEntityForm {
 

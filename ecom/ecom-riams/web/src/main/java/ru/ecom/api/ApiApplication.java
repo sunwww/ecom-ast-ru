@@ -1,5 +1,6 @@
 package ru.ecom.api;
 
+import ru.ecom.api.Onco.OncoResource;
 import ru.ecom.api.fondCheck.FondCheck;
 import ru.ecom.api.medcaseMedpolicy.MedcaseMedpolicy;
 import ru.ecom.api.queue.HospitalQueueResource;
@@ -28,6 +29,7 @@ public class ApiApplication extends Application {
         set.add(MedcaseMedpolicy.class);
         set.add(FondCheck.class);
         set.add(ScheduleTasks.class);
+        set.add(OncoResource.class);
         return set;
     }
 }

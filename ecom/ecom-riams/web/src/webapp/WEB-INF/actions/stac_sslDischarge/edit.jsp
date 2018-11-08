@@ -241,8 +241,8 @@
                         <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
                             <msh:row>
                                 <td colspan="4" align="center">
-                                    <tags:oncologyTag parentId="${param.id}" name="Onk"/>
-                                    <input type="button" value="Случай ЗНО" onclick="showOnkOncology('.do')"/>
+                                    <!--tags:oncologyTag parentId="${param.id}" name="Onk"/>
+                                    <input type="button" value="Случай ЗНО" onclick="showOnkOncology('.do')"/-->
                                     <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
                                     <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
                                     <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
@@ -460,7 +460,7 @@
                 //aert(countOncology);
                 var a= $('concludingMkbName').value;
 
-                OncologyService.checkSLO(${param.id},{
+               /* OncologyService.checkSLO(${param.id},{
                     callback : function(res) {
                         if(res=="0" && a.match(/C\d\d/ )!=null)
                         {
@@ -469,7 +469,7 @@
                                 $('submitPreDischrge1').disabled=false ;}catch(e){}
                             $('submitButton').disabled=false ;
 
-                        }else {
+                        }else {*/
                             var list_diag = ["complication","concomitant"] ;
                             var isnext=true ;
                             try {
@@ -494,9 +494,9 @@
                                     $('submitPreDischrge1').disabled=false ;}catch(e){}
                                 $('submitButton').disabled=false ;
                             }
-                        }
+                       /* }
 
-                    }});
+                    }});*/
 
             }
             onload=function(){

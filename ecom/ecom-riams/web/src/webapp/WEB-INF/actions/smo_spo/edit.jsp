@@ -212,9 +212,9 @@ order by vis.dateStart
                     ort.name as reason,
                     case when oc.distantmetastasis=true then 'Да' else 'Нет' end as disy,
                     n02.name as stad,
-                    n03.name as tumor,
-                    n04.name as nodus,
-                    n05.name as metastasis,
+                    case when n03.name is not null and n03.name!='' then n03.name else n03.tumorcode end as tumor,
+                    case when n04.name is not null and n04.name!='' then n04.name else n04.noduscode end as nodus,
+                    case when n05.name is not null and n05.name!='' then n05.name else n05.metastasiscode end as metastasis,
                     cons.name as consil,
                     n13.name as typetreat
                     from oncologycase oc
@@ -226,8 +226,8 @@ order by vis.dateStart
                     left join voconcologyconsilium cons on cons.id = oc.consilium_id
                     left join vocOncologyN013 n13 on n13.id = oc.typeTreatment_id
                     where medcase_id = ${param.id}"/>
-        <msh:table viewUrl="entityView-oncology_case.do?short=Short" name="list"
-                   action="entityParentView-oncology_case.do" idField="1" >
+        <msh:table viewUrl="entityView-oncology_case_reestr.do?short=Short" name="list"
+                   action="entityParentView-oncology_case_reestr.do" idField="1" >
           <msh:tableColumn columnName="#" property="sn"/>
           <msh:tableColumn columnName="Подозрение на ЗНО" property="2"/>
           <msh:tableColumn columnName="Причина обращения" property="3"/>
@@ -254,7 +254,7 @@ order by vis.dateStart
         <msh:sideLink key="ALT+0" action="/js-smo_visit-findPolyAdmissions" name="Рабочий календарь" roles="/Policy/Mis/MedCase/Visit/View" styleId="selected_menu"/>
         <msh:sideLink params="id" action="/js-smo_spo-reopenSpo" name="Открыть СПО" title="Открыть СПО" confirm="Открыть СПО?" key="ALT+4" roles="/Policy/Mis/MedCase/Spo/Reopen" />
 		<msh:sideLink params="id" action="/js-smo_spo-closeSpo" name="Закрыть СПО" title="Закрыть СПО" confirm="Закрыть СПО?" guid="d84659f7-7ea9-4400-a11c-c83e7d5c578d" key="ALT+5" roles="/Policy/Mis/MedCase/Spo/Close" />
-        <msh:sideLink key="ALT+1" params="id" action="/entityParentPrepareCreate-oncology_case.do" name="Создать онкологический случай" roles="/Policy/Mis/Oncology/Case/Create"/>
+        <msh:sideLink key="ALT+1" params="id" action="/entityParentPrepareCreate-oncology_case_reestr.do" name="Создать онкологический случай" roles="/Policy/Mis/Oncology/Case/Create"/>
         <tags:mis_choiceSpo hiddenNewSpo="1" method="unionSpos" methodGetPatientByPatient="getOpenSpoBySmo" service="TicketService" name="moveVisit"  roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo" title="Объединить с другим СПО" />
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('js-smo_spo-cost_case.do?short=Short&id=${param.id}','.do')" name='Цена' title="Просмотр стоимости услуг"         	roles="/Policy/Mis/Contract/Journals/AnalisisMedServices" />
             <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуги"  
@@ -286,7 +286,7 @@ order by vis.dateStart
                if(res=="true"){
                     var isAdmin = confirm("Требуется создать онкологический случай");
                     if(isAdmin){
-                        document.location.replace("entityParentPrepareCreate-oncology_case.do?id=${param.id}");
+                        document.location.replace("entityParentPrepareCreate-oncology_case_reestr.do?id=${param.id}");
                     }
                    btn.style.display  = "block";
                 }

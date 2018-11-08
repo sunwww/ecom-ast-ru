@@ -39,9 +39,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
     	styleId="stac_policies"
     	title='Полисы данного случая лечения в стационаре!'/>
 
-	<msh:sideLink key="ALT+5"
+	<msh:sideLink
 				  params="id"
-				  action="/entityParentPrepareCreate-oncology_case.do"
+				  action="/entityParentPrepareCreate-oncology_case_reestr.do"
 				  name="Создать онкологический случай"
 				  roles="/Policy/Mis/Oncology/Case/Create"/>
 
