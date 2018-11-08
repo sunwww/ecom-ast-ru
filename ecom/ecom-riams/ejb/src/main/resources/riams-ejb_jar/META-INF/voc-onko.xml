@@ -27,9 +27,44 @@
     <voc id='vocOncologyN002parent' type='NativeVocService'>
         <NativeVocService
                 from = "voconcologyn002 n002"
-                parent='n002.ds=:parent'
+                parent='case when (select count(*) from voconcologyN002 where ds=:parent)>0 then ds=:parent
+                else case when (select count(*) from voconcologyN002 where ds=substring(:parent from 1 for 3))>0 then  ds=substring(:parent from 1 for 3)
+                else ds is null  end end'
                 nameId= "n002.id"
                 names = "n002.name"
+        />
+    </voc>
+
+    <voc id='vocOncologyN003parent' type='NativeVocService'>
+        <NativeVocService
+                from = "voconcologyn003 n003"
+                parent='case when (select count(*) from voconcologyn003 where ds=:parent)>0 then ds=:parent
+                else case when (select count(*) from voconcologyn003 where ds=substring(:parent from 1 for 3))>0 then  ds=substring(:parent from 1 for 3)
+                else ds is null  end end'
+                nameId= "n003.id"
+                names = "case when n003.name is not null and n003.name!='' then name else n003.tumorcode end"
+        />
+    </voc>
+
+    <voc id='vocOncologyN004parent' type='NativeVocService'>
+        <NativeVocService
+                from = "voconcologyn004 n004"
+                parent='case when (select count(*) from voconcologyn004 where ds=:parent)>0 then ds=:parent
+                else case when (select count(*) from voconcologyn004 where ds=substring(:parent from 1 for 3))>0 then  ds=substring(:parent from 1 for 3)
+                else ds is null  end end'
+                nameId= "n004.id"
+                names = "case when n004.name is not null and n004.name!='' then name else n004.noduscode end"
+        />
+    </voc>
+
+    <voc id='vocOncologyN005parent' type='NativeVocService'>
+        <NativeVocService
+                from = "voconcologyn005 n005"
+                parent='case when (select count(*) from voconcologyn005 where ds=:parent)>0 then ds=:parent
+                else case when (select count(*) from voconcologyn005 where ds=substring(:parent from 1 for 3))>0 then  ds=substring(:parent from 1 for 3)
+                else ds is null  end end'
+                nameId= "n005.id"
+                names = "case when n005.name is not null and n005.name!='' then name else n005.metastasiscode end"
         />
     </voc>
 

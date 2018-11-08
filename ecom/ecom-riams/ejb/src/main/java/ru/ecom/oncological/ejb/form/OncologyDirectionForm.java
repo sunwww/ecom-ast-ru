@@ -19,7 +19,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
         , view="entityParentView-oncology_direction.do"
         , shortView="entityShortView-oncology_direction.do"
 )
-@Parent(property="oncologyCase", parentForm=OncologyCaseForm.class)
+@Parent(property="oncologyCase", parentForm=OncologyCaseReestrForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Oncology/Direction")
 public class OncologyDirectionForm extends IdEntityForm {
 

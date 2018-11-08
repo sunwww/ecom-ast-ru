@@ -315,10 +315,10 @@
 		<form-bean name="doc_externalMedserviceForm" type="ru.ecom.mis.ejb.form.licence.ExternalMedserviceForm" />
 
 		<!-- Онкологическое лечение -->
-		<form-bean name="oncology_caseForm" type="ru.ecom.oncological.ejb.form.OncologyCaseForm"/>
 		<form-bean name="oncology_contraForm" type="ru.ecom.oncological.ejb.form.OncologyContraForm"/>
 		<form-bean name="oncology_diagnosticForm" type="ru.ecom.oncological.ejb.form.OncologyDiagnosticForm"/>
 		<form-bean name="oncology_directionForm" type="ru.ecom.oncological.ejb.form.OncologyDirectionForm"/>
+		<form-bean name="oncology_case_reestrForm" type="ru.ecom.oncological.ejb.form.OncologyCaseReestrForm"/>
 	</form-beans>
 
 	<global-forwards></global-forwards>
@@ -1122,6 +1122,13 @@
 				scope="session"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/report203.jsp" />
+		</action>
+		<action path='/journal_onco' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/oncology_case_reestr/reestr.jsp" />
 		</action>
 		<action path='/reportKDL' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'

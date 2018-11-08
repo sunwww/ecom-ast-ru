@@ -396,7 +396,7 @@
 		}
 	}
 	onload=function(){
-	VocService.getAllValueByVocs(vocList,{
+	VocService.getAllValueByVocs(vocList,0,{
 	
 	callback: function(aResult) {
         vocValueList=JSON.parse(aResult) ;

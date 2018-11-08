@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.oncology;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -69,30 +70,37 @@ public class OncologyServiceJs {
         return id;
     }*/
 
-    public String insertDirection(String json, HttpServletRequest aRequest) throws JSONException, NamingException, ParseException {
-
-        JSONObject obj = new JSONObject(json);
+    public String insertDirection(String json, String id, HttpServletRequest aRequest) throws JSONException, NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        JSONObject obj = new JSONObject(json);
+        String js = getString(obj,"list");
+        JSONArray arr = new JSONArray(js);
+        for (int i=0; i<arr.length(); i++) {
+             obj = arr.getJSONObject(i);
 
-        String typeDirection= getString(obj,"typeDirection");
-        String methodDiagTreat= getString(obj,"methodDiagTreat");
-        String medService =getString(obj,"medService");
-        String medcase_id =getString(obj,"medcase_id");
+            String typeDirection= getString(obj,"typeDirection");
+            String methodDiagTreat= getString(obj,"methodDiagTreat");
+            String medService =getString(obj,"medService");
+            String medcase_id =getString(obj,"medCase");
+            String date =getString(obj,"date");
 
-        Collection<WebQueryResult> res = service.executeNativeSql("INSERT INTO oncologycase(medcase_id,suspiciononcologist, distantmetastasis)" +
-                "values ("+medcase_id+",true,false) returning id");
+            if (id.equals("")) {
+                Collection<WebQueryResult> res = service.executeNativeSql("INSERT INTO oncologycase(medcase_id,suspiciononcologist, distantmetastasis)" +
+                        "values ("+medcase_id+",true,false) returning id");
 
-        String id="";
-        for (WebQueryResult wqr : res) {
-            id = wqr.get1().toString();
+                for (WebQueryResult wqr : res) {
+                        id = wqr.get1().toString();
+                    }
+            }
+            if (date==null || date.equals(""))
+                service.executeUpdateNativeSql("insert into oncologydirection (oncologycase_id,typeDirection_id,methodDiagTreat_id,medService_id) " +
+                        "values(" + id + ",(select id from vocOncologyTypeDirection where code='" + typeDirection + "')," + methodDiagTreat + "," + medService + ") ");
+            else
+                service.executeUpdateNativeSql("insert into oncologydirection (oncologycase_id,typeDirection_id,methodDiagTreat_id,medService_id,date) " +
+                        "values(" + id + ",(select id from vocOncologyTypeDirection where code='" + typeDirection + "')," + methodDiagTreat + "," + medService + ",to_date('" + date + "','dd.mm.yyyy')) ");
         }
-
-        service.executeUpdateNativeSql("insert into oncologydirection (oncologycase_id,typeDirection_id,methodDiagTreat_id,medService_id) " +
-                "values("+id+","+typeDirection+","+methodDiagTreat+","+medService+") ");
-
         return id;
     }
-
     public void deleteOncologyCase(String id_case, HttpServletRequest aRequest) throws NamingException {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -199,5 +207,135 @@ public class OncologyServiceJs {
             }
         }
         return result;
+    }
+    //Milamesher 01102018 получение ФИО пациента для новой формы
+    public String getFIODsPatient(Long medcaseId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        //ФИО пациента
+        Collection<WebQueryResult> list = service.executeNativeSql("select pat.lastname||' ' ||pat.firstname||' '||pat.middlename from medcase hmc\n" +
+                "left join patient pat on pat.id=hmc.patient_id\n" +
+                "where hmc.id=" + medcaseId);
+         res.append(!list.isEmpty()? list.iterator().next().get1().toString()+"#" : "#");
+         //Основной выписной диагноз
+         list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
+                 "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
+                 "left join medcase hmc on hmc.id=ds.medcase_id\n" +
+                 "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
+                 "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
+                 "where hmc.dtype='HospitalMedCase' and reg.code='3' and pr.code='1' and hmc.id="+medcaseId);
+         res.append(!list.isEmpty()? list.iterator().next().get1().toString():"");
+         //Основной клинический последнего СЛО в СЛС
+         if (list.isEmpty()) {
+             list = service.executeNativeSql("select idc.code,ds.name from diagnosis ds\n" +
+                     "left join vocidc10 idc on idc.id=ds.idc10_id\n" +
+                     "left join medcase dmc on dmc.id=ds.medcase_id\n" +
+                     "left join medcase hmc on hmc.id=dmc.parent_id\n" +
+                     "left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id\n" +
+                     "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
+                     "where dmc.dtype='DepartmentMedCase' and reg.code='4' and pr.code='1' \n" +
+                     "and dmc.transferdate is null\n" +
+                     "and hmc.id="+medcaseId);
+             if (!list.isEmpty()) {
+                  WebQueryResult wqr = list.iterator().next();
+                  res.append(wqr.get1() + " " + wqr.get2());
+             }
+         }
+         return res.toString();
+    }
+    //Milamesher 03102018 получение code всех направлений к подозрению на ЗНО
+    public String getAllDirectionCode(Long caseId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql("select t.code from oncologydirection d\n" +
+                "left join vocOncologyTypeDirection t on d.typedirection_id=t.id\n" +
+                "where d.oncologycase_id=" + caseId);
+        if (!list.isEmpty()) {
+            for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#");
+        }
+        else res.append("##");
+        return res.toString();
+    }
+    //Milamesher 03102018 удаление всех направлений к подозрению на ЗНО
+    public String editDirectionsByCase(String idCase,String json,HttpServletRequest aRequest) throws JSONException, NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("delete from oncologydirection where oncologycase_id="+idCase);
+        return insertDirection(json,idCase,aRequest);
+    }
+    //Milamesher 03102018 получение даты направлений подозрения ЗНО
+    public String getDateDirection(Long caseId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql("select to_char(date,'dd.mm.yyyy') from oncologydirection where oncologycase_id=" + caseId);
+        if (!list.isEmpty()) res.append(list.iterator().next().get1());
+        return res.toString();
+    }
+    //Milamesher 05102018 - получение маркеров с оценками
+    public String getMarkersAndMarks(HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql("select distinct n10.id,n10.name,\n" +
+                "(select list(cast(id as varchar)) from VocOncologyN011 where marker=n10.code) as l1,\n" +
+                "(select list(value) from VocOncologyN011 where marker=n10.code) as l2\n" +
+                "from VocOncologyN010 n10 \n" +
+                "left join VocOncologyN011 n11 on n11.marker=n10.code \n" +
+                "where n10.code<>'11'");
+        if (!list.isEmpty()) {
+            for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("!");
+        }
+        else res.append("##");
+        return res.toString();
+    }
+    //Milamesher 09102018 - получение хирургического лечения
+    public String getTreatment(String sqlSelect, String sqlFrom, String sqlWhere, String sqlOrdeby,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        if (sqlSelect.indexOf(";")==-1 && sqlFrom.indexOf(";")==-1 &&  sqlWhere.indexOf(";")==-1 && sqlOrdeby.indexOf(";")==-1) {
+            Collection<WebQueryResult> list = service.executeNativeSql("select " + sqlSelect + " from " + sqlFrom + " where " + sqlWhere + " order by " + sqlOrdeby);
+            if (!list.isEmpty()) {
+                for (WebQueryResult wqr : list)
+                    res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("!");
+            } else res.append("##");
+        }
+        else res.append("##");
+        return res.toString();
+    }
+    //Milamesher 26102018 - получние гистологии для вывода
+    public String getHistology(String caseId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql("select t.id,case when t.code='1' then d.resulthistiology_id else d.valuemarkers_id end \n" +
+                "from oncologydiagnostic d\n" +
+                "left join voconcologydiagtype t on t.id=d.voconcologydiagtype_id\n" +
+                "where d.oncologycase_id=" + caseId);
+        if (!list.isEmpty()) {
+            for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("!");
+        }
+        else res.append("##");
+        return res.toString();
+    }
+    //Milanesher 26102018 get dateBiops/Cons
+    public String getDates(String caseId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql("select datebiops as d1,datecons as d2" +
+                ",to_char(datebiops,'dd.mm.yyyy') as ch1,to_char(datecons,'dd.mm.yyyy') as ch2  from oncologycase where id="+caseId);
+        if (!list.isEmpty()) {
+            for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4());
+        }
+        else res.append("##");
+        return res.toString();
+    }
+    //Milanesher 29102018 получить данные по отказам и противопоказаниям
+    public String getContras(String caseId,HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder res = new StringBuilder();
+        Collection<WebQueryResult> list = service.executeNativeSql(
+                "select c.contraindicationandrejection_id,c.date,to_char(c.date,'dd.mm.yyyy') from OncologyContra c where c.oncologycase_id="+caseId);
+        if (!list.isEmpty()) {
+            for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("!");
+        }
+        else res.append("##");
+        return res.toString();
     }
 }

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.sql.Date;
 
 
 /**
@@ -52,6 +53,12 @@ public class OncologyCase extends BaseEntity {
     private VocOncologyN016 cycleDrugTherapy;
     /**Тип лучевой терапии*/
     private VocOncologyN017 typeRadTherapy;
+    /**Выявлено впервые?*/
+    private Boolean isFirst;
+    /** дата взятия биопсийного материала */
+    private Date dateBiops;
+    /** дата проведения консилиума*/
+    private Date dateCons;
 
     @Comment("Подозрение на ЗНО")
     public Boolean getSuspicionOncologist() {
@@ -186,4 +193,25 @@ public class OncologyCase extends BaseEntity {
         this.typeRadTherapy = typeRadTherapy;
     }
 
+
+
+    @Comment("Выявлено впервые?")
+    public Boolean getIsFirst() { return isFirst; }
+    public void setIsFirst(Boolean first) { isFirst = first; }
+
+    @Comment("Дата взятия биопсийного материала")
+    public Date getDateBiops() {
+        return dateBiops;
+    }
+    public void setDateBiops(Date dateBiops) {
+        this.dateBiops = dateBiops;
+    }
+
+    @Comment("Дата проведения консилиума")
+    public Date getDateCons() {
+        return dateCons;
+    }
+    public void setDateCons(Date dateCons) {
+        this.dateCons = dateCons;
+    }
 }

@@ -157,7 +157,7 @@ group by wp.id,wp.name,vcbihr.name
 order by case when length(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(wp.name,'0',''),'1',''),'2',''),'3',''),'4',''),'5',''),'6',''),'7',''),'8',''),'9',''))=0 then cast(wp.name as int) else 100 end
  " />
     <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
+     action="javascript:void(0)" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6" escapeSymbols="false">
       <msh:tableColumn columnName="Палата" property="2" />
       <msh:tableColumn columnName="Вместимость" property="3" />
       <msh:tableColumn columnName="Список пациентов, которые лежат" property="4" />
@@ -189,7 +189,7 @@ and slo.dtype='DepartmentMedCase'
 and slo.roomNumber_id is null
  " />
     <msh:table name="journal_pat" 
-     action="javascript:void(0)" idField="1" noDataMessage="Нет данных" hideTitle="true">
+     action="javascript:void(0)" idField="1" noDataMessage="Нет данных" hideTitle="true" escapeSymbols="false">
       <msh:tableColumn columnName="Список пациентов, которые лежат" property="2" />
      </msh:table>
     </msh:sectionContent>
