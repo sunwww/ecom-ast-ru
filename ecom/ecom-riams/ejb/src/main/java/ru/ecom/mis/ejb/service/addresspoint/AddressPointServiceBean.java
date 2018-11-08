@@ -531,7 +531,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         	sql.append(" left join patient wp on wp.id=w.person_id");
         	
         	sql.append(" where ") ;
-        	
+			if (aCompany!=null&&aCompany!=0) sql.append("lp.company_id='").append(aCompany).append("' and ");
         	if (aLpuCheck) sql.append(" (p.lpu_id='").append(aLpu).append("' or lp.lpu_id='").append(aLpu).append("' or ml1.parent_id='").append(aLpu).append("' or ml2.parent_id='").append(aLpu).append("') and ") ;
         	if (aLpuCheck && aArea!=null &&aArea.intValue()>0) sql.append(" (p.lpuArea_id='").append(aArea).append("' or lp.area_id='").append(aArea).append("') and ") ;
         	sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ");
