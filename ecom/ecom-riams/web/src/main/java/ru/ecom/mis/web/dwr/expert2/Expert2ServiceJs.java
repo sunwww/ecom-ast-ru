@@ -9,6 +9,7 @@ import ru.ecom.expert2.service.IExpert2XmlService;
 import ru.ecom.expert2.service.IFinanceService;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
+
+    public String splitForeignOtherBill(Long aListEntryId, String aBillNumber, String aBillDate, String aTerritories, HttpServletRequest aRequest) throws NamingException, ParseException {
+        Date billDate = DateFormat.parseSqlDate(aBillDate);
+        return Injection.find(aRequest).getService(IExpert2Service.class).splitForeignOtherBill(aListEntryId,aBillNumber,billDate,aTerritories);
+    }
 
     public void fillDirectDatePlanHosp(Long aListEntryId, HttpServletRequest aRequest) throws NamingException {
         String sql = "update e2entry set directDate = startDate where listentry_id="+aListEntryId+" " +

@@ -47,12 +47,15 @@ var the${name}someData;
 new dateutil.DateField(${name}BillDate) ;
 // Показать
 function show${name}BillDialog(someStuff) {
-    the${name}someData=someStuff;
-    var dt =the${name}someData.split("&");
-    var oldBillDate= dt[2].split("=")[1];
-    var oldBillNumber= dt[3].split("=")[1];
-    $('${name}BillNumber').value=oldBillNumber;
-    $('${name}BillDate').value=oldBillDate;
+    if (someStuff && someStuff!=""){
+        the${name}someData=someStuff;
+        var dt =the${name}someData.split("&");
+        var oldBillDate= dt[2].split("=")[1];
+        var oldBillNumber= dt[3].split("=")[1];
+        $('${name}BillNumber').value=oldBillNumber;
+        $('${name}BillDate').value=oldBillDate;
+    }
+
     the${name}BillDialog.show() ;
 
 }

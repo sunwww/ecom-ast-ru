@@ -7,6 +7,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
     <tiles:put name="title" type="string">
         <ecom:titleTrail mainMenu="Expert2" beginForm="e2_entryListForm" guid="fbc3d5c0-2bf8-4584-a23f-1e2389d03646" />
+
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:ifFormTypeIsView formName="e2_entryListForm">
@@ -52,6 +53,7 @@
 
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
                 <msh:ifFormTypeIsView formName="e2_entryListForm">
+
                 <ecom:webQuery name="entries" nameFldSql="entries_sql" nativeSql="select '${param.id}&entryType='||e.entryType||'&billDate='||
                     coalesce(''||to_char(e.billDate,'dd.MM.yyyy'),'')||'&billNumber='||coalesce(e.billNumber,'') ||'&serviceStream='||e.serviceStream||'&isForeign='||case when e.isForeign='1' then '1' else '0' end as id
                 ,e.entryType as f2
@@ -67,6 +69,7 @@
                 where e.listentry_id =${param.id} and (e.isDeleted is null or e.isDeleted='0')
                 group by e.entryType, e.billDate, e.billNumber ,e.serviceStream, e.isForeign
                  order by e.entryType, e.serviceStream, e.billDate, e.billNumber  "/>
+
                 <msh:table idField="1" name="entries" action="entityParentList-e2_entry.do"  noDataMessage="Нет записей по заполнению" >
                     <msh:tableColumn columnName="Тип записи" property="2"/>
                     <msh:tableColumn columnName="иногородние" property="8"/>
@@ -81,6 +84,8 @@
 
                 </msh:table>
                 </msh:ifFormTypeIsView>
+
+                <div id ='myGrid'></div>
             </msh:panel>
         </msh:form>
     </tiles:put>
@@ -106,6 +111,7 @@
                     <msh:sideLink action="/javascript:showUnionExportHistory()" name="Журнал пакетов по счетам" roles="/Policy/E2/Edit" />
                     <msh:sideLink action="/javascript:refillListEntry()" name="Переформировать заполнение" roles="/Policy/E2/Admin" />
                     <msh:sideLink action="/javascript:setDirectAndPlanHospDate()" name="Заполнить пустые даты направления и даты пред. госпитализации" roles="/Policy/E2/Admin" />
+                    <msh:sideLink action="/javascript:showSplitForeignOtherBill()" name="Выделить 08,05" roles="/Policy/E2/Admin" />
                 </msh:tableNotEmpty>
                 <msh:sideLink action="/javascript:closeListEntry(false)" name="Открыть заполнение" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
@@ -115,7 +121,41 @@
         <msh:ifFormTypeIsView formName="e2_entryListForm">
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
+
+                function testNewTable() {
+                    var colunms = [
+                        {headerName:"id", field:"id"},
+                        {headerName:"name", field:"name"},
+
+                    ];
+                    var data = JSON.parse('${entries_sql_json}');
+                    var eGridDiv = document.querySelector('#myGrid');
+                    new agGrid.Grid(eGridDiv, {colunmDef:colunms,rowData:data});
+                }
+
+
+
+
+
                     var monitor = {};
+                    function showSplitForeignOtherBill(){
+                        jQuery('#E2Save').click(function(){splitForeignOtherBill();});
+                        showE2BillDialog('');
+
+                    }
+                    function splitForeignOtherBill() {
+                        var billDate=jQuery('#E2BillDate').val();
+                        var billNumber=jQuery('#E2BillNumber').val();
+
+                        //String aBillNumber, String aBillDate, String aTerritories
+                        Expert2Service.splitForeignOtherBill(${param.id},billNumber, billDate,null,{
+                            callback: function(ret){
+                                ret = JSON.parse(ret);
+                                showToastMessage("Изменено "+ret.count+" записей");
+                                window.document.location.reload();
+                            }
+                        });
+                    }
                 function refillListEntry() {
                     if (confirm('Вы действительно хотите пересчитать заполнение?')) {
                         Expert2Service.refillListEntry($('id').value, {

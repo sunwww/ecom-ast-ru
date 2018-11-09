@@ -13,6 +13,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 public interface IExpert2Service {
+    String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories);
     BigDecimal calculatePolyclinicEntryPrice(VocE2VidSluch aVidSluch, Date aFinishDate, VocE2MedHelpProfile aMedHelpProfile);
     E2Bill getBillEntryByDateAndNumber(String sBillNumber, String aBillDate);
     E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate);

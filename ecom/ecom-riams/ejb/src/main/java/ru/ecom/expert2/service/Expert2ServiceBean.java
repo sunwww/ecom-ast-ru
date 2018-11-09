@@ -65,6 +65,38 @@ public class Expert2ServiceBean implements IExpert2Service {
     private final String EXTDISPTYPE="EXTDISP";
     private final String POLYCLINICKDOTYPE="POLYCLINICKDO";
 
+    private JSONObject getOKJson() {
+        try {
+            return new JSONObject().put("status","ok");
+        } catch (JSONException e) {
+            e.printStackTrace();return new JSONObject(); //быть такого не может
+        }
+    }
+    /** Присваеваем отдельный счет для определенных иногородних регионов */
+    public String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories) {
+        if (aTerritories==null || aTerritories.equals("")) {
+            aTerritories="'08','05'";
+        }
+        log.info("Разделяем иногородних по территории"+aBillNumber+" "+aBillDate+" "+aTerritories);
+        E2Bill bill = getBillEntryByDateAndNumber(aBillNumber,aBillDate);
+        List<BigInteger> list = theManager.createNativeQuery("select id from e2entry where listentry_id=:listId and substring(insurancecompanycode ,0,3) in ("+aTerritories+") and (isdeleted is null or isdeleted='0') and (donotsend is null or donotsend='0') ")
+                .setParameter("listId",aListEntryId).getResultList();
+        log.info("split ="+list.size());
+        for (BigInteger id:list) {
+            E2Entry e = theManager.find(E2Entry.class,id.longValue());
+            e.setBill(bill);
+            e.setBillDate(aBillDate);
+            e.setBillNumber(aBillNumber);
+            theManager.persist(e);
+        }
+        try {
+            return getOKJson().put("count",list.size()).toString();
+        } catch (JSONException e) {
+            e.printStackTrace(); return "";
+        }
+
+    }
+
     /** Находим или создаем счет*/
     public E2Bill getBillEntryByDateAndNumber(String aBillNumber, java.util.Date aBillDate) {
         SimpleDateFormat f= new SimpleDateFormat("dd.MM.yyy");
@@ -334,13 +366,17 @@ public class Expert2ServiceBean implements IExpert2Service {
                 " from e2entry e " +
                 " left join e2entry olde on olde.externalpatientid=e.externalpatientid" +
                 " where e.listentry_id=" +aListEntry.getId()+
-                " and e.servicestream!='COMPLEXCASE' and olde.servicestream!='COMPLEXCASE'" +
+                " and e.servicestream!='COMPLEXCASE'" +
+                " and e.id!=olde.id" +
+                " and e.serviceStream=olde.serviceStream" +
                 " and olde.bill_id is not null" +
                 " and e.medhelpprofile_id = olde.medhelpprofile_id" +
                 " and e.entrytype = olde.entrytype" +
                 " and e.startdate<=olde.finishdate" +
                 " and (e.isdeleted is null or e.isdeleted='0')" +
-                " and (olde.isdeleted is null or olde.isdeleted='0')";
+                " and (e.doNotSend is null or e.doNotSend='0')" +
+                " and (olde.isdeleted is null or olde.isdeleted='0')"+
+                " and (olde.doNotSend is null or olde.doNotSend='0')";
         List<BigInteger> list = theManager.createNativeQuery(sql).getResultList();
         if (!list.isEmpty()) {
             log.warn("Найдено "+list.size()+" пересекающихся случаев");
@@ -420,7 +456,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 .append(" and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'")
                 .append(" and (e2.isMobilePolyclinic is null or e2.isMobilePolyclinic='0') and (e2.isEmergency is null or e2.isEmergency='0')")
                 .append(" and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') ")
-                .append(" and e2.medhelpprofile_id is not null ")
+                .append(" and e2.medhelpprofile_id is not null and e2.fondResult_id!=23")
                 //.append(" group by e2.externalpatientid , medhelpprofile_id, servicestream,substring(e2.mainmkb,1,1)")
                 .append(" group by ").append(isGroupBySpo?"e2.externalparentid":"e2.externalpatientid , medhelpprofile_id, servicestream")
                 .append(" having count(e2.id)>1").append(isGroupBySpo?"":"and count(case when substring(e2.mainmkb,1,1)='Z'then 1 else null end)<count(e2.id)");
@@ -1056,6 +1092,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             e.printStackTrace();
         }
         log.info("check list entry finished!");
+        cleanAllMaps();
     }
     public void makeCheckEntry(Long aEntryId, boolean updateKsgIfExist) {
         if (!theManager.createNativeQuery("select e.id from e2entry e left join e2listentry el on el.id=e.listEntry_id where e.id=:id and el.isClosed='1'").setParameter("id",aEntryId).getResultList().isEmpty()) {throw new IllegalStateException("Заполнение закрыто, проверка невозможна");}
@@ -1858,17 +1895,18 @@ public class Expert2ServiceBean implements IExpert2Service {
     private BigDecimal calculateTariff(E2Entry aEntry) {
         String key, sqlAdd;
         String entryType=aEntry.getEntryType();
+        String mmYYYY = new SimpleDateFormat("MMYYYY").format(aEntry.getFinishDate());
         if (entryType.equals(HOSPITALTYPE)) {
             if (isNotNull(aEntry.getVMPKind())) { //Если в СЛО есть ВМП, цена = ВМП
                 return aEntry.getCost();
             }
             String bedSubType = aEntry.getBedSubType();
-            key = HOSPITALTYPE+"#"+bedSubType;
+            key = HOSPITALTYPE+"#"+bedSubType+"#"+mmYYYY;
             sqlAdd = "stacType_id=" + bedSubType + " and vidSluch_id="+aEntry.getVidSluch().getId();
 
         } else if (entryType.equals(POLYCLINICTYPE)||entryType.equals(POLYCLINICKDOTYPE)) {
             String tariffCode=aEntry.getSubType()!=null?aEntry.getSubType().getTariffCode():"_NULLENTRYSUBTYPE_";
-            key = POLYCLINICTYPE+"#"+tariffCode+"";
+            key = POLYCLINICTYPE+"#"+tariffCode+"#"+aEntry.getVidSluch().getId()+"#"+mmYYYY;
             sqlAdd=" type.code='"+tariffCode+"' and vidSluch_id="+aEntry.getVidSluch().getId();
 
         }  else {
