@@ -132,12 +132,13 @@ public class WorkCalendarServiceJs {
 			workcalendarId = w.get1().toString();
 		}
 		//select createSheduleByContinueVis('18.06.2018','20.06.2018',1,'08:00:00','09:00:00','10m')
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		if(type.equals("1")) {
 			service.executeNativeSql("select createSheduleByContinueVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+","+evenodd+")");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+","+evenodd+",'"+username+"')");
 		}else {
 			service.executeNativeSql("select createSheduleByCountVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+","+evenodd+")");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+","+evenodd+",'"+username+"')");
 		}
 		return "yep."+dateFrom+">>"+dateTo+">>"+workcalendarId;
 	}
@@ -1842,5 +1843,27 @@ public class WorkCalendarServiceJs {
 		IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
 		return service.getDayBySpec(aFuncId);
 		
+	}
+	//Milamesher 12112018 копирование дня
+	public String copyDay(Long aCalendarDay, String date, HttpServletRequest aRequest) throws Exception {
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String sql="select count(id) from workcalendarday where calendardate=to_date('"+date+"','dd.mm.yyyy') and workcalendar_id=(select workcalendar_id from workcalendarday where id="+aCalendarDay+")";
+		Collection<WebQueryResult> list = service.executeNativeSql(sql);
+		if (!list.isEmpty() && list.iterator().next().get1().toString().equals("0")) {
+			String id="";
+			Collection<WebQueryResult> res = service.executeNativeSql("insert into workcalendarday(calendardate,holiday,workcalendar_id,insteadofday_id,isdeleted)\n" +
+					"select to_date('"+date+"','dd.mm.yyyy'),holiday,workcalendar_id,insteadofday_id,isdeleted from workcalendarday where id="+aCalendarDay + "  returning id");
+			for (WebQueryResult wqr : res) {
+				id = wqr.get1().toString();
+			}
+			service.executeUpdateNativeSql("insert into workcalendartime(timefrom,additional,rest,workcalendarday_id,createprerecord,\n" +
+					"createdateprerecord,createtimeprerecord,reservetype_id,createdate,createtime)\n" +
+					"select timefrom,additional,rest,"+id+",'"+username+"',current_date,current_time,\n" +
+					"reservetype_id,current_date as createdate,current_time\n" +
+					" from workcalendartime where workcalendarday_id="+aCalendarDay);
+		}
+		else throw new IllegalAccessException("Нельзя копировать в день, в котором уже создано расписание!");
+		return "Скопировано";
 	}
 }
