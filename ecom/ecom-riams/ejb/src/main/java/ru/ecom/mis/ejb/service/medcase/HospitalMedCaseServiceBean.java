@@ -43,7 +43,6 @@ import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInt
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
-import ru.ecom.poly.ejb.services.MedcardServiceBean;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
@@ -78,7 +77,7 @@ import java.util.*;
 @SecurityDomain("other")
 public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
-	private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
+	private final static Logger LOG = Logger.getLogger(HospitalMedCaseServiceBean.class);
 	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	private HashMap getMiacServiceStreamMap() {
@@ -1082,8 +1081,6 @@ private HashMap getRegions() {
 	 * @return
 	 */
 	public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode) {
-
-
 		//Начинаем стационар
  		StringBuilder sqlSelect = new StringBuilder();
  		StringBuilder sqlAppend = new StringBuilder();
@@ -1129,8 +1126,8 @@ private HashMap getRegions() {
 				.append(sqlAppend)
 				.append(" group by vss.financesource, vbt.code, to_char(sls.datefinish,'yyyy-MM')").append(sqlSelect)
 				.append(" order by to_char(sls.datefinish,'yyyy-MM')");
-		LOG.info("repotr_stac = "+sql);
-		 list = theManager.createNativeQuery(sql.toString()).getResultList();
+		//LOG.info("repotr_stac = "+sql);
+		list = theManager.createNativeQuery(sql.toString()).getResultList();
 		LOG.info("repotr_stac found "+list.size()+" records");
 		String region, profile, financeSource, patientCount;
 		String[] period, hosps;
@@ -1139,8 +1136,11 @@ private HashMap getRegions() {
 		StringBuilder txtFile = new StringBuilder();
 		HashMap<String, JSONObject> allRecords = new HashMap<String, JSONObject>();
 			//1 строка = 9 строчек
+		int i=0;
 		try {
 		for (Object[] row : list) {
+			i++;
+			if (1%100==0) {LOG.info("report_stac make "+i+" records");}
 				period = s(row[0]).split("-");
 				patientCount = s(row[1]);
 				region = regionOrCountry.get(s(row[2]))!=null?regionOrCountry.get(s(row[2])):"REGION_CODE="+s(row[2]);
@@ -1149,15 +1149,12 @@ private HashMap getRegions() {
 				hosps = s(row[5]).split(",");
 				totalSum = 0;
 				if (financeSource.equals("CHARGED")) { //Платные случаи
-
-						for (String hosp : hosps) {
-							JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()),priceListId));
-							totalSum += hospitalInfo.getDouble("totalSum");
-						}
-
-				} else if (financeSource.equals("OBLIGATORY")||financeSource.equals("BUDGET")) { //ОМС + БЮДЖЕТ
+				    for (String hosp : hosps) {
+						JSONObject hospitalInfo = new JSONObject(countMedcaseCost(Long.valueOf(hosp.trim()),priceListId));
+						totalSum += hospitalInfo.getDouble("totalSum");
+					}
+                } else if (financeSource.equals("OBLIGATORY")||financeSource.equals("BUDGET")) { //ОМС + БЮДЖЕТ
 					for (String hosp : hosps) {
-
 						try {
 							String[] arr = getDataByReferencePrintNotOnlyOMS(Long.valueOf(hosp.trim()), "HOSP", false, "OTHER','BUDGET").split("&");
 							for (int j = 0; j < arr.length; j++) {
@@ -1173,21 +1170,17 @@ private HashMap getRegions() {
 						} catch (java.lang.NumberFormatException e) {
 							LOG.warn("Не удалось расчитать цену");
 							totalSum=0.0;
-
 						} catch (Exception e) {
 							e.printStackTrace();
 							LOG.error("Неизведанная ошибка");
 						}
-
 					}
-
 				} else {
 					LOG.warn("Неизвестный источник оплаты: "+financeSource);
 					continue;
 				}
 				if (totalSum>0.0) {
 					period[1] = period[1].startsWith("0")?period[1].substring(1):period[1];
-
 					String recordHash = (period[0]+""+period[1]).hashCode()+"#"+region.hashCode()+""+uslovia.hashCode()+""+profile.hashCode()+""+financeSource.hashCode();
 					JSONObject rec =allRecords.get(recordHash);
 					if (rec!=null) {
@@ -1195,73 +1188,68 @@ private HashMap getRegions() {
 						patientCount=""+(Long.valueOf(patientCount)+Long.valueOf(rec.getString("patientCount")));
 						rec.remove("sum");rec.remove("patientCount");
 						rec.put("patientCount",patientCount).put("sum",new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN));
-
 					} else {
 						rec = new JSONObject();
 						rec.put("hash",recordHash).put("period0",period[0]).put("period1",period[1]).put("region",region).put("uslovia",uslovia).put("profile",profile).put("financeSource",sredstvaMap.get(financeSource))
 								.put("patientCount",patientCount).put("sum",new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN));
 					}
 					allRecords.put(recordHash,rec);
-
 				} else {
 				//	LOG.error("HOSP, price = null");
-
 				}
 			}
+			LOG.info("report_stac_finished");
 		} catch (JSONException e) {
 			LOG.error("JSONEXEPTION HAPP");
 			e.printStackTrace();
 		}
-
 			//Начинаем искать пол-ку
-			sql = new StringBuilder();
+		sql = new StringBuilder();
 		LOG.warn("Start search policlinic");
-
-
-
-			sql.append("select to_char(vis.datestart,'yyyy-MM') as f0_date")
-					.append(" ,count(distinct pat.id) as f1_person_count")
-					.append(sqlSelect).append(" as f2_address")
-					.append(" ,vwf.code as f3_profile")
-					.append(" , vss.financesource as f4_financesource")
-					.append(" ,sum (coalesce(smc.medserviceamount ,1)*pp.cost) as f5_totalSum")
-					.append(",list(''||vis.id) as f6_listVisits")
-					.append(" from medcase spo")
-					.append(" left join medcase vis on vis.parent_id=spo.id")
-					.append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
-					.append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
-					.append(" left join priceposition pp on pp.id=pms.priceposition_id ").append((priceListId!=null?" and pp.pricelist_id="+priceListId:""))
-					.append(" left join patient pat on pat.id=vis.patient_id")
-					.append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
-					.append(" left join address2 a on a.addressid=pat.address_addressid")
-					.append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
-					.append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
-					.append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
-					.append(" where spo.dtype='PolyclinicMedCase' and (vis.dtype='Visit' or vis.dtype='ShortMedCase') ")
-					.append(" and vis.datestart between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
-					.append(" and vss.financesource is not null and vss.financesource!='' ")
-					.append(sqlAppend)
-					.append(" group by to_char(vis.datestart,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
+		sql.append("select to_char(vis.datestart,'yyyy-MM') as f0_date")
+            .append(" ,count(distinct pat.id) as f1_person_count")
+            .append(sqlSelect).append(" as f2_address")
+            .append(" ,vwf.code as f3_profile")
+            .append(" , vss.financesource as f4_financesource")
+            .append(" ,sum (coalesce(smc.medserviceamount ,1)*pp.cost) as f5_totalSum")
+            .append(",list(''||vis.id) as f6_listVisits")
+            .append(" from medcase spo")
+            .append(" left join medcase vis on vis.parent_id=spo.id")
+            .append(" left join medcase smc on smc.parent_id=vis.id and smc.dtype='ServiceMedCase'")
+            .append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
+            .append(" left join priceposition pp on pp.id=pms.priceposition_id ").append((priceListId!=null?" and pp.pricelist_id="+priceListId:""))
+            .append(" left join patient pat on pat.id=vis.patient_id")
+            .append(" left join Omc_Oksm nat on nat.id=pat.nationality_id")
+            .append(" left join address2 a on a.addressid=pat.address_addressid")
+            .append(" left join workfunction wf on wf.id=vis.workfunctionexecute_id")
+            .append(" left join vocworkfunction vwf on vwf.id=wf.workfunction_id")
+            .append(" left join vocservicestream vss on vss.id=vis.servicestream_id")
+            .append(" where spo.dtype='PolyclinicMedCase' and (vis.dtype='Visit' or vis.dtype='ShortMedCase') ")
+            .append(" and vis.datestart between to_date('").append(aDateFrom).append("','dd.MM.yyyy') and to_date('").append(aDateTo).append("','dd.MM.yyyy') ")
+            .append(" and vss.financesource is not null and vss.financesource!='' ")
+            .append(sqlAppend)
+            .append(" group by to_char(vis.datestart,'yyyy-MM'),vwf.code , vss.financesource").append(sqlSelect);
 			LOG.info("===========repotr_pol = "+sql);
 			list = theManager.createNativeQuery(sql.toString()).getResultList();
 		LOG.info("repotr_pol found "+list.size()+" records");
 		uslovia="амбулаторно";
 		profileMap=getPolicProfileMap();
 		try {
+			i=0;
 			for (Object[] row : list) {
-
+                i++;
+                if (i%100==0) {
+                    LOG.info("making "+i+" records pol");
+                }
 				period = s(row[0]).split("-");
 				patientCount = s(row[1]);
-
 				region = regionOrCountry.get(s(row[2]))!=null?regionOrCountry.get(s(row[2])):"REGION_CODE="+s(row[2]);
 				profile = profileMap.get(s(row[3]))!=null?profileMap.get(s(row[3])):"PROFILE_CODE="+s(row[3]);
 				financeSource = s(row[4]);
 				totalSum = 0;
 				if (financeSource.equals("OBLIGATORY") || financeSource.equals("BUDGET")) { //считаем цену за ОМС
 					String[] visits = s(row[6]).split(",");
-					//LOG.info("=====polic OMC,"+visits);
 					for (String vis : visits) {
-
 						try {
 							String s = getDataByReferencePrintNotOnlyOMS(Long.valueOf(vis.trim()), "VISIT", false, "OTHER','BUDGET");
 							String arr[] = s != null ? s.split("<body>") : null;
@@ -1269,17 +1257,14 @@ private HashMap getRegions() {
 							totalSum += Double.valueOf(price);
 
 						} catch (java.lang.NumberFormatException e) {
-						//	LOG.warn("Не удалось расчитать цену поликлиники");
 							totalSum = 0.0;
 
 						} catch (Exception e) {
 							LOG.error("ERROR============ ");
 							e.printStackTrace();
 						}
-
 					}
 				} else {
-
 					try {
 						totalSum = Double.valueOf(s(row[5]));
 					} catch (NumberFormatException e) {
@@ -1304,45 +1289,35 @@ private HashMap getRegions() {
 					}
 					allRecords.put(recordHash, rec);
 
-				} else {
-					LOG.error("POLIC, price = null, IDS" + s(row[6]));
-
 				}
 			}
-
 			//Закончили искать пол-ку
-
-		//Начинаем формировать файл.
-			int i=0;
-		LOG.warn("====start make file "+i);
-		for (Map.Entry entry: allRecords.entrySet()) {
-			i++;
-			if (i%100==0) {
-				LOG.info("making "+i+" records");
-			}
-				JSONObject rec = (JSONObject) entry.getValue();
-				if (rec!=null) {
-					txtFile.append(aLpuCode).append("\n")
-							.append(rec.getString("period0")).append("\n")
-							.append(rec.getString("period1")).append("\n")
-							.append(rec.getString("region")).append("\n")
-							.append(rec.getString("uslovia")).append("\n")
-							.append(rec.getString("profile")).append("\n")
-							.append(rec.getString("financeSource")).append("\n")
-							.append(rec.getString("patientCount")).append("\n")
-							.append(String.valueOf(new BigDecimal(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".",",")).append("\n");
-				} else {
-					LOG.error("make file object = NULL!!!");
-				}
-
-
-		}
+            //Начинаем формировать файл.
+            i=0;
+            LOG.warn("====start make file "+i);
+            for (JSONObject rec: allRecords.values()) {
+                i++;
+                if (i%100==0) {
+                    LOG.info("making "+i+" records");
+                }
+                if (rec!=null) {
+                    txtFile.append(aLpuCode).append("\n")
+                        .append(rec.getString("period0")).append("\n")
+                        .append(rec.getString("period1")).append("\n")
+                        .append(rec.getString("region")).append("\n")
+                        .append(rec.getString("uslovia")).append("\n")
+                        .append(rec.getString("profile")).append("\n")
+                        .append(rec.getString("financeSource")).append("\n")
+                        .append(rec.getString("patientCount")).append("\n")
+                        .append(String.valueOf(new BigDecimal(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".",",")).append("\n");
+                } else {
+                    LOG.error("make file object = NULL!!!");
+                }
+		    }
 		} catch (Exception e) {
 			LOG.error("some exception");
 			e.printStackTrace();
 		}
-		//	LOG.info("TXT file = "+txtFile);
-
 		return createFile(txtFile,aType);
 	}
 
