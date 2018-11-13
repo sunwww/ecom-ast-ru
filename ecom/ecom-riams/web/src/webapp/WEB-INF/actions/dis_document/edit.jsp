@@ -189,6 +189,7 @@
             ,case when dd.isclose=true and dd.closeexport=false then dd.id else null end as signadd
             ,case when ds.id is not null then '&#9989;' else '&#x2716;' end as sig
             ,case when dd.closeexport=false then '&#x2716;' else '&#9989;' end as export
+            ,case when ds.id is not null then 'close' else null end as delclose
             from disabilitydocument dd
             left join disabilitysign ds on dd.id = ds.disabilitydocumentid_id and ds.noactual = false and ds.code = 'close'
             where dd.id =  ${param.id}"/>
@@ -196,6 +197,7 @@
                             <msh:tableButton role="/Policy/Mis/Disability/ElectronicDisability/Doc" hideIfEmpty="true" property="2" addParam="'close'" buttonFunction="javascript:showJournalfssSign" buttonName="Подписать" buttonShortName="&#9997;"/>
                             <msh:tableColumn role="/Policy/Mis/Disability/ElectronicDisability/Doc" columnName="Подпись" property="3"/>
                             <msh:tableColumn columnName="Выгружен" property="4"/>
+                            <msh:tableButton role="/Policy/Mis/Disability/ElectronicDisability/Doc" hideIfEmpty="true" property="5" buttonName="Удалить подпись закрытия" buttonFunction="javascript:deleteSign" buttonShortName="close"/>
                         </msh:table>
                     </msh:ifFormTypeIsView>
 
@@ -239,6 +241,8 @@
                     ,case when pvk.id is not null then case when dsvk.id is not null then '&#9989;' else '&#x2716;' end else '' end as vksig
                     ,case when dr.isexport is null or dr.isexport='0' then case when dr.workfunctionadd_id is not null then dr.id else null end else null end as vksignadd
                     ,case when dr.isexport is null or dr.isexport='0' then case when dr.workfunction_id is not null then dr.id else null end else null end as docsignadd
+                    ,case when dsdoc.id is not null then 'doc' else null end as deldoc
+                    ,case when dsvk.id is not null then 'vk' else null end as delvk
                     from disabilityrecord dr
                     left join workfunction wfdoc on wfdoc.id =  dr.workfunction_id
                     left join vocworkfunction  vwf on vwf.id = wfdoc.workfunction_id
@@ -263,6 +267,8 @@
                             <msh:tableColumn role="/Policy/Mis/Disability/ElectronicDisability/Vk" columnName="Подпись" property="9"/>
                             <msh:tableColumn columnName="Режим" property="6"/>
                             <msh:tableColumn columnName="Выгружен" property="7"/>
+                            <msh:tableButton role="/Policy/Mis/Disability/ElectronicDisability/Doc" hideIfEmpty="true" property="12" buttonName="Удалить подпись врача" buttonFunction="javascript:deleteSign" buttonShortName="doc"/>
+                            <msh:tableButton role="/Policy/Mis/Disability/ElectronicDisability/Vk" hideIfEmpty="true" property="13" buttonName="Удалить подпись ВК" buttonFunction="javascript:deleteSign"  buttonShortName="vk"/>
                         </msh:table>
                     </msh:section>
                     <!-- score data here -->
@@ -317,6 +323,15 @@
                         document.location.href = "print-disability_"+aTemplate+aResult+".do?s=DisabilityService&m=printDocument&id=${param.id}";
                     }
                 }) ;
+            }
+
+            //Milamesher 13112018 удаление подписей
+            function deleteSign(code) {
+                DisabilityService.deleteSign(${param.id},code,{
+                    callback: function(aString) {
+                        showToastMessage(aString,null,true);
+                        if (aString.length<=8) window.location.reload();
+                    }});
             }
         </script>
         <msh:ifFormTypeIsView formName="dis_documentForm">
@@ -484,7 +499,6 @@
                     }
                 }
                 setPeriod();
-
             </script>
         </msh:ifFormTypeIsNotView>
     </tiles:put>
