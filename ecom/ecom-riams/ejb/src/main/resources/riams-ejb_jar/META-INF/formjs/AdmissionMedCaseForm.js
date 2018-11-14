@@ -165,6 +165,10 @@ function closeSpo(aContext, aSpoId) {
         var dateFinish = listVisLast.get(0)[2];
         var startWF = listVisFirst.get(0)[3];
         var finishWF = listVisLast.get(0)[3];
+        if (dateStart!=null && dateStart!='null' && dateStart!='' &&
+            dateFinish!=null && dateFinish!='null' && dateFinish!='' &&
+            startWF!=null && startWF!='null' && startWF!='' &&
+            finishWF!=null && finishWF!='null' && finishWF!='')
         aContext.manager.createNativeQuery("update medcase set dateFinish=to_date('"+dateFinish
             +"','dd.mm.yyyy'),dateStart=to_date('"+dateStart
             +"','dd.mm.yyyy'),finishFunction_id='"+finishWF+"',startFunction_id='"+startWF
