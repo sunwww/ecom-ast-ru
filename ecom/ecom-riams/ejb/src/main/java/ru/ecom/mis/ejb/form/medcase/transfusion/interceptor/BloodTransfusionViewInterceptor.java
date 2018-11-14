@@ -85,7 +85,7 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 			form.setComplications( new StringBuilder().append(list.get(0)).toString()
 					) ;
 		}
-		
+
 
 	}
 	private <E,F> void saveForm(EntityManager aManager, String aAddtionSql,String[] aMethods, F aForm,Class<E> aClassEntity,Class<F> aClassForm)  {
@@ -100,10 +100,12 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 					Class ejbReturnType = m.getReturnType();
 					if (ejbReturnType.getAnnotation(Entity.class) != null) {
 						Object o = m.invoke(obj);
-						Object id = PropertyUtil.getPropertyValue(o, "id") ;
-						Method formSetterMethod = PropertyUtil.getSetterMethod(aForm
-								.getClass(), m);
-						formSetterMethod.invoke(aForm, id);
+						if (o!=null) {
+							Object id = PropertyUtil.getPropertyValue(o, "id");
+							Method formSetterMethod = PropertyUtil.getSetterMethod(aForm
+									.getClass(), m);
+							formSetterMethod.invoke(aForm, id);
+						}
 					} else {
 						PropertyUtil.copyProperty(aForm, obj, m);
 					}

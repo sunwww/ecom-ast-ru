@@ -27,6 +27,7 @@
       <msh:hidden property="id" />
       <msh:hidden property="medCase" />
       <msh:hidden property="saveType" />
+        <msh:hidden property="reagentPT2"/>
       <msh:panel colsWidth="1%,1%,15%,81%">
         <msh:row>
           <msh:textField property="journalNumber" label="Номер в журнале" />
@@ -133,16 +134,9 @@
         	<msh:autoComplete fieldColSpan="9" horizontalFill="true" vocName="vocTransfusionMethodPT" property="methodPT1" label="1. Метод"/>
         </msh:row>
         <msh:row>
-        	<msh:textField property="reagentPT1" label="Реактив"/>
-        	<msh:textField property="reagentSeriesPT1" label="Серия"/>
-        	<msh:textField property="reagentExpDatePT1" label="Срок годности"/>
-        	<msh:autoComplete vocName="vocYesNo" property="resultGoodPT1" label="Совместима?"/>
-        </msh:row>
-        <msh:row>
         	<msh:autoComplete fieldColSpan="9" horizontalFill="true" property="methodPT2" vocName="vocTransfusionMethodPT" label="2. Метод"/>
         </msh:row>
-        <msh:row>
-        	<msh:textField property="reagentPT2" label="Реактив"/>
+        <msh:row guid="1234">
         	<msh:textField property="reagentSeriesPT2" label="Серия"/>
         	<msh:textField property="reagentExpDatePT2" label="Срок годности"/>
         	<msh:autoComplete vocName="vocYesNo" property="resultGoodPT2" label="Совместима?"/>
@@ -286,6 +280,63 @@
   	phenotype();
   	</script>
   	</msh:ifFormTypeIsNotView>
+      <script type="text/javascript">
+          //Milamesher 08112018 - выпадающий список вместо текстового поля
+          function addReagentCmb() {
+              var row=document.getElementById('reagentSeriesPT2Label').parentNode.parentNode;
+              var div = document.createElement('div'); var tdID = document.createElement('td');
+
+              var new_comboBox = document.createElement('select');
+              var option_0 = document.createElement('option');
+              option_0.setAttribute('value', '');
+              var txt_0 = document.createTextNode("");
+              option_0.appendChild(txt_0);
+
+              var option_1 = document.createElement('option');
+              option_1.setAttribute('value', 'Полиглюкин 33%');
+              var txt_1 = document.createTextNode("Полиглюкин 33%");
+              option_1.appendChild(txt_1);
+
+              var option_2 = document.createElement('option');
+              option_2.setAttribute('value', 'Желатин');
+              var txt_2 = document.createTextNode("Желатин");
+              option_2.appendChild(txt_2);
+
+              var option_3 = document.createElement('option');
+              option_3.setAttribute('value', 'Гелевая карта');
+              var txt_3 = document.createTextNode("Гелевая карта");
+              option_3.appendChild(txt_3);
+
+              new_comboBox.appendChild(option_0);
+              new_comboBox.appendChild(option_1);
+              new_comboBox.appendChild(option_2);
+              new_comboBox.appendChild(option_3);
+              div.appendChild(document.createTextNode("Реактив:"));
+              new_comboBox.id='rg1';
+              onchange = function onchangeCmb() {
+                  $('reagentPT2').value=document.getElementById('rg1').options[document.getElementById('rg1').selectedIndex].text;
+              };
+              <msh:ifFormTypeAreViewOrEdit formName="trans_bloodForm">
+                new_comboBox.value=$('reagentPT2').value;
+              <msh:ifFormTypeIsView formName="trans_bloodForm">
+                new_comboBox.setAttribute('disabled',true);
+              </msh:ifFormTypeIsView>
+            </msh:ifFormTypeAreViewOrEdit>
+              <msh:ifFormTypeIsCreate formName="trans_bloodForm">
+                $('reagentPT2').value='';
+              </msh:ifFormTypeIsCreate>
+              div.appendChild(new_comboBox);tdID.appendChild(div);
+              row.appendChild(tdID);
+              //Перемещение столбца в строке
+              jQuery.moveColumn = function (row, from, to) {
+                  var cols;
+                  cols = jQuery(row).children('th, td');
+                  cols.eq(from).detach().insertBefore(cols.eq(to));
+              };
+              jQuery.moveColumn(document.getElementById('reagentSeriesPT2Label').parentNode.parentNode,6,0);
+          }
+          addReagentCmb();
+      </script>
   </tiles:put>
 </tiles:insert>
 
