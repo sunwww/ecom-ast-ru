@@ -29,14 +29,19 @@
                 </msh:row>
                 <msh:row>
                     <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
-                    <td onclick="this.childNodes[1].checked='checked'; getList(0,1);">
+                    <td id="td1">
                         <input type="radio" name="isCreated" value="1">  Случаи созданы
                     </td>
-                    <td onclick="this.childNodes[1].checked='checked';getList(0,1);">
+                    <td id="td2">
                         <input type="radio" name="isCreated" value="0">  Случаи НЕ созданы
                     </td>
-                    <td onclick="this.childNodes[1].checked='checked';getList(0,1);">
+                    <td id="td3">
                         <input type="radio" name="isCreated" value="-1">  Все
+                    </td>
+                </msh:row>
+                <msh:row>
+                    <td colspan="3">
+                        <input type="button" onclick="getList(0,1);" value="Найти" />
                     </td>
                 </msh:row>
                 <table hidden id="patientTable" border="1px">
@@ -55,6 +60,9 @@
                     <input type="button" value=">" onclick="getList(null,1);"/>
                     <input type="button" value=">|" onclick="getList(null,2);"/>
                 </div>
+                <div id="textMsg">
+                    Выберите параметры и нажмите Найти
+                </div>
             </msh:panel>
         </msh:form>
 
@@ -66,6 +74,9 @@
     document.getElementsByName("isCreated")[2].checked='checked';
     var tbl =jQuery('#patientTableBody');
     function getList(ID,next) {
+        document.getElementById("patientTable").removeAttribute("hidden");
+        document.getElementById("directionBtns").removeAttribute("hidden");
+        document.getElementById("textMsg").setAttribute("hidden",true);
         tbl.html("Подождите...");
         //что это единичный шаг - чтоб не уходить вникуда
         var flag1StepLeft=(ID==null && next==-1);
@@ -108,8 +119,18 @@
             }
         });
     }
-    departmentAutocomplete.addOnChangeCallback(function() {getList(0,1);});
-    $('dateBegin').oninput = function() {getList(0,1);};
-    $('dateEnd').oninput = function() {getList(0,1);};
-    $('filterAdd1').oninput = function() {getList(0,1);};
+    function clear() {
+        document.getElementById("patientTable").setAttribute("hidden",true);
+        document.getElementById("directionBtns").setAttribute("hidden",true);
+        document.getElementById("textMsg").removeAttribute("hidden");
+    }
+    departmentAutocomplete.addOnChangeCallback(function() {clear();});
+    $('dateBegin').oninput = function() {clear();};
+    $('dateEnd').oninput = function() {clear();};
+    $('dateBegin').onfocus = function() {clear();};
+    $('dateEnd').onfocus = function() {clear();};
+    $('filterAdd1').oninput = function() {clear();};
+    document.getElementById("td1").onclick=function() { clear();this.childNodes[1].checked='checked';};
+    document.getElementById("td2").onclick=function() { clear();this.childNodes[1].checked='checked';};
+    document.getElementById("td3").onclick=function() { clear();this.childNodes[1].checked='checked';};
 </script>
