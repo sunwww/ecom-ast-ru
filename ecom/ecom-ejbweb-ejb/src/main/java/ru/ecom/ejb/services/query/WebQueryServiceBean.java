@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
+
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
@@ -22,10 +23,14 @@ import java.util.List;
 @Stateless
 @Remote(IWebQueryService.class)
 public class WebQueryServiceBean implements IWebQueryService {
-
+	/** Возвращаем json массив с результатом запроса
+	 * aQuery - sql запрос
+	 * limit - максимальное количество записей для нахождения
+	 * nameArray - имя объекта, куда будет помещен массив
+	 * */
 	public String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException, SQLException {
 
-		if(limit==null || limit==0 || limit>100 ) limit=100;
+		//if(limit==null || limit==0 || limit>100 ) limit=100;
 
 		DataSource ds =findDataSource();
 		Connection connection = null;
@@ -33,19 +38,20 @@ public class WebQueryServiceBean implements IWebQueryService {
 		try {
 			connection = ds.getConnection();
 			statement = connection.createStatement();
-			statement.setMaxRows(limit);
+			if (limit!=null) statement.setMaxRows(limit);
 			ResultSet resultSet = statement.executeQuery(aQuery);
 			ResultSetMetaData rsmd = resultSet.getMetaData();
+			int columnCount = rsmd.getColumnCount();
 			JSONArray array = new JSONArray();
 			while (resultSet.next()) {
 				JSONObject temp = new JSONObject();
-				for (int j = 1; j <= resultSet.getMetaData().getColumnCount(); j++) {
-					temp.put(rsmd.getColumnName(j),resultSet.getString(j));
+				for (int j = 1; j <=columnCount; j++) {
+					temp.put(rsmd.getColumnName(j),resultSet.getObject(j));
 				}
 				array.put(temp);
 			}
 
-			if(nameArray.equals("")){
+			if(nameArray==null || nameArray.equals("")){
 				return array.toString();
 			}else {
 				return new JSONObject().put(nameArray, array).toString();
@@ -55,33 +61,21 @@ public class WebQueryServiceBean implements IWebQueryService {
 			e.printStackTrace();
 		} finally {
             if(connection!=null && !connection.isClosed()) connection.close();
-            if(statement!=null && !statement.isClosed()) statement.close();
+          //  if(statement!=null && !statement.isClosed()) statement.close();
         }
 		return null;
 	}
+	/** Возвращаем json массив с результатом запроса*/
 	public String executeSqlGetJson(String aQuery,Integer limit) throws NamingException, SQLException {
 		return executeSqlGetJson(aQuery,limit,"");
 	}
 
-	public String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException {
-
-		DataSource ds =findDataSource();
-		Connection connection = ds.getConnection();
-		Statement statement = connection.createStatement();
-		try {
-			ResultSet resultSet = statement.executeQuery(aQuery);
-			ResultSetMetaData rsmd = resultSet.getMetaData();
-			JSONObject jsonObject = new JSONObject();
-			while (resultSet.next()) {
-				for (int j = 1; j <= resultSet.getMetaData().getColumnCount(); j++) {
-					jsonObject.put(rsmd.getColumnName(j),resultSet.getString(j));
-				}
-			}
-
-			statement.close();
-			connection.close();
-			return jsonObject.toString();
-		}catch (Exception e){e.printStackTrace();}
+	/** Возвращаем первый результат запроса в качестве json объекта*/
+	public String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException, JSONException {
+		JSONArray arr = new JSONArray(executeSqlGetJson(aQuery,null,null));
+		if (arr.length()>0) {
+			return arr.getJSONObject(0).toString();
+		}
 		return null;
 	}
 
@@ -92,23 +86,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	public int executeUpdateNativeSql(String aQuery) {
 		return theManager.createNativeQuery(aQuery).executeUpdate() ;
 	}
-	/*private String getDataSourceFromPersistenceXml() throws IOException  {
-        String aResource = "/META-INF/persistence.xml";
-        System.out.println("--------------get jndi from "+aResource) ;
-        InputStream in = getClass().getResourceAsStream(aResource);
-        try {
-            Document doc = new SAXBuilder().build(in);
-            Element rootElement = doc.getRootElement();
-            Element unit = rootElement.getChild("persistence-unit");
-            Element jtaDataSource = unit.getChild("jta-data-source");
-            return jtaDataSource.getTextTrim();
-        } catch(Exception e){
-        	e.printStackTrace() ;
-        } finally {
-            in.close();
-        }
-        return "---------------no jndi" ;
-    }*/
+
 	public String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult) {
 		List<Object> list ;
 		Query query = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));

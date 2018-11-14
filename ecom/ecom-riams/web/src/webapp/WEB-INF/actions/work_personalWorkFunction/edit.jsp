@@ -84,6 +84,13 @@
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>
+          <msh:row>
+              <msh:separator label="Электронная очередь" colSpan="4"/>
+          </msh:row>
+          <msh:row>
+              <msh:autoComplete property="queue" vocName="vocTicketQueue" fieldColSpan="2" size="100" label="Тип очереди"/>
+              <msh:textField property="windowNumber" label="Номер окна"/>
+          </msh:row>
         <msh:row>
         	<msh:separator label="Дополнительная информация" colSpan="4"/>
         </msh:row>

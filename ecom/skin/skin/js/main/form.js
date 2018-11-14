@@ -135,7 +135,7 @@ var funcemergencymessage = {
 		    } ) ;
 		}
 }
-function showToastMessage(aMessage,aJson,aAutoClose) {
+function showToastMessage(aMessage,aJson,aAutoClose,aError) {
 	if (aJson) {
         jQuery.toast({
             position: aJson.position?aJson.position:'mid-center'
@@ -146,7 +146,9 @@ function showToastMessage(aMessage,aJson,aAutoClose) {
 
 		jQuery.toast({
 			text:aMessage
-			,hideAfter:aAutoClose?true:false
+			,hideAfter:aAutoClose&&aAutoClose!=null?true:false
+			,icon:aError&&true==aError?"error":"info"
+
 		});
 	}
 }

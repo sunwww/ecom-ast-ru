@@ -325,6 +325,13 @@
 
 
 	<action-mappings>
+		<action path='/queueKiosk' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				scope="request"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/riams/queue_kiosk.jsp" />
+		</action>
+
 		<action path='/exportDispensary' type='ru.ecom.web.actions.base.ForwardAction'
 				name="mis_dispensaryCardJournalForm"
 				validate='false'

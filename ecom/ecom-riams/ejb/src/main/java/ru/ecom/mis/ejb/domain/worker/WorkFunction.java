@@ -10,6 +10,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.worker.voc.VocAcademicDegree;
 import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
+import ru.ecom.queue.domain.voc.VocQueue;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -347,4 +348,19 @@ abstract public class WorkFunction extends BaseEntity {
 	public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {theIsDirectionNoTime = aIsDirectionNoTime;}
 	/** Разрешено записывать на дату без указания времени */
 	private Boolean theIsDirectionNoTime=false ;
+
+	/** Очередь, которую обслуживает раб. функция */
+	@Comment("Очередь, которую обслуживает раб. функция")
+	@OneToOne
+	public VocQueue getQueue() {return theQueue;}
+	public void setQueue(VocQueue aQueue) {theQueue = aQueue;}
+	/** Очередь, которую обслуживает раб. функция */
+	private VocQueue theQueue ;
+
+	/** Номер окна в электронной очереди */
+	@Comment("Номер окна в электронной очереди")
+	public String getWindowNumber() {return theWindowNumber;}
+	public void setWindowNumber(String aWindowNumber) {theWindowNumber = aWindowNumber;}
+	/** Номер окна в электронной очереди */
+	private String theWindowNumber ;
 }

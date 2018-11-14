@@ -1,10 +1,5 @@
 package ru.ecom.web.dwr;
 
-import java.util.Collection;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,10 +15,39 @@ import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.web.messages.ClaimMessage;
 import ru.nuzmsh.web.messages.UserMessage;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+
 /**
  * Для aucotomplete
  */
 public class VocServiceJs {
+
+	public String getWebSocketServer(HttpServletRequest aRequest) throws NamingException, JSONException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select keyvalue from softconfig where key='WEBSOCKET_SERVER'") ;
+		JSONObject ret = new JSONObject();
+		if (!list.isEmpty()) {
+			String queue="", queueCode="",server;
+			server=list.iterator().next().get1().toString();
+			list= service.executeNativeSql("select vq.code, vq.id from secuser su " +
+					" left join workfunction wf on wf.secuser_id=su.id" +
+					" left join vocQueue vq on vq.id=wf.queue_id where su.login='"+username+"'");
+			try {WebQueryResult wqr = list.iterator().next();queue=wqr.get2().toString();queueCode=wqr.get1().toString();} catch (Exception e) {}
+			ret.put("status","ok");
+			ret.put("server",server);
+			ret.put("queue",queue);
+			ret.put("queueCode",queueCode);
+			ret.put("username",username);
+			ret.put("appendUrl","/"+(username.startsWith("TV_")?"TV":"OPERATOR"));
+		} else {
+			ret.put("status","error");
+			ret.put("errorCode","empty");
+		}
+		return ret.toString();
+	}
     public String getNameById(HttpServletRequest aRequest, String aVocName, String aId, String aParentId) throws NamingException, VocServiceException {
         return EntityInjection.find(aRequest).getVocService().getNameById(aId, aVocName, new VocAdditional(aParentId)) ;
     }

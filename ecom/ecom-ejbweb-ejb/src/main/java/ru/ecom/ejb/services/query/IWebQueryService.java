@@ -1,10 +1,6 @@
 package ru.ecom.ejb.services.query;
 
-
-
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.JSONException;
 
 import javax.naming.NamingException;
 import java.sql.SQLException;
@@ -16,7 +12,7 @@ public interface IWebQueryService {
 	String executeSqlGetJson(String aQuery,Integer limit,String nameArray) throws NamingException, SQLException;
 	String executeSqlGetJson(String aQuery,Integer limit) throws NamingException, SQLException;
 	//JSONArray executeSqlGetJsonArray(String aQuery) throws SQLException, NamingException;
-	String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException;
+	String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException, JSONException;
 	String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult);
 	Collection<WebQueryResult> executeHql(String aQuery) ;
 	Collection<WebQueryResult> executeNativeSql(String aQuery) ;

@@ -41,9 +41,10 @@ if (kioskType.equals("ADMISSION")) {
     System.out.println("URI="+request.getContextPath());
 
     System.out.println("URI="+request.getPathTranslated());
-String pigeonHole = request.getParameter("pigeonHole");
-request.setAttribute("pigeonHole",pigeonHole);
-String isEmergency = request.getParameter("isEmergency");
+    String pigeonHole = request.getParameter("pigeonHole");
+    request.setAttribute("pigeonHole",pigeonHole);
+    request.setAttribute("pigeonHoleName",request.getParameter("pigeonHoleName"));
+    String isEmergency = request.getParameter("isEmergency");
     request.setAttribute("isEmergency",isEmergency);
     String token = request.getParameter("token");
     token="66405d38-a173-4cb7-a1b6-3ada51c16ac5";
@@ -56,7 +57,9 @@ String isEmergency = request.getParameter("isEmergency");
     //Показываем информацию об очереди в приемном отделении
     %>
 <msh:panel>
+    <msh:autoComplete property="pigeonHole" vocName="vocPigeonHole" label="Приемник"/>
 <msh:row>
+
     <td class="label" title="Представление (typeView)" colspan="1"><label for="typeViewName" id="typeViewLabel">Отобразить:</label></td>
     <td onclick="this.childNodes[1].checked='checked'; reloadPage();">
         <input type="radio" name="isEmergency" value="1">  Экстренные
@@ -82,10 +85,15 @@ String isEmergency = request.getParameter("isEmergency");
 var colors={red:"background-color:red;", orange:"background-color: orange;", yellow:"background-color: yellow;",blue:"background-color: lightblue;"}
     var tbl =jQuery('#patientWaitingTableBody');
     tbl.html("Подождите...");
+    $('pigeonHole').value='${pigeonHole}';
+    $('pigeonHoleName').value='${pigeonHoleName}';
+
     getQueue();
+
+    pigeonHoleAutocomplete.addOnChangeCallback( function() {reloadPage();});
     function reloadPage() {
         var em = jQuery('input:radio[name=isEmergency]:checked').val();
-        window.location.search="mode=ADMISSION&isEmergency="+em;
+        window.location.search="mode=ADMISSION&isEmergency="+em+"&pigeonHole="+$('pigeonHole').value+"&pigeonHoleName="+$('pigeonHoleName');
     }
     function getQueue() {
         jQuery.ajax({
@@ -122,81 +130,6 @@ function checkFieldUpdate(aField,aValue,aDefaultValue) {
     }
 }
 
-</script>
-<%
-} else if (kioskType.equals("QUEUE")) {
-    //Делаем таблицу на всё окно. В таблице каждая ячейка - очередь. При щелчке на очереди выходит талончик
-    %>
-<div id="ticketDiv" style="display: none; width: 100px; height: 200px">
-
-
-</div>
-<table id="queueTable" border="1" style="width: 100%; height: 100%">
-
-</table>
-
-<script type="text/javascript" src="/skin/ac.js"></script>
-<script type="text/javascript">
-    var theToken = "66405d38-a173-4cb7-a1b6-3ada51c16ac5";
-    var tbl =jQuery('#queueTable');
-    //Список очередей
-    getQueueList();
-    function getQueueList(){
-        jQuery.ajax({
-            url:"api/queue/ticket/getQueues"
-            ,data:{token:theToken,terminal:null}
-        }).done (function(array) {
-            if (array.length==0)  {
-                tbl.html("Нет доступных очередей");
-            } else {
-                tbl.html("");
-                for (var i=0;i<array.length;i++) {
-                    //разбиваем по 2 элемента на строке
-                    var el = array[i];
-                    var qId= el.queueId;
-                    var qName= el.queueName;
-                    var color="";
-                    //if (minutes>119){color=colors.red} else if (minutes>89){color=colors.orange} else if (minutes>59) {color=colors.yellow} else if (minutes>29){color=colors.blue}
-                    //if (i%2==0) {
-
-                    //}
-                    tbl.append("<tr style='"+color+"'><td align='center' onclick='getNewTicket("+qId+")'>"+qName+"</td></tr>");
-                }//60-90 - yellow
-            }
-            setTimeout(getQueueList,1800000);
-        });
-    }
-    //Получаем билетик
-    function getNewTicket(queueId) {
-        jQuery.ajax({
-            url:"api/queue/ticket/getNewTicket"
-            ,data:{token:theToken,queue:queueId}
-        }).done (function(json) {
-            if (json!=null)  {
-                //alert ("Ваш номер: "+json.fullNumber+", печатать на инфомате я пока не умею");
-                var html ="<p align='center'>Очередь: "+json.queueName+"</p>";
-                html +="<p align='center'>"+json.queueDate+"</p>";
-                html +="<p align='center'>Номер "+json.fullNumber+"</p>";
-                html +="<p align='center'>"+json.ticketDate+"</p>";
-                jQuery('#ticketDiv').html(html);
-            printHtml(jQuery('#ticketDiv').html());
-
-            }
-
-        });
-    }
-    function printHtml(el) {
-        var mywindow = window.open('', 'my div', 'height=200,width=200');
-        mywindow.document.write('<html><head><title>my div</title>');
-        mywindow.document.write('</head><body >');
-        mywindow.document.write(el);
-        mywindow.document.write('</body></html>');
-        mywindow.document.close(); // necessary for IE >= 10
-        mywindow.focus(); // necessary for IE >= 10
-        mywindow.print();
-      mywindow.close();
-        return true;
-    }
 </script>
 <%
 } else {out.print("Я не знаю что вы от меня хотите");}

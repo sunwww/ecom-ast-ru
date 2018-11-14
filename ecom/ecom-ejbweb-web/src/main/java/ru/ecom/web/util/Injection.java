@@ -8,7 +8,9 @@ import ru.nuzmsh.util.StringUtil;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -108,10 +110,15 @@ public class Injection {
         aWebName = getWebName(aRequest, aWebName) ;
         return Injection.class.getName()+aWebName ;
     }
+public static Injection find (ServletContextEvent contextEvent, String aWebName ) {
+    return find(contextEvent.getServletContext(),aWebName);
+}
+    public static Injection find (ServletRequestEvent contextEvent, String aWebName ) {
+        return find(contextEvent.getServletContext(),aWebName);
+    }
+    public static Injection find(ServletContext servletContext, String aWebName ) {
 
-    public static Injection find(ServletContextEvent contextEvent, String aWebName ) {
-
-        Injection injection = (Injection) contextEvent.getServletContext().getAttribute(Injection.class.getName()+aWebName);
+        Injection injection = (Injection) servletContext.getAttribute(Injection.class.getName()+aWebName);
         try {
             Properties prop = loadAppProperties(aWebName);
             if (injection == null) {

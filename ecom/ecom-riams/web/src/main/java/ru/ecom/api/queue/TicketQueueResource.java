@@ -6,6 +6,7 @@ import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.queue.domain.QueueTicket;
 import ru.ecom.queue.service.IQueueService;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -43,16 +44,39 @@ public class TicketQueueResource {
         QueueTicket ticket = queueService.getNewTicket(aQueueId);
         JSONObject test = new JSONObject();
         try {
+            test.put("ticketId", ticket.getId());
             test.put("number", ticket.getNumber());
             test.put("fullNumber", ticket.getFullNumber());
             test.put("queueName", ticket.getQueue().getType().getName());
             test.put("queueDate", DateFormat.formatToDate(ticket.getQueue().getDate()));
             test.put("ticketDate", DateFormat.formatToDateTime(ticket.getCreateDate()));
+            test.put("queueCode", ticket.getQueue().getType().getCode());
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return test.toString();
 
 
+    }
+
+    /** Получаем следующий талон в очереди*/
+    public QueueTicket requireNextTicketInQueue(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("queue") Long aQueueId) throws NamingException, JSONException {
+        if (token!=null) {throw new IllegalAccessError("В этом случае токен передавать запрещено");}
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+        IQueueService queueService = Injection.find(aRequest).getService(IQueueService.class);
+        return  queueService.getFirstTicketInQueue(aQueueId,username);
+    }
+    public String requireNextTicketInQueueJson(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("queue") Long aQueueId) throws NamingException, JSONException {
+        QueueTicket ticket = requireNextTicketInQueue(aRequest,token,aQueueId);
+        JSONObject ret  =new JSONObject();
+        if (ticket!=null) {
+            ret.put("ticketId",ticket.getId());
+            ret.put("number", ticket.getNumber());
+            ret.put("fullNumber", ticket.getFullNumber());
+            ret.put("queueName", ticket.getQueue().getType().getName());
+            ret.put("queueDate", DateFormat.formatToDate(ticket.getQueue().getDate()));
+            ret.put("ticketDate", DateFormat.formatToDateTime(ticket.getCreateDate()));
+        }
+        return ret.toString();
     }
 }

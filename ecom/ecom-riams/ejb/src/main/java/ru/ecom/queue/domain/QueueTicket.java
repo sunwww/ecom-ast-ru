@@ -1,6 +1,7 @@
 package ru.ecom.queue.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
@@ -9,6 +10,11 @@ import java.util.Date;
 /**Талон в очереди*/
 @Entity
 public class QueueTicket extends BaseEntity {
+
+    @Transient
+    public String getWindowNumber(){
+        return theExecutor.getWindowNumber()!=null?theExecutor.getWindowNumber():"---";
+    }
 
     /** В какой очереди находится */
     @Comment("В какой очереди находится")
@@ -46,5 +52,35 @@ public class QueueTicket extends BaseEntity {
         theNumber=aNumber;
 
     }
+
+    /** Оператор, обрабатывающий заявку */
+    @Comment("Оператор, обрабатывающий заявку")
+    @OneToOne
+    public WorkFunction getExecutor() {return theExecutor;}
+    public void setExecutor(WorkFunction aExecutor) {theExecutor = aExecutor;}
+    /** Оператор, обрабатывающий заявку */
+    private WorkFunction theExecutor ;
+
+    /** Дата и время начала обработки талона */
+    @Comment("Дата и время начала обработки талона")
+    public Date getStartExecuteDate() {return theStartExecuteDate;}
+    public void setStartExecuteDate(Date aStartExecuteDate) {theStartExecuteDate = aStartExecuteDate;}
+    /** Дата и время начала обработки талона */
+    private Date theStartExecuteDate ;
+
+    /** Оператор, закончивший обработку талона */
+    @Comment("Оператор, закончивший обработку талона")
+    @OneToOne
+    public WorkFunction getFinishExecutor() {return theFinishExecutor;}
+    public void setFinishExecutor(WorkFunction aFinishExecutor) {theFinishExecutor = aFinishExecutor;}
+    /** Оператор, закончивший обработку талона */
+    private WorkFunction theFinishExecutor ;
+
+    /** Дата окончания обслуживания */
+    @Comment("Дата окончания обслуживания")
+    public Date getFinishExecuteDate() {return theFinishExecuteDate;}
+    public void setFinishExecuteDate(Date aFinishExecuteDate) {theFinishExecuteDate = aFinishExecuteDate;}
+    /** Дата окончания обслуживания */
+    private Date theFinishExecuteDate ;
 
 }

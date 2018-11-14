@@ -5,6 +5,49 @@
 	div#content {margin-left: 0em;}
 }
 
+#ticketQueueDiv {display: block;
+    position: relative;
+    width: 30%;
+    height: 100px;
+    pointer-events: none !important;
+    margin: 0;
+    padding: 0;
+    letter-spacing: normal;
+    z-index: 9001 !important;
+    background: #7eadd9;
+    float: right;
+}
+
+#ws_nextTicketDiv {
+    width:90px;
+    height:100px;
+    background: #839dff;
+    position:relative;
+    float:right;
+}
+
+#ws_ticketNumberDiv{
+    width:90px;
+    height:100px;
+    background:yellow;
+    position:relative;
+    float:right;
+}
+#ws_finishWorkDiv {
+    width:90px;
+    height:100px;
+    background: #5d8028;
+    position:relative;
+    float:right;
+}
+#ws_windowWorkDiv {
+    width:90px;
+    height:100px;
+    background: #356080;
+    position:relative;
+    float:right;
+}
+
 .gotoTop {
 background-color: yellow;
 position: fixed;

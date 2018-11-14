@@ -1,7 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@page import="java.util.Calendar"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Date"%>
+<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
@@ -9,7 +7,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="java.util.Calendar"%>
 
 <%
     String username = LoginInfo.find(request.getSession()).getUsername();
@@ -41,6 +39,7 @@
 <!-- Дополнительное определение стиля END -->
 
      <script type="text/javascript">
+         var ws_socketServerStorageName;
          jQuery(document).ready(function() {
              var xhr = new XMLHttpRequest();
              xhr.open('GET', 'GetMessageFromFile?username=${username}', false);
@@ -56,6 +55,15 @@
 
 
      </script>
+     <msh:ifInRole roles="/Policy/WebSocket">
+         <script type="text/javascript">
+             ws_socketServerStorageName="ws_server_name";
+             jQuery(document).ready(function(){connectWebSocket();});
+
+         </script>
+         <script type="text/javascript" src="./dwr/interface/VocService.js"></script>
+
+     </msh:ifInRole>
  </head>
     <%
     //Date curDate = new Date() ;
@@ -128,7 +136,7 @@
             <li class="separator">|</li>
             <li><a href='js-secuser-changePassword.do'>Смена пароля</a></li>
             <li class="separator">|</li>
-            <li><a href="javascript:window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под др. именем</a></li>
+            <li><a href="javascript:ws_exit();window.location = 'ecom_relogin.do?next='+escape(window.location);">Войти под др. именем</a></li>
             <li class="separator">|</li>
             <li><msh:link action="/ecom_loginExit.do">Завершить работу</msh:link></li>
 
@@ -214,9 +222,17 @@
     <div id="hotkey">
     	<tiles:insert attribute="hotkey" ignore="true"/>
     </div>
+
     <div id="footer">
 
         <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
+        <div id="ws_ticketQueueDiv">
+
+           <div title="Нажмите чтобы приступить к работе/прекратить работу в очереди" id='ws_finishWorkDiv'>СТАТУС</div>
+            <div id="ws_windowWorkDiv" title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></div>
+            <div id="ws_nextTicketDiv" title="Нажмите для перехода к следующему талону" onclick='ws_setNewTicket()'>Перейти к следующему талону</div>
+            <div title="Текущий талон" onclick="alert('Текущий талон = '+jQuery('#ws_ticketNumberDiv').html())" id='ws_ticketNumberDiv'>---</div>
+        </div>
         <div id='copyright'>&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
     </div>
@@ -247,6 +263,8 @@
            </ul>
            
     </msh:ifInRole>
+
+
 
 
 	<!-- Additional Javascript -->
