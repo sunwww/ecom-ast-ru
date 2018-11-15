@@ -1,9 +1,4 @@
-<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
-<%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -221,11 +216,12 @@
 	 ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end 
 	||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end as address
 	,(select list(ved.name||' '||to_char(edc.startDate,'dd.mm.yyyy')||' '||to_char(edc.finishDate,'dd.mm.yyyy')||case when isServiceIndication='1' then ', направлен на 2 этап' else '' end) from ExtDispCard edc left join VocExtDisp ved on ved.id=edc.dispType_id where edc.patient_id=pat.id and to_char(edc.FinishDate,'yyyy')='${param.dateBeginYear}') as edclist
-     ,la.number
+     ,la.number as f8_laNumber
          ,coalesce(a2.fullname)||' ' || case when pat.houseNumber is not null and pat.realhouseNumber!='' then ' д.'||pat.realhouseNumber else '' end 
 	 ||case when pat.realhouseBuilding is not null and pat.realhouseBuilding!='' then ' корп.'|| pat.realhouseBuilding else '' end 
-	||case when pat.realflatNumber is not null and pat.realflatNumber!='' then ' кв. '|| pat.realflatNumber else '' end as address_real
+	||case when pat.realflatNumber is not null and pat.realflatNumber!='' then ' кв. '|| pat.realflatNumber else '' end as f9_address_real
 	${selectSql}
+	,pat.patientSync as f12_patSync
      from  Patient pat
      
      left join Address2 a on a.addressid=pat.address_addressid
@@ -256,6 +252,7 @@
     viewUrl="entityShortView-mis_patient.do" styleRow="11"
      name="reestr" idField="1">
     	<msh:tableColumn property="sn" columnName="#"/>
+    	<msh:tableColumn property="12" columnName="Код синхр"/>
     	<msh:tableColumn property="2" columnName="Фамилия"/>
     	<msh:tableColumn property="3" columnName="Имя"/>
     	<msh:tableColumn property="4" columnName="Отчество"/>
