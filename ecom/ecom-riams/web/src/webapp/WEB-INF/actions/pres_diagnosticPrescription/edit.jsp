@@ -467,7 +467,7 @@ function getPreRecord() {
     <!-- 
     	  - Назначение медицинской услуги
     	  -->
-    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="id" title="Назначение диагностического исследования/консультации">
+    <msh:form guid="formHello" action="/entityParentSaveGoView-pres_diagnosticPrescription.do" defaultField="surgCabinetName" title="Назначение диагностического исследования/консультации">
       <msh:hidden guid="hiddenId" property="id" />
       <msh:hidden property="prescriptionList" guid="8b852c-d5aa-40f0-a9f5-21dfgd6" />
       <msh:hidden guid="hiddenSaveType" property="saveType" />
@@ -499,7 +499,7 @@ function getPreRecord() {
         <tr><td>
         <table id="surgTable">
             <msh:row>
-        	 	<msh:separator label="Функциональные исследования" colSpan="10"/>
+        	 	<msh:separator label="Диагностическое исследование" colSpan="10"/>
         </msh:row>
         <tbody id="addsurgElements">
 			 <msh:row>
