@@ -159,6 +159,12 @@
                 <span class="menu-text">Обновить</span>
             </button>
         </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="addTime()">
+                    <i class="fa fa-star"></i>
+                    <span class="menu-text">Добавить время после</span>
+                </button>
+            </li>
         </menu>
 
 
@@ -343,7 +349,27 @@ function getReserves() {
                     });
                 }
             }
-
+    //Milamesher 16112018 добавить время в существующий день
+            function addTime() {
+                var mins;
+                do {
+                    mins = prompt("Введите значение минут:", "00");
+                    if (mins != null && mins>=0 && mins<60) {
+                        if (mins.length<2) mins="0"+mins;
+                        WorkCalendarService.addTime(thisCell.getAttribute('id'),mins,{
+                            callback: function(aResult) {
+                                showToastMessage(aResult,null,true);
+                                updateTable();
+                            },
+                            errorHandler: function(aMessage) {
+                                alert("Не удалось создать время! "+aMessage) ;
+                            }
+                        });
+                    }
+                    else if (mins != null) alert("Некорректное количество минут!");
+                }
+                while (mins != null && (mins<0 || mins>=60));
+            }
             function deleteTime() {
                 WorkCalendarService.setScheduleElementIsDelete(thisCell.getAttribute('id'),{
                     callback: function(aResult) {

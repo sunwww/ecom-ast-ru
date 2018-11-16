@@ -1882,4 +1882,20 @@ public class WorkCalendarServiceJs {
             changeScheduleElementReserve(array[i],reserveTypeId,aRequest);
 	    return "0";
     }
+    //Milamesher 16112018 добавление времени после
+    public String addTime(Long aTime, String mins, HttpServletRequest aRequest) throws Exception {
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Collection<WebQueryResult> list = service.executeNativeSql("select timefrom from workcalendartime where id="+aTime);
+        String timefrom="";
+        if (!list.isEmpty()) for (WebQueryResult wqr : list) timefrom = wqr.get1().toString();
+        if (!timefrom.equals("") && timefrom.length()>2) {
+            timefrom=timefrom.substring(0,2)+":"+mins+":00";
+        }
+        service.executeUpdateNativeSql("insert into workcalendartime(timefrom,additional,rest,workcalendarday_id,createprerecord,\n" +
+                "createdateprerecord,createtimeprerecord,reservetype_id,createdate,createtime)\n" +
+                "select to_timestamp('"+timefrom+"','HH24:MI:SS'),additional,rest,workcalendarday_id,'" + username + "',current_date,current_time,\n" +
+                "reservetype_id,current_date,current_time from workcalendartime where id=" + aTime);
+	    return "Добавлено.";
+    }
 }
