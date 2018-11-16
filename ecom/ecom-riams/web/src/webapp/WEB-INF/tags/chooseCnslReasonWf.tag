@@ -6,7 +6,6 @@
 
 <%@ attribute name="name" required="true" description="Название" %>
 
-<script type="text/javascript" src="./dwr/interface/QualityEstimationService.js">/**/</script>
 <div id='${name}CloseDocumentDialog' class='dialog'>
     <h2>Отменить консультацию</h2>
     <table width="100%" cellspacing="10" cellpadding="10" id="cmbTable" border="1" >
