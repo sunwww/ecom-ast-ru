@@ -110,9 +110,25 @@ public class QRCodeServiceBean implements IQRCodeService {
                     }
                 }
             }
-            /*else if (template.endsWith(".ods")) {
+            //Milamesher #120 19112018 работа с .ods файлом
+            else if (template.endsWith(".ods")) {
                 textdoc = (SpreadsheetDocument) SpreadsheetDocument.loadDocument(template);
-            }*/
+                if (textdoc.getTableList().size()>0) {
+                    Table t = textdoc.getTableList().get(0);
+                    Boolean flag = false;
+                    for (int i = 0; i < t.getRowCount(); i++) {
+                        for (int j = 0; i < t.getRowByIndex(i).getCellCount(); j++) {
+                            Cell c = t.getCellByPosition(i, j);
+                            if (c.getDisplayText().indexOf(replacesource) != -1) {
+                                c.setImage(uri);
+                                flag = true;
+                                break;
+                            }
+                            if (flag) break;
+                        }
+                    }
+                }
+            }
             if (textdoc!=null) textdoc.save(template);
         }
         catch (Exception e) {
