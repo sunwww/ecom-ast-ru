@@ -274,7 +274,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
     		
     		
     	}
-    	if (print) aOut.println(aStr) ;
+    	if (print) aOut.println(aStr.replace("–","-")) ;
 
     }
 	
