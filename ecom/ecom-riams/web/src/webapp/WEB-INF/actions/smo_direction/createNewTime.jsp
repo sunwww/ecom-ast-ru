@@ -159,6 +159,12 @@
                 <span class="menu-text">Обновить</span>
             </button>
         </li>
+            <li class="menu-item">
+                <button type="button" class="menu-btn" onclick="addTime()">
+                    <i class="fa fa-star"></i>
+                    <span class="menu-text">Добавить время после</span>
+                </button>
+            </li>
         </menu>
 
 
@@ -170,7 +176,8 @@
                 </button>
             </li>
             <li class="menu-item">
-                <button type="button" class="menu-btn" onclick="copyDay()">
+                <tags:chooseCopyPeriod name="chooseCopyPeriod"/>
+                <button type="button" class="menu-btn" onclick="showchooseCopyPeriod(thisCell.getAttribute('id'));">
                     <i class="fa fa-download"></i>
                     <span class="menu-text" >Скопировать день</span>
                 </button>
@@ -312,19 +319,57 @@ function getReserves() {
                     onContextMenu(e);
                 }
             };
-
+    //Milamesher 14112018 если ничего не выделено - делаем текущий, если что-то выделено - делаю им
             function changeReserve(type) {
-                WorkCalendarService.changeScheduleElementReserve(thisCell.getAttribute('id'),type,{
-                    callback: function(aResult) {
-                        updateTable();
+                var array = [];
+                var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+                for (var i = 0; i < checkboxes.length; i++) {
+                    array.push(checkboxes[i].id.replace("ch",""));
+                }
+                if (array.length==0) {
+                    WorkCalendarService.changeScheduleElementReserve(thisCell.getAttribute('id'), type, {
+                        callback: function (aResult) {
+                            updateTable();
 
-                    },
-                    errorHandler: function(aMessage) {
-                        alert("Не удалось отобразить! "+aMessage) ;
-                    }
-                });
+                        },
+                        errorHandler: function (aMessage) {
+                            alert("Не удалось отобразить! " + aMessage);
+                        }
+                    });
+                }
+                else {
+                    WorkCalendarService.changeScheduleArrayReserve(array, type, {
+                        callback: function (aResult) {
+                            updateTable();
+
+                        },
+                        errorHandler: function (aMessage) {
+                            alert("Не удалось отобразить! " + aMessage);
+                        }
+                    });
+                }
             }
-
+    //Milamesher 16112018 добавить время в существующий день
+            function addTime() {
+                var mins;
+                do {
+                    mins = prompt("Введите значение минут:", "00");
+                    if (mins != null && mins>=0 && mins<60) {
+                        if (mins.length<2) mins="0"+mins;
+                        WorkCalendarService.addTime(thisCell.getAttribute('id'),mins,{
+                            callback: function(aResult) {
+                                showToastMessage(aResult,null,true);
+                                updateTable();
+                            },
+                            errorHandler: function(aMessage) {
+                                alert("Не удалось создать время! "+aMessage) ;
+                            }
+                        });
+                    }
+                    else if (mins != null) alert("Некорректное количество минут!");
+                }
+                while (mins != null && (mins<0 || mins>=60));
+            }
             function deleteTime() {
                 WorkCalendarService.setScheduleElementIsDelete(thisCell.getAttribute('id'),{
                     callback: function(aResult) {
@@ -335,18 +380,6 @@ function getReserves() {
                     }
                 });
             }
-            //проверка даты
-            function checkDate(dateInput) {
-                var dateParts = dateInput.split(".");
-                var date = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
-
-                var dd=date.getDate();
-                var mm=date.getMonth() + 1;
-                var yyyy=date.getFullYear();
-
-                var dateInput2=(dd>9 ? '' : '0') +  dd+ "." + (mm>9 ? '' : '0')  + mm+ "." + yyyy;
-                return (dateInput==dateInput2);
-            }
             function deleteDay() {
                 WorkCalendarService.setScheduleDayIsDelete(thisCell.getAttribute('id'),{
                     callback: function(aResult) {
@@ -356,30 +389,6 @@ function getReserves() {
                         alert("Не удалось отобразить! "+aMessage) ;
                     }
                 });
-            }
-            //Milamesher копирование дня
-            function copyDay() {
-                var monthNames = [ "01", "02", "03", "04", "05", "06",
-                    "07", "08", "09", "10", "11", "12" ];
-                    var today = new Date();
-                    var day=today.getDate()>9? today.getDate():('0'+today.getDate());
-                    var date;
-                    do {
-                        var date = prompt("Введите дату.", day + "." + monthNames[today.getMonth()] + "." + today.getFullYear());
-                        if (date != null && checkDate(date)) {
-                            WorkCalendarService.copyDay(thisCell.getAttribute('id'),date,{
-                                callback: function(aResult) {
-                                    showToastMessage(aResult,null,true);
-                                    updateTable();
-                                },
-                                errorHandler: function(aMessage) {
-                                    alert("Не удалось скопировать! "+aMessage) ;
-                                }
-                            });
-                        }
-                        else if (date != null) alert("Некорректная дата!");
-                    }
-                    while (date!=null && !checkDate(date));
             }
 
             function editRecord() {

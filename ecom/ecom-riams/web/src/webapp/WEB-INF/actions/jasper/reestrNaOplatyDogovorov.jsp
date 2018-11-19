@@ -44,7 +44,7 @@
                                 HospitalMedCaseService. getVocServiceStreamCodeByName(sstream, {
                                     callback: function (res) {
                                         if (res != "##") {
-                                            window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F2KSG&standAlone=true&decorate=no"
+                                            window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2FRegistryForPaymentForContracts&standAlone=true&decorate=no"
                                                 + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&sstream="+ res + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML
                                             + "&type=" + $('hospType').value);
                                         }

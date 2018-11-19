@@ -875,4 +875,12 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 				names = "vd.name"
 		/>
 	</voc>
+	<!-- Справочник причин отмены консультаций -->
+	<voc id='vocWfConsultationCancelReason' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocWfConsultationCancelReason'
+				names   = 'name'
+				queried = 'name'
+		/>
+	</voc>
 </vocconfig>    

@@ -131,10 +131,10 @@
 							<li><msh:link  isReport="false" action="allLn_count_report.do" roles="/Policy/Mis/ArchiveCase/Create">
 								Количество ЛН по отделениям
 							</msh:link></li>
-                        <li><msh:link  isReport="false" action="reestrNaOplatyDogovorov.do" roles="/Policy/Mis/Journal/JasperReports">
+                        <li><msh:link  isReport="false" action="reestrNaOplatyDogovorov.do" roles="/Policy/Mis/Journal/JasperReports/RegistryForPaymentForContracts">
                             Реестр на оплату для договоров
                         </msh:link></li>
-						<li><msh:link  isReport="false" action="finPlan.do" roles="/Policy/Mis/Journal/JasperReports">
+						<li><msh:link  isReport="false" action="finPlan.do" roles="/Policy/Mis/Journal/JasperReports/ExecutionOfFinancialPlan">
 							Выполнение финансового плана
 						</msh:link></li>
 						<li><msh:link  isReport="false" action="smo_deniedHospitelByAttach.do" roles="/Policy/Mis/ArchiveCase/Create">

@@ -1515,14 +1515,13 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		}
 		return false;
 	}
-	//Milamesher 11102018 отмена назначения на консультацию
-	//плановые - пока не выполнено, экстренные - пока не передано
+	//Milamesher 11102018 отмена назначения на консультацию - пока не выполнено
 	public String cancelWFPrescription(String aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
 		if (aReason == null || aReason.trim().equals("")) {
 			return "Необходимо указать причину аннулирования!";
 		}
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String permSql="select case when t.code='plan' and wf.intakeDate is null or t.code='cito' and wf.transferdate is null then '1' else '0' end\n" +
+		String permSql="select case when wf.intakeDate is null then '1' else '0' end\n" +
 				"from prescription wf\n" +
 				"left join vocconsultingtype t on wf.vocconsultingtype_id=t.id\n" +
 				"where cancelDate is null and wf.id="+aPresctiptionId;
@@ -1540,7 +1539,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 			return "Назначение отменено.";
 		}
 		else {
-			return "Невозможно отменить назначение! Уже было отменено или находится в работе. Можно отменять плановые назначения, пока они не выполнены и экстренные назначения, пока они не переданы.";
+			return "Невозможно отменить назначение! Уже было отменено или находится в работе. Можно отменять невыполненные назначения.";
 		}
 	}
 }

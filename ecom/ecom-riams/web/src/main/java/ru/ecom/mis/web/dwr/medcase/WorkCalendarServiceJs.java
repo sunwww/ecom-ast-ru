@@ -83,12 +83,12 @@ public class WorkCalendarServiceJs {
 			date = w.get1().toString();
 			mondey = w.get2().toString();
 		}
-
+//Milamesher 14112018 добавлены чекбоксы для выделения и изменения резерва нескольких времён
 		String sql ="select " +
 				"getWeekbyDate (wcd.calendardate)," +
 				"prettyDate(wcd.calendardate,wcd.id),  " +
 				"wcd.id," +
-				"getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" >''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime " +
+				"getList('select ''<td contextmenu=\"cell\" id=\"''||id||''\" class=\"r''||coalesce(reservetype_id,0)||''\" ><input type=\"checkbox\" id=\"ch''||id||''\">''|| to_char(timefrom,''HH24:MI'')||''</td>'' from workcalendartime " +
 				"where workcalendarday_id = '||wcd.id||' and (isDeleted is null or isDeleted = false) order by timefrom','')\n" +
 				"from workcalendarday  wcd\n" +
 				"where wcd.workcalendar_id  = "+workcalendarId+" and wcd.calendardate between (date'"+mondey+"'+"+wek+") and (date'"+mondey+"'+6+"+(wek) +
@@ -1845,25 +1845,57 @@ public class WorkCalendarServiceJs {
 		
 	}
 	//Milamesher 12112018 копирование дня
-	public String copyDay(Long aCalendarDay, String date, HttpServletRequest aRequest) throws Exception {
+	public String copyDay(Long aCalendarDay, String date,String date2, HttpServletRequest aRequest) throws Exception {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql="select count(id) from workcalendarday where calendardate=to_date('"+date+"','dd.mm.yyyy') and workcalendar_id=(select workcalendar_id from workcalendarday where id="+aCalendarDay+")";
-		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty() && list.iterator().next().get1().toString().equals("0")) {
-			String id="";
-			Collection<WebQueryResult> res = service.executeNativeSql("insert into workcalendarday(calendardate,holiday,workcalendar_id,insteadofday_id,isdeleted)\n" +
-					"select to_date('"+date+"','dd.mm.yyyy'),holiday,workcalendar_id,insteadofday_id,isdeleted from workcalendarday where id="+aCalendarDay + "  returning id");
-			for (WebQueryResult wqr : res) {
-				id = wqr.get1().toString();
+		Date beginDate = DateFormat.parseSqlDate(date) ;
+		Date endDate = DateFormat.parseSqlDate(date2) ;
+
+		do {
+			String sql="select id from workcalendarday where calendardate=to_date('"+beginDate+"','yyyy-MM-dd') and workcalendar_id=(select workcalendar_id from workcalendarday where id="+aCalendarDay+")";
+			Collection<WebQueryResult> list = service.executeNativeSql(sql);
+			String id = "";
+			if (!list.isEmpty()) for (WebQueryResult wqr : list) id = wqr.get1().toString(); //день уже создан - добавлеяем времена к существующим
+			else { //день ещё не создан - создаём
+				Collection<WebQueryResult> res = service.executeNativeSql("insert into workcalendarday(calendardate,holiday,workcalendar_id,insteadofday_id,isdeleted)\n" +
+						"select to_date('" + new SimpleDateFormat("dd.MM.yyyy").format(beginDate) + "','dd.mm.yyyy'),holiday,workcalendar_id,insteadofday_id,isdeleted from workcalendarday where id=" + aCalendarDay + "  returning id");
+				for (WebQueryResult wqr : res) id = wqr.get1().toString();
 			}
+			//если день был удалён, снимаем отметку
+			service.executeUpdateNativeSql("update workcalendarday set isdeleted=false where id="+id);
+			//добавляем времена, проверка на повторы в триггера на стороне бд
 			service.executeUpdateNativeSql("insert into workcalendartime(timefrom,additional,rest,workcalendarday_id,createprerecord,\n" +
 					"createdateprerecord,createtimeprerecord,reservetype_id,createdate,createtime)\n" +
-					"select timefrom,additional,rest,"+id+",'"+username+"',current_date,current_time,\n" +
+					"select timefrom,additional,rest," + id + ",'" + username + "',current_date,current_time,\n" +
 					"reservetype_id,current_date as createdate,current_time\n" +
-					" from workcalendartime where workcalendarday_id="+aCalendarDay);
+					" from workcalendartime where workcalendarday_id=" + aCalendarDay + " and (isdeleted is null or isdeleted='0')");
+
+			if (new SimpleDateFormat("dd.MM.yyyy").format(beginDate).equals(new SimpleDateFormat("dd.MM.yyyy").format(endDate))) break;
+			beginDate = new java.sql.Date(beginDate.getTime() + 24 * 60 * 60 * 1000); //следующий день
 		}
-		else throw new IllegalAccessException("Нельзя копировать в день, в котором уже создано расписание!");
-		return "Скопировано";
+		while (!new SimpleDateFormat("dd.MM.yyyy").format(beginDate).equals(new SimpleDateFormat("dd.MM.yyyy").format(endDate)));
+		return "Скопировано.";
 	}
+	//Milamesher 14112018 изменение резерва у массива
+    public String changeScheduleArrayReserve(Long[] array,Long reserveTypeId,HttpServletRequest aRequest) throws NamingException {
+        for (int i=0; i<array.length; i++)
+            changeScheduleElementReserve(array[i],reserveTypeId,aRequest);
+	    return "0";
+    }
+    //Milamesher 16112018 добавление времени после
+    public String addTime(Long aTime, String mins, HttpServletRequest aRequest) throws Exception {
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+        Collection<WebQueryResult> list = service.executeNativeSql("select timefrom from workcalendartime where id="+aTime);
+        String timefrom="";
+        if (!list.isEmpty()) for (WebQueryResult wqr : list) timefrom = wqr.get1().toString();
+        if (!timefrom.equals("") && timefrom.length()>2) {
+            timefrom=timefrom.substring(0,2)+":"+mins+":00";
+        }
+        service.executeUpdateNativeSql("insert into workcalendartime(timefrom,additional,rest,workcalendarday_id,createprerecord,\n" +
+                "createdateprerecord,createtimeprerecord,reservetype_id,createdate,createtime)\n" +
+                "select to_timestamp('"+timefrom+"','HH24:MI:SS'),additional,rest,workcalendarday_id,'" + username + "',current_date,current_time,\n" +
+                "reservetype_id,current_date,current_time from workcalendartime where id=" + aTime);
+	    return "Добавлено.";
+    }
 }

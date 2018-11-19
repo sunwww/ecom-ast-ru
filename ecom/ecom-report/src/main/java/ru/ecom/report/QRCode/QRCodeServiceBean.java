@@ -8,6 +8,10 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.qrcode.QRCodeWriter;
+import org.odftoolkit.simple.Document;
+import org.odftoolkit.simple.SpreadsheetDocument;
+import org.odftoolkit.simple.table.Cell;
+import org.odftoolkit.simple.table.Table;
 import sun.misc.BASE64Encoder;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -92,13 +96,24 @@ public class QRCodeServiceBean implements IQRCodeService {
     //Milamesher #120 130092018  метод замены кодового слова на QR-код
     private Boolean putQRImage(URI uri,String template, String replacesource) {
         try {
-            TextDocument textdoc=(TextDocument)TextDocument.loadDocument(template);
-            TextNavigation search = new TextNavigation(replacesource, textdoc);
-            while (search.hasNext()) {
-                TextSelection item= (TextSelection) search.nextSelection();
-                if (item!=null) item.replaceWith(uri);
+            Document  textdoc=null;
+            if (template.endsWith(".odt")) {
+                textdoc = (TextDocument) TextDocument.loadDocument(template);
+                TextNavigation search = new TextNavigation(replacesource, textdoc);
+                if (search != null && uri != null) {
+                    while (search.hasNext()) {
+                        TextSelection item = (TextSelection) search.nextSelection();
+                        try {
+                            if (item != null) item.replaceWith(uri);
+                        }
+                        catch(NullPointerException e) {}
+                    }
+                }
             }
-            textdoc.save(template);
+            /*else if (template.endsWith(".ods")) {
+                textdoc = (SpreadsheetDocument) SpreadsheetDocument.loadDocument(template);
+            }*/
+            if (textdoc!=null) textdoc.save(template);
         }
         catch (Exception e) {
             e.printStackTrace();

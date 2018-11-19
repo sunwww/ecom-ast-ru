@@ -801,7 +801,7 @@
                     }
                 }
             }
-            //загрудка всех чекбоксов и рб
+            //загрузка всех чекбоксов и рб
             function loadCaseAll(voc) {
                 if (voc=='vocOncologyReasonTreat') {
                     if ($('isFirst').value=='true') document.getElementsByName("typeFirstOrNot")[0].checked='checked';
@@ -908,19 +908,7 @@
                             </msh:ifFormTypeIsView>
                             </msh:ifFormTypeAreViewOrEdit>
                             transform();
-                            //если ред-е и нет биопсии
-                            <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
-                            <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                            if (getValueVocRadiooncoT("epit","vocOncologyN008")==-1 && getValueVocRadiooncoT("carc","vocOncologyN008")==-1 &&
-                                getValueVocRadiooncoT("pochech","vocOncologyN008")==-1 && getValueVocRadiooncoT("endom","vocOncologyN008")==-1 &&
-                                getValueVocRadiooncoT("rad5","vocOncologyN008")==-1 && getValueVocRadiooncoT("svetloklet","vocOncologyN008")==-1 &&
-                                getValueVocRadiooncoT("melkoklet","vocOncologyN008")==-1 && getValueVocRadiooncoT("bazalklet","vocOncologyN008")==-1 &&
-                                getValueVocRadiooncoT("ploskoklet","vocOncologyN008")==-1 && getValueVocRadiooncoT("diff","vocOncologyN008")==-1) {
-                                document.getElementById('histologyChb').checked=false;
-                                checkCheckboxH();
-                            }
-                            </msh:ifFormTypeIsNotView>
-                            </msh:ifFormTypeAreViewOrEdit>
+                            hideUnChecked();
                         }
                     });
                 }
@@ -955,6 +943,42 @@
                     document.getElementById('treatmentChb').setAttribute("disabled",true);
                     </msh:ifFormTypeIsView>
                 }
+            }
+            //скрыть ненужное при ред-ии/просмотре
+            function hideUnChecked() {
+                //если ред-е/просмотр и нет контейнеров - снимаем галочки
+                <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
+                //нет биопсии
+                if (getValueVocRadiooncoT("epit","vocOncologyN008")==-1 && getValueVocRadiooncoT("carc","vocOncologyN008")==-1 &&
+                    getValueVocRadiooncoT("pochech","vocOncologyN008")==-1 && getValueVocRadiooncoT("endom","vocOncologyN008")==-1 &&
+                    getValueVocRadiooncoT("rad5","vocOncologyN008")==-1 && getValueVocRadiooncoT("svetloklet","vocOncologyN008")==-1 &&
+                    getValueVocRadiooncoT("melkoklet","vocOncologyN008")==-1 && getValueVocRadiooncoT("bazalklet","vocOncologyN008")==-1 &&
+                    getValueVocRadiooncoT("ploskoklet","vocOncologyN008")==-1 && getValueVocRadiooncoT("diff","vocOncologyN008")==-1) {
+                    document.getElementById('histologyChb').checked=false;
+                    checkCheckboxH();
+                }
+                //нет маркёров
+                if (getValueVocRadiooncoT("vocOncologyN010_111","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_1112","vocOncologyN010_11")==-1 &&
+                    getValueVocRadiooncoT("vocOncologyN010_119","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_1110","vocOncologyN010_11")==-1 &&
+                    getValueVocRadiooncoT("vocOncologyN010_118","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_114","vocOncologyN010_11")==-1 &&
+                    getValueVocRadiooncoT("vocOncologyN010_115","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_116","vocOncologyN010_11")==-1 &&
+                    getValueVocRadiooncoT("vocOncologyN010_112","vocOncologyN010_11")==-1 && getValueVocRadiooncoT("vocOncologyN010_113","vocOncologyN010_11")==-1 &&
+                    getValueVocRadiooncoT("vocOncologyN010_117","vocOncologyN010_11")==-1) {
+                    document.getElementById('immunoGistMarkChb').checked = false;
+                    checkCheckboxI();
+                }
+                //нет консилиума
+                if (getValueVocRadiooncoT('vocOncologyConsilium')==-1) {
+                    document.getElementById('consiliumChb').checked = false;
+                    checkCheckboxC();
+                }
+                //нет противопоказаний/отказов=
+                if (!document.getElementById("c1").checked && !document.getElementById("c2").checked && !document.getElementById("c3").checked &&
+                    !document.getElementById("c4").checked && !document.getElementById("c5").checked && !document.getElementById("c6").checked) {
+                    document.getElementById('contraChb').checked = false;
+                    checkCheckboxContra();
+                }
+                    </msh:ifFormTypeAreViewOrEdit>
             }
             //проставить доступность у разделов гистологии
             function setEnabledH(t) {

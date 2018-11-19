@@ -613,7 +613,7 @@ public class DisabilityServiceJs {
 					"from disabilityrecord dr\n" +
 					"left join disabilitydocument dd on dr.disabilitydocument_id=dd.id\n" +
 					"left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = dd.id and dsdoc.externalid = dr.id\n" +
-					"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "')=false", 1);
+					"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "' limit 1)=false", 1);
 			if (l.isEmpty())
 				return "Подписи не найдены либо период уже выгружен (в этом случае подписи удалять нельзя)!";
 			else {
@@ -622,7 +622,7 @@ public class DisabilityServiceJs {
 						"from disabilityrecord dr\n" +
 						"left join disabilitydocument dd on dr.disabilitydocument_id=dd.id\n" +
 						"left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = dd.id and dsdoc.externalid = dr.id\n" +
-						"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "')=false");
+						"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "' limit 1)=false");
 				return "Удалено.";
 			}
 		} else {
