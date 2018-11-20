@@ -116,9 +116,11 @@ public class WorkCalendarServiceJs {
 
 
 	/** Создание дат и времен по заданному количеству визитов или по длительности визита*/
+	//upd. Milamesher 20112018 учитываются дни недели
 	public String createDateTimes(String dateFrom,String dateTo
 			,Long workFunctionId,String timeFrom,String timeTo
-			, String countVis,String type,String reserveType,String evenodd,HttpServletRequest aRequest) throws NamingException {
+			, String countVis,String type,String reserveType,String evenodd, Boolean all, Boolean mon, Boolean tue, Boolean wed
+								  ,Boolean thu, Boolean fri, Boolean sat, Boolean sun, HttpServletRequest aRequest) throws NamingException {
 
 		if(reserveType.equals("")){
 			reserveType=null;
@@ -135,10 +137,12 @@ public class WorkCalendarServiceJs {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		if(type.equals("1")) {
 			service.executeNativeSql("select createSheduleByContinueVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+","+evenodd+",'"+username+"')");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "m',"+reserveType+","+evenodd+",'"+username+"',"+all+","+mon+","+
+					tue+","+wed+","+thu+","+fri+","+sat+","+sun+")");
 		}else {
 			service.executeNativeSql("select createSheduleByCountVis('" + dateFrom + "','" + dateTo + "'," + workcalendarId + "" +
-					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+","+evenodd+",'"+username+"')");
+					",'" + timeFrom + "','" + timeTo + "','" + countVis + "',"+reserveType+","+evenodd+",'"+username+"',"+all+","+mon+","+
+					tue+","+wed+","+thu+","+fri+","+sat+","+sun+")");
 		}
 		return "yep."+dateFrom+">>"+dateTo+">>"+workcalendarId;
 	}

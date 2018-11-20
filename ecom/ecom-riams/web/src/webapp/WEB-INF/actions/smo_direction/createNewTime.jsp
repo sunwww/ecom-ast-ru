@@ -124,8 +124,17 @@
                         <msh:autoComplete size="100" fieldColSpan="7" vocName="vocServiceReserveType" property="reserveType" label="Тип резерва" horizontalFill="true"/>
                     </msh:row>
                 </msh:row>
-
             </msh:panel>
+                <msh:row>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek0" value="0" type="checkbox" style="margin-right:10px">все
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek1" value="1" type="checkbox" style="margin-right:10px">Пн
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek2" value="2" type="checkbox" style="margin-right:10px">Вт
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek3" value="3" type="checkbox" style="margin-right:10px">Ср
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek4" value="4" type="checkbox" style="margin-right:10px">Чт
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek5" value="5" type="checkbox" style="margin-right:10px">Пт
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek6" value="6" type="checkbox" style="margin-right:10px">Сб
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek7" value="7" type="checkbox" >Вс
+        </msh:row>
         </msh:form>
         <input type="button" onclick="createDateTimes(this)" value="Создать" />
         <div id="schedule">
@@ -240,15 +249,28 @@ function getReserves() {
             function chkchangeChet(value) {
                 checkedRadioevenodd = value;
             }
-
+            //upd. Milamesher 20112018 учитываются дни недели
             function createDateTimes(ths) {
+                //если ни один не выбран  - по умолчанию - все
+                var flag=false;
+                for (var i=0; i<8; i++)
+                    if (document.getElementById('dayOfWeek'+i).checked) flag=true;
+                if (!flag) document.getElementById('dayOfWeek0').checked='checked';
 
                 ths.value="Подождите...";
                 ths.disabled=true;
 
                 WorkCalendarService.createDateTimes($('dateFrom').value,$('dateTo').value,
                     $('specialist').value,$('timeFrom').value,$('timeTo').value,
-                    $('countVisits').value,checkedRadio,$('reserveType').value,checkedRadioevenodd,{
+                    $('countVisits').value,checkedRadio,$('reserveType').value,checkedRadioevenodd,
+                    document.getElementById('dayOfWeek0').checked,
+                    document.getElementById('dayOfWeek1').checked,
+                    document.getElementById('dayOfWeek2').checked,
+                    document.getElementById('dayOfWeek3').checked,
+                    document.getElementById('dayOfWeek4').checked,
+                    document.getElementById('dayOfWeek5').checked,
+                    document.getElementById('dayOfWeek6').checked,
+                    document.getElementById('dayOfWeek7').checked, {
                         callback: function(aResult) {
                             //alert(aResult);
                             updateTable();
@@ -324,7 +346,8 @@ function getReserves() {
                 var array = [];
                 var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
                 for (var i = 0; i < checkboxes.length; i++) {
-                    array.push(checkboxes[i].id.replace("ch",""));
+                    if (checkboxes[i].id.indexOf("dayOfWeek")==-1)
+                        array.push(checkboxes[i].id.replace("ch",""));
                 }
                 if (array.length==0) {
                     WorkCalendarService.changeScheduleElementReserve(thisCell.getAttribute('id'), type, {
