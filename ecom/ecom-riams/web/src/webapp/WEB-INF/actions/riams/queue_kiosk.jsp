@@ -51,16 +51,23 @@ request.setAttribute("kioskMode",kioskMode);
             margin-bottom: 10px;
             width:100%;
         }
+        .queueTable {
+            width: 100%;
+            height: 100%;
+            font-size:500%;
+        }
     </style>
     <input type="hidden" id="current_username_li" value="${username}">
 <%
 if (kioskMode.equals("TV")) {
 %>
 
-<table id="patientWaitingTable" border="1">
+<table id="patientWaitingTable" border="1" style="height: 100%;">
+    <thead style="height: 10%">
     <th width="50%">Талон</th>
     <th width="50%">Окно</th>
-<tbody id="patientWaitingTableBody" name="patientWaitingTableBody"></tbody>
+    </thead>
+<tbody id="patientWaitingTableBody" name="patientWaitingTableBody" style="height: 90%;"></tbody>
 </table>
 
 <%
@@ -68,7 +75,7 @@ if (kioskMode.equals("TV")) {
 %>
 <div id="ticketDiv" style="display: none; width: 100px; height: 200px">
 </div>
-<table id="queueTable" border="1" style="width: 100%; height: 100%">
+<table id="queueTable" border="1" class="queueTable" cellpadding="0" cellspacing="0">
 </table>
 <%}%>
 
@@ -92,11 +99,11 @@ function TVONLOAD(){
 /**Подключаемся с сокет-серверу*/
 function connectWebSocketKiosk() {
     console.log("connectWebSocketKiosk");
-    if (window.ws_socketServerStorageName+'${username}') {
         //Если находим в localStorage информация о сервере WS - работаем. Иначе - запрашиваем у *ServiveJs и заносим результат в localStorage
-        var wsServer =ws_getFromLocalStorage(ws_socketServerStorageName+'${username}');
+        var wsServer =ws_getFromLocalStorage(ws_socketServerStorageName+'_${username}');
         if (wsServer==null) {
-            VocService.getWebSocketServer({callback:function(s) {console.log(s);wsServer=s;ws_saveToLocalStorage(ws_socketServerStorageName+'${username}',s);}});
+            VocService.getWebSocketServer({callback:function(s) {console.log(s);ws_saveToLocalStorage(ws_socketServerStorageName+'_${username}',s);connectWebSocketKiosk();}});
+            return;
         }
         console.log("prewsServer="+wsServer);
         wsServer = JSON.parse(wsServer);
@@ -117,9 +124,7 @@ function connectWebSocketKiosk() {
                 console.log('Код: ' + event.code + ' причина: ' + event.reason);
             };
         }
-    } else {
-        console.log("no webSocketRoles");
-    }
+
 }
 </script>
 <script type="text/javascript"> //Скрипты для инфомата записи на прием
@@ -162,12 +167,12 @@ function connectWebSocketKiosk() {
     }
     function printNewTicket(json) {
       try {
-          var html = "<p align='center'>Очередь: " + json.queueName + "</p>";
-          html += "<p align='center'>" + json.queueDate + "</p>";
-          html += "<p align='center'>Номер " + json.fullNumber + "</p>";
-          html += "<p align='center'>" + json.ticketDate + "</p>";
+          var html = "<p align='center'style='font-size:30px'>Очередь: " + json.queueName + "</p>";
+
+          html += "<p align='center' style='font-size:30px'> " + json.fullNumber + "</p>";
+          html += "<p align='center' style='font-size:30px'>" + json.ticketDate + "</p>";
           var mywindow = window.open('', 'my div', 'height=200,width=200');
-          mywindow.document.write('<html><head><title>my div</title>');
+          mywindow.document.write('<html><head><title>Оп-па, талончик</title>');
           mywindow.document.write('</head><body >');
           mywindow.document.write(html);
           mywindow.document.write('</body></html>');
@@ -212,23 +217,35 @@ function getAllTickets(){
                 if (msg.tickets) {
                     console.log("Количество активных талонов = "+msg.tickets.length);
                     for (i=0;i<msg.tickets.length;i++) {
-                        var t = msg.tickets[i];
-                        tbl.append("<tr id='tr_"+t.ticketId+"'><td>"+t.ticketNumber+"</td><td>"+t.window+"</td></tr>");
+                        showTheTicket(msg.tickets[i]);
                     }
                 }
                 break;
             case "showTicket": //Показываем новый талон
-                var t = msg.ticket;
-                tbl.append("<tr id='tr_"+t.ticketId+"'><td>"+t.ticketNumber+"</td><td>"+t.window+"</td></tr>");
-
+                showTheTicket(msg.ticket);
                 break;
             case "hideTicket": //Помечаем талон как выполненный
-                var t = msg.ticket;
-                tbl.children("#tr_"+t.ticketId).remove();
+               hideTheTicket(msg.ticket);
                 break;
             default:
-                alert("UNKNOWN FUNCTION"+msg.function);
+                alert("UNKNOWN FUNCTION="+msg.function);
         }
+    }
+
+    function showTheTicket(t) {
+    var id=t.ticketId;
+        jQuery('#patientWaitingTableBody').append("<tr id='tr_"+id+"'><td class='td_"+id+"'>"+t.ticketNumber+"</td><td class='td_"+id+"'>"+t.window+"</td></tr>");
+       var el = jQuery('td.td_'+id);
+        for (var i=0;i<10;i++) {
+            el.animate({backgroundColor:"#f00"},50);
+         //   el.animate({backgroundColor:"#00ff1c"},50);
+            el.animate({backgroundColor:"#0010ff"},50);
+        }
+        el.animate({backgroundColor:"#ffffff"},50);
+    }
+
+    function hideTheTicket(t) {
+        jQuery('#patientWaitingTableBody').children("#tr_"+t.ticketId).remove();
     }
 
 </script>
