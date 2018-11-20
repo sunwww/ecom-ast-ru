@@ -294,9 +294,18 @@ var resultofcalc;
 	function isEmpty() {
 		for ( var i = 0; i < global; i++) {
 			var inputbox = document.querySelector('#id' + i + '.txtbox');
-			if (inputbox.value == "") {
-				alert("Заполнены не все поля!");
-				return true;
+			if (typeof inputbox !== 'undefined' && inputbox !=null) {
+                if (inputbox.value == "") {
+                    alert("Заполнены не все поля! Заполните необходимые значения.");
+                    return true;
+                }
+            }
+            else {
+				calculating();
+				if (document.getElementById("result").value=='undefined') {
+				    alert("Невозможно вычислить результат, т.к. не введены необходимые значения.");
+				    return true;
+				}
 			}
 		}
 		return false;
