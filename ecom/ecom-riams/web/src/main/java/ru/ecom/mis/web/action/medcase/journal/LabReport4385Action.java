@@ -1,22 +1,16 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.ecom.jaas.ejb.service.ISecUserService;
-import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.web.action.medcase.PrescriptionForm;
-import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
-import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 public class LabReport4385Action extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -27,7 +21,7 @@ public class LabReport4385Action extends BaseAction {
         	String dateTo = form.getEndDate();
         	if (dateTo ==null||dateTo.equals("")) {dateTo = dateFrom;}
         	
-	        IWebQueryService service = (IWebQueryService) Injection.find(aRequest).getService(IWebQueryService.class) ;
+	        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 	        StringBuilder sql = new StringBuilder();
 	    	StringBuilder sqlAdd = new StringBuilder();
 	    	String leftJoinSql = "";
@@ -43,11 +37,10 @@ public class LabReport4385Action extends BaseAction {
 	    	}
 	    	if (diagnosis!=null&&!diagnosis.equals("")&&!diagnosis.equals("0")) {
 	    		leftJoinSql=" left join diagnosis diag on diag.medcase_id=mc.id" ;
-	    		//sqlAdd.append(" and diag.idc10_id="+diagnosis );
 	    	}
 	    	StringBuilder table = new StringBuilder();
 	    	sqlAdd.append(" and p.planstartdate between to_date('"+dateFrom+"','dd.MM.yyyy') and to_date ('"+dateTo+"','dd.MM.yyyy')");
-    	List<Object[]> titleList = service.executeNativeSqlGetObj("select count (distinct p.id) as cntPrescriptions, count(case when mc.dtype='DepartmentMedCase' then mcP.id else mc.id end) as cntMedCase" +
+    		List<Object[]> titleList = service.executeNativeSqlGetObj("select count (distinct p.id) as cntPrescriptions, count(case when mc.dtype='DepartmentMedCase' then mcP.id else mc.id end) as cntMedCase" +
     			" from  prescription p" +
     			" left join workfunction wf on wf.id=p.prescriptspecial_id" +
     			" left join worker w on w.id=wf.worker_id" +
@@ -80,17 +73,14 @@ public class LabReport4385Action extends BaseAction {
 		    	" group by uv.id, uv.name order by uv.name");
 		    		
 		    List<Object[]> RISList = service.executeNativeSqlGetObj("select id, name from uservalue where domain_id= '60' ");
-		    
 		    StringBuilder RISTD = new StringBuilder();
-		    StringBuilder dataRow = new StringBuilder();
 		    if (antiBioList.size()>0) {
 		    	
 		    	StringBuilder selectAdd = new StringBuilder();
 		    	
-		    	StringBuilder tdNames = new StringBuilder();
 		    	StringBuilder counts = new StringBuilder();
 		    	int k=3;
-		    	table.append("<table border='1'><tr><td>Название препарата</td>");
+		    	table.append("<table border='1' id='report4385ResultTable' class='tabview sel tableArrow'><tr><td rowspan='3'>Название препарата</td>");
 		    	boolean isFirst = true;
 		    	for (Object[] o: antiBioList) { //Формируем строку для основного запроса
 		    		table.append("<td colspan='3'>"+o[1]+"</td>");
@@ -106,9 +96,9 @@ public class LabReport4385Action extends BaseAction {
 		    		isFirst = false;
 		    	}
 		    	table.append("</tr>");
-		    	table.append("<tr><td></td>");
+		    	table.append("<tr>");
 		    	table.append(counts);
-		    	table.append("</tr><tr><td></td>");
+		    	table.append("</tr><tr>");
 		    	//Формируем шапку для таблицы
 		    	for (int i=0;i<antiBioList.size();i++) {
 		    		table.append(RISTD);
@@ -138,7 +128,6 @@ public class LabReport4385Action extends BaseAction {
 		    		table.append("</tr></table>");
 		    		//table.append("<tr>");
 		    aRequest.setAttribute("tableList", table.toString());	
-		    System.out.print("=== ResultText = "+table.toString());
 		    } else {
 		    	aRequest.setAttribute("tableList", "Данных не найдено");	
 		    }
