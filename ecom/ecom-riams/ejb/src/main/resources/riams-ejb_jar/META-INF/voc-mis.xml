@@ -1272,12 +1272,15 @@ where wf.dtype='PersonalWorkFunction' -->
     			parent="wf.id=:par1
     			and (ms.startDate is null or to_date(:par2,'dd.mm.yyyy')  >=ms.startDate)
     			and (ms.finishDate is null or ms.finishDate>=to_date(:par2,'dd.mm.yyyy'))
-				and (wfs.lpu_id is null or wfs.lpu_id=coalesce(wf.lpu_id,w.lpu_id))"
+				and (wfs.lpu_id is null or wfs.lpu_id=coalesce(wf.lpu_id,w.lpu_id))
+				and (wfs.workfunction_id is null or wfs.workfunction_id=:par1)"
     			parentSplitCount='2'
     			names = "ms.code||' '||ms.name"
     			nameId="ms.id"
     			queryAppend="ms.dtype='MedService' and ms.isPoliclinic='1'"
-    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join worker w on w.id=wf.worker_id'
+    			join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id
+    			left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
+    			left join worker w on w.id=wf.worker_id'
     			order=''
     			queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
     			groupBy="ms.id, ms.code, ms.name"
@@ -1298,7 +1301,7 @@ where wf.dtype='PersonalWorkFunction' -->
 				left join medservice ms on ms.id=pms.medservice_id
  				left join pricelist pl on pl.id=pp.pricelist_id
  				left join WorkFunctionService wfs on wfs.medService_id=ms.id
- 				left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id
+ 				left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
 				left join worker w on w.id=wf.worker_id"
 				order=''
 				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
@@ -1316,7 +1319,9 @@ where wf.dtype='PersonalWorkFunction' -->
 					names = "ms.code||' '||ms.name"
 					nameId="ms.id"
 					queryAppend="ms.dtype='MedService' and (ms.isDayHospital='1' or ms.isHospital='1') and vst.code!='OPERATION'"
-					join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id left join vocServiceType vst on ms.servicetype_id=vst.id'
+					join=' left join WorkFunctionService wfs on wfs.medService_id=ms.id
+					left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
+					left join vocServiceType vst on ms.servicetype_id=vst.id'
 					order=''
 					queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"
 					groupBy="ms.id, ms.code, ms.name"
@@ -1336,7 +1341,8 @@ where wf.dtype='PersonalWorkFunction' -->
 				join="left join pricemedservice pms on pms.priceposition_id=pp.id
 				left join medservice ms on ms.id=pms.medservice_id
  				left join pricelist pl on pl.id=pp.pricelist_id
- 				left join WorkFunctionService wfs on wfs.medService_id=ms.id left join WorkFunction wf on wf.workFunction_id=wfs.vocWorkFunction_id
+ 				left join WorkFunctionService wfs on wfs.medService_id=ms.id
+ 				left join WorkFunction wf on case when wfs.workfunction_id is null then wf.workFunction_id=wfs.vocWorkFunction_id else wf.id=wfs.workfunction_id end
  				left join vocServiceType vst on ms.servicetype_id=vst.id"
 				order=''
 				queried = "(upper(ms.code) like upper(:query) or upper(ms.code) like replace(upper(:query),'.','') or upper(ms.name) like UPPER(:query))"

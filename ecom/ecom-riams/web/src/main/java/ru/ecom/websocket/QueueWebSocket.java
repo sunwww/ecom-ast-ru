@@ -58,7 +58,6 @@ public class QueueWebSocket {
         if (!sessions.containsKey(aUsername)) { //Выполняется разово при входе пользователя в систему.
             os = new OperatorSession(this);
             String role=aUsername.startsWith("TV_")?TVROLE:OPERATORROLE;
-            if (aUsername.equals("vtsybulin")) role=ADMINROLE; //DEBUG //TODO убрать перед релизом
             os.setRole(role);
             WorkFunction wf = getInjection().getService(IQueueService.class).getWorkFunctionByUsername(aUsername);
             if (wf==null || wf.getQueue()==null) {
@@ -90,13 +89,13 @@ public class QueueWebSocket {
 
     @OnMessage
     public void onMessage(@PathParam("username") String aUsername,String aMessage) {
-        log.info(aUsername+" onMessage="+aMessage);
         OperatorSession session;
         try {
             session=sessions.get(aUsername);
 
             JSONObject msg = new JSONObject(aMessage) ;
             String method =msg.getString("method");
+            IQueueService queueService = getInjection().getService(IQueueService.class);
             switch (method) {
                 case "changeWindowNumber":
                     setWindowNumber(method, session,msg.getString("windowNumber"));
@@ -106,7 +105,6 @@ public class QueueWebSocket {
                     break;
                 case "exit":
                     sessions.remove(session);
-                    log.info("Пользователь "+aUsername+" глобально вышел");
                     break;
                 case "showAllTickets":
                     sendMessage(getOKJson(method).put("tickets",getAllActiveTickets(session.getQueueCode())),session);
@@ -114,7 +112,6 @@ public class QueueWebSocket {
                 case "getNextTicket": //Получаем запрос на взятие в работу нового талона
                     session.setIsOffline(false);
                     QueueTicket ticket = session.getTicket();
-                    IQueueService queueService = getInjection().getService(IQueueService.class);
                     if (ticket!=null) {
                         log.info("MARK TICKET AS EXECUTED ID = "+ticket.getId());
                         markTicketExecuted(ticket, queueService,session); //Заканчиваем работу с талоном, убираем его с экрана
@@ -134,6 +131,9 @@ public class QueueWebSocket {
                     sendMessage(ret,session);
                     break;
                 case "stopWork":
+                    if (session.getTicket()!=null) {
+                        markTicketExecuted(session.getTicket(),queueService,session);
+                    }
                     session.setIsOffline(true);
                     session.setIsBusy(true);
                     sendMessage(getOKJson(method, session),session);
@@ -181,7 +181,6 @@ private boolean isNotNull (String o) { return o!=null && !o.trim().equals("");}
         } else {
             log.error("Window number is null");
         }
-
     }
 
     /**Получаем талон по его ИД*/
@@ -196,7 +195,10 @@ private QueueTicket getTicketById(Long aTicketId) {
     /**Находим свободного оператора по коду очереди */
 private OperatorSession getFreeOperator (String aQueueCode) {
         for (OperatorSession os: sessions.values()) {
-            if (!os.getIsBusy() && os.getQueueCode().equals(aQueueCode)) {
+            if (!os.getIsBusy() && os.getQueueCode()!=null
+                    && os.getQueueCode().equals(aQueueCode)
+                    && os.getRole().equals(OPERATORROLE)
+            ) {
                 return os;
             }
         }
@@ -209,7 +211,6 @@ private OperatorSession getFreeOperator (String aQueueCode) {
             String qCode=aTicket.getString("queueCode");
             OperatorSession os = getFreeOperator(qCode);
             log.info("Find free operator = "+os);
-            System.out.println("Find free operator = "+os);
             if (os!=null) {//Находим свободного оператора, отдаем ему талон на обработку
                 QueueTicket ticket = getTicketById(aTicket.getLong("ticketId"));
                 startTicketExecute(os, ticket);

@@ -1,14 +1,9 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<%@page import="java.util.List"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="ru.ecom.ejb.services.query.IWebQueryService"%>
-<%@page import="java.util.Collection"%>
 
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
@@ -59,10 +54,13 @@
     <%
     String dateFrom = request.getParameter("beginDate");
     if (dateFrom!=null&&!dateFrom.equals("")) {
+        %>
+    <input type="button" onclick="mshSaveTableToExcelById('report4385ResultTable')" value="Сохранить в excel">
+    <%
     	out.print(request.getAttribute("tableList"));
      } %>
     <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
-    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">
            <script type='text/javascript'>
        //    checkFieldUpdate('typeIntake','${typeIntake}',1) ;
            checkFieldUpdate('typeGroup','${typeGroup}',1) ;

@@ -16,6 +16,9 @@
 		<include name="image/jai_codec.jar"/>
 		<include name="axis/axis.jar"/>
 		<include name='jersey/javax.ws.rs-api-2.1.jar' />
+		<include name='javax/javax.websocket-api-1.1.jar' />
+		<include name='jersey/gson-2.6.1.jar' />
+		
 	</fileset>
 
 	<target name='prepare.web'>
@@ -32,6 +35,9 @@
 			<fileset file='${libdir}/jersey/jersey-media-json-binding.jar' />
 			<fileset file='${libdir}/jersey/jersey-media-sse.jar' />
 			<fileset file='${libdir}/jersey/jersey-server.jar' />
+			<fileset file='${libdir}/javax/javax.websocket-api-1.1.jar' />
+			<fileset file='${libdir}/jersey/gson-2.6.1.jar' />
+
 			<!--jersey ext-->
 			<fileset file='${libdir}/jersey/ext/aopalliance-repackaged-2.5.0-b42.jar' />
 			<fileset file='${libdir}/jersey/ext/cdi-api-1.1.jar' />
@@ -66,7 +72,7 @@
 			<fileset file='${libdir}/gwt/gwt-servlet.jar' />
 			<fileset file='${libdir}/axis/axis.jar' />
 			<fileset file='${libdir}/axis/commons-discovery-0.2.jar' />
-			<fileset file='${libdir}/axis/commons-logging-1.0.4.jar' />
+		<!--	<fileset file='${libdir}/axis/commons-logging-1.0.4.jar' /> -->
 		</copy>
 
 		<delete dir='./target/webapp/ru.ecom.gwt.idemode.Main' />

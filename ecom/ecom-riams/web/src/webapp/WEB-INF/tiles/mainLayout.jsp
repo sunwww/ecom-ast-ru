@@ -226,14 +226,19 @@
     <div id="footer">
 
         <div id='gotoUpDown'><a class="gotoTop" href="#header">Вверх</a><a class="gotoBottom" href="#copyright">Вниз</a></div>
-        <div id="ws_ticketQueueDiv">
-
-           <div title="Нажмите чтобы приступить к работе/прекратить работу в очереди" id='ws_finishWorkDiv'>СТАТУС</div>
-            <div id="ws_windowWorkDiv" title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></div>
-            <div id="ws_nextTicketDiv" title="Нажмите для перехода к следующему талону" onclick='ws_setNewTicket()'>Перейти к следующему талону</div>
-            <div title="Текущий талон" onclick="alert('Текущий талон = '+jQuery('#ws_ticketNumberDiv').html())" id='ws_ticketNumberDiv'>---</div>
+        <msh:ifInRole roles="/Policy/WebSocket/Queue">
+           <div class='ws_workerDiv'>
+                <p id='ws_windowWorkDiv' title="Нажмите для изменения номера окна" onclick="ws_setNewWindowNumber()"></p><hr/>
+                <p id='ws_finishWorkDiv' title="Нажмите чтобы приступить к работе/прекратить работу в очереди">СТАТУС</p>
+            </div>
+            <div class="ws_ticketDiv">
+                <p id='ws_ticketNumberDiv' title="Текущий талон" onclick="alert('Текущий талон = '+jQuery('#ws_ticketNumberDiv').html())" >---</p><hr/>
+                <p id='ws_nextTicketDiv'   title="Нажмите для перехода к следующему талону" onclick='ws_setNewTicket()'>Перейти к следующему талону</p>
+            </div>
+        </msh:ifInRole>
         </div>
-        <div id='copyright'>&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
+
+        <div id='copyright' style="float: right;">&copy; МедОС (v. <%@ include file="/WEB-INF/buildnumber.txt" %> )
         </div>
     </div>
     <div id="divInstantMessage" class="instant_message">&nbsp;</div>

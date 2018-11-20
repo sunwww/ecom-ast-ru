@@ -43,7 +43,7 @@ public class QueueTicket extends BaseEntity {
     @Comment("Полный номер")
     @Transient
     public String getFullNumber() {
-        return theQueue.getType().getPrefix()+theNumber;
+        return theQueue.getType().getPrefix()+" "+theNumber;
     }
     public QueueTicket(){}
     public QueueTicket(Queue aQueue, Integer aNumber){

@@ -38,7 +38,7 @@ public class OperatorSession {
     public Boolean getIsBusy() {return theIsBusy;}
     public void setIsBusy(Boolean aIsBusy) {theIsBusy = aIsBusy;}
     /** Занят/свободен */
-    private Boolean theIsBusy ;
+    private Boolean theIsBusy=false ;
 
     /** QueueWebSocket */
     public QueueWebSocket getSocket() {return theSocket;}
@@ -58,7 +58,7 @@ public class OperatorSession {
     /** Рабочая функция исполнителя */
     private WorkFunction theWorkFunction ;
 
-    public OperatorSession(QueueWebSocket aSocket) {setSocket(aSocket);setSession(aSocket.getSession());setIsOffline(false);setRole("");}
+    public OperatorSession(QueueWebSocket aSocket) {setSocket(aSocket);setSession(aSocket.getSession());setIsOffline(true);setRole("");setIsBusy(true);}
 
     /** Номер окна */
     public String getWindow() {return theWindow;}

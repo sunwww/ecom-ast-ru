@@ -1,14 +1,9 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<%@page import="java.util.List"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="ru.ecom.ejb.services.query.IWebQueryService"%>
-<%@page import="java.util.Collection"%>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
 	<tiles:put name="style" type="string">
@@ -33,9 +28,9 @@
 <h2>на <%=request.getParameter("beginDate")%></h2>
   
  <%
-	String typeState = ActionUtil.updateParameter("PrescriptJournal", "typeState", "3", request);
-	String typeGroup = ActionUtil.updateParameter("PrescriptJournal", "typeGroup", "1", request);
-	String typeView = ActionUtil.updateParameter("PrescriptJournal", "typeView", "1", request);
+	ActionUtil.updateParameter("PrescriptJournal", "typeState", "3", request);
+	ActionUtil.updateParameter("PrescriptJournal", "typeGroup", "1", request);
+	ActionUtil.updateParameter("PrescriptJournal", "typeView", "1", request);
 	String typeReestr = request.getParameter("typeReestr");
 	
 	String start = request.getParameter("start");
@@ -108,8 +103,8 @@
 	</msh:section>
     <%
         }
-		String dateFrom = request.getParameter("beginDate");
-  		if (dateFrom != null && !dateFrom.equals("")) { out.print(request.getAttribute("tableList"));}
+		//String dateFrom = request.getParameter("beginDate");
+  		//if (dateFrom != null && !dateFrom.equals("")) { out.print(request.getAttribute("tableList"));}
     %>
     <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
     <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>

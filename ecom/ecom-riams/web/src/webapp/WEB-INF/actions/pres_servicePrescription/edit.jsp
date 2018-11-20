@@ -13,8 +13,7 @@
 	
 	var currentDate = new Date;
 	var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
-	var textMonth = currentDate.getMonth()+1;
-	var textMonth = textMonth<10?'0'+textMonth:textMonth;
+	var textMonth = currentDate.getMonth()+1;textMonth = textMonth<10?'0'+textMonth:textMonth;
 	var textYear =currentDate.getFullYear();
 	var textDate = textDay+'.'+textMonth+'.'+textYear;
 	var canChangeDate = false;
@@ -696,17 +695,18 @@
     <ecom:titleTrail guid="titleTrail-123" mainMenu="StacJournal" beginForm="pres_servicePrescriptionForm" />
     <tags:pres_vocPrescTypes title="Выбор типа назначения" name="check" parentType="prescriptionList" parentID="${param.id}"/>
   </tiles:put>
+
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm" guid="99ca692-c1d3-4d79-bc37-c6726c">
       <msh:sideMenu title="Назначения" guid="eb3f54-b971-441e-9a90-51jhf">
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params="id" action="/javascript:cancelService()" name="Отменить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+2"/>
         <msh:sideLink confirm="Удалить?" roles="/Policy/Mis/Prescription/ServicePrescription/Delete" params="id" action="/entityParentDelete-pres_servicePrescription" name="Удалить" guid="ca5sui7r-9239-47e3-aec4-995462584" key="ALT+DEL"/>
       </msh:sideMenu>
+
       <msh:sideMenu title="Добавить" guid="0e2ac7-5361-434d-a8a7-1284796f">
-    
         <msh:sideLink roles="/Policy/Mis/Prescription/PrescriptionFulfilment/Create" params="id" action="/entityParentPrepareCreate-pres_prescriptionFulfilment" name="Исполнение назначения" guid="ca3s9-9239-47e3-aec4-9a846547144" key="ALT+3"/>
-      
       </msh:sideMenu>
+
       <msh:sideMenu title="Показать" guid="67aa758-3ad2-4e6f-a791-4839460955" >
         <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/View" params="id" action="/entityParentListRedirect-pres_servicePrescription" name="К списку назначений на услугу" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
         <msh:sideLink roles="/Policy/Mis/Prescription/View" params="id" action="/entityParentListRedirect-pres_prescription" name="К списку назначений" guid="e9d94-fe74-4c43-85b1-267231ff" key="ALT+4"/>
@@ -717,7 +717,6 @@
     <msh:sideMenu title="Шаблоны">
   			<msh:sideLink action=" javascript:showaddTemplatePrescription()" name="Назначения из шаблона" guid="a2f380f2-f499-49bf-b205-cdeba65f8888" title="Добавить назначения из шаблона" />
   		</msh:sideMenu>
-  		
     </msh:ifFormTypeIsCreate>
   </tiles:put>
 </tiles:insert>
