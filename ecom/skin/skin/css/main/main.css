@@ -5,7 +5,7 @@
 	div#content {margin-left: 0em;}
 }
 
-#ticketQueueDiv {display: block;
+#ticketQueueDiv {display: block; /*Блок с информацией об очереди*/
     position: relative;
     width: 30%;
     height: 100px;
@@ -18,34 +18,39 @@
     float: right;
 }
 
-#ws_nextTicketDiv {
+.ws_ticketDiv{ /*Номер талона, след. талон*/
     width:90px;
-    height:100px;
-    background: #839dff;
-    position:relative;
-    float:right;
+    height:50px;
+    position:fixed;
+    text-align: center;
+    bottom: 5%;
+    right: 6%;
 }
 
-#ws_ticketNumberDiv{
-    width:90px;
-    height:100px;
+#ws_ticketNumberDiv { /*Номер талона*/
     background:yellow;
-    position:relative;
-    float:right;
 }
-#ws_finishWorkDiv {
-    width:90px;
-    height:100px;
-    background: #5d8028;
-    position:relative;
-    float:right;
+#ws_nextTicketDiv { /*перейти к след. талону*/
+    background: #ff1b0e;
+    height: 50px;
+
+
 }
-#ws_windowWorkDiv {
+
+.ws_workerDiv { /*номер окна, актив/не актив*/
     width:90px;
-    height:100px;
+    height:50px;
+    position:fixed;
+    text-align: center;
+    bottom: 5%;
+    right: 1%;
+}
+#ws_windowWorkDiv { /*Номер окна*/
     background: #356080;
-    position:relative;
-    float:right;
+}
+#ws_finishWorkDiv{ /*Приступить к работе*/
+    background: #4c8027;
+    height: 50px;
 }
 
 .gotoTop {

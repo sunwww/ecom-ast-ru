@@ -2,17 +2,17 @@
 
 var ws_socket;
 function ws_exit(){
-    try{ws_sendMessage({method:"exit"});} catch (e) {console.log("cant exit websocket");}
+    try{ws_sendMessage({method:"exit"});ws_removeFromLocalStorage(ws_socketServerStorageName+"_"+jQuery('#current_username_li').html())} catch (e) {console.log("cant exit websocket "+e);}
 }
 function connectWebSocket() {
     console.log("connectWebSocket");
     if (window.ws_socketServerStorageName) {
         var username= jQuery('#current_username_li').html();
         //Если находим в localStorage информация о сервере WS - работаем. Иначе - запрашиваем у *ServiveJs и заносим результат в localStorage
-        var wsServer =ws_getFromLocalStorage(ws_socketServerStorageName);
+        var wsServer =ws_getFromLocalStorage(ws_socketServerStorageName+"_"+username);
         if (wsServer==null) {
             VocService.getWebSocketServer({callback:function(s) {
-                wsServer=s;ws_saveToLocalStorage(ws_socketServerStorageName,s);
+                ws_saveToLocalStorage(ws_socketServerStorageName+"_"+username,s);
                 connectWebSocket();
             }
             });
@@ -25,17 +25,21 @@ function connectWebSocket() {
             ws_socket = new WebSocket(url);
             ws_socket.onopen=function(){console.log('opened');};
             ws_socket.onmessage=function(event) {ws_onMessage(event.data);}
-            ws_socket.onerror = function(event) {
-                console.log("ws_onError:"+JSON.stringify(event));
-                showToastMessage(event.type+" Неизвестная Ошибка",null,null,true);
-            };
-            ws_socket.onclose = function(event) {console.log('Код: ' + event.code + ' причина: ' + event.reason);};
+            ws_socket.onerror = function(event) {ws_onError(event);};
+            ws_socket.onclose = function(event) {ws_onClose(event);};
         }
     } else {
         console.log("no webSocketRoles");
     }
 }
+function ws_onClose(event) {console.log('Код: ' + event.code + ' причина: ' + event.reason);}
+function ws_onError(event) {
+    console.log("ws_onError:"+JSON.stringify(event));
+    showToastMessage(event.type+" Неизвестная Ошибка",null,null,true);
+    console.log("reconnect in 10 sec");
+    setTimeout(connectWebSocket,10000);
 
+}
 //Заканчиваем работу с очередью или начинаем работу
 function ws_setStartWorking(isStart) {
     if (confirm(isStart?"Приступить к работе?":"Прекратить работу?")){
@@ -93,7 +97,6 @@ function ws_getNewTicket(msg) {
 function ws_onMessage(msg) {
     console.log("ws_onMessage. Получили мессадж = "+msg);
     msg = JSON.parse(msg);
- //   var div = jQuery('#ws_ticketQueueDiv');
     if (msg.status=='ok') {
         switch(msg.function) {
             case "changeWindowNumber": //Сменили номер окна
