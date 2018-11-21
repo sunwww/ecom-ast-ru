@@ -1,17 +1,16 @@
 package ru.ecom.expomc.web.actions.exportformat;
 
-import ru.nuzmsh.web.struts.BaseAction;
-import ru.ecom.web.util.Injection;
-import ru.ecom.web.actions.monitor.MonitorActionForward;
-import ru.ecom.web.login.LoginInfo;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import ru.ecom.ejb.services.file.IJbossGetFileService;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.expomc.ejb.services.exportformat.IExportFormatService;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import ru.ecom.web.actions.monitor.MonitorActionForward;
+import ru.ecom.web.login.LoginInfo;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.web.struts.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,8 +20,8 @@ import javax.servlet.http.HttpSession;
  * @user ikouzmin 08.03.2007 16:53:11
  */
 public class ExportFormatDownloadAction  extends BaseAction {
-    private final static Log LOG = LogFactory.getLog(ExportFormatDownloadAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(ExportFormatDownloadAction.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 

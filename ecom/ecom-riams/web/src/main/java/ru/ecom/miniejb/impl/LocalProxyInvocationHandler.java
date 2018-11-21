@@ -1,9 +1,7 @@
 package ru.ecom.miniejb.impl;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.HashMap;
+import org.apache.log4j.Logger;
+import ru.ecom.miniejb.ThreadLocalContextManager;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -12,19 +10,18 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.ecom.miniejb.ThreadLocalContextManager;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 
 /**
  * Вызов метода сервиса.
  */
 public class LocalProxyInvocationHandler implements InvocationHandler {
 
-    private final static Log LOG = LogFactory.getLog(LocalProxyInvocationHandler.class);
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+    	private final static Logger LOG = Logger.getLogger(LocalProxyInvocationHandler.class);
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public LocalProxyInvocationHandler(Class aServiceClass, EjbHash aInterfaces) {
@@ -67,7 +64,7 @@ public class LocalProxyInvocationHandler implements InvocationHandler {
 //        LOG.info("aService = " + aService);
 
         for (Field field : aClass.getDeclaredFields()) {
-            if (CAN_TRACE) LOG.trace(" field = " + field);
+            if (CAN_TRACE) LOG.info(" field = " + field);
             if (field.isAnnotationPresent(Resource.class) && field.getType().equals(SessionContext.class)) {
                 field.setAccessible(true);
                 field.set(aService, ThreadLocalContextManager.getSessionContext());

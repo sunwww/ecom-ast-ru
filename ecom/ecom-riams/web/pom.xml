@@ -16,7 +16,7 @@
     </parent>
 
     <groupId>ru.amokb</groupId>
-    <artifactId>riams</artifactId>
+    <artifactId>riams-web</artifactId>
     <version>RELEASE</version>
     <packaging>war</packaging>
 
@@ -49,17 +49,24 @@
         </dependency>
         <dependency>
             <groupId>ru.ecom</groupId>
+            <artifactId>riams-ejb</artifactId>
+            <version>1</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.ecom</groupId>
             <artifactId>web</artifactId>
             <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/ecom/ejbweb/web/ecom-web.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>ru</groupId>
-            <artifactId>nuzmsh</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/msh/msh.jar</systemPath>
+            <groupId>ru.ecom</groupId>
+            <artifactId>msh</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+            <!--<systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/msh/msh.jar</systemPath>
             <scope>system</scope>
-            <version>RELEASE</version>
+            <version>RELEASE</version> -->
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -89,13 +96,7 @@
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache</groupId>
-            <artifactId>ecs</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/ecs/ecs-1.4.2.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
-        </dependency>
+
         <dependency>
             <groupId>ru.ecom</groupId>
             <artifactId>gwt-document</artifactId>
@@ -140,8 +141,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
                 </configuration>
             </plugin>
             <plugin>

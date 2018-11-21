@@ -11,7 +11,8 @@
 		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
 		<script>
 			var d = document;
-			
+            var oldaction = d.forms[0].action ;
+            d.forms[0].action = 'javascript:checkSumAndSubmit()';
 			var name;
 			var nameId;
 			var cnt ;
@@ -145,7 +146,6 @@
 		                }
 		    		}
                );
-			
 			}
 	
 	function checkSum() {
@@ -170,7 +170,15 @@
 		//$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
 		
 	}
-	$('autoAccount')
+
+            function checkSumAndSubmit() {
+                checkSum();
+                d.forms[0].action=oldaction;
+                d.forms[0].submit();
+
+
+            }
+//	$('autoAccount')
 	</script>
 	</tiles:put>
 	

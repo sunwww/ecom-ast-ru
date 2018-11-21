@@ -47,6 +47,117 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="ejb" />
+    <orderEntry type="module" module-name="ecom-ejbweb-ejb" />
+    <orderEntry type="module" module-name="ecom-jboss-lib" />
+    <orderEntry type="module-library">
+      <library name="Maven: org.jboss:aop:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/jboss/jboss-aop-jdk50.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: org.jboss:ssx:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/jboss/jbosssx.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: org.jboss:system:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/jboss/jboss-system.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: org.objectweb:asm:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/asm/asm-3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="ecom-report" />
+    <orderEntry type="module-library">
+      <library name="Maven: org.odftoolkit.odfdom:document:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/qr/odfdom-java-0.8.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: com.google.zxing.client:javase:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/qr/javase-3.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: org.odftoolkit:simple:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/qr/simple-odf-0.8.2-incubating.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: com.google.zxing:qrcore:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/qr/core-3.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: org.odftoolkit.simple:common:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/qr/simple-odf-0.8.2-incubating.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: org.apache:poi:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/apache-poi/poi-2.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: jdom:jdom:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/jdom/jdom.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: ru:bsh:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/bsh/bsh-2.0b4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library">
       <library name="Maven: ru.ecom:web:RELEASE">
         <CLASSES>
@@ -56,10 +167,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="msh" />
     <orderEntry type="module-library">
-      <library name="Maven: ru:nuzmsh:RELEASE">
+      <library name="Maven: junit:framework:RELEASE">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/msh/msh.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/junit/junit.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -102,15 +214,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Maven: org.apache:ecs:RELEASE">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/ecs/ecs-1.4.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="Maven: ru.ecom:gwt-document:RELEASE">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/ecom/gwt/document/ecom-gwt-document.jar!/" />
@@ -141,6 +244,15 @@
       <library name="Maven: com.sun.media:imageioimpl:RELEASE">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/image/jai_imageio.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: org.apache:ecs:RELEASE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../MedOS_libs/ecs/ecs-1.4.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -236,7 +348,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="ecom-alg" />
     <orderEntry type="module-library">
       <library name="Maven: org.jboss:annotations:RELEASE">
         <CLASSES>
@@ -288,9 +399,6 @@
     <orderEntry type="library" name="Maven: javax.ejb:javax.ejb-api:3.2" level="project" />
     <orderEntry type="library" name="Maven: javax.transaction:javax.transaction-api:1.2" level="project" />
     <orderEntry type="library" name="Maven: javax.persistence:persistence-api:1.0.2" level="project" />
-    <orderEntry type="library" name="Maven: ru.nuzmsh:util:1" level="project" />
-    <orderEntry type="library" name="Maven: ru.ecom:ejbweb-ejb:1" level="project" />
-    <orderEntry type="module" module-name="ecom-report" />
     <orderEntry type="module-library">
       <library name="Maven: org.apache:log4j:RELEASE">
         <CLASSES>

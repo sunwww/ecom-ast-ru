@@ -1,15 +1,11 @@
 package ru.ecom.mis.ejb.service.validator;
 
-import javax.annotation.EJB;
-import javax.annotation.Resource;
+import ru.ecom.ejb.services.util.ConvertSql;
+
 import javax.ejb.Remote;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.util.ConvertSql;
 
 @Stateless
 @Remote(IMkbValidatorService.class)
@@ -46,12 +42,12 @@ public class MkbValidatorServiceBean  implements IMkbValidatorService{
 			.append(aField)
 			.append(" like '").append(mkb).append(".%' and (noActuality is null or noActuality='0') ");
 		}
-		Object cntUtoch = (Object) theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+		Object cntUtoch = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 		if (cntUtoch!=null && ConvertSql.parseLong(cntUtoch).intValue()>0) return false ;
 		return true;
 	}
-	@EJB ILocalEntityFormService theEntityFormService ;
+//	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext EntityManager theManager ;
-    @Resource SessionContext theContext ;
+ //   @Resource SessionContext theContext ;
 
 }

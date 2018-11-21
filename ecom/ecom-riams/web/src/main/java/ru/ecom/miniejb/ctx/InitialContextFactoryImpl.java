@@ -1,27 +1,25 @@
 package ru.ecom.miniejb.ctx;
 
-import java.util.Hashtable;
+import org.apache.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Hashtable;
 
 /**
  *
  */
 public class InitialContextFactoryImpl implements InitialContextFactory {
-    private final static Log LOG = LogFactory.getLog(InitialContextFactoryImpl.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(InitialContextFactoryImpl.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     public InitialContextFactoryImpl() {
-        if (CAN_TRACE) LOG.trace("Init()");
+        if (CAN_TRACE) LOG.info("Init()");
     }
 
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-        if (CAN_TRACE) LOG.trace("getInitialContext() [environment = " + environment+"]");
+        if (CAN_TRACE) LOG.info("getInitialContext() [environment = " + environment+"]");
         return new ContextImpl(environment);
     }
 }

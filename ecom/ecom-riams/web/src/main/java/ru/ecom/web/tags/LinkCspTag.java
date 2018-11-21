@@ -1,16 +1,5 @@
 package ru.ecom.web.tags;
 
-import java.io.IOException;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
@@ -21,10 +10,13 @@ import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.util.IdeTagHelper;
 
-public class LinkCspTag extends AbstractGuidSimpleSupportTag {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
 
-    private final static Log LOG = LogFactory.getLog(LinkCspTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+public class LinkCspTag extends AbstractGuidSimpleSupportTag {
 
     /**
      * Устанавливать фокус на элемент

@@ -1,34 +1,25 @@
 package ru.ecom.expomc.ejb.services.omcprice;
 
+import org.apache.log4j.Logger;
+import ru.ecom.expomc.ejb.domain.omcvoc.*;
+import ru.ecom.expomc.ejb.services.timeservice.IImportTimeService;
+
+import javax.annotation.EJB;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.alg.omc.omcprice.IOmcPriceService;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcDepType;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcKsg;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcLpuDepartmentLevel;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcProfilDs;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcTariff;
-import ru.ecom.expomc.ejb.services.timeservice.IImportTimeService;
-
 /**
  * Получение необходимых данных для расчета цены
  */
-@Stateless
-@Remote(IOmcPriceService.class)
-@Local(IOmcPriceService.class)
-public class OmcPriceServiceBean implements IOmcPriceService {
+//@Stateless
+//@Remote(IOmcPriceService.class)
+//@Local(IOmcPriceService.class)
+@Deprecated
+public class OmcPriceServiceBean { //implements IOmcPriceService {
     private final static Logger LOG = Logger.getLogger(OmcPriceServiceBean.class) ;
     private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 

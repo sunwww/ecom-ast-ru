@@ -10,6 +10,8 @@
 
 		<script type="text/javascript" src="./dwr/interface/ContractService.js"></script>
 		<script>
+            var oldaction = document.forms[0].action ;
+            document.forms[0].action = 'javascript:checkSumAndSubmit()';
 			var d = document;
 			var name;
 			var nameId;
@@ -116,12 +118,14 @@
 							    var td2 = document.createElement("TD");
 							    var td3 = document.createElement("TD");
 							    var td4 = document.createElement("TD");
+							    var td5 = document.createElement("TD");
 							    
 							    row.appendChild(td1);
 							    row.appendChild(td2);
 							    row.appendChild(td3);
 							    row.appendChild(td4);
-							
+							    row.appendChild(td5);
+
 							    // Наполняем ячейки
 							    td1.innerHTML = name+"<input id='service"+cnt+"' name='service"+cnt+"' value='"+nameId+"' type='hidden' >"+"<input id='oldid"+cnt+"' name='oldid"+cnt+"' value='0' type='hidden' >";
 				                   if (+aResult>0)  {
@@ -133,6 +137,11 @@
 				                   	td4.innerHTML = "<input id='sum"+cnt+"' name='sum"+cnt+"' value='0' size='9' readonly='true' />";
 				                   }
 				   			    td3.innerHTML = "<input id='count"+cnt+"' name='count"+cnt+"' value='"+count+"' size='9'/ >";
+				                   var docHtml = '<div><input size="1" name="workFunctionExecute'+cnt+'" id="workFunctionExecute'+cnt+'" type="hidden">' +
+									   '<input name="workFunctionExecute'+cnt+'Name" id="workFunctionExecute'+cnt+'Name" size="50" class="autocomplete horizontalFill"' +
+									   ' autocomplete="off" type="text"><div id="workFunctionExecute'+cnt+'Div" ></div></div>';
+				                td5.innerHTML=docHtml;
+                                addDoctorAutocomplete('workFunctionExecute'+cnt);
 				   			    //$('sum'+cnt).readOnly=true ;
 				   			    eval("eventutil.addEventListener($('count"+cnt+"'),'change',function(){checkSum() ;})");
 				                eval("eventutil.addEventListener($('count"+cnt+"'),'keyup',function(){checkSum() ;})");
@@ -154,20 +163,37 @@
 				var count=+$('count'+i).value
 				var cost = +$('cost'+i).value ;
 				var sum = (cost*count) ;
+				var wf = +$('workFunctionExecute'+i).value;
 				costAll = costAll + sum ;
 				$('sum'+i).value=sum ;
 				if (medServAll!='') medServAll=medServAll+"#" ;
-				medServAll = medServAll+$('service'+i).value+":"+count;
+				medServAll = medServAll+$('service'+i).value+":"+count+":"+wf;
 			}
 			
 		}
 		$('priceMedServicies').value=medServAll;
 		$('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>' 
 		$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>' 
-		//$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>' 
+		//$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>'
+		alert ("val="+$('priceMedServicies').value);
 		
 	}
-	$('autoAccount')
+	 function checkSumAndSubmit() {
+			    checkSum();
+         document.forms[0].action=oldaction;
+         document.forms[0].submit();
+
+
+     }
+	function addDoctorAutocomplete(aIdFieldName) {
+        var t = new msh_autocomplete.Autocomplete();
+        t.setUrl('simpleVocAutocomplete/workFunction');
+        t.setIdFieldId(aIdFieldName);
+        t.setNameFieldId(aIdFieldName + 'Name');
+        t.setDivId(aIdFieldName + 'Div');
+        t.build();
+	}
+	//$('autoAccount')
 </script>
 	</tiles:put>
 	
@@ -265,6 +291,7 @@
             <th>Стоимость</th>
             <th>Кол-во услуг</th>
             <th>Общая стоимость</th>
+            <th>Исполнитель</th>
         </tr>
     </thead>
     <tbody>
