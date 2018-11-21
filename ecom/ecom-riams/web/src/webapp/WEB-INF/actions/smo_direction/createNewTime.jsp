@@ -251,40 +251,44 @@ function getReserves() {
             }
             //upd. Milamesher 20112018 учитываются дни недели
             function createDateTimes(ths) {
-                //если ни один не выбран  - по умолчанию - все
-                var flag=false;
-                for (var i=0; i<8; i++)
-                    if (document.getElementById('dayOfWeek'+i).checked) flag=true;
-                if (!flag) document.getElementById('dayOfWeek0').checked='checked';
+                //проверка на непустой промежуток/кол-во
+                if (document.getElementById("countVisits").value!='' && !isNaN(+document.getElementById("countVisits").value)) {
+                    //если ни один не выбран  - по умолчанию - все
+                    var flag = false;
+                    for (var i = 0; i < 8; i++)
+                        if (document.getElementById('dayOfWeek' + i).checked) flag = true;
+                    if (!flag) document.getElementById('dayOfWeek0').checked = 'checked';
 
-                ths.value="Подождите...";
-                ths.disabled=true;
+                    ths.value = "Подождите...";
+                    ths.disabled = true;
 
-                WorkCalendarService.createDateTimes($('dateFrom').value,$('dateTo').value,
-                    $('specialist').value,$('timeFrom').value,$('timeTo').value,
-                    $('countVisits').value,checkedRadio,$('reserveType').value,checkedRadioevenodd,
-                    document.getElementById('dayOfWeek0').checked,
-                    document.getElementById('dayOfWeek1').checked,
-                    document.getElementById('dayOfWeek2').checked,
-                    document.getElementById('dayOfWeek3').checked,
-                    document.getElementById('dayOfWeek4').checked,
-                    document.getElementById('dayOfWeek5').checked,
-                    document.getElementById('dayOfWeek6').checked,
-                    document.getElementById('dayOfWeek7').checked, {
-                        callback: function(aResult) {
-                            //alert(aResult);
-                            updateTable();
-                            ths.disabled=false;
-                            ths.value="Создать";
-                            var message ="Успешно создано!";
-                            showToastMessage(message,null,true);
-                        },
-                        errorHandler: function(aMessage) {
-                            alert("Не удалось создать! " +aMessage) ;
-                            ths.disabled=false;
-                            ths.value="Создать";
-                        }
-                    }) ;
+                    WorkCalendarService.createDateTimes($('dateFrom').value, $('dateTo').value,
+                        $('specialist').value, $('timeFrom').value, $('timeTo').value,
+                        $('countVisits').value, checkedRadio, $('reserveType').value, checkedRadioevenodd,
+                        document.getElementById('dayOfWeek0').checked,
+                        document.getElementById('dayOfWeek1').checked,
+                        document.getElementById('dayOfWeek2').checked,
+                        document.getElementById('dayOfWeek3').checked,
+                        document.getElementById('dayOfWeek4').checked,
+                        document.getElementById('dayOfWeek5').checked,
+                        document.getElementById('dayOfWeek6').checked,
+                        document.getElementById('dayOfWeek7').checked, {
+                            callback: function (aResult) {
+                                //alert(aResult);
+                                updateTable();
+                                ths.disabled = false;
+                                ths.value = "Создать";
+                                var message = "Успешно создано!";
+                                showToastMessage(message, null, true);
+                            },
+                            errorHandler: function (aMessage) {
+                                alert("Не удалось создать! " + aMessage);
+                                ths.disabled = false;
+                                ths.value = "Создать";
+                            }
+                        });
+                }
+                else alert('Введите длительность визитов либо их количество!');
             }
             function nextWeek() {
                 weekplus=weekplus+7;
