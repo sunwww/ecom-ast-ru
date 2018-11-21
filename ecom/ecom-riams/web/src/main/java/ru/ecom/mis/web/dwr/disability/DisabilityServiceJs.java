@@ -605,24 +605,26 @@ public class DisabilityServiceJs {
 		return snils;
 	}
 	//Milamesher 13112018 удаление подписи
-	public String deleteSign(Long disabilityDocumentId, String code, HttpServletRequest aRequest) throws NamingException {
+	public String deleteSign(Long disabilityRecordId, Long disabilityDocumentId, String code, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		if (!code.equals("close")) {
-			Collection<WebQueryResult> l = service.executeNativeSql("select id from disabilitysign  where disabilitydocumentid_id=" + disabilityDocumentId + " and code='" + code + "'\n" +
+			Collection<WebQueryResult> l = service.executeNativeSql("select id from disabilitysign  where disabilitydocumentid_id="
+					+ disabilityDocumentId + " and code='" + code + "'" + " and externalId=" + disabilityRecordId + "\n" +
 					"and (select isexport\n" +
 					"from disabilityrecord dr\n" +
 					"left join disabilitydocument dd on dr.disabilitydocument_id=dd.id\n" +
 					"left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = dd.id and dsdoc.externalid = dr.id\n" +
-					"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "' limit 1)=false", 1);
+					"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "'" + " and dr.id=" + disabilityRecordId + " limit 1)=false", 1);
 			if (l.isEmpty())
 				return "Подписи не найдены либо период уже выгружен (в этом случае подписи удалять нельзя)!";
 			else {
-				service.executeUpdateNativeSql("delete from disabilitysign  where disabilitydocumentid_id=" + disabilityDocumentId + " and code='" + code + "'\n" +
+				service.executeUpdateNativeSql("delete from disabilitysign  where disabilitydocumentid_id="
+						+ disabilityDocumentId + " and code='" + code + "'" + " and externalId=" + disabilityRecordId + "\n" +
 						"and (select isexport\n" +
 						"from disabilityrecord dr\n" +
 						"left join disabilitydocument dd on dr.disabilitydocument_id=dd.id\n" +
 						"left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = dd.id and dsdoc.externalid = dr.id\n" +
-						"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "' limit 1)=false");
+						"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "'" + " and dr.id=" + disabilityRecordId + " limit 1)=false");
 				return "Удалено.";
 			}
 		} else {

@@ -241,8 +241,8 @@
                     ,case when pvk.id is not null then case when dsvk.id is not null then '&#9989;' else '&#x2716;' end else '' end as vksig
                     ,case when dr.isexport is null or dr.isexport='0' then case when dr.workfunctionadd_id is not null then dr.id else null end else null end as vksignadd
                     ,case when dr.isexport is null or dr.isexport='0' then case when dr.workfunction_id is not null then dr.id else null end else null end as docsignadd
-                    ,case when dsdoc.id is not null then 'doc' else null end as deldoc
-                    ,case when dsvk.id is not null then 'vk' else null end as delvk
+                    ,case when dsdoc.id is not null then 'doc'||'#'||dr.id else null end as deldoc
+                    ,case when dsvk.id is not null then 'vk'||'#'||dr.id else null end as delvk
                     from disabilityrecord dr
                     left join workfunction wfdoc on wfdoc.id =  dr.workfunction_id
                     left join vocworkfunction  vwf on vwf.id = wfdoc.workfunction_id
@@ -327,7 +327,13 @@
 
             //Milamesher 13112018 удаление подписей
             function deleteSign(code) {
-                DisabilityService.deleteSign(${param.id},code,{
+                var drId=null;
+                if (code.indexOf('close')==-1) {
+                    var mas = code.split('#');
+                    code=mas[0];
+                    drId=mas[1];
+                }
+                DisabilityService.deleteSign(drId,${param.id},code,{
                     callback: function(aString) {
                         showToastMessage(aString,null,true);
                         if (aString.length<=8) window.location.reload();
