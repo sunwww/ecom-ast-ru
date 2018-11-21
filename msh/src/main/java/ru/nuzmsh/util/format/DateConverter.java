@@ -1,14 +1,10 @@
 package ru.nuzmsh.util.format;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-
+import org.apache.log4j.Logger;
 import ru.nuzmsh.util.StringUtil;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -18,7 +14,7 @@ import java.util.Date;
  */
 public class DateConverter {
 
-    private final static Log LOG = LogFactory.getLog(DateConverter.class) ;
+    private final static Logger LOG = Logger.getLogger(DateConverter.class) ;
 
     //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_1 = new SimpleDateFormat("yyyyMMdd");
     //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_2 = new SimpleDateFormat("dd.MM.yy");

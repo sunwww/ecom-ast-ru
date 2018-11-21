@@ -1,5 +1,6 @@
 package test.med;
 
+import junit.framework.TestCase;
 import ru.nuzmsh.util.med.CheckMkbRangeHelper;
 
 /**
@@ -7,20 +8,22 @@ import ru.nuzmsh.util.med.CheckMkbRangeHelper;
  * Date: 31.10.2006
  * Time: 13:07:14
  */
-public class TestCheckMkbRange {
+public class TestCheckMkbRange extends TestCase {
 
-    public static void main(String[] args) {
-        check("A21", "A00","T98") ;
-        check("A21", "A00","A19") ;
-        check("A21.4", "A21.2","A21.5") ;
-        check("A21.4", "A21.2","A21.4") ;
-        check("A21.4", "A25.4","Z00") ;
+    public void test() {
+
+        check("A21", "A00","T98",true) ;
+        check("A21", "A00","A19",false) ;
+        check("A21.4", "A21.2","A21.5",true) ;
+        check("A21.4", "A21.2","A21.4",true) ;
+        check("A21.4", "A25.4","Z00",false) ;
 
     }
 
 
-    private static void check(String aMkb, String aFrom, String aTo) {
+    private static void check(String aMkb, String aFrom, String aTo, boolean isTrue) {
         CheckMkbRangeHelper check = new CheckMkbRangeHelper() ;
         System.out.println(aMkb + " "+aFrom+" - "+aTo+" "+check.isIn(aMkb, aFrom, aTo));
+        assertEquals(check.isIn(aMkb, aFrom, aTo),isTrue);
     }
 }

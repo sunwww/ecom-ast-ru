@@ -1,5 +1,18 @@
 package ru.nuzmsh.web.struts.forms.customize.impl.xml;
 
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import ru.nuzmsh.commons.auth.ILoginInfo;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.web.struts.forms.customize.FormCustomizeException;
+import ru.nuzmsh.web.struts.forms.customize.FormElementInfo;
+import ru.nuzmsh.web.struts.forms.customize.FormInfo;
+import ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -9,28 +22,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-
-import ru.nuzmsh.commons.auth.ILoginInfo;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.struts.forms.customize.FormCustomizeException;
-import ru.nuzmsh.web.struts.forms.customize.FormElementInfo;
-import ru.nuzmsh.web.struts.forms.customize.FormInfo;
-import ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService;
-
 /**
  *
  */
 public class XmlFormCustomizeService implements IFormCustomizeService {
 
-    private final static Log LOG = LogFactory.getLog(XmlFormCustomizeService.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(XmlFormCustomizeService.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 
@@ -87,9 +85,9 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
             info = null ;
         }
 //        FormElementInfo info = theHash.get(sb.toString()) ;
-        //if (CAN_TRACE) LOG.trace("findFormElementInfo(): key = " + sb);
+        //if (CAN_TRACE) LOG.info("findFormElementInfo(): key = " + sb);
         StringBuilder sb = new StringBuilder(aFormName).append('.').append(aElementName);
-        if (CAN_TRACE) LOG.trace(new StringBuilder().append("findFormElementInfo(): ").append(sb).append(" = ").append(info).toString());
+        if (CAN_TRACE) LOG.info(new StringBuilder().append("findFormElementInfo(): ").append(sb).append(" = ").append(info).toString());
         return info ;
     }
 
@@ -106,7 +104,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
 
 
     private void saveFormElementInfoNoSave(ILoginInfo aLoginInfo, String aFormName, FormElementInfo aInfo) {
-        if (CAN_TRACE) LOG.trace("saving " +aFormName+"." + aInfo);
+        if (CAN_TRACE) LOG.info("saving " +aFormName+"." + aInfo);
 
         if(aInfo!=null && !canSave(aInfo)) { // удаляем из базы
             TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName) ;
@@ -181,7 +179,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
     }
 
     private boolean canSave(FormElementInfo aInfo) {
-        if (CAN_TRACE) LOG.trace("canSave()" + aInfo);
+        if (CAN_TRACE) LOG.info("canSave()" + aInfo);
         boolean canSave = false ;
         do {
             if(aInfo==null)  { break ; }
@@ -189,7 +187,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
             if(!StringUtil.isNullOrEmpty(aInfo.getLabel()))        { canSave = true ; break ; }
             if(aInfo.isVisible()!=null)                            { canSave = true ; break ; }
         } while(false) ;
-        if (CAN_TRACE) LOG.trace("  canSave = " + canSave);
+        if (CAN_TRACE) LOG.info("  canSave = " + canSave);
         return canSave ;
     }
 

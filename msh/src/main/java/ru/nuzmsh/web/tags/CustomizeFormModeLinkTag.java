@@ -1,18 +1,15 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import org.apache.log4j.Logger;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.tags.helper.RolesHelper;
+import java.io.IOException;
 
 /**
  * @jsp.tag           name = "customizeFormModeLink"
@@ -22,8 +19,8 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
  */
 public class CustomizeFormModeLinkTag extends SimpleTagSupport {
 
-    private final static Log LOG = LogFactory.getLog(CustomizeFormModeLinkTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(CustomizeFormModeLinkTag.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 
@@ -54,7 +51,7 @@ public class CustomizeFormModeLinkTag extends SimpleTagSupport {
             } catch (Exception e) {
                 LOG.error("Ошибка преобразования строки в Boolean: "+custMode,e) ;
             }
-            if (CAN_TRACE) LOG.trace("isInCustomeMode = " + isInCustomeMode);
+            if (CAN_TRACE) LOG.info("isInCustomeMode = " + isInCustomeMode);
             JspWriter out = getJspContext().getOut() ;
             StringBuilder sb = new StringBuilder();
             sb.append(request.getRequestURI()) ;

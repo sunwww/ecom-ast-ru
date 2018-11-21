@@ -1,31 +1,28 @@
 package ru.nuzmsh.web.tree;
 
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.nuzmsh.commons.tree.ISearchResult;
 import ru.nuzmsh.commons.tree.ITreeModel;
 import ru.nuzmsh.web.tree.player.TreeTablePlayer;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  *
  */
 public class TreeAction extends Action {
     private static final int MAX_COUNT = 10;
-    private final static Log LOG = LogFactory.getLog(TreeAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(TreeAction.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 
@@ -54,13 +51,13 @@ public class TreeAction extends Action {
 
         TreeTablePlayer player = TreeTablePlayer.find(key, aRequest.getSession());
 
-        if (CAN_TRACE) LOG.trace("form.getParentId() = " + form.getParentId());
-        if (CAN_TRACE) LOG.trace("form.getFromId() = " + form.getFromId());
+        if (CAN_TRACE) LOG.info("form.getParentId() = " + form.getParentId());
+        if (CAN_TRACE) LOG.info("form.getFromId() = " + form.getFromId());
         if(form.getParentId()==null && form.getFromId()!=null) {
             Object parentId = model.getParentId(form.getFromId()) ;
             form.setParentId(parentId==null?null:parentId.toString());
         }
-        if (CAN_TRACE) LOG.trace("after form.getParentId() = " + form.getParentId());
+        if (CAN_TRACE) LOG.info("after form.getParentId() = " + form.getParentId());
 
         Object fromId  ;
         if(form.getSearch()!=null) {

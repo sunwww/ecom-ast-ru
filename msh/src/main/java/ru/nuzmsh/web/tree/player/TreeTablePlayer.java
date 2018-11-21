@@ -1,6 +1,14 @@
 package ru.nuzmsh.web.tree.player;
 
-import java.awt.Point;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONWriter;
+
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspContext;
+import javax.servlet.jsp.PageContext;
+import java.awt.*;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -8,23 +16,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspContext;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONWriter;
-
 /**
  * Проигрывание компонента
  */
 public class TreeTablePlayer {
 
-    private final static Log LOG = LogFactory.getLog(TreeTablePlayer.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(TreeTablePlayer.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public TreeTablePlayer(String aName, String aTitle, String aIdField, String aParentIdField, String aNameField) {
@@ -51,7 +49,7 @@ public class TreeTablePlayer {
     }
 
     public void save(JspContext aJspContext) {
-        if (CAN_TRACE) LOG.trace("Cохранение Player в " + theName+".Player");
+        if (CAN_TRACE) LOG.info("Cохранение Player в " + theName+".Player");
         aJspContext.setAttribute(theName+".Player", this, PageContext.SESSION_SCOPE);
 
     }
@@ -89,7 +87,7 @@ public class TreeTablePlayer {
         for (Object row : aList) {
             Object id = getProperty(row, theIdField) ;
             Object parentId = getProperty(row, theParentIdField) ;
-            if (CAN_TRACE) LOG.trace("id = " + id);
+            if (CAN_TRACE) LOG.info("id = " + id);
 
             lastId = id ;
             lastParentId = parentId ;

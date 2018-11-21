@@ -1,20 +1,10 @@
 package ru.nuzmsh.util.zip;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class JarUtil {
 
-	private final static Log LOG = LogFactory.getLog(JarUtil.class);
-	private final static boolean CAN_TRACE = LOG.isTraceEnabled();
 
 	private static void check(File aFile, File aDir) {
 		if(aFile==null) throw new IllegalArgumentException("aFile==null") ;

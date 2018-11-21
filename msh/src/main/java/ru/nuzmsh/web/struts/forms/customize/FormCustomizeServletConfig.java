@@ -1,23 +1,20 @@
 package ru.nuzmsh.web.struts.forms.customize;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.apache.log4j.Logger;
+import ru.nuzmsh.web.struts.forms.customize.impl.xml.XmlFormCustomizeService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.nuzmsh.web.struts.forms.customize.impl.xml.XmlFormCustomizeService;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class FormCustomizeServletConfig extends HttpServlet {
 
-    private final static Log LOG = LogFactory.getLog(FormCustomizeServletConfig.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+	private final static Logger LOG = Logger.getLogger(FormCustomizeServletConfig.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     
 
@@ -53,7 +50,7 @@ public class FormCustomizeServletConfig extends HttpServlet {
 
 	public void init(ServletConfig servletConfig) throws ServletException {
     	LOG.info("initializing ...") ;
-        if (CAN_TRACE) LOG.trace("init() " + servletConfig);
+        if (CAN_TRACE) LOG.info("init() " + servletConfig);
         String catalinaHome = System.getProperty("catalina.home") ;
         String configHome = "/opt/tomcat/conf" ;
         if(catalinaHome==null) {
@@ -71,7 +68,7 @@ public class FormCustomizeServletConfig extends HttpServlet {
     }
 
     public void destroy() {
-        if (CAN_TRACE) LOG.trace("destroying ... ");
+        if (CAN_TRACE) LOG.info("destroying ... ");
 
         IFormCustomizeService service = FormCustomizeServiceHolder.getService();
         if(service!=null) service.stop() ;

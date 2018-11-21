@@ -1,13 +1,12 @@
 package test.date;
 
 import junit.framework.TestCase;
+import ru.nuzmsh.util.date.AgeUtil;
 
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import ru.nuzmsh.util.date.AgeUtil;
 
 /**
  *
@@ -51,7 +50,7 @@ public class TestAgeUtil extends TestCase {
         check("25.02.2001", "07.06.2006",  5 ) ;
         check("25.11.2001", "07.06.2006",  4 ) ;
 
-        check("06.06.2006", "07.06.2006",  1 ) ;
+        check("06.06.2006", "07.06.2006",  0 ) ;
         check("07.06.2005", "07.06.2006",  1 ) ;
         check("08.06.2005", "07.06.2006",  0 ) ;
 

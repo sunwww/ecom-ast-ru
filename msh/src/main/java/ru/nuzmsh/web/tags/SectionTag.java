@@ -1,19 +1,14 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.web.tags.helper.RolesHelper;
+import ru.nuzmsh.web.util.IdeTagHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.web.tags.helper.RolesHelper;
-import ru.nuzmsh.web.util.IdeTagHelper;
+import java.io.IOException;
 
 /**
  *
@@ -26,8 +21,6 @@ import ru.nuzmsh.web.util.IdeTagHelper;
  */
 public class SectionTag extends AbstractGuidSimpleSupportTag {
 
-	private final static Log LOG = LogFactory.getLog(SectionTag.class);
-	private final static boolean CAN_TRACE = LOG.isTraceEnabled();
 
     /**
      * Название секции

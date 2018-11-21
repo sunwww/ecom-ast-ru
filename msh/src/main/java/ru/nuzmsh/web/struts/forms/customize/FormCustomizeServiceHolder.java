@@ -1,10 +1,8 @@
 package ru.nuzmsh.web.struts.forms.customize;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import org.apache.log4j.Logger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.naming.InitialContext;
 
 /**
  *
@@ -13,13 +11,13 @@ public class FormCustomizeServiceHolder {
 
     private static final String KEY = "IFormCustomizeService" ;
 
-    private final static Log LOG = LogFactory.getLog(FormCustomizeServiceHolder.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+	private final static Logger LOG = Logger.getLogger(FormCustomizeServiceHolder.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     private static IFormCustomizeService SERVICE = null ;
 
     public static void putService(IFormCustomizeService aService) {
-        if (CAN_TRACE) LOG.trace("Putting service ("+KEY+") " + aService);
+        if (CAN_TRACE) LOG.info("Putting service ("+KEY+") " + aService);
     	try {
     		InitialContext ctx = new InitialContext() ;
     		try {
@@ -67,7 +65,7 @@ public class FormCustomizeServiceHolder {
 
 //    public static IFormCustomizeService getService(HttpServletRequest aRequest) {
 //        IFormCustomizeService service = (IFormCustomizeService) aRequest.getSession().getAttribute(KEY) ;
-//        if (CAN_TRACE) LOG.trace("Getting service ("+KEY+") " + service);
+//        if (CAN_TRACE) LOG.info("Getting service ("+KEY+") " + service);
 //        return service ;
 //    }
 

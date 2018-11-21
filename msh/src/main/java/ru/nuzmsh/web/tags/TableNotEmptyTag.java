@@ -1,16 +1,12 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
-import java.util.Collection;
+import org.apache.log4j.Logger;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.nuzmsh.util.StringUtil;
+import java.io.IOException;
+import java.util.Collection;
 
 /**
  * @jsp.tag         name = "tableNotEmpty"
@@ -20,8 +16,8 @@ import ru.nuzmsh.util.StringUtil;
  */
 public class TableNotEmptyTag extends AbstractGuidSimpleSupportTag {
 
-    private final static Log LOG = LogFactory.getLog(TableNotEmptyTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(TableNotEmptyTag.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     /**
@@ -47,18 +43,18 @@ public class TableNotEmptyTag extends AbstractGuidSimpleSupportTag {
 
     boolean isEmpty() {
         boolean ret  ;
-        if (CAN_TRACE) LOG.trace("isEmpty(): theName = " + theName);
+        if (CAN_TRACE) LOG.info("isEmpty(): theName = " + theName);
         if(!StringUtil.isNullOrEmpty(theName)) {
             Collection col = (Collection) getJspContext().findAttribute(theName) ;
-            if (CAN_TRACE) LOG.trace("isEmpty(): col = " + col);
+            if (CAN_TRACE) LOG.info("isEmpty(): col = " + col);
             ret = col==null || col.isEmpty();
         } else {
             TableTag table = (TableTag) getParent() ;
-            if (CAN_TRACE) LOG.trace("isEmpty(): table = " + table);
-            if (CAN_TRACE) LOG.trace("isEmpty(): table = " + table.isEmpty());
+            if (CAN_TRACE) LOG.info("isEmpty(): table = " + table);
+            if (CAN_TRACE) LOG.info("isEmpty(): table = " + table.isEmpty());
             ret = table.isEmpty() ;
         }
-        if (CAN_TRACE) LOG.trace("isEmpty() : ret = " + ret);
+        if (CAN_TRACE) LOG.info("isEmpty() : ret = " + ret);
         return ret ;
     }
 

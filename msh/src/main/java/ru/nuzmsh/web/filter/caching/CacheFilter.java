@@ -1,28 +1,21 @@
-package ru.nuzmsh.web.filter.caching; 
+package ru.nuzmsh.web.filter.caching;
 
+import org.apache.log4j.Logger;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class CacheFilter implements Filter {
 
 	//private static final long TEN_YEARS = 1000 * 60 * 60 * 24 * 10 ;
-	
-	private final static Log LOG = LogFactory.getLog(CacheFilter.class);
-	private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+
+    private final static Logger LOG = Logger.getLogger(CacheFilter.class);
+	private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 	
     public void doFilter(ServletRequest rawRequest, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -30,12 +23,12 @@ public class CacheFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse)response;
         HttpServletRequest request = (HttpServletRequest) rawRequest ;
         if(CAN_TRACE) {
-				LOG.trace("doFilter: request.getPathInfo()       = " + request.getPathInfo()); 
-				LOG.trace("doFilter: request.getPathTranslated() = " + request.getPathTranslated()); 
-				LOG.trace("doFilter: request.getQueryString()    = " + request.getQueryString()); 
-				LOG.trace("doFilter: request.getRequestURI()     = " + request.getRequestURI()); 
-				LOG.trace("doFilter: request.getRequestURL()     = " + request.getRequestURL()); 
-		        LOG.trace("doFilter:           If-Modified-Since = '" + request.getDateHeader("If-Modified-Since")+"'") ;
+				LOG.info("doFilter: request.getPathInfo()       = " + request.getPathInfo()); 
+				LOG.info("doFilter: request.getPathTranslated() = " + request.getPathTranslated()); 
+				LOG.info("doFilter: request.getQueryString()    = " + request.getQueryString()); 
+				LOG.info("doFilter: request.getRequestURI()     = " + request.getRequestURI()); 
+				LOG.info("doFilter: request.getRequestURL()     = " + request.getRequestURL()); 
+		        LOG.info("doFilter:           If-Modified-Since = '" + request.getDateHeader("If-Modified-Since")+"'") ;
         }
         // 
         HttpServletRequest req ;
@@ -43,7 +36,7 @@ public class CacheFilter implements Filter {
         // logLoginUserInvironment(request);
         
         if(request.getRequestURI().indexOf("-CA")>0) {
-        	if(CAN_TRACE) LOG.trace("Rewriting url "+request.getRequestURI()) ;
+        	if(CAN_TRACE) LOG.info("Rewriting url "+request.getRequestURI()) ;
         	res.setDateHeader("Date", getDate(0L) );
         	res.setDateHeader("Last-Modified", getDate(-10L) );
             res.setDateHeader("Expires", getDate(100L));
