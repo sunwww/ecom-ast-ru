@@ -1,29 +1,24 @@
 package ru.ecom.ejb.services.voc.helper;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import javax.persistence.EntityManager;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.voc.IVocContextService;
 import ru.ecom.ejb.services.voc.IVocServiceManagement;
 import ru.ecom.ejb.services.voc.VocContext;
 import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.voc.IVocService;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
+
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * @author esinev 18.08.2006 1:09:44
  */
 public class AllValueHelper implements IVocContextService, IVocServiceManagement {
 
-    private final static Log LOG = LogFactory.getLog(AllValueHelper.class);
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+    private final static Logger LOG = Logger.getLogger(AllValueHelper.class);
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public AllValueHelper(IAllValue aAllValue) {
@@ -97,7 +92,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
             reverted.add(0, value);
         }
         for (VocValue value : reverted) {
-            if (CAN_TRACE) LOG.trace("valueProperty = " + value);
+            if (CAN_TRACE) LOG.info("valueProperty = " + value);
             if (!finded && value.getId().equals(aId)) {
                 finded = true;
             }
@@ -113,7 +108,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
         LinkedList<VocValue> ret = new LinkedList<VocValue>();
         boolean finded = StringUtil.isNullOrEmpty(aId);
         for (VocValue value : listAll(aAdditional, aContext)) {
-            if (CAN_TRACE) LOG.trace("valueProperty = " + value);
+            if (CAN_TRACE) LOG.info("valueProperty = " + value);
             if (!finded && value.getId().equals(aId)) {
                 finded = true;
             }

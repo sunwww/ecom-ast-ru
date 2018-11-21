@@ -1,32 +1,18 @@
 package ru.ecom.ejb.services.live;
 
-import java.lang.reflect.Method;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.naming.NamingException;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
-import javax.persistence.PostRemove;
-import javax.persistence.PreRemove;
-import javax.persistence.Transient;
-
 import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.services.live.domain.LiveEntity;
-import ru.ecom.ejb.services.live.domain.LiveProperty;
-import ru.ecom.ejb.services.live.domain.LiveTransaction;
 import ru.ecom.ejb.services.live.domain.journal.DeleteJournal;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.jboss.live.LiveTransactionContext;
 import ru.nuzmsh.util.PropertyUtil;
+
+import javax.naming.NamingException;
+import javax.persistence.*;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 public class DeleteListener {
 	private final static Logger LOG = Logger.getLogger(DeleteListener.class);
