@@ -1,26 +1,22 @@
 package ru.ecom.web.tags;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.input;
-import org.apache.ecs.xhtml.script;
 import org.apache.ecs.xhtml.span;
-
+import org.apache.log4j.Logger;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.web.tags.AbstractFieldTag;
 import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 import ru.nuzmsh.web.util.StripExceptionHelper;
 import ru.nuzmsh.web.vochelper.VocHelperDelegate;
-import ru.nuzmsh.web.vochelper.VocHelperLocateException;
 import ru.nuzmsh.web.xhtml.Xa;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @jsp.tag name="treeAutoComplete"
@@ -29,9 +25,7 @@ import ru.nuzmsh.web.xhtml.Xa;
  *          description="Tree Autocomplete field JSP tag."
  */public class TreeAutoCompleteTag extends AbstractFieldTag {
 
-    private final static Log LOG = LogFactory.getLog(TreeAutoCompleteTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
-
+    private final static Logger LOG = Logger.getLogger(TreeAutoCompleteTag.class) ;
 
     protected Element getFieldElement() throws JspException {
         String vocname = "ERROR" ;

@@ -1,7 +1,6 @@
 package ru.ecom.web.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import ru.ecom.web.login.LoginInfo;
 import ru.nuzmsh.util.StringUtil;
 
@@ -26,8 +25,8 @@ public class Injection {
 
     private final static ThreadLocal<HashMap<String, Object>> THREAD_SERVICES = new ThreadLocal<HashMap<String,Object>>();
 
-    private final static Log LOG = LogFactory.getLog(Injection.class);
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+    private final static Logger LOG = Logger.getLogger(Injection.class);
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
     private static String KEY;
 
@@ -196,7 +195,7 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
         Object service ;
         HashMap<String,Object> services = THREAD_SERVICES.get();
         //System.out.println(" ----get service="+theWebName+" --- ");
-        if(CAN_TRACE) LOG.trace(aServiceName+" , services  "+services) ;
+        if(CAN_TRACE) LOG.info(aServiceName+" , services  "+services) ;
         if(services==null) {
             services = new HashMap<String, Object>() ;
             THREAD_SERVICES.set(services);
@@ -215,7 +214,7 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                 initialContext.close() ;
             }
         } else {
-            if(CAN_TRACE) LOG.trace("Сервис "+aServiceName+" взят из ThreadLocal : "+service) ;
+            if(CAN_TRACE) LOG.info("Сервис "+aServiceName+" взят из ThreadLocal : "+service) ;
         }
         return service ;
     }

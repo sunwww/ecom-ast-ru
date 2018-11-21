@@ -1,30 +1,9 @@
 package ru.ecom.web.login;
 
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.ejb.EJBAccessException;
-import javax.naming.CommunicationException;
-import javax.naming.NamingException;
-import javax.security.auth.login.FailedLoginException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -38,13 +17,25 @@ import ru.nuzmsh.web.messages.UserMessage;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.util.StringSafeEncode;
 
+import javax.ejb.EJBAccessException;
+import javax.naming.CommunicationException;
+import javax.naming.NamingException;
+import javax.security.auth.login.FailedLoginException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 /**
  *
  */
 public class LoginSaveAction extends LoginExitAction {
 
-    private final static Log LOG = LogFactory.getLog(LoginSaveAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(LoginSaveAction.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
     
     public static boolean needChangePasswordAtLogin (String aUsername, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -91,7 +82,7 @@ public class LoginSaveAction extends LoginExitAction {
         HttpSession session = aRequest.getSession(true) ;
         loginInfo.saveTo(session) ;
 
-        if (CAN_TRACE) LOG.trace("Сохранение в сесии " + loginInfo.getUsername());
+        if (CAN_TRACE) LOG.info("Сохранение в сесии " + loginInfo.getUsername());
         try {
 
             ILoginService service = Injection.find(aRequest).getService(ILoginService.class) ;

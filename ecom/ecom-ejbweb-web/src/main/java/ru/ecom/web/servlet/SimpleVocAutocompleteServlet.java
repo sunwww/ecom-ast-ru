@@ -1,29 +1,26 @@
 package ru.ecom.web.servlet;
 
+import org.apache.log4j.Logger;
+import ru.ecom.web.util.EntityInjection;
+import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.voc.VocValue;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.ecom.web.util.EntityInjection;
-import ru.nuzmsh.util.StringUtil;
-import ru.nuzmsh.util.voc.VocValue;
-
 /**
  * @author esinev 18.08.2006 1:54:06
  */
 public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
-    private final static Log LOG = LogFactory.getLog(SimpleVocAutocompleteServlet.class);
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+    private final static Logger LOG = Logger.getLogger(SimpleVocAutocompleteServlet.class);
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
@@ -42,14 +39,14 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
     public void printNext(HttpServletRequest aRequest, String aId, int aCount, PrintWriter aOut) throws Exception {
 
-        if (CAN_TRACE) LOG.trace("printNext(): aId = " + aId);
-        if (CAN_TRACE) LOG.trace("  printNext(): aCount = " + aCount);
+        if (CAN_TRACE) LOG.info("printNext(): aId = " + aId);
+        if (CAN_TRACE) LOG.info("  printNext(): aCount = " + aCount);
 
         Collection<VocValue> vocs = EntityInjection.find(aRequest).getVocService().findVocValueNext
                 (getVocName(aRequest), aId, aCount, VocAdditionalUtil.create(aRequest));
 
-        if (CAN_TRACE) LOG.trace("  vocs = " + vocs);
-        if (CAN_TRACE) LOG.trace("  vocs.size() = " + vocs.size());
+        if (CAN_TRACE) LOG.info("  vocs = " + vocs);
+        if (CAN_TRACE) LOG.info("  vocs.size() = " + vocs.size());
 
         if (!StringUtil.isNullOrEmpty(aId)) {
             String lastId = null;
@@ -58,27 +55,27 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                     lastId = vocValue.getId();
                 }
             }
-            if (CAN_TRACE) LOG.trace("  lastId = " + lastId);
+            if (CAN_TRACE) LOG.info("  lastId = " + lastId);
             if (vocs.size() < aCount && !StringUtil.isNullOrEmpty(lastId)) {
                 Collection<VocValue> addVocs = EntityInjection.find(aRequest).getVocService().findVocValuePrevious
                         (getVocName(aRequest), lastId, aCount - vocs.size(), VocAdditionalUtil.create(aRequest));
 
-                if (CAN_TRACE) LOG.trace("  addVocs = " + addVocs);
+                if (CAN_TRACE) LOG.info("  addVocs = " + addVocs);
                 HashMap<String, VocValue> hash = new HashMap<String, VocValue>();
                 for (VocValue vocValue : addVocs) {
                     hash.put(vocValue.getId(), vocValue) ;
                 }
 
-                if (CAN_TRACE) LOG.trace("  hash = " + hash);
+                if (CAN_TRACE) LOG.info("  hash = " + hash);
 
                 LinkedList<VocValue> ret = new LinkedList<VocValue>();
                 for (VocValue value : addVocs) {
                     ret.add(value);
                 }
-                if (CAN_TRACE) LOG.trace("  ret = " + ret);
-//                if (CAN_TRACE) LOG.trace("  ret = " + ret);
+                if (CAN_TRACE) LOG.info("  ret = " + ret);
+//                if (CAN_TRACE) LOG.info("  ret = " + ret);
 //                if (ret.size() > 0) ret.remove(ret.size() - 1);
-//                if (CAN_TRACE) LOG.trace("  after delete ret = " + ret);
+//                if (CAN_TRACE) LOG.info("  after delete ret = " + ret);
                 for (VocValue vocValue : vocs) {
                     String id = vocValue.getId() ;
                     if(id!=null && hash.get(id)==null) {
@@ -87,7 +84,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                     }
 //                    ret.add(vocValue);
                 }
-                if (CAN_TRACE) LOG.trace("  after add ret = " + ret);
+                if (CAN_TRACE) LOG.info("  after add ret = " + ret);
                 printResult(ret, aOut);
             } else {
                 printResult(vocs, aOut);

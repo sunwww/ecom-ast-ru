@@ -1,30 +1,21 @@
 package ru.ecom.web.tags;
 
-import java.io.IOException;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.ecom.ejb.services.entityform.IParentEntityFormService;
 import ru.ecom.web.actions.entity.AbstractEntityAction;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.StrutsConfigUtil;
 import ru.nuzmsh.web.tags.AbstractGuidSimpleSupportTag;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
+import java.util.Collection;
+
 /**
  *
  */
 public class ParentEntityListAllTag extends AbstractGuidSimpleSupportTag {
-
-    private final static Log LOG = LogFactory.getLog(ParentEntityListAllTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
-
 
     /** Имя формы */
     public String getFormName() { return theFormName ; }
