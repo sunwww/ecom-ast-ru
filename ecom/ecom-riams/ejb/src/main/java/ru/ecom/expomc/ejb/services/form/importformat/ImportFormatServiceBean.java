@@ -176,7 +176,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
         HashMap<String, Object> mapStoredValues = new HashMap<String, Object>();
         List<ImportEntity> entities = importConfig.getEntities();
 
-        StringBuffer sb = new StringBuffer("Импортируемые сущности: ");
+        StringBuilder sb = new StringBuilder("Импортируемые сущности: ");
         LOG.info("match table '" +dbfName+"':"+count);
         for (ImportEntity entity : entities) {
             if (!entity.getFormat().equals("dbf")) continue;
@@ -493,7 +493,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
 //        }
 //
 
-        StringBuffer sb = new StringBuffer("Импортируемые сущности: ");
+        StringBuilder sb = new StringBuilder("Импортируемые сущности: ");
         LOG.info("match table '" +dbfName+"':"+count);
         for (ImportEntity entity : entities) {
             if (!entity.getFormat().equals("dbf")) continue;
@@ -789,12 +789,12 @@ public class ImportFormatServiceBean implements IImportFormatService {
         monitor.setValue(3);
 
         long i = 0;
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         monitor.setText("Построение конфигурации импорта");
         List<ImportEntity> entities = importConfig.getEntities();
 
         monitor.setText("Расчет общего кол-ва записей");
-        StringBuffer sb = new StringBuffer("Импортируемые сущности: ");
+        StringBuilder sb = new StringBuilder("Импортируемые сущности: ");
         for (ImportEntity entity : entities) {
             if (!entity.getFormat().equals("xml")) continue;
             long c = entity.getCount(xdoc);
@@ -1389,7 +1389,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
             // Собственно импорт
             //LOG.info("XDOC=" + xdoc);
             List<ImportEntity> entities = importConfig.getEntities();
-            StringBuffer sb = new StringBuffer("Импортируемые сущности: ");
+            StringBuilder sb = new StringBuilder("Импортируемые сущности: ");
 
             monitor.setText("Расчет общего кол-ва записей");
             long totalRecords = 0;
