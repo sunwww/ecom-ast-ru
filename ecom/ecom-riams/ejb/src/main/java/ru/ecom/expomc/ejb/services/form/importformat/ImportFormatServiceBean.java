@@ -5,45 +5,12 @@
 package ru.ecom.expomc.ejb.services.form.importformat;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.jboss.annotation.ejb.TransactionTimeout;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
@@ -66,6 +33,23 @@ import ru.nuzmsh.dbf.DbfFileReader;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 @Stateless
 @Remote(IImportFormatService.class)
@@ -1813,7 +1797,11 @@ public class ImportFormatServiceBean implements IImportFormatService {
             ret = null ;
         } else {
             if(aDate.indexOf(',')>=0) aDate = aDate.replace(',', '.') ;
-            ret =  FORMAT_ODBC.parse(aDate) ;
+           try {
+               ret =  FORMAT_ODBC.parse(aDate) ;
+           } catch (Exception e) {
+               ret = DateFormat.parseDate(aDate,"MM.dd.yyyy");
+           }
         }
         if(ret!=null) {
                if(ret.before(minDate)) {
@@ -1848,6 +1836,9 @@ public class ImportFormatServiceBean implements IImportFormatService {
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Date.class)) {
             java.util.Date utilDate = parseDate((String) aValue);
             return utilDate != null ? new java.sql.Date(utilDate.getTime()) : null;
+        } else if (aInClass.equals(String.class) && aOutClass.equals(java.util.Date.class)) {
+            java.util.Date utilDate = parseDate((String) aValue);
+            return utilDate ;
         } else if (aOutClass.equals(String.class))  {  // В строку
             return aValue.toString();
         } else if (aOutClass.isAssignableFrom(aInClass)) {
