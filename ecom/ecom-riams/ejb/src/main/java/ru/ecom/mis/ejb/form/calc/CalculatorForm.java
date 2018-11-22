@@ -45,4 +45,11 @@ public class CalculatorForm extends IdEntityForm{
 	public Long getValueOfResult() {return theValueOfResult;}
 	public void setValueOfResult(Long aValueOfResult) {theValueOfResult = aValueOfResult;}
 	private Long theValueOfResult;
+
+	/** Создавать дневник? */
+	@Comment("Создавать дневник?")
+	@Persist
+	public Boolean getCreateDiary() {return theCreateDiary;}
+	public void setCreateDiary(Boolean aCreateDiary) {theCreateDiary = aCreateDiary;	}
+	private Boolean theCreateDiary;
 }

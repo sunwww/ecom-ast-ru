@@ -54,4 +54,11 @@ public class CalculationsForm extends IdEntityForm{
 	public String getComment() {return theComment;}
 	public void setComment(String aComment) {theComment = aComment;}
 	private String theComment;
+
+	/** Примечание */
+	@Comment("Примечание")
+	@Persist
+	public String getNote() {return theNote;}
+	public void setNote(String aNote) {theNote = aNote;}
+	private String theNote;
 }

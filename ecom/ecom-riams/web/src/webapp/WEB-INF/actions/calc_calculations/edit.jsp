@@ -63,6 +63,9 @@
 <msh:row>
 <msh:textField property="orderus" label="Порядок" viewOnlyField="true" fieldColSpan="3" />
 </msh:row>
+<msh:row>
+	<msh:textField property="note" label="Примечание" horizontalFill="true" fieldColSpan="3" />
+</msh:row>
 </msh:panel>
 </div>	
 
@@ -139,6 +142,8 @@
 				clear.value = "";
 				clear = document.querySelector('#comment.horizontalFill');
 				clear.value = "";
+                clear = document.querySelector('#note.horizontalFill');
+                clear.value = "";
 				ord.value = global;
 				preview();
 			} else {
@@ -300,7 +305,8 @@
 					type : span.querySelector('#type').value,
 					value : span.querySelector('#value.horizontalFill').value,
 					comment : span.querySelector('#comment.horizontalFill').value,
-					orderus : span.querySelector('#orderusReadOnly.viewOnly').value
+					orderus : span.querySelector('#orderusReadOnly.viewOnly').value,
+                    note : span.querySelector('#note.horizontalFill').value
 				};
 			}
 
