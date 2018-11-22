@@ -47,9 +47,9 @@ request.setAttribute("kioskMode",kioskMode);
     <style type="text/css">
         #patientWaitingTable {
             text-align: center;
-            font-size: 30px;
             margin-bottom: 10px;
             width:100%;
+            font-size:500%;
         }
         .queueTable {
             width: 100%;
@@ -85,15 +85,20 @@ if (kioskMode.equals("TV")) {
 <script type="text/javascript"> //Общие скрипты
 var ws_socketServerStorageName="ws_server_name";
 window.onload = function(){${kioskMode}ONLOAD();};
-
+function reload() {
+console.log("reload page")
+    window.document.location.reload();
+}
 function QUEUEONLOAD() {
     connectWebSocketKiosk();
     getQueueList();
+    setTimeout(reload,500000);
 }
 
 function TVONLOAD(){
     connectWebSocketKiosk();
     setTimeout(getAllTickets,4000);
+    setTimeout(reload,500000);
 }
 
 /**Подключаемся с сокет-серверу*/

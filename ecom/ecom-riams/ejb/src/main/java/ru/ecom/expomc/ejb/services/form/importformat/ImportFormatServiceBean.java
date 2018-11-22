@@ -27,7 +27,6 @@ import ru.ecom.expomc.ejb.services.form.importformat.config.ImportSyncKeyList;
 import ru.ecom.expomc.ejb.services.importservice.ImportException;
 import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
 import ru.ecom.expomc.ejb.services.importservice.ImportFileResult;
-import ru.nuzmsh.dbf.DbfField;
 import ru.nuzmsh.dbf.DbfFile;
 import ru.nuzmsh.dbf.DbfFileReader;
 import ru.nuzmsh.util.PropertyUtil;
@@ -473,7 +472,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
             inFile.close();
         }
 
-        Collection<DbfField> fields = dbfFile.getDbfFields();
+     //   Collection<DbfField> fields = dbfFile.getDbfFields();
 
 
 //        DbfFileReader in =  new DbfFileReader(new File(aFilename));
@@ -501,7 +500,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
             
             importStatistics.addTotalRecords(count);
             LOG.info("match entity '" +entity.getEntityName());
-            sb.append(entity.getEntityName()+" ");
+            sb.append(entity.getEntityName()).append(" ");
         }
         log(sb.toString());
         monitor.setValue(5);
