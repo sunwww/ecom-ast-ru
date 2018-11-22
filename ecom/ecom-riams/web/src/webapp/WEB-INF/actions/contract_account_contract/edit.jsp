@@ -165,8 +165,9 @@
 
                 }
                 $('priceMedServicies').value=medServAll;
-                $('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>'
-                $('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-$('discountDefault').value)/100)+'руб.</h1>'
+                var val = $('discountDefault').value;
+                $('divAllCount1').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-val)/100)+'руб.</h1>'
+                $('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб. с учетом скидки: '+(costAll*(100-val)/100)+'руб.</h1>'
                 //$('divAllCount2').innerHTML = '<h1>Сумма: '+costAll+' руб.</h1>'
 
             }
