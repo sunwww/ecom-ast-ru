@@ -126,14 +126,14 @@
                 </msh:row>
             </msh:panel>
                 <msh:row>
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek0" value="0" type="checkbox" style="margin-right:10px">все
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek1" value="1" type="checkbox" style="margin-right:10px">Пн
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek2" value="2" type="checkbox" style="margin-right:10px">Вт
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek3" value="3" type="checkbox" style="margin-right:10px">Ср
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek4" value="4" type="checkbox" style="margin-right:10px">Чт
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek5" value="5" type="checkbox" style="margin-right:10px">Пт
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek6" value="6" type="checkbox" style="margin-right:10px">Сб
-                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek7" value="7" type="checkbox" >Вс
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek0" value="0" type="checkbox" style="margin-right:10px" onchange="chooseAllDaysOfWeek()">все<br>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek1" value="1" type="checkbox" style="margin-right:10px" onchange="checkAll()">Понедельник<br>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek2" value="2" type="checkbox" style="margin-right:10px" onchange="checkAll()">Вторник<br>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek3" value="3" type="checkbox" style="margin-right:10px" onchange="checkAll()">Среда<br>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek4" value="4" type="checkbox" style="margin-right:10px" onchange="checkAll()">Четверг<br>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek5" value="5" type="checkbox" style="margin-right:10px" onchange="checkAll()">Пятница<br>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek6" value="6" type="checkbox" style="margin-right:10px" onchange="checkAll()">Суббота<br>
+                    <input class="checkbox" name="dayOfWeek" id="dayOfWeek7" value="7" type="checkbox" style="margin-right:10px" onchange="checkAll()">Воскресенье
         </msh:row>
         </msh:form>
         <input type="button" onclick="createDateTimes(this)" value="Создать" />
@@ -289,6 +289,28 @@ function getReserves() {
                         });
                 }
                 else alert('Введите длительность визитов либо их количество!');
+            }
+            //Milamesher 22112018 - выбрать все дни недели
+            function chooseAllDaysOfWeek() {
+                if (document.getElementById("dayOfWeek0").checked) {
+                    document.getElementById("dayOfWeek1").checked=document.getElementById("dayOfWeek2").checked=
+                        document.getElementById("dayOfWeek3").checked=document.getElementById("dayOfWeek4").checked=
+                            document.getElementById("dayOfWeek5").checked=document.getElementById("dayOfWeek6").checked=
+                                document.getElementById("dayOfWeek7").checked='checked';
+                }
+            }
+            //Milamesher 22112018 - снять отметку с все, если не все отмечены
+            function checkAll() {
+                if (document.getElementById("dayOfWeek0").checked &&
+                !document.getElementById("dayOfWeek1").checked || !document.getElementById("dayOfWeek2").checked ||
+                    !document.getElementById("dayOfWeek3").checked || !document.getElementById("dayOfWeek4").checked ||
+                !document.getElementById("dayOfWeek5").checked || !document.getElementById("dayOfWeek6").checked ||
+                    !document.getElementById("dayOfWeek7").checked) document.getElementById("dayOfWeek0").checked=false;
+                if (!document.getElementById("dayOfWeek0").checked &&
+                    document.getElementById("dayOfWeek1").checked && document.getElementById("dayOfWeek2").checked &&
+                    document.getElementById("dayOfWeek3").checked && document.getElementById("dayOfWeek4").checked &&
+                    document.getElementById("dayOfWeek5").checked  && document.getElementById("dayOfWeek6").checked  &&
+                    document.getElementById("dayOfWeek7").checked) document.getElementById("dayOfWeek0").checked='checked';
             }
             function nextWeek() {
                 weekplus=weekplus+7;
