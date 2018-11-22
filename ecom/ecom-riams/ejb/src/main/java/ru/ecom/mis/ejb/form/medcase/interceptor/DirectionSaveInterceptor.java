@@ -1,17 +1,13 @@
 package ru.ecom.mis.ejb.form.medcase.interceptor;
 
-import org.json.JSONObject;
 import ru.ecom.diary.ejb.service.template.TemplateProtocolServiceBean;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.form.medcase.poly.DirectionMedCaseForm;
 
 import javax.persistence.EntityManager;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.List;
 

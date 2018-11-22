@@ -1,11 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.interceptor;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
-import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -14,10 +8,11 @@ import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.ticket.interceptors.TicketMedCaseViewInterceptor;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.persistence.EntityManager;
+import java.util.List;
+
 public class DirectionViewInterceptor implements IFormInterceptor {
 
-    private final static Logger LOG = Logger.getLogger(DirectionViewInterceptor.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
     	TicketMedCaseForm form = (TicketMedCaseForm) aForm ;
     	Visit entity = (Visit) aEntity ;
