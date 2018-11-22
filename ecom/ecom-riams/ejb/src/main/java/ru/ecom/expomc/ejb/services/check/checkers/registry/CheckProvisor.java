@@ -1,16 +1,17 @@
 package ru.ecom.expomc.ejb.services.check.checkers.registry;
 
-import java.util.Collection;
-
 import ru.ecom.expomc.ejb.domain.registry.RegistryEntry;
 import ru.ecom.expomc.ejb.services.check.ICheckLog;
 import ru.ecom.expomc.ejb.services.check.checkers.BadPropertyUtil;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import java.util.Collection;
+
 /**
  * Провизорность
  */
 @Comment("Провизорность")
+@Deprecated
 public class CheckProvisor extends AbstractRegistryAcceptedCheck {
 
     public boolean isAccepted(RegistryEntry aEntry, ICheckLog aLog) {

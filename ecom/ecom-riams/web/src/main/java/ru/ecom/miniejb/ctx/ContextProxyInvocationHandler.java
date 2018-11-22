@@ -1,5 +1,11 @@
 package ru.ecom.miniejb.ctx;
 
+import org.apache.log4j.Logger;
+import ru.ecom.miniejb.ThreadLocalContextManager;
+import ru.ecom.miniejb.impl.SimpleSessionContext;
+
+import javax.ejb.SessionContext;
+import javax.naming.InitialContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,22 +16,13 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.ejb.SessionContext;
-import javax.naming.InitialContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.ecom.miniejb.ThreadLocalContextManager;
-import ru.ecom.miniejb.impl.SimpleSessionContext;
-
 /**
  * Вызов метода сервиса.
  */
 public class ContextProxyInvocationHandler implements InvocationHandler {
 
-    private final static Log LOG = LogFactory.getLog(ContextProxyInvocationHandler.class);
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+    private final static Logger LOG = Logger.getLogger(ContextProxyInvocationHandler.class);
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     private final String theUsername;
@@ -39,7 +36,7 @@ public class ContextProxyInvocationHandler implements InvocationHandler {
     }
 
     public Object invoke(Object proxy, Method aMethod, Object[] args) throws Throwable {
-        if (CAN_TRACE) LOG.trace("BEFORE: totalMemory() = " + Runtime.getRuntime().totalMemory());
+        if (CAN_TRACE) LOG.info("BEFORE: totalMemory() = " + Runtime.getRuntime().totalMemory());
         LOG.info(" thread = "+Thread.currentThread().getId()) ;
         ThreadLocalContextManager.start();
         try {

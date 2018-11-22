@@ -1,23 +1,16 @@
 package ru.ecom.ejb.services.entityform;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
+import org.apache.log4j.Logger;
+import org.jboss.annotation.security.SecurityDomain;
+import ru.nuzmsh.util.PropertyUtil;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-import org.jboss.annotation.security.SecurityDomain;
-
-import ru.ecom.ejb.services.entityform.map.MapClassLoader;
-import ru.ecom.ejb.services.util.EntityHelper;
-import ru.nuzmsh.util.PropertyUtil;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  *  Работа с EntityForm

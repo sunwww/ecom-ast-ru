@@ -1,13 +1,11 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import org.apache.log4j.Logger;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
 
 /**
  * @jsp.tag name="hideException"
@@ -17,8 +15,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class HideExceptionTag extends SimpleTagSupport {
 
-    private final static Log LOG = LogFactory.getLog(HideExceptionTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(HideExceptionTag.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public void doTag() throws JspException, IOException {
@@ -26,7 +24,7 @@ public class HideExceptionTag extends SimpleTagSupport {
         try {
             getJspBody().invoke(out);
         } catch (Exception e) {
-            if(CAN_TRACE) LOG.trace("Ошибка",e) ;
+            if(CAN_TRACE) LOG.info("Ошибка",e); ;
             out.print("<div class='error'>") ;
             out.print(e.getMessage()) ;
             out.print("</div>") ;

@@ -1,7 +1,5 @@
 package ru.nuzmsh.web.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.tags.decorator.ITableDecorator;
@@ -29,13 +27,6 @@ import java.util.Iterator;
  *     description = "Table JSP tag."
  */
 public class TableTag extends AbstractGuidSupportTag {
-
-    private final static Log LOG = LogFactory.getLog(TableTag.class) ;
-    @SuppressWarnings("unused")
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
-
-    @SuppressWarnings("unused")
-    private static final String VERSION = "1.2";
 
     /**
      * Не выводить шапку таблицы

@@ -1,22 +1,20 @@
 package ru.ecom.web.servlet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * @author esinev 18.08.2006 1:53:34
  */
 public abstract class AbstractAutocompleteServlet extends HttpServlet {
-    private final static Log LOG = LogFactory.getLog(AbstractAutocompleteServlet.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(AbstractAutocompleteServlet.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 
@@ -56,11 +54,11 @@ public abstract class AbstractAutocompleteServlet extends HttpServlet {
 //        if(aRequest.getParameter("parent")!=null) {
 //            id=id+";"+aRequest.getParameter("parent") ;
 //        }
-        if (CAN_TRACE) LOG.trace("id = " + id);
+        if (CAN_TRACE) LOG.info("id = " + id);
         String query = aRequest.getParameter("query");
-        if (CAN_TRACE) LOG.trace("query = " + query);
+        if (CAN_TRACE) LOG.info("query = " + query);
         boolean isForward = !"backward".equals(direction) ;
-        if (CAN_TRACE) LOG.trace("isForward = " + isForward);
+        if (CAN_TRACE) LOG.info("isForward = " + isForward);
         int COUNT = 10 ;
         PrintWriter out = aResponse.getWriter() ;
         out.println("<?xml version='1.0' encoding='utf-8'  ?>") ;

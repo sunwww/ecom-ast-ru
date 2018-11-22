@@ -1,9 +1,8 @@
 package ru.ecom.miniejb.impl;
 
-import java.util.HashMap;
+import org.apache.log4j.Logger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,8 +12,8 @@ import org.apache.commons.logging.LogFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class EjbHash {
-    private final static Log LOG = LogFactory.getLog(EjbHash.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(EjbHash.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public EjbHash() {
@@ -22,13 +21,13 @@ public class EjbHash {
     }
 
     public void put(Class aClass, String aJndi) {
-        if (CAN_TRACE) LOG.trace(" putting " + aClass+" to "+aJndi);
+        if (CAN_TRACE) LOG.info(" putting " + aClass+" to "+aJndi);
         theHashMap.put(aClass.getName(), aJndi) ;
     }
 
     public String get(Class aClass) {
         String jndi = theHashMap.get(aClass.getName()) ;
-        if (CAN_TRACE) LOG.trace(" getting " + aClass+" ("+jndi+")");
+        if (CAN_TRACE) LOG.info(" getting " + aClass+" ("+jndi+")");
         return  jndi;
     }
     private final HashMap<String, String> theHashMap = new HashMap<String, String>();

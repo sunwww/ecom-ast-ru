@@ -1,5 +1,6 @@
 package ru.nuzmsh.ejb.formpersistence;
 
+import org.apache.log4j.Logger;
 import ru.nuzmsh.commons.formpersistence.IEntityFormManager;
 import ru.nuzmsh.commons.formpersistence.IEntityFormManagerContext;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -9,31 +10,28 @@ import ru.nuzmsh.commons.formpersistence.annotation.RolesToEdit;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormEntityEJB;
 import ru.nuzmsh.util.PropertyUtil;
 
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.Id;
 import javax.rmi.PortableRemoteObject;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.FinderException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.ArrayList;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  *
  */
 public class EntityEJBEntityFormManager implements IEntityFormManager {
 
-    private final static Log LOG = LogFactory.getLog(EntityEJBEntityFormManager.class);
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+    private final static Logger LOG = Logger.getLogger(EntityEJBEntityFormManager.class);
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public EntityEJBEntityFormManager(String aJndiPrefix) throws NamingException {
@@ -107,7 +105,7 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
             }
             Class homeClass = home.getClass();
             Method findByPrimaryKey = homeClass.getMethod("findByPrimaryKey", idClass);
-            if (CAN_TRACE) LOG.trace("findByPrimaryKeyMethod = " + findByPrimaryKey);
+            if (CAN_TRACE) LOG.info("findByPrimaryKeyMethod = " + findByPrimaryKey);
             Object id = getId(aForm);
             if(id!=null && !id.toString().equals("")) {
                 Object ejbObject ;
@@ -135,7 +133,7 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
                         Method createMethod = homeClass.getMethod("create", idClass);
                         entityObject = createMethod.invoke(home, id);
                     } catch(NoSuchMethodException e) {
-                        if (CAN_TRACE) LOG.trace("e = " + e,e);
+                        if (CAN_TRACE) LOG.info("e = " + e,e);
                         Method createMethod = homeClass.getMethod("create") ;
                         entityObject = createMethod.invoke(home);
                     }
@@ -190,24 +188,24 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
         try {
             // todo
             String jndiName = new StringBuilder(theJndiPrefix).append('/').append(entityFormEJB.jndiSimpleName()).toString();
-            if (CAN_TRACE) LOG.trace("jndiName = " + jndiName);
+            if (CAN_TRACE) LOG.info("jndiName = " + jndiName);
             Object objRef = theInitialContext.lookup(theJndiPrefix + "/" + entityFormEJB.jndiSimpleName());
-            if (CAN_TRACE) LOG.trace("objRef = " + objRef);
+            if (CAN_TRACE) LOG.info("objRef = " + objRef);
             Object home = PortableRemoteObject.narrow(objRef, entityFormEJB.home());
-            if (CAN_TRACE) LOG.trace("home = " + home);
+            if (CAN_TRACE) LOG.info("home = " + home);
 
             Class idClass = findIdClass(clazz);
-            if (CAN_TRACE) LOG.trace("idClass = " + idClass);
+            if (CAN_TRACE) LOG.info("idClass = " + idClass);
             if (idClass == null) {
                 throw new IllegalArgumentException("Нет описания идентификатора. Нет ни отдного свойства с аннотацией @Id.");
             }
             Class homeClass = home.getClass();
             Method findByPrimaryKey = homeClass.getMethod("findByPrimaryKey", idClass);
-            if (CAN_TRACE) LOG.trace("findByPrimaryKeyMethod = " + findByPrimaryKey);
+            if (CAN_TRACE) LOG.info("findByPrimaryKeyMethod = " + findByPrimaryKey);
             Object id = getId(aObject);
-            if (CAN_TRACE) LOG.trace("id = " + id);
+            if (CAN_TRACE) LOG.info("id = " + id);
             Object ejbObject = id != null ? findByPrimaryKey.invoke(home, getId(aObject)) : null;
-            if (CAN_TRACE) LOG.trace("ejbObject = " + ejbObject);
+            if (CAN_TRACE) LOG.info("ejbObject = " + ejbObject);
             if (id == null && ejbObject == null) {
                 // todo обработать GENERATE
                 throw new IllegalStateException("Ошибка сохранения/создания. Нет ни идентификатора, ни EntityEJB объекта");
@@ -249,14 +247,14 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
         try {
             // todo
             String jndiName = new StringBuilder(theJndiPrefix).append('/').append(entityFormEJB.jndiSimpleName()).toString();
-            if (CAN_TRACE) LOG.trace("jndiName = " + jndiName);
+            if (CAN_TRACE) LOG.info("jndiName = " + jndiName);
             Object objRef = theInitialContext.lookup(theJndiPrefix + "/" + entityFormEJB.jndiSimpleName());
-            if (CAN_TRACE) LOG.trace("objRef = " + objRef);
+            if (CAN_TRACE) LOG.info("objRef = " + objRef);
             Object home = PortableRemoteObject.narrow(objRef, entityFormEJB.home());
-            if (CAN_TRACE) LOG.trace("home = " + home);
+            if (CAN_TRACE) LOG.info("home = " + home);
 
             Class idClass = findIdClass(clazz);
-            if (CAN_TRACE) LOG.trace("idClass = " + idClass);
+            if (CAN_TRACE) LOG.info("idClass = " + idClass);
             if (idClass == null) {
                 throw new IllegalArgumentException("Нет описания идентификатора. Нет ни отдного свойства с аннотацией @Id.");
             }
@@ -316,13 +314,13 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
     }
 
     public void remove(Object aObject, IEntityFormManagerContext aContext) {
-        if (CAN_TRACE) LOG.trace("Удаление " + aObject);
+        if (CAN_TRACE) LOG.info("Удаление " + aObject);
         Object home = findHome(aObject.getClass()) ;
         try {
             Object id = getId(aObject) ;
             Class idClass = findIdClass(aObject.getClass());
             Object ejbObject = findByPrimaryKey(home, id, idClass) ;
-            if (CAN_TRACE) LOG.trace("ejbObject = " + ejbObject);
+            if (CAN_TRACE) LOG.info("ejbObject = " + ejbObject);
             if(ejbObject!=null) {
                 Method method = ejbObject.getClass().getMethod("remove") ;
                 method.invoke(ejbObject) ;

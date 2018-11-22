@@ -93,11 +93,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					"left join medcase mc on mc.id=ds.medcase_id\n" +
 					"where idc.code like 'O82%' and mc.id="+aMedCaseId;
 			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
-			if (Long.valueOf(list.toString())>0) {
-				return true;
-			} else {
-				return false;
-			}
+			return Long.valueOf(list.toString())>0;
 		} else {
 			return true;
 		}
@@ -108,12 +104,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
 			String sql = "select count(ac.id) from assessmentCard ac where depmedcase_id= "+aMedCaseId + " and template=7";
-			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
-			if (Long.valueOf(list.toString())>0) {
-				return true;
-			} else {
-				return false;
-			}
+			Object list = aManager.createNativeQuery(sql).getSingleResult();
+			return Long.valueOf(list.toString())>0;
 		} else {
 			return true;
 		}
@@ -128,13 +120,9 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					" left join medcase slos on slos.parent_id=slo.parent_id and slos.dtype='DepartmentMedCase'" +
 					" left join childBirth cb on cb.medcase_id=slos.id" +
 					" where slo.id="+aMedCaseId+" and cb.pangsStartDate is not null";
-			Object list = aManager.createNativeQuery(sql.toString()).getSingleResult();
+			Object list = aManager.createNativeQuery(sql).getSingleResult();
 		//	System.out.println("=== РОДЫ, list.size()="+list.toString());
-			if (Long.valueOf(list.toString())>0) {
-				return true;
-			} else {
-				return false;
-			}
+			return Long.valueOf(list.toString())>0;
 		} else {
 			return true;
 		}

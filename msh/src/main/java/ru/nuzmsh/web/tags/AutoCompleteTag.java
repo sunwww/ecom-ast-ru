@@ -1,18 +1,12 @@
 package ru.nuzmsh.web.tags;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.input;
 import org.apache.ecs.xhtml.script;
-
+import org.apache.log4j.Logger;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.web.tags.helper.JavaScriptContext;
@@ -20,6 +14,10 @@ import ru.nuzmsh.web.util.StripExceptionHelper;
 import ru.nuzmsh.web.vochelper.VocHelperDelegate;
 import ru.nuzmsh.web.vochelper.VocHelperLocateException;
 import ru.nuzmsh.web.xhtml.Xa;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @jsp.tag name="autoComplete"
@@ -29,8 +27,7 @@ import ru.nuzmsh.web.xhtml.Xa;
  */
 public class AutoCompleteTag extends AbstractFieldTag {
 
-    private final static Log LOG = LogFactory.getLog(AutoCompleteTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(AutoCompleteTag.class) ;
 
     /** 
 	 * Показывать идентификатор в названии

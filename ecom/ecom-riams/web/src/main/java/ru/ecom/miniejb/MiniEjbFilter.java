@@ -1,27 +1,15 @@
 package ru.ecom.miniejb;
 
-import java.io.IOException;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.apache.log4j.Logger;
 import ru.ecom.miniejb.impl.LocalProxyCreator;
 import ru.ecom.miniejb.impl.RemoteProxyCreator;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.naming.*;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.servlet.*;
+import java.io.IOException;
 
 /**
  * Инициализация InitialContext
@@ -29,8 +17,8 @@ import ru.nuzmsh.util.StringUtil;
  */
 public class MiniEjbFilter implements Filter {
 
-    private final static Log LOG = LogFactory.getLog(MiniEjbFilter.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(MiniEjbFilter.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     private static String getConfigParam(FilterConfig aFilterConfig, String aName) {
@@ -83,7 +71,7 @@ public class MiniEjbFilter implements Filter {
 
 
     private void printContext(String aStr) {
-        if (CAN_TRACE) LOG.trace("Печать " + aStr);
+        if (CAN_TRACE) LOG.debug("Печать " + aStr);
         printContext(" ", theInitialContext) ;
 
     }
@@ -93,7 +81,7 @@ public class MiniEjbFilter implements Filter {
             NamingEnumeration<NameClassPair> en = aContext.list("") ;
             while (en.hasMoreElements()) {
                 NameClassPair pair = en.nextElement();
-                if (CAN_TRACE) LOG.trace(aStr+"  pair  " + pair.getName()+" "+pair.getClassName());
+                if (CAN_TRACE) LOG.debug(aStr+"  pair  " + pair.getName()+" "+pair.getClassName());
                 Object obj = aContext.lookup(pair.getName()) ;
                 if(obj instanceof Context) {
                     printContext(aStr+" ", (Context) obj) ;

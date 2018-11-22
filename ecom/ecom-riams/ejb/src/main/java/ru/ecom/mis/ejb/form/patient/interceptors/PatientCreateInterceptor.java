@@ -2,13 +2,12 @@ package ru.ecom.mis.ejb.form.patient.interceptors;
 
 import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.IEntityForm;
-import ru.ecom.ejb.services.entityform.IParentEntityFormService;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.form.patient.LpuAttachedByDepartmentForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
+import ru.nuzmsh.util.StringUtil;
 
 public class PatientCreateInterceptor implements IFormInterceptor {
 
@@ -28,8 +27,11 @@ public class PatientCreateInterceptor implements IFormInterceptor {
 				String syncCode = EjbInjection.getInstance().getLocalService(ISequenceService.class).startUseNextValue("Patient","patientSync");
 				patient.setPatientSync(syncCode) ;
 			} else {
-				patient.setPatientSync(new StringBuilder().append("Н").append(patient.getId()).toString()) ;
+				patient.setPatientSync("Н"+patient.getId()) ;
 			}
+		}
+		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/MisLpuDynamic/1/View") && StringUtil.isNullOrEmpty(form.getPhone())) { //Только для АМОКБ
+			throw new IllegalStateException("Необходимо указать контактный телефон");
 		}
 		/*if(form.isAttachedByDepartment()) {
 			// убираем прикрепление по полису, потом SaveInterceptor его прикрепит по адресу

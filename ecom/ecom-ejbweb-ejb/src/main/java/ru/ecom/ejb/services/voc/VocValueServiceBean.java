@@ -1,19 +1,7 @@
 package ru.ecom.ejb.services.voc;
 
-import java.util.Collection;
-
-import javax.annotation.Resource;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
-
 import ru.ecom.ejb.services.destroy.IDestroyService;
 import ru.ecom.ejb.services.voc.helper.PersistenceXmlVocLoader;
 import ru.ecom.ejb.services.voc.helper.XmlVocValueLoader;
@@ -25,6 +13,15 @@ import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
+import javax.annotation.Resource;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Collection;
+
 /**
  * 
  */
@@ -34,11 +31,9 @@ import ru.nuzmsh.util.voc.VocValue;
 @SecurityDomain("other")
 public class VocValueServiceBean implements IVocService, IVocInfoService {
 
-    private final static Log LOG = LogFactory.getLog(VocValueServiceBean.class);
+    private final static Logger LOG = Logger.getLogger(VocValueServiceBean.class);
     private final static boolean RELOAD_HASH_EVERY_TIME = !StringUtil.isNullOrEmpty(EjbEcomConfig.getInstance().get(EjbEcomConfig.VOC_DIR_PREFIX,null)) ;
     
-    //private final static boolean CAN_TRACE = LOG.isTraceEnabled();
-
     private static VocHashHolder HOLDER = null ;
     private static final String SYNC_VOCVALUESERVICE = "SYNC_VOCVALUESERVICE" ;
     

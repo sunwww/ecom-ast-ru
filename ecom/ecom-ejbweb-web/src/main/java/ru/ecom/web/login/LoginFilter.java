@@ -1,34 +1,26 @@
 package ru.ecom.web.login;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Enumeration;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.jboss.security.SecurityAssociation;
-
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.messages.ErrorMessage;
 import ru.nuzmsh.web.util.StringSafeEncode;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Enumeration;
 
 /**
  * Безопасность
  */
 public class LoginFilter implements Filter {
 
-    private final static Log LOG = LogFactory.getLog(LoginFilter.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+	private final static Logger LOG = Logger.getLogger(LoginFilter.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -38,7 +30,7 @@ public class LoginFilter implements Filter {
     public void doFilter(ServletRequest aRequest, ServletResponse aResponse, FilterChain aChain) throws IOException, ServletException {
 
     	if(CAN_TRACE) {
-			LOG.trace("LoginFilter.doingFilter ...[ hashCode()="+hashCode()+", currentThreadId="+Thread.currentThread().getId()+"]"); 
+			LOG.info("LoginFilter.doingFilter ...[ hashCode()="+hashCode()+", currentThreadId="+Thread.currentThread().getId()+"]");
     	}
         HttpServletRequest request = (HttpServletRequest) aRequest ;
         String url = request.getRequestURI() ;
@@ -116,7 +108,7 @@ public class LoginFilter implements Filter {
         try {
         	if (CAN_TRACE) {
         		
-				LOG.trace("Очищаем SecurityAssociation ...[ hashCode()="+hashCode()+", currentThreadId="+Thread.currentThread().getId()+"]"); 
+				LOG.info("Очищаем SecurityAssociation ...[ hashCode()="+hashCode()+", currentThreadId="+Thread.currentThread().getId()+"]");
         	}
         	SecurityAssociation.clear() ;
         } catch (Exception e) {

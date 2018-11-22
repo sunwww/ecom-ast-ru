@@ -75,6 +75,14 @@
   <global-forwards />
 
   <action-mappings>
+        <action path='/ws_chat' type='ru.ecom.web.actions.base.ForwardAction'
+                name='mis_searchForm'
+                validate='true'
+                scope="session"
+                input='/WEB-INF/actions/riams/ws_test.jsp'
+                >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/riams/ws_test.jsp" />
+        </action>
         <action path='/dis_documents' type='ru.ecom.mis.web.action.disability.DisabilityDocumentSearchAction'
                 name='mis_searchForm'
                 validate='true'

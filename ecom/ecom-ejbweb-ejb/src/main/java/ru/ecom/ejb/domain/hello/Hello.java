@@ -1,18 +1,12 @@
 package ru.ecom.ejb.domain.hello;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Comment;
-import static javax.persistence.CascadeType.ALL;
-
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.NoLiveBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 
 @Entity

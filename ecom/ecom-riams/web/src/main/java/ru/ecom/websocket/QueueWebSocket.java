@@ -82,6 +82,7 @@ public class QueueWebSocket {
     }
 
     @OnClose
+    /**При выходе пользователя*/
     public void onClose(@PathParam("username") String aUsername){
         OperatorSession os = sessions.get(aUsername);
         if (os!=null)os.setIsOffline(true);
@@ -104,7 +105,7 @@ public class QueueWebSocket {
                     findFreeOperatorByTicket(msg.getJSONObject("ticket"));
                     break;
                 case "exit":
-                    sessions.remove(session);
+                    onLogout(session);
                     break;
                 case "showAllTickets":
                     sendMessage(getOKJson(method).put("tickets",getAllActiveTickets(session.getQueueCode())),session);
@@ -165,6 +166,13 @@ public class QueueWebSocket {
     }
 private boolean isNotNull (String o) { return o!=null && !o.trim().equals("");}
 
+    /** При прекращении работы пользователя*/
+    private void onLogout(OperatorSession aSession) {
+        if (aSession.getTicket()!=null) {markTicketExecuted(aSession.getTicket(),null,aSession);}
+        sessions.remove(session);
+    }
+
+
     /** Изменяем номер окна для рабочей функции*/
     private void setWindowNumber(String aMethod, OperatorSession aSession, String aWindowNumber) {
         if (isNotNull(aWindowNumber)) {
@@ -195,7 +203,7 @@ private QueueTicket getTicketById(Long aTicketId) {
     /**Находим свободного оператора по коду очереди */
 private OperatorSession getFreeOperator (String aQueueCode) {
         for (OperatorSession os: sessions.values()) {
-            if (!os.getIsBusy() && os.getQueueCode()!=null
+            if (!os.getIsOffline() && !os.getIsBusy() && os.getQueueCode()!=null
                     && os.getQueueCode().equals(aQueueCode)
                     && os.getRole().equals(OPERATORROLE)
             ) {
@@ -290,6 +298,9 @@ private OperatorSession getFreeOperator (String aQueueCode) {
      * Указываем дату окончания, убираем талон с экрана, отмечаем оператора как свободного
      * */
     private void markTicketExecuted(QueueTicket aTicket, IQueueService aQueueService, OperatorSession aSession) {
+        try{
+            if (aQueueService==null) {aQueueService=getInjection().getService(IQueueService.class);}
+        }catch (Exception e ){log.error(aTicket.getId()+" No QueueService");}
         aTicket.setFinishExecuteDate(new Date());
         aTicket.setFinishExecutor(aSession.getWorkFunction());
         aQueueService.persistTicket(aTicket);

@@ -1,19 +1,7 @@
 package ru.ecom.jaas.ejb.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.jaas.ejb.domain.SoftConfig;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -21,10 +9,10 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.diary.ejb.service.protocol.KdlDiaryServiceBean;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.jaas.ejb.domain.SoftConfig;
+import java.io.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Stateless
 @Remote(ISoftConfigService.class )

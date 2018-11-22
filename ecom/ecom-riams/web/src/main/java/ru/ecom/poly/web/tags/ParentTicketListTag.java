@@ -1,27 +1,23 @@
 package ru.ecom.poly.web.tags;
 
-import java.io.IOException;
-import java.util.Collection;
+import org.apache.log4j.Logger;
+import ru.ecom.poly.ejb.services.ITicketService;
+import ru.ecom.web.tags.ParentEntityListAllTag;
+import ru.ecom.web.util.Injection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.ecom.poly.ejb.services.ITicketService;
-import ru.ecom.web.tags.ParentEntityListAllTag;
-import ru.ecom.web.util.Injection;
+import java.util.Collection;
 
 /**
  *
  */
 public class ParentTicketListTag extends ParentEntityListAllTag {
 
-    private final static Log LOG = LogFactory.getLog(ParentTicketListTag.class) ;
+    private final static Logger LOG = Logger.getLogger(ParentTicketListTag.class) ;
 
-    public void doTag() throws JspException, IOException {
+    public void doTag() throws JspException {
 //        JspWriter out = getJspContext().getOut() ;
         PageContext ctx = (PageContext) getJspContext() ;
         HttpServletRequest request = (HttpServletRequest) ctx.getRequest() ;

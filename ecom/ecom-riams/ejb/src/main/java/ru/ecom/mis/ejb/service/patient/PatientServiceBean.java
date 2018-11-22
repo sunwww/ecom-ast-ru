@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.address.ejb.domain.address.Address;
-import ru.ecom.alg.common.IsChild;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -37,6 +36,7 @@ import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.ecom.mis.ejb.form.patient.VocOrgForm;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
@@ -1822,7 +1822,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		// ребенок, если < 18 и есть дата рождения
 		boolean isChild = aBirthday!=null
-		    ? theIsChildUtil.isChild(aBirthday, new java.util.Date())
+		    ? AgeUtil.calcAgeYear(aBirthday,new java.util.Date())<18
 		    : false	;
 		EntityManager manager = theManager; // theFactory.createEntityManager();
 		StringBuilder sb = new StringBuilder();
@@ -2023,7 +2023,6 @@ private @EJB
 	private final LpuAreaDynamicSecurity theLpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
 
 	private @Resource SessionContext theSessionContext;
-	private final IsChild theIsChildUtil = new IsChild() ;
 	public String getConfigValue(String aConfigName, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		String res =config.get(aConfigName, aDefaultValue);

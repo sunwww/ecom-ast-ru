@@ -46,12 +46,18 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
             InputStream in = getClass().getResourceAsStream("/"+s);
             String sql = convertStreamToString(in);
             String tmp[] = sql.split("#");
-            Integer currScriptVersion = Integer.valueOf(tmp[0]);
-            if(databaseVersion<currScriptVersion){
-                execute(tmp[1]);
-                if(min<currScriptVersion){
-                    min=currScriptVersion;
+
+            try {
+                Integer currScriptVersion = Integer.valueOf(tmp[0]);
+                if(databaseVersion<currScriptVersion){
+                    LOG.info("executing "+s);
+                    execute(tmp[1]);
+                    if(min<currScriptVersion){
+                        min=currScriptVersion;
+                    }
                 }
+            } catch (Exception e) {
+                LOG.error("Error sql script "+s);
             }
         }
 

@@ -19,8 +19,6 @@ import java.util.List;
 
 @Stateless
 @Remote(IQueueService.class)
-
-
 public class QueueServiceBean implements IQueueService {
  /*   public QueueServiceBean(){
         List<Object[]> list = theManager.createNativeQuery("select q.id, max(cast(qt.number as int)) as lastN from queue q left join queueTicket qt on qt.queue_id=q.id where q.date=current_date group by q.id").getResultList();

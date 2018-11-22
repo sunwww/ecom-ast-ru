@@ -1,5 +1,9 @@
 package ru.nuzmsh.web.filter.caching;
 
+import org.apache.log4j.Logger;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,17 +13,10 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class RewritingHttpServletRequest implements HttpServletRequest {
 
-	private final static Log LOG = LogFactory
-			.getLog(RewritingHttpServletRequest.class);
-	private final static boolean CAN_TRACE = LOG.isTraceEnabled();
+	private final static Logger LOG = Logger.getLogger(RewritingHttpServletRequest.class);
+	private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 	
 	
 	public RewritingHttpServletRequest(HttpServletRequest aRequest) {
@@ -37,7 +34,7 @@ public class RewritingHttpServletRequest implements HttpServletRequest {
 		} else {
 			ret = aStr;
 		}
-		if(CAN_TRACE) LOG.trace("Translated to "+ret) ;
+		if(CAN_TRACE) LOG.info("Translated to "+ret) ;
 		return ret ;
 	}
 

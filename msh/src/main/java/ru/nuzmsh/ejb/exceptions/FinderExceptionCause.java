@@ -1,7 +1,6 @@
 package ru.nuzmsh.ejb.exceptions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import javax.ejb.FinderException;
 
@@ -10,8 +9,7 @@ import javax.ejb.FinderException;
  */
 public class FinderExceptionCause extends FinderException {
 
-    private final static Log LOG = LogFactory.getLog(FinderExceptionCause.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(FinderExceptionCause.class) ;
 
 
     public FinderExceptionCause(String aMessage, Exception aCause) {

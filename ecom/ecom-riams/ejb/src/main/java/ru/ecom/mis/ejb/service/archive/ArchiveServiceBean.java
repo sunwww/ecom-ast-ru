@@ -1,14 +1,13 @@
 package ru.ecom.mis.ejb.service.archive;
 
+import ru.ecom.mis.ejb.domain.archive.ArchiveCase;
+import ru.ecom.mis.ejb.domain.medcase.StatisticStub;
+
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.mis.ejb.domain.archive.ArchiveCase;
-import ru.ecom.mis.ejb.domain.medcase.StatisticStub;
-import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 @Stateless
 @Local(IArchiveService.class)
 @Remote(IArchiveService.class)

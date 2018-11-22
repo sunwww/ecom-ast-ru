@@ -1,21 +1,19 @@
 package ru.ecom.web.dwr;
 
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.monitor.RemoteMonitorStatus;
 import ru.ecom.web.util.Injection;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * 
  */
 public class RemoteMonitorServiceJs {
-     private final static Log LOG = LogFactory.getLog(RemoteMonitorServiceJs.class) ;
-     private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+     private final static Logger LOG = Logger.getLogger(RemoteMonitorServiceJs.class) ;
 
 
     public RemoteMonitorStatus getMonitorStatus(HttpServletRequest aRequest, long aMonitorId) throws NamingException {

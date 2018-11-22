@@ -1,41 +1,14 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Time;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Stack;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.TagSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Element;
 import org.apache.ecs.MultiPartElement;
 import org.apache.ecs.html.A;
-import org.apache.ecs.xhtml.div;
-import org.apache.ecs.xhtml.input;
-import org.apache.ecs.xhtml.label;
-import org.apache.ecs.xhtml.li;
-import org.apache.ecs.xhtml.span;
-import org.apache.ecs.xhtml.td;
-import org.apache.ecs.xhtml.ul;
+import org.apache.ecs.xhtml.*;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.taglib.TagUtils;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.fields.ALabel;
@@ -55,6 +28,24 @@ import ru.nuzmsh.web.util.DemoModeUtil;
 import ru.nuzmsh.web.util.IdeTagHelper;
 import ru.nuzmsh.web.util.StringSafeEncode;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.TagSupport;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Time;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Stack;
+
 /**
  * @jsp.tag name="field"
  *          display-name="Field"
@@ -63,8 +54,8 @@ import ru.nuzmsh.web.util.StringSafeEncode;
  */
 public abstract class AbstractFieldTag extends TagSupport implements IGuidSupport {
 
-    private final static Log LOG = LogFactory.getLog(AbstractFieldTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(AbstractFieldTag.class) ;
+    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public static final String LAST_DISPLAYED_FIELDNAME = "LAST_DISPLAYED_FIELD";
@@ -471,8 +462,8 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
 
 
             // проверки на роли для редактирования
-//        if (CAN_TRACE) LOG.trace("theEditRoles = " + theEditRoles);
-//        if (CAN_TRACE) LOG.trace("fieldElement.getClass() = " + fieldElement.getClass());
+//        if (CAN_TRACE) LOG.info("theEditRoles = " + theEditRoles);
+//        if (CAN_TRACE) LOG.info("fieldElement.getClass() = " + fieldElement.getClass());
 
 //        if( !StringUtil.isNullOrEmpty(theEditRoles) && fieldElement instanceof input) {
 //            input inputElement = (input) fieldElement  ;
@@ -600,7 +591,7 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
     protected String getFormattedValue() throws JspException {
         String ret ;
         String beanName = getBeanName() ;
-        if (CAN_TRACE) LOG.trace("beanName = " + beanName);
+        if (CAN_TRACE) LOG.info("beanName = " + beanName);
         if(beanName!=null) {
         	Object value ;
         	try {
@@ -616,9 +607,9 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
             } catch (Exception e) {
             	LOG.warn("Ошибка при удалении символов в DEMO режиме [value="+value+"]", e);
             }
-            if (CAN_TRACE) LOG.trace(" value = " + value);
+            if (CAN_TRACE) LOG.info(" value = " + value);
             ret =  formatValue(value) ;
-            if (CAN_TRACE) LOG.trace(" after value = " + value);
+            if (CAN_TRACE) LOG.info(" after value = " + value);
         } else {
             ret =  "" ;
         }
@@ -664,7 +655,7 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
      * @since Struts 1.2
      */
     protected String formatValue(Object value)  {
-        //if (CAN_TRACE) LOG.trace(" value.getClass() = " + value!=null ? value.getClass() : "null class");
+        //if (CAN_TRACE) LOG.info(" value.getClass() = " + value!=null ? value.getClass() : "null class");
         if (value == null) {
             return "";
         }

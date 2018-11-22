@@ -53,7 +53,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	//throw ""+aForm.labList;	
 	if (aForm.labList!=null && aForm.labList !="") {
 		var addMedServicies = aForm.labList.split("#") ;
-		var labMap = new java.util.HashMap() ;
+	//	var labMap = new java.util.HashMap() ;
 		var prescriptType = null;
 		if (aForm.prescriptType!=null) {
 			prescriptType = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType,aForm.prescriptType) ;

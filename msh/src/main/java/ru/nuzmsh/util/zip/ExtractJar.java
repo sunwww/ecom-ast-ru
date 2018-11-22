@@ -1,25 +1,17 @@
 package ru.nuzmsh.util.zip;
 
-
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileOutputStream;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
 import java.util.Enumeration;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  *
  */
 public class ExtractJar {
-
-    private final static Log LOG = LogFactory.getLog(ExtractJar.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
-
 
     public ExtractJar(boolean aSupportsJarDir) {
         theSupportsJarDir = aSupportsJarDir ;
