@@ -1,6 +1,10 @@
 package ru.ecom.ejb.services.voc;
 
-import java.lang.reflect.Method;
+import org.jboss.annotation.security.SecurityDomain;
+import ru.ecom.ejb.services.voc.helper.EntityVocService;
+import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.voc.VocAdditional;
+import ru.nuzmsh.util.voc.VocValue;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -10,14 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-
-import org.jboss.annotation.security.SecurityDomain;
-
-import ru.ecom.ejb.services.voc.helper.EntityVocService;
-import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.voc.IVocService;
-import ru.nuzmsh.util.voc.VocAdditional;
-import ru.nuzmsh.util.voc.VocValue;
+import java.lang.reflect.Method;
 
 @Stateless
 @Remote(IVocEditService.class)

@@ -1,16 +1,12 @@
 package ru.ecom.ejb.services.destroy;
 
-import java.beans.Introspector;
-import java.util.LinkedList;
+import org.apache.log4j.Logger;
+import org.jboss.annotation.ejb.Service;
+import ru.nuzmsh.util.PropertyUtil;
 
 import javax.ejb.Local;
-
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.log4j.Logger;
-import org.jboss.annotation.ejb.Management;
-import org.jboss.annotation.ejb.Service;
-
-import ru.nuzmsh.util.PropertyUtil;
+import java.beans.Introspector;
+import java.util.LinkedList;
 
 @Service
 @Local(IDestroyService.class)
@@ -18,8 +14,7 @@ public class DestroyServiceBean implements IDestroyService, IDestroyManagementSe
 
 	private final static Logger LOG = Logger
 			.getLogger(DestroyServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+
 	public void add(IDestroyable aDestroyable) {
 		LOG.info(" Add "+aDestroyable.getClass().getSimpleName()) ;
 		theListeners.add(aDestroyable) ;
@@ -46,5 +41,5 @@ public class DestroyServiceBean implements IDestroyService, IDestroyManagementSe
 		//PropertyUtilsBean.clearDescriptors();
 	}
 	
-	private final LinkedList<IDestroyable> theListeners = new LinkedList<IDestroyable>() ;
+	private final LinkedList<IDestroyable> theListeners = new LinkedList<>() ;
 }

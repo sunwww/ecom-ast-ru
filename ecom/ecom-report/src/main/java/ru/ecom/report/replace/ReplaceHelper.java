@@ -1,15 +1,13 @@
 package ru.ecom.report.replace;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import ru.nuzmsh.util.PropertyUtil;
 
 /**
  */
 public class ReplaceHelper {
 
-    private final static Log LOG = LogFactory.getLog(ReplaceHelper.class) ;
-    private final static boolean CAN_TRACE = LOG.isTraceEnabled() ;
+    private final static Logger LOG = Logger.getLogger(ReplaceHelper.class) ;
 
     /** Режим RTF */
     public boolean getRtfMode() { return theRtfMode ; }
