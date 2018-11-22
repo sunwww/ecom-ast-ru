@@ -151,6 +151,7 @@ var resultofcalc;
 		div.appendChild(table);
 		var formul = "";
 
+		var ifNeedNode = false;  //есть ли примечание
 		for ( var i = 0; i < size; i++) {
 			var tr = document.createElement('tr');
 			tr.id = "id" + global;
@@ -188,8 +189,17 @@ var resultofcalc;
 			}
 			
 			if (result[i].Type_id == 3){
-				tr.innerHTML += "<td class=\"label'\"><label>"+ result[i].Comment + ":</label></td>";
-				tr.innerHTML += "<td><input type=\"checkbox\"/ id=\"id"+global+"\" class=\"Ctxtbox\" value='"+result[i].Value+"'></td>";
+                if (result[i].Note =='') {
+                    tr.innerHTML += "<td class=\"label'\"><label>" + result[i].Comment + ":</label></td>";
+                    tr.innerHTML += "<td><input type=\"checkbox\"/ id=\"id" + global + "\" class=\"Ctxtbox\" value='" + result[i].Value + "'></td>";
+                }
+				else if (result[i].Note !='') {
+                    tr.style="border-bottom: 1px solid black;border-top: 1px solid black";
+                    tr.innerHTML += "<td width=\"20%\" class=\"label'\"><label>" + result[i].Comment + ":</label></td>";
+                    tr.innerHTML += "<td width=\"5%\"><input type=\"checkbox\"/ id=\"id" + global + "\" class=\"Ctxtbox\" value='" + result[i].Value + "'></td>";
+                    tr.innerHTML +="<td width=\"75%\" class=\"label'\"><label>"+ result[i].Note + "</label></td>";
+                    ifNeedNode=true;
+                }
 				global++;
 			}
 		}
@@ -202,8 +212,9 @@ var resultofcalc;
 					
 				
 		tr2.innerHTML += "<td class=\"label'\"><label>Результат:</label></td>";
-		tr2.innerHTML += "<td><input disabled id=\"result\" class=\"result\" size=\"60\" type=\"text\"></td>";
-		
+        if (ifNeedNode) tr2.innerHTML += "<td class=\"label'\"><label></label></td>";
+		tr2.innerHTML += "<td><input disabled id=\"result\" class=\"result\" size=\"160\" type=\"text\"></td>";
+
 		
 		var invisibleResult = document.querySelector('#result');
 		var visibleResult = document.querySelector('#result.result');
@@ -216,7 +227,7 @@ var resultofcalc;
 	});
 
 	//Вычисление
-	function calculating() {
+	function calculating(save) {
 		var T = "";
 		for ( var i = 0; i < global; i++) {
 			
@@ -238,6 +249,34 @@ var resultofcalc;
 		var res = document.querySelector('#result.result');
 		res.value = eval(T);
 		resultofcalc = eval(T);
+		//Добавить интерпретацию результата, если есть
+        CalculateService.getInterpretation(calculator.value, res.value, {
+            callback : function(aResult) {
+                if (aResult != '') {
+                    if (res.value.indexOf(aResult) == -1) {
+                        res.value = "Результат " + res.value + " " + aResult;
+                        if (save) {
+                            if (!isEmpty()) {
+                                CalculateService.SetCalculateResultCreate(DepartmentId.value,
+                                    "Результат " + res.value + " " + aResult, calculator.value, {
+                                        callback: function (aResult) {
+                                            goBack();
+                                        }
+                                    });
+                            }
+                        }
+                    }
+                }
+                else if (save && !isEmpty()) {
+                    CalculateService.SetCalculateResultCreate(DepartmentId.value,
+                         res.value, calculator.value, {
+                            callback: function (aResult) {
+                                goBack();
+                            }
+                        });
+                }
+            }
+        });
 	}
 
 
@@ -277,18 +316,8 @@ var resultofcalc;
 
 	//Создание результата
 	function CreateRes() {
-		calculating();
-		var res = document.querySelector('#result.result');
-		if (!isEmpty()) {
-			CalculateService.SetCalculateResultCreate(DepartmentId.value,
-					res.value, calculator.value, {
-						callback : function(aResult) {
-							//alert("Сохранено!");
-							goBack();
-						}
-					});
-		}
-	}
+        calculating(true);
+    }
 
 	//проверка полей на пустоту
 	function isEmpty() {

@@ -21,6 +21,7 @@
         <form-bean name="calc_calculationsForm"			type="ru.ecom.mis.ejb.form.calc.CalculationsForm" />
 		<form-bean name="calc_calculatorForm"			type="ru.ecom.mis.ejb.form.calc.CalculatorForm" />
 		<form-bean name="calc_calculationsResultForm"	type="ru.ecom.mis.ejb.form.calc.CalculationsResultForm" />
+		<form-bean name="calc_interpretationForm"	type="ru.ecom.mis.ejb.form.calc.InterpretationForm" />
 	<!-- /Калькулятор -->
 		<form-bean name="mis_patientExternalServiceAccountForm"			type="ru.ecom.mis.ejb.form.patient.PatientExternalServiceAccountForm" />
 		<form-bean name="work_attorneyForm"			type="ru.ecom.mis.ejb.form.worker.AttorneyForm" />

@@ -29,6 +29,9 @@
 	<msh:autoComplete  property="valueOfResult" label="Тип" vocName="vocMeasureUnit" size="100" fieldColSpan="3" />
 </msh:row>
 				<msh:row>
+					<msh:checkBox property="createDiary" label="Создавать дневник при вычислении?" horizontalFill="true" fieldColSpan="3" />
+				</msh:row>
+				<msh:row>
 				<msh:label property="username" label="пол-ль"/>
 				<msh:submitCancelButtonsRow colSpan="1000"  />
 				</msh:row>
@@ -36,7 +39,7 @@
 			
 			
 			<msh:ifFormTypeIsView formName="calc_calculatorForm">
-			 <ecom:webQuery name="calcs" nativeSql="select c.id,c.value,c.comment, vtc.name from calculations c left join voctypecalc  vtc on vtc.id= c.type_id
+			 <ecom:webQuery name="calcs" nativeSql="select c.id,c.value,c.comment, vtc.name, c.note from calculations c left join voctypecalc  vtc on vtc.id= c.type_id
 													where calculator_id=${param.id} order by orderus"/>
       	<msh:section  createRoles="/Policy/Mis/Calc/Calculator" createUrl="entityParentPrepareCreate-calc_calculations.do?id=${param.id}" title="Функционал">
       		<msh:sectionContent>
@@ -45,9 +48,20 @@
 		      		<msh:tableColumn property="2" columnName="Значение" />
 		      		<msh:tableColumn property="3" columnName="Назначение/Комментарий"/>
 		      		<msh:tableColumn property="4" columnName="Тип"/>
+                    <msh:tableColumn property="5" columnName="Примечание"/>
 		      	</msh:table>
       		</msh:sectionContent>
       	</msh:section>
+				<ecom:webQuery name="ints" nativeSql="select id,value,result from interpretation where calculator_id=${param.id}"/>
+				<msh:section  createRoles="/Policy/Mis/Calc/Calculator" createUrl="entityParentPrepareCreate-calc_interpretation.do?id=${param.id}" title="Интерпретации результата">
+					<msh:sectionContent>
+						<msh:table name="ints" action="entityParentView-calc_interpretation.do" idField="1">
+							<msh:tableColumn property="sn" columnName="##"/>
+							<msh:tableColumn property="2" columnName="Значение" />
+							<msh:tableColumn property="3" columnName="Интерпретация результата"/>
+						</msh:table>
+					</msh:sectionContent>
+				</msh:section>
       	</msh:ifFormTypeIsView>
       	
       	
@@ -59,6 +73,7 @@
 	<msh:ifFormTypeIsView formName="calc_calculatorForm">
 		<msh:sideMenu title="Добавить">
 			<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-calc_calculations.do" name="функционал" title="функционал"/>
+			<msh:sideLink params="id" action="/entityParentPrepareCreate-calc_interpretation.do" name="интерпретацию результата" title="интерпретацию результата"/>
 		</msh:sideMenu>
 	</msh:ifFormTypeIsView>
 	</tiles:put>
