@@ -150,6 +150,10 @@ public class QueueWebSocket {
                 case "countAllSessions":
                     sendBroadCastMessage(getOKJson(method).put("message","").put("cntAll","1"),ADMINROLE);
                     break;
+                case "markTicketExecuted":
+                    JSONObject t = msg.getJSONObject("ticket");
+                    markTicketExecuted(null,queueService,session,t.getLong("ticketId"));
+                    break;
                 default:
                     log.error("Неизвестный тип сообщение!"+method);
                     break;
@@ -298,15 +302,37 @@ private OperatorSession getFreeOperator (String aQueueCode) {
      * Указываем дату окончания, убираем талон с экрана, отмечаем оператора как свободного
      * */
     private void markTicketExecuted(QueueTicket aTicket, IQueueService aQueueService, OperatorSession aSession) {
-        try{
-            if (aQueueService==null) {aQueueService=getInjection().getService(IQueueService.class);}
-        }catch (Exception e ){log.error(aTicket.getId()+" No QueueService");}
-        aTicket.setFinishExecuteDate(new Date());
-        aTicket.setFinishExecutor(aSession.getWorkFunction());
-        aQueueService.persistTicket(aTicket);
-        aSession.setIsBusy(false);
-        hideTicketOnTheScreen(aTicket); //удаляем талон с экрана
-
+        markTicketExecuted(aTicket,aQueueService,aSession,null);
+    }
+    private void markTicketExecuted(QueueTicket aTicket, IQueueService aQueueService, OperatorSession aSession, Long aTicketId) {
+        try {
+            if (aQueueService==null) {
+                aQueueService=getInjection().getService(IQueueService.class);
+            }
+        } catch (Exception e ){
+            e.printStackTrace();
+            log.error(aTicket.getId()+" No QueueService");
+        }
+        if (aTicket==null) aTicket=aQueueService.findTicketById(aTicketId);
+        if (aTicket!=null && aTicket.getFinishExecutor()!=null) {
+            aTicket.setFinishExecuteDate(new Date());
+            aTicket.setFinishExecutor(aSession.getWorkFunction());
+            aQueueService.persistTicket(aTicket);
+            log.info("send to session null ticket000");
+            if(aSession.getRole().equals(ADMINROLE)) { //При пометке администратором талона как выполненный отправляем пользователю информацию о выполнении талона
+                final Long tId = aTicket.getId();
+                sessions.forEach((k,s)->{
+                    if(s.getTicket()!=null && s.getTicket().getId()==tId) {
+                        s.setTicket(null);s.setIsBusy(false);
+                        sendMessage(getOKJson("getNextTicket",s).put("ticket","{}"),s);
+                        log.info("send to session null ticket");
+                    }
+                });
+            } else {
+                aSession.setIsBusy(false);
+            }
+            hideTicketOnTheScreen(aTicket); //удаляем талон с экрана
+        }
     }
 
     /** Отображаем талон на экране*/
@@ -335,13 +361,17 @@ private OperatorSession getFreeOperator (String aQueueCode) {
         }
     }
 
-    /** Отображаем все активные талоны на экране по коду очереди*/
+    /** Отображаем все активные талоны на экране по коду очереди
+     * upd: отображаем талоны только к онлайн - операторам
+     * */
     private JSONArray getAllActiveTickets(String aQueueCode) {
         JSONArray tickets = new JSONArray();
         sessions.forEach((k,v)->{
-            QueueTicket ticket = v.getTicket();
-            if (ticket!=null && ticket.getQueue().getType().getCode().equals(aQueueCode)) {
-                tickets.put(getCurrentTicket(ticket));
+            if (!v.getIsOffline()) {
+                QueueTicket ticket = v.getTicket();
+                if (ticket!=null && ticket.getQueue().getType().getCode().equals(aQueueCode)) {
+                    tickets.put(getCurrentTicket(ticket));
+                }
             }
         });
         return tickets;

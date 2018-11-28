@@ -77,7 +77,11 @@ if (kioskMode.equals("TV")) {
 </div>
 <table id="queueTable" border="1" class="queueTable" cellpadding="0" cellspacing="0">
 </table>
-<%}%>
+<%} else if (kioskMode.equals("ADMIN")) {%>
+    <input type="text" id="executeTicket" placeholder="Введите ИД талона для снятия с очереди">
+    <input type="button" value="Аннулировать" onclick="annulTicket()" >
+    <input type="button" value="Получить список талонов" onclick="getAllTickets()" >
+    <% }%>
 
 <script type="text/javascript" src="./dwr/interface/VocService.js"></script>
 <script type="text/javascript" src="/skin/ac.js"></script>
@@ -88,6 +92,20 @@ window.onload = function(){${kioskMode}ONLOAD();};
 function reload() {
 console.log("reload page")
     window.document.location.reload();
+}
+
+function annulTicket() {
+    var t = +jQuery('#executeTicket').val();
+    alert ("t="+t)
+    if (t) {
+        ws_sendMessage({method:"markTicketExecuted",ticket:{ticketId:t}});
+    }
+
+}
+
+function ADMINONLOAD() {
+    connectWebSocketKiosk();
+    console.log("admin on load");
 }
 function QUEUEONLOAD() {
     connectWebSocketKiosk();
@@ -238,15 +256,21 @@ function getAllTickets(){
     }
 
     function showTheTicket(t) {
+
     var id=t.ticketId;
+    if (jQuery('#tr_'+id).val()) {
+        console.log("Талон уже на экране" +jQuery('#tr_'+id).val());
+    } else {
         jQuery('#patientWaitingTableBody').append("<tr id='tr_"+id+"'><td class='td_"+id+"'>"+t.ticketNumber+"</td><td class='td_"+id+"'>"+t.window+"</td></tr>");
-       var el = jQuery('td.td_'+id);
+        var el = jQuery('td.td_'+id);
         for (var i=0;i<10;i++) {
-            el.animate({backgroundColor:"#f00"},50);
-         //   el.animate({backgroundColor:"#00ff1c"},50);
-            el.animate({backgroundColor:"#0010ff"},50);
+            el.animate({backgroundColor:"#f00"},10);
+            //   el.animate({backgroundColor:"#00ff1c"},50);
+            el.animate({backgroundColor:"#0010ff"},80);
         }
-        el.animate({backgroundColor:"#ffffff"},50);
+        el.animate({backgroundColor:"#ffffff"},60);
+    }
+
     }
 
     function hideTheTicket(t) {
