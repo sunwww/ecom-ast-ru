@@ -22,6 +22,9 @@
                     <msh:autoComplete property="type" fieldColSpan="16" horizontalFill="true" label="Причина отмены" vocName="vocWfConsultationCancelReason"/>
                 </msh:row>
                 <msh:row>
+                    <msh:autoComplete property="refreshType" fieldColSpan="16" horizontalFill="true" label="Направлен к" vocName="workFunctionCons"/>
+                </msh:row>
+                <msh:row>
                     <msh:textField property="dateBegin" label="Период с" guid="8d7ef035-1273-4839-a4d8-1551c623caf1" />
                     <msh:textField property="dateEnd" label="по" guid="f54568f6-b5b8-4d48-a045-ba7b9f875245" />
                 </msh:row>
@@ -145,6 +148,8 @@
                     typeSql.append(" and scg.createdate between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('" + dateEnd+"','dd.mm.yyyy') ");
                 }
             }
+            String prCab = request.getParameter("refreshType") ;
+            if (prCab!=null && !prCab.equals(""))  typeSql.append(" and scg.prescriptcabinet_id="+prCab);
             request.setAttribute("typeSql",typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
