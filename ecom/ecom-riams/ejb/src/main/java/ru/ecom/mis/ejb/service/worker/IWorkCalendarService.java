@@ -1,13 +1,13 @@
 package ru.ecom.mis.ejb.service.worker;
 
-import java.sql.Date;
-import java.text.ParseException;
-
 import org.json.JSONException;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 
+import java.sql.Date;
+import java.text.ParseException;
+
 public interface IWorkCalendarService {
-	String getFreeCalendarTimeForWorkFunction (Long aWorkFunctionId, String aCalendarDay) throws ParseException, JSONException;
+	String getFreeCalendarTimeForWorkFunction (Long aWorkFunctionId, String aCalendarDay, String aUsername) throws ParseException, JSONException;
 	void autoGenerateCalendar(Long aCnt,Long aCntDayGererate) ;
 	void deleteWorkCalendarTime(Long aTime) ;
 	String deletePreRecord(String aUsername,Long aTime) ;
