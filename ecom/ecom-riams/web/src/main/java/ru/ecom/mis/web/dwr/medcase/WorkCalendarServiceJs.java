@@ -35,7 +35,8 @@ public class WorkCalendarServiceJs {
 
 	/** Возвращаем/создаем первое свободное время по рабочей функции и дню */
 	public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException, JSONException {
-		return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId,aCalendarDay);
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
+		return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId,aCalendarDay,username);
 	}
 
 	/** Изменяем тип резерва для времени по его id */
