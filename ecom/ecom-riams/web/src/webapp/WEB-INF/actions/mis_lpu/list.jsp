@@ -1,7 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@page import="ru.ecom.ejb.services.query.IWebQueryService"%>
-<%@ page import="ru.ecom.web.util.ActionUtil" %>
-<%@ page import="ru.ecom.web.util.Injection" %>
+<%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -41,7 +39,7 @@
     	<%
     }
     String id = request.getParameter("id");
-    	if (id!=null||id.equals("-1")) {
+    	if (id==null||id.equals("-1")) {
     		request.setAttribute("idSql", " is null");
     	} else {
     		request.setAttribute("idSql", " ="+id);
@@ -59,15 +57,19 @@
             <msh:tableColumn columnName="Наименование ЛПУ" property="3" />
         </msh:table>
     </tiles:put>
-    <div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"></div>
+
     <%  //lets try json table
+        //<div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"></div>
+        /*
         IWebQueryService service =  Injection.find(request,null).getService(IWebQueryService.class) ;
         String sql = request.getAttribute("lpus_sql").toString();
         System.out.println("sql=="+sql);
         String json = service.executeSqlGetJson(sql,null);
         request.setAttribute("entries_sql_json",json);
-    %>
-    <tiles:put name="javascript" type="string">
+        */
+
+        /*
+        <tiles:put name="javascript" type="string">
         <script type="text/javascript">
         function testNewTable() {
         var colunms = [
@@ -82,4 +84,7 @@
         }
         </script>
     </tiles:put>
+         */
+    %>
+
 </tiles:insert>

@@ -44,6 +44,7 @@ request.setAttribute("kioskMode",kioskMode);
     <title>${pageTitle}</title>
     </head>
     <body>
+    <link rel='stylesheet' type='text/css' href='/skin/css/css/main/main.css' />
     <style type="text/css">
         #patientWaitingTable {
             text-align: center;
@@ -96,7 +97,6 @@ console.log("reload page")
 
 function annulTicket() {
     var t = +jQuery('#executeTicket').val();
-    alert ("t="+t)
     if (t) {
         ws_sendMessage({method:"markTicketExecuted",ticket:{ticketId:t}});
     }
@@ -115,7 +115,6 @@ function QUEUEONLOAD() {
 
 function TVONLOAD(){
     connectWebSocketKiosk();
-    setTimeout(getAllTickets,4000);
     setTimeout(reload,500000);
 }
 
@@ -128,29 +127,44 @@ function connectWebSocketKiosk() {
             VocService.getWebSocketServer({callback:function(s) {console.log(s);ws_saveToLocalStorage(ws_socketServerStorageName+'_${username}',s);connectWebSocketKiosk();}});
             return;
         }
-        console.log("prewsServer="+wsServer);
         wsServer = JSON.parse(wsServer);
         if (wsServer.server!=null) {
             var url = wsServer.server+"/"+wsServer.username;
             console.log("Create new WebSocket, url for ws = "+url);
             ws_socket = new WebSocket(url);
-            ws_socket.onopen=function(){console.log('opened');};
-            ws_socket.onmessage=function(event) {console.log("on message "+event.data);
-                showTheMovie(event.data);
-            }
-            ws_socket.onerror = function(event) {
-                console.log("ws_onError:"+JSON.stringify(event));
-                showToastMessage(event.type+" Ошибка " + error.code+" "+event.reason);
-                setTimeout(connectWebSocketKiosk,5000); //Переподключимся при разрыве соединения
-            };
-            ws_socket.onclose = function(event) {
-                console.log('Код: ' + event.code + ' причина: ' + event.reason);
-            };
+            ws_socket.onopen=function(){console.log('opened, lets get all acticeTickets');getAllTickets();};
+            ws_socket.onmessage=function(event) {console.log("on message "+event.data);showTheMovie(event.data);}
+            ws_socket.onerror = function(event) {onClose(event)};
+            ws_socket.onclose = function(event) {onClose(event)};
+        } else {
+            console.log("no wsServer!! prewsServer="+wsServer);
         }
-
 }
+    function onClose(event) {
+      console.log('Код: ' + event.code + ' причина: ' + event.reason);
+      cleanTicketList();
+      jQuery.toast({
+            position: 'mid-center'
+            ,heading:'Ошибка'
+            ,text:'Подключение к серверу потеряно, переподключение через 30 сек'
+            ,hideAfter:true
+            ,icon:'error'
+            ,hideAfter:30000
+        });
+        setTimeout(connectWebSocketKiosk,30000) //переподключение через минуту
+    }
+
+    function cleanTicketList() {
+        try { //Очищаем список талонов в очереди
+        jQuery('#patientWaitingTableBody').children().remove();
+        } catch(e){
+            console.log(e);
+        }
+    }
+
 </script>
 <script type="text/javascript"> //Скрипты для инфомата записи на прием
+
     var tbl =jQuery('#queueTable');
     //Список очередей
 
@@ -183,8 +197,8 @@ function connectWebSocketKiosk() {
             ,data:{queue:queueId}
         }).done (function(json) {
             if (json!=null)  {
-                ws_sendMessage({method:"createNewTicket", ticket:json});
                 printNewTicket(json);
+                setTimeout(function(){console.log("send message by timout "); ws_sendMessage({method:"createNewTicket", ticket:json});},5000);
             }
         });
     }
@@ -204,7 +218,7 @@ function connectWebSocketKiosk() {
           mywindow.print();
           mywindow.close();
           return true;
-      } catch (e) {console.log("Не удалось напечатать талон: "+e);}
+      } catch (e) {console.log("Не удалось напечатать талон: "+e);return false;}
     }
 </script>
 
@@ -231,7 +245,8 @@ function getAllTickets(){
         console.log("showTheMovie = "+msg.function);
         switch (msg.function) {
             case "getNextTicket":
-                console.log("getNextTicket= "+JSON.stringify(msg));
+                console.log("skipping...")
+              //  console.log("getNextTicket= "+JSON.stringify(msg));
                 break;
             case "createNewTicket":
                 console.log("Талон с номером "+msg.ticket.fullNumber+" отправлен к оператору (или нет)");

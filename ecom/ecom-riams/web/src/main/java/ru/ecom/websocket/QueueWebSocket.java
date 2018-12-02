@@ -206,15 +206,17 @@ private QueueTicket getTicketById(Long aTicketId) {
 }
     /**Находим свободного оператора по коду очереди */
 private OperatorSession getFreeOperator (String aQueueCode) {
-        for (OperatorSession os: sessions.values()) {
-            if (!os.getIsOffline() && !os.getIsBusy() && os.getQueueCode()!=null
-                    && os.getQueueCode().equals(aQueueCode)
-                    && os.getRole().equals(OPERATORROLE)
-            ) {
-                return os;
-            }
-        }
-        return null;
+    OperatorSession os = null;
+    try {
+        os = sessions.entrySet().stream().filter(
+                (e)-> !e.getValue().getIsOffline() && !e.getValue().getIsBusy()
+                        && aQueueCode.equals(e.getValue().getQueueCode())
+                        && OPERATORROLE.equals(e.getValue().getRole())
+        ).findAny().get().getValue();
+    } catch (Exception e) {
+        log.warn("can't find free operator");
+    }
+        return os;
 }
 
     /** При получении талона пациентов находим для него свободного оператора*/
@@ -313,13 +315,16 @@ private OperatorSession getFreeOperator (String aQueueCode) {
             e.printStackTrace();
             log.error(aTicket.getId()+" No QueueService");
         }
-        if (aTicket==null) aTicket=aQueueService.findTicketById(aTicketId);
-        if (aTicket!=null && aTicket.getFinishExecutor()!=null) {
+        if (aTicket==null) {
+            log.info("ticket = neulll!!");
+            aTicket=aQueueService.findTicketById(aTicketId);
+        }
+        if (aTicket!=null && aTicket.getFinishExecutor()==null) {
             aTicket.setFinishExecuteDate(new Date());
             aTicket.setFinishExecutor(aSession.getWorkFunction());
             aQueueService.persistTicket(aTicket);
             log.info("send to session null ticket000");
-            if(aSession.getRole().equals(ADMINROLE)) { //При пометке администратором талона как выполненный отправляем пользователю информацию о выполнении талона
+            if(ADMINROLE.equals(aSession.getRole())) { //При пометке администратором талона как выполненный отправляем пользователю информацию о выполнении талона
                 final Long tId = aTicket.getId();
                 sessions.forEach((k,s)->{
                     if(s.getTicket()!=null && s.getTicket().getId()==tId) {
@@ -346,10 +351,11 @@ private OperatorSession getFreeOperator (String aQueueCode) {
             String qCode = aTicket.getQueue().getType().getCode();
             sessions.forEach((k,v)->{
                 Session s = v.getSession();
-                if (s.isOpen() &&v.getRole().equals(TVROLE)) {
-                    if (v.getQueueCode()!=null && v.getQueueCode().equals(qCode)) {
+                if (s.isOpen() &&TVROLE.equals(v.getRole())) {
+                    if (qCode.equals(v.getQueueCode())) {
                         try {
                             s.getBasicRemote().sendText(ticket.toString());
+                            log.info("===TO TV = "+ticket.toString());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -369,7 +375,7 @@ private OperatorSession getFreeOperator (String aQueueCode) {
         sessions.forEach((k,v)->{
             if (!v.getIsOffline()) {
                 QueueTicket ticket = v.getTicket();
-                if (ticket!=null && ticket.getQueue().getType().getCode().equals(aQueueCode)) {
+                if (ticket!=null && aQueueCode.equals(ticket.getQueue().getType().getCode())) {
                     tickets.put(getCurrentTicket(ticket));
                 }
             }
@@ -386,7 +392,7 @@ private OperatorSession getFreeOperator (String aQueueCode) {
                 Session session = s.getSession();
                 if (session.isOpen()) {
                     if (!s.getIsOffline()) {activeSessions++;}
-                    if (aRole==null || s.getRole().equals(aRole)){
+                    if (aRole==null || aRole.equals(s.getRole())){
                         session.getBasicRemote().sendText(aMessage.toString());
                     }
                 } else {

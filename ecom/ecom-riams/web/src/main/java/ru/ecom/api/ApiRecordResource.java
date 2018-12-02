@@ -210,6 +210,7 @@ public class ApiRecordResource {
         } catch (Exception e) {
             e.printStackTrace();
             String ret ="{\"status\":\"error\",\"error_name\":\""+e.getLocalizedMessage()+"\",\"error_code\":\""+e.toString()+"\"}";
+            System.out.println("ERRR, ROOT = "+root.toString());
             System.out.println(ret);
             return ret;
             }
