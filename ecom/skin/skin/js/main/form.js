@@ -137,13 +137,8 @@ var funcemergencymessage = {
 }
 function showToastMessage(aMessage,aJson,aAutoClose,aError) {
 	if (aJson) {
-        jQuery.toast({
-            position: aJson.position?aJson.position:'mid-center'
-            ,heading:aJson.title?aJson.title:"Сообщение"
-            ,text:aJson.text
-        });
+        jQuery.toast(aJson);
 	} else {
-
 		jQuery.toast({
 			text:aMessage
 			,hideAfter:aAutoClose&&aAutoClose!=null?true:false

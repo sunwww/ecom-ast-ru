@@ -32,13 +32,21 @@ function connectWebSocket() {
         console.log("no webSocketRoles");
     }
 }
-function ws_onClose(event) {console.log('Код: ' + event.code + ' причина: ' + event.reason);}
+function ws_onClose(event) {
+    console.log('Код: ' + event.code + ' причина: ' + event.reason);
+    setTimeout(connectWebSocket,10000);
+}
+
 function ws_onError(event) {
-    console.log("ws_onError:"+JSON.stringify(event));
+    jQuery('#ws_finishWorkDiv').html("ОШИБКА СОЕДИНЕНИЯ С СЕРВЕРОМ")
+    jQuery('#ws_windowWorkDiv').html("ОШИБКА");
+    jQuery('#ws_ticketNumberDiv').html("ОШИБКА");
+    jQuery('#ws_nextTicketDiv').unbind("click");
+    jQuery('#ws_nextTicketDiv').html("Переподключиться");
+    jQuery('#ws_nextTicketDiv').on('click',function(){connectWebSocket();});
     showToastMessage(event.type+" Неизвестная Ошибка",null,null,true);
     console.log("reconnect in 10 sec");
-    setTimeout(connectWebSocket,10000);
-
+    ws_onClose(event);
 }
 //Заканчиваем работу с очередью или начинаем работу
 function ws_setStartWorking(isStart) {
