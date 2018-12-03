@@ -1,7 +1,7 @@
 package ru.ecom.expert2.service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+//import com.google.gson.Gson;
+//import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +70,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     private final static SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
     public String getEntryJson(Long aEntryId) {
-        try {
+        return "";
+     /*   try {
             log.warn("START ME");
             E2Entry entry = theManager.find(E2Entry.class,aEntryId);
             log.warn("START ME1");
@@ -84,7 +85,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             return "NULL___";
         }
 
-
+*/
     }
 
     private JSONObject getOKJson() {
@@ -1110,7 +1111,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     final public void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
         long bedDays = AgeUtil.calculateDays(aEntry.getStartDate(), aEntry.getFinishDate());
         long calendarDays = bedDays>0?bedDays+1:1;
-        if (aEntry.getEntryType().equals(HOSPITALTYPE)&&isNotNull(aEntry.getBedSubType())&&aEntry.getBedSubType().equals("2")) {
+        if (HOSPITALTYPE.equals(aEntry.getEntryType()) && "2".equals(aEntry.getBedSubType())) { //Для дневного стационара день поступления и день выписки - 2 дня
             bedDays++;
         }
         try {
@@ -1234,7 +1235,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
     private void checkErrors(E2Entry aEntry) {
         List<E2EntryError> errors = new ArrayList<E2EntryError>();
-        if (isNotNull(aEntry.getServiceStream())&&aEntry.getServiceStream().equals("OBLIGATORYINSURANCE")) { //Проверка только для ОМС *05.06.2018
+        if ("OBLIGATORYINSURANCE".equals(aEntry.getServiceStream())) { //Проверка только для ОМС *05.06.2018
             //Дата выписки не входит в период
             if (aEntry.getFinishDate().getTime()>aEntry.getListEntry().getFinishDate().getTime()
                     ||aEntry.getFinishDate().getTime()<aEntry.getListEntry().getStartDate().getTime()) {
@@ -1243,10 +1244,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (aEntry.getEntryType().equals(HOSPITALTYPE)&& aEntry.getKsg()==null){
                 errors.add(new E2EntryError(aEntry,E2EntryErrorCode.NO_KSG));
             }
-
             if (errors.size()>0){saveErrors(errors);}
         }
-
     }
 
     /**
@@ -1648,7 +1647,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             return getActualVocByClassName(VocKsg.class,null,"code='233'");
         }
         return null;
-
     }
     /** Нахождение КСГ с бОльшим коэффициентом трудозатрат для случая */
     HashMap<String, List<Object>> ksgMap = new HashMap<String, List<Object>>();
@@ -1782,7 +1780,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     weight++;
                     surgicalKsgPosition=(surgicalKsgPosition!=null&&surgicalKsgPosition.getKSGValue().getKZ()>ksg.getKSGValue().getKZ())?surgicalKsgPosition:ksg;
                     //Если коронарография и у нас есть диагноз, берем дешевое КСГ! 09-02-2018
-                    if (isNotNull(ksg.getServiceCode())&&ksg.getServiceCode().equals("A16.12.033")) {
+                    if ("A16.12.033".equals(ksg.getServiceCode())) {
                         if (mainDiagnosis.contains(ksg.getMainMKB())) {weight=5;}
                     } else if (ksg.getMainMKB().equals("N18.5")||ksg.getMainMKB().equals("N18.4")) {
                         weight=5;
@@ -2059,8 +2057,9 @@ public class Expert2ServiceBean implements IExpert2Service {
     /** Расчитываем коэффициент сложности лечения пациента */
     private HashMap<String,VocE2CoefficientPatientDifficulty> difficultyHashMap = new HashMap<String, VocE2CoefficientPatientDifficulty>();
     private void calculatePatientDifficulty(E2Entry aEntry) {
-        if (aEntry.getKsg()==null||aEntry.getEntryType().equals(VMPTYPE)) {return;}
-        if(aEntry.getEntryType().equals(HOSPITALTYPE)&&!aEntry.getBedSubType().equals("1")) { return;}
+        String entryType = aEntry.getEntryType();
+        if (aEntry.getKsg()==null||VMPTYPE.equals(entryType)) {return;}
+        if(HOSPITALTYPE.equals(entryType)&&!aEntry.getBedSubType().equals("1")) { return;}
 
         //Удалим старые значения КСЛП //TODO оптимизировать!
         if (theManager.createNativeQuery("select id from E2CoefficientPatientDifficultyEntryLink where entry_id=:id").setParameter("id",aEntry.getId()).getResultList().size()>0) {
