@@ -27,6 +27,7 @@
         <form-bean name="e2_vocEntrySubTypeForm" type="ru.ecom.expert2.form.voc.VocE2EntrySubTypeForm"/>
         <form-bean name="e2_polFinancePlanForm" type="ru.ecom.expert2.form.financeplan.PolyclinicFinancePlanForm"/>
         <form-bean name="e2_stacFinancePlanForm" type="ru.ecom.expert2.form.financeplan.HospitalFinancePlanForm"/>
+        <form-bean name="e2_vmpFinancePlanForm" type="ru.ecom.expert2.form.financeplan.VmpFinancePlanForm"/>
         <form-bean name="e2_litteAmountMonthForm" type="ru.ecom.expert2.form.financeplan.MonthLittleAmountTableForm"/>
         <form-bean name="e2_vocKsgForm" type="ru.ecom.expert2.form.VocKsgForm"/>
         <form-bean name="e2_vocKsgKuksgForm" type="ru.ecom.expert2.form.E2KsgCoefficientHistoryForm"/>

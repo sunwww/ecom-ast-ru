@@ -87,7 +87,7 @@
 		    	names = "vkhc.code||' '||vkhc.name"
 		/>
 	</voc>
-	<voc id="vocMethodHighCare" type="NativeVocService">
+	<voc id="vocMethodHighCareByKind" type="NativeVocService">
 		<NativeVocService
 		    	from=" VocMethodHighCare as vmhc "
 		    	parent="vkhc.id=:parent"
@@ -98,6 +98,19 @@
 		    	queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
 		    	names = "vmhc.code||' '||vmhc.name"
 		    	
+		/>
+	</voc>
+
+	<voc id="vocMethodHighCare" type="NativeVocService">
+		<NativeVocService
+				from=" VocMethodHighCare as vmhc "
+				nameId="vmhc.id"
+				join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
+				queryAppend="(vmhc.dateTo is null or vmhc.dateTo >=current_date)"
+				order=""
+				queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
+				names = "vkhc.code||' '||vmhc.code||' '||vmhc.name"
+
 		/>
 	</voc>
 	<voc id="vocChildEmergency" type="NativeVocService">

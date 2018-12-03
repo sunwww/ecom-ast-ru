@@ -116,7 +116,8 @@
         </msh:form>
         <ecom:webQuery name="entryList" nativeSql="select fp.id
             ,${selectDateSql} as date
-            ,ksg.code||' '||ksg.name as f5_ksg
+            ,case when fp.dtype='VmpFinancePlan' then vmp.kindhighcare||' (метод '||vmp.code||')'
+                when fp.dtype='HospitalFinancePlan' then ksg.code||' '||ksg.name else '' end as f5_ksg
             , mhp.profilek||' '||mhp.name as profile
             ,ml.name as f4_department
             ,fp.count as f6
@@ -129,6 +130,7 @@
              left join mislpu ml on ml.id=fp.department_id
              left join vocbedsubtype vbt on vbt.id=fp.bedsubtype_id
              left join voce2vidSluch vs on vs.id=fp.vidsluch_id
+             left join vocMethodHighCare vmp on vmp.id=fp.method_id
               where fp.dtype='${dtype}' ${startDateSql} ${sqlAppend}
               order by fp.startDate, cast(ksg.code as int), ml.name, vbt.name "/>
         <msh:section title='Результат поиска по ${param.year} ${param.month} году'>

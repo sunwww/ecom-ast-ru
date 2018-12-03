@@ -20,6 +20,15 @@ import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
 
+    public String getMedcaseCost(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+        return Injection.find(aRequest).getService(IExpert2Service.class).getMedcaseCost(aMedcaseId);
+    }
+
+    public String getEntryJson(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
+        System.out.println("HELLO "+aEntryId);
+        return Injection.find(aRequest).getService(IExpert2Service.class).getEntryJson(aEntryId);
+    }
+
     public String splitForeignOtherBill(Long aListEntryId, String aBillNumber, String aBillDate, String aTerritories, HttpServletRequest aRequest) throws NamingException, ParseException {
         Date billDate = DateFormat.parseSqlDate(aBillDate);
         return Injection.find(aRequest).getService(IExpert2Service.class).splitForeignOtherBill(aListEntryId,aBillNumber,billDate,aTerritories);
@@ -163,22 +172,12 @@ public class Expert2ServiceJs {
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
         final long monitorId = monitorService.createMonitor();
         final String finalBillNumber = aBillNumber;
-
         final String finalBillDate = aBillDate;
-
-        new Thread() {
-            @Override
-            public void run() {
-                Date finalDate = null;
-                try {finalDate = new java.sql.Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
-                if (aVersion.equals("3.0")){
-                    service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId);
-                } else {
-                    service.makeMPFIleV2(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId);
-                }
-
-            }
-        }.start();
+        new Thread(() -> {
+            Date finalDate = null;
+            try {finalDate = new Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
+                service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId,aVersion);
+        }).start();
 
         return monitorId;
     }
@@ -187,13 +186,12 @@ public class Expert2ServiceJs {
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
         final long monitorId = monitorService.createMonitor();
         final IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
-        new Thread() {
-            public void run() {
+        new Thread(()-> {
                 System.out.println("start check new Thread");
                 service.checkListEntry(aListEntryId, forceUpdateKsg, aParams, monitorId);
                 System.out.println("finish checkEntryList ");
-            }
-            }.start();
+
+            }).start();
         return monitorId;
     }
     public void checkEntry (Long aEntryId, boolean forceUpdateKsg, HttpServletRequest aRequest) throws NamingException {

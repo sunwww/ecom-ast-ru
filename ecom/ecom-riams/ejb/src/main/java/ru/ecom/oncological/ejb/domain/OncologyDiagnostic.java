@@ -5,9 +5,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.oncological.ejb.domain.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Диагностический блок
@@ -31,7 +29,7 @@ public class OncologyDiagnostic extends BaseEntity {
     private VocOncologyN011 valueMarkers;
 
     @Comment("Случай онкологического лечения")
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public OncologyCase getOncologyCase() {
         return oncologyCase;
     }

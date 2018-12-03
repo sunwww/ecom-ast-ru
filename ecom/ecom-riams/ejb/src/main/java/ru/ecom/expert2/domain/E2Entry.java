@@ -33,6 +33,46 @@ import java.util.List;
 })
 public class E2Entry extends BaseEntity {
 
+    @Transient
+    /* Вычисляем основной диагноз по записи */
+    public EntryDiagnosis getMainEntryDiagnosis () {
+        /* //Уберем пока наш jboss не станет поддерживать stream
+        EntryDiagnosis diagnosis = getDiagnosis().stream().findFirst().filter((d)->
+                d.getRegistrationType()!=null && d.getRegistrationType().getCode().equals("3")
+                && d.getPriority()!=null &&d.getPriority().getCode().equals("1")).get(); //Ищем выписные основные диагнозы
+        if (diagnosis==null) {
+            diagnosis = getDiagnosis().stream().findFirst().filter((d)->
+                d.getRegistrationType()!=null && d.getRegistrationType().getCode().equals("4")
+                        && d.getPriority()!=null &&d.getPriority().getCode().equals("1")).get(); //Ищем клинические основные диагнозы
+        }
+        if (diagnosis==null) { //Не должно такого быть
+            diagnosis = getDiagnosis().get(0);
+        }
+        */
+        List<EntryDiagnosis> list = getDiagnosis();
+        for (EntryDiagnosis d: list) {
+            if (d.getRegistrationType()!=null && d.getRegistrationType().getCode().equals("3")
+                    && d.getPriority()!=null &&d.getPriority().getCode().equals("1")) {
+                return d;
+            }
+        }
+        for (EntryDiagnosis d: list) {
+            if (d.getRegistrationType()!=null && d.getRegistrationType().getCode().equals("4")
+                    && d.getPriority()!=null &&d.getPriority().getCode().equals("1")) {
+                return d;
+            }
+        }
+        return list.get(0);
+    }
+
+    /** Онкологические случаи */
+    @Comment("Онкологические случаи")
+    @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
+    public List<E2CancerEntry> getCancerEntries() {return theCancerEntries;}
+    public void setCancerEntries(List<E2CancerEntry> aCancerEntries) {theCancerEntries = aCancerEntries;}
+    /** Онкологические случаи */
+    private List<E2CancerEntry> theCancerEntries ;
+
     /** Онкологический случай */
     @Comment("Онкологический случай")
     public Boolean getIsCancer() {return theIsCancer;}
@@ -120,6 +160,14 @@ public class E2Entry extends BaseEntity {
     public void setExtDispNextStage(Boolean aExtDispNextStage) {theExtDispNextStage = aExtDispNextStage;}
     /** Направлен на след. этап ДД */
     private Boolean theExtDispNextStage ;
+
+    /** результат диспансеризации */
+    @Comment("результат диспансеризации")
+    @OneToOne
+    public VocE2FondV017 getDispResult() {return theDispResult;}
+    public void setDispResult(VocE2FondV017 aDispResult) {theDispResult = aDispResult;}
+    /** результат диспансеризации */
+    private VocE2FondV017 theDispResult ;
 
     /** Признак детского возраста */
     @Comment("Признак детского возраста")
@@ -313,7 +361,7 @@ public class E2Entry extends BaseEntity {
 
      /** Сложность лечения пациента */
      @Comment("Сложность лечения пациента")
-     @OneToMany(mappedBy = "entry", cascade = CascadeType.REMOVE)
+     @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
      public List<E2CoefficientPatientDifficultyEntryLink> getPatientDifficulty() {return thePatientDifficulty;}
      public void setPatientDifficulty(List<E2CoefficientPatientDifficultyEntryLink> aPatientDifficulty) {thePatientDifficulty = aPatientDifficulty;}
      /** Сложность лечения пациента */
@@ -528,7 +576,7 @@ public class E2Entry extends BaseEntity {
 
       /** Услуги по случаю */
       @Comment("Услуги по случаю")
-      @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+      @OneToMany(mappedBy = "entry",  fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
       public List<EntryMedService> getMedServices() {return theMedServices;}
       public void setMedServices(List<EntryMedService> aMedServices) {theMedServices = aMedServices;}
       /** Услуги по случаю */
@@ -536,7 +584,7 @@ public class E2Entry extends BaseEntity {
 
      /** Список диагнозов по случаю */
      @Comment("Список диагнозов по случаю")
-     @OneToMany(mappedBy="entry", cascade= CascadeType.ALL , fetch = FetchType.LAZY)
+     @OneToMany(mappedBy="entry", fetch = FetchType.LAZY)
      public List<EntryDiagnosis> getDiagnosis() {return theDiagnosis;}
      public void setDiagnosis(List<EntryDiagnosis> aDiagnosis) {theDiagnosis = aDiagnosis;}
      /** Список диагнозов по случаю */
@@ -737,10 +785,10 @@ public class E2Entry extends BaseEntity {
 
     /** Социальный статус пациента */
     @Comment("Социальный статус пациента")
-    public String  getSocialStatus() {return theSocialStatus;}
-    public void setSocialStatus(String  aSocialStatus) {theSocialStatus = aSocialStatus;}
+    public String getSocialStatus() {return theSocialStatus;}
+    public void setSocialStatus(String aSocialStatus) {theSocialStatus = aSocialStatus;}
     /** Социальный статус пациента */
-    private String  theSocialStatus ;
+    private String theSocialStatus ;
 
     /** Каким по счету родился ребенок */
     @Comment("Каким по счету родился ребенок")
@@ -809,14 +857,14 @@ public class E2Entry extends BaseEntity {
     public Boolean getIsCriminalMessage() {return theIsCriminalMessage;}
     public void setIsCriminalMessage(Boolean aIsCriminalMessage) {theIsCriminalMessage = aIsCriminalMessage;}
     /** Были сообщения в полицию */
-    private Boolean theIsCriminalMessage ;
+    private Boolean theIsCriminalMessage =false;
 
     /** Находился по уходу за родственников */
     @Comment("Находился по уходу за родственников")
     public Boolean getHotelServices() {return theHotelServices;}
     public void setHotelServices(Boolean aHotelServices) {theHotelServices = aHotelServices;}
     /** Находился по уходу за родственников */
-    private Boolean theHotelServices ;
+    private Boolean theHotelServices=false ;
 
     /** Тип стационара */
     @Comment("Тип стационара") //Дневной, круглосуточный
@@ -861,7 +909,7 @@ public class E2Entry extends BaseEntity {
 
     /** Заполнение */
     @Comment("Заполнение")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public E2ListEntry getListEntry() {return theListEntry;}
     public void setListEntry(E2ListEntry aListEntry) {theListEntry = aListEntry;}
     /** Заполнение */
@@ -963,7 +1011,7 @@ public class E2Entry extends BaseEntity {
     public Boolean getIsEmergency() {return theIsEmergency;}
     public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
     /** Экстренность */
-    private Boolean theIsEmergency ;
+    private Boolean theIsEmergency=false ;
 
     /** Направившее ЛПУ */
     @Comment("Направившее ЛПУ")
@@ -1054,7 +1102,7 @@ public class E2Entry extends BaseEntity {
     public Boolean getIsManualKsg() {return theIsManualKsg;}
     public void setIsManualKsg(Boolean aIsManualKsg) {theIsManualKsg = aIsManualKsg;}
     /** Ручное редактирование цены */
-    private Boolean theIsManualKsg ;
+    private Boolean theIsManualKsg=false ;
 
     @PrePersist
     void onPrePersist() {
@@ -1064,7 +1112,7 @@ public class E2Entry extends BaseEntity {
     }
     /** Санкции */
     @Comment("Санкции")
-    @OneToMany(mappedBy = "entry", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
     public List<E2EntrySanction> getSanctionList() {return theSanctionList;}
     public void setSanctionList(List<E2EntrySanction> aSanctionList) {theSanctionList = aSanctionList;}
     /** Санкции */
@@ -1072,7 +1120,7 @@ public class E2Entry extends BaseEntity {
 
     /** Ошибки проверки */
     @Comment("Ошибки проверки")
-    @OneToMany(mappedBy = "entry",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "entry",fetch = FetchType.LAZY)
     public List<E2EntryError> getErrorList() {return theErrorList;}
     public void setErrorList(List<E2EntryError> aErrorList) {theErrorList = aErrorList;}
     /** Ошибки проверки */

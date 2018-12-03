@@ -13,13 +13,11 @@
             <msh:panel>
 
                 <msh:row>
-
-                  </msh:row>
+                    <msh:checkBox property="maybeCancer"/>
+                </msh:row>
                 <msh:ifFormTypeIsCreate formName="e2_cancerEntryForm">
                 <msh:separator label="Направление" colSpan="4"/>
-                    <msh:row>
-                        <msh:checkBox property="maybeCancer"/>
-                    </msh:row>
+
                     <msh:row>
                         <msh:textField property="directionDate"/>
                         <msh:autoComplete property="directionType" vocName="vocOncologyTypeDirectionCode" size="50"/>
@@ -50,6 +48,7 @@
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="consiliumResult" vocName="vocOncologyConsiliumCode" size="50"/>
+                    <msh:textField property="consiliumDate" />
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="serviceType" vocName="vocOncologyN013Code" size="50"/>

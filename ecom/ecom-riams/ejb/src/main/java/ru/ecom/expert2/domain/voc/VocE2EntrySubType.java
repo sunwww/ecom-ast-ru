@@ -2,6 +2,7 @@ package ru.ecom.expert2.domain.voc;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV006;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV016;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV025;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -54,4 +55,11 @@ public class VocE2EntrySubType extends VocBaseEntity {
   public void setVisitPurpose(VocE2FondV025 aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
   /** Цель посещения */
   private VocE2FondV025 theVisitPurpose ;
+
+  /** Вид доп. диспансеризации */
+  @Comment("Вид доп. диспансеризации")
+  public VocE2FondV016 getExtDispType() {return theExtDispType;}
+  public void setExtDispType(VocE2FondV016 aExtDispType) {theExtDispType = aExtDispType;}
+  /** Вид доп. диспансеризации */
+  private VocE2FondV016 theExtDispType ;
 }

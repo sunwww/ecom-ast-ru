@@ -75,4 +75,12 @@ public class OncologyDirectionForm extends IdEntityForm {
     public void setDate(String date) {
         this.date = date;
     }
+
+    /** ЛПУ, куда сделано направление */
+    @Comment("ЛПУ, куда сделано направление")
+    @Persist
+    public Long getDirectLpu() {return theDirectLpu;}
+    public void setDirectLpu(Long aDirectLpu) {theDirectLpu = aDirectLpu;}
+    /** ЛПУ, куда сделано направление */
+    private Long theDirectLpu ;
 }

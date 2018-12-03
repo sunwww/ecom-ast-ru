@@ -1,6 +1,6 @@
 package ru.ecom.expert2.domain.voc.federal;
 
-import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -25,4 +25,12 @@ public class VocE2FondV021 extends VocBaseFederal {
     public void setIsKdoChief(Boolean aIsKdoChief) {theIsKdoChief = aIsKdoChief;}
     /** Главный специалист в диагностическом СПО */
     private Boolean theIsKdoChief ;
+
+    /** Услуга по умолчанию для поликлиники */
+    @Comment("Услуга по умолчанию для поликлиники")
+    @OneToOne
+    public VocMedService getDefaultMedService() {return theDefaultMedService;}
+    public void setDefaultMedService(VocMedService aDefaultMedService) {theDefaultMedService = aDefaultMedService;}
+    /** Услуга по умолчанию для поликлиники */
+    private VocMedService theDefaultMedService ;
 }

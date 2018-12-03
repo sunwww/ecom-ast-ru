@@ -5,11 +5,10 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.oncological.ejb.domain.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
 
 /**
@@ -214,4 +213,28 @@ public class OncologyCase extends BaseEntity {
     public void setDateCons(Date dateCons) {
         this.dateCons = dateCons;
     }
+
+    /** Направления */
+    @Comment("Направления")
+    @OneToMany(mappedBy = "oncologyCase", cascade = CascadeType.ALL)
+    public List<OncologyDirection> getDirections() {return theDirections;}
+    public void setDirections(List<OncologyDirection> aDirections) {theDirections = aDirections;}
+    /** Направления */
+    private List<OncologyDirection> theDirections ;
+
+    /** Противопоказания */
+    @Comment("Противопоказания")
+    @OneToMany(mappedBy = "oncologyCase", cascade = CascadeType.ALL)
+    public List<OncologyContra> getContras() {return theContras;}
+    public void setContras(List<OncologyContra> aContras) {theContras = aContras;}
+    /** Противопоказания */
+    private List<OncologyContra> theContras ;
+
+    /** Диагностические блоки */
+    @Comment("Диагностические блоки")
+    @OneToMany(mappedBy = "oncologyCase", cascade = CascadeType.ALL)
+    public List<OncologyDiagnostic> getDiagnostics() {return theDiagnostics;}
+    public void setDiagnostics(List<OncologyDiagnostic> aDiagnostics) {theDiagnostics = aDiagnostics;}
+    /** Диагностические блоки */
+    private List<OncologyDiagnostic> theDiagnostics ;
 }

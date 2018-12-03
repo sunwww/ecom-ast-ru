@@ -2,17 +2,9 @@ package ru.ecom.expert2.form;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.EntryDiagnosis;
-import ru.ecom.expert2.domain.EntryMedService;
-import ru.ecom.expomc.ejb.domain.med.VocIdc10;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 
 @EntityForm
@@ -36,6 +28,8 @@ public class EntryDiagnosisForm extends IdEntityForm {
     private Long thePriority ;
     /** Доп. код МКБ */
     private String theDopMkb ;
+    /** Справочник характеров заболевания */
+    private Long theVocIllnessPrimary ;
 
     @Comment("Запись")
     @Persist
@@ -66,6 +60,13 @@ public class EntryDiagnosisForm extends IdEntityForm {
     @Persist
     public String getIllnessPrimary() {return theIllnessPrimary;}
     public void setIllnessPrimary(String aIllnessPrimary) {theIllnessPrimary = aIllnessPrimary;}
+
+    /** Справочник характеров заболевания */
+    @Comment("Справочник характеров заболевания")
+    @Persist
+    public Long getVocIllnessPrimary() {return theVocIllnessPrimary;}
+    public void setVocIllnessPrimary(Long aVocIllnessPrimary) {theVocIllnessPrimary = aVocIllnessPrimary;}
+
 
 
 

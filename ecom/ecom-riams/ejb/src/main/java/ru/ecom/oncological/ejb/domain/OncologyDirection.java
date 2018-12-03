@@ -2,14 +2,13 @@ package ru.ecom.oncological.ejb.domain;
 
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyMethodDiagTreat;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyTypeDirection;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 
 /**
@@ -32,7 +31,7 @@ public class OncologyDirection extends BaseEntity {
     private Date date;
 
     @Comment("Случай окологического лечения")
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public OncologyCase getOncologyCase() {
         return oncologyCase;
     }
@@ -74,4 +73,12 @@ public class OncologyDirection extends BaseEntity {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    /** ЛПУ, куда сделано направление */
+    @Comment("ЛПУ, куда сделано направление")
+    @OneToOne
+    public MisLpu getDirectLpu() {return theDirectLpu;}
+    public void setDirectLpu(MisLpu aDirectLpu) {theDirectLpu = aDirectLpu;}
+    /** ЛПУ, куда сделано направление */
+    private MisLpu theDirectLpu ;
 }

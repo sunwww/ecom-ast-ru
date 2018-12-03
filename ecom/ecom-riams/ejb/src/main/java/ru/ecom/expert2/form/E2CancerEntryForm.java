@@ -99,6 +99,15 @@ public class E2CancerEntryForm extends IdEntityForm {
     /** Сведения о решении консилиума */
     private String theConsiliumResult ;
 
+    /** Дата проведения консилиума */
+    @Comment("Дата проведения консилиума")
+    @Persist
+    @DateString @DoDateString
+    public String getConsiliumDate() {return theConsiliumDate;}
+    public void setConsiliumDate(String aConsiliumDate) {theConsiliumDate = aConsiliumDate;}
+    /** Дата проведения консилиума */
+    private String theConsiliumDate ;
+
     /** Тип услуги */
     @Comment("Тип услуги")
     @Persist

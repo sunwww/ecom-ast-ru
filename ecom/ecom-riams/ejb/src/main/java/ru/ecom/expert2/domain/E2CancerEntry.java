@@ -3,9 +3,10 @@ package ru.ecom.expert2.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.List;
 
 @Entity
 /**Случай онкологического лечения*/
@@ -13,7 +14,7 @@ public class E2CancerEntry extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public E2Entry getEntry() {return theEntry;}
     public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
     /** Запись */
@@ -24,7 +25,7 @@ public class E2CancerEntry extends BaseEntity {
   public Boolean getMaybeCancer() {return theMaybeCancer;}
   public void setMaybeCancer(Boolean aMaybeCancer) {theMaybeCancer = aMaybeCancer;}
   /** Признак подозрения на на ЗО */
-  private Boolean theMaybeCancer ;
+  private Boolean theMaybeCancer =false;
   
   /** Повод обращения */
   @Comment("Повод обращения")
@@ -66,7 +67,7 @@ public class E2CancerEntry extends BaseEntity {
   public Boolean getIsMetastasisFound() {return theIsMetastasisFound;}
   public void setIsMetastasisFound(Boolean aIsMetastasisFound) {theIsMetastasisFound = aIsMetastasisFound;}
   /** Выявлены отдаленные метастазы */
-  private Boolean theIsMetastasisFound ;
+  private Boolean theIsMetastasisFound =false;
 
   /** Суммарная очаговая доза */
   @Comment("Суммарная очаговая доза")
@@ -81,6 +82,13 @@ public class E2CancerEntry extends BaseEntity {
   public void setConsiliumResult(String aConsiliumResult) {theConsiliumResult = aConsiliumResult;}
   /** Сведения о решении консилиума */
   private String theConsiliumResult ;
+
+  /** Дата проведения консилиума */
+  @Comment("Дата проведения консилиума")
+  public Date getConsiliumDate() {return theConsiliumDate;}
+  public void setConsiliumDate(Date aConsiliumDate) {theConsiliumDate = aConsiliumDate;}
+  /** Дата проведения консилиума */
+  private Date theConsiliumDate ;
   
   /** Тип услуги */
   @Comment("Тип услуги")
@@ -117,7 +125,31 @@ public class E2CancerEntry extends BaseEntity {
   /** Тип лучевой терапии */
   private String theRadiationTherapy ;
 
-  public E2CancerEntry(){}
   public E2CancerEntry(E2Entry aEntry) {theEntry=aEntry;}
+  public E2CancerEntry() {}
+
+  /** Список направления */
+  @Comment("Список направления")
+  @OneToMany(mappedBy = "cancerEntry", fetch = FetchType.LAZY)
+  public List<E2CancerDirection> getDirections() {return theDirections;}
+  public void setDirections(List<E2CancerDirection> aDirections) {theDirections = aDirections;}
+  /** Список направления */
+  private List<E2CancerDirection> theDirections ;
+
+  /** Диагностические блоки */
+  @Comment("Диагностические блоки")
+  @OneToMany(mappedBy = "cancerEntry", fetch = FetchType.LAZY)
+  public List<E2CancerDiagnostic> getDiagnostics() {return theDiagnostics;}
+  public void setDiagnostics(List<E2CancerDiagnostic> aDiagnostics) {theDiagnostics = aDiagnostics;}
+  /** Диагностические блоки */
+  private List<E2CancerDiagnostic> theDiagnostics ;
+
+  /** Противопоказания */
+  @Comment("Противопоказания")
+  @OneToMany(mappedBy = "cancerEntry", fetch = FetchType.LAZY)
+  public List<E2CancerRefusal> getRefusals() {return theRefusals;}
+  public void setRefusals(List<E2CancerRefusal> aRefusals) {theRefusals = aRefusals;}
+  /** Противопоказания */
+  private List<E2CancerRefusal> theRefusals ;
 
 }

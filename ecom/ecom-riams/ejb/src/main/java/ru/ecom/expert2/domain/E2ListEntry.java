@@ -13,6 +13,10 @@ import java.util.List;
 /**
  * Список записей (заполнение
  */
+@NamedQueries({
+        @NamedQuery( name="E2ListEntry.findAllEntries"
+                , query="from E2Entry where listEntry=:list and (isDeleted is null or isDeleted='0') and (doNotSend is null or doNotSend='0')")
+})
 @Entity
 @UnDeletable
 public class E2ListEntry extends BaseEntity {
@@ -44,7 +48,7 @@ public class E2ListEntry extends BaseEntity {
     public Boolean getIsClosed() {return theIsClosed;}
     public void setIsClosed(Boolean aIsClosed) {theIsClosed = aIsClosed;}
     /** Закрыто для редакторирования */
-    private Boolean theIsClosed ;
+    private Boolean theIsClosed =false;
 
     /** Имя заполнения */
     @Comment("Имя заполнения")
@@ -101,8 +105,6 @@ public class E2ListEntry extends BaseEntity {
         Long currentTime = System.currentTimeMillis();
         theCreateDate=new java.sql.Date(currentTime);
         theCreateTime=new java.sql.Time(currentTime);
-        theIsDeleted=false;
-        theIsClosed=false;
     }
 
     /** Удаленная запись */
@@ -110,7 +112,7 @@ public class E2ListEntry extends BaseEntity {
     public Boolean getIsDeleted() {return theIsDeleted;}
     public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
     /** Удаленная запись */
-    private Boolean theIsDeleted ;
+    private Boolean theIsDeleted = false;
 
     /** Список записей по заполнению */
     @Comment("Список записей по заполнению")

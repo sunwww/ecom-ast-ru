@@ -320,13 +320,16 @@
  , vdrt.code||' '||vdrt.name as f3_regType
  , vpd.code||' '||vpd.name as f4_priority
  ,d.dopMkb as f5_dop
+ ,(select code||' '||name from voce2fondv027 where code=d.illnessprimary) as f6_illnessPrimary
+ ,vip.code||' '||vip.name as f7_vocIllnessPrimary
  from entryDiagnosis d
  left join vocidc10 mkb on mkb.id=d.mkb_id
  left join vocDiagnosisRegistrationType vdrt on vdrt.id=d.registrationType_id
  left join VocPriorityDiagnosis vpd on vpd.id=d.priority_id
+ left join VocE2FondV027 vip on vip.id=d.vocillnessprimary_id
  where d.entry_id=${param.id}"/>
                 <msh:table
-                        idField="1" name="diagnosisList" action="jabascript:void()"
+                        idField="1" name="diagnosisList" action="javascript:void()"
                         deleteUrl="entityParentDeleteGoParentView-e2_entryDiagnosis.do"
 
                         noDataMessage="Нет диагнозов по случаю">
@@ -334,6 +337,7 @@
                     <msh:tableColumn columnName="Диагноз" property="2"/>
                     <msh:tableColumn columnName="Приоритет" property="4"/>
                     <msh:tableColumn columnName="Тип регистрации" property="3"/>
+                    <msh:tableColumn columnName="Характер заболевания" property="7"/>
                     <msh:tableColumn columnName="Доп. код" property="5"/>
                 </msh:table>
             </msh:section>
@@ -397,6 +401,16 @@ where cancer.entry_id=${param.id}"/>
                     String.prototype.replaceAt=function(index, replacement) {
                         return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
                     }
+
+            function getEntryJson () {
+                        if (1==1)return;
+                Expert2Service.getEntryJson(${param.id}, {
+                    callback:function(js) {
+                        console.log(js);
+                        alert(js);
+                    }
+                });
+            }
 
             function gotoMedcase() {
                 window.open('entitySubclassView-mis_medCase.do?id='+$('externalId').value);
@@ -520,6 +534,7 @@ where cancer.entry_id=${param.id}"/>
                 <%--</msh:IfPropertyIsFalse>--%>
                 <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:showAllEntriesByPatient()" name="Показать все случаи по пациенту" roles="/Policy/E2" />
+                <msh:sideLink action="/javascript:getEntryJson()" name="тест - получить случай json" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>

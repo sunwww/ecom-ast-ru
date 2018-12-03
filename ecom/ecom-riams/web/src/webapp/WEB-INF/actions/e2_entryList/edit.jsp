@@ -248,6 +248,7 @@
                         useAllListEntry=true;
                     }
                     var ver = "3.1";
+                    if (confirm("Формировать в версии 3.1.1 ?")) {ver="3.1.1";}
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,{
                         callback: function(monitorId) {
                             monitor.id=monitorId;
@@ -259,6 +260,27 @@
 
                 }
                     var statusToast;
+                //останавливаем проверку
+                function stopCheckAndMonitor() {
+                    if (monitor.id) {
+                        if (confirm("Желаете прервать проверку?")) {
+                            RemoteMonitorService.cancel(monitor.id, {
+                                callback: function () {
+                                   if (!statusToast) {
+                                           statusToast =jQuery.toast({
+                                               heading:""
+                                               ,text:""
+                                               ,icon:"info"
+                                               ,hideAfter:false
+                                           });
+                                       }
+                                    statusToast.update({text:"Формирование чето-то прервано!"});
+                                   isRun=false;
+                                }
+                            });
+                        }
+                    }
+                }
                 function updateStatus() {
                     var id=monitor.id;
                     if (id){ //Если есть действующий монитор
@@ -283,6 +305,7 @@
                                     isRun=false;
                                 } else {
                                     txt=aStatus.text;
+                                    txt+="<a href='javascript:stopCheckAndMonitor()'>ПРЕРВАТЬ ФОРМИРОВАНИЕ</a>";
                                     setTimeout(updateStatus,4000) ;
                                 }
                                 statusToast.update({

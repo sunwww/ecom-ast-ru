@@ -200,6 +200,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     if (persist)theManager.persist(entry);
                 }
             }
+            log.info("Закончили импортировать N5");
             return "success";
         } catch (Exception e) {
             e.printStackTrace();

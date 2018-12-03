@@ -3,11 +3,13 @@ package ru.ecom.expert2.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV027;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -23,7 +25,7 @@ public class EntryDiagnosis extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public E2Entry getEntry() {return theEntry;}
     public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
     /** Запись */
@@ -58,13 +60,22 @@ public class EntryDiagnosis extends BaseEntity {
     public void setDopMkb(String aDopMkb) {theDopMkb = aDopMkb;}
     /** Доп. код МКБ */
     private String theDopMkb ;
-    
+
+    /** Справочник характеров заболевания */
+    @Comment("Справочник характеров заболевания")
+    @OneToOne
+    public VocE2FondV027 getVocIllnessPrimary() {return theVocIllnessPrimary;}
+    public void setVocIllnessPrimary(VocE2FondV027 aVocIllnessPrimary) {theVocIllnessPrimary = aVocIllnessPrimary;}
+    /** Справочник характеров заболевания */
+    private VocE2FondV027 theVocIllnessPrimary ;
+
     /** Характер заболевания */
     @Comment("Характер заболевания")
     public String getIllnessPrimary() {return theIllnessPrimary;}
     public void setIllnessPrimary(String aIllnessPrimary) {theIllnessPrimary = aIllnessPrimary;}
     /** Характер заболевания */
     private String theIllnessPrimary ;
+
 
     public EntryDiagnosis(E2Entry aEntry, VocIdc10 aMkb, VocDiagnosisRegistrationType aRegType, VocPriorityDiagnosis aPriority, String aDopMkb, String aIllnessPrimary) {
         theEntry=aEntry; theMkb=aMkb;theRegistrationType=aRegType;thePriority=aPriority;theDopMkb=aDopMkb;theIllnessPrimary=aIllnessPrimary;

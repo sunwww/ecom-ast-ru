@@ -1,11 +1,11 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.expert2.domain.E2CancerEntry;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import java.sql.Date;
 
 @Entity
@@ -14,7 +14,7 @@ public class E2CancerRefusal extends BaseEntity {
 
     /** Случай рака */
     @Comment("Случай рака")
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public E2CancerEntry getCancerEntry() {return theCancerEntry;}
     public void setCancerEntry(E2CancerEntry aCancerEntry) {theCancerEntry = aCancerEntry;}
     /** Случай рака */

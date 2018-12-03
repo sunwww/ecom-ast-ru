@@ -18,6 +18,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 
 /**
  * Случай медицинского обслуживания
@@ -31,6 +32,26 @@ import java.sql.Time;
     }) 
 @EntityListeners(DeleteListener.class)
 abstract public class MedCase extends BaseEntity {
+
+
+
+	/** Случаи ВМП */
+	@Comment("Случаи ВМП")
+	@OneToMany(mappedBy = "medCase",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<HitechMedicalCase> getHitechMedicalCases() {return theHitechMedicalCases;}
+	public void setHitechMedicalCases(List<HitechMedicalCase> aHitechMedicalCases) {theHitechMedicalCases = aHitechMedicalCases;}
+	/** Случаи ВМП */
+	private List<HitechMedicalCase> theHitechMedicalCases ;
+	
+	/** Диагнозы по случаю */
+	@Comment("Диагнозы по случаю")
+	@OneToMany(mappedBy = "medCase",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<Diagnosis> getDiagnoses() {return theDiagnoses;}
+	public void setDiagnoses(List<Diagnosis> aDiagnoses) {theDiagnoses = aDiagnoses;}
+	/** Диагнозы по случаю */
+	private List<Diagnosis> theDiagnoses ;
+
+
 	/** Признак консультативно-диагностического обращения */
 	@Comment("Признак консультативно-диагностического обращения")
 	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
@@ -111,10 +132,10 @@ abstract public class MedCase extends BaseEntity {
 	public void setIntoxication(VocIntoxication aIntoxication) {theIntoxication = aIntoxication;}
 	
 	/** Хирургические операции */
-	//@Comment("Хирургические операции")
-	//@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	//public List<SurgicalOperation> getSurgicalOperations() {return theSurgicalOperations;	}
-	//public void setSurgicalOperations(List<SurgicalOperation> aSurgicalOperations) {theSurgicalOperations = aSurgicalOperations;}
+	@Comment("Хирургические операции")
+	@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<SurgicalOperation> getSurgicalOperations() {return theSurgicalOperations;	}
+	public void setSurgicalOperations(List<SurgicalOperation> aSurgicalOperations) {theSurgicalOperations = aSurgicalOperations;}
 	
 	/** Оператор */
 	@Comment("Оператор")
@@ -320,7 +341,7 @@ abstract public class MedCase extends BaseEntity {
 	/**ЛПУ - место исполнения */
 	private MisLpu theLpu;
 	/** Хирургические операции */
-	//private List<SurgicalOperation> theSurgicalOperations;
+	private List<SurgicalOperation> theSurgicalOperations;
 	/** Опьянение */
 	private VocIntoxication theIntoxication;
     /** Вакцинации*/

@@ -5,9 +5,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyN001;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 
 /**
@@ -27,7 +25,7 @@ public class OncologyContra extends BaseEntity {
 
 
     @Comment("Случай онкологического лечения")
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public OncologyCase getOncologyCase() {
         return oncologyCase;
     }

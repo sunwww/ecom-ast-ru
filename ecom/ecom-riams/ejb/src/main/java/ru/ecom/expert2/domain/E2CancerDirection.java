@@ -3,17 +3,25 @@ package ru.ecom.expert2.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import java.sql.Date;
 
 @Entity
 /** Направление  на лечение (онкология) */
 public class E2CancerDirection extends BaseEntity {
 
+    /** ЛПУ, куда сделали направление */
+    @Comment("ЛПУ, куда сделали направление")
+    public String getDirectLpu() {return theDirectLpu;}
+    public void setDirectLpu(String aDirectLpu) {theDirectLpu = aDirectLpu;}
+    /** ЛПУ, куда сделали направление */
+    private String theDirectLpu ;
+
     /** Случай рака */
     @Comment("Случай рака")
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public E2CancerEntry getCancerEntry() {return theCancerEntry;}
     public void setCancerEntry(E2CancerEntry aCancerEntry) {theCancerEntry = aCancerEntry;}
     /** Случай рака */
