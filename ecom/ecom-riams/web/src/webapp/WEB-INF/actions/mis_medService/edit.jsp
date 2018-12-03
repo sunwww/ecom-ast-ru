@@ -159,14 +159,16 @@
 			<msh:section title="Соответствия с прейскурантом">
 			<ecom:webQuery name="pricePosition" 
 			nativeSql="select pms.id as pmsid,pl.name as plname,pg.name as pgname,pp.code as ppcode
-			,pp.name as ppname,pp.cost from PriceMedService pms
+			,pp.name as ppname,pp.cost
+			,case when pms.dateTo is null and pp.dateTo is null then '' else 'color:red' end as f7_style
+			from PriceMedService pms
 			left join PricePosition pp on pp.id=pms.pricePosition_id
 			left join priceposition pg on pg.id=pp.parent_id
 			left join pricelist pl on pl.id=pp.priceList_id
 			where pms.medService_id=${param.id}
 			"
 			/>
-				<msh:table name="pricePosition" 
+				<msh:table name="pricePosition" styleRow="7"
 				viewUrl="entityParentView-contract_priceMedService.do?short=Short"
 				action="entityParentView-contract_priceMedService.do" idField="1">
 					<msh:tableColumn columnName="#" property="sn"/>

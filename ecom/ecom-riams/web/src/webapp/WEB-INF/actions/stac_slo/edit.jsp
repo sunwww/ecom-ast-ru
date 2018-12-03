@@ -127,6 +127,7 @@
                 </msh:sideMenu>
             </msh:ifNotInRole>
             <msh:sideMenu title="Администрирование">
+                <msh:sideLink name="Ориентировочная цена по ОМС" action=".javascript:getMedcaseCost()" roles="/Policy/E2/Admin"/>
                 <msh:sideLink confirm="Вы точно хотите объединить несколько СЛО?" name="Объединить со след. СЛО" action=".javascript:unionSloWithNextSlo()" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/UnionSlo"/>
                 <tags:mis_changeServiceStream name="CSS" service="HospitalMedCaseService" title="Изменить поток обслуживания" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/ChangeServiceStream" />
             </msh:sideMenu>
@@ -647,6 +648,19 @@ where m.id ='${param.id}'"/>
         <msh:ifFormTypeIsView formName="stac_sloForm">
             <script type="text/javascript">
                 slo_form_is_view = 1 ;
+
+                function getMedcaseCost() {
+                    Expert2Service.getMedcaseCost(${param.id},{
+                        callback:function(aResult) {
+                            aResult=JSON.parse(aResult);
+                            if (aResult.status=='ok') {
+                                showToastMessage("ПРИМЕРНАЯ стоимость случая по ОМС:<br>КСГ="+aResult.ksg+"<br>Цена="+aResult.price+"<br>Формула расчета: "+aResult.formulaCost);
+                            } else {
+                                showToastMessage("Ошибка расчета цены:"+aResult.errorName);
+                            }
+                        }
+                    })
+                }
             </script>
         </msh:ifFormTypeIsView>
         <tags:CreateDiagnoseCriteria name="CreateDiagnoseCriteria" />
@@ -938,6 +952,7 @@ where m.id ='${param.id}'"/>
         </script>
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+        <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <msh:ifFormTypeIsView formName="stac_sloForm">
             <script type="text/javascript">
                 function unionSloWithNextSlo() {

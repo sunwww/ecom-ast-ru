@@ -144,7 +144,7 @@ group by wct.createprerecord
                 <msh:table
                         name="journal_ticket" action="/javascript:void()" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="Кем записано" property="3"/>
-                    <msh:tableColumn columnName="Записано всего" property="1"/>
+                    <msh:tableColumn columnName="Записано всего (записей)" property="1"/>
                     <msh:tableColumn columnName="Оформлено направление" property="2"/>
                 </msh:table>
             </msh:sectionContent>
@@ -161,7 +161,6 @@ left join workcalendarday wcd on wcd.id=wct.workcalendarday_id
 left join secuser su on su.login=wct.createprerecord
 where ${dateSql} between to_date('${dateBegin}','dd.MM.yyyy') and to_date('${dateEnd}','dd.MM.yyyy') ${sqlAddNew}
 " guid="4a720225-8d94-4b47-bef3-4dbbe79eec74" />
-
             <msh:sectionTitle>
             </msh:sectionTitle>
             <msh:sectionContent>

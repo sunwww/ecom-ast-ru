@@ -1,13 +1,12 @@
 package ru.nuzmsh.forms.validator.validators;
 
+import ru.nuzmsh.forms.validator.IValidator;
+import ru.nuzmsh.forms.validator.ValidateException;
+
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
-import ru.nuzmsh.forms.validator.IValidator;
-import ru.nuzmsh.forms.validator.ValidateException;
 
 
 public class SnilsStringValidator implements IValidator{
@@ -31,29 +30,22 @@ public class SnilsStringValidator implements IValidator{
             }
 	}
 	public boolean isRigthSnils (String aSnils) {
-				String currentSnils = aSnils.replace("-", "").replace(" ", "");
-				int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
-				//System.out.println(snilsCN);
-				if (currentSnils.length()!=11) {
-					return false;
-				} 
-				int sum = 0;
-				int controlNumber = 0;
-				for (int i=0;i<9;i++) {
-					sum+=Integer.valueOf(currentSnils.substring(i, i+1))*(9-i);
-				}
-				if (sum>101) {
-					sum=sum%101;			
-				}
-				if (sum<100) {
-					controlNumber=sum;
-				} 
-				if (snilsCN==controlNumber) {
-					//System.out.println("==isRightSnilsValidator, СНИЛС верный! "+currentSnils);
-					return true;	
-				} else {
-					//System.out.println("==isRightSnilsValidator, Неправильный СНИЛС!"+currentSnils);
-					return false;
-				}
+		String currentSnils = aSnils.replace("-", "").replace(" ", "");
+		if (currentSnils.length()!=11) {
+			return false;
+		}
+		int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
+		int sum = 0;
+		int controlNumber = 0;
+		for (int i=0;i<9;i++) {
+			sum+=Integer.valueOf(currentSnils.substring(i, i+1))*(9-i);
+		}
+		if (sum>101) {
+			sum=sum%101;
+		}
+		if (sum<100) {
+			controlNumber=sum;
+		}
+		return snilsCN==controlNumber;
 	}
 }
