@@ -83,7 +83,9 @@ public class CalculateServiceJs {
 
 	StringBuilder sql = new StringBuilder();
 	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-	
+
+	if (aId.equals("")) aId="0";
+
 	sql.append("SELECT cs.value,cs.comment,cs.type_id,cs.note from calculations cs ");
 	sql.append("left join calculator c on c.id = cs.calculator_id ");
 	sql.append("where c.id = '"+aId+"' order by orderus ");
@@ -178,7 +180,7 @@ public class CalculateServiceJs {
 	return sb.toString();
 	
     }
-    
+
     //Получить возраст
     public String getAge(Long aId, HttpServletRequest aRequest)
 	    throws NamingException {
@@ -221,5 +223,12 @@ public class CalculateServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		Collection<WebQueryResult> res = service.executeNativeSql("select result from interpretation where value='"+val+"' and calculator_id='"+cId+"' limit 1");
 		return (res.isEmpty())? "": res.iterator().next().get1().toString();
+	}
+
+	//Milamesher #127 есть ли тэг для калькулятора
+	public String getCalcTagView(Long cId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql("select tag from calculator where id="+cId);
+		return (!res.isEmpty() && res.iterator().next().get1()!=null) ? res.iterator().next().get1().toString() : "";
 	}
 }

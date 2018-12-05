@@ -52,4 +52,11 @@ public class CalculatorForm extends IdEntityForm{
 	public Boolean getCreateDiary() {return theCreateDiary;}
 	public void setCreateDiary(Boolean aCreateDiary) {theCreateDiary = aCreateDiary;	}
 	private Boolean theCreateDiary;
+
+	/** Тэг *.tag */
+	@Comment("Тэг *.tag ")
+	@Persist
+	public String getTag() {return theTag;}
+	public void setTag(String aTag) {theTag = aTag;	}
+	private String theTag;
 }

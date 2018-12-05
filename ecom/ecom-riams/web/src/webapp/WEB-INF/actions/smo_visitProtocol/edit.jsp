@@ -111,7 +111,9 @@ horizontalFill="true" />
 						<input type="button" style="display: none" name="btnEditProt2" id="btnEditProt2"
 							value="Редактировать параметры" onClick="showTemplateForm($('templateProtocol').value);" />
 
-							<input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId,1)"/>
+							<input id="usualCalcs" class="hide" type="button" value="Калькуляторы и шкалы риска" onClick="showallCalc(medCaseId,1)"/>
+
+							<!--input id="SKNF" class="hide" type="button" value="Вычисление СКФ" onClick="showMyNewCalculation(medCaseId,1)"/-->
 
 
 							<input type="button" value="Шаблон" onClick="showtmpTemplateProtocol()"/>
@@ -195,6 +197,9 @@ horizontalFill="true" />
 									 roles="/Policy/Diary/Template/Create" field="record" title="Создание шаблона"/>
 			<tags:calculation_other name="Mycalc" roles="/Policy/Mis/Calc/Calculation/OtherCalculations" field="record2" title="Остальные вычисления"/>
 			<tags:calculation name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+			<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
+				<tags:allCalcs name="all" roles="/Policy/Mis/Calc/Calculation/Create" medCaseId="${param.id}"/>
+			</msh:ifFormTypeIsCreate>
 
 			<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
 				<tags:mis_protocolTemplateDocumentList name="Print" />
@@ -616,8 +621,10 @@ horizontalFill="true" />
             </script>
 			<msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
 				<script type="text/javascript">
-				   var btn = document.querySelector('#SKNF');
-				   btn.className = "";
+				   /*var btn = document.querySelector('#SKNF');
+				   btn.className = "";*/
+				   var btn = document.querySelector('#usualCalcs');
+                   btn.className = "";
 				   flag=1;
 				   function CalcService(){
 						CalculateService.getCountDiary(medCaseId, {
