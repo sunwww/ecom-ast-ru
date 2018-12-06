@@ -9,7 +9,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	saveParameters (aForm, aEntity, aCtx.getUsername(),aCtx);
 	//lastrelease milamesher 09.04.2018 #97 (при создании карты в СЛО надо создать протокол)
     if (aForm.getDepMedcase()!=null && aForm.getDepMedcase()!='' && aForm.getDepMedcase()!='0' && aForm.getTemplate()=='7') {
-        var asCardDiaryText = "Протокол карты оценки риска ВТЭО во время родов и в послеродовом периоде пациентки ";
+        var asCardDiaryText = "Протокол карты оценки риска ВТЭО во время родов и в послеродовом (послеоперационном) периоде пациентки ";
         var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
         asCardDiaryText +=patient.getPatientInfo() + "\n";
         var jsonStr=aForm.getParams();
