@@ -101,6 +101,7 @@
 			
 			</msh:ifFormTypeIsNotView>
 			<tags:calculation name="calculation" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+			<tags:calculation_grace name="calculation_grace" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 		</msh:form>
 	</tiles:put>
 	<!-- Scripts -->
@@ -228,16 +229,11 @@ if (window.parent.document.getElementById('allCalc')!=null) document.getElementB
 	    CalculateService.getCalcTagView(calculator.value, {
         callback : function(aResult) {
 			if (aResult=='') GetAndParseJson();
-			else {
-			    //если есть вьюшка, вывести её, имена должны совпадать
-				if (aResult=='calculation') {
-                    /*for (var i=0; i<100; i++) {
-                        if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
-                        if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
-                    }*/
-				    showcalculationNewCalculation($('departmentMedCase').value,0);
-                }
-			}
+            //если есть вьюшка, вывести её, имена должны совпадать
+			else if (aResult=='calculation')
+                    showcalculationNewCalculation($('departmentMedCase').value, 0);
+                else if (aResult=='calculation_grace')
+                    showcalculation_graceNewCalculation($('departmentMedCase').value, 0);
         }
     	});
 	});

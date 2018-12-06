@@ -13,8 +13,6 @@
 
 <msh:ifInRole roles="${roles}">
 
-<msh:sideLink name="${title}" action=" javascript:show${name}NewCalculation('.do') " /> 
-
 
 <style type="text/css">
     #${name}NewCalculation {
