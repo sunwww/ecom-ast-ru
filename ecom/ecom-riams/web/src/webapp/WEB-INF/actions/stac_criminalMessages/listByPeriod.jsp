@@ -194,9 +194,9 @@
 
     
     <%}
-    String date = (String)request.getParameter("dateBegin") ;
-    String date1 = (String)request.getParameter("dateEnd") ;
-        request.setAttribute("isReportBase", ActionUtil.isReportBase(date,date1,request));
+    String date = request.getParameter("dateBegin") ;
+    String date1 = request.getParameter("dateEnd") ;
+
     if (date!=null && !date.equals(""))  {
     	ActionUtil.getValueBySql("select id,omccode from VocSex where omccode='2'"
     			,"sex_id","sex_code",request);  		
