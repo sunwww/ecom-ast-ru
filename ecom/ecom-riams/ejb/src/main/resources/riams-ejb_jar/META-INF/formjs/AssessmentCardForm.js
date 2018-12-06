@@ -28,9 +28,9 @@ function onCreate(aForm, aEntity, aCtx) {
         }
         asCardDiaryText+="Общая сумма баллов: "+aEntity.getBallSum()+"\n";
         if (aEntity.getComment()!=null && aEntity.getComment()!="") asCardDiaryText+="Комментарий: " + aEntity.getComment() +"\n";
-        if (aEntity.getBallSum()<=1) asCardDiaryText+="Низкий риск.";
+        /*if (aEntity.getBallSum()<=1) asCardDiaryText+="Низкий риск.";
         else if (aEntity.getBallSum()==2) asCardDiaryText+="Средний риск.";
-        else if (aEntity.getBallSum()>=3) asCardDiaryText+="Высокий риск.";
+        else if (aEntity.getBallSum()>=3) asCardDiaryText+="Высокий риск.";*/
         if (asCardDiaryText!='') {
             var currentDate = new java.util.Date();
             var prot = new Packages.ru.ecom.poly.ejb.domain.protocol.Protocol;
