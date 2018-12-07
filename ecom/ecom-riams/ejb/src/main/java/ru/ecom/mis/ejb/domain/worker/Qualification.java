@@ -1,24 +1,17 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.worker.voc.VocAcademicDegree;
-import ru.ecom.mis.ejb.domain.worker.voc.VocAcademicStatus;
-import ru.ecom.mis.ejb.domain.worker.voc.VocCertificateIssueBase;
-import ru.ecom.mis.ejb.domain.worker.voc.VocCategory;
-import ru.ecom.mis.ejb.domain.worker.voc.VocInstitut;
-import ru.ecom.mis.ejb.domain.worker.voc.VocSpec;
+import ru.ecom.mis.ejb.domain.worker.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.sql.Date;
 
 /**
  * Квалификация

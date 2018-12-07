@@ -10,8 +10,6 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
-import java.sql.Time;
-
 /**
  * Created by Milamesher on 14.09.2018.
  * Консультация специалиста

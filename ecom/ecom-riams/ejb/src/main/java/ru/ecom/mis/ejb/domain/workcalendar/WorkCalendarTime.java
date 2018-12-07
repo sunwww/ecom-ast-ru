@@ -1,21 +1,19 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.*;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 /**
  * Рабочее время

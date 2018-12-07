@@ -1,23 +1,18 @@
 package ru.ecom.mis.ejb.domain.vaccination;
 
-import java.sql.Date;
-import java.sql.Time;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationMaterial;
-import ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationMethod;
-import ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationPhase;
-import ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationReaction;
-import ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationReasonType;
+import ru.ecom.mis.ejb.domain.vaccination.voc.*;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Вакцинация

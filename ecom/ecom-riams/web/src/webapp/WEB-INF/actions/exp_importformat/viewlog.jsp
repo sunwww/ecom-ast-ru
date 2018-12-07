@@ -1,9 +1,7 @@
-<%@ page import="java.io.Reader" %>
+<%@ page import="IJbossGetFileService" %>
+<%@ page import="ru.ecom.web.util.Injection" %>
 <%@ page import="java.io.FileReader" %>
 <%@ page import="java.io.LineNumberReader" %>
-<%@ page import="java.util.regex.Pattern" %>
-<%@ page import="ru.ecom.ejb.services.file.IJbossGetFileService" %>
-<%@ page import="ru.ecom.web.util.Injection" %>
 <%--
   @author ikouzmin 19.03.2007 16:26:01
   

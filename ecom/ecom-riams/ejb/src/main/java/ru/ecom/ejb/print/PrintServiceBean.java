@@ -1,22 +1,20 @@
 package ru.ecom.ejb.print;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.script.IScriptService;
-import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.IValueInit;
 import ru.ecom.report.replace.SetValueException;
 import ru.ecom.report.rtf.RtfPrintServiceHelper;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import java.util.HashMap;
+import java.util.Map;
 
 @Stateless
 @Local(IPrintService.class)
@@ -77,7 +75,7 @@ public class PrintServiceBean implements IPrintService {
 
 	
 	private @EJB
-	IJbossGetFileLocalService theJbossGetFileLocalService;
+    IJbossGetFileLocalService theJbossGetFileLocalService;
 
 	//private EjbInjection theInjection = EjbInjection.getInstance();
 }

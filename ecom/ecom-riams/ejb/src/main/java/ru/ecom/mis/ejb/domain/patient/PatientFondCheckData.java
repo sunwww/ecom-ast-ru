@@ -1,14 +1,12 @@
 package ru.ecom.mis.ejb.domain.patient;
 
-import java.sql.Date;
-import java.util.List;
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.sql.Date;
+import java.util.List;
 
 @Entity
 public class PatientFondCheckData extends BaseEntity {

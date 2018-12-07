@@ -1,10 +1,9 @@
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.Collection"%>
-<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
+<%@page import="WebQueryResult"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
+<%@page import="ru.nuzmsh.util.query.ReportParamUtil"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Calendar"%>
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="java.util.Date"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>

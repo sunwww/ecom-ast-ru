@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.form.pharmnet;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.mis.ejb.domain.pharmnetPharmacy.PharmnetComplectEntity;
 import ru.ecom.mis.ejb.domain.pharmnetPharmacy.PharmnetStorageEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;

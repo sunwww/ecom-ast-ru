@@ -1,26 +1,21 @@
 package ru.ecom.poly.ejb.domain.protocol;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.poly.ejb.domain.Ticket;
 import ru.ecom.poly.ejb.domain.voc.VocProtocolMode;
 import ru.ecom.poly.ejb.domain.voc.VocTypeProtocol;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Created by IntelliJ IDEA.

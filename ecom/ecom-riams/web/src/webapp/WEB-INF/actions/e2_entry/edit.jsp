@@ -304,7 +304,7 @@
                 <ecom:webQuery name="childEntries" nativeSql="select e.id
  ,e.departmentName, e.startDate, e.finishDate, e.serviceStream
  from e2entry e
- where e.parententry_id=${param.id} order by e.startdate, e.starttime"/>
+ where e.parententry_id=${param.id} and (e.isDeleted is null or e.isDeleted='0') order by e.startdate, e.starttime"/>
                 <msh:table  idField="1" name="childEntries" action="entityParentView-e2_entry.do" noDataMessage="Нет дочерних СЛО">
                     <msh:tableColumn columnName="ИД" property="1"/>
                     <msh:tableColumn columnName="Отделение" property="2"/>

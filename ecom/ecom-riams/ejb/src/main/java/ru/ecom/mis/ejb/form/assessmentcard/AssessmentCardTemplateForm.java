@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.form.assessmentcard;
 
-import java.sql.Date;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCardTemplate;

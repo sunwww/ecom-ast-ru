@@ -1,11 +1,11 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import ru.ecom.ejb.util.injection.EjbInjection;
+import ru.ecom.mis.ejb.service.patient.IPatientService;
+
 import javax.naming.NamingException;
 import javax.persistence.PostPersist;
 import javax.persistence.PreUpdate;
-
-import ru.ecom.ejb.util.injection.EjbInjection;
-import ru.ecom.mis.ejb.service.patient.IPatientService;
 
 /**
  * Обновление пациента

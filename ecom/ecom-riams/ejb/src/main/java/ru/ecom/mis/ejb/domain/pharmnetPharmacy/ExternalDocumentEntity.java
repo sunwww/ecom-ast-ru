@@ -1,10 +1,12 @@
 package ru.ecom.mis.ejb.domain.pharmnetPharmacy;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.sql.Date;
 import java.sql.Timestamp;
 

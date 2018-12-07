@@ -1,12 +1,5 @@
 package ru.ecom.mis.ejb.domain.assessmentcard;
 
-import java.sql.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -14,7 +7,12 @@ import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.forms.validator.validators.MaxLength;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
 
 
 @Entity

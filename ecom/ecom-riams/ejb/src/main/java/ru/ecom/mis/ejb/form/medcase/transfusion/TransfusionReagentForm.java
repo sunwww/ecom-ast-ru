@@ -1,23 +1,15 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
-import java.sql.Date;
-
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Transfusion;
 import ru.ecom.mis.ejb.domain.medcase.TransfusionReagent;
-import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.OneToOne;
 
 @EntityForm
 @EntityFormPersistance(clazz= TransfusionReagent.class)

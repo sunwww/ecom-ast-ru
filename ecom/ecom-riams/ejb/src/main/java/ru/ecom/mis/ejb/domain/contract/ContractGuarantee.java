@@ -1,19 +1,18 @@
 package ru.ecom.mis.ejb.domain.contract;
-import java.math.BigDecimal;
-import java.sql.Date;
+
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.contract.voc.VocGuaranteeKindHelp;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.contract.ContractPerson;
-import ru.ecom.mis.ejb.domain.contract.MedContract;
-import ru.ecom.mis.ejb.domain.contract.voc.VocGuaranteeKindHelp;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.math.BigDecimal;
+import java.sql.Date;
 	/**
 	 * Гарантийный документ по договору
 	 */

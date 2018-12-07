@@ -1,24 +1,12 @@
 package ru.ecom.mis.ejb.form.extdispplan;
 
-import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
 import ru.ecom.mis.ejb.domain.extdispplan.ExtDispPlanPopulationRecord;
-import ru.ecom.mis.ejb.domain.patient.IdentityCard;
-import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.form.extdisp.interceptor.ExtDispCardViewInterceptor;
-import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import java.sql.Date;
 
 @EntityForm
 @EntityFormPersistance(clazz =  ExtDispPlanPopulationRecord.class)

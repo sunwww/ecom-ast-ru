@@ -1,7 +1,7 @@
 <vocconfig>
     <voc id='vocOncologyN001' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN001'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN001'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -79,7 +79,7 @@
 
     <voc id='vocOncologyN003' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN003'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN003'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -95,7 +95,7 @@
 
     <voc id='vocOncologyN004' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN004'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN004'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -111,7 +111,7 @@
 
     <voc id='vocOncologyN005' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN005'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN005'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -138,7 +138,7 @@
 
     <voc id='vocOncologyN006' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN006'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN006'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -154,7 +154,7 @@
 
     <voc id='vocOncologyN007' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN007'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN007'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -170,7 +170,7 @@
 
     <voc id='vocOncologyN008' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN008'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN008'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -186,7 +186,7 @@
 
     <voc id='vocOncologyN009' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN009'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN009'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -202,7 +202,7 @@
 
     <voc id='vocOncologyN010' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN010'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN010'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -218,7 +218,7 @@
 
     <voc id='vocOncologyN011' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN011'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN011'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -234,7 +234,7 @@
 
     <voc id='vocOncologyN012' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN012'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN012'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -250,7 +250,7 @@
 
     <voc id='vocOncologyN013' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN013'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN013'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -266,7 +266,7 @@
 
     <voc id='vocOncologyN014' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN014'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN014'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -282,7 +282,7 @@
 
     <voc id='vocOncologyN015' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN015'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN015'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -298,7 +298,7 @@
 
     <voc id='vocOncologyN016' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN016'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN016'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -314,7 +314,7 @@
 
     <voc id='vocOncologyN017' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN017'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyN017'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -329,7 +329,7 @@
     </voc>
     <voc id='vocOncologyReasonTreat' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyReasonTreat'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -345,7 +345,7 @@
 
     <voc id='vocOncologyConsilium' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyConsilium'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -368,7 +368,7 @@
     </voc>
     <voc id='vocOncologyConsilium' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyConsilium'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -376,7 +376,7 @@
 
     <voc id='vocOncologyDiagType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyDiagType'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyDiagType'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -384,7 +384,7 @@
 
     <voc id='vocOncologyMethodDiagTreat' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyMethodDiagTreat'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyMethodDiagTreat'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -392,7 +392,7 @@
 
     <voc id='vocOncologyReasonTreat' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyReasonTreat'
                 names   = 'name'
                 queried = 'code,name'
         />
@@ -400,7 +400,7 @@
 
     <voc id='vocOncologyTypeDirection' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyTypeDirection'
+                entity  = 'ru.ecom.oncological.ru.ecom.ejb.domain.voc.VocOncologyTypeDirection'
                 names   = 'name'
                 queried = 'code,name'
         />

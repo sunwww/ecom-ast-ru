@@ -1,10 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@page import="java.util.List"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="ru.ecom.ejb.services.query.IWebQueryService"%>
-<%@page import="java.util.Collection"%>
+<%@page import="IWebQueryService"%>
+<%@page import="WebQueryResult"%>
 <%@page import="ru.ecom.web.util.Injection"%>
-<%@ page import="ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs" %>
+<%@page import="java.util.List"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>

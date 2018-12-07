@@ -1,23 +1,14 @@
 package ru.ecom.mis.ejb.domain.equipment;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.mis.ejb.domain.equipment.voc.VocCreater;
-import ru.ecom.mis.ejb.domain.equipment.voc.VocMarka;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocOKOF;
-import ru.ecom.mis.ejb.domain.equipment.voc.VocProvider;
-import ru.ecom.mis.ejb.domain.equipment.voc.VocTypeEquip;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.sql.Date;
 
 /**
  * @author  vtsybulin

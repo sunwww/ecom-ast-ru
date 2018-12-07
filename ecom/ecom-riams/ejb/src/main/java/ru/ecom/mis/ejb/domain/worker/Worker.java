@@ -1,17 +1,5 @@
 package ru.ecom.mis.ejb.domain.worker;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.document.ejb.domain.DocumentFormJournal;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -20,13 +8,13 @@ import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.transforms.DoTimeString;
-import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.TimeString;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 
 /**

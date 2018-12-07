@@ -1,14 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase.hospital;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
@@ -16,6 +7,13 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDayTime;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocStoolType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.sql.Date;
 
 /**
  * Температурная кривая

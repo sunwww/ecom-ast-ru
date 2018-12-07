@@ -1,5 +1,4 @@
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
+<%@page import="WebQueryResult"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -19,7 +18,7 @@
 <input type="submit" name="btnPrint" id="btnPrint" value="Печать реестра">
 <input type='hidden' name='m' value="printNativeQuery"/>
 <input type='hidden' name='s' value="PrintService"/>
-<input type='hidden' name='clazz' value="Packages.ru.ecom.mis.ejb.domain.contract.ContractAccount:${param.id}"/>
+<input type='hidden' name='clazz' value="Packages.ru.ecom.mis.ru.ecom.ejb.domain.contract.ContractAccount:${param.id}"/>
 <input type='hidden' name="groupField" id="groupField" value="2,3">
 <ecom:setAttribute name="sqlText" value="
 select cams.mainparent,
@@ -69,7 +68,7 @@ substring(cams.lastname,1,1)||lower(substring(cams.lastname,2)) as lastname
 <input type="submit" name="btnPrint" id="btnPrint" value="Печать акта и счета">
 <input type='hidden' name='m' value="printNativeQuery"/>
 <input type='hidden' name='s' value="PrintService"/>
-<input type='hidden' name='clazz' value="Packages.ru.ecom.mis.ejb.domain.contract.ContractAccount:${param.id}"/>
+<input type='hidden' name='clazz' value="Packages.ru.ecom.mis.ru.ecom.ejb.domain.contract.ContractAccount:${param.id}"/>
 <input type='hidden' name="groupField" id="groupField" value="2,3">
 <ecom:setAttribute name="sqlText" value="
 select pp.id as ppid

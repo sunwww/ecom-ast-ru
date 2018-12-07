@@ -1,19 +1,5 @@
 package ru.ecom.mis.ejb.service.expert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.EJB;
-import javax.annotation.Resource;
-import javax.ejb.Remote;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -25,8 +11,20 @@ import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit;
 import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationKind;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.service.medcase.HospitalMedCaseServiceBean;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
+
+import javax.annotation.EJB;
+import javax.annotation.Resource;
+import javax.ejb.Remote;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Stateless
 @Remote(IQualityEstimationService.class)

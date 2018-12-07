@@ -1,31 +1,6 @@
 package ru.ecom.expomc.ejb.services.check;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
@@ -38,19 +13,30 @@ import ru.ecom.expomc.ejb.domain.format.Format;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 import ru.ecom.expomc.ejb.domain.message.Message;
-//import ru.ecom.expomc.ejb.domain.message.MessageChange;
-//import ru.ecom.expomc.ejb.domain.message.MessageLog;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.INativeSqlMultipleQueriesSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.INativeSqlSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.ISqlSupports;
 import ru.ecom.expomc.ejb.services.check.checkers.sql.NativeSqlContext;
 import ru.ecom.expomc.ejb.services.check.impl.CheckContext;
-import ru.ecom.expomc.ejb.services.check.result.ResultLog;
 import ru.ecom.expomc.ejb.services.form.check.CheckPropertyForm;
 import ru.ecom.expomc.ejb.services.importservice.ImportServiceBean;
 import ru.ecom.expomc.ejb.services.voc.allvalues.AllowedChecksAllValues;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.PropertyUtil;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.util.*;
+import java.util.Map.Entry;
+
+//import ru.ecom.expomc.ejb.domain.message.MessageChange;
+//import ru.ecom.expomc.ejb.domain.message.MessageLog;
 
 /**
  * Проверка реестра

@@ -1,17 +1,10 @@
 package ru.ecom.mis.ejb.form.patient;
 
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.ADynamicSecurityInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.voc.VocColorType;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientCreateInterceptor;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientDynamicSecurityInterceptor;
 import ru.ecom.mis.ejb.form.patient.interceptors.PatientSaveInterceptor;
@@ -25,14 +18,7 @@ import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoInputNonLat;
 import ru.nuzmsh.forms.validator.transforms.DoTrimString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
-import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.MaxDateCurrent;
-import ru.nuzmsh.forms.validator.validators.MaxLength;
-import ru.nuzmsh.forms.validator.validators.MinLength;
-import ru.nuzmsh.forms.validator.validators.Required;
-import ru.nuzmsh.forms.validator.validators.SnilsString;
-import ru.nuzmsh.forms.validator.validators.VInputFIOByMaskOmc;
-import ru.nuzmsh.forms.validator.validators.VInputNonLat;
+import ru.nuzmsh.forms.validator.validators.*;
 
 /**
  * Пациент

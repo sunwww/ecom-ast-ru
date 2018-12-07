@@ -1,15 +1,13 @@
 package ru.ecom.diary.ejb.service.template;
 
-import java.util.List;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.diary.ejb.domain.protocol.template.TemplateWord;
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.

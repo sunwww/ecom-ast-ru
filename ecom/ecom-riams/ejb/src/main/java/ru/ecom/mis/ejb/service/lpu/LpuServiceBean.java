@@ -1,21 +1,19 @@
 package ru.ecom.mis.ejb.service.lpu;
 
-import java.util.List;
-
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.util.QueryResultUtil;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcLpu;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  *

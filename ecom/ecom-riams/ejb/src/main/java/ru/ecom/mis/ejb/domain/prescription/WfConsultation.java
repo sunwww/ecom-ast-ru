@@ -7,11 +7,12 @@ package ru.ecom.mis.ejb.domain.prescription;
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocConsultingType;
-import ru.ecom.mis.ejb.domain.prescription.Prescription;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
-import java.sql.Date;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(schema="SQLUser")

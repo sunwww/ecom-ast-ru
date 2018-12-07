@@ -18,17 +18,17 @@
 		
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuArea" value="transactional" />
-			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint" value="transactional" />
-			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText" value="transactional" />
-			<property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.MisLpu" value="transactional" />
-			<property name="hibernate.ejb.collectioncache.ru.ecom.mis.ejb.domain.lpu.MisLpu.subdivisions" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.mis.ru.ecom.ejb.domain.lpu.LpuArea" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.mis.ru.ecom.ejb.domain.lpu.LpuAreaAddressPoint" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.mis.ru.ecom.ejb.domain.lpu.LpuAreaAddressText" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.mis.ru.ecom.ejb.domain.lpu.MisLpu" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.collectioncache.ru.ecom.mis.ru.ecom.ejb.domain.lpu.MisLpu.subdivisions" value="transactional" />
 
-			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.address.Address" value="transactional" />
-			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.address.AddressType" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.address.ru.ecom.ejb.domain.address.Address" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.address.ru.ecom.ejb.domain.address.AddressType" value="transactional" />
 
-			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.kladr.Kladr" value="transactional" />
-			<property name="hibernate.ejb.classcache.ru.ecom.address.ejb.domain.kladr.KladrDoma" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.address.ru.ecom.ejb.domain.kladr.Kladr" value="transactional" />
+			<property name="hibernate.ru.ecom.ejb.classcache.ru.ecom.address.ru.ecom.ejb.domain.kladr.KladrDoma" value="transactional" />
 	
 		</properties>
 		

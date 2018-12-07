@@ -208,21 +208,21 @@ where wf.dtype='PersonalWorkFunction' -->
     
 <voc id='vocEquipmentType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.equipment.voc.VocTypeEquip'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.equipment.voc.VocTypeEquip'
                 names   = 'name'
                 queried = 'name'
         />
     </voc> 
 <voc id='vocMedicalStandard' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medstandard.MedicalStandard'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medstandard.MedicalStandard'
                 names   = 'name'
                 queried = 'name'
         />
     </voc> 
 <voc id='vocKiliDefect' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocKiliDefect'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocKiliDefect'
                 names   = 'name'
                 queried = 'name'
         />
@@ -231,7 +231,7 @@ where wf.dtype='PersonalWorkFunction' -->
 <!--  Справочник профилей КИЛИ -->
 <voc id='vocKiliProfile' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocKiliProfile'
                 names   = 'name'
                 queried = 'name'
         />
@@ -510,7 +510,7 @@ where wf.dtype='PersonalWorkFunction' -->
 		order="ef.comment"
 		names="ef.id||' '|| ef.comment"
 		join="left join impdoc id on id.id=ef.document_id"
-		queryAppend="ef.actualdateto is null and id.entityclassname='ru.ecom.mis.ejb.domain.patient.PatientAttachedImport'"
+		queryAppend="ef.actualdateto is null and id.entityclassname='ru.ecom.mis.ru.ecom.ejb.domain.patient.PatientAttachedImport'"
 		queried=" upper(ms.name) like upper(:query) "
 	/>
 </voc>
@@ -521,7 +521,7 @@ where wf.dtype='PersonalWorkFunction' -->
 		order="ef.comment"
 		names="ef.id||' '|| ef.comment"
 		join="left join impdoc id on id.id=ef.document_id"
-		queryAppend="ef.actualdateto is null and id.entityclassname='ru.ecom.mis.ejb.domain.medcase.hospital.HospitalDataFond'"
+		queryAppend="ef.actualdateto is null and id.entityclassname='ru.ecom.mis.ru.ecom.ejb.domain.medcase.hospital.HospitalDataFond'"
 		queried=" upper(ms.name) like upper(:query) "
 	/>
 </voc>
@@ -939,14 +939,14 @@ where wf.dtype='PersonalWorkFunction' -->
 	
 	<voc id='vocAccountOperation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.contract.voc.VocAccountOperation'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.contract.voc.VocAccountOperation'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc>
 	<voc id='vocIllnesPrimary' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary'
+                entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocIllnesPrimary'
                 names   = 'name'
                 queried = 'code,name'
                 queryAppend="(deprecated is null or deprecated=false)"
@@ -1089,7 +1089,7 @@ where wf.dtype='PersonalWorkFunction' -->
 	</voc>
     <voc id='vocCardIndex' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.poly.ejb.domain.voc.VocCardIndex'
+                entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocCardIndex'
                 names   = 'code,name'
                 queried = 'code,name'
                  parent = "lpu"
@@ -1183,21 +1183,21 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
     <voc id='contractNosologyGroup' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.contract.ContractNosologyGroup'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.contract.ContractNosologyGroup'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc>
     <voc id='contractMedServiceGroup' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.contract.ContractMedServiceGroup'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.contract.ContractMedServiceGroup'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc>
     <voc id='contractGuaranteeGroup' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.contract.ContractGuaranteeGroup'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.contract.ContractGuaranteeGroup'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1219,7 +1219,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
     <voc id='vocObjectPermission' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.jaas.ejb.domain.voc.VocObjectPermission'
+                entity  = 'ru.ecom.jaas.ru.ecom.ejb.domain.voc.VocObjectPermission'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1227,13 +1227,13 @@ where wf.dtype='PersonalWorkFunction' -->
 
 	<voc id="vocEncodingSystem" type="EntityVocService">
 		<EntityVocService 
-			entity="ru.ecom.mis.ejb.domain.identification.voc.VocEncodingSystem" 
+			entity="ru.ecom.mis.ru.ecom.ejb.domain.identification.voc.VocEncodingSystem"
 			names="name" 
 			queried="name"
 			/>
 	</voc>
     <voc id='lpu' type='AllValueHelper'>
-        <IAllValue>ru.ecom.mis.ejb.service.lpu.LpuAllValueVoc</IAllValue>
+        <IAllValue>ru.ecom.mis.ru.ecom.ejb.service.lpu.LpuAllValueVoc</IAllValue>
     </voc>
     
     <voc id='medService' type='NativeVocService'>
@@ -1419,7 +1419,7 @@ where wf.dtype='PersonalWorkFunction' -->
     
     </voc>
     <voc id='pregnancyByWoman' type='AllValueHelper'>
-        <IAllValue>ru.ecom.mis.ejb.service.birth.PregnancyByWomanVoc</IAllValue>
+        <IAllValue>ru.ecom.mis.ru.ecom.ejb.service.birth.PregnancyByWomanVoc</IAllValue>
     </voc>
     <voc id='pregnancyByPatient' type="NativeVocService">
     	<NativeVocService
@@ -1437,7 +1437,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
    <voc id='mainLpu' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.MisLpu'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.MisLpu'
                 names   = 'omcCode,name'
                 queried = 'name'
             queryAppend = "parent_id is null and (isArchive is null or isArchive='0') "
@@ -1446,13 +1446,13 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
 
     <voc id='groupWorkFunction' type='AllValueHelper'>
-    	  <IAllValue>ru.ecom.mis.ejb.service.worker.GroupWorkFunctionVoc</IAllValue>
+    	  <IAllValue>ru.ecom.mis.ru.ecom.ejb.service.worker.GroupWorkFunctionVoc</IAllValue>
     </voc>
     
         
    <voc id='vocWorkCalendarType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkCalendarType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.workcalendar.voc.VocWorkCalendarType'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = "UPPER_CASE"
@@ -1460,7 +1460,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
    <voc id='vocWorkPlaceLevel' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocWorkPlaceLevel'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.voc.VocWorkPlaceLevel'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1468,7 +1468,7 @@ where wf.dtype='PersonalWorkFunction' -->
     
    <voc id='vocDisabilityDocumentType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocDisabilityDocumentType'
                 names   = 'name'
                 queried = 'name'
                 queryConvertType = 'UPPER_CASE'
@@ -1476,7 +1476,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
    <voc id='vocDisabilityStatus' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocDisabilityStatus'
                 names   = 'name'
                 queried = 'name'
                 queryConvertType = 'UPPER_CASE'
@@ -1484,7 +1484,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
    <voc id='vocDisabilityStatusForDuplicate' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocDisabilityStatus'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="code!='0'"
@@ -1493,7 +1493,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
    <voc id='vocLpuFunction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocLpuFunction'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.voc.VocLpuFunction'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1501,7 +1501,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='lpuArea' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.LpuArea'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.LpuArea'
                 names   = 'typeName,number'
                 queried = 'number'
                 />
@@ -1509,7 +1509,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='lpuAreaWithParent' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.LpuArea'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.LpuArea'
                 names   = 'typeName,number,comment'
                 parent  = 'lpu'
                 queried = 'number,comment'
@@ -1560,7 +1560,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='lpuAreaAddressText' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressText'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.LpuAreaAddressText'
                 names   = 'AddressText'
                 queried = 'id'
                 />
@@ -1569,7 +1569,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='vocSex' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocSex'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.voc.VocSex'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1589,7 +1589,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
     <voc id='vocAdditionStatus' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocAdditionStatus'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.voc.VocAdditionStatus'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1597,7 +1597,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='vocInsuranceCompany' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany'
+                entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.registry.RegInsuranceCompany'
                 names   = 'omcCode,name'
                 queried = 'omcCode,name'
                 queryAppend = '(deprecated is null or deprecated = false) and (isRegion=true)'
@@ -1605,7 +1605,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
     <voc id='vocInsuranceCompanyAll' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany'
+                entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.registry.RegInsuranceCompany'
                 names   = 'omcCode,name'
                 queried = 'omcCode,name'
                 queryAppend = '(deprecated is null or deprecated = false)'
@@ -1614,7 +1614,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='vocOrg' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocOrg'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.voc.VocOrg'
                 names   = 'oldFondNumber,name,fondNumber'
                 queried = 'oldFondNumber,name,fondNumber'
                 queryConvertType="UPPER_CASE"
@@ -1650,7 +1650,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='Address-1' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.address.ejb.domain.address.Address'
+                entity  = 'ru.ecom.address.ru.ecom.ejb.domain.address.Address'
                 names   = 'name'
                 queried = 'name'
                 queryAppend = 'domen = 1'
@@ -1660,7 +1660,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='Address-2' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.address.ejb.domain.address.Address'
+                entity  = 'ru.ecom.address.ru.ecom.ejb.domain.address.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -1671,7 +1671,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='Address-3' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.address.ejb.domain.address.Address'
+                entity  = 'ru.ecom.address.ru.ecom.ejb.domain.address.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -1682,7 +1682,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='Address-4' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.address.ejb.domain.address.Address'
+                entity  = 'ru.ecom.address.ru.ecom.ejb.domain.address.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -1693,7 +1693,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='Address-5' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.address.ejb.domain.address.Address'
+                entity  = 'ru.ecom.address.ru.ecom.ejb.domain.address.Address'
                 names   = 'name,typeName'
                 queried = 'name'
                 parent  = 'parent'
@@ -1704,7 +1704,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='Address-6' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.address.ejb.domain.address.Address'
+                entity  = 'ru.ecom.address.ru.ecom.ejb.domain.address.Address'
                 names   = 'name,typeName,postIndex'
                 queried = 'name'
                 parent  = 'parent'
@@ -1715,7 +1715,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='vocAreaType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocAreaType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.voc.VocAreaType'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1724,7 +1724,7 @@ where wf.dtype='PersonalWorkFunction' -->
     <!-- Тип удостоверения личности -->
     <voc id='vocIdentityCard' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.voc.VocIdentityCard'
                 names   = 'name'
                 queried = 'name'
             queryAppend = "(deprecated is null or deprecated=true)"
@@ -1735,7 +1735,7 @@ where wf.dtype='PersonalWorkFunction' -->
     <!-- Лицензии -->
     <voc id='vocStatus' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocStatus'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.licence.voc.VocStatus'
                  names   = 'name'
                  queried = 'name'
                  queryConvertType = 'FIRST_UPPER'
@@ -1743,7 +1743,7 @@ where wf.dtype='PersonalWorkFunction' -->
      </voc>
      <voc id='=vocUrMember' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocUrMember'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.licence.voc.VocUrMember'
                  names   = 'name'
                  queried = 'name'
                  queryConvertType = 'FIRST_UPPER'
@@ -1752,7 +1752,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
      <voc id='vocTypeWork' type='EntityVocService'>
          <EntityVocService
-             entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocTypeWork'
+             entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.licence.voc.VocTypeWork'
              names   = 'name'
              queried = 'name'
              queryConvertType = 'FIRST_UPPER'
@@ -1764,7 +1764,7 @@ where wf.dtype='PersonalWorkFunction' -->
     <!-- Оборудование -->
     <voc id='vocTypeEquip' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.equipment.voc.VocTypeEquip'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.equipment.voc.VocTypeEquip'
                  names   = 'name'
                  queried = 'name'
                  />
@@ -1772,7 +1772,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
      <voc id='vocMarka' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.equipment.voc.VocMarka'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.equipment.voc.VocMarka'
                  names   = 'name'
                  queried = 'name'
                  />
@@ -1780,7 +1780,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
      <voc id='vocCreater' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.equipment.voc.VocCreater'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.equipment.voc.VocCreater'
                  names   = 'name'
                  queried = 'name'
                  />
@@ -1788,7 +1788,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
      <voc id='vocProvider' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.equipment.voc.VocProvider'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.equipment.voc.VocProvider'
                  names   = 'name'
                  queried = 'name'
                  />
@@ -1796,7 +1796,7 @@ where wf.dtype='PersonalWorkFunction' -->
     
      <voc id='vocPrivilegeCategory' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.VocPrivilegeCategory'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.VocPrivilegeCategory'
                  names   = 'name'
                  queried = 'name'
                  />
@@ -1804,7 +1804,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
      <voc id='vocPrivilegeCode' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.VocPrivilegeCode'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.VocPrivilegeCode'
                  names   = 'code,name'
                  queried = 'code,name'
                  />
@@ -1812,28 +1812,28 @@ where wf.dtype='PersonalWorkFunction' -->
 
      <voc id='vocDrugForm' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.VocDrugForm'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.VocDrugForm'
                  names   = 'code,name'
                  queried = 'code,name'
                  />
      </voc>
      <voc id='vocDrugClassify' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.VocDrugClassify'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.VocDrugClassify'
                  names   = 'code,name'
                  queried = 'code,name'
                  />
      </voc>
      <voc id='drugClassificator' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.DrugClassificator'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.DrugClassificator'
                  names   = 'name'
                  queried = 'name'
                  />
      </voc>
      <voc id='vocDloDoctor' type='EntityVocService'>
          <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.VocDloDoctor'
+                 entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.VocDloDoctor'
                  names   = 'code,name'
                  queried = 'code,name'
                  />
@@ -1841,7 +1841,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='policyByPatient' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.MedPolicyOmc'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.MedPolicyOmc'
                 names   = 'text'
                 parent  = 'patient'
                 queried = 'polNumber'
@@ -1850,42 +1850,42 @@ where wf.dtype='PersonalWorkFunction' -->
         <!-- Вакцинация -->
     <voc id='vaccineVocCommonReaction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VaccineVocCommonReaction'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VaccineVocCommonReaction'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc>  
     <voc id='vocVaccinationReaction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationReaction'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationReaction'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc>  
     <voc id='vocVaccinationCommonReaction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationCommonReaction'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationCommonReaction'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc>    
     <voc id='vaccineVocLocalReaction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VaccineVocLocalReaction'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VaccineVocLocalReaction'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc> 
     <voc id='vocVaccinationLocalReaction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationLocalReaction'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationLocalReaction'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc> 
     <voc id='vocVaccinationMaterial' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationMaterial'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationMaterial'
                 names   = 'name'
                 queried = 'name'
                  parent  = 'vaccine'  
@@ -1893,14 +1893,14 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc> 
     <voc id='vaccineVocMethod' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VaccineVocMethod'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VaccineVocMethod'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc> 
     <voc id='vocVaccinationMethod' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationMethod'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationMethod'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = 'UPPER_CASE'
@@ -1908,7 +1908,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc> 
     <voc id='vocVaccinationPhase' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationPhase'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationPhase'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = 'UPPER_CASE'
@@ -1917,7 +1917,7 @@ where wf.dtype='PersonalWorkFunction' -->
 
     <voc id='vocVaccinationReasonType' type='EntityVocService'>
         <EntityVocService                                         
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationReasonType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationReasonType'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = 'UPPER_CASE'
@@ -1925,14 +1925,14 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
     <voc id='vocEstopType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationEstopType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VocVaccinationEstopType'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc> 
     <voc id='vaccine' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.Vaccine'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.Vaccine'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = 'UPPER_CASE'
@@ -1941,14 +1941,14 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc> 
     <voc id='vaccineVocNosology' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.voc.VaccineVocNosology'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.voc.VaccineVocNosology'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc>     
     <voc id='vaccinationNosology' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.vaccination.VaccinationNosology'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.vaccination.VaccinationNosology'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -1956,7 +1956,7 @@ where wf.dtype='PersonalWorkFunction' -->
     <!--Сотрудник-->
     <voc id='vocWorker' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.worker.Worker'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.worker.Worker'
                 names   = 'person.lastname, person.firstname, person.middlename'
                 queried = 'person.lastname, person.firstname, person.middlename'
                 />
@@ -1985,7 +1985,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
      <voc id='disabilityDocumentByCase'  type='EntityVocService'>
      	<EntityVocService
-     			entity='ru.ecom.mis.ejb.domain.disability.DisabilityDocument'
+     			entity='ru.ecom.mis.ru.ecom.ejb.domain.disability.DisabilityDocument'
      			names = 'series,number'
      			queried="number"
      			parent = 'disabilityCase_id'
@@ -2070,7 +2070,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			parentSplitCount="3"
     	/>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.PolyclinicMedCase'
                 names   = 'dateStart,dateFinish,ownerFunction.workFunctionInfo'
                 queried = 'ownerFunction.worker.person.lastname'
             queryAppend = 'dateFinish is not null'
@@ -2090,7 +2090,7 @@ where wf.dtype='PersonalWorkFunction' -->
     			join='left join WorkFunction wf on wf.id=smc.ownerFunction_id left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id'
     	/>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.PolyclinicMedCase'
                 names   = 'dateStart,dateFinish,ownerFunction.workFunctionInfo'
                 queried = 'ownerFunction.worker.person.lastname'
             queryAppend = 'dateFinish is null'
@@ -2183,7 +2183,7 @@ where wf.dtype='PersonalWorkFunction' -->
     </voc>
    <voc id='role' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.jaas.ejb.domain.SecRole'
+                entity  = 'ru.ecom.jaas.ru.ecom.ejb.domain.SecRole'
                 names   = 'key,name'
                 queried = 'key,name'
        queryConvertType = "UPPER_CASE"                
@@ -2387,7 +2387,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='workCalendar' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.workcalendar.WorkCalendar'
                 names   = 'id'
                 queried = ''
         />
@@ -2395,14 +2395,14 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='secUser' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.jaas.ejb.domain.SecUser'
+                entity  = 'ru.ecom.jaas.ru.ecom.ejb.domain.SecUser'
                 names   = 'login, fullname'
                 queried = 'login, fullname'
         />
     </voc> 
     <voc id='secGroup' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.jaas.ejb.domain.SecGroup'
+                entity  = 'ru.ecom.jaas.ru.ecom.ejb.domain.SecGroup'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2412,7 +2412,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- FIXME дописать -->
     <voc id='diagnosisByDiagnosisSpo' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.Diagnosis'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.Diagnosis'
                 names   = 'name, idc10.code'
                 queried = ''
         />
@@ -2422,7 +2422,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocSexPermission' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.med.voc.VocSexPermission'
+                entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.med.voc.VocSexPermission'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2430,7 +2430,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 
     <voc id='vocWorkPlaceType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.voc.VocWorkPlaceType'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2438,7 +2438,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 
     <voc id='vocServiceStream' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.workcalendar.voc.VocServiceStream'
                 names   = 'name'
                 queried = 'name'
                 queryConvertType="UPPER_CASE"
@@ -2448,7 +2448,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 
     <voc id='staffUnit' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.worker.StaffUnit'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.worker.StaffUnit'
                 names   = 'info'
                 queried = 'post.name'
         />
@@ -2456,7 +2456,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocDiagnosisRegistrationType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDiagnosisRegistrationType'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = "UPPER_CASE"                
@@ -2465,7 +2465,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Диетология -->
     <voc id='vocDishPreparationMethod' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocDishPreparationMethod'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.voc.VocDishPreparationMethod'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2473,14 +2473,14 @@ left join medcase smoP on smoP.owner_id=w.id "
   
     <voc id='vocDishType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocDishType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.voc.VocDishType'
                 names   = 'name'
                 queried = 'name'
         />
     </voc> 
     <voc id='Diet' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.Diet'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.Diet'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="(isArchival is null or isArchival='0')"
@@ -2488,7 +2488,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     </voc> 
     <voc id='parentDiet' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.Diet'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.Diet'
                 names   = 'name'
                 queried = 'name'
                 queryAppend = 'parent_id is null'
@@ -2497,7 +2497,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 
      <voc id='vocMealTime' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocMealTime'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.voc.VocMealTime'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2505,7 +2505,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 
     <voc id='vocWeekDay' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekDay'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.workcalendar.voc.VocWeekDay'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2513,7 +2513,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='Dish' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.Dish'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.Dish'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2521,7 +2521,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocProcessingType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocProcessingType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.voc.VocProcessingType'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2529,7 +2529,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocFoodStuff' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocFoodStuff'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.voc.VocFoodStuff'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2537,7 +2537,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocMonth' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.diet.voc.VocMonth'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.voc.VocMonth'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2548,7 +2548,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник единиц измерения количества лекарства-->
 	<voc id='vocDrugAmountUnit' type = 'EntityVocService'>
 		<EntityVocService
-				entity = 'ru.ecom.mis.ejb.domain.prescription.voc.VocDrugAmountUnit'
+				entity = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocDrugAmountUnit'
 				names = 'name'
 				queried = 'name'
 		/>
@@ -2557,7 +2557,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник длительности использования-->
 	<voc id='vocDurationUnit' type = 'EntityVocService'>
 		<EntityVocService
-				entity = 'ru.ecom.mis.ejb.domain.prescription.voc.VocDurationUnit'
+				entity = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocDurationUnit'
 				names = 'name'
 				queried = 'name'
 		/>
@@ -2566,7 +2566,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник единиц частоты использования-->
 	<voc id='vocFrequencyUnit' type = 'EntityVocService'>
 		<EntityVocService
-				entity = 'ru.ecom.mis.ejb.domain.prescription.voc.VocFrequencyUnit'
+				entity = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocFrequencyUnit'
 				names = 'name'
 				queried = 'name'
 		/>
@@ -2575,7 +2575,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник причин отмены назначений-->
 	<voc id='vocPrescriptCancelReason' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptCancelReason'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocPrescriptCancelReason'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2584,7 +2584,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник состояний завершения назначения-->
 	<voc id='vocPrescriptFulfilState' type = 'EntityVocService'>
 		<EntityVocService
-				entity = 'ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptFulfilState'
+				entity = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocPrescriptFulfilState'
 				names = 'name'
 				queried = 'name'
 		/>
@@ -2593,7 +2593,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник типов порядка использования-->
 	<voc id='vocPrescriptOrderType' type = 'EntityVocService'>
 		<EntityVocService
-				entity = 'ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptOrderType'
+				entity = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocPrescriptOrderType'
 				names = 'name'
 				queried = 'name'
 		/>
@@ -2602,7 +2602,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник методов введения-->
 	<voc id='vocDrugMethod' type = 'EntityVocService'>
 		<EntityVocService
-				entity = 'ru.ecom.mis.ejb.uc.privilege.domain.voc.VocDrugMethod'
+				entity = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.voc.VocDrugMethod'
 				names = 'name'
 				queried = 'name'
 		/>
@@ -2611,7 +2611,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Справочник типов свертывания коек-->
 	<voc id='vocBedReductionType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocBedReductionType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.voc.VocBedReductionType'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -2620,7 +2620,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Справочник типов коек (дневной, круглосуточный)-->
 	<voc id='vocBedSubType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.voc.VocBedSubType'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -2629,7 +2629,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Справочник по ДТП-->
 	<voc id='omcRoadTrafficInjury' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcRoadTrafficInjury'
+                entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.omcvoc.OmcRoadTrafficInjury'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -2638,7 +2638,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Причина закрытия листка нетрудоспособности-->
 	<voc id='vocDisabilityDocumentCloseReason' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason'
                 names   = 'codeF,name'
                 queried = 'codeF,name'
                 queryConvertType = 'UPPER_CASE'
@@ -2660,7 +2660,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Режим нетрудоспособности-->
 	<voc id='vocDisabilityRegime' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityRegime'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocDisabilityRegime'
                 names   = 'code,name'
                 queried = 'code,name'
                 queryConvertType = 'UPPER_CASE'
@@ -2669,7 +2669,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Тип нарушения -->
 	<voc id='vocRegimeViolationType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocRegimeViolationType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocRegimeViolationType'
                 names   = 'codeF,name'
                 queried = 'codeF,name'
                 queryConvertType = 'UPPER_CASE'
@@ -2679,7 +2679,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Степень ограничения трудоспособности -->
 	<voc id='vocDisabilityDegree' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDegree'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocDisabilityDegree'
                 names   = 'name'
                 queried = 'name'
                 queryConvertType = 'UPPER_CASE'
@@ -2689,7 +2689,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     <!-- Первичность листка нетрудоспособности-->
 	<voc id='vocDisabilityDocumentPrimarity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentPrimarity'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocDisabilityDocumentPrimarity'
                 names   = 'name'
                 queried = 'name'
                 queryConvertType = 'FIRST_UPPER'
@@ -2699,7 +2699,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!-- Область нахождения СМО-->
 	<voc id='omcKodTer' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer'
+                entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.omcvoc.OmcKodTer'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -2708,7 +2708,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 
     <voc id='omcQnp' type='EntityVocService'>
     	<EntityVocService
-    			entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcQnp'
+    			entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.omcvoc.OmcQnp'
     			names   = 'name'
     			queried = 'name'
     	/>
@@ -2716,7 +2716,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='omcStreetT' type='EntityVocService'>
     	<EntityVocService
-    			entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcStreetT'
+    			entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.omcvoc.OmcStreetT'
     			names   = 'name'
     			queried = 'name'
     	/>
@@ -2724,7 +2724,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocStoolType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocStoolType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocStoolType'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2732,7 +2732,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocDayTime' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDayTime'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDayTime'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2740,7 +2740,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocEthnicity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocEthnicity'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.voc.VocEthnicity'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2748,7 +2748,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocMarriageStatus' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.patient.voc.VocMarriageStatus'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.patient.voc.VocMarriageStatus'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2756,7 +2756,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocEducationType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocEducationType'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.worker.voc.VocEducationType'
                 names   = 'name'
                 queried = 'name'
         />
@@ -2764,7 +2764,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocMedService' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocMedService'
+                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocMedService'
                 names   = 'code,name'
                 queried = 'code,name'
         />
@@ -2772,7 +2772,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocAcuityDiagnosis' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocAcuityDiagnosis'
                     names   = 'name'
                     queried = 'name'
                     queryConvertType="UPPER_CASE"
@@ -2780,7 +2780,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     </voc>
     <voc id='vocPrimaryDiagnosis' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPrimaryDiagnosis'
                     names   = 'name'
                     queried = 'name'
                     queryConvertType="UPPER_CASE"
@@ -2788,14 +2788,14 @@ left join medcase smoP on smoP.owner_id=w.id "
     </voc>
     <voc id='vocDrugUnlicensedName' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.voc.VocDrugUnlicensedName'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.voc.VocDrugUnlicensedName'
                     names   = 'name'
                     queried = 'name'
                     />
     </voc>
     <voc id='vocDrugLicensedName' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.uc.privilege.domain.voc.VocLicensedName'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.uc.privilege.domain.voc.VocLicensedName'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2803,7 +2803,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocInvalidity' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.disability.voc.VocInvalidity'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.disability.voc.VocInvalidity'
                     names   = 'name'
                     queried = 'name'
                     queryConvertType="UPPER_CASE"
@@ -2812,7 +2812,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!--  Поток обслуживания для КСГ (Milamesher) -->
 	<voc id='vocSstreamE2Entry' type='EntityVocService'>
 		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocSstreamE2Entry'
+				entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocSstreamE2Entry'
 				names   = 'name'
 				queried = 'name'
 		/>
@@ -2820,7 +2820,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!--  Типы помощи для отчёта jasper по платникам(Milamesher) -->
 	<voc id='VocTypeHelpJReport' type='EntityVocService'>
 		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTypeHelpJReport'
+				entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocTypeHelpJReport'
 				names   = 'name'
 				queried = 'name'
 		/>
@@ -2828,7 +2828,7 @@ left join medcase smoP on smoP.owner_id=w.id "
 	<!--  Типы стационара для фин. отчёта jasper (Milamesher) -->
 	<voc id='vocTypeStacJReport' type='EntityVocService'>
 		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType'
+				entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.voc.VocBedSubType'
 				names   = 'name'
 				queried = 'name'
 				queryAppend = "code='1' or code='2'"
@@ -2838,7 +2838,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocBloodGroup' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocBloodGroup'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2846,7 +2846,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocBloodPreparation' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodPreparation'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocBloodPreparation'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2854,7 +2854,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocBloodPreparationType' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodPreparationType'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocBloodPreparationType'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2862,21 +2862,21 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocOtherTransfusPreparation' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocOtherTransfusPreparation'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocOtherTransfusPreparation'
                     names   = 'name'
                     queried = 'name'
                     />
     </voc>
 	<voc id='vocBloodBioProbProcedure' type='EntityVocService'>
 		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBloodBioProbProcedure'
+				entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocBloodBioProbProcedure'
 				names   = 'name'
 				queried = 'name'
 		/>
 	</voc>
     <voc id='vocRhesusFactor' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocRhesusFactor'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocRhesusFactor'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2884,7 +2884,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocTransfusionMethod' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionMethod'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocTransfusionMethod'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2892,7 +2892,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocTransfusionReaction' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionReaction'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocTransfusionReaction'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2902,7 +2902,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocApgarMuscleTone' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocApgarMuscleTone'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocApgarMuscleTone'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2910,7 +2910,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocApgarPalpitation' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocApgarPalpitation'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocApgarPalpitation'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2918,7 +2918,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocApgarReflexes' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocApgarReflexes'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocApgarReflexes'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2926,7 +2926,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocApgarRespiration' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocApgarRespiration'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocApgarRespiration'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2934,7 +2934,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocApgarSkinColor' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocApgarSkinColor'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocApgarSkinColor'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2942,7 +2942,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocInfRiskNewBornWeight' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskNewBornWeight'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocInfRiskNewBornWeight'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2950,7 +2950,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocInfRiskWaterNature' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskWaterNature'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocInfRiskWaterNature'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2958,7 +2958,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocInfRiskMotherTemperature' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskMotherTemperature'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocInfRiskMotherTemperature'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2966,7 +2966,7 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocInfRiskMotherDiseases' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskMotherDiseases'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocInfRiskMotherDiseases'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -2974,70 +2974,70 @@ left join medcase smoP on smoP.owner_id=w.id "
     
     <voc id='vocInfRiskApgar' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskMotherDiseases'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocInfRiskMotherDiseases'
                     names   = 'name'
                     queried = 'name'
                     />
     </voc>
     <voc id='vocInfRiskWaterless' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocInfRiskWaterless'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocInfRiskWaterless'
                     names   = 'name'
                     queried = 'name'
                     />
     </voc>
     <voc id='vocNewBornCordAttaching' type='EntityVocService'>
     	<EntityVocService 
-    	  	 entity = 'ru.ecom.mis.ejb.domain.birth.voc.VocNewBornCordAttaching'
+    	  	 entity = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocNewBornCordAttaching'
     		  names = 'name'
     		queried = 'name'
     	/>
     </voc>
     <voc id='vocInspectionCondition' type='EntityVocService'>
     	<EntityVocService 
-    	  	 entity = 'ru.ecom.mis.ejb.domain.birth.voc.VocInspectionCondition'
+    	  	 entity = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocInspectionCondition'
     		  names = 'name'
     		queried = 'name'
     	/>
     </voc>
     <voc id='vocPlacentaIntegrity' type='EntityVocService'>
     	<EntityVocService 
-    	  	 entity = 'ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaIntegrity'
+    	  	 entity = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocPlacentaIntegrity'
     		  names = 'name'
     		queried = 'name'
     	/>
     </voc>
     <voc id='vocMembranesBreakPlace' type='EntityVocService'>
     	<EntityVocService 
-    	  	 entity = 'ru.ecom.mis.ejb.domain.birth.voc.VocMembranesBreakPlace'
+    	  	 entity = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocMembranesBreakPlace'
     		  names = 'name'
     		queried = 'name'
     	/>
     </voc>
     <voc id="vocMzDepType" type="EntityVocService">
     	<EntityVocService
-    		entity  = "ru.ecom.mis.ejb.domain.lpu.voc.VocMzDepType"
+    		entity  = "ru.ecom.mis.ru.ecom.ejb.domain.lpu.voc.VocMzDepType"
     		names   = "name"
     		queried = "name"
     	/>
     </voc>
     <voc id='vocDocumentParameter' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter'
+			entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.licence.voc.VocDocumentParameter'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocDocumentParameterGroup' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterGroup'
+			entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.licence.voc.VocDocumentParameterGroup'
 			names   = 'name'
 			queried = 'name'
 		/>
 	</voc>
 	<voc id='vocExternalDocumentType' type='EntityVocService'>
 		<EntityVocService
-			entity  = 'ru.ecom.mis.ejb.domain.licence.voc.VocExternalDocumentType'
+			entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.licence.voc.VocExternalDocumentType'
 			names   = 'name'
 			queried = 'name'
 		/>

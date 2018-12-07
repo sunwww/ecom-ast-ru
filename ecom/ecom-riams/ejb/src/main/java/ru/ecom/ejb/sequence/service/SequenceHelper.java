@@ -1,17 +1,16 @@
 package ru.ecom.ejb.sequence.service;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.sequence.domain.SequenceInfo;
 import ru.ecom.poly.ejb.domain.Medcard;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 public class SequenceHelper {
 
 	private static final SequenceHelper INSANCE = new SequenceHelper() ;
 	
-	private final String SYNC = "ru.ecom.ejb.sequence.service.SequenceHelper.SYNC" ;
+	private final String SYNC = "SequenceHelper.SYNC" ;
 	
 	private SequenceHelper() {}
 	

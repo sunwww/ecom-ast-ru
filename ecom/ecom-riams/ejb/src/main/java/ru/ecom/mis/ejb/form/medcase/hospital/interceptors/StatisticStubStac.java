@@ -1,17 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubExist;
@@ -20,6 +9,14 @@ import ru.ecom.mis.ejb.domain.medcase.StatisticStubRestored;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
+import javax.persistence.EntityManager;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Стат карта

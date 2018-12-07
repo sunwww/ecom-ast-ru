@@ -1,15 +1,5 @@
 package ru.ecom.mis.web.action.synclpufond;
 
-import java.io.File;
-
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -17,7 +7,6 @@ import org.apache.struts.upload.FormFile;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -26,7 +15,6 @@ import ru.ecom.expomc.ejb.services.form.importformat.IImportFormatService;
 import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
 import ru.ecom.jaas.web.action.service.ServiceImportRolesForm;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
-import ru.ecom.mis.web.action.bypassexport.AttachmentByLpuForm;
 import ru.ecom.report.util.XmlDocument;
 import ru.ecom.web.actions.monitor.MonitorActionForward;
 import ru.ecom.web.util.ActionUtil;
@@ -34,6 +22,14 @@ import ru.ecom.web.util.FileUploadUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.LinkedList;
+import java.util.List;
 
 public class HospitalDirectInFondImportAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, final HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {

@@ -6,7 +6,6 @@ package ru.ecom.mis.ejb.domain.pharmacy;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.mis.ejb.domain.directory.Department;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 

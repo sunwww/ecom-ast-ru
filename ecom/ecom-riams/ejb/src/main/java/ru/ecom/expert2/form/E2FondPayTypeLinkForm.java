@@ -1,11 +1,6 @@
 package ru.ecom.expert2.form;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
-import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expert2.form.voc.federal.VocE2FondV010Form;
-import ru.ecom.expert2.form.voc.federal.VocE2FondV015Form;
-import ru.nuzmsh.commons.formpersistence.annotation.*;
-import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Соответствие исхода случая результату медоса (V015)

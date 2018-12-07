@@ -1,18 +1,14 @@
 package ru.ecom.expomc.ejb.services.form.registry;
 
-import java.io.Serializable;
-
-import javax.persistence.Id;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
-import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.Id;
 
 /**
  * Страховая компания

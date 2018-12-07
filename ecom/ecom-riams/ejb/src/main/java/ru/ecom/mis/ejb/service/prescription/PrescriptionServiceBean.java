@@ -1,31 +1,5 @@
 package ru.ecom.mis.ejb.service.prescription;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.annotation.Resource;
-import javax.ejb.Remote;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +9,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
@@ -44,25 +17,12 @@ import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfo;
 import ru.ecom.diary.ejb.service.protocol.ParsedPdfInfoResult;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
-import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.medcase.MedService;
-import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
-import ru.ecom.mis.ejb.domain.medcase.Visit;
+import ru.ecom.mis.ejb.domain.medcase.*;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
-import ru.ecom.mis.ejb.domain.prescription.AbstractPrescriptionList;
-import ru.ecom.mis.ejb.domain.prescription.DietPrescription;
-import ru.ecom.mis.ejb.domain.prescription.DrugPrescription;
-import ru.ecom.mis.ejb.domain.prescription.ModePrescription;
-import ru.ecom.mis.ejb.domain.prescription.PrescriptList;
-import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
-import ru.ecom.mis.ejb.domain.prescription.Prescription;
-import ru.ecom.mis.ejb.domain.prescription.ServicePrescription;
+import ru.ecom.mis.ejb.domain.prescription.*;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -72,6 +32,27 @@ import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.annotation.EJB;
+import javax.annotation.Resource;
+import javax.ejb.Remote;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 
 @Stateless
@@ -665,7 +646,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				matId = ""+lPl.get(0) ;
 			}  
 			if (matId == null || matId.equals("")) {
-				SequenceHelper seqHelper = ru.ecom.ejb.sequence.service.SequenceHelper.getInstance() ;
+				SequenceHelper seqHelper = SequenceHelper.getInstance() ;
 				matId=seqHelper.startUseNextValueNoCheck("Prescription#Lab#"+aDate,"", aManager);
 			}
 		}

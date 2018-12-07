@@ -1,19 +1,13 @@
 package ru.ecom.expomc.ejb.services.form.impdoc;
 
-import javax.persistence.Id;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
-import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.validators.DateString;
+
+import javax.persistence.Id;
 
 /**
  * @author esinev 21.08.2006 0:15:05

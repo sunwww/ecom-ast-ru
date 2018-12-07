@@ -1,15 +1,6 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
@@ -17,6 +8,12 @@ import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
+
+import javax.persistence.EntityManager;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class MedServiceAllValueVoc  implements IAllValue {
     private final static Logger LOG = Logger.getLogger(MedServiceAllValueVoc.class);

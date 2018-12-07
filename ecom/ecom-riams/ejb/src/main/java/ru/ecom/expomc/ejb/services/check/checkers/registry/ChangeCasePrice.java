@@ -17,7 +17,7 @@ import java.util.Collection;
 //import ru.ecom.alg.omc.omcprice.OmcCalcPriceException;
 //import ru.ecom.alg.omc.omcprice.OmcPriceCalcResult;
 //import ru.ecom.alg.omc.omcprice.impl.OmcPriceRequestImmutable;
-//import ru.ecom.ejb.util.injection.EjbInjection;
+//import EjbInjection;
 
 /**
  * Расчет цены с изменением

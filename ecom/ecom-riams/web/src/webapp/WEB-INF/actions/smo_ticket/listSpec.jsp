@@ -1,8 +1,8 @@
+<%@page import="WebQueryResult"%>
 <%@page import="ru.ecom.poly.web.action.ticket.SearchForm"%>
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
-<%@page import="java.util.List"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>

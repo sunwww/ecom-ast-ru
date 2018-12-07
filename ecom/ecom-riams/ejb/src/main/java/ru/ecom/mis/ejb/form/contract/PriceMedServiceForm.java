@@ -8,15 +8,10 @@ import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
 import ru.ecom.mis.ejb.domain.contract.PriceMedService;
 import ru.ecom.mis.ejb.form.contract.interceptor.PriceMedServiceSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.MedServiceForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz = PriceMedService.class)

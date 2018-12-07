@@ -3,7 +3,6 @@ package ru.ecom.queue.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.util.Date;
 

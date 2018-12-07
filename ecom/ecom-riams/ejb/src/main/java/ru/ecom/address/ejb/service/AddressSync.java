@@ -1,21 +1,17 @@
 package ru.ecom.address.ejb.service;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.domain.address.AddressType;
 import ru.ecom.address.ejb.domain.kladr.Kladr;
 import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
+
+import javax.persistence.EntityManager;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Синхронизация типов адреса из кладр

@@ -1,19 +1,13 @@
 package ru.ecom.mis.ejb.domain.contract;
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.contract.ContractPerson;
-import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
 	/**
 	 * Обслуживаемая персона
 	 */

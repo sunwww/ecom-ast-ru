@@ -1,0 +1,28 @@
+<jboss-deployment-structure>
+    <!-- Make sub deployments isolated by default, so they cannot see each others classes without a Class-Path entry -->
+    <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+    <!-- This corresponds to the top level deployment. For a war this is the war's module, for an ear -->
+    <!-- This is the top level ear module, which contains all the classes in the EAR's lib folder     -->
+    <deployment>
+          <!-- This allows you to define additional dependencies, it is the same as using the Dependencies: manifest attribute -->
+        <dependencies>
+            <module name="deployment.ru.ecom" />
+            <!-- Import META-INF/services for ServiceLoader impls as well -->
+            <!--<module name="myservicemodule" services="import"/>-->
+        </dependencies>
+        <!-- These add additional classes to the module. In this case it is the same as including the jar in the EAR's lib directory -->
+       <!-- <resources>
+            <resource-root path="my-library.jar" />
+        </resources>-->
+    </deployment>
+    <!-- Now we are going to define two additional modules -->
+    <!-- This one is a different version of javassist that we have packaged -->
+    <module name="deployment.ru.ecom" >
+        <resources>
+            <resource-root path="riams-ru.ecom.ejb.jar" >
+                <!-- We want to use the servers version of javassist.util.proxy.* so we filter it out-->
+            </resource-root>
+        </resources>
+    </module>
+
+</jboss-deployment-structure>

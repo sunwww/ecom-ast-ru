@@ -1,15 +1,13 @@
 package ru.ecom.mis.ejb.form.worker.interceptor;
 
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.jaas.ejb.form.interceptor.SecPolicyViewInterceptor;
 import ru.ecom.mis.ejb.form.worker.VocWorkFunctionForm;
-import ru.ecom.mis.ejb.uc.privilege.form.interceptor.ListPersist;
+
+import javax.persistence.EntityManager;
 
 public class VocWorkFunctionViewInterceptor implements IFormInterceptor {
 

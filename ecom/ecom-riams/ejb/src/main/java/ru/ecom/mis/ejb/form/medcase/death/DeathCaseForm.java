@@ -1,28 +1,16 @@
 package ru.ecom.mis.ejb.form.medcase.death;
 
-import javax.persistence.OneToOne;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
-import ru.ecom.expomc.ejb.domain.med.VocIdc10;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.death.interceptors.DeathCasePreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.death.interceptors.DeathCaseSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.death.interceptors.DeathCaseViewInterceptor;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;

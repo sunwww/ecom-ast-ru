@@ -1,13 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.ticket.interceptors;
 
-import java.io.StringWriter;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.json.JSONException;
 import org.json.JSONWriter;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -15,10 +9,13 @@ import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseSaveInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DischargeMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
+
+import javax.persistence.EntityManager;
+import java.io.StringWriter;
+import java.util.List;
 
 public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 

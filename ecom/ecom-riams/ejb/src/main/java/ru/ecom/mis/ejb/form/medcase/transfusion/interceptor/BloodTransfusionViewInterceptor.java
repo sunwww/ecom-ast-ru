@@ -1,22 +1,8 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion.interceptor;
 
-import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-
-import org.json.JSONException;
-import org.json.JSONWriter;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.BloodTransfusion;
 import ru.ecom.mis.ejb.domain.medcase.TransfusionMonitoring;
 import ru.ecom.mis.ejb.domain.medcase.TransfusionReagent;
@@ -24,6 +10,11 @@ import ru.ecom.mis.ejb.form.medcase.transfusion.BloodTransfusionForm;
 import ru.ecom.mis.ejb.form.medcase.transfusion.TransfusionMonitoringForm;
 import ru.ecom.mis.ejb.form.medcase.transfusion.TransfusionReagentForm;
 import ru.nuzmsh.util.PropertyUtil;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 

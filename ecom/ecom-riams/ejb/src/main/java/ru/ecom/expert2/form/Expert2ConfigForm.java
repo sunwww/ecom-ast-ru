@@ -1,15 +1,13 @@
 package ru.ecom.expert2.form;
 
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.expert2.domain.Expert2Config;
-import ru.ecom.expert2.domain.voc.VocE2BaseTariff;
-import ru.nuzmsh.commons.formpersistence.annotation.*;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
+import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
+import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-
-import javax.persistence.Entity;
 
 /**
  * Справочник настроек экспертизы

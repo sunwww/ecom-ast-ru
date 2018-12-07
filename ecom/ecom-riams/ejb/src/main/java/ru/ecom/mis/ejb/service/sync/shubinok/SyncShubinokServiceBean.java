@@ -1,19 +1,6 @@
 package ru.ecom.mis.ejb.service.sync.shubinok;
 
-import java.sql.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.service.ILocalAddressService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
@@ -21,28 +8,31 @@ import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
-import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcOksm;
 import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.external.PatientInfoShubinok;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.hospital.FondImport;
 import ru.ecom.mis.ejb.domain.medcase.hospital.FondImportReestr;
-import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
 import ru.ecom.mis.ejb.domain.patient.MedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.PatientAttachedImport;
-import ru.ecom.mis.ejb.domain.patient.voc.VocAttachedType;
-import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
-import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
-import ru.ecom.mis.ejb.domain.patient.voc.VocRayon;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSocialStatus;
+import ru.ecom.mis.ejb.domain.patient.voc.*;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
-import ru.ecom.mis.ejb.service.patient.PatientServiceBean;
 import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 import ru.ecom.poly.ejb.domain.Medcard;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.sql.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Синхронизация с базой П.Г.Шибинка

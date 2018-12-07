@@ -1,18 +1,17 @@
 package ru.ecom.mis.ejb.domain.contract;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
-import ru.ecom.mis.ejb.domain.contract.ContractNosologyGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 
-	/**
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+/**
 	 * Интервал нозологий (A01-B99, G10.1-G10.7, Z
 	 */
 	@Comment("Интервал нозологий (A01-B99, G10.1-G10.7, Z")

@@ -1,15 +1,15 @@
 package ru.ecom.mis.ejb.domain.licence.voc;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
-import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 	/**
 	 * Справочник параметров документа

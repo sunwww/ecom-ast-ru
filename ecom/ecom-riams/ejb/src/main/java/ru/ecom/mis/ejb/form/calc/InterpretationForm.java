@@ -4,7 +4,6 @@ package ru.ecom.mis.ejb.form.calc;
  * Created by Milamesher on 21.11.2018.
  */
 
-import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.calc.Interpretation;

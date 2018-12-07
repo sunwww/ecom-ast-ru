@@ -1,17 +1,13 @@
 package ru.ecom.poly.ejb.form.interceptors;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
-import ru.ecom.poly.ejb.form.protocol.ProtocolForm;
+
+import java.util.List;
 
 public class ProtocolSaveInterceptor implements IFormInterceptor {
 

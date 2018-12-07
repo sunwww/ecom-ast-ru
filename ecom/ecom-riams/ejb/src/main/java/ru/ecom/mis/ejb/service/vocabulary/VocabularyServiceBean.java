@@ -1,11 +1,18 @@
 package ru.ecom.mis.ejb.service.vocabulary;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.w3c.dom.Element;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.ejb.services.util.EntityHelper;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.jaas.ejb.domain.SystemVocabulary;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlan;
+import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlanService;
+import ru.ecom.mis.ejb.domain.extdisp.voc.*;
+import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
+import ru.ecom.report.util.XmlDocument;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -16,32 +23,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
-import org.w3c.dom.Element;
-
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.ejb.services.util.EntityHelper;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.jaas.ejb.domain.SecPolicy;
-import ru.ecom.jaas.ejb.domain.SecRole;
-import ru.ecom.jaas.ejb.domain.SystemVocabulary;
-import ru.ecom.jaas.ejb.service.CreateReplaceMapHelper;
-import ru.ecom.jaas.ejb.service.SecUserServiceBean;
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlan;
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlanService;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDisp;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeReportGroup;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispHealthGroup;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispRisk;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
-import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispServiceFunction;
-import ru.ecom.mis.ejb.domain.patient.voc.VocIdentityCard;
-import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
-import ru.ecom.report.util.XmlDocument;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 
 

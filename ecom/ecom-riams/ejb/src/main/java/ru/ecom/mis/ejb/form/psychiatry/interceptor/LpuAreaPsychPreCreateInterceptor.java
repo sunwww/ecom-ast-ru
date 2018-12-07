@@ -1,21 +1,16 @@
 package ru.ecom.mis.ejb.form.psychiatry.interceptor;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
-import org.jdom.IllegalDataException;
-
-import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.mis.ejb.form.psychiatry.LpuAreaPsychCareCardForm;
-import ru.ecom.mis.ejb.form.psychiatry.PsychiatricCareCardForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.util.Date;
+import java.util.List;
 
 public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor, IFormInterceptor {
 

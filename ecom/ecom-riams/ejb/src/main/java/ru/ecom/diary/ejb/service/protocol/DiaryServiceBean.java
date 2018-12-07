@@ -1,20 +1,8 @@
 package ru.ecom.diary.ejb.service.protocol;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterByForm;
-import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterGroup;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.diary.ejb.form.DiaryForm;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
@@ -23,7 +11,15 @@ import ru.ecom.diary.ejb.service.protocol.tree.CheckNodeByParameter;
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.mis.ejb.domain.medcase.MedService;
+
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * User: STkacheva

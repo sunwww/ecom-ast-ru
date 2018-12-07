@@ -1,34 +1,13 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
-import static javax.persistence.CascadeType.ALL;
-
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PreRemove;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.document.ejb.domain.DocumentFormJournal;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.injection.EjbInjection;
-import ru.ecom.mis.ejb.domain.diet.Diet;
 import ru.ecom.mis.ejb.domain.equipment.Equipment;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuAccessEnterOperation;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocLpuFunction;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocMzDepType;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocPropertyAdmin;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocSubordination;
-import ru.ecom.mis.ejb.domain.lpu.voc.VocWorkPlaceLevel;
+import ru.ecom.mis.ejb.domain.lpu.voc.*;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPigeonHole;
 import ru.ecom.mis.ejb.domain.medstandard.MedicalStandard;
@@ -37,6 +16,13 @@ import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.Worker;
 import ru.ecom.mis.ejb.service.lpu.ILpuService;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 /**
  * ЛПУ

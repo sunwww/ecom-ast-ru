@@ -1,7 +1,7 @@
 <vocconfig>
     <voc id='medcard' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.Medcard'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.Medcard'
                     names   = 'number'
                     queried = 'number'
                     />
@@ -11,7 +11,7 @@
 
     <voc id='worker' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.worker.Worker'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.worker.Worker'
                     names   = 'doctorInfo'
                     queried = "person.lastname"
                     queryConvertType = 'UPPER_CASE'
@@ -20,7 +20,7 @@
 
     <voc id='vocSpecLabel' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocSpecLabel'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocSpecLabel'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -28,7 +28,7 @@
 
     <voc id='vocReason' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocReason'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocReason'
                     names   = 'name'
                     queried = 'name'
                 queryAppend = '(deprecated is null or deprecated = false)'
@@ -37,7 +37,7 @@
 
     <voc id='vocVisitResult' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocVisitResult'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocVisitResult'
                     names   = 'name'
                     queried = 'name'
                     queryAppend="(deprecated is null or deprecated='0')"
@@ -46,7 +46,7 @@
 
     <voc id='omcMkb10' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcMkb10'
+                    entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.omcvoc.OmcMkb10'
                     names   = 'name'
                     queried = 'name,code'
                     />
@@ -54,14 +54,14 @@
     
     <voc id='vocTraumaType' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType'
+                    entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocTraumaType'
                     names   = 'name'
                     queried = 'name'
                     />
     </voc>
     <voc id='vocTrauma' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocTrauma'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocTrauma'
                     names   = 'name'
                     queried = 'name'
                     />
@@ -69,7 +69,7 @@
 
      <voc id='vocDispanseryRegistration' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocDispanseryRegistration'
                     names   = 'name'
                     queried = 'name'
                     queryConvertType="FIRST_UPPER"
@@ -78,7 +78,7 @@
 
     <voc id='vocPolyMedUsluga' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcTariff'
+                    entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.omcvoc.OmcTariff'
                     names   = 'code,name'
                     queried = 'code,name'
                     queryAppend = 'x4 > 1'
@@ -87,14 +87,14 @@
     </voc>
     <voc  id='vocMedUsluga' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocMedUsluga'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocMedUsluga'
                     names   = 'code,name'
                     queried = 'code,name'
                     />
     </voc>
     <voc id='vocDisabilityDocumentStatus' type='EntityVocService'>
             <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocDisabilityDocumentStatus'
+                    entity  = 'ru.ecom.poly.ru.ecom.ejb.domain.voc.VocDisabilityDocumentStatus'
                     names   = 'name'
                     queried = 'name'
                     />

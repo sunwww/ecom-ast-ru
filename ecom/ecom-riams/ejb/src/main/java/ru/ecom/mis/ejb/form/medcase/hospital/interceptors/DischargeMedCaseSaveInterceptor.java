@@ -1,12 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
@@ -19,6 +13,9 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
  

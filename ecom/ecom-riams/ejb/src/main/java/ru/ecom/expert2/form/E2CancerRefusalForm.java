@@ -2,7 +2,6 @@ package ru.ecom.expert2.form;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expert2.domain.E2CancerDirection;
 import ru.ecom.expert2.domain.E2CancerRefusal;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;

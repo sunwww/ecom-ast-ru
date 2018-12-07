@@ -1,4 +1,4 @@
-<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
+<%@page import="WebQueryResult"%>
 <%@page import="ru.ecom.mis.ejb.service.patient.HospitalLibrary"%>
 <%@page import="ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>

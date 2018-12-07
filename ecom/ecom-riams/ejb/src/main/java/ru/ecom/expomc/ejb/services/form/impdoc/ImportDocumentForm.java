@@ -1,11 +1,7 @@
 package ru.ecom.expomc.ejb.services.form.impdoc;
 
-import javax.persistence.Id;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.form.simple.IdEntityForm;
-import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
@@ -15,10 +11,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoTrimString;
 import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.Id;
 
 /**
  * @author esinev 21.08.2006 0:15:05

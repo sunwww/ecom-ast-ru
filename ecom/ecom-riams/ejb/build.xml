@@ -10,10 +10,14 @@
 
 	<fileset id='compile.fileset' dir="${libdir}">
 		<include name="msh/msh.jar" />
-		<include name="ecom/ejbweb/ejb/ecom-ejb-api.jar" />
+	<!--	<include name="ecom/ejbweb/ejb/ecom-ejb-api.jar" /> -->
 		<include name="bsh/bsh-2.0b4.jar" />
 		<include name="ldap/riams-ldap.jar" />
 		<include name="apache-commons/commons-codec-1.3.jar" />
+		<include name="gson/gson-2.8.5.jar" />
+		<include name="junit/junit.jar" />
+
+
 	</fileset>
 
 	<target name='persistence.xml'>
@@ -42,6 +46,7 @@
 	<target name='ejb.jar' depends="persistence.xml">
 
 		<jar destfile="./target/${appname}-ejb.jar" compress="false">
+
 			<fileset refid="ecom.lib.fileset" />
 			<fileset refid="package.thirdparty.fileset" />
 			<fileset refid="package.classes" />
@@ -60,13 +65,13 @@
 				<include name='META-INF/persistence.xml'/>
 			</fileset>
 
-			<fileset refid="ejbweb.ejb.services" />
-			<fileset refid="ejbweb.ejb.jar" />
+		<!--	<fileset refid="ejbweb.ejb.services" /> -->
+		<!--	<fileset refid="riams.ejb.jar" /> -->
 
 		</jar>
 	</target>
 
-	<target name="ejb.sqlUpdater.Run">
+	<target name="ru.ecom.ejb.sqlUpdater.Run">
 		<delete dir='./target/sqlUpdater'/>
 		<mkdir dir="./target/sqlUpdater"/>
 		<javac destdir="./target/sqlUpdater/" includeantruntime="false">

@@ -1,16 +1,11 @@
 package ru.ecom.address.ejb.service;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
-import ru.ecom.address.ejb.domain.kladr.AltNames;
-import ru.ecom.address.ejb.domain.kladr.Kladr;
 import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 public class AltNamesSync implements ISync {
     private EntityManager theEntityManager;

@@ -1,11 +1,9 @@
 package ru.ecom.mis.ejb.domain.assessmentcard;
 
-import javax.persistence.Entity;
-
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.Entity;
 
 @Entity
 public class Assessment extends VocBaseEntity{

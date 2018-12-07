@@ -1,11 +1,24 @@
 package ru.ecom.mis.ejb.service.diary;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
+import org.jboss.annotation.security.SecurityDomain;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
+import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterByForm;
+import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
+import ru.ecom.diary.ejb.service.protocol.ParameterPage;
+import ru.ecom.diary.ejb.service.protocol.ParameterType;
+import ru.ecom.diary.ejb.service.protocol.field.*;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
+import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -15,36 +28,12 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
-import org.jboss.annotation.security.SecurityDomain;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-
-import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
-import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
-import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterByForm;
-import ru.ecom.diary.ejb.form.protocol.parameter.ParameterForm;
-import ru.ecom.diary.ejb.service.protocol.ParameterPage;
-import ru.ecom.diary.ejb.service.protocol.ParameterType;
-import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
-import ru.ecom.diary.ejb.service.protocol.field.ErrorByField;
-import ru.ecom.diary.ejb.service.protocol.field.LabelField;
-import ru.ecom.diary.ejb.service.protocol.field.RowField;
-import ru.ecom.diary.ejb.service.protocol.field.SeparatorField;
-import ru.ecom.diary.ejb.service.protocol.field.TextField;
-import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
-import ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate;
-import ru.ecom.mis.ejb.service.worker.IWorkCalendarService;
-import ru.ecom.poly.ejb.domain.protocol.RoughDraft;
-import ru.nuzmsh.util.StringUtil;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 /**
  * Сервис для работы с параметрами
  * @author stkacheva

@@ -1,19 +1,8 @@
 package ru.ecom.web.print;
 
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.TreeMap;
-
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-
 import ru.ecom.diary.ejb.service.protocol.IKdlDiaryService;
 import ru.ecom.ejb.print.IPrintService;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -24,6 +13,12 @@ import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.struts.BaseAction;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.TreeMap;
 
 public class PrintAction extends BaseAction {
 

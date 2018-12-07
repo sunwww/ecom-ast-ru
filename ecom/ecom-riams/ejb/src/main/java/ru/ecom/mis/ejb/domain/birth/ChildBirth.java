@@ -1,29 +1,18 @@
 package ru.ecom.mis.ejb.domain.birth;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
-import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.validators.Required;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Роды

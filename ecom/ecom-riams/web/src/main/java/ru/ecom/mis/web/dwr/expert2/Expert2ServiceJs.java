@@ -166,7 +166,7 @@ public class Expert2ServiceJs {
         final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         if (aEntryId!=null) {
             aBillNumber=aBillNumber!=null?aBillNumber:"TEST";
-            aBillDate=aBillDate!=null&&!aBillDate.equalsIgnoreCase("")?aBillDate:"24.12.1986";
+            aBillDate=aBillDate!=null&&!aBillDate.equals("")?aBillDate:"24.12.1986";
         }
         final IExpert2XmlService service = Injection.find(aRequest).getService(IExpert2XmlService.class);
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
@@ -176,6 +176,7 @@ public class Expert2ServiceJs {
         new Thread(() -> {
             Date finalDate = null;
             try {finalDate = new Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
+            System.out.println("start service.makeMPFIle");
                 service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId,aVersion);
         }).start();
 

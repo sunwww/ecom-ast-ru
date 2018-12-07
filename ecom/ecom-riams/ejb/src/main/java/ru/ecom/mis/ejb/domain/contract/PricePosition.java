@@ -1,27 +1,19 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.contract.voc.VocPositionType;
+import ru.ecom.mis.ejb.domain.contract.voc.VocVat;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.contract.PriceList;
-import ru.ecom.mis.ejb.domain.contract.PriceMedService;
-import ru.ecom.mis.ejb.domain.contract.voc.VocPositionType;
-import ru.ecom.mis.ejb.domain.contract.voc.VocVat;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.forms.validator.validators.MaxLength;
 
-	/**
+/**
 	 * Позиция прейскуранта  
 	 */
 	@Comment("Позиция прейскуранта")

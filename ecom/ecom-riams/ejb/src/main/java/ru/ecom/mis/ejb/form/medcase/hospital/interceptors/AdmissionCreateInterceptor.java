@@ -1,17 +1,12 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.Calendar;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
-import ru.ecom.mis.ejb.domain.medcase.StatisticStubExist;
-import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
+
+import javax.persistence.EntityManager;
 
 public class AdmissionCreateInterceptor implements IFormInterceptor {
 

@@ -1,17 +1,17 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlan;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispAgeGroup;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispService;
 import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 	/**
 	 * Услуга плана дополнительной диспансеризации

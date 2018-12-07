@@ -1,23 +1,18 @@
 package ru.ecom.address.ejb.service;
 
-import java.util.List;
+import org.apache.log4j.Logger;
+import ru.ecom.address.ejb.domain.address.Address;
+import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
+import ru.ecom.expomc.ejb.domain.omcvoc.OmcQnp;
+import ru.ecom.expomc.ejb.domain.omcvoc.OmcStreetT;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.address.ejb.domain.address.Address;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcQnp;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcStreetT;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcStreetType;
-import ru.nuzmsh.util.StringUtil;
+import java.util.List;
 
 /**
  * Сервис для работы с адресами

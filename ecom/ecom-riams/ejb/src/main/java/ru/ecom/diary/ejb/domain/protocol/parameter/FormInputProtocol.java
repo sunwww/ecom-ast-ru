@@ -1,15 +1,5 @@
 package ru.ecom.diary.ejb.domain.protocol.parameter;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -17,6 +7,12 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.math.BigDecimal;
 /**
  * Форма ввода для протокола
  * @author stkacheva

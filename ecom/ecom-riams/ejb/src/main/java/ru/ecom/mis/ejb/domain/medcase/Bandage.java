@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import ru.ecom.ejb.services.index.annotation.AIndex;
-import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 

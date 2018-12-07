@@ -1,28 +1,10 @@
 package ru.ecom.poly.ejb.services;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 import org.jdom.IllegalDataException;
 import org.json.JSONException;
 import org.json.JSONWriter;
-
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.entityform.PersistList;
@@ -31,7 +13,6 @@ import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.services.util.JBossConfigUtil;
-import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
@@ -41,6 +22,21 @@ import ru.ecom.poly.ejb.form.TicketForm;
 import ru.ecom.report.rtf.RtfPrintServiceHelper;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.io.File;
+import java.io.StringWriter;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Талоны

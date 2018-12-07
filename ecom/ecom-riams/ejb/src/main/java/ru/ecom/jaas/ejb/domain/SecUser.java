@@ -1,18 +1,16 @@
 package ru.ecom.jaas.ejb.domain;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 /**
  * Пользователь

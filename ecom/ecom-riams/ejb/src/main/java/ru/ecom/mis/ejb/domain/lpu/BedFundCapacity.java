@@ -1,15 +1,13 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.sql.Date;
 
 @Entity
 @Comment("Объемы коечного фонда")

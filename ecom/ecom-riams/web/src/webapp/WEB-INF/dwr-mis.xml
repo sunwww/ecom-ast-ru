@@ -38,9 +38,9 @@
         </create>
 
 		<!-- Редактирование справочников -->
-        <convert converter="bean" match="ru.ecom.ejb.services.vocentity.VocEntityPropertyInfo">
+        <convert converter="bean" match="VocEntityPropertyInfo">
         </convert>
-        <convert converter="bean" match="ru.ecom.ejb.services.vocentity.VocEntityInfo">
+        <convert converter="bean" match="VocEntityInfo">
         </convert>
         <create creator="new" javascript="VocEntityService" scope="application">
             <param name="class" value="ru.ecom.web.vocentity.VocEntityServiceJs"/>

@@ -1,21 +1,18 @@
 package ru.ecom.mis.ejb.service.lpu;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.ejb.services.voc.VocContext;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
+
+import javax.persistence.EntityManager;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class LpuAllValueVoc implements IAllValue {
 

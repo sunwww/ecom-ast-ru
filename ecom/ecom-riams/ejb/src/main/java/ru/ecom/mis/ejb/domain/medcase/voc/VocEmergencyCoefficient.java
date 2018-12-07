@@ -1,15 +1,13 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
-import java.sql.Date;
+import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.expomc.ejb.domain.omcvoc.OmcLpu;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcLpu;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.sql.Date;
 
 /**
  * Коэффициент экстренности

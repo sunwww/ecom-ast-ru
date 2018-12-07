@@ -1,17 +1,11 @@
 package ru.ecom.expert2.form;
 
-import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.E2FondMedSpecLink;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.ecom.expert2.form.voc.federal.VocE2FondV015Form;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 /**
  * Соответствие исхода случая результату медоса (V015)

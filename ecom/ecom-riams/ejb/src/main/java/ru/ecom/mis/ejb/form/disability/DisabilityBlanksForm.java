@@ -3,7 +3,6 @@ package ru.ecom.mis.ejb.form.disability;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.disability.DisabilityBlanks;
-import ru.ecom.mis.ejb.domain.disability.DisabilityCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;

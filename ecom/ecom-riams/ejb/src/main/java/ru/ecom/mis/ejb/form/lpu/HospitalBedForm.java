@@ -2,11 +2,7 @@ package ru.ecom.mis.ejb.form.lpu;
 
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.HospitalBed;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 @Comment("Больничная койка")
@@ -24,4 +20,17 @@ public class HospitalBedForm extends HospitalRoomForm {
 
 	/** Дополнительные */
 	private Boolean theIsAddition;
+
+	/**
+	 * Лечебное учреждение
+	 */
+	@Comment("Лечебное учреждение")
+	@Persist
+	public Long getLpu() {
+		return theLpu;
+	}
+	public void setLpu(Long aLpu) {
+		theLpu = aLpu;
+	}
+	private Long theLpu;
 }

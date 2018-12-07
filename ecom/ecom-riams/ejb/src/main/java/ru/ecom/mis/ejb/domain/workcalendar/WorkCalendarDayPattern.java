@@ -1,22 +1,17 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimePattern;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
 
-	/**
+import javax.persistence.*;
+import java.util.List;
+
+/**
 	 * Шаблон дня рабочего календаря
 	 */
 	@Comment("Шаблон дня рабочего календаря")

@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.form.contract;
 
-import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractGuaranteeLetter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;

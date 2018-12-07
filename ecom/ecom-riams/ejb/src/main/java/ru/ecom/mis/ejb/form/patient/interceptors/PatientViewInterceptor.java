@@ -1,21 +1,16 @@
 package ru.ecom.mis.ejb.form.patient.interceptors;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.PatientExternalServiceAccount;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.util.date.AgeUtil;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 public class PatientViewInterceptor implements IFormInterceptor {
 
