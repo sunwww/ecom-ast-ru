@@ -102,6 +102,7 @@
 			</msh:ifFormTypeIsNotView>
 			<tags:calculation name="calculation" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 			<tags:calculation_grace name="calculation_grace" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+            <tags:calculation_caprini name="calculation_caprini" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 		</msh:form>
 	</tiles:put>
 	<!-- Scripts -->
@@ -234,6 +235,8 @@ if (window.parent.document.getElementById('allCalc')!=null) document.getElementB
                     showcalculationNewCalculation($('departmentMedCase').value, 0);
                 else if (aResult=='calculation_grace')
                     showcalculation_graceNewCalculation($('departmentMedCase').value, 0);
+            else if (aResult=='calculation_caprini')
+                showcalculation_capriniNewCalculation($('departmentMedCase').value, 0);
         }
     	});
 	});

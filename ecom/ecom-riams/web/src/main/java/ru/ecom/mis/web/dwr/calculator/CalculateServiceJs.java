@@ -231,4 +231,20 @@ public class CalculateServiceJs {
 		Collection<WebQueryResult> res = service.executeNativeSql("select tag from calculator where id="+cId);
 		return (!res.isEmpty() && res.iterator().next().get1()!=null) ? res.iterator().next().get1().toString() : "";
 	}
+
+	//Milamesher #127 получить всё для ИМТ
+	public String getIMT(Long aId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select st.height,st.weight from statisticstub st ");
+		sql.append(" left join medcase hmc on hmc.id=st.medcase_id ");
+		sql.append(" left join medcase dmc on dmc.parent_id=hmc.id  ");
+		sql.append(" where dmc.id ='"+aId.toString()+"'");
+		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
+		StringBuilder sb = new StringBuilder();
+		for (WebQueryResult wqr : res) {
+			sb.append(wqr.get1()).append("#").append(wqr.get2());
+		}
+		return sb.toString();
+	}
 }

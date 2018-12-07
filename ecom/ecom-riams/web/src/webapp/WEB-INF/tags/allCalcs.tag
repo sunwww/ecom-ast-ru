@@ -8,7 +8,7 @@
 <msh:ifInRole roles="${roles}">
 
 <div id='${name}Calc' class='dialog'>
-    <iframe id="iframe" src="/riams/entityParentPrepareCreate-calc_calculationsResult.do?id=${medCaseId}&short=ShortCreate" height="500" width="1300"></iframe>
+    <iframe id="iframe" src="/riams/entityParentPrepareCreate-calc_calculationsResult.do?id=${medCaseId}&short=ShortCreate" height="700" width="1300"></iframe>
     <br>
 </div>
 
