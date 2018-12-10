@@ -247,7 +247,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник исходов госпитализации -->
     <voc id='vocHospitalizationOutcome' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospitalizationOutcome'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="(isNotViewDischarge is null or isNotViewDischarge='0')"
@@ -256,7 +256,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник исходов госпитализации -->
     <voc id='vocHospitalizationWhereAdmission' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospitalizationOutcome'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="(isNotViewAdmission is null or isNotViewAdmission='0')"
@@ -264,28 +264,28 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     </voc> 
     <voc id='vocAnesthesiaMethod' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocAnesthesiaMethod'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesiaMethod'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc> 
     <voc id='vocAbortion' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocAbortion'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAbortion'
                 names   = 'code,name'
                 queried = 'code,name'
                 />
     </voc> 
     <voc id='vocPediculosis' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPediculosis'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc> 
     <voc id='vocCriminalPhoneMessageType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPhoneMessageType'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageType'
                 names   = 'name'
                 queried = 'name'
                 queryAppend = 'isCriminal=true'
@@ -293,7 +293,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     </voc> 
     <voc id='vocPhoneMessageOrganization' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPhoneMessageOrganization'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageOrganization'
                 names   = 'name,phoneNumber'
                 queried = 'name,phoneNumber'
                 />
@@ -302,7 +302,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник результатов госпитализации -->
     <voc id='vocHospitalizationResult' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospitalizationResult'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="(isArchival is null or isArchival='0')"
@@ -312,7 +312,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник дефектов догоспитального этапа -->
     <voc id='vocPreAdmissionDefect' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPreAdmissionDefect'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -321,7 +321,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник времен заболевания до госпитализации -->
     <voc id='vocPreAdmissionTime' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPreAdmissionTime'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -330,7 +330,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник типов опьянения -->
     <voc id='vocIntoxication' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocIntoxication'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication'
                 names   = "name"
                 queried = 'name'
                 />
@@ -384,7 +384,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник осложнений -->
     <voc id='vocComplication' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocComplication'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocComplication'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -392,7 +392,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник отказов при госпитализации -->
     <voc id='vocDeniedHospitalizating' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDeniedHospitalizating'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -400,7 +400,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник профилей операций -->
     <voc id='vocSurgicalProfile' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocSurgicalProfile'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalProfile'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -408,7 +408,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник показаний (экстр.,план.) -->
     <voc id='vocHospitalAspect' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospitalAspect'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalAspect'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -416,7 +416,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник профилей коек -->
     <voc id='vocBedType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocBedType'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -424,7 +424,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 	<!-- Справочник профилей коек -->
 	<voc id='vocBedTypeWithCode' type='EntityVocService'>
 		<EntityVocService
-				entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocBedType'
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
 				names   = 'omcCode,name'
 				queried = 'name'
 		/>
@@ -459,14 +459,14 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник типов коек -->
     <voc id='vocRoomType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocRoomType'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType'
                 names   = 'name'
                 queried = 'name'
                 />
     </voc> 
     <voc id='vocOmcFrm' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ru.ecom.ejb.domain.omcvoc.OmcFrm'
+                entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm'
                 names   = 'name'
                 queried = 'name'
             />
@@ -474,7 +474,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
         <!-- Подразделения у LPU -->
     <voc id='vocLpuOtd' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.lpu.MisLpu'
+                entity  = 'ru.ecom.mis.ejb.domain.lpu.MisLpu'
                 names   = 'name'
                 queried = 'name'
                 parent  = 'parent'
@@ -531,7 +531,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
       <!-- Справочник показаний к поступлению -->
     <voc id='vocAdmissionAspect' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocAdmissionAspect'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionAspect'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -540,7 +540,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
             <!-- Справочник типов госпитального обслуживания -->
     <voc id='vocHospitalServiceType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospitalServiceType'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalServiceType'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -551,7 +551,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
            <!-- Справочник типов стационара при выписке, поступлении -->
     <voc id='vocHospType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospType'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="(isNotViewDefault is null or isNotViewDefault='0')"
@@ -559,7 +559,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     </voc> 
     <voc id='vocHospTypeInAdmission' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospType'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="(isNotViewAdmission is null or isNotViewAdmission='0')"
@@ -568,7 +568,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник типов листов назначений -->
     <voc id='vocPrescriptType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocPrescriptType'
+                entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -577,7 +577,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник госпитализаций (впервые, повторно) -->
     <voc id='vocHospitalization' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocHospitalization'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -586,7 +586,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
      <!-- Справочник места смерти -->
     <voc id='vocDeathPlace' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDeathPlace'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathPlace'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -594,7 +594,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
      <!-- Справочник категорий расхождения диагнозов в связи со смертью -->
     <voc id='vocDeathCategory' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDeathCategory'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory'
                 names   = 'name'
                 queried = 'name'
                 queryAppend="(deprecated='0' or deprecated is null)"
@@ -604,7 +604,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник причин смерти -->
     <voc id='vocDeathReason' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDeathReason'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathReason'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -613,7 +613,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник оснований смерти -->
     <voc id='vocDeathEvidence' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDeathEvidence'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -622,7 +622,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Смерть после окончания беременности -->
     <voc id='vocAfterPregnance' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocAfterPregnance'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAfterPregnance'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -631,7 +631,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник. Доношенность. -->
     <voc id='vocIsPrematurity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocIsPrematurity'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocIsPrematurity'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -640,7 +640,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник видов сертификатов -->
     <voc id='vocCertificateType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.document.ru.ecom.ejb.domain.voc.VocCertificateType'
+                entity  = 'ru.ecom.document.ejb.domain.voc.VocCertificateType'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -649,7 +649,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник. Кем установлена смерть -->
     <voc id='vocDeathWitnessFunction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocDeathWitnessFunction'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathWitnessFunction'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -658,7 +658,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник осложнений родов -->
     <voc id='vocChildbirthComplication' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocChildbirthComplication'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocChildbirthComplication'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -667,7 +667,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник места родов -->
     <voc id='vocChildbirthPlace' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocChildbirthPlace'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocChildbirthPlace'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -676,7 +676,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник врожденных аномалий развития -->
     <voc id='vocCongenitalAnomaly' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocCongenitalAnomaly'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocCongenitalAnomaly'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -685,7 +685,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник критериев живорождения -->
     <voc id='vocLivebirthCriterion' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocLivebirthCriterion'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocLivebirthCriterion'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -694,7 +694,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник осложнений новорожденного -->
     <voc id='vocNewbornComplication' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocNewbornComplication'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocNewbornComplication'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -703,7 +703,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник акушерских процедур -->
     <voc id='vocObstetricProcedure' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocObstetricProcedure'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocObstetricProcedure'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -712,7 +712,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник порядка рождения ребенка -->
     <voc id='vocOrderAndQuantity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocOrderAndQuantity'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocOrderAndQuantity'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -721,7 +721,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник медицинских факторов настоящей беременности -->
     <voc id='vocPregnancyMedFactor' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPregnancyMedFactor'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyMedFactor'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -730,7 +730,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник прочих факторов риска во время беременности -->
     <voc id='vocPregnancyRiskFactor' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPregnancyRiskFactor'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyRiskFactor'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -739,7 +739,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
      <!-- Справочник приоритетов диагнозов -->
     <voc id='vocPriorityDiagnosis' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.medcase.voc.VocPriorityDiagnosis'
+                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = "UPPER_CASE"                
@@ -749,7 +749,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник положений плода -->
     <voc id='vocFetusLocation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocFetusLocation'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFetusLocation'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -758,7 +758,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник предлежащей части плода -->
     <voc id='vocPreviusPart' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocPreviusPart'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPreviusPart'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -767,7 +767,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник родовой деятельности -->
     <voc id='vocPregnancyActivity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocPregnancyActivity'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPregnancyActivity'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -776,7 +776,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник влагалищных выделений -->
     <voc id='vocVaginalDischarge' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocVaginalDischarge'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocVaginalDischarge'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -785,7 +785,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник преждевременности отхождения вод -->
     <voc id='vocBirthWatesPrematurity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocBirthWatesPrematurity'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -794,7 +794,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник отделения плаценты -->
     <voc id='vocPlacentaSeparation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocPlacentaSeparation'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaSeparation'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -803,7 +803,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник целостности оболочек -->
     <voc id='vocFetalMembranesIntegrity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocFetalMembranesIntegrity'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -812,7 +812,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник особенностей повышения температуры тела -->
     <voc id='vocFeverFeature' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocFeverFeature'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -821,7 +821,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник частоты дыхательных движений по Downes -->
     <voc id='vocDownesRespirationRate' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocDownesRespirationRate'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesRespirationRate'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -830,7 +830,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
      <!-- Справочник цианоза по Downes -->
     <voc id='vocDownesCyanosis' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocDownesCyanosis'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesCyanosis'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -839,7 +839,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник втяжения межреберных промежутков по Downes -->
     <voc id='vocDownesIntercostalRet' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocDownesIntercostalRet'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesIntercostalRet'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -848,7 +848,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник затруднения дыхания по Downes -->
     <voc id='vocDownesDifExhalation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocDownesDifExhalation'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesDifExhalation'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -857,7 +857,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
     <!-- Справочник аускультации по Downes -->
     <voc id='vocDownesAuscultation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocDownesAuscultation'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesAuscultation'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -866,7 +866,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
      <!-- Справочник зрелости новорожденного -->
     <voc id='vocNewBornMaturity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.birth.voc.VocNewBornMaturity'
+                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity'
                 names   = 'name'
                 queried = 'name'
                 />
@@ -891,7 +891,7 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
 	<!-- Справочник причин отмены консультаций -->
 	<voc id='vocWfConsultationCancelReason' type='EntityVocService'>
 		<EntityVocService
-				entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.voc.VocWfConsultationCancelReason'
+				entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocWfConsultationCancelReason'
 				names   = 'name'
 				queried = 'name'
 		/>

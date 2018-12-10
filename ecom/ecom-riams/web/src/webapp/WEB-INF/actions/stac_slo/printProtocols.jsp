@@ -1,4 +1,3 @@
-<%@page import="WebQueryResult"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="java.util.List"%>

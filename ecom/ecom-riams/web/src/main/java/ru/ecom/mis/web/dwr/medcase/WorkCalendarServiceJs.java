@@ -1088,7 +1088,7 @@ public class WorkCalendarServiceJs {
 		sql.append(" left join workcalendartime wct on wct.workcalendarday_id=wcd.id");
 		sql.append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id") ;
 		sql.append(" where wc.id='").append(aWorkCalendar).append("'"); 
-		sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and to_char(wcd.calendardate,'mm.yyyy')='")
+		sql.append(" and (wcd.isDeleted is null or wcd.isDeleted='0') and (wct.isDeleted is null or wct.isDeleted='0') and to_char(wcd.calendardate,'mm.yyyy')='")
 			.append(aMonth).append(".").append(aYear).append("'");
 		if (isRemoteUser) sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0')");
 		sql.append(" group by wcd.id,wcd.calendardate");

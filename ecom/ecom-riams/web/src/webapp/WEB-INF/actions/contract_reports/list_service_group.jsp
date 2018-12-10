@@ -1,4 +1,4 @@
-<%@page import="WebQueryResult"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="java.math.BigDecimal"%>
 <%@page import="java.text.DecimalFormat"%>

@@ -1,19 +1,18 @@
 package ru.ecom.expomc.ejb.services.voc.allvalues;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.ejb.services.voc.helper.ArrayAllValue;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Список свойств у документа
@@ -21,7 +20,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public class EntitiesListAllValues extends ArrayAllValue {
 
     private final static Logger LOG = Logger.getLogger(EntitiesListAllValues.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private void loadResource(String aResource) throws IOException, JDOMException, ClassNotFoundException {
         LOG.info(new StringBuilder().append("load resource: Loading ").append(aResource).append(" ...").toString());

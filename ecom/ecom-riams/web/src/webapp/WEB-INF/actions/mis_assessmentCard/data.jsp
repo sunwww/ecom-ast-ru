@@ -1,4 +1,3 @@
-<%@page import="WebQueryResult"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

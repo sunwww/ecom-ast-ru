@@ -1,4 +1,4 @@
-<%@page import="WebQueryResult"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.util.PropertyUtil"%>
 <%@page import="java.util.List"%>

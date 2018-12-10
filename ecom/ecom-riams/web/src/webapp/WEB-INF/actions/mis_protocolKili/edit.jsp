@@ -5,7 +5,7 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh"%>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom"%>
 <%@ include file="/WEB-INF/tiles/header.jsp" %>
-<%@page import="WebQueryResult"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">

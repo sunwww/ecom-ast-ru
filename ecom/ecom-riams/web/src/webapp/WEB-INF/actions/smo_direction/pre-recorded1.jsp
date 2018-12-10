@@ -453,7 +453,7 @@ ul.listTimes li.first {
   		}
   		function showRow(aRowId, aCanShow, aField ) {
     		//alert(aRowId) ;
-			try {
+			try {map
 				//alert( aCanShow ? 'table-row' : 'none') ;
 				$(aRowId).style.display = aCanShow ? 'table-row' : 'none' ;
 			} catch (e) {

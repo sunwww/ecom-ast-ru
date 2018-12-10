@@ -1,6 +1,6 @@
-<%@page import="WebQueryResult"%>
 <%@page import="ru.ecom.diary.ejb.service.protocol.tree.CheckNode"%>
 <%@page import="ru.ecom.diary.web.action.protocol.template.TemplateEditAction"%>
+<%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>

@@ -46,7 +46,7 @@
     
     <voc id='TemplateProtocol' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.diary.ru.ecom.ejb.domain.protocol.template.TemplateProtocol'
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol'
                 names   = 'title'
                 queried = 'title'
        queryConvertType = 'FIRST_UPPER'
@@ -54,7 +54,7 @@
     </voc>
     <voc id='TemplateProtocolType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.diary.ru.ecom.ejb.domain.protocol.template.TemplateProtocolType'
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocolType'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = 'FIRST_UPPER'
@@ -62,7 +62,7 @@
     </voc>
     <voc id='KeyWord' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.diary.ru.ecom.ejb.domain.protocol.template.TemplateWord'
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateWord'
                 names   = 'reduction,decryption'
                 queried = 'reduction'
                 queryConvertType = 'FIRST_UPPER'
@@ -70,7 +70,7 @@
     </voc>
     <voc id='SecPolicy' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.jaas.ru.ecom.ejb.domain.SecPolicy'
+                entity  = 'ru.ecom.jaas.ejb.domain.SecPolicy'
                 names   = 'key,name'
                 queried = 'key'
                 queryConvertType = 'FIRST_UPPER'
@@ -78,7 +78,7 @@
     </voc>
     <voc id='valueDomain' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.diary.ru.ecom.ejb.domain.protocol.parameter.user.UserDomain'
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.parameter.user.UserDomain'
                 names   = 'name'
                 queried = 'name'
                 queryConvertType = 'FIRST_UPPER'
@@ -98,7 +98,7 @@
     </voc>
     <voc id='TemplateProtocolNew' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.diary.ru.ecom.ejb.domain.protocol.template.TemplateProtocol'
+                entity  = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol'
                 names   = 'title'
                 queried = 'title'
        queryConvertType = 'FIRST_UPPER'
@@ -116,7 +116,7 @@
     </voc>  -->
     <voc id='TemplateClassif' type='EntityVocService'>
         <EntityVocService
-                entity = 'ru.ecom.diary.ru.ecom.ejb.domain.protocol.template.TemplateClassif'
+                entity = 'ru.ecom.diary.ejb.domain.protocol.template.TemplateClassif'
                 names = 'name'
                 queried = 'name'
                 queriedConvertType = 'FIRST_UPPER'
@@ -126,20 +126,20 @@
     </voc>
 
     <voc id='vocTemplateCategory' type='AllValueHelper'>
-        <IAllValue>ru.ecom.mis.ru.ecom.ejb.service.prescription.TemplateCategoryAllValueVoc</IAllValue>
+        <IAllValue>ru.ecom.mis.ejb.service.prescription.TemplateCategoryAllValueVoc</IAllValue>
     </voc>
     
     <voc id='vocTemplateProtocolByCategory' type='AllValueHelper'>
-        <IAllValue>ru.ecom.diary.ru.ecom.ejb.service.protocol.TemplateProtocolByCategoryVoc</IAllValue>
+        <IAllValue>ru.ecom.diary.ejb.service.protocol.TemplateProtocolByCategoryVoc</IAllValue>
     </voc>
     
     <voc id='vocTemplatePrescriptionParent' type='AllValueHelper'>
-        <IAllValue>ru.ecom.mis.ru.ecom.ejb.service.prescription.PrescriptionChildValueVoc</IAllValue>
+        <IAllValue>ru.ecom.mis.ejb.service.prescription.PrescriptionChildValueVoc</IAllValue>
     </voc>
 
     <voc id='vocTemplatePrescription' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.prescription.PrescriptListTemplate'
+                entity  = 'ru.ecom.mis.ejb.domain.prescription.PrescriptListTemplate'
                 names   = 'name'
                 queried = 'name'
        queryConvertType = 'FIRST_UPPER'
@@ -148,7 +148,7 @@
 
     <voc id='vocMenuByDiet' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.MealMenuTemplate'
+                entity  = 'ru.ecom.mis.ejb.domain.diet.MealMenuTemplate'
                 names   = 'description'
                 queried = 'description'
             queryAppend = 'parentMenu_id is null'
@@ -157,7 +157,7 @@
     </voc>
     <voc id='vocChildMenu' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ru.ecom.ejb.domain.diet.MealMenuTemplate'
+                entity  = 'ru.ecom.mis.ejb.domain.diet.MealMenuTemplate'
                 names   = 'description'
                 queried = 'description'
                  parent = 'parentMenu_id'
