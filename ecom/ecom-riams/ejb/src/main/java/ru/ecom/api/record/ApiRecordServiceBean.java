@@ -13,6 +13,7 @@ import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.util.StringUtil;
+import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.Resource;
@@ -74,6 +75,16 @@ public class ApiRecordServiceBean implements IApiRecordService {
      */
     public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, String aPhone) {
         log.warn("RECORD_PATIENT = "+aPatientLastname);
+
+        try {
+            int age =AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()));
+            if (age>122) {
+                log.warn("Пациент старше 122 лет. Это маловероятно");
+                return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");
+            }
+        } catch (Exception e) {
+            return getErrorJson("Проверьте дату рождения пациента","TOO_YOUNG");
+        }
 
         Patient patient ;
         if (aPatientGUID!=null) { //Считаем, что записываем из приложения

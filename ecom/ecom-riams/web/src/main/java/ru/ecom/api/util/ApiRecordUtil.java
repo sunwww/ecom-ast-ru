@@ -6,12 +6,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.api.record.IApiRecordService;
 import ru.ecom.ejb.services.query.IWebQueryService;
-import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.date.AgeUtil;
 
 import java.sql.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ApiRecordUtil {
     private static  final Logger log = Logger.getLogger(ApiRecordUtil.class);
@@ -161,6 +158,13 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
     return recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,null,apiRecordService);
 }
 public static String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment,String aPhone, IApiRecordService apiRecordService) {
+    try {
+        if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()))>122) {
+            return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");
+        }
+    } catch (Exception e) {
+        return getErrorJson("Проверьте дату рождения пациента","TOO_YOUNG");
+    }
     return apiRecordService.recordPatient(aCalendarTimeId,aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday,aPatientGUID,aComment,aPhone);
 }
 
