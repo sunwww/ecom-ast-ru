@@ -91,7 +91,8 @@
 						<td style="padding-left: 20px; padding-top: 20px;"> 
 						<input id="cancel" type="button" value="Отмена" onclick="goBack()"/> 
 						<input disabled id="calculate" type="button" value="Рассчитать" onclick="calculating()"/> 
-						<input disabled id="calcandsave" type="button" value="Рассчитать и сохранить" onclick="CreateRes()" />
+						<input disabled id="calcandsave" type="button" value="Рассчитать и сохранить в дневник и/или вычисление" onclick="CreateRes(1)" />
+						<input hidden id="calcandtodiary" type="button" value="Рассчитать и добавить к дневнику" onclick="CreateRes(2)" />
 						<td>
 					</tr>
 
@@ -99,6 +100,9 @@
 			</div>
 			
 			</msh:ifFormTypeIsNotView>
+			<tags:calculation name="calculation" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+			<tags:calculation_grace name="calculation_grace" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+            <tags:calculation_caprini name="calculation_caprini" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 		</msh:form>
 	</tiles:put>
 	<!-- Scripts -->
@@ -112,7 +116,7 @@ var div = document.querySelector('#calculator.calc');
 var global=0;
 var result;
 var resultofcalc;
-
+if (window.parent.document.getElementById('allCalc')!=null) document.getElementById('calcandtodiary').removeAttribute('hidden');
 
 	function GetAndParseJson() {
 		CalculateService.GetSettingsById(calculator.value, {
@@ -223,7 +227,18 @@ var resultofcalc;
 	
 	//Эвент для выадающего списка. При активации элемента получаем JSON
 	calculatorAutocomplete.addOnChangeCallback(function() {
-		GetAndParseJson();
+	    CalculateService.getCalcTagView(calculator.value, {
+        callback : function(aResult) {
+			if (aResult=='') GetAndParseJson();
+            //если есть вьюшка, вывести её, имена должны совпадать
+			else if (aResult=='calculation')
+                    showcalculationNewCalculation($('departmentMedCase').value, 0);
+                else if (aResult=='calculation_grace')
+                    showcalculation_graceNewCalculation($('departmentMedCase').value, 0);
+            else if (aResult=='calculation_caprini')
+                showcalculation_capriniNewCalculation($('departmentMedCase').value, 0);
+        }
+    	});
 	});
 
 	//Вычисление
@@ -255,7 +270,7 @@ var resultofcalc;
                 if (aResult != '') {
                     if (res.value.indexOf(aResult) == -1) {
                         res.value = "Результат " + res.value + " " + aResult;
-                        if (save) {
+                        if (save==1) {
                             if (!isEmpty()) {
                                 CalculateService.SetCalculateResultCreate(DepartmentId.value,
                                     "Результат " + res.value + " " + aResult, calculator.value, {
@@ -265,15 +280,24 @@ var resultofcalc;
                                     });
                             }
                         }
+                        else if (save==2 && window.parent.document.getElementById('record')!=null) {
+                            window.parent.document.getElementById('record').value += res.value + " " + aResult + "\n";
+                            goBack();
+                        }
                     }
                 }
-                else if (save && !isEmpty()) {
+                else if (save==1 && !isEmpty()) {
                     CalculateService.SetCalculateResultCreate(DepartmentId.value,
                          res.value, calculator.value, {
                             callback: function (aResult) {
                                 goBack();
                             }
                         });
+                }
+
+                else if (save==2 && !isEmpty() && window.parent.document.getElementById('record')!=null) {
+                    window.parent.document.getElementById('record').value += "Результат " + res.value + " " + aResult + "\n";
+                    goBack();
                 }
             }
         });
@@ -315,10 +339,9 @@ var resultofcalc;
 	}
 
 	//Создание результата
-	function CreateRes() {
-        calculating(true);
+	function CreateRes(way) {
+        calculating(way);
     }
-
 	//проверка полей на пустоту
 	function isEmpty() {
 		for ( var i = 0; i < global; i++) {
@@ -342,6 +365,10 @@ var resultofcalc;
 	
 	 // возврат на родительскую страницу.
 	function goBack() {
+	    for (var i=0; i<100; i++) {
+            if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
+            if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+		}
 		location.href = "entityParentView-stac_slo.do?id=" + DepartmentId.value;
 	}
 	 

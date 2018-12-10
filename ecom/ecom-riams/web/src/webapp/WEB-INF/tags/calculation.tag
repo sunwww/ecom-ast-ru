@@ -13,8 +13,6 @@
 
 <msh:ifInRole roles="${roles}">
 
-<msh:sideLink name="${title}" action=" javascript:show${name}NewCalculation('.do') " /> 
-
 
 <style type="text/css">
     #${name}NewCalculation {
@@ -60,7 +58,7 @@
 <input class="cancel" id="cancel" value="Отмена" onclick="cancel${name}NewCalculation()" type="button">
 </td>
 <td> 
-<input value="Рассчитать" onclick="calculate();" type="button">
+<input value="Рассчитать" onclick="calculate${name}();" type="button">
 </td>
 <td> 
 <input value="Рассчитать и добавить к дневнику" onclick="save${name}NewCalculation();" type="button">
@@ -100,7 +98,7 @@
      function init${name}NewCalculationDialog() {
      	theIs${name}NewCalculationDialogInitialized = true ;
      }
-     
+
      // Показать
     function show${name}NewCalculation(id,create) {
         if (!theIs${name}NewCalculationDialogInitialized) {
@@ -108,9 +106,9 @@
         }
         the${name}NewCalculationDialog.show() ;
         $("age").focus() ;
-        getAge(id);
-        getGender(id);
-        
+        getAge${name}(id);
+        getGender${name}(id);
+
         //
        // if(create==0)
         //	document.getElementById("cancel").style.display = "none";
@@ -134,30 +132,51 @@
      
  	 // Сохранение данных
      function save${name}NewCalculation() {
-         calculate();
+         calculate${name}();
          var result = document.querySelector('#resultReadOnly');
          if(result.value!=''){
              var prop ;
-             if ("${property}"=="") {
-                 prop = "record" ;
-             } else { prop = "${property}" ;}
-
-             var temp = $('resultReadOnly').value;
-             $(prop).value +=  "СКФ:";
-             var str = "Требуется коррекция дозы лекарственных средств, которые активно выводятся с мочой. Лечащий врач может принять решение о направлении пациента на консультацию к врачу-клиническому фармакологу";
-             if(temp>90){ $(prop).value += temp+' - стадия 1, нормальная СКФ';}
-             if(temp>=60 && temp<=89){ $(prop).value += temp+' - стадия 2, признаки нефропатии, легкое снижение СКФ';}
-             if(temp>=45 && temp<=59){ $(prop).value += temp+' - стадия 3А, умеренное снижение СКФ';}
-             if(temp>=30 && temp<=44){ $(prop).value += temp+' - стадия 3Б, выраженное снижение СКФ'; alert(str);}
-             if(temp>=15 && temp<=29){ $(prop).value += temp+' - стадия 4, тяжелое снижение СКФ'; alert(str);}
-             if(temp<15){ $(prop).value += temp+' - стадия 5, терминальная хроническая почечная недостаточность'; alert(str);}
+             if ("${property}"=="") prop = "record" ;
              
+             var record = window.parent.document.getElementById(prop);
+             
+             if (record!=null) {
+                 var temp = $('resultReadOnly').value;
+                 record.value += "СКФ:";
+                 var str = "Требуется коррекция дозы лекарственных средств, которые активно выводятся с мочой. Лечащий врач может принять решение о направлении пациента на консультацию к врачу-клиническому фармакологу";
+                 if (temp > 90) {
+                     record.value += temp + ' - стадия 1, нормальная СКФ';
+                 }
+                 if (temp >= 60 && temp <= 89) {
+                     record.value += temp + ' - стадия 2, признаки нефропатии, легкое снижение СКФ';
+                 }
+                 if (temp >= 45 && temp <= 59) {
+                     record.value += temp + ' - стадия 3А, умеренное снижение СКФ';
+                 }
+                 if (temp >= 30 && temp <= 44) {
+                     record.value += temp + ' - стадия 3Б, выраженное снижение СКФ';
+                     alert(str);
+                 }
+                 if (temp >= 15 && temp <= 29) {
+                     record.value += temp + ' - стадия 4, тяжелое снижение СКФ';
+                     alert(str);
+                 }
+                 if (temp < 15) {
+                     record.value += temp + ' - стадия 5, терминальная хроническая почечная недостаточность';
+                     alert(str);
+                 }
+                 record.value +="\n";
+                 for (var i=0; i<100; i++) {
+                     if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
+                     if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+                 }
+             }
              the${name}NewCalculationDialog.hide();
          }
      }
      
      //вычисение результата
-     function calculate(){
+     function calculate${name}(){
          if(Createnin.value =="" || Mass.value==""){
              formula.innerHTML = '<font color="red"><b>Заполните все поля!</b></font>';
          }else{
@@ -179,7 +198,7 @@
      }
     
      //Получить пол  
-     function getGender(medcaseId) {
+     function getGender${name}(medcaseId) {
 
 		CalculateService.getGender(medcaseId, {
 			callback : function(aResult) {
@@ -201,7 +220,7 @@
 	}
 
   //Получить возраст полных лет   
-  function getAge(medcaseId) {
+  function getAge${name}(medcaseId) {
 		CalculateService.getAge(medcaseId, {
 			callback : function(aResult) {
 				var age = document.querySelector('#age');

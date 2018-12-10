@@ -9,7 +9,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	saveParameters (aForm, aEntity, aCtx.getUsername(),aCtx);
 	//lastrelease milamesher 09.04.2018 #97 (при создании карты в СЛО надо создать протокол)
     if (aForm.getDepMedcase()!=null && aForm.getDepMedcase()!='' && aForm.getDepMedcase()!='0' && aForm.getTemplate()=='7') {
-        var asCardDiaryText = "Протокол карты оценки риска ВТЭО во время родов и в послеродовом периоде пациентки ";
+        var asCardDiaryText = "Протокол карты оценки риска ВТЭО во время родов и в послеродовом (послеоперационном) периоде пациентки ";
         var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
         asCardDiaryText +=patient.getPatientInfo() + "\n";
         var jsonStr=aForm.getParams();
@@ -28,9 +28,9 @@ function onCreate(aForm, aEntity, aCtx) {
         }
         asCardDiaryText+="Общая сумма баллов: "+aEntity.getBallSum()+"\n";
         if (aEntity.getComment()!=null && aEntity.getComment()!="") asCardDiaryText+="Комментарий: " + aEntity.getComment() +"\n";
-        if (aEntity.getBallSum()<=1) asCardDiaryText+="Низкий риск.";
+        /*if (aEntity.getBallSum()<=1) asCardDiaryText+="Низкий риск.";
         else if (aEntity.getBallSum()==2) asCardDiaryText+="Средний риск.";
-        else if (aEntity.getBallSum()>=3) asCardDiaryText+="Высокий риск.";
+        else if (aEntity.getBallSum()>=3) asCardDiaryText+="Высокий риск.";*/
         if (asCardDiaryText!='') {
             var currentDate = new java.util.Date();
             var prot = new Packages.ru.ecom.poly.ejb.domain.protocol.Protocol;
