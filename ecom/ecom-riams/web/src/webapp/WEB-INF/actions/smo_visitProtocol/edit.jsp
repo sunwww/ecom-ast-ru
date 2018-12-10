@@ -626,16 +626,17 @@ horizontalFill="true" />
 				   var btn = document.querySelector('#usualCalcs');
                    btn.className = "";
 				   flag=1;
-				   function CalcService(){
+				   //Milamesher 10122018 - больше не нужна при загрузке
+				   /*function CalcService(){
 						CalculateService.getCountDiary(medCaseId, {
 							callback : function(aResult) {
 							if(parseInt(aResult)==0 && parseInt(ishosp)==1) {
 							showMyNewCalculation(medCaseId,0);
 							}
 						}});
-				   }
+				   }*/
 				   getDtype();
-				   CalcService();
+				   //CalcService();
 			   </script>
 		</msh:ifInRole>
 
