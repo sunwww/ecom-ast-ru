@@ -561,12 +561,18 @@ left join Patient pat on pat.id=wan.person_id
                 </msh:section>
             </msh:ifInRole>
             <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/View">
-                <ecom:webQuery name="childBirth" nativeSql="select cb.id,cb.birthFinishDate, count(nb.id), list(pat.firstname||' ' ||pat.middlename) from ChildBirth cb
-      	left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id where cb.medCase_id='${param.id}' group by cb.id,cb.birthFinishDate"/>
+                <ecom:webQuery name="childBirth" nativeSql="select cb.id,cb.birthFinishDate, count(nb.id), list(pat.firstname||' ' ||pat.middlename),vocr.name from medcase mc
+                    left join childbirth cb on cb.medcase_id=mc.id
+                    left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id
+                    left join robsonclass rc on rc.medcase_id=mc.id
+                    left join VocRobsonClass vocr on vocr.id=robsontype_id
+                     where mc.id='${param.id}'  and (vocr.name is not null or cb.id is not null) group by cb.id,cb.birthFinishDate,vocr.name"/>
                 <msh:section>
                     <msh:sectionTitle>
                         Роды
                         <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_childBirth.do?id=${param.id}">Добавить роды</a>
+                        </msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_robsonClass.do?id=${param.id}">Классификация Робсона</a>
                         </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/NewBorn/Create">
                             <a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденному</a>
@@ -578,6 +584,7 @@ left join Patient pat on pat.id=wan.person_id
                             <msh:tableColumn property="2" columnName="Дата окончания родов" />
                             <msh:tableColumn property="3" columnName="Кол-во плодов" />
                             <msh:tableColumn property="4" columnName="ФИО ребенка (детей)" />
+                            <msh:tableColumn property="5" columnName="Классификация Робсона" />
                         </msh:table>
                     </msh:sectionContent>
                 </msh:section>

@@ -82,6 +82,11 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		if (form.getPrevMedCase()!=null &&!isRiskCardBornExists(manager, form.getPrevMedCase() ) && !isDsO82(manager, form.getPrevMedCase())) {
 			throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана карта оценки риска!");
 		}
+		//lastrelease milamesher 10.12.2018 #131
+		//запустить с 01.01.2019
+		/*if (form.getPrevMedCase()!=null &&!isRobsonClassExists(manager, form.getPrevMedCase() ) && !isDsO82(manager, form.getPrevMedCase())) {
+			throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана классификация Робсона!");
+		}*/
     }
     //Milamesher не O82 ли диагноз (тогда следующая проверка не нужна)
 	public static boolean isDsO82(EntityManager aManager, Long aMedCaseId) {
@@ -110,7 +115,19 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			return true;
 		}
 	}
-    
+    //Milamesher 10122018 #131 существует ли классификация Робсона
+	public static boolean isRobsonClassExists(EntityManager aManager, Long aMedCaseId) {
+		if (aMedCaseId==null) {return true;}
+		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
+		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
+			String sql = "select count(id) from robsonclass where medcase_id= "+aMedCaseId;
+			Object list = aManager.createNativeQuery(sql).getSingleResult();
+			return Long.valueOf(list.toString())>0;
+		} else {
+			return true;
+		}
+	}
+
     public static boolean isPregnancyExists(EntityManager aManager, Long aMedCaseId) {
     	if (aMedCaseId==null) {return true;}
 		//System.out.println("===== Проверяем на роды, DEP_MC_CREATE_department_id: <> "+aMedCaseId);
