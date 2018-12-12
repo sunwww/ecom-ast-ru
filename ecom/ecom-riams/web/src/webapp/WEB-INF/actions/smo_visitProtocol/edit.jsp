@@ -195,7 +195,6 @@ horizontalFill="true" />
 		<msh:sideMenu>
 			<tags:template_new_diary name="newTemp"
 									 roles="/Policy/Diary/Template/Create" field="record" title="Создание шаблона"/>
-			<tags:calculation_other name="Mycalc" roles="/Policy/Mis/Calc/Calculation/OtherCalculations" field="record2" title="Остальные вычисления"/>
 			<tags:calculation name="My" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 			<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
 				<tags:allCalcs name="all" roles="/Policy/Mis/Calc/Calculation/Create" medCaseId="${param.id}"/>

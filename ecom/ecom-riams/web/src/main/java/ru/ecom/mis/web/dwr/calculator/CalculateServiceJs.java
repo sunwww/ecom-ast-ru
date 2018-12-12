@@ -120,7 +120,7 @@ public class CalculateServiceJs {
     }
     
     // Расчеты. Создать новый расчет.
-    public void SetCalculateResultCreate(String aId, String aResult, String aCalcId, HttpServletRequest aRequest) throws NamingException {
+    public void SetCalculateResultCreate(String aId, String aResult, String aCalcId, String formString, HttpServletRequest aRequest) throws NamingException {
 
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sql = new StringBuilder();
@@ -141,15 +141,17 @@ public class CalculateServiceJs {
 		String result = "";
 		Boolean checkCreateDiary = false;
 		if (res.size() > 0) {
-			result = (res.iterator().next().get1() != null) ? res.iterator().next().get1().toString() + ":\n" + aResult : aResult;
+			result = (res.iterator().next().get1() != null) ? res.iterator().next().get1().toString() + ":\n" + formString + "\n" + aResult
+					: formString + "\n" + aResult;
 			checkCreateDiary = (res.iterator().next().get2().equals("1"));
 		}
+		else result = formString + "\n" + aResult;
 		if (checkCreateDiary) {
 			String workFunction = service.executeNativeSql("select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id " +
 					"where su.login='" + username + "'").iterator().next().get1().toString();
 			sql.append("INSERT INTO diary(dtype,  \"time\", date, record, username, dateregistration, isdischarge, \n" +
 					"timeregistration,medcase_id, specialist_id,journaltext, templateprotocol, disableedit)");
-			sql.append("values ('Protocol', current_time, current_date,'" + result + "','" + username + "', current_date,false, current_time,"
+			sql.append("values ('Protocol', current_time, current_date,'"  + result + "','" + username + "', current_date,false, current_time,"
 					+ aId + "," + workFunction + ", '', 0, false)");
 			service.executeUpdateNativeSql(sql.toString());
 		}
