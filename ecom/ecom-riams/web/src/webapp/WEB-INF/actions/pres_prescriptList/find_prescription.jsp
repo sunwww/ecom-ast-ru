@@ -65,7 +65,7 @@
    ,mc.id as f12mcid
    ,'entityShortView-mis_patient.do?id='||pat.id as f13patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
-   ,ml.name as m15lname
+   ,coalesce(mlIntake.name,ml.name) as m15lname
   ,  case when mc.dateStart is null and p.cancelDate is null and p.transferDate is not null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
   ,  case when p.medCase_id is null and p.cancelDate is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
@@ -94,6 +94,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join MisLpu mlIntake on mlIntake.id=p.department_id
     left join vocPrescriptType vpt on vpt.id=p.prescripttype_id
     where p.intakeDate = to_date('${param.dateFrom}','dd.mm.yyyy')
     and p.materialId='${param.number}'

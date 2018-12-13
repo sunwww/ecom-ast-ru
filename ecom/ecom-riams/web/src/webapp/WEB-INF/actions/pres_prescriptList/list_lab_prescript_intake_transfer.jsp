@@ -1,7 +1,6 @@
 
-<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@page import="ru.ecom.web.login.LoginInfo"%>
+<%@page import="ru.nuzmsh.util.format.DateFormat"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
@@ -207,7 +206,7 @@
    ,mc.id as f12mcid
    ,'entityShortView-mis_patient.do?id='||pat.id as f13patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
-   ,ml.name as m15lname
+   ,coalesce(mlIntake.name,ml.name) as m15lname
   ,  case when mc.dateStart is null and p.cancelDate is null then coalesce(mc.id,0)||''','''||p.id||''','''||ms.id||''',''saveBioResult' else null end as j16sanaliz
   ,  case when p.medCase_id is null and p.cancelDate is null and p.medcase_id is null then ''||p.id||''','''||coalesce(vsst.biomaterial,'-') else null end as j17scanc
    , case when mc.datestart is null then 'НЕ ПОДТВЕРЖДЕННЫЙ РЕЗУЛЬТАТ!!!<br>' else '' end || d.record as drecord
@@ -239,6 +238,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
+    left join MisLpu mlIntake on mlIntake.id=p.department_id
     left join vocprescripttype vpt on vpt.id=p.prescripttype_id
     where p.dtype='ServicePrescription'
     and ${dateSql} between to_date('${beginDate}','dd.mm.yyyy') 

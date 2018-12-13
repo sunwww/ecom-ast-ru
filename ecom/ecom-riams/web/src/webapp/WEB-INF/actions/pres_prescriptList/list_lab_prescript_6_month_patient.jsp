@@ -44,7 +44,7 @@
    ,mc.id as f12mcid
    ,'entityShortView-mis_patient.do?id='||pat.id as f13patid
    ,'entitySubclassShortView-mis_medCase.do?id='||pl.medCase_id as f14sls
-   ,ml.name as mlname, d.record as drecord
+   ,coalesce(mlIntake.name, ml.name) as mlname, d.record as drecord
     from prescription p
     left join MedCase mc on mc.id=p.medcase_id
     left join Diary d on mc.id=d.medCase_id and d.dtype='Protocol'
@@ -65,7 +65,7 @@
     left join Worker iw on iw.id=iwf.worker_id
     left join Patient iwp on iwp.id=iw.person_id
     left join MisLpu ml on ml.id=w.lpu_id
-    
+    left join MisLpu mlIntake on mlIntake.id=p.department_id
     where pat.id=${param.id} and p.planStartDate between current_date-200 and current_date
     and vst.code='LABSURVEY' 
     order by pat.lastname,pat.firstname,pat.middlename
