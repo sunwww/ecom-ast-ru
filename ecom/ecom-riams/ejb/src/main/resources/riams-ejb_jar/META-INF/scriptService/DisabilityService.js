@@ -49,6 +49,9 @@ function printNoActuality(aCtx, aParams) {
     if (endDateR!=null && !endDateR.equals("")) {
     	endDate = endDateR  ;
     }
+    //Milamesher 13122018 испорчен, но нет дубликата - не выводит в список испорченных
+	//убираю and mdd.id is not null
+	//and vds.code!='1_ELN' меняю на and cast(dd.noActuality as int) =1
     var sql = "select dd.id as ddid,to_char(dd.issueDate,'dd.MM.yyyy') as date1"
        +" ,dd.number as dnumber,dd.hospitalizedNumber as ddhosnumber"
        +" ,p.lastname||' '||p.firstname||' '||p.middlename as pat"
@@ -66,7 +69,7 @@ function printNoActuality(aCtx, aParams) {
         +" 	where "+status+" "
         //+statusNoActuality
         +" "+ dateGroup +" between to_date('"+beginDate+"','dd.mm.yyyy') and to_date('"
-        +endDate+"' ,'dd.mm.yyyy') "+sqlReason+" and mdd.id is not null and vds.code!='1_ELN' order by "
+        +endDate+"' ,'dd.mm.yyyy') "+sqlReason+"  and cast(dd.noActuality as int) =1 order by "
         +order ;
     //throw sql ;
     var list=aCtx.manager.createNativeQuery(sql).getResultList() ;
