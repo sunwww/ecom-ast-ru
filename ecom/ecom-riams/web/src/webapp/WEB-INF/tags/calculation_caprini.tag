@@ -181,7 +181,7 @@
                 <input value="Рассчитать" onclick="calculate${name}();" type="button">
             </td>
             <td>
-                <input value="Рассчитать и добавить к дневнику" onclick="save${name}NewCalculation();" type="button">
+                <input value="Сохранить" onclick="save${name}NewCalculation();" type="button">
             </td>
         </tr>
     </div>
@@ -189,6 +189,8 @@
     <script type="text/javascript">
         var theIs${name}NewCalculationDialogInitialized = false ;
         var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog')) ;
+        var departmentId${name}=0;
+        var calcId${name}=0;
 
         // инициализация диалогового окна
         function init${name}NewCalculationDialog() {
@@ -196,7 +198,7 @@
         }
 
         // Показать
-        function show${name}NewCalculation(id,create) {
+        function show${name}NewCalculation(id,calcId,create) {
             if (!theIs${name}NewCalculationDialogInitialized) {
                 init${name}NewCalculationDialog() ;
             }
@@ -204,6 +206,8 @@
             getAge${name}(id);
             getGender${name}(id);
             getIMT${name}(id);
+            departmentId${name}=id;
+            calcId${name}=calcId;
             document.getElementById("cancel").style.display ="";
         }
 
@@ -216,77 +220,79 @@
         // Сохранение данных
         function save${name}NewCalculation() {
             calculate${name}();
+            var formString=formToString();
             var riskPoints=document.getElementById('formula${name}').innerHTML;
             var res='';
             var prop ;
             if ("${property}"=="") prop = "record" ;
 
             var record = window.parent.document.getElementById(prop);
-
-            if (record!=null) {
-                if (riskPoints < 1) {
-                    res = 'Риск ВТЭО ' + riskPoints + ' (очень низкий).\n';
-                    res += 'Меры профилактики: раняя активация.\n';
-                    res += 'Продолжительность: в период госпитализации\n';
-                    res += 'Частота ВТЭО: < 0,5%\n';
-                    res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО при ' +
-                        'отсутствии профилактики.\n';
-                } else if (riskPoints < 3) {
-                    res = 'Риск ВТЭО ' + riskPoints + ' (низкий).\n';
-                    res += 'Меры профилактики: эластичная компрессия или фармакопрофилактика.\n';
-                    res += 'Продолжительность: в период госпитализации\n';
-                    res += 'Частота ВТЭО: 1,5%\n';
-                    res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                        'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                        'инструкцией и актуальными клиническими рекомендациями.\n';
-                } else if (riskPoints < 5) {
-                    res = 'Риск ВТЭО ' + riskPoints + ' (умеренный).\n';
-                    res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
-                    res += 'Продолжительность: в период госпитализации\n';
-                    res += 'Частота ВТЭО: 3,0%\n';
-                    res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                        'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                        'инструкцией и актуальными клиническими рекомендациями.\n';
-                    res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 2000 МЕ (20 мг),' +
-                        ' надропарин кальция (фраксипарин) 0.3 мл, дальтепарин (фрагмин) 2500 МЕ (первая инъекция за 2 часа до операции).\n'
-                } else if (riskPoints < 9) {
-                    res = 'Риск ВТЭО ' + riskPoints + ' (высокий).\n';
-                    res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
-                    res += 'Продолжительность: минимум 7-10 дней или до полной активизации.\n';
-                    res += 'Частота ВТЭО: 6,0%.\n';
-                    res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                        'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                        'инструкцией и актуальными клиническими рекомендациями.\n';
-                    res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 4000 МЕ (40 мг),' +
-                        ' надропарин кальция (фраксипарин) 0.3 мл.\nОртопедические: вес < 50 кг - 0.2 мл\n50-69 кг - 0.3 мл\nЮ70 кг - 0.4 мл, \n' +
-                        ' дальтепарин (фрагмин) 1) 5000\n 2) 2500 МЕ.\n'
-                } else if (riskPoints < 11) {
-                    res = 'Риск ВТЭО ' + riskPoints + ' (очень высокий).\n';
-                    res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
-                    res += 'Продолжительность: не менее 30 дней.\n';
-                    res += 'Частота ВТЭО: 6,0 - 18,0%.\n';
-                    res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                        'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                        'инструкцией и актуальными клиническими рекомендациями.\n';
-                } else if (riskPoints >= 11) {
-                    res = 'Риск ВТЭО ' + riskPoints + ' (чрезвычайно высокий&sup3).\n';
-                    res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика &sup2, плюс ' +
-                        'активные методы ускорения кровотока или эластичная компрессия плюс индивидуальный подбор ' +
-                        'дозы антикоагулянтов.\n';
-                    res += 'Продолжительность: не менее 30 дней.\n';
-                    res += 'Частота ВТЭО: до 60,0%.\n';
-                    res += 'Рекомендации:  препараты и дозы в соответствии с официальной инструкцией и ' +
-                        'актуальными клиническими рекомендациями.\n';
-                    res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 4000 МЕ (40 мг),' +
-                        ' надропарин кальция (фраксипарин) 0.3 мл.\nОртопедические: вес < 50 кг - 0.2 мл\n50-69 кг - 0.3 мл\n>70 кг - 0.4 мл, \n' +
-                        ' дальтепарин (фрагмин) 1) 5000\n 2) 2500 МЕ.\n'
-                }
-                record.value += res;
-                for (var i=0; i<100; i++) {
-                    if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
-                    if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
-                }
+            if (riskPoints < 1) {
+                res = 'Риск ВТЭО ' + riskPoints + ' (очень низкий).\n';
+                res += 'Меры профилактики: раняя активация.\n';
+                res += 'Продолжительность: в период госпитализации\n';
+                res += 'Частота ВТЭО: < 0,5%\n';
+                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО при ' +
+                    'отсутствии профилактики.\n';
+            } else if (riskPoints < 3) {
+                res = 'Риск ВТЭО ' + riskPoints + ' (низкий).\n';
+                res += 'Меры профилактики: эластичная компрессия или фармакопрофилактика.\n';
+                res += 'Продолжительность: в период госпитализации\n';
+                res += 'Частота ВТЭО: 1,5%\n';
+                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
+                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
+                    'инструкцией и актуальными клиническими рекомендациями.\n';
+            } else if (riskPoints < 5) {
+                res = 'Риск ВТЭО ' + riskPoints + ' (умеренный).\n';
+                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
+                res += 'Продолжительность: в период госпитализации\n';
+                res += 'Частота ВТЭО: 3,0%\n';
+                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
+                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
+                    'инструкцией и актуальными клиническими рекомендациями.\n';
+                res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 2000 МЕ (20 мг),' +
+                    ' надропарин кальция (фраксипарин) 0.3 мл, дальтепарин (фрагмин) 2500 МЕ (первая инъекция за 2 часа до операции).\n'
+            } else if (riskPoints < 9) {
+                res = 'Риск ВТЭО ' + riskPoints + ' (высокий).\n';
+                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
+                res += 'Продолжительность: минимум 7-10 дней или до полной активизации.\n';
+                res += 'Частота ВТЭО: 6,0%.\n';
+                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
+                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
+                    'инструкцией и актуальными клиническими рекомендациями.\n';
+                res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 4000 МЕ (40 мг),' +
+                    ' надропарин кальция (фраксипарин) 0.3 мл.\nОртопедические: вес < 50 кг - 0.2 мл\n50-69 кг - 0.3 мл\nЮ70 кг - 0.4 мл, \n' +
+                    ' дальтепарин (фрагмин) 1) 5000\n 2) 2500 МЕ.\n'
+            } else if (riskPoints < 11) {
+                res = 'Риск ВТЭО ' + riskPoints + ' (очень высокий).\n';
+                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
+                res += 'Продолжительность: не менее 30 дней.\n';
+                res += 'Частота ВТЭО: 6,0 - 18,0%.\n';
+                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
+                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
+                    'инструкцией и актуальными клиническими рекомендациями.\n';
+            } else if (riskPoints >= 11) {
+                res = 'Риск ВТЭО ' + riskPoints + ' (чрезвычайно высокий).\n';
+                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика, плюс ' +
+                    'активные методы ускорения кровотока или эластичная компрессия плюс индивидуальный подбор ' +
+                    'дозы антикоагулянтов.\n';
+                res += 'Продолжительность: не менее 30 дней.\n';
+                res += 'Частота ВТЭО: до 60,0%.\n';
+                res += 'Рекомендации:  препараты и дозы в соответствии с официальной инструкцией и ' +
+                    'актуальными клиническими рекомендациями.\n';
+                res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 4000 МЕ (40 мг),' +
+                    ' надропарин кальция (фраксипарин) 0.3 мл.\nОртопедические: вес < 50 кг - 0.2 мл\n50-69 кг - 0.3 мл\n>70 кг - 0.4 мл, \n' +
+                    ' дальтепарин (фрагмин) 1) 5000\n 2) 2500 МЕ.\n'
             }
+            for (var i=0; i<100; i++) {
+                if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
+                if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+            }
+            if (record!=null) record.value+=res;
+            if (formString!='') CalculateService.SetCalculateResultCreate(departmentId${name},
+                res, calcId${name}, formString, {
+                    callback: function () {}
+                });
             the${name}NewCalculationDialog.hide();
         }
 
@@ -301,8 +307,107 @@
                 }
             }
             document.getElementById('formula${name}').innerHTML = res;
-        }
 
+        }
+        //Форма в строку
+        function formToString() {
+            var inputs = document.getElementsByTagName('input');
+            var formToStirng='Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
+            for (var i = 0; i < inputs.length; i++) {
+                if ((inputs[i].type == 'radio' || inputs[i].type == 'checkbox') && inputs[i].name.indexOf('${name}')!=-1) {
+                    if (inputs[i].name.indexOf('age${name}')!=-1 && formToStirng.indexOf('Возраст: ')==-1) {
+                        formToStirng+='Возраст: ';
+                        formToStirng+=getTextVocRadiooncoTJustChecked${name}('age${name}');
+                        formToStirng+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}('age${name}')+")";
+                        formToStirng+="\n";
+                    }
+                    if (inputs[i].name.indexOf('sex${name}')!=-1 && formToStirng.indexOf('Пол: ')==-1) {
+                        formToStirng+='Пол: ';
+                        formToStirng+=getTextVocRadiooncoTJustChecked${name}('sex${name}');
+                        formToStirng+="\n";
+                    }
+                    if (inputs[i].name.indexOf('oral-contraceptive')!=-1 && document.getElementById('female${name}').checked) {
+                        formToStirng+=getTextForInputChb${name}('oral-contraceptive-use${name}')+"\n";
+                        formToStirng+=getTextForInputChb${name}('pregnancy-and-puerperium${name}')+"\n";
+                        formToStirng+=getTextForInputChb${name}('miscarriages${name}')+"\n";
+                    }
+                    if (inputs[i].name.indexOf('body-mass-index-more-than-25')!=-1)
+                        formToStirng+='Индекс Массы Тела:\n'+getTextForInputChb${name}('body-mass-index-more-than-25${name}')+"\n";
+                    if (inputs[i].name.indexOf('edema-of-the-lower-limbs')!=-1)
+                        formToStirng+=getTextForInputChb${name}('edema-of-the-lower-limbs${name}')+"\n";
+                    if (inputs[i].name.indexOf('varicose-veins')!=-1)
+                        formToStirng+=getTextForInputChb${name}('varicose-veins${name}')+"\n";
+                    if (inputs[i].name.indexOf('planned-surgery')!=-1 && formToStirng.indexOf('Плановое хирургическое вмешательство:')==-1) {
+                        formToStirng+='Плановое хирургическое вмешательство:';
+                        formToStirng+=getTextVocRadiooncoTJustChecked${name}('planned-surgery${name}');
+                        formToStirng+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}('planned-surgery${name}')+")";
+                        formToStirng+="\n";
+                    }
+                    if (inputs[i].name.indexOf('acute-myocardial-infarction')!=-1)
+                        formToStirng+='Болезни сердца:\n'+getTextForInputChb${name}('acute-myocardial-infarction${name}')+"\n";
+                    if (inputs[i].name.indexOf('chronic-heart-failure')!=-1)
+                        formToStirng+=getTextForInputChb${name}('chronic-heart-failure${name}')+"\n";
+
+                    if (inputs[i].name.indexOf('personal-history-of-VTE')!=-1)
+                        formToStirng+='Венозные тромбоэмболические осложнения:\n'+getTextForInputChb${name}('personal-history-of-VTE${name}')+"\n";
+                    if (inputs[i].name.indexOf('chronic-heart-failure')!=-1)
+                        formToStirng+=getTextForInputChb${name}('family-history-of-VTE${name}')+"\n";
+
+                    if (inputs[i].name.indexOf('serious-lung-disease')!=-1)
+                        formToStirng+='Болезни лёгких:\n'+getTextForInputChb${name}('serious-lung-disease${name}')+"\n";
+                    if (inputs[i].name.indexOf('obstructive-lung-disease')!=-1)
+                        formToStirng+=getTextForInputChb${name}('obstructive-lung-disease${name}')+"\n";
+
+                    if (inputs[i].name.indexOf('mutation-of-the-Leiden-type')!=-1)
+                        formToStirng+='Мутации:\n'+getTextForInputChb${name}('mutation-of-the-Leiden-type${name}')+"\n";
+                    if (inputs[i].name.indexOf('prothrombin-20210A-mutation')!=-1)
+                        formToStirng+=getTextForInputChb${name}('prothrombin-20210A-mutation${name}')+"\n";
+
+                    if (inputs[i].name.indexOf('multiple-injury')!=-1)
+                        formToStirng+='Травмы:\n'+getTextForInputChb${name}('multiple-injury${name}')+"\n";
+                    if (inputs[i].name.indexOf('fracture-of-hip-and-shin-bones')!=-1)
+                        formToStirng+=getTextForInputChb${name}('fracture-of-hip-and-shin-bones${name}')+"\n";
+                    if (inputs[i].name.indexOf('fracture-of-hip-and-shin-bones')!=-1)
+                        formToStirng+=getTextForInputChb${name}('fracture-of-hip-and-shin-bones${name}')+"\n";
+
+                    if (inputs[i].name.indexOf('sepsis')!=-1)
+                        formToStirng+=getTextForInputChb${name}('sepsis${name}')+"\n";
+                    if (inputs[i].name.indexOf('hormone-replacement-therapy')!=-1)
+                        formToStirng+=getTextForInputChb${name}('hormone-replacement-therapy${name}')+"\n";
+                    if (inputs[i].name.indexOf('bed-rest-in-a-non-surgical-patient')!=-1)
+                        formToStirng+=getTextForInputChb${name}('bed-rest-in-a-non-surgical-patient${name}')+"\n";
+                    if (inputs[i].name.indexOf('bed-rest-in-the-patient-for-more-than-72-hours')!=-1)
+                        formToStirng+=getTextForInputChb${name}('bed-rest-in-the-patient-for-more-than-72-hours${name}')+"\n";
+                    if (inputs[i].name.indexOf('immobilization-of-the-limb')!=-1)
+                        formToStirng+=getTextForInputChb${name}('immobilization-of-the-limb${name}')+"\n";
+                    if (inputs[i].name.indexOf('inflammatory-diseases-of-the-colon-in-anamnesis')!=-1)
+                        formToStirng+=getTextForInputChb${name}('inflammatory-diseases-of-the-colon-in-anamnesis${name}')+"\n";
+                    if (inputs[i].name.indexOf('large-surgical-intervention-prescription-up-to-1-month')!=-1)
+                        formToStirng+=getTextForInputChb${name}('large-surgical-intervention-prescription-up-to-1-month${name}')+"\n";
+                    if (inputs[i].name.indexOf('arthroscopic-surgery')!=-1)
+                        formToStirng+=getTextForInputChb${name}('arthroscopic-surgery${name}')+"\n";
+                    if (inputs[i].name.indexOf('laparoscopic-intervention')!=-1)
+                        formToStirng+=getTextForInputChb${name}('laparoscopic-intervention${name}')+"\n";
+                    if (inputs[i].name.indexOf('central-venous-catheterization')!=-1)
+                        formToStirng+=getTextForInputChb${name}('central-venous-catheterization${name}')+"\n";
+                    if (inputs[i].name.indexOf('malignant-neoplasm')!=-1)
+                        formToStirng+=getTextForInputChb${name}('malignant-neoplasm${name}')+"\n";
+                    if (inputs[i].name.indexOf('hyperhomocysteinemia')!=-1)
+                        formToStirng+=getTextForInputChb${name}('hyperhomocysteinemia${name}')+"\n";
+                    if (inputs[i].name.indexOf('heparin-induced-thrombocytopenia')!=-1)
+                        formToStirng+=getTextForInputChb${name}('heparin-induced-thrombocytopenia${name}')+"\n";
+                    if (inputs[i].name.indexOf('elevated-levels-of-antibodies-to-cardiolipin')!=-1)
+                        formToStirng+=getTextForInputChb${name}('elevated-levels-of-antibodies-to-cardiolipin${name}')+"\n";
+                    if (inputs[i].name.indexOf('lupus-anticoagulant')!=-1)
+                        formToStirng+=getTextForInputChb${name}('lupus-anticoagulant${name}')+"\n";
+                    if (inputs[i].name.indexOf('stroke')!=-1)
+                        formToStirng+=getTextForInputChb${name}('strokes${name}')+"\n";
+                    if (inputs[i].name.indexOf('endoprosthetics-of-large-joints')!=-1)
+                        formToStirng+=getTextForInputChb${name}('endoprosthetics-of-large-joints${name}')+"\n";
+                }
+            }
+            return formToStirng;
+        }
         //Получить пол
         function getGender${name}(medcaseId) {
             CalculateService.getGender(medcaseId, {
@@ -374,6 +479,34 @@
             }
             return res;
         }
-
+        //получить текст группы рб
+        function getTextVocRadiooncoT${name}(name) {
+            var chk = document.getElementsByName(name);
+            var res=[];
+            for (var i=0; i<chk.length; i++) {
+                res.push(chk[i].parentNode.innerText);
+            }
+            return res;
+        }
+        //текст для чекбокса
+        function getTextForInputChb${name}(name) {
+            var res='';
+            var isExtra=getTextVocRadiooncoT${name}(name);
+            if (isExtra[0]==' ') isExtra=isExtra.substring(1);
+            if (isExtra!='') {
+                var bal=(getValueVocRadiooncoT${name}(name)==0)? 'Нет':'Да';
+                res+=isExtra+': '+bal+"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}(name)+")\n";
+            }
+            return res;
+        }
+        //получить текст группы рб
+        function getTextVocRadiooncoTJustChecked${name}(name) {
+            var chk = document.getElementsByName(name);
+            var res=0;
+            for (var i=0; i<chk.length; i++) {
+                if (chk[i].checked) res=chk[i].parentNode.innerText;
+            }
+            return res;
+        }
     </script>
 </msh:ifInRole>
