@@ -230,9 +230,9 @@ var resultofcalc;
 			else if (aResult=='calculation')
                     showcalculationNewCalculation($('departmentMedCase').value, 0);
                 else if (aResult=='calculation_grace')
-                    showcalculation_graceNewCalculation($('departmentMedCase').value, 0);
+                    showcalculation_graceNewCalculation($('departmentMedCase').value,calculator.value, 0);
             else if (aResult=='calculation_caprini')
-                showcalculation_capriniNewCalculation($('departmentMedCase').value, 0);
+                showcalculation_capriniNewCalculation($('departmentMedCase').value,calculator.value, 0);
         }
     	});
 	});

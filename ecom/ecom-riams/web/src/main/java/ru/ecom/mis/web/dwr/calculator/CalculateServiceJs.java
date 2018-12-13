@@ -137,7 +137,7 @@ public class CalculateServiceJs {
 		sql = new StringBuilder();
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
 		Collection<WebQueryResult> res = service.executeNativeSql
-				("select name||' ('||comment||')', case when creatediary=true then '1' else '0' end from calculator where id=" + aCalcId);
+				("select name|| case when comment is not null and comment<>'' then ' ('||comment||')' else '' end, case when creatediary=true then '1' else '0' end from calculator where id=" + aCalcId);
 		String result = "";
 		Boolean checkCreateDiary = false;
 		if (res.size() > 0) {
