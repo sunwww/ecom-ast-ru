@@ -11,10 +11,15 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
 <!-- Upper -->
+	<%
+		String shortS = request.getParameter("short") ;
+		if (shortS==null) {
+
+	%>
 <tiles:put name="title" type="string">
 <ecom:titleTrail mainMenu="Patient" beginForm="calc_calculationsResultForm"/>
 </tiles:put>
-
+	<% } %>
 
 	<!-- Sider -->
 	<tiles:put name="side" type="string">
@@ -59,7 +64,7 @@
 			<msh:hidden property="calculator" />
 			<msh:panel>
 				<msh:row>
-					<msh:autoComplete vocName="vocCalculator" property="calculator" label="Выбор калькулятора" fieldColSpan="4" size="30" />
+					<msh:autoComplete vocName="vocCalculator" property="calculator" label="Выбор калькулятора" fieldColSpan="4" size="90" />
 				</msh:row>
 			</msh:panel>
 <msh:ifFormTypeIsView formName="calc_calculationsResultForm">
@@ -102,6 +107,7 @@
 			<tags:calculation name="calculation" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 			<tags:calculation_grace name="calculation_grace" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
             <tags:calculation_caprini name="calculation_caprini" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+			<tags:calculation_imt name="calculation_imt" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 		</msh:form>
 	</tiles:put>
 	<!-- Scripts -->
@@ -233,6 +239,8 @@ var resultofcalc;
                     showcalculation_graceNewCalculation($('departmentMedCase').value,calculator.value, 0);
             else if (aResult=='calculation_caprini')
                 showcalculation_capriniNewCalculation($('departmentMedCase').value,calculator.value, 0);
+            else if (aResult=='calculation_imt')
+                showcalculation_imtNewCalculation($('departmentMedCase').value, 0);
         }
     	});
 	});

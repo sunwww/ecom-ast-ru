@@ -14,8 +14,8 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 @EntityForm
 @EntityFormPersistance(clazz = CalculationsResult.class)
-@Comment("Калькулятор человека")
-@WebTrail(comment = "Калькулятор человека"
+@Comment("Результат калькулятора человека")
+@WebTrail(comment = "Результат калькулятора человека"
 , nameProperties= "id", list="entityParentList-calc_calculationsResult.do", view="entityParentView-calc_calculationsResult.do", shortView="entityShortView-calc_calculationsResult.do")
 @Parent(property="departmentMedCase", parentForm=DepartmentMedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculation")
@@ -36,7 +36,7 @@ public class CalculationsResultForm extends IdEntityForm{
         private Long theCalculator;
         
         /** Дата */
-      	@Comment("Результат")
+      	@Comment("Дата")
       	@Persist
       	public String getResDate(){return theResDate;}
       	public void setResDate(String aResDate){theResDate = aResDate;}
