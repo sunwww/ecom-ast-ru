@@ -64,7 +64,7 @@
 		<form-bean name="extDisp_vocPlanServiceForm" type="ru.ecom.mis.ejb.form.extdisp.ExtDispPlanServiceForm" />
 	
 	
-        <form-bean name="mis_customMessageForm" type="CustomMessageForm" />
+        <form-bean name="mis_customMessageForm" type="ru.ecom.ejb.form.message.CustomMessageForm" />
         <form-bean name="mis_helpForm" type="ru.ecom.mis.web.action.util.HelpForm" />
         <form-bean name="smo_draftProtocolForm" type="ru.ecom.mis.ejb.form.medcase.RoughDraftForm" />
         <form-bean name="smo_visitProtocolForm" type="ru.ecom.mis.ejb.form.medcase.VisitProtocolForm" />
@@ -116,7 +116,7 @@
 		<form-bean name="contract_accountOperationReturnForm" type="ru.ecom.mis.ejb.form.contract.OperationReturnForm" />
 		<form-bean name="contract_accountOperationAccrualForm" type="ru.ecom.mis.ejb.form.contract.OperationAccrualForm" />
 		<form-bean name="contract_accountOperationForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationForm" />
-		<form-bean name="contract_accountOperationServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationByMedServiceForm" />
+<!--		<form-bean name="contract_accountOperationServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountOperationByMedServiceForm" /> -->
 		<form-bean name="contract_contractAccountRuleForm" type="ru.ecom.mis.ejb.form.contract.ContractAccountRuleForm" />
 		<form-bean name="contract_contractGuaranteeGroupForm" type="ru.ecom.mis.ejb.form.contract.ContractGuaranteeGroupForm" />
 		<form-bean name="contract_contractMedPolicyForm" type="ru.ecom.mis.ejb.form.contract.ContractMedPolicyForm" />
@@ -145,7 +145,7 @@
 		<form-bean name="contract_contractAccount20MedServiceForm" type="ru.ecom.mis.ejb.form.contract.ContractAccount20MedServiceForm" />
 		<form-bean name="contract_reportsForm" type="ru.ecom.mis.web.action.contract.ContractReportsForm" />
 		<form-bean name="mis_encodingAccordanceForm" type="ru.ecom.mis.ejb.form.identification.EncodingAccordanceForm"/>
-		<form-bean name="ecom_deleteJournalForm" type="DeleteJournalForm"/>
+		<form-bean name="ecom_deleteJournalForm" type="ru.ecom.ejb.form.live.DeleteJournalForm"/>
 		<form-bean name="mis_kinsmanForm" type="ru.ecom.mis.ejb.form.patient.KinsmanForm"/>
 		<form-bean name="mis_lpuForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuForm" />
 		<form-bean name="mis_lpuRequisiteForm" type="ru.ecom.mis.ejb.form.lpu.MisLpuRequisiteForm" />
@@ -252,7 +252,7 @@
 		
 		<!-- Описание здания больницы -->
 		<form-bean name="mis_workPlaceForm" type="ru.ecom.mis.ejb.form.lpu.WorkPlaceForm" />
-		<form-bean name="mis_phonePlaceForm" type="ru.ecom.mis.ejb.form.lpu.PhonePlaceForm" />
+	<!--	<form-bean name="mis_phonePlaceForm" type="ru.ecom.mis.ejb.form.lpu.PhonePlaceForm" /> -->
 		<form-bean name="mis_buildingPlaceForm" type="ru.ecom.mis.ejb.form.lpu.BuildingPlaceForm" />
 		<form-bean name="mis_userCompForm" type="ru.ecom.mis.ejb.form.lpu.UserComputerForm" />
 		<form-bean name="mis_floorBuildingForm" type="ru.ecom.mis.ejb.form.lpu.FloorBuildingForm" />
