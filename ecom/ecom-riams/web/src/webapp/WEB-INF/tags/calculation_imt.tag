@@ -13,7 +13,7 @@
 
 <msh:ifInRole roles="${roles}">
     <div id='${name}NewCalculationDialog' class='dialog'>
-        <h2>Шкала GRACE</h2>
+        <h2>ИМТ</h2>
         <div class="formula" id="formula${name}"> </div>
         <msh:panel>
             <label><input  disabled type="checkbox" name="body-mass-index-more-than-25${name}" value="1">

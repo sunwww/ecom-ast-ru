@@ -108,6 +108,7 @@
 			<tags:calculation_grace name="calculation_grace" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
             <tags:calculation_caprini name="calculation_caprini" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 			<tags:calculation_imt name="calculation_imt" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
+            <tags:calculation_nihss name="calculation_nihss" roles="/Policy/Mis/Calc/Calculation/Create" field="record" title=""/>
 		</msh:form>
 	</tiles:put>
 	<!-- Scripts -->
@@ -241,6 +242,8 @@ var resultofcalc;
                 showcalculation_capriniNewCalculation($('departmentMedCase').value,calculator.value, 0);
             else if (aResult=='calculation_imt')
                 showcalculation_imtNewCalculation($('departmentMedCase').value, 0);
+            else if (aResult=='calculation_nihss')
+                showcalculation_nihssNewCalculation($('departmentMedCase').value,calculator.value, 0);
         }
     	});
 	});
