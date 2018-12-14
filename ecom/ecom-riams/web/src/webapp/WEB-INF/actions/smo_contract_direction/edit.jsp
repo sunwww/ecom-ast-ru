@@ -4,10 +4,6 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<%@ page import="IWebQueryService"%>
-<%@ page import="WebQueryResult"%>
-<%@ page import="javax.persistence.Query"%>
-
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
   <tiles:put name="body" type="string">
@@ -26,7 +22,7 @@
 	<%
 
 	
-		Query aQuery;
+		//Query aQuery;
 		//EntityManager aManager = null;
 		
 		//IWebQueryService test = null;

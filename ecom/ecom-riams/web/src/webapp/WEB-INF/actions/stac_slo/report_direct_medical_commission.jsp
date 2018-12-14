@@ -1,4 +1,3 @@
-<%@page import="ConvertSql"%>
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="ru.ecom.web.login.LoginInfo"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
