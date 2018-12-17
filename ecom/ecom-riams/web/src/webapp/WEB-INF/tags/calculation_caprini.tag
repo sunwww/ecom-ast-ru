@@ -27,9 +27,9 @@
         .form-section {
             border: none;
             background-color: rgba(214, 222, 230, 0.42);
-            margin-bottom: 1rem;
-            padding: 0.1rem;
-            border-radius: 5px;
+            margin-bottom: 1px;
+            padding: 1px;
+            border-radius: 1px;
         }
     </style>
     <div id='${name}NewCalculationDialog' class='dialog'>
