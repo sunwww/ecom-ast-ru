@@ -176,6 +176,8 @@ scg.transferusername||' '||to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(
     else '' end end end end as f10style
 ,scg.cancelusername||' '||to_char(scg.canceldate,'dd.mm.yyyy')||' '||to_char(scg.canceltime,'HH24:MI:SS')||': '||scg.cancelreasontext as cnsl
     ,scg.id as scgid
+,case when scg.intakedate is not null then cast((scg.intakedate - scg.createdate) as int)
+else cast((current_date - scg.createdate)as int) end as waitdays
 from prescription scg
 left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
@@ -207,6 +209,7 @@ order by wf.groupname,scg.createdate desc,dep.id
                     <msh:tableColumn columnName="Создал, отделение" property="5"/>
                     <msh:tableColumn columnName="Дата и время создания" property="6"/>
                     <msh:tableColumn columnName="Передача" property="7"/>
+                    <msh:tableColumn columnName="Дней ожидания" property="13"/>
                     <msh:tableColumn columnName="Пользователь, который выполнил" property="8"/>
                     <msh:tableColumn columnName="Дата и время выполнения" property="9"/>
                     <msh:tableColumn columnName="Отмена" property="11"/>
@@ -235,6 +238,8 @@ dep.name||' '||scg.createusername as f1,to_char(scg.createdate,'dd.mm.yyyy')||' 
     else '' end end end end as f10style
     ,scg.cancelusername||' '||to_char(scg.canceldate,'dd.mm.yyyy')||' '||to_char(scg.canceltime,'HH24:MI:SS')||': '||scg.cancelreasontext as cnsl
     ,scg.id as scgid
+,case when scg.intakedate is not null then cast((scg.intakedate - scg.createdate) as int)
+else cast((current_date - scg.createdate)as int) end as waitdays
 from prescription scg
 left join PrescriptionList pl on pl.id=scg.prescriptionList_id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
@@ -272,6 +277,7 @@ order by scg.createdate desc,dep.id
                         <msh:tableColumn columnName="Пациент" property="4"/>
                         <msh:tableColumn columnName="Создал, отделение" property="5"/>
                         <msh:tableColumn columnName="Дата и время создания" property="6"/>
+                        <msh:tableColumn columnName="Дней ожидания" property="12"/>
                         <msh:tableColumn columnName="Пользователь, который выполнил" property="7"/>
                         <msh:tableColumn columnName="Дата и время выполнения" property="8"/>
                         <msh:tableColumn columnName="Отмена" property="10"/>
