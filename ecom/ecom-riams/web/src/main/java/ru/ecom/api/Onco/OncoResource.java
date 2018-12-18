@@ -44,10 +44,10 @@ public class OncoResource {
         whereSql+=(dateBegin!=null && !dateBegin.equals(""))? "and m.dateFinish between to_date('"+dateBegin+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')\n":"\n";
         if (stat!=null && !stat.equals("")) whereSql+=" and sc.code='"+stat+"' ";
         String sql="select sls.id\n" +
-                ",pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio\n" +
-                ",to_char(pat.birthday,'dd.mm.yyyy') as bd,sc.code as sccode\n" +
+                ",pat.lastname ||' ' ||LEFT(pat.firstname,1)||'. '|| LEFT(pat.middlename,1)||'.'||' г.р. '||to_char(pat.birthday,'dd.mm.yyyy') as patinfo\n" +
+                ",dep.name as depname,sc.code as sccode\n" +
                 ",to_char(sls.dateStart,'dd.mm.yyyy')||' - '||to_char(sls.dateFinish,'dd.mm.yyyy') as period\n" +
-                ",wp.lastname||' '||wp.firstname||' '||wp.middlename as worker\n" +
+                ",wp.lastname||' '||LEFT(wp.firstname,1)||'. '|| LEFT(wp.middlename,1)||'.' as worker\n" +
                 ",(select cast(idc10.code as varchar)||' '||ds.name from diagnosis ds\n" +
                 "left join vocidc10 idc10 on idc10.id=ds.idc10_id\n" +
                 "left join medcase hmc on hmc.id=ds.medcase_id\n" +
@@ -62,6 +62,7 @@ public class OncoResource {
                 "left join Worker w on w.id=wf.worker_id\n" +
                 "left join Patient wp on wp.id=w.person_id\n" +
                 "left outer join Patient pat on m.patient_id = pat.id \n" +
+                "left join Mislpu dep on dep.id=sls.department_id \n" +
                 "where m.DTYPE='DepartmentMedCase'  \n" +
                 whereSql +
                 "and POSITION('C' in (select cast(idc10.code as varchar) from diagnosis ds\n" +
@@ -71,10 +72,10 @@ public class OncoResource {
                 "left join vocprioritydiagnosis pr on pr.id=ds.priority_id\n" +
                 "where hmc.dtype='HospitalMedCase' and reg.code='3' and pr.code='1' and hmc.id=sls.id limit 1))<>0\n" +
                 "group by  sls.id,m.dateStart,pat.lastname,pat.firstname,pat.middlename\n" +
-                ",pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart,sls.dateFinish,sls.id\n" +
+                ",pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart,sls.dateFinish,sls.id,dep.name\n" +
                 "order by sls.id ";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String[] fields = {"id","patfio","bd","sccode","period", "worker", "d", "done"};
+        String[] fields = {"id","patinfo","depname","sccode","period", "worker", "d", "done"};
         if (next>0) {
             if (next!=2) {
                 sql = sql.replace(" and hmc.id=sls.id limit 1))<>0", " and hmc.id=sls.id limit 1))<>0 and sls.id > " + id + " \n");

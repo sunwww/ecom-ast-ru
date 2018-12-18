@@ -27,9 +27,9 @@
         .form-section {
             border: none;
             background-color: rgba(214, 222, 230, 0.42);
-            margin-bottom: 1rem;
-            padding: 0.1rem;
-            border-radius: 5px;
+            margin-bottom: 1px;
+            padding: 1px;
+            border-radius: 1px;
         }
     </style>
     <div id='${name}NewCalculationDialog' class='dialog'>
@@ -312,13 +312,13 @@
         //Форма в строку
         function formToString() {
             var inputs = document.getElementsByTagName('input');
-            var formToStirng='Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
+            var formToStirng='Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
             for (var i = 0; i < inputs.length; i++) {
                 if ((inputs[i].type == 'radio' || inputs[i].type == 'checkbox') && inputs[i].name.indexOf('${name}')!=-1) {
                     if (inputs[i].name.indexOf('age${name}')!=-1 && formToStirng.indexOf('Возраст: ')==-1) {
                         formToStirng+='Возраст: ';
                         formToStirng+=getTextVocRadiooncoTJustChecked${name}('age${name}');
-                        formToStirng+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}('age${name}')+")";
+                        formToStirng+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}('age${name}')+")";
                         formToStirng+="\n";
                     }
                     if (inputs[i].name.indexOf('sex${name}')!=-1 && formToStirng.indexOf('Пол: ')==-1) {
@@ -340,7 +340,7 @@
                     if (inputs[i].name.indexOf('planned-surgery')!=-1 && formToStirng.indexOf('Плановое хирургическое вмешательство:')==-1) {
                         formToStirng+='Плановое хирургическое вмешательство:';
                         formToStirng+=getTextVocRadiooncoTJustChecked${name}('planned-surgery${name}');
-                        formToStirng+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}('planned-surgery${name}')+")";
+                        formToStirng+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}('planned-surgery${name}')+")";
                         formToStirng+="\n";
                     }
                     if (inputs[i].name.indexOf('acute-myocardial-infarction')!=-1)
@@ -495,7 +495,7 @@
             if (isExtra[0]==' ') isExtra=isExtra.substring(1);
             if (isExtra!='') {
                 var bal=(getValueVocRadiooncoT${name}(name)==0)? 'Нет':'Да';
-                res+=isExtra+': '+bal+"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}(name)+")\n";
+                res+=isExtra+': '+bal+"\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+getValueVocRadiooncoT${name}(name)+")\n";
             }
             return res;
         }

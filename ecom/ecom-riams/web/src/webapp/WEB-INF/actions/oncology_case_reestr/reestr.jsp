@@ -45,13 +45,13 @@
                     </td>
                 </msh:row>
                 <table hidden id="patientTable" border="1px">
-                <th width="5%">Случай создан</th>
-                <th width="25%">Пациент</th>
-                <th width="5%">Дата рождения</th>
-                <th width="10%">Стат. карта</th>
+                <th width="3%">Случай создан</th>
+                <th width="15%">Пациент</th>
+                <th width="15%">Отделение</th>
+                <th width="7%">Стат. карта</th>
                 <th width="10%">Период госпитализации</th>
-                <th width="20%">Лечащий врач</th>
-                <th width="25%">Основной выписной диагноз</th>
+                <th width="15%">Лечащий врач</th>
+                <th width="35%">Основной выписной диагноз</th>
                 <tbody id="patientTableBody" name="patientTableBody"></tbody>
                 </table>
                 <div hidden id="directionBtns">
@@ -111,7 +111,7 @@
                     for (var i=0;i<array.length;i++) {
                         var el = array[i];
                         if (i==0) id=el.id;
-                        tbl.append("<tr onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\"><td align='center'><b>"+el.done+"</b></td><td align='center'>"+el.patfio+"</td><td align='center'>"+el.bd+"</td><td align='center'>"+el.sccode+"</td><td align='center'>"+el.period+"</td><td align='center'>"+el.worker+"</td><td align='center'>"+el.d+"</td></tr>");
+                        tbl.append("<tr onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\"><td align='center'><b>"+el.done+"</b></td><td align='center'>"+el.patinfo+"</td><td align='center'>"+el.depname+"</td><td align='center'>"+el.sccode+"</td><td align='center'>"+el.period+"</td><td align='center'>"+el.worker+"</td><td align='center'>"+el.d+"</td></tr>");
                         if (i==array.length-1) id2=el.id;
                     }
                     document.getElementById("directionBtns").removeAttribute("hidden");

@@ -8,8 +8,7 @@
 <msh:ifInRole roles="${roles}">
 
 <div id='${name}Calc' class='dialog'>
-    <iframe id="iframe" src="/riams/entityParentPrepareCreate-calc_calculationsResult.do?id=${medCaseId}&short=ShortCreate" height="700" width="1300"></iframe>
-    <br>
+
 </div>
 
 <script type="text/javascript">
@@ -25,6 +24,8 @@
         if (!theIs${name}Initialized) {
             init${name}Calc() ;
         }
+        document.getElementById('${name}Calc').innerHTML='<iframe id="iframe" src="/riams/entityParentPrepareCreate-calc_calculationsResult.do?id=${medCaseId}&short=ShortCreate" height="700" width="1300"></iframe>\n' +
+            '    <br>';
         the${name}CalcDialog.show() ;
     }
     // Сохранение данных

@@ -65,26 +65,6 @@
 </td>
 </tr>  
 </div>
- <!--    
- <div class='rootPane'>
-    <form action="javascript:void(0)">
-    <msh:panel>
-    	<msh:row>
-    		<msh:textField property="${name}TitleCalculation" label="Заголовок" fieldColSpan="5" horizontalFill="true"/>
-    	</msh:row>
-    	<msh:row>
-    		<msh:textArea property="${name}DataCalculation" label="Текст" fieldColSpan="5" />
-    	</msh:row>
-        <msh:row>
-            <td colspan="6">
-                <input type="button" value='OK'  onclick="javascript:save${name}NewCalculation()"/>
-                <input type="button" value='Отменить' onclick='javascript:cancel${name}NewCalculation()'/>
-            </td>
-        </msh:row>
-     </msh:panel> 
-</form>
-</div>
--->
   
 
 
