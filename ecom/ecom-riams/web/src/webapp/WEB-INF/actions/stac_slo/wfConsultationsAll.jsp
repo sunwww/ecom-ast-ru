@@ -263,8 +263,8 @@ left join Worker sw on sw.person_id=w.person_id
 left join WorkFunction swf on swf.worker_id=sw.id
 left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 left join SecUser su on su.id=swf.secUser_id
-where su.login='${login}'and wf.group_id=scg.prescriptcabinet_id and wf.workfunction_id=swf.workfunction_id)
-and (wf.archival is null or wf.archival='0') and scg.dtype='WfConsultation'
+where su.login='${login}'and wf.group_id=scg.prescriptcabinet_id)
+and scg.dtype='WfConsultation'
 order by scg.createdate desc,dep.id
 "/>
                     <form action="javascript:void(0)" method="post" target="_blank"></form>
