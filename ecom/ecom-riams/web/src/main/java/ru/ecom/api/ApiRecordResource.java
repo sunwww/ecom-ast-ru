@@ -43,13 +43,13 @@ public class ApiRecordResource {
         return "Enter test ID";
     }
 
-    public final String[][] serviceStreams = {{"OMC","ОМС"},{"CHARGED","Платно"}};
+    public static final String[][] serviceStreams = {{"OMC","ОМС"},{"CHARGED","Платно"}};
     /** Получаем список поддерживаемых потоков обслуживания*/
     @GET
     @Path("/getServiceStream")
     @Produces(MediaType.APPLICATION_JSON)
 
-    public String getServiceStream(@Context HttpServletRequest aRequest) throws JSONException {
+    public String getServiceStream(@Context HttpServletRequest aRequest) {
         JSONArray array = new JSONArray();
         for (String[] s: serviceStreams) {
             array.put(new JSONObject().put("code",s[0]).put("name",s[1]));
@@ -122,13 +122,13 @@ public class ApiRecordResource {
             , @QueryParam("workfunction_id") String workfunction
             , @QueryParam("vocWorkfunction_id") String vocWorkfunction
             , @QueryParam("serviceStream") String serviceStream
-            , @QueryParam("calendarDay_id") String calendarDay_id
+            , @QueryParam("calendarDay_id") String calendarDayId
             , @QueryParam("calendarDate") String calendarDate
             , @QueryParam("lpu") String aLpu
             , @QueryParam("token") String aToken) throws NamingException {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getFreeCalendarTimesByCalendarDate(calendarDay_id,vocWorkfunction,calendarDate,serviceStream,aLpu,service);
+        return new ApiRecordUtil().getFreeCalendarTimesByCalendarDate(calendarDayId,vocWorkfunction,calendarDate,serviceStream,aLpu,service);
     }
 
     /** Запись пациента на время */
@@ -136,7 +136,7 @@ public class ApiRecordResource {
     @Path("makeRecord")
     @Produces(MediaType.APPLICATION_JSON)
     public String makeRecord(@Context HttpServletRequest aRequest
-            ,  String jsonData) throws JSONException {
+            ,  String jsonData) {
         return makeRecordOrAnnul(aRequest,new JSONObject(jsonData));
     }
 
@@ -144,23 +144,22 @@ public class ApiRecordResource {
     @POST
     @Path("annulRecord")
     @Produces(MediaType.APPLICATION_JSON)
-    public String annulRecord(@Context HttpServletRequest aRequest
-            ,  String jsonData) throws JSONException {
+    public String annulRecord(@Context HttpServletRequest aRequest, String jsonData) {
         JSONObject root = new JSONObject(jsonData);
         root.put("annul","annul");
         return makeRecordOrAnnul(aRequest,root);
     }
 
-
     private String makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
-
         try {
-
             if (root==null) {
-                System.out.println("json record  __________ROOOOOOT IS NULLLLLL!!!!! : - ( ");
-                return  "{\"status\":\"error\",\"error_name\":\"JSONObject is null\",\"error_code\":\"NULL_JSON_OBJECT\"}";
+                return  ApiRecordUtil.getErrorJson("NULL_JSON_OBJECT","JSONObject is null");
             }
-            Long calendarTimeId = Long.valueOf((String)getJsonField(root,"calendarTime_id"));
+            String calendarId = getJsonField(root,"calendarTime_id");
+            if (calendarId==null ||"".equals(calendarId)) {
+                return ApiRecordUtil.getErrorJson("NO_CALENDARTIME","Не указано время записи");
+            }
+            Long calendarTimeId = Long.valueOf(calendarId);
             String lastname = getJsonField(root,"lastname");
             String firstname = getJsonField(root,"firstname");
             String middlename = getJsonField(root,"middlename");
@@ -168,7 +167,7 @@ public class ApiRecordResource {
             String patientGUID = getJsonField(root,"patient_uid");
             String patientComment = getJsonField(root,"comment");
             String patientPhone = getJsonField(root,"phone");
-            String debug = getJsonField(root,"debug");
+        //    String debug = getJsonField(root,"debug");
             String token = getJsonField(root,"token");
             String annul = getJsonField(root,"annul");
             String list;
@@ -193,27 +192,24 @@ public class ApiRecordResource {
                                 String filename = getJsonField(file,"filename");
                                 String file64String = getJsonField(file,"filebase64");
                                 String fileDocType = getJsonField(file,"fileDocType");
-                                service.saveExternalDodument(filename, file64String, patientID!=null?Long.valueOf(patientID):null, medcaseID!=null?Long.valueOf(medcaseID):null, Long.valueOf(calendarTimeId), fileDocType);
+                                service.saveExternalDodument(filename, file64String, patientID!=null?Long.valueOf(patientID):null, medcaseID!=null?Long.parseLong(medcaseID):null, calendarTimeId, fileDocType);
                             }
                         } else {
                             String fileContent = getJsonField(root,"filebase64");
                             String filename = getJsonField(root,"filename");
                             service.saveFile(filename, fileContent);
                         }
-
-
                     }
                 }
-
             }
             return list;
         } catch (Exception e) {
             e.printStackTrace();
-            String ret ="{\"status\":\"error\",\"error_name\":\""+e.getLocalizedMessage()+"\",\"error_code\":\""+e.toString()+"\"}";
+            String ret =ApiRecordUtil.getErrorJson(e.getLocalizedMessage(),e.toString());
             System.out.println("ERRR, ROOT = "+root.toString());
             System.out.println(ret);
             return ret;
-            }
+        }
     }
 
     private <T>T getJsonField(JSONObject obj, String aProperty) {

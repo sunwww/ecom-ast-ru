@@ -263,13 +263,13 @@ private OperatorSession getFreeOperator (String aQueueCode) {
     /**Отправляем сообщение пользователю*/
     private void sendMessage(JSONObject aMessage,OperatorSession aSession) {
         try {
-            log.info(" send message to "+aSession.getUsername()+" = "+aMessage.toString());
             Session session = aSession.getSession();
             if (session.isOpen()){
                 session.getBasicRemote().sendText(aMessage.toString());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            sessions.remove(aSession.getUsername());
+            log.error("Error sending message ="+e);
         }
     }
     /**Собираем всю информацию о талоне
@@ -384,7 +384,7 @@ private OperatorSession getFreeOperator (String aQueueCode) {
     }
     /**Отправляем сообщение всем пользователям по роли*/
     private void sendBroadCastMessage(JSONObject aMessage, String aRole) {
-        log.info("send broadcastmesage "+aMessage.toString());
+     //   log.info("send broadcastmesage "+aMessage.toString());
         int activeSessions=0;
         try{
             for (Map.Entry<String, OperatorSession> e: sessions.entrySet() ) {

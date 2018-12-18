@@ -12,6 +12,8 @@ import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTime;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
@@ -38,7 +40,8 @@ import java.util.List;
 @Local(IApiRecordService.class)
 @Remote(IApiRecordService.class)
 public class ApiRecordServiceBean implements IApiRecordService {
-    private static  final Logger log = Logger.getLogger(ApiRecordServiceBean.class);
+    private static final Logger log = Logger.getLogger(ApiRecordServiceBean.class);
+    private static final String ANNUL_ERROR="ANNUL_ERROR";
     private Patient getPatientByGuid(String aGuid) {return getPatientByGuidOrFio(null,null,null,null,aGuid);}
     private Patient getPatientByFIO(String aLastname, String aFirstname, String aMiddlename, Date aBirthdate) {return getPatientByGuidOrFio(aLastname,aFirstname,aMiddlename,aBirthdate,null);}
 
@@ -75,22 +78,24 @@ public class ApiRecordServiceBean implements IApiRecordService {
      */
     public String recordPatient(Long aCalendarTimeId, String aPatientLastname, String aPatientFirstname, String aPatientMiddlename, Date aPatientBirthday, String aPatientGUID, String aComment, String aPhone) {
         log.warn("RECORD_PATIENT = "+aPatientLastname);
-
+        Long currentDateLong = System.currentTimeMillis();
         try {
-            int age =AgeUtil.calcAgeYear(aPatientBirthday,new Date(System.currentTimeMillis()));
-            if (age>122) {
+            if (AgeUtil.calcAgeYear(aPatientBirthday,new Date(currentDateLong))>122) {
                 log.warn("Пациент старше 122 лет. Это маловероятно");
                 return getErrorJson("Запись пациента старше 122 лет невозможна","TOO_OLD");
             }
         } catch (Exception e) {
             return getErrorJson("Проверьте дату рождения пациента","TOO_YOUNG");
         }
+        WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aCalendarTimeId);
+        if (wct==null) {log.error("Не найдено время");return getErrorJson("Неизвестная ошибка при записи, обратитесь к программистам","SOME_UNKNOWN_ERROR");}//TODO
+
 
         Patient patient ;
         if (aPatientGUID!=null) { //Считаем, что записываем из приложения
             patient=getPatientByGuid(aPatientGUID);
         } else if (aPatientLastname!=null && aPatientFirstname!=null && aPatientBirthday!=null) { //Запись через сайт или другие источники.
-            patient = getPatientByFIO(aPatientFirstname,aPatientLastname,aPatientMiddlename,aPatientBirthday);
+            patient = getPatientByFIO(aPatientLastname,aPatientFirstname,aPatientMiddlename,aPatientBirthday);
         } else {
             return getErrorJson("Необходимо указать ФИО либо GUID пациента","NO_PATIENT");
         }
@@ -103,24 +108,21 @@ public class ApiRecordServiceBean implements IApiRecordService {
             return getErrorJson("При неуказании GUID пациента необходимо указать его ФИО и дату рождения","WRONG_PAR");
         }
 
-        WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aCalendarTimeId);
-        if (wct==null) {log.error("Не найдено время");return null;}//TODO
-        if (wct.getPrePatient()!=null
-                ||wct.getMedCase()!=null
+         if (wct.getPrePatient()!=null
+                || wct.getMedCase()!=null
                 || !StringUtil.isNullOrEmpty(wct.getPrePatientInfo())) {
             log.error("На это время невозможно записаться");
             return getErrorJson("Невозможно записаться на время - время уже занято","BUSY_TIME");
         }
-        Long currentDateLong = System.currentTimeMillis();
         Date currentDate = new Date(currentDateLong);
         Time currentTime = new Time(currentDateLong);
         String username = "ApiClient "+theContext.getCallerPrincipal().getName();
         StringBuilder recordLogInfo = new StringBuilder().append("Записан пациент через API. Пользователь: ").append(username).append(", дата создания:")
                 .append(currentDate).append(" время:").append(currentTime).append(", WCT_ID").append(aCalendarTimeId).append(". Дата записи:").append(wct.getWorkCalendarDay().getCalendarDate())
                 .append(", время:").append(wct.getTimeFrom());
-        if (wct.getReserveType()!=null&&wct.getReserveType().getIsNoPreRecord()!=null&&wct.getReserveType().getIsNoPreRecord()&&patient!=null) { //Создаем визит
+        if (wct.getReserveType()!=null && wct.getReserveType().getIsNoPreRecord()!=null && wct.getReserveType().getIsNoPreRecord() && patient != null) { //Создаем визит
             log.info("TIME_TO_CREATE_VISITI");
-            VocServiceStream serviceStream =getServiceStreamByWorkCalendarTime(wct);
+            VocServiceStream serviceStream = getServiceStreamByWorkCalendarTime(wct);
             Visit visit = new Visit();
             visit.setUsername(username);
             visit.setCreateDate(currentDate);
@@ -138,8 +140,8 @@ public class ApiRecordServiceBean implements IApiRecordService {
             recordLogInfo.append("Пациент: ").append(patient.getPatientInfo()).append(". Создан визит c ИД:").append(visit.getId());
         } else { //Создаем предварительную запись
             wct.setCreatePreRecord(username);
-            wct.setCreateDatePreRecord(new java.sql.Date(currentDateLong));
-            wct.setCreateTimePreRecord(new java.sql.Time(currentDateLong));
+            wct.setCreateDatePreRecord(currentDate);
+            wct.setCreateTimePreRecord(currentTime);
             if (patient!=null) {
                 wct.setPrePatient(patient);
                 recordLogInfo.append(". Пациент ").append(patient.getPatientInfo());
@@ -147,7 +149,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
                 wct.setPrePatientInfo(prePatientInfo.toUpperCase());
                 recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             }
-            if (StringUtil.isNullOrEmpty(aComment)) {
+            if (!StringUtil.isNullOrEmpty(aComment)) {
                 wct.setPatientComment(aComment);
             }
             recordLogInfo.append(".Создана предварительная запись");
@@ -155,8 +157,23 @@ public class ApiRecordServiceBean implements IApiRecordService {
         }
         theManager.persist(wct);
         theManager.persist(new ApiRecordJournal(recordLogInfo.toString()));
+        JSONObject ret ;
+        ret = new JSONObject(createJson("successCalendarTimeId",wct.getId()+"",null,null));
+        ret.put("patientInfo",patient!=null?patient.getPatientInfo():prePatientInfo);
+        ret.put("recordDate",DateFormat.formatToDate(wct.getWorkCalendarDay().getCalendarDate()));
+        ret.put("recordTime",DateFormat.formatToTime(wct.getTimeFrom()));
+        String doctorInfo;
+        WorkFunction wf = wct.getWorkCalendarDay().getWorkCalendar().getWorkFunction();
+        if (wf instanceof PersonalWorkFunction) {
+            doctorInfo = wf.getWorkFunctionInfo();
+        } else {
+            doctorInfo=wf.getInfo();
+        }
+        System.out.println("doctorInfo = "+doctorInfo);
+        ret.put("recordDoctor",doctorInfo);
 
-            return wct!=null?createJson("successCalendarTimeId",wct.getId()+"",null,null):getErrorJson("Неизвестная ошибка при записи, обратитесь к программистам","SOME_UNKNOWN_ERROR");
+
+        return ret.toString();
 
 
     }
@@ -171,8 +188,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
      * @return
      */
     public String annulRecord(Long aCalendarTimeId, String aLastname, String aFirstname, String aMiddlename, Date aBirthday, String aPatientGUID) {
-        StringBuilder sqlAdd = new StringBuilder().append("");
-        Patient patient = null;
+              Patient patient ;
         if (aPatientGUID!=null) { //Аннулируем по ГУИД
             patient=getPatientByGuid(aPatientGUID);
         } else if (aLastname!=null) {
@@ -183,7 +199,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         WorkCalendarTime wct = theManager.find(WorkCalendarTime.class,aCalendarTimeId);
         if (patient!=null&&wct!=null&&wct.getPrePatient()!=null) { //Аннулируем если только точно нашли пациента!
             if (wct.getMedCase()!=null&&wct.getMedCase().getDateStart()!=null) {
-                return getErrorJson("Ошибка аннулирования записи, визит уже оформлен", "ANNUL_ERROR");
+                return getErrorJson("Ошибка аннулирования записи, визит уже оформлен", ANNUL_ERROR);
             }
             if (patient.getId()==wct.getPrePatient().getId()||(wct.getMedCase()!=null&&wct.getMedCase().getPatient().getId()==patient.getId())) {
                 //аннулируем, если только нашли соответствие. В целях безопасности - не будем аннулировать предварительные направления с неидентифицированными пациентами
@@ -207,9 +223,9 @@ public class ApiRecordServiceBean implements IApiRecordService {
                 }
             }
         } else {
-            return getErrorJson("Ошибка аннулирования записи, возможно, пациент не идентифицирован ","ANNUL_ERROR");
+            return getErrorJson("Ошибка аннулирования записи, возможно, пациент не идентифицирован ",ANNUL_ERROR);
         }
-        return getErrorJson("Неизвестная ошибка аннулирования записи, возможно, визит уже оформлен","ANNUL_ERROR");
+        return getErrorJson("Неизвестная ошибка аннулирования записи, возможно, визит уже оформлен",ANNUL_ERROR);
 
     }
     /** Сохраняем внешний документ */
@@ -229,7 +245,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
             if (aCalendartimeId!=null) {document.setCalendarTime(theManager.find(WorkCalendarTime.class,aCalendartimeId));}
             if (!StringUtil.isNullOrEmpty(aDocumentType)) {
                 List<VocExternalDocumentType> list = theManager.createQuery(" from VocExternalDocumentType where code=:code").setParameter("code",aDocumentType).getResultList();
-                if (list.size()>0) {document.setType(list.get(0));}
+                if (!list.isEmpty()) {document.setType(list.get(0));}
             }
             theManager.persist(document);
 
@@ -239,19 +255,14 @@ public class ApiRecordServiceBean implements IApiRecordService {
     }
     /** Сохраняем файл/изображение*/
     public String saveFile(String aFilename, String base64String) {
-        try {
-            String rootFolder = getJbossConfigValue("tomcat.image.dir","/opt/tomcat/webapps/docmis");
-            if (aFilename==null) {return null;}
+        String rootFolder = getJbossConfigValue("tomcat.image.dir","/opt/tomcat/webapps/docmis");
+        if (aFilename==null) {return null;}
+        File file = new File(rootFolder+aFilename);
+        try ( BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(file))){
             aFilename = getMedosFilename(aFilename,null,rootFolder);
-
             byte[] base64EncodedData = Base64.decodeBase64(base64String.getBytes());
-            File file = new File(rootFolder+aFilename);
-
-            BufferedOutputStream writer = null;
-            writer = new BufferedOutputStream(new FileOutputStream(file));
             writer.write(base64EncodedData);
             writer.flush();
-            writer.close();
             return aFilename;
         } catch (Exception e) {
             e.printStackTrace();
@@ -280,8 +291,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
 
     private String getJbossConfigValue(String aConfigName, String aDefaultValue) {
         EjbEcomConfig config = EjbEcomConfig.getInstance();
-        String res = config.get(aConfigName, aDefaultValue);
-        return res;
+        return config.get(aConfigName, aDefaultValue);
 
     }
     private String getErrorJson(String aReasonText, String aCode) {
@@ -290,19 +300,14 @@ public class ApiRecordServiceBean implements IApiRecordService {
         return err;
     }
     private String createJson(String aElementName, String aJsonData, String aErrorCode, String aErrorName) {
-        JSONObject ret = null;
-        try {
-            ret = new JSONObject();
+        JSONObject ret = new JSONObject();
             if (aElementName!=null) {ret.put(aElementName, aJsonData);}
             ret.put("status",aErrorCode!=null?"error":"ok");
             if (aErrorCode!=null) {
                 ret.put("error_code",aErrorCode);
                 ret.put("error_name",aErrorName);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return ret!=null?ret.toString():"{\"global_error\":\"TRUE\"}";
+        return ret.toString();
     }
     /** Находим подходящий поток обслуживания по типу резерва*/
     private VocServiceStream getServiceStreamByWorkCalendarTime(WorkCalendarTime aWct) {

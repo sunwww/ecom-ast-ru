@@ -274,19 +274,15 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
 
     }
     public static String createJson(String aElementName, String aJsonData, String aErrorCode, String aErrorName) {
-        JSONObject ret = null;
-            try {
-                ret = new JSONObject();
-                if (aElementName!=null) {ret.put(aElementName, aJsonData!=null?new JSONArray(aJsonData):new JSONArray());}
-                ret.put("status",aErrorCode!=null?"error":"ok");
-                if (aErrorCode!=null) {
-                    ret.put("error_code",aErrorCode);
-                    ret.put("error_name",aErrorName);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        return ret!=null?ret.toString():"{\"global_error\":\"TRUE\"}";
+        JSONObject ret = new JSONObject();
+        if (aElementName!=null) {
+            ret.put(aElementName, aJsonData!=null?new JSONArray(aJsonData):new JSONArray());
+        }
+        ret.put("status",aErrorCode!=null?"error":"ok");
+        if (aErrorCode!=null) {
+            ret.put("error_code",aErrorCode);
+            ret.put("error_name",aErrorName);
+       }
+        return ret.toString();
     }
-
 }
