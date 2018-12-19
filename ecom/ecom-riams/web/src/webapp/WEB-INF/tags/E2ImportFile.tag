@@ -26,12 +26,15 @@
 
             <table width="100%" cellspacing="0" cellpadding="4">
                 <tr>
-                    <td>
+                    <td colspan="2">
                         <input type="button" value="Создать заполнение из файла" onclick="setAction('createEntry','СОЗДАЕМ НОВОЕ ЗАПОЛНЕНИЕ')">
-                        <input type="button" value="Импорт дефектов" onclick="setAction('','ИМПОРТ ДЕФЕКТОВ')">
-                        <input type="button" value="Импорт N5" onclick="setAction('','ИМПОРТ N5')">
+                        <input type="button" value="Импорт дефектов" onclick="setAction('importDefect','ИМПОРТ ДЕФЕКТОВ')">
+                        <input type="button" value="Импорт N5" onclick="setAction('importN5','ИМПОРТ N5')">
                     </td>
-
+                </tr>
+                <tr><td colspan="2">
+                        <input type="button" value="Импорт ошибок ФЛК" onclick="setAction('importFlk','ИМПОРТ ОШИБОК ФЛК')">
+                    </td>
                 </tr>
                 <tr>
                     <td align="right" width="100">Выберите файл:</td>
@@ -55,11 +58,7 @@
 var theIs${name}BillDialogInitialized = false ;
 var the${name}BillDialog = new msh.widget.Dialog($('${name}BillDialog')) ;
 function setAction(val, label) {
-    if (val) {
-        $('dirName').value=val;
-    } else {
-        $('dirName').value="";
-    }
+    $('dirName').value=val;
     $('dirNameName').innerHTML=label;
 }
 

@@ -22,4 +22,11 @@ public class VocBaseFederal extends VocBaseEntity{
     public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
     /** Дата окончания действия */
     private Date theFinishDate ;
+
+   /** Неактуальная запись */
+   @Comment("Неактуальная запись")
+   public Boolean getIsNoActual() {return theIsNoActual;}
+   public void setIsNoActual(Boolean aIsNoActual) {theIsNoActual = aIsNoActual;}
+   /** Неактуальная запись */
+   private Boolean theIsNoActual =false;
 }

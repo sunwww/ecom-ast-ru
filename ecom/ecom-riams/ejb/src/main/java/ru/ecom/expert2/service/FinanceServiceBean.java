@@ -1,7 +1,6 @@
 package ru.ecom.expert2.service;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.expert2.domain.financeplan.*;
@@ -50,8 +49,8 @@ public class FinanceServiceBean implements IFinanceService {
             FinancePlan yearPlan;
             Calendar startFromCalendar = Calendar.getInstance();
             //   Calendar lastCalendar = Calendar.getInstance();
-            HashMap<Long, String> littleAmountMonth = new HashMap<Long, String>();
-           HashMap<String, BigDecimal> caseCost= new HashMap<String, BigDecimal>();
+            HashMap<Long, String> littleAmountMonth = new HashMap<>();
+           HashMap<String, BigDecimal> caseCost= new HashMap<>();
             List<MonthLittleAmountTable> monthLittleAmountTables = theManager.createQuery("from MonthLittleAmountTable").getResultList();
             for (MonthLittleAmountTable mLAT : monthLittleAmountTables) {
                 littleAmountMonth.put(mLAT.getAmount(), mLAT.getMonths());
@@ -86,7 +85,7 @@ public class FinanceServiceBean implements IFinanceService {
                         try {
                             count += littleAmountMonth.get(cnt12).contains(month.format(currentMonth)) ? 1L : 0L;
                         } catch (Exception e) {
-                            e.printStackTrace();
+                           log.error(e);
                         }
                     }
 
@@ -161,14 +160,16 @@ public class FinanceServiceBean implements IFinanceService {
                 }
             }
             log.info("Finished!");
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+       log.error(e);
+       }
 
     }
 
     /** Копируем финансовый план с одного месяца на несколько */
     public String copyFinancePlanNextMonth (String aType, Date aMonthPlan, Date aStartMonth, Date aFinishMonth) {
         /* Находим все планы по всем отделениям на выбранный месяц и копируем их на следующие месяцы. Проще простого) */
-        System.out.println("monthPlan = "+aMonthPlan+", startFrom "+aStartMonth+", finish = "+aFinishMonth);
+        log.info("monthPlan = "+aMonthPlan+", startFrom "+aStartMonth+", finish = "+aFinishMonth);
         List<HospitalFinancePlan> plans = theManager.createQuery("from HospitalFinancePlan where :date between startDate and finishDate").setParameter("date",aMonthPlan).getResultList();
         log.info("plans for date = "+aMonthPlan+" found = "+plans.size());
         if (plans.isEmpty()) {return "null, no data";}
@@ -196,7 +197,7 @@ return "good";
     }
 
     /**Заполняем агг. таблицу с планом и фактом */
-    public String fillAggregateTable(String aType, Date aStartDate, Date aFinishDate, String aServiceStream) throws JSONException {
+    public String fillAggregateTable(String aType, Date aStartDate, Date aFinishDate, String aServiceStream) {
         if (aStartDate.getTime()>aFinishDate.getTime()) {return new JSONObject().put("status","error").put("error_code","Дата окончания больше даты начала").toString();}
         StringBuilder sql ;
 
@@ -317,7 +318,7 @@ log.info("Закончили формировать факты/планы");
             if (needPersist) {theManager.persist(newEntity);}
             return newEntity;
         } catch (Exception e) {
-            e.printStackTrace();
+           log.error(e);
             return null;
         }
 

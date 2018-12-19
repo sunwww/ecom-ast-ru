@@ -106,7 +106,7 @@
     <!-- dwr servlet -->
     <servlet>
         <servlet-name>dwr-invoker</servlet-name>
-        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+       <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
         <init-param>
         	<param-name>config-ecom</param-name>
           	<param-value>WEB-INF/dwr-ecom.xml</param-value>

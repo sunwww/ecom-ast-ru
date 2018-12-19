@@ -35,6 +35,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink action="/entityList-e2_vocFondV012.do" name="Справочник V012" title="Справочник настроек экспертизы" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV009.do" name="Справочник V009" title="Справочник настроек экспертизы" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV015.do" name="Справочник V015" title="Справочник V015" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocFondV021.do" name="Справочник V021" title="Справочник V021" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocFondV025.do" name="Справочник V025" title="Справочник V025" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_extDispPrice.do" name="Цены ДД" title="Цены ДД" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocEntrySubType.do" name="Подтипы случая" title="Подтипы случая" roles="/Policy/E2" />

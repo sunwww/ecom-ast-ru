@@ -1,12 +1,12 @@
 package ru.ecom.mis.web.dwr.expert2;
 
-import org.json.JSONException;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expert2.service.IExpert2XmlService;
 import ru.ecom.expert2.service.IFinanceService;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
@@ -19,6 +19,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
+
+    public Patient getTest(String aId, HttpServletRequest aRequest) {
+        Patient patient = new Patient();
+        patient.setLastname("IBANOV");
+
+        return patient;
+    }
 
     public String getMedcaseCost(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
         return Injection.find(aRequest).getService(IExpert2Service.class).getMedcaseCost(aMedcaseId);
@@ -45,7 +52,7 @@ public class Expert2ServiceJs {
 
     }
 
-   public String fillAggregateTable(String aType, String aStartDate, String aFinishDate, String aServiceStream, HttpServletRequest aRequest) throws NamingException, JSONException, ParseException {
+   public String fillAggregateTable(String aType, String aStartDate, String aFinishDate, String aServiceStream, HttpServletRequest aRequest) throws NamingException, ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         java.sql.Date startDate = new java.sql.Date(format.parse(aStartDate).getTime());
         java.sql.Date finishDate = new java.sql.Date(format.parse(aFinishDate).getTime());

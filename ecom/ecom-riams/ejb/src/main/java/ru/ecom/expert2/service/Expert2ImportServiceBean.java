@@ -5,6 +5,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.domain.E2Entry;
@@ -38,9 +39,9 @@ import java.util.List;
 @Local(IExpert2ImportService.class)
 @Remote(IExpert2ImportService.class)
 public class Expert2ImportServiceBean implements IExpert2ImportService {
-    private final Logger log = Logger.getLogger(Expert2ImportServiceBean.class);
-    private static EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-    private static String theXmlDir =config.get("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/riams/expert2xml");
+    private static final Logger log = Logger.getLogger(Expert2ImportServiceBean.class);
+    private static final EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    private static final String theXmlDir =config.get("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/riams/expert2xml");
     private Date toDate(String aDate) throws ParseException {
         return new java.sql.Date(new SimpleDateFormat("yyy-MM-dd").parse(aDate).getTime());
     }
@@ -52,8 +53,46 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             }
         }
         return null;
+    }
+
+    private Document getDocumentFromFile (String aPath, String aFilename, boolean deleteAfter) {
+        try {
+            if (aPath==null) {aPath="";}
+            File file = new File(aPath+aFilename);
+            Document doc =new SAXBuilder().build(file);
+            if (deleteAfter) file.delete();
+            return doc;
+        } catch (JDOMException | IOException e) {
+            e.printStackTrace();
+            log.error("Ошибка формирования документа из файла "+aFilename,e);
+            return null;
+        }
+    }
+
+    /*Импортируем ответ ФЛК от фонда*/
+    public String importFlkAnswer(String aFilename) {//, String aBillNumber, Date aBillDate) {
+        log.info("start import FLK="+aFilename);
+        Document root = getDocumentFromFile(theXmlDir+"/",aFilename,true);
+        XMLOutputter out = new XMLOutputter();
+        Element rootElement = root.getRootElement();
+        List<Element> defs = rootElement.getChildren("PR");
+        int cnt = 0;
+        for (Element el:defs) {
+            String entryId =el.getChildText("N_ZAP");
+            if (isNotNull(entryId)) {
+                E2Entry entry = theManager.find(E2Entry.class, Long.valueOf(entryId));
+                entry.setFondComment(out.outputString(el));
+                entry.setIsDefect(true);
+                theManager.persist(entry);
+                cnt++;
+            }
+
+        }
+        return "Импортировано " + cnt + " записей из "+defs.size();
 
     }
+
+    /*Создаем заполнение из MP файла*/
     public String createEntryByFondXml(String aMpFilename)  {
         try {
             E2ListEntry le = new E2ListEntry();
@@ -63,9 +102,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             String hFilename = aMpFilename.replace(".MP",".XML");
             String lFilename="L"+hFilename.substring(1);
             hFilename="H"+hFilename.substring(1);
-            File hFile = new File(dir+"/"+hFilename);
-
-            Document doc = new SAXBuilder().build(hFile);
+            Document doc = getDocumentFromFile(dir+"/",hFilename,false);
             Element root = doc.getRootElement();
             String ver = root.getChild("ZGLV").getChildText("VERSION");
             SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -179,8 +216,8 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 String planHospDate = el.getChildText("DATE_1");
                 String directDate = el.getChildText("D_NPR");
                 String historyNumber = el.getChildText("NHISTORY");
-                String sql = "from E2Entry where listentry_id="+aListEntryId+" and historyNumber='"+historyNumber+"'";
-                List<E2Entry> list = theManager.createQuery(sql).getResultList();
+                String sql = "from E2Entry where listentry_id=:listEntryId and historyNumber=:historyNumber";
+                List<E2Entry> list = theManager.createQuery(sql).setParameter("listEntryId",aListEntryId).setParameter("historyNumber",historyNumber).getResultList();
 
                 for (E2Entry entry: list) {
                     boolean persist = false;
@@ -210,7 +247,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
     /** Загружаем MP файл (ответ от фонда)*/
 
-    private HashMap<String, VocE2Sanction> sanctionMap = new HashMap<String, VocE2Sanction>();
+    private HashMap<String, VocE2Sanction> sanctionMap = new HashMap<>();
+
+    /*Загружаем ответ от фонда (версия файла {3.1, 3.0}*/
     public String importFondMPAnswer(String aMpFilename) {
         //filename вида *.mp *.mpi
         //String outputDir = unZip(aMpFilename);
@@ -224,40 +263,50 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
 
             Document doc = new SAXBuilder().build(hFile);
-            XmlDocument xmlDocError = new XmlDocument() ;
+        //    XmlDocument xmlDocError = new XmlDocument() ;
             org.jdom.Element root = doc.getRootElement();
             String ver = root.getChild("ZGLV").getChildText("VERSION");
-            if (ver.equals("3.0")) {
+            if ("3.0".equals(ver)) {
                 return importFondMPAnswerOld(aMpFilename);
             }
             List<Element> zaps= root.getChildren("ZAP");
-            String nSchet = root.getChild("SCHET").getChildText("NSCHET");
-            String dSchet = root.getChild("SCHET").getChildText("DSCHET");
+            Element schet = root.getChild("SCHET");
+            String nSchet = schet.getChildText("NSCHET");
+            String dSchet = schet.getChildText("DSCHET");
             SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
-            E2Bill bill = theManager.find(E2Bill.class,theExpertService.getBillIdByDateAndNumber(nSchet,toFormat.format(fromFormat.parse(dSchet))));
+            java.sql.Date billDate = new java.sql.Date(fromFormat.parse(dSchet).getTime());
+            E2Bill bill = theManager.find(E2Bill.class,theExpertService.getBillIdByDateAndNumber(nSchet,toFormat.format(billDate)));
             bill.setStatus(getActualVocByCode(VocE2BillStatus.class,null,"code='PAID'"));
 
             int i=0;
             log.info("Найдено "+zaps.size()+" записей. Обновляем!");
             BigDecimal totalSum = new BigDecimal("0");
+            String slIdElementName = "SL_ID";
+
             for (Element zap:zaps) {
                 i++;
                 if (i%100==0) {log.info("Обработано "+i+" записей");}
                 Element zsl = zap.getChild("Z_SL");
-                List<Element> sl_s = zsl.getChildren("SL");
+                List<Element> slList = zsl.getChildren("SL");
                 Element pac = zap.getChild("PACIENT");
                 boolean isComplexCase=false;
-                for (Element sl: sl_s) {
-                    if (isComplexCase) {break;}
-                    Long entryId = Long.parseLong(sl.getChildText("SL_ID"));
+                for (Element sl: slList) {
+                    if (isComplexCase) break;
+                    Element slId = sl.getChild(slIdElementName);
+                    if (slId == null) { //Для версии 3.1.1
+                        slIdElementName = "SL_IDCASE";
+                        slId = sl.getChild(slIdElementName);
+                        ver="3.1.1";
+                    }
+                    Long entryId = Long.parseLong(slId.getText());
                     E2Entry entry= theManager.find(E2Entry.class,entryId);
                     if (entry==null) {log.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = "+entryId);continue;}
                     if (entry.getParentEntry()!=null) {entry=entry.getParentEntry();isComplexCase=true;}
                     //log.info(j+" record id "+entry.getId()+" ");
-                    theManager.createNativeQuery("delete from E2EntrySanction where entry_id="+entryId).executeUpdate();
+                    theManager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId",entryId).executeUpdate();
                     entry.setBillNumber(nSchet);
-                    entry.setBillDate(bill.getBillDate());
+                    entry.setBillDate(billDate);
                     entry.setBill(bill);
 
                     //Проставляем данные о мед. полисе
@@ -267,19 +316,19 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     entry.setInsuranceCompanyCode(pac.getChildText("SMO"));
 
                     //Добавляем сведения о санкциях
-                    if (zsl.getChild("SANK_IT")!=null&&!zsl.getChildText("SANK_IT").equals("0.00")) { //
-                        List<Element> sanks =sl.getChildren("SANK");
+                    if (zsl.getChild("SANK_IT")!=null && !zsl.getChildText("SANK_IT").equals("0.00")) { //
+                        List<Element> sanks =ver.equals("3.1.1") ? zsl.getChildren("SANK") : sl.getChildren("SANK");
                         for (Element sank: sanks) {
                             String key = sank.getChildText("S_OSN") ;
                             if (!sanctionMap.containsKey(key)) {
                                 sanctionMap.put(key,getActualVocByCode(VocE2Sanction.class,null,"osn='"+key+"'"));
                             }
-                            boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
-                            E2EntrySanction s = new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),isMain);theManager.persist(s);
+                         //   boolean isMain =  false; // sank.getChildText("S_SUM").equalsIgnoreCase("0.00")?false:true; // 27-08-2018
+                            theManager.persist(new E2EntrySanction(entry,sanctionMap.get(key),sank.getChildText("S_DOP"),false));
                         }
                         entry.setIsDefect(true);
                     } else {
-                        totalSum.add(entry.getCost());
+                        totalSum=totalSum.add(entry.getCost());
                         entry.setIsDefect(false);
                         entry.setFondComment(null);
                     }
@@ -482,7 +531,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             sql+=" code='"+aCode+"'";
             list = theManager.createQuery(sql).setParameter("actualDate",aActualDate).getResultList();
             if (list.isEmpty()){
-                list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null and code='" + aCode+"'").getResultList();
+                list = theManager.createQuery("from " + aClass.getName() + " where finishDate is null and code=:code").setParameter("code",aCode).getResultList();
             }
 
         if (list.isEmpty()) {

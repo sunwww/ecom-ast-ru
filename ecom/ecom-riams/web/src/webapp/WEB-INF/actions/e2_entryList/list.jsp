@@ -18,7 +18,7 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-
+${importResult}
         <msh:hideException>
             <ecom:webQuery name="entryList" nativeSql="select id, name, startDate, finishDate, createDate||' '|| createTime
             ,case when isClosed='1' then 'color:blue' else '' end as color

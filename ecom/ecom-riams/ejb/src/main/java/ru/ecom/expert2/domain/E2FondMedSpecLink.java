@@ -1,7 +1,6 @@
 package ru.ecom.expert2.domain;
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV012;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV015;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 

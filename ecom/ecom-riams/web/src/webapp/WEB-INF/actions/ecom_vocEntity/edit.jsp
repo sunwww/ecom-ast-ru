@@ -32,13 +32,19 @@
     	<script type="text/javascript" src="/skin/ext/ext-base.js"></script>
     	<script type="text/javascript" src="/skin/ext/ext-all.js"></script>
     	<script type="text/javascript" src="/skin/ext/examples.js"></script>
-	   <script type='text/javascript' src='./dwr/interface/VocEntityService-CA113b8ec45f6.js'></script>   
-    	
+	   <script type='text/javascript' src='./dwr/interface/VocEntityService.js'></script>
+	   <script type='text/javascript' src='./dwr/interface/Expert2Service.js'></script>
+
     	<script type='text/javascript'>
     	
 Ext.onReady(function(){
+//    Expert2Service.getTest('${param.id}', {
 	VocEntityService.getVocEntityInfo('${param.id}', {
 		callback : function(aInfo) {
+		    if (aInfo==null) {
+		        console.log("${param.id} is null :-(");
+		        return;
+            }
 			//alert(1);
 			onVocEntityInfo(aInfo) ;
 			//alert(2) ;

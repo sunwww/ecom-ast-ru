@@ -33,4 +33,12 @@ public class VocE2FondV021 extends VocBaseFederal {
     public void setDefaultMedService(VocMedService aDefaultMedService) {theDefaultMedService = aDefaultMedService;}
     /** Услуга по умолчанию для поликлиники */
     private VocMedService theDefaultMedService ;
+    
+    /** Услуга по умолчания (повторный визит) */
+    @Comment("Услуга по умолчания (повторный визит)")
+    @OneToOne
+    public VocMedService getRepeatMedService() {return theRepeatMedService;}
+    public void setRepeatMedService(VocMedService aRepeatMedService) {theRepeatMedService = aRepeatMedService;}
+    /** Услуга по умолчания (повторный визит) */
+    private VocMedService theRepeatMedService ;
 }
