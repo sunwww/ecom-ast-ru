@@ -10,7 +10,7 @@ public class SequenceHelper {
 
 	private static final SequenceHelper INSANCE = new SequenceHelper() ;
 	
-	private final String SYNC = "SequenceHelper.SYNC" ;
+	private final String SYNC = "ru.ecom.ejb.sequence.service.SequenceHelper.SYNC" ;
 	
 	private SequenceHelper() {}
 	

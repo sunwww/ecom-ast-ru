@@ -11,9 +11,7 @@ public class AltNamesSync implements ISync {
     private EntityManager theEntityManager;
 	public void sync(SyncContext aContext) throws Exception {
 
-    	//String clause = " where kladrCode like '30%' and time = "+aContext.getImportTime().getId();
         String clause = " where time = "+aContext.getImportTime().getId();
-        String queryString = " from AltNames" + clause;
         String countQueryString = "select count(*) from AltNames " + clause;
 
         theEntityManager = aContext.getEntityManager();

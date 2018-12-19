@@ -33,7 +33,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -44,10 +43,10 @@ import java.util.*;
 @Remote(IAddressPointService.class)
 public class AddressPointServiceBean implements IAddressPointService {
 
-    private final static Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(AddressPointServiceBean.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
-	Collection<WebQueryResult> errList = new ArrayList<WebQueryResult>();
+	Collection<WebQueryResult> errList = new ArrayList<>();
 
     public WebQueryResult exportExtDispPlanAll(String aAge, String aFilenameAddSuffix
     		, String aAddSql, Long aLpu, Long aArea
@@ -227,7 +226,7 @@ public class AddressPointServiceBean implements IAddressPointService {
 						}
 					} catch (javax.persistence.NoResultException ee) {
 						// TODO Auto-generated catch block
-						System.out.println("NoResultExceprion: "+att.getPatient().getPatientInfo());
+					LOG.error("NoResultExceprion: "+att.getPatient().getPatientInfo());
 						ee.printStackTrace();
 					}
         		}
@@ -389,11 +388,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     	StringBuilder addSql=new StringBuilder().append(aAddSql) ;
     	StringBuilder filenames = new StringBuilder() ;
     	errList.clear();
-    	if (aLpu!=null&&aLpu>0) {
-    		aLpuCheck=true;
-		} else {
-    		aLpuCheck=false;
-		}
+    	aLpuCheck = aLpu != null && aLpu > 0;
     	if (aAge!=null) {
     		addSql.append("and cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(aDateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(aAge) ;
     	}
@@ -565,14 +560,14 @@ public class AddressPointServiceBean implements IAddressPointService {
 
 	public String createArchive(String aWorkDir,String archiveName, String[] aFileNames) {
 
-				EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+			//	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 				StringBuilder sb = new StringBuilder();
 				sb.append("zip -r -j -9 ").append(aWorkDir).append("/").append(archiveName).append(" ") ;
 				for (int i=0;i<aFileNames.length;i++) {
 					sb.append(aWorkDir).append("/").append(aFileNames[i]).append(" ");
 				}
 				try {
-					System.out.println("START EXECUTING = "+sb);
+					LOG.info("START EXECUTING = "+sb);
 					try {
 						Runtime.getRuntime().exec("zip -d " + aWorkDir + "/" + archiveName + " *");//Удаляем архив перед созданием;
 					 } catch (Exception e ) {}//Не удалось очистить архив, т.к. его нету. Ничего страшного)
@@ -587,8 +582,8 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     public void createFondXml (String workDir, String filename, String aPeriodByReestr,String aNReestr, List<Object[]> listPat,String[][] aProps) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
     	XmlDocument xmlDoc = new XmlDocument() ;
-    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    	SimpleDateFormat format2 = new SimpleDateFormat("yyyy");
+   // 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+   // 	SimpleDateFormat format2 = new SimpleDateFormat("yyyy");
     	
     	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
     	File outFile = new File(workDir+"/"+filename+".xml") ;

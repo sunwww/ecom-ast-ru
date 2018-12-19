@@ -22,30 +22,28 @@ import java.util.List;
 @Local(ILocalAddressService.class)
 public class AddressServiceBean implements IAddressService, ILocalAddressService {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(AddressServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     @SuppressWarnings("unchecked")
 	public Address findAddressByKladr(String aKladrCode) {
         List<Address> list = theEntityManager.createQuery("from Address where kladr = :kladr").setParameter("kladr",aKladrCode).getResultList();
-        return list!=null && list.size()>0 ? list.iterator().next() : null ;
+        return list!=null && !list.isEmpty() ? list.iterator().next() : null ;
     }
     public String getRayon(Long aAddressId, String aHouse) {
     	Address adr = theEntityManager.find(Address.class, aAddressId);
     	String rayon =theAstrkhanReginHelper.getOmcRayonNameKey(adr, aHouse, theEntityManager) ;
     	if (rayon!=null) {
 	    	StringBuilder sql = new StringBuilder() ;
-	    	sql.append("select id,code||' '||name from VocRayon where code='").append(rayon).append("'") ;
+	    	sql.append("select id,code||' '||name from VocRayon where code=:code") ;
 	    	
-	    	List<Object[]> list = theEntityManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-	    	if (list.size()>0) {
+	    	List<Object[]> list = theEntityManager.createNativeQuery(sql.toString()).setParameter("code",rayon).setMaxResults(1).getResultList() ;
+	    	if (!list.isEmpty()) {
 	    		Object[] obj = list.get(0) ;
 	    		StringBuilder res = new StringBuilder() ;
 	    		res.append(obj[0]).append("#").append(obj[1]) ;
 	    		return res.toString() ;
-	    	} else {
-	    		
 	    	}
     	}
     	return "" ;
@@ -96,18 +94,17 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     }
 
     public String getAddressString(long aAddressPk, String aHouse, String aCorpus, String aFlat,String aZipCode) {
-    	if (CAN_DEBUG)
-			LOG.debug("getAddressString: aAddressPk = " + aAddressPk); 
+    	if (CAN_DEBUG) LOG.debug("getAddressString: aAddressPk = " + aAddressPk);
 
     	String sql = "select a.fullname,a.name,at1.shortName,a.parent_addressid,a.addressid from Address2 a left join AddressType at1 on at1.id=a.type_id  where a.addressid=" ;
     	List<Object[]> list = theEntityManager.createNativeQuery(sql+aAddressPk) 
     			.setMaxResults(1).getResultList() ;
         //String rayon = theAstrkhanReginHelper.getOmcRayonName(address, aHouse, theEntityManager) ; 
         StringBuilder sb = new StringBuilder();
-        if (list.size()>0) {
+        if (!list.isEmpty()) {
         	Object[] obj = list.get(0) ;
         	String fullname = ""+(obj[0]==null?"":obj[0]) ;
-	        if (fullname!=null && !fullname.equals("")) {
+	        if (!fullname.equals("")) {
 	        	sb.append(fullname) ;
 	        } else {
 				sb.append(obj[2]!=null?obj[2]:"") ;

@@ -22,8 +22,6 @@ import java.util.List;
 public class EntityHelper {
 
     private final static Logger LOG = Logger.getLogger(EntityHelper.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-
 
     private EntityHelper() {
     }
@@ -72,7 +70,7 @@ public class EntityHelper {
 	        try {
 	            StringBuilder sb = new StringBuilder("Registered entities: ");
 	        	List<String> list = listAllEntitiesClassnames(in) ;
-	        	List<Class> ret = new LinkedList<Class>() ;
+	        	List<Class> ret = new LinkedList<>() ;
 	        	for(String className: list) {
 	                Class entityClass = theClassLoaderHelper.loadClass(className);
 	        		ret.add(entityClass) ;
@@ -81,7 +79,7 @@ public class EntityHelper {
 	        	}
 	            sb.deleteCharAt(sb.length() - 2);
 	            sb.append('.');
-	            LOG.info(sb);
+	            LOG.debug(sb);
 	        	return ret ;
 	        } catch(Exception e) {
 	            throw new IllegalStateException(e);
@@ -94,7 +92,7 @@ public class EntityHelper {
     }
     
     public List<String> listAllEntities(String aResource) {
-        LOG.info(new StringBuilder().append("Loading ").append(aResource).append(" ...").toString());
+        LOG.debug("Loading "+aResource+" ...");
         InputStream in = getClass().getResourceAsStream(aResource);
     	return listAllEntitiesClassnames(in);
     }

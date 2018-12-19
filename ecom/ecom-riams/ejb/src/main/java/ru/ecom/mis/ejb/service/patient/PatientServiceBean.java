@@ -67,8 +67,9 @@ import java.util.StringTokenizer;
 @Local(IPatientService.class)
 @SecurityDomain("other")
 public class PatientServiceBean implements IPatientService {
-	private  final Logger log = Logger.getLogger(PatientServiceBean.class);
-
+	
+	private final static Logger LOG = Logger.getLogger(PatientServiceBean.class);
+	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	/**Выгружаем список карт Д наблюдения */
 	public String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber)  {
 		JSONObject ret = new JSONObject();
@@ -129,10 +130,10 @@ public class PatientServiceBean implements IPatientService {
 				String patId =pat.getString("N_ZAP");
 
 				if (lastPatId!=null && lastPatId.equals(patId)) { //Создаем несколько карт Д учета одному пациенту.
-					log.info("У пациента несколько Д карт, попробуем стримы");
+					LOG.info("У пациента несколько Д карт, попробуем стримы");
 					//List<Element> list =dn.getChildren("ZAP");
 				//	zap = new Element("ZAP"); //list.stream().filter(z->z.getChildText("N_ZAP").equals(patId)).findFirst().get();
-					log.info("Hello, i found element by stream!!!");
+					LOG.info("Hello, i found element by stream!!!");
 				} else {
 				//	patients.add(patId);
 					zap = new Element("ZAP");
@@ -159,14 +160,9 @@ public class PatientServiceBean implements IPatientService {
 			ret.put("status","ok").put("filename",filename);
 		} catch (JSONException e) {
 			e.printStackTrace();
-			try {
-				ret.put("status","error").put("errorCode",e.toString());
-			} catch (JSONException e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();}
-
-
+			ret.put("status","error").put("errorCode",e.toString());
+			e.printStackTrace();
+		}
 		return ret.toString();
 	}
 	public void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId) {
@@ -370,35 +366,23 @@ public class PatientServiceBean implements IPatientService {
 			aOkato = aOkato.substring(0,11);
 		}
 		aStreet = checkStreet(aStreet.trim());
-		if (aStreet.toUpperCase().endsWith(" УЛ")) {
+		if (aStreet.endsWith(" УЛ") || aStreet.endsWith(" ПЛ")) {
 			streetType = aStreet.substring(aStreet.length()-2);
 			aStreet = aStreet.substring(0,aStreet.length()-2);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПЛ")) {
-			streetType = aStreet.substring(aStreet.length()-2);
-			aStreet = aStreet.substring(0,aStreet.length()-2);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПЕР")) {
+		} else if (aStreet.endsWith(" ПЕР") || aStreet.endsWith(" НАБ")) {
 			streetType = aStreet.substring(aStreet.length()-3);
 			aStreet = aStreet.substring(0,aStreet.length()-3);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПРОЕЗД")) {
+		} else if (aStreet.endsWith(" ПРОЕЗД")) {
 			streetType = aStreet.substring(aStreet.length()-6);
 			aStreet = aStreet.substring(0,aStreet.length()-6);
-		}
-		else if (aStreet.toUpperCase().endsWith(" ПР")) {
+		} else if (aStreet.endsWith(" ПР")) {
 			streetType = "ПРОЕЗД";
 			aStreet = aStreet.substring(0,aStreet.length()-2);
-		}
-		else if (aStreet.toUpperCase().endsWith(" Ш")) {
+		} else if (aStreet.toUpperCase().endsWith(" Ш")) {
 			streetType = aStreet.substring(aStreet.length()-1);
 			aStreet = aStreet.substring(0,aStreet.length()-1);
 		}
-		else if (aStreet.toUpperCase().endsWith(" НАБ")) {
-			streetType = aStreet.substring(aStreet.length()-3);
-			aStreet = aStreet.substring(0,aStreet.length()-3);
-		}
-		aStreet=aStreet.toUpperCase().trim() ;
+		aStreet=aStreet.trim() ;
 		streetType = streetType.toUpperCase().trim();
 		StringBuilder sql = new StringBuilder();
 	//	System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
@@ -410,7 +394,7 @@ public class PatientServiceBean implements IPatientService {
 		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(10).getResultList() ;
 		if (listO.size()>0) {
 			if (listO.size()>1) {
-				log.warn("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
+				LOG.warn("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
 				return null;
 			}
 		//	System.out.println("==== 3 found by okato, res = "+listO.get(0));
@@ -735,7 +719,7 @@ public class PatientServiceBean implements IPatientService {
 	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate, String aDoctorSnils
 			, boolean ignoreType, boolean updateEditDate) {
 		if (aCompany==null || aCompany.equals("") || aLpu==null || aLpu.equals("")) {
-			log.warn("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
+			LOG.warn("company or lpu is null: >"+aCompany+" < >"+aLpu+"<");
 			return null;
 		}
 		String updateDate = " editdate=current_date, ";
@@ -757,7 +741,7 @@ public class PatientServiceBean implements IPatientService {
 		if (!companies.isEmpty()) {
 			insCompany=companies.get(0);
 		} else {
-			log.error("Страх. компания не найдена");
+			LOG.error("Страх. компания не найдена");
 		}
 		
 	if (sc!=null && sc.getKeyValue().equals(lpu) && insCompany!=null) { //Создаем прикрепления только своей ЛПУ
@@ -775,7 +759,7 @@ public class PatientServiceBean implements IPatientService {
 			if (obj!=null&&obj.size()==1) { //Не найшли участок или нашли больше 1 участка - не проставляем участок!
 				areaId=Long.parseLong(obj.get(0).toString());
 			} else {
-				log.error("НЕ Нашли участок по СНИЛС врача");
+				LOG.error("НЕ Нашли участок по СНИЛС врача");
 			}
 		}
 		if (attachedType!=null&&attachedType.equals("1")){
@@ -791,7 +775,7 @@ public class PatientServiceBean implements IPatientService {
 					" and (((p.housebuilding is null or p.housebuilding='') and (laap.housebuilding is null or laap.housebuilding='')) or laap.housebuilding=p.housebuilding)" +
 					" and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getResultList();
 			} catch (NoResultException e) {
-				log.error("Участок по адресу не найден");
+				LOG.error("Участок по адресу не найден");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -833,7 +817,7 @@ public class PatientServiceBean implements IPatientService {
 
 					theManager.persist(att);
 				} catch (ParseException e) {
-					log.error("Дата не распознана "+attachedDate);
+					LOG.error("Дата не распознана "+attachedDate);
 					e.printStackTrace();
 				}
 				ret.append("Создано новое прикрепление. Тип="+att.getAttachedType().getCode() +
@@ -871,8 +855,7 @@ public class PatientServiceBean implements IPatientService {
 		
 		if (aFiodr!=null && !aFiodr.equals("")) {
 			fiodr = aFiodr.split("#") ;
-			if ( aIsPatient) {
-				if (aPatientId!=null &&aPatientId>Long.valueOf(0) &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
+				if (aIsPatient && aPatientId!=null &&aPatientId>Long.valueOf(0) &&(aIsPolicy||(fiodr.length>6 &&fiodr[6].length()==10))) {
 					StringBuilder sql = new StringBuilder() ;
 					if (!fiodr[0].startsWith("?")) {
 						sql.append("update Patient set lastname='").append(fiodr[0]).append("'") ;
@@ -904,13 +887,8 @@ public class PatientServiceBean implements IPatientService {
 						}
 						sql.append(" where id='").append(aPatientId).append("'") ;
 						theManager.createNativeQuery(sql.toString()).executeUpdate() ;
-						
 					}
 				}				
-				
-			}
-		
-			
 		}
 		if (aDocument!=null &&!aDocument.equals("") &&aIsDocument) {
 			String[] doc = aDocument.split("#") ;
@@ -1252,10 +1230,7 @@ public class PatientServiceBean implements IPatientService {
 		}
 		return frm ;
 	}
-	private final static Logger LOG = Logger
-			.getLogger(PatientServiceBean.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 	public String getOmcCodeByPassportType(Long aPassportType) {
 		VocIdentityCard vic = theManager.find(VocIdentityCard.class, aPassportType) ;
 		return vic!=null?vic.getOmcCode():"" ;
@@ -2027,9 +2002,5 @@ private @EJB
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		String res =config.get(aConfigName, aDefaultValue);
 		return res ;
-		
 	}
-
- 
-
 }

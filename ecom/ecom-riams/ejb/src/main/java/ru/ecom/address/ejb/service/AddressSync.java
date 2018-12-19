@@ -19,16 +19,14 @@ import java.util.List;
 
 public class AddressSync implements ISync {
 
-    private final static Logger LOG = Logger.getLogger(AddressSync.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(AddressSync.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
 
     public void sync(SyncContext aContext) throws Exception {
 
-    	//String clause = " where kladrCode like '30%' and time = "+aContext.getImportTime().getId();
         String clause = " where time = "+aContext.getImportTime().getId();
-        String queryString = " from Kladr" + clause;
         String countQueryString = "select count(*) from Kladr " + clause;
 
         theEntityManager = aContext.getEntityManager();
@@ -45,7 +43,7 @@ public class AddressSync implements ISync {
       //  Iterator<Kladr> iterator = QueryIteratorUtil.iterate(Kladr.class, theEntityManager.createQuery(queryString));
         List <Object> kladrs = theEntityManager.createNativeQuery(sql).setMaxResults(5000).getResultList();
         if (kladrs.isEmpty()) {
-        	System.out.println("===Импорт кладров завершен");
+        	LOG.info("===Импорт кладров завершен");
         	break;
         }
       //  System.out.println("=== Импорт в процессе, размер = "+kladrs.size());
@@ -57,7 +55,7 @@ public class AddressSync implements ISync {
             String kladrCode = kladr.getKladrCode();
             String kladrStatus = kladrCode.substring(kladrCode.length()-2);
         	if (!kladrStatus.equals("00")){
-        		System.out.println("Кладр: "+kladrCode+", Статус: недействующий ("+kladrStatus+")");
+        		LOG.info("Кладр: "+kladrCode+", Статус: недействующий ("+kladrStatus+")");
         		continue;
         	}
             
@@ -130,7 +128,7 @@ public class AddressSync implements ISync {
 //        System.out.println("aKladrCode = " + aKladrCode);
         List<Address> list = theEntityManager.createQuery("from Address where kladr = :kladr")
                 .setParameter("kladr", aKladrCode).getResultList();
-        return list != null && list.size() > 0 ? list.iterator().next() : null;
+        return list != null && !list.isEmpty() ? list.iterator().next() : null;
     }
 
 
@@ -224,7 +222,7 @@ public class AddressSync implements ISync {
 
     public static String getParentKladrCode(String aKladrCode) {
         if (CAN_TRACE) LOG.debug("    getParentKladrCode: aKladrCode = " + aKladrCode);
-        int domain = (int) getDomainForKladrCode(aKladrCode);
+        int domain = getDomainForKladrCode(aKladrCode);
         String ret;
         switch (domain) {
             case 6:
@@ -260,5 +258,5 @@ public class AddressSync implements ISync {
 
 
     private EntityManager theEntityManager;
-    private HashMap<String, AddressType> theHash = new HashMap<String, AddressType>();
+    private HashMap<String, AddressType> theHash = new HashMap<>();
 }

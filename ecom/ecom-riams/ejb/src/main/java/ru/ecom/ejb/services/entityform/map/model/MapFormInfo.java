@@ -27,7 +27,7 @@ public class MapFormInfo implements Serializable {
 
 	public String getClassname() {
 		return //theName ; //"$$map$$hello123"; //theName + System.currentTimeMillis() ; 
-                "ejb/services/entityform/MapEntityForm";
+                "ru/ecom/ejb/services/entityform/MapEntityForm";
 	}
 	
 	public void setName(String aName) {

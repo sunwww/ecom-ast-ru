@@ -41,10 +41,10 @@ import java.util.Map.Entry;
  * @author esinev Date: 16.08.2006 Time: 10:32:01
  */
 public class AbstractFormServiceBeanHelper1 implements IFormService {
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(AbstractFormServiceBeanHelper.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	void checkDynamicPermission(Class aFormClass, Object aId,
 			String aPolicyAction) {
@@ -727,8 +727,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 				if (method.isAnnotationPresent(PersistManyToManyOneProperty.class)) {
 					String json = (String) method.invoke(aForm);
 					// Method entityGetterMethod =
-					Class valueClass = entityClass.getMethod(method.getName())
-							.getReturnType();
+				//	Class valueClass = entityClass.getMethod(method.getName()).getReturnType();
 					PersistManyToManyOneProperty pm = method
 							.getAnnotation(PersistManyToManyOneProperty.class);
 					Class type = pm.collectionGenericType();
@@ -739,7 +738,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 					saveOneToManyOneProperty(json, collection, type);
 				} else if (method.isAnnotationPresent(PersistListProperty.class)) {
 					String json = (String) method.invoke(aForm) ;
-					Class valueClass = entityClass.getMethod(method.getName()).getReturnType() ;
+				//	Class valueClass = entityClass.getMethod(method.getName()).getReturnType() ;
 					PersistListProperty pl = method.getAnnotation(PersistListProperty.class) ;
 					Class type = pl.collectionGenericType() ;
 					Class persist = pl.tablePersist() ;
@@ -772,7 +771,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 	}
 
 	private void saveOneToManyOneProperty(String aJson, Collection aCollection,
-			Class aType) throws JSONException, ParseException,
+			Class aType) throws ParseException,
 			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 		//System.out.println(aJson);
 		JSONObject obj = new JSONObject(aJson);
@@ -780,7 +779,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 		JSONArray ar = obj.getJSONArray("childs");
 		// Class entityClass = aEntity.getClass() ;
 		// ashMap<Object, Object> map = new HashMap<Object, Object>();
-		Set<Object> set = new HashSet<Object>();
+		Set<Object> set = new HashSet<>();
 		for (int i = 0; i < ar.length(); i++) {
 			JSONObject child = (JSONObject) ar.get(i);
 			String jsonId = String.valueOf(child.get("value"));
@@ -829,7 +828,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 		JSONArray ar = obj.getJSONArray("childs");
 		// Class entityClass = aEntity.getClass() ;
 		// ashMap<Object, Object> map = new HashMap<Object, Object>();
-		Set<Object> set = new HashSet<Object>();
+		Set<Object> set = new HashSet<>();
 		for (int i = 0; i < ar.length(); i++) {
 			JSONObject child = (JSONObject) ar.get(i);
 			String jsonId = String.valueOf(child.get("value"));
@@ -916,7 +915,7 @@ public class AbstractFormServiceBeanHelper1 implements IFormService {
 	
     protected Collection<IEntityForm> convertToMapFormCollection(String aClassName, Collection<IEntityForm> aList) {
     	try {
-	    	ArrayList<IEntityForm> ret = new ArrayList<IEntityForm>() ;
+	    	ArrayList<IEntityForm> ret = new ArrayList<>() ;
 	    	for(IEntityForm form : aList) {
 	    		MapEntityForm mapForm = new MapEntityForm() ;
 	    		BeanUtils.copyProperties(mapForm, form);

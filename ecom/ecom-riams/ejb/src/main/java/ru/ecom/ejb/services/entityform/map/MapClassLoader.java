@@ -58,11 +58,8 @@ public class MapClassLoader extends ClassLoader {
 			} else {
 				String classNameForLoader = name + "__"+UUID.randomUUID() ; 
 				try {
-					
-					InputStream in 
-					 = MapEntityForm
-					 	.class
-					 	.getResourceAsStream("/ejb/services/entityform/MapEntityForm.class") ;
+					InputStream in = MapEntityForm.class
+							.getResourceAsStream("/ru/ecom/ejb/services/entityform/MapEntityForm.class") ;
 					ClassReader reader = new ClassReader(in);
 					ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 					MapFormInfo formInfo = theMapFormManager.getFormInfo(removeUuidFromClassName(name)) ;
@@ -71,9 +68,9 @@ public class MapClassLoader extends ClassLoader {
 					reader.accept(visitor, ClassReader.SKIP_DEBUG);
 					byte[] buf = writer.toByteArray();
 					ret = defineClass(
-							loadUnique 
-									? classNameForLoader 
-									: "MapEntityForm"
+							loadUnique
+									? classNameForLoader
+									: "ru.ecom.ejb.services.entityform.MapEntityForm"
 							//formInfo.getClassname()
 							, buf,
 							0, buf.length);

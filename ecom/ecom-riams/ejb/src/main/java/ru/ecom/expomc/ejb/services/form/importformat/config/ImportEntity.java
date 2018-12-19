@@ -1,18 +1,16 @@
 package ru.ecom.expomc.ejb.services.form.importformat.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
-
 import ru.ecom.ejb.util.EntityNameUtil;
 import ru.ecom.expomc.ejb.services.form.importformat.ImportLogger;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ikouzmin 09.03.2007 14:16:31
@@ -75,10 +73,7 @@ public class ImportEntity {
 
                 list.add(importSyncKey);
             }
-        } catch (JDOMException e) {
-        } catch (InvalidFkException e) {
-        } catch (ClassNotFoundException e) {
-        } catch (MissingAttributeException e) {
+        } catch (JDOMException | InvalidFkException | ClassNotFoundException | MissingAttributeException e) {
         } finally{
             declev();
         }

@@ -2761,7 +2761,15 @@ left join medcase smoP on smoP.owner_id=w.id "
                 queried = 'name'
         />
     </voc>
-    
+	<voc id='vocMedServiceActual' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocMedService'
+				names   = 'code,name'
+				queried = 'code,name'
+				queryAppend="(finishDate is null or finishDate>=current_date)"
+		/>
+	</voc>
+
     <voc id='vocMedService' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocMedService'

@@ -2,7 +2,6 @@ package ru.ecom.mis.ejb.service.prescription;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,16 +48,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 @Stateless
 @Remote(IPrescriptionService.class)
 public class PrescriptionServiceBean implements IPrescriptionService {
-	private final static Logger log = Logger.getLogger(PrescriptionServiceBean.class);
+	private static final Logger log = Logger.getLogger(PrescriptionServiceBean.class);
 
 	public void checkXmlFiles() throws ParserConfigurationException, SAXException, IOException {
 
@@ -68,15 +64,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
         
         File[] fileList = getFiles(xmlDirectory);
         
-        if (fileList!=null&&fileList.length>0)
-	    {
+        if (fileList.length>0) {
         	log.debug("Найдено "+fileList.length+" файлов");
         	
         	for (File file: fileList) {
 	        	String fileName = file.getName();
 	        	String[] expansions = fileName.split("\\.");
 	            if(expansions[1].equals("xml")) {
-	        		List<ParsedPdfInfo> l = ReadXML(xmlDirectory+fileName);
+	        		List<ParsedPdfInfo> l = readXML(xmlDirectory+fileName);
 					for (ParsedPdfInfo parsedPdfInfo:l) {
 						setDefaultDiary(parsedPdfInfo);
 					}
@@ -88,10 +83,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    }
 	}
 	
-	public static List<ParsedPdfInfo> ReadXML(String namefile) throws ParserConfigurationException, SAXException, IOException {
+	public static List<ParsedPdfInfo> readXML(String namefile) throws ParserConfigurationException, SAXException, IOException {
 		ParsedPdfInfo parsedPdfInfo ;
-		List<ParsedPdfInfoResult> parsedPdfInfoResults = new ArrayList<ParsedPdfInfoResult>();
-        List<ParsedPdfInfo>parsedPdfInfos = new ArrayList<ParsedPdfInfo>();
+		List<ParsedPdfInfoResult> parsedPdfInfoResults = new ArrayList<>();
+        List<ParsedPdfInfo>parsedPdfInfos = new ArrayList<>();
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         f.setValidating(false);
         DocumentBuilder builder = f.newDocumentBuilder();
@@ -131,41 +126,41 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	    public static File[] getFiles(String path) {
 	     	try {
 	         File dir = new File(path);
-	         File[] files = dir.listFiles(new FilenameFilter() {
-	             public boolean accept(File dir, String name) {
-	                 return name.toLowerCase().endsWith(".xml");
-	             }});
-	         
-	         return files;
+	         return dir.listFiles(new FilenameFilter() {
+				 public boolean accept(File dir, String name) {
+					 return name.toLowerCase().endsWith(".xml");
+				 }});
 	     	} catch(Exception e) {
-	     		System.out.println("Директория не обнаружена. Проверьте правильность.");
+	     		log.error("Директория не обнаружена. Проверьте правильность.");
 	     		e.printStackTrace();
-	     		return null;
+	     		return new File[0];
 	     	}
 	     }
 	    
-		
-	    public static boolean checkIsExist(String filePath, boolean resultExist) {
+		//Кажется, нигде не используем
+	  /*  public static boolean checkIsExist(String filePath, boolean resultExist) {
 	        File f = new File(filePath);
-	        return  f.exists()&&!f.isDirectory();
+	        return  f.exists() && !f.isDirectory();
 	    }
-	    
+	    */
 	    public static void moveFile(String pdfDirectory, String archDirectory, String fileName) {
 	        try {
 	            final File myFile = new File(pdfDirectory + fileName );
 	            if (myFile.renameTo(new File(archDirectory + fileName))) {
-	                System.out.println("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
+	                log.info("Файл "+ fileName + " успешно перенесен из директории " + pdfDirectory + " в директорию " + archDirectory);
+	            } else {
+					log.warn("Файл не был перенесен!");
 	            }
-	            else{
-	                 System.out.println("Файл не был перенесен!");
-	                }
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
 	    }
 
 	public String setDefaultDiary(ParsedPdfInfo parsedPdfInfo) {
-		if (parsedPdfInfo==null) {log.error("NO_RESULT");return "";}
+		if (parsedPdfInfo==null) {
+			log.error("NO_RESULT");
+			return "";
+		}
 		String barcode = parsedPdfInfo.getBarcode();
 		if (!StringUtil.isNullOrEmpty(barcode)) {
 		
@@ -352,45 +347,42 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		MedService sms = theManager.find(MedService.class, aMedServiceId);
 	if (sms!=null) {
 		long date = new java.util.Date().getTime() ;
-	
-	PrescriptList pl = theManager.find(PrescriptList.class, aPrescriptionListId);
-	Patient pat = pl.getMedCase().getPatient();
-	WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
-	WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
-	WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
-	Visit vis;
-	if (wct.getMedCase()!=null) {
-		vis = (Visit) wct.getMedCase();
-	} else {
-		vis = new Visit();
-		MedCase mc = pl.getMedCase() ;
-		if (mc instanceof HospitalMedCase|| mc instanceof DepartmentMedCase) {
-			VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
-			vis.setServiceStream(vss);
+		PrescriptList pl = theManager.find(PrescriptList.class, aPrescriptionListId);
+		Patient pat = pl.getMedCase().getPatient();
+		WorkFunction wfp = theManager.find(WorkFunction.class, aWorkFunctionPlanId);
+		WorkFunction wfo = theManager.find(WorkFunction.class, aOrderWorkFunction);
+		WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aTimePlanId);
+		Visit vis;
+		if (wct.getMedCase()!=null) {
+			vis = (Visit) wct.getMedCase();
 		} else {
-			vis.setServiceStream(mc.getServiceStream()) ;
+			vis = new Visit();
+			MedCase mc = pl.getMedCase() ;
+			if (mc instanceof HospitalMedCase|| mc instanceof DepartmentMedCase) {
+				VocServiceStream  vss = (VocServiceStream) theManager.createQuery("from VocServiceStream where code=:code").setParameter("code", "HOSPITAL").getSingleResult();
+				vis.setServiceStream(vss);
+			} else {
+				vis.setServiceStream(mc.getServiceStream()) ;
+			}
+			VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
+			vis.setWorkPlaceType(wpt) ;
+
+			vis.setPatient(pat);
+			vis.setCreateDate(new java.sql.Date(date));
+			vis.setCreateTime(new java.sql.Time(date));
+			if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
+				log.error("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
+				return null;
+			}
+			vis.setDatePlan(wct.getWorkCalendarDay());
+			vis.setNoActuality(false);
+			vis.setTimePlan(wct);
+			vis.setWorkFunctionPlan(wfp);
+			vis.setOrderWorkFunction(wfo);
+			vis.setUsername(aUsername);
+			theManager.persist(vis);
 		}
-		VocWorkPlaceType wpt = (VocWorkPlaceType) theManager.createQuery("from VocWorkPlaceType where code=:code").setParameter("code", "POLYCLINIC").getSingleResult();
-		vis.setWorkPlaceType(wpt) ;
-		
-		vis.setPatient(pat);
-		vis.setCreateDate(new java.sql.Date(date));
-		vis.setCreateTime(new java.sql.Time(date));
-		if (aDatePlanId!=null && !aDatePlanId.equals(wct.getWorkCalendarDay().getId())) {
-			log.error("==== Создание визита из назначения пошло не так. PL= "+aPrescriptionListId+" : "+aDatePlanId+" <> "+ wct.getWorkCalendarDay().getId());
-			return null;
-		}
-		vis.setDatePlan(wct.getWorkCalendarDay());
-		vis.setNoActuality(false);
-		vis.setTimePlan(wct);
-		vis.setWorkFunctionPlan(wfp);
-		vis.setOrderWorkFunction(wfo);
-		vis.setUsername(aUsername);
-		theManager.persist(vis);
-	}
-	
-	
-	
+
 	ServiceMedCase smc = new ServiceMedCase();
 	smc.setParent(vis);
 	smc.setMedService(sms);
@@ -403,120 +395,116 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 		return null ;
 	}
-	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) throws JSONException {
-		Protocol d =null;
-		//if (aProtocolId!=null )) {
-		JSONObject obj = new JSONObject(aParams) ;
-		String wf = String.valueOf(obj.get("workFunction"));
+	public String saveLabAnalyzed(Long aSmoId,Long aPrescriptId,Long aProtocolId, String aParams, String aUsername, Long aTemplateId) {
+		try {
+			Protocol d =null;
+			JSONObject obj = new JSONObject(aParams) ;
+			String wf = String.valueOf(obj.get("workFunction"));
+			StringBuilder sql ;
+			Visit m = theManager.find(Visit.class, aSmoId) ;
 
-		StringBuilder sql = new StringBuilder() ;
-		/*sql.append("select trim(ms.code|| ' ' ||ms.name) from prescription p " +
-				" left join medservice ms on ms.id=p.medservice_id where p.id=").append(aPrescriptId);
-		String ms=theManager.createNativeQuery(sql.toString()).getSingleResult().toString();
-		if(ms!=null&&!ms.equals("")) ms+="\n"; */
-		Visit m = theManager.find(Visit.class, aSmoId) ;
-		 
-		if (m!=null) {
-			List<Object> l = null;
-			if (aProtocolId!=null && !aProtocolId.equals(0L)) {
-				sql = new StringBuilder() ;
-				sql.append("select id from Diary where id=").append(aProtocolId).append(" and medCase_id=").append(aSmoId).append("") ;
-				l = theManager.createNativeQuery(sql.toString()).getResultList() ;
-			}
-			if (l==null || l.isEmpty()) {
-				sql = new StringBuilder() ;
-				sql.append("select id from Diary where medCase_id=").append(aSmoId).append("") ;
-				l = theManager.createNativeQuery(sql.toString()).getResultList() ;
-			}
-			if (!l.isEmpty()) {
-				Long idD = ConvertSql.parseLong(l.get(0)) ;
-				d = theManager.find(Protocol.class, idD) ;
-				theManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id="+d.getId()).executeUpdate() ;
-			}
-		} else {
-			Long smo = checkLabAnalyzed(aPrescriptId,Long.valueOf(wf),aUsername) ;
-			m = theManager.find(Visit.class, smo) ;
-		}
-		if (d == null) {
-			d = new RoughDraft() ;
-			d.setMedCase(m) ;
-			d.setTemplateProtocol(aTemplateId);
-			theManager.persist(d) ;
-		}
-		Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
-		//}
-		JSONArray params = obj.getJSONArray("params");
-		StringBuilder sb = new StringBuilder() ;
-		//sb.append(ms).append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
-		sb.append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
-		sb.append(" ").append(DateFormat.formatToTime(pres.getIntakeTime())).append("\n") ;
-		//sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
-		//sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
-		for (int i = 0; i < params.length(); i++) {
-			//boolean isSave = true ;
-			JSONObject param = (JSONObject) params.get(i);
-			FormInputProtocol fip = new FormInputProtocol() ;
-			fip.setDocProtocol(d) ;
-			Parameter p = theManager.find(Parameter.class, ConvertSql.parseLong(param.get("id"))) ;
-			fip.setParameter(p) ;
-			fip.setPosition(Long.valueOf(i+1)) ;
-			String type = String.valueOf(param.get("type"));
-			// 1-числовой
-			// 4-числовой с плав точкой
-			String value = String.valueOf(param.get("value"));
-			if (type.equals("1")||type.equals("4")) {
-				if (!StringUtil.isNullOrEmpty(value)) {
-					fip.setValueBD(new BigDecimal(value)) ;
-					if (sb.length()>0) sb.append("\n") ;
-					sb.append(param.get("name")).append(": ") ;
-					sb.append(value).append(" ") ;
-					sb.append(param.get("unitname")).append(" ") ;
-					//start Добавление отображения референтных интервалов
-					//sb.append("Реф. инт: ").append(p.getNormMinimumBD()).append(" <> ").append(p.getNormMaximumBD());
-					//end
+			if (m!=null) {
+				List<Object> l = null;
+				if (aProtocolId!=null && !aProtocolId.equals(0L)) {
+					sql = new StringBuilder() ;
+					sql.append("select id from Diary where id=").append(aProtocolId).append(" and medCase_id=").append(aSmoId) ;
+					l = theManager.createNativeQuery(sql.toString()).getResultList() ;
 				}
-				//пользовательский справочник
-			} else if (type.equals("2")) {
-				if (value!=null&&!value.equals("")){
-					Long id = ConvertSql.parseLong(value) ;
-					if (id!=null && !id.equals(0L)) {
-						UserValue uv = theManager.find(UserValue.class, id) ;
-						fip.setValueVoc(uv) ;
+				if (l==null || l.isEmpty()) {
+					sql = new StringBuilder() ;
+					sql.append("select id from Diary where medCase_id=").append(aSmoId);
+					l = theManager.createNativeQuery(sql.toString()).getResultList() ;
+				}
+				if (!l.isEmpty()) {
+					Long idD = ConvertSql.parseLong(l.get(0)) ;
+					d = theManager.find(Protocol.class, idD) ;
+					theManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id="+d.getId()).executeUpdate() ;
+				}
+			} else {
+				Long smo = checkLabAnalyzed(aPrescriptId,Long.valueOf(wf),aUsername) ;
+				m = theManager.find(Visit.class, smo) ;
+			}
+			if (d == null) {
+				d = new RoughDraft() ;
+				d.setMedCase(m) ;
+				d.setTemplateProtocol(aTemplateId);
+				theManager.persist(d) ;
+			}
+			Prescription pres = theManager.find(Prescription.class,aPrescriptId) ;
+			JSONArray params = obj.getJSONArray("params");
+			StringBuilder sb = new StringBuilder() ;
+			//sb.append(ms).append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
+			sb.append("Забор биоматериала произведен: ").append(DateFormat.formatToDate(pres.getIntakeDate()));
+			sb.append(" ").append(DateFormat.formatToTime(pres.getIntakeTime())).append("\n") ;
+			//sb.append("Дата передачи в лабораторию: ").append(DateFormat.formatToDate(pres.getTransferDate()));
+			//sb.append(" ").append(DateFormat.formatToTime(pres.getTransferTime())).append("\n") ;
+			for (int i = 0; i < params.length(); i++) {
+				//boolean isSave = true ;
+				JSONObject param = (JSONObject) params.get(i);
+				FormInputProtocol fip = new FormInputProtocol() ;
+				fip.setDocProtocol(d) ;
+				Parameter p = theManager.find(Parameter.class, ConvertSql.parseLong(param.get("id"))) ;
+				fip.setParameter(p) ;
+				fip.setPosition(i+1L) ;
+				String type = String.valueOf(param.get("type"));
+				// 1-числовой
+				// 4-числовой с плав точкой
+				String value = String.valueOf(param.get("value"));
+				if (type.equals("1")||type.equals("4")) {
+					if (!StringUtil.isNullOrEmpty(value)) {
+						fip.setValueBD(new BigDecimal(value)) ;
 						if (sb.length()>0) sb.append("\n") ;
 						sb.append(param.get("name")).append(": ") ;
-						sb.append(param.get("valueVoc")).append(" ") ;
+						sb.append(value).append(" ") ;
+						sb.append(param.get("unitname")).append(" ") ;
+						//start Добавление отображения референтных интервалов
+						//sb.append("Реф. инт: ").append(p.getNormMinimumBD()).append(" <> ").append(p.getNormMaximumBD());
+						//end
+					}
+					//пользовательский справочник
+				} else if (type.equals("2")) {
+					if (value!=null&&!value.equals("")){
+						Long id = ConvertSql.parseLong(value) ;
+						if (id!=null && !id.equals(0L)) {
+							UserValue uv = theManager.find(UserValue.class, id) ;
+							fip.setValueVoc(uv) ;
+							if (sb.length()>0) sb.append("\n") ;
+							sb.append(param.get("name")).append(": ") ;
+							sb.append(param.get("valueVoc")).append(" ") ;
+							sb.append(param.get("unitname")).append(" ") ;
+						}
+					}
+					//3-текстовый
+					//5-текстовый с ограничением
+				} else if (type.equals("3")||type.equals("5")) {
+					if (!StringUtil.isNullOrEmpty(value)) {
+						fip.setValueText(String.valueOf(value)) ;
+						if (sb.length()>0) sb.append("\n") ;
+						sb.append(param.get("name")).append(": ") ;
+						sb.append(value).append(" ") ;
 						sb.append(param.get("unitname")).append(" ") ;
 					}
 				}
-				//3-текстовый
-				//5-текстовый с ограничением
-			} else if (type.equals("3")||type.equals("5")) {
-				if (!StringUtil.isNullOrEmpty(value)) {
-					fip.setValueText(String.valueOf(value)) ;
-					if (sb.length()>0) sb.append("\n") ;
-					sb.append(param.get("name")).append(": ") ;
-					sb.append(value).append(" ") ;
-					sb.append(param.get("unitname")).append(" ") ;
-				}
+				theManager.persist(fip) ;
 			}
-			theManager.persist(fip) ;
-		}
-		d.setRecord(sb.toString()) ;
-		theManager.persist(d) ;
-		if (wf!=null && !wf.equals("0")) {
-			WorkFunction wfo = theManager.find(WorkFunction.class, Long.valueOf(wf)) ;
-			m.setWorkFunctionExecute(wfo) ;
-		} else {
-			m.setWorkFunctionExecute(m.getWorkFunctionPlan()) ;
+			d.setRecord(sb.toString()) ;
+			theManager.persist(d) ;
+			if (wf!=null && !wf.equals("0")) {
+				m.setWorkFunctionExecute(theManager.find(WorkFunction.class, Long.valueOf(wf))) ;
+			} else {
+				m.setWorkFunctionExecute(m.getWorkFunctionPlan()) ;
+				theManager.persist(m) ;
+			}
 			theManager.persist(m) ;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		theManager.persist(m) ;
 		return "" ;
 	}
 	public Long checkLabAnalyzed(Long aPrescriptId,Long aWorkFunctionId,String aUsername) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' then sls.id") ; 
-		sql.append(" when slo.dtype='Visit' then sls.id else slo.id end as pmo") ;
+		sql.append(" when slo.dtype='Visit' then coalesce (sls.id,slo.id) end else slo.id end as pmo") ;
 		sql.append(" ,p.prescriptSpecial_id as presspec") ;
 		sql.append(" ,p.prescriptCabinet_id as cabinet") ;
 		sql.append(" ,p.medService_id as service") ;
@@ -524,7 +512,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		sql.append(" left join PrescriptionList pl on pl.id=p.prescriptionlist_id left join medcase slo on slo.id=pl.medcase_id left join medcase sls on sls.id=slo.parent_id left join patient pat on pat.id=slo.patient_id where p.id=").append(aPrescriptId) ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (aWorkFunctionId == null) {
-			List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+aUsername+"'").getResultList() ;
+			List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login=:login").setParameter("login",aUsername).getResultList() ;
 			if ( wf.isEmpty()) {
 				return null ;
 			}
@@ -568,7 +556,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		return  vis.getId();
 	}
 	public Long checkLabAnalyzed(Long aPrescriptId,String aUsername) {
-		List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login='"+aUsername+"'").getResultList() ;
+		List<Object> wf = theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login=:login").setParameter("login",aUsername).getResultList() ;
 		if ( wf.isEmpty()) {
 			return null ;
 		} else {
@@ -591,8 +579,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		aDate = sdfOut.format(sdfIn.parse(aDate));
 		String[] prescriptionIds = aPrescriptions.split(",");
 		String aKey;// = "";
-		String matId = null;
-		HashMap<java.lang.String, java.lang.String> aLabMap =  new HashMap<String, String>() ;
+		String matId ;// = null;
+		HashMap<String, String> aLabMap =  new HashMap<>() ;
 		for (String prescriptionId: prescriptionIds) {
 			Long presId = Long.parseLong(prescriptionId.trim());
 			ServicePrescription p = theManager.find(ServicePrescription.class, presId);
@@ -628,8 +616,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	
 	public static String getPatientDateNumber(HashMap aLabMap, String aKey, long aPatientId, String aDate, EntityManager aManager) {
 		String matId = null;
-		HashMap<java.lang.String, java.lang.String> labMap = (HashMap<java.lang.String, java.lang.String>) aLabMap ;
-		if (!labMap.isEmpty()) { 
+		Map<String, String> labMap = aLabMap ;
+		if (!labMap.isEmpty()) {
 			matId = labMap.get(aKey);
 		}
 		if (matId == null || matId.equals("")) {
@@ -642,7 +630,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 									"and p.materialId!='' order by p.materialId desc ";
 			List<String> lPl = aManager.createNativeQuery(req).getResultList();
 			
-			if (lPl.size()>0) {
+			if (!lPl.isEmpty()) {
 				matId = ""+lPl.get(0) ;
 			}  
 			if (matId == null || matId.equals("")) {
@@ -662,7 +650,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	public String getDescription(Long aIdTemplateList) {
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
 		if (template==null) return "";
-		StringBuffer description = new StringBuffer();
+		StringBuilder description = new StringBuilder();
 		description.append("Название шаблона: ") ; 
 		description.append(template.getName());
 		description.append('\n');
@@ -719,7 +707,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			return false; 
 		}
 		List<Object[]> list = theManager.createNativeQuery(sqlquery).getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			Object[] obj = list.get(0);
 			
 			java.util.Date date;
@@ -822,7 +810,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			return list.toString();
 			}
 			catch (Exception e) {
-				System.out.println("catch DIET "+e);
+				log.error("catch DIET "+e);
 				e.printStackTrace();
 			}
 		} else if (aPresc instanceof ServicePrescription) {
@@ -910,9 +898,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			
 			//System.out.println("================ CLASS PrescriptionList = "+template.getClass().toString());
 			if (template.getClass().toString().equals("PrescriptListTemplate")) {
-				 template = (PrescriptListTemplate) template;
+				 //template = (PrescriptListTemplate) template;
 			//	System.out.println("================ IF HAPPENS CLASS PrescriptionList = "+template.getClass().toString());	
-				List<TemplateCategory> tempCategList = new ArrayList<TemplateCategory>() ;
+				List<TemplateCategory> tempCategList = new ArrayList<>() ;
 				PrescriptListTemplate template2 = (PrescriptListTemplate) template;
 				tempCategList.addAll(template2.getCategories());
 			/*	for (TemplateCategory tempCateg:template2.getCategories()) {
@@ -933,7 +921,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	private void addPrescription(AbstractPrescriptionList aTemplate, AbstractPrescriptionList aList, WorkFunction aSpecialist) {		
 		if (aTemplate!=null && aList!=null)  {
 			List<Prescription> listNew = aList.getPrescriptions() ;
-			if (listNew==null) listNew =new ArrayList<Prescription>() ;
+			if (listNew==null) listNew =new ArrayList<>() ;
 			for (Prescription presc:aTemplate.getPrescriptions()) {
 //				System.out.println("Назначение: "+presc.getId());
 				Prescription prescNew = newPrescriptionOnTemplate(presc, aSpecialist);
@@ -951,7 +939,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	}
 	
 	private String getDescrPerscriptions(PrescriptListTemplate aTemplate) {
-		StringBuffer desc = new StringBuffer() ;
+		StringBuilder desc = new StringBuilder() ;
 		List<Prescription> listPrescript =aTemplate.getPrescriptions() ;
 		int i = 0 ;
 		desc.append("Назначения: ");

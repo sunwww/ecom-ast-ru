@@ -1,5 +1,7 @@
 package ru.ecom.address.ejb.service;
 
+import org.apache.log4j.Logger;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -9,6 +11,7 @@ import java.util.TreeSet;
  *
  */
 public class AddressPointCheckHelper {
+    private static final Logger LOG = Logger.getLogger(AddressPointCheckHelper.class);
 
     public AddressPointCheck parsePoint(String aStr) {
     	StringBuilder houseNumber = new StringBuilder();
@@ -39,7 +42,7 @@ public class AddressPointCheckHelper {
         if(onlyChars.length()>0) {
         	
             String o = onlyChars.toString() ;
-            System.out.println("----"+o) ;
+            LOG.info("----"+o) ;
             o = checkOnlyOneOrNo(o, "влд") ;
             o = checkOnlyOneOrNo(o, "стр") ;
             o = checkOnlyOneOrNo(o, "к") ;
@@ -49,7 +52,7 @@ public class AddressPointCheckHelper {
             }
         }
 
-        return houseBuilding!=null
+        return houseBuilding.length()>0
                 ? new AddressPointCheck(houseNumber.toString(), houseBuilding.toString())
                 : new AddressPointCheck(houseNumber.toString()) ;
     }
@@ -63,8 +66,8 @@ public class AddressPointCheckHelper {
 
     public List<AddressPointCheck> parsePoints(String aStr) {
         StringTokenizer st = new StringTokenizer(aStr, " ,;.\n\r");
-        LinkedList<AddressPointCheck> ret = new LinkedList<AddressPointCheck>();
-        TreeSet<String> occurs = new TreeSet<String>();
+        LinkedList<AddressPointCheck> ret = new LinkedList<>();
+        TreeSet<String> occurs = new TreeSet<>();
         while(st.hasMoreTokens()) {
             String token = st.nextToken() ;
             try {
@@ -87,8 +90,8 @@ public class AddressPointCheckHelper {
                     ret.add(p) ;
                 }
             } catch (Exception e) {
-            	e.printStackTrace() ;
-                throw new IllegalArgumentException(new StringBuilder().append(token).append(" - ").append(e.getMessage()).toString(),e) ;
+            	LOG.error(e);
+                throw new IllegalArgumentException(token+" - "+e.getMessage(),e) ;
             }
         }
 //        for (AddressPointCheck point : ret) {
@@ -133,7 +136,7 @@ public class AddressPointCheckHelper {
     	if(aStr.indexOf('-')<0) throw new IllegalArgumentException("Не введен символ '-' для указания диапазона квартир") ;
     	if(aStr.indexOf(']')<0) throw new IllegalArgumentException("Не введен символ ']' для указания конца диапазона квартир") ;
     	if(aStr.indexOf('[')==0) throw new IllegalArgumentException("Нет номера дома при указании диапазона квартир") ;
-        LinkedList<AddressPointCheck> ret = new LinkedList<AddressPointCheck>();
+        LinkedList<AddressPointCheck> ret = new LinkedList<>();
     	// получение дома и корпуса
     	String houseAndBuildingPart = aStr.substring(0, aStr.indexOf('[')) ;
     	AddressPointCheck houseAndBuildingPointCheck = parsePoint(houseAndBuildingPart);
@@ -166,7 +169,7 @@ public class AddressPointCheckHelper {
     
     private List<AddressPointCheck> parseDiapasone(String aStr) {
         StringTokenizer st = new StringTokenizer(aStr, "ЧН()- ");
-        LinkedList<AddressPointCheck> ret = new LinkedList<AddressPointCheck>();
+        LinkedList<AddressPointCheck> ret = new LinkedList<>();
         Integer from ;
         Integer to ;
         if(st.hasMoreTokens()) {
@@ -198,7 +201,7 @@ public class AddressPointCheckHelper {
     public static void main(String[] args) {
     	AddressPointCheckHelper helper = new AddressPointCheckHelper() ;
     	List<AddressPointCheck> list = helper.parsePoints("12/12, 69Б[10-13]") ;
-    	System.out.println(list);
+    	LOG.info(list);
     }
      
 }

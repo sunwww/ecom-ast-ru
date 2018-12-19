@@ -50,6 +50,6 @@ public class VocEntityInfo implements Serializable{
 	
 	private final String theClassname ;
 	private final String theComment ;
-	private final ArrayList<VocEntityPropertyInfo> theProps  = new ArrayList<VocEntityPropertyInfo>(5) ;
+	private final ArrayList<VocEntityPropertyInfo> theProps  = new ArrayList<>(5) ;
 	private final int theCount ;
 }

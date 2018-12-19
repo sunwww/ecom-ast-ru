@@ -1,23 +1,21 @@
 package ru.ecom.address.ejb.service;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.address.ejb.domain.kladr.Kladr;
 import ru.ecom.address.ejb.domain.kladr.KladrDoma;
 import ru.ecom.ejb.services.util.QueryResultUtil;
 import ru.nuzmsh.util.StringUtil;
 
+import javax.persistence.EntityManager;
+import java.util.HashMap;
+import java.util.List;
+
 public class AstrkhanReginHelper {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(AstrkhanReginHelper.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public AstrkhanReginHelper() {
 		// заполнение ОКАТО
@@ -86,8 +84,7 @@ public class AstrkhanReginHelper {
 		return key!=null ? theNameHash.get(key) : key ;
 	}	
 	public String getOmcRayonNameKey(Address aAddress, String aHouse, EntityManager aManager) {
-		String key = getOmcRayon(aAddress, aHouse, aManager);
-		return key ;
+		return getOmcRayon(aAddress, aHouse, aManager);
 	}	
 	
 	private String findBySoato(Address address, EntityManager aManager) {
@@ -178,8 +175,8 @@ public class AstrkhanReginHelper {
 		}
 	}
 
-	private final HashMap<String, String> theOkatoHash = new HashMap<String, String>(); 
-	private final HashMap<String, String> theKladrHash = new HashMap<String, String>(); 
-	private final HashMap<String, String> theNameHash = new HashMap<String, String>();
+	private final HashMap<String, String> theOkatoHash = new HashMap<>();
+	private final HashMap<String, String> theKladrHash = new HashMap<>();
+	private final HashMap<String, String> theNameHash = new HashMap<>();
 	private final AddressPointCheckHelper thePointHelper = new AddressPointCheckHelper() ;
 }

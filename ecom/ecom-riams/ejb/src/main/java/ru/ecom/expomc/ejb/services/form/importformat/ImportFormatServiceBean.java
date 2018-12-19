@@ -12,7 +12,6 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.util.EntityNameUtil;
@@ -1844,10 +1843,11 @@ public class ImportFormatServiceBean implements IImportFormatService {
             Object retv = aOutClass.cast(aValue);
             //LOG.info("CONVTO:"+retv);
             return retv;
-
-    } else {
-        return PropertyUtil.convertValue(aInClass, aOutClass, aValue) ;
-    }
+        } else if (aInClass.equals(String.class) && aOutClass.equals(Boolean.class) && ("1".equals(aValue) || "0".equals(aValue))) { //- 1 = true ; 0 = false
+            return "1".equals(aValue);
+        } else {
+            return PropertyUtil.convertValue(aInClass, aOutClass, aValue) ;
+        }
     }
 
 
@@ -1875,7 +1875,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
     private boolean theDebug = false;
 
 
-    private @EJB  IJbossGetFileLocalService theJbossGetFileLocalService;
+  //  private @EJB  IJbossGetFileLocalService theJbossGetFileLocalService;
 
 
 

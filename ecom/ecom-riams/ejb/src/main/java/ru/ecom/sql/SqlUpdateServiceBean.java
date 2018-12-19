@@ -4,12 +4,8 @@ import org.apache.log4j.Logger;
 import org.jboss.annotation.ejb.Service;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 
-import javax.annotation.Resource;
 import javax.ejb.Local;
-import javax.ejb.SessionContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,43 +64,40 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
         return ApplicationDataSourceHelper.getInstance().findDataSource();
     }
 
-    private String select(String sql) throws NamingException, SQLException {
+    private String select(String sql) throws NamingException {
 
         DataSource ds =findDataSource();
-        Connection connection = ds.getConnection();
-        Statement statement = connection.createStatement();
         String result="0";
-        try {
+        try (Connection connection = ds.getConnection();
+             Statement statement = connection.createStatement()) {
             if(CAN_DEBUG) LOG.info("try select query>>>"+sql);
             ResultSet resultSet = statement.executeQuery(sql);
-
+            int columnCount = resultSet.getMetaData().getColumnCount();
             while (resultSet.next()) {
-                for (int j = 1; j <= resultSet.getMetaData().getColumnCount(); j++) {
+                for (int j = 1; j <= columnCount; j++) {
                     result=resultSet.getString(j);
                 }
             }
-            statement.close();
-            connection.close();
-        }catch (Exception e){e.printStackTrace();}
+        } catch (Exception e){
+            e.printStackTrace();
+            LOG.error(e);
+        }
         return result;
     }
 
-    private void execute(String sql) throws NamingException, SQLException {
-
+    private void execute(String sql) throws NamingException {
         DataSource ds =findDataSource();
-        Connection connection = ds.getConnection();
-        Statement statement = connection.createStatement();
-        try {
+        try (Connection connection = ds.getConnection();
+             Statement statement = connection.createStatement()) {
             if(CAN_DEBUG)  LOG.info("try execute query>>>"+sql);
             statement.executeUpdate(sql);
-            statement.close();
-            connection.close();
-        }catch (Exception e){e.printStackTrace();}
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private static List<String> getListFiles(){
-
-        List<String> fileNames = new ArrayList<String>();
+        List<String> fileNames = new ArrayList<>();
         try {
             CodeSource src = SqlUpdateServiceBean.class.getProtectionDomain().getCodeSource();
             if (src != null) {
@@ -122,7 +115,7 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
                     }
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return fileNames;
@@ -132,10 +125,6 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
-
-
-    @PersistenceContext
-    EntityManager theManager ;
-    @Resource
-    SessionContext theContext ;
+  //  @PersistenceContext     EntityManager theManager ;
+    // @Resource SessionContext theContext ;
 }

@@ -51,7 +51,7 @@ public class ProxyInjection {
             return m.invoke(theService, args);
         }
 
-        private final HashMap<Method, Method> theMethodsHash = new HashMap<Method, Method>();
+        private final HashMap<Method, Method> theMethodsHash = new HashMap<>();
         private final Object theService ;
     }
 }

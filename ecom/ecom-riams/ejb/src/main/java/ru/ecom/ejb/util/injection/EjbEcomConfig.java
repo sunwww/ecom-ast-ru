@@ -38,7 +38,7 @@ public class EjbEcomConfig {
 				in.close() ;
 			}
 		} catch (Exception e) {
-			e.printStackTrace() ;
+				LOG.error(e);
 		}
 		
 	}

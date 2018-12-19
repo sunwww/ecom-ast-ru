@@ -22,15 +22,15 @@ import java.util.*;
  */
 public class EntityVocService implements IVocContextService, IVocServiceManagement {
 
-    private final static Logger LOG = Logger.getLogger(EntityVocService.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(EntityVocService.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private enum QueryConvertType {NONE, LOWER_CASE, UPPER_CASE, FIRST_UPPER, FIRST_LAT_UPPER}
 
     public Class getEntityClass() {
     	return theEntityClass ;
     }
-    public EntityVocService(String aEntityClass, String aNames[], String aQueriedFields[]
+    public EntityVocService(String aEntityClass, String[] aNames, String[] aQueriedFields
         , String aParent, String aQueryAppend, String aConvertType) throws ClassNotFoundException {
 //        theEntityClassName = aEntityClass;
         theNames = aNames;
@@ -155,8 +155,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
                 sb.append(theParentField).append('=').append(aAdditional.getParentId()) ;
             }
             sb.append(" order by id") ;
-            if (CAN_DEBUG)
-				LOG.debug("findVocValueByQuery: query = " + sb);
+            if (CAN_DEBUG) LOG.debug("findVocValueByQuery: query = " + sb);
 
             Query query  = aContext.getEntityManager().createQuery
                     (sb.toString())
@@ -198,18 +197,16 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
 
         }
         sb.append(" order by id desc") ;
-        if (CAN_DEBUG)
-			LOG.debug("findVocValuePrevious: query = " + sb);
+        if (CAN_DEBUG) LOG.debug("findVocValuePrevious: query = " + sb);
         Query query = aContext.getEntityManager().createQuery(sb.toString()) ;
         if(id!=null) {
             query.setParameter("id", id) ;
-            if (CAN_DEBUG)
-				LOG.debug("findVocValuePrevious: id = " + id);
+            if (CAN_DEBUG) LOG.debug("findVocValuePrevious: id = " + id);
 
         }
         List list = query.setMaxResults(aCount).getResultList();
         Collection<VocValue> values = createValues(list) ;
-        ArrayList<VocValue> ret = new ArrayList<VocValue>();
+        ArrayList<VocValue> ret = new ArrayList<>();
         for (VocValue value : values) {
             ret.add(0, value);
         }
@@ -219,7 +216,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     public Collection<VocValue> findVocValueNext(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
         // уще не установлен родитель
         if(theParentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
-            return new LinkedList<VocValue>() ;
+            return new LinkedList<>() ;
         }
         StringBuilder sb = new StringBuilder();
         sb.append("from ").append(theEntityName) ;
@@ -258,7 +255,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
 
 
     private Collection<VocValue> createValues(List aEntities)  {
-        LinkedList<VocValue> values = new LinkedList<VocValue>();
+        LinkedList<VocValue> values = new LinkedList<>();
         if(aEntities!=null && !aEntities.isEmpty()) {
             for (Object entity : aEntities) {
                 values.add(createVocValue(entity)) ;
@@ -293,7 +290,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     }
 
     public Map<String,String> enrusCreate() {
-    	Map <String,String> map = new HashMap<String, String>();
+    	Map <String,String> map = new HashMap<>();
     	map.put("Й", "Q" ) ;
     	map.put("Ц", "W" ) ;
     	map.put("У","E"  ) ;

@@ -40,10 +40,10 @@ import java.util.Map.Entry;
  * @author esinev Date: 16.08.2006 Time: 10:32:01
  */
 public class AbstractFormServiceBeanHelper implements IFormService {
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(AbstractFormServiceBeanHelper.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	void checkDynamicPermission(Class aFormClass, Object aId,
 			String aPolicyAction) {
@@ -319,7 +319,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 	    return false ;
 	}
 
-	private void createManyToManyOneProperty(IEntityForm aForm, Object aEntity, Object aId) throws Exception, IllegalAccessException {
+	private void createManyToManyOneProperty(IEntityForm aForm, Object aEntity, Object aId) throws Exception {
 		Class clazz = aForm.getClass() ;
 	    Method[] methods = clazz.getMethods() ;
 	    for(Method method : methods) {
@@ -357,11 +357,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 				if (isDeleted!=null&&isDeleted) {
 					throw new IllegalArgumentException("Этот объект был удален");
 				}
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+			} catch (NoSuchMethodException |InvocationTargetException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
@@ -800,7 +796,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 			//JSONArray ar = obj.getJSONArray("childs");
 			// Class entityClass = aEntity.getClass() ;
 			// ashMap<Object, Object> map = new HashMap<Object, Object>();
-			Set<Object> set = new HashSet<Object>();
+			Set<Object> set = new HashSet<>();
 			for (int i = 0; i < ar.length(); i++) {
 				JSONObject child = (JSONObject) ar.get(i);
 				String jsonId = String.valueOf(child.get("value"));
@@ -892,7 +888,7 @@ public  void checkIsObjectDeleted(Object aEntity) throws IllegalArgumentExceptio
 	
     protected Collection<IEntityForm> convertToMapFormCollection(String aClassName, Collection<IEntityForm> aList) {
     	try {
-	    	ArrayList<IEntityForm> ret = new ArrayList<IEntityForm>() ;
+	    	ArrayList<IEntityForm> ret = new ArrayList<>() ;
 	    	int ind = 1 ;
 	    	for(IEntityForm form : aList) {
 	    		MapEntityForm mapForm = new MapEntityForm() ;

@@ -27,7 +27,7 @@ public class PersistenceXmlVocLoader {
     			) ;
     			String name = clazz.getSimpleName() ;
     			name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-    			LOG.info("Registering "+name);
+    			LOG.debug("Registering "+name);
     			aHash.put(name, voc) ;
     		}
     	}

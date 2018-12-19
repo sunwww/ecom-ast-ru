@@ -71,7 +71,7 @@ public class XmlVocValueLoader {
             throw new IllegalArgumentException("Нет атрибута id");
         }
         String type = aElement.getAttributeValue("type");
-        LOG.info(new StringBuilder().append(" Registering ").append(key).append(fixedCharString(key)).append(" (").append(type).append(")...").toString());
+        LOG.debug(" Registering "+key+fixedCharString(key)+" ("+type+")...");
         if ("AllValueHelper".equals(type)) {
             Element iAllValueElement = aElement.getChild("IAllValue");
             if (iAllValueElement == null) throw new IllegalStateException("Нет элемента IAllValue у справочника " + key);
@@ -177,7 +177,7 @@ public class XmlVocValueLoader {
     
     private static void put(Map<String, IVocContextService> aHash, String aKey, IVocContextService aService) {
     	if(aHash.containsKey(aKey)) {
-    		LOG.info("OVERRIDE "+aKey) ;
+    		LOG.debug("OVERRIDE "+aKey); ;
     	}
     	aHash.put(aKey, aService);
     }
