@@ -46,9 +46,7 @@ public class AddressSync implements ISync {
         	LOG.info("===Импорт кладров завершен");
         	break;
         }
-      //  System.out.println("=== Импорт в процессе, размер = "+kladrs.size());
         for (Object kl: kladrs) {
-      //  	System.out.println("=== All is OK"+kl);
         	Long klId = Long.valueOf(""+kl);
         	id = klId;
             Kladr kladr = theEntityManager.find(Kladr.class, klId);
@@ -125,7 +123,6 @@ public class AddressSync implements ISync {
 
     @SuppressWarnings("unchecked")
 	private Address findAddressByKladr(String aKladrCode) {
-//        System.out.println("aKladrCode = " + aKladrCode);
         List<Address> list = theEntityManager.createQuery("from Address where kladr = :kladr")
                 .setParameter("kladr", aKladrCode).getResultList();
         return list != null && !list.isEmpty() ? list.iterator().next() : null;

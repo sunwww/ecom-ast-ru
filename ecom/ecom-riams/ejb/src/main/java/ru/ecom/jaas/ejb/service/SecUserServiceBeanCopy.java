@@ -1,35 +1,22 @@
 package ru.ecom.jaas.ejb.service;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jboss.mx.util.MBeanServerLocator;
-
 import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.jaas.ejb.form.SecRoleForm;
 
+import javax.management.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+
 //@Stateless
 //@Remote(ISecUserService.class )
+@Deprecated
 public class SecUserServiceBeanCopy   {
 
 	    public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
@@ -66,7 +53,6 @@ public class SecUserServiceBeanCopy   {
 
 	    public void exportRolesProperties(String aFilename) throws IOException {
 	        PrintWriter out = new PrintWriter(new FileWriter(aFilename));
-	        System.out.println("---Begin") ;
 	        Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
 	        try {
 	            List<SecUser> users = theManager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
@@ -92,7 +78,6 @@ public class SecUserServiceBeanCopy   {
 	        } finally {
 	            out.close() ;
 	        }
-	        System.out.println("---End") ;
 	    }
 	    private String getRolesByUser(Long aUserId) {
 	    	StringBuilder sql = new StringBuilder() ;
@@ -124,9 +109,7 @@ public class SecUserServiceBeanCopy   {
 	        	}
 	        	/*
 	        	for (Object obj:list) {
-	        		System.out.println("children="+obj) ;
 	        		if (obj!=null && !aRoles.contains(obj)) {
-	        			System.out.print(" adding") ;
 	        			aRoles.add(obj) ;
 	        			children=true ;
 	        		}

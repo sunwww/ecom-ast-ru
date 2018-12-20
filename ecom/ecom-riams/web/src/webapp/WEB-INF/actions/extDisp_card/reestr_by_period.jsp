@@ -312,10 +312,7 @@ order by p.lastname,p.firstname,p.middlename
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
     checkFieldUpdate('typePaid','${typePaid}',1) ;
- //   checkFieldUpdate('typeDtype','${typeDtype}',3) ;
-  //  checkFieldUpdate('typeDate','${typeDate}',2) ;
-   var sqlAdd = ""; 
-  
+
    function createSqlField (aField, aSqlField) {
 	   if ($(aField)) {
 		   if ($(aField).value!=null&&$(aField).value!='') {
@@ -333,104 +330,7 @@ order by p.lastname,p.firstname,p.middlename
 		  $('formOrphDiv').style.display='block';
 	  }
   }  
-  function test() {
-	  alert ($('expZOJRecommend').value);
-  }
-  function showExpHelp() {
-	  alert ("Выгружаются карты детей, которым на дату осмотра педиатра не исполнилось 18 лет. Выгружаются все исследования, в которых указана дат осмотра\n"
-			  +"Если у ребенка не указан RZ, тип документа (также если тип документа НЕ паспорт или НЕ св-во о рождении), нет актуального полиса ОМС, карта выгружена не будет.\n"
-			  +"Поле \"Группа для занятий физ. культурой\" - обязательное\nРезультат анализов - как пример \"Без патологий\"");
-  }
-  function prepareForm30() {
-	  sqlAdd="";
-	  sqlAdd += createSqlField ('workFunction', 'edc.workfunction_id');
-	  sqlAdd += createSqlField ('dispType', 'edc.dispType_id');
-	  sqlAdd += createSqlField ('ageGroup', 'edc.ageGroup_id');
-	  sqlAdd += createSqlField ('healthGroup', 'edc.healthGroup_id');
-	  
-	  $('exportTable').style.display = 'none' ;
-	 if ($('createFrom').value!=null&&$('createFrom').value!='') {
-		 if ($('createTo').value!=null&&$('createTo').value!='') {
-			 sqlAdd += " and edc.createdate between to_date('"+$('createFrom').value+ "','dd.MM.yyyy')"+
-			 " and to_date('"+$('createTo').value+"','dd.MM.yyyy')";
-		 } else {
-			 sqlAdd +=" and edc.createdate >= to_date('"+$('createFrom').value+"','dd.MM.yyyy')"
-		 }
-	 }
-	  for (var i=0; i<document.getElementsByName("typeExport").length;i++) {
-		  if (document.getElementsByName("typeExport")[i].checked){
-			  if (document.getElementsByName("typeExport")[i].value=="2") {
-				  sqlAdd+=" and edc.exportDate is null ";
-			  }  
-		  }		
-	  }
-	  for (var i=0; i<document.getElementsByName("expDispAge").length;i++) {
-		  if (document.getElementsByName("expDispAge")[i].checked){
-			  if (document.getElementsByName("expDispAge")[i].value=="2") {
-				  sqlAdd+=" and vedag.code not like '%.%' ";
-			  }  
-		  }		
-	  }
-	  var dispType="";
-	  for (var i=0;i< document.getElementsByName("expDispType").length;i++) {
-		  if (document.getElementsByName("expDispType")[i].checked) {
-			  if (document.getElementsByName("expDispType")[i].value=="1") dispType+="'4',";
-			  if (document.getElementsByName("expDispType")[i].value=="2") dispType+="'5',";
-			  if (document.getElementsByName("expDispType")[i].value=="3") dispType+="'6',";
-		  }
-	  }
-	  if (dispType=="") {
-		  alert ("Укажите дип диспансеризации!");
-		  return;
-	  }
-	  
-	  
-	  sqlAdd +=" and vedsg.code in ("+dispType.substring(0,dispType.length-1)+") ";
-	  createForm30();
-  }
-  
-  function createForm30() {
-  	if ($('beginDate').value=='' || $('finishDate').value=='') {
-    	alert ("Заполните дату начала и окончания!!") ;
-    	return;
-    }
-	 	$('aView').innerHTML="Подождите...";
-     ExtDispService.exportOrph($('beginDate').value, $('finishDate').value,"mis_",sqlAdd, 
-    		$('expFizGroup').value,$('expHeight').value,$('expWeight').value,
-    		$('expHeadsize').value,$('expResearchText').value,$('expZOJRecommend').value,$('expRecommend').value!=""?$('expRecommend').value:"_",$('expDivideNum').value,$('lpu').value, {
-    	callback: function(aResult) {
-    		
-    	 	if (aResult==null)$('aView').innerHTML="Ошибка, обратитесь к разработчикам" ;
-    		else {
-    			var aData = aResult.split("@");
-    			$('aView').innerHTML="<a href='../rtf/"+aData[0]+"''>"+aData[0]+"</a>" ;
-    			if (aData[1]!="" && aData[1]!="null" && aData[1]!=null) {
-    				$('exportTable').style.display = 'block' ;
-	    			aData[1] = aData[1].substring(0,aData[1].length-1);
-	    			var rows = aData[1].split("#");
-	    			flushTable();
-	    			for (var i=0;i<rows.length;i++) {
-	    				addRow (rows[i]);
-	    			}
-    			}
-    		}
-    	}
-    });	 
- 
-	
-    }
-  
-  function flushTable() {
-	  var table = document.getElementById("exportElements");
-	  var aRows = table.childNodes;
-	  if (aRows.length>1) {
-		  var j=aRows.length;
-		  for (var i=1;i<j;i++) {
-			  table.deleteRow(0);
-		  }
-	  }
-	  
-  }
+
   var firstRow=1;
   function addRow (aRow) {
 	  var aData = aRow.split(":"); // ID:fullname:Diagnosis:Comment 

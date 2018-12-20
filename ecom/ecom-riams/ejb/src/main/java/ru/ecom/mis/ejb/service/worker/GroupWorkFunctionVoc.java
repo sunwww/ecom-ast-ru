@@ -1,9 +1,6 @@
 package ru.ecom.mis.ejb.service.worker;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
+import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.mis.ejb.domain.worker.GroupWorkFunction;
@@ -12,7 +9,13 @@ import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 public class GroupWorkFunctionVoc implements IAllValue {
+	private static final Logger LOG = Logger.getLogger(GroupWorkFunctionVoc.class);
+
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
     	String ret = null;
         if (aId != null) {
@@ -29,22 +32,19 @@ public class GroupWorkFunctionVoc implements IAllValue {
 	}
 	@SuppressWarnings("unchecked")
 	public Collection<VocValue> listAll(AllValueContext aContext) {
-		LinkedList<VocValue> ret = new LinkedList<VocValue>() ;
+		LinkedList<VocValue> ret = new LinkedList<>() ;
 		StringBuilder sql = new StringBuilder();
-		
 
-		
 		if (aContext.getVocAdditional()==null || aContext.getVocAdditional()!=null && aContext.getVocAdditional().getParentId()==null) {
-			//System.out.println("parent lpuAndDate="+aContext.getVocAdditional().getParentId()) ;
 			sql.append("from GroupWorkFunction");
 			
-			List<GroupWorkFunction> groups = null ;
+			List<GroupWorkFunction> groups ;
 			try{
 				 groups = aContext.getEntityManager()
 					.createQuery(sql.toString())
 					.getResultList() ;
 			} catch (Exception e) {
-				System.out.println("Error sql:="+e.getMessage()) ;
+				LOG.error("Error sql:="+e.getMessage(),e);
 				return ret ;
 			}
 			for(GroupWorkFunction group : groups) {
@@ -52,10 +52,9 @@ public class GroupWorkFunctionVoc implements IAllValue {
 					 add(ret, group) ;
 				 } catch (IllegalStateException e) {
 				 	e.printStackTrace();
-					 System.out.println(e.getMessage()) ;
+					 LOG.error(e.getMessage(),e);
 				 }
 			}
-			////////////////?????????????????????/
 		}
 		
 		
@@ -64,7 +63,7 @@ public class GroupWorkFunctionVoc implements IAllValue {
 			Long workerId ;
 			Long function ;
 			try {
-				int ind1 = parent.indexOf("#");
+				int ind1 = parent.indexOf("'#'");
 				//int ind3 = parent.indexOf(":",ind2) ;
 				if (ind1<1) throw new IllegalArgumentException("") ;
 				if (ind1==parent.length()) throw new IllegalArgumentException("") ;
@@ -86,14 +85,14 @@ public class GroupWorkFunctionVoc implements IAllValue {
 					.getResultList() ;
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("Error sql:="+e.getMessage()) ;
+				LOG.error("Error sql:="+e.getMessage(),e);
 				return ret ;
 			}
 			for(GroupWorkFunction group : groups) {
 				 try {
 					 add(ret, group) ;
 				 } catch (IllegalStateException e) {
-					 System.out.println(e.getMessage()) ;
+					 LOG.error("Error sql:="+e.getMessage(),e);
 				 }
 			}
 		}

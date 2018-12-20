@@ -1,15 +1,15 @@
 package ru.ecom.mis.ejb.uc.privilege.service;
 
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-
 import jxl.Sheet;
 import jxl.Workbook;
 import ru.ecom.mis.ejb.uc.privilege.service.cellfunctions.SplitFunction;
 import ru.ecom.mis.ejb.uc.privilege.service.rowwriter.CountRowWriter;
 import ru.ecom.mis.ejb.uc.privilege.service.rowwriter.DbfRowWriter;
 import ru.nuzmsh.util.StringUtil;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 public class RecipeServiceBean {
 
@@ -18,23 +18,19 @@ public class RecipeServiceBean {
 			Workbook workbook = Workbook.getWorkbook(aExcelFile);
 			Sheet sheet = workbook.getSheet(0);
 			int rowsCount = sheet.getRows();
-			LinkedList<String> group = new LinkedList<String>() ;
-			LinkedList<String> detail = new LinkedList<String>() ;
+			LinkedList<String> group = new LinkedList<>() ;
+			LinkedList<String> detail = new LinkedList<>() ;
 			for(int row=0;row<rowsCount;row++) {
 				if(isMatched(row, sheet, aConfig.getGroupColumns())) {
 					group.clear() ;
 					addMapping(row, sheet, group, aConfig.getGroupColumns());
-					//System.out.println(group) ;
 					continue ;
 				}
 				
 				boolean detailOk = isMatched(row, sheet, aConfig.getDetailsColumns()) ;
-//				System.out.println("detail ok = "+detailOk) ;
-//				System.out.println("  cols = "+aConfig.getDetailsColumns());
 				if(!group.isEmpty() && detailOk) {
 					addMapping(row, sheet, detail, aConfig.getDetailsColumns());
 					append(detail, group) ;
-					//System.out.println("   "+detail) ;
 					aRowWriter.write(detail);
 					detail.clear() ;
 				}
@@ -127,8 +123,7 @@ public class RecipeServiceBean {
 		CountRowWriter countRow = new CountRowWriter() ;
 		RecipeServiceBean service = new RecipeServiceBean() ;
 		service.convertExcelToDbf(c, file, countRow) ;
-	//	System.out.println("count = "+countRow.getCount());
-		
+
 		LinkedList<ColumnMapping> all = new LinkedList<ColumnMapping>() ;
 		service.append(all, c.getDetailsColumns()) ;
 		service.append(all, c.getGroupColumns()) ;

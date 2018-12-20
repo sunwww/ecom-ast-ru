@@ -1,15 +1,15 @@
 package ru.ecom.mis.ejb.form.contract.interceptor;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.mis.ejb.domain.contract.MedContract;
 import ru.ecom.mis.ejb.form.contract.MedContractForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class MedContractPreCreateInterceptor implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
@@ -34,7 +34,6 @@ public class MedContractPreCreateInterceptor implements IParentFormInterceptor {
         			Object[] objs = list.get(0) ;
         			addDog = ""+objs[0] ;
         			addDog = addDog.replaceFirst(parent.getContractNumber()+".", "") ;
-        			//System.out.println("----->"+addDog) ;
         			addDog = "."+((Integer.valueOf(addDog)+1)) ;
         		}
         		

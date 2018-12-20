@@ -1,15 +1,15 @@
 package ru.ecom.mis.web.dwr.extdisp;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.extdisp.IExtDispService;
 import ru.ecom.mis.ejb.service.extdispplan.IExtDispPlanService;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -23,17 +23,11 @@ public class ExtDispServiceJs {
     }
 
 	public int fillDispPlanByPersons(String aPersonJson, Long aPlanId, HttpServletRequest aRequest) throws NamingException {
-		try {
-			JSONArray arr = new JSONArray(aPersonJson);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 		return Injection.find(aRequest).getService(IExtDispPlanService.class).fillExtDispPlanByPersons(aPersonJson,aPlanId);
 	}
 
 
 	public String findPerson(Long aLpuId, Long aAreaId, Long aSexId, String aPatientInfo, String aYears, Integer aLimit, String aTypeSort, HttpServletRequest aRequest) throws NamingException {
-	//	System.out.println("Long aLimit = >"+aLimit+"<");
 		StringBuilder sql = new StringBuilder();
 		boolean firstWhere = true;
 		sql.append("select pat.id, pat.patientinfo, la.number||' '||vat.name from");
@@ -99,7 +93,7 @@ public class ExtDispServiceJs {
 	}
 	
 	
-	public String DispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException, ParseException {
+	public String dispCardNotReal(Long dispCardId, HttpServletRequest aRequest) throws NamingException {
 		if(dispCardId==null||dispCardId.equals(Long.valueOf(0))){
 			return "1";
 		}
@@ -110,8 +104,7 @@ public class ExtDispServiceJs {
 		}
 	}
 	
-	public String checkDisableAgeDoubles (Long aDispCardId, Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest)throws NamingException 
-	{
+	public String checkDisableAgeDoubles (Long aDispCardId, Long aDisptypeId, Long aPatientId, Long aAgeGroup, HttpServletRequest aRequest) throws NamingException {
 		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		 Long haveDis = Long.valueOf(service.executeNativeSql("select count(edc.id) " +
 		 		" from extdispcard edc " +
@@ -139,7 +132,7 @@ public class ExtDispServiceJs {
 		}
 		String res = "";
 		
-		if (aDispCardId!=null&& !aDispCardId.equals(Long.valueOf(0))){
+		if (aDispCardId!=null && aDispCardId!=0){
 			if (isInDispPeriod(aDate, aDispCardId, aRequest)) {res = "1Дата услуги ("+aDate+") выходит за период диспансеризации";}
 			if (isAfterDispPeriod(aDate, aDispCardId, aRequest)) {res = "2Услуга оказана позже окончания диспансеризации";}
 		} else {
@@ -152,8 +145,6 @@ public class ExtDispServiceJs {
 			if (existDoublesVisit(aDate, aPatientId, aWorkFunctionId, aRequest)) {res = "2У пациента есть посещение к данному специалисту за указанную дату ("+aDate+")";}
 		}
 		if (existDoublesStac (aDate, aPatientId, aRequest)) {res="2Пациент находился в стационаре на эту дату ("+aDate+")";}
-		
-		// System.out.println("Res = "+res);
 		return res;
 	}
 	
@@ -171,7 +162,6 @@ public class ExtDispServiceJs {
 				aPatientId = Long.valueOf(wqr.iterator().next().get1().toString());
 				return isMedPolicyExists(aPatientId, aDate, aRequest);
 			}
-			
 		}
 		return false;
 	}
@@ -183,83 +173,51 @@ public class ExtDispServiceJs {
 	
 	public boolean isAfterDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = false;
 		String str = "select count(edc.id) from extdispcard edc" +
 				" where edc.id=" +aDispCardId+
 				" and to_date('"+aDate+"','dd.MM.yyyy') > edc.finishdate";
-		//	System.out.println("isInDispPeriod = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = true;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
 	public boolean isInDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = true;
 		String str = "select count(edc.id) from extdispcard edc" +
 				" where edc.id=" +aDispCardId+
 				" and to_date('"+aDate+"','dd.MM.yyyy') between edc.startdate and edc.finishdate";
-	//	System.out.println("isInDispPeriod = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = false;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
 	public boolean existDoublesStac(String aDate, Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = false;
 		String str = "select count(sls.id) from medcase sls" +
 				" where (sls.dtype='HospitalMedCase') and sls.patient_id=" +aPatientId+
 				" and (to_date('"+aDate+"','dd.MM.yyyy') between sls.datestart and sls.datefinish or (to_date('"+aDate+"','dd.MM.yyyy')>=sls.datestart and sls.datefinish is null and sls.deniedhospitalizating_id is null))";
-	//	System.out.println("existDoublesStac = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-			//if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = true;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
 	
 	public boolean existDoublesVisit(String aDate, Long aPatientId, Long aWorkFunctionId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		boolean ret = false;
 		String str = "select count(mc.id) from medcase mc" +
 				" where (mc.dtype='ShortMedCase' or mc.dtype='Visit') and mc.patient_id=" +aPatientId+
 				" and mc.workfunctionexecute_id="+aWorkFunctionId+
 				" and mc.datestart=to_date('"+aDate+"','dd.MM.yyyy')";
-	//	System.out.println("existDoublesVisit = "+str);
 		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		if (!wqr.isEmpty()) {
-		//	if(Long.valueOf(wqr.iterator().next().get1().toString())>0) {
-			if(Long.parseLong(wqr.iterator().next().get1().toString())>0) {
-				ret = true;
-			}
-		}
-		return ret;		
+		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
 	}
 	
 	public String setOrphCodes(HttpServletRequest aRequest) throws NamingException {
-		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
-		return service.setOrphCodes();
+		return Injection.find(aRequest).getService(IExtDispService.class).setOrphCodes();
 	}
+
 	public String exportOrph(String aStartDate, String aFinishDate,
-			String aFileNameSuffix, String aSqlAdd, String aFizGroup, String aHeight,
-			String aWeight, String aHeadSize, String aAnalysesText,
-			String aZOJReccomend, String aReccomend, String aDivideNum, String aLpu, HttpServletRequest aRequest) throws NamingException, ParseException {
+			String aFileNameSuffix, String aSqlAdd, int aFizGroup, int aHeight,
+			int aWeight, int aHeadSize, String aAnalysesText,
+			String aZOJReccomend, String aReccomend, int aDivideNum, Long aLpu, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IExtDispService service = Injection.find(aRequest).getService(IExtDispService.class) ;
-		return service.exportOrph(aStartDate, aFinishDate,
-				aFileNameSuffix, aSqlAdd, aFizGroup, aHeight,
-				aWeight, aHeadSize, aAnalysesText,
-				aZOJReccomend, aReccomend, aDivideNum, aLpu);
+		Date startDate = DateFormat.parseSqlDate(aStartDate);
+		Date finishDate = DateFormat.parseSqlDate(aFinishDate);
+		return service.exportOrph(startDate, finishDate,aFileNameSuffix, aSqlAdd, aFizGroup, aHeight,
+				aWeight, aHeadSize, aAnalysesText,aZOJReccomend, aReccomend, aDivideNum, aLpu);
 	}
 }

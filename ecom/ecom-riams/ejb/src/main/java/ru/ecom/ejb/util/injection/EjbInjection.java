@@ -44,7 +44,6 @@ public class EjbInjection {
 				//String appName = theConfig.get("default.appname","riams-app");
 				
 				String jndi = theAppname + "/" + name + "Bean/"+aSuffix ;
-				//System.out.println("jndi = "+jndi) ;
 				return ctx.lookup(jndi);
 			} finally {
 				ctx.close();

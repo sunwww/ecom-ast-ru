@@ -1,6 +1,7 @@
 package ru.ecom.ejb.services.query;
 
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +24,7 @@ import java.util.List;
 @Stateless
 @Remote(IWebQueryService.class)
 public class WebQueryServiceBean implements IWebQueryService {
+	private static final Logger LOG = Logger.getLogger(WebQueryServiceBean.class);
 	/** Возвращаем json массив с результатом запроса
 	 * aQuery - sql запрос
 	 * limit - максимальное количество записей для нахождения
@@ -118,7 +120,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 			}
 			return ret.toString();
 		} catch (JSONException e) {
-			System.out.println("Ошибка executeNativeSqlGetJSON "+e);
+			LOG.error("Ошибка executeNativeSqlGetJSON "+e);
 			e.printStackTrace();
 		}
 		return null;
@@ -137,11 +139,6 @@ public class WebQueryServiceBean implements IWebQueryService {
 	}
 	@SuppressWarnings("unchecked")
 	public Collection<WebQueryResult> executeQuery(Query aQuery,Integer aMaxResult) {
-		/*try {
-			System.out.println("jndi---="+getDataSourceFromPersistenceXml()) ;
-		}catch(Exception e) {
-			e.printStackTrace() ;
-		}*/
 		List<Object> list ;
 		if (aMaxResult!=null) {
 			list= aQuery.setMaxResults(aMaxResult).getResultList() ;

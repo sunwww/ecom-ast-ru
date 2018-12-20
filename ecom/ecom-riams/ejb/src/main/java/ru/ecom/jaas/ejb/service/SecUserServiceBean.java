@@ -1,33 +1,7 @@
 package ru.ecom.jaas.ejb.service;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
-import javax.ejb.Remote;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.apache.log4j.Logger;
 import org.jboss.mx.util.MBeanServerLocator;
-
 import ru.ecom.ejb.services.entityform.PersistList;
 import ru.ecom.ejb.services.live.domain.journal.ChangeJournal;
 import ru.ecom.jaas.ejb.domain.SecPolicy;
@@ -35,17 +9,32 @@ import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.ecom.jaas.ejb.form.SecRoleForm;
 
+import javax.annotation.Resource;
+import javax.ejb.Remote;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.management.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  */
 @Stateless
 @Remote(ISecUserService.class )
 public class SecUserServiceBean implements ISecUserService {
+	private static final Logger LOG = Logger.getLogger(SecUserServiceBean.class);
 
 	private void exportPropertiesOtherServer(String aFilename) {
 		try {
 		String sb = "/home/scripts/upd_props.sh "+aFilename;
-		System.out.println("==== exportPropertiesOtherServer sb="+sb);
+		LOG.info("==== exportPropertiesOtherServer sb="+sb);
 		Runtime.getRuntime().exec(sb);
 		} catch (Exception e) {
 		//	e.printStackTrace();
@@ -53,79 +42,72 @@ public class SecUserServiceBean implements ISecUserService {
 	}
 	
 	public String setDefaultPassword(String aNewPassword, String aUsername, String aUsernameChange) throws IOException {
-		String hashPassword = null;
+		String hashPassword = getHashPassword(aUsername, aNewPassword);
 		
-		hashPassword = getHashPassword(aUsername, aNewPassword);
 		if (hashPassword==null) {
 			return "0Хеш не получился";
 		}
-		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', editDate=current_date,editTime=current_time,editUsername='"+aUsernameChange+"', changePasswordAtLogin='1' where login = '"+aUsername+"'").executeUpdate();
+		theManager.createNativeQuery("update secuser set password =:password, editDate=current_date,editTime=current_time,editUsername=:editUsername, changePasswordAtLogin='1' where login = :login")
+				.setParameter("editUsername",aUsernameChange).setParameter("password",hashPassword).setParameter("login",aUsername)
+				.executeUpdate();
 		exportUsersProperties();
 		return "1Пароль успешно обновлен";
 	}
 	public String changePassword(String aNewPassword, String aOldPassword, String aUsername) throws IOException {
-		String regexp = null;
-		String hashPassword = null;
+
 		if (aOldPassword.equals(aNewPassword)){
 			return "0Новый пароль ничем не отличается от старого";
 		}
 		String oldHash = getHashPassword(aUsername, aOldPassword);
-		List<Object> lo  = theManager.createNativeQuery("select id from secuser where login = '"+aUsername+"' and password = '"+oldHash+"'").getResultList();
+		List<Object> lo  = theManager.createNativeQuery("select id from secuser where login =:username and password = :password")
+				.setParameter("username",aUsername).setParameter("password",oldHash)
+				.getResultList();
 		if (lo.isEmpty()) {
 			return "0Старый пароль указан неверно";
 		}
 		String isGood = ""+lo.get(0).toString();
-		if (isGood==null||isGood.equals("")) {
+		if (isGood.equals("")) {
 			return "0Старый пароль указан неверно";			
 		}
 		List<Object[]> l = theManager.createNativeQuery("select sc.KeyValue, sc.description from SoftConfig sc where sc.key='PASSWORDREGEXP'").getResultList() ;
 		if (!l.isEmpty()) {
-			regexp = l.get(0)[0].toString();
-		}
-		if (regexp!=null) {
+			String regexp = l.get(0)[0].toString();
 			Pattern p = Pattern.compile(regexp);
 			Matcher m = p.matcher(aNewPassword);
 			if (!m.matches()) {
 				return "0Пароль не удоволетворяет требованиям безопасности!\n"+l.get(0)[1].toString();
 			}
 		}
-		hashPassword = getHashPassword(aUsername, aNewPassword);
-		if (hashPassword==null) {
-			return "0Хеш не получился";
-		}
-		theManager.createNativeQuery("update secuser set password ='"+hashPassword+"', passwordChangedDate=current_date, changePasswordAtLogin='0' where login = '"+aUsername+"'").executeUpdate();
+		String hashPassword  = getHashPassword(aUsername, aNewPassword);
+		theManager.createNativeQuery("update secuser set password =:hash, passwordChangedDate=current_date, changePasswordAtLogin='0' where login =:username")
+				.setParameter("username",aUsername).setParameter("hash",hashPassword)
+				.executeUpdate();
 		exportUsersProperties();
 		
 		return "1Пароль успешно обновлен";
 	}
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
-    	//System.out.println("FlushingJboss");
         MBeanServer SERVER = MBeanServerLocator.locateJBoss();
         String[] signature = {"java.lang.String"};
-        Object retVal  = SERVER.invoke(new ObjectName("jboss.security:service=JaasSecurityManager")
-        , "flushAuthenticationCache", new String[]{"other"}, signature) ;
+     	SERVER.invoke(new ObjectName("jboss.security:service=JaasSecurityManager"), "flushAuthenticationCache", new String[]{"other"}, signature) ;
 
     }
 
     public void exportUsersProperties() throws IOException {
         exportUsersProperties(Config.getConfigDir()+"/users.properties");
     }
-    private void log(Object obj) {
-    	System.out.println(obj) ;
-    }
 
     public static String getHashPassword(String aUsername, String aPassword) {
     	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
-    	//System.out.println(hash) ;
     	return new StringBuilder().append("F").append(hash).toString();
     }
     
     public void exportUsersProperties(String aFilename) throws IOException {
-        PrintWriter out = new PrintWriter(new FileWriter(aFilename));
-        try {
+
+        try (PrintWriter out = new PrintWriter(new FileWriter(aFilename))){
             List<SecUser> users = theManager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
             for (SecUser user : users) {
-            	if (user.getIsHash()==null || user.getIsHash()==false) {
+            	if (user.getIsHash()==null || !user.getIsHash()) {
             		user.setPassword(getHashPassword(user.getLogin(), user.getPassword())) ;
             		user.setIsHash(true) ;
             	}
@@ -136,17 +118,12 @@ public class SecUserServiceBean implements ISecUserService {
                 out.print("=") ;
                 out.println(user.getPassword().substring(1)) ;
             }
-        } finally {
-        	if(out!=null) out.close() ;
         }
         exportPropertiesOtherServer(aFilename);
         try {
-        	
 			fhushJboss();
 		} catch (Exception e) {
-			System.out.println("=== Jboss Flush Exception:"+e);
-			
-			// TODO Auto-generated catch block
+			LOG.error("=== Jboss Flush Exception:"+e.getMessage(),e);
 			e.printStackTrace();
 		} 
     }
@@ -155,63 +132,48 @@ public class SecUserServiceBean implements ISecUserService {
         exportRolesProperties(Config.getConfigDir()+"/roles.properties");
     }
 
-    public void exportRolesProperties(String aFilename) throws IOException {
-        PrintWriter out = new PrintWriter(new FileWriter(aFilename));
-        System.out.println("---Begin ExportRoles") ;
-        Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
-        try {
+    public void exportRolesProperties(String aFilename) {
+
+        LOG.info("---Begin ExportRoles");
+        Map<SecPolicy, String> hash = new HashMap<>() ;
+        try ( PrintWriter out = new PrintWriter(new FileWriter(aFilename))) {
             List<SecUser> users = theManager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
             for (SecUser user : users) {
                 out.print("# ") ;
                 out.println(user.getFullname()) ;
-            	//out.print("#   ") ;
-                //out.println(role.getName()) ;
                 out.print(user.getLogin()) ;
                 out.print("=") ;
-
-                //out.println("#  РОЛИ:") ;
                  //String rolesIds = getRolesByUser(user.getId()) ;
-                 //out.println("#  ids="+rolesIds) ;
-                List<Long> listRole = new ArrayList<Long>() ;
+                List<Long> listRole = new ArrayList<>() ;
                 for (SecRole role : user.getRoles()) {
                 	Long idP = role.getId() ;
                 	if (listRole.contains(idP)) {
-                		
                 	} else {
                 	//	log("Добавление..") ;
                 		listRole.add(idP) ;
                 		out.print(createPoliciesString(user,role,hash)) ;
-                		
                         for (SecRole childRole: role.getChildren()) {
                         	Long idC = childRole.getId() ;
-                      //  	log("...child="+idC) ;
                         	if (listRole.contains(idC)) {
-                        		
                         	} else {
-                      //  		log("....Добавление..") ;
                         		listRole.add(idC) ;
                         		out.print(createPoliciesString(user,childRole,hash)) ;
                         	}
                         }
-                        
                 	}
-                	
-                } 
+                }
                 out.println("PolicyAllData,PolicyServiceAll") ;
                 listRole.clear() ;
             }
         }catch(Exception e) {
-        	
-        } finally {
-        	if(out!=null) out.close() ;
+        	LOG.error(e);
         }
-        
     	//return aRoles ;
         exportPropertiesOtherServer(aFilename);
     }
 
     private String createPoliciesString(SecUser aUser, SecRole aRole, Map<SecPolicy,String> aPoliciesHash) {
-        TreeSet<String> policies = new TreeSet<String>();
+        TreeSet<String> policies = new TreeSet<>();
        // List <SecRole> roles = theManager.createQuery("from SecRole where id in ("+aRolesId+")").getResultList() ;
         //List<Object> listPolicies = theManager.createNativeQuery("select sp.id from SecPolicy as sp where sp.id in (select rp.secPolicies_id from SecRole_SecPolicy rp where rp.SecRole_id in ("+aRolesId+")) group by sp.id").getResultList() ;
         //for (SecRole role: roles) {
@@ -263,9 +225,9 @@ public class SecUserServiceBean implements ISecUserService {
     }
 
     private static Collection<SecRoleForm> convert(Collection<SecRole> aForm, boolean aIsSystemView) {
-        LinkedList<SecRoleForm> ret = new LinkedList<SecRoleForm>();
+        LinkedList<SecRoleForm> ret = new LinkedList<>();
         for (SecRole role : aForm) {
-        	if (aIsSystemView || ((!aIsSystemView) && (role.getIsSystems()==null || (role.getIsSystems()!=null&&!role.getIsSystems())))) {
+        	if (aIsSystemView || (role.getIsSystems()==null || (role.getIsSystems()!=null && !role.getIsSystems()))) {
 	            SecRoleForm form = new SecRoleForm();
 	            form.setId(role.getId());
 	            form.setName(role.getName());

@@ -169,7 +169,6 @@ public class ApiRecordServiceBean implements IApiRecordService {
         } else {
             doctorInfo=wf.getInfo();
         }
-        System.out.println("doctorInfo = "+doctorInfo);
         ret.put("recordDoctor",doctorInfo);
 
 

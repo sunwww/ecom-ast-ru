@@ -1,17 +1,15 @@
 package ru.ecom.mis.ejb.uc.privilege.form.interceptor;
 
-import java.io.StringWriter;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
-
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.EntityManager;
+import java.io.StringWriter;
+import java.util.List;
 
 public class ListPersist {
 	public static void saveArrayJson(String aTableName, Long aIdEntity, String aJson, String aFieldParent, String aFieldChildren, EntityManager aManager) {
@@ -23,12 +21,10 @@ public class ListPersist {
 				JSONObject child = (JSONObject) ar.get(i);
 				String jsonId = String.valueOf(child.get("value"));
 				if (!StringUtil.isNullOrEmpty(jsonId) || "0".equals(jsonId)) {
-				//	System.out.println("    id="+jsonId) ;
 					ids.append(",").append(jsonId) ;
 					StringBuilder sql = new StringBuilder() ;
 					sql.append("select count(*) from ").append(aTableName).append(" where ").append(aFieldParent).append("='")
 							.append(aIdEntity).append("' and ").append(aFieldChildren).append("='").append(jsonId).append("'") ;
-				//	System.out.println(sql) ;
 					Object count = aManager.createNativeQuery(sql.toString()).getSingleResult() ;
 					if (ConvertSql.parseLong(count)<1) {
 						sql = new StringBuilder() ;

@@ -1,25 +1,5 @@
 package ru.ecom.expomc.ejb.services.registry.print;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeMap;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
-
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -40,6 +20,15 @@ import ru.ecom.report.excel.ReportEngine;
 import ru.ecom.report.replace.BshValueGetter;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.*;
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Печать реестра
@@ -62,13 +51,11 @@ public class RegistryPrintServiceBean implements IRegistryPrintService {
 			sb.append(" or time=").append(aTimeDsId);
 		}
 		sb.append(" group by insuranceCompany");
-		LinkedList<String> ret = new LinkedList<String>();
-		//System.out.println("query=" + sb);
+		LinkedList<String> ret = new LinkedList<>();
 		List<String> list = theManager.createQuery(sb.toString())
 				.getResultList();
 		for (String row : list) {
 			ret.add(row);
-			//System.out.println(row);
 		}
 		return ret;
 	}

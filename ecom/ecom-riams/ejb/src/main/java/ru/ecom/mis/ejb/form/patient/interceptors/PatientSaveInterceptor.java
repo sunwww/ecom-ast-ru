@@ -6,7 +6,6 @@ import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
-import ru.ecom.mis.ejb.domain.patient.MedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.form.patient.LpuAttachedByDepartmentForm;
 import ru.ecom.mis.ejb.form.patient.MedPolicyOmcForm;
@@ -36,8 +35,7 @@ public class PatientSaveInterceptor implements IFormInterceptor {
 				try {
 					long policyId = EjbInjection.getInstance().getLocalService(IParentEntityFormService.class)
 						.create(polForm);
-					MedPolicyOmc medPolicyOmc = aContext.getEntityManager().find(MedPolicyOmc.class, policyId) ;
-					//System.out.println("medPolicyOmc="+medPolicyOmc);
+				//	MedPolicyOmc medPolicyOmc = aContext.getEntityManager().find(MedPolicyOmc.class, policyId) ;
 					//patient.setAttachedOmcPolicy(medPolicyOmc);
 					/*if(patient.getMedPolicies()!=null) {
 						patient.getMedPolicies().add(medPolicyOmc);
@@ -75,8 +73,6 @@ public class PatientSaveInterceptor implements IFormInterceptor {
 				throw new IllegalStateException(e);
 			}*/
 		//}
-		//System.out.println("save manager = "+aManager);
-		//System.out.println(" address = "+patient.getAddressInfo());
 		//if (CAN_DEBUG)
 		//	LOG.debug("intercept: form.getPolicyOmcForm().getSeries() = " + form.getPolicyOmcForm().getSeries());
 	}

@@ -240,12 +240,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 						par.append("{") ;
 						boolean isFirtMethod = false ;
 						boolean isError = false ;
-						//System.out.println("-------*-*-*errr--"+wqr.get4()+"-------*-*-*errr--"+wqr.get15()) ;
 						if (String.valueOf(objects[3]).equals("2")) {
-							//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
 							if (objects[14]==null) {
 								isError = true ;
-								//System.out.println("-------*-*-*errr--"+wqr.get1()) ;
 							}
 						}
 						try {
@@ -614,7 +611,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 * @return Номер дня пациента для исследования
 	 */
 	
-	public static String getPatientDateNumber(HashMap aLabMap, String aKey, long aPatientId, String aDate, EntityManager aManager) {
+	public static String getPatientDateNumber(Map aLabMap, String aKey, long aPatientId, String aDate, EntityManager aManager) {
 		String matId = null;
 		Map<String, String> labMap = aLabMap ;
 		if (!labMap.isEmpty()) {
@@ -729,7 +726,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	
 	public String getLabListFromTemplate(Long aIdTemplateList) {
 		PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
-		//System.out.println("======= getLabList, tmpl = "+template );
 		StringBuilder labList = new StringBuilder();
 		for (Prescription presc: template.getPrescriptions()) {
 			labList.append(getPrescriptionInfo(presc));
@@ -753,7 +749,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 		}
 		req.append("order by vpt.id ");
 		List<Object[]> list = theManager.createNativeQuery(req.toString()).getResultList() ;
-		//System.out.println("----------in getPrescriptionTypes, isBool = "+isEmergency);
 		for (Object[] o: list) {
 			res.append(o[0]).append(":").append(o[1]).append(":").append(o[2]).append("#");
 		}
@@ -768,7 +763,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	 */
 	private String getPrescriptionInfo (Prescription aPresc) {
 		StringBuilder list = new StringBuilder();
-	//	System.out.println("in getPrescriptioninfo, aPresc = "+aPresc);
 		if (aPresc instanceof DrugPrescription) {
 			try{
 			DrugPrescription presNew = (DrugPrescription) aPresc;
@@ -865,12 +859,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	//	PrescriptListTemplate template = theManager.find(PrescriptListTemplate.class, aIdTemplateList);
 		MedCase medCase = theManager.find(MedCase.class, aIdParent) ;
 		WorkFunction wf = WorkerServiceBean.getWorkFunction(theContext, theManager) ;
-	//	System.out.println("template="+template.getId());
-	//	System.out.println("medCase="+aIdParent) ;
-		
+
 		AbstractPrescriptionList list  ;
 		if (medCase!=null) {
-//			System.out.println("MedCase существует ! Создается PrescriptList") ;
 			 list = new PrescriptList() ;
 			
 			list.setMedCase(medCase) ;
@@ -886,7 +877,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			theManager.persist(list) ;
 			addPrescription(template,list,wf) ;
 		} else  {
-//			System.out.println("MedCase не существует ! Создается PrescriptListTemplate") ;
 			list =  new PrescriptListTemplate() ;
 			list.setCreateDate(new java.sql.Date(new Date().getTime())) ;
 			list.setCreateUsername(theContext.getCallerPrincipal().toString());
@@ -896,10 +886,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				list.setName(template.getName()) ;
 			}
 			
-			//System.out.println("================ CLASS PrescriptionList = "+template.getClass().toString());
 			if (template.getClass().toString().equals("PrescriptListTemplate")) {
 				 //template = (PrescriptListTemplate) template;
-			//	System.out.println("================ IF HAPPENS CLASS PrescriptionList = "+template.getClass().toString());	
 				List<TemplateCategory> tempCategList = new ArrayList<>() ;
 				PrescriptListTemplate template2 = (PrescriptListTemplate) template;
 				tempCategList.addAll(template2.getCategories());
@@ -923,14 +911,10 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			List<Prescription> listNew = aList.getPrescriptions() ;
 			if (listNew==null) listNew =new ArrayList<>() ;
 			for (Prescription presc:aTemplate.getPrescriptions()) {
-//				System.out.println("Назначение: "+presc.getId());
 				Prescription prescNew = newPrescriptionOnTemplate(presc, aSpecialist);
-//				System.out.println("создание копии назначения") ;
-				
+
 				prescNew.setPrescriptionList(aList) ;
 				listNew.add(prescNew);
-//				System.out.println("list...") ;
-//				System.out.print("pres...") ;
 				theManager.flush() ;
 			}	
 			aList.setPrescriptions(listNew) ;

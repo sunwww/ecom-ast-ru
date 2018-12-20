@@ -21,7 +21,6 @@ public class PrescriptListCreateInterceptor implements IFormInterceptor {
 		prescriptList.setEditDate(cur) ;
 		
 		ModePrescriptionForm modeForm = form.getModeForm() ;
-		System.out.println("Сохранение режима") ;
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/Prescription/Template/ModePrescription/Create")
 				&& modeForm!=null && modeForm.getModePrescription()!=null 
 				 && !modeForm.equals(Long.valueOf(0))
@@ -38,7 +37,6 @@ public class PrescriptListCreateInterceptor implements IFormInterceptor {
 			}
 		}
 		DietPrescriptionForm dietForm = form.getDietForm() ;
-		System.out.println("Сохранение диеты") ;
 		if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/Prescription/Template/DietPrescription/Create")
 				&&dietForm!=null && dietForm.getDiet()!=null && !dietForm.equals(Long.valueOf(0))
 				

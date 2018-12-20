@@ -29,8 +29,6 @@ public class LabelField {
 		label.append(aNameLabel).append(":");
 		label.append("</label>");
 		label.append("</td>");
-		System.out.println("label=");
-		System.out.println(label.toString());
 		return label;
 	}
 

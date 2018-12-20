@@ -42,8 +42,9 @@ import java.util.List;
 @Local(ISyncShubinokService.class)
 public class SyncShubinokServiceBean implements ISyncShubinokService {
 
-    private final static Logger LOG = Logger.getLogger(SyncShubinokServiceBean.class) ;
-    //    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(SyncShubinokServiceBean.class) ;
+    private static final String SYNCERRORTEXT = "Ошибка синхронизации";
+    private static final String OMCCODE = "omcCode";
 
     public void sync(long aMonitorId, long aTimeId) {
     	IMonitor monitor = null;
@@ -68,21 +69,19 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     						, pat.getFirstname(), pat.getMiddlename(), pat.getBirthdate()) ;
     				patient = patientId!=null ? theManager.find(Patient.class, patientId) : null ;
     			} else {
-    				patient = (Patient) medPolicy.getPatient() ;
+    				patient = medPolicy.getPatient() ;
     			}
     			
-    			if(i%100==0) {
+    			if(i % 100 == 0) {
     				monitor.advice(100);
     				monitor.setText(pat.getLastnameGood());
     			}
     			syncPatient(pat, patient, medPolicy) ;
     		}
             monitor.finish(aTimeId + "");
-    	} catch (IllegalMonitorStateException e) {
-    		throw e ;
     	} catch (Exception e) {
-    		monitor.error("Ошибка синхронизации",e);
-    		LOG.error("Ошибка синхронизации",e);
+    		monitor.error(SYNCERRORTEXT,e);
+    		LOG.error(SYNCERRORTEXT,e);
     	}
     }
     public void syncPatientByFond(long aMonitorId, long aTimeId) {
@@ -91,8 +90,10 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     public void syncPatientByFond(long aMonitorId, long aTimeId, boolean forceUpdateAttachment) {
         IMonitor monitor = null;
         FondImport fi = new FondImport();
-        fi.setImportDate(new java.sql.Date(new java.util.Date().getTime()));
-        fi.setImportTime(new java.sql.Time(new java.util.Date().getTime()));
+        Long currentDateLong = System.currentTimeMillis();
+		Date currentDate=new Date(currentDateLong) ;
+        fi.setImportDate(new java.sql.Date(currentDateLong));
+        fi.setImportTime(new java.sql.Time(currentDateLong));
         fi.setImportTable("PatientAttachedImport");
         fi.setImportNumber(String.valueOf(aTimeId));
         theManager.persist(fi);
@@ -103,10 +104,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     		if (lAdr.size()==1) {
     			adrAstr = ConvertSql.parseLong(lAdr.get(0)) ;
     		}
-    		Date current_date=new Date(new java.util.Date().getTime()) ;
-
             int i = 0;
-           // int nextData = 1;
             long id=0 ;
             while (true) {
             	List<PatientAttachedImport> paiList= (List<PatientAttachedImport>)theManager.createQuery("from PatientAttachedImport where time = :time and id > :id order by id")
@@ -115,7 +113,6 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
                         .setParameter("id", id).getResultList();
               //  Iterator<PatientAttachedImport> pats = QueryIteratorUtil.iterate(PatientAttachedImport.class, query);
             	if (paiList.isEmpty()) {break;}
-            	//System.out.println("=== before pats.hasnext");
             	//nextData=false ;
 	            for (PatientAttachedImport patImp: paiList) {
 	            	
@@ -176,20 +173,17 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	                    monitor.advice(100);
 	                    monitor.setText(i+". "+patImp.getLastname());
 	                }
-	                syncPatient(patImp, patientId1, medPolicy,current_date, forceUpdateAttachment, fi) ;
+	                syncPatient(patImp, patientId1, medPolicy,currentDate, forceUpdateAttachment, fi) ;
 	            }
             }
             monitor.finish(aTimeId + "");
-        } catch (IllegalMonitorStateException e) {
-            throw e ;
-        } catch (Exception e) {
-            monitor.error("Ошибка синхронизации",e);
-            LOG.error("Ошибка синхронизации",e);
+        }  catch (Exception e) {
+            monitor.error(SYNCERRORTEXT,e);
+            LOG.error(SYNCERRORTEXT,e);
         }
     }
 
     private void syncPatient(PatientAttachedImport aEntity, Long aPatientId, MedPolicyOmc aMedPolicy,Date aCurrentDate, boolean updateAttachment, FondImport fi) {
-   // 	System.out.println("=== SyncPatient, "+ aEntity+" : "+aPatientId);
     	VocIdentityCard passportType=findOrCreateIdentity(aEntity.getDocType()) ;
     	OmcOksm nat = findOrCreateNationality(aEntity.getCountry()) ;
     	boolean isNew = false ;
@@ -255,7 +249,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	patient.setHouseBuilding(aEntity.getHousing());
     	theManager.persist(patient);
     	//Район
-    	if (aEntity.getSex()!=null&&!aEntity.getSex().equals("")) patient.setSex(findEntity(VocSex.class,"omcCode",aEntity.getSex()));
+    	if (aEntity.getSex()!=null&&!aEntity.getSex().equals("")) patient.setSex(findEntity(VocSex.class,OMCCODE,aEntity.getSex()));
     	
     	if (aEntity.getInsuranceCompany()!=null) {
 	    	if(aMedPolicy==null) {
@@ -340,8 +334,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         aPatient.setHouseNumber(aEntry.getHouseNumber());
         aPatient.setFlatNumber(aEntry.getFlatNumber());
         aPatient.setHouseBuilding(aEntry.getBuildingNumber());
-        aPatient.setSex(findEntity(VocSex.class,"omcCode",aEntry.getSex()));
-        aPatient.setSocialStatus(findEntity(VocSocialStatus.class,"omcCode",aEntry.getInsuranceType()));
+        aPatient.setSex(findEntity(VocSex.class,OMCCODE,aEntry.getSex()));
+        aPatient.setSocialStatus(findEntity(VocSocialStatus.class,OMCCODE,aEntry.getInsuranceType()));
 
         //VocOrg org = findEntity(VocOrg.class, "fondNumber", aEntry.getOrgCodeNew()) ;
         //aPatient.setWorks(org);
@@ -353,7 +347,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         aMedPolicy.setSeries(aEntry.getPolicySeries());
         aMedPolicy.setPolNumber(aEntry.getPolicyNumber());
         //aMedPolicy.setOrg(org);
-        aMedPolicy.setCompany(findEntity(RegInsuranceCompany.class, "omcCode", aEntry.getInsuranceCompanyCode()));
+        aMedPolicy.setCompany(findEntity(RegInsuranceCompany.class, OMCCODE, aEntry.getInsuranceCompanyCode()));
 
         theManager.persist(aPatient);
         theManager.persist(aMedPolicy);
@@ -391,8 +385,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	if (theHashRayon.get(ind.toString())==null) {
     		if (aRayon!=null && !aRayon.trim().equals("") && (aRayon.contains("ИНОГ") || aRegion!=null&&aRegion.equals("30"))) {
     			VocRayon vr  = null ;
-    			List<VocRayon> list_vr = theManager.createQuery("from VocRayon where upper(name) like '%"+aRayon+"%'").setMaxResults(2).getResultList() ;
-    			if (list_vr.size()==1) vr=list_vr.get(0) ;
+    			List<VocRayon> listVr = theManager.createQuery("from VocRayon where upper(name) like '%"+aRayon+"%'").setMaxResults(2).getResultList() ;
+    			if (listVr.size()==1) vr=listVr.get(0) ;
     			theHashRayon.put(ind.toString(), vr);
     		}
     	} 
@@ -422,8 +416,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	
 	private Long getKladrByRayon(String aRegion, String aKladrRayon, String aCity, String aNp, String aStreet, String aIndex,long adrAstr) {
 		Long adr = null ;
-		StringBuilder sql = new StringBuilder() ;
-		StringBuilder res = new StringBuilder() ;
+		StringBuilder sql ;
 		List<Object[]> list ;
 		 if (aCity!=null && aCity.toUpperCase().contains("АСТРАХАН")
      			||	aNp!=null&&aNp.toUpperCase().contains("АСТРАХАН")
@@ -466,7 +459,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
 			sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladrRayon).append("%' and domen <6 and UPPER(replace(replace(name,'-',''),' ',''))='").append(aCity).append("' " ) ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 				adr=ConvertSql.parseLong(list.get(0)[0]) ;
 				aKladrRayon = ""+list.get(0)[1] ;
 				String lastKl = aKladrRayon.substring(aKladrRayon.length()-1, aKladrRayon.length()) ;
@@ -480,7 +473,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 				list = theManager.createNativeQuery(sql.toString()).setMaxResults(2).getResultList() ;
 				if (list.size()==1) {
 					adr=ConvertSql.parseLong(list.get(0)[0]) ;
-				} else if (list.size()>0 && aIndex!=null && !aIndex.trim().equals("")) {
+				} else if (!list.isEmpty() && aIndex!=null && !aIndex.trim().equals("")) {
 					sql.append(" and postIndex='"+aIndex+"'") ;
 					list.clear() ;
 					list = theManager.createNativeQuery(sql.toString()).setMaxResults(2).getResultList() ;
@@ -493,7 +486,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 		return adr ;
 	}
 
-	private HashMap<String, VocIdentityCard> theHashIdentity = new HashMap<String, VocIdentityCard>();
-	private HashMap<String, VocRayon> theHashRayon = new HashMap<String, VocRayon>();
-    private HashMap<String, OmcOksm> theHashNationality = new HashMap<String, OmcOksm>();
+	private HashMap<String, VocIdentityCard> theHashIdentity = new HashMap<>();
+	private HashMap<String, VocRayon> theHashRayon = new HashMap<>();
+    private HashMap<String, OmcOksm> theHashNationality = new HashMap<>();
 }

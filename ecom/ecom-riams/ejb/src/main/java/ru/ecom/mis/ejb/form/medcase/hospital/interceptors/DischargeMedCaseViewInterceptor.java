@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -15,6 +11,9 @@ import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.persistence.EntityManager;
+import java.util.List;
+
 
 public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 
@@ -24,7 +23,6 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 		EntityManager manager = aContext.getEntityManager() ;
 		long id = form.getId() ;
 		form.setDischargeEpicrisis(HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
-		//System.out.println("----------------1") ;
 		Long sloLast = null ;
 		if (medCase.getDateFinish()==null || medCase.getDischargeTime()==null){
 			if (medCase instanceof ExtHospitalMedCase) {}else{
@@ -40,8 +38,7 @@ public class DischargeMedCaseViewInterceptor implements IFormInterceptor{
 			}
 				List<Object[]> list1 = manager.createNativeQuery("select id,id from medcase where parent_id="+id).getResultList() ; 
 				if (list1.size()==0) throw new IllegalArgumentException("Необходимо перед выпиской создать случай лечения в отделении");
-			//System.out.println("----------------1") ;
-			
+
 			@SuppressWarnings("unchecked")
 			List<DepartmentMedCase> list = manager
 				.createQuery("from MedCase where DTYPE='DepartmentMedCase' and parent_id=:hosp and ((dateFinish is not null) or (dateFinish is null and transferDate is null))")

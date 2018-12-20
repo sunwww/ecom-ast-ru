@@ -1,21 +1,6 @@
 package ru.ecom.diary.ejb.service.protocol;
 
-import java.io.File;
-import java.text.ParseException;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -29,9 +14,23 @@ import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.File;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.util.*;
+import java.util.Map.Entry;
+
 @Stateless
 @Remote(IKdlDiaryService.class)
 public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryService {
+	private static final Logger LOG = Logger.getLogger(KdlDiaryServiceBean.class);
 	
 	public String getDir(String aKey, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
@@ -43,16 +42,17 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		ExternalMedservice externalMedservice;
 		@SuppressWarnings("unchecked")
 		List<ExternalMedservice> list = theManager == null? null : theManager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
-		if (list == null? false : list.size()>0) {
+		if (list != null && list.isEmpty()) {
 			externalMedservice = list.get(0) ;			
 		} else {
 			externalMedservice = new ExternalMedservice();
 		}
         theComment = new StringBuilder();
-        theDocumentParameterGroups = new TreeMap<String, String>();
-    	theDocumentParametersTree = new TreeMap<String, TreeMap<String, Object>>(); 
-        theDocumentParameterObj = new HashMap<String, VocDocumentParameter>();
-    	theDocumentParameterGroupsObj = new HashMap<String, VocDocumentParameterGroup>(); 	try{
+        theDocumentParameterGroups = new TreeMap<>();
+    	theDocumentParametersTree = new TreeMap<>();
+        theDocumentParameterObj = new HashMap<>();
+    	theDocumentParameterGroupsObj = new HashMap<>();
+    	try{
     		printVariable("Start parse",aUri);
 	    	File in = new File(aUri);
 	        theFileUri = aUri;
@@ -147,19 +147,15 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
         
 	}
 	@SuppressWarnings("unchecked")
-	private void parsePages(Element pages) 
-	{
-		for (Element page: (List<Element>) pages.getChildren("Page")) 
-		{
+	private void parsePages(Element pages) {
+		for (Element page: (List<Element>) pages.getChildren("Page")) {
 			parsePage(page);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void parsePage(Element aPage) 
-	{
-		for (Element section: (List<Element>) aPage.getChildren("Section")) 
-		{
+	private void parsePage(Element aPage) {
+		for (Element section: (List<Element>) aPage.getChildren("Section")) {
 			parseSection(section);
 		}
 	}
@@ -172,7 +168,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			
 			@SuppressWarnings("unchecked")
 			List<VocDocumentParameterGroup> list1 = theManager==null? null: theManager.createQuery("FROM VocDocumentParameterGroup WHERE code='"+sectionId+"'").getResultList() ;
-			if (list1 == null? false: list1.size()>0) {
+			if (list1 != null && !list1.isEmpty()) {
 				group =list1.get(list1.size()-1) ;
 			} 
 			if (group == null) {
@@ -184,7 +180,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			}
 		}
 		theDocumentParameterGroups.put(sectionId, sectionName);
-		if (group!=null) theDocumentParameterGroupsObj.put(sectionId, group);
+		theDocumentParameterGroupsObj.put(sectionId, group);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -219,9 +215,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		if (vocDocumentParameter==null) {
 			@SuppressWarnings("unchecked")
 			List<VocDocumentParameter> list = theManager == null? null : theManager.createQuery("FROM VocDocumentParameter WHERE code='"+testShortName+"'").getResultList();
-			if (list == null? false : list.size()>0) {
+			if (list != null && !list.isEmpty()) {
 				vocDocumentParameter = list.get(0) ;
-				
 			} else {
 				vocDocumentParameter = new VocDocumentParameter();
 				vocDocumentParameter.setCode(testShortName);
@@ -297,7 +292,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				i1=i1+1;
 				pm = pi.next();
 				DocumentParameter documentParameter = (DocumentParameter) pm.getValue();
-				VocDocumentParameter vocDocumentParameter = (VocDocumentParameter) documentParameter.getParameter();
+				VocDocumentParameter vocDocumentParameter =  documentParameter.getParameter();
 				norm="";
 				if (vocDocumentParameter.getNormMinimum()!=null){
 					norm=new StringBuilder().append(vocDocumentParameter.getNormMinimum()).append("-").append(vocDocumentParameter.getNormMaximum()).toString();
@@ -318,17 +313,17 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	} 
 	public static Time toTime(String aString){
 		try {
-			return aString == null ? null:(Time) DateFormat.parseSqlTime(aString);
+			return aString == null ? null:DateFormat.parseSqlTime(aString);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	public static String toString(Date aDate){
-		return aDate == null ? "":(String) DateFormat.formatToDate(aDate);		
+		return aDate == null ? "" : DateFormat.formatToDate(aDate);
 	}
 	public static String toString(Time aTime){
-		return aTime == null ? "":(String) DateFormat.formatToTime(aTime);		
+		return aTime == null ? "" : DateFormat.formatToTime(aTime);
 	}
 	public static String toString(int aInt){
 		return String.valueOf(aInt);
@@ -383,10 +378,10 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		} catch (Exception e) {}
 	}
 	public static void print(String aString){
-		System.out.print(aString);
+		LOG.info(aString);
 	}		
 	public static void println(String aString){
-		System.out.println(aString);
+		LOG.info(aString);
 	}		
 	private void persist(Object object){
 		if ((object!=null)&&(theManager!=null)) {
@@ -410,30 +405,26 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	}
 	public String getKdlDir() {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		String workDir =config.get("kdl.dir", "/opt/kdl/test");
-		return workDir ;
+		return config.get("kdl.dir", "/opt/kdl/test");
 	}
 	public String getKdlArcDir() {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		String workDir =config.get("kdl.arcdir", "/opt/kdl/testArc");
-		return workDir ;
+		return config.get("kdl.arcdir", "/opt/kdl/testArc");
 	}
 	public String getKdlErrorDir() {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		String workDir =config.get("kdl.errordir", "/opt/kdl/testError");
-		return workDir ;
+		return config.get("kdl.errordir", "/opt/kdl/testError");
 	}
 	public void setPermissions(File aFile){
 		run("chmod -R 777 "+aFile.getAbsolutePath());
 	}
-	public String run(String Command){
+	public String run(String command){
 		try{
-		Runtime.getRuntime().exec(Command);
+		Runtime.getRuntime().exec(command);
 		return ("0");
 		}
 		catch (Exception e){
-		System.out.println("Error running command: " + Command +
-		"\n" + e.getMessage());
+		LOG.error("Error running command: " + command +"" + e.getMessage(),e);
 		return(e.getMessage());
 		}
 	} 

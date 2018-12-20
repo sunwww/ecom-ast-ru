@@ -12,7 +12,6 @@ import ru.nuzmsh.util.format.DateFormat;
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.BufferedReader;
@@ -30,7 +29,7 @@ import java.util.List;
 @Stateless
 @Remote(IContractService.class)
 public class ContractServiceBean implements IContractService {
-	private final static Logger log = Logger.getLogger(ContractServiceBean.class);
+	private static final Logger LOG = Logger.getLogger(ContractServiceBean.class);
 
 
 	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, EntityManager aManager) {
@@ -53,9 +52,8 @@ public class ContractServiceBean implements IContractService {
 			List<Object[]> l = aManager.createNativeQuery(sb.toString()).getResultList();
 			//Collection<WebQueryResult> l = service.executeNativeSql(sb.toString());
 			if (!l.isEmpty()) {
-				//	System.out.println("not empty");
-				BigDecimal totalSum = new BigDecimal(0.00);
-				BigDecimal taxSum = new BigDecimal(0.00);
+				BigDecimal totalSum = BigDecimal.valueOf(0.00);
+				BigDecimal taxSum = BigDecimal.valueOf(0.00);
 				JSONObject root = new JSONObject();
 				root.put("function", isRefund?"makeRefund":"makePayment");
 				root.put("gotId", aAccountId); //Milamesher #106 10072018 - для проверки со стороны ККМ на печать одинаковых чеков
@@ -105,9 +103,9 @@ public class ContractServiceBean implements IContractService {
 		}
 	}
 
-	private void makeHttpPostRequest(String data, EntityManager aManager) throws IOException, NamingException {
+	private void makeHttpPostRequest(String data, EntityManager aManager) throws IOException {
 		if (aManager==null) {aManager=theManager;}
-		log.debug("===Send to KKM_BEAN. Data = "+data);
+		LOG.debug("===Send to KKM_BEAN. Data = "+data);
 		List<Object> list = aManager.createNativeQuery("select keyvalue from  softconfig where key='KKM_WEB_SERVER'").getResultList();
 		if (!list.isEmpty()) {
 			String address = list.iterator().next().toString();
@@ -131,7 +129,7 @@ public class ContractServiceBean implements IContractService {
 			br.close();
 			connection.disconnect();
 		} else {
-			log.error("Нет настройки 'KKM_WEB_SERVER', работа с ККМ невозможна");
+			LOG.error("Нет настройки 'KKM_WEB_SERVER', работа с ККМ невозможна");
 		}
 
 	}
@@ -142,17 +140,14 @@ public class ContractServiceBean implements IContractService {
 		if (aType!=null&&(aType.equals("Z")||aType.equals("X"))) {
 			try {
 				JSONObject root = new JSONObject();
-				if (root!=null) {
-					root.put("function", "print"+aType+"Report");
-					makeHttpPostRequest(root.toString(),aManager);
-					return  aType+" отчет успешно отправлен на печать";
-				}
+				root.put("function", "print"+aType+"Report");
+				makeHttpPostRequest(root.toString(),aManager);
+				return  aType+" отчет успешно отправлен на печать";
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 				return e.getMessage();
 			}
-
 		}
 		return "Неизвестный тип отчета";
 	}
@@ -171,10 +166,10 @@ public class ContractServiceBean implements IContractService {
 			return "Неизвестная функция";
 
 	}
-	
+	/* //unused
 	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType) {
 		return getMedService(aDepartment, aBedType, aBedSubType, aRoomType, null);
-	}
+	}*/
 	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType, String aCompanyType) {
 		/**
 		 *  Для силовиков по умолчанию ищем общие палаты
@@ -254,8 +249,8 @@ and (pp.isvat is null or pp.isvat='0')
 	}
 	private boolean checkNoDoubleCAMS(Long aIdSmo, String aDtype) {
 		List<Object> l = theManager.createNativeQuery("select id from ContractAccountMedService where Smo="+aIdSmo+" and TypeService='"+aDtype+"'").getResultList() ;
-		if (l.size()>0) return false ; 
-		return true ;
+		return  l.isEmpty(); 
+		
 	}
 	public Long setSmoByAccount(Long aAccount,String aDtypeSmo, Long aIdSmo, boolean aDeleteServiceWithOtherAccount, boolean aPeresech) throws ParseException {
 		Long contract = null ;
@@ -274,7 +269,7 @@ and (pp.isvat is null or pp.isvat='0')
 		
 		ContractAccount account = theManager.find(ContractAccount.class, aAccount) ;
 		if (aDtypeSmo.equals("HOSPITALMEDCASE")) {
-			System.out.println("=== ContractSBean ,account="+account.getContract().getId() +", smo="+aIdSmo);
+			LOG.info("=== ContractSBean ,account="+account.getContract().getId() +", smo="+aIdSmo);
 			List<Object[]> l = theManager.createNativeQuery("select sls.patient_id as cpid,mc.id as mcid,mc.priceList_id as pricelist"
 				+" , (select max(cg.id) from ContractGuarantee cg where cg.contract_id=mc.id and cg.contractPerson_id=cpp.id and sls.datestart between cg.actionDate and cg.actionDateTo) as cgid"
 				+", to_char(sls.datestart,'dd.mm.yyyy') as datestart"
@@ -307,7 +302,7 @@ and (pp.isvat is null or pp.isvat='0')
 			String datefinish=null;
 			String customerType = "";
 			
-			if (l.size()>0) {
+			if (!l.isEmpty()) {
 				try {
 					JuridicalPerson jp =  (JuridicalPerson) account.getContract().getCustomer();
 					if (jp!=null&& jp.getJuridicalPersonType()!=null) {
@@ -692,7 +687,7 @@ and (pp.isvat is null or pp.isvat='0')
 					+" ,pat.lastname,pat.firstname,pat.middlename,pat.birthday,sls.serviceStream_id,cpp.id"
 					+" order by cgid, polnumber desc"
 					).getResultList();
-			if (l.size()>0) {
+			if (!l.isEmpty()) {
 				
 				contract = ConvertSql.parseLong(l.get(0)[1]) ;
 				priceList = ConvertSql.parseLong(l.get(0)[2]) ;
@@ -701,15 +696,15 @@ and (pp.isvat is null or pp.isvat='0')
 					priceList = account.getContract().getPriceList().getId() ;
 				}
 				
-				patient = ConvertSql.parseLong(l.get(0)[0]) ;
-				servicestream = ConvertSql.parseLong(l.get(0)[11]) ;
+		//		patient = ConvertSql.parseLong(l.get(0)[0]) ;
+		//		servicestream = ConvertSql.parseLong(l.get(0)[11]) ;
 				
 				guarLetter = ConvertSql.parseLong(l.get(0)[3]) ;
 				if (guarLetter!=null) {
 					sp = theManager.find(ContractGuarantee.class, guarLetter);
 				}
-				datestart= ""+l.get(0)[4] ;
-				datefinish = ""+l.get(0)[5] ;
+		//		datestart= ""+l.get(0)[4] ;
+		//		datefinish = ""+l.get(0)[5] ;
 				polNumber = ""+l.get(0)[6] ;
 				lastname = ""+l.get(0)[7] ;
 				firstname = ""+l.get(0)[8] ;
@@ -790,9 +785,9 @@ and (pp.isvat is null or pp.isvat='0')
 			ac.setPeriodTo(DateFormat.parseSqlDate(aDateTo)) ;
 			ac.setAccountNumber(aAccountNumber) ;
 			theManager.persist(ac) ;
-			System.out.println("isEmpty="+aIsEmpty) ;
-	        System.out.println("isHospit="+aIsHosp) ;
-	        System.out.println("isPolyc="+aIsPolyc) ;
+			LOG.info("isEmpty="+aIsEmpty) ;
+	        LOG.info("isHospit="+aIsHosp) ;
+	        LOG.info("isPolyc="+aIsPolyc) ;
 			if (aIsEmpty) {
 				monitor=theMonitorService.startMonitor(aMonitorId, "Создание пустого счета",1) ;
 				monitor.finish("Создан счет") ;
@@ -823,7 +818,7 @@ and (pp.isvat is null or pp.isvat='0')
 					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]).append(" and mp.dtype like 'MedPolicyD%'") ;
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[3]) ;
 					sql.append(" group by mc.id,mp.id,mc.patient_id") ;
-					System.out.println("Формирование счета по стациционару. SQL = "+sql);
+					LOG.info("Формирование счета по стациционару. SQL = "+sql);
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
 					if (!isStart) {
 						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по стационару. Найдено госпитализаций: "+listHosp.size(),listHosp.size()) ;
@@ -853,7 +848,7 @@ and (pp.isvat is null or pp.isvat='0')
 					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
 					sql.append(" group by mc.id,mc.patient_id") ;
-					System.out.println("Формирование счета по поликлиническим обращениям. SQL = "+sql);
+					LOG.info("Формирование счета по поликлиническим обращениям. SQL = "+sql);
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
 					if(!isStart){
 						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлиническим обращениям. Найдено обращений: "+listHosp.size(),listHosp.size()) ;
@@ -881,7 +876,7 @@ and (pp.isvat is null or pp.isvat='0')
 					if (par[3]!=null) sql.append(" and mp.company_id=").append(par[3]+" and mp.dtype like 'MedPolicyDmc%' and mc.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date)") ;
 					if (par[4]!=null) sql.append(" and mc.orderLpu_id=").append(par[4]) ;
 					sql.append(" group by mc.id,mc.patient_id,mc.datestart") ;
-					System.out.println("Формирование счета по поликлинике визит. SQL = "+sql);
+					LOG.info("Формирование счета по поликлинике визит. SQL = "+sql);
 					List<Object[]> listHosp = theManager.createNativeQuery(sql.toString()).getResultList() ;
 					if (!isStart) {
 						monitor = theMonitorService.startMonitor(aMonitorId, "Формирование счета по поликлинике визит. Найдено визитов: "+listHosp.size(),listHosp.size()) ;
@@ -936,7 +931,7 @@ and (pp.isvat is null or pp.isvat='0')
 		List<ContractAccountMedService> list = theManager.createQuery(sql.toString())
 				.setParameter("CAMS", oldid)
 				.getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			
 			ContractAccountMedService ms = list.get(0) ;
 			ms.setCountMedService(aCount) ;

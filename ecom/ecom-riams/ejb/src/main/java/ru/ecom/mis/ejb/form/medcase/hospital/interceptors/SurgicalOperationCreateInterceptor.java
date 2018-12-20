@@ -21,24 +21,22 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     	SurgicalOperationForm form=(SurgicalOperationForm)aForm;
     	
     	
-    	if (parentSSL!=null && parentSSL instanceof HospitalMedCase) {
+    	if (parentSSL instanceof HospitalMedCase) {
         	DiagnosisForm frm = getDiagnosis(aContext.getEntityManager(), parentSSL.getId(), "4", "1", true) ;
     		HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
     		if (frm!=null) form.setIdc10Before(frm.getIdc10()) ;
-    		if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null) {
-    			if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase")) {
-    				throw new IllegalStateException("Нельзя добавить хирургическую операцию в закрытый случай стационарного лечения (ССЛ) !!!") ;
-    			}
+    		if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null && !aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase")) {
+    			throw new IllegalStateException("Нельзя добавить хирургическую операцию в закрытый случай стационарного лечения (ССЛ) !!!") ;
     		}
     		
     		if (hosp.getDepartment()!=null) form.setDepartment(hosp.getDepartment().getId()) ;
     		if (hosp.getServiceStream()!=null) form.setServiceStream(hosp.getServiceStream().getId()) ;
-    	} else if (parentSSL!=null && parentSSL instanceof DepartmentMedCase){
+    	} else if (parentSSL instanceof DepartmentMedCase){
     		DepartmentMedCase slo = (DepartmentMedCase) parentSSL ;
 			
     		if (slo.getDepartment()!=null) form.setDepartment(slo.getDepartment().getId()) ;
     		if (slo.getServiceStream()!=null) form.setServiceStream(slo.getServiceStream().getId()) ;
-    	} else  if (parentSSL!=null && parentSSL instanceof Visit){
+    	} else  if (parentSSL instanceof Visit){
     		Visit slo = (Visit) parentSSL ;
     		if (slo.getWorkFunctionExecute()!=null) {
     			if (slo.getWorkFunctionExecute() instanceof PersonalWorkFunction) {
@@ -60,7 +58,7 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
 		if (parentSSL.getDepartment()!=null) {
 				List<Object[]> l = aContext.getEntityManager().createNativeQuery("select vlaeo.id from mislpu ml left join VocLpuAccessEnterOperation vlaeo on vlaeo.id=ml.AccessEnterOperation_id where ml.id='"
 							+parentSSL.getDepartment().getId()+"' and (vlaeo.code='DENIED_IN_DEPARTMENT' or vlaeo.code='ALL_DEPARTMENT')").getResultList() ;
-				if (l.size()>0) throw new IllegalStateException("Нельзя добавить хирургическую операцию по текущему отделению!!!") ;
+				if (!l.isEmpty()) throw new IllegalStateException("Нельзя добавить хирургическую операцию по текущему отделению!!!") ;
 		}
 		if (parentSSL.getLpu()!=null) {	
 			form.setLpu(parentSSL.getLpu().getId());
@@ -73,7 +71,7 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     				.setParameter("lpu", form.getDepartment()) 
     				.setMaxResults(1)
     				.getResultList() ;
-    		if (listwf.size()>0) {
+    		if (!listwf.isEmpty()) {
     			Object[] wf = listwf.get(0) ;
     			form.setSurgeon(ConvertSql.parseLong(wf[0])) ;
     		} else {
@@ -82,7 +80,7 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
         				
         				.setMaxResults(1)
         				.getResultList() ;
-        		if (listwf.size()>0) {
+        		if (!listwf.isEmpty()) {
         			Object[] wf = listwf.get(0) ;
         			form.setSurgeon(ConvertSql.parseLong(wf[0])) ;
         		}
@@ -107,10 +105,8 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
 		}
 
 		String dateTime = aOperation.getOperationDate()+" "+aOperation.getOperationTime();
-	//	System.out.println("Вот запрос "+sql.toString()+", dateTime = "+dateTime);
 		List<BigInteger> ids = aManager.createNativeQuery(sql.toString()).setParameter("id",hospitalId).setParameter("operationDateTime",dateTime).getResultList();
 		if (ids.isEmpty()||ids.size()>1) {
-			System.out.println("Не удалось найти подходящий СЛО"+ids.size());
 			return;
 		}
 		aOperation.setMedCase(aManager.find(MedCase.class,ids.get(0).longValue()));
@@ -135,9 +131,8 @@ public class SurgicalOperationCreateInterceptor implements IParentFormIntercepto
     		sql.append(" and vdrt.code='").append(aRegType).append("'");
     		
     		sql.append(" order by dep.dateStart desc");
-    		sql.append("") ;
     		List<Object[]> listDiag = aManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-    		if (listDiag.size()>0) {
+    		if (!listDiag.isEmpty()) {
     			Object[] obj = listDiag.get(0) ;
     			DiagnosisForm frm = new DiagnosisForm() ;
     			frm.setIdc10(ConvertSql.parseLong(obj[1])) ;

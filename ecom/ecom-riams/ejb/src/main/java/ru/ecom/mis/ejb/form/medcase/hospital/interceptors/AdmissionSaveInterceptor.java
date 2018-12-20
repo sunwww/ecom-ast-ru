@@ -133,7 +133,6 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 					long policyId = EjbInjection.getInstance().getLocalService(IParentEntityFormService.class)
 						.create(polForm);
 					MedPolicyOmc medPolicyOmc = aManager.find(MedPolicyOmc.class, policyId) ;
-					//System.out.println("medPolicyOmc="+medPolicyOmc);
 					patient.setAttachedOmcPolicy(medPolicyOmc);
 					if(patient.getMedPolicies()!=null) {
 						patient.getMedPolicies().add(medPolicyOmc);
@@ -155,8 +154,6 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 				throw new IllegalStateException(e);
 			}
 		}*/
-		//System.out.println("save manager = "+aManager);
-		//System.out.println(" address = "+patient.getAddressInfo());
 		//if (CAN_DEBUG)
 		//	LOG.debug("intercept: form.getPolicyOmcForm().getSeries() = " + form.getPolicyOmcForm().getSeries());
 	

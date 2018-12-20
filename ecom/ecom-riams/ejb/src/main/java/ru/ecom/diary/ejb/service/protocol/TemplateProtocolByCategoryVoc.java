@@ -1,9 +1,5 @@
 package ru.ecom.diary.ejb.service.protocol;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
@@ -11,6 +7,10 @@ import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TemplateProtocolByCategoryVoc implements IAllValue{
 
@@ -27,7 +27,6 @@ public class TemplateProtocolByCategoryVoc implements IAllValue{
 			TemplateCategory categ = aContext.getEntityManager().find(TemplateCategory.class, parent) ;
 			aContext.getEntityManager().refresh(categ) ;
 			for (TemplateProtocol prot : categ.getProtocols()) {
-				System.out.println(prot.getTitle()) ;
 				add(ret, prot) ;
 			}
 			

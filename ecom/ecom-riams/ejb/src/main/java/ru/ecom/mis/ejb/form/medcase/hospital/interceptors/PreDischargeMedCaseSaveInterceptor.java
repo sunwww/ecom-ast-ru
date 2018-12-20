@@ -1,11 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.util.IFormInterceptor;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
@@ -18,6 +13,9 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
 import ru.ecom.poly.ejb.domain.voc.VocIllnesPrimary;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 	 
@@ -129,7 +127,6 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 					VocIllnesPrimary illnes = aManager.find(VocIllnesPrimary.class, aActuity) ;
 					VocAcuityDiagnosis actuity = illnes.getIllnesType() ;
 					VocPrimaryDiagnosis primary = illnes.getPrimary() ;
-					//System.out.println("      actuity ="+actuity+""); 
 					aDiag.setAcuity(actuity) ;
 					aDiag.setPrimary(primary) ;
 					aDiag.setIllnesPrimary(illnes) ;
@@ -137,7 +134,6 @@ public class PreDischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				aManager.persist(aDiag) ;
 				result = true ;
 			}
-			
 			return result ;
 			
 		}

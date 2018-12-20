@@ -35,6 +35,7 @@
         <include name="qr/odfdom-java-0.8.11-incubating.jar"/>
         <include name="qr/openoffice-unoil-2.0.3.jar"/>
         <include name="qr/simple-odf-0.8.2-incubating.jar"/>
+        <include name="javax/javax.ejb.jar"/>
     </fileset>
 
     <import file="../ant-support/lib-skeleton.xml" />

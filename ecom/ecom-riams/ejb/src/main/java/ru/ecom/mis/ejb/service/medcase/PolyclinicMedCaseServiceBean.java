@@ -1,8 +1,11 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.util.List;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.jaas.ejb.domain.SecUser;
+import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
+import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -11,13 +14,9 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.jaas.ejb.domain.SecUser;
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDay;
-import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.nuzmsh.util.format.DateFormat;
+import java.sql.Date;
+import java.text.ParseException;
+import java.util.List;
 
 @Stateless
 @Remote(IPolyclinicMedCaseService.class)
@@ -125,8 +124,6 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append(list.get(0)[1]) ;
 			
-		//	System.out.println("workfunction = "+aWorkFunction) ;
-		//	System.out.println("workcalendar = "+ret) ;
 			return Long.valueOf(ret.toString());
 		} else {
 			String username = theContext.getCallerPrincipal().toString() ;
@@ -138,7 +135,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 					+" where su.login = :username and case when wf.group_id is not null then wcg.id else wc.id end is not null order by wcg.id,wc.id")
 			.setParameter("username", username)
 			.getResultList() ;
-			if(list.size()==0) {
+			if(list.isEmpty()) {
 				list.clear() ;
 				
 				list = theManager.createNativeQuery("select wc.id as wcid, case when wf.group_id is not null then wcg.id else wc.id end as wcname"
@@ -152,9 +149,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 					+" where su.login = :username and case when wf.group_id is not null then wcg.id else wc.id end is not null order by wcg.id,wc.id")
 				.setParameter("username", username)
 				.getResultList() ;
-				//System.out.println("workcalendar = "+list) ;
 				if (list.size()==0||list.get(0)[1]==null) {
-					//System.out.println("workcalendar = "+(list.size()>0?list.get(0)[0]+"-"+list.get(0)[1]:"---")) ;
 					StringBuffer err = new StringBuffer() ;
 					throw
 						new IllegalArgumentException(
@@ -166,8 +161,6 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append(list.get(0)[1]) ;
 			
-		//	System.out.println("workfunction = "+aWorkFunction) ;
-		//	System.out.println("workcalendar = "+ret) ;
 			return Long.valueOf(ret.toString());
 			
 		}
@@ -177,9 +170,6 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 	public String getWorkCalendarDay(Long aWorkCalendar,Long aWorkFunction, String aCalendarDate) throws ParseException {
 			Date date = DateFormat.parseSqlDate(aCalendarDate);
 			Long workCalen = getWorkCalendar(aWorkFunction) ;
-		//	System.out.println("workCalend="+aWorkCalendar);
-			
-		//	System.out.println("workCalend1="+workCalen);
 				List<WorkCalendarDay> list = theManager.createQuery("from WorkCalendarDay where workCalendar_id = :workCalend and calendarDate = :date and (isDeleted is null or isDeleted='0')")
 					.setParameter("workCalend", workCalen)
 					.setParameter("date",date)
@@ -215,10 +205,6 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
                    .setParameter("workFunction",workFunc)
                    .setParameter("workCalendarDay", workCalendarDayId)
                    .getSingleResult();
-			//	System.out.println("day="+workCalendarDayId) ;
-			//	System.out.println("exec="+executed) ;
-			//	System.out.println("plan="+planned) ;
-			//	System.out.println("prerecord="+prerecord) ;
 				return new StringBuilder().append(workCalendarDayId).append("#")
 						.append(executed).append("#").append(planned).append("#").append(prerecord).toString();
 				

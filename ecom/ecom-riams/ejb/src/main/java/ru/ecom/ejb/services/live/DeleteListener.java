@@ -55,7 +55,6 @@ public class DeleteListener {
 	}
 	@PreRemove
 	public void remove(Object aObject) throws NamingException {
-		//System.out.println("username="+theContext.getCallerPrincipal());
 		if (aObject !=null) {
 			ILiveService service = EjbInjection.getInstance().getLocalService(ILiveService.class) ;
 			LiveTransactionContext ctx = LiveTransactionContext.get() ;
@@ -121,10 +120,9 @@ public class DeleteListener {
 				LOG.error("ERROR... "+e.getMessage()) ;
 			}
 			DeleteJournal dj = new DeleteJournal() ;
-			//System.out.println("        -pre------DeleteListener."+clazz.getName()+"."+theUsername+"."+entityId) ;
-			String keyAttribute = new StringBuilder().append("DeleteListener.")
-				.append(clazz.getName()).append(".").append(theUsername)
-				.append(".").append(entityId).toString() ;
+		//	String keyAttribute = new StringBuilder().append("DeleteListener.")
+		//		.append(clazz.getName()).append(".").append(theUsername)
+		//		.append(".").append(entityId).toString() ;
 			theSerialization = new StringBuilder() ;
 			theSerialization.append(ret) ;
 			theUsername = username ;

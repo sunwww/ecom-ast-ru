@@ -1,31 +1,5 @@
 package ru.ecom.mis.ejb.service.disability;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.EJB;
-import javax.annotation.Resource;
-import javax.ejb.Remote;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -33,7 +7,6 @@ import org.jdom.IllegalDataException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
 import ru.ecom.ejb.services.entityform.EntityFormException;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
@@ -54,6 +27,30 @@ import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.annotation.EJB;
+import javax.annotation.Resource;
+import javax.ejb.Remote;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.sql.DataSource;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Сервис для работы с нетрудоспобностью
  * @author stkacheva
@@ -63,8 +60,8 @@ import ru.nuzmsh.util.format.DateFormat;
 @Remote(IDisabilityService.class)
 public class DisabilityServiceBean implements IDisabilityService {
 
-	private final static Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(DisabilityServiceBean.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	/**
 	 * Импорт листа нетрудоспособности с ФСС
@@ -96,7 +93,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 	 */
 	public String makeHttpGetRequest(String aAddress, String aMethod) {
 		try {
-			System.out.println("makeHttpGetRequest, "+aAddress+"/"+aMethod);
+			LOG.info("makeHttpGetRequest, "+aAddress+"/"+aMethod);
 			URL url = new URL(aAddress + "/" + aMethod);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoInput(true);
@@ -105,7 +102,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
 			StringBuilder response = new StringBuilder();
-			String s = "";
+			String s ;
 			while ((s = in.readLine()) != null) {
 				response.append(s);
 			}
@@ -136,17 +133,14 @@ public class DisabilityServiceBean implements IDisabilityService {
 	}
 
 	public String getSoftConfigValue(String aKey, String aDefaultValue) {
-		List<Object[]> list = theManager.createNativeQuery("select sc.id, sc.keyvalue from softconfig sc where sc.key='" + aKey + "'").getResultList();
-		if (list.isEmpty()) {
-			return aDefaultValue;
-		}
-		return list.get(0)[1].toString();
+		List<Object[]> list = theManager.createNativeQuery("select sc.id, sc.keyvalue from softconfig sc where sc.key=:key").setParameter("key",aKey).getResultList();
+		return  list.isEmpty() ? aDefaultValue : list.get(0)[1].toString();
 	}
-
+/* //unused
 	private String getConfigValue(String aKey, String aDefaultValue) {
 		EjbEcomConfig config = EjbEcomConfig.getInstance();
 		return config.get(aKey, aDefaultValue);
-	}
+	}*/
 
 	public Map<String, String> getDefaultParametersForFSS() {
 		String address = getSoftConfigValue("FSS_PROXY_SERVICE", null);
@@ -154,11 +148,11 @@ public class DisabilityServiceBean implements IDisabilityService {
 		String ogrn = null;
 		if (lpuId != null) {
 			List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
-			if (list.size() > 0) {
+			if (!list.isEmpty()) {
 				ogrn = list.get(0)[1].toString();
 			}
 		}
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		map.put("address",address);
 		map.put("lpuId",lpuId);
 		map.put("ogrn",ogrn);
@@ -197,15 +191,15 @@ public class DisabilityServiceBean implements IDisabilityService {
 			snils = snils.replace("-", "").replace(" ", "");
 
 		}
-		if (address == null || lpuId == null) {
-			LOG.info("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = " + address + ", ЛПУ = " + lpuId);
+		if (address == null ) {
+			LOG.error("Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = " + address + ", ЛПУ = " + lpuId);
 			return "Нет необходимых даннх для экспорта ЭЛН: Адрес сервиса = " + address + ", ЛПУ = " + lpuId;
 		}
 		//List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
 
 
-		if (ogrn == null || ogrn.equals("0")) {
-			LOG.info("У ЛПУ не указан ОГРН. ЛПУ = " + lpuId);
+		if (ogrn.equals("0")) {
+			LOG.error("У ЛПУ не указан ОГРН. ЛПУ = " + lpuId);
 			return "У ЛПУ не указан ОГРН. ЛПУ = " + lpuId;
 		}
 		if (aMethod != null && aMethod.equals("exportDocument")) {
@@ -236,13 +230,13 @@ public class DisabilityServiceBean implements IDisabilityService {
 
 	}
    public boolean isRightSnils (String aSNILS) {
-	//   System.out.println("=======isRightSnils, snilsBefore="+aSNILS);
+	//   LOG.info("=======isRightSnils, snilsBefore="+aSNILS);
 		String currentSnils = aSNILS.replace("-", "").replace(" ", "").replace("\t","");
-	//	 System.out.println("=======isRightSnils, snilsAFTER="+currentSnils);
-		int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
-	//	System.out.println(snilsCN);
+	//	 LOG.info("=======isRightSnils, snilsAFTER="+currentSnils);
+		int snilsCN = Integer.parseInt(currentSnils.substring(currentSnils.length()-2));
+	//	LOG.info(snilsCN);
 		if (currentSnils.length()!=11) {
-		//	System.out.println("==isRightSnils, Неправильная длина поля СНИЛС! "+currentSnils);
+		//	LOG.info("==isRightSnils, Неправильная длина поля СНИЛС! "+currentSnils);
 			return false;
 		} 
 		int sum = 0;
@@ -255,26 +249,16 @@ public class DisabilityServiceBean implements IDisabilityService {
 		}
 		if (sum<100) {
 			controlNumber=sum;
-		} 
-		if (snilsCN==controlNumber) {
-		//	System.out.println("==isRightSnils, СНИЛС верный! "+currentSnils);
-			return true;	
-		} else {
-		//	System.out.println("==isRightSnils, Неправильный СНИЛС!"+currentSnils);
-			return false;
 		}
-			
+		return snilsCN==controlNumber;
    }
     public DisabilityDocument getDocument (String aNumber) {
 		try {
-			DisabilityDocument list = (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
-		return list;
+		return (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-			
 		}
-		
 	}
 
     //Не тестировано, не проверялось вообще!!!
@@ -290,11 +274,11 @@ public class DisabilityServiceBean implements IDisabilityService {
 		for (org.jdom.Element el: rowSets) {
 			i++;
 			Element result = el.getChild("LnResult").getChild("RESULT");
-			String ln_code = el.getChild("LnResult").getChildText("LN_CODE");
-			DisabilityDocument doc = getDocument(ln_code);
+			String lnCode = el.getChild("LnResult").getChildText("LN_CODE");
+			DisabilityDocument doc = getDocument(lnCode);
 			if (result.getChildText("STATUS").equals("1")) { //Тоды ошибка
 				Element fault = result.getChild("FAULT");
-				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(ln_code).append(":Ошибка = ").append(fault.getChildText("ERROR_CODE"))
+				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(lnCode).append(":Ошибка = ").append(fault.getChildText("ERROR_CODE"))
 					.append(":").append(fault.getChildText("ERROR_MESSAGE").replace(":", " "));
 				if (doc!=null) {
 					doc.setExportDate(new java.sql.Date(new java.util.Date().getTime()));
@@ -303,7 +287,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 				}
 				
 			} else if (result.getChildText("STATUS").equals("0")) {
-				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(ln_code).append(":Принят без замечаний:#");
+				sb.append(i).append(":").append(String.valueOf(doc.getId())).append(":").append(lnCode).append(":Принят без замечаний:#");
 				if (doc!=null) {
 					doc.setExportDefect("");
 					doc.setExportDate(new java.sql.Date(new java.util.Date().getTime()));
@@ -353,7 +337,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 			}
 			return createNewFile(rootElement, "aSocCode", "1");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}
@@ -479,8 +462,8 @@ public class DisabilityServiceBean implements IDisabilityService {
 	" and (ss.dtype='StatisticStubExist' or ss.id is null) "+
 	" order by dd.issuedate desc";
 		
-			System.out.println("Поиск записей:");
-			System.out.println(SQLreq);
+			LOG.info("Поиск записей:");
+			LOG.info(SQLreq);
 			
 			return find_data(SQLreq, aSocCode, aSocPhone, aSocEmail, aOgrnCode, aWorkFunction, aPacketNumber, lpu);
 	}
@@ -542,8 +525,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 						+ "left join worker wAdd on wAdd.id=wfAdd.worker_id "
 						+ "left join patient pwAdd on pwAdd.id=wAdd.person_id "
 						+ "where dr.disabilitydocument_id='");												
-			while (rs.next()) 
-				{
+			while (rs.next()) {
 				numAll++;
 				String ln = rs.getString("ln_number")!=null?rs.getString("ln_number").trim():null;
 				String ln_id=rs.getString("ddid");
@@ -561,7 +543,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 				String parentCode = rs.getString("osnWorkplaceNumber").trim();
 				String employer = rs.getString("employer")!=null?rs.getString("employer").trim():null;
 				Matcher m = lnPattern.matcher(ln);
-				System.out.println("======Текущий ЛН = "+ln);
+				LOG.info("======Текущий ЛН = "+ln);
 				
 				if (!m.matches()) {
 //Check ELN-004
@@ -629,7 +611,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 					rowLpuLn.addContent(new Element("PREV_LN_CODE").addContent(prevDocument));
 				}
 				
-				if (primaryFlag.equals("1")) {
+				if ("1".equals(primaryFlag)) {
 					rowLpuLn.addContent(new Element("PRIMARY_FLAG").addContent("1"));
 				} else if ((prevDocument!=null &&!prevDocument.equals(""))){
 					rowLpuLn.addContent(new Element("PRIMARY_FLAG").addContent("0"));
@@ -707,10 +689,10 @@ public class DisabilityServiceBean implements IDisabilityService {
 					Date bithday1 = new Date(format.parse(serv1_birthday).getTime());
 					Date dateFrom1 = new Date(format.parse(startDate).getTime());
 					String age1 = ru.nuzmsh.util.date.AgeUtil.calculateAge(bithday1,dateFrom1);
-					//System.out.println("----------------------------------------------------");
-					//System.out.println("birthday1="+bithday1+", dateFrom="+dateFrom1+", age1="+age1);
-					int age_ind1 = age1.indexOf(".") ;
-					int age_ind2 = age1.indexOf(".",age_ind1+1) ; 
+					//LOG.info("----------------------------------------------------");
+					//LOG.info("birthday1="+bithday1+", dateFrom="+dateFrom1+", age1="+age1);
+					int age_ind1 = age1.indexOf('.') ;
+					int age_ind2 = age1.indexOf('.',age_ind1+1) ;
 					String age1_ye=age1.substring(0,age_ind1) ;
 					String age1_mo=age1.substring(age_ind1+1,age_ind2) ;
 					
@@ -745,10 +727,10 @@ public class DisabilityServiceBean implements IDisabilityService {
 						String serv2_birthday = rs.getString("serv2_age");
 						Date bithday2 = new Date(format.parse(serv2_birthday).getTime());
 						String age2 = ru.nuzmsh.util.date.AgeUtil.calculateAge(bithday2,dateFrom1);
-						System.out.println("----------------------------------------------------");
-						System.out.println("birthday2="+bithday2+", dateFrom="+dateFrom1+", age2="+age2);
-						int age2_ind1 = age2.indexOf(".") ;
-						int age2_ind2 = age2.indexOf(".",age2_ind1+1) ; 
+						LOG.info("----------------------------------------------------");
+						LOG.info("birthday2="+bithday2+", dateFrom="+dateFrom1+", age2="+age2);
+						int age2_ind1 = age2.indexOf('.') ;
+						int age2_ind2 = age2.indexOf('.',age2_ind1+1) ;
 						String age2_ye=age2.substring(0,age2_ind1) ;
 						String age2_mo=age2.substring(age2_ind1+1,age2_ind2) ;
 						
@@ -773,7 +755,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 					}
 					
 				}
-				//System.out.println(rs.getString("preg12week"));
+				//LOG.info(rs.getString("preg12week"));
 				if (rs.getString("preg12week")!=null&&rs.getString("preg12week").equals("1")) {
 					rowLpuLn.addContent(new Element("PREGN12W_FLAG").addContent("1"));
 				}
@@ -935,13 +917,11 @@ public class DisabilityServiceBean implements IDisabilityService {
 			rs.close();
 			statement.close();
 			dbh.close();
-			System.out.println("Всего записей = " + numAll);
-			System.out.println("Верных записей = " + rightNum);
+			LOG.info("Всего записей = " + numAll);
+			LOG.info("Верных записей = " + rightNum);
 			if (defect.length()>0) {
-				System.out.println("Дефекты: "+defect.toString());
+				LOG.info("Дефекты: "+defect.toString());
 			}
-			System.out.println();
-			
 		//	return rootElement;
 			if (rootElement.getChildren().isEmpty()) {
 				return "Записей не найдено";
@@ -951,56 +931,38 @@ public class DisabilityServiceBean implements IDisabilityService {
 			
 			}
 			
-		catch (SQLException e)
-			{
-	        System.out.println(e.getMessage());
+		catch (Exception e) {
+	        LOG.info(e.getMessage());
 	        e.printStackTrace();
 	    	return "Find_data: SQLException"+e;
-			}	
-			catch (Exception e)
-			{
-	        System.out.println(e.getMessage());
-	        e.printStackTrace();
-	    	return "Find_data: Exception"+e;
-			}
-		
 		}
-    public String toStr (Object obj) {
-    	if (obj==null) {
-    		return "";
-    	}
-    	return obj.toString();
+	}
+
+    private String toStr (Object obj) {
+		return obj==null? "" : obj.toString();
     }
     
 	public static String createNewFile(Element rootElement, String aSocCode, String aPacketNumber) {
-		try 
-		{
-			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-	    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-			System.out.println("CreateNewFile, hashcode="+rootElement.hashCode());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd");
+		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+		Calendar cal = Calendar.getInstance();
+		String filename="L_"+aSocCode+"_"+format.format(new java.sql.Date(cal.getTime().getTime()))+"_"+aPacketNumber+".xml";
+		String outputFile=workDir+"/"+filename;
+		try (FileWriter fwrt = new FileWriter(outputFile)){
+			LOG.info("CreateNewFile, hashcode="+rootElement.hashCode());
 			XMLOutputter outputter = new XMLOutputter();
-			Calendar cal = Calendar.getInstance();
-			SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd");
 			format.format(new java.sql.Date(cal.getTime().getTime()));
-			
-			
-			String filename="L_"+aSocCode+"_"+format.format(new java.sql.Date(cal.getTime().getTime()))+"_"+aPacketNumber+".xml";
-			String outputFile=workDir+"/"+filename;
-			FileWriter fwrt = new FileWriter(outputFile);
 			Document pat = new Document(rootElement);
 			outputter.setFormat(Format.getPrettyFormat().setEncoding("UTF-8"));
 			outputter.output(pat, fwrt);
 			fwrt.close();
-			System.out.println("CreateNewFile, fileName="+filename);
+			LOG.info("CreateNewFile, fileName="+filename);
 			return filename;
-		}
-	
-		 catch (Exception ex) 
-		{
-			 System.out.println("E_CreateNewfile: "+ex.getMessage());
+		} catch (Exception ex) {
+			 LOG.error("E_CreateNewfile: "+ex.getMessage());
 			 return "ERROR";
-	        }
+		}
 	}
     		
     public void createF16vn(String aDateStart,String aDateEnd) {
@@ -1029,10 +991,10 @@ public class DisabilityServiceBean implements IDisabilityService {
     		.append("','dd.mm.yyyy') and to_date('").append(aDateEnd).append("','dd.mm.yyyy')") ;
     	sql.append("  and duplicate_id is null and vddcr.code='1' and workComboType_id is null") ;
     	sql.append(" order by dc.id,dd.issueDate desc") ;
-    	System.out.println("sql--->"+sql) ;
+    	LOG.info("sql--->"+sql) ;
     	List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
     	
-    	System.out.println("cnt--->"+list.size()) ;
+    	LOG.info("cnt--->"+list.size()) ;
     	Long dcaseold=Long.valueOf(0) ;
     	for (Object[] obj:list) {
     		String str = "" ;
@@ -1043,9 +1005,9 @@ public class DisabilityServiceBean implements IDisabilityService {
     		String mkb = ""+obj[1] ;
     		String sex = ""+obj[3] ;
     		String reason = ""+obj[2] ;
-    		System.out.println("mkb--->"+mkb) ;
-    		System.out.println("sex--->"+sex) ;
-    		System.out.println("reason--->"+reason) ;
+    		LOG.info("mkb--->"+mkb) ;
+    		LOG.info("sex--->"+sex) ;
+    		LOG.info("reason--->"+reason) ;
     		if (reason.equals("09")) {
     			if (sex.equals("1")) {str=str+","+"96,102" ;} else {str=str+","+"97,103" ;}
     		} else {if (reason.equals("08")) {
@@ -1053,7 +1015,8 @@ public class DisabilityServiceBean implements IDisabilityService {
     		} else {if (reason.equals("03")) {
     			if (sex.equals("1")) {str=str+","+"100,102" ;} else {str=str+","+"101,103" ;}
     		} else {if (reason.equals("05")) {
-    			if (sex.equals("1")) {str=str+","+"104" ;} else {str=str+","+"104" ;}
+				str=str+","+"104" ;
+    			//if (sex.equals("1")) {str=str+","+"104" ;} else {str=str+","+"104" ;}
     		} else { 
         		if (ConvertSql.ChInt("A00-B99",mkb)) {if (sex.equals("1")) {str=str+","+"1" ;} else {str=str+","+"2" ;}}
         		if (ConvertSql.ChInt("A00-A09",mkb)) {if (sex.equals("1")) {str=str+","+"3" ;} else {str=str+","+"4" ;}}
@@ -1108,23 +1071,23 @@ public class DisabilityServiceBean implements IDisabilityService {
 	    		//if (ConvertSql.ChInt("",mkb)) {if (sex.equals("1")) {str=str+","+"" ;} else {str=str+","+"" ;}}
 	    		//if (ConvertSql.ChInt("",mkb)) {if (sex.equals("1")) {str=str+","+"" ;} else {str=str+","+"" ;}}
     		}}}}
-    		System.out.println("str--->"+str) ;
+    		LOG.info("str--->"+str) ;
     		if (!str.equals("")) {
     			str = str.substring(1) ;
     			String[] strs = str.split(",") ;
     			theManager.createNativeQuery("delete from DisabilityReport where caseR='"+obj[0]+"'").executeUpdate() ;
     			if (strs.length>0) {
 	    			for (String s:strs) {
-		    			System.out.println("line--->"+s) ;
-		    			System.out.println("case--->"+dcase) ;
+		    			LOG.info("line--->"+s) ;
+		    			LOG.info("case--->"+dcase) ;
 	    				DisabilityReport dr = new DisabilityReport() ;
 	    				dr.setLineR(Long.valueOf(s)) ;
 	    				dr.setCaseR(dcase) ;
 	    				theManager.persist(dr) ;
 	    			}
 	    			String age = AgeUtil.getAgeCache((java.sql.Date)obj[6], (java.sql.Date)obj[4], 0);
-	    			System.out.println("age--->"+age) ;
-	    			System.out.println("duration--->"+obj[5]) ;
+	    			LOG.info("age--->"+age) ;
+	    			LOG.info("duration--->"+obj[5]) ;
 	    			theManager.createNativeQuery("update DisabilityCase set agePatient='"+age+"', durationCase='"+obj[5]+"' where id='"+obj[0]+"'").executeUpdate() ;
     			}
     		}
@@ -1138,9 +1101,9 @@ public class DisabilityServiceBean implements IDisabilityService {
     	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
     	boolean isElectronicDocument = false; // Отключаем проверки для электронных больничных листов
 		List<Object[]> list = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",doc.getId()).getResultList();
-		if (list.size()>0) {isElectronicDocument = true;}
+		if (!list.isEmpty()) {isElectronicDocument = true;}
 
-    	if (!isElectronicDocument && (doc.getIsClose()==null || doc.getIsClose()==false)) {
+    	if (!isElectronicDocument && (doc.getIsClose()==null || !doc.getIsClose())) {
     		throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!") ;
     	}
     	if (!isElectronicDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
@@ -1152,14 +1115,15 @@ public class DisabilityServiceBean implements IDisabilityService {
     	if (aJob!=null && !aJob.equals("")) {
     		aJob = aJob.trim().toUpperCase() ;
     		newDoc.setJob(aJob) ;
-    		if (aUpdateJob!=null &&aUpdateJob==true) {
-    			Patient pat = doc.getDisabilityCase()!=null && doc.getDisabilityCase().getPatient()!=null?doc.getDisabilityCase().getPatient():null ;
+    		if (aUpdateJob!=null && aUpdateJob) {
+    			Patient pat = doc.getDisabilityCase()!=null && doc.getDisabilityCase().getPatient()!=null ? doc.getDisabilityCase().getPatient():null ;
     			//VocOrg org= pat.getWorks() ;
     			//org.setCode(aJob) ;
-    			pat.setWorks(aJob) ;
-    			theManager.persist(pat) ;
+				if (pat!=null) {
+					pat.setWorks(aJob) ;
+					theManager.persist(pat) ;
+				}
     		}
-        	
     	}
     	
     	doc.setStatus(stat) ;
@@ -1180,11 +1144,11 @@ public class DisabilityServiceBean implements IDisabilityService {
     	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;
 
 		List<Object[]> list = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",aDocId).getResultList();
-		boolean isElectronicDocument = list.size()>0?true:false; //Уберем проверки для ЭЛН
-    	if (!isElectronicDocument&& doc.getWorkComboType()!=null) {
+		boolean isElectronicDocument = !list.isEmpty(); //Уберем проверки для ЭЛН
+    	if (!isElectronicDocument && doc.getWorkComboType()!=null) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО ДОБАВИТЬ ТОЛЬКО ПО ОСНОВНОМУ МЕСТУ РАБОТЫ") ;
     	}
-    	if (!isElectronicDocument && (doc.getIsClose()==null || doc.getIsClose()==false)) {
+    	if (!isElectronicDocument && (doc.getIsClose()==null || !doc.getIsClose())) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!") ;
     	}
     	if (!isElectronicDocument && (doc.getStatus()==null || !doc.getStatus().getCode().equals("0"))) {
@@ -1261,7 +1225,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     	theManager.persist(newDoc) ;
     	//newDoc.set(doc.get) ;
     	//newDoc.set(doc.get) ;
-    	List<DisabilityRecord> list1 = new ArrayList<DisabilityRecord>() ;
+    	List<DisabilityRecord> list1 = new ArrayList<>() ;
     	Date startRecordDate = null;
     	Date finishRecordDate = null;
     	for (int i=0;i<aDocument.getDisabilityRecords().size();i++) {
@@ -1288,7 +1252,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     		//record.set(old.get) ;
     		list1.add(record) ;
     	}
-    	List<RegimeViolationRecord> list2 = new ArrayList<RegimeViolationRecord>() ;
+    	List<RegimeViolationRecord> list2 = new ArrayList<>() ;
     	for (int i=0;i<aDocument.getRegimeViolationRecords().size();i++) {
     		RegimeViolationRecord old = aDocument.getRegimeViolationRecords().get(0) ;
     		RegimeViolationRecord record = new RegimeViolationRecord() ;
@@ -1300,22 +1264,20 @@ public class DisabilityServiceBean implements IDisabilityService {
     		//record.set(old.get) ;
     		list2.add(record) ;
     	}
-    	if (isDuplicate) {
-	    	if (!list1.isEmpty()) {
-	    		DisabilityRecord record = list1.get(0);
-	    		record.setDateFrom(startRecordDate);
-	    		record.setDateTo(finishRecordDate);
-	    		list1.clear();
-	    		list1.add(record);
-	    	}
-    	} 
+		if (isDuplicate && !list1.isEmpty()) {
+			DisabilityRecord record = list1.get(0);
+			record.setDateFrom(startRecordDate);
+			record.setDateTo(finishRecordDate);
+			list1.clear();
+			list1.add(record);
+		}
     	newDoc.setDisabilityRecords(list1) ;
     	newDoc.setRegimeViolationRecords(list2) ;
     	theManager.persist(newDoc) ;
 		//Проверяем, является ли больничный лист - электронным
 		List<ElectronicDisabilityDocumentNumber> elns = theManager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aNumber).getResultList();
-		if (elns!=null&&elns.size()>0) {
-			LOG.info("При создании дубликата выявилось что больничный лист - электронный");
+		if (elns!=null && !elns.isEmpty()) {
+			LOG.warn("При создании дубликата выявилось что больничный лист - электронный");
 			ElectronicDisabilityDocumentNumber eln = elns.get(0);
 			eln.setDisabilityDocument(newDoc);
 			eln.setUsername(username);
@@ -1398,7 +1360,7 @@ public class DisabilityServiceBean implements IDisabilityService {
         }
         
         if (aFind ==null || aFind.trim().equals(""))  { 
-        	return new LinkedList<DisabilityDocumentForm>();
+        	return new LinkedList<>();
         } else {
         	QueryClauseBuilder builder = new QueryClauseBuilder();
         	aFind = aFind.trim() ;
@@ -1421,7 +1383,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 	
 	private List<DisabilityDocumentForm> createList(Query aQuery) {
 		List<DisabilityDocument> list = aQuery.setMaxResults(50).getResultList();
-		List<DisabilityDocumentForm> ret = new LinkedList<DisabilityDocumentForm>();
+		List<DisabilityDocumentForm> ret = new LinkedList<>();
 		for (DisabilityDocument doc : list) {
 			try {
 				DisabilityDocumentForm frm = theEntityFormService.loadForm(DisabilityDocumentForm.class, doc) ;
@@ -1456,7 +1418,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 	private List<GroupByDate> findDocumentGroupByDate(StringBuilder aSql) {
 		List<Object[]> list = theManager.createNativeQuery(aSql.toString())
 				.getResultList() ;
-		LinkedList<GroupByDate> ret = new LinkedList<GroupByDate>() ;
+		LinkedList<GroupByDate> ret = new LinkedList<>() ;
 		long i =0 ;
 		for (Object[] row: list ) {
 			GroupByDate result = new GroupByDate() ;
@@ -1485,12 +1447,11 @@ public class DisabilityServiceBean implements IDisabilityService {
         List<Object> idlist = theManager.createNativeQuery("select dd.id from DisabilityDocument as dd"
         		+ " left join DisabilityRecord as dr on dr.disabilityDocument_id=dd.id"
         		+" where ((dd.isclose is null) or (cast(dd.isclose as int)=0))  and dr.dateFrom=:dateFrom").setParameter("dateFrom",date).setMaxResults(50).getResultList();
-        List<DisabilityDocumentForm> ret = new LinkedList<DisabilityDocumentForm>();
-        if (idlist.size()>0) {
+        List<DisabilityDocumentForm> ret = new LinkedList<>();
+        if (!idlist.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
         	StringBuilder sql = new StringBuilder() ;
 	        for (Object obj:idlist) {
-	        	Long iddoc = ConvertSql.parseLong(obj) ;
 	        	ids.append(",").append(obj) ;
 	        }
 	        ids.substring(1) ;
@@ -1509,7 +1470,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 	}
 	public List<DisabilityDocumentForm> findCloseTicketByDate(String aDate, String aType) {
 		
-		QueryClauseBuilder builder = new QueryClauseBuilder();
         Date date = null;
         if(!StringUtil.isNullOrEmpty(aDate)) {
             try {
@@ -1531,13 +1491,11 @@ public class DisabilityServiceBean implements IDisabilityService {
         		.append("and (select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id) = cast(:date as date)") ;
         }
         List<Object> idlist = theManager.createNativeQuery(sql.toString()).setParameter("date",date).setMaxResults(50).getResultList();
-        List<DisabilityDocumentForm> ret = new LinkedList<DisabilityDocumentForm>();
-        if (idlist.size()>0) {
+        List<DisabilityDocumentForm> ret = new LinkedList<>();
+        if (!idlist.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
-        	sql = null ;
         	sql = new StringBuilder() ;
 	        for (Object obj:idlist) {
-	        	Long iddoc = ConvertSql.parseLong(obj) ;
 	        	ids.append(",").append(obj) ;
 	        }
 	        ids.substring(1) ;
@@ -1555,9 +1513,7 @@ public class DisabilityServiceBean implements IDisabilityService {
         return ret;
 	}
 	public List<GroupByDate> findCloseDocumentGroupByDate(String aDateFrom, String aDateTo) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>();
 	}
 	@Resource SessionContext theContext ;
-
 }

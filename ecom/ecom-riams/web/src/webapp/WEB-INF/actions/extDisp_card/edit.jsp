@@ -287,7 +287,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     		else{
 		document.getElementById('notPaid').checked = true;
 		document.getElementById('isNoOmc').checked = true;
-		ExtDispService.DispCardNotReal($('id').value,{
+		ExtDispService.dispCardNotReal($('id').value,{
 		callback: function (aResult) {
 			if(aResult=='1'){
 				alert("Карта не найдена!")}

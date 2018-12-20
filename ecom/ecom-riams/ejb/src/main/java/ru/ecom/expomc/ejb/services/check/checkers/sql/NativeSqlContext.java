@@ -1,16 +1,15 @@
 package ru.ecom.expomc.ejb.services.check.checkers.sql;
 
-import java.lang.reflect.Method;
-
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.Column;
+import javax.persistence.EntityManager;
+import java.lang.reflect.Method;
 
 public class NativeSqlContext {
 
@@ -72,7 +71,6 @@ public class NativeSqlContext {
 			
 			//String methodName = PropertyUtil.getGetterMethodNameForProperty(aProperty) ;
 			Class type = PropertyUtil.getGetterMethod(theEntityClass, aProperty).getReturnType() ; //theEntityClass.getMethod(methodName).getReturnType() ;
-			//System.out.println(clazz+" "+theProperty+" "+type) ;
 			String emptyValue = type.equals(String.class) ? "''" : "0" ;
 			return emptyValue ;
 		} catch (Exception e) {

@@ -12,6 +12,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.util.EntityNameUtil;
@@ -1597,7 +1598,6 @@ public class ImportFormatServiceBean implements IImportFormatService {
                                 log("TIME:"+time.getId());
                             }
                             copyMapToEntity(maps, map, data);
-                            //System.out.println("data ="+data) ;
                             try {
                             	theManager.persist(data);
                             } catch (Exception e) {
@@ -1761,10 +1761,8 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 Method getterMethod = PropertyUtil.getMethodFormProperty(entityClass,key);
                 Method setterMethod = getSetterMethodForProperty(entityClass, field.getProperty());
                 Object value = aMap.get(key);
-                //System.out.println(setterMethod+" "+value) ;
                 if (value != null) {
                     Object convertedValue = convertValue(value.getClass(), getterMethod.getReturnType(), value);
-//                    LOG.info("convValue = "+convertedValue);
                     setterMethod.invoke(aEntity, convertedValue);
                 }
             }
@@ -1874,11 +1872,6 @@ public class ImportFormatServiceBean implements IImportFormatService {
     /** Отладка */
     private boolean theDebug = false;
 
-
-  //  private @EJB  IJbossGetFileLocalService theJbossGetFileLocalService;
-
-
-
+    private @EJB
+    IJbossGetFileLocalService theJbossGetFileLocalService;
 }
-
-

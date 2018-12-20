@@ -303,7 +303,6 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	String result = aParentField ;
     	if (aSplitCount!=null && aSplitCount>0) {
     		String[] val = aReplace.split("#") ;
-    		//System.out.println("count="+aSplitCount) ;
     		for (int i=0;i<aSplitCount.intValue();i++) {
     			find = ":par"+(i+1) ;
     			
@@ -313,16 +312,13 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     			} else {
     				pr="''" ;
     			}
-    			//System.out.println("find="+find+"    "+"pr="+pr) ;
     			result = result.replace(find, pr);
-    			//System.out.println("----result="+result) ;
     		}
     		
     	} else {
     		find = ":parent" ;
 	    	result = result.replace(find, "'"+aReplace+"'") ;
     	}
-    	//System.out.println("result="+result) ;
     	return result ;
     }
     
@@ -339,7 +335,6 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
             		values.add(createVocValue(entity)) ;
             	}
             }
-            //System.out.println(aPrevIs+"  list size="+values.size()) ;
         }
         return values;
     }
@@ -360,11 +355,8 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     private VocValue createVocValue(Object[] aObj) throws RuntimeException {
         try {
             //String id = PropertyUtil.getPropertyValue(aEntity, "id").toString() ;
-        	//System.out.println("obj="+aObj) ;
         	String id = new StringBuilder ().append(aObj[0]).toString() ;
-        	//System.out.println("id="+id) ;
             String name = getNameFromEntity(aObj) ;
-            //System.out.println("name="+name) ;
         	//String name = (String)aObj[2] ;
             return new VocValue(id, name) ;
         } catch (Exception e) {

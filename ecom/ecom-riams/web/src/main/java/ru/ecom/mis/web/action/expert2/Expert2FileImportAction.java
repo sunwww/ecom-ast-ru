@@ -34,7 +34,7 @@ public class Expert2FileImportAction extends BaseAction {
 				return aMapping.findForward("success") ;
 			}
 			String fileName=ffile.getFileName();
-			System.out.println("filename = "+fileName);
+			log.info("filename = "+fileName);
 			String action = form.getDirName();
 			String result ;
 			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/data");
@@ -74,7 +74,7 @@ public class Expert2FileImportAction extends BaseAction {
     		return aMapping.findForward("success") ;
 
     	} catch(Exception e) {
-    		System.out.println(e);
+    		log.error(e);
     		e.printStackTrace();
     	}
     	return aMapping.findForward("success") ;
@@ -82,7 +82,7 @@ public class Expert2FileImportAction extends BaseAction {
 
 	public void saveFile(InputStream aInputStream, String aFileName) throws IOException  {
 		int count ;
-		System.out.println("filename="+aFileName);
+		log.info("filename="+aFileName);
 		File outputFile = new File(aFileName);
 		if (!outputFile.exists()) {
 			outputFile.createNewFile();

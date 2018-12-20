@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.service.expert;
 
+import org.apache.log4j.Logger;
 import ru.ecom.diary.ejb.service.protocol.field.AutoCompleteField;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.util.ConvertSql;
@@ -30,12 +31,13 @@ import java.util.regex.Pattern;
 @Remote(IQualityEstimationService.class)
 @SuppressWarnings("unchecked")
 public class QualityEstimationServiceBean implements IQualityEstimationService {
+	private static final Logger LOG = Logger.getLogger(QualityEstimationServiceBean.class);
 	
 	public String getInfoByDep(Long aSmo, Long aDepartment){
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("'") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			String dtype=list.get(0)[0].toString() ;
 			//Стационар
 			if (dtype!=null && dtype.equals("HOSPITALMEDCASE")) {
@@ -57,9 +59,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					.append(" left join worker w on w.id = wf.worker_id")
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where smoM.id = '").append(aSmo).append("' and smoD.department_id='").append(aDepartment).append("'") ;
-				;
 				list = theManager.createNativeQuery(sql.toString()).getResultList() ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					StringBuilder ret = new StringBuilder() ;
 					Object[] row = list.get(0) ;
 					ret.append(row[0]!=null?row[0]:"")
@@ -70,11 +71,11 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					return ret.toString() ;
 				}
 				//Поликлиника
-			} else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")){
+			}/* else if (dtype!=null && dtype.equals("POLYCLINICMEDCASE")){
 				
 			} else {
 				
-			}
+			}*/
 		}
 		
 		return null ;
@@ -90,13 +91,12 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		//	.append(" where (select qec.kind_id from qualityestimationcard qec where qec.id='").append(aCardId).append("')=vqec.kind_id")			;
 		sql1.append("select vqec.id as vqecid from VocQualityEstimationCrit vqec")
 			.append(" left join qualityestimationcard qec on qec.kind_id=vqec.kind_id where qec.id='").append(aCardId).append("' group by vqec.id,vqec.code  order by vqec.code")			;
-		//log(sql1) ;
+		//LOG.info(sql1) ;
 		List<Object> list1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
 		Long cntSection ;
 		//Long kind ;
-		if (list1.size()>0) {
+		if (!list1.isEmpty()) {
 			StringBuilder result = new StringBuilder() ;
-			
 			cntSection = Long.valueOf(list1.size()) ;
 			result.append(cntSection) ;
 			for (int i =0 ; i<list1.size();i++) {
@@ -104,21 +104,17 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			}
 			return result.toString() ;
 		} else {
-			log("row null") ;
+			LOG.info("row null") ;
 			return null ;
 		}
 	}
-	private void log(Object aObj) {
-		System.out.println(aObj) ;
-	}
 	public QualityEstimationRow getRow(Boolean aFullExpertCard, String aRequestParam,Long aCardId, String aTypeSpecialist, boolean aView) {
 		boolean replaceValue = false ;
-		HashMap<String, String> val = new HashMap<String, String> () ;
-		log(aRequestParam) ;
+		HashMap<String, String> val = new HashMap<> () ;
+		LOG.info(aRequestParam) ;
 		if (!aView&&aRequestParam!=null && !aRequestParam.trim().equals("")) {
 			replaceValue = true ;
 			String[] repSt = aRequestParam.split("#") ;
-			log("length = "+repSt.length);
 			for (String str: repSt) {
 				String[] o = str.split(":") ;
 				val.put(o[0], o[1]) ;
@@ -136,21 +132,20 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		int cntSection ;
 		
 		Long kind ;
-		if (list1.size()>0) {
+		if (!list1.isEmpty()) {
 			Object[] row = list1.get(0) ;
 			cntSection = ConvertSql.parseLong(row[0]).intValue() ;
 			kind = ConvertSql.parseLong(row[1]) ;
 		} else {
-			
 			return null ;
 		}
 		if (!aView && !aFullExpertCard) {
 			return getRowShort(replaceValue,val,kind, aCardId, aTypeSpecialist, cntSection, aView) ;
 		}
 		Boolean ifTypeBool=false;
-		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
-		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
-		if (listkind.size()!=0) {
+		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=:cardId";
+		List<Object[]> listkind = theManager.createNativeQuery(sql2).setParameter("cardId",aCardId).getResultList() ;
+		if (!listkind.isEmpty()) {
 			Object one = "1";
 			Object row = listkind.get(0);
 			if (row.equals(one))
@@ -229,7 +224,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		}
 		sql.append(" group by vqem.id ,vqec.id,vqec.code,vqec.name,vqec.shortname,vqem.code ,vqem.name,vqem.mark")
 		 	.append(" order by vqec.code");
-		// log(sql) ;
+		// LOG.info(sql) ;
 		 StringBuilder table = new StringBuilder() ;
 		 StringBuilder javaScript = new StringBuilder() ;
 		 table.append("<table border='1' width=90%>")  ;
@@ -246,7 +241,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 if (ifTypeBool) table.append("<th>Комм. зав.</th>") ;
 		 table.append("</tr>") ;
 		 List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
-		 if (list.size()>0) {
+		 if (!list.isEmpty()) {
 			 boolean firststr = false;
 			 int cntPart =1 ;
 			 int cntSubsection = 0 ;
@@ -273,10 +268,10 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					 //Expert - эксперт
 					 //Coeur - КЭР
 					 Object valMarkId =  row[12];
-					 //log(aTypeSpecialist) ;
+					 //LOG.info(aTypeSpecialist) ;
 					 if (replaceValue &&!aView && aTypeSpecialist.equals("BranchManager")) {
 						 valMarkId=val.get(String.valueOf(cntPart-1)) ;
-						 //log(String.valueOf(cntPart-1)+":"+valMarkId) ;
+						 //LOG.info(String.valueOf(cntPart-1)+":"+valMarkId) ;
 					 }
 					 table.append(recordExpert(row[0],row[8], valMarkId,row[9],cntPart, cntSection,cntSubsection, "BranchManager", aTypeSpecialist, firststr, aView) );
 					 valMarkId =  row[14];
@@ -317,7 +312,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		return getRow(true, null, aCardId, aTypeSpecialist, aView);
 	}
 	public QualityEstimationRow getRowShort(Long aKind, Long aCard, String aTypeSpecialist, int aCntSection, boolean aView) {
-		return getRowShort(false,new HashMap<String,String>(), aKind, aCard, aTypeSpecialist, aCntSection, aView);
+		return getRowShort(false,new HashMap<>(), aKind, aCard, aTypeSpecialist, aCntSection, aView);
 	}
 	
 	public QualityEstimationRow getRowShort(boolean aReplaceValue,HashMap<String,String> aValueMap, Long aKind, Long aCard, String aTypeSpecialist, int aCntSection, boolean aView) {
@@ -394,7 +389,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		Boolean ifTypeBool=false;
 		String sql2 = "select case when vqec.code='PR203' then '1' else '0' end  from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCard;
 		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
-		if (listkind.size()!=0) {
+		if (!listkind.isEmpty()) {
 			Object one = "1";
 			Object row = listkind.get(0) ;
 			if (row.equals(one)) {
@@ -417,20 +412,20 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			sql.append(" and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqec.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqec.ischild=true) ");
 		}
 		sql.append(" order by vqec.code") ;
-	//	System.out.println("shortRow="+sql.toString());
-		//log(sql);
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
-		 if (list.size()>0) {
+		 if (!list.isEmpty()) {
 			 List<String[]> list2=null;
 			 if (ifTypeBool) {
 				 list2 = getExecutedCriterias(aCard) ;
 			 }
 			 table.append("<table border=1 width=90%>")  ;//
 			 table.append("<tr>") ;
-			 if (ifTypeBool)
+			 if (ifTypeBool) {
 			 	table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи (зелёным цветом выделены те критерии, которые выполнены согласно автоматическому подсчёту оказанных услуг; оранжевым - те, что не выполнены).</th>") ;
-			 else
+			 }
+			 else {
 				 table.append("<th rowspan=2 colspan=1>Критерии качества медицинской помощи.</th>") ;
+			 }
 		 	 table.append("<th rowspan=2>№№п/п</th>") ;
 			 table.append("<th colspan=3>Оценочные баллы</th>") ;
 			 table.append("</tr>") ;
@@ -469,7 +464,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 int index=-1;
 				 if (list!=null && list2!=null) {
 					 for (int t = 0; t < list2.size(); t++) {
-						 if (list2.get(t)[0].toString().equals(list.get(i)[1].toString())) index = t;
+						 if (list2.get(t)[0].equals(list.get(i)[1].toString())) index = t;
 					 }
 				 }
 				 if (index!=-1 && list2!=null && list2.get(index)!=null && list2.get(index)[1]!=null && list2.get(index)[1].equals("yes")) {
@@ -484,7 +479,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				
 				 if (aReplaceValue &&!aView && aTypeSpecialist.equals("BranchManager")) {
 					 valMark=aValueMap.get(String.valueOf(cntPart-1)) ;
-					 //log(String.valueOf(cntPart-1)+":"+valMark) ;
+					 //LOG.info(String.valueOf(cntPart-1)+":"+valMark) ;
 				 }
 				 table.append(recordExpertShort(row[0],row[4], valMark, cntPart, aCntSection, "BranchManager", aTypeSpecialist, aView) );
 				 valMark =  row[5];
@@ -534,7 +529,6 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			 ret.append(AutoCompleteField.getField(vocName,property, label, value,parentId, fieldColSpan, size
 					 , horizontalFill, required, Boolean.FALSE,null,String.valueOf(1)));
 			 //javaScript.append(AutoCompleteField.getJavaScript(false,vocName, property,propertyNext,label)) ;
-			// System.out.println("1 recordExpertShot, ret="+ret);
 		 } else {
 			 ret.append("<td align='center'>");
 			 if (aValueMark==null) {
@@ -543,7 +537,6 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				 ret.append(aValueMark) ;
 			 }
 			// ret.append("<input type='hidden' id='criterion"+aCntPart+"Comment'></td>") ;
-			 //System.out.println("2 recordExpertShot, ret="+ret);
 		 }
 		return ret ;
 	}
@@ -584,9 +577,8 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		return ret ;
 	}
 	public Long getIdQualityEstimationByType(String aType, Long aIdCard) {
-		List<Object[]> result = theManager.createNativeQuery("select qe.id, qe.expert_id from qualityestimation qe where qe.card_id='"+aIdCard+"' and qe.expertType='"+aType+"'").getResultList();
-		if (result.size()>0) return ConvertSql.parseLong(result.get(0)[0]) ;
-		return null ;
+		List<Object[]> result = theManager.createNativeQuery("select qe.id, qe.expert_id from qualityestimation qe where qe.card_id='"+aIdCard+"' and qe.expertType=:aType").setParameter("aType",aType).getResultList();
+		return result.isEmpty()? null : ConvertSql.parseLong(result.get(0)[0]) ;
 	}
 	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext EntityManager theManager ;
@@ -595,7 +587,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	//Milamesher получение списка критерии+услуги
 	private List<String[]> getExecutedCriterias(Long aCard) {
 
-		List<String[]> total = new ArrayList<String[]>();
+		List<String[]> total = new ArrayList<>();
 		String query="select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes\n" +
 				"from vocqualityestimationcrit vqecrit\n" +
 				"left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id\n" +
@@ -607,18 +599,16 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				"left join qualityestimationcard qecard on qecard.medcase_id=mc.id\n" +
 				"where qecard.id="+aCard+" and reg.code='4' and prior.code='1'";
 		List<Object[]> list = theManager.createNativeQuery(query).getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			query = "select m.parent_id from qualityestimationcard qecard\n" +
 					"left join qualityestimation qe on qe.card_id=qecard.id\n" +
 					"left join medcase m on m.id=qecard.medcase_id\n" +
 					"where qecard.id=" + aCard;
 			List<Object> list0 = theManager.createNativeQuery(query).getResultList();
-			if (list0.size() > 0) {
+			if (!list0.isEmpty()) {
 				Long id = Long.parseLong(list0.get(0).toString());
-				//log(id);
 				String json=theHospitalMedCaseService.getAllServicesByMedCase(id);
-				//log(json);
-				List<String> allMatches = new ArrayList<String>();
+				List<String> allMatches = new ArrayList<>();
 				Matcher m = Pattern.compile("\"vmscode\":\"[A-Za-z0-9.]*\"").matcher(json);
 				while (m.find()) {
 					allMatches.add(m.group().replace("\"vmscode\":\"", "").replace("\"}]", "").replace("\"", ""));
@@ -629,20 +619,16 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					Boolean flag = false;
 					total.add(new String[2]);
 					total.get(i)[0] = list.get(i)[0].toString();
-					if (allMatches.size() > 0) {
+					if (!allMatches.isEmpty()) {
 						for (int j = 0; j < allMatches.size(); j++) {
-							String scode = allMatches.get(j).toString();
+							String scode = allMatches.get(j);
 							if (mcodes.contains("'" + scode + "'")) flag = true;
-							//log("scode "+scode);
-							//log("mcodes"+mcodes);
 						}
 					}
 					if (flag) total.get(i)[1] = "yes";
 					else total.get(i)[1] = "no";
-					//log (flag);
 				}
 			}
-			//log("total"+total.toString());
 		}
 		return total;
 	}
@@ -650,22 +636,22 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	public Long createDraftEK(Long aMcaseId) {
 		//если уже есть QE, то вернуть имеющийся, нет - создать
 		List<Object> ids= theManager.createNativeQuery("select id from qualityestimation where card_id=ANY(select id from qualityestimationcard  where medcase_id=" + aMcaseId + " and kind_id=5)").getResultList();
-		if (ids == null || ids.size()==0) {
+		if (ids == null || ids.isEmpty()) {
 			QualityEstimationCard qecard = new QualityEstimationCard();
 			//беру первый основной клинический диагноз
-			Long idc10_id = ConvertSql.parseLong(theManager.createNativeQuery("select ds.idc10_id from diagnosis ds\n" +
+			Long idc10Id = ConvertSql.parseLong(theManager.createNativeQuery("select ds.idc10_id from diagnosis ds\n" +
 					"left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id \n" +
 					"left join vocprioritydiagnosis prior on prior.id=ds.priority_id\n" +
 					" where ds.medcase_id= " + aMcaseId + " and prior.code='1' and reg.code='4' order by ds.id").getResultList().get(0));
 			String login = theContext.getCallerPrincipal().toString();
 			MedCase mcase = aMcaseId != null ? theManager.find(MedCase.class, aMcaseId) : null;
-			Long kind_id = ConvertSql.parseLong(theManager.createNativeQuery("select id from vocqualityestimationkind where code='PR203'").getResultList().get(0));
-			VocQualityEstimationKind kind = kind_id != null ? theManager.find(VocQualityEstimationKind.class, kind_id) : null;
-			Long wf_id = ConvertSql.parseLong(theManager.createNativeQuery("select id from workfunction where secuser_id=(select id from secuser where login='" + login + "')").getResultList().get(0));
-			WorkFunction wf = wf_id != null ? theManager.find(WorkFunction.class, wf_id) : null;
-			VocIdc10 idc10 = idc10_id != null ? theManager.find(VocIdc10.class, idc10_id) : null;
+			Long kindId = ConvertSql.parseLong(theManager.createNativeQuery("select id from vocqualityestimationkind where code='PR203'").getResultList().get(0));
+			VocQualityEstimationKind kind = kindId != null ? theManager.find(VocQualityEstimationKind.class, kindId) : null;
+			Long wfId = ConvertSql.parseLong(theManager.createNativeQuery("select id from workfunction where secuser_id=(select id from secuser where login='" + login + "')").getResultList().get(0));
+			WorkFunction wf = wfId != null ? theManager.find(WorkFunction.class, wfId) : null;
+			VocIdc10 idc10 = idc10Id != null ? theManager.find(VocIdc10.class, idc10Id) : null;
 			Object cardnumber = theManager.createNativeQuery("select code from statisticstub  where medcase_id=(select parent_id from medcase where id=" + aMcaseId + ") ").getResultList().get(0);
-			if (mcase != null && kind_id != null && wf != null && idc10 != null && cardnumber != null) {
+			if (mcase != null && kindId != null && wf != null && idc10 != null && cardnumber != null) {
 				qecard.setCreateDate(new java.sql.Date((new java.util.Date()).getTime()));
 				qecard.setCreateUsername(login);
 				qecard.setMedcase(mcase);

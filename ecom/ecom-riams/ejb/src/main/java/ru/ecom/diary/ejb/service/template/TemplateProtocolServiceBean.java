@@ -1,17 +1,5 @@
 package ru.ecom.diary.ejb.service.template;
 
-import java.io.*;
-import java.math.BigDecimal;
-import java.net.*;
-import java.sql.Date;
-import java.util.*;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +22,21 @@ import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInt
 import ru.ecom.poly.ejb.domain.protocol.Protocol;
 import ru.nuzmsh.util.StringUtil;
 
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Date;
+import java.util.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: STkacheva
@@ -44,7 +47,7 @@ import ru.nuzmsh.util.StringUtil;
 @Stateless
 @Remote(ITemplateProtocolService.class)
 public class TemplateProtocolServiceBean implements ITemplateProtocolService {
-	static final Logger log = Logger.getLogger(TemplateProtocolServiceBean.class);
+	static final Logger LOG = Logger.getLogger(TemplateProtocolServiceBean.class);
 
 	public void sendSms(String aPhone, String aMessage)  {
 		try {
@@ -54,14 +57,14 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			EjbEcomConfig config = EjbEcomConfig.getInstance();
 			String address = config.get("ru.amokb.patientcabinetaddress", null);
 			makePOSTRequest(json.toString(), address, "SendSms", null, null, null);
-			log.debug("message sent");
+			LOG.debug("message sent");
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("Ошибка при отправке СМС "+aMessage);
+			LOG.error("Ошибка при отправке СМС "+aMessage);
 		}
 	}
 	public String makePOSTRequest (String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager) {
-		//log.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
+		//LOG.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
 		try {
 			if (address==null) {
 				return "";
@@ -72,7 +75,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				connection = (HttpURLConnection) url.openConnection();
 				if (params!=null&&!params.isEmpty()) {
 					for (Map.Entry<String,String> par: params.entrySet()) {
-					//	log.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
+					//	LOG.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
 						connection.setRequestProperty(par.getKey(),par.getValue());
 					}
 				}
@@ -87,7 +90,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				writer.close();
 				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 				StringBuilder response = new StringBuilder();
-				String s = "";
+				String s ;
 				while ((s = in.readLine()) != null) {
 					response.append(s);
 				}
@@ -96,10 +99,10 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				return response.toString();
 
 			} catch (ConnectException e) {
-				log.error("Ошибка соединения с сервисом. "+e);
+				LOG.error("Ошибка соединения с сервисом. "+e);
 			} catch (Exception e) {
 				if (connection!=null) {connection.disconnect();}
-				log.error("in thread happens exception"+e);
+				LOG.error("in thread happens exception"+e);
 				e.printStackTrace();
 			}
 		} catch (Exception e) {
@@ -113,7 +116,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			}
 			String response = makePOSTRequest(data, address, aMethod, params, aObjectId, aManager);
 			if (response.length()>0) {
-				//log.info("Получили ответ, вот он"+response);
+				//LOG.info("Получили ответ, вот он"+response);
 				if (aMethod.equals("SetRegisterPatient")) {
 					setAccountExternalCode(aObjectId,aManager,response);
 				} else if (aMethod.equals("SetBlockPatient")){
@@ -138,7 +141,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				aManager.persist(p);
 			}
 		} catch (Exception e) {
-			log.error("changeInformation exception: "+e);
+			LOG.error("changeInformation exception: "+e);
 			e.printStackTrace();
 		}
 	}
@@ -159,12 +162,12 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			PatientExternalServiceAccount pesa = aManager.find(PatientExternalServiceAccount.class, aPatientExternalServiceAccountId);
 			Patient pat = pesa.getPatient();
 			JSONObject root = new JSONObject();
-			Map<String,String> params = new LinkedHashMap<String,String>();
+			Map<String,String> params = new LinkedHashMap<>();
 			String function  = "";
 			String logType = "EXTERNAL_RESOURCE_";
 			if (pesa.getDateTo()!=null) {
 				logType+="BLOCK_PATIENT";
-				log.info("Отзываем согласие пациента. uid = "+pesa.getExternalCode());
+				LOG.info("Отзываем согласие пациента. uid = "+pesa.getExternalCode());
 				//params.put("uid",pesa.getExternalCode());
 				//params.put("blockUser",aUsername);
 				root.put("uid",pesa.getExternalCode());
@@ -208,7 +211,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	public String getExternalServiceAddress() {
 	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 	String address =config.get("ru.amokb.patientcabinetaddress", null) ;
-	if (address==null) {log.error("В конфигурационном файле нет параметра ru.amokb.patientcabinetaddress, ");}
+	if (address==null) {LOG.error("В конфигурационном файле нет параметра ru.amokb.patientcabinetaddress, ");}
 	return address;
 }
 	/**
@@ -223,7 +226,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		if (aManager==null) {aManager=theManager;}
 		Protocol p = aProtocolId!=null?aManager.find(Protocol.class,aProtocolId):null;
 		MedCase mc = p!=null?p.getMedCase():aManager.find(MedCase.class, aMedCaseId);
-		//log.info("=== Protocol p = "+p);
+		//LOG.info("=== Protocol p = "+p);
 		sendProtocolToExternalResource(p, mc,aRecord, aManager);
 	}
 
@@ -233,7 +236,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	 * @param aManager
 	 * @throws JSONException
 	 */
-	public void sendPatientMedicalHistoryToExternalResource(Long aPatientExternalAccountId, EntityManager aManager) throws JSONException { // Делаем разовую выгрузку всей информации по случаям лечения пациента.
+	public void sendPatientMedicalHistoryToExternalResource(Long aPatientExternalAccountId, EntityManager aManager) { // Делаем разовую выгрузку всей информации по случаям лечения пациента.
 		if (aManager==null) {aManager=theManager;}
 		String address = getExternalServiceAddress();
 		if (address==null) {return;}
@@ -261,7 +264,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				" order by mc.datestart desc, mc.timeexecute desc")
 				.setParameter("pat", aPatientId).getResultList();
 		if (!list.isEmpty()) { //Выписка из амбулаторной карты (прием к врачу)
-			log.info("Найдено "+list.size()+" выписок по пациенту "+aPatientId);
+			LOG.info("Найдено "+list.size()+" выписок по пациенту "+aPatientId);
 			//Выгружаем дневники пол-ки, диагностика, лаборатория
 			for (Object[] rec: list) {
 				Visit vis = aManager.find(Visit.class, Long.valueOf(rec[1].toString()));
@@ -283,10 +286,10 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 						record = protocol.getRecord();
 						externalCaseId = lpuCode+"#"+serviceType+"#"+rec[3].toString();
 					} else {
-						log.warn("У диагностичекой услуги/визита "+rec[1]+" нет протокола, запись не выгружаем");
+						LOG.warn("У диагностичекой услуги/визита "+rec[1]+" нет протокола, запись не выгружаем");
 					}
 				} else {
-					log.error("Неизвестный тип услуги");
+					LOG.error("Неизвестный тип услуги");
 					continue;
 				}
 				medcaseDate = "" +  vis.getDateStart();
@@ -374,7 +377,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		try {
 			if (mc == null) {
 				if (d==null) {
-					log.error("Ни медкейса, ни дневника!! Что выгружать? Выходим!");
+					LOG.error("Ни медкейса, ни дневника!! Что выгружать? Выходим!");
 					return;
 				}
 				mc = d.getMedCase();
@@ -400,9 +403,9 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 
 				if (mc instanceof HospitalMedCase) { //Если стационар - выгружаем выписной эпикриз
 					if (d==null ||d instanceof DischargeEpicrisis) {
-						//log.info("1=getEpicrisis 0");
+						//LOG.info("1=getEpicrisis 0");
 						//recordText = HospitalMedCaseViewInterceptor.getDischargeEpicrisis(mc.getId(), aManager);
-						//log.info("1=getEpicrisis 1 " + aRecord);
+						//LOG.info("1=getEpicrisis 1 " + aRecord);
 						HospitalMedCase hosp = (HospitalMedCase) mc;
 						serviceType = "DISCHARGE";
 						externalCaseId = lpuCode+"#"+serviceType+"#"+hosp.getId();
@@ -441,13 +444,13 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 					Visit vis = (Visit) mc;
 					//DischargeDocument doc = aManager.createQuery("from DischargeDocument where medCase=:vis").setParameter("vis",vis).getRe;
 					if (vis.getDateStart() == null) {
-				//		log.debug("Визит " + vis.getId() + "не был оформлен, ничего не выгружаем");
+				//		LOG.debug("Визит " + vis.getId() + "не был оформлен, ничего не выгружаем");
 						return;
 					}
 					serviceType = "VISIT";
 					calendartimeId = ""+(vis.getTimePlan()!=null?vis.getTimePlan().getId():"");
 					List<ServiceMedCase> list = aManager.createQuery("from ServiceMedCase where parent=:vis").setParameter("vis", mc).getResultList();
-					if (list.size() > 0) {
+					if (!list.isEmpty()) {
 						ServiceMedCase smc = list.get(0);
 						String serviceCode = smc.getMedService().getServiceType().getCode();
 						if (serviceCode != null && serviceCode.equals("LABSURVEY")) { //Помечаем случай как лаб. исследование
@@ -492,37 +495,29 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 				service.put("recordtext", aRecord);
 				service.put("calendartimeid",calendartimeId);
 				services.put(service); root.put("services",services);
-				//log.info("=== jSON is ready, " + root.toString());
+				//LOG.info("=== jSON is ready, " + root.toString());
 				makeHttpPostRequest(root.toString(), address,"SetStatement",null, mc.getId(), aManager);
-				//log.info("return = ");
+				//LOG.info("return = ");
 			} else if (pat == null) {
-				log.error("Дневник = " + d.getId() + ", patient = null");
+				LOG.error("Дневник = " + d.getId() + ", patient = null");
 			}
 		} catch (Exception e) {
-			log.error("Exception happens "+e);
+			LOG.error("Exception happens "+e);
 			e.printStackTrace();
 		}
 	}
-	public static String saveParametersByProtocol(Long aSmoId,Protocol d, String aParams, String aUsername, EntityManager aManager) throws JSONException {
+	public static String saveParametersByProtocol(Long aSmoId,Protocol d, String aParams, String aUsername, EntityManager aManager) {
 		JSONObject obj = new JSONObject(aParams) ;
 		String wf = String.valueOf(obj.get("workFunction"));
-		//System.out.print("workfunction================"+wf);
-		StringBuilder sql = new StringBuilder() ;
 		MedCase m = aManager.find(MedCase.class, aSmoId) ;
-		if (m!=null) {
-		List<Object> l = null;
-		
-		
-		if (d!=null) {
-			aManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id="+d.getId()).executeUpdate() ;
+		if (m!=null && d!=null) {
+			aManager.createNativeQuery("delete from FormInputProtocol where docProtocol_id=:protId").setParameter("protId",d.getId()).executeUpdate() ;
 		}
-		} 
 		if (d == null) {
 			d = new Protocol() ;
 			d.setMedCase(m) ;
 			aManager.persist(d) ;			
 		}
-		
 		JSONArray params = obj.getJSONArray("params");
 		StringBuilder sb = new StringBuilder() ;
 		for (int i = 0; i < params.length(); i++) {
@@ -531,7 +526,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			fip.setDocProtocol(d) ;
 			Parameter p = aManager.find(Parameter.class, ConvertSql.parseLong(param.get("id"))) ;
 			fip.setParameter(p) ;
-			fip.setPosition(Long.valueOf(i+1)) ;
+			fip.setPosition(i+1L);
 			String type = String.valueOf(param.get("type"));
 			// 1-числовой
 			// 4-числовой с плав точкой
@@ -629,6 +624,6 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
     EntityManager theManager ;
 	public Long getCountSymbolsInProtocol(long aVisit) {
 		List<Protocol> list = theManager.createQuery("from Protocol where medCase_id=:idv").setParameter("idv", aVisit).setMaxResults(1).getResultList() ;
-		if (list.size()>0) return Long.valueOf(list.get(0).getRecord().length()) ;
-		return Long.valueOf(0);
-	}}
+		return list.isEmpty() ? Long.valueOf(0) : Long.valueOf(list.get(0).getRecord().length());
+	}
+}

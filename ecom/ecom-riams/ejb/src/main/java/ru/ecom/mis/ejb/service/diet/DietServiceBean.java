@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.service.diet;
 
+import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.mis.ejb.domain.diet.*;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -15,7 +16,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Date;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +29,11 @@ import java.util.List;
 @Stateless
 @Remote(IDietService.class)
 public class DietServiceBean implements IDietService {
+	private static final Logger LOG = Logger.getLogger(DietServiceBean.class);
 
 	public String getDescriptionMenu(Long aIdTemplateMenu) {
 		MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
-		StringBuffer desc = new StringBuffer() ;
+		StringBuilder desc = new StringBuilder() ;
 		desc.append("Описание меню-раскладки №") ;
 		desc.append(aIdTemplateMenu) ;
 		desc.append('\n');
@@ -67,7 +68,7 @@ public class DietServiceBean implements IDietService {
 	public String getDescriptionChildMenu(Long aIdTemplateMenu) {
 		MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
 		MealMenuTemplate parent = temp.getParentMenu() ;
-		StringBuffer desc = new StringBuffer() ;
+		StringBuilder desc = new StringBuilder() ;
 		desc.append("Описание меню №") ;
 		desc.append(aIdTemplateMenu) ;
 		desc.append('\n');
@@ -96,13 +97,12 @@ public class DietServiceBean implements IDietService {
 	}
 
 	public boolean saveInExistsMenu(Long aIdTemplateMenu, Long aIdParent) {
-		System.out.println("tempMenu="+aIdTemplateMenu) ;
-		System.out.println("curMenu="+aIdParent) ;
+		LOG.info("tempMenu="+aIdTemplateMenu) ;
+		LOG.info("curMenu="+aIdParent) ;
 		if (aIdTemplateMenu.equals(aIdParent)) throw new IllegalArgumentException("Невозможно добавить блюда. Шаблон и текущее меню должны быть разными!!!");
 		MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
 		MealMenu menu = theManager.find(MealMenu.class, aIdParent) ;
 		if (menu instanceof MealMenuTemplate) {
-			System.out.print("Copy to template") ;
 			for (MealMenuTemplate childMenu: temp.getChildMenus()) {
 				MealMenuTemplate newtemp = new MealMenuTemplate() ;
 				newtemp.setMealTime(childMenu.getMealTime());
@@ -125,7 +125,7 @@ public class DietServiceBean implements IDietService {
 		//Date date = getDateFormat(aDateFrom);
 		if (aDateFrom!=null) {
 			//Diet diet = theManager.find(Diet.class, aIdParent) ;
-			if (temp!=null && temp.getChildMenus()!=null && temp.getChildMenus().size()>0) {
+			if (temp!=null && temp.getChildMenus()!=null && !temp.getChildMenus().isEmpty()) {
 				for (MealMenuTemplate childMenu:temp.getChildMenus()) {
 					MealMenuOrder order = new MealMenuOrder() ;
 					order.setDiet(temp.getDiet()) ;
@@ -148,7 +148,7 @@ public class DietServiceBean implements IDietService {
 	public boolean saveInNewTemplateMenu(Long aIdTemplateMenu
 			,Long aIdDiet, Long aIdServiceStream
 			,Long aIdWeekDay, Date aDateFrom, Date aDateTo) {
-		System.out.println("копирование данных шаблона");
+		LOG.info("копирование данных шаблона");
 		//MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
 		Diet diet = theManager.find(Diet.class, aIdDiet);
 		VocWeekDay weekDay = theManager.find(VocWeekDay.class, aIdWeekDay);
@@ -171,9 +171,9 @@ public class DietServiceBean implements IDietService {
 	private void addDishInMenu(MealMenuTemplate aMenuTemplate, MealMenu aMenu) {
 		if (aMenuTemplate!=null &&aMenu!=null) {
 			List<DishMealMenu> list = aMenu.getDishes() ;
-			if (list==null) list = new ArrayList<DishMealMenu>() ;
+			if (list==null) list = new ArrayList<>() ;
 			for (DishMealMenu dishMenu:aMenuTemplate.getDishes()) {
-				System.out.println(new StringBuffer().append("Блюдо меню:").append(dishMenu.getId()).toString());
+				LOG.info(new StringBuilder().append("Блюдо меню:").append(dishMenu.getId()).toString());
 //				DishMealMenu newDishMenu = newDishMenuOnTemplate(dishMenu, aMenu);
 				DishMealMenu newDishMenu = new DishMealMenu() ;
 				newDishMenu.setDish(dishMenu.getDish()) ;
@@ -185,6 +185,7 @@ public class DietServiceBean implements IDietService {
 			theManager.persist(aMenu) ;
 		}
 	}
+	/* //unused
 	private DishMealMenu newDishMenuOnTemplate(DishMealMenu aOldDishMenu, MealMenu aMenu) {
 		DishMealMenu newDishMenu = null ;
 		if (aMenu instanceof MealMenuTemplate) {
@@ -199,7 +200,7 @@ public class DietServiceBean implements IDietService {
 		}
 		return newDishMenu ;
 	}
-	
+	*/
 	private String getDateFormat(Date aDate) {
 		String ret ="___";
 		if (aDate!=null) {
@@ -207,26 +208,14 @@ public class DietServiceBean implements IDietService {
 		}
 		return ret ;
 	}
-	
-	private Date getDateFormat(String aDate) {
-		Date date = null ;
-		if (aDate!=null && !aDate.equals("")) {
-			try {
-				date = DateFormat.parseSqlDate(aDate);
-			} catch (ParseException e) {
-				date = null ;
-			}
-		}
-		return date ;
-	}
-	
+
 	/**
 	 * Получить описание блюд шаблона меню
 	 * @param aTemp - Шаблон меню
 	 * @return описание
 	 */
 	private String getDescriptDishMenu(MealMenuTemplate aTemp) {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		if (aTemp.getDishes()!=null) {
 			int i = 0 ;
 			for(DishMealMenu dish:aTemp.getDishes()) {

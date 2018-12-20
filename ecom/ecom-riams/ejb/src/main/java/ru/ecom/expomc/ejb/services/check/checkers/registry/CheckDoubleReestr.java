@@ -85,7 +85,6 @@ public class CheckDoubleReestr implements ICheck {
 //	        clause = clause + "\' and \"dischargeDate\" = \'" + convertDate(dischargeDate); 
 //	        clause=clause + "\' and \"admissionDate\" = \'" + convertDate(admissionDate) + "\'";
 //	        String queryString = "from RegistryEntry " + clause;
-//			System.out.println(queryString);
 //			EntityManager manager=null;
 //	        List<RegistryEntry> list= manager.createQuery(queryString).getResultList();
 //	        manager.close();

@@ -47,8 +47,8 @@ import java.util.List;
 @SecurityDomain("other")
 public class TicketServiceBean implements ITicketService {
 
-    private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(MedcardServiceBean.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
     
     
     public Long createMedcase (String aType) {
@@ -71,9 +71,8 @@ public class TicketServiceBean implements ITicketService {
   
     
     public void unionSpos(Long aOldSpo,Long aNewSpo) {
-    	List<ShortMedCase> list = theManager.createQuery("from ShortMedCase where parent_id="+aOldSpo).getResultList() ;
+    	List<ShortMedCase> list = theManager.createQuery("from ShortMedCase where parent_id=:oldSpo").setParameter("oldSpo",aOldSpo).getResultList() ;
     	PolyclinicMedCase spoOld = theManager.find(PolyclinicMedCase.class, aOldSpo) ;
-    	
     	
     	if (!list.isEmpty() && spoOld!=null) {
     		PolyclinicMedCase spoNew = theManager.find(PolyclinicMedCase.class, aNewSpo) ;
@@ -92,7 +91,9 @@ public class TicketServiceBean implements ITicketService {
     	}
     }
     public void moveVisitInOtherSpo(Long aVisit,Long aNewSpo) {
-    	List<Object[]> list = theManager.createNativeQuery("select max(spo.id) as spo,count(allv.id) as allvid from medcase v left join medcase spo on spo.id=v.parent_id left join medcase allv on allv.parent_id=spo.id where v.id='"+aVisit+"' and (allv.dtype='Visit' or allv.dtype='ShortMedCase')").setMaxResults(1).getResultList() ;
+    	List<Object[]> list = theManager.createNativeQuery("select max(spo.id) as spo,count(allv.id) as allvid" +
+				" from medcase v left join medcase spo on spo.id=v.parent_id left join medcase allv on allv.parent_id=spo.id" +
+				" where v.id=:visitId and (allv.dtype='Visit' or allv.dtype='ShortMedCase')").setParameter("visitId",aVisit).setMaxResults(1).getResultList() ;
 		ShortMedCase vis = theManager.find(ShortMedCase.class, aVisit) ;
     	
     	if (!list.isEmpty() && vis!=null) {
@@ -116,9 +117,9 @@ public class TicketServiceBean implements ITicketService {
     		theManager.persist(spoNew) ;
     		vis.setParent(spoNew) ;
     		theManager.persist(vis) ;
-    		System.out.print("спо="+spo+" кол-во визитов="+cnt) ;
+    		LOG.info("спо="+spo+" кол-во визитов="+cnt) ;
     		if (spo!=null && vis.getParent().getId()!=spo  && (cnt==null ||cnt.intValue()<2)) {
-    			System.out.print("удаление спо="+spo) ;
+    			LOG.info("удаление спо="+spo) ;
     			
     			PolyclinicMedCase spoOld = theManager.find(PolyclinicMedCase.class, spo) ;
     			//spoOld.setChildMedCase(new ArrayList<MedCase>()) ;
@@ -139,7 +140,7 @@ public class TicketServiceBean implements ITicketService {
     		.append("' and ((ms.startDate is null or to_date('").append(dat)
     		.append("','yyyy-mm-dd') >=ms.startDate) and (ms.finishDate is null or ms.finishDate>=to_date('")
     		.append(dat).append("','yyyy-mm-dd'))) and ms.vocMedService_id is not null and ms.isPoliclinic='1'") ;
-    	System.out.println(sqlMain) ;
+    	LOG.info(sqlMain) ;
     	List<Object[]> list = theManager.createNativeQuery(sqlMain.toString())
 //    		.setParameter("date", )
     		.getResultList() ;
@@ -159,7 +160,7 @@ public class TicketServiceBean implements ITicketService {
 				j.endArray();
 		
 				j.endObject();
-				System.out.println(out.toString()) ;
+				LOG.info(out.toString()) ;
 				return out.toString() ;
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -180,10 +181,10 @@ public class TicketServiceBean implements ITicketService {
                 LOG.warn("Ошибка преобразования даты "+aDate, e);
             }
         }
-    	System.out.println("id="+aId) ;
-    	System.out.println("medcard="+aMedcard) ;
-    	System.out.println("spec="+aSpecialist) ;
-    	System.out.println("date="+aDate) ;
+    	LOG.info("id="+aId) ;
+    	LOG.info("medcard="+aMedcard) ;
+    	LOG.info("spec="+aSpecialist) ;
+    	LOG.info("date="+aDate) ;
     	
         StringBuilder sql = new StringBuilder() ;
         sql.append("select t.id,p.lastname||' ' || p.firstname||' '||p.middlename|| ' '||to_char(p.birthday,'dd.mm.yyyy'),to_char(coalesce(t.dateStart,t.dateFinish),'dd.mm.yyyy'),t.createTime,vwf.name|| ' ' || wp.lastname|| ' ' || wp.firstname|| ' ' || wp.middlename")
@@ -270,9 +271,9 @@ public class TicketServiceBean implements ITicketService {
 
         Query query = builder.build(theManager, "from Ticket as t left join Medcard as m on m.id=t.medcard_id "+add, " order by t.date,t.time, t.status");
        
-        //System.out.println("Запрос по ticket: from Ticket where "+aDateInfo
+        //LOG.info("Запрос по ticket: from Ticket where "+aDateInfo
         //		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
-        System.out.println(query.toString()) ;
+        LOG.info(query.toString()) ;
         return createList(query);    	
     }*/
     public List<TicketForm> findTicketBySpecialistByDate(String aTypePat, String aDate, String aSpecialist) {
@@ -301,49 +302,13 @@ public class TicketServiceBean implements ITicketService {
     		//query.setParameter("tdate", date) ;
     		//return createList(query) ;
     	}
-    	Query query = theManager.createNativeQuery("select t.id from Ticket t  left join medcard m on m.id=t.medcard_id where t.date=:tdate  and t.workFunction_id='"+aSpecialist+"' "+add);
-    	query.setParameter("tdate", date) ;
-    	
-    	//System.out.println("Запрос по ticket: from Ticket where "+aDateInfo
+    	Query query = theManager.createNativeQuery("select t.id from Ticket t  left join medcard m on m.id=t.medcard_id " +
+				"where t.date=:tdate  and t.workFunction_id=:workFunction"+add);
+    	query.setParameter("tdate", date).setParameter("workFunction",aSpecialist) ;
     	//		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
-    	System.out.println(query.toString()) ;
+    	LOG.info(query.toString()) ;
     	return createNativeList(query);    	
     }
-    /*
-    public List<TicketForm> findTicketByNonresidentByDate(String aTypePat, String aDate) {
-        //QueryClauseBuilder builder = new QueryClauseBuilder();
-        Date date = null;
-        if(!StringUtil.isNullOrEmpty(aDate)) {
-            try {
-                date = DateFormat.parseSqlDate(aDate);
-            } catch (Exception e) {
-                LOG.warn("Ошибка преобразования даты "+aDate, e);
-            }
-        }
-        if (date != null){
-        	//builder.add("t.date", date);
-        } else {
-        	throw new IllegalDataException("Неправильная дата") ;
-        }
-        String add ;
-		if (aTypePat.equals("2")) {
-			add=" and $$isForeignPatient^ZExpCheck(m.person_id,t.date)>0" ;
-		} else if (aTypePat.equals("1")){
-			add=" and $$isForeignPatient^ZExpCheck(m.person_id,t.date)=0" ;
-		} else {
-			add= " " ;
-	        Query query = theManager.createQuery("from Ticket t  where t.date=:tdate  "+add);
-	        query.setParameter("tdate", date) ;
-	        return createList(query) ;
-	    }
-        Query query = theManager.createNativeQuery("select t.id from Ticket t  left join medcard m on m.id=t.medcard_id where t.date=:tdate  "+add);
-        query.setParameter("tdate", date) ;
-
-        //System.out.println("Запрос по ticket: from Ticket where "+aDateInfo
-        //		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
-        System.out.println(query.toString()) ;
-        return createNativeList(query);    	
-    }*/
     
     public List<TicketForm> findStatTicketByDateAndUsername(String aDateInfo, String aDate,String aUsername) {
         QueryClauseBuilder builder = new QueryClauseBuilder();
@@ -367,9 +332,9 @@ public class TicketServiceBean implements ITicketService {
         }
         Query query = builder.build(theManager, "from Ticket where "
         		+"usernameCreate"+aUsername, " order by date,time, status");
-        //System.out.println("Запрос по ticket: from Ticket where "+aDateInfo
+        //LOG.info("Запрос по ticket: from Ticket where "+aDateInfo
         //		+" =:date and usernameCreate='"+aUsername+"' order by date,time, status");
-        System.out.println(query.toString()) ;
+        LOG.info(query.toString()) ;
         return createList(query);
     }
     
@@ -408,8 +373,8 @@ public class TicketServiceBean implements ITicketService {
 	        	throw new IllegalDataException("Неправильная дата") ;
 	        }
 	        Query query = builder.build(theManager, "from Ticket where status<>"+Ticket.STATUS_CLOSED, " order by date,time, status");
-	        System.out.println("Запрос по ticket: ");
-	        System.out.println(query.toString()) ;
+	        LOG.info("Запрос по ticket: ");
+	        LOG.info(query.toString()) ;
 	        return createList(query);
 	}
 	
@@ -474,8 +439,8 @@ public class TicketServiceBean implements ITicketService {
     		stat = " and (status is null or status<2)" ;
     	}
     	Query query = builder.build(theManager, new StringBuilder().append("from Ticket where workFunction_id in (").append(obj).append(") ").append(stat).toString(), " order by date,time, status");
-    	System.out.println("Запрос по ticket: ");
-    	System.out.println(query.toString()) ;
+    	LOG.info("Запрос по ticket: ");
+    	LOG.info(query.toString()) ;
     	return createList(query);
     }
     /**
@@ -504,8 +469,8 @@ public class TicketServiceBean implements ITicketService {
         }
         if (date != null) builder.add("date", date);
         Query query = builder.build(theManager, "from Ticket where "+stat, " order by date,time, status");
-        System.out.println("Запрос по ticket: ");
-        System.out.println(query.toString()) ;
+        LOG.info("Запрос по ticket: ");
+        LOG.info(query.toString()) ;
         return createList(query);
     }
 
@@ -544,9 +509,9 @@ public class TicketServiceBean implements ITicketService {
 	        	ids.append(",").append(obj) ;
 	        }
 	        ids.substring(1) ;
-	        System.out.println(ids.substring(1)) ;
+	        LOG.info(ids.substring(1)) ;
 	        sql.append("from Ticket where id in (").append(ids.substring(1)).append(")") ;
-	        System.out.println(sql.toString()) ;
+	        LOG.info(sql.toString()) ;
 	    
 	    List<Ticket> list =theManager.createQuery(sql.toString()).getResultList() ;
         
@@ -569,7 +534,7 @@ public class TicketServiceBean implements ITicketService {
         IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к экспорту талона");
         Ticket ticket = theManager.find(Ticket.class, aTicketId);
 
-        File file = theJbossGetFileLocalService.createFile(aFileId, "ticket.rtf");
+        theJbossGetFileLocalService.createFile(aFileId, "ticket.rtf");
 
         try {
             monitor = theMonitorService.startMonitor(aMonitorId, "Экспорт стат. талона", 1);
@@ -580,8 +545,6 @@ public class TicketServiceBean implements ITicketService {
             //service.print(template, file,  tvi) ;
 
             monitor.finish(aMonitorId + "");
-        } catch (IllegalMonitorStateException e) {
-            throw e;
         } catch (Exception e) {
             monitor.error("Ошибка экспорта", e);
             throw new IllegalArgumentException(e);

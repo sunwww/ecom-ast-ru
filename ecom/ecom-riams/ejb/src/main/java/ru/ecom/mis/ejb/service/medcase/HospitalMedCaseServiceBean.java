@@ -24,7 +24,6 @@ import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.ejb.xml.XmlUtil;
 import ru.ecom.expomc.ejb.domain.med.VocDiagnosis;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
-import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterConfig;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -77,11 +76,11 @@ import java.util.*;
 @SecurityDomain("other")
 public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
-	private final static Logger LOG = Logger.getLogger(HospitalMedCaseServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final  Logger LOG = Logger.getLogger(HospitalMedCaseServiceBean.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	private HashMap getMiacServiceStreamMap() {
-		HashMap<String, String> ss = new HashMap<String, String>();
+		HashMap<String, String> ss = new HashMap<>();
 		ss.put("OBLIGATORY","Средства ОМС");
 		ss.put("BUDGET","Средства бюджета");
 		ss.put("CHARGED","Личные средства граждан, по договору и ДМС");
@@ -93,7 +92,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	 * @return map со странами в виде (Код специальности, Название_МИАЦа)
 	 */
 	private HashMap getPolicProfileMap() {
-		HashMap<String, String> policProfiles = new HashMap<String, String>();
+		HashMap<String, String> policProfiles = new HashMap<>();
 
 		policProfiles.put("80","другое");
 		policProfiles.put("0S","другое");
@@ -167,7 +166,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	 * @return map со странами в виде (профиль койки, Название_МИАЦа)
 	 */
 	private HashMap getStacProfileMap() {
-		HashMap<String, String> stacProfiles = new HashMap<String, String>();
+		HashMap<String, String> stacProfiles = new HashMap<>();
 		stacProfiles.put("40","акушерство и гинекология");
 		stacProfiles.put("38","акушерство и гинекология");
 		stacProfiles.put("39","акушерство и гинекология");
@@ -207,7 +206,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	 * @return  map со странами в виде (Код, Название_МИАЦа)
 	 */
 	private HashMap getCountries() {
-	HashMap<String, String> countries = new HashMap<String, String>();
+	HashMap<String, String> countries = new HashMap<>();
 	countries.put("598","Экваториальная Гвинея"); //ПАПУА-НОВАЯ ГВИНЕЯ
 	countries.put("226","Экваториальная Гвинея");
 	countries.put("148","Республика Чад");
@@ -293,7 +292,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 	 * @return  map с регионами в виде (Код, Название_МИАЦа)
 	 */
 private HashMap getRegions() {
-	HashMap<String, String> countries = new HashMap<String, String>();
+	HashMap<String, String> countries = new HashMap<>();
 	countries.put("01","Республика Адыгея");
 	countries.put("04","Республика Алтай");
 	countries.put("02","Республика Башкортостан");
@@ -607,7 +606,6 @@ private HashMap getRegions() {
 					url_csp.append("http://").append(cspurl)
 							.append("/getmedcasecost.csp?CacheUserName=_system&tmp=").append(Math.random()).append("&CachePassword=sys&")
 							.append(href_slo);
-					//System.out.println(url_csp) ;
 
 					StringBuilder c;
 					if (aIsUrl) {
@@ -615,7 +613,6 @@ private HashMap getRegions() {
 					} else {
 						String cost = getContentOfHTTPPage(url_csp.toString().replaceAll(" ", ""), code_page);
 						//String cost = "11#2222" ;
-						//System.out.println("----cost--->"+cost) ;
 						if (isf) {
 							res.append("&render=");
 							isf = false;
@@ -625,9 +622,6 @@ private HashMap getRegions() {
 						c = getRender(cost, new StringBuilder().append(wqr_slo[16]).append(". КОЙКИ "), new StringBuilder().append(" С ").append(wqr_slo[14]).append(" ПО ").append(wqr_slo[15]));
 						res.append(c.toString().replaceAll("#", "%23").replaceAll(" ", "%20"));
 					}
-
-
-					//System.out.println(res.toString()) ;
 				}
 
 			}
@@ -764,7 +758,6 @@ private HashMap getRegions() {
 				href_vis.append(param("Hts", null));
 				href_vis.append(param("LpuFunction", wqr_vis[4])); //
 				href_vis.append(param("Operations", null));
-			//	System.out.println("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys" + href_vis.toString());
 				String cost = getContentOfHTTPPage("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&" + href_vis.toString(), code_page);
 				if (isf) {
 					res.append("&render=");
@@ -1020,7 +1013,6 @@ private HashMap getRegions() {
 				href_vis.append(param("Hts", null));
 				href_vis.append(param("LpuFunction", wqr_vis[2])); //
 				href_vis.append(param("Operations", null));
-				//System.out.println("http://"+cspurl+"/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys"+href_vis.toString()) ;
 				String cost = getContentOfHTTPPage("http://" + cspurl + "/getmedcasecost.csp?CacheUserName=_system&CachePassword=sys&" + href_vis.toString(), code_page);
 				if (isf) {
 					res.append("&render=");
@@ -1102,7 +1094,7 @@ private HashMap getRegions() {
 		}
 		List<Object[]> list = theManager.createNativeQuery("select id , id from PriceList where isdefault='1'").getResultList();
 		String priceListId = null;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			priceListId=list.get(0)[0].toString();
 		}
 		StringBuilder sql = new StringBuilder()
@@ -1134,7 +1126,7 @@ private HashMap getRegions() {
 		double totalSum;
 		String uslovia = "стационар"; //AMOKB
 		StringBuilder txtFile = new StringBuilder();
-		HashMap<String, JSONObject> allRecords = new HashMap<String, JSONObject>();
+		HashMap<String, JSONObject> allRecords = new HashMap<>();
 			//1 строка = 9 строчек
 		int i=0;
 		try {
@@ -1187,11 +1179,11 @@ private HashMap getRegions() {
 						totalSum += rec.getDouble("sum");
 						patientCount=""+(Long.valueOf(patientCount)+Long.valueOf(rec.getString("patientCount")));
 						rec.remove("sum");rec.remove("patientCount");
-						rec.put("patientCount",patientCount).put("sum",new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						rec.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
 					} else {
 						rec = new JSONObject();
 						rec.put("hash",recordHash).put("period0",period[0]).put("period1",period[1]).put("region",region).put("uslovia",uslovia).put("profile",profile).put("financeSource",sredstvaMap.get(financeSource))
-								.put("patientCount",patientCount).put("sum",new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+								.put("patientCount",patientCount).put("sum",BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
 					}
 					allRecords.put(recordHash,rec);
 				} else {
@@ -1252,7 +1244,7 @@ private HashMap getRegions() {
 					for (String vis : visits) {
 						try {
 							String s = getDataByReferencePrintNotOnlyOMS(Long.valueOf(vis.trim()), "VISIT", false, "OTHER','BUDGET");
-							String arr[] = s != null ? s.split("<body>") : null;
+							String[] arr = s != null ? s.split("<body>") : null;
 							String price = arr.length > 1 ? arr[1].trim().split("#")[0].trim() : "0";
 							totalSum += Double.valueOf(price);
 
@@ -1281,11 +1273,11 @@ private HashMap getRegions() {
 						patientCount = "" + (Long.valueOf(patientCount) + Long.valueOf(rec.getString("patientCount")));
 						rec.remove("sum");
 						rec.remove("patientCount");
-						rec.put("patientCount", patientCount).put("sum", new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+						rec.put("patientCount", patientCount).put("sum", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
 					} else {
 						rec = new JSONObject();
 						rec.put("hash", recordHash).put("period0", period[0]).put("period1", period[1]).put("region", region).put("uslovia", uslovia).put("profile", profile).put("financeSource", sredstvaMap.get(financeSource))
-								.put("patientCount", patientCount).put("sum", new BigDecimal(totalSum).setScale(2, RoundingMode.HALF_EVEN));
+								.put("patientCount", patientCount).put("sum", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_EVEN));
 					}
 					allRecords.put(recordHash, rec);
 
@@ -1309,7 +1301,7 @@ private HashMap getRegions() {
                         .append(rec.getString("profile")).append("\n")
                         .append(rec.getString("financeSource")).append("\n")
                         .append(rec.getString("patientCount")).append("\n")
-                        .append(String.valueOf(new BigDecimal(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".",",")).append("\n");
+                        .append(String.valueOf(BigDecimal.valueOf(rec.getDouble("sum")).setScale(2, RoundingMode.HALF_UP).doubleValue()).replace(".",",")).append("\n");
                 } else {
                     LOG.error("make file object = NULL!!!");
                 }
@@ -1322,17 +1314,14 @@ private HashMap getRegions() {
 	}
 
 	public String createFile (StringBuilder aText, String aFileName) {
-		try {
-			EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-			String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-			workDir+="/"+aFileName+"."+aFileName;
-			OutputStream os = new FileOutputStream(workDir);
+        EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+        String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+        workDir+="/"+aFileName+"."+aFileName;
+		try (OutputStream os = new FileOutputStream(workDir)){
 			os.write(aText.toString().getBytes());
 			os.close();
 			LOG.info("i create file = /rtf/"+aFileName+"."+aFileName);
 			return "/rtf/"+aFileName+"."+aFileName;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1355,7 +1344,7 @@ private HashMap getRegions() {
 				priceListId=aPriceListId;
 			} else {
 				List<Object> list = theManager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
-				if (list!=null&&list.size()>0) {
+				if (list!=null && !list.isEmpty()) {
 					priceListId=list.get(0).toString();
 				}
 			}
@@ -1404,7 +1393,7 @@ private HashMap getRegions() {
 						.append(" group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code,ms.code");
 				List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
 				JSONArray arr = new JSONArray(); //Койко-дни
-				double cost = 0.0;
+				double cost ;
 				double sum = 0.0;
 				double totalSum = 0.0;
 				for (Object[] o : list) { //Считаем стоимость койко-дней
@@ -1692,20 +1681,14 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		int len = 15000 ;
 		int lend = aDischargeEpicrisis.length() ;
 		int cnt = lend/len;
-	//	System.out.println("len = "+len) ;
-	//	System.out.println("lend = "+lend) ;
-	//	System.out.println("cnt = "+cnt) ;
-	//	System.out.println("cnt%len = "+(lend%len)) ;
 		for (int i=0;i<cnt;i++) {
 			DischargeEpicrisis prot = new DischargeEpicrisis() ;
-			//	System.out.println("record1="+aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
 			prot.setRecord(aDischargeEpicrisis.substring(i*len,(i+1)*len<lend?(i+1)*len:lend)) ;
 			prot.setMedCase(aMedCase) ;
 			aManager.persist(prot);
 		}
 		if (lend%len>0) {
 			DischargeEpicrisis prot = new DischargeEpicrisis() ;
-			//System.out.println("record2="+aDischargeEpicrisis.substring(len*cnt)) ;
 			prot.setRecord(aDischargeEpicrisis.substring(len*cnt)) ;
 			prot.setMedCase(aMedCase) ;
 			aManager.persist(prot);
@@ -1778,30 +1761,20 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 
 	public String importFileDataFond(long aMonitorId, String aFilename) throws Exception {
 		File f = new File(aFilename) ;
-		InputStream in = null;
 		String type =null;
-		boolean isErrorFile = false ;
-		final String filename ;
-		String contentType = null ;
-		String filenameError = null ;
-		List<WebQueryResult> list = new LinkedList<WebQueryResult>() ;
+		List<WebQueryResult> list = new LinkedList<>() ;
 
 		try {
 			org.jdom.Document doc = new SAXBuilder().build(f);
 			XmlDocument xmlDocError = new XmlDocument() ;
 			org.w3c.dom.Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 			org.jdom.Element parConfigElement = doc.getRootElement();
-			//System.out.println(new StringBuilder().append("		root=").append(parConfigElement).toString());
-			Long i =Long.valueOf(1) ; int ind=0 ;
 			for (Object o : parConfigElement.getChildren()) {
 				org.jdom.Element parEl = (org.jdom.Element) o;
 				if ("ZGLV".equals(parEl.getName())) {
 					type = parEl.getChild("FILENAME").getText().trim().toUpperCase().substring(0,2) ;
-					//	System.out.println("type-------------"+type) ;
 				} else if("NPR".equals(parEl.getName())) {
-					//System.out.println("parel=="+parEl.getChildren("REFREASON")) ;
 					if (parEl.getChildren("REFREASON").isEmpty()) {
-						//System.out.println("par===el=="+parEl.getChildren("REFREASON")) ;
 						WebQueryResult wqr = new WebQueryResult() ;
 						wqr.set1(getText(parEl,"N_NPR")) ;
 						wqr.set2(getDate(parEl,"D_NPR")) ;
@@ -1824,7 +1797,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 						wqr.set19(getText(parEl,"DS1")) ;
 						wqr.set20(getText(parEl,"PROFIL")) ;
 						wqr.set21(getText(parEl,"IDDOKT")) ;
-						if (type.equals("N1")) {
+						if ("N1".equals(type)) {
 							wqr.set22(getDate(parEl,"DATE_1")) ;
 						} else {
 							wqr.set23(getDate(parEl,"DATE_1")) ;
@@ -1838,7 +1811,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 							list.add(wqr) ;
 						}
 					} else {
-						isErrorFile = true ;
+					//	isErrorFile = true ;
 						org.w3c.dom.Element zap = xmlDocError.newElement(root_error, "NPR", null);
 						String[] flds ={"N_NPR","D_NPR","FOR_POM","NCODE_MO","DCODE_MO"
 								,"VPOLIS","SPOLIS","NPOLIS","SMO","SMO_OGRN","SMO_OK"
@@ -1863,19 +1836,16 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 	public String importDataFond(long aMonitorId, String aFileType,List<WebQueryResult> aList) {
 		IMonitor monitor = null;
-	//	System.out.print("Save data") ;
 		try {
 
-		//	System.out.println("start importDataFond");
     		/*
     		monitor = theMonitorService.startMonitor(aMonitorId, "ImportFondMonitor", aList.size());
     		monitor.advice(20) ;
-    		System.out.println("start importDataFond");
 */
-			try{
+			try {
 				monitor = theMonitorService.getMonitor(aMonitorId);
 				monitor.advice(20) ;
-			}catch(Exception e) {
+			} catch(Exception e) {
 				e.fillInStackTrace() ;
 			}
 
@@ -1886,7 +1856,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				if (monitor.isCancelled()) {
 					throw new IllegalMonitorStateException("Прервано пользователем");
 				}
-			//	System.out.println("Save data="+i) ;
 				//Object id = null ;
 				if (wqr.get1()!=null) {
 					List<Object> lf = theManager.createNativeQuery("select id from HospitalDataFond where numberFond='"+wqr.get1()+"' order by id desc").setMaxResults(1).getResultList() ;
@@ -1919,7 +1888,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 							String sex = ""+wqr.get16() ;
 							if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
 							List<Object> l = theManager.createNativeQuery("select id from VocSex where omcCode='"+sex+"'").setMaxResults(1).getResultList() ;
-							if (!l.isEmpty()) {sql1.append("sex_id,") ; sql2.append("'").append(l.get(0)).append("',") ;} ;
+							if (!l.isEmpty()) {sql1.append("sex_id,") ; sql2.append("'").append(l.get(0)).append("',") ;}
 						}
 						if (wqr.get17()!=null) {sql1.append("Birthday,") ; sql2.append("to_date('").append(wqr.get17()).append("','yyyy-mm-dd'),") ;}
 						if (wqr.get18()!=null) {sql1.append("Phone,") ; sql2.append("'").append(wqr.get18()).append("',") ;}
@@ -1970,7 +1939,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 							String sex = ""+wqr.get16() ;
 							if (sex.equals("М")) {sex="1";} else if (sex.equals("Ж")) {sex="2" ;}
 							List<Object> l = theManager.createNativeQuery("select id from VocSex where omcCode='"+sex+"'").setMaxResults(1).getResultList() ;
-							if (!l.isEmpty()) {sql1.append("sex_id") .append("=").append("'").append(l.get(0)).append("'").append(",") ;} ;
+							if (!l.isEmpty()) {sql1.append("sex_id") .append("=").append("'").append(l.get(0)).append("'").append(",") ;}
 						}
 						if (wqr.get17()!=null) {sql1.append("Birthday").append("=").append("to_date('").append(wqr.get17()).append("','yyyy-mm-dd')").append(",") ;}
 						if (wqr.get18()!=null) {sql1.append("Phone").append("=").append("'").append(wqr.get18()).append("'").append(",") ;}
@@ -1999,7 +1968,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 						sql1.append(" where id=").append(id) ;
 					}
 					//try {
-					//System.out.println("sql="+sql1) ;
 					theManager.createNativeQuery(sql1.toString()).executeUpdate() ;
 					//}catch(Exception e) {
 					//	e.printStackTrace() ;
@@ -2016,7 +1984,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					monitor.setText("Импортировано " + i);
 				}
 			}
-		//	System.out.println("==== Закончили импорт!");
 			monitor.finish("");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2121,36 +2088,28 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				sql1.append(" where ct1.careCard_id='").append(obj[1]).append("' and ct1.orderNumber='").append(obj[0]).append("' and ct1.kind_id in (2,3)") ;
 				sql1.append(" order by ct1.decisiondate") ;
 				List<Object[]> l1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
-				List<Object[]> l2 = new ArrayList<Object[]>() ;
-			//	System.out.println("l1 size="+l1.size()) ;
+				List<Object[]> l2 = new ArrayList<>() ;
 
 				for (Object[] o1:l1) {
 					theManager.createNativeQuery("delete from CompulsoryTreatmentAggregate where sls in ("+o1[5]+")").executeUpdate() ;
-				//	System.out.println("o1="+o1[0]+" - "+o1[1]+" - "+o1[2]+" - "+o1[3]+" - "+o1[4]+" - "+o1[5]+" - ") ;
-					boolean prevCT = (o1[4]!=null && Integer.valueOf(""+o1[4]).intValue()==1)?true:false ;
+					boolean prevCT = (o1[4]!=null && Integer.parseInt(""+o1[4])==1) ;
 					//boolean nextCT = (o1[5]!=null && Integer.valueOf(""+o1[5]).intValue()==1)?true:false ;
 					if (!prevCT) {
-				//		System.out.println("no prev") ;
 						l2.add(o1) ;
 					} else {
 
-						if (l2.size()>0) {
-				//			System.out.println("yes prev") ;
+						if (!l2.isEmpty()) {
 							l2.get(l2.size()-1)[1]=o1[1] ;
 							l2.get(l2.size()-1)[3]=o1[3] ;
 						} else {
-				//			System.out.println("yes prev -") ;
 							l2.add(o1);
 						}
 					}
 
 				}
-				long hospInd = Long.valueOf(0) ;
+				long hospInd = 0;
 				for (Object[] o2:l2) {
 					hospInd++ ;
-
-			//		System.out.println("o1="+o2[0]+" - "+o2[1]+" - "+o2[2]+" - "+o2[3]+" - "+o2[4]+" - "+o2[5]+" - ") ;
-
 					StringBuilder sql3 = new StringBuilder() ;
 					sql3.append("select mc.parent_id as s0ls,mc.id as s1lo,case when mc.datestart>to_date('").append(o2[2]==null?curDate:o2[2]).append("','dd.mm.yyyy') then '1' else null end as s2rdate");
 					sql3.append(", to_char(mc.datestart,'dd.mm.yyyy') as d3atestart,to_char(mc.transferdate,'dd.mm.yyyy') as t4ransferdate,to_char(mc.datefinish,'dd.mm.yyyy') as d5atefinish,mc.department_id as d6epartment") ;
@@ -2196,8 +2155,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					sql3.append(" order by mc.datestart") ;
 					sql3.append("");
 					List<Object[]> l3=theManager.createNativeQuery(sql3.toString()).getResultList() ;
-					if (l3.size()==0) {
-				//		System.out.println("bad") ;
+					if (l3.isEmpty()) {
 						CompulsoryTreatmentAggregate ahr = new CompulsoryTreatmentAggregate() ;
 						ahr.setOrderCompTr(ConvertSql.parseString(obj[0])) ;
 						ahr.setPatient(ConvertSql.parseLong(obj[2])) ;
@@ -2205,9 +2163,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 						ahr.setEntranceHospDate(ConvertSql.parseDate(o2[3]==null?curDate:o2[3])) ;
 						ahr.setNumberHosp(hospInd) ;
 						theManager.persist(ahr);
-					}else{
-				//		System.out.println("good") ;
-
+					} else {
 						Date begDate = null ;
 						Date endDate = null ;
 						Object[] oF = l3.get(0) ;
@@ -2218,7 +2174,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 
 						if (oL[7]!=null) {
 							endDate=ConvertSql.parseDate(oL[7]) ;
-							//System.out.println("endDate1="+endDate) ;
 						}
 
 						for (int ind =0;ind<l3.size();ind++) {
@@ -2235,9 +2190,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 
 							if (o3[7]!=null) {
 								endDateDep=ConvertSql.parseDate(o3[7]) ;
-								//System.out.println("endDateDep1="+endDateDep) ;
 							}
-
 
 							CompulsoryTreatmentAggregate ahr = new CompulsoryTreatmentAggregate() ;
 							ahr.setSls(ConvertSql.parseLong(o3[0])) ;
@@ -2474,9 +2427,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 
 	private String getTitleFile(String aReestr,String aLpu, String aPeriodByReestr,String aNPackage) {
-		//aLpu="300001";
-		String filename = "N"+aReestr+"M"+aLpu+"T30_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
-		return filename ;
+		return "N"+aReestr+"M"+aLpu+"T30_"+aPeriodByReestr+XmlUtil.namePackage(aNPackage) ;
 	}
 	public WebQueryResult[] exportFondZip23(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu, boolean aSaveInFolder)
 			throws ParserConfigurationException, TransformerException {
@@ -2489,8 +2440,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		};
 
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-		workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
+	//	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+	//	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 		fileExpList[2].set1((""+fileExpList[0].get1()).substring(2).replaceAll("\\.xml", "")+".263") ;
 
 		StringBuilder sb=new StringBuilder();
@@ -2500,7 +2451,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			if (fileExpList[i].get2()!=null) sb.append(fileExpList[i].get2()).append(" ");
 			if (fileExpList[i].get3()!=null) sb.append(fileExpList[i].get3()).append(" ");
 		}
-		//System.out.println(sb) ;
 		try {
 			//String[] arraCmd = {new StringBuilder().append("cd ").append(workDir).append("").toString(),sb.toString()} ;
 			Runtime.getRuntime().exec(sb.toString());
@@ -2529,7 +2479,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		for (int i=2;i>-1;i--){
 			sb.append(workDir).append("/").append(fileExpList[i]).append(" ");
 		}
-		//System.out.println(sb) ;
 		try {
 			//String[] arraCmd = {sb.toString()} ;
 			Runtime.getRuntime().exec(sb.toString());
@@ -2629,7 +2578,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,wchb.dateFrom as w19chbdatefrom");
 		sql.append(", wchb.visit_id as v20isit");
 		sql.append(", case when vbst.code='3' then '2' else vbst.code end as v21bstcode");
-		sql.append(", cast(case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det"); //TODO доделать обработку по детям
+		sql.append(", cast(case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int)>=18 then '0' else '1' end as varchar(1)) as f22det");
 		sql.append(", wchb.internalcode as f23_internalDirectionNumber");
 		sql.append(" from WorkCalendarHospitalBed wchb");
 		sql.append(" left join VocBedType vbt on vbt.id=wchb.bedType_id");
@@ -2642,13 +2591,13 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			sql.append(" left join medcase_medpolicy mcp on mcp.medcase_id=mc.id ");
 			sql.append(" left join medpolicy mp on mp.id=mcp.policies_id");
 			sql.append(" left join WorkFunction wf on wf.id=wchb.workFunction_id");
-		} else if (aIsPolyc&&!aIsHospital) {
+		} else if (aIsPolyc) {
 			sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
 			sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
-		} else if (aIsPolyc&&aIsHospital) {
+		}/* else if (aIsPolyc&&aIsHospital) {
 			sql.append(" left join WorkFunction wf on wf.id=mc.workFunctionExecute_id");
 			sql.append(" left join medpolicy mp on mp.patient_id=wchb.patient_id and mp.actualdatefrom<=wchb.createDate and coalesce(mp.actualdateto,current_date)>=wchb.createDate");
-		}
+		}*/
 
 		sql.append(" left join VocIdc10 mkb on mkb.id=wchb.idc10_id");
 		sql.append(" left join MisLpu ml on ml.id=wchb.department_id");
@@ -2681,7 +2630,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		xmlDoc.newElement(title, "VERSION", "1.0");
 		xmlDoc.newElement(title, "DATA", aDateFrom);xmlDocExist.newElement(title_exist, "DATA", aDateFrom);xmlDocError.newElement(title_error, "DATA", aDateFrom);
 		xmlDoc.newElement(title, "FILENAME", filename);
-		int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
+		List<WebQueryResult> i_error=new ArrayList<>() ;
 		for (Object[] obj:list) {
 			if (checkDirect(obj[10],obj[11],obj[12],obj[14],obj[19],obj[17]
 					, obj[4], obj[6],obj[18],obj[16])) {
@@ -2926,7 +2876,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
 		Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 		Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
-		int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
+		List<WebQueryResult> i_error=new ArrayList<>() ;
 
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select to_char(sls.dateStart,'yyyy-mm-dd') as f0datestart");
@@ -3043,7 +2994,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
 		String filename = getTitleFile("2",aLpu,aPeriodByReestr,aNPackage) ;
 		WebQueryResult res = new WebQueryResult() ;
-		ArrayList<XmlDocument> xmlDocList = new ArrayList<XmlDocument>() ;
 
 		XmlDocument xmlDoc = new XmlDocument() ;
 		XmlDocument xmlDocError = new XmlDocument() ;
@@ -3051,7 +3001,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
 		Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 		Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
-		int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
+		List<WebQueryResult> i_error=new ArrayList<>() ;
 
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select  sls.id as slsid, count(distinct case when sloALL.dtype='DepartmentMedCase' then vbtALL.codef else null end) cntProfile" );
@@ -3218,7 +3169,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		Element root = xmlDoc.newElement(xmlDoc.getDocument(), "ZL_LIST", null);
 		Element root_error = xmlDocError.newElement(xmlDocError.getDocument(), "ZL_LIST", null);
 		Element root_exist = xmlDocExist.newElement(xmlDocExist.getDocument(), "ZL_LIST", null);
-		int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+		ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;
+		List<WebQueryResult> i_error=new ArrayList<>() ;
 
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select to_char(sls.dateStart,'yyyy-mm-dd') as f0datestart");
@@ -3355,7 +3307,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			throws ParserConfigurationException, TransformerException {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		WebQueryResult res = new WebQueryResult() ;
-		Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+	//	Map<SecPolicy, String> hash = new HashMap<>() ;
 		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 		workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 		String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
@@ -3364,7 +3316,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.getLocalService(ISequenceService.class)
 				.startUseNextValueNoCheck("PACKAGE_HOSP","number");
 		}
-		String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ; ;
+		String filename = getTitleFile("1",aLpu,aPeriodByReestr,aNPackage) ;
 		XmlDocument xmlDoc = new XmlDocument() ;
 		XmlDocument xmlDocError = new XmlDocument() ;
 		XmlDocument xmlDocExist = new XmlDocument() ;
@@ -3394,7 +3346,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		sql.append(" ,to_char(sls.dateStart,'yyyy-mm-dd') as wchbdatefrom");
 		sql.append(", cast(null as int) as visit");
 		sql.append(", case when vbst.code='3' then '2' else vbst.code end as v22bstcode");
-		sql.append(", case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as f23det"); //TODO доделать обработку по детям
+		sql.append(", case when bf.forChild='1' then cast('1' as varchar(1)) else cast('0' as varchar(1)) end as f23det");
 		sql.append(",to_char(sls.dateStart,'yyyy')||'"+aLpu+"'||ss.id as f23_internalDirectionNumber");
 		sql.append("  from medcase sls");
 		sql.append(" left join HospitalDataFond hdf on hdf.hospitalMedCase_id=sls.id");
@@ -3435,7 +3387,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		xmlDoc.newElement(title, "VERSION", "1.0");
 		xmlDoc.newElement(title, "DATA", aDateFrom);xmlDocExist.newElement(title_exist, "DATA", aDateFrom);xmlDocError.newElement(title_error, "DATA", aDateFrom);
 		xmlDoc.newElement(title, "FILENAME", filename);
-		int i=0 ;ArrayList<WebQueryResult> i_exist=new ArrayList<WebQueryResult>() ;List<WebQueryResult> i_error=new ArrayList<WebQueryResult>() ;
+		ArrayList<WebQueryResult> i_exist=new ArrayList<>() ;
+		List<WebQueryResult> i_error=new ArrayList<>() ;
 		for (Object[] obj:list) {
 			if (checkDirect(obj[10],obj[11],obj[12],obj[14],obj[19],obj[17]
 					, obj[4], obj[6],obj[18],obj[16])) {
@@ -3483,7 +3436,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			throws ParserConfigurationException, TransformerException {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 		WebQueryResult res = new WebQueryResult() ;
-		Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
 		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 		workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 		String workAddDir =aSaveInFolder?config.get("data.dir.order263.out", null):null;
@@ -3492,7 +3444,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.getLocalService(ISequenceService.class)
 				.startUseNextValueNoCheck("PACKAGE_HOSP","number");
 		}
-		String filename = getTitleFile("3",aLpu,aPeriodByReestr,aNPackage) ; ;
+		String filename = getTitleFile("3",aLpu,aPeriodByReestr,aNPackage) ;
 
 		XmlDocument xmlDoc = new XmlDocument() ;
 		XmlDocument xmlDocError = new XmlDocument() ;
@@ -3587,16 +3539,14 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	public String exportN4(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)
 			throws ParserConfigurationException, TransformerException {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
 		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-		workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 		String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
 
 		if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
 				.getLocalService(ISequenceService.class)
 				.startUseNextValueNoCheck("PACKAGE_HOSP","number");
 		}
-		String filename = getTitleFile("4",aLpu,aPeriodByReestr,aNPackage) ; ;
+		String filename = getTitleFile("4",aLpu,aPeriodByReestr,aNPackage) ;
 
 		XmlDocument xmlDoc = new XmlDocument() ;
 
@@ -3619,7 +3569,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		xmlDoc.newElement(title, "VERSION", "1.0");
 		xmlDoc.newElement(title, "DATA", aDateFrom);
 		xmlDoc.newElement(title, "FILENAME", filename);
-		int i=0 ;
 		for (Object[] obj:list) {
 			Element zap = xmlDoc.newElement(root, "NPR", null);
 			//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
@@ -3647,11 +3596,10 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	public String exportN4b(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage)
 			throws ParserConfigurationException, TransformerException {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
 		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 		workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 
-		String filename = getTitleFile("4",aLpu,aPeriodByReestr,aNPackage) ; ;
+		String filename = getTitleFile("4",aLpu,aPeriodByReestr,aNPackage) ;
 
 		File outFile = new File(workDir+"/"+filename+".xml") ;
 		XmlDocument xmlDoc = new XmlDocument() ;
@@ -3710,7 +3658,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		xmlDoc.newElement(title, "VERSION", "1.0");
 		xmlDoc.newElement(title, "DATA", aDateFrom);
 		xmlDoc.newElement(title, "FILENAME", filename);
-		int i=0 ;
 		for (Object[] obj:list) {
 			Element zap = xmlDoc.newElement(root, "NPR", null);
 			//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
@@ -3728,9 +3675,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	public String exportN5(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)
 			throws ParserConfigurationException, TransformerException {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
 		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-		workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 		String workAddDir = aSaveInFolder?config.get("data.dir.order263.out", null):null;
 
 		if (aNPackage==null || aNPackage.equals("")) {aNPackage = EjbInjection.getInstance()
@@ -3801,7 +3746,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		xmlDoc.newElement(title, "VERSION", "1.0");
 		xmlDoc.newElement(title, "DATA", aDateFrom);
 		xmlDoc.newElement(title, "FILENAME", filename);
-		int i=0 ;
 		for (Object[] obj:list) {
 			Element zap = xmlDoc.newElement(root, "NPR", null);
 			XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"N_NPR",obj[0],true,"") ;
@@ -3835,7 +3779,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	public String exportN6(String aDateFrom, String aDateTo,String aPeriodByReestr, String aLpu,String aNPackage, boolean aSaveInFolder)
 			throws ParserConfigurationException, TransformerException, ParseException {
 		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-		Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
 		String time_263 =config.get("injuction263.format.time"
 				, "09:00");
 		String workDir =config.get("tomcat.data.dir"
@@ -3904,7 +3847,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		String dateNextBegin=format.format(cal.getTime()) ;
 		//request.setAttribute("dateNextBegin", date1) ;
 		cal.add(Calendar.DAY_OF_MONTH, -2) ;
-		String datePrevBegin=format.format(cal.getTime()) ;
 		//request.setAttribute("datePrevBegin", date1) ;
 
 		dat = ru.nuzmsh.util.format.DateFormat.parseDate(dateEnd) ;
@@ -3912,7 +3854,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		cal.add(Calendar.DAY_OF_MONTH, 1) ;
 		String dateNextEnd=format.format(cal.getTime()) ;
 
-		int i=0 ;
 		for (Object[] obj:listB) {
 			Element zap = xmlDoc.newElement(root, "NPR", null);
 			StringBuilder sqlB1 = new StringBuilder() ;
@@ -4004,7 +3945,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			sqlB1.append("	order by vbt.codeF") ;
 			List<Object[]> listB1 = theManager.createNativeQuery(sqlB1.toString())
 					.setMaxResults(1).getResultList() ;
-			Object[] objB1 = listB1.size()>0? listB1.get(0):null ;
+			Object[] objB1 = !listB1.isEmpty()? listB1.get(0):null ;
 			//xmlDoc.newElement(zap, "IDCASE", AddressPointServiceBean.getStringValue(++i)) ;
 			XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"DATA",aDateFrom,true,"") ;
 			XmlUtil.recordElementInDocumentXml(xmlDoc,zap,"LPU",aLpu,true,"") ;
@@ -4057,8 +3998,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		MisLpu department = theManager.find(MisLpu.class, aDepartment) ;
 		for (int i = 0; i < obj.length; i++) {
 			String jsId = obj[i];
-			if (jsId!=null && !jsId.equals("") || jsId.equals("0")) {
-				//System.out.println("    id="+jsonId) ;
+			if (jsId!=null && (!jsId.equals("") || jsId.equals("0"))) {
 
 				Long jsonId=java.lang.Long.valueOf(jsId) ;
 
@@ -4242,7 +4182,8 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					if (obj[2]!=null) {
 						theManager.createNativeQuery("update MedCase set prevMedCase_id='"+aSlo+"' where id='"+obj[2]+"'").executeUpdate() ;
 					}
-					if (theManager.createNativeQuery("select id from newborn where medcase_id='"+obj[1]+"'").getResultList().size()>0||theManager.createNativeQuery("select id from childbirth where medcase_id='"+obj[1]+"'").getResultList().size()>0) {
+					if (!theManager.createNativeQuery("select id from newborn where medcase_id='"+obj[1]+"'").getResultList().isEmpty()
+                            || !theManager.createNativeQuery("select id from childbirth where medcase_id='"+obj[1]+"'").getResultList().isEmpty()) {
 						throw new IllegalArgumentException("Невозможность объединить СЛО, т.к. имеются данные по родам!");
 					}
 					theManager.createNativeQuery("delete from medcase m where m.id='"+obj[1]+"'").executeUpdate() ;
@@ -4287,7 +4228,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				List<Object[]> list = theManager.createNativeQuery("select p.lastname||' '||p.firstname||' '||coalesce(p.middlename)||' '||to_char(p.birthday,'dd.mm.yyyy'),ss.code,case when sls.deniedHospitalizating_id is not null then 'при отказе от госпитализации дата выписки не ставится' when sls.dischargeTime is not null then 'Изменение даты выписки у оформленных историй болезни производится через выписку' when sls.dateStart>to_date('"+aDate+"','dd.mm.yyyy') then 'Дата выписки должна быть больше, чем дата поступления' else '' end from medcase sls left join patient p on p.id=sls.patient_id left join statisticstub ss on ss.id=sls.statisticstub_id where sls.id='"+id+"'")
 						//.setParameter("dat", date)
 						.getResultList() ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					Object[] objs = list.get(0) ;
 					throw new IllegalArgumentException(
 							new StringBuilder().append("Пациент:").append(objs[0])
@@ -4318,14 +4259,12 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		////a = a.getParent() ;
 
 		//sb.insert(0, aAddress[2]) ;
-		//System.out.println(aAddress) ;
 		if(aAddress[4]!=null) {
 			Long id1 = ConvertSql.parseLong(aAddress[4]) ;
-			//System.out.println("parent="+id1) ;
 			List<Object[]> list = theManager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid="+id1+" order by a.addressid")
 					.setMaxResults(1)
 					.getResultList() ;
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 
 				sb.insert(0, ", ") ;
 				sb.insert(0, addressInfo(aManager,id1,list.get(0))) ;
@@ -4361,7 +4300,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		list = theManager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid>"+id+" and a.fullname is null order by a.addressid")
 				.setMaxResults(450)
 				.getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			for (Object[] adr:list) {
 
 				//Address adr = list.get(i) ;
@@ -4429,10 +4368,9 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					.append(") ")
 
 					.append("from VocSex") ;
-		//	System.out.println(sql) ;
 			List<Object[]> usls  = theManager.createNativeQuery(sql.toString()).getResultList() ;
 
-			return usls.size()>0?new StringBuilder().append(usls.get(0)[1]).toString():"" ;
+			return !usls.isEmpty()?new StringBuilder().append(usls.get(0)[1]).toString():"" ;
 		} catch (Exception e) {
 			return "" ;
 		}
@@ -4443,19 +4381,19 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		List<VocPrimaryDiagnosis> prDiag = theManager.createQuery("from VocPrimaryDiagnosis where code=1").getResultList();
 		List<VocAcuityDiagnosis> actDiag = theManager.createQuery("from VocAcuityDiagnosis where code=1 or omcCode=1").getResultList();
 		List<VocDiagnosisRegistrationType> regTypeDiag = theManager.createQuery("from VocDiagnosisRegistrationType where code=4").getResultList();
-		if (prDiag.size()>0) {
+		if (!prDiag.isEmpty()) {
 			VocPrimaryDiagnosis pr = prDiag.get(0) ;
 			ret.append(pr.getId()).append("#").append(pr.getName()).append("#") ;
 		} else {
 			ret.append("##") ;
 		}
-		if (actDiag.size()>0) {
+		if (!actDiag.isEmpty()) {
 			VocAcuityDiagnosis act = actDiag.get(0) ;
 			ret.append(act.getId()).append("#").append(act.getName()).append("#") ;
 		} else {
 			ret.append("##") ;
 		}
-		if (regTypeDiag.size()>0) {
+		if (!regTypeDiag.isEmpty()) {
 			VocDiagnosisRegistrationType regType = regTypeDiag.get(0) ;
 			ret.append(regType.getId()).append("#").append(regType.getName()) ;
 		} else {
@@ -4472,11 +4410,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append(" left join mislpu as d on d.id=p.department_id ")
 				.append(" left join vocservicestream as vss on vss.id=smc.servicestream_id")
 				.append(" where smc.patient_id=:pat and smc.DTYPE='ServiceMedCase' and smc.medService_id=:usl and smc.dateExecute=:dat") ;
-	//	System.out.println("sql="+sql) ;
-	//	System.out.println("pat="+aPatient) ;
-	//	System.out.println("medservice="+aMedService) ;
-	//	System.out.println("service="+aService) ;
-	//	System.out.println("date="+aDate) ;
 		if (aMedService!=null && aMedService>0) {
 			sql.append(" and smc.id!='").append(aMedService).append("'") ;
 		}
@@ -4488,7 +4421,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.setParameter("dat", date)
 				.getResultList() ;
 
-		if (doubles.size()>0) {
+		if (!doubles.isEmpty()) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
 			for (Object[] res:doubles) {
@@ -4516,11 +4449,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append(" left join mislpu as d on d.id=p.department_id ")
 //    			.append(" left join vocservicestream as vss on vss.id=so.servicestream_id")
 				.append(" where mc.id=:mcid and so.medService_id=:usl and so.operationDate=:dat") ;
-		//System.out.println("sql="+sql) ;
-		//System.out.println("parentmedcase="+aParentMedCase) ;
-		//System.out.println("suroperation="+aSurOperation) ;
-		//System.out.println("operation="+aOperation) ;
-		//System.out.println("date="+aDate) ;
 		if (aSurOperation!=null && aSurOperation>0) {
 			sql.append(" and so.id!='").append(aSurOperation).append("'") ;
 		}
@@ -4532,7 +4460,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.setParameter("dat", date)
 				.getResultList() ;
 
-		if (doubles.size()>0) {
+		if (!doubles.isEmpty()) {
 			StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
 			for (Object[] res:doubles) {
@@ -4568,8 +4496,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append(" where statisticStub.code like :number order by dateStart");
 		Query query2 = theManager.createQuery(query.toString()) ;
 		query2.setParameter("number", "%"+aNumber+"%") ;
-	//	System.out.println("Запрос по medCase: ");
-	//	System.out.println(query.toString()) ;
 		return createHospitalList(query2);
 	}
 	public void setPatientByExternalMedservice(String aNumberDoc, String aOrderDate, String aPatient) {
@@ -4587,7 +4513,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append(" left join MisLpu as ml on ml.id=mc.department_id")
 				.append( " where mc.parent_id=:idsls and mc.DTYPE='DepartmentMedCase' and mc.dateFinish is null and mc.transferDate is null") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setParameter("idsls", aIdSls).getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			StringBuilder ret = new StringBuilder() ;
 			Object[] row = list.get(0) ;
 			ret.append(" СЛО №").append(row[0]).append(" отделение: ").append(row[1]) ;
@@ -4620,7 +4546,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	public Collection<MedPolicyForm> listPolicies(Long aMedCase) {
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCase);
 		//List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
-		List<MedPolicy> listPolicies =new ArrayList<MedPolicy>() ;
+		List<MedPolicy> listPolicies =new ArrayList<>() ;
 		List<MedCaseMedPolicy> hospmp = theManager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", hospital).getResultList() ;
 		for (MedCaseMedPolicy mp : hospmp) {
 			listPolicies.add(mp.getPolicies()) ;
@@ -4636,7 +4562,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				+hospital.getPatient().getId()+"' group by p.id")
 				.getResultList();
 		//List<MedPolicy> allPolicies = theManager.createQuery("from MedPolicy where patient_id=:pat").setParameter("pat", hospital.getPatient().getId()).getResultList();
-		List<MedPolicy> allPolicies = new ArrayList<MedPolicy>() ;
+		List<MedPolicy> allPolicies = new ArrayList<>() ;
 		for (Object[] obj:listPolicies) {
 			Long cnt = ConvertSql.parseLong(obj[1]) ;
 			if (cnt==null || cnt.equals(Long.valueOf(0))) {
@@ -4650,7 +4576,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 
 	private static Collection<MedPolicyForm> convert(Collection<MedPolicy> aPolicies) {
-		LinkedList<MedPolicyForm> list = new LinkedList<MedPolicyForm>();
+		LinkedList<MedPolicyForm> list = new LinkedList<>();
 		for (MedPolicy policy:aPolicies) {
 			MedPolicyForm frm = new MedPolicyForm() ;
 			frm.setId(policy.getId());
@@ -4667,9 +4593,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCaseId);
 		//List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
 		for (long policyId: aPolicies) {
-
-			MedPolicy policy= theManager.find(MedPolicy.class, policyId);
-	//		System.out.println("adding="+policy.getId());
 			if (!checkExistsAttachedPolicy(aMedCaseId, policyId)) {
 				MedCaseMedPolicy mp = new MedCaseMedPolicy() ;
 				mp.setMedCase(hospital) ;
@@ -4688,7 +4611,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				.append("' and policies_id='").append(aPolicy).append("'") ;
 		Object res= theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 		Long cnt=ConvertSql.parseLong(res) ;
-		return cnt>Long.valueOf(0)?true:false ;
+		return cnt>Long.valueOf(0);
 	}
 
 	public void removePolicies(long aMedCaseId, long[] aPolicies) {
@@ -4696,7 +4619,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		//List<MedCaseMedPolicy> listPolicies = hospital.getPolicies() ;
 		for (long policyId:aPolicies) {
 			//MedPolicy policy= theManager.find(MedPolicy.class, policyId);
-			//System.out.println("remove="+policy.getId());
 			//listPolicies.remove(policy) ;
 			theManager.createNativeQuery(new StringBuilder().append("delete from MedCase_MEdPolicy where medCase_id='")
 					.append(aMedCaseId).append("' and policies_id='").append(policyId).append("'").toString()).executeUpdate();
@@ -4708,7 +4630,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 
 	public String getTemperatureCurve(long aMedCaseId) {
-		HospitalMedCase hospital = theManager.find(HospitalMedCase.class,aMedCaseId);
 		List<TemperatureCurve> list = theManager.createQuery("from TemperatureCurve where medCase_id=:medCase").setParameter("medCase", aMedCaseId).getResultList() ;
 
 		StringBuilder json = new StringBuilder() ;
@@ -4760,7 +4681,6 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 					.append("}");
 		}
 		json.append("]}");
-		// TODO Auto-generated method stub
 		return json.toString();
 	}
 
@@ -4799,8 +4719,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 		// query2.setParameter("patient", aParentId) ;
 		//results = query2.setMaxResults(1000).getResultList();
 		List<Object[]> list = theManager.createNativeQuery(query.toString()).setParameter("patient", aParentId).getResultList() ;
-		//System.out.println("RESULT == "+results.size()) ;
-		LinkedList<IEntityForm> ret = new LinkedList<IEntityForm>();
+		LinkedList<IEntityForm> ret = new LinkedList<>();
 		for (Object[] hospit : list) {
 			HospitalMedCaseForm form ;
 			if (hospit[1]!=null) {
@@ -4838,7 +4757,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 	}
 	private List<SurgicalOperationForm> createList(Query aQuery) {
 		List<SurgicalOperation> list = aQuery.getResultList();
-		List<SurgicalOperationForm> ret = new LinkedList<SurgicalOperationForm>();
+		List<SurgicalOperationForm> ret = new LinkedList<>();
 		for (SurgicalOperation surOper : list) {
 			try {
 				ret.add(theEntityFormService.loadForm(SurgicalOperationForm.class, surOper));
@@ -4865,14 +4784,12 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 			throw new IllegalDataException("Неправильная дата") ;
 		}
 		Query query = builder.build(theManager, "from MedCase where DTYPE='HospitalMedCase' and dateFinish is null  and deniedHospitalizating_id is null and (ambulanceTreatment is null or cast(ambulanceTreatment as int)=0)", " order by entranceTime");
-	//	System.out.println("Запрос по medCase: ");
-	//	System.out.println(query.toString()) ;
 		return createHospitalList(query);
 	}
 
 	private List<HospitalMedCaseForm> createHospitalList(Query aQuery) {
 		List<HospitalMedCase> list = aQuery.getResultList();
-		List<HospitalMedCaseForm> ret = new LinkedList<HospitalMedCaseForm>();
+		List<HospitalMedCaseForm> ret = new LinkedList<>();
 		for (HospitalMedCase medCase : list) {
 			try {
 				ret.add(theEntityFormService.loadForm(HospitalMedCaseForm.class, medCase));

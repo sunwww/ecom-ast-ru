@@ -63,7 +63,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
                     }
                 }
             }catch(Exception e) {
-            	System.out.println(e.getMessage());
+            	LOG.error(e.getMessage());
             } 
             finally {
                 in.close();

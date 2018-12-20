@@ -1,24 +1,7 @@
 package ru.ecom.jaas.ejb.service;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
-
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryResultUtil;
@@ -27,6 +10,16 @@ import ru.ecom.jaas.ejb.domain.SecPolicy;
 import ru.ecom.jaas.ejb.domain.SecRole;
 import ru.ecom.jaas.ejb.form.SecRoleForm;
 import ru.ecom.report.util.XmlDocument;
+
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.File;
+import java.util.*;
 /**
  * Экспорт, импорт политик, ролей
  * @author stkacheva
@@ -35,8 +28,8 @@ import ru.ecom.report.util.XmlDocument;
 @Stateless
 @Remote(ISecService.class)
 public class SecServiceBean implements ISecService {
-    private final static Logger LOG = Logger.getLogger(SecServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(SecServiceBean.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
     
     public Long findRole(PolicyForm aRole) {
     	SecRole role;
@@ -56,11 +49,11 @@ public class SecServiceBean implements ISecService {
     }
     
     public List<SecRoleForm> listRoles() {
-    	List<SecRoleForm> list = new LinkedList<SecRoleForm>();
+    	List<SecRoleForm> list = new LinkedList<>();
     	List<SecRole> allRoles = theManager.createQuery("from SecRole").getResultList();
-    	  System.out.println(allRoles) ;
+    	  LOG.debug(allRoles);
     	 for (SecRole role : allRoles) {
-    		 System.out.println(role) ;
+    		 LOG.info(role);
              SecRoleForm form = new SecRoleForm();
              form.setId(role.getId());
              form.setKey(role.getKey());
@@ -73,9 +66,8 @@ public class SecServiceBean implements ISecService {
 
     public String exportRoles(long[] aRoles) throws ParserConfigurationException, TransformerException {
     	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-    	Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+    	Map<SecPolicy, String> hash = new HashMap<>() ;
     	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-    	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
     	String filename = "export-role-"+System.currentTimeMillis()+".xml" ;
     	File outFile = new File(workDir+"/"+filename) ;
     	XmlDocument xmlDoc = new XmlDocument() ;
@@ -107,7 +99,7 @@ public class SecServiceBean implements ISecService {
     
 	public String exportPolicy(long[] aPolicies) throws ParserConfigurationException, TransformerException {
         EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-        Map<SecPolicy, String> hash = new HashMap<SecPolicy,String>() ;
+        Map<SecPolicy, String> hash = new HashMap<>() ;
         String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
         workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
         String filename = "export-policy-"+System.currentTimeMillis()+".xml" ;
@@ -140,7 +132,7 @@ public class SecServiceBean implements ISecService {
 		IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
 		try {
 			monitor = theMonitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size()) ;
-			Map<String, SecPolicy> hash = new HashMap<String, SecPolicy>() ;
+			Map<String, SecPolicy> hash = new HashMap<>() ;
 			hash.put("/", findRootPolicy()) ;
 			for(PolicyForm policy : aPolicies) {
 				if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
@@ -169,7 +161,7 @@ public class SecServiceBean implements ISecService {
 				size=size+role.getPolicies().size() ;
 			}
 			monitor = theMonitorService.startMonitor(aMonitorId, "Импорт политик безопасности", size) ;
-			Map<String, SecPolicy> hash = new HashMap<String, SecPolicy>() ;
+			Map<String, SecPolicy> hash = new HashMap<>() ;
 			for (ImportRoles role : aListRoles) {
 				importPoliciesByRole(monitor,hash, aClearRole,role.getRole() , role.getPolicies()) ;
 			}
@@ -188,14 +180,13 @@ public class SecServiceBean implements ISecService {
 		SecRole role= findOrCreateRole(aRole) ;
 		Collection<SecPolicy> listPolicy ;
 		if (aClearRole) {
-			listPolicy = new LinkedList<SecPolicy>();
+			listPolicy = new LinkedList<>();
 		} else {
 			listPolicy = role.getSecPolicies() ;
 		}
 		
 		aMonitor.setText("Импортируется РОЛЬ: "+role.getName());
-		if (CAN_DEBUG)
-			LOG.debug("importPolicies: role = " + role.getName()); 
+		if (CAN_DEBUG) LOG.debug("importPolicies: role = " + role.getName());
     	
     	aHash.put("/", findRootPolicy()) ;
     	if(aMonitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;

@@ -1,10 +1,12 @@
 package ru.ecom.jaas.ejb.service;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.ejb.services.util.QueryResultUtil;
+import ru.ecom.jaas.ejb.domain.SecPolicy;
+import ru.ecom.jaas.ejb.domain.SecRole;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -12,15 +14,7 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.util.QueryResultUtil;
-import ru.ecom.jaas.ejb.domain.SecPolicy;
-import ru.ecom.jaas.ejb.domain.SecRole;
-import ru.nuzmsh.util.StringUtil;
+import java.util.*;
 
 /**
  * Импорт политик безопасности
@@ -30,11 +24,11 @@ import ru.nuzmsh.util.StringUtil;
 @Local(ISecPolicyImportService.class)
 public class SecPolicyImportServiceBean implements ISecPolicyImportService {
 
-    private final static Logger LOG = Logger.getLogger(SecPolicyImportServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(SecPolicyImportServiceBean.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
     
     public Long addPolicy(String aPolicy, String aName) {
-    	Map<String, SecPolicy> hash = new HashMap<String, SecPolicy>() ;
+    	Map<String, SecPolicy> hash = new HashMap<>() ;
     	Map<String,String> names = new CreateReplaceMapHelper().create() ;
     	hash.put("/", findRootPolicy()) ;    	
     	SecPolicy policy = importPolicy(aPolicy, hash, names,null) ;
@@ -75,9 +69,7 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     	listusers.append(" left join secrole_secpolicy ss on ss.secrole_id=sr.id");
     	listusers.append(" where ss.secpolicies_id='").append(policy.getId()).append("')");
     	listusers.append(" group by su.id,su.login");
-    	//TODO
-    	List<Object[]> l = aEntityManager.createNativeQuery(listusers.toString()).getResultList() ;
-    	return l ;
+    	return aEntityManager.createNativeQuery(listusers.toString()).getResultList() ;
     }
 
     private SecPolicy findRootPolicy() {
@@ -123,14 +115,13 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     	IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
     	try {
     		monitor = theMonitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size()) ;
-        	Map<String, SecPolicy> hash = new HashMap<String, SecPolicy>() ;
+        	Map<String, SecPolicy> hash = new HashMap<>() ;
         	hash.put("/", findRootPolicy()) ;
         	for(String policy : aPolicies) {
         		if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
         		monitor.advice(1) ;
         		monitor.setText("Импортируется "+policy);
-        		if (CAN_DEBUG)
-    				LOG.debug("importPolicies: policy = " + policy); 
+        		if (CAN_DEBUG) LOG.debug("importPolicies: policy = " + policy);
         		importPolicy(policy, hash, aNames, aComments) ;
         	}
         	monitor.finish(hash.get("/").getId()+"") ;
@@ -210,7 +201,6 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     }
     private SecPolicy createOrFindPolicy(SecPolicy aParentPolicy, String aKey, String aComment) {
         if (aParentPolicy == null) throw new IllegalArgumentException("aParentPolicy не должен быть равен NULL");
-//        System.out.println("aParentPolicy = " + aParentPolicy.getKey());
         SecPolicy ret = null;
 
         if (aParentPolicy.getChildsSecPolicies() != null) {
@@ -244,14 +234,14 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
 
     public void standartPolicyByParent(Long aParentPolicy) {
     	SecPolicy parentpolicy = theManager.find(SecPolicy.class,aParentPolicy) ;
-    	SecPolicy view = createOrFindPolicy(parentpolicy,"View", "Просмотр объекта") ;
-    	if (CAN_DEBUG&&view!=null) LOG.debug("Создана политика View");
-    	SecPolicy delete = createOrFindPolicy(parentpolicy,"Delete","Удаление объекта") ;
-    	if (CAN_DEBUG&&delete!=null) LOG.debug("Создана политика Delete");
-    	SecPolicy create = createOrFindPolicy(parentpolicy,"Create","Создание объекта") ;
-    	if (CAN_DEBUG&&create!=null) LOG.debug("Создана политика Create");
-    	SecPolicy edit = createOrFindPolicy(parentpolicy,"Edit","Редактирование объекта") ;
-    	if (CAN_DEBUG&&edit!=null) LOG.debug("Создана политика Edit");
+    	createOrFindPolicy(parentpolicy,"View", "Просмотр объекта") ;
+    	if (CAN_DEBUG) LOG.debug("Создана политика View");
+    	createOrFindPolicy(parentpolicy,"Delete","Удаление объекта") ;
+    	if (CAN_DEBUG) LOG.debug("Создана политика Delete");
+    	createOrFindPolicy(parentpolicy,"Create","Создание объекта") ;
+    	if (CAN_DEBUG) LOG.debug("Создана политика Create");
+    	createOrFindPolicy(parentpolicy,"Edit","Редактирование объекта") ;
+    	if (CAN_DEBUG) LOG.debug("Создана политика Edit");
     }
     
     private @PersistenceContext EntityManager theManager;

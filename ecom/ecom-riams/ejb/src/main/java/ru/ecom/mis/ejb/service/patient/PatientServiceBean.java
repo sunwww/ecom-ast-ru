@@ -199,7 +199,6 @@ public class PatientServiceBean implements IPatientService {
 							" and att.attachedtype_id=(select id from vocattachedtype where code='"+aAttachedType+"')" +
 							" and att.dateFrom=to_date('"+aAttachedDate+"','dd.MM.yyyy')and att.dateTo is null" +
 							" and (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')='"+aLpuAttached+"')) end";
-							//System.out.println("=========== aSQL = "+aSql);
 					Object a = theManager.createNativeQuery(aSql).getSingleResult();
 					if (a.toString().equals("0")) {isDifference = true;}
 					
@@ -218,8 +217,6 @@ public class PatientServiceBean implements IPatientService {
 				}
 				
 			/*} catch (Exception e) {
-				System.out.println("---------Ошибка - patId:attType:attDate:attLpu:polSer:polNum:polSK = "+aPatientId+" : "+aAttachedType+":"+aAttachedDate+":"+
-						aLpuAttached+":"+aPolicySeries+":"+aPolicyNumber+":"+aCompanyCode);
 				e.printStackTrace();
 			}*/
 			return isDifference;
@@ -302,12 +299,10 @@ public class PatientServiceBean implements IPatientService {
 			doc.setType(type) ;
 		}
 		theManager.persist(doc) ;
-		//System.out.println("==== Загружаем пользовательский документ? тип = "+aObject);
 		if (aObject.equals("Template")) {
 			
 		//	 doc = (TemplateExternalDocument) doc;
 		//	 theManager.persist(doc) ;	 
-			//System.out.println("==== Загружаем пользовательский документ " + doc.getId());
 			//theManager.createNativeQuery("update document set dtype='TemplateExternalDocument' where id =:id").setParameter("id", doc.getId()).executeUpdate();
 		}
 		
@@ -385,19 +380,16 @@ public class PatientServiceBean implements IPatientService {
 		aStreet=aStreet.trim() ;
 		streetType = streetType.toUpperCase().trim();
 		StringBuilder sql = new StringBuilder();
-	//	System.out.println("=== 1 getAddressByOkato "+aOkato+" : "+aStreet);
 		sql.append("select a.addressid from kladr k left join address2 a on a.kladr = k.kladrcode" +
 				" left join addresstype atype on atype.id=a.type_id"+
 	" where k.okatd='"+aOkato+"' and upper(a.name) = upper('"+aStreet+"')");
 		if (!streetType.equals("")) {sql.append(" and upper(atype.shortname)=upper('"+streetType+"')");}
-	//	System.out.println("==== 2 finding by okato, sql = "+sql.toString());
 		List<Object> listO = theManager.createNativeQuery(sql.toString()).setMaxResults(10).getResultList() ;
 		if (listO.size()>0) {
 			if (listO.size()>1) {
 				LOG.warn("=== 2.5 Найдено несколько подходящих адресов, возвращаем null "+listO.size());
 				return null;
 			}
-		//	System.out.println("==== 3 found by okato, res = "+listO.get(0));
 			return listO.get(0).toString();
 		}
 		return null;
@@ -465,10 +457,8 @@ public class PatientServiceBean implements IPatientService {
 					list.clear() ;
 					list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 					if (list.size()>0) {
-						//System.out.println("111") ;
 						res.append(list.get(0)[0]) ;
 					} else {
-						//System.out.println("222") ;
 						return getKladrByRayon(aRegion, aRayon, aCity, aStreet) ;
 					}
 				} else {
@@ -538,18 +528,13 @@ public class PatientServiceBean implements IPatientService {
 			String sity = adr[2].toUpperCase() ;
 			String street = adr[3].toUpperCase() ;
 			String region = adr[4].toUpperCase() ;
-			//System.out.println("000") ;
 			res.append(getAddressByKladr(kladr,region,rayon, sity, street)) ;
-			//System.out.println("333"+rayon) ;
 			res.append("#");
 			sql = new StringBuilder() ;
-			//res = new StringBuilder() ;
-			
+
 			sql.append("select id,code||' '||name from VocRayon where code='").append(rayon).append("' or upper(name) like '%").append(rayon).append("%'" ) ;
-			//System.out.println(sql.toString()) ;
 			if (list!=null) list.clear() ;
 			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-			//System.out.println("444--") ;
 			if (list.size()>0) {
 				res.append(list.get(0)[0]).append("#").append(list.get(0)[1]).append("#") ;
 			} else {
@@ -560,7 +545,6 @@ public class PatientServiceBean implements IPatientService {
 			res.append("#") ;
 			res.append("##") ;
 		}
-		//System.out.println("444") ;
 		if (aPolicy!=null &&!aPolicy.equals("")) {
 			String pol[] = aPolicy.split("#") ;
 			sql = new StringBuilder() ;
@@ -647,7 +631,6 @@ public class PatientServiceBean implements IPatientService {
 			String address = getAddressByOkato(aOkato, aStreet);
 			
 			if (needUpdatePatient) {
-		//		System.out.println("++++ UPDATE PATIENT! = "+aLastname + " "+ aFirstname);
 				o=1;
 				if (aSnils!=null&&!aSnils.equals("")) {
 					str.append(prepSql("snils",aSnils));
@@ -658,7 +641,6 @@ public class PatientServiceBean implements IPatientService {
 			} else {patF.setIsPatientUpdate(false);}
 			
 			if (needUpdateDocuments) {
-		//		System.out.println("++++ UPDATE DOCUMENT! = "+aLastname + " "+ aFirstname);
 				if (aDocNumber!=null&&aDocSeries!=null&&aDocType!=null&&aDocDateIssued!=null) {
 					if (o==1) {
 						str.append(",");
@@ -675,17 +657,14 @@ public class PatientServiceBean implements IPatientService {
 			if (o==1) {
 				str.append(" where id=").append(aPatientId);
 								
-	//			System.out.println ("UpdatePatient = "+theManager.createNativeQuery(str.toString()).executeUpdate());
 			}
 			if (needUpdatePolicy) {
-				//System.out.println("++++ UPDATE POLICY! = "+aLastname + " "+ aFirstname);
 				patF.setIsPolicyUpdate(updateOrCreatePolicyByFond(aPatientId, aRz, aLastname, aFirstname, aMiddlename, aBirthday, aCompany
 						, aPolicySeries, aPolicyNumber, aPolicyDateFrom, aPolicyDateTo, aCheckDate));
 				
 				
 			} else {patF.setIsPolicyUpdate(false);}
 			if (needUpdateAttachment) {
-				//System.out.println("++++ UPDATE ATTACHMENT! = "+aLastname + " "+ aFirstname);
 				String s = updateOrCreateAttachment(aPatientId, aCompany, aAttachedLpu, aAttachedType, aAttachedDate, doctorSnils,true, false);
 				patF.setIsAttachmentUpdate((s!=null&&s.length()>0)?true:false);
 				
@@ -727,14 +706,12 @@ public class PatientServiceBean implements IPatientService {
 		//String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
 		StringBuilder ret = new StringBuilder();
 		String lpu = aLpu, attachedType=aAttachedType, attachedDate = aAttachedDate;
-	//	System.out.println("=== === "+aPatientId+ ":"+aCompany+ ":"+aLpu+ ":"+aAttachedDate+ ":"+aAttachedType);
 		RegInsuranceCompany insCompany =null;
 		String sqlAdd = "smoCode"; //smoCode - федеральный 5 значный код
 		if (aCompany.length()<5) { //В некоторых случаях мы получаем местный код (7, 15) в этом случае, и искать мы будем по местному коду
 			sqlAdd="omcCode";
 		}
 		String sqll = "from RegInsuranceCompany where "+sqlAdd+" = :code and (deprecated is null or deprecated='0')";
-		//s("WHERE IS ERROR?? "+sqll);
 		List<RegInsuranceCompany> companies =(List<RegInsuranceCompany>) theManager.createQuery(sqll)
 				.setParameter("code", aCompany).getResultList(); 
 		
@@ -966,9 +943,6 @@ public class PatientServiceBean implements IPatientService {
 			
 			for (String p:pols) {
 				String[] pol = p.split("#") ;
-			//	System.out.println(pol.length) ;
-			//	System.out.println(p) ;
-				
 				updateOrCreatePolicyByFond(aPatientId, pol[5], fiodr[0], fiodr[1], fiodr[2], fiodr[3], pol[0], pol[1], pol[2],pol[3],pol[4],curDate) ;
 			}
 		}
@@ -1362,9 +1336,6 @@ public class PatientServiceBean implements IPatientService {
 		WebQueryResult wqr = new WebQueryResult() ;
 		String defaultLpu = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", "-", theManager);
 		boolean isEnableLimitAreas = theSessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
-	//	System.out.print("/Policy/Mis/Patient/EnableLimitPsychAreas") ;
-	//	System.out.print(isEnableLimitAreas) ;
-	//	System.out.print(theSessionContext.getCallerPrincipal().toString()) ;
 		String fiIdprev=null ;
 		if (aIdNext!=null) {
 			List<Object[]> infoNext = theManager.createNativeQuery("select lastname,firstname,middlename from patient where id="+aIdNext).getResultList() ;
@@ -1686,11 +1657,9 @@ public class PatientServiceBean implements IPatientService {
 	@SuppressWarnings("unchecked")
 	private void appendNativeToList(Query aQuery, List<PatientForm> ret, String aAddInfo, boolean aNext) {
 		List<Object[]> list = aQuery.setMaxResults(50).getResultList();
-	//	System.out.println("next="+aNext) ;
 		for (int i=0; i<list.size(); i++) {
 			int ind=i ;
 			if (!aNext) ind=list.size()-i-1 ;
-	//		System.out.println("ind="+ind) ;
 			Object[] arr = list.get(ind) ;
 			PatientForm f = new PatientForm();
 			f.setId(((Number) arr[0]).longValue());

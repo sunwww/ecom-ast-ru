@@ -128,12 +128,10 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 				VocIllnesPrimary illnes = aManager.find(VocIllnesPrimary.class, aActuity) ;
 				VocAcuityDiagnosis actuity = illnes.getIllnesType() ;
 				VocPrimaryDiagnosis primary = illnes.getPrimary() ;
-				//System.out.println("      actuity ="+actuity+""); 
 				aDiag.setAcuity(actuity) ;
 				aDiag.setPrimary(primary) ;
 				aDiag.setIllnesPrimary(illnes) ;
 				//VocAcuityDiagnosis actuity = aManager.find(VocAcuityDiagnosis.class, aActuity) ;
-				//System.out.println("      actuity ="+actuity+""); 
 				//aDiag.setAcuity(actuity) ;
 			}
 			resault = true ;
@@ -178,15 +176,12 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		sql=sql+" and ((ldr.diagnosispriority is null or ldr.diagnosispriority=0) or ldr.diagnosispriority="+diagnosisPriority+")" +
 			" and ((ldr.servicestream is null or ldr.servicestream=0) or ldr.servicestream="+serviceStream+")";
 			
-		//System.out.println("=== DIAG, sql ="+sql);
 			List<Object[]> o = manager.createNativeQuery(sql).getResultList();
-		//	System.out.println("=== DIAG o = "+o.size());
 			if (o==null||o.isEmpty()) {
 				return true;
 			} 
 			boolean first = true;
 			for (Object[] oo: o) {
-			//	System.out.println("=== DIAG_n, o[] = "+oo[0]+":"+oo[1]+":"+oo[2]);
 				if (first){
 					isPermitted = oo[1].toString().equals("1")?true:false;
 					first = false;

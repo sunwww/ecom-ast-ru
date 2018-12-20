@@ -1,20 +1,6 @@
 package ru.ecom.expomc.ejb.services.exportservice;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -26,6 +12,14 @@ import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.dbf.DbfField;
 import ru.nuzmsh.dbf.DbfWriter;
 import ru.nuzmsh.util.PropertyUtil;
+
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.File;
+import java.util.*;
 
 /**
  *  Экспорт
@@ -80,7 +74,6 @@ public class ExportServiceBean implements IExportService {
             boolean notCanceled = true ;
             while (aIterator.hasNext() && notCanceled) {
                 Object entity = aIterator.next();
-                //System.out.println(entity);
                 if(++i % 100 == 0) {
                 	if(aMonitor!=null) aMonitor.advice(100);
                 }
@@ -94,7 +87,6 @@ public class ExportServiceBean implements IExportService {
                 if(aMonitor!=null) {
                 	notCanceled = !aMonitor.isCancelled() ;
                 }
-                //System.out.println("notCancelled="+notCanceled);
             }
         } finally {
             writer.close() ;

@@ -1,9 +1,14 @@
 package ru.ecom.mis.ejb.service.worker;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.LinkedList;
-import java.util.List;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.jaas.ejb.domain.SecUser;
+import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.domain.worker.Worker;
+import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.annotation.Resource;
@@ -13,17 +18,10 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.jaas.ejb.domain.SecUser;
-import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
-import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
-import ru.ecom.mis.ejb.domain.worker.Worker;
-import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
-import ru.nuzmsh.util.format.DateFormat;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -32,41 +30,34 @@ import ru.nuzmsh.util.format.DateFormat;
 @Local(IWorkerService.class)
 @Remote(IWorkerService.class)
 public class WorkerServiceBean implements IWorkerService{
+
+	/*Все рабочие функции по одному работнику (по одному отделению)*/
 	public String getWorkFunctions(Long aWorkFunction){
-		StringBuilder sql =new StringBuilder().append("select wf.id from WorkFunction wf left join Worker w on w.id=wf.worker_id left join WorkFunction wf1 on wf1.worker_id=wf.worker_id where wf1.id='").append(aWorkFunction).append("'") ;
-		//System.out.println(sql) ;
-		List<Object> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+		StringBuilder sql =new StringBuilder().append("select wf.id from WorkFunction wf left join Worker w on w.id=wf.worker_id left join WorkFunction wf1 on wf1.worker_id=wf.worker_id where wf1.id=workFunctionId") ;
+		List<Object> list = theManager.createNativeQuery(sql.toString()).setParameter("workFunctionId",aWorkFunction).getResultList() ;
 		StringBuilder res = new StringBuilder() ;
 		for (Object id :list) {
 			res.append(",").append(id) ;
 		}
-		return list.size()>0 ? res.substring(1) :String.valueOf(aWorkFunction) ;	
+		return !list.isEmpty() ? res.substring(1) :String.valueOf(aWorkFunction) ;
 	}
     public void onUpdate(Worker aWorker) {
        /* theManager.createQuery("update StateList set freeRate=fullRate")
                 //.setParameter("post", aWorker.getPost().getId())
                 .executeUpdate() ;     */
     }
-
+	/*Отделение по рабочей функции*/
 	public Long getWorkingLpu() {
+		WorkFunction workFunction = getWorkFunction(theContext,theManager);
+		/*
 		String username = theContext.getCallerPrincipal().toString() ;
 		List<PersonalWorkFunction> list= theManager.createQuery("from WorkFunction where secUser.login = :login")
 			.setParameter("login", username) 
 			.getResultList() ;
-		StringBuffer err = new StringBuffer() ;
-		if(list.size()==0) throw
-			new IllegalArgumentException(
-				err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)")
-				.toString()
-				);	
-		MisLpu lpu =list.get(0).getLpuRegister() ;
-		
-		if (lpu!=null) {
-			//	System.out.println("lpu="+lpu.getId()) ;
-				return lpu.getId() ;
-		}
-		System.out.println("Not found") ;
-		return Long.valueOf(0) ;
+		if(list.isEmpty()) throw new IllegalArgumentException("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)");
+		*/
+		MisLpu lpu =workFunction.getLpuRegister() ;
+		return lpu!=null ? lpu.getId() : Long.valueOf(0) ;
 	}
 	
 	public String getWorkFunctionInfo(Long aWorkFunction) {
@@ -83,23 +74,15 @@ public class WorkerServiceBean implements IWorkerService{
 		List<SecUser> list = theManager.createQuery("from SecUser where login = :login")
 			.setParameter("login", username) 
 			.getResultList() ;
-		StringBuffer err = new StringBuffer() ;
-		if(list.size()==0) throw 
-			new IllegalArgumentException(
-					err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между ")
-					.append(username)
-					.append(" и SecUser").toString());	
-		if(list.size()>1)  throw 
-			new IllegalArgumentException(
-					err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Больше одного раза встречается имя ")
-					.append(username)
-					.append(" в SecUser")
-					.toString()) ;
+		if(list.isEmpty()) throw new IllegalArgumentException("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между " + username+" и SecUser");
+		if(list.size()>1)  throw new IllegalArgumentException("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Больше одного раза встречается имя "+username+" в SecUser") ;
 		return list.iterator().next().getId();
 	}
 	@SuppressWarnings({ "unchecked" })
 	public Long getWorkFunction()  {
-		String username = theContext.getCallerPrincipal().toString() ;
+		WorkFunction workFunction = getWorkFunction(theContext,theManager);
+		return workFunction.getId();
+		/*String username = theContext.getCallerPrincipal().toString() ;
 		List<WorkFunction> list= theManager.createQuery("from WorkFunction where secUser.login = :login")
 			.setParameter("login", username) 
 			.getResultList() ;
@@ -115,43 +98,28 @@ public class WorkerServiceBean implements IWorkerService{
 					.append(username)
 					.append(" в SecUser")
 					.toString()) ;
-	return list.get(0).getId() ;
+	return list.get(0).getId() ; */
 	}
 	public String getUsernameByWorkFunction(Long aWorkFunction) {
-		List<Object[]> list = theManager.createNativeQuery("select count(*), su.login from WorkFunction wf left join SecUser su on wf.secUser_id=su.id where wf.id='"+aWorkFunction+"' group by su.login").getResultList() ;
-		return list.size()>0 ? String.valueOf(list.get(0)[1]) :"" ;
+		List<Object[]> list = theManager.createNativeQuery("select count(*), su.login from WorkFunction wf left join SecUser su on wf.secUser_id=su.id where wf.id=:workFunction group by su.login")
+				.setParameter("workFunction",aWorkFunction).getResultList() ;
+		return !list.isEmpty() ? String.valueOf(list.get(0)[1]) :"" ;
 	}
 	public static WorkFunction getWorkFunction(SessionContext aContext, EntityManager aManager)  {
 		String username = aContext.getCallerPrincipal().toString() ;
 		List<WorkFunction> list=aManager.createQuery("from WorkFunction where secUser.login = :login")
 			.setParameter("login", username) 
 			.getResultList() ;
-		StringBuffer err = new StringBuffer() ;
-		if(list.size()==0) throw
-			new IllegalArgumentException(
-				err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между WorkFunction и SecUser")
-				.toString()
-				);	
-		if(list.size()>1)  throw 
-			new IllegalArgumentException(
-					err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Больше одного раза встречается имя ")
-					.append(username)
-					.append(" в SecUser")
-					.toString()) ;
-	return list.get(0) ;
+		if(list.isEmpty()) throw new IllegalArgumentException("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между WorkFunction и SecUser");
+		if(list.size()>1)  throw new IllegalArgumentException("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Больше одного раза встречается имя "+ username+" в SecUser") ;
+		return list.get(0) ;
 	}
 
 	public Long getWorkFunction(Long aSecUser)  {
-		String username = theContext.getCallerPrincipal().toString() ;
+	//	String username = theContext.getCallerPrincipal().toString() ;
 		List<WorkFunction> list= theManager.createQuery("from WorkFunction where secUser_id = :secUser")
-			.setParameter("secUser", aSecUser) 
-			.getResultList() ;
-		StringBuffer err = new StringBuffer() ;
-		if(list.size()==0) throw
-			new IllegalArgumentException(
-				err.append("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)")
-				.toString()
-				);	
+			.setParameter("secUser", aSecUser).getResultList() ;
+		if(list.isEmpty()) throw new IllegalArgumentException("Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)");
 		return list.get(0).getId() ;
 	}
 	
@@ -171,7 +139,7 @@ public class WorkerServiceBean implements IWorkerService{
 
 		List<Object[]> list = theManager.createNativeQuery(sql.toString()).setParameter("WFid", aWorkFunctionId).getResultList() ;
 		sql = new StringBuilder() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			Object[] obj = list.get(0);
 			if (obj[1]!=null) {
 				sql.append(obj[1]) ;
@@ -222,18 +190,15 @@ public class WorkerServiceBean implements IWorkerService{
 				.setParameter("dateFinish", aDateFinish)
 				.setParameter("WFid", aVocWorkFunctionId)
 				.getResultList() ;
-		LinkedList<TableTimeBySpecialists> ret = new LinkedList<TableTimeBySpecialists>() ;
+		LinkedList<TableTimeBySpecialists> ret = new LinkedList<>() ;
 		long i = 0 ;
 		for (Object[] row : list) {
 			TableTimeBySpecialists result = new TableTimeBySpecialists() ;
-			System.out.println("Specialist") ;
 			//BigInteger idbi = (BigInteger)row[0] ;
 			//String idst = Long.valueOf(row[0]) ;
 			result.setSpecialistId(ConvertSql.parseLong(row[0])) ;
-			System.out.println("Calendar day") ;
 			result.setCalendarDayId(ConvertSql.parseLong(row[1]));
 			//String specialist ;
-			//System.out.println("Specialist info") ;
 			/*
 			if (row[5]==null) {
 				result.setSpecialist((String) row[6]) ;
@@ -243,17 +208,11 @@ public class WorkerServiceBean implements IWorkerService{
 			Time timeMin = (Time)row[3];
 			Time timeMax = (Time)row[4];
 			Date day = (Date)row[2];
-			//System.out.println("Min date") ;
 			result.setTimeMax(DateFormat.formatToTime(timeMax)) ;
-			//System.out.println("Max date") ;
 			result.setTimeMin(DateFormat.formatToTime(timeMin)) ;
-			//System.out.println("Day string") ;
 			result.setDateString(DateFormat.formatToDate(day)) ;
-			//System.out.println("Day id") ;
 			result.setDate(day) ;
-			//System.out.println("Sn") ;
-			result.setSn(Long.valueOf(++i)) ;
-			//System.out.println("Min date") ;
+			result.setSn(++i) ;
 			ret.add(result) ;
 		}
 		return ret ;
@@ -265,7 +224,7 @@ public class WorkerServiceBean implements IWorkerService{
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
 				.setParameter("WCDid", aWorkCalendarDay)
 				.getResultList() ;
-		LinkedList<TableSpetialistByDay> ret = new LinkedList<TableSpetialistByDay>() ;
+		LinkedList<TableSpetialistByDay> ret = new LinkedList<>() ;
 		long i =0 ;
 		for (Object[] row: list ) {
 			TableSpetialistByDay result = new TableSpetialistByDay() ;
@@ -281,7 +240,6 @@ public class WorkerServiceBean implements IWorkerService{
 	public String getCalendarTimeId(Long aCalendarDay, Time aCalendarTime, Long aMinIs) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select id,timeFrom from WorkCalendarTime where workCalendarDay_id=:WCDid and medCase_id is null  and prepatient_id is null and (prepatientinfo is null or prepatientinfo='') and (isDeleted is null or isDeleted='0')") ;
-	//	System.out.println("minIs="+aMinIs) ;
 		if (aMinIs!=null && aMinIs.equals(Long.valueOf(1))) {
 			sql.append(" order by timeFrom asc") ;
 		} else {
@@ -292,7 +250,7 @@ public class WorkerServiceBean implements IWorkerService{
 			.setMaxResults(1)
 			//.setParameter("time", aCalendarTime) 
 			.getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			Object[] row = list.get(0) ;
 			Long id = ConvertSql.parseLong(row[0]) ;
 			Time time = (Time)row[1] ;
@@ -327,17 +285,16 @@ public class WorkerServiceBean implements IWorkerService{
 						.setParameter("workFuncId", aWorkFunction) 
 						.setMaxResults(1)
 						.getResultList() ;
-		if (rownext.size()==0 || rownext.get(0)[1]==null) {
+		if (rownext.isEmpty() || rownext.get(0)[1]==null) {
 			rownext = theManager.createNativeQuery(sqlmax.toString())
 				.setParameter("workFuncId", aWorkFunction) 
 				.setMaxResults(1)
 				.getResultList() ;
-			if (rownext.size()==0 || rownext.get(0)[1]==null) {
+			if (rownext.isEmpty() || rownext.get(0)[1]==null) {
 				return null ;
 			}
 		} 
 		ret.append(rownext.get(0)[0]).append("#").append(rownext.get(0)[1]) ;
-	//	System.out.println("default date="+ret) ;
 		return ret.toString() ;
 	}
 }

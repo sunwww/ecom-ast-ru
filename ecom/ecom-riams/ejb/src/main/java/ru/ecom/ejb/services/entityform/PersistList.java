@@ -25,12 +25,10 @@ public class PersistList {
 				JSONObject child = (JSONObject) ar.get(i);
 				String jsonId = String.valueOf(child.get("value"));
 				if (!StringUtil.isNullOrEmpty(jsonId) || "0".equals(jsonId)) {
-					//System.out.println("    id="+jsonId) ;
 					ids.append(",").append(jsonId) ;
 					StringBuilder sql = new StringBuilder() ;
 					sql.append("select count(*) from ").append(aTableName).append(" where ").append(aFieldParent).append("='")
 							.append(aIdEntity).append("' and ").append(aFieldChildren).append("='").append(jsonId).append("'") ;
-					//System.out.println(sql) ;
 					Object count = aManager.createNativeQuery(sql.toString()).getSingleResult() ;
 					if (parseLong(count)<1) {
 						sql = new StringBuilder() ;
@@ -80,8 +78,7 @@ public class PersistList {
 			if (aIdEntity>0) {
 				StringBuilder sql = new StringBuilder() ;
 				sql.append("select ").append(aFieldChildren).append(",").append(aFieldParent).append(" from ").append(aTableName).append(" where ").append(aFieldParent).append("='").append(aIdEntity).append("'") ;
-				//System.out.println(sql) ;
-				List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList(); 
+				List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList();
 				for (Object child[] : list) {
 					j.object().key("value").value(parseLong(child[0]));
 					j.endObject();

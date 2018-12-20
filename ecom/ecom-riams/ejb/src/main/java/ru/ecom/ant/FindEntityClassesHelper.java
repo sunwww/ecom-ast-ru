@@ -1,16 +1,19 @@
 package ru.ecom.ant;
 
+import org.apache.log4j.Logger;
+
+import javax.persistence.Entity;
 import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Entity;
-
 public class FindEntityClassesHelper {
+
+	private final static Logger LOG = Logger.getLogger(FindEntityClassesHelper.class);
 
 	private File theRootDir = null ;
 	public Set<String> findClasses(String aDir) {
-		TreeSet<String> ret = new TreeSet<String>() ;
+		TreeSet<String> ret = new TreeSet<>() ;
 		File file = new File(aDir); 
 		theRootDir = file ;
 		addToSet(file, ret) ;
@@ -48,26 +51,19 @@ public class FindEntityClassesHelper {
 		try {
 			Class clazz = getClass().forName(aClassname);
 			boolean ret = clazz.isAnnotationPresent(Entity.class) ;
-			if(ret) {
-				trace("Adding "+aClassname);
-			}
+			if(ret) LOG.debug("Adding "+aClassname);
 			return ret ;
 		} catch (Exception e) {
-			System.out.println("Error loading class: "+aClassname);
+			LOG.error("Error loading class: "+aClassname);
 			return false ;
-			//throw new IllegalStateException(e.getMessage(),e);
 		}
-	}
-	
-	private void trace(Object aObj) {
-		System.out.println(aObj);
 	}
 	
 	public static void main(String args[]) {
 		FindEntityClassesHelper h = new FindEntityClassesHelper() ;
 		Set<String> classes = h.findClasses("./target/classes");
 		for(String cl : classes) {
-			System.out.println(cl);
+			LOG.info(cl);
 		}
 	}
 }

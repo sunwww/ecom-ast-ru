@@ -1,12 +1,6 @@
 package ru.ecom.mis.ejb.service.lpu;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.address.ejb.service.AddressSync;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
@@ -15,6 +9,10 @@ import ru.ecom.expomc.ejb.domain.omcvoc.OmcLpu;
 import ru.ecom.expomc.ejb.services.sync.ISync;
 import ru.ecom.expomc.ejb.services.sync.SyncContext;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+
+import javax.persistence.EntityManager;
+import java.util.Iterator;
+import java.util.List;
 
 public class LpuSync implements ISync {
 
@@ -49,7 +47,6 @@ public class LpuSync implements ISync {
             }
             int lenMax= omcLpu.getName().length() ;
             if (lenMax>254) lenMax=254 ;
-            System.out.println("lenMax="+lenMax) ;
             lpu.setName(omcLpu.getName().substring(0,lenMax)) ;
 			lpu.setOmcCode(omcLpu.getCode()) ;
 			lpu.setEmail(omcLpu.getMail()) ;

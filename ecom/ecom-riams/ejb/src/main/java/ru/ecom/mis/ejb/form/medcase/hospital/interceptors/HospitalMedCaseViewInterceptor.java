@@ -18,7 +18,6 @@ public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		HospitalMedCaseForm form=(HospitalMedCaseForm)aForm ;
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
-		//System.out.println("form view only ="+form.isViewOnly());
 		form.setDischargeEpicrisis(getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
 		if (!form.isViewOnly()) {
 			try {

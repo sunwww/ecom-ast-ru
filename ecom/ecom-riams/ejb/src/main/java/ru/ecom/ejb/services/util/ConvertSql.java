@@ -20,7 +20,6 @@ public class ConvertSql {
 		return getDatePart(aValue, "month");
 	}
 	public static String getDatePart(Object aValue, String aDatePart) {
-		System.out.println("=== GET DATEPART, "+aValue+" : "+aDatePart);
 		java.sql.Date date = parseDate(aValue);
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -147,7 +146,6 @@ public class ConvertSql {
 	 tst=false ;
 	 String[] inter = Interval.split(",") ;
 	 for (String in:inter) {
-		 //System.out.println(in.indexOf("-")) ;
 		 if (in.indexOf("-")==-1) {
 			 tst=ChSub(Mkb,in) ;
 		 } else {
@@ -178,19 +176,16 @@ public class ConvertSql {
 		}
 		
 		int ind = aMkb1.indexOf(".") ;
-		//System.out.println(ind) ;
 		return (ind==-1?aMkb1:aMkb1.substring(0,ind)).equals(aMkb2) ;
 	}
 	private static boolean soderjit(String aMkb1,String aMkb2) {
 		int tst=0;
 		int cnt1 = aMkb1.length() ;
 		int cnt2 = aMkb2.length() ;
-		//System.out.print("mkb1="+aMkb1+" mkb2="+aMkb2) ;
 		for (int i=0 ;(i< cnt1&&i<cnt2) ;i++) {
 			
 			int c1 = Character.getNumericValue(aMkb1.charAt(i)) ;
 			int c2 = Character.getNumericValue(aMkb2.charAt(i)) ;
-			//System.out.print(" c1="+c1+"-"+aMkb1.charAt(i)+" c2="+c2+"-"+aMkb2.charAt(i)) ;
 			if (c1>c2&&tst==0) {
 				tst=1 ;
 				break ;
@@ -243,7 +238,6 @@ public class ConvertSql {
 	}
 	
 	public static String toWords(BigDecimal sum) {
-		  System.out.println(sum) ;
 		    BigDecimal TAUSEND = new BigDecimal(1000);
 		    int i, mny;
 		    StringBuffer result = new StringBuffer("");

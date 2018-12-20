@@ -51,7 +51,6 @@ public class XmlUtil {
 	/** Создаем файл из документа */
 	public static String createXmlFile(org.jdom.Element aElement, String aFileName) {
 		if (aElement == null) {
-			//log.error("no data for create file " + aFileName);
 			return null;
 		}
 		try {
@@ -63,8 +62,7 @@ public class XmlUtil {
 			fwrt.close();
 			return aFileName;
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-			System.out.println("Someshing happened strange!!!");
+			ex.printStackTrace();
 			return null;
 		}
 	}

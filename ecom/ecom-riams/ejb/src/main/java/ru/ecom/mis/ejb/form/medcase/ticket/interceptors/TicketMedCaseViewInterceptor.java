@@ -66,8 +66,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 		StringBuilder sql = new StringBuilder() ;
 		StringBuilder res = new StringBuilder() ;
 		sql.append("select mc.medservice_id,ms.code||' '||ms.name,mc.uet,mc.ordernumber,mc.medserviceamount from MedCase mc left join MedService ms on ms.id=mc.medservice_id where mc.parent_id='").append(aForm.getId()).append("' and mc.dtype='ServiceMedCase' order by mc.id") ;
-		//System.out.println(sql) ;
-		List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList(); 
+		List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList();
 		for (Object[] child : list) {
 			res.append(child[0]).append("@").append(child[2]).append("@") ;
 			res.append(child[3]).append("@").append(child[4]).append("@") ;
@@ -89,8 +88,7 @@ public class TicketMedCaseViewInterceptor  implements IFormInterceptor{
 
 			StringBuilder sql = new StringBuilder() ;
 			sql.append("select ").append(aFieldChildren).append(" from ").append(aTableName).append(" where ").append(aWhere) ;
-			//System.out.println(sql) ;
-			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList(); 
+			List<Object> list = aManager.createNativeQuery(sql.toString()).getResultList();
 			for (Object child : list) {
 				j.object().key("value").value(ConvertSql.parseLong(child));
 				j.endObject();

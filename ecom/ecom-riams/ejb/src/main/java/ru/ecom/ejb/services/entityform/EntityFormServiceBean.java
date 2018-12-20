@@ -32,7 +32,6 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
 
     @SuppressWarnings("unchecked")
 	public <T extends IEntityForm> T loadForm(Class<T> aFormClass, Object aEntity) throws EntityFormException {
-    	//System.out.println("loadForm local") ;
         checkPermission(aFormClass, "View") ;
         try {
             IEntityForm form = aFormClass.newInstance();

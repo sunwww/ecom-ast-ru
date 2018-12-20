@@ -1,21 +1,19 @@
 package ru.ecom.mis.web.action.medcase.journal;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.web.actions.entity.ListAction;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ByDepartmentAdmissionSearchAction extends ListAction{
 
@@ -70,7 +68,6 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
         } else {
             try {
                 lpu = service.getWorkingLpu() ;
-             //   System.out.println("lpu="+lpu) ;
             } catch(Exception e) {
             	System.out.println("lpu not found") ;
             	return aMapping.findForward("successerror");
@@ -78,7 +75,6 @@ public class ByDepartmentAdmissionSearchAction extends ListAction{
         	
         }
         if (lpu!=null && lpu!=0) { 
-	      //  System.out.println("lpu="+lpu) ;
 	        aRequest.setAttribute("department",lpu) ;
 	        String lpuinfo = service.getWorkingLpuInfo(lpu) ;
 	        aRequest.setAttribute("departmentInfo",lpuinfo) ;

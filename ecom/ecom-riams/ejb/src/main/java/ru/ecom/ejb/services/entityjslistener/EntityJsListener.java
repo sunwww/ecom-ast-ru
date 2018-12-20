@@ -25,7 +25,6 @@ public class EntityJsListener {
 	}
 	
 	private IEntityJsListenerService findService() {
-		System.out.println("findService");
 		return EjbInjection.getInstance().getLocalService(IEntityJsListenerService.class);
 	}
 }

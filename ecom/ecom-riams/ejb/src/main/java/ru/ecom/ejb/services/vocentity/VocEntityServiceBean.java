@@ -122,12 +122,10 @@ public class VocEntityServiceBean implements IVocEntityService {
 		List <Object> list1 = theManager.createNativeQuery("select id from "+theEntityHelper.getTableName(clazz)
 		+ " order by "+aOrderBy+" "+(aAscending?"asc":"desc")+", id "+(aAscending?"asc":"desc"))
 		.setMaxResults(aFrom+aCount).getResultList() ;
-		//System.out.println("size="+list1.size()+" from="+aFrom) ;
-		
+
 		StringBuilder ids=new StringBuilder() ;
 		if (list1.size()>aFrom) {
 			//val = list1.get(list1.size()-1) ;
-			//System.out.println("get="+list1.get(list1.size()-aCount));
 			for (int i=aFrom;i<list1.size();i++){
 				ids.append(",").append(list1.get(i)) ;
 			}
@@ -142,7 +140,6 @@ public class VocEntityServiceBean implements IVocEntityService {
 		sql.append("from "+theEntityHelper.getEntityName(clazz)) 
 		.append(" where id in (").append(ids.length()>0?ids.substring(1):"").append(")")
 		.append(" order by ").append(aOrderBy).append(" ").append((aAscending?"asc":"desc")).append(", id ").append((aAscending?"asc":"desc"));
-		//System.out.println(sql.toString()) ;
 		List  list = theManager.createQuery(sql.toString())
 				//.setParameter("val", val)
 				.setMaxResults(aCount)

@@ -1,26 +1,19 @@
 package ru.ecom.ant;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.persistence.Entity;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
 import ru.ecom.ejb.services.util.EntityHelper;
+
+import javax.persistence.Entity;
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PersistenceXmlHelper {
 
@@ -47,7 +40,6 @@ public class PersistenceXmlHelper {
 		try {
 			List<String> classes = listAllEntitiesClassnames(new FileInputStream(aFilenameToAdd)) ;
 			for(String clazz : classes) {
-				System.out.println(clazz) ;
 				theClasses.add(clazz) ;
 			}
 		} catch (Exception e) {

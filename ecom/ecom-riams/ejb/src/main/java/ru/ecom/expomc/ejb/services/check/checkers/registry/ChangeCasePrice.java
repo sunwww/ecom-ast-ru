@@ -49,10 +49,8 @@ public class ChangeCasePrice implements ICheck {
 //            accepted = oldPrice.equals(price.getCalcPrice()) ;
 //        }
         CheckResult result = CheckResult.createAccepted(false);
-    	System.out.println("Entry.CasePrice = "+entry.getCasePrice()+", Entry.CasePrice = "+price.getCalcPrice()) ; //zav
         if(canChange(entry.getCasePrice(), price.getCalcPrice())) {
         	result.setAccepted(true) ;
-        	//System.out.println("Cena = "+price.getCalcPrice()) ;
         	result.set("casePrice", price.getCalcPrice());
         }
         if(canChange(entry.getTariff(), price.getTariff())){
@@ -71,7 +69,6 @@ public class ChangeCasePrice implements ICheck {
         	result.setAccepted(true) ;
         	result.set("level", price.getLevel()+"") ;
         }
-        System.out.println(result); //zav
         return result ;*/
     }
 

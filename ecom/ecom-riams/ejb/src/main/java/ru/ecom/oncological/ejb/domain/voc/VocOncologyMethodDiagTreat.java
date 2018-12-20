@@ -1,6 +1,7 @@
 package ru.ecom.oncological.ejb.domain.voc;
 
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.ecom.expert2.domain.voc.federal.VocBaseFederal;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -8,5 +9,5 @@ import javax.persistence.Table;
 /** Метод диагностического лечения */
 @Entity
 @Table(schema="SQLUser")
-public class VocOncologyMethodDiagTreat extends VocBaseEntity {
+public class VocOncologyMethodDiagTreat extends VocBaseFederal {
 }

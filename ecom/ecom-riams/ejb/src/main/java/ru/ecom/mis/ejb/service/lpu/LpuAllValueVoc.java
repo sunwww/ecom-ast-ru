@@ -61,7 +61,6 @@ public class LpuAllValueVoc implements IAllValue {
 		for(Object[] lpu : lpus) {
 			Long id = ConvertSql.parseLong(lpu[0]) ;
 			add(aValues, id, ""+lpu[1], ".    "+aAppend,aManager) ;
-			//System.out.println("lpu=     ."+aAppend+lpu.getId()+"--"+lpu.getName()) ;
 		}
 	}
 	

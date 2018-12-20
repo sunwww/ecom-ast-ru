@@ -110,9 +110,7 @@ public class AutoCompleteField {
 		}
 		field.append("</td>") ;
 		
-		//System.out.println("field=") ;
-		//System.out.println(field.toString()) ;
-		
+
 		return field;
 	}
 	public static StringBuilder getJavaScript(boolean aViewOnly,String aVocName, String aProperty,String aPropertyNext,String aLabelName) {

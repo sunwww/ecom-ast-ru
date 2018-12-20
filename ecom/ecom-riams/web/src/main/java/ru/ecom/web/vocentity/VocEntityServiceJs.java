@@ -1,17 +1,22 @@
 package ru.ecom.web.vocentity;
 
+import ru.ecom.ejb.services.vocentity.IVocEntityService;
+import ru.ecom.ejb.services.vocentity.VocEntityInfo;
+import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.web.util.Injection;
+
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
-import ru.ecom.ejb.services.vocentity.IVocEntityService;
-import ru.ecom.ejb.services.vocentity.VocEntityInfo;
-import ru.ecom.web.util.Injection;
-
 public class VocEntityServiceJs {
 
-	public VocEntityInfo getVocEntityInfo(String aClassname, HttpServletRequest aRequest) throws NamingException {
+	public Patient getVocEntityInfo(String aClassname, HttpServletRequest aRequest) throws NamingException {
 		IVocEntityService service = Injection.find(aRequest).getService(IVocEntityService.class) ;
-		return service.getVocEntityInfo(aClassname);
+		VocEntityInfo vocEntityInfo = service.getVocEntityInfo(aClassname);
+		System.out.println("vocInfo = "+vocEntityInfo);
+		Patient patient = new Patient(); patient.setLastname("TESTOFFF");
+		System.out.println("ret = "+patient);
+		return patient;
 	}
 	
 	public Object setVocEntityValue(String aClassname, String aId, String aProperty, String aValue, HttpServletRequest aRequest) throws NamingException {

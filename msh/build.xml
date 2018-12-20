@@ -26,14 +26,9 @@
         <include name="json/json.jar"/>
 
         <include name="struts/struts.jar"/>
-        <!--<include name="msh-logicpool/msh-logicpool-api.jar"/>
-        <include name="msh/commons/msh-commons.jar"/>
-        <include name="msh/forms/msh-forms.jar"/>
-        <include name="msh/util/msh-util.jar"/>
-        <include name="msh/util-voc/msh-util-voc.jar"/>-->
 
         <include name="ecom/riams/ejb/riams-ejb-api.jar" />
-        <include name="ecom/ejbweb/web/ecom-web.jar" />
+        <include name="ecom/riams/web/riams-web.jar" />
 
 
     </fileset>
@@ -45,7 +40,7 @@
             <include name="servlet/*.jar"/>
             <include name="struts/*.jar"/>
             <include name="jsp/*.jar"/>
-            <include name="msh/designer/*.jar"/>
+         <!--   <include name="msh/designer/*.jar"/> -->
             <!--<include name="msh/util/*.jar"/>-->
             <!--<include name="msh/forms/*.jar"/>-->
         </fileset>

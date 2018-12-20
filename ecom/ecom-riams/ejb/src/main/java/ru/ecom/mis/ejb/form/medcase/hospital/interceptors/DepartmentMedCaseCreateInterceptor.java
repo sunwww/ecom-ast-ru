@@ -41,7 +41,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     		if (parentSSL.getEmergency()!=null && parentSSL.getEmergency()==Boolean.TRUE) {
     			form.setEmergency(Boolean.TRUE) ;
     		}
-    		//System.out.println("Check working create");
     		if (parentSSL.getDeniedHospitalizating()!=null) {
                 throw new IllegalStateException("При отказе в госпитализации нельзя заводить случай лечения в отделении") ;
                
@@ -130,7 +129,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 
     public static boolean isPregnancyExists(EntityManager aManager, Long aMedCaseId) {
     	if (aMedCaseId==null) {return true;}
-		//System.out.println("===== Проверяем на роды, DEP_MC_CREATE_department_id: <> "+aMedCaseId);
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
 			String sql = "select count(cb.id) from medcase slo " +
@@ -138,7 +136,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					" left join childBirth cb on cb.medcase_id=slos.id" +
 					" where slo.id="+aMedCaseId+" and cb.pangsStartDate is not null";
 			Object list = aManager.createNativeQuery(sql).getSingleResult();
-		//	System.out.println("=== РОДЫ, list.size()="+list.toString());
 			return Long.valueOf(list.toString())>0;
 		} else {
 			return true;

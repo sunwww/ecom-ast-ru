@@ -1,7 +1,12 @@
 package ru.ecom.mis.ejb.service.diet;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.apache.log4j.Logger;
+import ru.ecom.ejb.services.entityform.EntityFormException;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.mis.ejb.domain.diet.voc.VocFoodStuff;
+import ru.ecom.mis.ejb.form.diet.voc.VocFoodStuffForm;
+import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
+
 import javax.annotation.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -9,12 +14,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import org.apache.log4j.Logger;
-import ru.ecom.ejb.services.entityform.EntityFormException;
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.mis.ejb.domain.diet.voc.VocFoodStuff;
-import ru.ecom.mis.ejb.form.diet.voc.VocFoodStuffForm;
-import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -25,9 +26,9 @@ import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 @Local(IFoodStuffService.class)
 public class FoodStuffServiceBean implements IFoodStuffService {
 
-	private final static Logger LOG = Logger.getLogger(FoodStuffServiceBean.class);
+	private static final Logger LOG = Logger.getLogger(FoodStuffServiceBean.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	/**
 	 * Поиск продукта питания
@@ -44,7 +45,7 @@ public class FoodStuffServiceBean implements IFoodStuffService {
 	Query query = builder.build(theManager, "from VocFoodStuff where",
 			" order by name");
 	
-	List<VocFoodStuffForm> ret = new LinkedList<VocFoodStuffForm>();
+	List<VocFoodStuffForm> ret = new LinkedList<>();
 	appendToList(query, ret);
 	return ret;
 	}
@@ -70,12 +71,7 @@ public class FoodStuffServiceBean implements IFoodStuffService {
 
 	private @PersistenceContext EntityManager theManager;
 
-	public void updateFoodStuff(VocFoodStuff aFoodStuffId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
+	//public void updateFoodStuff(VocFoodStuff aFoodStuffId) {}
 	}
 
 

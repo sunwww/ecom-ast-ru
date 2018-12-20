@@ -145,7 +145,6 @@ public class DischargeMedCaseSaveInterceptor implements IFormInterceptor {
 				VocIllnesPrimary illnes = aManager.find(VocIllnesPrimary.class, aActuity) ;
 				VocAcuityDiagnosis actuity = illnes.getIllnesType() ;
 				VocPrimaryDiagnosis primary = illnes.getPrimary() ;
-				//System.out.println("      actuity ="+actuity+""); 
 				aDiag.setAcuity(actuity) ;
 				aDiag.setPrimary(primary) ;
 				aDiag.setIllnesPrimary(illnes) ;

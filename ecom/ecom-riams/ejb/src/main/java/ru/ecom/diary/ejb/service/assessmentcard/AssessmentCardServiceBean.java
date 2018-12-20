@@ -1,17 +1,7 @@
 package ru.ecom.diary.ejb.service.assessmentcard;
 
-import java.math.BigDecimal;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import ru.ecom.diary.ejb.domain.protocol.parameter.FormInputProtocol;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
@@ -21,15 +11,20 @@ import ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCard;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.nuzmsh.util.StringUtil;
 
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+
 @Stateless
 @Remote(IAssessmentCardService.class)
 public class AssessmentCardServiceBean implements IAssessmentCardService{
 
-	public static String saveParametersByCard(Long aPatientId, AssessmentCard ac, String aParams, EntityManager aManager) throws JSONException{
+	public static String saveParametersByCard(Long aPatientId, AssessmentCard ac, String aParams, EntityManager aManager) {
 		
 			JSONObject obj = new JSONObject(aParams) ;
-			String wf = String.valueOf(obj.get("workFunction"));
-		//	System.out.print("workfunction================"+wf);
 			Patient pat = aManager.find(Patient.class, aPatientId) ;
 			if (pat!=null) {			
 				if (ac!=null) {
@@ -48,7 +43,7 @@ public class AssessmentCardServiceBean implements IAssessmentCardService{
 				fip.setAssessmentCard(ac.getId());
 				Parameter p = aManager.find(Parameter.class, ConvertSql.parseLong(param.get("id"))) ;
 				fip.setParameter(p) ;
-				fip.setPosition(Long.valueOf(i+1)) ;
+				fip.setPosition(i+1L) ;
 				String type = String.valueOf(param.get("type"));
 				// 1-числовой
 				// 4-числовой с плав точкой

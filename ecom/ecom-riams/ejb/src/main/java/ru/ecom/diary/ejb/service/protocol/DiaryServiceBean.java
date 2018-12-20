@@ -1,5 +1,6 @@
 package ru.ecom.diary.ejb.service.protocol;
 
+import org.apache.log4j.Logger;
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.diary.ejb.domain.protocol.parameter.Parameter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterByForm;
@@ -28,11 +29,12 @@ import java.util.TreeSet;
 @Stateless
 @Remote(IDiaryService.class)
 public class DiaryServiceBean implements IDiaryService {
+	private static final Logger LOG = Logger.getLogger(DiaryServiceBean.class);
  public List<DiaryForm> findProtocol(long aSloId) {
         List<Diary> list = theManager.createQuery(
                 "from Diary where sloId = :sloId"
         ).setParameter("sloId",aSloId).setMaxResults(50).getResultList();
-        List<DiaryForm> ret = new LinkedList<DiaryForm>();
+        List<DiaryForm> ret = new LinkedList<>();
         for (Diary diary : list) {
             try {
                 ret.add(theEntityFormService.loadForm(DiaryForm.class,  diary)) ;
@@ -43,8 +45,7 @@ public class DiaryServiceBean implements IDiaryService {
         return ret ;
     }
 	 public List<Object[]> loadParameterTableByMedService(long aTemplateId) {
-		List<Object[]> list = theManager.createNativeQuery("select p.parameter_id,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm p left join Parameter par on par.id=p.parameter_id left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where p.template_id=:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
-		return list ;
+		return theManager.createNativeQuery("select p.parameter_id,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,'') from ParameterByForm p left join Parameter par on par.id=p.parameter_id left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where p.template_id=:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
 	 }
 	public CheckNode loadParametersByMedService(long aTemplateId) {
 		return loadParametersByMedService(aTemplateId, "");
@@ -53,8 +54,7 @@ public class DiaryServiceBean implements IDiaryService {
 		return loadParametersByMedService(aTemplateId, aUsername, "p.template_id");
 	}
 	public CheckNode loadParametersByMedService(long aTemplateId, String aUsername, String aField) {
-		TreeSet<Long> parametersSet = new TreeSet<Long>() ;
-		TemplateProtocol template = theManager.find(TemplateProtocol.class, aTemplateId) ;
+		TreeSet<Long> parametersSet = new TreeSet<>() ;
 		List<Object> list = theManager.createNativeQuery("select p.parameter_id from ParameterByForm p where "+aField+" =:temp order by p.position").setParameter("temp", aTemplateId).getResultList() ;
 		for (Object param: list) {
 			if (param!=null) parametersSet.add(ConvertSql.parseLong(param)) ;
@@ -63,10 +63,8 @@ public class DiaryServiceBean implements IDiaryService {
 		List<Object[]> rootGroups = findRootGroups(aUsername) ;
 		
 		CheckNodeByGroup rootNode = new CheckNodeByGroup("g"+0, "/",false);
-		//System.out.println("-G-"+rootNode.getName()) ;
 		for (Object[] group : rootGroups) {
 			Long id =ConvertSql.parseLong(group[0]) ;
-			//System.out.println("-ROOT--"+id+"-"+group[1]) ;
 			CheckNodeByGroup node = new CheckNodeByGroup("g"+id,""+group[1],false) ;
 			rootNode.getChilds().add(node);
 			addGroups(id,node,parametersSet, aUsername) ;
@@ -94,7 +92,6 @@ public class DiaryServiceBean implements IDiaryService {
 					"g"+group[0] , new StringBuilder().append(group[1]).toString(),false
 					) ;
 			aNode.getChilds().add(node) ;
-			//System.out.println("-GR-"+aNode.getId()+"-"+node.getName()) ;
 			addGroups(id,node ,aParameters, aUsername) ;
 			addParameters(id,node,aParameters);
 		}
@@ -106,7 +103,6 @@ public class DiaryServiceBean implements IDiaryService {
 			CheckNodeByParameter node = new CheckNodeByParameter("p"+param[0],
 					new StringBuilder().append(param[1]).toString()
 					,aParameters.contains(ConvertSql.parseLong(param[0])),ConvertSql.parseLong(param[2]));
-			//System.out.println("-PAR-"+aNode.getId()+"-"+node.getName()) ;
 			aNode.getChilds().add(node) ;
 		}
 	}
@@ -120,11 +116,9 @@ public class DiaryServiceBean implements IDiaryService {
 			aIdFieldName="template_id";
 		}
 		//theManager.refresh(protocol) ;
-		//System.out.println("ADDING");
 		int i=0;
 		for (long idParam:aAdded) {
 			i++ ;
-			//System.out.println("adding id "+idParam);
 			//Parameter param = theManager.find(Parameter.class, idParam) ;
 			//if(param!=null &&!params.contains(param)) {
 			//	params.add(param) ;
@@ -154,19 +148,10 @@ public class DiaryServiceBean implements IDiaryService {
 				}
 				
 			}
-			//System.out.println("OK");
 		}
-		//System.out.println("REMOVED");
 		for(long idParam:aRemoved) {
-			//System.out.println("removed id "+idParam);
 			theManager.createNativeQuery("delete from ParameterByForm where "+aIdFieldName+"='"+aProtocolId+"' and parameter_id='"+idParam+"'").executeUpdate() ;
-			
-			//System.out.println("OK");
 		}
-		//System.out.println("Size params="+params.size());
-		//theManager.refresh(protocol) ;
-		//System.out.println("Size params after saving="+protocol.getParameters().size());
-		
 	}
 	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext EntityManager theManager ;

@@ -17,9 +17,9 @@ import java.io.InputStreamReader;
 @Stateless
 public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(EntityJsListenerServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public void postPersist(Object aEntity) {
 		execute(aEntity, "postPersist") ;
@@ -35,7 +35,7 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 	}
 	
 	private void execute(Object aEntity, String aFunctionName) {
-		System.out.println("execute = "+aFunctionName+" "+aEntity);
+		LOG.info("execute = "+aFunctionName+" "+aEntity);
 
 		if(aEntity==null) throw new IllegalArgumentException("Нет параметра aEntity") ;
 		try {
@@ -44,14 +44,9 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 			if(file.exists()) {
 				Context jsContext = Context.enter() ;
 				Scriptable scope = jsContext.initStandardObjects();
-				try {
-					InputStreamReader in = new InputStreamReader(new FileInputStream(file),"utf-8") ;
-					try {
-						Script script = jsContext.compileReader(in, file.getName(), 0, null);
-						script.exec(jsContext, scope);
-					} finally {
-						in.close();
-					}
+				try (InputStreamReader in = new InputStreamReader(new FileInputStream(file),"utf-8")) {
+					Script script = jsContext.compileReader(in, file.getName(), 0, null);
+					script.exec(jsContext, scope);
 					Object finded = scope.get(aFunctionName, scope) ;
 					if(finded instanceof Function) {
 						Function f = (Function) scope.get(aFunctionName, scope) ;
@@ -60,18 +55,17 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 						Object ret = f.call(jsContext, scope, scope, args);
 						if(ret instanceof Undefined) {
 							Undefined un = (Undefined) ret ;
-							System.out.println(un.readResolve()) ;
+							LOG.info(un.readResolve()) ;
 						}
-						System.out.println("f = "+ret) ;
+						LOG.info("f = "+ret) ;
 					}
-					if (CAN_DEBUG)
-						LOG.debug("execute: aFunctionName = " + finded); 
+					if (CAN_DEBUG) LOG.debug("execute: aFunctionName = " + finded);
 					
 				} finally {
 					Context.exit() ;
 				}
 			} else {
-				System.out.println("file "+file+" not found");
+				LOG.warn("file "+file+" not found");
 			}
 		} catch (Exception e) {
 			LOG.error("Ошибка ",e) ;

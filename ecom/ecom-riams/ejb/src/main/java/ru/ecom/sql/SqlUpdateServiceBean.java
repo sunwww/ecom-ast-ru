@@ -32,8 +32,7 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
         LOG.info("Try get scripts...");
 
         int min=-1000;
-        Integer databaseVersion=0;
-        databaseVersion= Integer.valueOf(select("select keyvalue from softconfig where key='BD_version'"));
+        Integer databaseVersion = Integer.valueOf(select("select keyvalue from softconfig where key='BD_version'"));
 
 
         List<String> files = getListFiles();
