@@ -452,7 +452,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             log.warn("Похоже, у нас Виндовс. Попробуем запустить 7-zip");
             sb = new StringBuilder().append("\"C:\\Program Files\\7-Zip\\7z.exe\" e ").append(theXmlDir).append("\\").append(aZipFile).append(" -o").append(outputDir);
             try {
-                System.out.println("sb="+sb+", dir="+outputDir);
+                log.info("sb="+sb+", dir="+outputDir);
                 Runtime.getRuntime().exec(sb.toString());
                 Thread.sleep(5000); //Заснем, чтобы точно всё распаковалось
             } catch (Exception e1) {log.warn("NE SMOG :-(");}

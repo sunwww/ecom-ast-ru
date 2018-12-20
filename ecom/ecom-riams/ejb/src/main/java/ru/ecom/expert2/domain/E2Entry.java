@@ -350,32 +350,30 @@ public class E2Entry extends BaseEntity {
     /** Итоговый коэффициент */
     private BigDecimal theTotalCoefficient ;
 
-
     /** Родительский случай */
     @Comment("Родительский случай")
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     public E2Entry getParentEntry() {return theParentEntry;}
     public void setParentEntry(E2Entry aParentEntry) {theParentEntry = aParentEntry;}
     /** Родительский случай */
     private E2Entry theParentEntry ;
 
-     /** Сложность лечения пациента */
+    /** Дочерние случаи */
+ //   @Comment("Дочерние случаи")
+  //  @OneToMany(mappedBy = "parentEntry", fetch = FetchType.LAZY)
+ //   public List<E2Entry> getChildEntryList() {return theChildEntryList;}
+//    public void setChildEntryList(List<E2Entry> aChildEntryList) {theChildEntryList = aChildEntryList;}
+    /** Дочерние случаи */
+ //   private List<E2Entry> theChildEntryList ;
+
+
+    /** Сложность лечения пациента */
      @Comment("Сложность лечения пациента")
      @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
      public List<E2CoefficientPatientDifficultyEntryLink> getPatientDifficulty() {return thePatientDifficulty;}
      public void setPatientDifficulty(List<E2CoefficientPatientDifficultyEntryLink> aPatientDifficulty) {thePatientDifficulty = aPatientDifficulty;}
      /** Сложность лечения пациента */
      private List<E2CoefficientPatientDifficultyEntryLink> thePatientDifficulty ;
-
-     @Transient
-     public String getPatientDifficultyCodes() {
-      StringBuilder ret=new StringBuilder();
-      for (E2CoefficientPatientDifficultyEntryLink link:  getPatientDifficulty()) {
-       if (ret.length()>0) {ret.append(";");}
-       ret.append(link.getDifficulty().getCode());
-      }
-      return ret.toString();
-     }
 
      /** Причины неполной оплаты */
      @Comment("Причины неполной оплаты")
@@ -573,6 +571,13 @@ public class E2Entry extends BaseEntity {
      public void setDepartmentId(Long aDepartmentId) {theDepartmentId = aDepartmentId;}
      /** ИД отделения СЛО */
      private Long theDepartmentId ;
+
+     /** Родовое отделение */
+     @Comment("Родовое отделение")
+     public Boolean getIsChildBirthDepartment() {return theIsChildBirthDepartment!=null?theIsChildBirthDepartment:false;}
+     public void setIsChildBirthDepartment(Boolean aIsChildBirthDepartment) {theIsChildBirthDepartment = aIsChildBirthDepartment;}
+     /** Родовое отделение */
+     private Boolean theIsChildBirthDepartment =false;
 
       /** Услуги по случаю */
       @Comment("Услуги по случаю")

@@ -2622,7 +2622,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 break;
             default:
                 throw new IllegalStateException("can't find preobrazovanie for type "+aType);
-                //System.out.println("can't find java type");
                 //aClass = null;
                 //break;
         }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.expert2;
 
+import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.expert2.domain.E2Bill;
@@ -19,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
+    private final static Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
     public Patient getTest(String aId, HttpServletRequest aRequest) {
         Patient patient = new Patient();
@@ -32,7 +34,7 @@ public class Expert2ServiceJs {
     }
 
     public String getEntryJson(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
-        System.out.println("HELLO "+aEntryId);
+        LOG.info("HELLO "+aEntryId);
         return Injection.find(aRequest).getService(IExpert2Service.class).getEntryJson(aEntryId);
     }
 
@@ -71,8 +73,7 @@ public class Expert2ServiceJs {
         Date planDate = new java.sql.Date(format.parse(aCurrentMonth).getTime());
         Date startDate = new java.sql.Date(format.parse(aStartMonth).getTime());
         Date finishDate = new java.sql.Date(format.parse(aFinishMonth).getTime());
-        System.out.println("Copy plans!");
-        System.out.println(service.copyFinancePlanNextMonth(null,planDate,startDate,finishDate));
+        LOG.info(service.copyFinancePlanNextMonth(null,planDate,startDate,finishDate));
 
     }
     /** Пересчитать заполнение (удаляем существующие записи и формируем новые в существующее заполнение) */
@@ -135,7 +136,6 @@ public class Expert2ServiceJs {
         StringBuilder sql = new StringBuilder();
         String fieldName;
         sql.append("update e2entry e set ");
-        //System.out.println(aFieldName);
         if (aFieldName.equals("SERVICESTREAM")) {
             fieldName="serviceStream";
             //sql.append();
@@ -162,7 +162,7 @@ public class Expert2ServiceJs {
 
         }
         sql.append(" and (isDeleted is null or isDeleted='0')");
-        System.out.println("SQL for update field = "+sql);
+        LOG.info("SQL for update field = "+sql);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
         service.executeUpdateNativeSql(sql.toString());
@@ -183,29 +183,29 @@ public class Expert2ServiceJs {
         new Thread(() -> {
             Date finalDate = null;
             try {finalDate = new Date(format.parse(finalBillDate).getTime());} catch (Exception e) {}
-            System.out.println("start service.makeMPFIle");
+            LOG.info("start service.makeMPFIle");
                 service.makeMPFIle(aEntryListId,aType, finalBillNumber,finalDate,aEntryId,calcAllListEntry, monitorId,aVersion);
         }).start();
 
         return monitorId;
     }
     public long checkListEntry(final Long aListEntryId, final boolean forceUpdateKsg, final String aParams, HttpServletRequest aRequest) throws NamingException {
-        System.out.println("start checkEntryList "+forceUpdateKsg);
+        LOG.info("start checkEntryList "+forceUpdateKsg);
         IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
         final long monitorId = monitorService.createMonitor();
         final IExpert2Service service = Injection.find(aRequest).getService(IExpert2Service.class);
         new Thread(()-> {
-                System.out.println("start check new Thread");
+                LOG.info("start check new Thread");
                 service.checkListEntry(aListEntryId, forceUpdateKsg, aParams, monitorId);
-                System.out.println("finish checkEntryList ");
+                LOG.info("finish checkEntryList ");
 
             }).start();
         return monitorId;
     }
     public void checkEntry (Long aEntryId, boolean forceUpdateKsg, HttpServletRequest aRequest) throws NamingException {
-        System.out.println("start checkEntry "+aEntryId);
+        LOG.info("start checkEntry "+aEntryId);
         Injection.find(aRequest).getService(IExpert2Service.class).makeCheckEntry(aEntryId,forceUpdateKsg);
-        System.out.println("finish checkEntry ");
+        LOG.info("finish checkEntry ");
     }
 
     public void addMedHelpProfileBedType (Long aMedHelpId, Long aBedTypeId, Long aBedSubTypeId, HttpServletRequest aRequest ) throws NamingException {
@@ -241,9 +241,4 @@ public class Expert2ServiceJs {
         service.testUnionMecCase(aListEntryId,aHospitalMedCase,aPatientId, aEntryType, isGroupSpo);
         return true;
     }
-
-    public void addMedServiceToEntry(Long aEntryId, Long aMedServiceId, HttpServletRequest aRequest) {
-        System.out.println("addMedServiceToEntry JS DEPRECATED");
-    }
-
 }

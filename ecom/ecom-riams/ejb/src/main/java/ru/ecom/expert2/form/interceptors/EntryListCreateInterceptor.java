@@ -21,9 +21,7 @@ public class EntryListCreateInterceptor implements IFormInterceptor {
         } else {
             try {
                 EjbInjection.getInstance().getLocalService(IExpert2Service.class).fillListEntry((E2ListEntry) aEntity, form.getHistoryNumbers());
-                System.out.println("При создании заполнения успешно созданы записи!");
             } catch (Exception e) {
-                System.out.println("При создании заполнения Naming Exception");
                 e.printStackTrace();
             }
         }
