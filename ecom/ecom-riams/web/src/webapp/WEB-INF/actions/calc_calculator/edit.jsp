@@ -62,6 +62,38 @@
 						</msh:table>
 					</msh:sectionContent>
 				</msh:section>
+				<ecom:webQuery name="prescs" nativeSql="select p.id,p.prescvalue,r.riskvalue,r.lowscore,r.upscore from presccalc p left join calcrisk r on r.id=p.calcrisk_id where p.calculator_id=${param.id}"/>
+				<msh:section  createRoles="/Policy/Mis/Calc/Calculator" createUrl="entityParentPrepareCreate-calc_presc.do?id=${param.id}" title="Назначения">
+					<msh:sectionContent>
+						<msh:table name="prescs" action="entityParentView-calc_presc.do" idField="1">
+							<msh:tableColumn property="sn" columnName="##"/>
+							<msh:tableColumn columnName="Назначение" property="2"/>
+							<msh:tableColumn columnName="Риск" property="3"/>
+							<msh:tableColumn columnName="Баллы риска от" property="4"/>
+							<msh:tableColumn columnName="До" property="5"/>
+						</msh:table>
+					</msh:sectionContent>
+				</msh:section>
+				<ecom:webQuery name="contras" nativeSql="select id,contravalue from contracalc where calculator_id=${param.id}"/>
+				<msh:section  createRoles="/Policy/Mis/Calc/Calculator" createUrl="entityParentPrepareCreate-calc_contra.do?id=${param.id}" title="Противопоказания">
+					<msh:sectionContent>
+						<msh:table name="contras" action="entityParentView-calc_contra.do" idField="1">
+							<msh:tableColumn property="sn" columnName="##"/>
+							<msh:tableColumn columnName="Противопоказание" property="2"/>
+						</msh:table>
+					</msh:sectionContent>
+				</msh:section>
+				<ecom:webQuery name="risks" nativeSql="select r.id,r.riskvalue,r.lowscore,r.upscore from calcrisk r where r.calculator_id=${param.id}"/>
+				<msh:section  createRoles="/Policy/Mis/Calc/Calculator" createUrl="entityParentPrepareCreate-calc_risk.do?id=${param.id}" title="Риски">
+					<msh:sectionContent>
+						<msh:table name="risks" action="entityParentView-calc_risk.do" idField="1">
+							<msh:tableColumn property="sn" columnName="##"/>
+							<msh:tableColumn columnName="Риск" property="2"/>
+							<msh:tableColumn columnName="Баллы риска от" property="3"/>
+							<msh:tableColumn columnName="До" property="4"/>
+						</msh:table>
+					</msh:sectionContent>
+				</msh:section>
       	</msh:ifFormTypeIsView>
       	
       	
@@ -72,8 +104,11 @@
 	<tiles:put name="side" type="string">
 	<msh:ifFormTypeIsView formName="calc_calculatorForm">
 		<msh:sideMenu title="Добавить">
-			<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-calc_calculations.do" name="функционал" title="функционал"/>
+			<msh:sideLink params="id" action="/entityParentPrepareCreate-calc_calculations.do" name="функционал" title="функционал"/>
 			<msh:sideLink params="id" action="/entityParentPrepareCreate-calc_interpretation.do" name="интерпретацию результата" title="интерпретацию результата"/>
+			<msh:sideLink params="id" action="/entityParentPrepareCreate-calc_presc.do" name="назначение" title="назначение"/>
+			<msh:sideLink params="id" action="/entityParentPrepareCreate-calc_contra.do" name="противопоказание" title="противопоказание"/>
+			<msh:sideLink params="id" action="/entityParentPrepareCreate-calc_risk.do" name="риск" title="риск"/>
 		</msh:sideMenu>
 	</msh:ifFormTypeIsView>
 	</tiles:put>

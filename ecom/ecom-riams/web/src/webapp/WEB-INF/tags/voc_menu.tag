@@ -82,4 +82,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 					styleId="diary_parameterGroup"
 					roles="/Policy/Mis/Order203/EditVocs"
 			/>
+			<msh:sideLink
+					action="/entityList-calc_calculator.do"
+					name="Калькуляторы"
+					title="Калькуляторы"
+					styleId="diary_parameterGroup"
+					roles="/Policy/Mis/Calc/Calculator"
+			/>
 	    </msh:sideMenu>

@@ -1,5 +1,6 @@
 package ru.ecom.mis.web.dwr.calculator;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -120,8 +121,8 @@ public class CalculateServiceJs {
     }
     
     // Расчеты. Создать новый расчет.
-    public void SetCalculateResultCreate(String aId, String aResult, String aCalcId, String formString, HttpServletRequest aRequest) throws NamingException {
-
+    public String SetCalculateResultCreate(String aId, String aResult, String aCalcId, String formString, HttpServletRequest aRequest) throws NamingException {
+		String scaleName="";
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sql = new StringBuilder();
 
@@ -141,6 +142,7 @@ public class CalculateServiceJs {
 		String result = "";
 		Boolean checkCreateDiary = false;
 		if (res.size() > 0) {
+			scaleName=(res.iterator().next().get1() != null) ? res.iterator().next().get1().toString(): "\n";
 			result = (res.iterator().next().get1() != null) ? res.iterator().next().get1().toString() + ":\n" + formString + "\n" + aResult
 					: formString + "\n" + aResult;
 			checkCreateDiary = (res.iterator().next().get2().equals("1"));
@@ -155,6 +157,7 @@ public class CalculateServiceJs {
 					+ aId + "," + workFunction + ", '', 0, false)");
 			service.executeUpdateNativeSql(sql.toString());
 		}
+		return scaleName.equals("")? "":scaleName+":\n";
 	}
     
     
@@ -248,5 +251,36 @@ public class CalculateServiceJs {
 			sb.append(wqr.get1()).append("#").append(wqr.get2());
 		}
 		return sb.toString();
+	}
+	//Milamesher #127 получить сущность в json для назначений и противопоказаний
+	public String getInJson(String voc, String name, String[][] args,HttpServletRequest aRequest) throws NamingException,SQLException {
+		IWebQueryService service =  Injection.find(aRequest,null).getService(IWebQueryService.class) ;
+		StringBuilder where = new StringBuilder();
+		where.append(" where ");
+		for (int i=0; i<args.length; i++) {
+			where.append(args[i][0]).append("='").append(args[i][1]).append("' ");
+			if (i<args.length-1) where.append(" and ");
+		}
+		return service.executeSqlGetJson("select id," + name + " from " + voc + where.toString(),null);
+	}
+	//Milamesher #127 получить имя шкалы
+	public String getScaleName(String aCalcId, HttpServletRequest aRequest) throws NamingException {
+		String scaleName="";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select name|| case when comment is not null and comment<>'' then ' ('||comment||')' else '' end from calculator where id=" + aCalcId);
+		if (res.size() > 0)
+			scaleName=(res.iterator().next().get1() != null) ? res.iterator().next().get1().toString(): "\n";
+		return scaleName.equals("")? "":scaleName+":\n";
+	}
+	//Milamesher #127 получить риск по баллам
+	public String getRisk(String aCalcId, Long val, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select id,riskvalue from calcrisk where "+ val + " between lowscore and upscore and calculator_id=" + aCalcId);
+		StringBuilder r = new StringBuilder();
+		if (res.size() > 0)
+			r.append(res.iterator().next().get1().toString()).append("#").append(res.iterator().next().get2().toString());
+		return r.toString();
 	}
 }

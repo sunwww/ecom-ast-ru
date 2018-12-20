@@ -141,15 +141,15 @@ position: absolute ;
                 if (temp > 118) res += '\n-в течение 6 месяцев: высокий\t> 8%';
 
                 res +="\n";
-                for (var i=0; i<100; i++) {
-                    if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
+                for (var i=0; i<100; i++)
                     if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+                if (record!=null) {
+                    record.value+=res;
+                    showToastMessage("Добавлено к дневнику!",null,true);
                 }
-                
-                if (record!=null) record.value+=res;
-                if (formString!='') CalculateService.SetCalculateResultCreate(departmentId${name},
+                else CalculateService.SetCalculateResultCreate(departmentId${name},
                     res, calcId${name}, formString, {
-                        callback: function () {}
+                        callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
                     });
                 the${name}NewCalculationDialog.hide();
             }

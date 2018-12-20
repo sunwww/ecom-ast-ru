@@ -181,10 +181,11 @@
                 <input value="Рассчитать" onclick="calculate${name}();" type="button">
             </td>
             <td>
-                <input value="Сохранить" onclick="save${name}NewCalculation();" type="button">
+                <input value="Далее" onclick="save${name}NewCalculation();" type="button">
             </td>
         </tr>
     </div>
+    <tags:calculation_extra name="calculation_extra"/>
     <script type="text/javascript" src="./dwr/interface/CalculateService.js"></script>
     <script type="text/javascript">
         var theIs${name}NewCalculationDialogInitialized = false ;
@@ -220,78 +221,24 @@
         // Сохранение данных
         function save${name}NewCalculation() {
             calculate${name}();
-            var formString=formToString();
+            var formString=formToString${name}();
             var riskPoints=document.getElementById('formula${name}').innerHTML;
-            var res='';
             var prop ;
             if ("${property}"=="") prop = "record" ;
 
-            var record = window.parent.document.getElementById(prop);
-            if (riskPoints < 1) {
-                res = 'Риск ВТЭО ' + riskPoints + ' (очень низкий).\n';
-                res += 'Меры профилактики: раняя активация.\n';
-                res += 'Продолжительность: в период госпитализации\n';
-                res += 'Частота ВТЭО: < 0,5%\n';
-                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО при ' +
-                    'отсутствии профилактики.\n';
-            } else if (riskPoints < 3) {
-                res = 'Риск ВТЭО ' + riskPoints + ' (низкий).\n';
-                res += 'Меры профилактики: эластичная компрессия или фармакопрофилактика.\n';
-                res += 'Продолжительность: в период госпитализации\n';
-                res += 'Частота ВТЭО: 1,5%\n';
-                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                    'инструкцией и актуальными клиническими рекомендациями.\n';
-            } else if (riskPoints < 5) {
-                res = 'Риск ВТЭО ' + riskPoints + ' (умеренный).\n';
-                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
-                res += 'Продолжительность: в период госпитализации\n';
-                res += 'Частота ВТЭО: 3,0%\n';
-                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                    'инструкцией и актуальными клиническими рекомендациями.\n';
-                res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 2000 МЕ (20 мг),' +
-                    ' надропарин кальция (фраксипарин) 0.3 мл, дальтепарин (фрагмин) 2500 МЕ (первая инъекция за 2 часа до операции).\n'
-            } else if (riskPoints < 9) {
-                res = 'Риск ВТЭО ' + riskPoints + ' (высокий).\n';
-                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
-                res += 'Продолжительность: минимум 7-10 дней или до полной активизации.\n';
-                res += 'Частота ВТЭО: 6,0%.\n';
-                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                    'инструкцией и актуальными клиническими рекомендациями.\n';
-                res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 4000 МЕ (40 мг),' +
-                    ' надропарин кальция (фраксипарин) 0.3 мл.\nОртопедические: вес < 50 кг - 0.2 мл\n50-69 кг - 0.3 мл\nЮ70 кг - 0.4 мл, \n' +
-                    ' дальтепарин (фрагмин) 1) 5000\n 2) 2500 МЕ.\n'
-            } else if (riskPoints < 11) {
-                res = 'Риск ВТЭО ' + riskPoints + ' (очень высокий).\n';
-                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика.\n';
-                res += 'Продолжительность: не менее 30 дней.\n';
-                res += 'Частота ВТЭО: 6,0 - 18,0%.\n';
-                res += 'Рекомендации: 30-ти или 60-ти дневная частота возникновения симптоматических ВТЭО ' +
-                    'при отсутствии профилактики препараты и дозы в соответствии с официальной ' +
-                    'инструкцией и актуальными клиническими рекомендациями.\n';
-            } else if (riskPoints >= 11) {
-                res = 'Риск ВТЭО ' + riskPoints + ' (чрезвычайно высокий).\n';
-                res += 'Меры профилактики: эластичная компрессия и фармакопрофилактика, плюс ' +
-                    'активные методы ускорения кровотока или эластичная компрессия плюс индивидуальный подбор ' +
-                    'дозы антикоагулянтов.\n';
-                res += 'Продолжительность: не менее 30 дней.\n';
-                res += 'Частота ВТЭО: до 60,0%.\n';
-                res += 'Рекомендации:  препараты и дозы в соответствии с официальной инструкцией и ' +
-                    'актуальными клиническими рекомендациями.\n';
-                res += 'Рекомендуемые препараты: нефракционный гепарин (2500 МЕ), эноксапарин (клексан) 4000 МЕ (40 мг),' +
-                    ' надропарин кальция (фраксипарин) 0.3 мл.\nОртопедические: вес < 50 кг - 0.2 мл\n50-69 кг - 0.3 мл\n>70 кг - 0.4 мл, \n' +
-                    ' дальтепарин (фрагмин) 1) 5000\n 2) 2500 МЕ.\n'
-            }
-            for (var i=0; i<100; i++) {
-                if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
-                if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
-            }
-            if (record!=null) record.value+=res;
-            if (formString!='') CalculateService.SetCalculateResultCreate(departmentId${name},
-                res, calcId${name}, formString, {
-                    callback: function () {}
+
+            //18122018 - отметка назначений и противопоказаний
+            CalculateService.getRisk(calcId${name},riskPoints,{
+                callback: function(aResult) {
+                        var ar = aResult.split('#');
+                        var riskId=ar[0];
+                        var risk=ar[1];
+                        formString+=(window.parent.document.getElementById(prop)==null)? "\nНазначения:\n":"\nРезультат: "+riskPoints+"\nРиск: " + risk + "\nНазначения:\n";
+                        var calcRes="Результат: "+riskPoints+". Риск: " + risk;
+                        if (riskId!=null) {
+                            showcalculation_extraNewCalculation('presccalc',departmentId${name},'prescvalue',calcId${name},riskId,'Назначения и противопоказания',formString,prop,risk,calcRes);
+                        }
+                    }
                 });
             the${name}NewCalculationDialog.hide();
         }
@@ -300,7 +247,7 @@
         function calculate${name}(){
             var res=0;
             var inputs = document.getElementsByTagName('input');
-            for (i = 0; i < inputs.length; i++) {
+            for (var i = 0; i < inputs.length; i++) {
                 if ((inputs[i].type == 'radio' || inputs[i].type == 'checkbox') && inputs[i].checked==true && inputs[i].name.indexOf('${name}')!=-1) {
                     if (inputs[i].type == 'checkbox') res+=+inputs[i].value;
                     else res+= +getValueVocRadiooncoT${name}(inputs[i].name);
@@ -310,7 +257,7 @@
 
         }
         //Форма в строку
-        function formToString() {
+        function formToString${name}() {
             var inputs = document.getElementsByTagName('input');
             var formToStirng='Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
             for (var i = 0; i < inputs.length; i++) {

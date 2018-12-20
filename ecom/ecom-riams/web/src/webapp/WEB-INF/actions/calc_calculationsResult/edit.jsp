@@ -94,7 +94,7 @@
 					</tr>
 					<tr>
 						<td style="padding-left: 20px; padding-top: 20px;"> 
-						<input id="cancel" type="button" value="Отмена" onclick="goBack()"/> 
+						<input id="cancel" type="button" value="Закрыть" onclick="goBack()"/>
 						<input id="calculate" type="button" value="Рассчитать" onclick="calculating()"/>
 						<input id="calcandtodiary" type="button" value="Рассчитать и сохранить" onclick="CreateRes(2)" />
 						<td>
@@ -235,13 +235,13 @@ var resultofcalc;
 			if (aResult=='') GetAndParseJson();
             //если есть вьюшка, вывести её, имена должны совпадать
 			else if (aResult=='calculation')
-                    showcalculationNewCalculation($('departmentMedCase').value, 0);
+                    showcalculationNewCalculation($('departmentMedCase').value,calculator.value, 0);
                 else if (aResult=='calculation_grace')
                     showcalculation_graceNewCalculation($('departmentMedCase').value,calculator.value, 0);
             else if (aResult=='calculation_caprini')
                 showcalculation_capriniNewCalculation($('departmentMedCase').value,calculator.value, 0);
             else if (aResult=='calculation_imt')
-                showcalculation_imtNewCalculation($('departmentMedCase').value, 0);
+                showcalculation_imtNewCalculation($('departmentMedCase').value, calculator.value, 0);
             else if (aResult=='calculation_nihss')
                 showcalculation_nihssNewCalculation($('departmentMedCase').value,calculator.value, 0);
         }
@@ -250,72 +250,88 @@ var resultofcalc;
 
 	//Вычисление
 	function calculating(save) {
-	    var formStringCheckBox='Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
-		var T = "";
-		for ( var i = 0; i < global; i++) {
-			
-			if(document.querySelector('#id' + i + '.Ctxtbox')==null)
-				{
-			var inputbox = document.querySelector('#id' + i + '.txtbox');
-			T += "" + inputbox.value;
-			
-				}else{
-					chkbox = document.querySelector('#id' + i + '.Ctxtbox');
-					if (document.querySelector('#id' + i + '.Ctxtbox').parentNode!=null &&
-						document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode!=null &&
-                        document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode.childNodes.length>0)
-                	formStringCheckBox+=document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode.childNodes[0].innerText;
-					if(chkbox.checked) {
-						T += "+" + chkbox.value;
-                        formStringCheckBox+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t("+chkbox.value+")";
-					}
-					else formStringCheckBox+="\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(0)";
-                formStringCheckBox+="\n";
-			}
-		}
+        var formStringCheckBox = 'Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
+        var T = "";
+        for (var i = 0; i < global; i++) {
 
-		var res = document.querySelector('#result.result');
-		res.value = eval(T);
-		resultofcalc = eval(T);
-		//Добавить интерпретацию результата, если есть
-		//Сохраняется в текущий дневник, если есть. И отдельным дневником вместе с самой формой - всегда
+            if (document.querySelector('#id' + i + '.Ctxtbox') == null) {
+                var inputbox = document.querySelector('#id' + i + '.txtbox');
+                T += "" + inputbox.value;
+
+            } else {
+                chkbox = document.querySelector('#id' + i + '.Ctxtbox');
+                if (document.querySelector('#id' + i + '.Ctxtbox').parentNode != null &&
+                    document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode != null &&
+                    document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode.childNodes.length > 0)
+                    formStringCheckBox += document.querySelector('#id' + i + '.Ctxtbox').parentNode.parentNode.childNodes[0].innerText;
+                if (chkbox.checked) {
+                    T += "+" + chkbox.value;
+                    formStringCheckBox += "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(" + chkbox.value + ")";
+                }
+                else formStringCheckBox += "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t(0)";
+                formStringCheckBox += "\n";
+            }
+        }
+
+        var res = document.querySelector('#result.result');
+        res.value = eval(T);
+        resultofcalc = eval(T);
+        //Добавить интерпретацию результата, если есть
+        //Сохраняется в текущий дневник, если есть. Если нет - отдельным дневником
         if (!isEmpty()) {
             CalculateService.getInterpretation(calculator.value, res.value, {
-                callback: function (aResult) {
-                    if (aResult != '') {
-                        if (res.value.indexOf(aResult) == -1) {
+                    callback: function (aResult) {
+                        if (aResult != '') {
                             res.value = "Результат " + res.value + " " + aResult;
                             if (save != null) {
-                                CalculateService.SetCalculateResultCreate(DepartmentId.value,
-                                    res.value, calculator.value, formStringCheckBox, {
-                                        callback: function () {
-                                            if (window.parent.document.getElementById('record') != null) {
-                                                window.parent.document.getElementById('record').value += res.value + "\n";
+                                if (res.value.indexOf(aResult) == -1) {
+                                    if (window.parent.document.getElementById('record') != null) {
+                                        CalculateService.getScaleName(calculator.value, {
+                                            callback: function (scaleName) {
+                                                window.parent.document.getElementById('record').value += scaleName + res.value + "\n";
+                                                showToastMessage("Вычисление успешно создано!", null, true);
+                                                goBack();
                                             }
-                                            goBack();
+                                        });
+                                    }
+                                    else
+                                        CalculateService.SetCalculateResultCreate(DepartmentId.value,
+                                            res.value, calculator.value, formStringCheckBox, {
+                                                callback: function () {
+                                                    showToastMessage("Вычисление успешно создано!", null, true);
+                                                    goBack();
+                                                }
+                                            });
+                                }
+                                else {
+                                    res.value = "Результат " + res.value;
+                                    if (save != null) {
+                                        if (window.parent.document.getElementById('record') != null) {
+                                            CalculateService.getScaleName(calculator.value, {
+                                                callback: function (scaleName) {
+                                                    window.parent.document.getElementById('record').value += scaleName + res.value + "\n";
+                                                    showToastMessage("Вычисление успешно создано!", null, true);
+                                                    goBack();
+                                                }
+                                            });
                                         }
-                                    });
+                                        else CalculateService.SetCalculateResultCreate(DepartmentId.value,
+                                            res.value, calculator.value, formStringCheckBox, {
+                                                callback: function () {
+                                                    showToastMessage("Вычисление успешно создано!", null, true);
+                                                    goBack();
+                                                }
+                                            });
+                                    }
+                                }
                             }
                         }
                     }
-                    else {
-                        res.value = "Результат " + res.value;
-                        if (save != null) {
-                            CalculateService.SetCalculateResultCreate(DepartmentId.value,
-                                res.value, calculator.value, formStringCheckBox,{
-                                    callback: function () {
-                                        if (window.parent.document.getElementById('record') != null) {
-                                            window.parent.document.getElementById('record').value += res.value + "\n";
-                                        }
-                                        goBack();
-                                    }
-                                });
-                        }
-                    }
                 }
-            });
+            );
         }
-	}
+    }
+
 
 	//Получение пола по id случая
 	function getGender(glob) {
@@ -352,7 +368,8 @@ var resultofcalc;
 
 	//Создание результата
 	function CreateRes(way) {
-        calculating(way);
+	    if ($('calculator').value!=null && $('calculator').value!=''  && $('calculator').value!='0') calculating(way);
+	    else alert('Выберите калькулятор!');
     }
 	//проверка полей на пустоту
 	function isEmpty() {
