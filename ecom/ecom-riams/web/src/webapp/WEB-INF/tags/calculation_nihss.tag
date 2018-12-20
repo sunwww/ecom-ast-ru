@@ -176,7 +176,7 @@
         // Сохранение данных
         function save${name}NewCalculation() {
             calculate${name}();
-            var formString=formToString();
+            var formString=formToString${name}();
             var res=document.getElementById('formula${name}').innerHTML;
 
             var resStr='Шкала инсульта NIHSS. Результат: ';
@@ -195,15 +195,17 @@
             if ("${property}"=="") prop = "record" ;
 
             var record = window.parent.document.getElementById(prop);
-            if (record!=null) record.value+=resStr;
-            for (var i=0; i<100; i++) {
-                if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
-                if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+            if (record!=null) {
+                record.value+=resStr;
+                showToastMessage("Добавлено к дневнику!",null,true)
             }
-            if (formString!='') CalculateService.SetCalculateResultCreate(departmentId${name},
+            else CalculateService.SetCalculateResultCreate(departmentId${name},
                 resStr, calcId${name}, formString, {
-                    callback: function () {}
+                    callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
                 });
+            for (var i=0; i<100; i++)
+                if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+
             the${name}NewCalculationDialog.hide();
         }
 
@@ -227,7 +229,7 @@
             document.getElementById('formula${name}').innerHTML = res;
         }
         //Форма в строку
-        function formToString() {
+        function formToString${name}() {
             var formToStirng='Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
             formToStirng+='Уровень сознания:\t'+selectToString('ursozn${name}');
             formToStirng+='Ответы на вопросы:\t'+selectToString('otv${name}');

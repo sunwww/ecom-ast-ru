@@ -49,6 +49,7 @@
         var theIs${name}NewCalculationDialogInitialized = false ;
         var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog')) ;
         var departmentId${name}=0;
+        var calcId${name}=0;
 
         // инициализация диалогового окна
         function init${name}NewCalculationDialog() {
@@ -56,13 +57,14 @@
         }
 
         // Показать
-        function show${name}NewCalculation(id,create) {
+        function show${name}NewCalculation(id,calcId,create) {
             if (!theIs${name}NewCalculationDialogInitialized) {
                 init${name}NewCalculationDialog() ;
             }
             the${name}NewCalculationDialog.show() ;
             getIMT${name}(id);
             departmentId${name}=id;
+            calcId${name}=calcId;
             document.getElementById("cancel").style.display ="";
         }
 
@@ -76,11 +78,17 @@
             var prop ;
             if ("${property}"=="") prop = "record" ;
             var record = window.parent.document.getElementById(prop);
-            for (var i=0; i<100; i++) {
-                if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
+            for (var i=0; i<100; i++)
                 if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+            var temp='Индекс массы тела: '+document.getElementById('imt-calc-result${name}').innerHTML.replace(' кг/м<sup>2</sup>','');
+            if (record!=null) {
+                record.value+=temp+"\n";
+                showToastMessage("Добавлено к дневнику!",null,true);
             }
-            if (record!=null) record.value+='Индекс массы тела: '+document.getElementById('imt-calc-result${name}').innerHTML.replace(' кг/м<sup>2</sup>','')+"\n";
+            else CalculateService.SetCalculateResultCreate(departmentId${name},
+                temp, calcId${name}, '', {
+                    callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
+                });
             the${name}NewCalculationDialog.hide();
         }
 

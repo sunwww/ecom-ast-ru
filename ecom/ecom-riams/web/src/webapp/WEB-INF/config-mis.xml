@@ -22,6 +22,9 @@
 		<form-bean name="calc_calculatorForm"			type="ru.ecom.mis.ejb.form.calc.CalculatorForm" />
 		<form-bean name="calc_calculationsResultForm"	type="ru.ecom.mis.ejb.form.calc.CalculationsResultForm" />
 		<form-bean name="calc_interpretationForm"	type="ru.ecom.mis.ejb.form.calc.InterpretationForm" />
+		<form-bean name="calc_riskForm"	type="ru.ecom.mis.ejb.form.calc.CalcRiskForm" />
+		<form-bean name="calc_prescForm"	type="ru.ecom.mis.ejb.form.calc.PrescCalcForm" />
+		<form-bean name="calc_contraForm"	type="ru.ecom.mis.ejb.form.calc.ContraCalcForm" />
 	<!-- /Калькулятор -->
 		<form-bean name="mis_patientExternalServiceAccountForm"			type="ru.ecom.mis.ejb.form.patient.PatientExternalServiceAccountForm" />
 		<form-bean name="work_attorneyForm"			type="ru.ecom.mis.ejb.form.worker.AttorneyForm" />

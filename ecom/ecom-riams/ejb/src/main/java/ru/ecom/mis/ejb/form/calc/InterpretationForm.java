@@ -12,8 +12,8 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
 @EntityForm
 @EntityFormPersistance(clazz = Interpretation.class)
-@Comment("Форма интерпретации результата")
-@WebTrail(comment = "Форма интерпретации результата"
+@Comment("Интерпретация результата")
+@WebTrail(comment = "Интерпретация результата"
         , nameProperties= "id", list="entityParentList-interpretation.do", view="entityParentView-calc_interpretation.do")
 @Parent(property="calculator", parentForm=CalculatorForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculator")

@@ -14,7 +14,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz = Calculator.class)
 @Comment("Форма калькулятора")
 @WebTrail(comment = "Форма калькулятора"
-, nameProperties= "id", list="entityParentList-calculator.do", view="entityParentView-calc_calculator.do")
+, nameProperties= "id", list="entityList-calc_calculator.do", view="entityView-calc_calculator.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculator")
 public class CalculatorForm extends IdEntityForm{
 

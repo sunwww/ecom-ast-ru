@@ -73,18 +73,22 @@
 <script type="text/javascript">
      var theIs${name}NewCalculationDialogInitialized = false ;
      var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog')) ;
-    
+     var departmentId${name}=0;
+     var calcId${name}=0;
+
      // инициализация диалогового окна
      function init${name}NewCalculationDialog() {
      	theIs${name}NewCalculationDialogInitialized = true ;
      }
 
      // Показать
-    function show${name}NewCalculation(id,create) {
+    function show${name}NewCalculation(id,calcId,create) {
         if (!theIs${name}NewCalculationDialogInitialized) {
             init${name}NewCalculationDialog() ;
         }
         the${name}NewCalculationDialog.show() ;
+        departmentId${name}=id;
+        calcId${name}=calcId;
         $("age").focus() ;
         getAge${name}(id);
         getGender${name}(id);
@@ -119,38 +123,42 @@
              if ("${property}"=="") prop = "record" ;
              
              var record = window.parent.document.getElementById(prop);
-             
-             if (record!=null) {
-                 var temp = $('resultReadOnly').value;
-                 record.value += "СКФ:";
-                 var str = "Требуется коррекция дозы лекарственных средств, которые активно выводятся с мочой. Лечащий врач может принять решение о направлении пациента на консультацию к врачу-клиническому фармакологу";
-                 if (temp > 90) {
-                     record.value += temp + ' - стадия 1, нормальная СКФ';
-                 }
-                 if (temp >= 60 && temp <= 89) {
-                     record.value += temp + ' - стадия 2, признаки нефропатии, легкое снижение СКФ';
-                 }
-                 if (temp >= 45 && temp <= 59) {
-                     record.value += temp + ' - стадия 3А, умеренное снижение СКФ';
-                 }
-                 if (temp >= 30 && temp <= 44) {
-                     record.value += temp + ' - стадия 3Б, выраженное снижение СКФ';
-                     alert(str);
-                 }
-                 if (temp >= 15 && temp <= 29) {
-                     record.value += temp + ' - стадия 4, тяжелое снижение СКФ';
-                     alert(str);
-                 }
-                 if (temp < 15) {
-                     record.value += temp + ' - стадия 5, терминальная хроническая почечная недостаточность';
-                     alert(str);
-                 }
-                 record.value +="\n";
-                 for (var i=0; i<100; i++) {
-                     if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('allCalc').hide();
-                     if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
-                 }
+
+             var temp = $('resultReadOnly').value;
+             var res = "СКФ:";
+             var str = "Требуется коррекция дозы лекарственных средств, которые активно выводятся с мочой. Лечащий врач может принять решение о направлении пациента на консультацию к врачу-клиническому фармакологу";
+             if (temp > 90) {
+                 res += temp + ' - стадия 1, нормальная СКФ';
              }
+             if (temp >= 60 && temp <= 89) {
+                 res += temp + ' - стадия 2, признаки нефропатии, легкое снижение СКФ';
+             }
+             if (temp >= 45 && temp <= 59) {
+                 res += temp + ' - стадия 3А, умеренное снижение СКФ';
+             }
+             if (temp >= 30 && temp <= 44) {
+                 res += temp + ' - стадия 3Б, выраженное снижение СКФ';
+                 alert(str);
+             }
+             if (temp >= 15 && temp <= 29) {
+                 res += temp + ' - стадия 4, тяжелое снижение СКФ';
+                 alert(str);
+             }
+             if (temp < 15) {
+                 res += temp + ' - стадия 5, терминальная хроническая почечная недостаточность';
+                 alert(str);
+             }
+             if (record!=null) {
+                 record.value +=res+"\n";
+                 showToastMessage("Добавлено к дневнику!",null,true);
+             }
+             else
+                 CalculateService.SetCalculateResultCreate(departmentId${name},
+                     res, calcId${name}, '', {
+                         callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
+                     });
+             for (var i=0; i<100; i++)
+                 if (window.parent.document.getElementById('allCalc')!=null) window.parent.document.getElementById('fadeEffect').hide();
              the${name}NewCalculationDialog.hide();
          }
      }

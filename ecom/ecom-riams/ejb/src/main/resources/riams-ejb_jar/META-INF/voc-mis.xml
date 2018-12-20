@@ -130,10 +130,20 @@ where wf.dtype='PersonalWorkFunction' -->
 	names="c.name"
 	>
 	</NativeVocService>
-    </voc> 
-    
-    
-<!--  Справочник НДС  -->
+    </voc>
+
+<!--  Справочник назначения в калькуляторе -->
+<voc id='vocCalcRiskparent' type='NativeVocService'>
+	<NativeVocService
+			from="calcrisk r"
+			nameId="r.id"
+			names="r.riskvalue,r.lowscore,r.upscore"
+			parent="r.calculator_id=:parent"
+	>
+	</NativeVocService>
+</voc>
+
+	<!--  Справочник НДС  -->
 <voc id='vocVat' type='NativeVocService'>
        <NativeVocService
 	from="vocvat vv"
