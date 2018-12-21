@@ -80,19 +80,11 @@ public class AssessmentCard extends BaseEntity {
 	/** Дата приема */
 	private Date theStartDate;
 
-	/** СЛО создания */
-	@Comment("СЛО создания")
+	/** СЛО/визит создания */
+	@Comment("СЛО/визит создания")
 	@OneToOne
-	public HospitalMedCase getDepMedcase() {return theDepMedcase;}
-	public void setDepMedcase(HospitalMedCase aDepMedcase) {theDepMedcase = aDepMedcase;}
-	/** СЛО создания */
-	private HospitalMedCase theDepMedcase;
-
-	/** Визит создания */
-	@Comment("Визит создания")
-	@OneToOne
-	public MedCase getVisitMedcase() {return theVisitMedcase;}
-	public void setVisitMedcase(MedCase aVisitMedcase) {theVisitMedcase = aVisitMedcase;}
-	/** СЛО создания */
-	private MedCase theVisitMedcase;
+	public MedCase getMedcase() {return theMedcase;}
+	public void setMedcase(MedCase aMedcase) {theMedcase = aMedcase;}
+	/** СЛО/визит создания */
+	private MedCase theMedcase;
 }

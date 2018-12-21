@@ -891,9 +891,9 @@
                                     </msh:ifFormTypeAreViewOrEdit>
                                 }
                                 if (getValueVocRadiooncoT("diff","vocOncologyN008")!=-1) {
+                                    document.getElementById('histologyChb3').checked = 'checked';
                                     <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
                                     <msh:ifFormTypeIsNotView formName="oncology_case_reestrForm">
-                                    document.getElementById('histologyChb3').checked = 'checked';
                                     document.getElementById('histologyChb3').removeAttribute("disabled");
                                     setEnabledH(3);
                                     </msh:ifFormTypeIsNotView>

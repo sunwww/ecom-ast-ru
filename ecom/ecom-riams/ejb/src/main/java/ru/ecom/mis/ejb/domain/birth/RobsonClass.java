@@ -8,15 +8,13 @@ import ru.ecom.mis.ejb.domain.birth.voc.VocRobsonClass;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.Persist;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.transforms.DoTimeString;
-import ru.nuzmsh.forms.validator.validators.DateString;
-import ru.nuzmsh.forms.validator.validators.TimeString;
+import java.sql.Time;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.sql.Date;
 
 /**
  * Created by Milamesher on 10.12.2018.
@@ -42,28 +40,20 @@ public class RobsonClass extends BaseEntity {
     public void setRobsonType(VocRobsonClass aRobsonType) {theRobsonType = aRobsonType;}
     /** Дата создания */
     @Comment("Дата создания")
-    @DateString
-    @DoDateString
-    @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public Date getCreateDate() {return theCreateDate;}
+    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
     /** Дата редактирования */
     @Comment("Дата редактирования")
-    @DateString @DoDateString @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public Date getEditDate() {return theEditDate;}
+    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
     /** Время создания */
     @Comment("Время создания")
-    @TimeString
-    @DoTimeString
-    @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public Time getCreateTime() {return theCreateTime;}
+    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
     /** Время редактрования */
     @Comment("Время редактирования")
-    @TimeString @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public Time getEditTime() {return theEditTime;}
+    public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
@@ -84,11 +74,11 @@ public class RobsonClass extends BaseEntity {
     /** Пользователь, который создал запись */
     private String theCreateUsername;
     /** Время редактрования */
-    private String theEditTime;
+    private Time theEditTime;
     /** Время создания */
-    private String theCreateTime;
+    private Time theCreateTime;
     /** Дата редактирования */
-    private String theEditDate;
+    private Date theEditDate;
     /** Дата создания */
-    private String theCreateDate;
+    private Date theCreateDate;
 }

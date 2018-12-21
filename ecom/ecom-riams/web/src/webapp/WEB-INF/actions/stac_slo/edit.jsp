@@ -594,7 +594,7 @@ left join Patient pat on pat.id=wan.person_id
                   ,ac.ballsum as f4_ballsum
                   from assessmentCard ac
                   left join assessmentcardtemplate act on act.id=ac.template
-                  where ac.depmedcase_id=${param.id}
+                  where ac.medcase_id=${param.id}
                 order by ac.startDate desc"/>
                 <msh:section>
                     <msh:sectionTitle>

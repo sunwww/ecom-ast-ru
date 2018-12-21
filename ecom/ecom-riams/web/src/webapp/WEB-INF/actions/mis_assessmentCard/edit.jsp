@@ -18,8 +18,7 @@
       <msh:hidden guid="hiddenSaveType" property="saveType" />
       <msh:hidden guid="hiddenParent" property="patient" />
       <msh:hidden guid="hidden" property="params" />
-      <msh:hidden guid="hidden" property="depMedcase" />
-      <msh:hidden guid="hidden" property="visitMedcase" />
+      <msh:hidden guid="hidden" property="medcase" />
       <msh:panel guid="panel">
       
         <msh:row guid="row1">
@@ -54,6 +53,7 @@
       </msh:panel>
       <div id='dataFieldTitle'> </div>
         <div id='dataField'> </div>
+        <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
       <%
           //lastrelease milamesher 09.04.2018 #97
           String typeCard=request.getParameter("typeCard");
@@ -65,7 +65,6 @@
           if (typeCard!=null && !typeCard.equals("")) {
               %>
         <msh:ifFormTypeIsCreate formName="mis_assessmentCardForm">
-            <script type='text/javascript' src='./dwr/interface/HospitalMedCaseService.js'></script>
                 <script>
                     window.onload=function load(){
                         HospitalMedCaseService.getVocAssesmentCardById('${typeCard}',{
@@ -191,14 +190,19 @@
 		//window.document.location="print-ass_card1.do?s=PrintService&m=printAssessmentCard&id=${param.id}&groupFields="+groupFields+"&sqlText"+sql;
   }
   function goBackSloOrVisit() {
-      if ($('depMedcase').value!=null && $('depMedcase').value!='' && $('depMedcase').value!='0')
-        window.location.href="entityParentView-stac_slo.do?id="+$('depMedcase').value;
-      else if ($('visitMedcase').value!=null && $('visitMedcase').value!='' && $('visitMedcase').value!='0')
-          window.location.href="entityParentView-smo_visit.do?id="+$('visitMedcase').value;
-      else if ($('patient').value!=null && $('patient').value!='' && $('patient').value!='0')
-          window.location.href="entityView-mis_patient.do.do?id="+$('patient').value;
-      else
-          alert("Нет прикреплённого СЛО или визита!");
+      if ($('medcase').value!=null && $('medcase').value!='' && $('medcase').value!='0') {
+          HospitalMedCaseService.getMedcaseDtype($('medcase').value,{
+              callback: function(res) {
+                  if (res=='1')
+                      window.location.href="entityParentView-stac_slo.do?id="+$('medcase').value;
+                  else if (res=='2')
+                      window.location.href="entityParentView-smo_visit.do?id="+$('medcase').value;
+                  else if ($('patient').value!=null && $('patient').value!='' && $('patient').value!='0')
+                      window.location.href="entityView-mis_patient.do?id="+$('patient').value;
+                  else
+                      alert("Нет прикреплённого СЛО или визита!");
+              }});
+      }
   }
   </script>
   </msh:ifFormTypeIsView>
@@ -434,10 +438,10 @@
 		if (!isError) {
 			document.forms['mis_assessmentCardForm'].action='entityParentSaveGoView-mis_assessmentCard.do';
             if ('${slo}'!=null && '${slo}'!='') {
-                $('depMedcase').value='${slo}';
+                $('medcase').value='${slo}';
             }
             if ('${visit}'!=null && '${visit}'!='') {
-                $('visitMedcase').value='${visit}';
+                $('medcase').value='${visit}';
             }
 			document.forms['mis_assessmentCardForm'].submit();
 		}

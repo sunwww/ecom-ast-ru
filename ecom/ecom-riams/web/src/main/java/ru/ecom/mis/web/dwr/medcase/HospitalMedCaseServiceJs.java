@@ -2227,4 +2227,17 @@ public class HospitalMedCaseServiceJs {
 		}
 		return res;
 	}
+	//Milamesher получить dtype medcase (0 - hospital, 1 - dep, 2 - visit, 3 - другое
+	public String getMedcaseDtype(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+		String res="";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'\n" +
+				"else case when mc.dtype='DepartmentMedCase' then '1'\n" +
+				"else case when mc.dtype='Visit' then '2' else '0' end end end\n" +
+				"from assessmentcard  ac\n" +
+				"left join medcase mc on mc.id=ac.medcase_id\n" +
+				"where ac.medcase_id="+aMedcaseId) ;
+		if (l.size()>0) res=l.iterator().next().get1().toString();
+		return res;
+	}
 }

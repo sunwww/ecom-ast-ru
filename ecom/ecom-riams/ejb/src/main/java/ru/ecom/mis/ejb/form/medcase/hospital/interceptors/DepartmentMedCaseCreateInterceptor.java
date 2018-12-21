@@ -254,7 +254,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			.append("' and bf.serviceStream_id='").append(aServiceStream!=null?aServiceStream:"0")
 			.append("' and to_date('").append(aDateFrom)
 			.append("','dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)") ;
-		sql.append(" and vbst.code='").append(bedSubType).append("'");
+		sql.append(" and vbst.code='").append(bedSubType!=null?bedSubType:"1").append("'");
 		List<Object[]> idT = aManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 		if (idT.size()==1) {
 			return ConvertSql.parseLong(idT.get(0)[0]) ;
