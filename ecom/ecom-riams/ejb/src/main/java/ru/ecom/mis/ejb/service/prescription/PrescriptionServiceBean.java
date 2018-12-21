@@ -501,7 +501,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 	public Long checkLabAnalyzed(Long aPrescriptId,Long aWorkFunctionId,String aUsername) {
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' then sls.id") ; 
-		sql.append(" when slo.dtype='Visit' then coalesce (sls.id,slo.id) end else slo.id end as pmo") ;
+		sql.append(" when slo.dtype='Visit' then coalesce (sls.id,slo.id) else slo.id end as pmo") ;
 		sql.append(" ,p.prescriptSpecial_id as presspec") ;
 		sql.append(" ,p.prescriptCabinet_id as cabinet") ;
 		sql.append(" ,p.medService_id as service") ;
