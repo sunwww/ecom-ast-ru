@@ -6,6 +6,7 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCard;
+import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
@@ -100,19 +101,11 @@ public class AssessmentCardForm extends IdEntityForm{
 	private String theStartDate;
 
 
-	/** СЛО создания */
-	@Comment("СЛО создания")
+	/** СЛО/визит создания */
+	@Comment("СЛО/визит создания")
 	@Persist
-	public Long getDepMedcase() {return theDepMedcase;}
-	public void setDepMedcase(Long aDepMedcase) {theDepMedcase = aDepMedcase;}
-	/** СЛО создания */
-	private Long theDepMedcase;
-
-    /** Визит создания */
-    @Comment("Визит создания")
-    @Persist
-    public Long getVisitMedcase() {return theVisitMedcase;}
-    public void setVisitMedcase(Long aVisitMedcase) {theVisitMedcase = aVisitMedcase;}
-    /** СЛО создания */
-    private Long theVisitMedcase;
+	public Long getMedcase() {return theMedcase;}
+	public void setMedcase(Long aMedcase) {theMedcase = aMedcase;}
+	/** СЛО/визит создания */
+	private Long theMedcase;
 }

@@ -107,7 +107,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		if (aMedCaseId==null) {return true;}
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
-			String sql = "select count(ac.id) from assessmentCard ac where depmedcase_id= "+aMedCaseId + " and template=7";
+			String sql = "select count(ac.id) from assessmentCard ac where medcase_id= "+aMedCaseId + " and template=7";
 			Object list = aManager.createNativeQuery(sql).getSingleResult();
 			return Long.valueOf(list.toString())>0;
 		} else {

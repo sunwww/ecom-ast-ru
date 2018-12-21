@@ -8,7 +8,7 @@ function onPreCreate(aForm, aCtx) {
 function onCreate(aForm, aEntity, aCtx) {
 	saveParameters (aForm, aEntity, aCtx.getUsername(),aCtx);
 	//lastrelease milamesher 09.04.2018 #97 (при создании карты в СЛО надо создать протокол)
-    if (aForm.getDepMedcase()!=null && aForm.getDepMedcase()!='' && aForm.getDepMedcase()!='0' && aForm.getTemplate()=='7') {
+    if (aForm.getMedcase()!=null && aForm.getMedcase()!='' && aForm.getMedcase()!='0' && aForm.getTemplate()=='7') {
         var asCardDiaryText = "Протокол карты оценки риска ВТЭО во время родов и в послеродовом (послеоперационном) периоде пациентки ";
         var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient,aForm.getPatient());
         asCardDiaryText +=patient.getPatientInfo() + "\n";
@@ -42,7 +42,7 @@ function onCreate(aForm, aEntity, aCtx) {
             else prot.setDateRegistration(new java.sql.Date(currentDate.getTime()));
             prot.setTimeRegistration(new java.sql.Time (currentDate.getTime()));
             prot.setUsername(aCtx.getUsername());
-            prot.setMedCase(aEntity.getDepMedcase());
+            prot.setMedCase(aEntity.getMedcase());
             prot.setSpecialist(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunction"));
             prot.setRecord(asCardDiaryText);
             aCtx.manager.persist(prot);

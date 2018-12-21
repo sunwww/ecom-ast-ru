@@ -13,7 +13,7 @@
   ,ac.ballsum as f4_ballsum
   from assessmentCard ac
   left join assessmentcardtemplate act on act.id=ac.template
-  where ac.visitmedcase_id=${param.id} order by ac.startDate desc"/>
+  where ac.medcase_id=${param.id} order by ac.startDate desc"/>
         <msh:section createRoles="/Policy/Mis/AssessmentCard/Create" createUrl="entityParentPrepareCreate-mis_assessmentCard.do?id=${param.patient}&visit=${param.id}"
                      title="Карты оценки">
             <msh:table name="cardList" action="entityParentView-mis_assessmentCard.do" idField="1" guid="e699b892-d71e-4622-ae5e-eaec3ed85bb4">
