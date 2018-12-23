@@ -21,8 +21,8 @@ import java.util.List;
 
 public class DepartmentSaveInterceptor  implements IFormInterceptor{
 
-	private final static Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
     
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		DepartmentMedCaseForm form=(DepartmentMedCaseForm)aForm ;
@@ -94,7 +94,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     }
     public static Object getVocByCode(EntityManager aManager,String aTable, String aCode) {
     	List list = aManager.createQuery(new StringBuilder().append("from ").append(aTable).append(" where code='").append(aCode).append("'").toString()).getResultList() ;
-    	return list.size()>0?list.get(0):null ; 
+    	return list.isEmpty() ? null : list.get(0);
     }
 
     private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity) {
@@ -143,11 +143,7 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 	private static boolean isEmpty(Long aLong) {
 	    return (aLong == null)||(aLong == 0) ;
 	}
-	private static boolean isEmpty(String aString) {
-	    return (aString == null)||(aString.trim().equals("")) ;
-	}
-	
-	
+
 	
 	public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long aPatient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
 		if (clinicalMkb==null || clinicalMkb.equals(Long.valueOf(0))) return true ;
@@ -167,7 +163,6 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			" left join lpucontractnosologygroup lcng on lcng.lpudiagnosisrule = ldr.id" +
 			" left join contractnosologygroup cng on cng.id=lcng.nosologygroup" +
 			" left join nosologyinterval ni on ni.nosologygroup_id=cng.id" +
-			
 			" where ldr.department = "+department +
 			" and ldr.id is not null" +
 			" and ((ldr.diagnosisregistrationtype is null or ldr.diagnosisregistrationtype=0) or ldr.diagnosisregistrationtype="+diagnosisRegistrationType+")" ;
@@ -183,11 +178,11 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			boolean first = true;
 			for (Object[] oo: o) {
 				if (first){
-					isPermitted = oo[1].toString().equals("1")?true:false;
+					isPermitted = oo[1].toString().equals("1");
 					first = false;
-					ret = isPermitted?false:true;
+					ret = !isPermitted;
 				}
-				boolean isEnter = oo[2].toString().equals("1")?true:false;
+				boolean isEnter = oo[2].toString().equals("1");
 				if (isPermitted) {
 					if (isEnter) {
 						ret =  true;

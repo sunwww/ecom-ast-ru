@@ -1,33 +1,19 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocAdmissionOrder;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocBedType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospType;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocJudgment;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime;
+import ru.ecom.mis.ejb.domain.medcase.voc.*;
 import ru.ecom.mis.ejb.domain.psychiatry.voc.VocPsychHospitalReason;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
 /**
  * Стационарный случай медицинского обслуживания
@@ -56,11 +42,11 @@ public class HospitalMedCase extends LongMedCase {
 	private Time theTransferTime;
 	/** Дата перевода */
 	private Date theTransferDate;
-	///** Диагнозы */
-	//@Comment("Диагнозы")
-	//@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	//public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
-	//public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
+	/** Диагнозы */
+	@Comment("Диагнозы")
+	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
+	public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
+	public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
 
 
 	///** Сообщения об инфекции */
@@ -305,6 +291,7 @@ public class HospitalMedCase extends LongMedCase {
 
 	/** Педикулез */
 	@Comment("Педикулез")
+	@OneToOne
 	public VocPediculosis getPediculosis() {return thePediculosis;}
 	public void setPediculosis(VocPediculosis aPediculosis) {thePediculosis = aPediculosis;}
 
@@ -357,8 +344,8 @@ public class HospitalMedCase extends LongMedCase {
 	///** Сообщения об инфекции */
 	//private List<PhoneMessage> theMessages;
 
-	///** Диагнозы */
-	//private List<Diagnosis> theDiagnosis;
+	/** Диагнозы */
+	private List<Diagnosis> theDiagnosis;
 
 	/** Рабочая функция направителя */
 	private WorkFunction theOrderWorkFunction;
