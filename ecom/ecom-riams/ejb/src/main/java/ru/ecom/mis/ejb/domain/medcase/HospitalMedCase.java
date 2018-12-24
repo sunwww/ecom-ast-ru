@@ -13,7 +13,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 
 /**
  * Стационарный случай медицинского обслуживания
@@ -42,12 +41,6 @@ public class HospitalMedCase extends LongMedCase {
 	private Time theTransferTime;
 	/** Дата перевода */
 	private Date theTransferDate;
-	/** Диагнозы */
-	@Comment("Диагнозы")
-	@OneToMany(mappedBy = "medCase", cascade = CascadeType.ALL)
-	public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
-
 
 	///** Сообщения об инфекции */
 	//@Comment("Сообщения об инфекции")
@@ -343,9 +336,6 @@ public class HospitalMedCase extends LongMedCase {
 	private VocPreAdmissionDefect thePreAdmissionDefect;
 	///** Сообщения об инфекции */
 	//private List<PhoneMessage> theMessages;
-
-	/** Диагнозы */
-	private List<Diagnosis> theDiagnosis;
 
 	/** Рабочая функция направителя */
 	private WorkFunction theOrderWorkFunction;

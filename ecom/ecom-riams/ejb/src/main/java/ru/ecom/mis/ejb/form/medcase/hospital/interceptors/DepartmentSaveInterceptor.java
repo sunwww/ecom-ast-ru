@@ -31,11 +31,11 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 		DepartmentMedCase medCase = (DepartmentMedCase)aEntity ;
 		String dateFinish = "null" ;
 		if (medCase.getDateFinish()!=null) {
-			dateFinish = new StringBuilder().append("to_date('").append(DateFormat.formatToDate(medCase.getDateFinish())).append("','dd.mm.yyyy')").toString() ;
+			dateFinish = "to_date('" + DateFormat.formatToDate(medCase.getDateFinish())+"','dd.mm.yyyy')" ;
 		}
 		String timeFinish ="null" ;
 		if (medCase.getDischargeTime()!=null) {
-			timeFinish = new StringBuilder().append("'").append(DateFormat.formatToTime(medCase.getDischargeTime())).append("'").toString() ;
+			timeFinish = "'"+DateFormat.formatToTime(medCase.getDischargeTime())+"'" ;
 		}
 		StringBuilder sqlupdate = new StringBuilder() ;
 		
@@ -43,7 +43,6 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			throw new IllegalStateException ("Данный диагноз запрещен в отделении!");
 		}
 		sqlupdate.append("update MedCase set dateFinish="+dateFinish+", dischargeTime="+timeFinish+" where parent_id=:parent and DTYPE='DepartmentMedCase' and (dateFinish is not null or (transferDate is null and dateFinish is null))") ;
-		
 		manager.createNativeQuery(sqlupdate.toString())
 			.setParameter("parent", form.getId())
 			.executeUpdate() ;
@@ -93,14 +92,14 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
     	}
     }
     public static Object getVocByCode(EntityManager aManager,String aTable, String aCode) {
-    	List list = aManager.createQuery(new StringBuilder().append("from ").append(aTable).append(" where code='").append(aCode).append("'").toString()).getResultList() ;
+    	List list = aManager.createQuery("from "+aTable+" where code=:code").setParameter("code",aCode).getResultList() ;
     	return list.isEmpty() ? null : list.get(0);
     }
-
+/*
     private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity) {
     	return setDiagnosisByType( aNewIs,  aDiag, aType, aName, aDate,  aCode, aMedCase, aManager, aPriorityType, aActuity,null);
     }
-    
+  */
 	private boolean setDiagnosisByType(boolean aNewIs, Diagnosis aDiag, VocDiagnosisRegistrationType aType, String aName, String aDate, Long aCode, HospitalMedCase aMedCase, EntityManager aManager, VocPriorityDiagnosis aPriorityType, Long aActuity, String aMkbAdc) {
 		boolean resault = false ;
 		if (!aNewIs) {
@@ -198,5 +197,4 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 			}
 			return ret;
 	}
-
 }

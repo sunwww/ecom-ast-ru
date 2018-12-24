@@ -29,14 +29,12 @@ public class DepartmentMedCase extends HospitalMedCase {
 	@Comment("Главный диагноз случая")
 	@Transient
 	public Diagnosis getMainDiagnosis () {
-		for (Diagnosis diagnosis : getDiagnosis()) {
+		for (Diagnosis diagnosis : getDiagnoses()) {
 			if ("1".equals(diagnosis.getPriority().getCode()) && "4".equals(diagnosis.getRegistrationType().getCode())) return diagnosis;
 		}
 		return null;
 	}
 	
-
-
 	/** Отделение перевода */
 	@Comment("Отделение перевода")
 	@OneToOne

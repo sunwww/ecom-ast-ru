@@ -4,7 +4,6 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
-import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -18,7 +17,7 @@ import java.sql.Date;
 @Entity
 @AIndexes({
 		@AIndex(properties="patient")
-		,@AIndex(properties="depMedcase")
+		,@AIndex(properties="medcase")
 })
 @Table(schema="SQLUser")
 public class AssessmentCard extends BaseEntity {

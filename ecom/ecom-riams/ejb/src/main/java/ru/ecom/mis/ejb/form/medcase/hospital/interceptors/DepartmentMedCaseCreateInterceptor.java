@@ -113,8 +113,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 	}
     //Milamesher существует ли карта оценки риска
     private static boolean isRiskCardBornExists(EntityManager aManager, MedCase aMedCase) {
-			String sql = "select count(ac.id) from assessmentCard ac where depmedcase_id= "+aMedCase.getId() + " and template=7";
-			Object list = aManager.createNativeQuery(sql).getSingleResult();
+			String sql = "select count(ac.id) from assessmentCard ac where medcase_id=:medcaseId and template=7";
+			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
 			return Long.valueOf(list.toString())>0;
 
 	}
@@ -133,6 +133,10 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 
 	/** Проверяем - заполнены ли данные по родам
 	 * Если диагноз входит в список разрешенных, то разрешаем перевод без заполнения информации о родах*/
+    public static boolean isPregnancyExists(EntityManager aManager, Long aMedCase) {
+    	return isPregnancyExists(aManager,aManager.find(DepartmentMedCase.class,aMedCase));
+	}
+
     private static boolean isPregnancyExists(EntityManager aManager, DepartmentMedCase aMedCase) {
 			Diagnosis diagnosis = aMedCase.getMainDiagnosis();
 			ArrayList<String> withoutChildBirth = new ArrayList<String>(){{add("O47.0");add("O47.1");add("O42.2");}}; //надоело усложнять :(
@@ -143,8 +147,6 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					" where slo.id=:medcaseId and cb.pangsStartDate is not null";
 			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
 			return Long.valueOf(list.toString())>0;
-
-
 	}
     /**
      * Новый первый случай лечения в отделении
@@ -260,8 +262,5 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			return ConvertSql.parseLong(idT.get(0)[0]) ;
 		}
 		return null ;
-		
     }
-
-
 }

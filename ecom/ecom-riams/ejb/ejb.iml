@@ -20,9 +20,25 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ecom-ejbweb-ejb" />
-    <orderEntry type="module" module-name="msh" />
-    <orderEntry type="module" module-name="ecom-report" />
+    <orderEntry type="module" module-name="ecom-ejb" />
+    <orderEntry type="module-library">
+      <library name="Maven: ru.ecom:msh:1.0-SNAPSHOT">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../msh/target/msh.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: ru.ecom:report:1">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../ecom-report/target/ecom-report.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="ecom-jboss-lib" />
     <orderEntry type="module-library">
       <library name="Maven: org.objectweb:asm:RELEASE">

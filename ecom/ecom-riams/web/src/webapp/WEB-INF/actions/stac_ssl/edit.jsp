@@ -233,7 +233,7 @@
                 <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslForm.patient" roles="/Policy/Mis/Pregnancy/History/View">
                     <msh:separator label="Беременность" colSpan="9"/>
                     <msh:row>
-                        <msh:autoComplete viewAction="entityParentView-preg_pregnancy.do" property="pregnancy" label="Беременность" fieldColSpan="3" parentId="stac_sslAdmissionForm.patient" vocName="pregnancyByPatient" horizontalFill="true"/>
+                        <msh:autoComplete viewAction="entityParentView-preg_pregnancy.do" property="pregnancy" label="Беременность" fieldColSpan="3" parentId="patient" vocName="pregnancyByPatient" horizontalFill="true"/>
                     </msh:row>
                 </mis:ifPatientIsWoman>
 
