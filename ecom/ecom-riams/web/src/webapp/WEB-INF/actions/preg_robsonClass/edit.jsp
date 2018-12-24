@@ -23,7 +23,7 @@
             <msh:hidden property="robsonType" />
             <msh:panel guid="0a4989f1-a793-45e4-905f-4ac4f46d7815">
                 <div id="classRobsonsDiv"></div>
-                <msh:ifFormTypeIsView formName="preg_robsonClassForm">
+                <msh:ifFormTypeAreViewOrEdit formName="preg_robsonClassForm">
                     <msh:row>
                         <msh:separator label="Дополнительная информация" colSpan="4"/>
                     </msh:row>
@@ -41,7 +41,7 @@
                     <msh:row>
                         <msh:label property="editUsername" label="пользователь"/>
                     </msh:row>
-                </msh:ifFormTypeIsView>
+                </msh:ifFormTypeAreViewOrEdit>
                 <msh:submitCancelButtonsRow colSpan="3"  guid="bd5bf27d-bcd4-4779-9b5d-1de22f1ddc68" functionSubmit="save();"/>
             </msh:panel>
         </msh:form>
