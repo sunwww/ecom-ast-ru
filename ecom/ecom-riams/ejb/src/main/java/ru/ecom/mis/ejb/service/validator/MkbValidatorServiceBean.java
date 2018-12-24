@@ -37,7 +37,7 @@ public class MkbValidatorServiceBean  implements IMkbValidatorService{
 			.append(aClass)
 			.append(" where ")
 			.append(aField)
-			.append(" like '").append(mkb).append(".%' and (noActuality is null or noActuality='0'l) ");
+			.append(" like '").append(mkb).append(".%' and (noActuality is null or noActuality='0') ");
 		}
 		Object cntUtoch = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
 		return cntUtoch==null || ConvertSql.parseLong(cntUtoch).intValue()==0;
