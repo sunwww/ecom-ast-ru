@@ -47,10 +47,6 @@ public class ExtDispServiceBean implements IExtDispService {
 	private @PersistenceContext EntityManager theManager;
 	private static final Logger LOG = Logger.getLogger(ExtDispServiceBean.class);
 
-	private void setIsExported(String aId) {
-		theManager.createNativeQuery("update ExtDispCard set exportDate = current_date where id=:id").setParameter("id",aId).executeUpdate();
-	}
-
 	/*Упаковка в архив файлов */
 	private String createArchive(String archiveName, List<String> aFileNames) {
 			if (!aFileNames.isEmpty()) {
@@ -163,12 +159,11 @@ public class ExtDispServiceBean implements IExtDispService {
 		List<String> xmlFilenames = new ArrayList<>();
 		ExtDispCard extDispCard;
 		DataSource ds = ApplicationDataSourceHelper.getInstance().findDataSource();
+		JSONObject ret = new JSONObject();
 		try (Connection dbh = ds.getConnection();
 			 Statement statement = dbh.createStatement();
 			 ResultSet rs = statement.executeQuery(aSqlString)){
-
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
 			int numRight = 0;
 			// --------------Значения по умолчания для всех записей.
 			 
@@ -181,6 +176,8 @@ public class ExtDispServiceBean implements IExtDispService {
 				//	+ ", закаливание, профилактика вредных привычек."; //Рекомендации
 			String fizkultG = aFizGroup>0?aFizGroup+"":"1"; //"1"; //Группа здоровья для физкультуры
 			String cardIsslResult = aAnalysesText;//"Без патологий"; // Результат анализов
+			Date currentDate = new Date(System.currentTimeMillis());
+
 			while (rs.next()) {
 				String diagnosis = rs.getString("mkbcode");
 				String healthG = rs.getString("vedhgcode");
@@ -245,12 +242,11 @@ public class ExtDispServiceBean implements IExtDispService {
 				numRight++;
 				int monthLet = Integer.parseInt(rs.getString("fullage"));
 				List<ExtDispService> serviceList = extDispCard.getServices();
-				LOG.warn("List<ExtDispService> serviceList "+serviceList.size());
 				Element cardBasic = new Element("basic");
 				Element cardIssled = new Element("issled");
 				for (ExtDispService service:serviceList) {
 					String orphCode = service.getServiceType().getOrphCode();
-					if (!StringUtil.isNullOrEmpty(orphCode)) {
+					if (!StringUtil.isNullOrEmpty(orphCode) && service.getServiceDate()!=null) {
 						Element record = new Element("record");
 						record.addContent(new Element("id").addContent(orphCode))
 								.addContent(new Element("date").addContent(format.format(service.getServiceDate())));
@@ -409,19 +405,24 @@ public class ExtDispServiceBean implements IExtDispService {
 					xmlFilenames.add(createFile(rootElement, xmlFilename));
 					rootElement = new Element("children");
 				}
-				setIsExported(cardId);
+				extDispCard.setExportDate(currentDate);
+				theManager.persist(extDispCard);
 			}
-			dbh.close();
 			if (!rootElement.getChildren().isEmpty()) {
 				xmlFilenames.add(createFile(rootElement, xmlFilename));
 			}
+			ret.put("status","ok");
+			ret.put("errorCards",errorCards);
 		} catch (Exception e) {
+			ret.put("status","error");
+			ret.put("errorName",e.getMessage());
+
 			e.printStackTrace();
 	        LOG.error(e);
 	    }
-		JSONObject ret = new JSONObject();
-		ret.put("status","ok");
-		ret.put("errorCards",errorCards);
+	    LOG.info("Finished!");
+
+
 	    if (!xmlFilenames.isEmpty()) {
 	    	ret.put("archiveName",createArchive(xmlFilename+"_"+System.currentTimeMillis()+".zip", xmlFilenames));
 		}
@@ -435,10 +436,12 @@ public class ExtDispServiceBean implements IExtDispService {
 		String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 		String outputFile=workDir+"/"+fileName;
 		org.jdom.output.XMLOutputter outputter = new org.jdom.output.XMLOutputter();
-		try (FileWriter fwrt = new FileWriter(outputFile)){
+		LOG.info(">>>>>"+outputFile);
+		try (FileWriter fwrt = new FileWriter(outputFile)) {
 			Document pat = new Document(aElement);
 			outputter.setFormat(org.jdom.output.Format.getPrettyFormat().setEncoding("UTF-8"));
 			outputter.output(pat, fwrt);
+			LOG.info("created file = "+outputFile);
 			return fileName;
 		} catch (Exception ex) {
 			ex.printStackTrace();

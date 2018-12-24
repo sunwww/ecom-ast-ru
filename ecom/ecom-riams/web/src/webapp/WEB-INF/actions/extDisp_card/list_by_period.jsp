@@ -1243,7 +1243,7 @@ order by vwf.name,wp.lastname,wf.id,veds.id
                 return;
             }
     	    aResult = JSON.parse(aResult);
-            if (aResult.archiveName) $('aView').innerHTML="<a href='../rtf/"+aResult.archiveName+"'>"+aResult.archiveName+"</a>" ;
+            $('aView').innerHTML="<a href='../rtf/"+(aResult.archiveName?aResult.archiveName:'noFile')+"'>"+(aResult.archiveName?aResult.archiveName:'Нечего выгружать')+"</a>" ;
     		if (aResult.errorCards) {
                 $('exportTable').style.display = 'block' ;
                 flushTable();
