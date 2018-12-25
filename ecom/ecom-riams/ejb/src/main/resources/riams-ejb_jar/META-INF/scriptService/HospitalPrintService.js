@@ -237,7 +237,7 @@ function printCheckList (aCtx, aParams) {
 			
 }
 function unNull (aStr) {
-	return aStr!=null?""+aStr:"";
+	return aStr!=null ? ""+aStr : "";
 }
 function printPrescriptList(aCtx, aParams) {
 	var id = new java.lang.Long(aParams.get("id"));
@@ -245,7 +245,7 @@ function printPrescriptList(aCtx, aParams) {
 	var lastname="";
 	var firstname="";
 	var middlename="";
-	var birthday="";
+//	var birthday="";
 	var doctor="";
 	var date = "";
 	var prescriptions = new java.util.ArrayList();
@@ -255,9 +255,10 @@ function printPrescriptList(aCtx, aParams) {
 				" ,to_char(p.planstarttime,'HH24:MI') as timestart" +
 				" ,to_char(p.canceldate,'dd.MM.yyyy') as canceldate" +
 				" ,case when p.dtype='ServicePrescription' then ms.name" +
-					"  when p.dtype='DietPrescription' then diet.name" +
-					"  when p.dtype='DrugPrescription' then dr.name " +
-					"  when p.dtype='ModePrescription' then vmp.name else '' end as f5_presName" +
+					" when p.dtype='DietPrescription' then 'Диета: '|| diet.name" +
+					" when p.dtype='DrugPrescription' then dr.name " +
+					" when p.dtype='ModePrescription' then 'Режим: '|| vmp.name " +
+					" else '' end as f5_presName" +
 				" ,'Частота: '||p.frequency ||' '||coalesce(vfu.name,'') as f6_vfuname" +
 				" ,p.orderTime ||' '||coalesce(vpot.name,'') as f7_vpotname" +
 				" ,'Дозировка: '||p.amount ||' '||coalesce(vdau.name,'') as f8_vdauname" +
@@ -290,19 +291,20 @@ function printPrescriptList(aCtx, aParams) {
 				if (p[10]!=null) {
 					comments.add(unNull(p[10]));
 				}
-				if (p[1].equals("ServicePrescription")) {
+			/*	if (dtype.equals("ServicePrescription")) {
 					
-				} else if (p[1].equals("DietPrescription")) {
+				} else if (dtype.equals("DietPrescription")) {
 					
-				} else if (p[1].equals("DrugPrescription")) {
+				} else */
+					if (dtype.equals("DrugPrescription")) {
 					for (var j=6;j<10;j++) {
 						if (p[j]!=null) {
 							comments.add(unNull(p[j]));
 						}
 					}
-				} else if (p[1].equals("ModePrescription")) {
+				}/* else if (dtype.equals("ModePrescription")) {
 					
-				}
+				}*/
 				
 				pp.add(name);
 				pp.add(startDate);
@@ -328,13 +330,13 @@ function printPrescriptList(aCtx, aParams) {
 			" left join patient wp on wp.id=w.person_id" +
 			" where pl.id="+id;
 			var arr  = aCtx.manager.createNativeQuery(sql).getResultList();
-	if (arr.size()>0) {
+	if (!arr.isEmpty()) {
 		var data = arr.get(0);
 		sscode = ""+data[0];
 		lastname = ""+data[1];
 		firstname = ""+data[2];
 		middlename = ""+data[3];
-		birthday = ""+data[4];
+	//	birthday = ""+data[4];
 		doctor = ""+data[5];
 		date =""+data[6];
 		
@@ -347,9 +349,7 @@ function printPrescriptList(aCtx, aParams) {
 	map.put("pat.middlename", middlename);
 	map.put("doctorInfo", doctor);
 	map.put("currentDate", date);
-	
 	map.put ("listNumber", id);
-	map.put
 	map.put("prescriptions",prescriptions);
 	return map;
 }
