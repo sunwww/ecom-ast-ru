@@ -126,6 +126,19 @@
 		    	
 		/>
 	</voc>
+	<voc id="vocTypeMisbirth" type="NativeVocService">
+		<NativeVocService
+				from=" VocTypeMisbirth "
+				parent=""
+				nameId=" id "
+				join=""
+				queryAppend=""
+				order=""
+				queried=" name "
+				names = " name "
+
+		/>
+	</voc>
 	<voc id="hospitalRoomByLpu" type="NativeVocService">
 		<NativeVocService
 		    	from=" WorkPlace as wp "

@@ -4,39 +4,36 @@ import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
-import ru.ecom.mis.ejb.domain.birth.RobsonClass;
-import ru.ecom.mis.ejb.form.birth.interceptors.RobsonClassPreCreateInterceptor;
+import ru.ecom.mis.ejb.domain.birth.Misbirth;
+import ru.ecom.mis.ejb.form.birth.interceptors.MisbirthPreCreateInterceptor;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
+import ru.nuzmsh.forms.validator.validators.Required;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 
 /**
- * Created by Milamesher on 10.12.2018.
+ * Created by Milamesher on 21.12.2018.
  */
 @EntityForm
-@EntityFormPersistance(clazz= RobsonClass.class)
-@Comment("Классификация Робсона")
-@WebTrail(comment = "Классификация Робсона", nameProperties= "id", view="entityParentView-preg_robsonClass.do")
+@EntityFormPersistance(clazz= Misbirth.class)
+@Comment("Выкидыш")
+@WebTrail(comment = "Выкидыш", nameProperties= "id", view="entityParentView-preg_misbirth.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy/ChildBirth")
 @AParentPrepareCreateInterceptors(
-        @AParentEntityFormInterceptor(RobsonClassPreCreateInterceptor.class)
+        @AParentEntityFormInterceptor(MisbirthPreCreateInterceptor.class)
 )
-public class RobsonClassForm extends IdEntityForm {
+public class MisbirthForm extends IdEntityForm {
     /** СМО */
     @Comment("СМО")
     @Persist
+    @Required
     public Long getMedCase() {return theMedCase;}
     public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-    /** Классификация */
-    @Comment("Классификация")
-    @Persist
-    public Long getRobsonType() {return theRobsonType;}
-    public void setRobsonType(Long aRobsonType) {theRobsonType = aRobsonType;}
     /** Дата создания */
     @Comment("Дата создания")
     @DateString
@@ -73,11 +70,41 @@ public class RobsonClassForm extends IdEntityForm {
     @Persist
     public String getEditUsername() {return theEditUsername;}
     public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    /** Срок беременности (нед) */
+    @Comment("Срок беременности (нед)")
+    @Persist @Required
+    public String getDurationPregnancy() {return theDurationPregnancy;}
+    public void setDurationPregnancy(String aDurationPregnancy) {theDurationPregnancy = aDurationPregnancy;}
+    /** Тип выкидыша */
+    @Comment("Тип выкидыша")
+    @Persist @Required
+    public Long getTypeMisbirth() {return theTypeMisbirth;}
+    public void setTypeMisbirth(Long aTypeMisbirth) {theTypeMisbirth = aTypeMisbirth;}
+    /** Дата выкидыша */
+    @Comment("Дата выкидыша")
+    @DateString
+    @DoDateString
+    @Persist @Required
+    public String getMisbirthDate() {return theMisbirthDate;}
+    public void setMisbirthDate(String aMisbirthDate) {theMisbirthDate = aMisbirthDate;}
+    /** Тип выкидыша */
+    @Comment("Тип выкидыша")
+    @Persist @Required
+    public Long getNumFetus() {return theNumFetus;}
+    public void setNumFetus(Long aNumFetus) {theNumFetus = aNumFetus;}
+    /** ЭКО? */
+    @Comment("ЭКО?")
+    @Persist
+    public Boolean getIsECO() {return theIsECO;}
+    public void setIsECO(Boolean aIsECO) {theIsECO = aIsECO;}
+    /** Состояла на учёте в ЖК? */
+    @Comment("Состояла на учёте в ЖК?")
+    @Persist
+    public Boolean getIsRegisteredWithWomenConsultation() {return theIsRegisteredWithWomenConsultation;}
+    public void setIsRegisteredWithWomenConsultation(Boolean aIsRegisteredWithWomenConsultation) {theIsRegisteredWithWomenConsultation = aIsRegisteredWithWomenConsultation;}
 
     /** СМО */
     private Long theMedCase;
-    /** Классификация */
-    private Long theRobsonType;
     /** Пользователь, который последний редактировал запись */
     private String theEditUsername;
     /** Пользователь, который создал запись */
@@ -90,4 +117,16 @@ public class RobsonClassForm extends IdEntityForm {
     private String theEditDate;
     /** Дата создания */
     private String theCreateDate;
+    /** Срок беременности (нед) */
+    private String theDurationPregnancy;
+    /** Тип выкидыша */
+    private Long theTypeMisbirth;
+    /** Дата выкидыша */
+    private String theMisbirthDate;
+    /** Кол-во плодов */
+    private Long theNumFetus;
+    /** ЭКО? */
+    private Boolean theIsECO;
+    /** Состояла на учёте в ЖК? */
+    private Boolean theIsRegisteredWithWomenConsultation;
 }

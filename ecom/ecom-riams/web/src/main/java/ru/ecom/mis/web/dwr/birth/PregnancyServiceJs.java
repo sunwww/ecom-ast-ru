@@ -78,11 +78,12 @@ public class PregnancyServiceJs {
 		IPregnancyService service = Injection.find(aRequest).getService(IPregnancyService.class) ;
 		return  service.calcInfRiskEstimation(aWaterlessDuration, aMotherTemperature, aWaterNature, aApgar, aNewBornWeight, aMotherInfectiousDiseases) ;
 	}
-	//Milamesher #131 есть ли уже классификации Робсона в СЛО
-	public String getIfRobbsonClassAlreadyExists(Long aSlo, HttpServletRequest aRequest) throws NamingException {
+	//Milamesher #131,#132 есть ли уже классификации Робсона/выкидыш в СЛО
+	public String getIfRobbsonClassOrMisbirthAlreadyExists(Long aSlo, Boolean ifRobson,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sql = new StringBuilder();
-		Collection<WebQueryResult> res = service.executeNativeSql("select id from robsonclass where medcase_id="+aSlo);
+		Collection<WebQueryResult> res = service.executeNativeSql(
+				"select id from " + (ifRobson? "robsonclass" : "misbirth") +  " where medcase_id="+aSlo);
 		return (res.isEmpty())? "" : res.iterator().next().get1().toString();
 	}
 }

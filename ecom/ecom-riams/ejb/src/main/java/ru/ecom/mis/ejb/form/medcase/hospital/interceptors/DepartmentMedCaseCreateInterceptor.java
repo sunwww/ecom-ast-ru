@@ -81,13 +81,16 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		if (form.getPrevMedCase()!=null) {
 			DepartmentMedCase prevMedCase = manager.find(DepartmentMedCase.class, form.getPrevMedCase());
 			if (prevMedCase.getDepartment().getIsMaternityWard()!=null && prevMedCase.getDepartment().getIsMaternityWard() ) {
-				if (!noCheckPregnancy && !isPregnancyExists(manager, prevMedCase)) {
-					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам!");
-				}
+				//Milamesher #132 Карта оценки риска обязательна всегда
+				//Обазятельны либо роды, либо выкидыш
 				//lastrelease milamesher 10.04.2018 #97
 				if (!isRiskCardBornExists(manager, prevMedCase) && !isDsO82(manager, form.getPrevMedCase())) {
 					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не создана карта оценки риска!");
 				}
+				if (!noCheckPregnancy && !isPregnancyExists(manager, prevMedCase) && !isMisbirthClassExists(manager, form.getPrevMedCase())) {
+					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам либо данные по выкидышу!");
+				}
+
 				//lastrelease milamesher 10.12.2018 #131
 				//запустить с 01.01.2019
 		/*if (form.getPrevMedCase()!=null &&!isRobsonClassExists(manager, form.getPrevMedCase() ) && !isDsO82(manager, form.getPrevMedCase())) {
@@ -130,7 +133,18 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			return true;
 		}
 	}
-
+	//Milamesher 24122018 #132 существует ли выкидыш
+	private static boolean isMisbirthClassExists(EntityManager aManager, Long aMedCaseId) {
+		if (aMedCaseId==null) {return true;}
+		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
+		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
+			String sql = "select count(id) from misbirth where medcase_id= "+aMedCaseId;
+			Object list = aManager.createNativeQuery(sql).getSingleResult();
+			return Long.valueOf(list.toString())>0;
+		} else {
+			return true;
+		}
+	}
 	/** Проверяем - заполнены ли данные по родам
 	 * Если диагноз входит в список разрешенных, то разрешаем перевод без заполнения информации о родах*/
     public static boolean isPregnancyExists(EntityManager aManager, Long aMedCase) {

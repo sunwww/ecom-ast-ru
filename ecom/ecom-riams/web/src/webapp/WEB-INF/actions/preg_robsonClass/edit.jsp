@@ -55,7 +55,7 @@
             <msh:ifFormTypeIsCreate formName="preg_robsonClassForm">
             //Если уже есть и мы переходим с СЛО, запустить просмотр существующей
             function loadExisting() {
-                PregnancyService.getIfRobbsonClassAlreadyExists($('medCase').value,{
+                PregnancyService.getIfRobbsonClassOrMisbirthAlreadyExists($('medCase').value,true,{
                     callback: function(aResult) {
                         if (aResult!='')
                             window.location.href='entityParentEdit-preg_robsonClass.do?id='+aResult;
@@ -90,7 +90,7 @@
                     }
                 });
             }
-            loadYesNoRobson();
+            window.onload=function() { loadYesNoRobson(); }
             function save() {
                 var id=checkYesNoGetIndex();
                 if (id!=-1) {

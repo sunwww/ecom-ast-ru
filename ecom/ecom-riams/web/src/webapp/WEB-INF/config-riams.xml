@@ -26,6 +26,7 @@
     <form-bean name="preg_newBornInfRiskEstimationForm" type="ru.ecom.mis.ejb.form.birth.NewBornInfRiskEstimationForm"/>
     <form-bean name="preg_childBirthForm" type="ru.ecom.mis.ejb.form.birth.ChildBirthForm"/>
     <form-bean name="preg_robsonClassForm" type="ru.ecom.mis.ejb.form.birth.RobsonClassForm"/>
+    <form-bean name="preg_misbirthForm" type="ru.ecom.mis.ejb.form.birth.MisbirthForm"/>
     <form-bean name="preg_childBirthForPregnancyForm" type="ru.ecom.mis.ejb.form.birth.ChildBirthForPregnancyForm"/>
     <form-bean name="preg_audiologicScreeningForm" type="ru.ecom.mis.ejb.form.birth.AudiologicScreeningForm"/>
     <form-bean name="preg_hereditaryScreeningForm" type="ru.ecom.mis.ejb.form.birth.HereditaryScreeningForm"/>

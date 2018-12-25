@@ -561,12 +561,18 @@ left join Patient pat on pat.id=wan.person_id
                 </msh:section>
             </msh:ifInRole>
             <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/View">
-                <ecom:webQuery name="childBirth" nativeSql="select cb.id,cb.birthFinishDate, count(nb.id), list(pat.firstname||' ' ||pat.middlename),vocr.name from medcase mc
-                    left join childbirth cb on cb.medcase_id=mc.id
-                    left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id
-                    left join robsonclass rc on rc.medcase_id=mc.id
-                    left join VocRobsonClass vocr on vocr.id=robsontype_id
-                     where mc.id='${param.id}'  and (vocr.name is not null or cb.id is not null) group by cb.id,cb.birthFinishDate,vocr.name"/>
+                <ecom:webQuery name="childBirth" nativeSql="select cb.id,cb.birthFinishDate, count(nb.id), list(pat.firstname||' ' ||pat.middlename),vocr.name,
+                to_char(mb.misbirthdate,'dd.mm.yyyy')||' '||vtmb.name as txt1
+                ,'&chbId='||coalesce(cb.id,0)||'&rbId='||coalesce(rc.id,0)||'&mbId='||coalesce(mb.id,0)||'&mcId='||coalesce(mc.id,0) as txt2
+                from medcase mc
+                left join childbirth cb on cb.medcase_id=mc.id
+                left join newborn nb on nb.childbirth_id=cb.id left join patient pat on pat.id=nb.patient_id
+                left join robsonclass rc on rc.medcase_id=mc.id
+                left join VocRobsonClass vocr on vocr.id=robsontype_id
+                left join misbirth mb on mb.medcase_id=mc.id
+                left join VocTypeMisbirth vtmb on vtmb.id=mb.typemisbirth_id
+                where mc.id='${param.id}'  and (vocr.name is not null or cb.id is not null or mb.misbirthdate is not null) group by cb.id,cb.birthFinishDate,
+                vocr.name,mb.misbirthdate,vtmb.name,rc.id,mb.id,mc.id"/>
                 <msh:section>
                     <msh:sectionTitle>
                         Роды
@@ -574,17 +580,20 @@ left join Patient pat on pat.id=wan.person_id
                         </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_robsonClass.do?id=${param.id}">Классификация Робсона</a>
                         </msh:ifInRole>
+                        <msh:ifInRole roles="/Policy/Mis/Pregnancy/ChildBirth/Create"><a href="entityParentPrepareCreate-preg_misbirth.do?id=${param.id}">Выкидыш</a>
+                        </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/NewBorn/Create">
                             <a href="entityParentPrepareCreate-preg_neonatalNewBorn.do?id=${param.id}"> Добавить инф. о новорожденному</a>
                         </msh:ifInRole>
                     </msh:sectionTitle>
                     <msh:sectionContent>
-                        <msh:table name="childBirth" action="entityParentView-preg_childBirth.do" idField="1">
+                        <msh:table name="childBirth" action="js-stac_slo-gotoChildBirthOrMisbirthOrRobson.do" cellFunction="true" idField="7" openNewWindow="true">
                             <msh:tableColumn property="sn" columnName="##"/>
-                            <msh:tableColumn property="2" columnName="Дата окончания родов" />
-                            <msh:tableColumn property="3" columnName="Кол-во плодов" />
-                            <msh:tableColumn property="4" columnName="ФИО ребенка (детей)" />
-                            <msh:tableColumn property="5" columnName="Классификация Робсона" />
+                            <msh:tableColumn property="2" columnName="Дата окончания родов" addParam="&type=chb"/>
+                            <msh:tableColumn property="3" columnName="Кол-во плодов" addParam="&type=chb"/>
+                            <msh:tableColumn property="4" columnName="ФИО ребенка (детей)" addParam="&type=chb"/>
+                            <msh:tableColumn property="5" columnName="Классификация Робсона" addParam="&type=rb"/>
+                            <msh:tableColumn property="6" columnName="Выкидыш" addParam="&type=mb"/>
                         </msh:table>
                     </msh:sectionContent>
                 </msh:section>
