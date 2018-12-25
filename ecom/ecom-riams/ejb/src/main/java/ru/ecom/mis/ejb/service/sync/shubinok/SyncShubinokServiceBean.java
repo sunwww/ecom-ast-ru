@@ -21,6 +21,7 @@ import ru.ecom.mis.ejb.domain.patient.voc.*;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
 import ru.ecom.poly.ejb.domain.Medcard;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
@@ -106,6 +107,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     		}
             int i = 0;
             long id=0 ;
+            HashMap<String,RegInsuranceCompany> companyHashMap = new HashMap<>();
             while (true) {
             	List<PatientAttachedImport> paiList= (List<PatientAttachedImport>)theManager.createQuery("from PatientAttachedImport where time = :time and id > :id order by id")
                 		.setMaxResults(500)
@@ -115,17 +117,17 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
             	if (paiList.isEmpty()) {break;}
             	//nextData=false ;
 	            for (PatientAttachedImport patImp: paiList) {
-	            	
-	            	
+	            	i++;
 	            	//PatientAttachedImport patImp = pats.next();
-	                if (monitor.isCancelled()) {
+	                if (i%100==0 && monitor.isCancelled()) {
 	                    throw new IllegalMonitorStateException("Прервано пользователем");
 	                }
 	               // i++;
 	                String aPolicyNumber = patImp.getPolicyNumber();
 	                String aPolicySeries = patImp.getPolicySeries();
 	                id=patImp.getId() ;
-	                RegInsuranceCompany insComp = findEntity(RegInsuranceCompany.class, "smocode", patImp.getInsCompName()) ;
+	                RegInsuranceCompany insComp = companyHashMap.computeIfAbsent(patImp.getInsCompName(),k->findEntity(RegInsuranceCompany.class, "smocode", k));
+
 	                patImp.setInsuranceCompany(insComp) ;
 	                MedPolicyOmc medPolicy = (MedPolicyOmc) patImp.getMedPolicy() ;
 	            	if (medPolicy==null && insComp!=null && aPolicyNumber!=null || !aPolicyNumber.trim().equals("")) {
@@ -187,11 +189,10 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	VocIdentityCard passportType=findOrCreateIdentity(aEntity.getDocType()) ;
     	OmcOksm nat = findOrCreateNationality(aEntity.getCountry()) ;
     	boolean isNew = false ;
-    	String firRecord = ""; 
+    	StringBuilder firRecord = new StringBuilder();
     	Patient patient ;
-    	if (aPatientId==null||aPatientId.equals(Long.valueOf(0))) {
-    		firRecord="Создан новый пациент - "+aEntity.getLastname()+" "+aEntity.getFirstname()+" "+aEntity.getMiddlename()
-    				+" д.р. "+DateFormat.formatToDate(aEntity.getBirthday())+". ";
+    	if (aPatientId==null || aPatientId.equals(0L)) {
+
     		isNew=true;
     		patient = new Patient();
     		patient.setCreateUsername("fond_base") ;
@@ -209,15 +210,15 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         	patient.setBirthPlace(aEntity.getBirthPlace()!=null?aEntity.getBirthPlace():"") ;
         	//Гражданство
         	patient.setNationality(nat) ;
+			firRecord.append("Создан новый пациент: ").append(patient.getPatientInfo()).append(".");
     	} else {
     		patient = theManager.find(Patient.class,aPatientId) ;
-    		firRecord="Пациент "+patient.getPatientInfo()+ " найден в базе. ";
+    		firRecord.append("Пациент ").append(patient.getPatientInfo()).append(" найден в базе. ");
     		aEntity.setIsUpdatePatient(true) ;
-    		if ((patient.getBirthPlace()==null||patient.getBirthPlace().equals(""))&&aEntity.getBirthPlace()!=null) {
+    		if (!StringUtil.isNullOrEmpty(patient.getBirthPlace())) {
     			patient.setBirthPlace(aEntity.getBirthPlace()) ;
     		}
-    		if (((patient.getPassportSeries()==null||patient.getPassportSeries().equals(""))&&aEntity.getDocSeries()!=null)||
-    				patient.getPassportDateIssued()!=null&&aEntity.getDocDateIssued()!=null&&aEntity.getDocDateIssued().getTime()>patient.getPassportDateIssued().getTime()) {
+    		if (patient.getPassportDateIssued()==null || (aEntity.getDocDateIssued()!=null && aEntity.getDocDateIssued().getTime() > patient.getPassportDateIssued().getTime())){
     			//Обновляем, если паспорт пациента не заполнен, либо дата выдачи паспорта по фонду больше даты выдачи паспорта пациента
     			patient.setPassportSeries(aEntity.getDocSeries()) ;
             	patient.setPassportNumber(aEntity.getDocNumber()) ;
@@ -249,7 +250,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	patient.setHouseBuilding(aEntity.getHousing());
     	theManager.persist(patient);
     	//Район
-    	if (aEntity.getSex()!=null&&!aEntity.getSex().equals("")) patient.setSex(findEntity(VocSex.class,OMCCODE,aEntity.getSex()));
+    	if (!StringUtil.isNullOrEmpty(aEntity.getSex())) patient.setSex(findEntity(VocSex.class,OMCCODE,aEntity.getSex()));
     	
     	if (aEntity.getInsuranceCompany()!=null) {
 	    	if(aMedPolicy==null) {
@@ -282,7 +283,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	theManager.merge(aEntity);
     	
     	//theManager.persist(aEntity);
-    	String patientSync = new StringBuilder().append("Ф").append(patient.getId()).toString() ;
+    	String patientSync = "Ф"+patient.getId() ;
     	if (isNew) {
     		Medcard medcard = new Medcard() ;
     		medcard.setNumber(patientSync) ;
@@ -293,13 +294,10 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	}
     	//Обновляем прикрепления
     		if (aEntity.getLpuauto()!=null && !aEntity.getLpuauto().equals("") &&!aEntity.getLpuauto().equals("0")) {
-    			firRecord+=	thePatientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
-        				, aEntity.getLpuauto(), DateFormat.formatToDate(aEntity.getLpuDateFrom()), aEntity.getDoctorSnils(), updateAttachment, true);
-    			
+    			firRecord.append(thePatientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
+        				, aEntity.getLpuauto(), DateFormat.formatToDate(aEntity.getLpuDateFrom()), aEntity.getDoctorSnils(), updateAttachment, true));
         	}
-    	
-    	
-    	
+
 		if (patient.getPatientSync()==null || patient.getPatientSync().equals("")) {
 			patient.setPatientSync(patientSync) ;
 	    	theManager.persist(patient);
@@ -308,10 +306,11 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 
 			FondImportReestr fir = new FondImportReestr();
 			fir.setImportType(fi);
-			if (firRecord.length()>255){
+		/*	if (firRecord.length()>255){
 				firRecord = firRecord.substring(0, 255);
 			}
-			fir.setImportResult(firRecord);
+			*/
+			fir.setImportResult(firRecord.toString());
 			fir.setNumberFond(String.valueOf(aEntity.getId()));
 			theManager.persist(fir);	
 		} catch (Exception e) {
@@ -393,12 +392,9 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	return theHashRayon.get(ind.toString());
     }
     private OmcOksm findOrCreateNationality(String aCode) {
-    	if (aCode==null || aCode.trim().equals("")) aCode="RUS" ;
+    	if (StringUtil.isNullOrEmpty(aCode)) aCode="RUS" ;
     	aCode = aCode.toUpperCase().trim() ;
-    	if (theHashNationality.get(aCode)==null) {
-    		theHashNationality.put(aCode, findEntity(OmcOksm.class,"alfa2",aCode)) ;
-    	} 
-    	return theHashNationality.get(aCode) ;
+    	return theHashNationality.computeIfAbsent(aCode,k->findEntity(OmcOksm.class,"alfa2",k))  ;
     }
 	private VocIdentityCard findOrCreateIdentity(String aCode) {
 		aCode = aCode.toUpperCase() ;
@@ -407,13 +403,9 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         } 
         return theHashIdentity.get(aCode);
     }
-	
-	
-	
-	
+
 	//address
-	
-	
+
 	private Long getKladrByRayon(String aRegion, String aKladrRayon, String aCity, String aNp, String aStreet, String aIndex,long adrAstr) {
 		Long adr = null ;
 		StringBuilder sql ;

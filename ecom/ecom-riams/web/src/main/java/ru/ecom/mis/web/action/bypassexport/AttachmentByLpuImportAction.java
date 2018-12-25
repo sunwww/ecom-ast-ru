@@ -22,33 +22,27 @@ public class AttachmentByLpuImportAction extends BaseAction {
     	 IRemoteMonitorService monitorService = (IRemoteMonitorService) Injection.find(aRequest).getService("MonitorService") ;
 	     
     	final long monitorId = monitorService.createMonitor();
-    	if (form!=null ) {
-    		FormFile formFile = form.getAttachmentFile();
-    	
-    		if (formFile!=null&&!formFile.equals("")) {
-    			final IImportFormatService service = Injection.find(aRequest).getService(IImportFormatService.class);
-    			 final String originalFileName = form.getAttachmentFile().getFileName(); 
-    		     final String tempFileName = FileUploadUtil.writeFile(formFile) ;
-    		     final ImportFileForm timeForm = new ImportFileForm();
-    		        timeForm.setActualDateFrom(form.getPeriod());
-    		        timeForm.setActualDateTo(form.getPeriod());
-    		        timeForm.setImportFormat(form.getImportFormat());
-    		        timeForm.setComment("AUTOIMPORT, Дата импорта = "+DateFormat.formatToDate(new java.util.Date()));
-    		        
-    		    //   new Thread() {
-    		    //       public synchronized void run() {
-    		                try {
-    		                	service.importFile(monitorId,fileId , tempFileName, originalFileName, timeForm);
-    		                   } catch (Exception e) {
-    		                	   e.printStackTrace();
-    		                    throw new IllegalStateException(e) ;
-    		                }
-    		     //       }
+		FormFile formFile = form.getAttachmentFile();
 
-    		    //    }.start();
-    		        aRequest.setAttribute("impResult", "Файл успешно проимпортирован!");
-    		} 
-    	}
+		if (formFile!=null) {
+			final IImportFormatService service = Injection.find(aRequest).getService(IImportFormatService.class);
+			final String originalFileName = form.getAttachmentFile().getFileName();
+			final String tempFileName = FileUploadUtil.writeFile(formFile) ;
+			ImportFileForm timeForm = new ImportFileForm();
+			timeForm.setActualDateFrom(form.getPeriod());
+			timeForm.setActualDateTo(form.getPeriod());
+			timeForm.setImportFormat(form.getImportFormat());
+			timeForm.setComment("AUTOIMPORT, Дата импорта = "+DateFormat.formatToDate(new java.util.Date()));
+
+			try {
+				service.importFile(monitorId, fileId, tempFileName, originalFileName, timeForm);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IllegalStateException(e) ;
+			}
+			aRequest.setAttribute("impResult", "Файл успешно проимпортирован!");
+		}
+
         return aMapping.findForward("success") ;
     }
 }

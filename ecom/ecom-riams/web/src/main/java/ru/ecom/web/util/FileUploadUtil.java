@@ -18,15 +18,15 @@ public class FileUploadUtil {
         return tempFile.getAbsolutePath() ;
     }
 
-    private static void writeFile(InputStream aInputStream, String aFilename) throws IOException {
-        int count = 0 ;
-        FileOutputStream out = new FileOutputStream(aFilename);
-        byte[] buf = new byte[8192] ;
-        while ( (count=aInputStream.read(buf)) > 0) {
-            out.write(buf, 0, count) ;
+    private static void writeFile(InputStream aInputStream, String aFilename) {
+        int count ;
+        try (FileOutputStream out = new FileOutputStream(aFilename)){
+            byte[] buf = new byte[8192] ;
+            while ( (count=aInputStream.read(buf)) > 0) {
+                out.write(buf, 0, count) ;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        out.close() ;
     }
-
-
 }

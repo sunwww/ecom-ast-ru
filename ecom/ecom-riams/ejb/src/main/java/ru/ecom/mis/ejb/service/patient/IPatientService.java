@@ -16,20 +16,20 @@ import java.util.List;
  */
 public interface IPatientService {
 	String exportDispensaryCard(java.util.Date aDateFrom, java.util.Date aDateTo, java.util.Date aDateChanged, String aPacketNumber);
-	public String getAddressByOkato (String aOkato, String aStreet);
-	public void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId);
-	public String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate
+	String getAddressByOkato (String aOkato, String aStreet);
+	void changeMedPolicyType (Long aPolicyId, Long aNewPolicyTypeId);
+	String updateOrCreateAttachment(Long aPatientId, String aCompany, String aLpu, String aAttachedType, String aAttachedDate
 			,String aDoctorSnils, boolean ignoreType, boolean updateEditDate);
-	public void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException; 
-	public boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment);
-	public boolean updateDataByFondAutomatic (Long aPatientFondId, Long aCheckId
+	void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException;
+	boolean updateDataByFondAutomaticByFIO (String aLastName, String aFirstName, String aMiddleName, String aBirthday, Long aCheckTimeId,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment);
+	boolean updateDataByFondAutomatic (Long aPatientFondId, Long aCheckId
 			,boolean needUpdatePatient, boolean needUpdateDocuments, boolean needUpdatePolicy, boolean needUpdateAttachment);
-	public PatientFondCheckData getNewPFCheckData(boolean aNeedUpdatePatient, boolean aNeedUpdateDocument, boolean aNeedUpdatePolicy, boolean aNeedUpdateAttachment); 
-	public float getImageCompress() ;
-	public String getImageDir();
-	public String getConfigValue(String aConfigName, String aDefaultValue);
-	public void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) ;
-	public void insertCheckFondData(
+	PatientFondCheckData getNewPFCheckData(boolean aNeedUpdatePatient, boolean aNeedUpdateDocument, boolean aNeedUpdatePolicy, boolean aNeedUpdateAttachment);
+	float getImageCompress() ;
+	String getImageDir();
+	String getConfigValue(String aConfigName, String aDefaultValue);
+	void insertExternalDocumentByObject(String aObject,Long aObjectId, Long aType,String aReferenceComp,String aReferenceTo, String aComment,String aUsername) ;
+	void insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
 			,String aSnils
 			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
@@ -40,7 +40,7 @@ public interface IPatientService {
 			,String aKladr,String aHouse, String aHouseBuilding, String aFlat
 			,String aLpuAttached, String aAttachedDate, String aAttachedType
 			) throws ParseException ;
-	public Long insertCheckFondData(
+	Long insertCheckFondData(
 			String aLastname,String aFirstname,String aMiddlename,String aBirthday
 			,String aSnils
 			,String aCommonNumber,String aPolicySeries,String aPolicyNumber
@@ -53,31 +53,31 @@ public interface IPatientService {
 			,String aDocumentDateIssued, String aDocumentWhomIssued, String aDoctorSnils, String aCodeDepartment
 			,String aPatientId, PatientFondCheckData aCheckTime, String aStreet, String aOkato
 			) throws ParseException ;
-	public String getCodeByMedPolicyOmc(Long aType) ;
-	public boolean isNaturalPerson(Long aPatient) ;
-	public void createNaturalPerson(Long aPatient) ;	
+	String getCodeByMedPolicyOmc(Long aType) ;
+	boolean isNaturalPerson(Long aPatient) ;
+	void createNaturalPerson(Long aPatient) ;
 	
-	public String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy) ;
-	public boolean updateDataByFond(String aUsername,Long aPatientId, String aFiodr
+	String getInfoVocForFond(String aPassportType,String aAddress, String aPolicy) ;
+	boolean updateDataByFond(String aUsername,Long aPatientId, String aFiodr
 			,String aDocument,String aPolicy,String aAddress,boolean aIsPatient, boolean aIsPolicy
 			, boolean aIsDocument, boolean aIsAddress, boolean aIsAttachment) ;
-	public boolean updateOrCreatePolicyByFond(Long aPatientId, String aRz, String aLastname, String aFirstname
+	boolean updateOrCreatePolicyByFond(Long aPatientId, String aRz, String aLastname, String aFirstname
 			, String aMiddlename, String aBirthday, String aComp, String aSeries
 			, String aNumber, String aDateFrom, String aDateTo,String aCurrentDate) ;
-	public PatientForm getPatientById(Long aId) ;
-	public String getOmcCodeByPassportType(Long aPassportType);
-	public List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) ;
-	public void movePatientDoubleData(Long aIdNew, Long aIdOld);
-	public String addPatient(String aLastname, String aFirstname, String aMiddlename,
+	PatientForm getPatientById(Long aId) ;
+	String getOmcCodeByPassportType(Long aPassportType);
+	List<VocOrgForm> findOrg(String aNewNumber, String aOldNumber, String aName) ;
+	void movePatientDoubleData(Long aIdNew, Long aIdOld);
+	String addPatient(String aLastname, String aFirstname, String aMiddlename,
 			String aBirthday, Long aSex, Long aSocialStatus, String aSnils) ;
 	
-	public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
+	String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction) throws ParseException ;
 	
     WebQueryResult findPatient(Long aLpuId, Long aLpuAreaId, String aLastname, String aYear
     		, Boolean aNext, String aIdNext) ;
     
-    public String findPatientLpuInfo(Long aAddressId, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
+    String findPatientLpuInfo(Long aAddressId, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
 
     /**
      * Прикрепление пациента к ЛПУ
@@ -85,11 +85,11 @@ public interface IPatientService {
      */
     void updatePatientLpuByAddress(Patient aPatientId) ;
     
-    public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
+    String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries) throws ParseException;
-    public String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
+    String getDoubleByBaseData(String aId, String aLastname, String aFirstname, String aMiddlename,
 			String aSnils, String aBirthday, String aPassportNumber, String aPassportSeries, String aAction,boolean aIsFullBirthdayCheck) throws ParseException;
     LpuAreaAddressPoint findPoint(Address aAddress, String aNumber, String aBuilding, Date aBirthday, String aFlat) ;
     
-    public void setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus)  ;
+    void setAddParamByMedCase(String aParam, Long aMedCase,Long aStatus)  ;
 }
