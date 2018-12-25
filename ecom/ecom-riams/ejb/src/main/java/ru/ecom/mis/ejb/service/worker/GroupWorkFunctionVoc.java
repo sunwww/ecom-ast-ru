@@ -44,7 +44,7 @@ public class GroupWorkFunctionVoc implements IAllValue {
 					.createQuery(sql.toString())
 					.getResultList() ;
 			} catch (Exception e) {
-				LOG.error("Error sql:="+e.getMessage(),e);
+				LOG.error(e.getMessage(),e);
 				return ret ;
 			}
 			for(GroupWorkFunction group : groups) {
@@ -63,21 +63,20 @@ public class GroupWorkFunctionVoc implements IAllValue {
 			Long workerId ;
 			Long function ;
 			try {
-				int ind1 = parent.indexOf("'#'");
+				int ind1 = parent.indexOf('#');
 				//int ind3 = parent.indexOf(":",ind2) ;
 				if (ind1<1) throw new IllegalArgumentException("") ;
 				if (ind1==parent.length()) throw new IllegalArgumentException("") ;
 				function = Long.valueOf(parent.substring(0,ind1)) ;
 				workerId = Long.valueOf(parent.substring(ind1+1)) ;
-
 			} catch (Exception e) {
 				return ret ;
 			}
 			Worker worker = aContext.getEntityManager().find(Worker.class, workerId) ;
 			sql.append("from GroupWorkFunction where lpu_id=:lpu and (workFunction_id=:function or  hasServiceStuff ='1')");
 			//sql.append("from BedFund where lpu_id=:lpu");
-			List<GroupWorkFunction> groups = null ;
-			try{
+			List<GroupWorkFunction> groups  ;
+			try {
 				 groups = (List<GroupWorkFunction>) aContext.getEntityManager()
 					.createQuery(sql.toString())
 					.setParameter("lpu",worker.getLpu().getId())
@@ -85,14 +84,14 @@ public class GroupWorkFunctionVoc implements IAllValue {
 					.getResultList() ;
 			} catch (Exception e) {
 				e.printStackTrace();
-				LOG.error("Error sql:="+e.getMessage(),e);
+				LOG.error(e.getMessage(),e);
 				return ret ;
 			}
 			for(GroupWorkFunction group : groups) {
 				 try {
 					 add(ret, group) ;
 				 } catch (IllegalStateException e) {
-					 LOG.error("Error sql:="+e.getMessage(),e);
+					 LOG.error(e.getMessage(),e);
 				 }
 			}
 		}
