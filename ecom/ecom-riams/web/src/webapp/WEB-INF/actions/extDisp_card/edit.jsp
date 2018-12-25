@@ -192,9 +192,9 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		var oldaction = document.forms['extDisp_cardForm'].action ;
 		document.forms['extDisp_cardForm'].action="javascript:checkDisableAgeDoubles()";
 		
-		function checkDisp(aDate) {
-			if (aDate!=null && aDate!='' && $('workFunction').value!=null && $('workFunction').value!=0) {
-				ExtDispService.checkDispService(aDate, 0,$('patient').value, $('workFunction').value,{
+		function checkDisp(aStartDate, aFinishDate) {
+			if (aStartDate!='' && aFinishDate!='' && +$('workFunction').value>0) {
+				ExtDispService.checkDispService(aFinishDate, 0,$('patient').value, $('workFunction').value,aStartDate,aFinishDate,{
 					callback: function(aResult) {
 						if (aResult.substring(0,1)=="1") {
 							if (!confirm("ВНИМАНИЕ!\n"+aResult.substring(1)+".\nВы хотите продолжить?")){
@@ -228,10 +228,9 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 	    					document.getElementById('submitButton').disabled=false;
 							document.getElementById('submitButton').value='Создать';
     					}
-    				}
-    				else {
+    				} else {
     					if (r=='1') {
-    						checkDisp($('finishDate').value);
+    						checkDisp($('startDate').value, $('finishDate').value);
     						
     					}
     					
@@ -270,17 +269,16 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
     	updateAge() ;
     	try {
     		dispTypeAutocomplete.addOnChangeCallback(function() {$('ageGroup').value='';$('ageGroupName').value='';$('healthGroup').value='';$('healthGroupName').value='';checkDispAttached('0');});
-    		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('finishDate').value);}) ;
-    		eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('finishDate').value);}) ;
+    		eventutil.addEventListener($('finishDate'),'change',function(){updateAge() ;checkDisp($('startDate').value, $('finishDate').value);}) ;
+    		eventutil.addEventListener($('workFunction'),'change',function(){checkDisp($('startDate').value, $('finishDate').value);}) ;
     		eventutil.addEventListener($('finishDate'),'blur',function(){updateAge() ;}) ;
     		} catch(e) {
 
     	}
-    	
 		</script>
 		
 		<script type="text/javascript">
-    	function DoDispCardNotReal() {
+    	function doDispCardNotReal() {
 
     		if(document.getElementById('notPaid').checked==true)
     		{ alert("Карта уже отмечена как недействительная!")} 
@@ -291,20 +289,19 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 		callback: function (aResult) {
 			if(aResult=='1'){
 				alert("Карта не найдена!")}
-			else
-			{		
-			alert("Карта отмечена как недействительная")
+			else {
+				alert("Карта отмечена как недействительная")
 			}
 			}});
     		}
 	}
 		</script>
 		<script type="text/javascript">
-    	function CheckHealthGroup() {
+  /*  	function CheckHealthGroup() {
     		if(document.getElementById('healthGroupReadOnly').value>2){
 				document.location.replace("entityParentPrepareCreate-extDisp_appointment.do?id="+document.getElementById('id').value);
 			}else alert('Можно добавить только для группы здоровья 3');
-		}
+		}*/
 		</script>
 	</tiles:put>
 	<tiles:put name="title" type="string">
@@ -321,7 +318,7 @@ where eds.card_id='${param.id}' and eds.dtype='ExtDispVisit'
 				<msh:sideLink key="ALT+N" params="id" action="/entityParentPrepareCreate-extDisp_appointment.do" name="Назначение" title="Назначение" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 				<msh:sideLink key="ALT+N" params="id" action="/js-extDisp_service-edit" name="Услуги" title="Услуги" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 			<msh:ifFormTypeIsView formName="extDisp_cardForm">
-			   <msh:sideLink key="ALT+M" params="id" action="/javascript:DoDispCardNotReal()" name="Сделать карту недействительной" title="Сделать карту недействительной" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
+			   <msh:sideLink key="ALT+M" params="id" action="/javascript:doDispCardNotReal()" name="Сделать карту недействительной" title="Сделать карту недействительной" roles="/Policy/Mis/ExtDisp/Card/Edit"/>
 			</msh:ifFormTypeIsView>
 			</msh:sideMenu>
 		</msh:ifFormTypeAreViewOrEdit>

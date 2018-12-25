@@ -128,7 +128,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 	}
 	@Transient
 	public String getStatCardBySLS() {
-		if (getParent()!=null && getParent() instanceof HospitalMedCase) {
+		if (getParent() instanceof HospitalMedCase) {
 			HospitalMedCase par = (HospitalMedCase) getParent() ;
 			return par.getStatCardNumber() ;
 		}

@@ -26,7 +26,7 @@
           <msh:autoComplete vocName="vocCategory" property="category" fieldColSpan="1" label="Категория" size="20" />
         </msh:row>
         <msh:row guid="b5f4-b971-441e-9a90-5194a8019c07">
-          <msh:autoComplete  vocName="groupWorkFunction" property="group" guid="3a3e4d1b-880-b205-715fb379b018" fieldColSpan="3" label="Групповая рабочая функция" size="50" viewAction="entityParentView-work_groupWorkFunction.do" />
+          <msh:autoComplete vocName="groupWorkFunction" property="group" guid="3a3e4d1b-880-b205-715fb379b018" fieldColSpan="3" label="Групповая рабочая функция" size="50" viewAction="entityParentView-work_groupWorkFunction.do" />
         </msh:row>
         <msh:row guid="39f80ce0-5e25-41b9-a530-d406d84bfc00">
           <msh:autoComplete viewAction="userView.do" vocName="secUser" property="secUser" label="Вход в систему" guid="8754e635-11ce-4c73-b398-4479988fd60d" fieldColSpan="3" horizontalFill="true" />
