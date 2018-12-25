@@ -255,7 +255,7 @@
         order by vrspt.strCode
 
         " />
-            <msh:table name="report16vnswod" 
+            <msh:table name="report16vnswod"  printToExcelButton="Сохранить в excel"
             viewUrl="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
              action="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
               <msh:tableColumn columnName="Наименование" property="2" />
@@ -363,7 +363,7 @@
             
             
         " />
-            <msh:table name="journal_surOperation" 
+            <msh:table name="journal_surOperation" printToExcelButton="Сохранить в excel"
             viewUrl="entityShortView-dis_document.do" 
              action="entityView-dis_document.do" idField="1">
               <msh:tableColumn columnName="##" property="sn" />
@@ -396,9 +396,7 @@
     <msh:sectionTitle>Свод</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="report16vnswod1" nativeSql="
-
- 
-select 
+select
 '&strcode='||coalesce(vdr1.codeF,vdr.codeF) ${sqlCntDaysUrl1} as codeF,coalesce(vdr1.name,vdr.name) as namevdr,case when count(distinct dd.id)<10 then list(distinct ''||dc.id) else '' end as listDC
 ,count(distinct dc.id) as cntAll
 ,sum((select max(dr.dateto)-min(dr.datefrom)+1 from disabilityrecord dr left join disabilitydocument dd1 on dd1.id=dr.disabilityDocument_id where dd.id=dd1.id and (dd1.noActuality='0' or dd1.noActuality is null) and dd1.anotherLpu_id is null and dd1.mainWorkDocumentNumber='')) as sumDays
@@ -486,16 +484,8 @@ dd.issueDate between to_date('${dateBegin}','dd.mm.yyyy')
 group by coalesce(vdr1.codeF,vdr.codeF),coalesce(vdr1.name,vdr.name)
 ${sqlCntDays1}
 
-
-
-
-
-
-
-
-
 " />
-    <msh:table name="report16vnswod1" 
+    <msh:table name="report16vnswod1" printToExcelButton="Сохранить в excel"
     viewUrl="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Наименование" property="2" />
@@ -611,17 +601,8 @@ or coalesce(vdr1.codeF,vdr.codeF)='09' or coalesce(vdr1.codeF,vdr.codeF)='03'
     ) 
 group by coalesce(vdr1.codeF,vdr.codeF),coalesce(vdr1.name,vdr.name)
 ${sqlCntDays}
-
-
-
-
-
-
-
-
-
 " />
-    <msh:table name="report16vnswod" 
+    <msh:table name="report16vnswod" printToExcelButton="Сохранить в excel"
     viewUrl="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}" 
      action="mis_report_16vn.do?typeView=${typeView}&noViewForm=1&period=${dateBegin}-${dateEnd}" idField="1" guid="b621e361-1e0b-4ebd-9f58-b7d919b45bd6">
       <msh:tableColumn columnName="Наименование" property="2" />
@@ -665,9 +646,7 @@ ${sqlCntDays}
     <msh:sectionTitle>Список пациентов</msh:sectionTitle>   
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
-    
-    
-    select 
+    select
 dd.id as soid
 
 ,p.lastname||' '||p.firstname||' '||p.middlename
@@ -746,7 +725,7 @@ order by p.lastname,p.firstname,p.middlename
     
     
 " />
-    <msh:table name="journal_surOperation" 
+    <msh:table name="journal_surOperation" printToExcelButton="Сохранить в excel"
     viewUrl="entityShortView-dis_document.do" 
      action="entityView-dis_document.do" idField="1">
       <msh:tableColumn columnName="##" property="sn" />
@@ -758,7 +737,6 @@ order by p.lastname,p.firstname,p.middlename
     </msh:table>
     </msh:sectionContent>
     </msh:section>  
-      		
     		<%
     }
     }
