@@ -642,4 +642,32 @@ public class DisabilityServiceJs {
 			}
 		}
 	}
+	//Milamesher 25122018 показать все случаи нетрудоспособности по disdocument_id
+	public String getDisCasesInJson(String documentId, HttpServletRequest aRequest) throws NamingException,SQLException {
+		IWebQueryService service =  Injection.find(aRequest,null).getService(IWebQueryService.class) ;
+		return service.executeSqlGetJson("select dc.id\n" +
+				"  \t, to_char(min(dr.datefrom),'dd.mm.yyyy') as mindatefrom\n" +
+				"  \t, case when \n" +
+				"count(case when dr.dateto is null then '1' else null end)>0 \n" +
+				"then '-' else to_char(max(dr.dateto),'dd.mm.yyyy') end maxdateto \n" +
+				", case when \n" +
+				"count(case when dr.dateto is null then '1' else null end)>0 \n" +
+				"then null \n" +
+				"else \n" +
+				"case when max(dr.dateto)=min(dr.datefrom) then '1' else max(dr.dateto)-min(dr.datefrom)+1 end end\n" +
+				"  \tfrom disabilitycase dc\n" +
+				"  \tleft join disabilitydocument dd on dd.disabilitycase_id=dc.id\n" +
+				"  \tleft join disabilityrecord dr on dr.disabilitydocument_id=dd.id \n" +
+				"  \twhere dc.patient_id=(select distinct _dc.patient_id from disabilitycase _dc \n" +
+				"left join disabilitydocument _dd on _dd.disabilitycase_id=_dc.id\n" +
+				"where _dd.id='"+documentId+"')\n" +
+				"  \tgroup by dc.id\n" +
+				"  \torder by dc.id",null);
+	}
+	//Milamesher 25122018 перенести ЛН в другой СНТ
+	public String moveToNewDisCase(String documentId, String newCaseId,HttpServletRequest aRequest) throws NamingException,SQLException {
+		IWebQueryService service =  Injection.find(aRequest,null).getService(IWebQueryService.class) ;
+		service.executeUpdateNativeSql("update disabilitydocument set disabilitycase_id='"+newCaseId+"' where id='"+documentId+"'");
+		return "ЛН перенесён!";
+	}
 }

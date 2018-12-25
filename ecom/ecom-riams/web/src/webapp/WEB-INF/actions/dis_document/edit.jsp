@@ -514,6 +514,7 @@
                 <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-dis_document" name="Изменить" roles="/Policy/Mis/Disability/Case/Document/Edit" guid="d8ee3597-d55e-4f08-a868-c58d8dfc57c4" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-dis_document" name="Удалить" roles="/Policy/Mis/Disability/Case/Document/Delete" guid="4565603e-337e-48eb-82eb-79bd40cd5108" />
                 <msh:sideLink confirm="Действительно?" params="id" action="/javascript:unattachEln()" name="Отвязать ЭЛН" roles="/Policy/Mis/Disability/ElectronicDisability/UnattachEln"/>
+                <msh:sideLink key="ALT+9" action="/javascript:showtoAnotherDisCase()" name="Перенести в другой СНТ" roles="/Policy/Mis/Disability/Case/Document/Edit" guid="d8ee3597-d55e-4f08-a868-c58d8dfc57c4" />
                 <tags:closeDisDocument reason="closeReason"
                                        roles="/Policy/Mis/Disability/Case/Document/Edit" key="ALT+3"
                                        name="doc" title="Закрыть" otherCloseDate="otherCloseDate"
@@ -523,6 +524,7 @@
                                             name="duplicate" title="Дубликат (испорчен)" confirm="Вы действительно хотите создать дубликат текущего документа нетрудоспособности?" />
                 <tags:dis_workComboDocument roles="/Policy/Mis/Disability/Case/Document/Create" key="ALT+5"
                                             name="workCombo" title="Бланк по совместительству" confirm="Вы действительно хотите создать документ по совместительству на основе текущего документа нетрудоспособности?" />
+                <tags:toAnotherDisCase name="toAnotherDisCase"  documentId="${param.id}"/>
             </msh:sideMenu>
             <msh:sideMenu title="Печать">
                 <msh:sideLink  name="шаблон 1" key="ALT+6" action="/javascript:printDoc(1,'.do')"/>
