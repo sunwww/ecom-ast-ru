@@ -91,7 +91,7 @@ where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
-and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 )
  ,'&depId='||coalesce(dep.id,0)||'&depname='||coalesce(dep.name,'')
@@ -111,10 +111,81 @@ where qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
-and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
 )=0 then '0' else
  round(100*(select count(distinct mc.id) as noque
+  from medcase mc
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+  left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+ ${department} and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mc.DTYPE='DepartmentMedCase'
+and dep.name is not null)/
+cast((select count(distinct mc.id) as pr203 from medcase mc
+ left join diagnosis ds on ds.medcase_id=mc.id
+ left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join MisLpu dep2 on dep2.id=mc.department_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mc.patient_id
+where qd.vocidc10_id=ds.idc10_id
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+ ${department} and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
+end as per1
+,(select count(distinct mc.id) as noquedraft
+  from medcase mc
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+  left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+ ${department} and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
+and dep.name is not null
+)
+, case when (select count(distinct mc.id) as noquedraft
+  from medcase mc
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+  left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+ ${department} and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mc.DTYPE='DepartmentMedCase'
+and dep.name is not null
+)=0 then '0' else
+ round(100*(select count(distinct mc.id) as noquedraft
   from medcase mc
  left join MisLpu dep2 on dep2.id=mc.department_id
  left join Medcase dmc on dmc.parent_id=mc.id
@@ -146,7 +217,7 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
-end
+end  as per2
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -169,7 +240,9 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                     <msh:tableColumn columnName="Отделение" property="1" addParam="&short=Short&view=treatDoctors&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}" />
                     <msh:tableColumn columnName="ВСЕГО выписаны" property="2" isCalcAmount="true" addParam="&short=Short&view=dishAll&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
                     <msh:tableColumn columnName="Выписаны по 203 приказу" property="3"  isCalcAmount="true" addParam="&short=Short&view=203All&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу + Экспертная карта" property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
+                    <msh:tableColumn columnName="Карта врача" property="7"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}&isDraft=&draft=врача"/>
+                    <msh:tableColumn columnName="%" property="8" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Экспертная карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                     <msh:tableColumn columnName="%" property="6" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -211,11 +284,89 @@ left join medcase slo1 on slo1.prevMedCase_id=mc.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
- and qe.experttype='BranchManager' and qek.code='PR203'
+ and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
  ,case when (select count(distinct mc.id) as noque
+from medcase mc
+left join medcase slo1 on slo1.prevMedCase_id=mc.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+  left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
+and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+=0 then '0' else
+round(100*(select count(distinct mc.id) as noque
+from medcase mc
+left join medcase slo1 on slo1.prevMedCase_id=mc.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+  left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
+and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+/cast((select count(distinct mc.id) as pr203
+from medcase mc
+left join medcase slo1 on slo1.prevMedCase_id=mc.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join diagnosis ds on ds.medcase_id=mc.id
+ left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mc.patient_id
+ where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+  and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
+end as per1
+,(select count(distinct mc.id) as noquedraft
+  from medcase mc
+left join medcase slo1 on slo1.prevMedCase_id=mc.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+  left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mc.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203'
+and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
+ ,case when (select count(distinct mc.id) as noquedraft
 from medcase mc
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
  left join medcase slo2 on slo2.prevMedCase_id=slo1.id
@@ -236,7 +387,7 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null))
 =0 then '0' else
-round(100*(select count(distinct mc.id) as noque
+round(100*(select count(distinct mc.id) as noquedraft
 from medcase mc
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
  left join medcase slo2 on slo2.prevMedCase_id=slo1.id
@@ -272,7 +423,7 @@ left join patient pat on pat.id=mc.patient_id
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
-end
+end as per2
  from medcase slo
  left join medcase slo1 on slo1.prevMedCase_id=slo.id
  left join medcase slo2 on slo2.prevMedCase_id=slo1.id
@@ -292,7 +443,9 @@ end
                     <msh:tableColumn columnName="Отделение" property="1" addParam="&short=Short&view=treatDoctors2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
                     <msh:tableColumn columnName="ВСЕГО выписаны" property="2" isCalcAmount="true" addParam="&short=Short&view=dishAll2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"/>
                     <msh:tableColumn columnName="Выписаны по 203 приказу" property="3"  isCalcAmount="true" addParam="&short=Short&view=203All2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу + Экспертная карта" property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"/>
+                    <msh:tableColumn columnName="Карта врача" property="6"  isCalcAmount="true" addParam="&short=Short&view=203EK2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&isDraft=&draft=врача"/>
+                    <msh:tableColumn columnName="%" property="7" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Экспертная карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                     <msh:tableColumn columnName="%" property="5" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -370,7 +523,7 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'ЭК есть' else '-' end )
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -378,7 +531,15 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then
 (select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -386,7 +547,7 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) else
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) else
 (select
 '&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -402,11 +563,13 @@ left join diagnosis ds on ds.medcase_id=mc.id
 left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
   and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and dep.id=${param.depId}
  and dep.name is not null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  group by mc.id,pat.id
 "/>
 
@@ -420,6 +583,7 @@ and dep.id=${param.depId}
                            action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Карта врача есть?" property="4" />
                     <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
                 </msh:table>
             </msh:sectionContent>
@@ -450,7 +614,8 @@ where mc1.id=mc.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
- and qe.experttype='BranchManager' and qek.code='PR203'  and dep.name is not null
+ and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
+ ${param.isDraft}
   )
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -467,11 +632,12 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
- and qe.experttype='BranchManager' and qek.code='PR203'  and dep.name is not null
+ and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
+ ${param.isDraft}
 group by mc.id,pat.id,qec.id"/>
 
                 <form action="report203.do" method="post" target="_blank">
-                    Пациенты, выписанные по 203 приказу из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo}, в СЛС которых созданы экспертные карты заведующего
+                    Пациенты, выписанные по 203 приказу из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo}, в СЛС которых созданы экспертные карты ${param.draft}
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
@@ -529,7 +695,15 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'ЭК есть' else '-' end )
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as вщс
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -563,12 +737,14 @@ left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
 left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
 
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
- and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true))
   "/>
 
                 <form action="report203.do" method="post" target="_blank">
@@ -581,6 +757,7 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
                            action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Карта врача есть?" property="4" />
                     <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
                 </msh:table>
             </msh:sectionContent>
@@ -613,6 +790,7 @@ where mc1.id=mc.id and qd.vocidc10_id=ds.idc10_id
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ ${param.isDraft}
   )
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -633,11 +811,12 @@ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ ${param.isDraft}
 group by mc.id,pat.id,qec.id
   "/>
 
                 <form action="report203.do" method="post" target="_blank">
-                    Пациенты, переведённые из АКУШЕРСКОГО ОТДЕЛЕНИЯ ПАТОЛОГИИ БЕРЕМЕННОСТИ в РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ за период с ${dateBegin} ${dateEnd}
+                    Пациенты, переведённые из АКУШЕРСКОГО ОТДЕЛЕНИЯ ПАТОЛОГИИ БЕРЕМЕННОСТИ в РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ за период с ${dateBegin} ${dateEnd}, в СЛС которых созданы экспертные карты  ${param.draft}
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
@@ -693,7 +872,7 @@ where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
-and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mcinner.DTYPE='DepartmentMedCase'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and mcinner.ownerFunction_id=mc.ownerFunction_id
 )
@@ -714,11 +893,86 @@ where qd.vocidc10_id=ds.idc10_id
 and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 ${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
-and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mcinner.DTYPE='DepartmentMedCase'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mcinner.DTYPE='DepartmentMedCase'
 and dep.name is not null
 and mcinner.ownerFunction_id=mc.ownerFunction_id
 )=0 then '0' else
  round(100*(select count(distinct mcinner.id) as noque
+  from medcase mcinner
+ left join MisLpu dep2 on dep2.id=mcinner.department_id
+ left join Medcase dmc on dmc.parent_id=mcinner.id
+  left join Patient pat on pat.id=mcinner.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mcinner.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+${department} and dep.id=${param.depId}  and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true and mcinner.DTYPE='DepartmentMedCase'
+and dep.name is not null
+and mcinner.ownerFunction_id=mc.ownerFunction_id)/
+cast((select count(distinct mcinner.id) as pr203 from medcase mcinner
+ left join diagnosis ds on ds.medcase_id=mcinner.id
+ left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join MisLpu dep2 on dep2.id=mcinner.department_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mcinner.patient_id
+where qd.vocidc10_id=ds.idc10_id
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+  ${department} and dep.id=${param.depId}  and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and mcinner.DTYPE='DepartmentMedCase' and dep.name is not null
+and mcinner.ownerFunction_id=mc.ownerFunction_id
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
+end as per1
+,(select count(distinct mcinner.id) as noquedraft
+  from medcase mcinner
+ left join MisLpu dep2 on dep2.id=mcinner.department_id
+ left join Medcase dmc on dmc.parent_id=mcinner.id
+  left join Patient pat on pat.id=mcinner.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mcinner.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mcinner.DTYPE='DepartmentMedCase'
+and dep.name is not null
+and mcinner.ownerFunction_id=mc.ownerFunction_id
+)
+, case when (select count(distinct mcinner.id) as noquedraft
+  from medcase mcinner
+ left join MisLpu dep2 on dep2.id=mcinner.department_id
+ left join Medcase dmc on dmc.parent_id=mcinner.id
+  left join Patient pat on pat.id=mcinner.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mcinner.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+and mcinner.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+${department} and dep.id=${param.depId} and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and qe.experttype='BranchManager' and qek.code='PR203' and mcinner.DTYPE='DepartmentMedCase'
+and dep.name is not null
+and mcinner.ownerFunction_id=mc.ownerFunction_id
+)=0 then '0' else
+ round(100*(select count(distinct mcinner.id) as noquedraft
   from medcase mcinner
  left join MisLpu dep2 on dep2.id=mcinner.department_id
  left join Medcase dmc on dmc.parent_id=mcinner.id
@@ -752,7 +1006,7 @@ and mcinner.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and dep2.id=dep.id and mcinner.DTYPE='DepartmentMedCase' and dep.name is not null
 and mcinner.ownerFunction_id=mc.ownerFunction_id
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
-end
+end as per2
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -779,7 +1033,9 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                     <msh:tableColumn columnName="Врач" property="2" addParam="&nul=nul" />
                     <msh:tableColumn columnName="ВСЕГО выписаны" property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
                     <msh:tableColumn columnName="Выписаны по 203 приказу" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу + Экспертная карта" property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
+                    <msh:tableColumn columnName="Карта врача" property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача"/>
+                    <msh:tableColumn columnName="%" property="9" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Экспертная карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                     <msh:tableColumn columnName="%" property="7" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -837,7 +1093,15 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'ЭК есть' else '-' end )
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -869,11 +1133,13 @@ left join diagnosis ds on ds.medcase_id=mc.id
 left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
 left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
   and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
 and dep.id=${param.depId}
  and dep.name is not null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  and mc.ownerFunction_id=${param.wfId}
  group by mc.id,pat.id
 "/>
@@ -888,6 +1154,7 @@ and dep.id=${param.depId}
                            action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Карта врача есть?" property="4" />
                     <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
                 </msh:table>
             </msh:sectionContent>
@@ -914,11 +1181,13 @@ from medcase mc1
   left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 where mc1.id=mc.id and mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
- and qe.experttype='BranchManager' and qek.code='PR203'  and dep.name is not null
+ and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
   )
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
@@ -931,16 +1200,18 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
   left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
   left join qualityestimation qe on qe.card_id=qec.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
   where mc.dtype='DepartmentMedCase' and qd.vocidc10_id=ds.idc10_id
 and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
 and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
  ${department} and reg.code='4' and prior.code='1' and dep.id=${param.depId}
- and qe.experttype='BranchManager' and qek.code='PR203'  and dep.name is not null
+ and qe.experttype='BranchManager' and qek.code='PR203' and dep.name is not null
  and mc.ownerFunction_id=${param.wfId}
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
 group by mc.id,pat.id,qec.id"/>
 
                 <form action="report203.do" method="post" target="_blank">
-                    Пациенты, выписанные по 203 приказу из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo} врачом ${param.wfname}, в СЛС которых созданы экспертные карты заведующего
+                    Пациенты, выписанные по 203 приказу из отделения ${param.depname} за период с ${param.dateBegin} ${dateTo} врачом ${param.wfname}, в СЛС которых созданы экспертные карты  ${param.draft}
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
@@ -997,12 +1268,95 @@ left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
   left join vocqualityestimationkind qek on qek.id=qec.kind_id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
- and qe.experttype='BranchManager' and qek.code='PR203'
+ and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
 and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
 and mcinner.ownerFunction_id=slo.ownerFunction_id)
  ,case when (select count(distinct mcinner.id) as noque
+  from medcase mcinner
+left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join MisLpu dep2 on dep2.id=mcinner.department_id
+ left join Medcase dmc on dmc.parent_id=mcinner.id
+  left join Patient pat on pat.id=mcinner.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mcinner.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
+and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+and mcinner.ownerFunction_id=slo.ownerFunction_id)
+=0 then '0' else
+round(100*(select count(distinct mcinner.id) as noque
+  from medcase mcinner
+left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join MisLpu dep2 on dep2.id=mcinner.department_id
+ left join Medcase dmc on dmc.parent_id=mcinner.id
+  left join Patient pat on pat.id=mcinner.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mcinner.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true
+and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+and mcinner.ownerFunction_id=slo.ownerFunction_id)
+/cast((select count(distinct mcinner.id) as pr203
+ from medcase mcinner
+left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join diagnosis ds on ds.medcase_id=mcinner.id
+ left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mcinner.patient_id
+ where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+  and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+ and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
+and mcinner.ownerFunction_id=slo.ownerFunction_id) as numeric),2)
+end as per1
+, '&wfId='||coalesce(slo.ownerFunction_id,0)||'&wfname='||ovwf.name||' '||owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'')
+,(select count(distinct mcinner.id) as noquedraft
+  from medcase mcinner
+left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
+ left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+ left join MisLpu dep2 on dep2.id=mcinner.department_id
+ left join Medcase dmc on dmc.parent_id=mcinner.id
+  left join Patient pat on pat.id=mcinner.patient_id or pat.id=dmc.patient_id
+  left join diagnosis ds on ds.medcase_id=mcinner.id or ds.medcase_id=dmc.id
+  left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+  left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+  left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+  left join qualityestimationcard qec on qec.medcase_id=mcinner.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where qd.vocidc10_id=ds.idc10_id
+ and reg.code='4' and prior.code='1'
+ and qe.experttype='BranchManager' and qek.code='PR203'
+and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and mcinner.department_id='182' and slo1.department_id='203' and mcinner.dtype='DepartmentMedCase'
+ and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+and mcinner.ownerFunction_id=slo.ownerFunction_id)
+,case when (select count(distinct mcinner.id) as noquedraft
   from medcase mcinner
 left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
  left join medcase slo2 on slo2.prevMedCase_id=slo1.id
@@ -1024,7 +1378,7 @@ and mcinner.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
 and mcinner.ownerFunction_id=slo.ownerFunction_id)
 =0 then '0' else
-round(100*(select count(distinct mcinner.id) as noque
+round(100*(select count(distinct mcinner.id) as noquedraft
   from medcase mcinner
 left join medcase slo1 on slo1.prevMedCase_id=mcinner.id
  left join medcase slo2 on slo2.prevMedCase_id=slo1.id
@@ -1062,8 +1416,7 @@ left join patient pat on pat.id=mcinner.patient_id
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
 and mcinner.ownerFunction_id=slo.ownerFunction_id) as numeric),2)
-end
-, '&wfId='||coalesce(slo.ownerFunction_id,0)||'&wfname='||ovwf.name||' '||owp.lastname||' '||substring(owp.firstname,1,1)||' '||coalesce(substring(owp.middlename,1,1),'')
+end as per2
  from medcase slo
  left join medcase slo1 on slo1.prevMedCase_id=slo.id
  left join medcase slo2 on slo2.prevMedCase_id=slo1.id
@@ -1089,7 +1442,9 @@ end
                     <msh:tableColumn columnName="Врач" property="2" addParam="&nul=nul" />
                     <msh:tableColumn columnName="ВСЕГО выписаны" property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
                     <msh:tableColumn columnName="Выписаны по 203 приказу" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу + Экспертная карта" property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
+                    <msh:tableColumn columnName="Карта врача" property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача"/>
+                    <msh:tableColumn columnName="%" property="9" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Экспертная карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                     <msh:tableColumn columnName="%" property="6" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -1142,7 +1497,15 @@ left join Patient pat on pat.id=mc1.patient_id
 left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
 left join qualityestimation qe on qe.card_id=qec.id
 left join vocqualityestimationkind qek on qek.id=qec.kind_id
-where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'ЭК есть' else '-' end )
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' and qe.isdraft<>true group by pat.id) is not null then 'Да' else '-' end ) as zav
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='PR203' group by pat.id) is not null then 'Да' else '-' end ) as doc
 ,(select case when(select
 min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
 left join Medcase dmc on dmc.parent_id=mc1.id
@@ -1176,12 +1539,14 @@ left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
 left join vocprioritydiagnosis prior on prior.id=ds.priority_id
 left join medcase slo1 on slo1.prevMedCase_id=mc.id
 left join medcase slo2 on slo2.prevMedCase_id=slo1.id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 where qd.vocidc10_id=ds.idc10_id
  and reg.code='4' and prior.code='1'
 
 and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
  and mc.ownerFunction_id=${param.wfId}
   "/>
 
@@ -1195,6 +1560,7 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
                            action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Карта врача есть?" property="4" />
                     <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
                 </msh:table>
             </msh:sectionContent>
@@ -1248,11 +1614,12 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
  and mc.department_id='182' and slo1.department_id='203' and mc.dtype='DepartmentMedCase'
  and slo1.dtype='DepartmentMedCase' and (slo2.dtype='DepartmentMedCase' or slo2.dtype is null)
  and mc.ownerFunction_id=${param.wfId}
+ ${param.isDraft}
 group by mc.id,pat.id,qec.id
   "/>
 
                 <form action="report203.do" method="post" target="_blank">
-                    Пациенты, переведённые из АКУШЕРСКОГО ОТДЕЛЕНИЯ ПАТОЛОГИИ БЕРЕМЕННОСТИ в РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ за период с ${dateBegin} ${dateEnd}
+                    Пациенты, переведённые из АКУШЕРСКОГО ОТДЕЛЕНИЯ ПАТОЛОГИИ БЕРЕМЕННОСТИ в РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ за период с ${dateBegin} ${dateEnd}, в СЛС которых созданы экспертные карты  ${param.draft}
                 </form>
             </msh:sectionTitle>
             <msh:sectionContent>
