@@ -581,6 +581,7 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
                            action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -1194,6 +1195,7 @@ and mc.dateStart between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dat
                            action="entityView-stac_slo.do" idField="1" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
