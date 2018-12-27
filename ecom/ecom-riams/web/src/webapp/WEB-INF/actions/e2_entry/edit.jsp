@@ -24,6 +24,7 @@
                   </msh:row>
                 <msh:row>
                 <msh:checkBox property="isMobilePolyclinic" />
+                <msh:checkBox property="isChildBirthDepartment" />
                   </msh:row>
                 <msh:row>
                     <msh:textField property="mainMkb" size="50"/>

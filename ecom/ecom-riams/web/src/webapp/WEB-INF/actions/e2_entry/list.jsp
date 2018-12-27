@@ -22,31 +22,30 @@
     String filter = request.getParameter("filter");
     StringBuilder filterSql= new StringBuilder();
     if (filter!=null&&!filter.equals("")) {
-        boolean filterFound = false;
         String[] fields = filter.split(";");
+        boolean isFirst = true;
         for (String field: fields) {
             String[] data = field.split(":");
             String fldName = data[0], fldValue = data.length>1?data[1]:"";
             if (fldValue!=null&&!fldValue.trim().equals("")) {
+                if (!isFirst) {
+                    filterSql.append(" and ");
+                } else {
+                    isFirst=false;
+                }
                 if (fldName.equals("lastname")) {
                     String[] fio = fldValue.split(" ");
-                    filterSql.append(" and e.lastname like upper('").append(fio[0]).append("%')");
+                    filterSql.append(" e.lastname like upper('").append(fio[0]).append("%')");
                     if (fio.length>1) {filterSql.append(" and e.firstname like upper('").append(fio[1]).append("%')");}
                     if (fio.length>2) {filterSql.append(" and e.middlename like upper('").append(fio[2]).append("%')");}
                     if (fio.length>3) {filterSql.append(" and e.birthdate =to_date('").append(fio[3]).append("','dd.MM.yyyy')");}
+                } else if (fldName.equals("billStatus")) {
+               //     filterSql.append(" and vbs.code='").append(fldValue).append("'");
+                    filterSql.append(" vbs.code='").append("PAID").append("'");
                 } else {
-                  /*  if (fldName.equals("startDate")) {
-                        String dateType =
-
-                    } else if (fldName.equals("finishDate")) {
-
-                    } else {*/
-                        filterSql.append(" and e.").append(fldName).append("='").append(fldValue).append("'");
-                //    }
+                    filterSql.append(" e.").append(fldName).append("='").append(fldValue).append("'");
                 }
-                filterFound=true;
             }
-
         }
       //  if (!filterFound) {filterSql.append("and 1=2");}
     }
@@ -58,7 +57,7 @@
 
     ActionUtil.setParameterFilterSql("defect","e.isDefect",request);
     String listId=request.getParameter("id");
-    if (listId!=null&& listId.equals("0")) { //Нет листа - ищем все оплаченные случаи
+    if (listId!=null && (listId.equals("") || listId.equals("0"))) { //Нет листа - ищем все оплаченные случаи **Нет листа - ищем все случаи. Есть фильтр что оплачен - ищем оплаченные
         listId=null;
     }
     String billDate = request.getParameter("billDate");
@@ -67,7 +66,9 @@
     //if (serviceStream!=null&&!serviceStream.equals("")) {sqlAdd.append(" and e.serviceStream='").append(serviceStream).append("'");}
    // if (billNumber!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billNumber='").append(billNumber).append("'");}
     if (billDate!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billDate=to_date('").append(billDate).append("','dd.MM.yyyy')");}
-    if (orderBy==null||orderBy.equals("")) {
+    if ("firstNew".equals(orderBy)) {
+        orderBy="id desc";
+    } else if (orderBy==null || orderBy.equals("")) {
       orderBy = "e.lastname, e.firstname, e.middlename, e.birthdate, e.finishDate"  ;
     }
     String errorCode = request.getParameter("errorCode");
@@ -90,7 +91,7 @@ String defectColumnName = "Дефект";
             searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
         }
 
-        searchWhereSql=(listId!=null?" e.listentry_id="+listId:" vbs.code='PAID' ")
+        searchWhereSql=(listId!=null ? " e.listentry_id="+listId : "")
             +(request.getAttribute("entryTypeSql")!=null?request.getAttribute("entryTypeSql"):"")
             +(request.getAttribute("serviceStreamSql")!=null?request.getAttribute("serviceStreamSql"):"")
             +(billNumber!=null?" and e.billNumber='"+billNumber+"'":"")
@@ -99,7 +100,11 @@ String defectColumnName = "Дефект";
         request.setAttribute("searchTitle"," ");
     }
     request.setAttribute("defectColumnName",defectColumnName);
-    searchWhereSql+=request.getAttribute("filterSql");
+    if (filterSql.length()>0) {
+        if (searchWhereSql.length()>1) searchWhereSql+=" and ";
+        searchWhereSql+=filterSql;
+    }
+
     if (isForeign!=null){searchWhereSql+=" and e.isForeign='"+(isForeign.equals("1")?"1":"0")+"'";}
     request.setAttribute("searchFromSql",searchFromSql);
     request.setAttribute("searchWhereSql",searchWhereSql);
@@ -137,7 +142,7 @@ String defectColumnName = "Дефект";
 select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||to_char(e.birthDate,'dd.MM.yyyy') as f2_fio, e.startDate as f3_startDate, e.finishDate as f4_finishDate
         , e.departmentName as f5_depName, ksg.code||' '||ksg.name as f6_ksg ,e.historyNumber as f7_hisNum, e.cost as f8_cost, vbt.code||' '||vbt.name as f9_bedType
         , list(coalesce(e.mainMkb,mkb.code)) as f10_diagnosis, rslt.code||' '||rslt.name as f11_result
-        ,case when e.isDefect='1' then 'color:blue' when (e.doNotSend is null or e.doNotSend='0') then '' else 'color: red' end as f12_style
+        ,case when e.isDefect='1' then 'color:blue' when (e.doNotSend='1') then 'color: red'  when e.serviceStream='COMPLEXCASE' then 'color: gray' else '' end as f12_style
 
         ${searchFromSql}
         left join voce2medhelpprofile vbt on vbt.id=e.medhelpprofile_id

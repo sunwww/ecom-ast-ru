@@ -18,6 +18,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/E2")
 public class E2EntryForm extends IdEntityForm {
 
+    /** Родовое отделение */
+    @Comment("Родовое отделение")
+    @Persist
+    public Boolean getIsChildBirthDepartment() {return theIsChildBirthDepartment!=null?theIsChildBirthDepartment:false;}
+    public void setIsChildBirthDepartment(Boolean aIsChildBirthDepartment) {theIsChildBirthDepartment = aIsChildBirthDepartment;}
+    /** Родовое отделение */
+    private Boolean theIsChildBirthDepartment ;
 
 //----------все поля ниже добавлены на jsp!!!
     /** Онкологический случай */
