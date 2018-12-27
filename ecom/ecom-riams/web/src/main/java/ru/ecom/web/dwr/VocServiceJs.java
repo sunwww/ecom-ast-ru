@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import ru.ecom.ejb.services.login.ILoginService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
+import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.EntityInjection;
 import ru.ecom.web.util.Injection;
@@ -23,8 +24,18 @@ import java.util.Collection;
  * Для aucotomplete
  */
 public class VocServiceJs {
+	public Patient getTestPatient(HttpServletRequest aRequest) {
+		Patient patient = new Patient();
+		patient.setLastname("TEST");
+		return patient;
+	}
+	public String getTestPatientLastname(HttpServletRequest aRequest) {
+		Patient patient = new Patient();
+		patient.setLastname("TEST");
+		return patient.getLastname();
+	}
 
-	public String getWebSocketServer(HttpServletRequest aRequest) throws NamingException, JSONException {
+	public String getWebSocketServer(HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select keyvalue from softconfig where key='WEBSOCKET_SERVER'") ;
@@ -127,16 +138,16 @@ public class VocServiceJs {
     	return root.toString() ;
     }
     private String str(String aValue) {
-    	if (aValue.indexOf("\"")!=-1) {
+    	if (aValue.indexOf('\"')!=-1) {
     		aValue = aValue.replaceAll("\"", "\\\"") ;
     	}
-    	if (aValue.indexOf("\n")!=-1) {
+    	if (aValue.indexOf('\n')!=-1) {
     		aValue = aValue.replaceAll("\n", "\\\\n") ;
     	}
-    	if (aValue.indexOf("\r")!=-1) {
+    	if (aValue.indexOf('\r')!=-1) {
     		aValue = aValue.replaceAll("\r", "\\\\r") ;
     	}
-    	if (aValue.indexOf("\t")!=-1) {
+    	if (aValue.indexOf('\t')!=-1) {
     		aValue = aValue.replaceAll("\t", "\\\\t") ;
     	}
     	return aValue ;
