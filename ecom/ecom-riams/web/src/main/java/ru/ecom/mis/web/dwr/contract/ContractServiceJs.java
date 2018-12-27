@@ -1201,4 +1201,10 @@ public Double calculateMedCaseCost(Long aMedcaseId, Long aPriceListId, HttpServl
 		}
 		return res.toString();
 	}
+	//Milamesher #133 копирование шаблонов из одной услуги в другую
+	public String copyTemplatesToMedService(String aMedServiceIdFrom, String aMedServiceIdTo, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		service.executeNativeSql("select copymedservicetemplates ("+aMedServiceIdFrom+","+aMedServiceIdTo+")");
+		return "Шаблоны скопированы!" ;
+	}
 }
