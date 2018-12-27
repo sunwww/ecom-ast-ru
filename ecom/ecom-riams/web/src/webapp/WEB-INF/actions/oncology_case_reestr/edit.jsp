@@ -197,9 +197,9 @@
             //для экономии времени нужные массивы для лечения
             var mas1=[], mas2=[];
             for(var i=1; i<=6; i++) checkDateContra(document.getElementById("c"+i));
-            document.getElementById("c1").oninput=document.getElementById("c2").oninput=
-                document.getElementById("c3").oninput=document.getElementById("c4").oninput=
-                    document.getElementById("c5").oninput=document.getElementById("c6").oninput=function() {
+            document.getElementById("c1").onclick=document.getElementById("c2").onclick=
+                document.getElementById("c3").onclick=document.getElementById("c4").onclick=
+                    document.getElementById("c5").onclick=document.getElementById("c6").onclick=function() {
                         checkDateContra(this);
                     };
             //проставить доступность даты отказа/противопоказания в зависимости от чекбокса
@@ -246,22 +246,22 @@
                 }});
             </msh:ifFormTypeAreViewOrEdit>
             //проставить видимость дивов в зависимости от чекбоксов
-           suspicionOncologist.oninput = function() {
+           suspicionOncologist.onclick = function() {
                 checkCheckbox();
             };
-            histologyChb.oninput = function() {
+            histologyChb.onclick = function() {
                 checkCheckboxH();
             };
-            immunoGistMarkChb.oninput = function() {
+            immunoGistMarkChb.onclick = function() {
                 checkCheckboxI();
             };
-            consiliumChb.oninput = function() {
+            consiliumChb.onclick = function() {
                 checkCheckboxC();
             };
-            treatmentChb.oninput = function() {
+            treatmentChb.onclick = function() {
                 checkCheckboxT();
             };
-            contraChb.oninput = function() {
+            contraChb.onclick = function() {
                 checkCheckboxContra();
             };
             function load1() {
@@ -1134,13 +1134,13 @@
                     txt+="</td><br>";
                     document.getElementById(divId).innerHTML+=txt;
                     transform();
-                    document.getElementById("histologyChb1").oninput= function() {
+                    document.getElementById("histologyChb1").onclick= function() {
                         checkHoncoT(voc,1,"histologyChb1");
                     };
-                    document.getElementById("histologyChb2").oninput= function() {
+                    document.getElementById("histologyChb2").onclick= function() {
                         checkHoncoT(voc,2,"histologyChb2");
                     };
-                    document.getElementById("histologyChb3").oninput= function() {
+                    document.getElementById("histologyChb3").onclick= function() {
                         checkHoncoT(voc,3,"histologyChb3");
                     };
                     return;
@@ -1357,15 +1357,15 @@
                     document.getElementById("c"+i).checked=false;
                 }
             }
-            //set oninput
+            //set onclick
             function setOnInput() {
-                document.getElementById('vocOncologyN013_1').oninput = function () {
+                document.getElementById('vocOncologyN013_1').onclick = function () {
                     ch1();ch2();
                 };
-                document.getElementById("vocOncologyN013_2").oninput = function () {
+                document.getElementById("vocOncologyN013_2").onclick = function () {
                     ch1();ch2();
                 };
-                document.getElementById("vocOncologyN013_3").oninput = function () {
+                document.getElementById("vocOncologyN013_3").onclick = function () {
                     ch1();ch2();
                 };
             }
