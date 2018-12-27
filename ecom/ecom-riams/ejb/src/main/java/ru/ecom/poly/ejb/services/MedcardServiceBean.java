@@ -1,7 +1,12 @@
 package ru.ecom.poly.ejb.services;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.apache.log4j.Logger;
+import org.jboss.annotation.security.SecurityDomain;
+import ru.ecom.ejb.services.entityform.EntityFormException;
+import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
+import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
+import ru.ecom.poly.ejb.domain.Medcard;
+import ru.ecom.poly.ejb.form.MedcardForm;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -10,15 +15,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.apache.log4j.Logger;
-import org.jboss.annotation.security.SecurityDomain;
-
-import ru.ecom.ejb.services.entityform.EntityFormException;
-import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
-import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
-import ru.ecom.poly.ejb.domain.Medcard;
-import ru.ecom.poly.ejb.form.MedcardForm;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Работа с мед. картой
@@ -29,8 +27,8 @@ import ru.ecom.poly.ejb.form.MedcardForm;
 @SecurityDomain("other")
 public class MedcardServiceBean implements IMedcardService{
 
-    private final static Logger LOG = Logger.getLogger(MedcardServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(MedcardServiceBean.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     /**
      * Поиск мед. карты по номеру
@@ -52,7 +50,7 @@ public class MedcardServiceBean implements IMedcardService{
 
     private List<MedcardForm> createList(Query aQuery) {
         List<Medcard> list = aQuery.setMaxResults(50).getResultList();
-        List<MedcardForm> ret = new LinkedList<MedcardForm>();
+        List<MedcardForm> ret = new LinkedList<>();
         for (Medcard medcard : list) {
             try {
                 ret.add(theEntityFormService.loadForm(MedcardForm.class, medcard));

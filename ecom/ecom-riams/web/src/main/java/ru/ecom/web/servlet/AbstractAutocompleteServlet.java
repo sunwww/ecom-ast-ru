@@ -13,8 +13,8 @@ import java.io.PrintWriter;
  * @author esinev 18.08.2006 1:53:34
  */
 public abstract class AbstractAutocompleteServlet extends HttpServlet {
-    private final static Logger LOG = Logger.getLogger(AbstractAutocompleteServlet.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(AbstractAutocompleteServlet.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 
@@ -27,8 +27,7 @@ public abstract class AbstractAutocompleteServlet extends HttpServlet {
     public static String getNextDir(HttpServletRequest aRequest) {
             String uri = aRequest.getRequestURI() ;
             int lastSlash = uri.lastIndexOf('/') ;
-            String vocname = lastSlash!=-1 ? vocname = uri.substring(lastSlash+1) :"ERROR_GETTING_VOCNAME_IN_SERVLET" ;
-            return vocname ;
+            return lastSlash!=-1 ? uri.substring(lastSlash+1) :"ERROR_GETTING_VOCNAME_IN_SERVLET" ;
         }
 
     protected void p(PrintWriter out, String aId, String aName) {

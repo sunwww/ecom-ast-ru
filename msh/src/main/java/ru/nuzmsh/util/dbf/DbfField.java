@@ -252,11 +252,11 @@ public class DbfField  {
     private static void writeChar(ByteBuffer buf, Object aObject, int aLength) throws UnsupportedEncodingException {
         String str;
         if (aObject != null) {
-            if (aObject instanceof String) {
+         //   if (aObject instanceof String) {
                 str = aObject.toString();
-            } else {
+          /*  } else {
                 str = aObject.toString();
-            }
+            }*/
         } else {
             str = "";
         }
@@ -330,6 +330,6 @@ public class DbfField  {
     }
 
 
-    private final static SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
 }

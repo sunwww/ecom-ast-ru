@@ -29,7 +29,7 @@ public class QueueServiceBean implements IQueueService {
         }
     }*/
     private static HashMap<Long, Integer> lastTicketNumberMap =new HashMap<>();
-    private final static Logger log = Logger.getLogger(QueueServiceBean.class);
+    private static final Logger log = Logger.getLogger(QueueServiceBean.class);
 
     /**Возвращаем талон по его ИД*/
     public QueueTicket findTicketById(Long aTicketId) {return theManager.find(QueueTicket.class,aTicketId);}

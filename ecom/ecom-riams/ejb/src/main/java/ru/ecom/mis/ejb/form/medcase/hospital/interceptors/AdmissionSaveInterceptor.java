@@ -18,8 +18,8 @@ import java.util.List;
 
 public class AdmissionSaveInterceptor implements IFormInterceptor {
 
-    private final static Logger LOG = Logger.getLogger(AdmissionSaveInterceptor.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(AdmissionSaveInterceptor.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		AdmissionMedCaseForm form=(AdmissionMedCaseForm)aForm ;
@@ -43,7 +43,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 					.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist' and code=:number and year=:year ")
 				.setParameter("number", statCardNumber).setParameter("year",java.lang.Long.valueOf(year)).getResultList() ;
 			
-			if (list.size()==0) {
+			if (list.isEmpty()) {
 				boolean alwaysCreate = aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/AlwaysCreateStatCardNumber") ;
 				if (!alwaysCreate) {
 	    			if (form.getDeniedHospitalizating()!=null && form.getDeniedHospitalizating()>Long.valueOf(0)) {
@@ -70,7 +70,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			List<Object> list = manager.createNativeQuery("select id from StatisticStub where medCase_id='"+id+"' and DTYPE='StatisticStubExist'")
 				//.setParameter("number", aStatCardNumber).setParameter("year",java.lang.Long.valueOf(year))
 				.getResultList() ;
-			if (list.size()==0) {
+			if (list.isEmpty()) {
 				//if (aForm.deniedHospitalizating==0) {
 					StatisticStubStac.createStacCardNumber(id, statCardNumber, manager, aContext.getSessionContext(),form);
 				//} else {
@@ -91,7 +91,7 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
 			VocDiagnosisRegistrationType vocTypeOrder = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(1));
 			VocDiagnosisRegistrationType vocTypeEnter = manager.find(VocDiagnosisRegistrationType.class, Long.valueOf(2));
 			List<Diagnosis> diagList = manager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList() ;
-			if (diagList==null) diagList = new ArrayList<Diagnosis>(); 
+			if (diagList==null) diagList = new ArrayList<>();
 			for(Diagnosis diag:diagList){
 				if (!adding1) adding1=setDiagnosisByType(false,diag, vocTypeEnter, form.getOrderDiagnos(), form.getOrderDate(), form.getOrderMkb(), medCase, manager) ;
 				if (!adding2) adding2=setDiagnosisByType(false,diag, vocTypeOrder, form.getEntranceDiagnos(), form.getDateStart(), form.getEntranceMkb(), medCase, manager) ;

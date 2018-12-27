@@ -1,20 +1,19 @@
 package ru.nuzmsh.forms.util;
 
-import org.apache.struts.action.ActionForm;
 import org.apache.log4j.Logger;
-
-import javax.ejb.EJBLocalObject;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.math.BigDecimal;
-
+import org.apache.struts.action.ActionForm;
 import ru.nuzmsh.forms.validator.validators.TimeString;
 import ru.nuzmsh.util.at.AField;
 import ru.nuzmsh.util.at.AtUtil;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.ejb.EJBLocalObject;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author ESinev
@@ -22,14 +21,14 @@ import ru.nuzmsh.util.format.DateFormat;
  *         Time: 17:08:46
  */
 public class FormUtil {
-    private final static Logger LOG = Logger.getLogger(FormUtil.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(FormUtil.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 
 
     public static void saveData(ActionForm aForm, EJBLocalObject aBean, Class aBeanClass) {
         Class formClass = aForm.getClass();
-        Class beanClass = aBean.getClass();
+     //   Class beanClass = aBean.getClass();
         Method[] methods = formClass.getMethods();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
@@ -67,14 +66,14 @@ public class FormUtil {
         Method method = clazz.getMethod(aSetterMethodName, typeClazz) ;
         String typeClazzName = typeClazz.getName() ;
         Object value  ;
-        if("java.util.Date".equals(typeClazzName) && aValue instanceof String && aValue!=null) {
+        if("java.util.Date".equals(typeClazzName) && aValue instanceof String) {
             if(!"".equals(aValue)) {
                 Date d = DateFormat.parseDate((String) aValue) ;
                 value = d ;
             } else {
                 value = null ;
             }
-        } else if("java.math.BigDecimal".equals(typeClazzName) && aValue instanceof String && aValue!=null) {
+        } else if("java.math.BigDecimal".equals(typeClazzName) && aValue instanceof String) {
             if(!"".equals(aValue)) {
                 value = new BigDecimal((String) aValue) ;
             } else {
@@ -107,7 +106,7 @@ public class FormUtil {
                     Class beanGetterMethodReturnType = beanGetterMethod.getReturnType() ;
                     String formSetterMethodName = "s" + method.getName().substring(1);
                     if (beanGetterMethodReturnType.equals(String.class)) { // STRING
-                        Object value = (String) beanGetterMethod.invoke(aBean);
+                        Object value = beanGetterMethod.invoke(aBean);
                         if(method.isAnnotationPresent(TimeString.class) && value!=null) {
                         	value = value.toString().replace('.', ':');
                         }

@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class WebQueryGroupTag  extends AbstractGuidSimpleSupportTag {
-	private final static Logger LOG = Logger.getLogger(WebQueryTag.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(WebQueryTag.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     public void doTag() throws JspException, IOException {
     	printIdeStart() ;

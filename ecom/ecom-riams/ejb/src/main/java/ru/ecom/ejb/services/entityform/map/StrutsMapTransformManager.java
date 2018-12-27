@@ -16,9 +16,9 @@ public class StrutsMapTransformManager {
 	private static StrutsMapTransformManager INSTANCE = null ;
 	private static final StrutsMapTransform ENTITY_TRANSFORM = new StrutsMapTransform("java/lang/Long") ; 
 	
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(StrutsMapTransformManager.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	private StrutsMapTransformManager() {
 		put(String.class, "java/lang/String");
@@ -94,5 +94,5 @@ public class StrutsMapTransformManager {
 	}
 	
 
-	private final HashMap<Class, StrutsMapTransform> theHash = new HashMap<Class, StrutsMapTransform>() ;
+	private final HashMap<Class, StrutsMapTransform> theHash = new HashMap<>() ;
 }

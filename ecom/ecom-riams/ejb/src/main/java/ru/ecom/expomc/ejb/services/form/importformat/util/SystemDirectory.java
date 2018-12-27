@@ -1,17 +1,17 @@
 package ru.ecom.expomc.ejb.services.form.importformat.util;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author ikouzmin 19.03.2007 15:36:30
  */
+@Deprecated
 public class SystemDirectory {
 
-    private final static Logger LOG = Logger.getLogger(SystemDirectory.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(SystemDirectory.class) ;
 
 
     private static Properties getEcomProperties() throws Exception {

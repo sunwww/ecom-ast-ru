@@ -17,8 +17,8 @@ import java.util.LinkedList;
  */
 public class AllValueHelper implements IVocContextService, IVocServiceManagement {
 
-    private final static Logger LOG = Logger.getLogger(AllValueHelper.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(AllValueHelper.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public AllValueHelper(IAllValue aAllValue) {
@@ -47,7 +47,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     	String query = aQuery.toUpperCase();
         String findedId = null;
         boolean finded=false;
-        LinkedList<VocValue> ret = new LinkedList<VocValue>();
+        LinkedList<VocValue> ret = new LinkedList<>();
         if (!StringUtil.isNullOrEmpty(aQuery)) {
             for (VocValue value : listAll(aAdditional,aContext)) {
             	finded=false ;
@@ -85,9 +85,9 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     }
 
     public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
-        LinkedList<VocValue> ret = new LinkedList<VocValue>();
+        LinkedList<VocValue> ret = new LinkedList<>();
         boolean finded = StringUtil.isNullOrEmpty(aId);
-        LinkedList<VocValue> reverted = new LinkedList<VocValue>();
+        LinkedList<VocValue> reverted = new LinkedList<>();
         for (VocValue value : listAll(aAdditional, aContext)) {
             reverted.add(0, value);
         }
@@ -105,7 +105,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     }
 
     public Collection<VocValue> findVocValueNext(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
-        LinkedList<VocValue> ret = new LinkedList<VocValue>();
+        LinkedList<VocValue> ret = new LinkedList<>();
         boolean finded = StringUtil.isNullOrEmpty(aId);
         for (VocValue value : listAll(aAdditional, aContext)) {
             if (CAN_TRACE) LOG.info("valueProperty = " + value);

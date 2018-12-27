@@ -47,11 +47,11 @@ public class ConvertSql {
 		if(aValue instanceof BigInteger) {
 			BigInteger bigint = (BigInteger) aValue ;
 			
-			return bigint!=null?bigint.longValue() : null;
+			return bigint.longValue() ;
 		} 
 		if (aValue instanceof Number) {
 			Number number = (Number) aValue ;
-			return number!=null?number.longValue() : null ;
+			return number.longValue() ;
 		}
 		if (aValue instanceof String) {
 			return Long.valueOf((String) aValue);
@@ -66,8 +66,7 @@ public class ConvertSql {
 	}
 	public static boolean parseBoolean(Object aValue) {
 		if (aValue==null) return false;
-		if (parseString(aValue).equals("1")) return true ;
-		return false ;
+		return parseString(aValue).equals("1");
 	}
 	
 	public static java.sql.Time parseTime(Object aValue) {
@@ -146,7 +145,7 @@ public class ConvertSql {
 	 tst=false ;
 	 String[] inter = Interval.split(",") ;
 	 for (String in:inter) {
-		 if (in.indexOf("-")==-1) {
+		 if (in.indexOf('-')==-1) {
 			 tst=ChSub(Mkb,in) ;
 		 } else {
 			 String[] dop = in.split("-") ;
@@ -171,11 +170,11 @@ public class ConvertSql {
 	 return tst ;
 	}
 	private static boolean ChSub(String aMkb1,String aMkb2) {
-		if (aMkb2.indexOf(".")>-1) {
+		if (aMkb2.indexOf('.')>-1) {
 			return aMkb1.indexOf(aMkb2)>-1 ;
 		}
 		
-		int ind = aMkb1.indexOf(".") ;
+		int ind = aMkb1.indexOf('.') ;
 		return (ind==-1?aMkb1:aMkb1.substring(0,ind)).equals(aMkb2) ;
 	}
 	private static boolean soderjit(String aMkb1,String aMkb2) {
@@ -240,7 +239,7 @@ public class ConvertSql {
 	public static String toWords(BigDecimal sum) {
 		    BigDecimal TAUSEND = new BigDecimal(1000);
 		    int i, mny;
-		    StringBuffer result = new StringBuffer("");
+		    StringBuilder result = new StringBuilder();
 		    BigDecimal divisor; // делитель
 		    BigDecimal psum = sum;
 
@@ -310,7 +309,7 @@ public class ConvertSql {
 		    }
 		    return result.toString();
 		  }
-	  private final static String[][] a_power = new String[][]{
+	  private static final String[][] a_power = new String[][]{
 		   {"0", ""            , ""             ,""              },  // 1
 		   {"1", "тысяча "     , "тысячи "      ,"тысяч "        },  // 2
 		   {"0", "миллион "    , "миллиона "    ,"миллионов "    },  // 3
@@ -321,7 +320,7 @@ public class ConvertSql {
 		   {"0", "квинтиллион1 ", "квинтиллиона1 ","квинтиллионов1 "}   // 8
 		  };
 
-		  private final static String[][] digit = new String[][] {
+		  private static final String[][] digit = new String[][] {
 		   {""       ,""       , "десять "      , ""            ,""          },
 		   {"один "  ,"одна "  , "одиннадцать " , "десять "     ,"сто "      },
 		   {"два "   ,"две "   , "двенадцать "  , "двадцать "   ,"двести "   },
@@ -333,6 +332,6 @@ public class ConvertSql {
 		   {"восемь ","восемь ", "восемнадцать ", "восемьдесят ","восемьсот "},
 		   {"девять ","девять ", "девятнадцать ", "девяносто "  ,"девятьсот "}
 		  };
-		  public final static int DG_POWER=10;
+		  public static final int DG_POWER=10;
 
 }

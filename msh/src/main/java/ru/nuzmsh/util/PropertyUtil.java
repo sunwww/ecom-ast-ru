@@ -1,5 +1,8 @@
 package ru.nuzmsh.util;
 
+import org.apache.log4j.Logger;
+import ru.nuzmsh.util.format.DateFormat;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -7,20 +10,15 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
-
-import ru.nuzmsh.util.format.DateFormat;
 
 /**
  * Утилиты для работы со свойствами
  */
 public class PropertyUtil {
 
-	private final static Logger LOG = Logger.getLogger(PropertyUtil.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(PropertyUtil.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     /**
      * Копировать значение свойства
@@ -146,7 +144,7 @@ public class PropertyUtil {
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Timestamp.class)) {
         return Timestamp.valueOf((String) aValue) ;
         } else if(aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
-            return (Long) aValue ;
+            return aValue ;
         } else if(aInClass.equals(Long.class) && aOutClass.equals(Long.TYPE)) {
             return aValue ;
         } else if (aInClass.equals(java.util.Date.class) && aOutClass.equals(String.class)) {
@@ -264,7 +262,7 @@ public class PropertyUtil {
         }
     }
 
-    public static Method getMethodFormProperty(Class aClass, String aPropertyName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Method getMethodFormProperty(Class aClass, String aPropertyName) throws NoSuchMethodException {
     	return getGetterMethod(aClass, aPropertyName) ;
     }
 
@@ -285,14 +283,14 @@ public class PropertyUtil {
     public static Method getGetterMethodIgnoreCase(Class aClass, String aPropertyName) throws NoSuchMethodException {
         String getterMethodName = getGetterMethodNameForProperty(aPropertyName).toUpperCase();
         for (Method method: aClass.getMethods()) {
-            if (method.getName().toUpperCase().equals(getterMethodName)) {
+            if (method.getName().equalsIgnoreCase(getterMethodName)) {
                 return method;
             }
         }
         throw new NoSuchMethodException("property="+aPropertyName);
     }
     
-    public static void setPropertyValue(Object aObject, String aProperty, Object aValue) throws NoSuchMethodException, ParseException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    public static void setPropertyValue(Object aObject, String aProperty, Object aValue) throws NoSuchMethodException, ParseException, IllegalAccessException, InvocationTargetException {
     	if(aObject==null) throw new IllegalArgumentException("Нет объекта. aObject==null") ;
     	Class clazz = aObject.getClass() ;
         //String getterMethodName = PropertyUtil.getGetterMethodNameForProperty(aProperty) ;
@@ -325,8 +323,8 @@ public class PropertyUtil {
     	GET_SETTER_METHOD_NAME.clear() ;
     }
     // 
-    private static final Map<Method,String> GET_PROPERTY_NAME_HASH = new HashMap<Method, String>() ;
+    private static final Map<Method,String> GET_PROPERTY_NAME_HASH = new HashMap<>() ;
     
     // getSetterMethodName
-    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<String, String>() ;
+    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<>() ;
 }

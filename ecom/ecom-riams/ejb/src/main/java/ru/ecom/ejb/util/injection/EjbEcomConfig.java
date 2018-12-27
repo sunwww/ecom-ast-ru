@@ -12,8 +12,8 @@ import java.util.Properties;
 
 public class EjbEcomConfig {
 
-	private final static Logger LOG = Logger.getLogger(EjbEcomConfig.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(EjbEcomConfig.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public static final String VOC_DIR_PREFIX = "voc.dir.prefix";
     public static final String FORM_JS_PREFIX = "form.js.prefix";

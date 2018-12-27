@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * 
  */
 public class RemoteMonitorServiceJs {
-     private final static Logger LOG = Logger.getLogger(RemoteMonitorServiceJs.class) ;
+     private static final Logger LOG = Logger.getLogger(RemoteMonitorServiceJs.class) ;
 
 
     public RemoteMonitorStatus getMonitorStatus(HttpServletRequest aRequest, long aMonitorId) throws NamingException {

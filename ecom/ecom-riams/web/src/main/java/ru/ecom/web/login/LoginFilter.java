@@ -19,8 +19,8 @@ import java.util.Enumeration;
  */
 public class LoginFilter implements Filter {
 
-	private final static Logger LOG = Logger.getLogger(LoginFilter.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+	private static final Logger LOG = Logger.getLogger(LoginFilter.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public void init(FilterConfig filterConfig) throws ServletException {

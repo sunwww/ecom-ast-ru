@@ -1,21 +1,21 @@
 package ru.ecom.jboss;
 
-import java.io.Serializable;
-
 import org.apache.log4j.Logger;
 import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.security.SecurityAssociation;
 
+import java.io.Serializable;
+
 public class SecurityAssociationCleaningInterceptor implements Interceptor,
 		Serializable {
 
-	private final static ThreadLocal<Integer> THREAD_COUNT = new ThreadLocal<Integer>();
+	private static final ThreadLocal<Integer> THREAD_COUNT = new ThreadLocal<Integer>();
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(SecurityAssociationCleaningInterceptor.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public String getName() {
 		return this.getClass().getName();

@@ -12,8 +12,8 @@ import java.util.LinkedList;
  */
 public class QueryClauseBuilder {
 
-    private final static Logger LOG = Logger.getLogger(QueryClauseBuilder.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(QueryClauseBuilder.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 
     public void addLike(String aParameterName, Object aValue) {

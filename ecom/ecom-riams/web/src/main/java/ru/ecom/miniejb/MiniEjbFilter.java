@@ -17,8 +17,8 @@ import java.io.IOException;
  */
 public class MiniEjbFilter implements Filter {
 
-    private final static Logger LOG = Logger.getLogger(MiniEjbFilter.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(MiniEjbFilter.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     private static String getConfigParam(FilterConfig aFilterConfig, String aName) {

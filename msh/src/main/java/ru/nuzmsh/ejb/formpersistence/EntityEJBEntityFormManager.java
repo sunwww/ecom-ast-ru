@@ -30,8 +30,8 @@ import java.util.Collection;
  */
 public class EntityEJBEntityFormManager implements IEntityFormManager {
 
-    private final static Logger LOG = Logger.getLogger(EntityEJBEntityFormManager.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(EntityEJBEntityFormManager.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public EntityEJBEntityFormManager(String aJndiPrefix) throws NamingException {
@@ -110,7 +110,7 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
             if(id!=null && !id.toString().equals("")) {
                 Object ejbObject ;
                 try {
-                    ejbObject = id != null ? findByPrimaryKey.invoke(home, getId(aForm)) : null;
+                    ejbObject = findByPrimaryKey.invoke(home, getId(aForm)) ;
                 } catch (Exception e) {
                     if (CAN_TRACE) LOG.warn("EXCEPTION from findByPrimaryKeyMethod: " + e.getClass()+" "+e);
                     if (CAN_TRACE) LOG.warn("e = " + e);
@@ -161,7 +161,7 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
             Method findByPrimaryKey = homeClass.getMethod("findByPrimaryKey", idClass);
             Object id = getId(aForm);
             if(id!=null) {
-                Object ejbObject = id != null ? findByPrimaryKey.invoke(home, getId(aForm)) : null;
+                Object ejbObject = findByPrimaryKey.invoke(home, getId(aForm)) ;
                 if(ejbObject==null) {
                     throw new EJBException("Нет объекта с идентификатором "+id) ;
                 } else {
@@ -206,10 +206,10 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
             if (CAN_TRACE) LOG.info("id = " + id);
             Object ejbObject = id != null ? findByPrimaryKey.invoke(home, getId(aObject)) : null;
             if (CAN_TRACE) LOG.info("ejbObject = " + ejbObject);
-            if (id == null && ejbObject == null) {
+            if (id == null ) {
                 // todo обработать GENERATE
                 throw new IllegalStateException("Ошибка сохранения/создания. Нет ни идентификатора, ни EntityEJB объекта");
-            } else if (id != null && ejbObject == null) {
+            } else if (ejbObject == null) {
                 // добавляем
                 RolesToCreate createRoles = (RolesToCreate) clazz.getAnnotation(RolesToCreate.class);
                 if (createRoles == null || checkRoles(createRoles.value(), aContext)) {
@@ -219,15 +219,15 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
                 } else {
                     throw new IllegalAccessException("Недостаточно прав для создания");
                 }
-            } else if (ejbObject != null) {
+            } else  { //if (ejbObject != null) {
                 RolesToEdit editRoles = (RolesToEdit) clazz.getAnnotation(RolesToEdit.class);
                 if (editRoles == null || checkRoles(editRoles.value(), aContext)) {
                     setProperties(aObject, ejbObject);
                 }
                 // заменяем
-            } else {
+            } /*else {
                 throw new IllegalStateException("Неправильное состояние [id=" + id + ", ejbObject=" + ejbObject + "]");
-            }
+            }*/
 
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при сохранении", e);
@@ -327,11 +327,7 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
             } else {
                 throw new EJBException("Нет EJB объекта с идентификатором "+id) ;
             }
-        } catch (IllegalAccessException e) {
-            throw new EJBException("Ошибка удаление объекта",e) ;
-        } catch (InvocationTargetException e) {
-            throw new EJBException("Ошибка удаление объекта",e) ;
-        } catch (NoSuchMethodException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new EJBException("Ошибка удаление объекта",e) ;
         }
     }

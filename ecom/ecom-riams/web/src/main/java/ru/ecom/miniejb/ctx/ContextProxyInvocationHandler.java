@@ -21,8 +21,8 @@ import java.util.StringTokenizer;
  */
 public class ContextProxyInvocationHandler implements InvocationHandler {
 
-    private final static Logger LOG = Logger.getLogger(ContextProxyInvocationHandler.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(ContextProxyInvocationHandler.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     private final String theUsername;
@@ -58,7 +58,7 @@ public class ContextProxyInvocationHandler implements InvocationHandler {
             Properties prop = new Properties();
             prop.load(in);
             String roles = prop.getProperty(theUsername) ;
-            HashSet<String> set = new HashSet<String>();
+            HashSet<String> set = new HashSet<>();
             if(roles!=null) {
                 StringTokenizer st = new StringTokenizer(roles,", \t\n");
                 while(st.hasMoreTokens()) {

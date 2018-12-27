@@ -12,8 +12,8 @@ import java.util.TreeSet;
  */
 public class ContextImpl implements Context {
 
-    private final static Logger LOG = Logger.getLogger(ContextImpl.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ContextImpl.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     private final Hashtable theEnvironment ;
     private final ContextProxyCreator theProxyCreator = new ContextProxyCreator();
@@ -26,7 +26,7 @@ public class ContextImpl implements Context {
     public Object lookup(String name) throws NamingException {
         if (CAN_TRACE) LOG.info("lookup() [name = " + name+"]");
         String username = (String)theEnvironment.get(Context.SECURITY_PRINCIPAL) ;
-        TreeSet<String> roles = new TreeSet<String>();
+        TreeSet<String> roles = new TreeSet<>();
         roles.add("/Policy/Exp/Document/View") ;
         roles.add("/Policy/Exp/Format/View") ;
         roles.add("/Policy/Exp/Time/View") ;

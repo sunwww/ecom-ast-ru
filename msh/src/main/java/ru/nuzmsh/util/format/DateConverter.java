@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class DateConverter {
 
-    private final static Logger LOG = Logger.getLogger(DateConverter.class) ;
+    private static final Logger LOG = Logger.getLogger(DateConverter.class) ;
 
     //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_1 = new SimpleDateFormat("yyyyMMdd");
     //private static final SimpleDateFormat GLOBALE_DATE_FORMAT_2 = new SimpleDateFormat("dd.MM.yy");
@@ -66,7 +66,7 @@ public class DateConverter {
                 return aDate;
             } else {
                 SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-                StringBuffer sb = new StringBuffer(df.format(aDate));
+                StringBuilder sb = new StringBuilder(df.format(aDate));
                 sb.append(" ");
                 sb.append(aTime.replace(':', '.'));
                 SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH.mm");

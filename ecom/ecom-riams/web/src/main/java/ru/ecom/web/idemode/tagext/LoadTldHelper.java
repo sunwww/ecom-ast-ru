@@ -22,8 +22,8 @@ import java.util.List;
 
 public class LoadTldHelper {
 
-	private final static Logger LOG = Logger.getLogger(LoadTldHelper.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(LoadTldHelper.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public TagLibraryInfo loadTld(InputStream aInputStream)  {
 		try {
@@ -77,7 +77,7 @@ public class LoadTldHelper {
 		String bodyContent = aElement.getChildTextTrim("body-content", aNamespace);
 //		String  = aElement.getChildTextTrim("", aNamespace);
 		//TagInfo i = new TagInfo() ;
-		ArrayList<TagAttributeInfo> attrs = new ArrayList<TagAttributeInfo>(20) ;
+		ArrayList<TagAttributeInfo> attrs = new ArrayList<>(20) ;
 		for(Object obj : aElement.getChildren()) {
 			Element elm = (Element) obj ;
 			if("attribute".equals(elm.getName())) {

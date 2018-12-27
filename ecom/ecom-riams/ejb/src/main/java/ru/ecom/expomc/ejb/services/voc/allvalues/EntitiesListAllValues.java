@@ -1,28 +1,23 @@
 package ru.ecom.expomc.ejb.services.voc.allvalues;
 
 import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.ejb.services.voc.helper.ArrayAllValue;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 /**
  * Список свойств у документа
  */
 public class EntitiesListAllValues extends ArrayAllValue {
 
-    private final static Logger LOG = Logger.getLogger(EntitiesListAllValues.class) ;
-
+    private static final Logger LOG = Logger.getLogger(EntitiesListAllValues.class) ;
+/*
     private void loadResource(String aResource) throws IOException, JDOMException, ClassNotFoundException {
-        LOG.info(new StringBuilder().append("load resource: Loading ").append(aResource).append(" ...").toString());
+        LOG.info("load resource: Loading "+aResource+" ...");
         InputStream in = getClass().getResourceAsStream(aResource);
         StringBuilder sb = new StringBuilder("Registered entities: ");
         try {
@@ -45,7 +40,7 @@ public class EntitiesListAllValues extends ArrayAllValue {
         sb.append('.') ;
         LOG.info(sb) ;
 
-    }
+    }*/
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, JDOMException {
         new EntitiesListAllValues() ;

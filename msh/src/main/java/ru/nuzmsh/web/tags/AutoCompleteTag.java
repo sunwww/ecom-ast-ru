@@ -27,7 +27,7 @@ import javax.servlet.jsp.PageContext;
  */
 public class AutoCompleteTag extends AbstractFieldTag {
 
-    private final static Logger LOG = Logger.getLogger(AutoCompleteTag.class) ;
+    private static final Logger LOG = Logger.getLogger(AutoCompleteTag.class) ;
 
     /** 
 	 * Показывать идентификатор в названии
@@ -121,6 +121,7 @@ public class AutoCompleteTag extends AbstractFieldTag {
         try {
             vocname = getVocName() ;
         } catch (Exception e) {
+            LOG.error(e.getMessage(),e);
             e.printStackTrace();
         }
         String id = getFormattedValue() ;
@@ -149,7 +150,7 @@ public class AutoCompleteTag extends AbstractFieldTag {
             		a.setHref("javascript:void(0) ;") ;
             		StringBuilder onclick = new StringBuilder().append("getDefinition('") ; 
             		onclick.append(theShortViewAction) ;
-            		if (theShortViewAction.indexOf("?")==-1) {onclick.append("?id=") ;} else {onclick.append("&id=") ;}
+            		if (theShortViewAction.indexOf('?')==-1) {onclick.append("?id=") ;} else {onclick.append("&id=") ;}
             		onclick.append(id).append("',event); ") ;
             		a.setOnClick(onclick.toString()) ;
             		a.setTagText("<img src='/skin/images/main/view1.png' alt='Просмотр' title='Просмотр' height='14' width='14'/>") ;
@@ -177,7 +178,7 @@ public class AutoCompleteTag extends AbstractFieldTag {
             
         } else {
 
-            StringBuffer styleClass = new StringBuffer("autocomplete");
+            StringBuilder styleClass = new StringBuilder("autocomplete");
             if(getHorizontalFill()) {
                 styleClass.append(" horizontalFill") ;
             }
@@ -193,7 +194,7 @@ public class AutoCompleteTag extends AbstractFieldTag {
             }
 //            String horFill = getHorizontalFill() ? "horizontalFill" : "" ;
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             sb.append(String.format("<input type='hidden' size='1'  name='%1$s' value='%2$s' id='%1$s'/>", getProperty(), id)) ;
             sb.append(String.format(new StringBuilder().append("<input title='").append(vocname).append("' type='text' name='%1$sName' value='%2$s' id='%1$sName' size='%3$s' class='%4$s'/>").toString()
@@ -270,7 +271,7 @@ public class AutoCompleteTag extends AbstractFieldTag {
         }
         if(name==null) name="" ;
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(String.format("<input type='hidden' name='%1$s' value='%2$s' id='%1$s'/>", getProperty(), id)) ;
         sb.append("<table border='0'><tr><td>") ;
         sb.append(String.format("<input readOnly='true' type='text' name='%1$sName' value='%2$s' id='%1$sName' size='%3$s'/>"

@@ -27,8 +27,8 @@ import javax.persistence.Id;
 @EntityFormSecurityPrefix("/Policy/Exp/Document")
 public class ImportDocumentForm extends IdEntityForm {
 
-    private final static Logger LOG = Logger.getLogger(ImportDocumentForm.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportDocumentForm.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     /** Идентификатор */
     @Id

@@ -19,8 +19,8 @@ import java.util.ArrayList;
  */
 public class ServiceRegister {
 
-    private final static Logger LOG = Logger.getLogger(ServiceRegister.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(ServiceRegister.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public ServiceRegister(String aAppName, InitialContext aContext, IProxyCreator aLocalProxyCreator, IProxyCreator aRemoteProxyCreator) {
@@ -111,19 +111,17 @@ public class ServiceRegister {
         String file = "/META-INF/miniejbservices.txt";
         InputStream resourceIn = loader.getResourceAsStream(file);
         if (resourceIn == null) throw new IllegalArgumentException("Нет файла " + file);
-        try {
-            LineNumberReader in = new LineNumberReader(new InputStreamReader(resourceIn));
+        try (LineNumberReader in = new LineNumberReader(new InputStreamReader(resourceIn))){
             String line;
             while ((line = in.readLine()) != null) {
                 if (!StringUtil.isNullOrEmpty(line)) register(loader.loadClass(line));
             }
-            in.close();
         } finally {
             resourceIn.close();
         }
     }
 
-    private final ArrayList<String> theRegisterJndis = new ArrayList<String>();
+    private final ArrayList<String> theRegisterJndis = new ArrayList<>();
     private final InitialContext theInitialContext;
     private final IProxyCreator theLocalProxyCreator;
     private final IProxyCreator theRemoteProxyCreator;

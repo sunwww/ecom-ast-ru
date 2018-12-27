@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class TagLibraryManager {
 
-	private final static Logger LOG = Logger.getLogger(TagLibraryManager.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(TagLibraryManager.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	
 	public void addTld(Class aClass, String aName) {

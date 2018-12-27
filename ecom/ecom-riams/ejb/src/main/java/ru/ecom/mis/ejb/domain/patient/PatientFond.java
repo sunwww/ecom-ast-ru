@@ -22,9 +22,9 @@ import java.sql.Timestamp;
 		@AIndex(properties = { "commonNumber" })
 })
 public class PatientFond extends BaseEntity{
-	public final static String STATUS_CHECK_TYPE_AUTOMATIC="A" ;
-	public final static String STATUS_CHECK_TYPE_PACKAGE="P" ;
-	public final static String STATUS_CHECK_TYPE_MANUAL="M" ;
+	public static final String STATUS_CHECK_TYPE_AUTOMATIC="A" ;
+	public static final String STATUS_CHECK_TYPE_PACKAGE="P" ;
+	public static final String STATUS_CHECK_TYPE_MANUAL="M" ;
 
 	private String theLastname;
 	private String theFirstname;

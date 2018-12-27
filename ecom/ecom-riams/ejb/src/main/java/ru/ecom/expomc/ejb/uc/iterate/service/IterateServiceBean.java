@@ -1,18 +1,9 @@
 package ru.ecom.expomc.ejb.uc.iterate.service;
 
-import java.util.Iterator;
-
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
-
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.monitor.MonitorId;
@@ -21,13 +12,20 @@ import ru.ecom.ejb.util.RhinoHelper;
 import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.expomc.ejb.uc.iterate.domain.Iterate;
 
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Iterator;
+
 @Stateless
 @Remote(IIterateService.class)
 public class IterateServiceBean implements IIterateService {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(IterateServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public void executeIterate(MonitorId aMonitorId, long aIterateId) {
 		IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Запуск перебора "+aIterateId) ;
@@ -85,8 +83,7 @@ public class IterateServiceBean implements IIterateService {
 	
 	
 	private long calcCount(Iterate iterate) {
-		Long count = (Long) theManager.createQuery("select count(*) "+iterate.getHqlString()).getSingleResult();
-		return count ;
+		return (Long) theManager.createQuery("select count(*) "+iterate.getHqlString()).getSingleResult();
 	}
 	
 	private @EJB ILocalMonitorService theMonitorService ;

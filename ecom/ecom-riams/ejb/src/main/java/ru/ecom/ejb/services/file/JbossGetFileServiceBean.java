@@ -23,8 +23,7 @@ import java.util.Properties;
 @Local(IJbossGetFileLocalService.class)
 public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetFileLocalService{
 
-    private final static Logger LOG = Logger.getLogger(JbossGetFileServiceBean.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(JbossGetFileServiceBean.class) ;
     
 
     private static long theNext = 1;
@@ -56,7 +55,7 @@ public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetF
 
     // IKO 070404 +++
     public String getAbsoluteFilename(long aFileId) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String exportDir = getTomcatExportDir();
         sb.append(exportDir);
         if (!exportDir.endsWith("/")) {
@@ -96,7 +95,7 @@ public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetF
     }
 
 
-    private final HashMap<Long, JbossFileInfoLocal> theHash = new HashMap<Long, JbossFileInfoLocal>();
+    private final HashMap<Long, JbossFileInfoLocal> theHash = new HashMap<>();
     private @Resource SessionContext theContext;
 
 }

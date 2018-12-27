@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 
 public class IdeModeServiceJs {
 
-	private final static Logger LOG = Logger.getLogger(IdeModeServiceJs.class);
+	private static final Logger LOG = Logger.getLogger(IdeModeServiceJs.class);
 
 	public IdeModeServiceJs() {
 		LOG.info("INIT()") ;
@@ -42,7 +42,7 @@ public class IdeModeServiceJs {
 	}
 	
 	public String[][] listTags() {
-		ArrayList<String[]> ret = new ArrayList<String[]>() ;
+		ArrayList<String[]> ret = new ArrayList<>() ;
 		for(TagLibraryInfo lib : theManager.getTagLibrariesInfos()) {
 			String prefix = lib.getPrefixString() ;
 			for(TagInfo tag : lib.getTags()) {

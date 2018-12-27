@@ -20,9 +20,9 @@ import java.util.Collection;
  */
 public class ListAction extends AbstractEntityAction {
 
-	private final static Logger LOG = Logger.getLogger(ListAction.class);
+	private static final Logger LOG = Logger.getLogger(ListAction.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
 			HttpServletRequest aRequest, HttpServletResponse aResponse)

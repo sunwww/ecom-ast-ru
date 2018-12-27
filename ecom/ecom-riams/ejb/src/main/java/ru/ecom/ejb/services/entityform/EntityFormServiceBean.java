@@ -22,12 +22,8 @@ import java.util.LinkedList;
 @SecurityDomain("other")
 public class EntityFormServiceBean extends AbstractFormServiceBeanHelper implements IEntityFormService, Serializable, ILocalEntityFormService {
 
-//    private final static Log LOG = LogFactory.getLog(EntityFormServiceBean.class);
-//    private final static boolean CAN_TRACE = LOG.isTraceEnabled();
-
-    private final static Logger LOG = Logger
-			.getLogger(EntityFormServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(EntityFormServiceBean.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 
     @SuppressWarnings("unchecked")
@@ -71,7 +67,7 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
                 .setMaxResults(300).getResultList();
         
     	if (CAN_DEBUG) LOG.debug("listAll: copying ..."); 
-        LinkedList<IEntityForm> ret = new LinkedList<IEntityForm>();
+        LinkedList<IEntityForm> ret = new LinkedList<>();
         try {
         	int ind=1 ;
             for (Object o : results) {
@@ -109,7 +105,7 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
     	return convertToMapForm(aFormClassName, prepareToCreate(loadMapForm(aFormClassName)));
     }
 	
-    
+    /*
 	private void dumpCollection(Collection aObject) {
 		if (CAN_DEBUG)
 			LOG.debug("dumpCollection: collection = " + aObject); 
@@ -121,7 +117,7 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
 			dump(o);
 		}
 	}
-	
+	*/
 	private void dump(Object aObject) {
 		for (Method m : aObject.getClass().getMethods()) {
 			if (CAN_DEBUG)

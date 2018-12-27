@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class PoiCellUtil {
 
-    private final static Logger LOG = Logger.getLogger(PoiCellUtil.class) ;
+    private static final Logger LOG = Logger.getLogger(PoiCellUtil.class) ;
 
 
     public static Object getCellValue(HSSFCell aCell) {

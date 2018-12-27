@@ -7,15 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
 
 public class CacheFilter implements Filter {
 
 	//private static final long TEN_YEARS = 1000 * 60 * 60 * 24 * 10 ;
 
-    private final static Logger LOG = Logger.getLogger(CacheFilter.class);
-	private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(CacheFilter.class);
+	private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 	
     public void doFilter(ServletRequest rawRequest, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -66,7 +65,7 @@ public class CacheFilter implements Filter {
     	CacheUniqueUtil.setUniqueId(theUniqueId) ;
     	LOG.info("unique = "+theUniqueId) ;
     }
-
+/*  //unused
 	private void logLoginUserInvironment(HttpServletRequest aRequest) {
         LOG.info("Login user env : {") ;
         for(Map.Entry entry : createUserEnvironmentInfo(aRequest).entrySet() ) {
@@ -75,7 +74,7 @@ public class CacheFilter implements Filter {
         LOG.info("}") ;
 		
 	}
-
+*/
     private Properties createUserEnvironmentInfo(HttpServletRequest aRequest) {
     	Properties prop = new Properties() ;
     	Enumeration headers = aRequest.getHeaderNames();

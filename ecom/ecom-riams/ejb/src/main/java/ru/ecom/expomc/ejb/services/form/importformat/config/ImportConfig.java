@@ -1,16 +1,16 @@
 package ru.ecom.expomc.ejb.services.form.importformat.config;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ikouzmin 09.03.2007 11:14:41
@@ -30,8 +30,7 @@ Sample XML
 public class ImportConfig {
     private Document theDocument;
 
-    private final static Logger LOG = Logger.getLogger(ImportConfig.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportConfig.class) ;
 
 
     //org.jdom.xpath.JaxenXPath dd;
@@ -45,7 +44,7 @@ public class ImportConfig {
     }
 
     public List<ImportEntity> getEntities() {
-        List<ImportEntity> ret = new ArrayList<ImportEntity>();
+        List<ImportEntity> ret = new ArrayList<>();
         List<Element> entities = null;
         try {
             LOG.info("ImportDoc:"+theDocument+":");

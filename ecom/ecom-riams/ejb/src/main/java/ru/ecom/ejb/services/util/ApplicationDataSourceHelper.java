@@ -17,8 +17,8 @@ import java.io.InputStream;
  */
 public class ApplicationDataSourceHelper {
 
-    private final static Logger LOG = Logger.getLogger(ApplicationDataSourceHelper.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ApplicationDataSourceHelper.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private ApplicationDataSourceHelper() {
     }

@@ -11,8 +11,8 @@ import java.util.Hashtable;
  *
  */
 public class InitialContextFactoryImpl implements InitialContextFactory {
-    private final static Logger LOG = Logger.getLogger(InitialContextFactoryImpl.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(InitialContextFactoryImpl.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     public InitialContextFactoryImpl() {
         if (CAN_TRACE) LOG.info("Init()");

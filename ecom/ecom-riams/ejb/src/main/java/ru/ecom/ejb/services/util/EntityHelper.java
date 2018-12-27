@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class EntityHelper {
 
-    private final static Logger LOG = Logger.getLogger(EntityHelper.class);
+    private static final Logger LOG = Logger.getLogger(EntityHelper.class);
 
     private EntityHelper() {
     }
@@ -155,7 +155,7 @@ public class EntityHelper {
     
     public List<String> listAllEntitiesClassnames(InputStream in) {
         try {
-            List<String> list = new LinkedList<String>();
+            List<String> list = new LinkedList<>();
             //InputStream in = getClass().getResourceAsStream(aResource);
             try {
                 Document doc = new SAXBuilder().build(in);
@@ -205,10 +205,9 @@ public class EntityHelper {
 
             if(oneToOne!=null || manyToOne!=null) {
                 // FIXME id - добавить функцию в EntityHelper getIdPropertyName()
-                String name = PropertyUtil.getPropertyName(method)
+				return PropertyUtil.getPropertyName(method)
                         +"_"
                         +getColumnName(method.getReturnType(), "id") ;
-                return name ;
             }
         }
         return aProperty ;

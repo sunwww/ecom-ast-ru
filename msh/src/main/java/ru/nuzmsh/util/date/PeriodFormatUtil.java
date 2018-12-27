@@ -1,8 +1,8 @@
 package ru.nuzmsh.util.date;
 
-import java.util.Date;
-import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Работа с периодами
@@ -24,7 +24,7 @@ public class PeriodFormatUtil {
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(aTo);
 
-        StringBuffer sb = new StringBuffer(" с ");
+        StringBuilder sb = new StringBuilder(" с ");
         // с 20 по 26 ноября 2005 года
         if (calFrom.get(Calendar.MONTH) == calTo.get(Calendar.MONTH)
                 && calFrom.get(Calendar.YEAR) == calTo.get(Calendar.YEAR)) {
@@ -55,7 +55,7 @@ public class PeriodFormatUtil {
         return sb.toString();
     }
 
-    private static void formatD1M5Y4(Calendar aCalendar, StringBuffer aSb) {
+    private static void formatD1M5Y4(Calendar aCalendar, StringBuilder aSb) {
         aSb.append(aCalendar.get(Calendar.DAY_OF_MONTH));
         aSb.append(' ');
         aSb.append(MONTHS[aCalendar.get(Calendar.MONTH)]);
@@ -64,7 +64,7 @@ public class PeriodFormatUtil {
 
     }
 
-    private final static String getMonthName(Date aDate) {
+    private static final String getMonthName(Date aDate) {
         Calendar calFrom = Calendar.getInstance();
         calFrom.setTime(aDate);
         return MONTHS[calFrom.get(Calendar.MONTH)];

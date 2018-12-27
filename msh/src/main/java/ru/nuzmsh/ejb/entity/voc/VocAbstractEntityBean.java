@@ -1,19 +1,18 @@
 package ru.nuzmsh.ejb.entity.voc;
 
+import org.apache.log4j.Logger;
+import ru.nuzmsh.ejb.exceptions.CreateExceptionCause;
+import ru.nuzmsh.ejb.exceptions.FinderExceptionCause;
+import ru.nuzmsh.forms.autocomplete.IAutocompletable;
 import ru.nuzmsh.logicpool.api.ILogic;
 import ru.nuzmsh.logicpool.api.LogicException;
-import ru.nuzmsh.forms.autocomplete.IAutocompletable;
-import ru.nuzmsh.ejb.exceptions.FinderExceptionCause;
-import ru.nuzmsh.ejb.exceptions.CreateExceptionCause;
 import ru.nuzmsh.util.StringUtil;
 
 import javax.ejb.*;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
-
-import org.apache.log4j.Logger;
 
 /**
  * @ejb.bean
@@ -35,7 +34,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class VocAbstractEntityBean implements EntityBean, IAutocompletable {
 
-    private final static Logger LOG = Logger.getLogger(VocAbstractEntityBean.class);
+    private static final Logger LOG = Logger.getLogger(VocAbstractEntityBean.class);
 
 
     protected abstract ILogic getLogic(EntityContext aContext) throws LogicException;

@@ -1,5 +1,13 @@
 package ru.ecom.expomc.ejb.services.exportformat.driver;
 
+import org.apache.log4j.Logger;
+import ru.ecom.expomc.ejb.services.exportformat.AbstractExportFormatDriver;
+import ru.ecom.expomc.ejb.services.exportformat.SaveXmlException;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.Transient;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,23 +16,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.expomc.ejb.services.exportformat.AbstractExportFormatDriver;
-import ru.ecom.expomc.ejb.services.exportformat.SaveXmlException;
-
 /**
  * @author ikouzmin 13.03.2007 16:52:47
  */
 
 public class DefaultExportDriver extends AbstractExportFormatDriver {
-    private final static Logger LOG = Logger.getLogger(DefaultExportDriver.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(DefaultExportDriver.class) ;
 
     protected boolean theNative;
     protected Query theQuery;
@@ -48,7 +45,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
             theQuery = theManager.createQuery(sql);
         }
 
-        theDriverConfig = new HashMap<String, String>();
+        theDriverConfig = new HashMap<>();
         for (String s : driverConfig.split(";")) {
             String[] keys = (s+"==~").split("=");
             String keyName = keys[0];
@@ -66,7 +63,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         rows = resultList.size();
     }
 
-    public void saveXml(StringBuffer s) throws SaveXmlException {
+    public void saveXml(StringBuilder s) throws SaveXmlException {
         long i = 0;
         try {
             if (rows == 0) {
@@ -88,7 +85,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
 
     public void saveXml(Writer writer) throws SaveXmlException {
         long i = 0;
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         try {
             if (rows == 0) {
                 saveEmpty(s);
@@ -112,7 +109,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         }
     }
 
-    private void saveProlog(StringBuffer s) {
+    private void saveProlog(StringBuilder s) {
         clazz = null;
         methods = null;
         cols = 0;
@@ -136,7 +133,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         }
     }
 
-    private void saveRow(Object o, StringBuffer s) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void saveRow(Object o, StringBuilder s) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Object[] nullArgs = {};
         s.append("\t<row>\n");
         saveObject(o,s,0,true);
@@ -172,7 +169,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
             return false;
     }
 
-    private void saveObject(Object o,StringBuffer s,int level,boolean isExpanded)  {
+    private void saveObject(Object o,StringBuilder s,int level,boolean isExpanded)  {
         if (o == null) return;
         Class clazz = o.getClass();
         List<Method> methods = null;
@@ -279,15 +276,15 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         return ret;
     }
 
-    private void saveEpilog(StringBuffer s) {
+    private void saveEpilog(StringBuilder s) {
         s.append("</result>\n");
     }
 
-    private void saveEmpty(StringBuffer s) {
+    private void saveEmpty(StringBuilder s) {
         s.append("<result rows='0'><nodata/></result>");
     }
 
-    private void saveError(StringBuffer s) {
+    private void saveError(StringBuilder s) {
 
     }
 
@@ -297,7 +294,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
 
 class BeanPropertyUtil {
     static List<Method> getBeanPropertyGetMethods(Class aClass) {
-        List<Method> methodList = new ArrayList<Method>();
+        List<Method> methodList = new ArrayList<>();
         Method[] methods = aClass.getMethods();
         for (Method method : methods) {
             String methodName = method.getName();

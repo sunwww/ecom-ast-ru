@@ -46,8 +46,8 @@ import java.util.Map.Entry;
 @Local(ICheckServiceLocal.class) 
 public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
 
-    private final static Logger LOG = Logger.getLogger(CheckServiceBean.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(CheckServiceBean.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private void clearChecks(ImportTime aTime) {
     	EntityManager manager = theFactory.createEntityManager() ;
@@ -87,11 +87,11 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         	Object entity = entityClass.newInstance() ;
         	ImportServiceBean.copyMapToEntity(fields, aMap, entity) ;
 
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            HashMap<String, Object> map = new HashMap<>();
             copyToMap(entity, map,entityClass);
         	
             // список полей
-            HashSet<String> allowedFields = new HashSet<String>();
+            HashSet<String> allowedFields = new HashSet<>();
             for (Method method : entityClass.getMethods()) {
                 if(method.getAnnotation(Comment.class)!=null) {
                     allowedFields.add(PropertyUtil.getPropertyName(method)) ;
@@ -155,7 +155,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     }
     
     private Collection<CheckPair> createIteratorsChecks(Collection<Check> aChecks, boolean aSqlSupports) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, ParseException {
-    	LinkedList<CheckPair> ret = new LinkedList<CheckPair>() ;
+    	LinkedList<CheckPair> ret = new LinkedList<>() ;
     	for (Check check : aChecks) {
             if(!check.getDisabled()) {
 	            ICheck icheck = (ICheck) findCheckClass(check).newInstance() ;
@@ -183,16 +183,13 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     	if(CAN_DEBUG) LOG.debug("time="+aTime) ;
         try {
             ImportTime time = theManager.find(ImportTime.class, aTime) ;
-            if (CAN_DEBUG)
-				LOG.debug("checkDocumentData: time = " + time); 
+            if (CAN_DEBUG) LOG.debug("checkDocumentData: time = " + time);
 
             ImportDocument document = time.getDocument() ;
-            if (CAN_DEBUG)
-				LOG.debug("checkDocumentData: document = " + document); 
+            if (CAN_DEBUG) LOG.debug("checkDocumentData: document = " + document);
 
             Format format = (Format) time.getFormat() ;
-            if (CAN_DEBUG)
-				LOG.debug("checkDocumentData: format = " + format); 
+            if (CAN_DEBUG) LOG.debug("checkDocumentData: format = " + format);
 
             // перебор всех записей в реестре
 
@@ -217,7 +214,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             monitor.setText("Создание списка полей...") ;
             Class entityClass = ClassLoaderHelper.getInstance().loadClass(document.getEntityClassName());
             // список полей
-            HashSet<String> allowedFields = new HashSet<String>();
+            HashSet<String> allowedFields = new HashSet<>();
             for (Method method : entityClass.getMethods()) {
                 if(method.getAnnotation(Comment.class)!=null) {
                     allowedFields.add(PropertyUtil.getPropertyName(method)) ;
@@ -251,7 +248,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             	}
             	
                 // копируем все в MAP
-                HashMap<String, Object> map = new HashMap<String, Object>();
+                HashMap<String, Object> map = new HashMap<>();
                 copyToMap(entity, map, entityClass);
                 CheckContext ctx = new CheckContext(format, map, allowedFields, time.getActualDateFrom(), theManager,entity);
 
@@ -356,15 +353,15 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
 
         Collection<CheckProperty> properties = check.getProperties() ;
 
-        TreeMap<String, String> values = new TreeMap<String, String>();
-        TreeMap<String, Long> ids = new TreeMap<String, Long>();
+        TreeMap<String, String> values = new TreeMap<>();
+        TreeMap<String, Long> ids = new TreeMap<>();
         for (CheckProperty property : properties) {
             values.put(property.getProperty(), property.getValue()) ;
             ids.put(property.getProperty(), property.getId()) ;
         }
 
         Class clazz = findCheckClass(check) ;
-        LinkedList<CheckPropertyRow> ret = new LinkedList<CheckPropertyRow>();
+        LinkedList<CheckPropertyRow> ret = new LinkedList<>();
         for (Method method : clazz.getMethods()) {
             Comment comment = method.getAnnotation(Comment.class) ;
             if(comment!=null) {

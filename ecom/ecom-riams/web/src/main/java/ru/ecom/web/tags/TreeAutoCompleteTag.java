@@ -25,7 +25,7 @@ import javax.servlet.jsp.PageContext;
  *          description="Tree Autocomplete field JSP tag."
  */public class TreeAutoCompleteTag extends AbstractFieldTag {
 
-    private final static Logger LOG = Logger.getLogger(TreeAutoCompleteTag.class) ;
+    private static final Logger LOG = Logger.getLogger(TreeAutoCompleteTag.class) ;
 
     protected Element getFieldElement() throws JspException {
         String vocname = "ERROR" ;

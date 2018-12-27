@@ -23,14 +23,14 @@ import java.util.Properties;
  */
 public class Injection {
 
-    private final static ThreadLocal<HashMap<String, Object>> THREAD_SERVICES = new ThreadLocal<HashMap<String,Object>>();
+    private static final ThreadLocal<HashMap<String, Object>> THREAD_SERVICES = new ThreadLocal<>();
 
-    private final static Logger LOG = Logger.getLogger(Injection.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(Injection.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
     private static String KEY;
 
-    private Injection(String aWebName, String aAppName, String aProviderUrl, LoginInfo aLoginInfo, String aInitialContextFactory, String aSecurityProtocol) throws NamingException {
+    private Injection(String aWebName, String aAppName, String aProviderUrl, LoginInfo aLoginInfo, String aInitialContextFactory, String aSecurityProtocol) {
         //System.out.println("new Injection("+aWebName+"," + aAppName + ", " + aProviderUrl + ", " + aLoginInfo.getUsername() + ", " + aInitialContextFactory + ") ");
         theAppName = aAppName;
         theWebName = aWebName;
@@ -128,7 +128,7 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                             , prop.getProperty("java.naming.factory.initial")
                             , prop.getProperty("java.naming.security.protocol", "other")
                     );
-                } catch (NamingException e) {
+                } catch (Exception e) {
                     throw new IllegalStateException("Ошибка подключение к серверу: " + e.getMessage(), e);
                 }
             } else {
@@ -151,7 +151,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                 LoginInfo loginInfo = LoginInfo.find(session);
                 if (loginInfo == null) throw new IllegalStateException("Нет информации о пользователе");
 
-                try {
 
                     //System.out.println("------webName="+aWebName) ;
                     //System.out.println("---appName="+prop.getProperty("ejb-app-name")) ;
@@ -163,9 +162,6 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
                             , prop.getProperty("java.naming.security.protocol", "other")
                     );
                     aRequest.getSession().setAttribute(KEY, injection);
-                } catch (NamingException e) {
-                    throw new IllegalStateException("Ошибка подключение к серверу: " + e.getMessage(), e);
-                }
             } else {
 
             }
@@ -197,7 +193,7 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
         //System.out.println(" ----get service="+theWebName+" --- ");
         if(CAN_TRACE) LOG.info(aServiceName+" , services  "+services) ;
         if(services==null) {
-            services = new HashMap<String, Object>() ;
+            services = new HashMap<>() ;
             THREAD_SERVICES.set(services);
             service = null ;
         } else {

@@ -9,7 +9,7 @@ import java.util.TreeSet;
 
 public class FindEntityClassesHelper {
 
-	private final static Logger LOG = Logger.getLogger(FindEntityClassesHelper.class);
+	private static final Logger LOG = Logger.getLogger(FindEntityClassesHelper.class);
 
 	private File theRootDir = null ;
 	public Set<String> findClasses(String aDir) {
@@ -59,7 +59,7 @@ public class FindEntityClassesHelper {
 		}
 	}
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		FindEntityClassesHelper h = new FindEntityClassesHelper() ;
 		Set<String> classes = h.findClasses("./target/classes");
 		for(String cl : classes) {

@@ -20,10 +20,7 @@ import javax.servlet.http.HttpSession;
  * @user ikouzmin 08.03.2007 16:53:11
  */
 public class ExportFormatDownloadAction  extends BaseAction {
-    private final static Logger LOG = Logger.getLogger(ExportFormatDownloadAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
-
-
+    private static final Logger LOG = Logger.getLogger(ExportFormatDownloadAction.class) ;
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 
@@ -47,7 +44,7 @@ public class ExportFormatDownloadAction  extends BaseAction {
         new Thread() {
             public void run() {
                 service.setMaxRecords(0);
-                service.exportAsXml(new Long(id),fileId,monitorId);
+                service.exportAsXml(id,fileId,monitorId);
             }
         }.start() ;
 
