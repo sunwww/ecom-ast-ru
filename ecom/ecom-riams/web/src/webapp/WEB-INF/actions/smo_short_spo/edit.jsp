@@ -188,7 +188,7 @@
         	  } if ($('emergency').checked){
         		  addOtherDate(aDate);
         	  } else {
-	        	  TicketService.canICreateTicket (null, +$('medcard').value, +$('ownerFunction').value, aDate, +$('medcard').value,  {
+	        	  TicketService.canICreateTicket (null, +$('patient').value, +$('ownerFunction').value, aDate, +$('medcard').value,  {
 	        		 callback: function (a) {
 	        			 if (a!=null&&""+a!="") {
 	        				 showTicketDouble(a) ;
