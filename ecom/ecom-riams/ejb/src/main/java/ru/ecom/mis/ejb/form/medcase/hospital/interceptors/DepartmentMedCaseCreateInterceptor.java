@@ -90,12 +90,11 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 				if (!noCheckPregnancy && !isPregnancyExists(manager, prevMedCase) && !isMisbirthClassExists(manager, form.getPrevMedCase())) {
 					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам либо данные по выкидышу!");
 				}
-
 				//lastrelease milamesher 10.12.2018 #131
 				//запустить с 01.01.2019
-		/*if (form.getPrevMedCase()!=null &&!isRobsonClassExists(manager, form.getPrevMedCase() ) && !isDsO82(manager, form.getPrevMedCase())) {
-			throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана классификация Робсона!");
-		}*/
+				if (form.getPrevMedCase()!=null &&!isRobsonClassExists(manager, prevMedCase )) {
+					throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана классификация Робсона!");
+				}
 			}
 		}
 	}
@@ -122,11 +121,13 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 
 	}
     //Milamesher 10122018 #131 существует ли классификация Робсона
-	private static boolean isRobsonClassExists(EntityManager aManager, Long aMedCaseId) {
-		if (aMedCaseId==null) {return true;}
-		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
-		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
-			String sql = "select count(id) from robsonclass where medcase_id= "+aMedCaseId;
+	private static boolean isRobsonClassExists(EntityManager aManager, DepartmentMedCase aMedCase) {
+		//Milmesher 28122018 классификация необязательная для след. диагнозов
+		Diagnosis diagnosis = aMedCase.getMainDiagnosis();
+		ArrayList<String> withoutChildBirth = new ArrayList<String>(){{add("O47.0");add("O47.1");add("O42.2");}};
+		if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
+		if (aMedCase.getDepartment()!=null && aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()){
+			String sql = "select count(id) from robsonclass where medcase_id= "+aMedCase.getId();
 			Object list = aManager.createNativeQuery(sql).getSingleResult();
 			return Long.valueOf(list.toString())>0;
 		} else {
