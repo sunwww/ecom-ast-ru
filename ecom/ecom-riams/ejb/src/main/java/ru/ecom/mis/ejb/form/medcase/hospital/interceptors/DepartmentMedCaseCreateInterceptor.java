@@ -91,8 +91,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					throw new IllegalStateException("Перевод из отделения невозможен, т.к.не заполнены данные по родам либо данные по выкидышу!");
 				}
 				//lastrelease milamesher 10.12.2018 #131
-				//запустить с 01.01.2019
-				if (form.getPrevMedCase()!=null &&!isRobsonClassExists(manager, prevMedCase )) {
+				if (form.getPrevMedCase()!=null && !isMisbirthClassExists(manager, form.getPrevMedCase()) &&!isRobsonClassExists(manager, prevMedCase )) {
 					throw new IllegalStateException ("Перевод из отделения невозможен, т.к.не создана классификация Робсона!");
 				}
 			}
