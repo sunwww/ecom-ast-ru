@@ -161,7 +161,8 @@
     ,vddp.name as vddpname,vdr.name as vdrname
     ,vddcr.name as vddcrname,case when cast(dd.isclose as int)=1 then 'Да' else 'НЕТ' end
     
-    	,p.lastname||' '||p.firstname||' '||p.middlename as pat 
+    	,p.lastname||' '||p.firstname||' '||p.middlename as pat
+	    ,dd.hospitalizedNumber as hn
      	from disabilitydocument as dd 
 	   	left join disabilitycase dc on dc.id=dd.disabilityCase_id
 	   	left join disabilitydocument dupl on dupl.id=dd.duplicate_id
@@ -172,7 +173,7 @@
 	   	left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
     	left join patient p on p.id=dc.patient_id
      	where ${showbyType} ${status} ${statusNoActuality} ${dateGroup } between cast('${beginDate}' as date) and cast('${endDate}' as date) ${disReason} ${closeReason} ${primarity} ${anotherlpu} order by ${orderBystatus} "/>
-    <msh:table viewUrl="entityShortView-dis_document.do" name="journal_priem" action="entityParentView-dis_document.do" idField="1">
+    <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-dis_document.do" name="journal_priem" action="entityParentView-dis_document.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата выдачи" property="2"/>
       <msh:tableColumn columnName="Номер" property="5"/>
@@ -184,6 +185,7 @@
       <msh:tableColumn columnName="Дата послед. продл." property="4"/>
       <msh:tableColumn columnName="Причина закрытия" property="9"/>
       <msh:tableColumn columnName="Закрыт?" property="10"/>
+      <msh:tableColumn columnName="Номер истории" property="12"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>

@@ -8,6 +8,7 @@
 
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="mis_medService" />
+      <tags:medserviceTemplatesCopy name="medserviceTemplatesCopy" />
     <msh:sideMenu guid="9ec15353-1f35-4c18-b99d-e2b63ecc60c9" title="Медицинская услуга">
       <msh:ifFormTypeIsView formName="mis_medServiceForm" guid="e2054544-85-a21c-3bb9b4569efc">
         <msh:sideLink key="ALT+1" params="id" action="/entityParentEdit-mis_medService" name="Изменить" roles="/Policy/Mis/MedService/Edit" />
@@ -146,7 +147,7 @@
     	</msh:section>
     </msh:ifInRole>
     <msh:ifInRole roles="/Policy/Diary/Template/View" guid="3a4d6eb2-8dac-420a-9dcf-4f47584d9d61">
-        <msh:section title="Шаблоны заключений" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
+        <msh:section title="Шаблоны заключений <a href='javascript:void(0)' onclick='showmedserviceTemplatesCopy(${param.id })'> Копировать в услугу</a>" createRoles="/Policy/Diary/Template/Create" createUrl="entityParentPrepareCreate-diary_template.do?id=${param.id}">
           <ecom:parentEntityListAll attribute="templates" formName="diary_templateForm" guid="templates" />
           <msh:table name="templates" action="diary_templateView.do" idField="id" guid="16cdff9b--8997-eebc80ecc49c">
             <msh:tableColumn property="title" columnName="Заголовок" guid="2fd022ea-59b0-4cc9a3ddc91f" />
