@@ -16,7 +16,6 @@ import ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +26,8 @@ import java.util.TreeMap;
  */
 public class XmlFormCustomizeService implements IFormCustomizeService {
 
-    private final static Logger LOG = Logger.getLogger(XmlFormCustomizeService.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(XmlFormCustomizeService.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 
@@ -37,7 +36,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
     public void setConfigDir(String aConfigDir) { theConfigDir = aConfigDir ; }
 
     public void start() {
-        theHash = new TreeMap<String, TreeMap<String, FormElementInfo>>();
+        theHash = new TreeMap<>();
         try {
             Element root = getRootElement(theConfigDir+"/formsCustomize.xml") ;
             List<Element> forms = root.getChildren() ;
@@ -119,7 +118,7 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         } else {
             TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName) ;
             if(elementsHash==null) {
-                elementsHash = new TreeMap<String, FormElementInfo>();
+                elementsHash = new TreeMap<>();
                 theHash.put(aFormName, elementsHash) ;
             }
             elementsHash.put(aInfo.getName(), aInfo) ;
@@ -135,28 +134,27 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         }
     }
 
-    private void saveAll() throws IOException, UnsupportedEncodingException {
+    private void saveAll() throws IOException {
         XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
         FileOutputStream tmpOut = new FileOutputStream(theConfigDir+"/formsCustomize.xml") ;
-        OutputStreamWriter fileOut = new OutputStreamWriter(tmpOut, "utf-8");
-//        fileOut.write("<?xml version='1.0' encoding='utf-8'?>\n");
-        Element forms = new Element("forms");
-        Document doc = new Document(forms);
-        for (String formKey : theHash.keySet()) {
-            TreeMap<String, FormElementInfo> elementsHash = theHash.get(formKey) ;
-            Element form = new Element("form");
-            form.setAttribute("name",formKey) ;
-            for (FormElementInfo info : elementsHash.values()) {
-                if(canSave(info)) {
-                    form.addContent(createXmlElementFromElement(info)) ;
+        try (OutputStreamWriter fileOut = new OutputStreamWriter(tmpOut, "utf-8")){
+            Element forms = new Element("forms");
+            Document doc = new Document(forms);
+            for (String formKey : theHash.keySet()) {
+                TreeMap<String, FormElementInfo> elementsHash = theHash.get(formKey) ;
+                Element form = new Element("form");
+                form.setAttribute("name",formKey) ;
+                for (FormElementInfo info : elementsHash.values()) {
+                    if(canSave(info)) {
+                        form.addContent(createXmlElementFromElement(info)) ;
+                    }
+                }
+                if(form.getChildren()!=null && !form.getChildren().isEmpty()) {
+                    forms.addContent(form) ;
                 }
             }
-            if(form.getChildren()!=null && !form.getChildren().isEmpty()) {
-                forms.addContent(form) ;
-            }
+            xmlOut.output(doc, fileOut);
         }
-        xmlOut.output(doc, fileOut);
-        fileOut.close() ;
     }
 
     private Element createXmlElementFromElement(FormElementInfo info) {
@@ -191,8 +189,8 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
         return canSave ;
     }
 
-    public Collection<FormInfo> listCustomizedForms() throws FormCustomizeException {
-        LinkedList<FormInfo> ret = new LinkedList<FormInfo>();
+    public Collection<FormInfo> listCustomizedForms()  {
+        LinkedList<FormInfo> ret = new LinkedList<>();
         for (String key : theHash.keySet()) {
             FormInfo formInfo = new FormInfo();
             formInfo.setName(key);

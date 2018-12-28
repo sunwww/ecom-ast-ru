@@ -35,13 +35,12 @@ import java.util.TreeMap;
 @SecurityDomain("other")
 public class QuickQueryServiceBean implements IQuickQueryService {
 	
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(QuickQueryServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+
 	public Map<String,String> listQuickQueries() {
 		
-		TreeMap<String,String> map = new TreeMap<String, String>() ;
+		TreeMap<String,String> map = new TreeMap<>() ;
 		try {
 			File dir = JBossConfigUtil.getDataFile("quickquery/") ;
 			for(File file : dir.listFiles()) {
@@ -91,16 +90,17 @@ public class QuickQueryServiceBean implements IQuickQueryService {
 		
 	}
 	private void executeQuery(Connection aCon, QuickQuery aQuery, ConfigQuery aConfigQuery, ConfigQuickQuery aConfig) throws SQLException {
-		Statement stmt = aCon.createStatement() ;
-		
-		ResultSet rs = stmt.executeQuery(applyWhereClause(aConfig, aConfigQuery.getSql())) ;
-		ResultSetMetaData meta = rs.getMetaData() ;
-		while(rs.next()) {
-			QuickQueryRow row = new QuickQueryRow() ;
-			for(int i=0; i<meta.getColumnCount(); i++) {
-				row.getCells().add(rs.getObject(i+1));
+
+		try (Statement stmt = aCon.createStatement();
+			 ResultSet rs = stmt.executeQuery(applyWhereClause(aConfig, aConfigQuery.getSql()))) {
+			ResultSetMetaData meta = rs.getMetaData();
+			while (rs.next()) {
+				QuickQueryRow row = new QuickQueryRow();
+				for (int i = 0; i < meta.getColumnCount(); i++) {
+					row.getCells().add(rs.getObject(i + 1));
+				}
+				aQuery.getRows().add(row);
 			}
-			aQuery.getRows().add(row);
 		}
 	}
 

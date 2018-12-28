@@ -1,10 +1,10 @@
 package ru.ecom.expomc.ejb.services.importservice;
 
+import org.apache.log4j.Logger;
+
 import javax.annotation.EJB;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-
-import org.apache.log4j.Logger;
 
 /**
  * Запуск импорта
@@ -15,8 +15,8 @@ import org.apache.log4j.Logger;
 //        })
 public class ImportMDB implements MessageListener {
 
-    private final static Logger LOG = Logger.getLogger(ImportMDB.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportMDB.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     public void onMessage(Message aMessage) {
         try {

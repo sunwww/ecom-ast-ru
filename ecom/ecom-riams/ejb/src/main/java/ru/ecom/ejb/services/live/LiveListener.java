@@ -21,8 +21,8 @@ import java.util.Date;
 
 public class LiveListener {
 	
-	private final static Logger LOG = Logger.getLogger(LiveListener.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(LiveListener.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	private static final int ACTION_CREATE = 1 ;
 	private static final int ACTION_UPDATE = 2 ;

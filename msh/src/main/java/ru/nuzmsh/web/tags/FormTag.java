@@ -1,19 +1,9 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
-import java.util.Iterator;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ActionConfig;
-
 import ru.nuzmsh.forms.response.FormMessage;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.util.StringUtil;
@@ -21,6 +11,13 @@ import ru.nuzmsh.web.messages.InfoMessage;
 import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 import ru.nuzmsh.web.util.IdeTagHelper;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import java.util.Iterator;
 
 /**
  * Форма
@@ -33,8 +30,8 @@ import ru.nuzmsh.web.util.IdeTagHelper;
 public class FormTag extends org.apache.struts.taglib.html.FormTag implements IGuidSupport {
 
 
-	private final static Logger LOG = Logger.getLogger(FormTag.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(FormTag.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	/** 
 	 * Название формы

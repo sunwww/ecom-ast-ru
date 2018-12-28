@@ -14,9 +14,9 @@ import java.util.List;
 
 public class RowPersistDelegate {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(RowPersistDelegate.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public boolean isRowPersistEnable(Class aFormClass) {
 		return aFormClass.isAnnotationPresent(RowPersist.class);

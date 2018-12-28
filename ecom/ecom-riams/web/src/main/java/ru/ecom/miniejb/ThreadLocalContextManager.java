@@ -9,7 +9,7 @@ import javax.persistence.EntityManagerFactory;
  */
 public class ThreadLocalContextManager {
 
-    private final static ThreadLocal<ThreadLocalContext> THREAD  = new ThreadLocal<ThreadLocalContext>();
+    private static final ThreadLocal<ThreadLocalContext> THREAD  = new ThreadLocal<ThreadLocalContext>();
 
     public static void start() {
         if(THREAD.get()!=null) throw new IllegalStateException("Менеджер уже запущен") ;

@@ -37,8 +37,8 @@ import java.util.Collection;
  */
 public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
 
-	private final static Logger LOG = Logger.getLogger(EntityWebTrailTag.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(EntityWebTrailTag.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     /** Раздел основного меню */
     public String getMainMenu() { return theMainMenu ; }
@@ -84,7 +84,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             ActionForm form = (ActionForm) request.getAttribute(theBeginForm) ;
 
             boolean createState = false ;
-            if(form !=null && form instanceof BaseValidatorForm) {
+            if(form instanceof BaseValidatorForm) {
                 BaseValidatorForm baseForm = (BaseValidatorForm) form ;
                 if(baseForm.isTypeCreate()) {
                     createState = true ;
@@ -156,11 +156,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         	//LOG.debug("             error subclass") ;
         	//LOG.debug(e) ;
         }
-        if (CAN_DEBUG)
-			LOG.debug("   print: aClazz = " + aClazz); 
-
-        
-    	
+        LOG.debug("   print: aClazz = " + aClazz);
         String[] propertyNames = WebTrailUtil.getPropertiesName(aClazz) ;
         String[] listStyle = WebTrailUtil.getListStyle(aClazz);
         
@@ -175,16 +171,12 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         	//aRequest.setAttribute("mainFormComment", comment);
         }
         
-        if (CAN_DEBUG)
-			LOG.debug("   print: comment = " + comment); 
-
-
+        LOG.debug("   print: comment = " + comment);
         StringBuilder sb = new StringBuilder();
         StringBuilder sbTitle = new StringBuilder();
         String entityName = aFirst && aCreateState ? "Создание" : getEntityName(aService, aClazzName, aId, propertyNames, aLoader) ;
         String sbStyle = (aFirst && aCreateState||listStyle==null) ? "" : getStyle(aId, listStyle,aWebService) ;
-        if (CAN_DEBUG)
-			LOG.debug("    print: entityName = " + entityName); 
+        LOG.debug("    print: entityName = " + entityName);
         
 
         printLi(sb, sbTitle, entityName , comment, aId, webTrail.view(),webTrail.shortView(), aFirst, aSecond,sbStyle);
@@ -193,9 +185,8 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         aSbTitle.insert(0, sbTitle) ;
         Parent parent = (Parent) aClazz.getAnnotation(Parent.class) ;
         
-        if (CAN_DEBUG)
-			LOG.debug("    print: parentAnnotation = " + parent); 
-        int level = 1 ;
+			LOG.debug("    print: parentAnnotation = " + parent);
+       // int level = 1 ;
         if (!aCreateState && webTrail.journal()) {
         	
         	 aService.saveView(ConvertSql.parseLong(aId), aUsername, entityName,aClazz.getSimpleName(), aFirst?1:2);
@@ -244,7 +235,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     	sb.append("<span><a") ;
     	sb.append(" href='") ;
     	sb.append(aListAction) ;
-    	if (aListAction.indexOf("?")<0) {sb.append("?id=") ;} else {sb.append("&id=");} ;
+    	if (aListAction.indexOf('?')<0) {sb.append("?id=") ;} else {sb.append("&id=");}
     	sb.append(aId);
     	sb.append("'");
         sb.append("'>");
@@ -253,7 +244,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         if (aListShortAction!=null && !aListShortAction.equals("")) {
         	sb.append("<a class='a_instance_message' href='javascript:void(0)' onclick='getDefinition(\"").append(aListShortAction);
             //aSb.append(" class='a_instance_message' onmouseover='getDefinition(\"").append(aDefaultShortAction);
-        	if (aListShortAction.indexOf("?")<0) {sb.append("?id=") ;} else {sb.append("&id=");} ;
+        	if (aListShortAction.indexOf('?')<0) {sb.append("?id=") ;} else {sb.append("&id=");}
         	sb.append(aId);
         	sb.append("\", event); return false ;' ");
             //sb.append("onmouseout='hideMessage()'") ;
@@ -290,13 +281,13 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     				if (obj!=null)st.append(obj).append(";") ;
     			}
     		}
-    		if (st.length()>0) sb.append("").append(st).append("") ;
+    		if (st.length()>0) sb.append(st);
     	}
     	return sb.toString() ;
     }
     private void printLi(StringBuilder aSb, StringBuilder aSbTitle, String aValue, String aComment, Object aId, String aDefaultViewAction
     		, String aDefaultShortAction
-            , boolean aFirst, boolean aSecond, String aSbStyle) throws IOException {
+            , boolean aFirst, boolean aSecond, String aSbStyle) {
         aSb.append("<span");
         if (aSbStyle!=null && !aSbStyle.equals("")) aSb.append(" style ='").append(aSbStyle).append("'") ;
         aSb.append(">") ;
@@ -309,7 +300,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
             } 
             aSb.append(" href='") ;
             aSb.append(aDefaultViewAction) ;
-            if (aDefaultViewAction.indexOf("?")<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}
+            if (aDefaultViewAction.indexOf('?')<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}
             aSb.append(aId);
             aSb.append("'");
             aSb.append(" title='") ;
@@ -343,7 +334,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         if (firstIsLink&&aDefaultShortAction!=null && !aDefaultShortAction.equals("")) {
         	aSb.append("<a class='a_instance_message' href='javascript:void(0)' onclick='getDefinition(\"").append(aDefaultShortAction);
             //aSb.append(" class='a_instance_message' onmouseover='getDefinition(\"").append(aDefaultShortAction);
-        	if (aDefaultShortAction.indexOf("?")<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}
+        	if (aDefaultShortAction.indexOf('?')<0) {aSb.append("?id=") ;} else{aSb.append("&id=");}
             //aSb.append("?id=") ;
             aSb.append(aId);
             aSb.append("\", event); return false ;' ");
@@ -379,8 +370,7 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
     @SuppressWarnings("unchecked")
 	private String getEntityName(IParentEntityFormService service, String aClassName, Object aId, String[] aPropertyNames, ClassLoader aLoader) throws EntityFormException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, ParseException, ClassNotFoundException, InstantiationException {
 //      System.out.println("aClass = " + aClass);
-    	if (CAN_DEBUG)
-			LOG.debug("getEntityName: aClassName = " + aClassName); 
+			LOG.debug("getEntityName: aClassName = " + aClassName);
 
       Class formClass = aLoader.loadClass(aClassName);
       IEntityForm entityForm = (IEntityForm) formClass.newInstance();

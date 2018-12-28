@@ -18,7 +18,6 @@
 		<include name='jersey/javax.ws.rs-api-2.1.jar' />
 		<include name='javax/javax.websocket-api-1.1.jar' />
 		<include name='jersey/gson-2.6.1.jar' />
-		
 	</fileset>
 
 	<target name='prepare.web'>

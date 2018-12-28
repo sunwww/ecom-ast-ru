@@ -12,8 +12,8 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class EjbHash {
-    private final static Logger LOG = Logger.getLogger(EjbHash.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(EjbHash.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public EjbHash() {
@@ -30,5 +30,5 @@ public class EjbHash {
         if (CAN_TRACE) LOG.info(" getting " + aClass+" ("+jndi+")");
         return  jndi;
     }
-    private final HashMap<String, String> theHashMap = new HashMap<String, String>();
+    private final HashMap<String, String> theHashMap = new HashMap<>();
 }

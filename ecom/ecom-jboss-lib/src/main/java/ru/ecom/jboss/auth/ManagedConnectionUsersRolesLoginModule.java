@@ -1,7 +1,7 @@
 package ru.ecom.jboss.auth;
 
-import java.io.PrintWriter;
-import java.util.Set;
+import org.apache.log4j.Logger;
+import org.jboss.security.auth.spi.UsersRolesLoginModule;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
@@ -11,9 +11,8 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
-
-import org.apache.log4j.Logger;
-import org.jboss.security.auth.spi.UsersRolesLoginModule;
+import java.io.PrintWriter;
+import java.util.Set;
 
 /**
  * Добавляет PasswordCredential в getPrivateCredential()
@@ -21,9 +20,9 @@ import org.jboss.security.auth.spi.UsersRolesLoginModule;
  */
 public class ManagedConnectionUsersRolesLoginModule extends UsersRolesLoginModule {
 	
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(ManagedConnectionUsersRolesLoginModule.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public boolean login() throws LoginException {
 		boolean ret = super.login() ;

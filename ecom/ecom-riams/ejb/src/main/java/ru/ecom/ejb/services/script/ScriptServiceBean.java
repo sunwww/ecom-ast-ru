@@ -24,8 +24,8 @@ import java.io.Reader;
 @SecurityDomain("other")
 public class ScriptServiceBean  implements IScriptService {
 
-	private final static Logger LOG = Logger.getLogger(ScriptServiceBean.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(ScriptServiceBean.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public Object invoke(String aServiceName, String aMethodName, Object[] args) {
 		if (CAN_DEBUG)
@@ -41,11 +41,8 @@ public class ScriptServiceBean  implements IScriptService {
 			InputStream inputStream = theEcomConfig.getInputStream(jsResourceName, EjbEcomConfig.SCRIPT_SERVICE_PREFIX, true) ;
 			if(inputStream!=null) {
 				Context jsContext = Context.enter();
-				try {
+				try (Reader in = new InputStreamReader(inputStream, "utf-8")) {
 					Scriptable scope = jsContext.initStandardObjects();
-					
-					Reader in = new InputStreamReader(inputStream, "utf-8") ;
-					try {
 						Script script = jsContext.compileReader(in, jsResourceName, 1,null);
 						script.exec(jsContext, scope);
 						
@@ -65,9 +62,6 @@ public class ScriptServiceBean  implements IScriptService {
 						} else {
 							throw new IllegalArgumentException("Нет функции "+aMethodName+" у сервиса "+aServiceName+" : "+o) ; 
 						}
-					} finally {
-						in.close() ;
-					}
 				} finally {
 					Context.exit();
 				}

@@ -8,7 +8,6 @@ import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.expomc.ejb.services.importservice.IImportService;
 import ru.ecom.expomc.ejb.services.importservice.ImportException;
 import ru.ecom.expomc.ejb.services.importservice.ImportFileForm;
-import ru.ecom.expomc.ejb.services.importservice.ImportFileResult;
 import ru.ecom.web.util.FileUploadUtil;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.web.struts.BaseAction;
@@ -22,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ImportTimeUploadSaveAction extends BaseAction {
 
-    private final static Logger LOG = Logger.getLogger(ImportTimeUploadSaveAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportTimeUploadSaveAction.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
@@ -48,8 +47,7 @@ public class ImportTimeUploadSaveAction extends BaseAction {
             public void run() {
                 try {
                     if (CAN_TRACE) LOG.info("Importing file " + filename);
-                    ImportFileResult result = service.importFile(
-                    		form.getFile().getFileName(), monitorId, filename, timeForm) ;
+                     service.importFile(form.getFile().getFileName(), monitorId, filename, timeForm) ;
                 } catch (ImportException e) {
                     throw new IllegalStateException(e) ;
                 }

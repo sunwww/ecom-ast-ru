@@ -11,8 +11,8 @@ public class FormCustomizeServiceHolder {
 
     private static final String KEY = "IFormCustomizeService" ;
 
-	private final static Logger LOG = Logger.getLogger(FormCustomizeServiceHolder.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+	private static final Logger LOG = Logger.getLogger(FormCustomizeServiceHolder.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     private static IFormCustomizeService SERVICE = null ;
 

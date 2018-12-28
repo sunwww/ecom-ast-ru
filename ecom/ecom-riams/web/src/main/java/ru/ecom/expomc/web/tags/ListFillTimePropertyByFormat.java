@@ -1,27 +1,22 @@
 package ru.ecom.expomc.web.tags;
 
-import java.io.IOException;
+import org.apache.log4j.Logger;
+import ru.ecom.expomc.ejb.uc.filltime.form.FillTimeForm;
+import ru.ecom.expomc.ejb.uc.filltime.service.IFillTimeService;
+import ru.ecom.web.util.Injection;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.expomc.ejb.uc.filltime.form.FillTimeForm;
-import ru.ecom.expomc.ejb.uc.filltime.service.IFillTimeService;
-import ru.ecom.expomc.web.actions.checkproperty.CheckPropertyListAction;
-import ru.ecom.web.util.Injection;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+import java.io.IOException;
 
 public class ListFillTimePropertyByFormat extends SimpleTagSupport {
 	
-	private final static Logger LOG = Logger
-			.getLogger(ListFillTimePropertyByFormat.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+	private static final Logger LOG = Logger.getLogger(ListFillTimePropertyByFormat.class);
+
 	  /** Коллекция */
 	@Comment("Коллекция")
 	public String getCollection() {

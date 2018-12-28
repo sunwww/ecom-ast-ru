@@ -23,8 +23,8 @@ import java.util.StringTokenizer;
  */
 public class XmlVocValueLoader {
 
-	private final static Logger LOG = Logger.getLogger(XmlVocValueLoader.class) ;
-//    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+	private static final Logger LOG = Logger.getLogger(XmlVocValueLoader.class) ;
+//    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     public void load(Map<String, IVocContextService> aHash) throws IOException, JDOMException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         loadFile(aHash, "/META-INF/voc.xml");
@@ -147,9 +147,9 @@ public class XmlVocValueLoader {
         	//String[] names = getAsArray(elm.getAttributeValue("names")) ;
         	String filename = elm.getAttributeValue("filename") ;
         	String parent = elm.getAttributeValue("parent") ;
-        	if(StringUtil.isNullOrEmpty(parent)) {
+       /* 	if(StringUtil.isNullOrEmpty(parent)) {
                 parent = elm.getAttributeValue("parentProperty") ;
-            }
+            }*/
         	//Element iAllValueElement = aElement.getChild("IAllValue");
             if (StringUtil.isNullOrEmpty(filename)) throw new IllegalStateException("Пустой элемент filename");
             XmlFileVocService service = new XmlFileVocService(filename) ;
@@ -184,7 +184,7 @@ public class XmlVocValueLoader {
 
     private static String[] getAsArray(String aStr) {
         StringTokenizer st = new StringTokenizer(aStr, " ;,:");
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         while(st.hasMoreTokens()) {
             list.add(st.nextToken()) ;
         }

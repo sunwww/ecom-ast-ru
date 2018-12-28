@@ -15,14 +15,13 @@ import java.util.*;
 
 public class JspFileHelper {
 
-	private final static String TILES_INSERT = "<tiles:insert page        = '/WEB-INF/tiles/mainLayout.jsp' flush       = 'true'"
+	private static final String TILES_INSERT = "<tiles:insert page        = '/WEB-INF/tiles/mainLayout.jsp' flush       = 'true'"
 			+"  xmlns:tiles = 'http://struts.apache.org/tags-tiles'"
 			+"  xmlns:msh   = 'http://www.nuzmsh.ru/tags/msh'"
 			+"  xmlns:ecom  = 'http://www.ecom-ast.ru/tags/ecom'"
 			+"  xmlns:tags  = 'http://www.ecom-ast.ru/tags/riams/tags'"
 			+"  >" ;
-	private final static Logger LOG = Logger.getLogger(JspFileHelper.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(JspFileHelper.class);
 
 	/** Рабочий каталог */
 	public File getWorkspaceDir() {
@@ -34,7 +33,7 @@ public class JspFileHelper {
 	}
 
 	private List<File> findTargetJspFiles(String aJspPath) {
-		ArrayList<File> ret = new ArrayList<File>(10);
+		ArrayList<File> ret = new ArrayList<>(10);
 		File WORKSPACE_DIR = theWorkspaceDir; 
 		File[] dirs = WORKSPACE_DIR.listFiles() ;
 		for(File dir : dirs) {
@@ -49,20 +48,13 @@ public class JspFileHelper {
 	}
 	
 	private void copyFile(File aSource, File aDest) throws IOException {
-		FileInputStream in = new FileInputStream(aSource) ;
-		try {
-			FileOutputStream out = new FileOutputStream(aDest);
-			try {
+		try (FileInputStream in = new FileInputStream(aSource) ;
+			 FileOutputStream out = new FileOutputStream(aDest)){
 				byte[] buf = new byte[4048];
-				int result = 0 ;
+				int result ;
 				while ( (result=in.read(buf))>0) {
 					out.write(buf, 0, result);
 				}
-			} finally {
-				out.close() ;
-			}
-		} finally {
-			in.close();
 		}
 	}
 	
@@ -105,12 +97,12 @@ public class JspFileHelper {
 	
 	private String createCleanXml(String aJspPath) throws IOException {
 		FileInputStream in = new FileInputStream(findJspFile(aJspPath)) ;
-		try {
+		try (LineNumberReader lin = new LineNumberReader(new InputStreamReader(in, "utf-8"))){
 			
 			StringBuilder sb = new StringBuilder(8000) ;
 			sb.append("<?xml version='1.0' encoding='utf-8'?>") ;
 			sb.append("<!DOCTYPE mydtd [<!ENTITY nbsp ' '>]>") ;
-			LineNumberReader lin = new LineNumberReader(new InputStreamReader(in, "utf-8")) ;
+
 			String line ;
 			while ( (line=lin.readLine())!=null) {
 				String trimmedLine = line.trim();
@@ -121,12 +113,8 @@ public class JspFileHelper {
 					sb.append(line);
 					sb.append('\n');
 				}
-				
-				
 			}
 			return sb.toString() ;
-		} finally {
-			in.close() ;
 		}
 	}
 
@@ -134,15 +122,14 @@ public class JspFileHelper {
 		Document doc = new SAXBuilder().build(
 				new StringReader(createCleanXml(aJspPath))
 		) ;
-		Element root = doc.getRootElement() ;
-		return root ;
+		return doc.getRootElement() ;
 	}
 	
 	private Element findSingleElementByGuid(String aJspPath, String aGuid) throws JDOMException, IOException {
 		Element root = getRootElement(aJspPath);
-		ArrayList<Element> list = new ArrayList<Element>();
+		ArrayList<Element> list = new ArrayList<>();
 		findElementsByGuid(root, aGuid, list);
-		if(list.size()==0) {
+		if(list.isEmpty()) {
 			throw new IllegalStateException("Не найден тэг с guid "+aGuid+" в файле "+aJspPath) ;
 		} else if(list.size()>1) {
 			throw new IllegalStateException("Найдено "+list.size()+" элементов с guid "+aGuid+" в файле "+aJspPath) ;
@@ -159,7 +146,7 @@ public class JspFileHelper {
 	 */
 	public Map<String,String> getAttributeValues(String aJspPath, String aGuid) throws Exception {
 			Element elm = findSingleElementByGuid(aJspPath, aGuid);
-			HashMap<String,String> map = new HashMap<String, String>();
+			HashMap<String,String> map = new HashMap<>();
 			// FIXME __TAG & __PREFIX
 			map.put("__tag", elm.getName());
 			map.put("__prefix", elm.getNamespacePrefix());
@@ -213,8 +200,7 @@ public class JspFileHelper {
 	}
 	
 	private static String createGuid() {
-		String uuid = UUID.randomUUID().toString() ;
-		return uuid ;
+		return UUID.randomUUID().toString() ;
 	}
 
 	public void deleteTag(String aJspPath, String aGuid) throws Exception {
@@ -236,7 +222,7 @@ public class JspFileHelper {
 		
         // удаляем атрубуты, которых нет в TagInfo
         TagInfo tagInfo = aManager.getTagInfo(tag.getNamespacePrefix(), tag.getName());
-        Map<String,String> values = new HashMap<String, String>() ;
+        Map<String,String> values = new HashMap<>() ;
         for(TagAttributeInfo attr:tagInfo.getAttributes()) {
         	String value = aValues.get(attr.getName());
         	if(attr.getTypeName().equals("boolean") 
@@ -257,7 +243,7 @@ public class JspFileHelper {
 		System.out.println("values = "+values);
         
 		// удаляем равные старым значениям и пустые
-		Set<String> keys = new TreeSet<String>();
+		Set<String> keys = new TreeSet<>();
 		for(String key : values.keySet()) {
 			keys.add(key);
 		}
@@ -286,18 +272,19 @@ public class JspFileHelper {
 		}
 		
 		// устанавливаем атрибуты в элементе
-		for(String key : values.keySet()) {
-			String newValue = values.get(key);
+		for(Map.Entry<String, String> entry: values.entrySet()) {
+			String newValue = entry.getValue();
+			String key = entry.getKey();
 			String defaultValue = defaultValues.get(key);
 			if(StringUtil.isNullOrEmpty(newValue) && StringUtil.isNullOrEmpty(defaultValue)) {
-				System.out.println("   remove "+key);
+				LOG.info("   remove "+key);
 				tag.removeAttribute(key); 
 			} else if(newValue!=null && newValue.equals(defaultValue)){
-				tag.removeAttribute(key); 
-				System.out.println("   remove "+key);
+				tag.removeAttribute(key);
+				LOG.info("   remove "+key);
 			} else if(newValue!=null ) {
 				tag.setAttribute(key, newValue);
-				System.out.println("  SET  "+key);
+				LOG.info("  SET  "+key);
 			}
 		}
 		
@@ -319,25 +306,19 @@ public class JspFileHelper {
         File jspFile = findJspFile(aJspPath);
 		// создаем xml
 		File tmpFile = File.createTempFile("jspxhtml", ".xml");
-		try {
+		try (FileOutputStream tmpOut = new FileOutputStream(tmpFile)) {
 	        XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-	        FileOutputStream tmpOut = new FileOutputStream(tmpFile) ;
-	        try {
-	            OutputStreamWriter fileOut = new OutputStreamWriter(tmpOut, "utf-8");
+	        try (OutputStreamWriter fileOut = new OutputStreamWriter(tmpOut, "utf-8")){
 	            xmlOut.output(aDocument, fileOut);
-	        } finally {
-	            tmpOut.close() ;
 	        }
 	        
 	        // пишем JSP файл
         	String headers = getHeaders(aJspPath);
 	        PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(jspFile),"utf-8")) ;
-	        try {
+	        try (LineNumberReader in = new LineNumberReader(
+					new InputStreamReader(new FileInputStream(tmpFile)
+							, "utf-8"))){
 	        	out.println(headers);
-	    		LineNumberReader in = new LineNumberReader(
-	    				new InputStreamReader(new FileInputStream(tmpFile)
-	    				, "utf-8")) ;
-	    		try {
 	    			String line ;
 	    			boolean canWrite = false ;
 	    			while ( (line=in.readLine())!=null) {
@@ -348,10 +329,7 @@ public class JspFileHelper {
 	    					canWrite = true ;
 	    				}
 	    			}
-	    		} finally {
-	    			in.close() ;
-	    		}
-	        	
+
 	        } finally {
 	        	out.close() ;
 	        }
@@ -366,7 +344,7 @@ public class JspFileHelper {
 		}
 		
 	}
-	public enum InsertOption {AFTER, BEFORE, INTO, OVER} ;
+	public enum InsertOption {AFTER, BEFORE, INTO, OVER}
 
 	
 	public void addGuids(String aJspPath, TagLibraryManager aManager) throws Exception {
@@ -403,7 +381,7 @@ public class JspFileHelper {
 				break ;
 			case OVER:
 				
-				int oldPosition = parent.getChildren().indexOf(targetTag);
+			//	int oldPosition = parent.getChildren().indexOf(targetTag);
 				targetTag.detach() ;
 				newTag.addContent(targetTag);
 				if(index>=0) {
@@ -467,7 +445,7 @@ public class JspFileHelper {
 		// copy ecom_hello/edit.jsp and ecom_hello/list.jsp to aNewFormName
 		File dir = new File(theWorkspaceDir, "ecom-riams/web/src/webapp/WEB-INF/actions/"+aNewFormName) ;
 		File editSourceFile = new File(dir, "edit.jsp") ;
-		File listSourceFile = new File(dir, "list.jsp") ; ;
+		File listSourceFile = new File(dir, "list.jsp") ;
 		
 		// copy to source with replace
 		dir.mkdir();
@@ -487,20 +465,13 @@ public class JspFileHelper {
 	}
 	
 	private void copyWithReplace(File aSource, File aDest, String aFrom, String aTo) throws Exception {
-		LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(aSource), "utf-8")) ;
-		try {
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(aDest), "utf-8")) ;
-			try {
+		try (LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(aSource), "utf-8"));
+			 PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(aDest), "utf-8"))){
 				String line ;
 				while ( (line=in.readLine())!=null) {
 					line = line.replace(aFrom, aTo);
 					out.println(line);
 				}
-			} finally {
-				out.close() ;
-			}
-		} finally {
-			in.close() ;
 		}
 	}
 	
@@ -508,9 +479,9 @@ public class JspFileHelper {
 		File configHelloForm = new File(theWorkspaceDir, "ecom-riams/web/src/webapp/WEB-INF/config-hello.xml") ;
 		File configHelloFormTarget = new File(theWorkspaceDir, "ecom-riams/web/target/webapp/WEB-INF/config-hello.xml") ;
 		final String formClass = "ru.ecom.ejb.form.hello.HelloForm" ;
-		
-		InputStreamReader in = new InputStreamReader(new FileInputStream(configHelloForm), "utf-8") ;
-		try {
+
+		try ( InputStreamReader in = new InputStreamReader(new FileInputStream(configHelloForm), "utf-8") ;
+			  OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(configHelloForm), "utf-8")) {
 			Document doc = new SAXBuilder().build(in) ;
 			Element root = doc.getRootElement() ;
 			Element formBeansElement = root.getChild("form-beans");
@@ -521,17 +492,10 @@ public class JspFileHelper {
 			
 			// saving...
 	        XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-            OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(configHelloForm), "utf-8");
-	        try {
-	            xmlOut.output(doc, out);
-	        } finally {
-	            out.close() ;
-	        }
-	        
+
+	        xmlOut.output(doc, out);
 	        // copy to target
 	        copyFile(configHelloForm, configHelloFormTarget);
-		} finally {
-			in.close() ;
 		}
 	}
 
@@ -552,10 +516,8 @@ public class JspFileHelper {
 				, "number123"
 				, values
 				, manager);
-		
 	}
 	
 	/** Рабочий каталог */
 	private File theWorkspaceDir = new File("/home/esinev/workspace/ecom") ;
-	
 }

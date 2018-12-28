@@ -10,7 +10,7 @@ import java.io.InputStream;
 public class MapFormManager {
 
 
-	private final static MapFormManager INSTANCE = new MapFormManager() ;
+	private static final MapFormManager INSTANCE = new MapFormManager() ;
 	
 	private MapFormManager() {}
 	

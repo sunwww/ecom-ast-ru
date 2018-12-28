@@ -20,7 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
-    private final static Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
+    private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
     public Patient getTest(String aId, HttpServletRequest aRequest) {
         Patient patient = new Patient();

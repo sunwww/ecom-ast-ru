@@ -16,8 +16,6 @@ import javax.servlet.http.HttpSession;
  * @author ikouzmin 05.03.2007 12:02:51
  */
 public class TestXslAction extends BaseAction {
-   // private final static Logger LOG = Logger.getLogger(TestXslAction.class);
-  //  private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 

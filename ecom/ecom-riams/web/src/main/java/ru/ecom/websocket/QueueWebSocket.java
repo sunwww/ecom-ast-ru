@@ -2,7 +2,6 @@ package ru.ecom.websocket;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.queue.domain.QueueTicket;
@@ -21,7 +20,7 @@ import java.util.Map;
 
 @ServerEndpoint(value = "/ws_queue/{username}", configurator =HttpSessionConfigurator.class )
 public class QueueWebSocket {
-    private final static Logger log = Logger.getLogger(QueueWebSocket.class);
+    private static final Logger log = Logger.getLogger(QueueWebSocket.class);
     private static final String TVROLE="TV";
     private static final String OPERATORROLE="OPERATOR";
     private static final String ADMINROLE="ADMIN";
@@ -46,7 +45,7 @@ public class QueueWebSocket {
 
     @OnOpen
     public void onOpen(@PathParam("username") String aUsername
-            ,  Session aSession, EndpointConfig aConfig) throws JSONException, NamingException {
+            ,  Session aSession, EndpointConfig aConfig) throws NamingException {
         session=aSession;
         setUsername(aUsername);
 
@@ -90,59 +89,59 @@ public class QueueWebSocket {
 
     @OnMessage
     public void onMessage(@PathParam("username") String aUsername,String aMessage) {
-        OperatorSession session;
+        OperatorSession operatorSession;
         try {
-            session=sessions.get(aUsername);
+            operatorSession=sessions.get(aUsername);
 
             JSONObject msg = new JSONObject(aMessage) ;
             String method =msg.getString("method");
             IQueueService queueService = getInjection().getService(IQueueService.class);
             switch (method) {
                 case "changeWindowNumber":
-                    setWindowNumber(method, session,msg.getString("windowNumber"));
+                    setWindowNumber(method, operatorSession,msg.getString("windowNumber"));
                     break;
                 case "createNewTicket": //Создан новый талон, попробуем найти ему свободного оператора
                     findFreeOperatorByTicket(msg.getJSONObject("ticket"));
                     break;
                 case "exit":
-                    onLogout(session);
+                    onLogout(operatorSession);
                     break;
                 case "showAllTickets":
-                    sendMessage(getOKJson(method).put("tickets",getAllActiveTickets(session.getQueueCode())),session);
+                    sendMessage(getOKJson(method).put("tickets",getAllActiveTickets(operatorSession.getQueueCode())),operatorSession);
                     break;
                 case "getNextTicket": //Получаем запрос на взятие в работу нового талона
-                    session.setIsOffline(false);
-                    QueueTicket ticket = session.getTicket();
+                    operatorSession.setIsOffline(false);
+                    QueueTicket ticket = operatorSession.getTicket();
                     if (ticket!=null) {
                         log.info("MARK TICKET AS EXECUTED ID = "+ticket.getId());
-                        markTicketExecuted(ticket, queueService,session); //Заканчиваем работу с талоном, убираем его с экрана
+                        markTicketExecuted(ticket, queueService,operatorSession); //Заканчиваем работу с талоном, убираем его с экрана
                     }
-                    session.setTicket(null);
+                    operatorSession.setTicket(null);
                     ticket = queueService.getFirstTicketInQueue(aUsername);
-                    session.setTicket(ticket);
+                    operatorSession.setTicket(ticket);
                     if (ticket!=null) { //если есть талоны в очереди
-                        startTicketExecute(session,ticket);
+                        startTicketExecute(operatorSession,ticket);
                         log.info("new ticket = "+ticket.getId());
                         showTicketOnTheScreen(ticket);
                     } else {
-                        session.setIsBusy(false);
+                        operatorSession.setIsBusy(false);
                         log.info("no ticket in queue");
                     }
-                    JSONObject ret = getOKJson(method, session).put("ticket", getCurrentTicket(session,ticket));
-                    sendMessage(ret,session);
+                    JSONObject ret = getOKJson(method, operatorSession).put("ticket", getCurrentTicket(operatorSession,ticket));
+                    sendMessage(ret,operatorSession);
                     break;
                 case "stopWork":
-                    if (session.getTicket()!=null) {
-                        markTicketExecuted(session.getTicket(),queueService,session);
+                    if (operatorSession.getTicket()!=null) {
+                        markTicketExecuted(operatorSession.getTicket(),queueService,operatorSession);
                     }
-                    session.setIsOffline(true);
-                    session.setIsBusy(true);
-                    sendMessage(getOKJson(method, session),session);
+                    operatorSession.setIsOffline(true);
+                    operatorSession.setIsBusy(true);
+                    sendMessage(getOKJson(method, operatorSession),operatorSession);
                     break;
                 case "startWork":
-                    session.setIsOffline(false);
-                    session.setIsBusy(false);
-                    sendMessage(getOKJson(method, session),session);
+                    operatorSession.setIsOffline(false);
+                    operatorSession.setIsBusy(false);
+                    sendMessage(getOKJson(method, operatorSession),operatorSession);
                     break;
                 case "sendMessage":
                     sendBroadCastMessage(getOKJson(method).put("message",msg.getString("message")),null);
@@ -152,7 +151,7 @@ public class QueueWebSocket {
                     break;
                 case "markTicketExecuted":
                     JSONObject t = msg.getJSONObject("ticket");
-                    markTicketExecuted(null,queueService,session,t.getLong("ticketId"));
+                    markTicketExecuted(null,queueService,operatorSession,t.getLong("ticketId"));
                     break;
                 default:
                     log.error("Неизвестный тип сообщение!"+method);
@@ -185,11 +184,7 @@ private boolean isNotNull (String o) { return o!=null && !o.trim().equals("");}
             aSession.setWindow(aWindowNumber);
             persistObject(wf);
             log.info(wf.getId()+" window number = "+wf.getWindowNumber());
-            try {
                 sendMessage(getOKJson(aMethod, aSession).put("windowNumber",aWindowNumber),aSession);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         } else {
             log.error("Window number is null");
         }
@@ -209,7 +204,7 @@ private OperatorSession getFreeOperator (String aQueueCode) {
     OperatorSession os = null;
     try {
         os = sessions.entrySet().stream().filter(
-                (e)-> !e.getValue().getIsOffline() && !e.getValue().getIsBusy()
+                e-> !e.getValue().getIsOffline() && !e.getValue().getIsBusy()
                         && aQueueCode.equals(e.getValue().getQueueCode())
                         && OPERATORROLE.equals(e.getValue().getRole())
         ).findAny().get().getValue();
@@ -221,7 +216,6 @@ private OperatorSession getFreeOperator (String aQueueCode) {
 
     /** При получении талона пациентов находим для него свободного оператора*/
     private void findFreeOperatorByTicket(JSONObject aTicket) {
-        try {
             String qCode=aTicket.getString("queueCode");
             OperatorSession os = getFreeOperator(qCode);
             log.info("Find free operator = "+os);
@@ -232,9 +226,6 @@ private OperatorSession getFreeOperator (String aQueueCode) {
                 sendMessage(ret,os);
                 showTicketOnTheScreen(ticket);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     /** Отмечаем: оператор начал обрабатывать талон*/
@@ -263,9 +254,9 @@ private OperatorSession getFreeOperator (String aQueueCode) {
     /**Отправляем сообщение пользователю*/
     private void sendMessage(JSONObject aMessage,OperatorSession aSession) {
         try {
-            Session session = aSession.getSession();
-            if (session.isOpen()){
-                session.getBasicRemote().sendText(aMessage.toString());
+            Session operatorSession = aSession.getSession();
+            if (operatorSession.isOpen()){
+                operatorSession.getBasicRemote().sendText(aMessage.toString());
             }
         } catch (IOException e) {
             sessions.remove(aSession.getUsername());
@@ -283,21 +274,13 @@ private OperatorSession getFreeOperator (String aQueueCode) {
         if (aSession!=null && aSession.getTicket()!=null) {
             aTicket = aSession.getTicket();
         }
-        try {
             if (aTicket!=null) {
                 ticketJson = new JSONObject()
                         .put("ticketId",aTicket.getId())
                         .put("ticketNumber",aTicket.getFullNumber())
                         .put("window",aSession!=null?(aSession.getWindow()!=null?aSession.getWindow():"+0"):aTicket.getWindowNumber());
-            } else {
-
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         return ticketJson;
-
-
     }
 
     /**Отмечаем талон как выполненный.
@@ -346,7 +329,6 @@ private OperatorSession getFreeOperator (String aQueueCode) {
     private void hideTicketOnTheScreen(QueueTicket aTicket) {showHideTicketOnTheScreen(aTicket,true);}
     /** Отображаем или прячем талон на экране*/
     private void showHideTicketOnTheScreen(QueueTicket aTicket, boolean hideTicket) {
-        try {
             JSONObject ticket  =getOKJson(hideTicket?"hideTicket":"showTicket").put("ticket",getCurrentTicket(aTicket));
             String qCode = aTicket.getQueue().getType().getCode();
             sessions.forEach((k,v)->{
@@ -362,9 +344,7 @@ private OperatorSession getFreeOperator (String aQueueCode) {
                     }
                 }
             });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
     }
 
     /** Отображаем все активные талоны на экране по коду очереди
@@ -389,11 +369,11 @@ private OperatorSession getFreeOperator (String aQueueCode) {
         try{
             for (Map.Entry<String, OperatorSession> e: sessions.entrySet() ) {
                 OperatorSession s = e.getValue();
-                Session session = s.getSession();
-                if (session.isOpen()) {
+                Session operatorSession = s.getSession();
+                if (operatorSession.isOpen()) {
                     if (!s.getIsOffline()) {activeSessions++;}
                     if (aRole==null || aRole.equals(s.getRole())){
-                        session.getBasicRemote().sendText(aMessage.toString());
+                        operatorSession.getBasicRemote().sendText(aMessage.toString());
                     }
                 } else {
                     s.setIsOffline(true);
@@ -410,15 +390,11 @@ private OperatorSession getFreeOperator (String aQueueCode) {
     private JSONObject getOKJson(String aFunction) {return getOKJson(aFunction,null) ;}
     private JSONObject getOKJson(String aFunction, OperatorSession os) {
         JSONObject ret = new JSONObject();
-        try {
            ret.put("status","ok").put("function",aFunction);
             if (os!=null) {
                 ret.put("isBusy",os.getIsBusy()).put("isOffline",os.getIsOffline());
                 if (isNotNull(os.getWindow())) ret.put("windowNumber", os.getWindow());
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         return ret;
     }
 

@@ -31,8 +31,8 @@ import java.util.Collection;
 @SecurityDomain("other")
 public class VocValueServiceBean implements IVocService, IVocInfoService {
 
-    private final static Logger LOG = Logger.getLogger(VocValueServiceBean.class);
-    private final static boolean RELOAD_HASH_EVERY_TIME = !StringUtil.isNullOrEmpty(EjbEcomConfig.getInstance().get(EjbEcomConfig.VOC_DIR_PREFIX,null)) ;
+    private static final Logger LOG = Logger.getLogger(VocValueServiceBean.class);
+    private static final boolean RELOAD_HASH_EVERY_TIME = !StringUtil.isNullOrEmpty(EjbEcomConfig.getInstance().get(EjbEcomConfig.VOC_DIR_PREFIX,null)) ;
     
     private static VocHashHolder HOLDER = null ;
     private static final String SYNC_VOCVALUESERVICE = "SYNC_VOCVALUESERVICE" ;
@@ -93,7 +93,7 @@ public class VocValueServiceBean implements IVocService, IVocInfoService {
      * Обязательно перегрузить справочники
      */
     private void reloadRequired() { 
-    	synchronized(SYNC_VOCVALUESERVICE) { ;
+    	synchronized(SYNC_VOCVALUESERVICE) {
     	HOLDER = null ;
     	reloadVocs();
     }

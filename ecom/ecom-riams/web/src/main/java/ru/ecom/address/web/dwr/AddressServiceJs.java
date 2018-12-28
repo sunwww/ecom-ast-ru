@@ -19,7 +19,7 @@ import java.util.List;
 /**
  */
 public class AddressServiceJs {
-    private final static Logger LOG = Logger.getLogger(AddressServiceJs.class) ;
+    private static final Logger LOG = Logger.getLogger(AddressServiceJs.class) ;
     public String getAddressRayon(Long aAddressId, String aHouse
     		,HttpServletRequest aRequest) throws NamingException {
     	IAddressService service = Injection.find(aRequest).getService(IAddressService.class);
@@ -96,14 +96,11 @@ public class AddressServiceJs {
                 service.checkExists(aLpuAreaId, aLpuAddressTextId, aAddress, null, null, null);
                 return "" ;
             }
+        } catch (EJBException ejbException ) {
+            if(ejbException.getCause()!=null) throw (Exception)ejbException.getCause();
+            else throw ejbException;
         } catch (Exception e) {
-            if(e instanceof EJBException) {
-                EJBException ejbException = (EJBException) e ;
-                if(ejbException.getCause()!=null) throw (Exception)ejbException.getCause();
-                else throw e;
-            } else {
                 throw e ;
-            }
         }
     }
 

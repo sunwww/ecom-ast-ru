@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class XmlFileVocService implements IVocContextService, IVocServiceManagement { 
-    private final static Logger LOG = Logger.getLogger(XmlFileVocService.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(XmlFileVocService.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 	public void destroy() {
 		// TODO Auto-generated method stub

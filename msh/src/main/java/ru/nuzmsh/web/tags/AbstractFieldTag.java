@@ -4,6 +4,7 @@ import org.apache.ecs.Element;
 import org.apache.ecs.MultiPartElement;
 import org.apache.ecs.html.A;
 import org.apache.ecs.xhtml.*;
+import org.apache.jasper.runtime.BodyContentImpl;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessage;
@@ -54,8 +55,8 @@ import java.util.Stack;
  */
 public abstract class AbstractFieldTag extends TagSupport implements IGuidSupport {
 
-    private final static Logger LOG = Logger.getLogger(AbstractFieldTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(AbstractFieldTag.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public static final String LAST_DISPLAYED_FIELDNAME = "LAST_DISPLAYED_FIELD";
@@ -302,7 +303,7 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
      *
      */
     private String getBeanName() {
-        FormTag tag = (FormTag) getFormTag(this);
+        FormTag tag = getFormTag(this);
         return tag!=null ? tag.getBeanName() : null ;
     }
 
@@ -541,7 +542,7 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
 	        					|| value instanceof Locale
 	        					|| value instanceof StringBuffer
 	        					|| value instanceof StringBuilder
-	        					|| (value !=null && value.getClass().getSimpleName().equals("BodyContentImpl"))
+	        					|| (value instanceof BodyContentImpl)
 	        					
 	        					) {
 	        			} else {
@@ -659,13 +660,13 @@ public abstract class AbstractFieldTag extends TagSupport implements IGuidSuppor
         if (value == null) {
             return "";
         }
-        if(value!=null && (value.getClass().equals(Integer.TYPE) || value.getClass().equals(Long.TYPE)) && value.toString().equals("0")) {
+        if(value.getClass().equals(Integer.TYPE) || value.getClass().equals(Long.TYPE) && value.toString().equals("0")) {
             return "" ;
         }
         if(value instanceof Long && 0==(Long)value) {
             return "" ;
         }
-        if(value!=null && value.getClass().equals(Integer.class)) {
+        if(value.getClass().equals(Integer.class)) {
             Integer i = (Integer)value ;
             if(i.equals(0)) {
                 return "" ;

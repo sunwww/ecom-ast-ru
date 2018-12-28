@@ -7,7 +7,7 @@ import ru.nuzmsh.util.PropertyUtil;
  */
 public class ReplaceHelper {
 
-    private final static Logger LOG = Logger.getLogger(ReplaceHelper.class) ;
+    private static final Logger LOG = Logger.getLogger(ReplaceHelper.class) ;
 
     /** Режим RTF */
     public boolean getRtfMode() { return theRtfMode ; }
@@ -20,8 +20,7 @@ public class ReplaceHelper {
         if (aLine.startsWith("${") && aLine.indexOf("${",3)==-1&& aLine.endsWith("}")) {
         	//System.out.println("<--"+aLine) ;
         	try {
-        		Object o = aValueGetter.getValue(aLine.substring(2, aLine.length() - 1)) ;
-        		return o ;
+        		return aValueGetter.getValue(aLine.substring(2, aLine.length() - 1)) ;
         	}catch (Exception e) {
         		//System.out.println(e.getCause()) ;
         		throw new SetValueException(e.getMessage(),e.getCause());

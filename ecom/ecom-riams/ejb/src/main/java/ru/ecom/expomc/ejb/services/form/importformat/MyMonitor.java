@@ -5,12 +5,10 @@
 package ru.ecom.expomc.ejb.services.form.importformat;
 
 import org.apache.log4j.Logger;
-
 import ru.ecom.ejb.services.monitor.IMonitor;
 
 public class MyMonitor implements IMonitor {
-    private final static Logger LOG = Logger.getLogger(MyMonitor.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(MyMonitor.class) ;
 
 
     double theInternalValue;

@@ -13,20 +13,21 @@
     <packaging>pom</packaging>
     <properties>
         <jdk.version>1.8</jdk.version>
+        <libdir>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/</libdir>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>http</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/javax/javax.servlet.jsp.jar</systemPath>
+            <systemPath>${libdir}/javax/javax.servlet.jsp.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/servlet/servlet-api.jar</systemPath>
+            <systemPath>${libdir}/servlet/servlet-api.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
@@ -34,112 +35,112 @@
         <dependency>
             <groupId>org.apache</groupId>
             <artifactId>ecs</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/ecs/ecs-1.4.2.jar</systemPath>
+            <systemPath>${libdir}/ecs/ecs-1.4.2.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>beanutils</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/struts/WEB-INF/lib/commons-beanutils.jar</systemPath>
+            <systemPath>${libdir}/struts/WEB-INF/lib/commons-beanutils.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>bsh</groupId>
             <artifactId>bsh</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/bsh/bsh-2.0b4.jar</systemPath>
+            <systemPath>${libdir}/bsh/bsh-2.0b4.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tools</groupId>
             <artifactId>ant</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/ant/ant.jar</systemPath>
+            <systemPath>${libdir}/ant/ant.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>ru.nuzmsh</groupId>
             <artifactId>dbflib</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/msh/dbflib/dbflib-0.1.jar</systemPath>
+            <systemPath>${libdir}/msh/dbflib/dbflib-0.1.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>client</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/jboss/jbossall-client.jar</systemPath>
+            <systemPath>${libdir}/jboss/jbossall-client.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>ejb3</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/jboss/jboss-ejb3.jar</systemPath>
+            <systemPath>${libdir}/jboss/jboss-ejb3.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.perststense</groupId>
             <artifactId>codecs</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/hibernate/entitymanager/hibernate-entitymanager.jar</systemPath>
+            <systemPath>${libdir}/hibernate/entitymanager/hibernate-entitymanager.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.entitymanager</groupId>
             <artifactId>manager</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/hibernate/entitymanager/hibernate3.jar</systemPath>
+            <systemPath>${libdir}/hibernate/entitymanager/hibernate3.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>codecs</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/apache-commons/commons-codec-1.10.jar</systemPath>
+            <systemPath>${libdir}/apache-commons/commons-codec-1.10.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com</groupId>
             <artifactId>jxl</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/jxl/jxl.jar</systemPath>
+            <systemPath>${libdir}/jxl/jxl.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>annotations</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/jboss/jboss-annotations-ejb3.jar</systemPath>
+            <systemPath>${libdir}/jboss/jboss-annotations-ejb3.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>annotations</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/hibernate/entitymanager/hibernate-annotations.jar</systemPath>
+            <systemPath>${libdir}/hibernate/entitymanager/hibernate-annotations.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.mozilla</groupId>
             <artifactId>javascript</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/rhino/custom_rhino.jar</systemPath>
+            <systemPath>${libdir}/rhino/custom_rhino.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.apache</groupId>
             <artifactId>struts</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/struts/struts.jar</systemPath>
+            <systemPath>${libdir}/struts/struts.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
-            <systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/jboss/jboss-ejb3x.jar</systemPath>
+            <systemPath>${libdir}/jboss/jboss-ejb3x.jar</systemPath>
             <scope>system</scope>
             <version>RELEASE</version>
         </dependency>

@@ -1,28 +1,13 @@
 package ru.ecom.mis.web.webservice;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.rpc.ServiceException;
-
-import org.apache.ecs.xhtml.applet;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.tempuri.WS_MES_SERVER.wsdl.WSLocator;
 import org.tempuri.WS_MES_SERVER.wsdl.WS_MES_SERVERSoapPort;
-
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
-import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
 import ru.ecom.mis.ejb.domain.patient.PatientFond;
 import ru.ecom.mis.ejb.domain.patient.PatientFondCheckData;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -31,12 +16,23 @@ import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.format.DateFormat;
 
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.rpc.ServiceException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 public class FondWebService {
 	//private static String theAddress = "192.168.4.2" ;
 	private static String theAddress = "vipnet" ;
 	//private static String theAddress = "192.168.10.179" ;
 	private static String theLpu = "1" ;
-	//private final static String theAddress = "srv-kir" ;
+	//private static final String theAddress = "srv-kir" ;
 	public static String getRZ(PatientForm aPatFrm, String aLastname,String aFirstname
 			,String aMiddlename, String aBirthday, String aSnils
 			,String aType, String aSeries,String aNumber) {
@@ -155,13 +151,11 @@ public class FondWebService {
 					" where p.id in ("+aPatientList+") and (p.noactuality is null or p.noactuality='0') and p.deathdate is null");
 		}
 	//	System.out.println("updPatient ="+updPatient +":"+updDocument);
-		boolean needUpdate = false, updatePatient=false, updatePolicy=false, updateDocument = false, updateAttachment=false;  
-		if (updPatient!=null&&(updPatient.equals("1")||updPatient.toLowerCase().equals("true")||updPatient.toLowerCase().equals("on"))) {updatePatient=true; needUpdate = true;} 
-		if (updDocument!=null&&(updDocument.equals("1")||updDocument.toLowerCase().equals("true")||updDocument.toLowerCase().equals("on"))) {updateDocument=true; needUpdate = true;} 
-		if (updPolicy!=null&&(updPolicy.equals("1")||updPolicy.toLowerCase().equals("true")||updPolicy.toLowerCase().equals("on"))) {updatePolicy=true; needUpdate = true;} 
-		if (updAttachment!=null&&(updAttachment.equals("1")||updAttachment.toLowerCase().equals("true")||updAttachment.toLowerCase().equals("on"))) {updateAttachment=true; needUpdate = true;} 
-		//System.out.println("-----UPDATЫЫЫЫ1 = "+ updatePatient +" : "+updateDocument+" : "+updatePolicy+" : "+updateAttachment);
-		//System.out.println("-----UPDATЫЫЫЫ2 = "+ updPatient +" : "+updDocument+" : "+updPolicy+" : "+updAttachment);
+		boolean updatePatient=false, updatePolicy=false, updateDocument = false, updateAttachment=false;
+		if (updPatient!=null&&(updPatient.equals("1")||updPatient.equalsIgnoreCase("true")||updPatient.equalsIgnoreCase("on"))) {updatePatient=true; }
+		if (updDocument!=null&&(updDocument.equals("1")||updDocument.equalsIgnoreCase("true")||updDocument.equalsIgnoreCase("on"))) {updateDocument=true; }
+		if (updPolicy!=null&&(updPolicy.equals("1")||updPolicy.equalsIgnoreCase("true")||updPolicy.equalsIgnoreCase("on"))) {updatePolicy=true; }
+		if (updAttachment!=null&&(updAttachment.equals("1")||updAttachment.equalsIgnoreCase("true")||updAttachment.equalsIgnoreCase("on"))) {updateAttachment=true; }
 		try {
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		IWebQueryService serviceWQS = Injection.find(aRequest).getService(IWebQueryService.class) ;
@@ -242,7 +236,6 @@ public class FondWebService {
 			StringBuilder fiodr = new StringBuilder();
 			StringBuilder policy = new StringBuilder();
 			//StringBuilder docs = new StringBuilder();
-			boolean isStart = true ;
 			for (Element e:list_cur) {
 				//F:I:O:DR:RZ:DEAD:SNILS:DATEPRIK:SP_PRIK:LPU:SSD:KODPODR
 				lastname = e.getChildText("f"); firstname = e.getChildText("i"); middlename =e.getChildText("o");
@@ -334,10 +327,9 @@ public class FondWebService {
 			list_cur = root.getChildren("cur1");
 			String documentType = null, documentSeries = null, documentNumber = null ;
 			String documentDateIssued = null; String documentWhomIssued = null;
-			isStart=true ;
 			sb.append("<h2>Список документов</h2><table border=1 width=100%>") ;
 			sb.append("<tr>");
-			sb.append("<th>").append("").append("</th>") ;
+			sb.append("<th>").append("</th>") ;
 			sb.append("<th>").append("Тип").append("</th>") ;
 			sb.append("<th>").append("Серия").append("</th>") ;
 			sb.append("<th>").append("Номер").append("</th>") ;
@@ -346,7 +338,6 @@ public class FondWebService {
 			sb.append("</tr>") ;
 			Date maxDate = null;
 			for (Element el:list_cur) {
-				//System.out.println(result);
 				sb.append("<tr>") ;
 				String ac = "" ;
 				Date currentDocDate = DateFormat.parseDate(el.getChildText("doc_d"), "yyyy-MM-dd");
@@ -357,14 +348,11 @@ public class FondWebService {
 					
 				}
 			}
-			//System.out.println();
 			in.close() ;
 			
 			
 			result = (String)aSoap.get_ADRES_from_RZ(aRz, theLpu) ;
-			//System.out.println("result adress:") ;
-			//System.out.println(result) ;
-			
+
 			result = updateXml(result) ;
 			//System.out.println(result) ;
 			in = new ByteArrayInputStream(result.getBytes());
@@ -374,7 +362,6 @@ public class FondWebService {
 			list_cur = root.getChildren("cur1");
 			sb.append("<h2>Список адресов</h2><table border=1 width=100%>") ;
 			String kladr = null, house = null, houseBuilding = null, flat = null , okato = null, street = null;
-			isStart=true ;
 			sb.append("<tr>") ;
 			sb.append("<th></th>") ;
 			sb.append("<th>").append("КЛАДР").append("</th>") ;

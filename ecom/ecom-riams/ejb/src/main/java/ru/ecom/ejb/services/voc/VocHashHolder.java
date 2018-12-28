@@ -10,9 +10,8 @@ import java.util.TreeMap;
 
 public class VocHashHolder implements IDestroyable {
 
-	private final static Logger LOG = Logger.getLogger(VocHashHolder.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+	private static final Logger LOG = Logger.getLogger(VocHashHolder.class);
+
 	public void destroy(DestroyContext aContext) {
         LOG.info("Destroying all vocs...");
         for (Map.Entry<String, IVocContextService> entry : theHash.entrySet()) {

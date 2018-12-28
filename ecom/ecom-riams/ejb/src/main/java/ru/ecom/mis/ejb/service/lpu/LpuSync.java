@@ -1,7 +1,5 @@
 package ru.ecom.mis.ejb.service.lpu;
 
-import org.apache.log4j.Logger;
-import ru.ecom.address.ejb.service.AddressSync;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
 import ru.ecom.ejb.services.util.QueryResultUtil;
@@ -12,12 +10,9 @@ import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 
 import javax.persistence.EntityManager;
 import java.util.Iterator;
-import java.util.List;
 
 public class LpuSync implements ISync {
 
-    private final static Logger LOG = Logger.getLogger(AddressSync.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
 
     public void sync(SyncContext aContext) throws Exception {
     	
@@ -29,7 +24,7 @@ public class LpuSync implements ISync {
 
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация ", results);
     	
-    	List<OmcLpu> omcLpus = theEntityManager.createQuery("from OmcLpu "+clause).getResultList() ;
+    //	List<OmcLpu> omcLpus = theEntityManager.createQuery("from OmcLpu "+clause).getResultList() ;
     	int i =0;
     	
         Iterator<OmcLpu> iterator = QueryIteratorUtil.iterate(OmcLpu.class, theEntityManager.createQuery(queryString));

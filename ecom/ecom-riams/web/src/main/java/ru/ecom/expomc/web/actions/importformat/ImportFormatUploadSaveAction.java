@@ -27,8 +27,7 @@ import javax.servlet.http.HttpSession;
 
 public class ImportFormatUploadSaveAction extends BaseAction {
 
-    private final static Logger LOG = Logger.getLogger(ImportFormatUploadSaveAction.class) ;
- //   private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportFormatUploadSaveAction.class) ;
 
 
     public ActionForward myExecute(final ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {

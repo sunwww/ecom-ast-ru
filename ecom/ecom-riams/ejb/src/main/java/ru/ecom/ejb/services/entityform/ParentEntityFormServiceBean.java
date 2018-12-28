@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.persistence.Entity;
 import javax.persistence.Query;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
@@ -25,8 +24,8 @@ import java.util.LinkedList;
 @SecurityDomain("other")
 public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper implements IParentEntityFormService, Serializable {
 
-    private final static Logger LOG = Logger.getLogger(ParentEntityFormServiceBean.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ParentEntityFormServiceBean.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
     
     public void saveView(Long aId, String aUsername, String aComment, String aFormName,Integer aLevelWebTrail) {
 		ViewJournal view = new ViewJournal() ;
@@ -82,15 +81,14 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
     public  Collection<IEntityForm> listAll(String aClassName, Object aParentId) throws EntityFormException {
     	return convertToMapFormCollection(aClassName, listAll(loadMapForm(aClassName), aParentId));
     }
-
+/*
     private Collection getOneToManyCollection(Object aParentEntity, Class aParentClass, Class aChildClass) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     	if(aParentEntity==null) return null ;
     	String name =  "get"+aChildClass.getSimpleName()+"s" ;
     	if (CAN_DEBUG) LOG.debug("getOneToManyCollection: name = " + name); 
 		try {
 	    	Method m  = aParentClass.getMethod(name) ;
-	    	if (CAN_DEBUG)
-				LOG.debug("getOneToManyCollection: method = " + m); 
+				LOG.debug("getOneToManyCollection: method = " + m);
 
 	    	return (Collection)m.invoke(aParentEntity) ;
 		} catch (NoSuchMethodException e) {
@@ -99,7 +97,7 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
     	
     	
     }
-    
+    */
     public <E extends IEntityForm> Collection<E> listAll(Class<E> type, Object aParentId) throws EntityFormException {
         checkPermission(type, "View") ;
         checkDynamicParentPermission(type, aParentId, "View") ;
@@ -117,9 +115,8 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
 //            if (CAN_DEBUG)
 //				LOG.debug("listAll: results = " + results); 
 
-            if(results==null) {
-            	if (CAN_DEBUG)
-					LOG.debug("listAll: creating query..."); 
+      //      if(results==null) {
+					LOG.debug("listAll: creating query...");
 
                 StringBuilder query = new StringBuilder() ;
                 query.append("from ").append(findFormPersistance((Class<IEntityForm>) type).clazz().getSimpleName()).append(" c where ")
@@ -142,9 +139,9 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
                     query2.setParameter(parentPropertyName, entity) ;
                 }
                 results = query2.setMaxResults(1000).getResultList();
-            }
+     //       }
             
-            LinkedList<IEntityForm> ret = new LinkedList<IEntityForm>();
+            LinkedList<IEntityForm> ret = new LinkedList<>();
             int ind = 1 ;
             for (Object o : results) {
                 IEntityForm form = type.newInstance() ;
@@ -190,9 +187,7 @@ public class ParentEntityFormServiceBean extends AbstractFormServiceBeanHelper i
                 try {
                     IDynamicParentSecurityInterceptor dynamicInterceptor = (IDynamicParentSecurityInterceptor) interceptorClass.newInstance() ;
                     dynamicInterceptor.checkParent(aPolicyAction, aParentId, ctx); 
-                } catch (InstantiationException e) {
-                    throw new IllegalStateException(e) ;
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     throw new IllegalStateException(e) ;
                 }
             }

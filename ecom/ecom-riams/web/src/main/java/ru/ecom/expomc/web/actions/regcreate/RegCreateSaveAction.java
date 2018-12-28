@@ -20,9 +20,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RegCreateSaveAction extends BaseAction {
 	
-	private final static Logger LOG = Logger.getLogger(RegCreateSaveAction.class);
-//	private final static boolean CAN_TRACE = LOG.isTraceEnabled();
-	
+	private static final Logger LOG = Logger.getLogger(RegCreateSaveAction.class);
+
     public ActionForward myExecute(ActionMapping aMapping, final ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 
         final IRegistryPrintService service = Injection.find(aRequest).getService(IRegistryPrintService.class) ;

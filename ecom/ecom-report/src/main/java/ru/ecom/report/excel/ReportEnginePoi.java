@@ -1,19 +1,18 @@
 package ru.ecom.report.excel;
 
-import org.apache.poi.hssf.usermodel.*;
 import org.apache.log4j.Logger;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.StringTokenizer;
-import java.util.Collection;
-import java.util.Iterator;
-
+import org.apache.poi.hssf.usermodel.*;
 import ru.ecom.report.replace.IValueGetter;
 import ru.ecom.report.replace.ReplaceHelper;
 import ru.ecom.report.replace.SetValueException;
 import ru.nuzmsh.util.StringUtil;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 /**
  * Создание отчета
@@ -21,8 +20,8 @@ import ru.nuzmsh.util.StringUtil;
 public class ReportEnginePoi {
 
 
-    private final static Logger LOG = Logger.getLogger(ReportEnginePoi.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ReportEnginePoi.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     /**
      * Создание отчета по шаблону

@@ -24,10 +24,12 @@ public class DirectionPreCreateInterceptor implements IParentFormInterceptor {
 			//.setParameter("patid", form.getId())
 			.getResultList();
 		//Milamesher mc.dischargetime вместо mc.dateFinish для учёта предварительной выписки
+		//врач может направлять сам к себе
 		List<Object[]> hospInfo = manager.createNativeQuery("select list(to_char(mc.dateStart,'dd.mm.yyyy')||' '||ml.name),list(ml.name) as mlname from MedCase mc left join MisLpu ml on ml.id=mc.department_id " +
-				" left join vocdeniedhospitalizating vdh on vdh.id=mc.deniedhospitalizating_id where mc.patient_id='"+aParentId+"' and mc.dtype='HospitalMedCase' and mc.dischargetime is null and (mc.deniedHospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') group by mc.patient_id").getResultList() ;
+				" left join vocdeniedhospitalizating vdh on vdh.id=mc.deniedhospitalizating_id where mc.patient_id=:patientId and mc.dtype='HospitalMedCase' and mc.dischargetime is null " +
+				"and (mc.deniedHospitalizating_id is null or vdh.code='IN_PIGEON_HOLE') group by mc.patient_id").setParameter("patientId",aParentId).getResultList() ;
 		String errorInfo = null ;
-		if (hospInfo.size()>0) {
+		if (!hospInfo.isEmpty()) {
 			errorInfo = "Пациент ГОСПИТАЛИЗИРОВАН в стационар. "+hospInfo.get(0)[0] ;
 
 			if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Direction/CreateDirectionInHospital")) {

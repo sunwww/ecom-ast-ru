@@ -3,7 +3,6 @@ package ru.ecom.ejb.services.hibernatecacheconfig;
 import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -23,7 +22,7 @@ public class HibernateCacheConfigServiceBean implements IHibernateCacheConfigSer
 			for(Class clazz : theEntityHelper.getInstance().listAllEntities()) {
 				if(isCacheable(clazz)) {
 					String comment = theEntityHelper.getComment(clazz) ;
-					if(StringUtil.isNullOrEmpty(comment)) comment = clazz.getSimpleName();
+				//	if(StringUtil.isNullOrEmpty(comment)) comment = clazz.getSimpleName();
 					//sb.append("# ").append(comment+" , количество "+getRowsCount(clazz)) ;
 					//sb.append("\n") ;
 					sb.append("hibernate.ejb.classcache.") ;
@@ -51,8 +50,8 @@ public class HibernateCacheConfigServiceBean implements IHibernateCacheConfigSer
 			
 			for(Class clazz : theEntityHelper.getInstance().listAllEntities()) {
 				if(isCacheable(clazz)) {
-					String comment = theEntityHelper.getComment(clazz) ;
-					if(StringUtil.isNullOrEmpty(comment)) comment = clazz.getSimpleName();
+				//	String comment = theEntityHelper.getComment(clazz) ;
+				//	if(StringUtil.isNullOrEmpty(comment)) comment = clazz.getSimpleName();
 					//sb.append("# ").append(comment+" , количество "+getRowsCount(clazz)) ;
 					//sb.append("\n") ;
 					sb.append("hibernate.ejb.classcache.") ;
@@ -88,7 +87,7 @@ public class HibernateCacheConfigServiceBean implements IHibernateCacheConfigSer
 	}
 	
 	
-	private final static EntityHelper theEntityHelper = EntityHelper.getInstance();
+	private static final EntityHelper theEntityHelper = EntityHelper.getInstance();
     private @PersistenceContext EntityManager theManager ;
    
 

@@ -1,6 +1,5 @@
 package ru.ecom.web.tags;
 
-import org.apache.log4j.Logger;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.web.tags.AbstractGuidSimpleSupportTag;
 
@@ -10,9 +9,7 @@ import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 
 public class SetAttributeTag  extends AbstractGuidSimpleSupportTag {
-	private final static Logger LOG = Logger.getLogger(WebQueryTag.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+
     public void doTag() throws JspException, IOException {
     	printIdeStart() ;
         //JspWriter out = getJspContext().getOut() ;

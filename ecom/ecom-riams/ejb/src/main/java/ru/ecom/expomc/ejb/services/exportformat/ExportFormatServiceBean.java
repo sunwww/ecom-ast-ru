@@ -4,6 +4,23 @@
 
 package ru.ecom.expomc.ejb.services.exportformat;
 
+import org.apache.log4j.Logger;
+import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
+import ru.ecom.ejb.services.monitor.ILocalMonitorService;
+import ru.ecom.ejb.services.monitor.IMonitor;
+import ru.ecom.expomc.ejb.domain.format.ExportFormat;
+import ru.ecom.expomc.ejb.services.exportformat.driver.DriverManager;
+import ru.ecom.expomc.ejb.services.exportformat.util.Xslt;
+
+import javax.annotation.EJB;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.xml.transform.Result;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -16,31 +33,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.EJB;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.xml.transform.Result;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
-import ru.ecom.ejb.services.monitor.ILocalMonitorService;
-import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.expomc.ejb.domain.format.ExportFormat;
-import ru.ecom.expomc.ejb.services.exportformat.driver.DriverManager;
-import ru.ecom.expomc.ejb.services.exportformat.util.Xslt;
-
 
 @Stateless
 @Remote(IExportFormatService.class)
 public class ExportFormatServiceBean implements IExportFormatService {
-    private final static Logger LOG = Logger.getLogger(ExportFormatServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(ExportFormatServiceBean.class);
 
     private ExportFormat getExportFormat(Long anId) {
         return theManager.find(ExportFormat.class, anId);
@@ -55,7 +52,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
         ExportFormat exportFormat = getExportFormat(anId);
         String sql = exportFormat.getQuery();
         LOG.info("Query =[" + sql);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         String [] sqls = sql.split(";;");
         try {
             s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -115,7 +112,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
         ExportFormat exportFormat = getExportFormat(anId);
         String sql = exportFormat.getQuery();
         LOG.info("Query (TOFILE) =[" + sql);
-        //StringBuffer s = new StringBuffer();
+        //StringBuilder s = new StringBuilder();
         String [] sqls = sql.split(";;");
         try {
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -154,12 +151,12 @@ public class ExportFormatServiceBean implements IExportFormatService {
             throw new SaveXmlException(e.getMessage(),e);
         }
     }
-
+/* //unused
     private static String exportEntity(Object s) {
         if (s == null) return "";
         return s.toString().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
-
+*/
 
     public void transform(Long anId, Result outStream) throws TransformerException {
         ExportFormat entity = getExportFormat(anId);
@@ -234,8 +231,6 @@ public class ExportFormatServiceBean implements IExportFormatService {
         LOG.info("Transform started");
         Xslt.transform(xmlSource, xsltSource, outStream);
         LOG.info("Transform completed");
-
-        return;
     }
 
     public String getTransformedXml(Long anId) throws TransformerException {
@@ -245,10 +240,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
 
         transform(anId, new StreamResult(stringWriter));
 
-        String ret = stringWriter.toString();
-        //LOG.info("XML-OUT = [" + ret + "]");
-        return ret;
-        //return "ERR";
+        return stringWriter.toString();
     }
 
     public void exportAsXml(Long anId, long aFileId) {
@@ -321,13 +313,12 @@ public class ExportFormatServiceBean implements IExportFormatService {
 
 class BeanPropertyUtil {
     static List<Method> getBeanPropertyGetMethods(Class aClass) {
-        List<Method> methodList = new ArrayList<Method>();
+        List<Method> methodList = new ArrayList<>();
         Method[] methods = aClass.getMethods();
         for (Method method : methods) {
             String methodName = method.getName();
 
-            if (method.getParameterTypes().length > 0) continue;
-            if (methodName.equals("getClass")) continue;
+            if (method.getParameterTypes().length > 0 || methodName.equals("getClass")) continue;
 
             if (methodName.startsWith("get") ||
                     methodName.startsWith("is")) {

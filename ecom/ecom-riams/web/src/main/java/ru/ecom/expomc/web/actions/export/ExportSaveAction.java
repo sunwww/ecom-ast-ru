@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
  * Показывает формочку для экспорта
  */
 public class ExportSaveAction extends BaseAction {
-    private final static Logger LOG = Logger.getLogger(ExportSaveAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ExportSaveAction.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
