@@ -42,6 +42,7 @@
   	  		<fileset file='skin/js/main/widget/VocValueEdit.js' />
   	  		<fileset file='skin/js/main/form.js' />
   	  		<fileset file='skin/js/main/widget/OneToManyAutocompletes.js' />
+  	  		<fileset file='skin/js/main/ws/websocket.js' />
 
 	</concat>
   	

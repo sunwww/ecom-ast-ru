@@ -19,29 +19,19 @@
 	<packaging>jar</packaging>
 	<name>riams-ejb</name>
 
-
 <dependencies>
-	<dependency>
-		<groupId>ru.ecom</groupId>
-		<artifactId>ecom-ejb</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<systemPath>C:/Users/vtsybulin/IdeaProjects/AmokbMedos/ecom/ecom-ejbweb-ejb/target/ecom-ejb-api.jar</systemPath>
-		<scope>system</scope>
-		<type>ejb</type>
-	</dependency>
 	<dependency>
 		<groupId>ru.ecom</groupId>
 		<artifactId>msh</artifactId>
 		<version>1.0-SNAPSHOT</version>
-		<systemPath>C:/Users/vtsybulin/IdeaProjects/AmokbMedos/msh/target/msh.jar</systemPath>
+		<systemPath>${libdir}/msh/msh.jar</systemPath>
 		<scope>system</scope>
 	</dependency>
 	<dependency>
 		<groupId>ru.ecom</groupId>
 		<artifactId>report</artifactId>
-		<systemPath>C:/Users/vtsybulin/IdeaProjects/AmokbMedos/ecom/ecom-report/target/ecom-report.jar</systemPath>
+		<systemPath>${libdir}/ecom/report/ecom-report.jar</systemPath>
 		<scope>system</scope>
-
 		<version>1</version>
 	</dependency>
 	<!--
@@ -54,24 +44,18 @@
     -->
 
 	<!-- ecom-ejbweb-ejb deps -->
-	<dependency>
-		<groupId>ru.ecom</groupId>
-		<artifactId>msh</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<systemPath>C:/Users/vtsybulin/IdeaProjects/AmokbMedos/msh/target/msh.jar</systemPath>
-		<scope>system</scope>
-	</dependency>
+
 	<dependency>
 		<groupId>ru.ecom</groupId>
 		<artifactId>ecom-jboss-lib</artifactId>
 		<version>1</version>
-		<systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/ecom/jboss/ecom-jboss.jar</systemPath>
+		<systemPath>${libdir}/ecom/jboss/ecom-jboss.jar</systemPath>
 		<scope>system</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.objectweb</groupId>
 		<artifactId>asm</artifactId>
-		<systemPath>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/asm/asm-3.0.jar</systemPath>
+		<systemPath>${libdir}/asm/asm-3.0.jar</systemPath>
 		<scope>system</scope>
 		<version>RELEASE</version>
 	</dependency>
