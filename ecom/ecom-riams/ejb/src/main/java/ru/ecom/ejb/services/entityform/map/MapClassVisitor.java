@@ -18,11 +18,11 @@ public class MapClassVisitor extends ClassAdapter implements Opcodes {
 	private static final String L_ENTITY_FORM_PERSISTANCE = "Lru/nuzmsh/ejb/formpersistence/annotation/EntityFormPersistance;";
 	private static final String L_PARENT = "Lru/nuzmsh/commons/formpersistence/annotation/Parent;";
 	private static final String L_ENTITY_FORM_SECURITY_PREFIX = "Lru/nuzmsh/commons/formpersistence/annotation/EntityFormSecurityPrefix;";
-	private final static String L_COMMENT = "Lru/nuzmsh/commons/formpersistence/annotation/Comment;" ;
+	private static final String L_COMMENT = "Lru/nuzmsh/commons/formpersistence/annotation/Comment;" ;
 
-	private final static Logger LOG = Logger.getLogger(MapClassVisitor.class);
+	private static final Logger LOG = Logger.getLogger(MapClassVisitor.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	
 	public MapClassVisitor(ClassVisitor cv, MapFormInfo aInfo, String aFormClassName, boolean aTomcatMode) {
@@ -204,13 +204,9 @@ public class MapClassVisitor extends ClassAdapter implements Opcodes {
 	}	
 	private boolean isGetterMethod(Method aMethod) {
 		String name = aMethod.getName() ;
-		if((name.startsWith("get") || name.startsWith("is"))
+		return (name.startsWith("get") || name.startsWith("is"))
 			&& aMethod.getParameterTypes().length==0
-			&& !aMethod.getReturnType().equals(Class.class)) {
-			return true ;
-		} else {
-			return false ;
-		}
+			&& !aMethod.getReturnType().equals(Class.class) ;
 	}
 
 	@Override

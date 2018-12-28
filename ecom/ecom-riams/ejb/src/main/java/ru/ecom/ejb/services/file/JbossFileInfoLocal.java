@@ -9,8 +9,8 @@ import java.io.File;
  */
 class JbossFileInfoLocal {
 
-    private final static Logger LOG = Logger.getLogger(JbossFileInfoLocal.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(JbossFileInfoLocal.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 
 

@@ -20,8 +20,8 @@ import java.util.HashMap;
  */
 public class LocalProxyInvocationHandler implements InvocationHandler {
 
-    	private final static Logger LOG = Logger.getLogger(LocalProxyInvocationHandler.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    	private static final Logger LOG = Logger.getLogger(LocalProxyInvocationHandler.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public LocalProxyInvocationHandler(Class aServiceClass, EjbHash aInterfaces) {
@@ -95,7 +95,7 @@ public class LocalProxyInvocationHandler implements InvocationHandler {
     }
 
 
-    final HashMap<Method, Method> theMethodsHash = new HashMap<Method, Method>();
+    final HashMap<Method, Method> theMethodsHash = new HashMap<>();
     final Class theServiceClass;
     private final EjbHash theInterfaces ;
 }

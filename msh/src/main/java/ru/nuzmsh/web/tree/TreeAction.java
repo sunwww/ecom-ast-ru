@@ -21,8 +21,8 @@ import java.util.LinkedList;
  */
 public class TreeAction extends Action {
     private static final int MAX_COUNT = 10;
-    private final static Logger LOG = Logger.getLogger(TreeAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(TreeAction.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 

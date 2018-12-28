@@ -9,7 +9,7 @@ import javax.ejb.FinderException;
  */
 public class FinderExceptionCause extends FinderException {
 
-    private final static Logger LOG = Logger.getLogger(FinderExceptionCause.class) ;
+    private static final Logger LOG = Logger.getLogger(FinderExceptionCause.class) ;
 
 
     public FinderExceptionCause(String aMessage, Exception aCause) {

@@ -1,25 +1,23 @@
 package ru.ecom.expomc.ejb.services.form.importformat.config;
 
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
-
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.util.StringUtil;
+
+import javax.persistence.EntityManager;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author ikouzmin 09.03.2007 15:03:58
  */
 public class ImportMap extends ImportKey {
-    private final static Logger LOG = Logger.getLogger(ImportMap.class);
+    private static final Logger LOG = Logger.getLogger(ImportMap.class);
 
 
     public void load(Element element, EntityManager aManager) throws InvalidFkException, ClassNotFoundException, MissingAttributeException {

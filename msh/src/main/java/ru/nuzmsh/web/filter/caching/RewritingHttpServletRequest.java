@@ -15,8 +15,8 @@ import java.util.Map;
 
 public class RewritingHttpServletRequest implements HttpServletRequest {
 
-	private final static Logger LOG = Logger.getLogger(RewritingHttpServletRequest.class);
-	private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(RewritingHttpServletRequest.class);
+	private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 	
 	
 	public RewritingHttpServletRequest(HttpServletRequest aRequest) {

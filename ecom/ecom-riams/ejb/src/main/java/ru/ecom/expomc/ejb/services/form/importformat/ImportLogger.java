@@ -1,21 +1,20 @@
 package ru.ecom.expomc.ejb.services.form.importformat;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.apache.log4j.Logger;
 
 /**
  * Отчет импортирования
  * @author ikouzmin 16.03.2007 12:05:24
  */
 public class ImportLogger {
-    private final static Logger LOG = Logger.getLogger(ImportLogger.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ImportLogger.class) ;
 
-    private SimpleDateFormat FORMAT_LOG = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    private SimpleDateFormat FORMATLOG = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
 
     /** Выходной поток для отчета импорта */
@@ -26,7 +25,7 @@ public class ImportLogger {
         Date dt = new Date();
         if (theImportReportWriter != null) {
             try {
-                theImportReportWriter.write(FORMAT_LOG.format(dt)+": ");
+                theImportReportWriter.write(FORMATLOG.format(dt)+": ");
                 for (int i=0; i<theInputReportLevel; i++) theImportReportWriter.write("\t");
                 theImportReportWriter.write(message+"\n");
             } catch (IOException e) {

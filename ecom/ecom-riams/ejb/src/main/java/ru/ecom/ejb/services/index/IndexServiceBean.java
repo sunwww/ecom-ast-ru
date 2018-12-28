@@ -24,12 +24,12 @@ import java.util.HashSet;
 @Local(IIndexService.class)
 public class IndexServiceBean implements IIndexService, IIndexServiceManagement {
 
-	private final static Logger LOG = Logger.getLogger(IndexServiceBean.class);
+	private static final Logger LOG = Logger.getLogger(IndexServiceBean.class);
 
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	private HashSet<String> getIndexNames(Connection aCon) throws SQLException {
-		HashSet<String> ret = new HashSet<String>();
+		HashSet<String> ret = new HashSet<>();
 		DatabaseMetaData db = aCon.getMetaData();
 		ResultSet rs = db.getTables(null, null, null, new String[] { "TABLE" });
 		try {
@@ -267,9 +267,9 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 
 			if (oneToOne != null || manyToOne != null) {
 				// todo id - добавить функцию в EntityHelper getIdPropertyName()
-				String name = PropertyUtil.getPropertyName(method) + "_"
+				return  PropertyUtil.getPropertyName(method) + "_"
 						+ getColumnName(method.getReturnType(), "id");
-				return name;
+
 			}
 		}
 		return aProperty;

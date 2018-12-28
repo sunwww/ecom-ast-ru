@@ -1,26 +1,23 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-
 import org.apache.log4j.Logger;
-
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.nuzmsh.util.format.DateConverter;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Утилита для проверки даты в районе меньше 24 часов
  */
 public class SecPolicy {
 
-    private final static Logger LOG = Logger.getLogger(SecPolicy.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(SecPolicy.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
     /**
      * Проверка:

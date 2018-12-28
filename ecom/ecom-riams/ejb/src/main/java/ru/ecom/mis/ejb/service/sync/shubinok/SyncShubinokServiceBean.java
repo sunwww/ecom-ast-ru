@@ -107,7 +107,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     		}
             int i = 0;
             long id=0 ;
-            HashMap<String,RegInsuranceCompany> companyHashMap = new HashMap<>();
+         //   HashMap<String,RegInsuranceCompany> companyHashMap = new HashMap<>();
             while (true) {
             	List<PatientAttachedImport> paiList= (List<PatientAttachedImport>)theManager.createQuery("from PatientAttachedImport where time = :time and id > :id order by id")
                 		.setMaxResults(500)
@@ -126,8 +126,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	                String aPolicyNumber = patImp.getPolicyNumber();
 	                String aPolicySeries = patImp.getPolicySeries();
 	                id=patImp.getId() ;
-	                RegInsuranceCompany insComp = companyHashMap.computeIfAbsent(patImp.getInsCompName(),k->findEntity(RegInsuranceCompany.class, "smocode", k));
-
+//	                RegInsuranceCompany insComp = companyHashMap.computeIfAbsent(patImp.getInsCompName(),k->findEntity(RegInsuranceCompany.class, "smocode", k));
+					RegInsuranceCompany insComp = findEntity(RegInsuranceCompany.class, "smocode", patImp.getInsCompName()) ;
 	                patImp.setInsuranceCompany(insComp) ;
 	                MedPolicyOmc medPolicy = (MedPolicyOmc) patImp.getMedPolicy() ;
 	            	if (medPolicy==null && insComp!=null && aPolicyNumber!=null || !aPolicyNumber.trim().equals("")) {
@@ -394,7 +394,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     private OmcOksm findOrCreateNationality(String aCode) {
     	if (StringUtil.isNullOrEmpty(aCode)) aCode="RUS" ;
     	aCode = aCode.toUpperCase().trim() ;
-    	return theHashNationality.computeIfAbsent(aCode,k->findEntity(OmcOksm.class,"alfa2",k))  ;
+    	return theHashNationality.get(aCode);//,k->findEntity(OmcOksm.class,"alfa2",k))  ;
+    	//return theHashNationality.computeIfAbsent(aCode,k->findEntity(OmcOksm.class,"alfa2",k))  ;
     }
 	private VocIdentityCard findOrCreateIdentity(String aCode) {
 		aCode = aCode.toUpperCase() ;

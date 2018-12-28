@@ -19,8 +19,8 @@ import java.util.LinkedList;
  */
 public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
-    private final static Logger LOG = Logger.getLogger(SimpleVocAutocompleteServlet.class);
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(SimpleVocAutocompleteServlet.class);
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
@@ -61,14 +61,14 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                         (getVocName(aRequest), lastId, aCount - vocs.size(), VocAdditionalUtil.create(aRequest));
 
                 if (CAN_TRACE) LOG.info("  addVocs = " + addVocs);
-                HashMap<String, VocValue> hash = new HashMap<String, VocValue>();
+                HashMap<String, VocValue> hash = new HashMap<>();
                 for (VocValue vocValue : addVocs) {
                     hash.put(vocValue.getId(), vocValue) ;
                 }
 
                 if (CAN_TRACE) LOG.info("  hash = " + hash);
 
-                LinkedList<VocValue> ret = new LinkedList<VocValue>();
+                LinkedList<VocValue> ret = new LinkedList<>();
                 for (VocValue value : addVocs) {
                     ret.add(value);
                 }
@@ -107,7 +107,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
             if (lastVoc != null) {
                 Collection<VocValue> addVocs = EntityInjection.find(aRequest).getVocService().findVocValueNext
                         (getVocName(aRequest), aId, aCount - vocs.size(), VocAdditionalUtil.create(aRequest));
-                LinkedList<VocValue> ret = new LinkedList<VocValue>();
+                LinkedList<VocValue> ret = new LinkedList<>();
                 for (VocValue value : vocs) {
                     ret.add(value);
                 }

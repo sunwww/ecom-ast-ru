@@ -13,9 +13,9 @@ import ru.nuzmsh.web.struts.BaseAction;
  */
 public abstract class AbstractEntityAction extends BaseAction {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(AbstractEntityAction.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     public static IEntityForm castEntityForm(ActionForm aForm, ActionMapping aMapping) {
     	StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
@@ -25,9 +25,7 @@ public abstract class AbstractEntityAction extends BaseAction {
         	MapForm form = (MapForm) ret ;
         	form.setStrutsFormName(aMapping.getName());
 
-        	if (CAN_DEBUG)
-				LOG.debug("castEntityForm: name = " + form.getStrutsFormName()); 
-        	
+        	if (CAN_DEBUG) LOG.debug("castEntityForm: name = " + form.getStrutsFormName());
         }
         return ret ;
     }

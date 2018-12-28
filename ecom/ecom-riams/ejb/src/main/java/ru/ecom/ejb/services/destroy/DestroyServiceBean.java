@@ -12,7 +12,7 @@ import java.util.LinkedList;
 @Local(IDestroyService.class)
 public class DestroyServiceBean implements IDestroyService, IDestroyManagementService {
 
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(DestroyServiceBean.class);
 
 	public void add(IDestroyable aDestroyable) {

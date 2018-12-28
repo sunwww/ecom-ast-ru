@@ -1,8 +1,8 @@
 package ru.ecom.ejb.services.live;
 
-
+@Deprecated
 public class LiveContextManager {
 
-    private final static ThreadLocal<LiveContext> THREAD  = new ThreadLocal<LiveContext>();
+    private static final ThreadLocal<LiveContext> THREAD  = new ThreadLocal<>();
 	
 }

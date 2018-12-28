@@ -11,8 +11,8 @@ import org.apache.log4j.Logger;
  */
 public class LocalMonitorStatus implements IMonitor {
 
-    private final static Logger LOG = Logger.getLogger(LocalMonitorStatus.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(LocalMonitorStatus.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     public LocalMonitorStatus(String aName, double aMaximum) {
         theName = aName ;

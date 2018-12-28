@@ -17,8 +17,8 @@ import java.io.Reader;
 
 public class JavaScriptFormInterceptorManager {
 
-	private final static Logger LOG = Logger.getLogger(JavaScriptFormInterceptorManager.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(JavaScriptFormInterceptorManager.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public static JavaScriptFormInterceptorManager getInstance() {
 		return new JavaScriptFormInterceptorManager() ;
@@ -33,10 +33,8 @@ public class JavaScriptFormInterceptorManager {
 				if(inputStream!=null) {
 					Context jsContext = Context.enter();
 					jsContext.setOptimizationLevel(9);
-					try {
+					try (Reader in = new InputStreamReader(inputStream, "utf-8")) {
 						Scriptable scope = jsContext.initStandardObjects();
-						
-						Reader in = new InputStreamReader(inputStream, "utf-8") ;
 						try {
 							Script script = jsContext.compileReader(in, jsResourceName, 1,null);
 							script.exec(jsContext, scope);
@@ -61,8 +59,8 @@ public class JavaScriptFormInterceptorManager {
 							} else {
 								if (CAN_DEBUG) LOG.debug("Нет функции " + aFunctionName+": "+o); 
 							}
-						} finally {
-							in.close() ;
+						} catch (Exception e) {
+							LOG.error(e);
 						}
 					} finally {
 						Context.exit();

@@ -1,10 +1,5 @@
 package ru.ecom.mis.ejb.domain.patient;
 
-import java.sql.Date;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
@@ -15,6 +10,11 @@ import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
 import ru.ecom.mis.ejb.domain.patient.voc.VocRayon;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
+
 @Comment("Пациент прикрепление")
 @Entity
 @Table(schema="SQLUser")
@@ -24,9 +24,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 })
 public class PatientAttachedImport extends BaseEntity implements IImportData {
 
-	public final static String STATUS_CHECK_TYPE_AUTOMATIC="A" ;
-	public final static String STATUS_CHECK_TYPE_PACKAGE="P" ;
-	public final static String STATUS_CHECK_TYPE_MANUAL="M" ;
+	public static final String STATUS_CHECK_TYPE_AUTOMATIC="A" ;
+	public static final String STATUS_CHECK_TYPE_PACKAGE="P" ;
+	public static final String STATUS_CHECK_TYPE_MANUAL="M" ;
 
     /** Единый номер застрахованного */
 	@Comment("Единый номер застрахованного")

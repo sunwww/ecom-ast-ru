@@ -1,14 +1,11 @@
 package ru.ecom.expomc.ejb.services.check;
 
+import ru.ecom.expomc.ejb.services.check.result.ResultLog;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.apache.log4j.Logger;
-
-//import ru.ecom.expomc.ejb.domain.message.MessageLog;
-import ru.ecom.expomc.ejb.services.check.result.ResultLog;
 
 /**
  * @author esinev
@@ -17,8 +14,6 @@ import ru.ecom.expomc.ejb.services.check.result.ResultLog;
  */
 public class CheckResult  {
 
-    private final static Logger LOG = Logger.getLogger(CheckResult.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 
     public static CheckResult createAccepted(boolean aAccepted) {
@@ -57,11 +52,11 @@ public class CheckResult  {
         theValues.put(aFieldName, aValue) ;
     }
 
-
+/*
     private void addLog(int aType, String aMessage) {
         if (CAN_DEBUG) LOG.debug("aMessage = " + aMessage);
         theLogs.add(new ResultLog(aType, aMessage)) ;
-    }
+    }*/
     /**
      * Ход выполнения
      * @param aMessage
@@ -102,8 +97,8 @@ public class CheckResult  {
 
     /** Сообщения */
     public ArrayList<ResultLog> getLogs() { return theLogs ; }
-    private TreeMap<String, Object> theValues = new TreeMap<String, Object>();
+    private TreeMap<String, Object> theValues = new TreeMap<>();
 
     /** Сообщения */
-    private final ArrayList<ResultLog> theLogs = new ArrayList<ResultLog>();
+    private final ArrayList<ResultLog> theLogs = new ArrayList<>();
 }

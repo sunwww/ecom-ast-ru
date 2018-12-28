@@ -1,14 +1,9 @@
 package ru.ecom.expomc.ejb.services.registry.voc;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.LinkedList;
-
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.nuzmsh.util.StringUtil;
@@ -16,13 +11,16 @@ import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
+import java.io.File;
+import java.util.Collection;
+import java.util.LinkedList;
+
 /**
  * Вывод всех экспортов
  */
 public class ListDataExportAllValue implements IAllValue {
 
-    private final static Logger LOG = Logger.getLogger(ListDataExportAllValue.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ListDataExportAllValue.class) ;
 
     private final String JBOSS_SERVER_DATA_EXPORT_DIR = System.getProperty("jboss.server.data.dir")+"/export";
 
@@ -39,8 +37,8 @@ public class ListDataExportAllValue implements IAllValue {
     }
     public Collection<VocValue> listAll(AllValueContext aContext) {
         File dir = new File(JBOSS_SERVER_DATA_EXPORT_DIR);
-        File files[] = dir.listFiles() ;
-        LinkedList<VocValue> list = new LinkedList<VocValue>();
+        File[] files = dir.listFiles() ;
+        LinkedList<VocValue> list = new LinkedList<>();
         for (File file : files) {
             if(file.isFile()) {
                 list.add(getVocValue(file)) ;

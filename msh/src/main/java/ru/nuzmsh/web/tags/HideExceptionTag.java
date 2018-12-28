@@ -15,8 +15,8 @@ import java.io.IOException;
  */
 public class HideExceptionTag extends SimpleTagSupport {
 
-    private final static Logger LOG = Logger.getLogger(HideExceptionTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(HideExceptionTag.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public void doTag() throws JspException, IOException {

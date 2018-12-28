@@ -1,21 +1,10 @@
 package ru.ecom.expomc.ejb.services.voc.allvalues;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import ru.ecom.ejb.services.util.ClassLoaderHelper;
 import ru.ecom.ejb.services.util.EntityHelper;
 import ru.ecom.ejb.services.voc.IVocConfigXmlService;
@@ -30,13 +19,22 @@ import ru.nuzmsh.util.voc.VocAdditional;
 import ru.nuzmsh.util.voc.VocServiceException;
 import ru.nuzmsh.util.voc.VocValue;
 
+import javax.persistence.Query;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 /**
  *
  */
 public class TimeVocService implements IVocContextService, IVocServiceManagement, IVocConfigXmlService {
 
-    private final static Logger LOG = Logger.getLogger(TimeVocService.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(TimeVocService.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     private enum QueryConvertType {NONE, LOWER_CASE, UPPER_CASE}
 

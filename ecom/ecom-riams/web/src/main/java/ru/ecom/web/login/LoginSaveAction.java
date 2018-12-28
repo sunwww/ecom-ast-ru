@@ -27,22 +27,24 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Set;
 
 /**
  *
  */
 public class LoginSaveAction extends LoginExitAction {
 
-    private final static Logger LOG = Logger.getLogger(LoginSaveAction.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(LoginSaveAction.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
     
     public static boolean needChangePasswordAtLogin (String aUsername, HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
     	String res = service.executeNativeSql("select case when changePasswordAtLogin='1' then '1' else '0' end" +
     			" from secuser where login='"+aUsername+"'").iterator().next().get1().toString();
-    	if (res!=null&&res.equals("1")) return true;
-    	return false;
+		return "1".equals(res);
     }
     public static Long getPasswordAge (String username, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -222,7 +224,7 @@ public class LoginSaveAction extends LoginExitAction {
     	if (!list1.isEmpty()) {
     		WebQueryResult wqr = list1.iterator().next() ;
     		secUserId = ConvertSql.parseLong(wqr.get1()) ;
-    		wfId =  ConvertSql.parseLong(wqr.get3()) ;
+    	//	wfId =  ConvertSql.parseLong(wqr.get3()) ;
     		depId =  ConvertSql.parseLong(wqr.get2()) ;
     	}
     	if (RolesHelper.checkRoles("/Policy/Config/ViewMessages/ShortProtocol", aRequest)) {
@@ -266,7 +268,7 @@ public class LoginSaveAction extends LoginExitAction {
     		}
     		Collection<WebQueryResult> list =service.executeNativeSql(sql.toString()) ;
     		StringBuilder res1 = new StringBuilder() ;
-    		if (list.size()>0) {
+    		if (!list.isEmpty()) {
     			for (WebQueryResult wqr:list) {
     				res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
     			}
@@ -324,7 +326,7 @@ public class LoginSaveAction extends LoginExitAction {
     		}
     		Collection<WebQueryResult> list =service.executeNativeSql(sql.toString()) ;
     		StringBuilder res1 = new StringBuilder() ;
-    		if (list.size()>0) {
+    		if (!list.isEmpty()) {
     			for (WebQueryResult wqr:list) {
     				res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
     			}
@@ -381,7 +383,7 @@ public class LoginSaveAction extends LoginExitAction {
     		}
 	    	Collection<WebQueryResult> list =service.executeNativeSql(sql.toString()) ;
 	    	StringBuilder res1 = new StringBuilder() ;
-	    	if (list.size()>0) {
+	    	if (!list.isEmpty()) {
 		    	for (WebQueryResult wqr:list) {
 		    		res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append(" ") ;
 		    		res1.append("; необходимо сегодня делать направление: ").append(wqr.get3()).append(" ") ;
@@ -421,7 +423,7 @@ public class LoginSaveAction extends LoginExitAction {
     		  sql.append(" group by case when dmc.id is not null then ml1.name else ml.name end") ;
   	    	Collection<WebQueryResult> list =service.executeNativeSql(sql.toString()) ;
   	    	StringBuilder res1 = new StringBuilder() ;
-  	    	if (list.size()>0) {
+  	    	if (!list.isEmpty()) {
   		    	for (WebQueryResult wqr:list) {
   		    		res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append(" лежат более 3х дней: ").append(wqr.get3()).append("<br>") ;
   		    	}
@@ -439,7 +441,7 @@ public class LoginSaveAction extends LoginExitAction {
         	cal.add(Calendar.DAY_OF_MONTH, -2) ;
         	String dateTo = FORMAT_1.format(cal.getTime()) ;
         	cal.add(Calendar.MONTH, -1) ;
-        	Date prev = cal.getTime() ;
+        //	Date prev = cal.getTime() ;
         	String dateFrom = FORMAT_1.format(cal.getTime()) ;
         	StringBuilder sql = new StringBuilder() ;
     		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
@@ -461,7 +463,7 @@ public class LoginSaveAction extends LoginExitAction {
     			sql.append("	group by ml.name");
     			sql.append("	order by ml.name");
 	    			//.append(",pat.lastname,pat.middlename,pat.firstname") 
-    			;
+
     		} else {
     			sql.append("select ml.name,count(distinct m.id) as cntAll");
     			sql.append(" from MedCase  m ");
@@ -477,7 +479,7 @@ public class LoginSaveAction extends LoginExitAction {
     		}
 	    	Collection<WebQueryResult> list =service.executeNativeSql(sql.toString()) ;
 	    	StringBuilder res1 = new StringBuilder() ;
-	    	if (list.size()>0) {
+	    	if (!list.isEmpty()) {
 		    	for (WebQueryResult wqr:list) {
 		    		res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
 		    	}
@@ -509,9 +511,9 @@ public class LoginSaveAction extends LoginExitAction {
         				" group by ml.id, ml.name" +
         				" order by ml.name";
     			
-    			Collection<WebQueryResult> list =service.executeNativeSql(labReportSql.toString()) ;
+    			Collection<WebQueryResult> list =service.executeNativeSql(labReportSql) ;
     			StringBuilder ret = new StringBuilder();
-    			if (list.size()>0) {
+    			if (!list.isEmpty()) {
     				for (WebQueryResult wqr: list) {
     					ret.append(wqr.get2()).append(": <a href='lab_chief_report.do?").append(wqr.get1()).append("'>").append(wqr.get3()).append("</a><br>");
     				}
@@ -533,9 +535,9 @@ public class LoginSaveAction extends LoginExitAction {
     				" where p.dtype='ServicePrescription' and p.transferdate between current_date-1" +
     				" and current_date and p.canceldate is null " +
     				" group by vpt.id, vpt.name";
-    		Collection<WebQueryResult> list =service.executeNativeSql(labReportSql.toString()) ;
+    		Collection<WebQueryResult> list =service.executeNativeSql(labReportSql) ;
 			StringBuilder ret = new StringBuilder();
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 				for (WebQueryResult wqr: list) {
 					ret.append(wqr.get2())
 					.append("Не выполнено: <a href='lab_chief_report.do?").append(wqr.get1()).append("&typeState=0'>").append(wqr.get3()).append("</a>")
@@ -552,9 +554,7 @@ public class LoginSaveAction extends LoginExitAction {
     }
 
     public static String getHashPassword(String aUsername, String aPassword) {
-    	String hash = String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
-    	//System.out.println(hash) ;
-    	return hash;
+    	return String.valueOf(aPassword.hashCode() + aUsername.hashCode()) ;
     }
 
 	private String getErrorMessage(Throwable aException) {
@@ -580,7 +580,7 @@ public class LoginSaveAction extends LoginExitAction {
         //System.out.println("}") ;
 		
 	}
-
+/* //unused
     private Properties createUserEnvironmentInfo(HttpServletRequest aRequest) {
     	Properties prop = new Properties() ;
     	Enumeration headers = aRequest.getHeaderNames();
@@ -589,5 +589,5 @@ public class LoginSaveAction extends LoginExitAction {
     		prop.setProperty(header, aRequest.getHeader(header));
     	}
     	return prop ;
-    }
+    }*/
 }

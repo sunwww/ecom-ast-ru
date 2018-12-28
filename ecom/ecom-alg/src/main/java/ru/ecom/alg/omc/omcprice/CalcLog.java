@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
  */
 class CalcLog implements Serializable {
 
-    private final static Logger LOG = Logger.getLogger(CalcLog.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(CalcLog.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 	
     protected void log(String aMessage) {
     	if(CAN_DEBUG) LOG.debug(aMessage) ;

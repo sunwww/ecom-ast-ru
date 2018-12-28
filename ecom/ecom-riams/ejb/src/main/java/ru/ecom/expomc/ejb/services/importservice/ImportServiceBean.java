@@ -42,8 +42,8 @@ import java.util.*;
 public class ImportServiceBean implements IImportService {
 
 
-     private final static Logger LOG = Logger.getLogger(ImportServiceBean.class) ;
-     private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+     private static final Logger LOG = Logger.getLogger(ImportServiceBean.class) ;
+     private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
      public ImportFileResult importFile(String aOriginalFilename, long aMonitorId, String aFilename, ImportFileForm aImportForm) throws ImportException {
     	 IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
@@ -108,14 +108,10 @@ public class ImportServiceBean implements IImportService {
         DbfFileReader in = null ;
 
         IMonitor monitor = null ;
-        try {
-//            theUserTransaction.begin();
-
-
+        try ( InputStream inFile = new FileInputStream(aFilename)){
             DbfFile dbfFile = new DbfFile();
-            //File file = new File(aFilename) ;
-            InputStream inFile = new FileInputStream(aFilename) ;
-            long count = 0 ;
+
+            long count ;
             try {
                 dbfFile.load(inFile);
                 count = dbfFile.getRecordsCount() ;
@@ -130,13 +126,9 @@ public class ImportServiceBean implements IImportService {
             final boolean isImportTimeSupport = document.isTimeSupport() ;
 
             //if(!isImportTimeSupport) deleteNotTimeSupports(entityClass, document) ;
-
-            
-
-
             // отркрываем файл DBF и перебираем все записи
             in =  new DbfFileReader(new File(aFilename));
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            HashMap<String, Object> map = new HashMap<>();
             boolean firstPassed = false ;
             ImportFileResult ret = new ImportFileResult(time.getId());
             int i = 0 ;
@@ -370,7 +362,7 @@ public class ImportServiceBean implements IImportService {
      * Находит актуальный формат
      * @param aEntity
      */
-    public Format findActualFormat(ImportDocument aEntity) throws ActualFormatNotFoundException {
+    public Format findActualFormat(ImportDocument aEntity) {
         // todo берется пока первый формат
         return aEntity.getFormats().iterator().next() ;
     }

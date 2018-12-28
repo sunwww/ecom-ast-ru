@@ -1,14 +1,14 @@
 package ru.ecom.jboss.live;
 
-import javax.persistence.EntityManager;
-
 import org.apache.log4j.Logger;
+
+import javax.persistence.EntityManager;
 
 public class LiveTransactionContext {
 	
-	private final static Logger LOG = Logger
+	private static final Logger LOG = Logger
 			.getLogger(LiveTransactionContext.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 			
 	private static ThreadLocal<LiveTransactionContext> THREAD = new ThreadLocal<LiveTransactionContext>() ;
 	
@@ -26,8 +26,7 @@ public class LiveTransactionContext {
 		if(CAN_DEBUG) LOG.debug("  LiveTransactionContext = "+ctx) ;
 	}
 	public static LiveTransactionContext get() {
-		LiveTransactionContext ctx = THREAD.get() ;
-		return ctx ;
+		return THREAD.get() ;
 	}
 
 	public static void close() {

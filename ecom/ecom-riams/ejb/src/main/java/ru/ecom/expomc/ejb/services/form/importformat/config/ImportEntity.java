@@ -39,9 +39,7 @@ import java.util.List;
 
 */
 public class ImportEntity {
-    private final static Logger LOG = Logger.getLogger(ImportEntity.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
-
+    private static final Logger LOG = Logger.getLogger(ImportEntity.class) ;
 
     ImportEntity() {
     }
@@ -58,7 +56,7 @@ public class ImportEntity {
 
 
     List<ImportSyncKey> getKeyQueries(EntityManager aManager) {
-        List<ImportSyncKey> list = new ArrayList<ImportSyncKey>();
+        List<ImportSyncKey> list = new ArrayList<>();
         List<Element> keys ;
         log("Построение запросов синхронизации основной записи");
         inclev();
@@ -80,13 +78,13 @@ public class ImportEntity {
         return list;
     }
 
-    public ImportSyncKeyList getKeyList(EntityManager aManager) throws ClassNotFoundException {
+    public ImportSyncKeyList getKeyList(EntityManager aManager) {
         return new ImportSyncKeyList(this,aManager);
 
     }
 
     public List<ImportMap> getMaps(EntityManager aManager) throws Exception {
-        List<ImportMap> list = new ArrayList<ImportMap>();
+        List<ImportMap> list = new ArrayList<>();
         List<Element> maps = null;
         log("Построение запросов синхронизации внешних ключей");
         inclev();
@@ -147,7 +145,7 @@ public class ImportEntity {
             if (value.equals(""))
                 return Long.MAX_VALUE;
             else
-                return new Long(value).longValue();
+                return Long.parseLong(value);
         }
         return 0;
     }

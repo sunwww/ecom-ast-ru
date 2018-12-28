@@ -16,8 +16,8 @@ import java.util.Collection;
  */
 public class TableNotEmptyTag extends AbstractGuidSimpleSupportTag {
 
-    private final static Logger LOG = Logger.getLogger(TableNotEmptyTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(TableNotEmptyTag.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     /**

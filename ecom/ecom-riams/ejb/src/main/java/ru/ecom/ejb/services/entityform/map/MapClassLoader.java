@@ -13,10 +13,10 @@ import java.util.UUID;
 
 public class MapClassLoader extends ClassLoader {
 	
-	private final static Logger LOG = Logger.getLogger(MapClassLoader.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(MapClassLoader.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
-	private static final Map<String, Class> HASH = new HashMap<String, Class>() ; 
+	private static final Map<String, Class> HASH = new HashMap<>() ;
 	
 	public MapClassLoader(ClassLoader aLoader) {
 		this(aLoader, false);
@@ -77,7 +77,7 @@ public class MapClassLoader extends ClassLoader {
 					if (CAN_DEBUG)
 						LOG.debug("loadClass: new class loaded " + ret); 
 					HASH.put(name, ret);
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					LOG.error("Error loading "+classNameForLoader+": "+e.getMessage(), e) ;
 					throw new IllegalStateException(e);
 				}

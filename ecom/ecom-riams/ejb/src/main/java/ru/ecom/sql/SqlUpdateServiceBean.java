@@ -7,13 +7,11 @@ import ru.ecom.ejb.services.util.ApplicationDataSourceHelper;
 import javax.ejb.Local;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +23,10 @@ import java.util.zip.ZipInputStream;
 @Local(ISqlUpdateService.class)
 public class SqlUpdateServiceBean implements ISqlUpdateService {
 
-    private final static Logger LOG = Logger.getLogger(SqlUpdateServiceBean.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(SqlUpdateServiceBean.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
-    public SqlUpdateServiceBean() throws IOException, SQLException, NamingException {
+    public SqlUpdateServiceBean() throws NamingException {
         LOG.info("Try get scripts...");
 
         int min=-1000;

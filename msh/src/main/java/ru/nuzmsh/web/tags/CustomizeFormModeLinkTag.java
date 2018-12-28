@@ -19,8 +19,8 @@ import java.io.IOException;
  */
 public class CustomizeFormModeLinkTag extends SimpleTagSupport {
 
-    private final static Logger LOG = Logger.getLogger(CustomizeFormModeLinkTag.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(CustomizeFormModeLinkTag.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
 

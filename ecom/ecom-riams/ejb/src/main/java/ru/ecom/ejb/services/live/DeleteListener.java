@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.List;
 
 public class DeleteListener {
-	private final static Logger LOG = Logger.getLogger(DeleteListener.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(DeleteListener.class);
+	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	EntityManager theManager ;
 	StringBuilder theSerialization ;
 	String theUsername ;

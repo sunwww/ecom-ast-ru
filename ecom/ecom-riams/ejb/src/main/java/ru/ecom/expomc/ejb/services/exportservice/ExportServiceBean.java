@@ -28,8 +28,8 @@ import java.util.*;
 @Remote(IExportService.class)
 public class ExportServiceBean implements IExportService {
 
-    private final static Logger LOG = Logger.getLogger(ExportServiceBean.class) ;
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(ExportServiceBean.class) ;
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     
     public void export(long aMonitorId, long aFileId, ExportForm aForm) {
@@ -77,7 +77,7 @@ public class ExportServiceBean implements IExportService {
                 if(++i % 100 == 0) {
                 	if(aMonitor!=null) aMonitor.advice(100);
                 }
-                HashMap<String, Object> map = new HashMap<String, Object>();
+                HashMap<String, Object> map = new HashMap<>();
                 if(aInterceptor!=null) aInterceptor.beforeSave(entity) ;
                 for (Field field : fields) {
                     Object value = PropertyUtil.getPropertyValue(entity, field.getProperty()) ;
@@ -104,7 +104,7 @@ public class ExportServiceBean implements IExportService {
         return ret;
     }
     private static List<DbfField> createDbfField(Format aFormat) {
-        LinkedList<DbfField> fields = new LinkedList<DbfField>();
+        LinkedList<DbfField> fields = new LinkedList<>();
         for (Field field : aFormat.getFields()) {
             DbfField dbfField = new DbfField(field.getName(), getDbfType(field),field.getDbfSize(), field.getDbfDecimal() );
             fields.add(dbfField) ;

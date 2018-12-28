@@ -1,28 +1,23 @@
 package ru.ecom.mis.web.servlet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
+import org.apache.log4j.Logger;
+import ru.ecom.ejb.services.vocentity.IVocEntityService;
+import ru.ecom.web.util.Injection;
+import ru.ecom.web.vocentity.VocEntityServlet;
 
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.services.vocentity.IVocEntityService;
-import ru.ecom.web.servlet.AbstractAutocompleteServlet;
-import ru.ecom.web.util.Injection;
-import ru.ecom.web.vocentity.VocEntityServlet;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 
 public class EncodingAccordanceServlet extends HttpServlet {
 
-	private final static Logger LOG = Logger.getLogger(VocEntityServlet.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(VocEntityServlet.class);
 
-	
 	@Override
 	public void doGet(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
 		// TODO Auto-generated method stub

@@ -1,18 +1,16 @@
 package ru.nuzmsh.web.util;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
-
 import ru.nuzmsh.web.tags.helper.RolesHelper;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 
 public class DemoModeUtil {
 
-	private final static Logger LOG = Logger.getLogger(DemoModeUtil.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	 
+	private static final Logger LOG = Logger.getLogger(DemoModeUtil.class);
+
 	public static boolean isInDemoMode(HttpServletRequest aRequest) {
 		try {
 			return RolesHelper.checkRoles("/Policy/DEMO", aRequest);

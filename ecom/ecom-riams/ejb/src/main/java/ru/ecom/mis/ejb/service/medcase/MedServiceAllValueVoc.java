@@ -1,6 +1,5 @@
 package ru.ecom.mis.ejb.service.medcase;
 
-import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
@@ -16,8 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class MedServiceAllValueVoc  implements IAllValue {
-    private final static Logger LOG = Logger.getLogger(MedServiceAllValueVoc.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	public void destroy() {
 		
@@ -36,7 +33,7 @@ public class MedServiceAllValueVoc  implements IAllValue {
 	
 	//@SuppressWarnings("unchecked")
 	public Collection<VocValue> listAll(AllValueContext aContext) {
-		String addSql = "" ;
+		String addSql  ;
 		SimpleDateFormat FORMAT_2 = new SimpleDateFormat("dd.MM.yyyy") ;
 		if (aContext!=null && aContext.getVocAdditional()!=null 
 				&& aContext.getVocAdditional().getParentId()!=null && !aContext.getVocAdditional().getParentId().equals("")) {
@@ -65,7 +62,7 @@ public class MedServiceAllValueVoc  implements IAllValue {
 			
 		//LOG.info("SQL medService"+sql) ;
 		List<MedService> medServs = aContext.getEntityManager().createQuery(sql.toString()).getResultList() ;
-		List<VocValue> ret = new ArrayList<VocValue>() ;
+		List<VocValue> ret = new ArrayList<>() ;
 		
 		//InterceptorContext context = new InterceptorContext(aContext.getEntityManager(), aContext.getSessionContext()) ;
 		

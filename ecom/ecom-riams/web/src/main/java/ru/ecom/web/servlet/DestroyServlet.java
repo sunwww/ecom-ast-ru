@@ -11,9 +11,8 @@ import java.beans.Introspector;
  */
 public class DestroyServlet extends HttpServlet {
 
-	private final static Logger LOG = Logger.getLogger(DestroyServlet.class);
-	//private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+	private static final Logger LOG = Logger.getLogger(DestroyServlet.class);
+
     @Override
 	public void destroy() {
 		LOG.info("  Destoying PropertyUtil hash...") ;

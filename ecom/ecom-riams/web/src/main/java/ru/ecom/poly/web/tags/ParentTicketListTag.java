@@ -15,7 +15,7 @@ import java.util.Collection;
  */
 public class ParentTicketListTag extends ParentEntityListAllTag {
 
-    private final static Logger LOG = Logger.getLogger(ParentTicketListTag.class) ;
+    private static final Logger LOG = Logger.getLogger(ParentTicketListTag.class) ;
 
     public void doTag() throws JspException {
 //        JspWriter out = getJspContext().getOut() ;

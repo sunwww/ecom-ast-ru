@@ -18,8 +18,8 @@ import javax.persistence.EntityManager;
 
 public class TicketMedCaseSaveInterceptor implements IFormInterceptor {
 	 
-	private final static Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
-    private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(DischargeMedCaseSaveInterceptor.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     public void intercept(IEntityForm aForm, Object aEntity, EntityManager aManager) {
     	TicketMedCaseForm form = (TicketMedCaseForm)aForm ;

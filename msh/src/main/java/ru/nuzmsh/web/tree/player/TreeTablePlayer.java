@@ -21,8 +21,8 @@ import java.util.LinkedList;
  */
 public class TreeTablePlayer {
 
-    private final static Logger LOG = Logger.getLogger(TreeTablePlayer.class) ;
-    private final static boolean CAN_TRACE = LOG.isDebugEnabled() ;
+    private static final Logger LOG = Logger.getLogger(TreeTablePlayer.class) ;
+    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public TreeTablePlayer(String aName, String aTitle, String aIdField, String aParentIdField, String aNameField) {

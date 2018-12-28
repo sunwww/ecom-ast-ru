@@ -1,25 +1,22 @@
 package ru.ecom.web.vocentity;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
+import org.apache.log4j.Logger;
+import ru.ecom.ejb.services.vocentity.IVocEntityService;
+import ru.ecom.web.servlet.AbstractAutocompleteServlet;
+import ru.ecom.web.util.Injection;
 
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-
-import ru.ecom.ejb.services.vocentity.IVocEntityService;
-import ru.ecom.web.servlet.AbstractAutocompleteServlet;
-import ru.ecom.web.util.Injection;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 
 public class VocEntityServlet extends HttpServlet {
 
-	private final static Logger LOG = Logger.getLogger(VocEntityServlet.class);
-	private final static boolean CAN_DEBUG = LOG.isDebugEnabled();
+	private static final Logger LOG = Logger.getLogger(VocEntityServlet.class);
 
 	
 	@Override
@@ -30,12 +27,12 @@ public class VocEntityServlet extends HttpServlet {
 
 	@Override
 	public void service(HttpServletRequest aRequest,
-			HttpServletResponse aResponse) throws ServletException, IOException {
+			HttpServletResponse aResponse) throws IOException {
 		aResponse.setCharacterEncoding("utf-8");
 		Enumeration en = aRequest.getParameterNames() ;
 		while(en.hasMoreElements()) {
 			String key = (String) en.nextElement() ;
-			System.out.println(key+" = "+aRequest.getParameter(key)) ;
+			LOG.info(key+" = "+aRequest.getParameter(key)); ;
 		}
 		 
 		PrintWriter out = aResponse.getWriter();
@@ -61,8 +58,7 @@ public class VocEntityServlet extends HttpServlet {
 			String vocEntityClass = AbstractAutocompleteServlet.getNextDir(aRequest);
 			String json = service.loadJsonValues(vocEntityClass, start, limit, orderBy, !descending) ; 
 			out.println(json);
-			//System.out.println(json);
-			
+
 		} catch (NamingException e) {
 			LOG.error(e.getMessage(),e);
 		}
@@ -72,5 +68,4 @@ public class VocEntityServlet extends HttpServlet {
 			out.println(");") ;
 		}
 	}
-
 }
