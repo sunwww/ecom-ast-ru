@@ -727,7 +727,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      return serviceList1;
  }
     /** тупо объединяем, не думаем */
-    public E2Entry unionEntries(E2Entry aMainEntry, E2Entry aNotMainEntry) { //Функционал по объединению случаев
+    private E2Entry unionEntries(E2Entry aMainEntry, E2Entry aNotMainEntry) { //Функционал по объединению случаев
         if (aMainEntry==null||aNotMainEntry==null) {throw new IllegalStateException("UNOIN = entry=null");}
         if (aMainEntry.getStartDate().getTime()>aNotMainEntry.getStartDate().getTime()
                 ||(aMainEntry.getStartDate().getTime() == aNotMainEntry.getStartDate().getTime() && aMainEntry.getStartTime().after(aNotMainEntry.getStartTime()))) {
@@ -789,7 +789,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
 
     /** Проверяем, является ли объект NULL либо пустой строкой */
-    public boolean isNotNull(Object aField) {
+    private boolean isNotNull(Object aField) {
         if (aField == null) return false;
         if (aField instanceof String) {
             String ss = (String) aField;
@@ -813,7 +813,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /** Получение значения из справочника V002 по профилю коек */
-    private static HashMap<String, VocE2MedHelpProfile> bedTypes = new HashMap<>();
+    private static final HashMap<String, VocE2MedHelpProfile> bedTypes = new HashMap<>();
     private VocE2MedHelpProfile getProfileByBedType(E2Entry aEntry) {
         String bedType=aEntry.getHelpKind();
         String bedSubType = aEntry.getBedSubType();
@@ -1126,7 +1126,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /** Запустить проверку случая (расчет КСГ, цены, полей для xml) */
-    public final void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
+    private void makeCheckEntry(E2Entry aEntry, boolean updateKsgIfExist, boolean checkErrors) {
     //    LOG.warn("SIZE childs = "+aEntry.getChildEntryList().size()); setRightParent(aEntry,null);
         long bedDays = AgeUtil.calculateDays(aEntry.getStartDate(), aEntry.getFinishDate());
         long calendarDays = bedDays>0?bedDays+1:1;
@@ -1139,7 +1139,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             aEntry.setBedDays(bedDays > 0 ? bedDays : 1L);
             aEntry.setIsChild(AgeUtil.calcAgeYear(aEntry.getBirthDate(),aEntry.getStartDate())<18);
             aEntry.setCalendarDays(calendarDays);
-            getBestKSG(aEntry, updateKsgIfExist); //Находим КСГ
+            getBestKSG(aEntry, updateKsgIfExist,true); //Находим КСГ
             calculateFondField(aEntry);
             aEntry = calculateEntryPrice(aEntry);
             if (checkErrors) checkErrors(aEntry);
@@ -1152,7 +1152,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /** Найдем подтип случая (посещение, обращение, НМП */
-    HashMap<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
+    private HashMap<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
     private E2Entry setEntrySubType(E2Entry aEntry){
         String code;
         String entryType=aEntry.getEntryType();
@@ -1397,7 +1397,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
     }
 
-    HashMap<String, Object > diagnosisMap = new HashMap<>();
+    private HashMap<String, Object > diagnosisMap = new HashMap<>();
     private List<EntryDiagnosis> getDiagnosis(E2Entry aEntry) {return   aEntry.getDiagnosis()!=null?aEntry.getDiagnosis():new ArrayList<>();}
     /** Создаем список диагнозов из строки с диагнозами +устанавливаем основной диагноз
      *  UPD 18-07-2018 Помечаем случай как раковый
@@ -1477,7 +1477,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
     }
 
-    Map<String, VocMedService> serviceList = new HashMap<>();
+    private Map<String, VocMedService> serviceList = new HashMap<>();
 
     /** Создание списка услуг по записи + делаем главную услугу */ //делаем разово
     private void createServices(E2Entry aEntry) {
@@ -1671,9 +1671,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         return null;
     }
     /** Нахождение КСГ с бОльшим коэффициентом трудозатрат для случая */
-    HashMap<String, List<Object>> ksgMap = new HashMap<>();
-    public VocKsg getBestKSG(E2Entry aEntry, boolean updateKsgIfExist) {return getBestKSG(aEntry,updateKsgIfExist,true);}
-    public VocKsg getBestKSG(E2Entry aEntry, boolean updateKsgIfExist, boolean needPersist) {
+    private HashMap<String, List<Object>> ksgMap = new HashMap<>();
+    private VocKsg getBestKSG(E2Entry aEntry, boolean updateKsgIfExist, boolean needPersist) {
         if (aEntry.getEntryType()==null || !aEntry.getEntryType().equals(HOSPITALTYPE)) {return null;}
         if (!updateKsgIfExist && aEntry.getKsg()!=null) {return aEntry.getKsg();} //Не проверяем КСГ у записей с уже найденным КСГ
         if (isNotNull(aEntry.getIsManualKsg())) { return aEntry.getKsg();} //Если стоит признак ручного ввода КСГ, не расчитываем КСГ
@@ -2000,7 +1999,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      * @param aEntry
      * @return
      */
-    HashMap<String, BigDecimal> hospitalCostMap = new HashMap<>();
+    private HashMap<String, BigDecimal> hospitalCostMap = new HashMap<>();
     private E2Entry calculateHospitalEntryPrice(E2Entry aEntry) {
         try {
             String key;
@@ -2152,6 +2151,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         E2CoefficientPatientDifficultyEntryLink link;
         //calc 10
+        List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new ArrayList<>();
         long sluchDuration = aEntry.getBedDays()!=null?aEntry.getBedDays():1;
         long maxDuration = aEntry.getKsg().getLongKsg()!=null&&aEntry.getKsg().getLongKsg()?45:30; //TODO вынести в настройки
         if (sluchDuration>maxDuration) { //Если случай лечения больше 30 (45) дней, ищем "10" коэффициент
@@ -2161,13 +2161,11 @@ public class Expert2ServiceBean implements IExpert2Service {
             link.setEntry(aEntry);
             link.setDifficulty((VocE2CoefficientPatientDifficulty)getActualVocByClassName(VocE2CoefficientPatientDifficulty.class,null," code='9'"));
             link.setValue(value.setScale(2,RoundingMode.HALF_UP));
-            theManager.persist(link);
+            difficultyEntryLinks.add(link);
         }
-
         //Пришло время сохранять все сложности пациента
         if (!ret.isEmpty()) {
             //theManager.createNativeQuery("delete from E2CoefficientPatientDifficultyEntryLink where entry_id=:id").setParameter("id",aEntry.getId()).executeUpdate();
-
             for (String code:ret) {
                 if (!difficultyHashMap.containsKey(code)) {
                     difficultyHashMap.put(code,(VocE2CoefficientPatientDifficulty)getActualVocByClassName(VocE2CoefficientPatientDifficulty.class,null," code='"+code+"'"));
@@ -2177,18 +2175,20 @@ public class Expert2ServiceBean implements IExpert2Service {
                 link.setEntry(aEntry);
                 link.setDifficulty(difficulty);
                 link.setValue(difficulty.getValue());
-                theManager.persist(link);
+                difficultyEntryLinks.add(link);
             }
+        }
+        if (!difficultyEntryLinks.isEmpty()) {
+            aEntry.setPatientDifficulty(difficultyEntryLinks);
+            theManager.persist(aEntry);
         }
     }
     /** Считаем коэффициент сложности лечения пациента */
     public BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry) {
         BigDecimal one = new BigDecimal(1);
         if(aEntry.getEntryType().equals(HOSPITALTYPE)&&!aEntry.getBedSubType().equals("1")) { return one;}
-        //  LOG.info("start calc difficult");
         List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
         BigDecimal ret = new BigDecimal(1);
-
         if (list!=null && !list.isEmpty()) { //Нет КСЛП - возвращаем 1.
             if (list.size()==1) { //Если один - возвращаем его.
                 ret = list.get(0).getValue();
@@ -2527,7 +2527,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /**Выводим сообщение в монитор. Возвращаем - отменен ли монитор*/
-    public boolean isMonitorCancel(IMonitor aMonitor, String aMonitorText) {
+    private boolean isMonitorCancel(IMonitor aMonitor, String aMonitorText) {
         aMonitor.setText(aMonitorText);
         LOG.info(aMonitorText);
         if (aMonitor.isCancelled()) {
@@ -2723,7 +2723,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      3 – прочие причины (умер, переведён в другое отделение и пр.)
      4 – ранее проведённые услуги в пределах установленных сроков.
      */
-    List<String> ksgFullPaymentChildsList = new ArrayList<>();
+    private List<String> ksgFullPaymentChildsList = new ArrayList<>();
 
     private BigDecimal calculateNoFullMedCaseCoefficient (E2Entry aEntry) { //Считаем коэффициент Кпр.+    //  LOG.info("start calculateNoFullMedCaseCoefficient");
         String  npl = aEntry.getNotFullPaymentReason();
@@ -3059,7 +3059,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         theManager.persist(aEntry);
     }
 
-    public  String addSql(String aField, String aValue) {
+    private String addSql(String aField, String aValue) {
         return  isNotNull(aValue)?" ("+aField+" ='"+aValue+"')":" ("+aField+" is null or "+aField+"='')";
     }
     private void cleanAllMaps(){
@@ -3125,7 +3125,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                 }
                 sloEntry.setMedServices(medServiceList);
-                sloEntry.setKsg(getBestKSG(sloEntry,true));
+                sloEntry.setKsg(getBestKSG(sloEntry,true,true));
             } else {
                 LOG.warn("Расчет примерной цены по поликлинике пока не сделан");
                 ret.put("status","error");

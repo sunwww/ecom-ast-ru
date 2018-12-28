@@ -369,7 +369,7 @@ public class E2Entry extends BaseEntity {
 
     /** Сложность лечения пациента */
      @Comment("Сложность лечения пациента")
-     @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
+     @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
      public List<E2CoefficientPatientDifficultyEntryLink> getPatientDifficulty() {return thePatientDifficulty;}
      public void setPatientDifficulty(List<E2CoefficientPatientDifficultyEntryLink> aPatientDifficulty) {thePatientDifficulty = aPatientDifficulty;}
      /** Сложность лечения пациента */
