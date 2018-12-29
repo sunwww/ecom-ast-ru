@@ -2240,4 +2240,43 @@ public class HospitalMedCaseServiceJs {
 		if (l.size()>0) res=l.iterator().next().get1().toString();
 		return res;
 	}
+	//Milamesher получить dtype medcase (0 - hospital, 1 - dep, 2 - visit, 3 - другое
+	public String getMedcaseDtypeById(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+		String res="";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'\n" +
+				"else case when mc.dtype='DepartmentMedCase' then '1'\n" +
+				"else case when mc.dtype='Visit' then '2' else '0' end end end\n" +
+				"from medcase mc where mc.id="+aMedcaseId) ;
+		if (l.size()>0) res=l.iterator().next().get1().toString();
+		return res;
+	}
+	//Milamesher #135 получить кол-во дней с начала СЛС при создании дневника в приёмнике
+	public String getSlsCountDays(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+		String res="";
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> l= service.executeNativeSql("\n" +
+				"select cast(round((EXTRACT(EPOCH FROM current_timestamp)-(SELECT EXTRACT(EPOCH FROM (mc.datestart + mc.entrancetime))  " +
+				"from medcase mc where id="+aMedcaseId+" ))/3600/24) as int)") ;
+		if (l.size()>0) res=l.iterator().next().get1().toString();
+		return res;
+	}
+	//Milamesher #135 получить кол-во дней с начала СЛО и СЛС при создании дневника в СЛО
+	public String getSloCountDays(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+		StringBuilder res=new StringBuilder();
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select cast(round((EXTRACT(EPOCH FROM current_timestamp)" +
+				"-(SELECT EXTRACT(EPOCH FROM (hmc.datestart + hmc.entrancetime))  from medcase hmc where hmc.id=dmc.parent_id ))/3600/24) as int) as t1\n" +
+				",cast(round((EXTRACT(EPOCH FROM current_timestamp)-(SELECT EXTRACT(EPOCH FROM (dmc.datestart + dmc.entrancetime))  " +
+				"from medcase dmc where dmc.id="+aMedcaseId+"))/3600/24) as int) as t2\n" +
+				"from medcase dmc\n" +
+				"left join medcase hmc on hmc.id=dmc.parent_id\n" +
+				"where dmc.id=" + aMedcaseId) ;
+		if (list.size() > 0) {
+			WebQueryResult w = list.iterator().next() ;
+			res.append(w.get1()).append("#").append(w.get2());
+		}
+		else res.append("##");
+		return res.toString();
+	}
 }
