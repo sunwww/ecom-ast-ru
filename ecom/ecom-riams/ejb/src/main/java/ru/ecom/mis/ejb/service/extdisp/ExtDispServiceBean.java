@@ -84,7 +84,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		 * Проверка на 1 группу здоровья и диагноз, отличный от Z**.*
 		*/
 		
-		String sql="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, vs.omccode as sex, p.snils "
+		String sql="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, vs.omccode as sex, p.snils as snils "
 				+", to_char(p.birthday,'dd.mm.yyyy') as birthday "
 				+",to_char(edc.startDate,'dd.mm.yyyy') as edcBeginDate "
 				+",to_char(edc.finishDate,'dd.mm.yyyy') as edcFinishDate "
@@ -177,6 +177,7 @@ public class ExtDispServiceBean implements IExtDispService {
 			String fizkultG = aFizGroup>0?aFizGroup+"":"1"; //"1"; //Группа здоровья для физкультуры
 			String cardIsslResult = aAnalysesText;//"Без патологий"; // Результат анализов
 			Date currentDate = new Date(System.currentTimeMillis());
+			String astrakhanFias = "83009239-25CB-4561-AF8E-7EE111B1CB73";
 
 			while (rs.next()) {
 				String diagnosis = rs.getString("mkbcode");
@@ -187,6 +188,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				String commonNumber = rs.getString("RZ");
 				String patientInfo = rs.getString("patientinfo");
 				String sex = rs.getString("sex");
+				String snils = rs.getString("snils");
 				int smoCode = rs.getInt("smoCode");
 				
 
@@ -217,6 +219,10 @@ public class ExtDispServiceBean implements IExtDispService {
 				}
 				if (!diagnosis.startsWith("Z") && "1".equals(healthG)) { //Если 1 группа здоровья и диагноз !=Z (система выбросит)
 					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"Расхождение группы здоровья и диагноза"));
+					continue;
+				}
+				if (StringUtil.isNullOrEmpty(snils)) {
+					errorCards.put(createBadCardObject(cardId,patientInfo,diagnosis,"Не указан СНИЛС пациената!"));
 					continue;
 				}
 				String insuranceCompany ;
@@ -281,13 +287,18 @@ public class ExtDispServiceBean implements IExtDispService {
 					.addContent(new Element("idDocument").addContent(passId))
 					.addContent(new Element("documentSer").addContent(rs.getString("passSer")))
 					.addContent(new Element("documentNum").addContent(rs.getString("passNum")))
+					.addContent(new Element("snils").addContent(snils))
 					.addContent(new Element("polisNum").addContent(commonNumber))
 					.addContent(new Element("idInsuranceCompany").addContent(insuranceCompany))
 					.addContent(new Element("medSanName").addContent(lpuName))
-					.addContent(new Element("medSanAddress").addContent(lpuAddress))
-					.addContent(new Element("address"));
-				String fullAddress = rs.getString("fullAddress");
-				Element address =currPat.getChild("address");
+					.addContent(new Element("medSanAddress").addContent(lpuAddress));
+					//.addContent(new Element("address"));
+				Element address = new Element("address");
+				address.addContent(new Element("regionCode").setText(astrakhanFias));
+				currPat.addContent(address);
+				//String fullAddress = rs.getString("fullAddress");
+				//Element address =currPat.getChild("address");
+				/*
 				if (fullAddress!=null && !fullAddress.equals("0") && !fullAddress.equals("")) {
 					String[] arrAddress = fullAddress.split(":"); //postIndex:kladrNP:kladrStr:house:building:appartment
 					boolean allOk = false;
@@ -311,6 +322,8 @@ public class ExtDispServiceBean implements IExtDispService {
 				} else {
 					address.addContent(new Element("kladrNP").addContent("3000000100000")); //Код нас. пункта по KLADR (г. Астрахань)
 				}
+
+				*/
 				Element cards = new Element("cards");
 				
 				Element card = new Element("card")
