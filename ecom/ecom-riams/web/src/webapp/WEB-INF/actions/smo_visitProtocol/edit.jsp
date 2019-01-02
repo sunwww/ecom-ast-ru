@@ -600,7 +600,36 @@ horizontalFill="true" />
 
 		<msh:ifFormTypeIsCreate formName="smo_visitProtocolForm">
             <script type="text/javascript">
-                //Milamesher 18102018 #122
+				//Milamesher 27122018 #135 - вывод суток
+				<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShowDaysInDiary">
+				if ($('record').value=='') {
+                HospitalMedCaseService.getMedcaseDtypeById(${param.id},{
+                        callback: function(res) {
+                            if (res=="0") {
+                                HospitalMedCaseService.getSlsCountDays(${param.id}, {
+                                    callback: function (res2) {
+                                        if (res2!="") {
+                                            if (res2==0) res2=1;
+                                            $('record').value+="С начала СЛС: " + res2+" сутки\n";
+                                        }
+                                    }});
+							}
+							else if (res=="1") {
+                                HospitalMedCaseService.getSloCountDays(${param.id}, {
+                                    callback: function (res) {
+                                        if (res!="##") {
+                                            var cnts=res.split('#');
+                                            if (cnts.length==2) {
+                                                $('record').value += "С начала СЛС: " + cnts[0] + " сутки\n";
+                                                $('record').value += "С начала СЛО: " + cnts[1] + " сутки\n";
+                                            }
+                                        }
+                                    }});
+                            }
+                        }});
+				}
+                </msh:ifInRole>
+			   //Milamesher 18102018 #122
                 HospitalMedCaseService.getIfPrivateInsurance(${param.id},true,{
                         callback: function(res) {
                             if (res=="1") {
