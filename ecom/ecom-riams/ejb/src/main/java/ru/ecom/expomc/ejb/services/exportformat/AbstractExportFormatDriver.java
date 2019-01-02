@@ -7,7 +7,7 @@ import java.io.Writer;
  */
 public class AbstractExportFormatDriver implements IExportFomatDriver {
 
-    public void saveXml(StringBuffer s) throws SaveXmlException {
+    public void saveXml(StringBuilder s) throws SaveXmlException {
 
     }
 
