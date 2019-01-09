@@ -9,7 +9,6 @@ import ru.ecom.mis.ejb.domain.medcase.voc.VocDiagnosisRegistrationType;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -19,13 +18,13 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @AIndexes({
-        @AIndex(unique = false, properties = {"entry"})
+        @AIndex(properties = {"entry"})
 })
 public class EntryDiagnosis extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     public E2Entry getEntry() {return theEntry;}
     public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
     /** Запись */

@@ -293,12 +293,13 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /** Объединяем СЛС с родами */
     private void unionChildBirthHospital(List<E2Entry> entriesList) {
+
         /*
         27-12-2018 Получаем список в обратном порядке
         14-12-2018. Логика поменялась. Первым может быть как паталогия, так и родовое. а, может даже и обсервационное отделение.
         делаем так: берем СЛО. Если роды, то склеиваем со след. СЛО. если отделения след. СЛО = отделению пред СЛО (пред. родовому), то и их склеиваем.
          */
-        //   LOG.warn("unionChildBirth1");
+         //  LOG.warn("unionChildBirth1");
         E2Entry mainEntry = null; //theManager.find(E2Entry.class,Long.valueOf(entriesIds.get(0)[0].toString()));
         boolean childBirthFound=false;
         E2Entry childEntry = null;
@@ -314,7 +315,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             } else if (entry.getIsChildBirthDepartment()) {
                 mainEntry = unionEntries(mainEntry,entry);
                 if (!childBirthFound) { //Первое (последнее) родовое отделение
-                    LOG.info("warn 1");
                     childBirthFound=true;
                  //   makeCheckEntry(mainEntry,false,false);
                     childEntry = mainEntry;
@@ -324,7 +324,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 LOG.warn("Что-то необычное в родах, стоит обратить внимание "+entry.getId()+entry.getHelpKind());
             }
         }
-        if (childBirthFound && !mainEntry.equals(childEntry)) {
+        if (childBirthFound && mainEntry !=null && !childEntry.equals(mainEntry)) {
             LOG.info("pat = "+mainEntry.getId());
             patologyEntry = mainEntry;
         }
@@ -337,16 +337,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                     VocE2FondV009 perevodResult = getActualVocByClassName(VocE2FondV009.class, patologyEntry.getFinishDate(), " code='104'"); //TODO Колхоз - исправить
                     patologyEntry.setFondResult(perevodResult); //TODO Колхоз - исправить
                     patologyEntry.setIsUnion(true);
-                    childEntry.setMedServices(moveMedServiceToMainEntry(childEntry, patologyEntry));
-                    setRightParent(childEntry, null);
+                    theManager.persist(childEntry);
+                    theManager.persist(patologyEntry);
                     makeCheckEntry(childEntry, false, false);
-                    LOG.info("Самостоятельная патология");
                 } else {
                     unionEntries(childEntry,patologyEntry);
-                    LOG.info("НЕСамостоятельная патология");
                 }
         } else {
-            LOG.warn("Чтото непонятное");
+            LOG.warn("Чтото непонятное, похоже нет патологии");
         }
     }
 
@@ -602,7 +600,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 for (E2Entry entry:entriesList) {
                     if (entry.getId()==mainEntry.getId()) {continue;}
                     entry.setParentEntry(vmpEntry);
-                    entry.setServiceStream(E2Enumerator.COMPLEXSERVICESTREAM);
+                    entry.setServiceStream(COMPLEXSERVICESTREAM);
                     entry.setIsUnion(true);
                     theManager.persist(entry);
                 }
@@ -672,14 +670,14 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /*Делаем все дочерние случаи от дочернего случая дочерними случаями главного случая*/
     private void setRightParent (E2Entry aMainEntry, List<E2Entry> aChildEntries) {
-     //   if (1==1) {LOG.info("NE nado");return;}
+        if (1==1) {LOG.info("NE nado "+aMainEntry.getId());return;}
         if (aChildEntries==null) {
-            aChildEntries = theManager.createQuery("from E2Entry where parentEntry=:parent").setParameter("parent",aMainEntry).getResultList();
+            aChildEntries = theManager.createQuery("from E2Entry where parentEntry_id=:parent").setParameter("parent",aMainEntry.getId()).getResultList();
             LOG.info("sze = "+aChildEntries.size());
         }
         if (aChildEntries!=null && !aChildEntries.isEmpty()) {
             for (E2Entry childEntry : aChildEntries) {
-                List<E2Entry> subChildren = theManager.createQuery("from E2Entry where parentEntry=:parent").setParameter("parent",childEntry).getResultList();
+                List<E2Entry> subChildren = theManager.createQuery("from E2Entry where parentEntry_id=:parent").setParameter("parent",childEntry.getId()).getResultList();
                 if (!childEntry.getParentEntry().equals(aMainEntry)) {
                     childEntry.setParentEntry(aMainEntry);
                     theManager.persist(childEntry);
@@ -724,6 +722,8 @@ public class Expert2ServiceBean implements IExpert2Service {
      serviceList1.addAll(aMainEntry.getMedServices());
      aMainEntry.setMedServices(serviceList1);
      aNotMainEntry.setMedServices(new ArrayList<>());
+     theManager.persist(aMainEntry);
+     theManager.persist(aNotMainEntry);
      return serviceList1;
  }
     /** тупо объединяем, не думаем */
@@ -733,7 +733,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 ||(aMainEntry.getStartDate().getTime() == aNotMainEntry.getStartDate().getTime() && aMainEntry.getStartTime().after(aNotMainEntry.getStartTime()))) {
             //Если дата+время начала главного случая позднее даты и время начала неглавного случая
             aMainEntry.setStartDate(aNotMainEntry.getStartDate());//Дата начала главного случая = дате начала текущего случая
-
             aMainEntry.setStartTime(aNotMainEntry.getStartTime());//Время начала главного случая = времени окончания начала текущего случая
         } else if (aNotMainEntry.getFinishDate().getTime()>aMainEntry.getFinishDate().getTime()
                 ||(aNotMainEntry.getFinishDate().getTime()==aMainEntry.getFinishDate().getTime() && aNotMainEntry.getFinishTime().after(aMainEntry.getFinishTime()))) {
@@ -747,14 +746,11 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (aNotMainEntry.getReanimationEntry()!=null) aMainEntry.setReanimationEntry(aNotMainEntry); //Если в объединяемом случае была реанимация - она будет в главном случае
         if(isNotNull(aNotMainEntry.getNewbornAmount())) aMainEntry.setNewbornAmount(aNotMainEntry.getNewbornAmount()); //Переносим информация о детях из родового отделения в неродовое
        aMainEntry.setMedServices(moveMedServiceToMainEntry(aNotMainEntry,aMainEntry));
-    /*    List<E2Entry> childEntries =aNotMainEntry.getChildEntryList();
+     /*   List<E2Entry> childEntries =theManager.createQuery("from E2Entry where parentEntry=:entry").setParameter("entry",aNotMainEntry).getResultList();
         for (E2Entry childEntry: childEntries) {
             childEntry.setParentEntry(aMainEntry);
             theManager.persist(childEntry);
-        }
-        childEntries.addAll(aMainEntry.getChildEntryList());
-        childEntries.add(aNotMainEntry);
-        aMainEntry.setChildEntryList(childEntries);*/
+        }*/
         aMainEntry.setIsUnion(true);
         aNotMainEntry.setIsUnion(true);
         aNotMainEntry.setParentEntry(aMainEntry);
@@ -1145,7 +1141,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (checkErrors) checkErrors(aEntry);
             theManager.persist(aEntry);
         } catch (Exception e) {
-            e.printStackTrace();
             LOG.error(e);
             LOG.error("ERR=",e);
         }

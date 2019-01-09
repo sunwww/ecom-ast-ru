@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
@@ -21,7 +21,7 @@
         <%System.out.println("IMPORT_result = "+request.getAttribute("importResult"));%>
 ${importResult}
         <msh:hideException>
-            <msh:textField property="historyNumber"/><input type="button" value="Найти по ИБ" onclick="findByNumber()">
+            <msh:textField label="Номер карты" property="historyNumber"/><input type="button" value="Найти по ИБ" onclick="findByNumber()">
 
             <ecom:webQuery name="entryList" nativeSql="select id, name, startDate, finishDate, createDate||' '|| createTime
             ,case when isClosed='1' then 'color:blue' else '' end as color

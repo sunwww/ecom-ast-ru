@@ -20,15 +20,15 @@ import java.util.List;
 @Entity
 @UnDeletable
 @AIndexes({
-        @AIndex(unique = false, properties= {"listEntry"})
-        , @AIndex(unique = false, properties= {"entryType"})
-        , @AIndex(unique = false, properties= {"lastname","firstname","middlename", "birthDate"})
-        , @AIndex(unique = false, properties= {"billDate", "billNumber"})
-        , @AIndex(unique = false, properties= {"historyNumber"})
-        , @AIndex(unique = false, properties= {"startDate"})
-        , @AIndex(unique = false, properties= {"finishDate"})
-        , @AIndex(unique = false, properties= {"serviceStream"})
-        , @AIndex(unique = false, properties= {"parentEntry"})
+        @AIndex(properties= {"listEntry"})
+        , @AIndex(properties= {"entryType"})
+        , @AIndex(properties= {"lastname","firstname","middlename", "birthDate"})
+        , @AIndex(properties= {"billDate", "billNumber"})
+        , @AIndex(properties= {"historyNumber"})
+        , @AIndex(properties= {"startDate"})
+        , @AIndex(properties= {"finishDate"})
+        , @AIndex(properties= {"serviceStream"})
+        , @AIndex(properties= {"parentEntry"})
 
 })
 public class E2Entry extends BaseEntity {
@@ -581,7 +581,7 @@ public class E2Entry extends BaseEntity {
 
       /** Услуги по случаю */
       @Comment("Услуги по случаю")
-      @OneToMany(mappedBy = "entry",  fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
+      @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL)
       public List<EntryMedService> getMedServices() {return theMedServices;}
       public void setMedServices(List<EntryMedService> aMedServices) {theMedServices = aMedServices;}
       /** Услуги по случаю */
@@ -589,7 +589,7 @@ public class E2Entry extends BaseEntity {
 
      /** Список диагнозов по случаю */
      @Comment("Список диагнозов по случаю")
-     @OneToMany(mappedBy="entry", fetch = FetchType.LAZY)
+     @OneToMany(mappedBy="entry", cascade = CascadeType.ALL)
      public List<EntryDiagnosis> getDiagnosis() {return theDiagnosis;}
      public void setDiagnosis(List<EntryDiagnosis> aDiagnosis) {theDiagnosis = aDiagnosis;}
      /** Список диагнозов по случаю */
