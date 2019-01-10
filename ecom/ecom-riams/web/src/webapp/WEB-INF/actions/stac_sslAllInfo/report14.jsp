@@ -1,4 +1,3 @@
-<%@page import="ru.ecom.mis.web.action.medcase.journal.AdmissionJournalForm"%>
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
@@ -814,20 +813,20 @@ case
 end
 ) as sumDays
  from medcase sls
+left join Patient p on p.id=sls.patient_id
+left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
+left join MedCase sloa on sloa.parent_id=sls.id
+left join BedFund bf on bf.id=sloa.bedFund_id
 left join diagnosis diag on sls.id=diag.medcase_id
 left join vocidc10 mkb on mkb.id=diag.idc10_id
 left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
 left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-left join MedCase sloa on sloa.parent_id=sls.id
-left join BedFund bf on bf.id=sloa.bedFund_id
 left join VocReportSetParameterType vrspt on vrspt.classname='F14_DIAG'
 left join ReportSetTYpeParameterType rspt on rspt.parameterType_id=vrspt.id
-left join Patient p on p.id=sls.patient_id
-left join vochospitalizationoutcome vho on vho.id=sls.outcome_id
-where 
+where
 sls.dtype='HospitalMedCase' ${periodSql}
-and mkb.code between rspt.codefrom and rspt.codeto 
 ${paramSql} ${diagnosisCodeSql}
+and mkb.code between rspt.codefrom and rspt.codeto
  ${outcomeSql}
 ${age_sql} 
  
@@ -1277,6 +1276,7 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
      
     ${paramSql} and sloa.dateFinish is not null
     and sls.result_id='${result_death}'
+    and (sls.dateStart=sls.dateFinish or sls.dateFinish-sls.dateStart=1 and sls.dischargetime<sls.entrancetime)
     and 
     coalesce(
     (select max(mkb.code) from Diagnosis diag 
@@ -1298,7 +1298,6 @@ case when dc.categoryDifference_id is not null or dc.latrogeny_id is not null th
     )
     ) between rspt.codefrom and rspt.codeto
     ${age_sql}  
-    and (sls.dateStart=sls.dateFinish or sls.dateFinish-sls.dateStart=1 and sls.dischargetime<sls.entrancetime)
     group by vrspt.id,vrspt.name,vrspt.strCode,vrspt.code
     order by vrspt.strCode
     " />

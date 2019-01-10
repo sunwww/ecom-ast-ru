@@ -35,36 +35,31 @@ public class WebQueryServiceBean implements IWebQueryService {
 		//if(limit==null || limit==0 || limit>100 ) limit=100;
 
 		DataSource ds =findDataSource();
-		Connection connection = null;
-		Statement statement = null;
-		try {
-			connection = ds.getConnection();
-			statement = connection.createStatement();
+
+		try (Connection connection = ds.getConnection();
+             Statement statement = connection.createStatement()){
 			if (limit!=null) statement.setMaxRows(limit);
-			ResultSet resultSet = statement.executeQuery(aQuery);
-			ResultSetMetaData rsmd = resultSet.getMetaData();
-			int columnCount = rsmd.getColumnCount();
-			JSONArray array = new JSONArray();
-			while (resultSet.next()) {
-				JSONObject temp = new JSONObject();
-				for (int j = 1; j <=columnCount; j++) {
-					temp.put(rsmd.getColumnName(j),resultSet.getObject(j));
-				}
-				array.put(temp);
-			}
+			try (ResultSet resultSet = statement.executeQuery(aQuery)){
+                ResultSetMetaData rsmd = resultSet.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                JSONArray array = new JSONArray();
+                while (resultSet.next()) {
+                    JSONObject temp = new JSONObject();
+                    for (int j = 1; j <=columnCount; j++) {
+                        temp.put(rsmd.getColumnName(j),resultSet.getObject(j));
+                    }
+                    array.put(temp);
+                }
 
-			if(nameArray==null || nameArray.equals("")){
-				return array.toString();
-			}else {
-				return new JSONObject().put(nameArray, array).toString();
-			}
-
-		}catch (JSONException | SQLException e){
+                if(nameArray==null || nameArray.equals("")){
+                    return array.toString();
+                }else {
+                    return new JSONObject().put(nameArray, array).toString();
+                }
+            }
+		} catch (SQLException e){
 			e.printStackTrace();
-		} finally {
-            if(connection!=null && !connection.isClosed()) connection.close();
-          //  if(statement!=null && !statement.isClosed()) statement.close();
-        }
+		}
 		return null;
 	}
 	/** Возвращаем json массив с результатом запроса*/
@@ -73,7 +68,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 	}
 
 	/** Возвращаем первый результат запроса в качестве json объекта*/
-	public String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException, JSONException {
+	public String executeSqlGetJsonObject(String aQuery) throws NamingException, SQLException {
 		JSONArray arr = new JSONArray(executeSqlGetJson(aQuery,null,null));
 		if (arr.length()>0) {
 			return arr.getJSONObject(0).toString();
@@ -99,7 +94,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 		}
 		try {
 			JSONArray ret = new JSONArray();
-			if (list.size()>0) {
+			if (!list.isEmpty()) {
 				boolean first = true;
 				for (Object rowO: list) {
 					if (rowO instanceof Object[]){
@@ -145,7 +140,7 @@ public class WebQueryServiceBean implements IWebQueryService {
 		} else {
 			list= aQuery.getResultList() ;
 		}
-		LinkedList<WebQueryResult> ret = new LinkedList<WebQueryResult>() ;
+		LinkedList<WebQueryResult> ret = new LinkedList<>() ;
 		long i = 0 ;
 		Class<WebQueryResult> clazz = WebQueryResult.class ;
 		Class<Object> obj_clazz =Object.class ;

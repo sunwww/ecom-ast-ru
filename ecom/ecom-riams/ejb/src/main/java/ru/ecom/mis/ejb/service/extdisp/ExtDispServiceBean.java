@@ -84,7 +84,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		 * Проверка на 1 группу здоровья и диагноз, отличный от Z**.*
 		*/
 		
-		String sql="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, vs.omccode as sex, p.snils as snils "
+		String sql="select distinct edc.id as did, p.id as pid,p.lastname, p.firstname, p.middlename, p.patientinfo, vs.omccode as sex, replace(p.snils,' ','-') as snils "
 				+", to_char(p.birthday,'dd.mm.yyyy') as birthday "
 				+",to_char(edc.startDate,'dd.mm.yyyy') as edcBeginDate "
 				+",to_char(edc.finishDate,'dd.mm.yyyy') as edcFinishDate "

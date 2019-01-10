@@ -23,52 +23,48 @@ public class JavaScriptFormInterceptorManager {
 	public static JavaScriptFormInterceptorManager getInstance() {
 		return new JavaScriptFormInterceptorManager() ;
 	}
-	
+
 	public void invoke(String aFunctionName, IEntityForm aForm, Object aEntity, Object aId, Class aStrutsFormClass, JavaScriptFormInterceptorContext aContext) {
 		//if(aForm==null) throw new IllegalArgumentException("Нет формы") ;
-			String strutsFormName = aForm!=null ? getStrutsFormName(aForm) : getStrutsFormName(aStrutsFormClass) ;
-			String jsResourceName = "/META-INF/formjs/"+strutsFormName+".js" ;
-			try {
-				InputStream inputStream = theEcomConfig.getInputStream(jsResourceName, EjbEcomConfig.FORM_JS_PREFIX, false) ;
-				if(inputStream!=null) {
-					Context jsContext = Context.enter();
-					jsContext.setOptimizationLevel(9);
-					try (Reader in = new InputStreamReader(inputStream, "utf-8")) {
-						Scriptable scope = jsContext.initStandardObjects();
-						try {
-							Script script = jsContext.compileReader(in, jsResourceName, 1,null);
-							script.exec(jsContext, scope);
-							
-							Object o = scope.get(aFunctionName, scope);
-							if(o instanceof Function) {
-								Function f = (Function) o;
-								Object[] args ;
-								if(aForm==null && aEntity==null && aId!=null) {
-									args = new Object[] {aId, aContext} ;
-								} else if(aForm!=null && aEntity==null && aId==null) {
-									args = new Object[] { aForm, aContext };
-								} else if(aForm!=null && aEntity!=null && aId==null) {
-									args = new Object[] { aForm, aEntity, aContext } ;
-								} else {
-									throw new IllegalStateException("Нельзя определить, какие аргументы передавать функции "
-											+aFunctionName
-											+" [aForm = "+aForm+", aEntity = "+aEntity+", aId = "+aId+"]") ;
-								}
-								Object result = f.call(jsContext, scope, scope, args);
-								if (CAN_DEBUG) LOG.debug("invoke: result = " + result); 
+		String strutsFormName = aForm!=null ? getStrutsFormName(aForm) : getStrutsFormName(aStrutsFormClass) ;
+		String jsResourceName = "/META-INF/formjs/"+strutsFormName+".js" ;
+		try {
+			InputStream inputStream = theEcomConfig.getInputStream(jsResourceName, EjbEcomConfig.FORM_JS_PREFIX, false) ;
+			if(inputStream!=null) {
+				Context jsContext = Context.enter();
+				jsContext.setOptimizationLevel(9);
+				try (Reader in = new InputStreamReader(inputStream, "utf-8")){
+					Scriptable scope = jsContext.initStandardObjects();
+						Script script = jsContext.compileReader(in, jsResourceName, 1,null);
+						script.exec(jsContext, scope);
+
+						Object o = scope.get(aFunctionName, scope);
+						if(o instanceof Function) {
+							Function f = (Function) o;
+							Object[] args ;
+							if(aForm==null && aEntity==null && aId!=null) {
+								args = new Object[] {aId, aContext} ;
+							} else if(aForm!=null && aEntity==null && aId==null) {
+								args = new Object[] { aForm, aContext };
+							} else if(aForm!=null && aEntity!=null && aId==null) {
+								args = new Object[] { aForm, aEntity, aContext } ;
 							} else {
-								if (CAN_DEBUG) LOG.debug("Нет функции " + aFunctionName+": "+o); 
+								throw new IllegalStateException("Нельзя определить, какие аргументы передавать функции "
+										+aFunctionName
+										+" [aForm = "+aForm+", aEntity = "+aEntity+", aId = "+aId+"]") ;
 							}
-						} catch (Exception e) {
-							LOG.error(e);
+							Object result = f.call(jsContext, scope, scope, args);
+							if (CAN_DEBUG) LOG.debug("invoke: result = " + result);
+						} else {
+							if (CAN_DEBUG) LOG.debug("Нет функции " + aFunctionName+": "+o);
 						}
-					} finally {
-						Context.exit();
-					}
+				} finally {
+					Context.exit();
 				}
-			} catch (IOException e) {
-				throw new IllegalStateException("Ошибка открытия ресурса "+jsResourceName) ;
 			}
+		} catch (IOException e) {
+			throw new IllegalStateException("Ошибка открытия ресурса "+jsResourceName) ;
+		}
 	}
 
 	public String getStrutsFormName(String aClassName) {

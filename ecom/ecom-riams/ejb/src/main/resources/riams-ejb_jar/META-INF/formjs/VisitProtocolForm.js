@@ -123,7 +123,7 @@ function onPreSave(aForm, aEntity, aCtx) {
     check(aForm, aCtx);
     var date = new java.util.Date();
     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-    //aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+    aForm.setEditTime(new java.sql.Time (date.getTime())) ;
     aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
     var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
     if (protocols.isEmpty()) {

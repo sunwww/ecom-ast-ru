@@ -151,4 +151,17 @@ public class ProtocolForm extends IdEntityForm {
 
 	/** Информация для журнала */
 	private String theJournalText;
+
+    /** Время редактирования */
+    @Comment("Время редактирования")
+    @Persist
+    @TimeString @DoTimeString
+    public String getEditTime() {
+        return theEditTime;
+    }
+    public void setEditTime(String  aEditTime) {
+        theEditTime = aEditTime;
+    }
+    /** Время редактирования */
+    private String  theEditTime;
 }

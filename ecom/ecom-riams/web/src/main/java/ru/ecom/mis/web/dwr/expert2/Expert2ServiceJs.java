@@ -3,6 +3,7 @@ package ru.ecom.mis.web.dwr.expert2;
 import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
+import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expert2.service.IExpert2XmlService;
@@ -21,6 +22,27 @@ import java.text.SimpleDateFormat;
 
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
+
+    /*Меняем кардиологию на сосуды *только для АМОКБ */
+    public String changeToSosud(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        try {
+            WebQueryResult webQueryResult = service.executeNativeSql("select coalesce(voc.code,'') from e2entry e left join voce2medhelpprofile voc on voc.id=e.medhelpprofile_id where e.id="+aEntryId).iterator().next();
+            if ("29".equals(webQueryResult.get1().toString())) {
+                service.executeUpdateNativeSql("delete from entrymedservice where entry_id ="+aEntryId);
+                service.executeUpdateNativeSql("insert into entrymedservice (medservice_id, entry_id, servicedate) (select (select max(id) from vocmedservice where code='A16.12.028' and finishdate is null),e.id,e.startDate from e2entry e where e.id ="+aEntryId+")");
+                service.executeUpdateNativeSql("update e2entry set medhelpprofile_id=258,fonddoctorspec_id=133, fonddoctorspecv021_id=65, doctorworkfunction='64' where id = "+aEntryId);
+                return "Успешно сделано!";
+            } else {
+                return "Профиль - не кардиологический, ничего менять не буду!";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Ошибка: "+e.getMessage();
+        }
+
+
+    }
 
     public Patient getTest(String aId, HttpServletRequest aRequest) {
         Patient patient = new Patient();
@@ -44,11 +66,11 @@ public class Expert2ServiceJs {
     }
 
     public void fillDirectDatePlanHosp(Long aListEntryId, HttpServletRequest aRequest) throws NamingException {
-        String sql = "update e2entry set directDate = startDate where listentry_id="+aListEntryId+" " +
+        String sql = "update e2entry set directDate = startDate where listentry_id="+aListEntryId+
                 " and entryType='HOSPITAL' and directDate is null and (isEmergency is null or isEmergency='0') and (isDeleted is null or isDeleted='0')";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         service.executeUpdateNativeSql(sql);
-        sql = "update e2entry set planHospDate = startDate where listentry_id="+aListEntryId+" " +
+        sql = "update e2entry set planHospDate = startDate where listentry_id="+aListEntryId+
                 " and entryType in ('VMP','HOSPITAL') and planHospDate is null and (isEmergency is null or isEmergency='0') and (isDeleted is null or isDeleted='0')";
         service.executeUpdateNativeSql(sql);
 

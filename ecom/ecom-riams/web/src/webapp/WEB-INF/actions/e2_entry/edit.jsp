@@ -495,8 +495,14 @@ where cancer.entry_id=${param.id}"/>
             }
             function showAllEntriesByPatient() {
                 window.open("entityList-e2_entry.do?id=0&filter=commonnumber:"+$('commonNumber').value);
+            }
 
-
+            function makeSosud() {
+                Expert2Service.changeToSosud(${param.id}, {
+                   callback: function(ret) {
+                       alert(ret);
+                   }
+                });
             }
                 </script>
 
@@ -537,6 +543,7 @@ where cancer.entry_id=${param.id}"/>
                 <%--</msh:IfPropertyIsFalse>--%>
                 <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:showAllEntriesByPatient()" name="Показать все случаи по пациенту" roles="/Policy/E2" />
+                <msh:sideLink action="/javascript:makeSosud()" name="Сделать сосудистым случаем" roles="/Policy/E2" />
                 <msh:sideLink action="/javascript:getEntryJson()" name="тест - получить случай json" roles="/Policy/E2/Admin" />
             </msh:sideMenu>
         </msh:ifFormTypeIsView>

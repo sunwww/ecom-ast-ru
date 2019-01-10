@@ -153,8 +153,8 @@ horizontalFill="true" />
 					</msh:row>
 					<msh:row>
 						<msh:label property="editDate" label="Дата редак." />
-						<msh:label property="editUsername" label="Пользователь"
-							guid="2258d5ca-cde5-46e9-a1cc-3ffc278353fe" />
+						<msh:label property="editTime" label="Время редак." />
+						<msh:label property="editUsername" label="Пользователь" />
 					</msh:row>
 					<msh:row>
 						<msh:textField property="printDate" label="Дата печати"
