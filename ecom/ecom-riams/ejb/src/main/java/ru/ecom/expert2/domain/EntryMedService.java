@@ -16,7 +16,7 @@ import java.sql.Date;
 
 @Entity
 @AIndexes({
-        @AIndex(unique = false, properties = {"entry"})
+        @AIndex(properties = {"entry"})
 })
 public class EntryMedService extends BaseEntity {
 
