@@ -620,8 +620,12 @@ horizontalFill="true" />
                                         if (res!="##") {
                                             var cnts=res.split('#');
                                             if (cnts.length==2) {
-                                                $('record').value += "С начала СЛС: " + cnts[0] + " сутки\n";
-                                                $('record').value += "С начала СЛО: " + cnts[1] + " сутки\n";
+                                                var rescnt1=cnts[0];
+                                                var rescnt2=cnts[1];
+                                                if (rescnt1==0) rescnt1=1;
+                                                if (rescnt2==0) rescnt2=1;
+                                                $('record').value += "С начала СЛС: " + rescnt1 + " сутки\n";
+                                                $('record').value += "С начала СЛО: " + rescnt2 + " сутки\n";
                                             }
                                         }
                                     }});
