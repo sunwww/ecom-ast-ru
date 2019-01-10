@@ -59,7 +59,7 @@ function onPreCreate(aForm, aCtx) {
 		aForm.setOtherCloseDate("") ;
 	}
 	list = aCtx.manager.createNativeQuery("select number, disabilitydocument_id from ElectronicDisabilityDocumentNumber where number =:num and disabilitydocument_id is not null").setParameter("num",number).getResultList();
-	if (list.size()>0) {
+	if (!list.isEmpty()) {
 		throw "Данный номер уже был использован в случае нетрудоспособности "+list.get(0)[1];
 	}
 
@@ -100,7 +100,10 @@ function onCreate(aForm, aEntity, aCtx) {
 		}
 	}
 	var elns = aCtx.manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aEntity.number).getResultList();
-	if (elns.size()>0) { //Если номер из таблицы с полученнми номерами от ФСС, забираем номер.
+	if (!elns.isEmpty()) { //Если номер из таблицы с полученнми номерами от ФСС, забираем номер.
+		if (elns.size>1) {
+			throw "Обнаружено более одного листа с номером "+aEntity.number+", обратитесь к разработчикам";
+		}
 		var eln = elns.get(0);
 		if (eln.getDisabilityDocument()!=null) {throw "Случилось то, чего не должно случиться. Обратитесь к разработчикам. Ошибка: ELN_UJE_ZANYAT";}
 		eln.setDisabilityDocument(aEntity);
@@ -112,11 +115,7 @@ function onCreate(aForm, aEntity, aCtx) {
 	}
 }
 function onSave(aForm, aEntity, aCtx) {
-	if (aEntity.status!=null && +aEntity.status.code>0) {
-		aEntity.setNoActuality(true) ;
-	} else {
-		aEntity.setNoActuality(false) ;
-	}
+	aEntity.setNoActuality(aEntity.status!=null && +aEntity.status.code>0) ;
 	aCtx.manager.persist(aEntity) ;
 	if (aForm.isUpdateWork!=null && aForm.isUpdateWork==true) {
 		var pat = aEntity.disabilityCase.patient ;
@@ -132,7 +131,7 @@ function onSave(aForm, aEntity, aCtx) {
 function checkIsElectronic(aEntityId , aCtx, sql, aMessage){
     var elns = aCtx.manager.createNativeQuery("select id from ElectronicDisabilityDocumentNumber where disabilitydocument_id=:num "+sql)
         .setParameter("num",aEntityId).getResultList();
-    if (elns.size()>0) {
+    if (!elns.isEmpty()) {
         throw aMessage;
     }
 }
@@ -143,7 +142,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 	var series = aForm.getSeries() ;
 	var number = aForm.getNumber() ;
 	var thisid = aForm.getId() ;
-	var dcase = aForm.getDisabilityCase() ;
+//	var dcase = aForm.getDisabilityCase() ;
 	var doctype = aForm.getDocumentType() ;
 	var list ;
 	if (aForm.prevDocument>0 && aForm.prevDocument == aForm.id) {
@@ -185,7 +184,7 @@ function onPreSave(aForm,aEntity , aCtx) {
 	}
 }
 function errorThrow(aList, aError) {
-	if (aList.size()>0) {
+	if (!aList.isEmpty()) {
 		var error ="";
 		for(var i=0; i<aList.size(); i++) {
 			var doc = aList.get(i) ;
@@ -199,25 +198,19 @@ function errorThrow(aList, aError) {
 function onPreDelete(aEntityId, aContext) {
 
     checkIsElectronic(aEntityId,aContext,"","Невозможно удалить ЭЛН!");
-	var doc = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument
-			, new java.lang.Long(aEntityId)) ;
+//	var doc = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.disability.DisabilityDocument, new java.lang.Long(aEntityId)) ;
 	//if (doc.duplicate!=null) throw "Невозможно удалить документ так"
 	var list = aContext.manager.createQuery(
 		"from DisabilityDocument where duplicate_id=:aid")
 		.setParameter("aid", aEntityId)
 		.getResultList() ;
 	
-	if (list.size()>0) {
+	if (!list.isEmpty()) {
 		var orig = list.get(0) ;
-		var id = orig.id ;
+		//var id = orig.id ;
 		orig.setDuplicate(null) ;
-		var stat = aContext.manager.createQuery(
-				"from VocDisabilityStatus where code='0'").getResultList() ;
-		if (stat.size()>0) {
-			orig.setStatus(stat.get(0)) ;
-		} else {
-			stat.setStatus(null) ;
-		}
+		var stat = aContext.manager.createQuery("from VocDisabilityStatus where code='0'").getResultList() ;
+		orig.setStatus(stat.isEmpty() ? null : stat.get(0)) ;
 		aContext.manager.persist(orig);
 	} 
 }
