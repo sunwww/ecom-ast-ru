@@ -203,7 +203,7 @@ public static Injection find (ServletContextEvent contextEvent, String aWebName 
             InitialContext initialContext = new InitialContext(theEnv);
             try {
                 //System.out.println("theAppName="+theAppName+"---"+aServiceName) ;
-                String serviceUrl = new StringBuilder().append(theAppName).append("/").append(aServiceName).append("Bean/remote").toString();
+                String serviceUrl = theAppName+"/"+aServiceName+"Bean/remote";
                 service = initialContext.lookup(serviceUrl);
                 services.put(aServiceName+theWebName, service);
             } finally {

@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.api.IApiService;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -34,7 +33,7 @@ import static ru.ecom.api.util.ApiUtil.cretePostRequest;
  *
  */
 public class DisabilityServiceJs {
-	public static Logger log = Logger.getLogger(DisabilityServiceJs.class);
+	private static final Logger LOG = Logger.getLogger(DisabilityServiceJs.class);
 
 
 	public String unattachEln(Long disabilityDocumentId, HttpServletRequest aRequest) throws NamingException {
@@ -42,11 +41,11 @@ public class DisabilityServiceJs {
 
 		Collection<WebQueryResult> list = service.executeNativeSql("select exportdate " +
 				"from electronicdisabilitydocumentnumber where disabilitydocument_id="+disabilityDocumentId);
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			WebQueryResult wqr = list.iterator().next();
 			if(wqr.get1()!=null && !wqr.get1().toString().equals("")){
 				return "Документ уже экспортирован! Невозможно его отвязать";
-			}else {
+			} else {
 
 				service.executeUpdateNativeSql("update electronicdisabilitydocumentnumber " +
 						"set disabilitydocument_id=null " +
@@ -76,14 +75,7 @@ public class DisabilityServiceJs {
 		}
 		return null;
 	}
-	public String getStringFromWebQueryResult(WebQueryResult wqr, String aDelimiter) {
-		if (wqr==null||wqr.get1()==null) {return null;}
-		StringBuilder sb = new StringBuilder();
-		//while (true) {
-		//sb.append(wqr.get+i())
-		//}
-		return "";
-	}
+
 	public String getElectronicDisabilityDocumentInfo(Long aDisabilityDocumentId, String aNumber, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sb = new StringBuilder();
@@ -94,9 +86,9 @@ public class DisabilityServiceJs {
 		} else if (aNumber!=null&&!aNumber.trim().equals("")){
 			sb.append(" el.number = '").append(aNumber).append("'");
 		}
-		log.info(sb);
+		LOG.info(sb);
 		Collection<WebQueryResult> list = service.executeNativeSql(sb.toString());
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			WebQueryResult wqr = list.iterator().next();
 			return wqr.get1()+"#"+wqr.get2()+"#"+wqr.get3()+"#"+wqr.get4()+"#"+wqr.get5();
 		} else {
@@ -119,12 +111,10 @@ public class DisabilityServiceJs {
 	@Deprecated
 	public String exportDisabilityDocument (Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-		String ret = service.exportDisabilityDocument(aDocumentId);
-		return ret;
+		return service.exportDisabilityDocument(aDocumentId);
 	}
 
-	public String exportDisabilityDoc(String aDocumentId, HttpServletRequest aRequest)
-			throws NamingException, SQLException, JSONException {
+	public String exportDisabilityDoc(String aDocumentId, HttpServletRequest aRequest) throws NamingException, SQLException {
 
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
@@ -295,19 +285,15 @@ public class DisabilityServiceJs {
 
 			json = cretePostRequest(endpoint, "api/export/exportDisabilityDocument", body.toString(), "application/json");
 			saveLog(json,aRequest);
-		}
-
-		if(code==1){
+		} else if(code==1){
 			json= new JSONObject()
 					.put("code","1")
 					.put("error","Не найдена подпись врача в периоде").toString();
-		}
-		if(code==2){
+		} else if(code==2){
 			json= new JSONObject()
 					.put("code","2")
 					.put("error","Не найдена подпись вк в периоде").toString();
-		}
-		if(code==3){
+		} else if(code==3){
 			json= new JSONObject()
 					.put("code","3")
 					.put("error","Не найдена подпись врача в закрытии").toString();
@@ -320,42 +306,41 @@ public class DisabilityServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		JsonParser parser =new JsonParser();
 		JsonObject obj = parser.parse(json).getAsJsonObject();
-		String message="";
+		StringBuilder message= new StringBuilder();
 
 		String elnumber = obj.get("lncode").getAsString();
-		String disdocId=null;
+
 		Collection<WebQueryResult> list = service.executeNativeSql("select dd.id from disabilitydocument dd where dd.number = '"+elnumber+"'");
-		if (!list.isEmpty()) {
-			for (WebQueryResult wqr : list) {
-				disdocId = wqr.get1().toString();
-			}
-		}
-		ExportFSSLog exportFSSLog  =new ExportFSSLog();
+		if (!list.isEmpty() && list.size()==1) {
+            String disdocId=list.iterator().next().get1().toString();
+            ExportFSSLog exportFSSLog  =new ExportFSSLog();
+            exportFSSLog.setDisabilityDocument(Long.valueOf((disdocId)));
+            exportFSSLog.setDisabilityNumber(elnumber);
+            exportFSSLog.setStatus(obj.get("status").getAsString());
+            exportFSSLog.setRequest_id(obj.get("requestId").getAsString());
 
-		exportFSSLog.setDisabilityDocument(Long.valueOf((disdocId)));
-		exportFSSLog.setDisabilityNumber(elnumber);
-		exportFSSLog.setStatus(obj.get("status").getAsString());
-		exportFSSLog.setRequest_id(obj.get("requestId").getAsString());
+            message.append(obj.get("message").getAsString());
+            if(obj.has("errors")){
+                JsonArray errors = obj.getAsJsonArray("errors");
+                for (JsonElement err : errors) {
+                    JsonObject error = err.getAsJsonObject();
+                    message.append(error.get("errmess").getAsString());
+                }
+            }
+            exportFSSLog.setRequestDate(new java.sql.Date(System.currentTimeMillis()));
+            exportFSSLog.setRequestTime(new java.sql.Time(System.currentTimeMillis()));
+            exportFSSLog.setResult(message.toString());
+            exportFSSLog.setRequestType("prParseFilelnlpu");
 
-		message+=obj.get("message").getAsString();
-		if(obj.has("errors")){
-			JsonArray errors = obj.getAsJsonArray("errors");
-			for (JsonElement err : errors) {
-				JsonObject error = err.getAsJsonObject();
-				message+=error.get("errmess").getAsString();
-			}
-		}
-		exportFSSLog.setRequestDate(new java.sql.Date(System.currentTimeMillis()));
-		exportFSSLog.setRequestTime(new java.sql.Time(System.currentTimeMillis()));
-		exportFSSLog.setResult(message);
-		exportFSSLog.setRequestType("prParseFilelnlpu");
+            IApiService persist = Injection.find(aRequest).getService(IApiService.class);
+            persist.persistEntity(exportFSSLog);
 
-		IApiService persist = Injection.find(aRequest).getService(IApiService.class);
-		persist.persistEntity(exportFSSLog);
-
-		if(obj.get("status").getAsString().equals("1")){
-			updateInformationELN(disdocId, obj.get("hash").getAsString(), obj.get("lnstate").getAsString(), aRequest);
-		}
+            if(obj.get("status").getAsString().equals("1")){
+                updateInformationELN(disdocId, obj.get("hash").getAsString(), obj.get("lnstate").getAsString(), aRequest);
+            }
+		} else {
+		    LOG.error("Не найден ЭЛН для логирования...");
+        }
 	}
 
 	private void updateInformationELN(String aDocumentId, String hash, String code, HttpServletRequest aRequest) throws NamingException {
@@ -373,8 +358,6 @@ public class DisabilityServiceJs {
 		service.executeUpdateNativeSql("update electronicdisabilitydocumentnumber set exportdate='"+new java.sql.Date(System.currentTimeMillis())+"'," +
 				"status_id="+id+", lasthash='"+hash+"'," +
 				"exporttime='"+new java.sql.Time(System.currentTimeMillis())+"' where disabilitydocument_id = "+aDocumentId);
-
-
 	}
 
 	@Deprecated
@@ -394,24 +377,23 @@ public class DisabilityServiceJs {
 			return service.importDisabilityDocument(aDisabilityDocumentNumber,snils,aPatientId, aMethod);
 		}
 		return "У пациента не указан СНИЛС!";
-
 	}
 
 	//Milamesher 0308 - отметить аннулирование
 	public String setAnnulDisabilityDocument(Long aDocumentId,String aAnnulText,String aAnnulCode,HttpServletRequest aRequest) throws NamingException {
-		String ret = null;
+		String ret ;
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String sql = "SELECT number from electronicdisabilitydocumentnumber WHERE disabilitydocument_id='" + aDocumentId + "'";
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (list.size() > 0) {
+		if (!list.isEmpty()) {
 			IDisabilityService disService = Injection.find(aRequest).getService(IDisabilityService.class);
 			String number =  list.iterator().next().get1().toString() ;
 			String snils = null;
-			list = service.executeNativeSql("select p.snils from patient p \n" +
-					"left join disabilitycase dc on dc.patient_id = p.id \n" +
-					"left join disabilitydocument d on dc.id=d.disabilitycase_id \n" +
-					"where d.id=" + aDocumentId);
-			if (list.size() > 0) {
+			list = service.executeNativeSql("select p.snils from disabilitydocument d " +
+					" left join disabilitycase dc on dc.id=d.disabilitycase_id" +
+					" left join patient p on dc.patient_id = p.id" +
+					" where d.id=" + aDocumentId);
+			if (!list.isEmpty()) {
 				snils=list.iterator().next().get1().toString();
 			}
 			ret = disService.annulDisabilityDocument(Long.valueOf(number),aAnnulCode,aAnnulText,snils);
@@ -453,45 +435,36 @@ public class DisabilityServiceJs {
 	 * @throws NamingException
 	 * @throws ParseException
 	 */
-	public String getFreeNumberForDisabilityDocumentReloaded(int aCount, HttpServletRequest aRequest) throws NamingException, ParseException {
+	private String getFreeNumberForDisabilityDocumentReloaded(int aCount, HttpServletRequest aRequest) throws NamingException, ParseException {
 		if (aCount>2) { //Если за 3 раза не удалось вернуть номер, выходим
-			return "Произошла непредвиденная ошибка, обратитесь к разработчикам";
+			return "Не удалось получить номер более 3х раз, обратитесь к разработчикам";
 		}
 		aCount++;
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
-		String ret = "";
-		Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy') as f2_date, cast(reservetime as varchar(5)) as f3_time from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null ");
-		boolean needGetNewNumber = true;
+		Collection<WebQueryResult> list = service.executeNativeSql("select number as f1,to_char(reservedate,'dd.MM.yyyy') as f2_date, cast(reservetime as varchar(5)) as f3_time, id as f4_id from ElectronicDisabilityDocumentNumber where disabilitydocument_id is null ");
 		if (!list.isEmpty()) {
 			Date currentDate = new Date();
 			Calendar cal = new GregorianCalendar();
-
 			for (WebQueryResult r: list) {
-				if (r.get2()==null||r.get2().toString().trim().equals("")) {
-					ret = r.get1().toString();
-					needGetNewNumber=false;
-					break;
+				String id = r.get4().toString();
+				String number = r.get1().toString();
+				String rDate = r.get2()==null ? "" : r.get2().toString().trim();
+				if (rDate.equals("")) {
+					service.executeUpdateNativeSql("update ElectronicDisabilityDocumentNumber set reservedate = current_date, reservetime = current_time where id ="+id);
+					return number;
 				} else {
-					Date reserveDate = DateConverter.createDateTime(r.get2().toString(),r.get3().toString());
-					cal.setTime(reserveDate);
+					cal.setTime(DateConverter.createDateTime(rDate,r.get3().toString()));
 					cal.add(Calendar.HOUR,1);
 					if (currentDate.getTime()>cal.getTime().getTime()) { //Если за 1 час больничный лист не оформили, забераем его себе.
-						ret = r.get1().toString();
-						needGetNewNumber=false;
-						break;
+						service.executeUpdateNativeSql("update ElectronicDisabilityDocumentNumber set reservedate = current_date, reservetime = current_time where id ="+id);
+						return number;
 					}
 				}
 			}
-			if (ret!=null&&!ret.equals("")) {
-				service.executeUpdateNativeSql("update ElectronicDisabilityDocumentNumber set reservedate = current_date, reservetime = current_time where number ='"+ret+"' ");
-			}
 		}
-		if (needGetNewNumber) {
-			log.warn("Не найдено свободных номеров ЭЛН, запрашиваем один номер");
-			getLNNumberRange(Long.valueOf(1),aRequest);
+			LOG.warn("Не найдено свободных номеров ЭЛН, запрашиваем один номер");
+			getLNNumberRange(1L,aRequest);
 			return getFreeNumberForDisabilityDocumentReloaded(aCount,aRequest);
-		}
-		return ret;
 	}
 
 
@@ -534,12 +507,7 @@ public class DisabilityServiceJs {
 	private String getDateGoToWork(Long aDisDocument, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest) .getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> l = service.executeNativeSql("select to_char(max(dateto)+1,'yyyy-MM-dd') from disabilityrecord where disabilitydocument_id ="+aDisDocument,1) ;
-		if (l.isEmpty()) {
-			return null ;
-		} else {
-			WebQueryResult wqr = l.iterator().next() ;
-			return wqr.get1().toString();
-		}
+		return l.isEmpty() ? null : l.iterator().next().get1().toString();
 	}
 	public String closeDisabilityDocument(Long aDocId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate,HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
@@ -552,14 +520,14 @@ public class DisabilityServiceJs {
 		return service.exportLNByDate(aDateStart, aDateFinish,  aLpu, aWorkFunction,  aPacketNumber, aDateType );
 	}
 
-	public String exportLNByNumber (String aNumber,HttpServletRequest aRequest) throws Exception {
+	private String exportLNByNumber (String aNumber,HttpServletRequest aRequest) throws Exception {
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 
 		return service.exportLNByNumber(aNumber);
 	}
 
 	public String getDataByClose(Long aDocId,HttpServletRequest aRequest) throws Exception {
-		System.out.println("doc="+aDocId) ;
+		LOG.info("doc="+aDocId) ;
 		IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class) ;
 		return service.getDataByClose(aDocId) ;
 	}
@@ -577,7 +545,7 @@ public class DisabilityServiceJs {
 		String query="SELECT code,name from vocannulreason";
 		Collection<WebQueryResult> list = service.executeNativeSql(query);
 		StringBuilder res = new StringBuilder() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			for (WebQueryResult wqr : list) {
 				res.append(wqr.get1()).append("#").append(wqr.get2()).append("!");
 			}
@@ -591,12 +559,12 @@ public class DisabilityServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String snils="";
 		Collection<WebQueryResult> list = service.executeNativeSql("select snils from patient where id="+aPatinetId);
-		if (list.size() > 0) {
+		if (!list.isEmpty()) {
 			snils=list.iterator().next().get1().toString();
 		}
 
 		if(!snils.equals("")){
-			String str[];
+			String[] str;
 			str = snils.split("-");
 			snils = str[0] + str[1] + str[2];
 			str = snils.split(" ");
@@ -615,9 +583,9 @@ public class DisabilityServiceJs {
 					"left join disabilitydocument dd on dr.disabilitydocument_id=dd.id\n" +
 					"left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = dd.id and dsdoc.externalid = dr.id\n" +
 					"where dd.id=" + disabilityDocumentId + " and dsdoc.code = '" + code + "'" + " and dr.id=" + disabilityRecordId + " limit 1)=false", 1);
-			if (l.isEmpty())
-				return "Подписи не найдены либо период уже выгружен (в этом случае подписи удалять нельзя)!";
-			else {
+			if (l.isEmpty()) {
+                return "Подписи не найдены либо период уже выгружен (в этом случае подписи удалять нельзя)!";
+            } else {
 				service.executeUpdateNativeSql("delete from disabilitysign  where disabilitydocumentid_id="
 						+ disabilityDocumentId + " and code='" + code + "'" + " and externalId=" + disabilityRecordId + "\n" +
 						"and (select isexport\n" +
@@ -631,9 +599,9 @@ public class DisabilityServiceJs {
 			Collection<WebQueryResult> l = service.executeNativeSql("select * from disabilitydocument dd\n" +
 					"left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = dd.id\n" +
 					"where dd.id=" + disabilityDocumentId + " and dsdoc.code = 'close' and dd.closeexport=false", 1);
-			if (l.isEmpty())
-				return "Подписи не найдены либо ЭЛН уже выгружен (в этом случае подписи удалять нельзя)!";
-			else {
+			if (l.isEmpty()) {
+                return "Подписи не найдены либо ЭЛН уже выгружен (в этом случае подписи удалять нельзя)!";
+            } else {
 				service.executeUpdateNativeSql("delete from disabilitysign\n" +
 						"where id=ANY(select dsdoc.id from disabilitydocument dd\n" +
 						"left join disabilitysign dsdoc on dsdoc.disabilitydocumentid_id = dd.id\n" +
@@ -645,27 +613,27 @@ public class DisabilityServiceJs {
 	//Milamesher 25122018 показать все случаи нетрудоспособности по disdocument_id
 	public String getDisCasesInJson(String documentId, HttpServletRequest aRequest) throws NamingException,SQLException {
 		IWebQueryService service =  Injection.find(aRequest,null).getService(IWebQueryService.class) ;
-		return service.executeSqlGetJson("select dc.id\n" +
-				"  \t, to_char(min(dr.datefrom),'dd.mm.yyyy') as mindatefrom\n" +
-				"  \t, case when \n" +
-				"count(case when dr.dateto is null then '1' else null end)>0 \n" +
-				"then '-' else to_char(max(dr.dateto),'dd.mm.yyyy') end maxdateto \n" +
-				", case when \n" +
-				"count(case when dr.dateto is null then '1' else null end)>0 \n" +
-				"then null \n" +
-				"else \n" +
-				"case when max(dr.dateto)=min(dr.datefrom) then '1' else max(dr.dateto)-min(dr.datefrom)+1 end end\n" +
-				"  \tfrom disabilitycase dc\n" +
-				"  \tleft join disabilitydocument dd on dd.disabilitycase_id=dc.id\n" +
-				"  \tleft join disabilityrecord dr on dr.disabilitydocument_id=dd.id \n" +
-				"  \twhere dc.patient_id=(select distinct _dc.patient_id from disabilitycase _dc \n" +
-				"left join disabilitydocument _dd on _dd.disabilitycase_id=_dc.id\n" +
-				"where _dd.id='"+documentId+"')\n" +
-				"  \tgroup by dc.id\n" +
-				"  \torder by dc.id",null);
+		return service.executeSqlGetJson("select dc.id" +
+				" , to_char(min(dr.datefrom),'dd.mm.yyyy') as mindatefrom" +
+				" , case when" +
+				" count(case when dr.dateto is null then '1' else null end)>0" +
+				" then '-' else to_char(max(dr.dateto),'dd.mm.yyyy') end maxdateto" +
+				" , case when" +
+				" count(case when dr.dateto is null then '1' else null end)>0" +
+				" then null " +
+				" else" +
+				" case when max(dr.dateto)=min(dr.datefrom) then '1' else max(dr.dateto)-min(dr.datefrom)+1 end end" +
+				" from disabilitycase dc" +
+				" left join disabilitydocument dd on dd.disabilitycase_id=dc.id" +
+				" left join disabilityrecord dr on dr.disabilitydocument_id=dd.id" +
+				" where dc.patient_id=(select distinct _dc.patient_id from disabilitycase _dc" +
+				" left join disabilitydocument _dd on _dd.disabilitycase_id=_dc.id" +
+				" where _dd.id='"+documentId+"')" +
+				" group by dc.id" +
+				" order by dc.id",null);
 	}
 	//Milamesher 25122018 перенести ЛН в другой СНТ
-	public String moveToNewDisCase(String documentId, String newCaseId,HttpServletRequest aRequest) throws NamingException,SQLException {
+	public String moveToNewDisCase(String documentId, String newCaseId,HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service =  Injection.find(aRequest,null).getService(IWebQueryService.class) ;
 		service.executeUpdateNativeSql("update disabilitydocument set disabilitycase_id='"+newCaseId+"' where id='"+documentId+"'");
 		return "ЛН перенесён!";
