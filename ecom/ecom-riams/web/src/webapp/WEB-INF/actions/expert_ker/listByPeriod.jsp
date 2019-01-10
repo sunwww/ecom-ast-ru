@@ -255,7 +255,7 @@ ${lpuSql} ${typeSql}
     </form>
     </msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="journal_expert"
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_expert"
     viewUrl="entityParentView-expert_ker.do?short=Short" 
      action="entityParentView-expert_ker.do" idField="1" >
       <msh:tableColumn columnName="#" property="sn" />
