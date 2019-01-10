@@ -152,6 +152,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 	}
 
     private static boolean isPregnancyExists(EntityManager aManager, DepartmentMedCase aMedCase) {
+    	if (aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()) {
 			Diagnosis diagnosis = aMedCase.getMainDiagnosis();
 			ArrayList<String> withoutChildBirth = new ArrayList<String>(){{add("O47.0");add("O47.1");add("O42.2");}}; //надоело усложнять :(
 			if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
@@ -161,6 +162,9 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 					" where slo.id=:medcaseId and cb.pangsStartDate is not null";
 			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
 			return Long.valueOf(list.toString())>0;
+		} else {
+    		return true;
+		}
 	}
     /**
      * Новый первый случай лечения в отделении
