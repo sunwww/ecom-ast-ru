@@ -155,9 +155,9 @@ public class DisabilityServiceJs {
 				",case when p2.id is not null and p2.id!=p.id then to_char(p2.birthday,'yyyy-MM-dd') else to_char(p22.birthday,'yyyy-MM-dd') end as SERV2_AGE\n" +
 				",case when p2.id is not null and p2.id!=p.id then vkr2.code else vkr2.oppositeRoleCode end as SERV2_RELATION_CODE\n" +
 				",case when p2.id is not null and p2.id!=p.id then p2.lastname||' '||p2.firstname||' '||p2.middlename else p22.lastname||' '||p22.firstname||' '||p22.middlename end as SERV2_FIO\n" +
-				",case when dd.disabilityreason_id = 9" +
-				"then case when (dc.earlypregnancyregistration is null or dc.earlypregnancyregistration = '0') then '0' else '1' end" +
-				" else case when (dc.earlypregnancyregistration is null or dc.earlypregnancyregistration = '0') then 'null' else '1' end end as PREGN12W_FLAG\n" +
+				",case when vdr.codef= '05'" +
+				" then case when dc.earlypregnancyregistration='1' then '1' else '0' end" +
+				" else 'null' end as PREGN12W_FLAG\n" +
 				",dd.hospitalizedfrom as HOSPITAL_DT1\n" +
 				",dd.hospitalizedto as HOSPITAL_DT2\n" +
 				",vddcr.name as CLOSE_REASON\n" +
