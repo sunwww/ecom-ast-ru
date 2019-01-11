@@ -209,10 +209,11 @@ cec.id as f1_id, to_char(expertDate,'dd.mm.yyyy')
 ,veds.name||' '||cec.deviationStandardsText as deviationStandards
 ,cec.defects as defects,cec.resultStep as resultStep
 ,vec.name||' '||coalesce(to_char(cec.conclusionDate,'dd.mm.yyyy'),'')||coalesce('. '||vecs.name,'')||' '||coalesce(cec.additionInfo,'') as conclusion
-,cec.orderHADate as orderHADate,cec.conclusionHA as conlusionHA
-,cec.receiveHADate as receiveHADate,cec.additionInfoHA as addtionInfoHA
+,to_char(cec.orderHADate,'dd.mm.yyyy') as orderHADate,cec.conclusionHA as conlusionHA
+,to_char(cec.receiveHADate,'dd.mm.yyyy') as receiveHADate,cec.additionInfoHA as addtionInfoHA
 ,coalesce(cec.numberinjournal,''||cec.id) as numberInJournal
 ,replace(replace(vecomp.name,' ',''),',',chr(13)) as expertComission
+,cast('' as varchar(2)) as expertsign
 from ClinicExpertCard cec
 left join VocExpertComposition vecomp on vecomp.id=cec.expcomposition_id
 left join MedCase slo on slo.id=cec.medCase_id
@@ -278,6 +279,8 @@ ${lpuSql} ${typeSql}
       <msh:tableColumn columnName="Заключеие МСЭ" property="17" />
       <msh:tableColumn columnName="Дата получения закл. МСЭ" property="18" />
       <msh:tableColumn columnName="Доп. инф. по закл. др. учреж." property="19" />
+      <msh:tableColumn columnName="Основной состав экспертов" property="21" />
+      <msh:tableColumn columnName="Подписи экспертов" property="22" />
     </msh:table>
     </msh:sectionContent>
     </msh:section>
