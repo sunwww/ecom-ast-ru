@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.domain.worker;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.mis.ejb.domain.equipment.KkmEquipment;
 import ru.ecom.mis.ejb.domain.lpu.CopyingEquipment;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.lpu.WorkPlace;
@@ -363,4 +364,13 @@ abstract public class WorkFunction extends BaseEntity {
 	public void setWindowNumber(String aWindowNumber) {theWindowNumber = aWindowNumber;}
 	/** Номер окна в электронной очереди */
 	private String theWindowNumber ;
+
+	/** ККМ по умолчанию */
+	@Comment("ККМ по умолчанию")
+	@OneToOne
+	public KkmEquipment getKkmEquipmentDefault() {return theKkmEquipmentDefault;}
+	public void setKkmEquipmentDefault(KkmEquipment aKkmEquipmentDefault) {theKkmEquipmentDefault = aKkmEquipmentDefault;}
+
+	/** ККМ по умолчанию */
+	private KkmEquipment theKkmEquipmentDefault;
 }

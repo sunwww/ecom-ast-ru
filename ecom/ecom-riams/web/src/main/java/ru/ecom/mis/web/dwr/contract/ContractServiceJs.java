@@ -150,7 +150,10 @@ private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throw
 	
 		System.out.println("===Send to KKM. Data = "+data);
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		Collection<WebQueryResult> l = service.executeNativeSql("select keyvalue from  softconfig where key='KKM_WEB_SERVER'");
+		//Milamesher 11012019 #136 отправка на привязанный к wf ККМ
+		Collection<WebQueryResult> l = service.executeNativeSql("select eq.url from equipment eq\n" +
+				"left join workfunction wf on wf.kkmequipmentdefault_id=eq.id\n" +
+						"where secuser_id=(select id from secuser where login='" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "')");
 		if (!l.isEmpty()) {
 			String address = l.iterator().next().get1().toString();
 			//method by milamesher 15.03.2017
@@ -175,7 +178,7 @@ private void makeHttpPostRequest(String data, HttpServletRequest aRequest) throw
 		    br.close();
 		    connection.disconnect();
 		} else {
-			log.error("Нет настройки 'KKM_WEB_SERVER', работа с ККМ невозможна");
+			log.error("Нет настройки ККМ по умолчанию для рабочей функции, работа с ККМ невозможна");
 		}
 		
 	}
