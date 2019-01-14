@@ -1,17 +1,16 @@
 package ru.ecom.expomc.ejb.domain.omcvoc;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.NoLiveBaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
+import java.io.Serializable;
 
 
 /**
@@ -23,10 +22,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes
 ({
-@AIndex(unique = false, properties = {"code"}),
-@AIndex(unique = false, properties = {"time", "code"}),
-@AIndex(unique = false, properties = {"time", "name"}),
-@AIndex(unique = false, properties = {"time", "code", "name"})
+@AIndex(properties = {"code"}),
+@AIndex(properties = {"time", "code"}),
+@AIndex(properties = {"time", "name"}),
+@AIndex(properties = {"time", "code", "name"})
         })
 public class OmcAbstractVoc extends NoLiveBaseEntity implements Serializable, IImportData {
 

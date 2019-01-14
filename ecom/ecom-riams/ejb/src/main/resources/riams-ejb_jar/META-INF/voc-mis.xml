@@ -2304,7 +2304,7 @@ where wf.dtype='PersonalWorkFunction' -->
 		    	parent='okt.id=:parent'
 		    	nameId="oss.id"
 		    	join=" left join Omc_KodTer as okt on okt.okato=oss.fondOkato "
-		    	queryAppend=" oss.smoCode is not null"
+		    	queryAppend=" oss.smoCode is not null and oss.finishDate is null"
 		    	order=""
 		    	queried=" oss.name like UPPER(:query) "
 		    	names = " oss.name"
