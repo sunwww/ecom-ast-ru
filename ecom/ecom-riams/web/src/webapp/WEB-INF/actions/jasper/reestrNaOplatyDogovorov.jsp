@@ -24,6 +24,9 @@
                 <msh:autoComplete property="hospType" fieldColSpan="4" horizontalFill="true" label="Тип помощи" vocName="vocTypeHelpJReport"/>
             </msh:row>
             <msh:row>
+                <msh:textField property="pigeonHole" fieldColSpan="4" horizontalFill="true" label="Номер счёта"/>
+            </msh:row>
+            <msh:row>
                 <td colspan="3">
                     <input type="button" onclick="report()" value="Отчёт" />
                 </td>
@@ -41,12 +44,13 @@
                             if (res != "##") {
                                 var sstream=document.getElementById("serviceStreamName").value;
                                 if (sstream[sstream.length-1]==' ') sstream=sstream.substring(0,sstream.length-1);
+                                var billnumtext=($('pigeonHole').value=='')? '':'&billnumtext='+$('pigeonHole').value;
                                 HospitalMedCaseService. getVocServiceStreamCodeByName(sstream, {
                                     callback: function (res) {
                                         if (res != "##") {
                                             window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2FRegistryForPaymentForContracts&standAlone=true&decorate=no"
                                                 + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&sstream="+ res + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML
-                                            + "&type=" + $('hospType').value);
+                                            + "&type=" + $('hospType').value + billnumtext);
                                         }
                                     }
                                 });
