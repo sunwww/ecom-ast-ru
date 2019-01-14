@@ -183,7 +183,10 @@ wf.groupname as f01,scg.createusername as f1
 ,to_char(scg.createdate,'dd.mm.yyyy')||' '||scg.createtime as f2,scg.editusername as f3,to_char(scg.editdate,'dd.mm.yyyy')||' '||scg.edittime as f4,
 scg.transferusername as f5 ,to_char(scg.transferdate,'dd.mm.yyyy')||' '||to_char(scg.transfertime,'HH24:MI:SS') as f6,
 vwf2.name||' '||wp2.lastname||' '||wp2.firstname||' '||wp2.middlename as f7,to_char(scg.intakedate,'dd.mm.yyyy')||' '||to_char(scg.intaketime,'HH24:MI:SS') as f8
-from prescription scg left join PrescriptionList pl on pl.id=scg.prescriptionList_id
+from medcase sls
+left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
+left join PrescriptionList pl on pl.medcase_id = sls.id or pl.medcase_id = slo.id
+left join Prescription scg on scg.prescriptionList_id=pl.id
 left join workfunction wf on wf.id=scg.prescriptcabinet_id
 left join vocworkFunction vwf on vwf.id=wf.workFunction_id
 left join workfunction wf2 on wf2.id=scg.intakespecial_id
@@ -191,8 +194,6 @@ left join vocworkFunction vwf2 on vwf2.id=wf2.workFunction_id
 left join worker w2 on w2.id = wf2.worker_id
 left join patient wp2 on wp2.id=w2.person_id
 left join vocconsultingtype vtype on vtype.id=scg.vocconsultingtype_id
-left join medcase slo on slo.id=pl.medcase_id
-left join medcase sls on sls.id=slo.parent_id or sls.id=slo.id
 where ${field} and scg.canceldate is null and scg.dtype='WfConsultation'"/>
 	<msh:sectionContent>
 		<msh:table name="pres" action="entityParentView-pres_wfConsultation.do" idField="1">
