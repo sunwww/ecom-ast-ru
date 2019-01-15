@@ -128,7 +128,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 <script type="text/javascript">
 function printKKMReport(type) {
 	if (confirm("Распечатать "+type+" отчет?")) {
-		ContractService.sendKKMRequest("print"+type+"Report", null,null, {
+		ContractService.sendKKMRequest("print"+type+"Report", {
 			callback: function (a) {
 				alert (""+a);
 			}
