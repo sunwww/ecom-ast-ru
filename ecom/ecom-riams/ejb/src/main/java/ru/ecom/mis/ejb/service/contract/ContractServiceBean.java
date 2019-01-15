@@ -33,7 +33,7 @@ public class ContractServiceBean implements IContractService {
 	private static final Logger LOG = Logger.getLogger(ContractServiceBean.class);
 
 
-	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, String aCustomerPhone, EntityManager aManager) {
+	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, String aCustomerPhone, EntityManager aManager, Long wfId) {
 		try {
 			String discontSql = StringUtil.isNullOrEmpty(aDiscont) ? "cams.cost" : "round(cams.cost*(100-"+aDiscont+")/100,2)";
 
@@ -90,8 +90,8 @@ public class ContractServiceBean implements IContractService {
 				//root.put("isTerminalPayment", isTerminalPayment);
 				root.put("FIO", aKassir);
 			//	log.warn("isTermPayment = "+isTerminalPayment);
-				makeHttpPostRequest(root.toString(), aManager);
-			//	LOG.warn(root.toString());
+				makeHttpPostRequest(root.toString(), aManager, wfId);
+				//log.warn(root.toString());
 				return "Чек отправлен на печать";
 			} else {
 				return "Произошла ошибка, обратитесь к программистам";
@@ -102,10 +102,13 @@ public class ContractServiceBean implements IContractService {
 		}
 	}
 
-	private void makeHttpPostRequest(String data, EntityManager aManager) throws IOException {
+	private void makeHttpPostRequest(String data, EntityManager aManager, Long wfId) throws IOException {
 		if (aManager==null) {aManager=theManager;}
 		LOG.debug("===Send to KKM_BEAN. Data = "+data);
-		List<Object> list = aManager.createNativeQuery("select keyvalue from  softconfig where key='KKM_WEB_SERVER'").getResultList();
+		//Milamesher 11012019 #136 отправка на привязанный к wf ККМ
+		List<Object> list = aManager.createNativeQuery("select eq.url from equipment eq\n" +
+				"left join workfunction wf on wf.kkmequipmentdefault_id=eq.id\n" +
+						"where wf.id=" + wfId).getResultList();
 		if (!list.isEmpty()) {
 			String address = list.iterator().next().toString();
 			URL url = new URL(address);
@@ -128,19 +131,19 @@ public class ContractServiceBean implements IContractService {
 			br.close();
 			connection.disconnect();
 		} else {
-			LOG.error("Нет настройки 'KKM_WEB_SERVER', работа с ККМ невозможна");
+			LOG.error("Нет настройки ККМ по умолчанию для рабочей функции, работа с ККМ невозможна");
 		}
 
 	}
 
 
 	//Печать K, Z отчета
-	public String printKKMReport(String aType, EntityManager aManager) {
+	public String printKKMReport(String aType, EntityManager aManager, Long wfId) {
 		if (aType!=null&&(aType.equals("Z")||aType.equals("X"))) {
 			try {
 				JSONObject root = new JSONObject();
 				root.put("function", "print"+aType+"Report");
-				makeHttpPostRequest(root.toString(),aManager);
+				makeHttpPostRequest(root.toString(),aManager,wfId);
 				return  aType+" отчет успешно отправлен на печать";
 			}
 			catch (Exception e) {
@@ -150,15 +153,15 @@ public class ContractServiceBean implements IContractService {
 		}
 		return "Неизвестный тип отчета";
 	}
-	public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, String aCustomerPhone, String aKassir,EntityManager aManager)  {
+	public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, String aCustomerPhone, String aKassir,EntityManager aManager, Long wfId)  {
 			if (aFunction!=null &&aFunction.equals("makePayment")) {
-				return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aKassir,aCustomerPhone,aManager);
+				return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aKassir,aCustomerPhone,aManager,wfId);
 			} else if (aFunction!=null&&aFunction.equals("makeRefund")) {
-				return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment,aKassir, aCustomerPhone,aManager);
+				return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment,aKassir, aCustomerPhone,aManager,wfId);
 			} else if (aFunction!=null&&aFunction.equals("printZReport")){
-				return printKKMReport("Z", aManager);
+				return printKKMReport("Z", aManager,wfId);
 			} else if (aFunction!=null&&aFunction.equals("printXReport")){
-				return printKKMReport("X",aManager);
+				return printKKMReport("X",aManager,wfId);
 			} else if (aFunction!=null&&aFunction.equals("printLastOrder")) {
 				//return printLastOrder(aRequest);
 			}

@@ -630,7 +630,7 @@ public class DisabilityServiceJs {
 				" left join disabilityrecord dr on dr.disabilitydocument_id=dd.id" +
 				" where dc.patient_id=(select distinct _dc.patient_id from disabilitycase _dc" +
 				" left join disabilitydocument _dd on _dd.disabilitycase_id=_dc.id" +
-				" where _dd.id='"+documentId+"')" +
+				" where _dd.id='"+documentId+"')  and dd.disabilitycase_id<>(select disabilitycase_id from disabilitydocument where id='"+documentId+"')" +
 				" group by dc.id" +
 				" order by dc.id",null);
 	}

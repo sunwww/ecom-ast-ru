@@ -81,6 +81,10 @@
         	<msh:autoComplete property="copyingEquipmentDefault" vocName="copyingEquipment" 
         	horizontalFill="true" label="Принтер"/>
         </msh:row>
+          <msh:row>
+            <msh:autoComplete property="kkmEquipmentDefault" vocName="kkmEquipment"
+                              horizontalFill="true" label="ККМ"/>
+        </msh:row>
         <msh:row>
         	<msh:textArea property="comment" fieldColSpan="3" horizontalFill="true"/>
         </msh:row>

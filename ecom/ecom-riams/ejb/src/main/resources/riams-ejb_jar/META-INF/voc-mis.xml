@@ -872,6 +872,15 @@ where wf.dtype='PersonalWorkFunction' -->
 		queried="upper(ce.name) like upper(:query)"
 	/>
 </voc>
+<voc id="kkmEquipment" type="NativeVocService">
+	<NativeVocService
+			from="Equipment e"
+			nameId="e.id"
+			queryAppend=" dtype='KkmEquipment' " join="" order=""
+			names="e.name"
+			queried="upper(e.name) like upper(:query)"
+	/>
+</voc>
 	<!--Список позиций прейскуранта по прейскуранту-->
 	<voc id="pricePositionByPriceList" type="NativeVocService">
 		<NativeVocService

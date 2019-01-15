@@ -62,6 +62,11 @@
                         tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
                         table.appendChild(tr);
                     }
+                    //если СНТ только один и текущий - закрыть
+                    if (cases.length==0) {
+                        showToastMessage("Нет других СНТ кроме текущего!",null, true);
+                        cancel${name}();
+                    }
                 }
             }
         });

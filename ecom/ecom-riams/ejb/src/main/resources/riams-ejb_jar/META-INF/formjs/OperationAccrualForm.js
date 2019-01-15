@@ -68,14 +68,13 @@ function onCreate(aForm, aEntity, aCtx) {
     }
     setMedCasesPaid(aEntity, aCtx);
 
-    // Отправляем запрос на ККМ
-    if (aCtx.getSessionContext().isCallerInRole("/Policy/Config/KKMWork")) {
-
-		var kkm = new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
-		var worker = wf.worker.person;
-		var fio = wf.workFunction.name + " " + worker.lastname + " " + worker.firstname.substring(0, 1) + ". " + (worker.middlename != null ? worker.middlename.substring(0, 1) + "." : "");
-		kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false
-            , fio, aForm.getCustomerPhone, aCtx.manager);
+    //Milamesher #136 если у пользователя настроен ККМ
+    var defaultKkm=wf.getKkmEquipmentDefault();
+    if (aCtx.getSessionContext().isCallerInRole("/Policy/Config/KKMWork") && defaultKkm!=null) {
+        var kkm = new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
+        var worker = wf.worker.person;
+        var fio = wf.workFunction.name + " " + worker.lastname + " " + worker.firstname.substring(0, 1) + ". " + (worker.middlename != null ? worker.middlename.substring(0, 1) + "." : "");
+        kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false, fio,aForm.getCustomerPhone, aCtx.manager,wf.id);
     }
     //**** ***//
 }

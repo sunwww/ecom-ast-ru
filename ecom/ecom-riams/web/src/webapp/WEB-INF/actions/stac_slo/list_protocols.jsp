@@ -100,7 +100,7 @@
       ,aslo.department_id,slo.patient_id 
             	order by  d.dateRegistration desc,  d.timeRegistration desc
             	"/>            	
-                <msh:table hideTitle="false" styleRow="6" idField="1" name="protocols" action="javascript:void(0)" guid="d0267-9aec-4ee0-b20a-4f26b37">
+                <msh:table hideTitle="false" styleRow="6" idField="1" name="protocols" action="javascript:void(0)" guid="d0267-9aec-4ee0-b20a-4f26b37" escapeSymbols="false">
                     <msh:tableButton property="8" hideIfEmpty="true" buttonFunction="goToPage" buttonName="Перейти" buttonShortName="Перейти"/>
                     <msh:tableButton property="7" hideIfEmpty="true" buttonFunction="getDefinition" buttonName="Текст" buttonShortName="Текст"/>
                     <msh:tableColumn columnName="#" property="sn"/>

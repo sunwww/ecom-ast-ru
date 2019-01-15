@@ -247,6 +247,7 @@
 		
 
 		<form-bean name="mis_equipmentForm" type="ru.ecom.mis.ejb.form.equipment.EquipmentForm" />
+		<form-bean name="mis_kkmequipmentForm" type="ru.ecom.mis.ejb.form.equipment.KkmEquipmentForm" />
 		<form-bean name="mis_invalidityForm" type="ru.ecom.mis.ejb.form.patient.InvalidityForm" />
 		<form-bean name="mis_privilegeForm" type="ru.ecom.mis.ejb.uc.privilege.form.PrivilegeForm" />
 		<form-bean name="mis_drugNeedForm"  type="ru.ecom.mis.ejb.uc.privilege.form.DrugNeedForm" />
