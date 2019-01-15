@@ -58,7 +58,7 @@ function onCreate(aForm, aEntity, aCtx) {
             aCtx.manager.persist(cams);
         }
     } else {
-        var balSumOld = +aEntity.account.balanceSum;
+     //   var balSumOld = +aEntity.account.balanceSum;
         var balSum = +aEntity.account.balanceSum;
         var cost = +aEntity.cost;
         if (+aForm.discount > 0) {cost = cost-(cost * aForm.discount / 100);};
@@ -74,7 +74,8 @@ function onCreate(aForm, aEntity, aCtx) {
 		var kkm = new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
 		var worker = wf.worker.person;
 		var fio = wf.workFunction.name + " " + worker.lastname + " " + worker.firstname.substring(0, 1) + ". " + (worker.middlename != null ? worker.middlename.substring(0, 1) + "." : "");
-		kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false, fio, aCtx.manager);
+		kkm.sendKKMRequest("makePayment", aEntity.getAccount().getId(), aForm.getDiscount(), aEntity.getIsPaymentTerminal() != null ? aEntity.getIsPaymentTerminal() : false
+            , fio, aForm.getCustomerPhone, aCtx.manager);
     }
     //**** ***//
 }

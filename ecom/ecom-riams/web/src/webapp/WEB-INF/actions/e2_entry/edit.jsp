@@ -404,7 +404,6 @@ where cancer.entry_id=${param.id}"/>
                     }
 
             function getEntryJson () {
-                        if (1==1)return;
                 Expert2Service.getEntryJson(${param.id}, {
                     callback:function(js) {
                         console.log(js);

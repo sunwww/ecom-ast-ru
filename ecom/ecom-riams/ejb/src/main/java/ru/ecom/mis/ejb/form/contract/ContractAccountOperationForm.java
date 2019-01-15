@@ -20,7 +20,16 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation")
 @Subclasses({OperationAccrualForm.class,OperationReservationForm.class
 	,OperationReturnForm.class,OperationWriteOffForm.class})
-public class ContractAccountOperationForm extends IdEntityForm{
+public class ContractAccountOperationForm extends IdEntityForm {
+
+	/** Номер телефона для чека */
+	@Comment("Номер телефона для чека")
+	@Persist
+	public String getCustomerPhone() {return theCustomerPhone;}
+	public void setCustomerPhone(String aCustomerPhone) {theCustomerPhone = aCustomerPhone;}
+	/** Номер телефона для чека */
+	private String theCustomerPhone ;
+
 	/**
 	 * Тип операции
 	 */

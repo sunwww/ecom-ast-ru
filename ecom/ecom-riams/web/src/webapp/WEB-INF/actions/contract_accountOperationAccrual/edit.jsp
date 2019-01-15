@@ -39,7 +39,7 @@
 				</msh:row>
 				<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
 				<msh:row>
-					<td align="left" colspan="5">К оплате: <span id='costInfo'></<span></td>
+					<td align="left" colspan="5">К оплате: <span id='costInfo'></span></td>
 				</msh:row>
 				<msh:row><td colspan="4">
 					Получено от клиента   <input type="text" id="cashCount" name="cashCount">
@@ -47,6 +47,13 @@
 				<msh:row><td colspan="4">
 					Сдача <span style="font-size:20px;" id="cashGiveBackCount"></span>
 				</td></msh:row>
+					<msh:row>
+						<td colspan="4">
+							<div id="customerPhoneDiv" style="display: none;">
+								Номер телефона/адрес электронной почты: <input type="text" id="customerPhone" name="customerPhone">
+							</div>
+						</td>
+					</msh:row>
 				</msh:ifFormTypeIsCreate>
 				<ecom:webQuery name="sumCost" nativeSql="
 							select sum(CAMS.countMedService*CAMS.cost) as sumaccrual,list(''||cams.id) as lstid ,min(ca.discountDefault) as discount   
@@ -95,6 +102,13 @@
 					<msh:textField property="editUsername" label="Пользователь"/>
 				</msh:row>
 				</msh:ifFormTypeIsView>
+				<msh:ifFormTypeIsCreate formName="contract_accountOperationAccrualForm">
+					<msh:row>
+						<td colspan="4">
+							<input type="button" onclick="jQuery('#customerPhoneDiv').css('display','block');" value="Оформить электронный чек">
+						</td>
+					</msh:row>
+				</msh:ifFormTypeIsCreate>
 			<msh:submitCancelButtonsRow colSpan="3" />
 			</msh:panel>
 		</msh:form>
