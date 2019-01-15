@@ -33,7 +33,7 @@ public class ContractServiceBean implements IContractService {
 	private static final Logger LOG = Logger.getLogger(ContractServiceBean.class);
 
 
-	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, String aCustomerPhone, EntityManager aManager, Long wfId) {
+	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, String aCustomerPhone, EntityManager aManager, String url) {
 		try {
 			String discontSql = StringUtil.isNullOrEmpty(aDiscont) ? "cams.cost" : "round(cams.cost*(100-"+aDiscont+")/100,2)";
 
@@ -90,7 +90,7 @@ public class ContractServiceBean implements IContractService {
 				//root.put("isTerminalPayment", isTerminalPayment);
 				root.put("FIO", aKassir);
 			//	log.warn("isTermPayment = "+isTerminalPayment);
-				makeHttpPostRequest(root.toString(), aManager, wfId);
+				makeHttpPostRequest(root.toString(), url);
 				//log.warn(root.toString());
 				return "Чек отправлен на печать";
 			} else {
@@ -102,15 +102,9 @@ public class ContractServiceBean implements IContractService {
 		}
 	}
 
-	private void makeHttpPostRequest(String data, EntityManager aManager, Long wfId) throws IOException {
-		if (aManager==null) {aManager=theManager;}
+	private void makeHttpPostRequest(String data, String address) throws IOException {
+	//	if (aManager==null) {aManager=theManager;}
 		LOG.debug("===Send to KKM_BEAN. Data = "+data);
-		//Milamesher 11012019 #136 отправка на привязанный к wf ККМ
-		List<Object> list = aManager.createNativeQuery("select eq.url from equipment eq\n" +
-				"left join workfunction wf on wf.kkmequipmentdefault_id=eq.id\n" +
-						"where wf.id=" + wfId).getResultList();
-		if (!list.isEmpty()) {
-			String address = list.iterator().next().toString();
 			URL url = new URL(address);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -130,20 +124,16 @@ public class ContractServiceBean implements IContractService {
 			//   }
 			br.close();
 			connection.disconnect();
-		} else {
-			LOG.error("Нет настройки ККМ по умолчанию для рабочей функции, работа с ККМ невозможна");
 		}
-
-	}
 
 
 	//Печать K, Z отчета
-	public String printKKMReport(String aType, EntityManager aManager, Long wfId) {
+	public String printKKMReport(String aType, EntityManager aManager, String url) {
 		if (aType!=null&&(aType.equals("Z")||aType.equals("X"))) {
 			try {
 				JSONObject root = new JSONObject();
 				root.put("function", "print"+aType+"Report");
-				makeHttpPostRequest(root.toString(),aManager,wfId);
+				makeHttpPostRequest(root.toString(),url);
 				return  aType+" отчет успешно отправлен на печать";
 			}
 			catch (Exception e) {
@@ -153,15 +143,15 @@ public class ContractServiceBean implements IContractService {
 		}
 		return "Неизвестный тип отчета";
 	}
-	public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, String aCustomerPhone, String aKassir,EntityManager aManager, Long wfId)  {
+	public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, String aCustomerPhone,String aKassir,EntityManager aManager, String url)  {
 			if (aFunction!=null &&aFunction.equals("makePayment")) {
-				return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aKassir,aCustomerPhone,aManager,wfId);
+				return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aKassir,aCustomerPhone,aManager,url);
 			} else if (aFunction!=null&&aFunction.equals("makeRefund")) {
-				return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment,aKassir, aCustomerPhone,aManager,wfId);
+				return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment,aKassir,aCustomerPhone, aManager,url);
 			} else if (aFunction!=null&&aFunction.equals("printZReport")){
-				return printKKMReport("Z", aManager,wfId);
+				return printKKMReport("Z", aManager,url);
 			} else if (aFunction!=null&&aFunction.equals("printXReport")){
-				return printKKMReport("X",aManager,wfId);
+				return printKKMReport("X",aManager,url);
 			} else if (aFunction!=null&&aFunction.equals("printLastOrder")) {
 				//return printLastOrder(aRequest);
 			}
@@ -916,7 +906,7 @@ and (pp.isvat is null or pp.isvat='0')
 		}
 		
 	}
-	
+
 	@PersistenceContext EntityManager theManager ;
 	 private @EJB ILocalMonitorService theMonitorService ;
 	
