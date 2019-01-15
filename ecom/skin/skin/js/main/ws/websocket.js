@@ -140,7 +140,12 @@ function ws_onMessage(msg) {
                 break;
         }
     } else if (msg.status=='error') {
-        showToastMessage(msg.errorCode);
+        if (msg.errorCode=="NO_ACTIVE_QUEUE") {
+            jQuery('#ws_ticketNumberDiv').html("Н/О");
+        } else {
+            showToastMessage(msg.errorCode);
+        }
+
     }
 }
 function ws_sendMessage(json) {
