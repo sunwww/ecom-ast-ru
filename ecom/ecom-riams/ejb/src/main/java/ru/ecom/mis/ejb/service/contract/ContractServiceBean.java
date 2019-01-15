@@ -36,7 +36,6 @@ public class ContractServiceBean implements IContractService {
 	public String makeKKMPaymentOrRefund(Long aAccountId,String aDiscont, Boolean isRefund,Boolean isTerminalPayment, String aKassir, String aCustomerPhone, EntityManager aManager, String url) {
 		try {
 			String discontSql = StringUtil.isNullOrEmpty(aDiscont) ? "cams.cost" : "round(cams.cost*(100-"+aDiscont+")/100,2)";
-
 			StringBuilder sb = new StringBuilder();
 			sb.append("select pp.id, pp.code as f2_code, pp.name as f3_name, cams.countmedservice as f4_count, cast(").append(discontSql)
 					.append(" as varchar) as f5_cost, cast(").append(discontSql).append("*cams.countmedservice as varchar) as f6_sum")
@@ -128,13 +127,13 @@ public class ContractServiceBean implements IContractService {
 
 
 	//Печать K, Z отчета
-	public String printKKMReport(String aType, EntityManager aManager, String url) {
+	private String printKKMReport(String aType, String url) {
 		if (aType!=null&&(aType.equals("Z")||aType.equals("X"))) {
 			try {
 				JSONObject root = new JSONObject();
 				root.put("function", "print"+aType+"Report");
 				makeHttpPostRequest(root.toString(),url);
-				return  aType+" отчет успешно отправлен на печать";
+				return aType+" отчет успешно отправлен на печать";
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -144,19 +143,20 @@ public class ContractServiceBean implements IContractService {
 		return "Неизвестный тип отчета";
 	}
 	public String sendKKMRequest(String aFunction, Long aAccountId, String aDiscont, Boolean isTerminalPayment, String aCustomerPhone,String aKassir,EntityManager aManager, String url)  {
-			if (aFunction!=null &&aFunction.equals("makePayment")) {
+			if ("makePayment".equals(aFunction)) {
 				return makeKKMPaymentOrRefund(aAccountId, aDiscont, false, isTerminalPayment,aKassir,aCustomerPhone,aManager,url);
-			} else if (aFunction!=null&&aFunction.equals("makeRefund")) {
+			} else if ("makeRefund".equals(aFunction)) {
 				return makeKKMPaymentOrRefund(aAccountId, aDiscont, true, isTerminalPayment,aKassir,aCustomerPhone, aManager,url);
-			} else if (aFunction!=null&&aFunction.equals("printZReport")){
-				return printKKMReport("Z", aManager,url);
-			} else if (aFunction!=null&&aFunction.equals("printXReport")){
-				return printKKMReport("X",aManager,url);
-			} else if (aFunction!=null&&aFunction.equals("printLastOrder")) {
+			} else if ("printZReport".equals(aFunction)){
+				return printKKMReport("Z", url);
+			} else if ("printXReport".equals(aFunction)){
+				return printKKMReport("X",url);
+			} else if ("printLastOrder".equals(aFunction)) {
 				//return printLastOrder(aRequest);
+			} else {
+				return "Неизвестная функция: "+aFunction;
 			}
-			return "Неизвестная функция";
-
+			return "";
 	}
 	/* //unused
 	private Long getMedService(Long aDepartment, Long aBedType, Long aBedSubType, Long aRoomType) {
