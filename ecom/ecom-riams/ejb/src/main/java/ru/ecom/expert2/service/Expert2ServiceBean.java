@@ -48,12 +48,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.sql.*;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Stateless
 @Local(IExpert2Service.class)
@@ -71,23 +69,9 @@ public class Expert2ServiceBean implements IExpert2Service {
     private final SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
     private static final ArrayList<String> childBirthMkb = new ArrayList<>();
 
-    public String getEntryJson(Long aEntryId) {
-        return "";
-     /*   try {
-            LOG.warn("START ME");
-            E2Entry entry = theManager.find(E2Entry.class,aEntryId);
-            LOG.warn("START ME1");
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            LOG.warn("START ME2");
-            String s =gson.toJson(entry);
-            LOG.warn("START ME3");
-            return s;
-        } catch (Exception e) {
-            LOG.error(e);
-            return "NULL___";
-        }
+    public E2Entry getEntryJson(Long aEntryId) {
+        return theManager.find(E2Entry.class,aEntryId);
 
-*/
     }
 
     private JSONObject getOKJson() {
@@ -1686,18 +1670,15 @@ public class Expert2ServiceBean implements IExpert2Service {
                     if(isNotNull(ed.getDopMkb())) {
                         dopmkb=ed.getDopMkb();
                     }
-                    if (ed.getMkb().getCode().startsWith("C")) {
-                        isCancer=true;
-                    }
+                    isCancer=ed.getMkb().getCode().startsWith("C");
                 }
-
             }
 
             List<String> mainDiagnosis = findDiagnosisCodes(diagnosisList, "3","1"); //Тип регистрации:1,2-при поступлении, 3  - выписной, 4 = клинический
             if (mainDiagnosis.isEmpty()) { //Нет выписного диагноза - возьмем клинический
                 mainDiagnosis= findDiagnosisCodes(diagnosisList, "4","1");
             }
-            if (mainDiagnosis.isEmpty()&&isNotNull(aEntry.getMainMkb())) {
+            if (mainDiagnosis.isEmpty() && isNotNull(aEntry.getMainMkb())) {
                 mainDiagnosis.add(aEntry.getMainMkb());
             }
 
@@ -1722,13 +1703,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                     serviceCodes.add(ms.getMedService().getCode());
                 }
             }
-            StringBuilder sqlHeader = new StringBuilder();
             StringBuilder sql = new StringBuilder();
-            sqlHeader.append("select gkp.id as id  from GrouperKSGPosition gkp")
+            sql.append("select gkp.id as id  from GrouperKSGPosition gkp")
                     .append(" left join grouperksg gk on gk.id=gkp.ksggrouper_id")
                     .append(" left join vocbedsubtype vbst on vbst.id=gk.bedtype_id")
-                    .append(" where gk.isActive='1' and vbst.code='").append(bedType).append("'");
-            sql.append(sqlHeader);
+                    .append(" where gk.year=:year and vbst.code='").append(bedType).append("'");
             if (!mainDiagnosis.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 for (String d : mainDiagnosis) {
@@ -1763,7 +1742,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             //   LOG.warn("sql for ksg = "+sql.toString());
             if (!ksgMap.containsKey(key)) {
                 //  LOG.info(key+" not found new sql ="+sql);
-                results = theManager.createNativeQuery(sql.toString()).getResultList();
+                results = theManager.createNativeQuery(sql.toString()).setParameter("year",getYear(aEntry.getFinishDate())).getResultList();
                 ksgMap.put(key,results);
                 if (results.isEmpty()) {
                     LOG.warn(key+" Не смог найти КСГ для случая с ИД="+aEntry.getId()+" по запросу: "+sql);
@@ -1856,6 +1835,13 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
     }
+
+    private int getYear(Date finishDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(finishDate);
+        return calendar.get(Calendar.YEAR);
+    }
+
     /** Проверяем, является ли пара КСГ исключением из случая*/
     private static final String[] ksgExceptions = {"9#11","9#12","10#11","18#76","18#77","179#173","300#301","207#301","242#245","244#35","271#256"}; //терапевтическая#Хирургическая
     private GrouperKSGPosition checkIsKsgException(GrouperKSGPosition aSurgicalKsgPosition, GrouperKSGPosition aTherapicalKsgPosition) {

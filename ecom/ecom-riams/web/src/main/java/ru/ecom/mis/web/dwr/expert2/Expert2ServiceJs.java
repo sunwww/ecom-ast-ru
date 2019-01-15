@@ -1,10 +1,13 @@
 package ru.ecom.mis.web.dwr.expert2;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.expert2.domain.E2Bill;
+import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expert2.service.IExpert2XmlService;
 import ru.ecom.expert2.service.IFinanceService;
@@ -57,7 +60,20 @@ public class Expert2ServiceJs {
 
     public String getEntryJson(Long aEntryId, HttpServletRequest aRequest) throws NamingException {
         LOG.info("HELLO "+aEntryId);
-        return Injection.find(aRequest).getService(IExpert2Service.class).getEntryJson(aEntryId);
+        E2Entry entry = Injection.find(aRequest).getService(IExpert2Service.class).getEntryJson(aEntryId);
+        try {
+            LOG.warn("START ME");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            LOG.warn("START ME2");
+            String s =gson.toJson(entry);
+            LOG.warn("START ME3");
+            return s;
+        } catch (Exception e) {
+            LOG.error(e);
+            e.printStackTrace();
+            return "NULL___";
+        }
+
     }
 
     public String splitForeignOtherBill(Long aListEntryId, String aBillNumber, String aBillDate, String aTerritories, HttpServletRequest aRequest) throws NamingException, ParseException {

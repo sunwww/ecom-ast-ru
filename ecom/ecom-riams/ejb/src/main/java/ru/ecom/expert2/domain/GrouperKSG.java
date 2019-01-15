@@ -2,7 +2,6 @@ package ru.ecom.expert2.domain;
 
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.expert2.domain.voc.VocStacType;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -28,4 +27,11 @@ public class GrouperKSG extends BaseEntity {
     public void setIsActive(Boolean aIsActive) {theIsActive = aIsActive;}
     /** Активный */
     private Boolean theIsActive ;
+
+    /** Год группировщика */
+    @Comment("Год группировщика")
+    public Integer getYear() {return theYear;}
+    public void setYear(Integer aYear) {theYear = aYear;}
+    /** Год группировщика */
+    private Integer theYear ;
 }

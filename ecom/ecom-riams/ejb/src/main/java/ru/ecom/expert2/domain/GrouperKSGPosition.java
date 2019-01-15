@@ -2,6 +2,8 @@ package ru.ecom.expert2.domain;
 
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -12,6 +14,13 @@ import javax.persistence.OneToOne;
  * Позиции группировщика КСГ
  */
 @Entity
+@AIndexes({
+        @AIndex(properties= {"kSGGrouper"})
+        , @AIndex(properties= {"mainMKB"})
+        , @AIndex(properties= {"anotherMKB"})
+        , @AIndex(properties= {"serviceCode"})
+
+})
 public class GrouperKSGPosition extends BaseEntity {
 
     /** Код позиции группировщика */

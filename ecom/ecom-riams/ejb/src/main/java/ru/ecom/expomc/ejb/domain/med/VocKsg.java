@@ -1,15 +1,13 @@
 package ru.ecom.expomc.ejb.domain.med;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  *  КСГ 
@@ -18,6 +16,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("КСГ")
 @Table(schema="SQLUser")
 public class VocKsg extends VocIdCodeName {
+
+	/** Год КСГ */
+	@Comment("Год КСГ")
+	public Integer getYear() {return theYear;}
+	public void setYear(Integer aYear) {theYear = aYear;}
+	/** Год КСГ */
+	private Integer theYear ;
 
 	/** Сверхдлительный КСГ (45 дней)	*/
 	@Comment("Длительный срок лечения КСГ")
@@ -28,6 +33,7 @@ public class VocKsg extends VocIdCodeName {
 
 	/** Является операцией */
 	@Comment("Является операцией")
+	@Deprecated
 	public Boolean getIsOperation() {return theIsOperation;}
 	public void setIsOperation(Boolean aIsOperation) {theIsOperation = aIsOperation;}
 	/** Является операцией */

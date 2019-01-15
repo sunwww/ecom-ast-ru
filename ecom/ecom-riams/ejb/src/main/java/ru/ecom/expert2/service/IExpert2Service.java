@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public interface IExpert2Service {
     String getMedcaseCost(Long aMedcaseId);
-    String getEntryJson(Long aEntryId);
+    E2Entry getEntryJson(Long aEntryId);
     String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories);
     BigDecimal calculatePolyclinicEntryPrice(VocE2VidSluch aVidSluch, Date aFinishDate, VocE2MedHelpProfile aMedHelpProfile);
     E2Bill getBillEntryByDateAndNumber(String sBillNumber, String aBillDate);

@@ -45,7 +45,6 @@ public class E2ExportPacketJournal extends BaseEntity {
     private Time theCreateTime ;
 
     public E2ExportPacketJournal(String aBillNumber, Date aBillDate, String aFilename) {
-        System.out.println("create newentity");
         Long time = System.currentTimeMillis();
         Date currentDate = new java.sql.Date(time);
         Time currentTime = new Time(time);
