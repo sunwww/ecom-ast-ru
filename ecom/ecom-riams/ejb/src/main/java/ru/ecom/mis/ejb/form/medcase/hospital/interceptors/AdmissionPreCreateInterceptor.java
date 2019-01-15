@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -11,12 +7,16 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 public class AdmissionPreCreateInterceptor  implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
     	if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateDoubleOpenHospitalMedCase")) {
     		List<MedCase> list = aContext.getEntityManager().createQuery("from MedCase where patient_id=:pat and DTYPE='HospitalMedCase'  and dateFinish is null and deniedHospitalizating_id is null and ( cast(ambulanceTreatment as int)=0 or ambulanceTreatment is null) ")
     			.setParameter("pat", aParentId).getResultList() ;
-        	if (list.size()>0) throw new IllegalArgumentException(
+        	if (!list.isEmpty()) throw new IllegalArgumentException(
     				"У данного пациента есть открытый случай лечения в стационаре!!!"
     		);
     	}

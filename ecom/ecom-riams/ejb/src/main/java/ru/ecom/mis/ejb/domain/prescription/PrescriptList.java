@@ -1,16 +1,11 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Лист назначений
@@ -22,7 +17,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
-public class PrescriptList extends AbstractPrescriptionList{
+public class PrescriptList extends AbstractPrescriptionList {
+
+	@PrePersist
+	void onPrePersist() {
+		Long currentTime = System.currentTimeMillis();
+		setCreateDate(new java.sql.Date(currentTime));
+		setCreateTime(new java.sql.Time(currentTime));
+	}
 	
 	/** Шаблон листа назначений */
 	@Comment("Шаблон листа назначений")

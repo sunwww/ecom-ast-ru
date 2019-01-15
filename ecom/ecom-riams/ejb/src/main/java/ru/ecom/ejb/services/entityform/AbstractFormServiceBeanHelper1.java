@@ -40,6 +40,7 @@ import java.util.Map.Entry;
 /**
  * @author esinev Date: 16.08.2006 Time: 10:32:01
  */
+@Deprecated
 public class AbstractFormServiceBeanHelper1 implements IFormService {
 	private static final Logger LOG = Logger
 			.getLogger(AbstractFormServiceBeanHelper.class);

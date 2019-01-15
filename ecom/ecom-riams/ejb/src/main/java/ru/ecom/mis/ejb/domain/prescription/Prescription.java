@@ -38,6 +38,13 @@ import java.util.List;
 @EntityListeners(DeleteListener.class)
 public abstract class Prescription extends BaseEntity{
 
+	@PrePersist
+	void onPrePersist() {
+		Long currentTime = System.currentTimeMillis();
+		theCreateDate=new java.sql.Date(currentTime);
+		theCreateTime=new java.sql.Time(currentTime);
+	}
+
 	/** Лист назначений */
 	@Comment("Лист назначений")
 	@ManyToOne

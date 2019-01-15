@@ -80,6 +80,10 @@ function onCreate(aForm, aEntity, aCtx) {
         var opSpoId = listSpoByPat.get(ind);
         closeSpo(aCtx,opSpoId);
     }
+    	var list = new Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList();
+		list.setMedCase(aEntity);
+		list.setCreateUsername(aForm.username);
+		aCtx.manager.persist(list);
 }
 //Закрытие СПО по id (взято с SmoVisitService) - датой последнего визита
 function closeSpo(aContext, aSpoId) {
@@ -110,7 +114,7 @@ function closeSpo(aContext, aSpoId) {
         +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
         +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
         +" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-    if (listOpenVis.size()==0&&listVisLast.size()>0) {
+    if (listOpenVis.isEmpty() && !listVisLast.isEmpty()) {
         var listVisFirst = aContext.manager.createNativeQuery("select vis.id as visid"
             +" ,mkb.id as mkbid, to_char(vis.dateStart,'dd.mm.yyyy') as dateStart, vis.workFunctionExecute_id"
             +" from MedCase vis"
@@ -131,10 +135,10 @@ function closeSpo(aContext, aSpoId) {
             +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
             +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
             +" order by vis.dateStart, vis.timeExecute").setMaxResults(1).getResultList() ;
-        var visFirst = listVisFirst.get(0)[0];
+      //  var visFirst = listVisFirst.get(0)[0];
         //var visFirstO = aContext.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
         //		, java.lang.Long.valueOf(visFirst)) ;
-        var visLast = listVisLast.get(0)[0];
+   //     var visLast = listVisLast.get(0)[0];
         var mkb = listVisLast.get(0)[1];
         if (mkb==null) {
             var listMkb = aContext.manager.createNativeQuery("select vis.id as visid"
@@ -157,9 +161,7 @@ function closeSpo(aContext, aSpoId) {
                 +" group by vis.id, vis.dateStart,vis.workfunctionexecute_id, vis.timeExecute,vwf.name, pat.lastname,  pat.firstname,  pat.middlename"
                 +" ,vr.name ,vss.name,vvr.name,vpd.code,vpd.id,mkb.id"
                 +" order by vis.dateStart desc, vis.timeExecute desc").setMaxResults(1).getResultList() ;
-            var mkb = listMkb.size()>0?listMkb.get(0)[1]:null;
-
-
+            mkb = listMkb.isEmpty() ? null : listMkb.get(0)[1];
         }
         var dateStart = listVisFirst.get(0)[2];
         var dateFinish = listVisLast.get(0)[2];
