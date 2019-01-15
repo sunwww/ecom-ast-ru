@@ -60,7 +60,7 @@ public class QueueWebSocket {
             os.setRole(role);
             WorkFunction wf = getInjection().getService(IQueueService.class).getWorkFunctionByUsername(aUsername);
             if (wf==null || wf.getQueue()==null) {
-                log.error("В этой рабочей функции у пользователя нет очереди");
+                log.error("В этой рабочей функции у пользователя "+aUsername+" нет очереди");
                 sendErrorMessage("NO_ACTIVE_QUEUE","В этой рабочей функции у пользователя нет очереди",os);
                 return;
             }
