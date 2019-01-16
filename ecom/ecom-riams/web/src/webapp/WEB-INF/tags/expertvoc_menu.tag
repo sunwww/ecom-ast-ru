@@ -44,6 +44,7 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 			<msh:sideLink action="/e2_stacFinancePlan.do" name="Финансовый планы по стационару" title="Финансовый планы по стационару" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_litteAmountMonth.do" name="Настроечная табличка" title="Настроечная табличка" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_vocKsg.do" name="Справочник КСГ" title="Справочник КСГ" roles="/Policy/E2" />
+			<msh:sideLink action="/entityList-e2_vocKdp.do" name="Справочник КДП" title="Справочник КДП" roles="/Policy/E2" />
 			<msh:sideLink action="/entityList-e2_bill.do" name="Список счетов" title="Список счетов" roles="/Policy/E2" />
 			<msh:sideLink action="/javascript:findPersonByCommonnumber()" name="Поиск по RZ (оплаченые счета)" title="Поиск по RZ" roles="/Policy/E2" />
 	    </msh:sideMenu>

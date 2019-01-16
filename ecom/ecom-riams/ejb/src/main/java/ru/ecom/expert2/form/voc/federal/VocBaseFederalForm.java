@@ -37,4 +37,20 @@ public abstract class VocBaseFederalForm extends IdEntityForm implements IEntity
     /** Неактуальная запись */
     private Boolean theIsNoActual =false;
 
+    /** Название */
+    @Comment("Название")
+    @Persist
+    public String getName() {return theName;}
+    public void setName(String aName) {theName = aName;}
+    /** Название */
+    private String theName ;
+
+    /** Код */
+    @Comment("Код")
+    @Persist
+    public String getCode() {return theCode;}
+    public void setCode(String aCode) {theCode = aCode;}
+    /** Код */
+    private String theCode ;
+
 }

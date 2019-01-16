@@ -4,7 +4,10 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2EntryError;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 
 @Entity
 public class E2EntryError extends BaseEntity {
@@ -19,7 +22,7 @@ public class E2EntryError extends BaseEntity {
 
     /** Случай */
     @Comment("Случай")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     public E2Entry getEntry() {return theEntry;}
     public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
     /** Случай */

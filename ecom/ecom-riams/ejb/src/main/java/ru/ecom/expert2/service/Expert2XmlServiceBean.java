@@ -1573,7 +1573,6 @@ private Boolean isCheckIsRunning = false;
             mainDiagnosis = theManager.createQuery(" from EntryDiagnosis where entry_id=:id and "+mainDiagnosisSqlAdd).setParameter("id",aEntry.getId()).getResultList(); //клинические основные диагнозы
         }
 
-
         List<String> otherDiagnosis = findDiagnosisCodes(list,null,"3"); // Сопутствующие
         List<String> napravitDiagnosis = findDiagnosisCodes(list,"1,2","3"); // Направительные
         if (!napravitDiagnosis.isEmpty()) {

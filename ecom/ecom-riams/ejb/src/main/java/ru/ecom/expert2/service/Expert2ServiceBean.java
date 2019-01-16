@@ -59,6 +59,7 @@ import java.util.*;
 public class Expert2ServiceBean implements IExpert2Service {
     private Boolean isCheckIsRunning = false;
     private static final Logger LOG = Logger.getLogger(Expert2ServiceBean.class);
+    private static final String KDPTYPE="STACKDP";
     private static final String HOSPITALTYPE="HOSPITAL";
     private static final String HOSPITALPEREVODTYPE="HOSPITALPEREVOD";
     private static final String POLYCLINICTYPE="POLYCLINIC";
@@ -175,6 +176,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             theManager.persist(newListEntry);
             List<E2Entry> list = theManager.createQuery("from E2Entry where listEntry_id=:id and isDefect='1' and (isDeleted is null or isDeleted='0')").setParameter("id",aListEntryId).getResultList();
             LOG.info("creating defects... defect list size = "+list.size());
+            //TODO Сделать копирование диагнозов у child entry в обращениях
 
             for (E2Entry entry: list) {
                 E2Entry newEntry = cloneEntity(entry);
@@ -190,7 +192,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             e.printStackTrace();
             LOG.error(e);
         }
-
         return true;
     }
 
@@ -915,20 +916,30 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         String resourceName;
-        if (listEntryType.equals(EXTDISPTYPE)) {
-            resourceName = "ExtDisp.sql";
-        } else if (listEntryType.equals(HOSPITALTYPE)) {
-            resourceName = "Hospital.sql";
-        } else if (listEntryType.equals(POLYCLINICTYPE)) {
-            resourceName = "Visit.sql";
-        } else if (listEntryType.equals(HOSPITALPEREVODTYPE)) {
-            resourceName = "HospitalPerevod.sql";
-        } else if (listEntryType.equals(POLYCLINICKDOTYPE)) {
-            resourceName="VisitKdo.sql";
-        } else {
-            LOG.error("Неизвесный тип заполнения");
-            throw new IllegalStateException("Неизвестный тип заполнения!!");
+        switch (listEntryType) {
+            case EXTDISPTYPE:
+                resourceName = "ExtDisp.sql";
+                break;
+            case HOSPITALTYPE:
+                resourceName = "Hospital.sql";
+                break;
+            case POLYCLINICTYPE:
+                resourceName = "Visit.sql";
+                break;
+            case HOSPITALPEREVODTYPE:
+                resourceName = "HospitalPerevod.sql";
+                break;
+            case POLYCLINICKDOTYPE:
+                resourceName="VisitKdo.sql";
+                break;
+            case KDPTYPE:
+                resourceName ="StacKdp.sql";
+                break;
+            default:
+                LOG.error("Неизвесный тип заполнения");
+                throw new IllegalStateException("Неизвестный тип заполнения!!");
         }
+
         String searchSql = getFileAsSTring(resourceName);
         if (searchSql == null) {
             LOG.error("NO SQL FILE FOUND");
@@ -2521,7 +2532,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /** Проставляем тип записи (стационар, ВМП, поликлиника, подушевое финансирование, __ИНОГОРОДНИЕ__ */
     private void setEntryType(E2Entry aEntry, String aCode) {
-        if (aCode.equals(HOSPITALTYPE)&&isNotNull(aEntry.getVMPKind())) {
+        if (aCode.equals(HOSPITALTYPE) && isNotNull(aEntry.getVMPKind())) {
             aCode=VMPTYPE;
         } else if (aCode.equals(HOSPITALPEREVODTYPE)) {
             aCode=HOSPITALTYPE;
@@ -2531,7 +2542,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             aCode=POLYCLINICKDOTYPE;
         }
         if (isNotNull(aEntry.getInsuranceCompanyCode())) {aCode+="_INOG";} //Если код страх. компании не пустой - иногородний.
-        aEntry.setEntryType(aCode.toUpperCase());
+        aEntry.setEntryType(aCode);
         theManager.persist(aEntry);
     }
     /** Получаем значение из настроек экспертизы по коду */

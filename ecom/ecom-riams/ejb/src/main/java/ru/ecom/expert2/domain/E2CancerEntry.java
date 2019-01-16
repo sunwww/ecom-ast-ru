@@ -3,7 +3,10 @@ package ru.ecom.expert2.domain;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
@@ -14,7 +17,7 @@ public class E2CancerEntry extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     public E2Entry getEntry() {return theEntry;}
     public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
     /** Запись */
