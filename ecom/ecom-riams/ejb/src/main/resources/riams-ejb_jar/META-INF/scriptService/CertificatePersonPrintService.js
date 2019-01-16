@@ -38,7 +38,8 @@ function issueRefund(aCtx, aId) {
     var kkm =new Packages.ru.ecom.mis.ejb.service.contract.ContractServiceBean();
     var worker = wf.worker.person;
     var fio = wf.workFunction.name+" "+worker.lastname+" "+worker.firstname.substring(0,1)+". "+(worker.middlename!=null?worker.middlename.substring(0,1)+".":"");
-    var res = kkm.sendKKMRequest("makeRefund",operationAccrual.account.id, operationAccrual.discount,operationAccrual.isPaymentTerminal!=null?operationAccrual.isPaymentTerminal:false, fio, aCtx.manager);
+    var res = kkm.sendKKMRequest("makeRefund",operationAccrual.account.id, operationAccrual.discount
+		,operationAccrual.isPaymentTerminal!=null ? operationAccrual.isPaymentTerminal : false,null, fio, aCtx.manager, wf.getKkmEquipmentDefault()!=null ? wf.getKkmEquipmentDefault().getUrl() : "");
 
 }
 
