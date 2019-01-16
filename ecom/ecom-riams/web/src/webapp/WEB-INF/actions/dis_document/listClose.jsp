@@ -167,6 +167,7 @@
 (select max(dr2.dateTo) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)
 - (select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)
  end as dur
+ ,CAST(EXTRACT (YEAR from (p.birthday)) as int) as y
      	from disabilitydocument as dd 
 	   	left join disabilitycase dc on dc.id=dd.disabilityCase_id
 	   	left join disabilitydocument dupl on dupl.id=dd.duplicate_id
@@ -191,6 +192,7 @@
       <msh:tableColumn columnName="Закрыт?" property="10"/>
       <msh:tableColumn columnName="Номер истории" property="12"/>
       <msh:tableColumn columnName="Длительность" property="13"/>
+      <msh:tableColumn columnName="Год рождения" property="14"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
