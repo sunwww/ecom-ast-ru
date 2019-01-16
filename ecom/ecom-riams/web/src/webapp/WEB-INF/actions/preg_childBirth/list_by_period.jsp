@@ -131,6 +131,7 @@
     , vocem.name as f15_em
     , vrb.name as vrbname
     , paritet_pregn.code as f9_paritet_2
+    , case when cb.createusername is not null then cb.createusername else cb.editusername end as creator
      from ChildBirth cb
      left join MedCase slo  on cb.medcase_id = slo.id
      left join MedCase sls on sls.id=slo.parent_id
@@ -169,6 +170,7 @@
     <msh:tableColumn property="14" columnName="Место родов"/>
     <msh:tableColumn property="15" columnName="Показания"/>
     <msh:tableColumn property="16" columnName="Класификация Робсона"/>
+    <msh:tableColumn property="18" columnName="Создал роды"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
