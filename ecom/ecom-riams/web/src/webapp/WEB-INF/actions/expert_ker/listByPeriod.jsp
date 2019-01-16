@@ -322,8 +322,8 @@ ${lpuSql} ${typeSql}
     viewUrl="expert_journal_ker.do?short=Short&dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}" 
      action="expert_journal_ker.do?dateBegin=${param.dateBegin}&type=${param.type}&dateEnd=${param.dateEnd}&typeView=1&modeCase=${modeCase}&patientStatus=${patientStatus}&reasonDirect=${reasonDirect}&deviationStandards=${deviationStandards}&conclusion=${conclusion}&conclusionSent=${conclusionSent}&typeEmergency=${typeEmergency}&typeLpu=${typeLpu}" idField="1" >
       <msh:tableColumn columnName="Отделение" property="2" />
-      <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" />
-      <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" />
+      <msh:tableColumn columnName="Кол-во направ. на ВК" property="3" isCalcAmount="true"/>
+      <msh:tableColumn columnName="Кол-во ВК с откл. от станд." property="4" isCalcAmount="true"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>
