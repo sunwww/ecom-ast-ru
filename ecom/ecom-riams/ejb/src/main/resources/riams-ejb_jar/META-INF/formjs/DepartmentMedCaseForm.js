@@ -17,7 +17,7 @@ function onPreCreate(aForm, aContext) {
 		.setParameter("parent",aForm.parent)
 		.getResultList();
 	}
-	if (listDep.size()>0) {
+	if (!listDep.isEmpty()) {
 		var dep = listDep.get(0) ;
 		throw "Уже завели случай в отделелении. <a href='entitySubclassView-mis_medCase.do?id="+dep.id+"'>Перейти к нему</a>"
 		

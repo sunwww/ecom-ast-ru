@@ -138,8 +138,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 		if (aMedCaseId==null) {return true;}
 		DepartmentMedCase parentSLO = aManager.find(DepartmentMedCase.class, aMedCaseId) ;
 		if (parentSLO.getDepartment()!=null && parentSLO.getDepartment().getIsMaternityWard()!=null && parentSLO.getDepartment().getIsMaternityWard()){
-			String sql = "select count(id) from misbirth where medcase_id= "+aMedCaseId;
-			Object list = aManager.createNativeQuery(sql).getSingleResult();
+			String sql = "select count(id) from misbirth where medcase_id=:medcaseId";
+			Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCaseId).getSingleResult();
 			return Long.valueOf(list.toString())>0;
 		} else {
 			return true;
@@ -200,9 +200,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
         	aForm.setBedFund(getBedFund(aManager, aForm.getDepartment(), aForm.getServiceStream(), aForm.getDateStart(), aMedCase.getHospType())) ;
         }
         
-        aForm.setlpuAndDate(new StringBuilder().append(aForm.getDepartment()).append(":")
-        		.append(aForm.getDateStart())
-        		.toString()) ;
+        aForm.setlpuAndDate(aForm.getDepartment()+":"+aForm.getDateStart()) ;
     }
     
     /**
@@ -266,7 +264,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     
     
     private Long getBedFund(EntityManager aManager, Long aDepartment, Long aServiceStream, String aDateFrom,VocHospType aHospType) {
-    	String bedSubType = aHospType!=null?(aHospType.getCode().startsWith("DAY")?"2":"1"):"1" ;
+    	String bedSubType = aHospType!=null ? (aHospType.getCode().startsWith("DAY") ? "2" : "1") : "1" ;
     	StringBuilder sql = new StringBuilder() ;
     	sql.append("select bf.id,vbst.id from BedFund bf ") ;
 		sql.append(" left join vocBedType vbt on vbt.id=bf.bedType_id left join vocBedSubType vbst on vbst.id=bf.bedSubType_id ") ;
@@ -274,11 +272,8 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 			.append("' and bf.serviceStream_id='").append(aServiceStream!=null?aServiceStream:"0")
 			.append("' and to_date('").append(aDateFrom)
 			.append("','dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)") ;
-		sql.append(" and vbst.code='").append(bedSubType!=null?bedSubType:"1").append("'");
+		sql.append(" and vbst.code='").append(bedSubType).append("' order by bf.amount desc");
 		List<Object[]> idT = aManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
-		if (idT.size()==1) {
-			return ConvertSql.parseLong(idT.get(0)[0]) ;
-		}
-		return null ;
+		return idT.isEmpty() ? null : ConvertSql.parseLong(idT.get(0)[0]);
     }
 }
