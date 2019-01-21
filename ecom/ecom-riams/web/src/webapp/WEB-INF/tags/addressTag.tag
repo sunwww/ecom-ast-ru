@@ -255,8 +255,6 @@
 
 
     function initAddress() {
-
-        var address = document.createElement("p") ;
         var inputLabel = "Ввести" ;
         var val = $('addressField').value ;
 //        alert("'"+val+"'")
