@@ -229,7 +229,6 @@
                 +"</span><input id='buttonShow${name}Address' type='button' value='"+inputLabel+"' onclick='show${name}Address()' />" ;
 		var zipcode = '${zipcode}' ;
 		if (zipcode!='') zipcode=$(zipcode).value ;
-        alert($('${name}').value+"<>");
         AddressService.getAddressString($('${name}').value
                 , $('${houseNumber}').value, $('${houseBuilding}').value, $('${flatNumber}').value,zipcode, {
             callback: function(aString) {
