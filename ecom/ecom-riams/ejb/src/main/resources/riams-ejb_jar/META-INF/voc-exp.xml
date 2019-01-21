@@ -242,6 +242,14 @@
                 order="voc.code"
         />
     </voc>
+    <voc id='vocJasperVidSluchPolyclinic' type='NativeVocService'>
+        <NativeVocService
+                from = ' JasperVidSluchPolyclinic  voc '
+                names=" voc.name"
+                nameId=" voc.id "
+                order="voc.id"
+        />
+    </voc>
     <voc id='vocE2ListEntryType' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.expert2.domain.voc.VocListEntryType'

@@ -26,6 +26,9 @@
                 <msh:row>
                     <msh:autoComplete property="department" fieldColSpan="5" label="Отделение" horizontalFill="true" vocName="lpu"/>
                 </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="filterAdd2" fieldColSpan="4" horizontalFill="true" label="Вид мед. помощи" vocName="vocJasperVidSluchPolyclinic"/>
+                </msh:row>
                 <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
                     <td class="label" title="Поиск по промежутку  (typeGroup)" colspan="1"><label for="typeGroupName" id="ttypeGroupLabel">Выберите:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
@@ -74,9 +77,10 @@
                                 var lpu=($('department').value!="")? "&lpu=" + $('department').value:"";
                                 var type=getValue('typeGroup');
                                 var type2=getText('typeGroup2');
+                                var vidsluch=($('filterAdd2').value!="")? "&vidsluch=" + $('filterAdd2').value + "&vidsluchName=" + $('filterAdd2Name').value:"";
                                 url="http://" + resMas[0] + "/jasperserver/flow.html?_flowIddepartment=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F"+"NAMEREPORT"+"&standAlone=true&decorate=no"
                                     + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML
-                                    +"&type="+"TYPEREPORT" + bdt + "&fpplan="+type2;
+                                    +"&type="+"TYPEREPORT" + bdt + "&fpplan="+type2+vidsluch;
                                 url=url.replace("TYPEREPORT", type);
                                 if (type=='1')
                                     url = url.replace("NAMEREPORT", "generalFinPlan")+ profilek;
