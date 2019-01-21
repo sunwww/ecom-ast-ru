@@ -123,7 +123,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 	private static boolean isRobsonClassExists(EntityManager aManager, DepartmentMedCase aMedCase) {
 		//Milmesher 28122018 классификация необязательная для след. диагнозов
 		Diagnosis diagnosis = aMedCase.getMainDiagnosis();
-		ArrayList<String> withoutChildBirth = new ArrayList<String>(){{add("O47.0");add("O47.1");add("O42.2");}};
+		ArrayList<String> withoutChildBirth = getDiagosisWithoutChldBirth();
 		if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
 		if (aMedCase.getDepartment()!=null && aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()){
 			String sql = "select count(id) from robsonclass where medcase_id= "+aMedCase.getId();
@@ -151,10 +151,19 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
     	return isPregnancyExists(aManager,aManager.find(DepartmentMedCase.class,aMedCase));
 	}
 
+	/** Список диагнозов, по которым возможно незаполнение родов*/
+	private static ArrayList<String> getDiagosisWithoutChldBirth() {
+		ArrayList<String> withoutChildBirth = new ArrayList<>();
+		withoutChildBirth.add("O47.0");
+		withoutChildBirth.add("O47.1");
+		withoutChildBirth.add("O42.2");
+		return withoutChildBirth;
+	}
+
     private static boolean isPregnancyExists(EntityManager aManager, DepartmentMedCase aMedCase) {
     	if (aMedCase.getDepartment().getIsMaternityWard()!=null && aMedCase.getDepartment().getIsMaternityWard()) {
 			Diagnosis diagnosis = aMedCase.getMainDiagnosis();
-			ArrayList<String> withoutChildBirth = new ArrayList<String>(){{add("O47.0");add("O47.1");add("O42.2");}}; //надоело усложнять :(
+			ArrayList<String> withoutChildBirth = getDiagosisWithoutChldBirth();
 			if (diagnosis == null || withoutChildBirth.contains(diagnosis.getIdc10().getCode())) return true;
 			String sql = "select count(cb.id) from medcase slo " +
 					" left join medcase slos on slos.parent_id=slo.parent_id and slos.dtype='DepartmentMedCase'" +

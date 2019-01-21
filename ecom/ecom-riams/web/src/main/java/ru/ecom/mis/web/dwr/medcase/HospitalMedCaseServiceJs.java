@@ -1802,18 +1802,18 @@ public class HospitalMedCaseServiceJs {
     }
     public String getDefaultBedFundBySlo(Long aParent, Long aDepartment, Long aServiceStream, String aDateFrom,HttpServletRequest aRequest) throws NamingException {
     	IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-    	StringBuilder sql = new StringBuilder() ;
+    	StringBuilder sql ;
     	StringBuilder res = new StringBuilder() ;
     	Collection<WebQueryResult> list = service.executeNativeSql("select vht.id,vht.code from MedCase hmc left join VocHospType vht on vht.id=hmc.hospType_id where hmc.id='"+aParent+"' and vht.code is not null",1) ;
     	String bedSubType="";
     	String hospType=null ;
-    	if (list.size()>0) {
+    	if (!list.isEmpty()) {
     		WebQueryResult wqr = list.iterator().next() ;
     		hospType=""+wqr.get2() ;
     	}
-    	if (hospType!=null && hospType.equals("DAYTIMEHOSP")) {
+    	if ("DAYTIMEHOSP".equals(hospType)) {
     		bedSubType=" and vbst.code='2' ";
-    	} else if (hospType==null||hospType.equals("ALLTIMEHOSP")) {
+    	} else if (hospType==null || hospType.equals("ALLTIMEHOSP")) {
     		bedSubType=" and vbst.code='1' ";
     	}
     	sql = new StringBuilder() ;

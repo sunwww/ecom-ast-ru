@@ -71,9 +71,7 @@
 
 <script type="text/javascript">
 
-
     ${name}FormField = function(theId, theAutocomplete, theInputField) {
-
 
         this.loadValue = function () {
             if(theAutocomplete) {
@@ -115,7 +113,6 @@
     }
     function show${name}Address() {
         if(!theIs${name}AddressDialogInitialized) {
-        
             the${name}Fields = new Array(6) ;
             the${name}Fields[0] = ${name}address_1Autocomplete ;
             the${name}Fields[1] = ${name}address_2Autocomplete ;
@@ -149,19 +146,11 @@
             $('${name}addressHouseBuilding').value = $('${houseBuilding}').value ;
             $('${name}addressFlatNumber').value = $('${flatNumber}').value ;
             if ('${zipcode}'!='') $('${name}addressZipcode').value = $('${zipcode}').value ;
-            //addressProvincialAreaPkAutocomplete.setVocId($('provincialAreaPk')) ;
-
-
             theIs${name}AddressDialogInitialized = true ;
         }
         the${name}AddressDialog.show() ;
         $('${name}address_6Name').focus() ;
         $('${name}address_6Name').select() ;
-//        var ar = createArray() ;
-//        for(var i=0; i<ar.length; i++) {
-//            ar[i].loadValue() ;
-//        }
-//        addressCountryPkAutocomplete.requestFocus() ;
     }
 
     function set${name}IdForLevel(aLevel, aAddressPk) {
@@ -177,7 +166,8 @@
     }
 
     function update${name}ProvincialArea() {
-        if(true) return ;
+        return;
+  /*      if(true) return ;
         AddressService.getFondRegionForAddress($('address').value, {
             callback: function(aRegionId) {
                 if(aRegionId!=null && aRegionId!="") {
@@ -187,7 +177,7 @@
                     $('provincialAreaPkName').disabled = false ;
                 }
             }
-        } ) ;
+        } ) ; */
     }
 
     function save${name}Address() {
@@ -209,8 +199,6 @@
         $('${houseBuilding}').value = $('${name}addressHouseBuilding').value ;
         $('${flatNumber}').value = $('${name}addressFlatNumber').value ;
         if ('${zipcode}'!='') $('${zipcode}').value = $('${name}addressZipcode').value ;
-//        $('provincialAreaPk').value = addressProvincialAreaPkAutocomplete.getVocId() ;
-
         AddressService.getAddressString(addressPk, $('${name}addressHouseNumber').value, $('${name}addressHouseBuilding').value, $('${name}addressFlatNumber').value
         , $('${name}addressZipcode').value
         , {
@@ -218,33 +206,15 @@
                 $('${name}addressPar').innerHTML = aString ;
             }
         } ) ;
-
-
-//        var dlg = $('addressDialog') ;
-//        dlg.style.visibility = 'hidden' ;
-//        dlg.style.display = 'none' ;
         the${name}AddressDialog.hide() ;
-
-
         $('${name}').value = addressPk ;
-
         //updateProvincialArea() ;
-
         $('buttonShow${name}Address').focus() ;
-
-        /*if(on${name}AddressSave) {
-            on${name}AddressSave() ;
-        }*/
-    }
-
-
+       }
 
     function init${name}Address() {
-    //alert('Начало');
-        var address = document.createElement("p") ;
         var inputLabel = "Ввести" ;
         var val = $('${addressField}').value ;
-//        alert("'"+val+"'")
         if(val!=null && val.length>0) {
             var finded = false ;
             for(var i=0; i<val.length; i++) {
@@ -254,36 +224,26 @@
             }
             inputLabel = "Изменить" ;
         }
-
         $('${addressField}').parentNode.innerHTML = "<span id='${name}addressPar'>"+
                                                  "Получение адреса..."
                 +"</span><input id='buttonShow${name}Address' type='button' value='"+inputLabel+"' onclick='show${name}Address()' />" ;
-                
 		var zipcode = '${zipcode}' ;
 		if (zipcode!='') zipcode=$(zipcode).value ;
+        alert($('${name}').value+"<>");
         AddressService.getAddressString($('${name}').value
                 , $('${houseNumber}').value, $('${houseBuilding}').value, $('${flatNumber}').value,zipcode, {
             callback: function(aString) {
                 $('${name}addressPar').innerHTML = aString ;
             }
         } ) ;
-
-
         eventutil.addEnterSupport('${name}addressFlatNumber', '${name}buttonAddressOk') ;
-
     }
-
     init${name}Address() ;
-    //window.onload =    updateProvincialArea ;
-	
-	//updateProvincialArea() ;
 
 </script>
 
     <msh:ifFormTypeIsView formName="${form}" guid="b8c4d74b-4db5-433e-982c-e3133e4993ea">
-      <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript">
       		$('buttonShow${name}Address').style.display = 'none';
-		//]]></script>
+		</script>
     </msh:ifFormTypeIsView>
-
-

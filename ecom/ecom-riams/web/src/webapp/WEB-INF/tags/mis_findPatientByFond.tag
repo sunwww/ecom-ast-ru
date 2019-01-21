@@ -181,37 +181,36 @@
 				$('houseBuilding').value=adr[2] ;
 				$('flatNumber').value=adr[3] ;
 				//$('rayon').value=adr[4] ;//
-				address=adr[0]+"#"+adr[4]+"#"+adr[5]+"#"+adr[6]+"#"+adr[8] ;
+				address=adr[0]+"#"+adr[4]+"#"+adr[5]+"#"+adr[6]+"#"+adr[8]+"#"+ (adr.length>9 ? adr[9] : "" );
 				
 				//alert(address);
 			}
 			if (passType.length>1 || address.length>6 || policyInfo.length>2) {
-			PatientService.getInfoVocForFond(
+			PatientService.getInfoVocForFond( // c 18.01.19 переделано на json
 					passType,address,policyInfo,{
 						callback: function(aResult) {
-							var res = aResult.split('#') ;
-							if (res[0]!="") {
-								$('passportType').value=res[0] ;
-								$('passportTypeName').value=res[1] ;
+						    var js = JSON.parse(aResult);
+							if (js.passportType) {
+								$('passportType').value=js.passportType ;
+								$('passportTypeName').value=js.passportName ;
 							}
-							if (res[3]&&res[3]!="") {
-								$('rayon').value=res[3] ;
-								$('rayonName').value=res[4] ;
+							if (js.rayonId) {
+								$('rayon').value=js.rayonId ;
+								$('rayonName').value=js.rayonName ;
 							}							
 							if (address!="") {
-								if (res[2]&&res[2]!="") {
-									$('address').value=res[2] ;
+								if (js.address) {
+									$('address').value=js.address ;
 									reloadAddress() ;
 								}
-								
 							}
-							if (res[5]&&res[5]!=null) {
-								$('policyOmcForm.company').value=res[5] ;
-								$('policyOmcForm.companyName').value=res[6] ;
+							if (js.companyId) {
+								$('policyOmcForm.company').value=js.companyId ;
+								$('policyOmcForm.companyName').value=js.companyName ;
 							}
-							if (res[7]&&res[7]!=null) {
-								$('policyOmcForm.type').value=res[7] ;
-								$('policyOmcForm.typeName').value=res[8] ;
+							if (js.policyId) {
+								$('policyOmcForm.type').value=js.policyId ;
+								$('policyOmcForm.typeName').value=js.policyName ;
 							}
 							$('sexName').focus() ;
 							$('sexName').select() ;
