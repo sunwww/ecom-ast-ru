@@ -51,9 +51,6 @@
                     <msh:autoComplete property="department" fieldColSpan="5" label="Отделение" horizontalFill="true" vocName="lpu"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="filterAdd2" fieldColSpan="4" horizontalFill="true" label="Вид мед. помощи" vocName="vocJasperVidSluchPolyclinic"/>
-                </msh:row>
-                <msh:row>
                     <td colspan="3">
                         <input type="button" onclick="report()" value="Отчёт" />
                     </td>
@@ -72,22 +69,27 @@
                         callback: function (res) {
                             var resMas = res.split("#");
                             if (res != "##") {
-                                var bdt=($('hospType').value!="")? "&bedtype=" + $('hospType').value:"";
-                                var profilek=($('filterAdd').value!="")? "&prname=" + $('filterAdd').value:"";
-                                var lpu=($('department').value!="")? "&lpu=" + $('department').value:"";
-                                var type=getValue('typeGroup');
-                                var type2=getText('typeGroup2');
-                                var vidsluch=($('filterAdd2').value!="")? "&vidsluch=" + $('filterAdd2').value + "&vidsluchName=" + $('filterAdd2Name').value:"";
-                                url="http://" + resMas[0] + "/jasperserver/flow.html?_flowIddepartment=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F"+"NAMEREPORT"+"&standAlone=true&decorate=no"
-                                    + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML
-                                    +"&type="+"TYPEREPORT" + bdt + "&fpplan="+type2+vidsluch;
-                                url=url.replace("TYPEREPORT", type);
-                                if (type=='1')
-                                    url = url.replace("NAMEREPORT", "generalFinPlan")+ profilek;
-                                else if (type=='2')
-                                    url = url.replace("NAMEREPORT", "generalFinPlan")+lpu;
-                                else if (type=='3')
-                                    url = url.replace("NAMEREPORT", "totalFinPlan").replace("&type=3","")+ lpu;
+                                var profilek = ($('filterAdd').value != "") ? "&prname=" + $('filterAdd').value : "";
+                                if (getValue('typeGroup2')==3) {
+                                    url="http://" + resMas[0] + "/jasperserver/flow.html?_flowIddepartment=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F"+"polyclinicFinPlan"+"&standAlone=true&decorate=no"
+                                        + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML + profilek;
+                                }
+                                else {
+                                    var bdt = ($('hospType').value != "") ? "&bedtype=" + $('hospType').value : "";
+                                    var lpu = ($('department').value != "") ? "&lpu=" + $('department').value : "";
+                                    var type = getValue('typeGroup');
+                                    var type2 = getText('typeGroup2');
+                                    url = "http://" + resMas[0] + "/jasperserver/flow.html?_flowIddepartment=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2F" + "NAMEREPORT" + "&standAlone=true&decorate=no"
+                                        + "&j_username=" + resMas[1] + "&j_password=" + resMas[2] + "&dstart=" + $('dateBegin').value + "&dfin=" + $('dateEnd').value + "&user=" + document.getElementById('current_username_li').innerHTML
+                                        + "&type=" + "TYPEREPORT" + bdt + "&fpplan=" + type2;
+                                    url = url.replace("TYPEREPORT", type);
+                                    if (type == '1')
+                                        url = url.replace("NAMEREPORT", "generalFinPlan") + profilek;
+                                    else if (type == '2')
+                                        url = url.replace("NAMEREPORT", "generalFinPlan") + lpu;
+                                    else if (type == '3')
+                                        url = url.replace("NAMEREPORT", "totalFinPlan").replace("&type=3", "") + lpu;
+                                }
                                 window.open(url);
                             }
                             else
@@ -121,30 +123,22 @@
             function showStac() {
                 $('hospTypeLabel').removeAttribute("hidden");
                 $('hospTypeName').removeAttribute("hidden");
-                $('filterAddLabel').removeAttribute("hidden");
-                $('filterAddName').removeAttribute("hidden");
                 $('departmentLabel').removeAttribute("hidden");
                 $('departmentName').removeAttribute("hidden");
                 $('gtd0').removeAttribute("hidden");
                 $('gtd1').removeAttribute("hidden");
                 $('gtd2').removeAttribute("hidden");
                 $('gtd3').removeAttribute("hidden");
-                $('filterAdd2Label').setAttribute("hidden",true);
-                $('filterAdd2Name').setAttribute("hidden",true);
             }
             function showPolyckinic() {
                 $('hospTypeLabel').setAttribute("hidden",true);
                 $('hospTypeName').setAttribute("hidden",true);
-                $('filterAddLabel').setAttribute("hidden",true);
-                $('filterAddName').setAttribute("hidden",true);
                 $('departmentLabel').setAttribute("hidden",true);
                 $('departmentName').setAttribute("hidden",true);
                 $('gtd0').setAttribute("hidden",true);
                 $('gtd1').setAttribute("hidden",true);
                 $('gtd2').setAttribute("hidden",true);
                 $('gtd3').setAttribute("hidden",true);
-                $('filterAdd2Label').removeAttribute("hidden");
-                $('filterAdd2Name').removeAttribute("hidden");
             }
             if (getValue('typeGroup2')==1 || getValue('typeGroup2')==2) showStac();
             else if (getValue('typeGroup2')==3) showPolyckinic();
