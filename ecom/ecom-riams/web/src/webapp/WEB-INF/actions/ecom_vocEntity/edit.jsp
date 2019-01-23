@@ -36,30 +36,19 @@
 	   <script type='text/javascript' src='./dwr/interface/Expert2Service.js'></script>
 
     	<script type='text/javascript'>
-    	
 Ext.onReady(function(){
-//    Expert2Service.getTest('${param.id}', {
 	VocEntityService.getVocEntityInfo('${param.id}', {
 		callback : function(aInfo) {
 		    if (aInfo==null) {
 		        console.log("${param.id} is null :-(");
 		        return;
             }
-			//alert(1);
 			onVocEntityInfo(aInfo) ;
-			//alert(2) ;
 		}
 	}) ;
 		
 }) ;
 
-/*
-[
-  {name: 'name', mapping: 'name'},
-            {name: 'id', mapping: 'id'},
-            {name: 'code', mapping: 'code'}
-        ]
-*/
 function createDataMapping(aInfo) {
 	var arr = new Array() ;
 	var id = new Object() ;
