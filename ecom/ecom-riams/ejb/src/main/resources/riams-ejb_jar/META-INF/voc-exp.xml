@@ -238,8 +238,18 @@
         <NativeVocService
                 from = ' VocE2MedHelpProfile  voc '
                 names="voc.code ||' '|| voc.name"
-                nameId=" voc.code "
-                order="voc.code"
+                nameId=" voc.id "
+                queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
+                queryAppend=""
+                order="voc.name"
+        />
+    </voc>
+    <voc id='vocJasperVidSluchPolyclinic' type='NativeVocService'>
+        <NativeVocService
+                from = ' JasperVidSluchPolyclinic  voc '
+                names=" voc.name"
+                nameId=" voc.id "
+                order="voc.id"
         />
     </voc>
     <voc id='vocE2ListEntryType' type='EntityVocService'>

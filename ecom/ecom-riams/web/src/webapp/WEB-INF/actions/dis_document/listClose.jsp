@@ -92,16 +92,21 @@
                 <input type="radio" name="orderByType" value="3">  все
             </td>
         </msh:row>
-      <msh:row>
-      	<msh:autoComplete property="disabilityReason" fieldColSpan="3" size="6" horizontalFill="true"
-      		label="Причина нетруд." vocName="vocDisabilityReason"
-      	/>
-      </msh:row>
-      <msh:row>
-      	<msh:autoComplete property="closeReason" fieldColSpan="3" horizontalFill="true"
-      		label="Причина закрытия" vocName="vocDisabilityDocumentCloseReason"
-      	/>
-      </msh:row>
+        <msh:row>
+            <msh:autoComplete property="disabilityReason" fieldColSpan="3" size="6" horizontalFill="true"
+                              label="Причина нетруд." vocName="vocDisabilityReason"
+            />
+        </msh:row>
+        <msh:row>
+            <msh:autoComplete property="disabilityReason2" fieldColSpan="3" size="6" horizontalFill="true"
+                              label="Доп. причина нетруд." vocName="vocDisabilityReason2"
+            />
+        </msh:row>
+        <msh:row>
+            <msh:autoComplete property="closeReason" fieldColSpan="3" horizontalFill="true"
+                              label="Причина закрытия" vocName="vocDisabilityDocumentCloseReason"
+            />
+        </msh:row>
       <msh:row>
       	<msh:autoComplete property="primarity" fieldColSpan="3" horizontalFill="true"
       		label="Первичность" vocName="vocDisabilityDocumentPrimarity"
@@ -177,7 +182,7 @@
 	   	left join electronicdisabilitydocumentnumber eln on eln.disabilitydocument_id = dd.id
 	   	left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
     	left join patient p on p.id=dc.patient_id
-     	where ${showbyType} ${status} ${statusNoActuality} ${dateGroup } between cast('${beginDate}' as date) and cast('${endDate}' as date) ${disReason} ${closeReason} ${primarity} ${anotherlpu} order by ${orderBystatus} "/>
+     	where ${showbyType} ${status} ${statusNoActuality} ${dateGroup } between cast('${beginDate}' as date) and cast('${endDate}' as date) ${disReason} ${disReason2} ${closeReason} ${primarity} ${anotherlpu} order by ${orderBystatus} "/>
     <msh:table printToExcelButton="Сохранить в excel" viewUrl="entityShortView-dis_document.do" name="journal_priem" action="entityParentView-dis_document.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата выдачи" property="2"/>

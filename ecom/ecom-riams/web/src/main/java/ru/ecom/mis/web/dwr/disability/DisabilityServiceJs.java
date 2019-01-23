@@ -640,4 +640,15 @@ public class DisabilityServiceJs {
 		service.executeUpdateNativeSql("update disabilitydocument set disabilitycase_id='"+newCaseId+"' where id='"+documentId+"'");
 		return "ЛН перенесён!";
 	}
+	//Milamesher 23012019 получитьсписок экспертов по умолчанию для ВК
+	public String getDefaultKer(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
+		Collection<WebQueryResult> list = service.executeNativeSql("select ex.id, case when ex.code is not null then ex.code||' '||ex.name else 'null '||ex.name end \n" +
+				"from vocExpertComposition ex left join softconfig sc  on ex.id=cast(sc.keyvalue as integer) where sc.key='defaultKER'");
+		if (!list.isEmpty()) {
+			WebQueryResult wqr = list.iterator().next();
+			return wqr.get1() + "#" + wqr.get2();
+		}
+		else return "";
+	}
 }
