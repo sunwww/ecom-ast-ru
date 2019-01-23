@@ -11,9 +11,7 @@ public class VocEntityServiceJs {
 
 	public VocEntityInfo getVocEntityInfo(String aClassname, HttpServletRequest aRequest) throws NamingException {
 		IVocEntityService service = Injection.find(aRequest).getService(IVocEntityService.class) ;
-		VocEntityInfo vocEntityInfo = service.getVocEntityInfo(aClassname);
-		System.out.println("vocInfo = "+vocEntityInfo);
-		return vocEntityInfo != null ? vocEntityInfo : new VocEntityInfo("faka","maza",1);
+		return service.getVocEntityInfo(aClassname);
 	}
 	
 	public Object setVocEntityValue(String aClassname, String aId, String aProperty, String aValue, HttpServletRequest aRequest) throws NamingException {
@@ -24,7 +22,6 @@ public class VocEntityServiceJs {
 	public void removeVocEntity(String aClassname, String aId, HttpServletRequest aRequest) throws NamingException {
 		IVocEntityService service = Injection.find(aRequest).getService(IVocEntityService.class) ;
 		service.removeVocEntity(aClassname, aId) ;
-		
 	}
 	
 	public boolean delete(String aClassname, HttpServletRequest aRequest) {
