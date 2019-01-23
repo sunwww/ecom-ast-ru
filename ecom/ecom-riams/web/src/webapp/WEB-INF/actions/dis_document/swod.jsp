@@ -48,6 +48,11 @@
       	/>
       </msh:row>
       <msh:row>
+        <msh:autoComplete property="disabilityReason2" fieldColSpan="3" size="6" horizontalFill="true"
+                          label="Доп. причина нетруд." vocName="vocDisabilityReason2"
+        />
+      </msh:row>
+      <msh:row>
       	<msh:autoComplete property="closeReason" fieldColSpan="3" horizontalFill="true"
       		label="Причина закрытия" vocName="vocDisabilityDocumentCloseReason"
       	/>
@@ -108,6 +113,7 @@
 
     StringBuilder addSql = new StringBuilder() ;
     addSql.append(ActionUtil.setParameterFilterSql("disabilityReason","vdr.id", request)) ;
+      addSql.append(ActionUtil.setParameterFilterSql("disabilityReason2","vdr2.id", request)) ;
     addSql.append(ActionUtil.setParameterFilterSql("closeReason","vddcr.id", request)) ;
     addSql.append(ActionUtil.setParameterFilterSql("sex","pat.sex_id", request)) ;
     addSql.append(ActionUtil.setParameterFilterSql("documentType","vddt.id", request)) ;
@@ -156,7 +162,8 @@ and vpd.code='1' and vdrt.code='3'
 
  from disabilitydocument ddM
 left join vocdisabilitydocumentclosereason vddcr on vddcr.id=ddM.closereason_id
- left join VocDisabilityReason vdr on vdr.id=ddM.disabilityReason_id 
+ left join VocDisabilityReason vdr on vdr.id=ddM.disabilityReason_id
+ left join VocDisabilityReason vdr2 on vdr2.id=ddM.disabilityReason2_id
 left join disabilitycase dc on ddM.disabilitycase_id=dc.id
 left join disabilitydocument dd on dd.disabilitycase_id=dc.id
 left join disabilityrecord dr on dr.disabilitydocument_id=dd.id
@@ -174,12 +181,12 @@ and ddM.workComboType_id is null and dd.workComboType_id is null
 and (dd.noactuality='0' or dd.noactuality is null) and (ddm.noactuality='0' or ddm.noactuality is null) 
 
 group by dc.id ,pat.lastname,pat.firstname,pat.middlename ,pat.birthday 
-,vs.name,adr.fullname,vddcr.name
+,vs.name,adr.fullname,vddcr.name,dd.hospitalizednumber
 order by pat.lastname,pat.firstname,pat.middlename
     	
     	"
     	/>	
-    		<msh:table viewUrl="entityView-dis_case.do?short=Short" name="inf_svn" action="entityParentView-dis_case.do" idField="1">
+    		<msh:table printToExcelButton="Сохранить в excel" viewUrl="entityView-dis_case.do?short=Short" name="inf_svn" action="entityParentView-dis_case.do" idField="1">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="ФИО" property="2"/>
       <msh:tableColumn columnName="Дата рождения" property="3"/>
@@ -227,13 +234,14 @@ left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+ left join VocDisabilityReason vdr2 on vdr2.id=dd.disabilityReason2_id
 left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
 and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate "/>
     <msh:sectionTitle>Сводная таблица по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="journal_swod" action="dis_documentClose.do" idField="1">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_swod" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />
@@ -295,6 +303,7 @@ left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
 left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+ left join VocDisabilityReason vdr2 on vdr2.id=dd.disabilityReason2_id
 left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
     
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY') 
@@ -302,7 +311,7 @@ and dd.anotherlpu_id is null ${addSql}
 "/>
     <msh:sectionTitle>ИТОГ по документам нетрудоспособности (общая)</msh:sectionTitle>
     <msh:sectionContent>
-    <msh:table name="journal_itog" action="dis_documentClose.do" idField="1">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_itog" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th colspan=4>Всего</th>
@@ -363,13 +372,14 @@ left join DisabilityDocument dup on dup.duplicate_id=dd.id
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
-left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+ left join VocDisabilityReason vdr2 on vdr2.id=dd.disabilityReason2_id
 left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
 and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate"
     />
-    <msh:table name="journal_issueDuplicate" action="dis_documentClose.do" idField="1">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_issueDuplicate" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />
@@ -421,13 +431,14 @@ left join DisabilityDocument dup on dup.duplicate_id=dd.id
 left join VocDisabilityStatus vds on vds.id=dup.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
-left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+ left join VocDisabilityReason vdr2 on vdr2.id=dd.disabilityReason2_id
 left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY') 
 and dd.anotherlpu_id is null ${addSql}
 "
     />
-    <msh:table name="journal_issueDuplicate_itog" action="dis_documentClose.do" idField="1">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_issueDuplicate_itog" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />
@@ -476,13 +487,14 @@ left join DisabilityDocument dup on dup.id=dd.duplicate_id
 left join VocDisabilityStatus vds on vds.id=dd.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
-left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+ left join VocDisabilityReason vdr2 on vdr2.id=dd.disabilityReason2_id
 left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
 and dd.anotherlpu_id is null ${addSql}
 group by dd.issueDate order by dd.issueDate"
     />
-    <msh:table name="journal_duplicate" action="dis_documentClose.do" idField="1">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_duplicate" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />
@@ -533,13 +545,14 @@ left join DisabilityDocument dup on dup.id=dd.duplicate_id
 left join VocDisabilityStatus vds on vds.id=dd.status_id
 left join VocDisabilityDocumentPrimarity vddp on vddp.id=dd.primarity_id
 left join VocDisabilityDocumentCloseReason vddcr on vddcr.id=dd.closeReason_id
-left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id 
+left join VocDisabilityReason vdr on vdr.id=dd.disabilityReason_id
+ left join VocDisabilityReason vdr2 on vdr2.id=dd.disabilityReason2_id
 left join vocdisabilitydocumenttype vddt on vddt.id=dd.documentType_id
 where dd.issueDate between to_date('${beginDate}','DD.MM.YYYY') and to_date('${endDate}','DD.MM.YYYY')
 and dd.anotherlpu_id is null ${addSql}
 " 
     />
-    <msh:table name="journal_duplicate_itog" action="dis_documentClose.do" idField="1">
+    <msh:table printToExcelButton="Сохранить в excel" name="journal_duplicate_itog" action="dis_documentClose.do" idField="1">
             <msh:tableNotEmpty guid="a6284e48-9209-412d-8436-c1e8e37eb8aa">
               <tr>
                 <th />

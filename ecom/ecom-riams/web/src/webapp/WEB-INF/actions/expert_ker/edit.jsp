@@ -186,9 +186,24 @@
 		    <msh:sideMenu guid="sideMenu-123">
 		      <msh:sideLink guid="sideLinkDelete" key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDelete-expert_ker" name="Удалить" roles="/Policy/Mis/MedCase/ClinicExpertCard/Delete" />
 		    </msh:sideMenu>
+            <tiles:put name="javascript" type="string">
+                <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
+                <script language="javascript" type="text/javascript">
+                    if ($('expComposition').value=='') {
+                        DisabilityService.getDefaultKer({
+                            callback : function(aResult) {
+                                if (aResult!='') {
+                                    var res=aResult.split('#');
+                                    if (res[0]!='' && res[1]!='') {
+                                        $('expComposition').value=res[0];$('expCompositionName').value=res[1];
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </script>
+            </tiles:put>
     	</msh:ifFormTypeAreViewOrEdit>
     </msh:ifFormTypeIsNotView>
-    
   </tiles:put>
 </tiles:insert>
-

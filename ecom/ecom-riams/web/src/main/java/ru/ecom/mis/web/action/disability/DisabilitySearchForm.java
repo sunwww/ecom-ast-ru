@@ -24,6 +24,10 @@ public class DisabilitySearchForm extends BaseValidatorForm {
 	public Long getDisabilityReason() {return theDisabilityReason;}
 	public void setDisabilityReason(Long aDisabilityReason) {theDisabilityReason = aDisabilityReason;}
 
+	/** Доп. причина нетрудоспособности */
+	public Long getDisabilityReason2() {return theDisabilityReason2;}
+	public void setDisabilityReason2(Long aDisabilityReason2) {theDisabilityReason2 = aDisabilityReason2;}
+
 	/** Sn */
 	public Long getSn() {return theSn;}
 	public void setSn(Long aSn) {theSn = aSn;}
@@ -38,6 +42,8 @@ public class DisabilitySearchForm extends BaseValidatorForm {
 	private Long theSn;
 	/** Причина нетрудоспособности */
 	private Long theDisabilityReason;
+	/** Доп. причина нетрудоспособности */
+	private Long theDisabilityReason2;
 	/** Причина закрытия */
 	private Long theCloseReason;
 	/** EndDate */

@@ -2676,6 +2676,17 @@ left join medcase smoP on smoP.owner_id=w.id "
 			join=""
 			/>
     </voc>
+	<!-- Доп. причина нетрудоспособности-->
+	<voc id='vocDisabilityReason2' type='NativeVocService'>
+		<NativeVocService
+				from="VocDisabilityReason2"
+				nameId="id"
+				names="code||' '||name"
+				queried="code like :querId or UPPER(name) like UPPER(:query)"
+				queryAppend=""
+				join=""
+		/>
+	</voc>
     <!-- Режим нетрудоспособности-->
 	<voc id='vocDisabilityRegime' type='EntityVocService'>
         <EntityVocService
