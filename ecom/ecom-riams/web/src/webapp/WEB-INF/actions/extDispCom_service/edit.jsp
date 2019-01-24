@@ -7,8 +7,31 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
-<%
+
+
+	<ecom:webQuery maxResult="1" nameFldSql ="getCardWorkfunctionSql" name="getCardWorkfunction" nativeSql="select vwf.code, wf.id
+	, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name
+	,to_char(edc.finishDate,'dd.MM.yyyy') as f4_finishDate, edc.idcMain_id as dsId, mkb.code||' '||mkb.name as dsName
+	,to_char(edc.startDate,'dd.MM.yyyy') as f7_startDate
+	,edc.patient_id as f8_patientId
+	from extdispcard edc
+	left join workfunction wf on wf.id=edc.workfunction_id
+	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
+	left join worker w on w.id=wf.worker_id
+	left join mislpu ml on ml.id=w.lpu_id
+	left join patient wp on wp.id=w.person_id
+	left join vocidc10 mkb on mkb.id=edc.idcMain_id
+	where edc.id='${param.id}'
+	" />
+
+	<%
 boolean isCache = ActionUtil.isCacheCurrentLpu( request);
+
+		List<WebQueryResult> cardWorkfunction = (List<WebQueryResult>) request.getAttribute("getCardWorkfunction");
+		WebQueryResult cardInfo = cardWorkfunction.get(0);
+		request.setAttribute("dispStartDate",cardInfo.get7().toString());
+		request.setAttribute("dispFinishDate",cardInfo.get4().toString());
+		request.setAttribute("patientId",cardInfo.get8().toString());
 
 %>
 
@@ -164,21 +187,9 @@ order by veds.id,veds.name
 
 	"/>
 <%}%>
-	
-	<ecom:webQuery maxResult="1" nameFldSql ="getCardWorkfunctionSql" name="getCardWorkfunction" nativeSql="select vwf.code, wf.id, vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename || ' '||ml.name
-	,to_char(edc.finishDate,'dd.MM.yyyy') as finishDate, edc.idcMain_id as dsId, mkb.code||' '||mkb.name as dsName
-	from extdispcard edc
-	left join workfunction wf on wf.id=edc.workfunction_id 
-	left join vocworkfunction vwf on vwf.id=wf.workfunction_id
-	left join worker w on w.id=wf.worker_id
-	left join mislpu ml on ml.id=w.lpu_id
-	left join patient wp on wp.id=w.person_id
-	left join vocidc10 mkb on mkb.id=edc.idcMain_id
-	where edc.id='${param.id}'
-	" /> 
+
 	<%List listExam = (List)request.getAttribute("getServiceExam") ;
 	List listVisit = (List)request.getAttribute("getServiceVisit") ;
-	List cardWorkfunction = (List) request.getAttribute("getCardWorkfunction");
 	if (listExam!=null && !listExam.isEmpty()) {
 	} else {
 		%>
@@ -297,7 +308,6 @@ order by veds.id,veds.name"
 		
 		
 		if (sizeVisit>0) {			
-			WebQueryResult cardWQR = (WebQueryResult) cardWorkfunction.get(0);
 	%>
 		<tr><td><h2>Посещения</h2></td></tr>
 	<%
@@ -326,8 +336,8 @@ order by veds.id,veds.name"
 		out.print("<b>"+wqr.get3()+"</b>") ;out.print("</td>") ;
 		out.print("<td>") ;out.println(wqr.get4()) ;out.print("<input type='checkbox' hidden='true' id = 'visitDefectCheckBox"+i+"'><span style='color: red' id='visitDefect"+i+"'></span></td>") ;
 		out.print("<td>") ;out.println("<input type='text' size='10' name='visitServiceDate"+i+"' id='visitServiceDate"+i+"' value='");
-		 if (wqr.get9()!=null && wqr.get9().equals(cardWQR.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
-			out.print(cardWQR.get4()!=null?cardWQR.get4():"");	
+		 if (wqr.get9()!=null && wqr.get9().equals(cardInfo.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
+			out.print(cardInfo.get4()!=null?cardInfo.get4():"");
 		} else { 
 			out.print(wqr.get6()!=null?wqr.get6():"");
 		}
@@ -335,10 +345,10 @@ order by veds.id,veds.name"
 		//out.print("<td>") ;out.print("</td>") ;
 		//out.print("<td>") ;out.print("</td>") ;
 		/* Добавляем рабочую функцию врача */
- 		if (wqr.get9()!=null && wqr.get9().equals(cardWQR.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
+ 		if (wqr.get9()!=null && wqr.get9().equals(cardInfo.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
 			out.print("<td title='Врач' class='label' colspan='1' size='10'><label id='lpuLabel' for='workFunctionName'>Врач:</label></td>"+
-					"<td colspan='2' class='workFunction'><div><input size='1' name='workFunction"+i+"' value='"+(cardWQR.get2()!=null?cardWQR.get2():"")+"' "+
-			"id='workFunction"+i+"' type='hidden'><input autocomplete='off' title='workFunction' name='workFunction"+i+"Name' value='"+cardWQR.get3()+"' id='workFunction"+i+"Name'"+
+					"<td colspan='2' class='workFunction'><div><input size='1' name='workFunction"+i+"' value='"+(cardInfo.get2()!=null?cardInfo.get2():"")+"' "+
+			"id='workFunction"+i+"' type='hidden'><input autocomplete='off' title='workFunction' name='workFunction"+i+"Name' value='"+cardInfo.get3()+"' id='workFunction"+i+"Name'"+
 			" size='40' class='autocomplete horizontalFill' type='text'><input size='1' name='workFunctionCode"+i+"' value='"+wqr.get9()+"' "+
 			"id='workFunctionCode"+i+"' type='hidden'><div style='visibility: hidden; display: none;'"+
 			" id='workFunction"+i+"Div'></div></div></td>");
@@ -353,10 +363,10 @@ order by veds.id,veds.name"
 		/* ---Добавляем рабочую функцию врача */
 		}
 		/* Диагноз  */
- 		if (wqr.get9()!=null && wqr.get9().equals(cardWQR.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
+ 		if (wqr.get9()!=null && wqr.get9().equals(cardInfo.get1()) && (wqr.get1()==null || wqr.get1().equals(""))) {
 			out.print("<td title='Диагноз' class='label' colspan='1' size='10'><label id='IdcLabel' for='IdcName'>Диагноз:</label></td>"+
-					"<td colspan='1' class='Idc10'><div><input size='1' name='Idc10"+i+"' value='"+(cardWQR.get5()!=null?cardWQR.get5():"")+"' "+
-			"id='Idc10"+i+"' type='hidden'><input autocomplete='off' title='Idc10' name='Idc10"+i+"Name' value='"+cardWQR.get6()+"' id='Idc10"+i+"Name'"+
+					"<td colspan='1' class='Idc10'><div><input size='1' name='Idc10"+i+"' value='"+(cardInfo.get5()!=null?cardInfo.get5():"")+"' "+
+			"id='Idc10"+i+"' type='hidden'><input autocomplete='off' title='Idc10' name='Idc10"+i+"Name' value='"+cardInfo.get6()+"' id='Idc10"+i+"Name'"+
 			" size='10' class='autocomplete horizontalFill' type='text'><div style='visibility: hidden; display: none;'"+
 			" id='Idc10"+i+"Div'></div></div></td>"); 
 		} else {
@@ -503,11 +513,11 @@ order by veds.id,veds.name"
 		function checkService (type, i) {
 			var date = $(type+'ServiceDate'+i).value;
 			var doctor = $('workFunction')?$('workFunction'+i).value:null;
-		if (date!=null&&date!='' &&date.length==10 ) {
+		if (date!=null && date!='' && date.length==10 ) {
 			if (doctor==null ||doctor=='') {doctor=0;}
-			ExtDispService.checkDispService(date, $('card').value,0,doctor,{
+			ExtDispService.checkDispService(date, $('card').value,+'${patientId}',doctor,'${dispStartDate}','${dispFinishDate}',{
 				callback: function(aResult) {
-				if (aResult!=null&&aResult!=''){
+				if (aResult!=null && aResult!=''){
 					if (aResult.startsWith("1")){
 						$(type+'Defect'+i).style.color='green';
 						$(type+'DefectCheckBox'+i).checked=false;
