@@ -331,7 +331,7 @@ public void createAnnulMessage (String aAnnulJournalRecordId, HttpServletRequest
 		
 		Long patientId = getPatientIdByPrescriptionList(aPrescriptListId,aRequest);
 		//Если время занято - не записываем на него
-		if (!wqs.executeNativeSql("select wct.id from workcalendartime wct left join medcase mc on mc.id =wct.medcase_id " +
+		if (wqs.executeNativeSql("select wct.id from workcalendartime wct left join medcase mc on mc.id =wct.medcase_id " +
 				" where wct.id = "+aTimePlanId+" and (wct.medcase_id is null or mc.patient_id ="+patientId+" ) ").isEmpty()) {
 			return null;
 		}
