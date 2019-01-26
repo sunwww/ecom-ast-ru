@@ -11,12 +11,11 @@ import java.sql.Timestamp;
 
 /**
  * Подпись нетрудоспособности
- * @author rkurbanov
  */
 
 @Comment("Подпись нетрудостпособности")
 @Entity
-@Table(schema="SQLUser")
+@Table(schema = "SQLUser")
 public class DisabilitySign extends BaseEntity {
 
     private DisabilityDocument disabilityDocumentId;
@@ -27,10 +26,11 @@ public class DisabilitySign extends BaseEntity {
     private String digestValue;
     private String signatureValue;
     private String certificate;
-    private Boolean isExport=false;
-    private Boolean isNoactual=false;
+    private Boolean isExport = false;
+    private Boolean isNoactual = false;
     private Timestamp dateCreate;
     private String сreateUsername;
+    private String signatureType;
 
     public DisabilitySign() {
         this.dateCreate = new Timestamp(System.currentTimeMillis());
@@ -41,6 +41,7 @@ public class DisabilitySign extends BaseEntity {
     public DisabilityDocument getDisabilityDocumentId() {
         return disabilityDocumentId;
     }
+
     public void setDisabilityDocumentId(DisabilityDocument disabilityDocumentId) {
         this.disabilityDocumentId = disabilityDocumentId;
     }
@@ -49,6 +50,7 @@ public class DisabilitySign extends BaseEntity {
     public Long getExternalId() {
         return externalId;
     }
+
     public void setExternalId(Long externalId) {
         this.externalId = externalId;
     }
@@ -57,6 +59,7 @@ public class DisabilitySign extends BaseEntity {
     public String getCode() {
         return code;
     }
+
     public void setCode(String code) {
         this.code = code;
     }
@@ -65,6 +68,7 @@ public class DisabilitySign extends BaseEntity {
     public String getCounter() {
         return counter;
     }
+
     public void setCounter(String counter) {
         this.counter = counter;
     }
@@ -73,6 +77,7 @@ public class DisabilitySign extends BaseEntity {
     public String getElnNumber() {
         return elnNumber;
     }
+
     public void setElnNumber(String elnNumber) {
         this.elnNumber = elnNumber;
     }
@@ -81,6 +86,7 @@ public class DisabilitySign extends BaseEntity {
     public String getDigestValue() {
         return digestValue;
     }
+
     public void setDigestValue(String digestValue) {
         this.digestValue = digestValue;
     }
@@ -89,6 +95,7 @@ public class DisabilitySign extends BaseEntity {
     public String getSignatureValue() {
         return signatureValue;
     }
+
     public void setSignatureValue(String signatureValue) {
         this.signatureValue = signatureValue;
     }
@@ -97,6 +104,7 @@ public class DisabilitySign extends BaseEntity {
     public String getCertificate() {
         return certificate;
     }
+
     public void setCertificate(String certificate) {
         this.certificate = certificate;
     }
@@ -105,6 +113,7 @@ public class DisabilitySign extends BaseEntity {
     public Boolean getExport() {
         return isExport;
     }
+
     public void setExport(Boolean export) {
         isExport = export;
     }
@@ -113,6 +122,7 @@ public class DisabilitySign extends BaseEntity {
     public Boolean getNoactual() {
         return isNoactual;
     }
+
     public void setNoactual(Boolean noactual) {
         isNoactual = noactual;
     }
@@ -121,6 +131,7 @@ public class DisabilitySign extends BaseEntity {
     public Timestamp getDateCreate() {
         return dateCreate;
     }
+
     public void setDateCreate(Timestamp dateCreate) {
         this.dateCreate = dateCreate;
     }
@@ -129,7 +140,17 @@ public class DisabilitySign extends BaseEntity {
     public String getСreateUsername() {
         return сreateUsername;
     }
+
     public void setСreateUsername(String сreateUsername) {
         this.сreateUsername = сreateUsername;
+    }
+
+    @Comment("Тип ГОСТа ключа шифрования")
+    public String getSignatureType() {
+        return signatureType;
+    }
+
+    public void setSignatureType(String signatureType) {
+        this.signatureType = signatureType;
     }
 }

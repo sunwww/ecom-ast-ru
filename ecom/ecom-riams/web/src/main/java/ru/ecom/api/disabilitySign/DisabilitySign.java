@@ -23,36 +23,28 @@ import java.util.Collection;
 import static ru.ecom.api.util.ApiUtil.cretePostRequest;
 import static ru.ecom.api.util.ApiUtil.login;
 
-/** Created by rkurbanov on 04.05.2018. */
 
 @Path("/disabilitySign")
 public class DisabilitySign {
 
     private static String usename;
-    //TODO логин экспортировавшего пользователя
+
     @GET
     @Path("exportDisabilityDocument")
     @Produces("application/json")
     public String exportDisabilityDocument(@Context HttpServletRequest aRequest,
-                                           @WebParam(name="token") String aToken,
+                                           @WebParam(name = "token") String aToken,
                                            @QueryParam("disDoc") String disDoc)
             throws SQLException, NamingException, JSONException {
 
-        ApiUtil.init(aRequest,aToken);
+        ApiUtil.init(aRequest, aToken);
         DisabilityServiceJs serviceJs = new DisabilityServiceJs();
-        return serviceJs.exportDisabilityDoc(disDoc,aRequest);
+        return serviceJs.exportDisabilityDoc(disDoc, aRequest);
     }
 
-
-    /**
-     * Принимает JSON от удаленного сервиса
-     * @param aRequest
-     * @param json
-     */
     @POST
     @Path("getJson")
-    public void getJson(@Context HttpServletRequest aRequest,
-                        String json) {
+    public void getJson(@Context HttpServletRequest aRequest, String json) {
 
         try {
             login("66405d38-a173-4cb7-a1b6-3ada51c16ac5", aRequest);
@@ -70,6 +62,7 @@ public class DisabilitySign {
             disabilitySign.setDigestValue(get(jparse, "DigestValue"));
             disabilitySign.setSignatureValue(get(jparse, "SignatureValue"));
             disabilitySign.setElnNumber(get(jparse, "ELN"));
+            disabilitySign.setSignatureType(get(jparse, "SignatureType"));
             disabilitySign.setСreateUsername(usename);
 
             if (get(jparse, "AnotherId") != null && !get(jparse, "AnotherId").equals("")) {
@@ -82,34 +75,23 @@ public class DisabilitySign {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Отправляет JSON на сервис
-     * @param aRequest
-     * @param aToken
-     * @param disRecId
-     * @param docType
-     * @param response
-     * @return
-     * @throws NamingException
-     * @throws SQLException
-     * @throws JSONException
-     */
     @GET
     @Path("/sendDisabilityRecordJson")
     @Produces("text/html")
-    public String getTest(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken,
-                          @QueryParam("disRecId") String disRecId,
+    public String getTest(@Context HttpServletRequest request,
+                          @WebParam(name = "token") String token,
+                          @QueryParam("disRecId") String disabilityRecordId,
                           @QueryParam("docType") String docType,
                           @QueryParam("username") String username,
                           @Context HttpServletResponse response) throws NamingException, SQLException, JSONException {
 
-        ApiUtil.init(aRequest,aToken);
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        ApiUtil.init(request, token);
+        IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
 
         String sql = "select\n" +
                 "number as ddnum" +
@@ -123,7 +105,7 @@ public class DisabilitySign {
                 ",case when disrec.vkrole is null then vwf2.name else disrec.vkrole end as TREAT_CHAIRMAN_ROLE\n" +
                 ",case when disrec.vkname is null then vkname.lastname ||' '|| vkname.firstname ||' '|| vkname.middlename else disrec.vkname end as TREAT_CHAIRMAN\n" +
                 ",case when disrec.isexport is null or disrec.isexport = false then false else true end as isexport\n" +
-                ",'"+docType+"' as docType\n" +
+                ",'" + docType + "' as docType\n" +
                 "from disabilitydocument dd\n" +
                 "left join disabilitycase dc on dc.id=dd.disabilitycase_id \n" +
                 "left join patient p on p.id=dc.patient_id left join disabilityrecord disrec on disrec.disabilitydocument_id = dd.id\n" +
@@ -135,13 +117,12 @@ public class DisabilitySign {
                 "left join worker w2 on w2.id = wf2.worker_id\n" +
                 "left join patient vkname on vkname.id = w2.person_id\n" +
                 "left join VocWorkFunction vwf2 on vwf2.id = wf2.workFunction_id\n" +
-                "where dd.id = (select disabilitydocument_id  from disabilityrecord  where id  = "+disRecId+")\n" +
+                "where dd.id = (select disabilitydocument_id  from disabilityrecord  where id  = " + disabilityRecordId + ")\n" +
                 "order by treat_dt1 asc \n";
 
-
-        if(docType.equals("close")){
-            sql="select \n" +
-                    "'"+docType+"' as docType \n" +
+        if (docType.equals("close")) {
+            sql = "select \n" +
+                    "'" + docType + "' as docType \n" +
                     ",dd.id as DDID \n" +
                     ",dd.number as ddnum \n" +
                     ",'2' as num \n" +
@@ -155,35 +136,35 @@ public class DisabilitySign {
                     "left join disabilitydocument dd3 on dd3.prevdocument_id=dd.id\n" +
                     "left join disabilityrecord dr on dr.disabilitydocument_id = dd.id\n" +
                     "where\n" +
-                    "dd.id ="+disRecId+" \n" +
+                    "dd.id =" + disabilityRecordId + " \n" +
                     "and dr.dateto = (select max(dateto) \n" +
                     "from disabilityrecord  \n" +
-                    "where disabilitydocument_id = "+disRecId+")";
+                    "where disabilitydocument_id = " + disabilityRecordId + ")";
         }
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers","origin, content-type, accept, authorization");
+        response.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
         response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS, HEAD");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
 
-        String json = service.executeSqlGetJson(sql,10,"data").toString();
+        String json = service.executeSqlGetJson(sql, 10, "data").toString();
         usename = username;
-        return cretePostRequest(getEndpoint(aRequest),"api/sign/getJSON",json,"text/html");
+        return cretePostRequest(getEndpoint(request), "api/sign/getJSON", json, "text/html");
     }
 
     private String getEndpoint(@Context HttpServletRequest aRequest) throws NamingException {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list= service.executeNativeSql("select keyvalue from softconfig  where key = 'FSS_PROXY_SERVICE'");
-        String endpoint="";
-        for (WebQueryResult wqr:list) {
-            endpoint= wqr.get1().toString();
+        Collection<WebQueryResult> list = service.executeNativeSql("select keyvalue from softconfig  where key = 'FSS_PROXY_SERVICE'");
+        String endpoint = "";
+        for (WebQueryResult wqr : list) {
+            endpoint = wqr.get1().toString();
         }
         return endpoint;
     }
 
-    private String get(JsonObject obj, String name){
-        if(obj.has(name)){
-            if(obj!=null && obj.get(name)!=null && !obj.get(name).getAsString().equals("")){
+    private String get(JsonObject obj, String name) {
+        if (obj.has(name)) {
+            if (obj != null && obj.get(name) != null && !obj.get(name).getAsString().equals("")) {
                 return obj.get(name).getAsString();
             }
         }

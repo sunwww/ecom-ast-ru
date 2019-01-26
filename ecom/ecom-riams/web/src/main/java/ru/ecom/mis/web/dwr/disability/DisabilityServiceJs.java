@@ -260,6 +260,8 @@ public class DisabilityServiceJs {
                 ",dsvk.certificate as certvk\n" +
                 ",dsvk.digestvalue as digvk\n" +
                 ",dsvk.counter as countervk\n" +
+                ",dsvk.signatureType as typesignvk\n" +
+                ",dsdoc.signatureType as counterdsdoc\n" +
                 "from disabilitydocument dd\n" +
                 "left join disabilitycase dc on dc.id=dd.disabilitycase_id \n" +
                 "left join patient p on p.id=dc.patient_id left join disabilityrecord disrec on disrec.disabilitydocument_id = dd.id\n" +
@@ -281,12 +283,13 @@ public class DisabilityServiceJs {
                 "digestvalue as digclose,\n" +
                 "counter as counterclose,\n" +
                 "signaturevalue as signclose,\n" +
-                "(dr.dateto+1) as returndt\n" +
+                "(dr.dateto+1) as returndt,\n" +
+                "signatureType as counterdsclose\n" +
                 "from disabilitysign ds \n" +
                 "left join disabilityrecord dr on dr.disabilitydocument_id = ds.disabilitydocumentid_id\n" +
-                "where \n" +
-                "ds.id = (select max(id) from  disabilitysign where disabilitydocumentid_id =" + aDocumentId + " and noactual=false and code='close')\n" +
-                "and dr.dateto =  (select max(dateto) from disabilityrecord  where disabilitydocument_id = " + aDocumentId + ")";
+                "where ds.id = " +
+                "(select max(id) from  disabilitysign where disabilitydocumentid_id =" + aDocumentId + " and noactual=false and code='close')\n" +
+                " and dr.dateto = (select max(dateto) from disabilityrecord  where disabilitydocument_id = " + aDocumentId + ")";
 
         JSONObject body = new JSONObject(service.executeSqlGetJsonObject(sql1));
         JSONArray arr = new JSONArray(service.executeSqlGetJson(sql2, 10));
