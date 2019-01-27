@@ -170,7 +170,7 @@
 	    ,dd.hospitalizedNumber as hn
 ,case when dc.durationcase is not null then dc.durationcase else
 (select max(dr2.dateTo) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)
-- (select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id)
+- (select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id) +1
  end as dur
  ,CAST(EXTRACT (YEAR from (p.birthday)) as int) as y
      	from disabilitydocument as dd 

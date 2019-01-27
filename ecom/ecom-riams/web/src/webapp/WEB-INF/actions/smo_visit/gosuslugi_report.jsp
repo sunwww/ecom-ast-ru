@@ -115,7 +115,7 @@
                     if (typeRemote.equals("2")) sqlAddNew.append(" and wct.createprerecord='MedVox'"); //su id is null
                     if (typeRemote.equals("3")) {
                         sqlAddNew.append(" and (wct.createprerecord like 'ApiClient%' or wct.createprerecord ='FromSite')");
-                        if (!typeGroup.equals("1"))  sqlAddNew.append("and su.id is not null");
+                        //if (!typeGroup.equals("1"))  sqlAddNew.append("and su.id is not null");
                     }
                 }
                 else if (!typeGroup.equals("1")) sqlAddNew.append(" and su.id is not null");
