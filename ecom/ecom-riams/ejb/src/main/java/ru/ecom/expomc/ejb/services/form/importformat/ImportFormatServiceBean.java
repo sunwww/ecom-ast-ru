@@ -114,6 +114,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
         theVerifyAfterSave =  aVerifyAfterSave;
     }
 
+    @Deprecated
     private void importFileFromText(
             MyMonitor monitor,
             String aFilename,String dbfName,
@@ -344,7 +345,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                             isCorrect = false;
                             log("Ошибка верификации:\n\tСущность не наследована от BaseEntity");
                         } else {
-                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, new Long(savedId));
+                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, savedId);
                             if (savedData == null) {
                                 log("Ошибка верификации:\n\tСущность несохранена");
                             } else {
@@ -669,7 +670,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                             isCorrect = false;
                             log("Ошибка верификации:\n\tСущность не наследована от BaseEntity");
                         } else {
-                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, new Long(savedId));
+                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, savedId);
                             if (savedData == null) {
                                 log("Ошибка верификации:\n\tСущность несохранена");
                             } else {
@@ -962,7 +963,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                             isCorrect = false;
                             log("Ошибка верификации:\n\tСущность не наследована от BaseEntity");
                         } else {
-                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, new Long(savedId));
+                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, savedId);
                             if (savedData == null) {
                                 log("Ошибка верификации:\n\tСущность несохранена");
                             } else {
@@ -1033,7 +1034,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
             if (magic[0] == '<' ) return "xml";
             return "";
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("error",e);
             return "error";
         }
     }
@@ -1043,7 +1044,7 @@ LOG.info("File= "+file.getAbsolutePath());
         try (InputStream istream = new FileInputStream(file)){
             return checkPhysicalFormat(istream);
         } catch (IOException  e) {
-           e.printStackTrace();
+           LOG.error("File check error",e);
         }
         return "error";
     }
@@ -1103,48 +1104,50 @@ LOG.info("File= "+file.getAbsolutePath());
 
         } else if (phisicalFormat.equals("zip")) {
             if (file==null) throw new Exception("Обнаружен вложенный архив");
-            ZipFile zipFile = new ZipFile(file);
-            Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+            try (ZipFile zipFile = new ZipFile(file)) {
+                Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
 
-            monitor.setText("Анализ архива");
-            long totalZipUncompressedSize = 0;
-            while (entries.hasMoreElements()) {
-                ZipEntry zipEntry = entries.nextElement();
-                if (zipEntry.isDirectory()) continue;
-                totalZipUncompressedSize += zipEntry.getSize();
-            }
-            monitor.setMaxValue(totalZipUncompressedSize);
-            
-
-            LOG.info("ZIP FILE:"+file);
-            log("Архив ZIP:"+file.getName());
-            entries = (Enumeration<ZipEntry>) zipFile.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry zipEntry = entries.nextElement();
-                if (zipEntry.isDirectory()) continue;
-
-                InputStream inputStream = zipFile.getInputStream(zipEntry);
-                LOG.info(":"+zipEntry.getName()+":"+zipEntry.getSize()+":"+zipEntry.getCompressedSize());
-                log("Элемент архива "+":"+zipEntry.getName()+":"+zipEntry.getSize()+":"+zipEntry.getCompressedSize());
-                String entryFormat = checkPhysicalFormat(inputStream);
-                inputStream.close();
-                if (entryFormat.equals("")) {
-                    monitor.advice(zipEntry.getSize());
-                    continue;
+                monitor.setText("Анализ архива");
+                long totalZipUncompressedSize = 0;
+                while (entries.hasMoreElements()) {
+                    ZipEntry zipEntry = entries.nextElement();
+                    if (zipEntry.isDirectory()) continue;
+                    totalZipUncompressedSize += zipEntry.getSize();
                 }
-                inputStream = zipFile.getInputStream(zipEntry);
+                monitor.setMaxValue(totalZipUncompressedSize);
 
-                importFileFromAnyType(entryFormat,
-                        monitor.getSubMonitor(monitor.getValue()+zipEntry.getSize()),
-                        zipEntry.getName(),null,inputStream,
-                        importFormat, importConfig,importStatistics, comment,
-                        importDate,actualDateFrom, actualDateTo
-                );
-                
-                try {
+
+                LOG.info("ZIP FILE:" + file);
+                log("Архив ZIP:" + file.getName());
+                entries = (Enumeration<ZipEntry>) zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry zipEntry = entries.nextElement();
+                    if (zipEntry.isDirectory()) continue;
+
+                    InputStream inputStream = zipFile.getInputStream(zipEntry);
+                    LOG.info(":" + zipEntry.getName() + ":" + zipEntry.getSize() + ":" + zipEntry.getCompressedSize());
+                    log("Элемент архива " + ":" + zipEntry.getName() + ":" + zipEntry.getSize() + ":" + zipEntry.getCompressedSize());
+                    String entryFormat = checkPhysicalFormat(inputStream);
                     inputStream.close();
-                } catch (Exception e) {}
-                monitor.update();
+                    if (entryFormat.equals("")) {
+                        monitor.advice(zipEntry.getSize());
+                        continue;
+                    }
+                    inputStream = zipFile.getInputStream(zipEntry);
+
+                    importFileFromAnyType(entryFormat,
+                            monitor.getSubMonitor(monitor.getValue() + zipEntry.getSize()),
+                            zipEntry.getName(), null, inputStream,
+                            importFormat, importConfig, importStatistics, comment,
+                            importDate, actualDateFrom, actualDateTo
+                    );
+
+                    try {
+                        inputStream.close();
+                    } catch (Exception e) {
+                    }
+                    monitor.update();
+                }
             }
         } else {
             LOG.error("Неизвестный формат файла:"+phisicalFormat+":");
@@ -1165,7 +1168,7 @@ LOG.info("File= "+file.getAbsolutePath());
             monitor.attachMonitor(standardMonitor);
             // Загрузка конфигурации импорта
             long formatId = aImportForm.getImportFormat();
-            ImportFormat importFormat = theManager.find(ImportFormat.class, new Long(formatId));
+            ImportFormat importFormat = theManager.find(ImportFormat.class, formatId);
             ImportDocument document = importFormat.getDocument();
             final boolean isImportTimeSupport = document.isTimeSupport();
             //ensureImportLogger();
@@ -1225,8 +1228,7 @@ LOG.info("File= "+file.getAbsolutePath());
             monitor.finish(""+theLogFileId);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error(e);
+            LOG.error("SomeError",e);
             if (monitor != null) {
                 monitor.error(e.getMessage(),e);
             }
@@ -1299,16 +1301,13 @@ LOG.info("File= "+file.getAbsolutePath());
             if(aDate.indexOf(',')>=0) aDate = aDate.replace(',', '.') ;
            try {
                ret =  FORMAT_ODBC.parse(aDate) ;
-           } catch (Exception e) {
-               ret = DateFormat.parseDate(aDate,"MM.dd.yyyy");
+           } catch (ParseException e) {
+               ret = DateFormat.parseDate(aDate,"dd.MM.yyyy");
            }
         }
-        if(ret!=null) {
-               if(ret.before(minDate)) {
-                   // TODO Как-нибудь обрабатывать по-другому эту ошибку
-                   log("ОШИБКА: Дата "+FORMAT_ODBC.format(ret)+" не должна быть меньше "+FORMAT_ODBC.format(minDate)) ;
-                   ret = null ;
-               }
+        if(ret!=null && ret.before(minDate)) {
+            log("ОШИБКА: Дата "+FORMAT_ODBC.format(ret)+" не должна быть меньше "+FORMAT_ODBC.format(minDate)) ;
+            ret = null ;
         }
 
         return ret ;
@@ -1351,7 +1350,7 @@ LOG.info("File= "+file.getAbsolutePath());
     }
 
 
-    private Method getSetterMethodForProperty(Class aClass, String aPropertyName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private Method getSetterMethodForProperty(Class aClass, String aPropertyName) throws NoSuchMethodException {
         //String getterMethodName = PropertyUtil.getGetterMethodNameForProperty(aPropertyName);
         Method getterMethod = PropertyUtil.getMethodFormProperty(aClass,aPropertyName);
         return PropertyUtil.getSetterMethod(aClass, getterMethod);
