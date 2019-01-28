@@ -23,9 +23,10 @@
         <include name="ecs/ecs-1.4.2.jar"/>
         <include name="javax/javax.servlet.jsp.jar"/>
         <include name="jdom/jdom.jar"/>
-        <include name="json/json.jar"/>
+        <include name="json/json-20180813.jar"/>
 
         <include name="struts/struts.jar"/>
+        <include name="gwt/gwt-dev-linux.jar"/>
 
         <include name="ecom/riams/ejb/riams-ejb-api.jar" />
         <include name="ecom/riams/web/riams-web.jar" />
