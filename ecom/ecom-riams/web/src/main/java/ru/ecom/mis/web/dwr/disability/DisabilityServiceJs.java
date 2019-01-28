@@ -261,7 +261,7 @@ public class DisabilityServiceJs {
                 ",dsvk.digestvalue as digvk\n" +
                 ",dsvk.counter as countervk\n" +
                 ",dsvk.signatureType as typesignvk\n" +
-                ",dsdoc.signatureType as counterdsdoc\n" +
+                ",dsdoc.signatureType as typesigndoc\n" +
                 "from disabilitydocument dd\n" +
                 "left join disabilitycase dc on dc.id=dd.disabilitycase_id \n" +
                 "left join patient p on p.id=dc.patient_id left join disabilityrecord disrec on disrec.disabilitydocument_id = dd.id\n" +
@@ -284,7 +284,7 @@ public class DisabilityServiceJs {
                 "counter as counterclose,\n" +
                 "signaturevalue as signclose,\n" +
                 "(dr.dateto+1) as returndt,\n" +
-                "signatureType as counterdsclose\n" +
+                "signatureType as typesignclose\n" +
                 "from disabilitysign ds \n" +
                 "left join disabilityrecord dr on dr.disabilitydocument_id = ds.disabilitydocumentid_id\n" +
                 "where ds.id = " +
