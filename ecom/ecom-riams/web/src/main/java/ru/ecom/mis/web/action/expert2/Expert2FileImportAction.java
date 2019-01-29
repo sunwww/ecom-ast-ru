@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Expert2FileImportAction extends BaseAction {
-	private static final Logger log = Logger.getLogger(Expert2FileImportAction.class);
+	private static final Logger LOG = Logger.getLogger(Expert2FileImportAction.class);
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
@@ -34,7 +34,7 @@ public class Expert2FileImportAction extends BaseAction {
 				return aMapping.findForward("success") ;
 			}
 			String fileName=ffile.getFileName();
-			log.info("filename = "+fileName);
+			LOG.info("filename = "+fileName);
 			String action = form.getDirName();
 			String result ;
 			String xmlUploadDir = expert2service.getConfigValue("expert2.input.folder","/opt/jboss-4.0.4.GAi-postgres/server/default/data");
@@ -42,7 +42,7 @@ public class Expert2FileImportAction extends BaseAction {
 				case "createEntry":
 					if (fileName.toUpperCase().endsWith(".MP")) {
 						saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
-						log.info("Создаем заполнение из файла");
+						LOG.info("Создаем заполнение из файла");
 						result = expert2service.createEntryByFondXml(fileName);
 					} else {
 						result="Создания заполнения возможно только из МР пакета!";
@@ -50,7 +50,7 @@ public class Expert2FileImportAction extends BaseAction {
 					break;
 				case "importN5":
 					if (fileName.startsWith("N5") && fileName.toUpperCase().endsWith(".XML")) { //Импортируем файл для проставления номеров направления фонда
-						log.info("start import N5");
+						LOG.info("start import N5");
 						Long entryListId = form.getObjectId();
 						result = expert2service.importN5File(new SAXBuilder().build(ffile.getInputStream()),entryListId);
 					} else {
@@ -69,20 +69,19 @@ public class Expert2FileImportAction extends BaseAction {
 						result="Я не понимаю, чего вы от меня хотите!!!"+action;
 			}
 
-			log.info(result);
+			LOG.info(result);
 			aRequest.setAttribute("importResult",result);
     		return aMapping.findForward("success") ;
 
     	} catch(Exception e) {
-    		log.error(e);
-    		e.printStackTrace();
+			LOG.error("Ошибочка = ",e);
     	}
     	return aMapping.findForward("success") ;
     }
 
 	public void saveFile(InputStream aInputStream, String aFileName) throws IOException  {
 		int count ;
-		log.info("filename="+aFileName);
+		LOG.info("filename="+aFileName);
 		File outputFile = new File(aFileName);
 		if (!outputFile.exists()) {
 			outputFile.createNewFile();
@@ -92,11 +91,7 @@ public class Expert2FileImportAction extends BaseAction {
 			while ( (count=aInputStream.read(buf)) > 0) {
 				out.write(buf, 0, count) ;
 			}
-			out.close() ;
 			aInputStream.close();
-		} catch (Exception e) {
-
 		}
-
 	}
 }

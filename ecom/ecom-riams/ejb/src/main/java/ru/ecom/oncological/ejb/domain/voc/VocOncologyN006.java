@@ -10,6 +10,7 @@ import javax.persistence.Table;
 /**N006 - справочник соответсвия стадий (Stad+Tumor+Nodus+Metastasis)*/
 @Entity
 @Table(schema="SQLUser")
+@Deprecated
 public class VocOncologyN006 extends VocBaseFederal {
 
     private String ds;
