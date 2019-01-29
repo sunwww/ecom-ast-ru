@@ -376,15 +376,10 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     </msh:table>
     </msh:sectionContent>
     </msh:section>
-    <% } %>
-    	
-    	
-    	
-    	
-    <% 
+    <% }
         } else if (typeMode.equals("2")) {
         	StringBuilder paramSql= new StringBuilder() ;
-          	StringBuilder paramHref= new StringBuilder() ;
+       //   	StringBuilder paramHref= new StringBuilder() ;
           	//--old---paramSql.append(" ").append(ActionUtil.setParameterFilterSql("department", "sloa.department_id", request)) ;
           	//paramSql.append(" ").append(ActionUtil.setParameterManyFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
           	paramSql.append(" ").append(ActionUtil.setParameterFilterSql("vocWorkFunctions","vocWorkFunctions", "vwf.id", request)) ;
@@ -397,11 +392,6 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
            		request.setAttribute("diagSql", " and diag.id is null") ;
           		 
           	 }
-          	int type=1 ;
-        	if (request.getAttribute("vocWorkFunctions")!=null) {
-        		type=2 ;
-       		}
-          	//if (request.getParameter("filterMkb")!=null) {
          %>
          
     <%if (typeView.equals("1")) { %>
@@ -409,7 +399,7 @@ order by sls.dateStart,p.lastname,p.firstname,p.middlename
     <msh:sectionTitle>Свод по дневникам</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="datelist" nameFldSql="datelist_sql" nativeSql="
-    select cast('${vocWorkFunctionsSqlId}' as varchar) as vwfid,vwf.name as vwfname
+    select cast(${vocWorkFunctionsSqlId} as varchar) as vwfid,vwf.name as vwfname
     ,count(distinct sls.id) as cntSls
     ,count(distinct case when diag.id is null then sls.id else null end) as notdiag
     ,count(distinct case when diag.id is not null ${filterMkbSql} then sls.id else null end) as diagFilter
@@ -450,9 +440,9 @@ and sls.medicalAid='1'
 select sls.id as slsid, to_char(sls.datestart,'dd.mm.yyyy') as deniedDate
 ,p.lastname||' '||p.firstname||' '||p.middlename as fiopatient
 ,to_char(p.birthday,'dd.mm.yyyy') as birthday
-,dvwf.name||' '||dwp.lastname||' '||dwp.firstname||' '||dwp.middlename as worker
+,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
 ,case when mcmp.policies_id is not null then 'Да' else '' end  as policies
-,case when diag.id is not null ${filterMkbSql} then mkb.code else null end as diag
+,case when diag.id is not null ${filterMkbSql} then mkb.code || ' ' ||dvwf.name||' '||dwp.lastname||' '||dwp.firstname||' '||dwp.middlename else null end as diag
 ,ml.name as f8_depName
  from MedCase sls
 left join patient p on p.id=sls.patient_id
@@ -477,14 +467,14 @@ and sls.deniedHospitalizating_id is not null
 ${diagSql}
 order by sls.dateStart,p.lastname,p.firstname,p.middlename
     " guid="81cbfcaf-6737-4785-bac0-6691c6e6b501" />
-    <msh:table name="datelist" 
+    <msh:table name="datelist" printToExcelButton="сохранить в Excel"
     viewUrl="entityParentView-stac_sslAdmission.do?short=Short"
     action="entityParentView-stac_sslAdmission.do" idField="1" guid="be9cacbc-17e8-4a04-8d57-bd2cbbaeba30">
       <msh:tableColumn property="sn" columnName="#"/>
       <msh:tableColumn columnName="Дата обращения" property="2" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
       <msh:tableColumn columnName="Год рождения" property="4" guid="34a9f56a-2b47-4feb-a3fa-5c1afdf6c41d" />
-      <msh:tableColumn columnName="Деж. врач (поставил диагноз)" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
+      <msh:tableColumn columnName="Деж. врач (создал дневник)" property="5" guid="3cf775aa-e94d-4393-a489-b83b2be02d60" />
       <msh:tableColumn columnName="Наличие страх. документов" property="6"/>
       <msh:tableColumn columnName="Диагноз" property="7"/>
 		<msh:tableColumn columnName="Отделение" property="8"/>
