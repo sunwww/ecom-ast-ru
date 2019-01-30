@@ -352,6 +352,9 @@
 						<li><msh:link  isReport="false" action="journal_onco.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View">
 							Отчёт по онкологическим случаям
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_cardiacScreening.do" roles="/Policy/Mis/Pregnancy/CardiacScreening/View">
+							Отчёт о проведении кардиоскрининга новорождённых
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>

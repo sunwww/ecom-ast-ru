@@ -290,6 +290,8 @@
   <script type="text/javascript">
   document.forms["mainForm"].action="javascript:checkDeadBorn()" ;
   isSaveNewBorns=1 ;
+  //значение по умолчанию для ЖК
+  document.getElementsByName("gkGroup")[0].checked=$('isRegisteredWithWomenConsultation').value = true;
   </script>
   </msh:ifFormTypeIsCreate>
   <script type="text/javascript">

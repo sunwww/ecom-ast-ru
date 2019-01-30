@@ -577,4 +577,11 @@ public class MisLpu extends BaseEntity {
 	public void setIsNewBorn(Boolean aIsNewBorn) {theIsNewBorn = aIsNewBorn;}
 	/** Палата новорождённых? */
 	private Boolean theIsNewBorn;
+
+	/** Создают ли кадриоскрининг новорождённым? */
+	@Comment("Создают ли кадриоскрининг новорождённым?")
+	public Boolean getIsCreateCardiacScreening() {return theIsCreateCardiacScreening;}
+	public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {theIsCreateCardiacScreening = aIsCreateCardiacScreening;}
+	/** Создают ли кадриоскрининг новорождённым? */
+	private Boolean theIsCreateCardiacScreening;
 }

@@ -37,6 +37,7 @@ function onSave(aForm,aEntity, aCtx) {
 function onPreSave(aForm,aEntity, aCtx) {
     //checkUniqueDiagnosis(aForm,aCtx);
     checkDeathThenPlan(aCtx, +aForm.result, +aForm.reasonDischarge);
+    checkNewBornScreeningSecondExists(aForm,aCtx);
     //проверка на наличие ЭК по критериям
     //checkIfIsQECard(aForm, aCtx);
 	var manager = aCtx.manager;
@@ -199,6 +200,26 @@ function checkDeathThenPlan(aCtx,resultId,reasonId) {
 	if (result!=null && result.code=="11" && reason!=null && reason.code!="DIS_PLAN") {
 		throw ("Если результат - смерть, то причина выписки должна быть плановая!");
 	}
+}
+/**
+ * Проверить наличие II этапа кардиоскрининга перед выпиской (только при выписке из отделения новорождённых).
+ */
+function checkNewBornScreeningSecondExists(aForm,aCtx) {
+    var sql = "select slo.id\n" +
+        "from medcase sls\n" +
+        "left join mislpu lpu on lpu.id=sls.department_id\n" +
+        "left join medcase slo on slo.parent_id=sls.id\n" +
+        "left join medcase allslo on allslo.parent_id=sls.id\n" +
+        "left join mislpu lpuslo on lpuslo.id=slo.department_id\n" +
+        "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
+        "where lpu.IsCreateCardiacScreening=true  and lpuslo.IsCreateCardiacScreening=true and\n" +
+        "sls.dtype='HospitalMedCase'  and slo.dtype='DepartmentMedCase'  and allslo.dtype='DepartmentMedCase'\n" +
+        "and sls.id='" + aForm.id + "'\n"+
+        "group by slo.id\n" +
+        "having count(distinct allslo.id)=1 and count(distinct scrII.id)=0";
+    var list = aCtx.manager.createNativeQuery(sql).getResultList();
+    if (!list.isEmpty())
+		throw ("<a href='entityParentPrepareCreate-stac_screeningCardiacSecond.do?id=" + list.get(0) + "' target='_blank'>II этап кардиоскрининга</a> в отд. новорождённых должен быть создан до выписки!");
 }
 //првоерка на наличие экспертной карты по критериям. Если нет - выписку запретить
 function checkIfIsQECard(aForm,aCtx) {
