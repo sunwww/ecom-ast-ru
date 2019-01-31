@@ -226,6 +226,12 @@
 						<li><msh:link action="stac_report_BirthTotal.do" roles="/Policy/Mis/Pregnancy/Report/Report32">
 							Анализ работы родового отделения
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_cardiacScreening.do" roles="/Policy/Mis/Pregnancy/CardiacScreening/View">
+							Отчёт о проведении кардиоскрининга новорождённых
+						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_robson.do" roles="/Policy/Mis/Pregnancy/ChildBirth/View">
+							Отчёт по классификации Робсона
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>			

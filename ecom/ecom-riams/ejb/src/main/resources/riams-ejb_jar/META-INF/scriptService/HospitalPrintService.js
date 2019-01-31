@@ -2019,6 +2019,28 @@ function printBilling(aCtx, aParams)
 	var currentDate = new Date() ;
 	var FORMAT_2 = new java.text.SimpleDateFormat("dd.MM.yyyy") ;
 	map.put("currentDate",FORMAT_2.format(currentDate)) ;
+	//Milamesher #137 вывод кардиоскринингов
+	var listDatesScreening=aCtx.manager.createNativeQuery("select \n" +
+        "case when (scrI.createdate is not null and scrII.createdate is not null) then\n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrI.createdate,'dd.mm.yyyy')||' (I этап) и '||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап).' \n" +
+        "else case when scrI.createdate is not null then\n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrI.createdate,'dd.mm.yyyy')||' (I этап)'\n" +
+        "else case when scrII.createdate is not null then\n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап)'\n" +
+        "end end end as s\n" +
+        "from medcase sls\n" +
+        "left join mislpu lpu on lpu.id=sls.department_id\n" +
+        "left join medcase slo on slo.parent_id=sls.id\n" +
+        "left join medcase allslo on allslo.parent_id=sls.id\n" +
+        "left join mislpu lpuslo on lpuslo.id=slo.department_id\n" +
+        "left join screeningcardiac scrI on scrI.medcase_id=slo.id and scrI.dtype='ScreeningCardiacFirst'\n" +
+        "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
+        "where lpu.IsCreateCardiacScreening=true and lpuslo.IsCreateCardiacScreening=true\n" +
+        "and sls.dtype='HospitalMedCase' and slo.dtype='DepartmentMedCase' and allslo.dtype='DepartmentMedCase'\n" +
+        "group by sls.id,scrI.createdate,scrII.createdate\n" +
+        "having count(distinct allslo.id)=1 and sls.id="+id).getResultList();
+    if (listDatesScreening.size()>0) map.put("cardiascreen",(listDatesScreening.get(0)!=null)? "\n"+listDatesScreening.get(0):"") ;
+    else  map.put("cardiascreen","") ;
 	return map ;
 }
 

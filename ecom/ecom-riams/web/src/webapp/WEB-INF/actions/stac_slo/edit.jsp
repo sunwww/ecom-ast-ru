@@ -82,6 +82,8 @@
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/Create" name="Случай ВМП" action="/entityParentPrepareCreate-stac_vmpCase" params="id" title="Добавить случай ВМП"/>
                 <msh:sideLink action="/javascript:watchThisPatient()" name="Наблюдать пациента на дежурстве" title="Наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
                 <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
+                <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (I этап)" action="/entityParentPrepareCreate-stac_screeningCardiacFirst" params="id" title="Добавить кардио-скрининг нов. (I этап)"/>
+                <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (II этап)" action="/entityParentPrepareCreate-stac_screeningCardiacSecond" params="id" title="Добавить кардио-скрининг нов. (II этап)"/>
             </msh:sideMenu>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                 <msh:sideMenu title="Показать" guid="c65476c8-6c6a-43c4-a70a-84f40bda76e1">
@@ -118,12 +120,15 @@
                     <tags:QECriteria name="QECriteria" />
                     <msh:sideLink styleId="viewShort" action="/javascript:showQECriteriaCloseDocument(${param.id})" name='Критерии' title="Просмотр критериев" params="" roles="/Policy/Mis/MedCase/Visit/View" />
                     <!--msh:sideLink styleId="viewShort" action="/javascript:viewAssessmentCardsByPatient('.do')" name="Карты оценки"  title="Показать все карты оценки" roles="/Policy/Mis/AssessmentCard/View"/-->
+                    <tags:CardiacScreening name="CardiacScreening" />
+                    <msh:sideLink styleId="viewShort" action="/javascript:showCardiacScreening(${param.id})" name='Кардио-скрининги нов.' title="Кардио-скрининги нов." params="" roles="/Policy/Mis/Pregnancy/CardiacScreening/View" />
                 </msh:sideMenu>
                 <msh:sideMenu title="Печать">
 
                     <tags:stac_documentsPrint name="Docum" roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/Print/ConsentImplant" title="Документов" medCase="${param.id}"/>
                     <msh:sideLink roles="/Policy/Mis/MedCase/Protocol/View" name="Дневников по СЛО" action="/printProtocolsBySLO.do?stAll=selected&medcase=${param.id}" params="id"/>
                     <msh:sideLink roles="/Policy/Mis/MedCase/MedService/View" name="Мед.услуг по СЛО" action="/printMedServiciesBySMO.do?medcase=${param.id}" params="id"/>
+                    <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/View" name="Кардиоскрининг" action="/javascript:window.open('print-cardiacScreeningForm.do?s=PrintNewBornHistoryService&m=printCardiacScreeningForm&id='+${param.id});" params="id"/>
                 </msh:sideMenu>
             </msh:ifNotInRole>
             <msh:sideMenu title="Администрирование">

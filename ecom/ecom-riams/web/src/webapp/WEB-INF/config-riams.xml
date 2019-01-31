@@ -33,6 +33,9 @@
     <form-bean name="preg_newBornForm" type="ru.ecom.mis.ejb.form.birth.NewBornForm"/>
     <form-bean name="preg_neonatalNewBornForm" type="ru.ecom.mis.ejb.form.birth.NeonatalNewBornForm"/>
     <form-bean name="preg_obstetricNewBornForm" type="ru.ecom.mis.ejb.form.birth.ObstetricNewBornForm"/>
+    <!-- КАРДИО-СКРИНИНГ -->
+    <form-bean name="stac_screeningCardiacFirstForm" type="ru.ecom.mis.ejb.form.birth.ScreeningCardiacFirstForm"/>
+    <form-bean name="stac_screeningCardiacSecondForm" type="ru.ecom.mis.ejb.form.birth.ScreeningCardiacSecondForm"/>
     
     <!-- ПЕРЕЛИВАНИЕ КРОВИ -->
     <form-bean name="trans_bloodForm" type="ru.ecom.mis.ejb.form.medcase.transfusion.BloodTransfusionForm"/>

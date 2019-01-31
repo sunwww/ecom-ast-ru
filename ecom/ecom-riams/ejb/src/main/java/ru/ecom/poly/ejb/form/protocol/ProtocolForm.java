@@ -3,10 +3,9 @@ package ru.ecom.poly.ejb.form.protocol;
 
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
-import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
-import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
+import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
+import ru.ecom.poly.ejb.form.interceptors.ProtocolPreCreateInterceptor;
 import ru.ecom.poly.ejb.form.interceptors.ProtocolSaveInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
@@ -37,6 +36,9 @@ import javax.persistence.Id;
 )
 @ACreateInterceptors(
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)
+)
+@AParentPrepareCreateInterceptors(
+        @AParentEntityFormInterceptor(ProtocolPreCreateInterceptor.class)
 )
 public class ProtocolForm extends IdEntityForm {
     /** Запрет на ручное редактирование */
@@ -164,4 +166,12 @@ public class ProtocolForm extends IdEntityForm {
     }
     /** Время редактирования */
     private String  theEditTime;
+
+    /** Визит */
+    @Comment("Визит")
+    @Persist
+    public Long getMedCase() {return theMedCase;}
+    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    /** Визит */
+    private Long theMedCase;
 }

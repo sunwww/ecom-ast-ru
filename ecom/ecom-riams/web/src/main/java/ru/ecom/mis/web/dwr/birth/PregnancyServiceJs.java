@@ -86,4 +86,15 @@ public class PregnancyServiceJs {
 				"select id from " + (ifRobson? "robsonclass" : "misbirth") +  " where medcase_id="+aSlo);
 		return (res.isEmpty())? "" : res.iterator().next().get1().toString();
 	}
+	//Milamesher #137 возврат кардиоскринингов
+	public String getAllCardiacScreenings(Long aSlo,HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		StringBuilder sql = new StringBuilder();
+		Collection<WebQueryResult> res = service.executeNativeSql("select id,case when dtype='ScreeningCardiacFirst' then 'I' else 'II' end," +
+				"to_char(createdate,'dd.mm.yyyy')||' '||createusername from screeningcardiac where medcase_id="+aSlo);
+		StringBuilder result = new StringBuilder();
+		for (WebQueryResult wqr : res)
+			result.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("!");
+		return result.toString();
+	}
 }

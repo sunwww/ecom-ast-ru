@@ -475,6 +475,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/list_by_period.jsp" />
         </action>
+		<action path='/journal_robson' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/journal_robson.jsp" />
+		</action>
 
 		<action path='/smo_deniedHospitelByAttach' type='ru.ecom.web.actions.base.ForwardAction'
 				name='stac_admissionJournalForm'
@@ -1141,6 +1148,13 @@
 				scope="session"
 		>
 			<forward name="success" redirect="false" path="/WEB-INF/actions/oncology_case_reestr/reestr.jsp" />
+		</action>
+		<action path='/journal_cardiacScreening' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_slo/journal_cardiacScreening.jsp" />
 		</action>
 		<action path='/reportKDL' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
