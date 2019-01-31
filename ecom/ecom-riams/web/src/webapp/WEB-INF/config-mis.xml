@@ -475,6 +475,13 @@
                 >
             <forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/list_by_period.jsp" />
         </action>
+		<action path='/journal_robson' type='ru.ecom.web.actions.base.ForwardAction'
+				name='stac_admissionJournalForm'
+				validate='false'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/preg_childBirth/journal_robson.jsp" />
+		</action>
 
 		<action path='/smo_deniedHospitelByAttach' type='ru.ecom.web.actions.base.ForwardAction'
 				name='stac_admissionJournalForm'
