@@ -1,5 +1,6 @@
 package ru.ecom.api;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/record")
 public class ApiRecordResource {
+    private static final Logger LOG = Logger.getLogger(ApiRecordResource.class);
     @GET
     @Path("/test/mazafaka/{lastname}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -108,10 +110,15 @@ public class ApiRecordResource {
             , @QueryParam("vocWorkfunction_id") String vocWorkfunction
             , @QueryParam("serviceStream") String serviceStream
             , @QueryParam("lpu") String aLpu
-            , @QueryParam("token") String aToken) throws NamingException {
+            , @QueryParam("token") String aToken
+            , @QueryParam("requestId") String aRequestId
+    ) throws NamingException {
+
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getFreeCalendarDaysByWorkFunction(workfunction,vocWorkfunction,serviceStream,aLpu,service);
+        String ret = new ApiRecordUtil().getFreeCalendarDaysByWorkFunction(workfunction,vocWorkfunction,serviceStream,aLpu,service);
+        if (aRequestId!=null) LOG.info("Запрос №"+aRequestId+" получен, вернули: "+ret); //debug
+        return ret;
     }
 
     /** Список свободных времен по дате */
@@ -125,10 +132,14 @@ public class ApiRecordResource {
             , @QueryParam("calendarDay_id") String calendarDayId
             , @QueryParam("calendarDate") String calendarDate
             , @QueryParam("lpu") String aLpu
-            , @QueryParam("token") String aToken) throws NamingException {
+            , @QueryParam("token") String aToken
+            , @QueryParam("requestId") String aRequestId
+    ) throws NamingException {
         ApiUtil.init(aRequest,aToken);
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return new ApiRecordUtil().getFreeCalendarTimesByCalendarDate(calendarDayId,vocWorkfunction,calendarDate,serviceStream,aLpu,service);
+        String ret = new ApiRecordUtil().getFreeCalendarTimesByCalendarDate(calendarDayId,vocWorkfunction,calendarDate,serviceStream,aLpu,service);
+        if (aRequestId!=null) LOG.info("Запрос №"+aRequestId+" получен, вернули: "+ret); //debug
+        return ret ;
     }
 
     /** Запись пациента на время */
@@ -152,9 +163,8 @@ public class ApiRecordResource {
 
     private String makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
         try {
-            if (root==null) {
-                return  ApiRecordUtil.getErrorJson("NULL_JSON_OBJECT","JSONObject is null");
-            }
+            String requestId = root.has("requestId") ? root.getString("requestId") : null;
+            if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) получен :"+root); //debug
             String calendarId = getJsonField(root,"calendarTime_id");
             if (calendarId==null ||"".equals(calendarId)) {
                 return ApiRecordUtil.getErrorJson("NO_CALENDARTIME","Не указано время записи");
@@ -177,7 +187,7 @@ public class ApiRecordResource {
             if (!StringUtil.isNullOrEmpty(annul)) {
                 list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
             } else {
-                list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null,patientGUID,patientComment,patientPhone,service);
+                list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
                 if (list==null) {
                     list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
                 } else { //Записали успешно, пишем файл
@@ -202,6 +212,7 @@ public class ApiRecordResource {
                     }
                 }
             }
+            if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) обработан, вот ответ: "+list); //debug
             return list;
         } catch (Exception e) {
             e.printStackTrace();

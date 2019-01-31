@@ -11,12 +11,15 @@ import ru.nuzmsh.util.date.AgeUtil;
 import java.sql.Date;
 
 public class ApiRecordUtil {
-    private static  final Logger log = Logger.getLogger(ApiRecordUtil.class);
+    private static final Logger LOG = Logger.getLogger(ApiRecordUtil.class);
+    private static final String ERRORSERVICESTREAM="WRONG_SERVICESTREAM";
+    private static final String ERRORWORKFUNCTION="WRONG_DOCTOR";
+    private static final String ERRORVISITDATE="WRONG_VISITDATE";
 
     /** Формируем json с ошибкой */
     public static String getErrorJson(String aReasonText, String aCode) {
         String err = createJson(null,null,aCode,aReasonText);
-        log.error("ERROR_JSON "+err);
+        LOG.error("ERROR_JSON "+err);
             return err;
     }
 
@@ -29,7 +32,7 @@ public class ApiRecordUtil {
     public String getSpecializations(String aServiceStream, String aLpuId, IWebQueryService aService)  {
         aServiceStream=getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
-            return getErrorJson("Неверное значение параметра 'Поток обслуживания'","WRONG_PAR");
+            return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         }
         String[] jsonFields = {"specialization_id", "specialization_name"};
         String selectSql="vwf.id as id, vwf.name as name";
@@ -38,8 +41,6 @@ public class ApiRecordUtil {
         if (aLpuId!=null&&!aLpuId.equals("")) {
             aServiceStream+=" and mlGr.id="+aLpuId;
         }
-
-
         return getData(selectSql,aServiceStream,orderBy,groupBy,jsonFields,100, aService);
     }
 
@@ -64,9 +65,9 @@ public class ApiRecordUtil {
     public String getDoctors (String aServiceStream, String aVocWorkfunctionId, String aLpuId,  IWebQueryService aService) {
         aServiceStream=getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
-            return getErrorJson("Неверное значение параметра 'Поток обслуживания'","WRONG_PAR");
+            return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         } else if (aVocWorkfunctionId==null) {
-            return getErrorJson("Неверное значение параметра 'Должность'","WRONG_PAR");
+            return getErrorJson("Неверное значение параметра 'Должность'",ERRORWORKFUNCTION);
         }
         String selectSql=" wf.id as id, case when wf.dtype='PersonalWorkFunction' then vwf.name else '' end as wfName, case when wf.dtype='PersonalWorkFunction' then p.lastname||' '||p.firstname||' '|| coalesce(p.middlename,'') "
                 +"else wf.groupname end as doctorName";
@@ -75,7 +76,7 @@ public class ApiRecordUtil {
         String[] jsonFields = {"workfunction_id","workfunction_name","doctor_name"};
 
         String sqlAdd = aServiceStream+" and vwf.id="+aVocWorkfunctionId;
-        if (aLpuId!=null&&!aLpuId.equals("")) {
+        if (aLpuId!=null && !aLpuId.equals("")) {
             sqlAdd+=" and mlGr.id="+aLpuId;
         }
         return getData(selectSql,sqlAdd,orderBySql,groupBySql,jsonFields,100,aService);
@@ -94,7 +95,7 @@ public class ApiRecordUtil {
     public String getFreeCalendarDaysByWorkFunction(String aWorkfunctionId,String aVocWorkfunctionId, String aServiceStream,String aLpuId, IWebQueryService aService) {
         aServiceStream = getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
-            return getErrorJson("Неверное значение параметра 'Поток обслуживания'","WRONG_PAR");
+            return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         }
         StringBuilder sqlAdd = new StringBuilder();
         StringBuilder selectSql = new StringBuilder();
@@ -110,7 +111,7 @@ public class ApiRecordUtil {
                     sqlAdd.append(" and mlGr.id=").append(aLpuId);
                 }
             } else {
-                return getErrorJson("Неверное значение параметра 'Должность'","WRONG_PAR");
+                return getErrorJson("Неверное значение параметра 'Должность'",ERRORWORKFUNCTION);
             }
         }
         sqlAdd.append(" and (wcd.calendardate>current_date or wcd.calendardate=current_date and wct.timeFrom>current_time)")
@@ -126,7 +127,7 @@ public class ApiRecordUtil {
     public String getFreeCalendarTimesByCalendarDate(String aCalendarDayId, String aVocWorkfunctionId, String aCalendarDate, String aServiceStream, String aLpuId, IWebQueryService aService) {
         aServiceStream = getServiceStreamSqlAdd(aServiceStream);
         if (aServiceStream==null) {
-            return getErrorJson("Неверное значение параметра 'Поток обслуживания'","WRONG_PAR");
+            return getErrorJson("Неверное значение параметра 'Поток обслуживания'",ERRORSERVICESTREAM);
         }
         StringBuilder sqlAdd = new StringBuilder();
         StringBuilder selectSql = new StringBuilder();
@@ -136,13 +137,13 @@ public class ApiRecordUtil {
         selectSql.append("wct.id as id, cast(wct.timefrom as varchar(5)) as calendarTime");
         if (aCalendarDayId!=null&&!aCalendarDayId.equals("")) { //Ищем по конкретному специалисту
             sqlAdd.append(" and wcd.id=").append(aCalendarDayId);
-        } else if (aVocWorkfunctionId!=null&&!aVocWorkfunctionId.equals("") &&aCalendarDate!=null) { //Ищем по всем врачам выбранной специальности
+        } else if (aVocWorkfunctionId!=null && !aVocWorkfunctionId.equals("") && aCalendarDate!=null) { //Ищем по всем врачам выбранной специальности
                 sqlAdd.append(" and wvf.id=").append(aVocWorkfunctionId).append(" and wcd.calendardate = to_date('yyyy-MM-dd','").append(aCalendarDate).append("')");
             if (aLpuId!=null&&!aLpuId.equals("")) {
                 sqlAdd.append(" and mlGr.id=").append(aLpuId);
             }
             } else {
-            return getErrorJson("Неверное значение параметра 'Дата приема'","WRONG_PAR");
+                return getErrorJson("Неверное значение параметра 'Дата приема'",ERRORVISITDATE);
             }
 
         sqlAdd.append(" and case when wcd.calendardate=current_date and wct.timeFrom>current_time then 1 when wcd.calendardate>current_date then 1 else 0 end =1").append(aServiceStream);
@@ -198,15 +199,15 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
            .append(" left join Worker w on w.id=wf.worker_id")
            .append(" left join Patient wpat on wpat.id=w.person_id")
            .append(" where wct.id=").append(Long.valueOf(aWorkcalendarTimeId));
-       // log.info("sql="+sql);
+       // LOG.info("sql="+sql);
         String[] jsonFields = {"workcalendartime_id","workCalendarTimeId", "patientInfo","calendarDate","timeFrom","doctorName","lpuCode","patientUID","medcaseId","patientId","serviceStream","state","recordComment"};
         String ret = aService.executeNativeSqlGetJSON(jsonFields,sql.toString(),1);
         try {
             JSONArray arr = new JSONArray(ret);
-            if (arr!=null&& arr.length()>0){
+            if (arr.length()>0){
                 JSONObject obj =arr.getJSONObject(0);
                 obj.put("status","ok");
-                log.info("Пациент успешно записан"+ obj.toString());
+                LOG.info("Пациент успешно записан"+ obj.toString());
                 return obj.toString();
             }
         } catch (JSONException e) {
@@ -222,7 +223,7 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
      */
     private static String getServiceStreamSqlAdd(String aServiceStreamCode) {
         StringBuilder sqlAppend = new StringBuilder();
-        if (aServiceStreamCode==null) {log.error("Не указан поток обслуживания");return null;}
+        if (aServiceStreamCode==null) {LOG.error("Не указан поток обслуживания");return null;}
         if (aServiceStreamCode.equals("OMC")) {
             sqlAppend.append(" and wct.reservetype_id is null");
         } else if (aServiceStreamCode.equals("CHARGED")) {
@@ -232,7 +233,7 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
         } else if (aServiceStreamCode.equals("TELE_CHARGED")) {//Удаленная консультация платно
             sqlAppend.append(" and vrt.code='TELE_CHARGED'");
         } else {
-                log.error("Неправильный источник оплаты: " + aServiceStreamCode);
+                LOG.error("Неправильный источник оплаты: >" + aServiceStreamCode+"<");
             return null;
         }
         return sqlAppend.toString();
@@ -276,9 +277,9 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
     public static String createJson(String aElementName, String aJsonData, String aErrorCode, String aErrorName) {
         JSONObject ret = new JSONObject();
         if (aElementName!=null) {
-            ret.put(aElementName, aJsonData!=null?new JSONArray(aJsonData):new JSONArray());
+            ret.put(aElementName, aJsonData!=null ? new JSONArray(aJsonData) : new JSONArray());
         }
-        ret.put("status",aErrorCode!=null?"error":"ok");
+        ret.put("status",aErrorCode!=null ? "error" : "ok");
         if (aErrorCode!=null) {
             ret.put("error_code",aErrorCode);
             ret.put("error_name",aErrorName);

@@ -21,7 +21,7 @@ public class HibernateCacheConfigServiceBean implements IHibernateCacheConfigSer
 			StringBuilder sb = new StringBuilder() ;
 			for(Class clazz : theEntityHelper.getInstance().listAllEntities()) {
 				if(isCacheable(clazz)) {
-					String comment = theEntityHelper.getComment(clazz) ;
+				//	String comment = theEntityHelper.getComment(clazz) ;
 				//	if(StringUtil.isNullOrEmpty(comment)) comment = clazz.getSimpleName();
 					//sb.append("# ").append(comment+" , количество "+getRowsCount(clazz)) ;
 					//sb.append("\n") ;

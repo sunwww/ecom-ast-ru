@@ -307,12 +307,12 @@ function transferObservRoomToChild(aForm, aEntity, aContext) {
     }
 }
 function onSave(aForm, aEntity, aContext) {
-	var dat =(new java.util.Date()).getTime() ;
+//	var dat =(new java.util.Date()).getTime() ;
 	//aEntity.setEditTime(new java.sql.Time (dat)) ;
 	
-	var listDep = aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev")
+/*	var listDep = aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev")
 		.setParameter("prev",aForm.id).getResultList() ;
-	/*if (listDep.size()>0) {
+	if (listDep.size()>0) {
 		var medCase = listDep.get(0) ;
 		medCase.dateStart = aEntity.transferDate ;
 		medCase.entranceTime = aEntity.transferTime ;

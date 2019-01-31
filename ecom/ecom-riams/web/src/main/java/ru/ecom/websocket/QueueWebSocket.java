@@ -60,14 +60,12 @@ public class QueueWebSocket {
             os.setRole(role);
             WorkFunction wf = getInjection().getService(IQueueService.class).getWorkFunctionByUsername(aUsername);
             if (wf==null || wf.getQueue()==null) {
-                LOG.error("В этой рабочей функции у пользователя "+aUsername+" нет очереди");
                 sendErrorMessage("NO_ACTIVE_QUEUE","В этой рабочей функции у пользователя нет очереди",os);
                 return;
             }
             os.setQueueCode(wf.getQueue().getCode());
             os.setWorkFunction(wf);
             os.setWindow(wf.getWindowNumber());
-            LOG.error("set window = "+os.getWindow());
             sessions.put(aUsername, os);
             sendBroadCastMessage(getOKJson("sendMessage").put("message"," Пришел новый пользователь "+aUsername),ADMINROLE);
         } else {
@@ -164,15 +162,17 @@ public class QueueWebSocket {
 
     @OnError
     public void onError(Throwable err) {
-        err.printStackTrace();
-        LOG.error("onError "+err);
+        LOG.error("onError "+err.getLocalizedMessage());
     }
 private boolean isNotNull (String o) { return o!=null && !o.trim().equals("");}
 
     /** При прекращении работы пользователя*/
     private void onLogout(OperatorSession aSession) {
-        if (aSession.getTicket()!=null) {markTicketExecuted(aSession.getTicket(),null,aSession);}
-        sessions.remove(session);
+        if (aSession !=null && aSession.getTicket()!=null) {
+            markTicketExecuted(aSession.getTicket(),null,aSession);
+            sessions.remove(session);
+        }
+
     }
 
 
@@ -209,7 +209,7 @@ private OperatorSession getFreeOperator (String aQueueCode) {
                         && OPERATORROLE.equals(e.getValue().getRole())
         ).findAny().get().getValue();
     } catch (Exception e) {
-        LOG.warn("can't find free operator");
+        LOG.info("can't find free operator");
     }
         return os;
 }

@@ -21,9 +21,7 @@ public class MedServiceSaveInterceptor implements IFormInterceptor {
 
 			VocMedService vms = new VocMedService() ;
 			List<VocMedService> list = manager.createQuery("from VocMedService where code=:code").setParameter("code", form.getCode()).getResultList() ;
-			if (list.size()>0) {
-				vms = list.get(0) ;
-			} else {
+			if (list.isEmpty()) {
 				String role="/Policy/Mis/VocMedService/Create";
 				if (aContext.getSessionContext().isCallerInRole(role)) {
 					vms.setName(form.getName()) ;
@@ -33,6 +31,8 @@ public class MedServiceSaveInterceptor implements IFormInterceptor {
 				} else {
 					throw new IllegalArgumentException(". невозможно создать внешнюю услугу: нет политики !"+role ) ;
 				}
+			} else {
+				vms = list.get(0) ;
 			}
 			ms.setVocMedService(vms) ;
 			try {

@@ -48,7 +48,7 @@ public class SequenceHelper {
 	public String startUseNextValueNoCheck(String aTable, EntityManager aManager) {
 		
 			SequenceInfo info = getSequenceInfo(aTable.toLowerCase(), aManager) ;
-			String value = null;
+			String value ;
 			String addValue = addValue(aTable) ;
 			String mayByNextValue = nextValue(addValue, info.getNextValue());
 			
@@ -68,7 +68,7 @@ public class SequenceHelper {
 	public String startUseNextValueNoCheck(String aTable, String aField, EntityManager aManager) {
 		synchronized(SYNC) {
 			SequenceInfo info = getSequenceInfo(aTable.toLowerCase(), aManager) ;
-			String value = null;
+			String value ;
 			String addValue = addValue(aTable) ;
 			String mayByNextValue = nextValue(addValue, info.getNextValue());
 			
