@@ -94,10 +94,10 @@
           <msh:textField property="downWatersQuality" label="Качество задних вод"  />
         </msh:row>
           <msh:row>
-              <msh:autoComplete property="paritet" label="Паритет родов" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
+              <msh:autoComplete property="paritetPregn" label="Паритет беременностей" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
           </msh:row>
           <msh:row>
-              <msh:autoComplete property="paritetPregn" label="Паритет беременностей" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
+              <msh:autoComplete property="paritet" label="Паритет родов" horizontalFill="true" vocName="vocParitet" fieldColSpan="1"/>
           </msh:row>
           <msh:ifFormTypeIsNotView formName="preg_childBirthForm">
               <msh:row guid="7d80be13-710c-46b8-8503-ce0413686b69">
