@@ -146,7 +146,7 @@ function printCardiacScreeningForm(aCtx, aParams) {
         "left join newborn born on born.patient_id=child.id\n" +
         "left join childbirth chb on chb.id=born.childbirth_id\n" +
         "left join screeningcardiac scrI on scrI.medcase_id=slo.id and scrI.dtype='ScreeningCardiacFirst'\n" +
-        "left join screeningcardiac scrII on scrI.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
+        "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
         "left join VocScreeningSkin sk1 on sk1.id=scrI.skin_id\n" +
         "left join VocScreeningSkin sk2 on sk2.id=scrII.skin_id\n" +
         "left join VocScreeningArterialPulsation vsap1 on vsap1.id=scrI.RightHandAP_id\n" +
