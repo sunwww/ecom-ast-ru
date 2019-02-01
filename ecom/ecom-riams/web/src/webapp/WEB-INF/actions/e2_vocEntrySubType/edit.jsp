@@ -29,6 +29,9 @@
                 <msh:row>
                     <msh:autoComplete  property="visitPurpose" vocName="vocE2FondV025" size="100" />
                 </msh:row>
+                <msh:row>
+                    <msh:autoComplete  property="idsp" vocName="vocE2FondV010Actual" size="100" />
+                </msh:row>
                <msh:row>
                    <msh:checkBox  property="isConsultation"/>
                 </msh:row>

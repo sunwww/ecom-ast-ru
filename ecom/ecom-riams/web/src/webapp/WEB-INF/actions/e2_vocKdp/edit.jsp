@@ -22,6 +22,12 @@
             <msh:row>
                 <msh:textField property="cost"/>
             </msh:row>
+                <msh:row>
+                    <msh:textArea property="medServicesList" size="100" />
+                </msh:row>
+            <msh:row>
+                <msh:autoComplete property="profile" vocName="vocE2FondV015" size="50"/>
+            </msh:row>
                 <msh:submitCancelButtonsRow guid="submitCancel" colSpan="4" />
             </msh:panel>
         </msh:form>

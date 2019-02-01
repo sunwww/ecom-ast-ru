@@ -18,15 +18,13 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/E2")
 public class E2EntryForm extends IdEntityForm {
 
-    /** Родовое отделение */
-    @Comment("Родовое отделение")
-    @Persist
-    public Boolean getIsChildBirthDepartment() {return theIsChildBirthDepartment!=null?theIsChildBirthDepartment:false;}
-    public void setIsChildBirthDepartment(Boolean aIsChildBirthDepartment) {theIsChildBirthDepartment = aIsChildBirthDepartment;}
+//----------все поля ниже добавлены на jsp!!!
+    /** КДП */
+    private Long theKdpVisit ;
     /** Родовое отделение */
     private Boolean theIsChildBirthDepartment ;
-
-//----------все поля ниже добавлены на jsp!!!
+    /** Специальность врача по фонду */
+    private Long theFondDoctorSpecV021 ;
     /** Онкологический случай */
     private Boolean theIsCancer ;
     /** Цель посещения */
@@ -963,18 +961,20 @@ public class E2EntryForm extends IdEntityForm {
     public void setIsCancer(Boolean aIsCancer) {theIsCancer = aIsCancer;}
 
 
-    /** Специальность врача по фонду V021 */
     @Comment("Специальность врача по фонду V021")
     @Persist
     public Long getFondDoctorSpecV021() {return theFondDoctorSpecV021;}
     public void setFondDoctorSpecV021(Long aFondDoctorSpecV021) {theFondDoctorSpecV021 = aFondDoctorSpecV021;}
-    /** Специальность врача по фонду */
-    private Long theFondDoctorSpecV021 ;
 
+    @Comment("Родовое отделение")
+    @Persist
+    public Boolean getIsChildBirthDepartment() {return theIsChildBirthDepartment!=null?theIsChildBirthDepartment:false;}
+    public void setIsChildBirthDepartment(Boolean aIsChildBirthDepartment) {theIsChildBirthDepartment = aIsChildBirthDepartment;}
 
-
-
-
+    @Comment("КДП")
+    @Persist
+    public Long getKdpVisit() {return theKdpVisit;}
+    public void setKdpVisit(Long aKdpVisit) {theKdpVisit = aKdpVisit;}
 
     //Ниже идут Нехранимые поля!!!
 

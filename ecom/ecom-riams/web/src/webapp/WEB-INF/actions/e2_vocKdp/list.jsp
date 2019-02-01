@@ -20,15 +20,18 @@
         <ecom:webQuery name="entryList" nativeSql="select kdp.id
             ,kdp.code||' '||kdp.name as ksg
             ,list(ms.code||' '||ms.name) as services
+            ,pr.code|| ' '|| pr.name as profile
              from VocDiagnosticVisit kdp
+             left join VocE2FondV015 pr on pr.id=kdp.profile_id
              left join VocDiagnosticVisitMedService vis on vis.visit_id=kdp.id
              left join vocMedService ms on ms.id=vis.medservice_id
-             group by kdp.id, kdp.code, kdp.name
+             group by kdp.id, kdp.code, kdp.name, pr.code, pr.name
              order by kdp.code, kdp.name
 "/>
         <msh:section title='Результат поиска'>
             <msh:table  name="entryList" action="entityView-e2_vocKdp.do" idField="1" disableKeySupport="true" styleRow="6">
                 <msh:tableColumn columnName="КПГ" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
+                <msh:tableColumn columnName="Профиль" property="4" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
                 <msh:tableColumn columnName="Услуги" property="3" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />
             </msh:table>
         </msh:section>

@@ -33,11 +33,12 @@
             </msh:panel>
         </msh:form>
         <ecom:webQuery name="polyclinicCoefficientList" nativeSql="select coef.id, coef.startDate,coef.finishDate,coef.value, vest.code||' '||coalesce(vest.name,'')  as entryType
-             ,coef.isdiagnosticSpo as isKdo, coef.isConsultation as isCons
+             ,coef.isdiagnosticSpo as isKdo, coef.isConsultation as f7_isCons
+             ,case when coef.finishDate<current_date then 'color:red' else '' end as f8_styleRow
              from VocCoefficient coef
              left join VocE2EntrySubType vest on vest.id=coef.entryType_id
              where coef.dtype='VocE2PolyclinicCoefficient' and coef.profile_id=${param.id}"/>
-        <msh:table idField="1" name="polyclinicCoefficientList" action="entityParentEdit-e2_polyclinicCoefficient.do" noDataMessage="Нет коэфцициентов">
+        <msh:table idField="1" name="polyclinicCoefficientList" action="entityParentEdit-e2_polyclinicCoefficient.do" noDataMessage="Нет коэфцициентов" styleRow="8">
             <msh:tableColumn columnName="Тип случая" property="5"/>
             <msh:tableColumn columnName="КДО" property="6"/>
             <msh:tableColumn columnName="Консультативное" property="7"/>

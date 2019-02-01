@@ -33,7 +33,6 @@ public class VocKsg extends VocIdCodeName {
 
 	/** Является операцией */
 	@Comment("Является операцией")
-	@Deprecated
 	public Boolean getIsOperation() {return theIsOperation;}
 	public void setIsOperation(Boolean aIsOperation) {theIsOperation = aIsOperation;}
 	/** Является операцией */

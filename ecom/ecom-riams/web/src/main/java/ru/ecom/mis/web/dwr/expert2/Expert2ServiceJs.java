@@ -279,4 +279,9 @@ public class Expert2ServiceJs {
         service.testUnionMecCase(aListEntryId,aHospitalMedCase,aPatientId, aEntryType, isGroupSpo);
         return true;
     }
+
+    public  void cleanAllErrorsByList(Long aEntryList, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("delete from e2entryerror where listentry_id="+aEntryList);
+    }
 }

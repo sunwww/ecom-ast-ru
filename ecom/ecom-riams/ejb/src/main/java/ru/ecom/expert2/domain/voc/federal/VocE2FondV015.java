@@ -12,6 +12,7 @@ import javax.persistence.PreUpdate;
  * Классификатор медицинских специальностей
  */
 @Entity
+@Deprecated
 public class VocE2FondV015 extends VocBaseFederal {
     @PrePersist
     void prePersist() {}

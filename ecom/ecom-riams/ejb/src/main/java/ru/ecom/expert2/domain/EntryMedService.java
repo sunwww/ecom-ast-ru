@@ -37,11 +37,23 @@ public class EntryMedService extends BaseEntity {
     private VocMedService theMedService ;
 
     public EntryMedService(E2Entry aEntry, VocMedService aMedService) {
-        theEntry=aEntry;theMedService=aMedService;
+        theEntry=aEntry;
+        theMedService=aMedService;
     }
     public EntryMedService(E2Entry aEntry, EntryMedService aMedService) {
-        theEntry=aEntry;theMedService=aMedService.getMedService();theServiceDate=aMedService.getServiceDate();theSpeciality=aMedService.getSpeciality();theMkb=aMedService.getMkb();
+        theEntry=aEntry;
+        theMedService=aMedService.getMedService();
+        theServiceDate=aMedService.getServiceDate();
+        theSpeciality=aMedService.getSpeciality();
+        theMkb=aMedService.getMkb();
     }
+
+    /** СНИЛС специалиста, выполневшего услугу */
+    @Comment("СНИЛС специалиста, выполневшего услугу")
+    public String getDoctorSnils() {return theDoctorSnils;}
+    public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
+    /** СНИЛС специалиста, выполневшего услугу */
+    private String theDoctorSnils ;
 
     /** Дата оказания мед. услуги */
     @Comment("Дата оказания мед. услуги")

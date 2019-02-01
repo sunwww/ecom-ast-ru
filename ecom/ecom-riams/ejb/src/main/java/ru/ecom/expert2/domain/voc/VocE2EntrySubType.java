@@ -2,6 +2,7 @@ package ru.ecom.expert2.domain.voc;
 
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV006;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV010;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV016;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV025;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -58,8 +59,17 @@ public class VocE2EntrySubType extends VocBaseEntity {
 
   /** Вид доп. диспансеризации */
   @Comment("Вид доп. диспансеризации")
+  @OneToOne
   public VocE2FondV016 getExtDispType() {return theExtDispType;}
   public void setExtDispType(VocE2FondV016 aExtDispType) {theExtDispType = aExtDispType;}
   /** Вид доп. диспансеризации */
   private VocE2FondV016 theExtDispType ;
+
+  /** Способ оплаты */
+  @Comment("Способ оплаты")
+  @OneToOne
+  public VocE2FondV010 getIdsp() {return theIdsp;}
+  public void setIdsp(VocE2FondV010 aIdsp) {theIdsp = aIdsp;}
+  /** Способ оплаты */
+  private VocE2FondV010 theIdsp ;
 }

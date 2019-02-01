@@ -19,8 +19,8 @@
 
     <tiles:put name='body' type='string'>
         <%
-        String month = request.getParameter("month");
-        String year = request.getParameter("year");
+   //     String month = request.getParameter("month");
+   //     String year = request.getParameter("year");
         String startDateSql = " and to_char(fp.startDate,'MM')='01' and to_char(fp.finishDate,'MM')='12'";
         request.setAttribute("startDateSql",startDateSql);
             %>
@@ -34,7 +34,7 @@
             ,ksg.isFullPayment
              from VocKsg ksg
              left join vocBedSubType vbst on vbst.id=ksg.bedsubtype_id
-              order by vbst.id, cast(ksg.code as int)"/>
+              order by ksg.year desc, vbst.id, ksg.code "/>
         <msh:section title='Результат поиска'>
             <msh:table  name="entryList" action="entityView-e2_vocKsg.do" idField="1" disableKeySupport="true" styleRow="6">
                 <msh:tableColumn columnName="КСГ" property="2" guid="5b05897f-5dfd-4aee-ada9-d04244ef20c6" />

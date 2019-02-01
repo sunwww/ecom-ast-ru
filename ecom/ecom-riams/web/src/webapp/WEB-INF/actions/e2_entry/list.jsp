@@ -79,6 +79,7 @@
     //request.setAttribute("sqlAdd",sqlAdd.toString());
     request.setAttribute("filterSql",filterSql.toString());
 String defectColumnName = "Дефект";
+//String entryType = request.getParameter("entryType");
     if (errorCode!=null&&!errorCode.equals("")) {
         searchFromSql=", list(err.comment) as errComment from e2entryerror err left join e2entry e on e.id=err.entry_id";
         searchWhereSql=(listId!=null?" err.listentry_id="+listId:"")+" and err.errorCode='"+errorCode+"'";
@@ -89,6 +90,14 @@ String defectColumnName = "Дефект";
             defectColumnName="Счет";
         } else {
             searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
+   /*         switch (entryType) {
+                case "STACKDP":
+                    searchFromSql=",vdv.code||' '||vdv.name as f13_kdpName from e2entry e";
+                    break;
+                default:
+                    searchFromSql=" ,list (es.dopCode) as f13_defects from e2entry e";
+            }*/
+
         }
 
         searchWhereSql=(listId!=null ? " e.listentry_id="+listId : "")
@@ -140,7 +149,11 @@ String defectColumnName = "Дефект";
         </msh:panel>
         <ecom:webQuery nameFldSql="entriesSql" name="entries" nativeSql="
 select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||to_char(e.birthDate,'dd.MM.yyyy') as f2_fio, e.startDate as f3_startDate, e.finishDate as f4_finishDate
-        , e.departmentName as f5_depName, ksg.code||' '||ksg.name as f6_ksg ,e.historyNumber as f7_hisNum, e.cost as f8_cost, vbt.code||' '||vbt.name as f9_bedType
+        , e.departmentName as f5_depName
+        , list(
+            case when e.entryType='STACKDP' then vdv.name else ksg.code||' '||ksg.name end
+             ) as f6_ksg
+        ,e.historyNumber as f7_hisNum, e.cost as f8_cost, vbt.code||' '||vbt.name as f9_bedType
         , list(coalesce(e.mainMkb,mkb.code)) as f10_diagnosis, rslt.code||' '||rslt.name as f11_result
         ,case when e.isDefect='1' then 'color:blue' when (e.doNotSend='1') then 'color: red'  when e.serviceStream='COMPLEXCASE' then 'color: gray' else '' end as f12_style
 
@@ -153,6 +166,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join e2entrysanction es on es.entry_id=e.id and (es.isDeleted is null or es.isDeleted='0')
         left join e2bill bill on bill.id=e.bill_id
         left join voce2billstatus vbs on vbs.id=bill.status_id
+        left join VocDiagnosticVisit vdv on vdv.id=e.kdpVisit_id
  where ${searchWhereSql}
  and (e.isDeleted is null or e.isDeleted='0')
  group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate

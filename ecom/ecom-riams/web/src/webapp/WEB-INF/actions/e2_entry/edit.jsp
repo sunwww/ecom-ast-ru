@@ -245,7 +245,7 @@
                 <msh:autoComplete property="visitPurpose" size="50" vocName="vocE2FondV025"/>
 
                 </msh:row><msh:row>
-
+                    <msh:autoComplete property="kdpVisit" vocName="vocDiagnosticVisit" />
             </msh:row>
                 <msh:row>
                     <msh:textField property="entryType" size="50"/>
@@ -416,9 +416,9 @@ where cancer.entry_id=${param.id}"/>
                 window.open('entitySubclassView-mis_medCase.do?id='+$('externalId').value);
             }
             function makeCheck() {
-                var recalcKsg=false;
-                if ($('ksg').value &&confirm('Пересчитать КСГ?')) {
-                    recalcKsg=true;
+                var recalcKsg=true;
+                if ($('ksg').value && !confirm('Пересчитать КСГ?')) {
+                    recalcKsg=false;
                 }
                 Expert2Service.checkEntry(${param.id}, recalcKsg, {
                     callback: function () {
@@ -428,7 +428,7 @@ where cancer.entry_id=${param.id}"/>
             }
             function makeMPFromRecord() {
                 //Long aEntryListId, String aType, String aBillNumber, String aBillDate, Long aEntryId,
-                var ver = "3.1.1"
+                var ver = "3.1.1";
                 //if (prompt("Формировать в версии 3.1 ?")) {ver="3.1";}
                 Expert2Service.makeMPFIle(null,$('entryType').value,$('billNumber').value, $('billDate').value,${param.id},false,ver,{
                     callback: function (monitorId) {

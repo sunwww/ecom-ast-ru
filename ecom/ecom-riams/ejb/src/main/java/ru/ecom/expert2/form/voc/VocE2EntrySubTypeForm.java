@@ -79,4 +79,12 @@ public class VocE2EntrySubTypeForm extends IdEntityForm {
     public void setVisitPurpose(Long aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
     /** Цель посещения */
     private Long theVisitPurpose ;
+
+    /** Способ оплаты */
+    @Comment("Способ оплаты")
+    @Persist
+    public Long getIdsp() {return theIdsp;}
+    public void setIdsp(Long aIdsp) {theIdsp = aIdsp;}
+    /** Способ оплаты */
+    private Long theIdsp ;
 }

@@ -4,6 +4,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
+import ru.ecom.expert2.domain.voc.VocDiagnosticVisit;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2VidSluch;
@@ -15,6 +16,8 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -400,7 +403,7 @@ public class E2Entry extends BaseEntity {
      /** Тип заполнения */
      @Comment("Тип заполнения")
      @Transient
-     public String getEntryListType() {return theListEntry.getEntryType().getCode();}
+     public String getEntryListType() {return theListEntry!=null ? theListEntry.getEntryType().getCode() : null;}
 
     /** Многоплодная беременность */
     @Comment("Многоплодная беременность")
@@ -412,6 +415,7 @@ public class E2Entry extends BaseEntity {
      /** Специальность врача по фонду */
      @Comment("Специальность врача по фонду")
      @OneToOne
+     @Deprecated
      public VocE2FondV015 getFondDoctorSpec() {return theFondDoctorSpec;}
      public void setFondDoctorSpec(VocE2FondV015 aFondDoctorSpec) {theFondDoctorSpec = aFondDoctorSpec;}
      /** Специальность врача по фонду */
@@ -586,6 +590,20 @@ public class E2Entry extends BaseEntity {
       public void setMedServices(List<EntryMedService> aMedServices) {theMedServices = aMedServices;}
       /** Услуги по случаю */
       private List<EntryMedService> theMedServices ;
+
+      /** Список кодов услуг */
+      @Comment("Список кодов услуг")
+      @Transient
+      public List<String> getMedServicesCodes() {
+          List<String> list = new ArrayList<>();
+          for (EntryMedService medService : getMedServices()) {
+              if (medService.getMedService()!=null) {
+                  list.add(medService.getMedService().getCode());
+              }
+          }
+          Collections.sort(list);
+          return list;
+      }
 
      /** Список диагнозов по случаю */
      @Comment("Список диагнозов по случаю")
@@ -1130,5 +1148,13 @@ public class E2Entry extends BaseEntity {
     public void setErrorList(List<E2EntryError> aErrorList) {theErrorList = aErrorList;}
     /** Ошибки проверки */
     private List<E2EntryError> theErrorList ;
+
+    /** КДП */
+    @Comment("КДП")
+    @OneToOne
+    public VocDiagnosticVisit getKdpVisit() {return theKdpVisit;}
+    public void setKdpVisit(VocDiagnosticVisit aKdpVisit) {theKdpVisit = aKdpVisit;}
+    /** КДП */
+    private VocDiagnosticVisit theKdpVisit ;
 
 }

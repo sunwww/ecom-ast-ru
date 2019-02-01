@@ -54,7 +54,7 @@ if (listId!=null) {
 
     <% } else { //Выводим список всех ошибок за заполнению
 %>
-
+<input type="button" onclick="cleanAllErrors()" value="Удалить все ошибки"/>
             <ecom:webQuery name="entriesList" nativeSql="select '${param.id}&errorCode='||err.errorcode as fldId, err.errorcode||' '||coalesce(ve.name,'') as error , count( distinct err.entry_id) as cnt
                 from e2entryerror err
                 left join VocE2EntryError ve on ve.code=err.errorcode
@@ -70,6 +70,9 @@ if (listId!=null) {
     <tiles:put name="javascript" type="string">
     <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
     <script type="text/javascript">
+        function cleanAllErrors () {
+            Expert2Service.cleanAllErrorsByList(${param.id}, {callback: function(){window.document.location.reload();}});
+        }
         function dontShow(chk) {
         //    if (this.ch)
         }

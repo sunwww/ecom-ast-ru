@@ -243,19 +243,15 @@
                     var type=a[1].split("=")[1];
                     var billNumber=a[3].split("=")[1];
                     var billDate=a[2].split("=")[1];
-                    var useAllListEntry= false;
-                    if (confirm("Формировать файл по счету по всем заполнениям?")){
-                        useAllListEntry=true;
-                    }
-                    var ver = "3.1";
-                    if (confirm("Формировать в версии 3.1.1 ?")) {ver="3.1.1";}
+                    var useAllListEntry = confirm("Формировать файл по счету по всем заполнениям?");
+                    var ver = "3.1.1";
+               //     if (confirm("Формировать в версии 3.1.1 ?")) {ver="3.1.1";}
                     Expert2Service.makeMPFIle(${param.id},type,billNumber,billDate, null,useAllListEntry,ver,{
                         callback: function(monitorId) {
                             monitor.id=monitorId;
                             jQuery.toast("Формирование файла запущено");
                             updateStatus();
                         }
-
                     });
 
                 }
