@@ -165,7 +165,8 @@ public class VocServiceJs {
 		boolean isFistrVoc = true ;
 		for(String voc : vocs) {
 			//System.out.println("voc"+voc) ;
-			Collection<WebQueryResult> list= service.executeNativeSql(sql+voc) ;
+			String tmpOrder=(isCode)? "  order by cast(code as integer)":"";
+			Collection<WebQueryResult> list= service.executeNativeSql(sql+voc+tmpOrder) ;
 			if (isFistrVoc) {isFistrVoc=false ;} else {sb.append(", ");}
 			sb.append("{\"name\":\"").append(voc).append("\",\"values\":[");
 			boolean firstPassed = true ;

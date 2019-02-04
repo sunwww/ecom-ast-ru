@@ -274,12 +274,12 @@ public class OncologyServiceJs {
     public String getMarkersAndMarks(HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
-        Collection<WebQueryResult> list = service.executeNativeSql("select distinct n10.id,n10.name,\n" +
-                "(select list(cast(id as varchar)) from VocOncologyN011 where marker=n10.code) as l1,\n" +
+        Collection<WebQueryResult> list = service.executeNativeSql("select distinct cast(n10.code as integer),n10.name,\n" +
+                "(select list(cast(code as varchar)) from VocOncologyN011 where marker=n10.code) as l1,\n" +
                 "(select list(value) from VocOncologyN011 where marker=n10.code) as l2\n" +
                 "from VocOncologyN010 n10 \n" +
                 "left join VocOncologyN011 n11 on n11.marker=n10.code \n" +
-                "where n10.code<>'11'");
+                "where n10.code<>'11' order by cast(n10.code as integer)");
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("#").append(wqr.get3()).append("#").append(wqr.get4()).append("!");
         }
@@ -304,9 +304,11 @@ public class OncologyServiceJs {
     public String getHistology(String caseId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder res = new StringBuilder();
-        Collection<WebQueryResult> list = service.executeNativeSql("select t.id,case when t.code='1' then d.resulthistiology_id else d.valuemarkers_id end \n" +
+        Collection<WebQueryResult> list = service.executeNativeSql("select t.id,case when t.code='1' then n8.code else n11.code end\n" +
                 "from oncologydiagnostic d\n" +
                 "left join voconcologydiagtype t on t.id=d.voconcologydiagtype_id\n" +
+                "left join VocOncologyN008 n8 on n8.id=d.resulthistiology_id\n" +
+                "left join VocOncologyN011 n11 on n11.id=d.valuemarkers_id\n" +
                 "where d.oncologycase_id=" + caseId);
         if (!list.isEmpty()) {
             for (WebQueryResult wqr : list) res.append(wqr.get1()).append("#").append(wqr.get2()).append("!");

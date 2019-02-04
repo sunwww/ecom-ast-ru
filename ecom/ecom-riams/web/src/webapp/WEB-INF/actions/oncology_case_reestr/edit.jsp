@@ -579,7 +579,7 @@
                     btn.value='Создать';
                 }
                 else if (ds.indexOf("C16")!=-1 && getValueVocRadiooncoT("vocOncologyN010_111","vocOncologyN010_11")==-1) {
-                    alert("Для диагноза С16 (эпителиальная опухоhistologyChbль) указывается уровень экспрессии белка НЕR2.");
+                    alert("Для диагноза С16 (эпителиальная опухоль) указывается уровень экспрессии белка НЕR2.");
                     btn.removeAttribute("disabled");
                     btn.value='Создать';
                 }
@@ -1032,7 +1032,7 @@
             * txt - innerHtml
             * */
             function setHistologyoncoT(voc,divId,ids,txt) {
-                VocService.getAllValueByVocs(voc,false, {
+                VocService.getAllValueByVocs(voc,true, {
                     callback: function (aResult) {
                         setHistologyTypeoncoT(voc,JSON.parse(aResult).vocs[0],divId,ids,1,false,false,false,txt);
                         <msh:ifFormTypeAreViewOrEdit formName="oncology_case_reestrForm">
