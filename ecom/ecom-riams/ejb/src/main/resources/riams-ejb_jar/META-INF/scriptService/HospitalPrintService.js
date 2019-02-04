@@ -2022,11 +2022,11 @@ function printBilling(aCtx, aParams)
 	//Milamesher #137 вывод кардиоскринингов
 	var listDatesScreening=aCtx.manager.createNativeQuery("select \n" +
         "case when (scrI.createdate is not null and scrII.createdate is not null) then\n" +
-        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrI.createdate,'dd.mm.yyyy')||' (I этап) и '||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап).' \n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrI.createdate,'dd.mm.yyyy')||' (I этап) и '||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап). '||coalesce(scrII.conclusion,'')\n" +
         "else case when scrI.createdate is not null then\n" +
         "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrI.createdate,'dd.mm.yyyy')||' (I этап)'\n" +
         "else case when scrII.createdate is not null then\n" +
-        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап)'\n" +
+        "cast('Кардиоскрининг был проведён ' as varchar(36))||to_char(scrII.createdate,'dd.mm.yyyy')||' (II этап). '||coalesce(scrII.conclusion,'')\n" +
         "end end end as s\n" +
         "from medcase sls\n" +
         "left join mislpu lpu on lpu.id=sls.department_id\n" +
@@ -2037,7 +2037,7 @@ function printBilling(aCtx, aParams)
         "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
         "where lpu.IsCreateCardiacScreening=true and lpuslo.IsCreateCardiacScreening=true\n" +
         "and sls.dtype='HospitalMedCase' and slo.dtype='DepartmentMedCase' and allslo.dtype='DepartmentMedCase'\n" +
-        "group by sls.id,scrI.createdate,scrII.createdate\n" +
+        "group by sls.id,scrI.createdate,scrII.createdate,scrii.conclusion\n" +
         "having count(distinct allslo.id)=1 and sls.id="+id).getResultList();
     if (listDatesScreening.size()>0) map.put("cardiascreen",(listDatesScreening.get(0)!=null)? "\n"+listDatesScreening.get(0):"") ;
     else  map.put("cardiascreen","") ;

@@ -74,13 +74,17 @@
                     <msh:autoComplete property="diuresis" label="Характеристика диуреза" vocName="vocScreeningDiuresis"  size="30"/>
                 </msh:row>
                 <msh:row>
-                    <br><label>Электрокардиография (по показаниям)</label><br>
+                    <br><label><b>Электрокардиография (по показаниям)</b></label><br>
                     <msh:textArea property="ECG" label=""/>
                 </msh:row>
                 <msh:row>
-                    <br><label>Дополнительные сведения: подозрения на синдромальную патологию, множественные пороки развития</label><br>
+                    <br><label><b>Дополнительные сведения: подозрения на синдромальную патологию, множественные пороки развития</b></label><br>
                     <msh:textArea property="extraInfo" label=""
                                   horizontalFill="true"/>
+                </msh:row>
+                <msh:row>
+                    <br><label><b>Заключение</b></label><br>
+                    <msh:textArea property="conclusion" label=""/><br>
                 </msh:row>
                 <msh:ifFormTypeAreViewOrEdit formName="stac_screeningCardiacSecondForm">
                     <msh:row>

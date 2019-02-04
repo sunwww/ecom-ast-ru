@@ -58,6 +58,11 @@ public class ScreeningCardiacSecondForm extends ScreeningCardiacFirstForm {
     @Persist
     public String getECG() {return theECG;}
     public void setECG(String aECG) {theECG = aECG;}
+    /** Заключение для выписки  */
+    @Comment("Заключение для выписки")
+    @Persist
+    public String getConclusion() {return theConclusion;}
+    public void setConclusion(String aConclusion) {theConclusion = aConclusion;}
 
     /** СМО */
     private Long theMedCase;
@@ -73,4 +78,6 @@ public class ScreeningCardiacSecondForm extends ScreeningCardiacFirstForm {
     private Long theDiuresis;
     /** ЭКГ (по показаниям) */
     private String theECG;
+    /** Заключение для выписки */
+    private String theConclusion;
 }

@@ -46,6 +46,10 @@ public class ScreeningCardiacSecond extends ScreeningCardiacFirst {
     @Comment("ЭКГ (по показаниям)")
     public String getECG() {return theECG;}
     public void setECG(String aECG) {theECG = aECG;}
+    /** Заключение для выписки  */
+    @Comment("Заключение для выписки")
+    public String getConclusion() {return theConclusion;}
+    public void setConclusion(String aConclusion) {theConclusion = aConclusion;}
 
     /** Регистрация АД одновременная - правая рука*/
     private Long theRightHandAD;
@@ -59,4 +63,6 @@ public class ScreeningCardiacSecond extends ScreeningCardiacFirst {
     private VocScreeningDiuresis theDiuresis;
     /** ЭКГ (по показаниям) */
     private String theECG;
+    /** Заключение для выписки */
+    private String theConclusion;
 }
