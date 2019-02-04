@@ -14,6 +14,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Path("login")
 public class ApiLoginResource {
@@ -37,13 +39,19 @@ public class ApiLoginResource {
     @Path("getChildCount")
     public String getChildCount(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("date") String aDate) throws NamingException, JSONException {
         ApiUtil.login(token,aRequest);
+        String tmpDate="";
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
         if (aDate==null||aDate.equals("")) {
+            tmpDate=df.format(new Date());
             aDate=" nb.birthdate = current_date";
         } else if (aDate.equals("-1")){
+            tmpDate= df.format(new Date(System.currentTimeMillis()-24*60*60*1000));
             aDate=" nb.birthdate = current_date-1";
         } else if (aDate.split("-").length>1) {
+            tmpDate= aDate.split("-")[0];
             aDate=" nb.birthdate between to_date('"+aDate.split("-")[0]+"','dd.MM.yyyy') and to_date('"+aDate.split("-")[1]+"','dd.MM.yyyy')";
         } else {
+            tmpDate=aDate;
             aDate=" nb.birthdate = to_date('"+aDate+"','dd.MM.yyyy')";
         }
         String sql = "select to_char(nb.birthdate, 'dd.MM.yyyy') as bDate" +
@@ -64,6 +72,8 @@ public class ApiLoginResource {
                 ret.append("newBornSize=").append(arr.length()).append(";birthDate=").append(obj.getString("date")).append(";birthMale=").append(obj.getString("male")).append(";birthFeMale=").append(obj.getString("female")).append("\n\r");
             }
         }
+        else
+            ret.append("newBornSize=").append("1").append(";birthDate=").append(tmpDate).append(";birthMale=").append("0").append(";birthFeMale=").append("0").append("\n\r");
         return ret.toString();
     }
 }
