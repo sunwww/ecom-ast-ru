@@ -63,8 +63,8 @@ function printStatCards(aCtx, aParams) {
 		//10. Диагноз клинический
 		wqr.set12(getDiagnos(medCase.diagnosClinical)) ;//"sls.diagnosisClinical",
 		
-		wqr.set13(recordSloBySls(aCtx,slsId)) ;//,"listSlo"
-		wqr.set14(recordSurgicalOperationBySls(aCtx,slsId)) ;//,"listOper"
+		wqr.set13(recordSloBySls(aCtx,medCase.id)) ;//,"listSlo"
+		wqr.set14(recordSurgicalOperationBySls(aCtx,medCase.id)) ;//,"listOper"
 		ret.add(wqr) ;
 		
 	}
