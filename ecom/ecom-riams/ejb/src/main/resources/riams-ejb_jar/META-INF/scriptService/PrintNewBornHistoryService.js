@@ -217,7 +217,8 @@ function printCardiacScreeningForm(aCtx, aParams) {
         map.put("ECG2", (obj[40]!=null)?obj[40]:"");
         map.put("extraInfo", (obj[41]!=null)?obj[41]:"");
         map.put("fio1", (obj[42]!=null)?obj[42]:"");
-        map.put("fio2", (obj[43]!=null)?obj[43]:"");
+        map.put("fio2", (''+obj[43]!=''+obj[42])?obj[43]:"");
+        map.put("provod", (''+obj[43]!=''+obj[42] && obj[43]!=null && obj[42]!=null)?"проводивших":"проводившего");
     }
     return map;
 }
