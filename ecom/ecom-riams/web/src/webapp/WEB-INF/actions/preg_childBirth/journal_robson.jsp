@@ -83,7 +83,7 @@
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="totalinfo"
-                           action="journal_robson.do" idField="1" cellFunction="true" >
+                           action="journal_robson.do" idField="1" cellFunction="true" printToExcelButton="Сохранить в excel">
                     <msh:tableColumn columnName="Группа Робсона" property="2" addParam="&nul=nul" />
                     <msh:tableColumn columnName="К/С в группах" property="3" isCalcAmount="true" addParam="&short=Short&ks=true&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(КС)"/>
                     <msh:tableColumn columnName="Всего родов в группе" property="4" isCalcAmount="true" addParam="&short=Short&ks=false&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(роды)"/>
@@ -130,7 +130,7 @@
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="patList" openNewWindow="true"
-                           action="entityView-stac_ssl.do" idField="1" >
+                           action="entityView-stac_ssl.do" idField="1" printToExcelButton="Сохранить в excel">
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>
