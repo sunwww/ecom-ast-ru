@@ -49,8 +49,10 @@ import java.util.*;
 public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	static final Logger LOG = Logger.getLogger(TemplateProtocolServiceBean.class);
 
+	@Deprecated
 	public void sendSms(String aPhone, String aMessage)  {
-		try {
+		LOG.warn("Кто-то пытался послать СМС: "+aPhone+" : "+aMessage );
+		/*try {
 			JSONObject json = new JSONObject();
 			json.put("phonenumber", aPhone);
 			json.put("message", aMessage);
@@ -61,7 +63,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error("Ошибка при отправке СМС "+aMessage);
-		}
+		}*/
 	}
 	public String makePOSTRequest (String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager) {
 		//LOG.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
