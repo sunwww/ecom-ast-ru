@@ -36,6 +36,12 @@ public class ScreeningCardiacFirstPreCreateInterceptor implements IParentFormInt
 						"order by p.planStartDate desc limit 1").getResultList() ;
 				if (list.size()>0)
 					iiform.setECG(String.valueOf(list.get(0)));
+				//Запрет на создание II этапа скрининга без I
+				if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/Pregnancy/CardiacScreening/ChekFirstExistBeforeCreateSecond")){
+					list = aContext.getEntityManager().createNativeQuery("select count(id) from screeningcardiac  where medcase_id='"+form.getMedCase()+"'").getResultList() ;
+					if (list.size()>0 && String.valueOf(list.get(0)).equals("0"))
+						throw new IllegalStateException("<a href='entityParentPrepareCreate-stac_screeningCardiacFirst.do?id=" + form.getMedCase() + "'>I этап кардиоскрининга</a> в отд. новорождённых должен быть создан до II этапа!") ;
+				}
 			}
     	}
     }

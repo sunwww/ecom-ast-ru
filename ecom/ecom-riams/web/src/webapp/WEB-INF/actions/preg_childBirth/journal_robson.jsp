@@ -5,7 +5,8 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%
-    request.setAttribute("ksCode","A16.20.005");
+    String ksCode="A16.20.005";
+    request.setAttribute("ksCode",ksCode);
     String nul = request.getParameter("nul") ;
     if (nul==null) {
 
@@ -45,22 +46,24 @@
         <%
             if (request.getParameter("dateBegin")!=null &&  !request.getParameter("dateBegin").equals("")) {
                 request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin,dateEnd,request));
+                ActionUtil.getValueBySql("select getTotalChildBirthOrKs('"+dateBegin+"','"+dateEnd+"',"+false+",'"+ksCode+"') ", "r","rName",request) ;
+                ActionUtil.getValueBySql("select getTotalChildBirthOrKs('"+dateBegin+"','"+dateEnd+"',"+true+",'"+ksCode+"') ", "ks","ksName",request) ;
         %>
         <msh:section>
             <msh:sectionTitle>
                 <ecom:webQuery isReportBase="${isReportBase}" name="totalinfo" nameFldSql="totalinfo_sql" nativeSql="
                 select '&vrid='||coalesce(t.vrid,0)||'&vrname='||coalesce(t.vrname,''),t.vrname as vrname,sum(t.ks) as ks,sum(t.chbc) as chbc,
-                case when getTotalChildBirthOrKs('${dateBegin}','${dateEnd}',false,'${ksCode}')=0 then 0 else round(100*sum(t.chbc)/cast(getTotalChildBirthOrKs('${dateBegin}','${dateEnd}',false,'${ksCode}') as numeric),1) end as per1,
+                case when ${r}=0 then 0 else round(100*sum(t.chbc)/cast(${r} as numeric),1) end as per1,
                 case when sum(t.chbc)=0 then 0 else round(100*sum(t.ks)/cast(sum(t.chbc) as numeric),1) end  as per2,
-                case when getTotalChildBirthOrKs('${dateBegin}','${dateEnd}',true,'${ksCode}')=0 then 0 else round(100*sum(t.ks)/cast(getTotalChildBirthOrKs('${dateBegin}','${dateEnd}',true,'${ksCode}') as numeric),1) end  as per3
+                case when ${ks}=0 then 0 else round(100*sum(t.ks)/cast(${ks} as numeric),1) end  as per3
                 from (
                 select vr.id as vrid,vr.name as vrname,
                 count(distinct chb.id) as chbc,
                 (select count(distinct chb1.id) from childbirth chb1
-                left join medcase slo on slo.id=chb1.medcase_id
+                left join medcase slo on slo.id=chb1.medcase_id or slo.parent_id=(select parent_id from medcase where id=chb1.medcase_id)
                 left join robsonclass r on r.medcase_id=slo.id
                 left join vocrobsonclass vr on vr.id=robsontype_id
-                left join SurgicalOperation so on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+                left join SurgicalOperation so on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase' or so.medCase_id=(select parent_id from medcase where id=chb.medcase_id)
                 left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
                 left join MedService vo on vo.id=so.medService_id
                 where chb1.id=chb.id and vo.code='${ksCode}') as ks
@@ -68,7 +71,7 @@
                 left join medcase slo on slo.id=chb.medcase_id
                 left join robsonclass r on r.medcase_id=slo.id
                 left join vocrobsonclass vr on vr.id=r.robsontype_id
-                left join SurgicalOperation so on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
+                left join SurgicalOperation so on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase' or so.medCase_id=(select parent_id from medcase where id=chb.medcase_id)
                 left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
                 left join MedService vo on vo.id=so.medService_id
                 where chb.birthfinishdate between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and vr.id is not null
@@ -80,10 +83,10 @@
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="totalinfo"
-                           action="journal_robson.do" idField="1" cellFunction="true" >
+                           action="journal_robson.do" idField="1" cellFunction="true" printToExcelButton="Сохранить в excel">
                     <msh:tableColumn columnName="Группа Робсона" property="2" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="К/С в группах" property="3" isCalcAmount="true" addParam="&short=Short&ks=true&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(роды)"/>
-                    <msh:tableColumn columnName="Всего родов в группе" property="4" isCalcAmount="true" addParam="&short=Short&ks=false&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(КС)"/>
+                    <msh:tableColumn columnName="К/С в группах" property="3" isCalcAmount="true" addParam="&short=Short&ks=true&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(КС)"/>
+                    <msh:tableColumn columnName="Всего родов в группе" property="4" isCalcAmount="true" addParam="&short=Short&ks=false&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&viewname=(роды)"/>
                     <msh:tableColumn columnName="Размер группы, %" property="5" addParam="&nul=nul"/>
                     <msh:tableColumn columnName="Уровень К/С в группах, %" property="6" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Вклад К/С по группам в общ. кол-во К/С, %" property="7" addParam="&nul=nul"/>
@@ -111,11 +114,11 @@
                 <ecom:webQuery isReportBase="${isReportBase}" name="patList" nameFldSql="patList_sql" nativeSql="
                 select distinct sls.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
                 from childbirth chb
-                left join medcase slo on slo.id=chb.medcase_id
+                left join medcase slo on slo.id=ANY(select id from medcase where parent_id=(select parent_id from medcase where id=chb.medcase_id) and dtype='DepartmentMedCase')
                 left join robsonclass r on r.medcase_id=slo.id
                 left join vocrobsonclass vr on vr.id=r.robsontype_id
-                left join SurgicalOperation so on slo.id=so.medCase_id and slo.dtype='DepartmentMedCase'
                 left join MedCase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'
+                left join SurgicalOperation so on case when ${param.ks}=true then so.medCase_id=ANY(select id from medcase where parent_id=sls.id and dtype='DepartmentMedCase') else so.medCase_id=chb.medcase_id end
                 left join MedService vo on vo.id=so.medService_id
                 left join patient pat on slo.patient_id=pat.id
                 where chb.birthfinishdate between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy') and vr.id=${param.vrid}
@@ -127,7 +130,7 @@
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="patList" openNewWindow="true"
-                           action="entityView-stac_ssl.do" idField="1" >
+                           action="entityView-stac_ssl.do" idField="1" printToExcelButton="Сохранить в excel">
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="ФИО" property="2" />
                 </msh:table>

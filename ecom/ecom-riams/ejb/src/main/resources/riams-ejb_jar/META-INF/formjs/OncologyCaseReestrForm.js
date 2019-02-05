@@ -17,11 +17,15 @@ function onCreate(aForm, aEntity, aCtx){
             diagn.setVocOncologyDiagType(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyDiagType, java.lang.Long.valueOf(vals[0])));
             if (vals[0] == '1') {
                 diagn.setHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN007, java.lang.Long.valueOf(vals[1])));
-                diagn.setResultHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN008, java.lang.Long.valueOf(vals[2])));
+                var res = aCtx.manager.createNativeQuery("select id from VocOncologyN008 where code='"+vals[2]+"'").getResultList();
+                if (res.size()>0)
+                    diagn.setResultHistiology(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN008, java.lang.Long.valueOf(res.get(0))));
             }
             else if (vals[0] == '2') {
                 diagn.setMarkers(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN010, java.lang.Long.valueOf(vals[1])));
-                diagn.setValueMarkers(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN011, java.lang.Long.valueOf(vals[2])));
+                var res = aCtx.manager.createNativeQuery("select id from VocOncologyN011 where code='"+vals[2]+"'").getResultList();
+                if (res.size()>0)
+                    diagn.setValueMarkers(aCtx.manager.find(Packages.ru.ecom.oncological.ejb.domain.voc.VocOncologyN011, java.lang.Long.valueOf(res.get(0))));
             }
             diagn.setOncologyCase(aEntity);
             aCtx.manager.persist(diagn);

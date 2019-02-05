@@ -146,7 +146,7 @@ function printCardiacScreeningForm(aCtx, aParams) {
         "left join newborn born on born.patient_id=child.id\n" +
         "left join childbirth chb on chb.id=born.childbirth_id\n" +
         "left join screeningcardiac scrI on scrI.medcase_id=slo.id and scrI.dtype='ScreeningCardiacFirst'\n" +
-        "left join screeningcardiac scrII on scrI.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
+        "left join screeningcardiac scrII on scrII.medcase_id=slo.id and scrII.dtype='ScreeningCardiacSecond'\n" +
         "left join VocScreeningSkin sk1 on sk1.id=scrI.skin_id\n" +
         "left join VocScreeningSkin sk2 on sk2.id=scrII.skin_id\n" +
         "left join VocScreeningArterialPulsation vsap1 on vsap1.id=scrI.RightHandAP_id\n" +
@@ -217,7 +217,8 @@ function printCardiacScreeningForm(aCtx, aParams) {
         map.put("ECG2", (obj[40]!=null)?obj[40]:"");
         map.put("extraInfo", (obj[41]!=null)?obj[41]:"");
         map.put("fio1", (obj[42]!=null)?obj[42]:"");
-        map.put("fio2", (obj[43]!=null)?obj[43]:"");
+        map.put("fio2", (''+obj[43]!=''+obj[42])?obj[43]:"");
+        map.put("provod", (''+obj[43]!=''+obj[42] && obj[43]!=null && obj[42]!=null)?"проводивших":"проводившего");
     }
     return map;
 }
