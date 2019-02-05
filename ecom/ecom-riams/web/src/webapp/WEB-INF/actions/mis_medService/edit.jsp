@@ -236,13 +236,15 @@
 	      	 	update() ;
 	      	 });
 	      	 function update() {
-	      	 	var text ;
-	      	 	text = $('vocMedServiceName').value ;
-	      	 	var cnt = text.indexOf(' ') ;
-	      	 	if (cnt>0) {
-		      	 	$('code').value=text.substring(0,cnt) ;
-		      	 	$('name').value=text.substring(cnt+1);
-	      	 	}
+	      	     if (!$('code').value) {
+                     var text ;
+                     text = $('vocMedServiceName').value ;
+                     var cnt = text.indexOf(' ') ;
+                     if (cnt>0) {
+                         $('code').value=text.substring(0,cnt) ;
+                         $('name').value=text.substring(cnt+1);
+                     }
+                 }
 	      	 }
     	</script>
     </msh:ifFormTypeIsNotView>
