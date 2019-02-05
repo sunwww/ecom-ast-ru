@@ -35,6 +35,13 @@
                 queryAppend="finishDate is null"
         />
     </voc>
+    <voc id='vocE2FondV027' type='EntityVocService'>
+        <EntityVocService
+                entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV027'
+                names   = 'code, name'
+                queried = 'code, name'
+        />
+    </voc>
     <voc id='vocE2FondV010' type='EntityVocService'>
         <EntityVocService
                 entity  = 'ru.ecom.expert2.domain.voc.federal.VocE2FondV010'

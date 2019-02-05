@@ -78,7 +78,7 @@ where ${field}  and p.dtype = 'DrugPrescription'"/>
 
     <msh:section title="Список назначений на диагностические исследования">
     	<ecom:webQuery name="pres" nativeSql="
- select p.id as pid,pl.id as plid,ms.name as f3_drname ,p.planStartDate ,m.datestart ||' '||cast(m.timeexecute as varchar(5)) as f5_timeexecute
+ select p.id as pid,pl.id as plid,ms.code||' '|| ms.name as f3_drname ,p.planStartDate ,m.datestart ||' '||cast(m.timeexecute as varchar(5)) as f5_timeexecute
   , p.canceldate as f6_canceldate ,coalesce(p.cancelreasontext,'') as f7_cancelText
   ,case when canceldate is not null then 'color:red;' else null end as f8_styleCancel
   from Medcase sls

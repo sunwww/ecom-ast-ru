@@ -31,7 +31,7 @@
                 </msh:row><msh:row>
 
                 </msh:row><msh:row>
-                    <msh:autoComplete vocName="vocIllnesPrimary" property="${name}IllnesPrimary" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
+                    <msh:autoComplete vocName="vocE2FondV027" property="${name}IllnesPrimary" label="Характер заболевания" horizontalFill="true" fieldColSpan="3"/>
                 </msh:row><msh:row>
                     <msh:autoComplete vocName="vocPriorityDiagnosis" property="${name}Priority" label="Приоритет" guid="e28f35fc-fe25-4968-bf2f-d1fe4661349e" horizontalFill="true" />
                 </msh:row>
@@ -86,7 +86,7 @@ function save${name}Service() {
         newJson[json[i].name]=json[i].value;
     }
     if ($('${name}MkbId').value) {
-        if (!$('${name}RegistrationType').value||!$('${name}IllnesPrimary').value||!$('${name}Priority').value) {
+        if (!$('${name}RegistrationType').value || !$('${name}IllnesPrimary').value || !$('${name}Priority').value) {
             alert("Необходимо заполнить тип регистрации, приоритет и характер заболевания!");
             return;
 }

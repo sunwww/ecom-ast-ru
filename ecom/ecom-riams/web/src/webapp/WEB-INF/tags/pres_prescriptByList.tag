@@ -71,7 +71,7 @@ where ${field} and pres.dtype = 'DrugPrescription'"/>
 </msh:ifInRole>
 <msh:section>
 	<ecom:webQuery name="pres" nativeSql="select
-    	p.id as pid,pl.id as plid,ms.name as drname
+    	p.id as pid,pl.id as plid,ms.code||' '||ms.name as drname
  ,p.planStartDate,p.planEndDate
  ,m.datestart
 ,coalesce(d.record,'')

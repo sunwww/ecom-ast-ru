@@ -76,12 +76,18 @@ public class EntryDiagnosis extends BaseEntity {
     private String theIllnessPrimary ;
 
 
-    public EntryDiagnosis(E2Entry aEntry, VocIdc10 aMkb, VocDiagnosisRegistrationType aRegType, VocPriorityDiagnosis aPriority, String aDopMkb, String aIllnessPrimary) {
+    public EntryDiagnosis(E2Entry aEntry, VocIdc10 aMkb, VocDiagnosisRegistrationType aRegType, VocPriorityDiagnosis aPriority, String aDopMkb
+            , String aIllnessPrimary) {
         theEntry=aEntry; theMkb=aMkb;theRegistrationType=aRegType;thePriority=aPriority;theDopMkb=aDopMkb;theIllnessPrimary=aIllnessPrimary;
+    }
+    public EntryDiagnosis(E2Entry aEntry, VocIdc10 aMkb, VocDiagnosisRegistrationType aRegType, VocPriorityDiagnosis aPriority, String aDopMkb
+            , VocE2FondV027 aIllnessPrimary) {
+        theEntry=aEntry; theMkb=aMkb;theRegistrationType=aRegType;thePriority=aPriority;theDopMkb=aDopMkb;theVocIllnessPrimary=aIllnessPrimary;
     }
     public EntryDiagnosis (E2Entry aEntry, EntryDiagnosis aEntryDiagnosis) {
         theEntry=aEntry; theMkb=aEntryDiagnosis.getMkb();theRegistrationType=aEntryDiagnosis.getRegistrationType();
         thePriority=aEntryDiagnosis.getPriority();theDopMkb=aEntryDiagnosis.getDopMkb();theIllnessPrimary=aEntryDiagnosis.getIllnessPrimary();
+        theVocIllnessPrimary = aEntryDiagnosis.getVocIllnessPrimary();
     }
     public EntryDiagnosis() {}
 }
