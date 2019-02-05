@@ -187,20 +187,27 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 	}
 
 
-    //Проверяем -  есть ли СЛО.
+    //Проверяем -  есть ли открытый СЛС.
     var sql = "select pl.id as listId, coalesce(slo.id,sls.id) as medcaseId" +
         " from medcase sls" +
         " left join medcase slo on slo.parent_id = sls.id and slo.dtype='DepartmentMedCase' and slo.transferdate is null" +
         " left join prescriptionlist pl on pl.medcase_id = coalesce(slo.id, sls.id)" +
         " left join vocdeniedhospitalizating vdh on vdh.id = sls.deniedhospitalizating_id" +
-        " where sls.dtype='HospitalMedCase' and  sls.patient_id = " + aEntity.patient.id +
-        " and (sls.datefinish is null or vdh.code = 'IN_PIGEON_HOLE')" ;
+        " where sls.dtype='HospitalMedCase' and sls.patient_id = " + aEntity.patient.id +
+        " and sls.datefinish is null and (sls.deniedhospitalizating_id is null or vdh.code = 'IN_PIGEON_HOLE')" ;
     var list = aManager.createNativeQuery(sql).getResultList();
-    var isCreatePres = !list.isEmpty();
+    var hasSls = !list.isEmpty();
     var presList =null;
-    if (isCreatePres) {
-    	presList = aManager.find(Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList,java.lang.Long.valueOf(+list.get(0)[0]));
+    if (hasSls) {
+    	var sls =list.get(0);
+		if (sls[0]) {
+			presList = aManager.find(Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList, java.lang.Long.valueOf(+sls[0]));
+		} else {
+			presList = new Packages.ru.ecom.mis.ejb.domain.prescription.PrescriptList();
+			presList.setMedCase(aManager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase, java.lang.Long.valueOf(+sls[1])));
+		}
 	}
+
 
 	for (var i = 0; i < ar.length(); i++) {
 		var child = ar.get(i);
@@ -216,7 +223,7 @@ function saveArray(aEntity,aManager, aJsonString,aClazz,aMainCmd, aAddCmd,
 					eval(aAddCmd[j]) ;
 				}
 				aManager.persist(objNew) ;
-				if (isCreatePres) {
+				if (hasSls) {
                     var pres = new Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription();
                     pres.setPrescriptionList(presList);
                     pres.setPlanStartDate(aEntity.timePlan.workCalendarDay.calendarDate);
