@@ -77,12 +77,12 @@ public class DepartmentSaveInterceptor  implements IFormInterceptor{
 	    					.setParameter("idc10", Long.valueOf(serv[0]))
 	    					.setParameter("mkbAdc", aMkbAdc) 
 	    					.executeUpdate() ;
-	    				} else {
+	    				} /*else {
 	    					aManager.createNativeQuery("insert into Diagnosis (name,idc10_id,medCase_id,priority_id,registrationType_id,illnesPrimary_id,mkbAdc) values (:name,'"+serv[0]+"','"+aMedCase+"','"+vocPrior.getId()+"','"+vocDRT.getId()+"',"+((aIllnesPrimary==null||aIllnesPrimary.intValue()==0)?"null":"'"+aIllnesPrimary+"'")+",:mkbAdc)")
 	    					.setParameter("name", serv.length>2?serv[2]:"") 
 	    					.setParameter("mkbAdc", aMkbAdc) 
 	    						.executeUpdate() ;
-	    				}
+	    				}*/
     				}
     			}
     			for (int i=otherServs.length;i<list.size();i++) {
