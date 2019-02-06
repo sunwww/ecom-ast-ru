@@ -307,30 +307,28 @@ function transferObservRoomToChild(aForm, aEntity, aContext) {
     }
 }
 function onSave(aForm, aEntity, aContext) {
-//	var dat =(new java.util.Date()).getTime() ;
+	//var dat =(new java.util.Date()).getTime() ;
 	//aEntity.setEditTime(new java.sql.Time (dat)) ;
-	
-/*	var listDep = aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev")
-		.setParameter("prev",aForm.id).getResultList() ;
-	if (listDep.size()>0) {
-		var medCase = listDep.get(0) ;
-		medCase.dateStart = aEntity.transferDate ;
-		medCase.entranceTime = aEntity.transferTime ;
-		if (medCase.department != aEntity.transferDepartment) {
-			medCase.department = aEntity.transferDepartment ;
-		}
-		aContext.manager.persist(medCase) ;
-	}*/
+
+	//Оставить след. строку. Если её закомментировать - то всё будет плохо!
+		 aContext.manager.createQuery("from MedCase where prevMedCase_id=:prev").setParameter("prev",aForm.id).getResultList() ;
+    /*    if (listDep.size()>0) {
+            var medCase = listDep.get(0) ;
+            medCase.dateStart = aEntity.transferDate ;
+            medCase.entranceTime = aEntity.transferTime ;
+            if (medCase.department != aEntity.transferDepartment) {
+                medCase.department = aEntity.transferDepartment ;
+            }
+            aContext.manager.persist(medCase) ;
+        }*/
 	if (aEntity.prevMedCase!=null) {
 		aEntity.prevMedCase.transferDate = aEntity.dateStart ;
 		aEntity.prevMedCase.transferTime = aEntity.entranceTime ;
 		aEntity.prevMedCase.transferDepartment = aEntity.department ;
 	}
-	//throw  "--"+aForm.getId() ;
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getComplicationDiags(), "4", "4",null) ;
 	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getConcomitantDiags(), "4","3",null) ;
-	//throw ""+new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString() ;
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), new java.lang.StringBuilder().append(aForm.getClinicalMkb()).append("@#@ @#@").append(aForm.getClinicalDiagnos()).toString(), "4", "1",aForm.clinicalActuity,aForm.mkbAdc) ;
+	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.DepartmentSaveInterceptor.setDiagnosis(aContext.manager, aEntity.getId(), aForm.getClinicalMkb()+"@#@ @#@"+aForm.getClinicalDiagnos(), "4", "1",aForm.clinicalActuity,aForm.mkbAdc) ;
 }
 
 // Перед удалением
