@@ -358,7 +358,7 @@ function gotoNewBornHistory(aMedCase,aUrl) {
               var resMas = res.split("#");
               if (res != "##") {
                   var stat=$('statCardNumber').value;
-                  var year=$('dateStart').value.substring(6,11);
+                  var year=$('dateFinish').value.substring(6,11);
                   window.open("http://" + resMas[0] + "/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2Freports&reportUnit=%2Freports%2FCostCertificate&standAlone=true&decorate=no"
                       + "&j_username=" + resMas[1] + "&j_password=" + resMas[2]+"&hn="+stat+"&fy="+year+ "&user=" + document.getElementById('current_username_li').innerHTML);
               }
