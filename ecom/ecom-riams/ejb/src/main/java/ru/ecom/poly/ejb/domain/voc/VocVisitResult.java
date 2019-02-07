@@ -41,4 +41,13 @@ public class VocVisitResult extends VocIdNameOmcCode {
 		this.promedCode1 = promedCode1;
 	}
 
+	private String promedCode2;
+	@Comment("Код в промеде2")
+	public String getPromedCode2() {
+		return promedCode2;
+	}
+	public void setPromedCode2(String promedCode2) {
+		this.promedCode2 = promedCode2;
+	}
+
 }
