@@ -250,18 +250,6 @@ horizontalFill="true" />
 
 		<script type="text/javascript">
             var isDMS=false;
-            function printProtocol() {
-                HospitalMedCaseService.getPrefixByProtocol(${param.id},
-                    {
-                        callback: function(prefix) {
-                            if (prefix==null) prefix="" ;
-                            initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1)
-                            //window.location.href="print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}" ;
-
-                        }
-                    }
-                )
-            }
 
 		</script>
 
@@ -345,7 +333,7 @@ horizontalFill="true" />
 
 				function save_form() {
                     if (typeof isDMS  == 'undefined') {
-                        HospitalMedCaseService.getIfPrivateInsurance(${param.id},true,{
+                        HospitalMedCaseService.getIfPrivateInsurance($('medCase').value,true,{
                                 callback: function(res) {
                                     isDMS=(res=="1");
                                     checkAndSave();
@@ -566,7 +554,7 @@ horizontalFill="true" />
             <msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
                 <script type="text/javascript">
                     //Milamesher 18102018 #122
-                    HospitalMedCaseService.getIfPrivateInsurance(${param.id},false,{
+                    HospitalMedCaseService.getIfPrivateInsurance($('id').value,false,{
                             callback: function(res) {
                                 if (res=="1") {
                                     isDMS=true;
@@ -603,10 +591,10 @@ horizontalFill="true" />
 				//Milamesher 27122018 #135 - вывод суток
 				<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShowDaysInDiary">
 				if ($('record').value=='') {
-                HospitalMedCaseService.getMedcaseDtypeById(${param.id},{
+                HospitalMedCaseService.getMedcaseDtypeById($('medCase').value,{
                         callback: function(res) {
                             if (res=="0") {
-                                HospitalMedCaseService.getSlsCountDays(${param.id}, {
+                                HospitalMedCaseService.getSlsCountDays($('medCase').value, {
                                     callback: function (res2) {
                                         if (res2!="") {
                                             if (res2==0) res2=1;
@@ -615,7 +603,7 @@ horizontalFill="true" />
                                     }});
 							}
 							else if (res=="1") {
-                                HospitalMedCaseService.getSloCountDays(${param.id}, {
+                                HospitalMedCaseService.getSloCountDays($('medCase').value, {
                                     callback: function (res) {
                                         if (res!="##") {
                                             var cnts=res.split('#');
@@ -634,7 +622,7 @@ horizontalFill="true" />
 				}
                 </msh:ifInRole>
 			   //Milamesher 18102018 #122
-                HospitalMedCaseService.getIfPrivateInsurance(${param.id},true,{
+                HospitalMedCaseService.getIfPrivateInsurance($('medCase').value,true,{
                         callback: function(res) {
                             if (res=="1") {
                                 isDMS=true;
