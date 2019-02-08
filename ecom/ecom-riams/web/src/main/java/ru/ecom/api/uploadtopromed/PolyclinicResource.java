@@ -17,8 +17,14 @@ public class PolyclinicResource {
     @POST
     @Path("getPolyclinicCase")
     @Produces(MediaType.APPLICATION_JSON)
-    /** Список случаев поликлинического обслуживания
-     * dateTo - период по*/
+    /**
+     * Получить cписок случаев поликлинического обслуживания в JSON.
+     *
+     * @param aRequest HttpServletRequest
+     * @param aToken String
+     * @param dateTo String
+     * @return JSON in String
+     */
     public String getPolyclinicCase(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken
             , @QueryParam("dateTo") String dateTo
     ) throws NamingException {

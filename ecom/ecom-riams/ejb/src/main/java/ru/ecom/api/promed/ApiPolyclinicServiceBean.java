@@ -169,7 +169,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @return List<BigInteger>
      */
     private List<BigInteger> getAllVisitsInSpo(Long polyclinicCaseId) {
-        return theManager.createNativeQuery(new StringBuilder().append(" select vis.id from medcase vis where parent_id=").append(polyclinicCaseId)
+        return theManager.createNativeQuery(new StringBuilder().append("select vis.id from medcase vis where parent_id=").append(polyclinicCaseId)
                 .append("and servicestream_id is not null and visitresult_id != 11 and (noactuality  = false or noactuality is null)  " +
                 "and (select islab from vocWorkFunction where id =(select workfunction_id from workfunction where id=vis.workfunctionexecute_id)) is null")
                 .toString()).getResultList();
@@ -246,7 +246,6 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService  {
      * @param firstResultId
      * @return JSONObject
      */
-    //Весь визит в json
     private JSONObject getVisitInJson(ShortMedCase visit,Long firstResultId) {
         JSONObject jsonVis = new JSONObject();
 
