@@ -1,8 +1,7 @@
-package ru.ecom.api.Promed;
+package ru.ecom.api.uploadtopromed;
 
 
 import ru.ecom.api.promed.IApiPolyclinicService;
-import ru.ecom.api.record.IApiRecordService;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.web.util.Injection;
 
