@@ -19,7 +19,7 @@ public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor,
 		String sql = "select count(*) as cnt1,count(case when transferDate is null and finishDate is null then 1 else null end) as cnt2,to_char(max(coalesce(transferDate,finishDate)),'dd.mm.yyyy') as maxdat from LpuAreaPsychCareCard where careCard_id='"+aParentId+"'" ;
 		List<Object[]> list = aContext.getEntityManager().createNativeQuery(sql)
 				.setMaxResults(1).getResultList() ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			Object[] objs = list.get(0) ;
 			Long cnt = ConvertSql.parseLong(objs[0]) ;
 			Long cntConsisting = ConvertSql.parseLong(objs[1]) ;
@@ -27,7 +27,7 @@ public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor,
 				sql = "select coalesce(to_char(pcc.startDate,'dd.mm.yyyy'),to_char(pcc.firstPsychiatricVisitDate,'dd.mm.yyyy')) as dateStart,pcc.observationReason_id as vporid from PsychiatricCareCard pcc  where pcc.id='"+aParentId+"'" ;
 				List<Object[]> list1 = aContext.getEntityManager().createNativeQuery(sql)
 						.setMaxResults(1).getResultList() ;
-				if (list1.size()>0) {
+				if (!list1.isEmpty()) {
 					Object[] objs1 = list1.get(0) ;
 					if (objs1[0]!=null && objs1[1]!=null) {
 						form.setStartDate(""+objs1[0]) ;
@@ -45,8 +45,6 @@ public class LpuAreaPsychPreCreateInterceptor implements IParentFormInterceptor,
 					throw new IllegalArgumentException("Более 2х открытых движений по участкам!!!") ;
 				}
 			}
-		} else {
-			
 		}
 		Date dateThis =new Date() ;
 		form.setCreateDate(DateFormat.formatToDate(dateThis)) ;

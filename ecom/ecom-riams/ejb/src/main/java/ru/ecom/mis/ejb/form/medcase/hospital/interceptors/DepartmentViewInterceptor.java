@@ -1,21 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.ejb.SessionContext;
-import javax.persistence.EntityManager;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeJavaObject;
-import org.mozilla.javascript.Script;
-import org.mozilla.javascript.Scriptable;
-
+import org.mozilla.javascript.*;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -28,6 +13,15 @@ import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.DiagnosisForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.DepartmentMedCaseForm;
 import ru.nuzmsh.forms.response.FormMessage;
+
+import javax.ejb.SessionContext;
+import javax.persistence.EntityManager;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.List;
 
 public class DepartmentViewInterceptor  implements IFormInterceptor{
 
@@ -47,7 +41,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 		
 		if (!form.isTypeCreate() && form.getSaveType()==form.TYPE_SAVE) {
 		
-				if (dep.getParent()!=null && dep.getParent() instanceof HospitalMedCase
+				if (dep.getParent() instanceof HospitalMedCase
 						&& ((HospitalMedCase)dep.getParent()).getDischargeTime()!=null
 						&&aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay")
 						) {
@@ -70,8 +64,8 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 		
 	}
 	
-	  private boolean checkPermission(String aObject, String aPermission,  Long aIdTicket, InterceptorContext aContext) throws Exception {
-	    	HashMap<String, Comparable> param = new HashMap<String, Comparable>() ;
+	  private boolean checkPermission(String aObject, String aPermission,  Long aIdTicket, InterceptorContext aContext) {
+	    	HashMap<String, Comparable> param = new HashMap<>() ;
 	    	long res1 ;
 	    	Object res ;
 	    	
@@ -80,8 +74,7 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 			param.put("id", aIdTicket) ;
 			res = invoke(aContext.getEntityManager(), aContext.getSessionContext(), "WorkerService", "checkPermission", new Object[]{param});
 			res1 = ConvertSql.parseLong(res);
-			if (res1>0) {return true ; }
-	    	return false ;
+		  	return res1>0 ;
 	    }
 	  
 	public static String getDiagnosis(EntityManager aManager, Long aMedCase, String aRegistrationType, String aPriority) {
@@ -109,11 +102,9 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 			InputStream inputStream = theEcomConfig.getInputStream(jsResourceName, EjbEcomConfig.SCRIPT_SERVICE_PREFIX, true) ;
 			if(inputStream!=null) {
 				Context jsContext = Context.enter();
-				try {
+				try (Reader in = new InputStreamReader(inputStream, "utf-8")){
 					Scriptable scope = jsContext.initStandardObjects();
-					
-					Reader in = new InputStreamReader(inputStream, "utf-8") ;
-					try {
+
 						Script script = jsContext.compileReader(in, jsResourceName, 1,null);
 						script.exec(jsContext, scope);
 						
@@ -138,9 +129,6 @@ public class DepartmentViewInterceptor  implements IFormInterceptor{
 						} else {
 							throw new IllegalArgumentException("Нет функции "+aMethodName+" у сервиса "+aServiceName+" : "+o) ; 
 						}
-					} finally {
-						in.close() ;
-					}
 				} finally {
 					Context.exit();
 				}

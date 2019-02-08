@@ -28,11 +28,10 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 		VisitProtocolForm form = (VisitProtocolForm) aForm;
 		List<WorkFunction> listwf = aContext.getEntityManager().createQuery("from WorkFunction where secUser.login = :login")
 				.setParameter("login", username).getResultList();
-		if (listwf.size() == 0) {
-
-		} else {
+		if (!listwf.isEmpty()) {
 			form.setSpecialist(listwf.get(0).getId());
 		}
+
 		//Milamesher #137 28012019 - проверка на наличие кардиоскрининга новорождённых в случае если:
 		//это - отделение новорождённых
 		//первый дневник

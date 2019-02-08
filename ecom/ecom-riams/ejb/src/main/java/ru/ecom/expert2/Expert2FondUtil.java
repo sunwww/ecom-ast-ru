@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import ru.ecom.expert2.domain.E2CoefficientPatientDifficultyEntryLink;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.voc.E2Enumerator;
-import ru.nuzmsh.util.date.AgeUtil;
 
 import java.util.List;
 
@@ -15,17 +14,6 @@ public class Expert2FondUtil {
         return aValue==null||aValue.trim().equals("");
     }
 
-    public static String getUslOkByStacType(String sStacType) {
-        if (sStacType.toUpperCase().equals("ALLTIMEHOSP")) {
-            return "1";
-        } else if (sStacType.toUpperCase().equals("DAYTIMEHOSP")) {
-            return "2";
-        } else if (sStacType.toUpperCase().equals("POLIC")) {
-            return "3";
-        } else {
-            throw new IllegalStateException("BAD StacType = "+sStacType);
-        }
-    }
     public static String addSql(String aField, String aValue) {
         return  " ("+aField+" is null or "+aField+"="+(isNull(aValue)?"''":"'"+aValue+"'")+")";
     }

@@ -1319,11 +1319,10 @@ private HashMap getRegions() {
         workDir+="/"+aFileName+"."+aFileName;
 		try (OutputStream os = new FileOutputStream(workDir)){
 			os.write(aText.toString().getBytes());
-			os.close();
 			LOG.info("i create file = /rtf/"+aFileName+"."+aFileName);
 			return "/rtf/"+aFileName+"."+aFileName;
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error(e.getLocalizedMessage(),e);
 		}
 		return "NO_FILE";
 	}
@@ -2439,7 +2438,7 @@ public String getDefaultParameterByConfig (String aParameter, String aDefaultVal
 				,new WebQueryResult()
 		};
 
-		EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+		//EjbEcomConfig config = EjbEcomConfig.getInstance() ;
 	//	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
 	//	workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
 		fileExpList[2].set1((""+fileExpList[0].get1()).substring(2).replaceAll("\\.xml", "")+".263") ;

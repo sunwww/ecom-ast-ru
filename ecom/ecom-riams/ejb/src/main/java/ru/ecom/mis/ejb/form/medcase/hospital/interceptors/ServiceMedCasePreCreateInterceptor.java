@@ -1,17 +1,16 @@
 package ru.ecom.mis.ejb.form.medcase.hospital.interceptors;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.form.medcase.ServiceMedCaseForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class ServiceMedCasePreCreateInterceptor implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
@@ -38,7 +37,7 @@ public class ServiceMedCasePreCreateInterceptor implements IParentFormIntercepto
     	}
     	*/
     	List<Object[]> list =aContext.getEntityManager().createNativeQuery("select patient_id,serviceStream_id from medcase where id=:parent").setParameter("parent", aParentId).getResultList() ;
-    	if (list.size()>0) {
+    	if (!list.isEmpty()) {
     		Object[] row = list.get(0) ;
     		form.setPatient(ConvertSql.parseLong(row[0])) ;
     		form.setServiceStream(ConvertSql.parseLong(row[1])) ;
@@ -61,7 +60,7 @@ public class ServiceMedCasePreCreateInterceptor implements IParentFormIntercepto
         List<Object[]> listwf = manager.createNativeQuery("select wf.id,secUser.id,* from WorkFunction as wf  left join SecUser as secUser on secUser.id=wf.secUser_id  where secUser.login = :login")
         	.setParameter("login", username)
         	.getResultList() ;
-        if (listwf.size()==0) {
+        if (listwf.isEmpty()) {
     		throw new IllegalArgumentException(
     				"Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)"
     				);

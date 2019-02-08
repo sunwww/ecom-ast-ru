@@ -56,10 +56,10 @@ public class SequenceHelper {
 			value = mayByNextValue ;
 			mayByNextValue = nextValue(addValue, mayByNextValue);
 		
-			if(value==null) {
+		/*	if(value==null) {
 				throw new IllegalStateException("Ошибка получение следу") ;
 			}
-			info.setNextValue(addValue.equals("")?value:value.replace(addValue, ""));
+		*/	info.setNextValue(addValue.equals("")?value:value.replace(addValue, ""));
 			
 			return value ;
 		
@@ -76,10 +76,10 @@ public class SequenceHelper {
 			value = mayByNextValue ;
 			mayByNextValue = nextValue(addValue, mayByNextValue);
 		
-			if(value==null) {
+		/*	if(value==null) {
 				throw new IllegalStateException("Ошибка получение следу") ;
-			}
-			info.setNextValue(addValue.equals("")?value:value.replace(addValue, ""));
+			}*/
+			info.setNextValue(addValue.equals("") ? value : value.replace(addValue, ""));
 			aManager.persist(info) ;
 			return value ;
 		}
@@ -88,7 +88,7 @@ public class SequenceHelper {
 	private boolean checkExists(String aTable, String aField, String mayByNextValue, EntityManager aManager) {
 		List<Medcard> list = aManager.createQuery("from "+aTable+" where "+aField+"=:number")
 			.setParameter("number", mayByNextValue).getResultList();
-		return list.size()!=0;
+		return !list.isEmpty();
 	}
 
 	private String nextValue(String aKey, String aOldValue) {
@@ -96,8 +96,7 @@ public class SequenceHelper {
 			aOldValue = aOldValue.replaceFirst(aKey, "") ;
 		}
 		long l = Long.parseLong(aOldValue)+1;
-		String key = aKey+String.valueOf(l) ;
-		return key ;
+		return aKey+l ;
 	}
 	private String addValue(String aKey) {
 		return (aKey.equals("Patient"))? "Н":"" ;
@@ -106,7 +105,7 @@ public class SequenceHelper {
 	private SequenceInfo getSequenceInfo(String aKey, EntityManager aManager) {
 		List<SequenceInfo> list = aManager.createQuery("from SequenceInfo where uniqueName=:key")
 			.setParameter("key", aKey).getResultList();
-		if(list.size()!=0) {
+		if(!list.isEmpty()) {
 			return list.iterator().next();
 		} else {
 			//aManager.createNativeQuery("insert into SequenceInfo (uniqueName, nextValue) values (:key, '1')",SequenceInfo.class).setParameter("key", aKey);
@@ -120,7 +119,7 @@ public class SequenceHelper {
 		}
 		
 	}
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		SequenceHelper s = getInstance() ;
 		// 
 		// startUseNextValue() ;

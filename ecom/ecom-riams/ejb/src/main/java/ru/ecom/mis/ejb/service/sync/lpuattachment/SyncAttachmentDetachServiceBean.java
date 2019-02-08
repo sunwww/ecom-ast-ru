@@ -1,15 +1,5 @@
 package ru.ecom.mis.ejb.service.sync.lpuattachment;
 
-import java.sql.Date;
-import java.util.Iterator;
-
-import javax.annotation.EJB;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.QueryIteratorUtil;
@@ -17,6 +7,15 @@ import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDetach;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.service.synclpufond.ISyncLpuFondService;
+
+import javax.annotation.EJB;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.sql.Date;
+import java.util.Iterator;
 
 /**
  * 
@@ -40,8 +39,7 @@ public class SyncAttachmentDetachServiceBean implements ISyncAttachmentDetachSer
 	IMonitor monitor = null; 
 	public LpuAttachedByDepartment getAttachment (long aPatientId) {
 		try {
-		LpuAttachedByDepartment list = (LpuAttachedByDepartment) theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null order by datefrom desc ").setParameter("pat", aPatientId).getSingleResult();
-		return list;
+		return (LpuAttachedByDepartment) theManager.createQuery("from LpuAttachedByDepartment where patient_id=:pat and dateTo is null order by datefrom desc ").setParameter("pat", aPatientId).getSingleResult();
 		} catch (Exception e) {
 			return null;
 		}

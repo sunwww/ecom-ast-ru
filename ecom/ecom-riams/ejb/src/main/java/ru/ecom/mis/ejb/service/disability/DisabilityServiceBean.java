@@ -932,8 +932,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 			}
 			
 		catch (Exception e) {
-	        LOG.info(e.getMessage());
-	        e.printStackTrace();
+	        LOG.error(e.getMessage(),e);
 	    	return "Find_data: SQLException"+e;
 		}
 	}
@@ -956,7 +955,6 @@ public class DisabilityServiceBean implements IDisabilityService {
 			Document pat = new Document(rootElement);
 			outputter.setFormat(Format.getPrettyFormat().setEncoding("UTF-8"));
 			outputter.output(pat, fwrt);
-			fwrt.close();
 			LOG.info("CreateNewFile, fileName="+filename);
 			return filename;
 		} catch (Exception ex) {

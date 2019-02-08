@@ -40,7 +40,7 @@ public class StatisticStubStac {
 		//setRolesAlwaysStatNumber(aRolesAlwaysStatCardNumber);
 		setMedCase(aMedCase);
 		setEntityManager(aManager);
-		VocPigeonHole pigeonHole =aMedCase!=null&&aMedCase.getDepartment()!=null?aMedCase.getDepartment().getPigeonHole():null ;
+		VocPigeonHole pigeonHole =aMedCase!=null && aMedCase.getDepartment()!=null ? aMedCase.getDepartment().getPigeonHole() : null ;
 		setPigeonHole(pigeonHole) ;
 		setContext(aContext);
 		boolean isEmerPlan = false ;
@@ -48,7 +48,7 @@ public class StatisticStubStac {
     		isEmerPlan = true ;
     	}
     	theIsEmergAndPlan=isEmerPlan ;
-    	theIsEmergency=aMedCase.getEmergency()==null?false:aMedCase.getEmergency().booleanValue() ;
+    	theIsEmergency=aMedCase!=null && aMedCase.getEmergency()!=null && aMedCase.getEmergency();
 		if (aMedCase!=null){
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(aMedCase.getDateStart());
@@ -56,9 +56,11 @@ public class StatisticStubStac {
 		} else {
 			setYear(-1);
 		}
-		if (CAN_DEBUG) LOG.debug("Создание StatisticStubStac...");
-		if (CAN_DEBUG) LOG.debug(new StringBuffer().append("theMedCaseId=").append(theMedCase.getId()).toString());
-		if (CAN_DEBUG) LOG.debug(new StringBuffer().append("theYear=").append(theYear).toString());
+		if (CAN_DEBUG) {
+			LOG.debug("Создание StatisticStubStac...");
+			LOG.debug("theMedCaseId="+theMedCase.getId());
+			LOG.debug("theYear="+theYear);
+		}
 	}
 	/**
 	 * Если ли ограничение на выписку
@@ -99,7 +101,7 @@ public class StatisticStubStac {
      * @ejb.permission role-name = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber"
      */
     public static boolean changeStatCardNumber(long aSlsId, String aNewStatCardNumber,
-    		EntityManager aManager, SessionContext aContext) throws EJBException {
+    		EntityManager aManager, SessionContext aContext) {
     	String oldStatCard="" ;
     	String username = aContext.getCallerPrincipal().toString() ;
     	if (aContext.isCallerInRole(ChangeStatCardNumber)) {

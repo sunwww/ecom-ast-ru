@@ -47,7 +47,7 @@ public class PersistenceXmlHelper {
 		}
 	}
 	
-	private final Set<String> theClasses = new TreeSet<String>() ;
+	private final Set<String> theClasses = new TreeSet<>() ;
 	
 	public void write(String aFilename) {
 		try {
@@ -117,7 +117,7 @@ public class PersistenceXmlHelper {
 
 	public List<String> listAllEntitiesClassnames(InputStream in) {
         try {
-            List<String> list = new LinkedList<String>();
+            List<String> list = new LinkedList<>();
             try {
                 Document doc = new SAXBuilder().build(in);
                 Element rootElement = doc.getRootElement();
@@ -143,8 +143,7 @@ public class PersistenceXmlHelper {
 	private static Document loadDocument(File aFile) throws JDOMException, IOException {
 		if(!aFile.exists()) throw new FileNotFoundException("Файл "+aFile.getAbsolutePath()+" не найден") ;
 		FileInputStream in = new FileInputStream(aFile) ; 
-		Document doc = new SAXBuilder().build(in);
-		return doc ;
+		return new SAXBuilder().build(in);
 	}
 	private final File theTemplateFile ;
 	private final EntityHelper theEntityHelper = EntityHelper.getInstance() ; 

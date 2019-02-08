@@ -71,24 +71,6 @@ public class Patient extends BaseEntity{
 	/** Телефон */
 	private String thePhone;
 
-	/** DTYPE */
-	//@Comment("DTYPE")
-	//public String getDTYPE() {return theDTYPE;}
-	//public void setDTYPE(String aDTYPE) {theDTYPE = aDTYPE;}
-
-	/** Вакцинации */
-	/*@Comment("Вакцинации")
-	@OneToMany(mappedBy="patient", cascade=CascadeType.ALL)
-	public List<Vaccination> getVaccinations() {return theVaccinations;}
-	public void setVaccinations(List<Vaccination> aVaccinations) {theVaccinations = aVaccinations;}
-	*/
-
-	/** Прикрепление по адресу */
-	public static String ATTACHED_TYPE_ADDRESS = null ;
-
-	/** Прикрепление по страховой компании/заявлению */
-	public static String ATTACHED_TYPE_SK = "2" ;
-
 	public static String medcaseMedpolicy_id;
 
 	@Comment("Последняя синхронизация с фондом")

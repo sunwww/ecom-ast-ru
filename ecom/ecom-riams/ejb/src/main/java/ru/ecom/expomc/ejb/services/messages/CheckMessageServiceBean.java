@@ -1,21 +1,21 @@
 package ru.ecom.expomc.ejb.services.messages;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import ru.ecom.ejb.services.util.ClassLoaderHelper;
+import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
+import ru.ecom.expomc.ejb.domain.message.Message;
+import ru.ecom.expomc.ejb.services.check.ICheck;
+import ru.ecom.expomc.ejb.services.check.ICheckServiceLocal;
+import ru.ecom.expomc.ejb.services.voc.allvalues.AllowedChecksAllValues;
 
 import javax.annotation.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collection;
+import java.util.LinkedList;
 
-import ru.ecom.ejb.services.util.ClassLoaderHelper;
-import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
-import ru.ecom.expomc.ejb.domain.message.Message;
 //import ru.ecom.expomc.ejb.domain.message.MessageChange;
-import ru.ecom.expomc.ejb.services.check.ICheck;
-import ru.ecom.expomc.ejb.services.check.ICheckServiceLocal;
-import ru.ecom.expomc.ejb.services.voc.allvalues.AllowedChecksAllValues;
 
 /**
  * Сообщения о проверках
@@ -26,8 +26,7 @@ public class CheckMessageServiceBean implements ICheckMessageService {
 
 	public long getCheckByMessage(long aMessageId) {
         Message message = theManager.find(Message.class, aMessageId) ;
-        long checkId = message.getCheck().getId() ;
-        return checkId ;
+        return message.getCheck().getId() ;
 	}
 	
     public Collection<String> getBadProperties(long aMessageId) {
@@ -52,7 +51,7 @@ public class CheckMessageServiceBean implements ICheckMessageService {
     
     public Collection<MessageRow> listMessage(long aTimeId) {
         ImportTime time = theManager.find(ImportTime.class, aTimeId) ;
-        LinkedList<MessageRow> ret = new LinkedList<MessageRow>();
+        LinkedList<MessageRow> ret = new LinkedList<>();
         for (Message message : time.getMessages()) {
             MessageRow row = new MessageRow();
             row.setId(message.getId());
@@ -78,19 +77,7 @@ public class CheckMessageServiceBean implements ICheckMessageService {
     }
 
     public Collection<MessageChangeRow> listChanges(long aMessage) {
-        Message message = theManager.find(Message.class, aMessage) ;
-        LinkedList<MessageChangeRow> ret = new LinkedList<MessageChangeRow>();
-        /*
-
-        for (MessageChange change : message.getChanges()) {
-            MessageChangeRow row = new MessageChangeRow();
-            row.setProperty(change.getPropertyName());
-            row.setOldValue(change.getOldValue());
-            row.setNewValue(change.getNewValue());
-            row.setMessageId(aMessage);
-            ret.add(row) ;
-        }*/
-        return ret ;
+        return new LinkedList<>();
     }
 
     private final AllowedChecksAllValues theAllowedChecksAllValues = new AllowedChecksAllValues();

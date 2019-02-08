@@ -129,7 +129,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                         	sb.append("</li>") ;
                         }
                     }
-                } catch(Throwable e) {
+                } catch(Exception e) {
                 	LOG.warn(e.getMessage(),e) ;
                 	sb.append("<li>") ;
                 	sb.append(check.getName()).append(": ").append(e.getMessage()) ;

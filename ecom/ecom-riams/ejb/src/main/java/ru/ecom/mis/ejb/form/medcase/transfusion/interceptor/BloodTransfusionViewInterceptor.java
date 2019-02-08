@@ -68,13 +68,12 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 				biolTest.append(" Состояние: ____________________________. Жалобы _____________________________") ;
 			}
 		}
-		if (form.getIsBreakBT()!=null&&form.getIsBreakBT().booleanValue()==true) biolTest.append(" Переливание прекращено.") ;
+		if (form.getIsBreakBT()!=null && form.getIsBreakBT()) biolTest.append(" Переливание прекращено.") ;
 		form.setBiologicTest(biolTest.toString()) ;
 		//Осложнения complications
 		List<Object> list = manager.createNativeQuery(new StringBuilder().append(" select list(''||reaction_id) from TransfusionComplication where transfusion_id='").append(id).append("' group by transfusion_id").toString()).getResultList();
-		if (list.size()>0) {
-			form.setComplications( new StringBuilder().append(list.get(0)).toString()
-					) ;
+		if (!list.isEmpty()) {
+			form.setComplications( list.get(0).toString()) ;
 		}
 
 
@@ -82,7 +81,7 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 	private <E,F> void saveForm(EntityManager aManager, String aAddtionSql,String[] aMethods, F aForm,Class<E> aClassEntity,Class<F> aClassForm)  {
 		
 		List<E> objs = aManager.createQuery(aAddtionSql).setMaxResults(1).getResultList() ;
-		if (objs.size()>0) {
+		if (!objs.isEmpty()) {
 			E obj = objs.get(0);
 			for (String method:aMethods) {
 				try {

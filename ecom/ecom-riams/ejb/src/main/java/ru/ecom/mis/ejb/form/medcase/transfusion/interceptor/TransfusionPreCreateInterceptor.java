@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion.interceptor;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -13,6 +9,9 @@ import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.form.medcase.transfusion.TransfusionForm;
 
+import javax.persistence.EntityManager;
+import java.util.List;
+
 public class TransfusionPreCreateInterceptor implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
     	EntityManager manager = aContext.getEntityManager();
@@ -20,7 +19,7 @@ public class TransfusionPreCreateInterceptor implements IParentFormInterceptor {
     	TransfusionForm form=(TransfusionForm)aForm;
     	
     	
-    	if (parentSSL!=null && parentSSL instanceof DepartmentMedCase) {
+    	if (parentSSL instanceof DepartmentMedCase) {
     		DepartmentMedCase slo = (DepartmentMedCase) parentSSL;
         	HospitalMedCase hosp = (HospitalMedCase)slo.getParent() ;
     		if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null) {
@@ -35,7 +34,7 @@ public class TransfusionPreCreateInterceptor implements IParentFormInterceptor {
         				.setParameter("lpu", slo.getDepartment().getId()) 
         				.setMaxResults(1)
         				.getResultList() ;
-        		if (listwf.size()>0) {
+        		if (!listwf.isEmpty()) {
         			Object[] wf = listwf.get(0) ;
         			form.setExecutor(ConvertSql.parseLong(wf[0])) ;
         		} else {
@@ -44,13 +43,13 @@ public class TransfusionPreCreateInterceptor implements IParentFormInterceptor {
             				
             				.setMaxResults(1)
             				.getResultList() ;
-            		if (listwf.size()>0) {
+            		if (!listwf.isEmpty()) {
             			Object[] wf = listwf.get(0) ;
             			form.setExecutor(ConvertSql.parseLong(wf[0])) ;
             		}
         		}
         	}    		
-    	} else if (parentSSL!=null && parentSSL instanceof HospitalMedCase){
+    	} else if (parentSSL instanceof HospitalMedCase){
         	HospitalMedCase hosp = (HospitalMedCase) parentSSL ;
     		if (hosp.getDateFinish()!=null && hosp.getDischargeTime()!=null) {
     			if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateInCloseMedCase")) {

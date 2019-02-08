@@ -146,7 +146,7 @@ public class XmlVocValueLoader {
             if (elm == null) throw new IllegalStateException("Нет элемента XmlFileVocService у справочника " + key);
         	//String[] names = getAsArray(elm.getAttributeValue("names")) ;
         	String filename = elm.getAttributeValue("filename") ;
-        	String parent = elm.getAttributeValue("parent") ;
+       // 	String parent = elm.getAttributeValue("parent") ;
        /* 	if(StringUtil.isNullOrEmpty(parent)) {
                 parent = elm.getAttributeValue("parentProperty") ;
             }*/
@@ -177,7 +177,7 @@ public class XmlVocValueLoader {
     
     private static void put(Map<String, IVocContextService> aHash, String aKey, IVocContextService aService) {
     	if(aHash.containsKey(aKey)) {
-    		LOG.debug("OVERRIDE "+aKey); ;
+    		LOG.debug("OVERRIDE "+aKey);
     	}
     	aHash.put(aKey, aService);
     }

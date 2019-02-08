@@ -24,7 +24,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
 
     public NativeVocService(String aFrom, String aNames,String aNameId, String aJoin, String aQueryAppend,String aQueried, String aParent, String aOrder
     		,String aFieldsSplitCount, String aParentSplitCount,String aGroupBy
-    ) throws ClassNotFoundException {
+    ) {
        // theSelect = aNames;
     	theSplitQueriedCount = (aFieldsSplitCount!=null && !aFieldsSplitCount.equals("")) ?Long.valueOf(aFieldsSplitCount):null ;
     	LOG.debug("theSplitQueriedCount="+theSplitQueriedCount) ;
@@ -84,11 +84,10 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
                 	}
         		}
         		return getNameFromEntity(obj.get(0)) ;
-        	} else {
-        		
         	}
         } catch (Exception e) {
-        	e.printStackTrace() ;
+        	LOG.error("Ошибка выполнение voc-запроса("+aVocName+"): "+sql.toString(),e);
+        //	e.printStackTrace() ;
             //throw new VocServiceException("Ошибка при получении наименования у объекта "+theEntityClass+" "+aId);
         }
         return "" ;
@@ -183,7 +182,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
 		//LOG.info("-------sql1"+sql);
 		//LOG.info("-------theParentField="+theParentField);
     	if (theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
-    		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
+    		sql.append(" where ") ;
     		sql.append(getParent(theParentField,aAdditional.getParentId(),theSplitParentCount)) ;
     		appendIs=true ;
     		//LOG.info("-------aAdditional.getParentId()="+aAdditional.getParentId());
@@ -197,7 +196,7 @@ public class NativeVocService implements IVocContextService, IVocServiceManageme
     	if (!StringUtil.isNullOrEmpty(aId)) {
     		if (appendIs) sql.append(" and "); else sql.append(" where ") ;
     		sql.append(theNameId).append("<='").append(aId).append("' ");
-    		appendIs=true ;
+    	//	appendIs=true ;
     	}
     	if (theGroupBy!=null) sql.append(" group by ").append(theGroupBy) ;
     	sql.append(" order by ").append(theNameId) .append(" desc");

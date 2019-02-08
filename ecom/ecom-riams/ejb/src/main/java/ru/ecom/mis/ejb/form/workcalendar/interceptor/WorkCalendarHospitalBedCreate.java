@@ -52,15 +52,9 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
 	    			+ " left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id " 
 	    			+ " where su.login = :login and wf.id is not null") 
 	    		.setParameter("login", username).setMaxResults(1).getResultList() ;
-	    	if (list.size()>0) {
+	    	if (!list.isEmpty()) {
 	    		 form.setWorkFunction(ConvertSql.parseLong(list.get(0)[0])) ;
-	    	
-	    	} else {
-	    		
 	    	}
         }
-    	
     }
-
-
 }

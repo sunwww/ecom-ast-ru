@@ -133,8 +133,8 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         }
     }
 
-    private void saveRow(Object o, StringBuilder s) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object[] nullArgs = {};
+    private void saveRow(Object o, StringBuilder s)  {
+     //   Object[] nullArgs = {};
         s.append("\t<row>\n");
         saveObject(o,s,0,true);
         s.append("\t</row>\n");
@@ -161,18 +161,14 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         String expand = ","+theDriverConfig.get("expand")+",";
         String levelString = ""+level;
 //        LOG.info("CheckExpand:"+levelString+"/"+name+" From:"+expand);
-        if (expand.indexOf(","+levelString+",")>=0 || expand.indexOf(","+name+",")>=0 ||
-                expand.indexOf(","+levelString+"/"+name+",")>=0) {
-//            LOG.info("ok");
-            return true;
-        } else
-            return false;
+        return expand.indexOf(","+levelString+",")>=0 || expand.indexOf(","+name+",")>=0 ||
+                expand.indexOf(","+levelString+"/"+name+",")>=0;
     }
 
     private void saveObject(Object o,StringBuilder s,int level,boolean isExpanded)  {
         if (o == null) return;
         Class clazz = o.getClass();
-        List<Method> methods = null;
+        List<Method> methods ;
 //        boolean isExpanded = false;
         boolean isEntity = clazz.isAnnotationPresent(Entity.class);
 
@@ -196,8 +192,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
                         s.append("\t\t<" + name + ">");
                         saveObject(value,s,level+1,isExpandChild);
                         s.append("</" + name + ">\n");
-                    } catch (IllegalAccessException e) {
-                    } catch (InvocationTargetException e) {
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                     }
                 }
             } else {
@@ -207,9 +202,7 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
                     Method meth = clazz.getMethod("getId", noclass);
                     Object val = meth.invoke(o,noargs);
                     s.append("<id class='" + clazz.getCanonicalName()+"'>"+val.toString()+"</id>");
-                } catch (NoSuchMethodException e) {
-                } catch (IllegalAccessException e) {
-                } catch (InvocationTargetException e) {
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 }
             }
         } else if (o instanceof Collection) {
@@ -257,14 +250,8 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
                     ret = "<id class='" + clazz.getCanonicalName()+"'>"+val.toString()+"</id>";
 //                    ret = clazz.getCanonicalName()+":"+val.toString();
 //                    ret = ret.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-                } catch (NoSuchMethodException e1) {
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e1) {
                     ret = "***";
-                } catch (IllegalAccessException e1) {
-                    ret = "***";
-                } catch (InvocationTargetException e1) {
-                    ret = "***";
-                } finally {
-
                 }
             } else {
                 ret = o.toString();

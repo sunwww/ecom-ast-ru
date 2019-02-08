@@ -85,8 +85,7 @@ public class VocValueServiceBean implements IVocService, IVocInfoService {
 
 
     private VocContext createContext() {
-    	VocContext ctx = new VocContext(theEntityManager, theSessionContext) ;
-    	return ctx ;
+    	return new VocContext(theEntityManager, theSessionContext) ;
     }
     
     /**

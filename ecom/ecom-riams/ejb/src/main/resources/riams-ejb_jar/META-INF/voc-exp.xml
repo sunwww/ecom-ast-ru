@@ -280,6 +280,7 @@
                 names   = 'code, name'
                 queried = 'name'
                 queryConvertType = 'FIRST_UPPER'
+                queryAppend="isActual='1'"
         />
     </voc>
 

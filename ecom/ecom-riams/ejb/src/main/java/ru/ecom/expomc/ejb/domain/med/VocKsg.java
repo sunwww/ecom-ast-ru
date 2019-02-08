@@ -146,5 +146,12 @@ public class VocKsg extends VocIdCodeName {
 	/** Тип коек */
 	private VocBedSubType theBedSubType ;
 
+	/** Не учитывать КУСмо */
+	@Comment("Не учитывать КУСмо")
+	public Boolean getDoNotUseCusmo() {return theDoNotUseCusmo;}
+	public void setDoNotUseCusmo(Boolean aDoNotUseCusmo) {theDoNotUseCusmo = aDoNotUseCusmo;}
+	/** Не учитывать КУСмо */
+	private Boolean theDoNotUseCusmo = false;
+
 
 }

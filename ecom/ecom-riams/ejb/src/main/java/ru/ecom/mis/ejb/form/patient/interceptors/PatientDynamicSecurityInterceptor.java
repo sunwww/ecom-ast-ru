@@ -2,10 +2,7 @@ package ru.ecom.mis.ejb.form.patient.interceptors;
 
 import ru.ecom.ejb.services.entityform.interceptors.IDynamicSecurityInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
-import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.form.lpu.interceptors.MisLpuDynamicSecurity;
-
-import java.lang.annotation.ElementType;
 
 /**
  * Если есть ЛПУ проверка на доступность
@@ -15,7 +12,7 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 
 	public void check(String aPolicyAction, Object aId, InterceptorContext aContext) {
 		
-		
+		/*
 		if(!aContext.getSessionContext().isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck")) {
 			boolean canCheck = 
 				("View".equals(aPolicyAction) && aContext.getTarget().equals(ElementType.METHOD))
@@ -24,8 +21,8 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 			if(canCheck) {
 				Patient person = aContext.getEntityManager().find(Patient.class, aId) ;
 				if(person!=null && person instanceof Patient) {
-					Patient patient = (Patient) person ;
-					boolean okByDep = false ;
+				//	Patient patient = (Patient) person ;
+				//	boolean okByDep = false ;
 					/*
 					if(!person.getAttachedByDepartments().isEmpty()) {
 							for(LpuAttachedByDepartment at: person.getAttachedByDepartments()) {
@@ -50,9 +47,9 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 						// FIXME если нет прикрепленного ЛПУ
 						else throw new IllegalStateException("Не прикреплен") ;
 					}*/
-				}
-			}
-		}
+
+		//	}*/
+	//	}
 	}
 
 	private final MisLpuDynamicSecurity theMisLpuDynamicSecurity = new MisLpuDynamicSecurity() ;

@@ -1,17 +1,17 @@
 package ru.ecom.expomc.ejb.domain.registry;
 
-import java.sql.Date;
+import ru.ecom.ejb.domain.simple.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import ru.ecom.ejb.domain.simple.BaseEntity;
+import java.sql.Date;
 
 /**
  * Период реестра
  */
 @Entity
 @Table(name="EOPERIOD",schema="SQLUser")
+@Deprecated
 public class RegPeriod extends BaseEntity {
 
     /** Дата начала перода */

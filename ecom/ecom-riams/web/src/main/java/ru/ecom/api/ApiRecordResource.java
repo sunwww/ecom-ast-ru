@@ -163,7 +163,7 @@ public class ApiRecordResource {
 
     private String makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
         try {
-            String requestId = root.has("requestId") ? root.getString("requestId") : null;
+            String requestId = root.has("requestId") ? ""+root.getLong("requestId"): null;
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) получен :"+root); //debug
             String calendarId = getJsonField(root,"calendarTime_id");
             if (calendarId==null ||"".equals(calendarId)) {

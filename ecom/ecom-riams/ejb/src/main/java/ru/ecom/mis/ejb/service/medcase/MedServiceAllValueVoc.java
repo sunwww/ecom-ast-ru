@@ -54,9 +54,9 @@ public class MedServiceAllValueVoc  implements IAllValue {
 			}
 			
 		} else {
-			addSql = new StringBuilder()
-			.append(" and dtype='MedServiceGroup'")
-			.append(" and (startDate is null or startDate <= CURRENT_DATE ) and (finishDate is null or finishDate >=CURRENT_DATE)").toString() ;		}
+			addSql = " and dtype='MedServiceGroup'"+
+			" and (startDate is null or startDate <= CURRENT_DATE ) and (finishDate is null or finishDate >=CURRENT_DATE)";
+		}
 		StringBuilder sql = new StringBuilder () ;
 		sql.append("from MedService where parent_id is null ").append(addSql).append(" order by name") ;
 			

@@ -77,7 +77,7 @@ public class HospitalMedCaseViewInterceptor implements IFormInterceptor {
 		List<Object[]> l2=aManager.createNativeQuery("select id,DischargeEpicrisis from medcase where id= "+aMedCaseId).getResultList() ;
 		List<Object[]> l1= aManager.createNativeQuery("select d.id,d.record from diary d where d.medcase_id= "+aMedCaseId+" and upper(d.dtype)='DISCHARGEEPICRISIS' order by d.id").getResultList() ;
 		StringBuilder ret = new StringBuilder() ;
-		if (l1.size()>0) {
+		if (!l1.isEmpty()) {
 			for (Object[] obj:l1) {
 				ret.append(obj[1]!=null?obj[1]:"") ;
 			}

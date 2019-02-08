@@ -317,7 +317,7 @@ public class WorkCalendarServiceJs {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		StringBuilder sql = new StringBuilder() ;
-		Collection<WebQueryResult> list =null;
+		Collection<WebQueryResult> list ;
 
 		sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
 		sql.append(" from WorkFunction wf")
@@ -344,7 +344,7 @@ public class WorkCalendarServiceJs {
 			.append(" left join patient wp on wp.id=w1.person_id ")
 			.append("where su.login='").append(username).append("' and wc1.id is not null ") ;
 		Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString());
-		if (list1.isEmpty()) list.addAll(list1) ;
+		if (!list1.isEmpty()) list.addAll(list1) ;
 		if (anyWFadd) {
 			sql = new StringBuilder() ;
 			sql.append("select wf1.id as wf1id,vwf.name ||' '||coalesce(wp.lastname||' '||wp.middlename||' '||wp.firstname,wf.groupName) as workFunction ") ;
@@ -385,12 +385,13 @@ public class WorkCalendarServiceJs {
 		Calendar cal = Calendar.getInstance() ;
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 		sql.append("select wcd.id as wcdid, to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate ") ;
-		sql.append(" from WorkCalendarDay wcd left join WorkCalendar wc on wc.id=wcd.workCalendar_id where wc.workFunction_id='").append(aWorkFunction).append("' and wcd.calendarDate between to_date('")
+		sql.append(" from WorkFunction wf left join WorkCalendar wc on wc.id=coalesce(wf.group_id, wf.id) left join WorkCalendarDay wcd on wcd.workCalendar_id =wc.id where wf.id='").append(aWorkFunction).append("' and wcd.calendarDate between to_date('")
 		.append(format.format(cal.getTime()))
 		.append("','dd.mm.yyyy') and to_date('");
 		cal.add(Calendar.DATE, 14) ;
 		sql.append(format.format(cal.getTime()))
 		.append("','dd.mm.yyyy') order by wcd.calendarDate") ;
+		System.out.printf("sql="+sql);
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
 		StringBuilder res = new StringBuilder() ;
 		res.append("<ul>") ;

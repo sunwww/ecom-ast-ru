@@ -39,8 +39,8 @@ public class DirectionPreCreateInterceptor implements IParentFormInterceptor {
 			if (polerr.size()!=1) errorInfo="<br/>"+errorInfo ;
 		}
 		//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
-		if(polerr.size()==0) errorInfo="НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС"+errorInfo!=null?errorInfo:"";
-		if(polerr.size()>1) errorInfo="БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС"+errorInfo!=null?errorInfo:"";
+		if(polerr.isEmpty()) errorInfo="НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС"+(errorInfo!=null ? errorInfo : "");
+		if(polerr.size()>1) errorInfo="БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС"+(errorInfo!=null ? errorInfo : "");
 		form.setInfoByPolicy(errorInfo) ;
 
 	// 

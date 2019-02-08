@@ -185,7 +185,7 @@ public class ConvertSql {
 			
 			int c1 = Character.getNumericValue(aMkb1.charAt(i)) ;
 			int c2 = Character.getNumericValue(aMkb2.charAt(i)) ;
-			if (c1>c2&&tst==0) {
+			if (c1>c2) {
 				tst=1 ;
 				break ;
 			} else if (c1==c2) {

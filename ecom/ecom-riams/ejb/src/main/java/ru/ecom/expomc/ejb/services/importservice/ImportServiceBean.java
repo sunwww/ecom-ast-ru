@@ -112,12 +112,8 @@ public class ImportServiceBean implements IImportService {
             DbfFile dbfFile = new DbfFile();
 
             long count ;
-            try {
                 dbfFile.load(inFile);
                 count = dbfFile.getRecordsCount() ;
-            } finally {
-                inFile.close();
-            }
             monitor = theMonitorService.startMonitor(aMonitorId, "Импорт файла "+aFilename, count);
 
             Collection<Field> fields = Collections.unmodifiableCollection(format.getFields());

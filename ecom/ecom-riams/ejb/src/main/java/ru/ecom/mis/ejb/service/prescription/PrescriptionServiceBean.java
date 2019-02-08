@@ -131,8 +131,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					 return name.toLowerCase().endsWith(".xml");
 				 }});
 	     	} catch(Exception e) {
-	     		log.error("Директория не обнаружена. Проверьте правильность.");
-	     		e.printStackTrace();
+	     		log.error("Директория не обнаружена. Проверьте правильность.",e);
 	     		return new File[0];
 	     	}
 	     }
@@ -152,7 +151,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					log.warn("Файл не был перенесен!");
 	            }
 	        } catch (Exception e) {
-	            e.printStackTrace();
+	            log.error("ОШибка переноса файла",e);
 	        }
 	    }
 
@@ -273,8 +272,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				sb.append("}") ;
 			//  log.info("==== JSSON= "+sb.toString());
 			    saveLabAnalyzed(0L,pid,0L,sb.toString(),username, templateId) ;
-				}catch(Exception e){
-					e.printStackTrace();
+				} catch(Exception e){
+					log.error(e);
 				} 
 			}
 			}
@@ -447,7 +446,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				// 1-числовой
 				// 4-числовой с плав точкой
 				String value = String.valueOf(param.get("value"));
-				if (type.equals("1")||type.equals("4")) {
+				if (type.equals("1")||type.equals("4")) { //TODO при NaN происходит пиздец (создается пустой дневник и невозможно изменить введенный результа), исправить !
 					if (!StringUtil.isNullOrEmpty(value)) {
 						fip.setValueBD(new BigDecimal(value)) ;
 						if (sb.length()>0) sb.append("\n") ;
@@ -494,7 +493,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			}
 			theManager.persist(m) ;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return "" ;
 	}
@@ -715,7 +714,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 					isEmergency=true;
 				}
 			} catch (ParseException e) {
-				e.printStackTrace();
+				log.error(e);
 			}	
 		}
 		return isEmergency ;
@@ -791,8 +790,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			return list.toString() ;
 			}
 			catch (Exception e) {
-				log.error("catch Drug "+e);
-				e.printStackTrace();
+				log.error("catch Drug ",e);
 			}
 		} else if (aPresc instanceof DietPrescription) {
 			try{
@@ -804,14 +802,13 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 			return list.toString();
 			}
 			catch (Exception e) {
-				log.error("catch DIET "+e);
-				e.printStackTrace();
+				log.error("catch DIET ",e);
 			}
 		} else if (aPresc instanceof ServicePrescription) {
 			try {
 				ServicePrescription presNew = (ServicePrescription) aPresc;
 				if (presNew.getMedService().getFinishDate()!=null) {
-					log.error("Услуга "+presNew.getMedService().getName()+" запрещена к назначению (закрыта)");
+				//	log.error("Услуга "+presNew.getMedService().getName()+" запрещена к назначению (закрыта)");
 					return "";
 				}
 				list.setLength(0);
@@ -826,8 +823,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 				list.append(presNew.getDepartment()!=null?presNew.getDepartment().getName():"").append("#");
 				return list.toString();
 			} catch (Exception e) {
-				log.error("catch Service "+e);
-				e.printStackTrace();
+				log.error("catch Service ",e);
 			}
 		} else if (aPresc instanceof ModePrescription)  {
 			ModePrescription prescNew = (ModePrescription) aPresc;

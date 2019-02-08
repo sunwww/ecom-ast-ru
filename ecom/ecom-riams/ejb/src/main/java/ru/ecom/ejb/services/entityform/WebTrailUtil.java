@@ -11,7 +11,7 @@ public class WebTrailUtil {
 
     public static String getFirstPropertyName(Class aClass) {
         WebTrail trail = findWebTrail(aClass) ;
-        String names[] = trail.nameProperties() ;
+        String[] names = trail.nameProperties() ;
         if(names!=null && names.length>0) {
             return names[0] ;
         } else {

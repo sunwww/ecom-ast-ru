@@ -99,10 +99,8 @@ public class FindPolicyServiceBean implements IFindPolicyService {
 	}
 	
 	private void print(int aType, String aUrlEdit, long aPolicyId) {
-		try {
-			PrintWriter out = new PrintWriter(new FileWriter("policyReplaced.txt",true)) ;
+		try (PrintWriter out = new PrintWriter(new FileWriter("policyReplaced.txt",true))){
 			out.println(aType+","+aUrlEdit+","+aPolicyId) ;
-			out.close() ;
 		} catch (Exception e) {
 			throw new RuntimeException("Ошибка записи файла",e) ;
 		}

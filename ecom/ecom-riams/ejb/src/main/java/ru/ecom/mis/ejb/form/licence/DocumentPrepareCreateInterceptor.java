@@ -52,7 +52,7 @@ public class DocumentPrepareCreateInterceptor implements IParentFormInterceptor 
         		+" left join MedService ms on ms.id=mc.medService_id"
         		+" where mc.parent_id='"+aParentId+"' and mc.dtype='ServiceMedCase' order by ms.code").getResultList() ;
         res = new StringBuilder() ; 
-         isFirst = true ;
+     //    isFirst = true ;
         for (Object[] obj:list) {
         	res.append(obj[0]).append(". ").append(obj[1]).append("\n") ;
         }

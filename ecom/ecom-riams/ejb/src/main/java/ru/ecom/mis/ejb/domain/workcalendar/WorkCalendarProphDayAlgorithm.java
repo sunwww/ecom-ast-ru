@@ -1,15 +1,14 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekDay;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekMonthOrder;
+import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkWeek;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekDay;
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekMonthOrder;
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkWeek;
-import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDayPattern;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 	/**
 	 * Алгоритм шаблога рабочего календаря по профилактическому дню

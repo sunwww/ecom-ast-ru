@@ -79,7 +79,7 @@ public class PersistList {
 				StringBuilder sql = new StringBuilder() ;
 				sql.append("select ").append(aFieldChildren).append(",").append(aFieldParent).append(" from ").append(aTableName).append(" where ").append(aFieldParent).append("='").append(aIdEntity).append("'") ;
 				List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList();
-				for (Object child[] : list) {
+				for (Object[] child : list) {
 					j.object().key("value").value(parseLong(child[0]));
 					j.endObject();
 				}
@@ -97,7 +97,7 @@ public class PersistList {
 	
 	public static Long parseLong(Object aValue) {
 		Long ret =null;
-		if (aValue==null) return ret ;
+		if (aValue==null) return null ;
 		if (aValue instanceof Integer) {
 			
 			return Long.valueOf((Integer) aValue) ;
@@ -105,11 +105,11 @@ public class PersistList {
 		if(aValue instanceof BigInteger) {
 			BigInteger bigint = (BigInteger) aValue ;
 			
-			return bigint!=null?bigint.longValue() : null;
+			return bigint.longValue();
 		} 
 		if (aValue instanceof Number) {
 			Number number = (Number) aValue ;
-			return number!=null?number.longValue() : null ;
+			return number.longValue() ;
 		}
 		if (aValue instanceof String) {
 			return Long.valueOf((String) aValue);

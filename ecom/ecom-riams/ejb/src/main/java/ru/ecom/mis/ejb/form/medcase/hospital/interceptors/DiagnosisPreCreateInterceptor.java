@@ -24,7 +24,7 @@ public class DiagnosisPreCreateInterceptor implements IParentFormInterceptor {
         	form.addDisabledField("medicalWorker");
         	List<WorkFunction> listwf =  manager.createQuery("from WorkFunction where secUser.login = :login")
 				.setParameter("login", username).getResultList() ;
-	    	if (listwf.size()==0) {
+	    	if (listwf.isEmpty()) {
 	    		throw new IllegalArgumentException(
 	    				"Обратитесь к администратору системы. Ваш профиль настроен неправильно. Нет соответсвия между рабочей функцией и пользователем (WorkFunction и SecUser)"
 	    				);

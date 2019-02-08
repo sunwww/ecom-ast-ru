@@ -103,7 +103,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     private static String[] getArray(Element aParentElement, String aElementName, String[] aDefaultArray) {
         String text = getText(aParentElement,aElementName,createFromArray(aDefaultArray)) ;
         StringTokenizer st = new StringTokenizer(text,", ;:");
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         while(st.hasMoreTokens()) {
             String token = st.nextToken() ;
             list.add(token) ;
@@ -276,7 +276,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         }
     }
 
-    private VocValue createVocValue(Object aEntity) throws RuntimeException {
+    private VocValue createVocValue(Object aEntity) {
         try {
             String id = PropertyUtil.getPropertyValue(aEntity, theCodeField).toString() ;
             String name = getNameFromEntity(aEntity) ; //PropertyUtil.getPropertyValue(aEntity, theNameField).toString() ;
@@ -310,7 +310,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
                 throw new VocServiceException("Ошибка получения идентификатора",e);
             }
         } else {
-            LinkedList<VocValue> values = new LinkedList<VocValue>();
+            LinkedList<VocValue> values = new LinkedList<>();
             values.add(new VocValue("", "Не найдено")) ;
             return values;
         }
@@ -332,7 +332,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     }
 
     private Collection<VocValue> createValues(List aEntities)  {
-        LinkedList<VocValue> values = new LinkedList<VocValue>();
+        LinkedList<VocValue> values = new LinkedList<>();
         if(aEntities!=null && !aEntities.isEmpty()) {
             for (Object entity : aEntities) {
                 values.add(createVocValue(entity)) ;

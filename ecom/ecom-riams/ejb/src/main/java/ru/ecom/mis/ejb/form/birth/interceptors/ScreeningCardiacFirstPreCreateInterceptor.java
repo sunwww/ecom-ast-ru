@@ -15,7 +15,7 @@ public class ScreeningCardiacFirstPreCreateInterceptor implements IParentFormInt
     	if (aForm instanceof ScreeningCardiacFirstForm) {
 			ScreeningCardiacFirstForm form = (ScreeningCardiacFirstForm) aForm ;
 	    	List<Object[]> list=aContext.getEntityManager().createNativeQuery("select slo.id,ml.id from medcase slo left join mislpu ml on ml.id=slo.department_id where  slo.id='"+form.getMedCase()+"' and ml.IsCreateCardiacScreening='1'").getResultList() ;
-	    	if (list.size()==0) throw new IllegalStateException("Кардиоскрининги новорождённых можно создавать только в отделении новорождённых!!!") ;
+	    	if (list.isEmpty()) throw new IllegalStateException("Кардиоскрининги новорождённых можно создавать только в отделении новорождённых!!!") ;
 	    	//если было сделано ЭКГ, проставвляем ЭКГ
 			if (aForm instanceof ScreeningCardiacSecondForm) {
 				ScreeningCardiacSecondForm iiform = (ScreeningCardiacSecondForm) aForm ;
@@ -34,12 +34,12 @@ public class ScreeningCardiacFirstPreCreateInterceptor implements IParentFormInt
 						"and d.record is not null " +
 						"and ms.code='A05.10.006' " +
 						"order by p.planStartDate desc limit 1").getResultList() ;
-				if (list.size()>0)
+				if (!list.isEmpty())
 					iiform.setECG(String.valueOf(list.get(0)));
 				//Запрет на создание II этапа скрининга без I
 				if (aContext.getSessionContext().isCallerInRole("/Policy/Mis/Pregnancy/CardiacScreening/ChekFirstExistBeforeCreateSecond")){
 					list = aContext.getEntityManager().createNativeQuery("select count(id) from screeningcardiac  where medcase_id='"+form.getMedCase()+"'").getResultList() ;
-					if (list.size()>0 && String.valueOf(list.get(0)).equals("0"))
+					if (!list.isEmpty() && String.valueOf(list.get(0)).equals("0"))
 						throw new IllegalStateException("<a href='entityParentPrepareCreate-stac_screeningCardiacFirst.do?id=" + form.getMedCase() + "'>I этап кардиоскрининга</a> в отд. новорождённых должен быть создан до II этапа!") ;
 				}
 			}

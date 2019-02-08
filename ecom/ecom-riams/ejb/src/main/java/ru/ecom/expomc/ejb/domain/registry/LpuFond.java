@@ -1,40 +1,22 @@
 package ru.ecom.expomc.ejb.domain.registry;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
 import ru.ecom.ejb.domain.simple.NoLiveBaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.expomc.ejb.domain.impdoc.ADomain;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcAs;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcDepType;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcExpert;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcKl;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcLpu;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcMkb10;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcOrg;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcOsl;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcPrvd;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcQz;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcRayon;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcResG;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcSex;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcSgroup;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcSk;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcStreetType;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcTariff;
-import ru.ecom.expomc.ejb.domain.omcvoc.OmcVidLpu;
+import ru.ecom.expomc.ejb.domain.omcvoc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.sql.Date;
 
 /**
  *
  */
 @SuppressWarnings("serial")
 @MappedSuperclass
+@Deprecated
 public class LpuFond extends NoLiveBaseEntity {
     @Transient
     public Date getActualDate() {

@@ -1,9 +1,5 @@
 package ru.ecom.mis.ejb.form.prescription.interceptor;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.ecom.ejb.services.entityform.interceptors.IParentFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.InterceptorContext;
@@ -11,6 +7,9 @@ import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.form.prescription.PrescriptListForm;
 import ru.nuzmsh.util.format.DateFormat;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 public class PrescriptListPreCreateInterceptor implements IParentFormInterceptor{
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
@@ -37,7 +36,7 @@ public class PrescriptListPreCreateInterceptor implements IParentFormInterceptor
         				//.setParameter("lpu", form.getDepartment()) 
         				.setMaxResults(1)
         				.getResultList() ;
-        		if (listwf.size()>0) {
+        		if (!listwf.isEmpty()) {
         			Object[] wf = listwf.get(0) ;
         			form.setWorkFunction(ConvertSql.parseLong(wf[0])) ;
         		}

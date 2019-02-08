@@ -32,15 +32,11 @@ public class PriceMedServiceSaveInterceptor  implements IFormInterceptor {
 				}
 				MedService medService = new MedService() ;
 				List<MedService> list = manager.createQuery("from MedService where code=:code and finishDate is null").setParameter("code", msForm.getCode()).getResultList() ;
-				if (list.size()>0) {
+				if (!list.isEmpty()) {
 					medService = list.get(0) ;
 				} else {
-					
-				
-					
 					if (msForm.getName().trim().equals("")) {
-						if (priceMedService.getPricePosition()!=null)
-						msForm.setName(priceMedService.getPricePosition().getName().toUpperCase().trim()) ;
+						if (priceMedService.getPricePosition()!=null) msForm.setName(priceMedService.getPricePosition().getName().toUpperCase().trim()) ;
 					} else {
 						msForm.setName(msForm.getName().toUpperCase().trim()) ;
 					}

@@ -68,7 +68,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 
 	public IndexServiceBean() throws NamingException, SQLException,
 			NoSuchMethodException {
-
+/*
 		DataSource dataSource = findDataSource();
 		Connection con = dataSource.getConnection();
 		try {
@@ -84,7 +84,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 			}
 		} finally {
 			con.close();
-		}
+		} */
 	}
 
 	private DataSource findDataSource() throws NamingException {

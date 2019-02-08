@@ -29,7 +29,7 @@ public class DirectionViewInterceptor implements IFormInterceptor {
 	                      +"and DTYPE like 'MedPolicyOmc%'")
 	    				.getResultList();
 	    			//form.setNotice(form.getNotice()+form.getId() +polerr[0]+"----"+polerr.length+polerr.toString()) ;
-				if(polerr.size()==0) form.setInfoByPolicy("НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС");
+				if(polerr.isEmpty()) form.setInfoByPolicy("НЕТ АКТУАЛЬНОГО ПОЛИСА ОМС");
 				if(polerr.size()>1) form.setInfoByPolicy("БОЛЬШЕ ОДНОГО АКТУАЛЬНОГО ПОЛИСА ОМС");
 	    	}
     	}

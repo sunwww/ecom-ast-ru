@@ -160,7 +160,7 @@ public class PatientServiceBean implements IPatientService {
 			ret.put("status","ok").put("filename",filename);
 		} catch (JSONException e) {
 			ret.put("status","error").put("errorCode",e.toString());
-			e.printStackTrace();
+			LOG.error(e);
 		}
 		return ret.toString();
 	}
@@ -222,10 +222,9 @@ public class PatientServiceBean implements IPatientService {
 	}
 	
 	public boolean needChangeValue (Object aOldValue, Object aNewValue) {
-		if (toStr(aOldValue)==null&&toStr(aNewValue)!=null) {return true;} //Старое значение пустое, новое - нет, обновляем.
+		if (toStr(aOldValue)==null && toStr(aNewValue)!=null) {return true;} //Старое значение пустое, новое - нет, обновляем.
 		if (toStr(aNewValue)==null) {return false;} //На пустое значение не обновляем.
-		if (toStr(aOldValue).equals(toStr(aNewValue))) {return false;} //Если значения равны - не обновляем
-		return true;
+		return !toStr(aOldValue).equals(toStr(aNewValue));
 		
 	}
 	public void insertPatientNotFound(Long aPatientId, Long aCheckTimeId) throws ParseException {
@@ -1031,7 +1030,7 @@ public class PatientServiceBean implements IPatientService {
 					theManager.createNativeQuery(sql.toString()).executeUpdate() ;
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOG.error(e);
 				}
 				}
 			} else {
@@ -1721,7 +1720,7 @@ public class PatientServiceBean implements IPatientService {
 						.getLpuAreaAddressText().getArea().getId(),
 						new InterceptorContext(theManager, theSessionContext));
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error(e);
 				throw new IllegalStateException(e);
 			}
 			StringBuilder sb = new StringBuilder();

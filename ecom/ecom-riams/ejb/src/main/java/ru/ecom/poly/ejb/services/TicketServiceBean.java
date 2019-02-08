@@ -12,14 +12,12 @@ import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.ejb.services.util.JBossConfigUtil;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.poly.ejb.domain.Ticket;
 import ru.ecom.poly.ejb.form.TicketForm;
-import ru.ecom.report.rtf.RtfPrintServiceHelper;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
@@ -30,7 +28,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.io.File;
 import java.io.StringWriter;
 import java.sql.Date;
 import java.text.ParseException;
@@ -144,17 +141,17 @@ public class TicketServiceBean implements ITicketService {
     	List<Object[]> list = theManager.createNativeQuery(sqlMain.toString())
 //    		.setParameter("date", )
     		.getResultList() ;
-    	if (list.size()>0) {
+    	if (!list.isEmpty()) {
     		try {
 				StringWriter out = new StringWriter();
 				JSONWriter j = new JSONWriter(out);
 				j.object();
 				j.key("childs").array();
-				Object child[] = list.get(0) ;
+				Object[] child = list.get(0) ;
 	    					//for (Object child[] : list) {
 	    						j.object();
 	    						j.key("value").value(PersistList.parseLong(child[0]));
-	    						j.key("name").value((String)child[1]);
+	    						j.key("name").value(child[1]);
 	    						j.endObject();
 	    					//}
 				j.endArray();
@@ -163,7 +160,7 @@ public class TicketServiceBean implements ITicketService {
 				LOG.info(out.toString()) ;
 				return out.toString() ;
 			} catch (JSONException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(),e);
 			}
     	}
     	return "" ;
@@ -196,7 +193,6 @@ public class TicketServiceBean implements ITicketService {
 			.append(" left join worker as w on wf.worker_id=w.id")
 			.append(" left join patient as wp on wp.id = w.person_id")
 			.append(" where t.dtype='ShortMedCase' and t.medcard_id=:medcard and t.workFunctionExecute_id=:workFunction and coalesce(t.dateStart,t.dateFinish)=:date and (t.istalk is null or t.istalk='0')") ;
-        String add ="" ;
         if (aId!=null) sql.append(" and t.id!=").append(aId);
 
         List<Object[]> doubles = theManager.createNativeQuery(sql.toString())
@@ -204,7 +200,7 @@ public class TicketServiceBean implements ITicketService {
         	.setParameter("workFunction", aSpecialist)
         	.setParameter("date", date)
         	.getResultList();
-        if (doubles.size()>0) {
+        if (!doubles.isEmpty()) {
         	StringBuilder ret = new StringBuilder() ;
 			ret.append("<br/><ol>") ;
 			for (Object[] res:doubles) {
@@ -343,7 +339,7 @@ public class TicketServiceBean implements ITicketService {
 		sql.append("select t.date,count(t.id) from Ticket as t where t.status<> ").append(Ticket.STATUS_CLOSED).append(" group by t.date") ;
 		List<Object[]> list = theManager.createNativeQuery(sql.toString())
 				.getResultList() ;
-		LinkedList<GroupByDate> ret = new LinkedList<GroupByDate>() ;
+		LinkedList<GroupByDate> ret = new LinkedList<>() ;
 		long i =0 ;
 		for (Object[] row: list ) {
 			GroupByDate result = new GroupByDate() ;
@@ -486,7 +482,7 @@ public class TicketServiceBean implements ITicketService {
 
     private List<TicketForm> createList(Query aQuery) {
     	List<Ticket> list = aQuery.getResultList();
-    	List<TicketForm> ret = new LinkedList<TicketForm>();
+    	List<TicketForm> ret = new LinkedList<>();
     	for (Ticket ticket : list) {
     		try {
     			ret.add(theEntityFormService.loadForm(TicketForm.class, ticket));
@@ -499,12 +495,12 @@ public class TicketServiceBean implements ITicketService {
     
     
      private List<TicketForm> createNativeList(Query aQuery) {
-        List<Object> list_id = aQuery.getResultList() ;
+        List<Object> listId = aQuery.getResultList() ;
         List<TicketForm> ret = new LinkedList<TicketForm>();
-        if (list_id.size()>0) {
+        if (!listId.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
         	StringBuilder sql = new StringBuilder() ;
-	        for (Object obj:list_id) {
+	        for (Object obj:listId) {
 	        	//Long iddoc = ConvertSql.parseLong(obj) ;
 	        	ids.append(",").append(obj) ;
 	        }
@@ -539,9 +535,9 @@ public class TicketServiceBean implements ITicketService {
         try {
             monitor = theMonitorService.startMonitor(aMonitorId, "Экспорт стат. талона", 1);
 
-            File template = JBossConfigUtil.getDataFile("ticket.rtf");
-            TicketValueInit tvi = new TicketValueInit(ticket);
-            RtfPrintServiceHelper service = new RtfPrintServiceHelper();
+         //   File template = JBossConfigUtil.getDataFile("ticket.rtf");
+         //   TicketValueInit tvi = new TicketValueInit(ticket);
+          //  RtfPrintServiceHelper service = new RtfPrintServiceHelper();
             //service.print(template, file,  tvi) ;
 
             monitor.finish(aMonitorId + "");

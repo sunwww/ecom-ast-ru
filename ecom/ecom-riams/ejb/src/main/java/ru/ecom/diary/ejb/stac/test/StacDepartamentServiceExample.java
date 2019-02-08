@@ -1,8 +1,8 @@
 package ru.ecom.diary.ejb.stac.test;
 
-import java.util.ArrayList;
-
 import ru.ecom.diary.ejb.stac.IStacDepartamentService;
+
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,22 +13,21 @@ import ru.ecom.diary.ejb.stac.IStacDepartamentService;
  */
 public class StacDepartamentServiceExample implements IStacDepartamentService {
     public ArrayList getChild(long aId) {
-        ArrayList list = new ArrayList() ;
 
-        return list ;
+        return new ArrayList() ;
     }
     public Long getParent(long aId) {
         switch((int)aId) {
 //            case 0:
 //                return Long.valueOf(1) ;
             case 1:
-                return Long.valueOf(0) ;
+                return 0L ;
             case 2:
-                return Long.valueOf(1) ;
+                return 1L ;
             case 3:
-                return Long.valueOf(1) ;
+                return 1L ;
             case 4:
-                return Long.valueOf(2) ;
+                return 2L ;
             default:
                 return null ;
 

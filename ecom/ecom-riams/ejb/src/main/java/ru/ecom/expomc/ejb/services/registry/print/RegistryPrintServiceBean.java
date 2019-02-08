@@ -35,6 +35,7 @@ import java.util.*;
  */
 @Stateless
 @Remote(IRegistryPrintService.class)
+@Deprecated
 public class RegistryPrintServiceBean implements IRegistryPrintService {
 
 	private ReportEngine theReportEngine = new ReportEngine();

@@ -1,12 +1,11 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import ru.ecom.mis.ejb.domain.medcase.voc.VocOtherTransfusPreparation;
+import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import ru.ecom.mis.ejb.domain.medcase.voc.VocOtherTransfusPreparation;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Переливания других трансфузионных жидкостей

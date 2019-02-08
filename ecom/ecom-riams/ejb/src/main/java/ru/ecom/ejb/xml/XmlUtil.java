@@ -18,7 +18,7 @@ public class XmlUtil {
 	public static String namePackage(String aPackage) {
 		if (aPackage==null||aPackage.equals("")) return "01" ;
 		if (aPackage.length()==1) return "0"+aPackage ;
-		return aPackage.substring(aPackage.length()-2,aPackage.length());
+		return aPackage.substring(aPackage.length()-2);
 	}
 
 	public static void recordElementInDocumentXml(XmlDocument aXmlDocument, Element aMainNode, String aNameElement,Object aValue, boolean aIsRequired,String aValueDefault){
@@ -53,13 +53,11 @@ public class XmlUtil {
 		if (aElement == null) {
 			return null;
 		}
-		try {
+		try (OutputStreamWriter fwrt = new OutputStreamWriter(new FileOutputStream(aFileName), Charset.forName("windows-1251"))){
 			XMLOutputter outputter = new XMLOutputter();
-			OutputStreamWriter fwrt = new OutputStreamWriter(new FileOutputStream(aFileName), Charset.forName("windows-1251"));
 			Document pat = new Document(aElement);
 			outputter.setFormat(org.jdom.output.Format.getPrettyFormat().setEncoding("windows-1251"));
 			outputter.output(pat, fwrt);
-			fwrt.close();
 			return aFileName;
 		} catch (Exception ex) {
 			ex.printStackTrace();

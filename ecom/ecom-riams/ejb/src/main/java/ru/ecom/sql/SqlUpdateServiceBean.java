@@ -38,7 +38,7 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
             LOG.info(">>>Work with file: "+s);
             InputStream in = getClass().getResourceAsStream("/"+s);
             String sql = convertStreamToString(in);
-            String tmp[] = sql.split("#");
+            String[] tmp = sql.split("#");
 
             try {
                 Integer currScriptVersion = Integer.valueOf(tmp[0]);
@@ -68,15 +68,15 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
         try (Connection connection = ds.getConnection();
              Statement statement = connection.createStatement()) {
             if(CAN_DEBUG) LOG.info("try select query>>>"+sql);
-            ResultSet resultSet = statement.executeQuery(sql);
-            int columnCount = resultSet.getMetaData().getColumnCount();
-            while (resultSet.next()) {
-                for (int j = 1; j <= columnCount; j++) {
-                    result=resultSet.getString(j);
+            try (ResultSet resultSet = statement.executeQuery(sql)){
+                int columnCount = resultSet.getMetaData().getColumnCount();
+                while (resultSet.next()) {
+                    for (int j = 1; j <= columnCount; j++) {
+                        result=resultSet.getString(j);
+                    }
                 }
             }
         } catch (Exception e){
-            e.printStackTrace();
             LOG.error(e);
         }
         return result;
@@ -99,15 +99,16 @@ public class SqlUpdateServiceBean implements ISqlUpdateService {
             CodeSource src = SqlUpdateServiceBean.class.getProtectionDomain().getCodeSource();
             if (src != null) {
                 URL jar = src.getLocation();
-                ZipInputStream zip = new ZipInputStream(jar.openStream());
-                while(true) {
-                    ZipEntry e = zip.getNextEntry();
-                    if (e == null)
-                        break;
-                    String name = e.getName();
-                    if (name.startsWith("META-INF/sql/")) {
-                        if(name.contains(".sql") || name.contains(".SQL")){
-                            fileNames.add(name);
+                try (ZipInputStream zip = new ZipInputStream(jar.openStream())){
+                    while(true) {
+                        ZipEntry e = zip.getNextEntry();
+                        if (e == null)
+                            break;
+                        String name = e.getName();
+                        if (name.startsWith("META-INF/sql/")) {
+                            if(name.contains(".sql") || name.contains(".SQL")){
+                                fileNames.add(name);
+                            }
                         }
                     }
                 }

@@ -7,7 +7,6 @@ import ru.ecom.ejb.util.injection.EjbInjection;
 import ru.ecom.jboss.live.LiveTransactionContext;
 import ru.nuzmsh.util.PropertyUtil;
 
-import javax.naming.NamingException;
 import javax.persistence.*;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -54,7 +53,7 @@ public class DeleteListener {
 		}
 	}
 	@PreRemove
-	public void remove(Object aObject) throws NamingException {
+	public void remove(Object aObject) {
 		if (aObject !=null) {
 			ILiveService service = EjbInjection.getInstance().getLocalService(ILiveService.class) ;
 			LiveTransactionContext ctx = LiveTransactionContext.get() ;

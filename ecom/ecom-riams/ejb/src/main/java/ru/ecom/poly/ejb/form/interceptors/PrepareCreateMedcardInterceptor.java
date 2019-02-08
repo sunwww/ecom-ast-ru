@@ -20,7 +20,7 @@ public class PrepareCreateMedcardInterceptor implements IParentFormInterceptor, 
 		String sql = "select cardNumber from PsychiatricCareCard where patient_id="+aParentId+" order by id desc" ;
 		List<Object> list = aContext.getEntityManager().createNativeQuery(sql)
 				.setMaxResults(1).getResultList() ;
-		if (list.size()>0 && list.get(0)!=null) {
+		if (!list.isEmpty() && list.get(0)!=null) {
 			form.setNumber(""+list.get(0)) ;
 			
 		} else {
