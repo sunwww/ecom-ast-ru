@@ -3,6 +3,7 @@
 
     <property name="appname" value="WebService" />
     <property name='dirname' value="ecom/WebService"/>
+    <property name='libdir' value="C:/Users/vtsybulin/IdeaProjects/MedOS_libs/"/>
 
 
 

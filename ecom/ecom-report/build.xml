@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project default="all" name="report" basedir=".">
+<project default="all" name="ecom-report" basedir=".">
 
     <property name="appname" value="ecom-report"/>
     <property name='dirname' value="ecom/report"/>
