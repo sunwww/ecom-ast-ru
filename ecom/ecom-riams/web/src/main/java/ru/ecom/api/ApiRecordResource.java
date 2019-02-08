@@ -34,7 +34,7 @@ public class ApiRecordResource {
             IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
             return service.executeNativeSqlGetJSON(new String[]{"id","name"},"select id, patientinfo from patient where lastname='"+lastname+"'",10);
         } catch (NamingException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return message;
     }
@@ -148,7 +148,7 @@ public class ApiRecordResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String makeRecord(@Context HttpServletRequest aRequest
             ,  String jsonData) {
-        return makeRecordOrAnnul(aRequest,new JSONObject(jsonData));
+        return makeRecordOrAnnul(aRequest,new JSONObject(jsonData)).toString();
     }
 
     /** Аннулирование записи пациента */
@@ -158,16 +158,16 @@ public class ApiRecordResource {
     public String annulRecord(@Context HttpServletRequest aRequest, String jsonData) {
         JSONObject root = new JSONObject(jsonData);
         root.put("annul","annul");
-        return makeRecordOrAnnul(aRequest,root);
+        return makeRecordOrAnnul(aRequest,root).toString();
     }
 
-    private String makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
+    private JSONObject makeRecordOrAnnul(HttpServletRequest aRequest,  JSONObject root) {
         try {
-            String requestId = root.has("requestId") ? ""+root.getLong("requestId"): null;
+            Long requestId = root.has("requestId") ? root.getLong("requestId"): null;
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) получен :"+root); //debug
             String calendarId = getJsonField(root,"calendarTime_id");
             if (calendarId==null ||"".equals(calendarId)) {
-                return ApiRecordUtil.getErrorJson("NO_CALENDARTIME","Не указано время записи");
+                return new JSONObject(ApiRecordUtil.getErrorJson("NO_CALENDARTIME","Не указано время записи"));
             }
             Long calendarTimeId = Long.valueOf(calendarId);
             String lastname = getJsonField(root,"lastname");
@@ -180,21 +180,21 @@ public class ApiRecordResource {
         //    String debug = getJsonField(root,"debug");
             String token = getJsonField(root,"token");
             String annul = getJsonField(root,"annul");
-            String list;
+            JSONObject list;
 
             ApiUtil.init(aRequest,token);
             IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
             if (!StringUtil.isNullOrEmpty(annul)) {
-                list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
+                list = new JSONObject(new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service));
             } else {
-                list =  ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
-                if (list==null) {
-                    list=ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD");
+                String recordInfo = ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
+                if (recordInfo == null) {
+                    list=new JSONObject(ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD"));
                 } else { //Записали успешно, пишем файл
-                    JSONObject recordInfo = new JSONObject(list);
-                    if (!recordInfo.has("error_code")) {
-                        String medcaseID = getJsonField(recordInfo, "medcaseId");
-                        String patientID = getJsonField(recordInfo, "patientId");
+                    list = new JSONObject(recordInfo);
+                    if (!list.has("error_code")) {
+                        String medcaseID = getJsonField(list, "medcaseId");
+                        String patientID = getJsonField(list, "patientId");
                         if (root.has("files")) {
                             JSONArray files = root.getJSONArray("files");
                             for (int i = 0; i < files.length(); i++) {
@@ -213,13 +213,14 @@ public class ApiRecordResource {
                 }
             }
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) обработан, вот ответ: "+list); //debug
+            list.put("requestId",requestId);
             return list;
         } catch (Exception e) {
             e.printStackTrace();
             String ret =ApiRecordUtil.getErrorJson(e.getLocalizedMessage(),e.toString());
             System.out.println("ERRR, ROOT = "+root.toString());
             System.out.println(ret);
-            return ret;
+            return new JSONObject(ret);
         }
     }
 

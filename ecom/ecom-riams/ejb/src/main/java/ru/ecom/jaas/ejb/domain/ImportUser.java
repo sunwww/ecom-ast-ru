@@ -1,6 +1,5 @@
 package ru.ecom.jaas.ejb.domain;
 
-import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import java.sql.Date;
@@ -12,7 +11,7 @@ import java.sql.Date;
 //@Entity
 //@Table(schema="SQLUser")
 	@Deprecated
-public class ImportUser extends VocBaseEntity{
+public class ImportUser { //extends VocBaseEntity{
 	/** Фамилия */
 	@Comment("Фамилия")
 	public String getLastname() {return theLastname;}
