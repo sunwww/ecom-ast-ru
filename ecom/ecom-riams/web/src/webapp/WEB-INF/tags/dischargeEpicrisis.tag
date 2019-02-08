@@ -21,36 +21,36 @@
 		<form name="${name}EpicrisisParameterForm">
 		    <msh:panel>
 		    	<msh:ifInRole roles="/Policy/Mis/MedCase/Document/External/Medservice/View">
-		            <msh:row>
+					<tr onclick="show${name}DiariesDiv()">
 			        	<msh:checkBox property="${name}ExtLabs" label="Внешние лаб. исследования" fieldColSpan="2"/>
-			        </msh:row>
-		            <msh:row>
+					</tr>
+				<msh:row>
 		            	<td></td>
-				        <td onclick="this.childNodes[1].checked='checked';">
+				        <td onclick="this.childNodes[1].checked='checked';update${name}LabServices();">
 				        	<input type="radio" name="${name}ExtLabsReg" value="1"> перевести в ниж.регистр
 				        </td>
-				        <td onclick="this.childNodes[1].checked='checked';">
+				        <td onclick="this.childNodes[1].checked='checked';update${name}LabServices();">
 				        	<input type="radio" name="${name}ExtLabsReg" checked="checked" value="2"> оставить без изменений
 				        </td>
 			        </msh:row>
 		            <msh:row>
 		            	<td></td>
-				        <td onclick="this.childNodes[1].checked='checked';">
+				        <td onclick="this.childNodes[1].checked='checked';update${name}LabServices();">
 				        	<input type="radio" name="${name}ExtLabsStr" value="1"> в одну строку
 				        </td>
-				        <td onclick="this.childNodes[1].checked='checked';">
+				        <td onclick="this.childNodes[1].checked='checked';update${name}LabServices();">
 				        	<input type="radio" name="${name}ExtLabsStr" checked="checked" value="2"> на отдельные строки
 				        </td>
 			        </msh:row>
 		            <msh:row>
 		                <td></td>
-				        <td onclick="this.childNodes[1].checked='checked';">
+				        <td onclick="this.childNodes[1].checked='checked';update${name}LabServices();">
 				        	<input type="radio" name="${name}ExtLabsDep" value="1"> исп. найстройки по отделению
 				        </td>
-				        <td onclick="this.childNodes[1].checked='checked';">
+				        <td onclick="this.childNodes[1].checked='checked';update${name}LabServices();">
 				        	<input type="radio" name="${name}ExtLabsDep" checked="checked" value="2"> не использовать
 				        </td>
-			        </msh:row>
+					</msh:row>
 		    	</msh:ifInRole>
 			        
 		    	<msh:ifInRole roles="/Policy/Mis/MisLpu/IsNuzMsch">
@@ -83,6 +83,7 @@
 		        <div id='${name}diariesDiv' style='display:none'>
 		        </div></td>
 		        </msh:row>
+				</tr>
 		    </msh:panel>
 		        <msh:row>
 		            <td colspan="6">
@@ -110,11 +111,21 @@
              .replace('&lt;',/</g)
              .replace('&quot;',/"/g);
      }
+     //Отображаем лаб. исследования в нужном виде
+	 var servicesList =[]; // будем хранить дневники здесь
+     function update${name}LabServices() {
+
+	 }
      function show${name}DiariesDiv() {
     	 
      if ($('${name}Diaries').checked) {
-    	 HospitalMedCaseService.getDiariesByHospital($('id').value, {
-    		 callback: function (aResult) {
+     	if (servicesList.length==0) {
+			HospitalMedCaseService.getDiariesByHospital($('id').value, {
+				callback: function (aResult) {
+					servicesList = JSON.parse(aResult);
+					show${name}DiariesDiv();
+				}});
+		} else {
     			 var p = '';
     			 if (aResult!=null&&aResult!='') {
     			 var r=aResult.split('@');
@@ -140,7 +151,7 @@
     		 $('${name}diariesDiv').style.display='block';
 			 $('${name}diariesDiv').innerHTML=p;
     		 }
-    	 });
+    	 }
      } else {
 		 $('${name}diariesDiv').style.display='none';
      }
