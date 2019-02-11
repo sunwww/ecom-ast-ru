@@ -253,7 +253,7 @@
     "/>
     <msh:sectionTitle>${titleInfo}</msh:sectionTitle>
         <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19">
+	    <msh:table name="list" action="javascript:void(0)" idField="1" styleRow="19" escapeSymbols="false">
         <msh:tableButton property="16" buttonFunction="goBioService" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Результат" buttonShortName="Ввод результата" hideIfEmpty="true"/>
 	      <msh:tableButton property="17" buttonFunction="showBioIntakeCancel" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator" buttonName="Брак биоматериала" buttonShortName="Брак" hideIfEmpty="true"/>
 	      <msh:tableColumn columnName="#" property="sn"  />
@@ -340,7 +340,7 @@
 
     </msh:sectionTitle>
     <msh:sectionContent>
-	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply">
+	    <msh:table name="list" action="javascript:void(0)" idField="1" selection="multiply" escapeSymbols="false">
 	     <msh:tableNotEmpty>
 	     <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/IsCheckTransfer">
             <tr>
