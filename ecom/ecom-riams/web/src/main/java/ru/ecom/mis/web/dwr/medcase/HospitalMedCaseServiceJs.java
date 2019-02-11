@@ -260,16 +260,21 @@ public class HospitalMedCaseServiceJs {
 		}
 		return "1" ;
 	}
-	public String getDiariesByHospital(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
+
+	/**Возвращаем список дневников, исследований, лаб. анализов по госпитализации */
+	public String getDiariesByHospital(Long aMedcaseId, String aServiceType, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		StringBuilder res = new StringBuilder();
-		String sql = "select d.id, to_char(d.dateregistration,'dd.MM.yyyy')|| ' ' ||to_char(d.timeregistration,'HH:MI') as dt," +
-			" case when count (mc.id)>0 then list(mc.code||' '||mc.name) ||'\n' else '' end || d.record " +
+		String addSql = "LABSURVEY".equalsIgnoreCase(aServiceType) ? " and vst.code='LABSURVEY'" : "" ;
+		String sql = "select d.id as id, to_char(d.dateregistration,'dd.MM.yyyy') as recordDate"+
+			" ,to_char(d.timeregistration,'HH:MI') as recordTime,"+
+			" list(mc.code) as serviceCode, list(mc.name) as serviceName"+
+			" ,d.record as recordText"+
 			" from medcase sls " +
 			" left join medcase vis on vis.patient_id=sls.patient_id" +
 			" left join medcase servmc on servmc.parent_id=vis.id"+
 			" left join medservice mc on mc.id=servmc.medservice_id" + 
 			" left join diary d on d.medcase_id= vis.id" +
+			" left join VocServiceType vst on vst.id=mc.serviceType_id" +
 			" where sls.id="+aMedcaseId +
 			" and d.dtype='Protocol'" +
 			" and (vis.dtype='Visit' or vis.dtype='HospitalMedCase' or vis.dtype='DepartmentMedCase')" +
@@ -277,16 +282,10 @@ public class HospitalMedCaseServiceJs {
 			" and case when vis.dtype='Visit' and vis.parent_id!=sls.id then (select case when vwf.isNoDiagnosis='1' then '1' else '0' end from medcase v" +
 			" left join workfunction wf on wf.id=v.workfunctionexecute_id" +
 			" left join vocworkfunction vwf on vwf.id=wf.workfunction_id where v.id=vis.id) else '1' end = '1'" +
+			addSql +
 			" group by d.id, d.dateregistration, d.timeregistration, d.record " +
 			" order by d.dateregistration desc, d.timeregistration desc";
-		Collection<WebQueryResult> wqr = service.executeNativeSql(sql);
-		if (!wqr.isEmpty()) {
-			for (WebQueryResult w: wqr) {
-				res.append(w.get1()).append("#").append(w.get2()).append("#").append(w.get3()).append("@");
-			}
-		}
-		
-		return res.length()>0?res.substring(0,res.length()-1):"";
+		return service.executeNativeSqlGetJSON(new String[]{"id", "recordDate","recordTime","serviceCode","serviceName","recordText"}, sql,null);
 	}
 	
 	public String getPrefixByProtocol(Long aDiaryId,HttpServletRequest aRequest) throws NamingException {

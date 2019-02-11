@@ -50,8 +50,8 @@ public class MedService extends BaseEntity{
 	private Boolean theIsForLabDoctor;
 	
 	
-	/** Справочная услуга */
-	@Comment("Справочная услуга")
+	/** Медицинская услуга по справочнику V001 */
+	@Comment("Медицинская услуга по справочнику V001")
 	@OneToOne
 	public VocMedService getVocMedService() {return theVocMedService;}
 	public void setVocMedService(VocMedService aVocMedService) {theVocMedService = aVocMedService;}

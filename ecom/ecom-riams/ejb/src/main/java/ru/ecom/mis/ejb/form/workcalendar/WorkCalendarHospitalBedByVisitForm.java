@@ -17,7 +17,6 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz = WorkCalendarHospitalBed.class)
 @Comment("Предварительная госпитализация")
 @WebTrail(comment = "Предварительная госпитализация", nameProperties= "id"
-//, list="stac_planning_hospitalizations.do"
 , view="entityView-stac_planHospitalByVisit.do")
 @Parent(property="visit", parentForm=MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Planning")
@@ -27,7 +26,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ACreateInterceptors(
 		@AEntityFormInterceptor(WorkCalendarHospitalBedSave.class)
 )
-public class WorkCalendarHospitalBedByVisitForm extends WorkCalendarHospitalBedForm{
+public class WorkCalendarHospitalBedByVisitForm extends WorkCalendarHospitalBedForm {
 
 	/** Отделение */
 	@Comment("Отделение")

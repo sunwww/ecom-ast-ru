@@ -1,13 +1,5 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
-import java.sql.Date;
-import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -24,6 +16,13 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocSex;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.sql.Date;
+import java.sql.Time;
 
 @Entity
 @Table(schema="SQLUser")
@@ -248,13 +247,19 @@ public class WorkCalendarHospitalBed extends BaseEntity {
 	public MisLpu getOrderLpu() {
 		return theOrderLpu;
 	}
-
 	public void setOrderLpu(MisLpu aOrderLpu) {
 		theOrderLpu = aOrderLpu;
 	}
-
 	/** Откуда направление */
 	private MisLpu theOrderLpu;
+
+	/** ЛПУ куда направляется */
+	@Comment("ЛПУ куда направляется")
+	@OneToOne
+	public MisLpu getDirectLpu() {return theDirectLpu;}
+	public void setDirectLpu(MisLpu aDirectLpu) {theDirectLpu = aDirectLpu;}
+	/** ЛПУ куда направляется */
+	private MisLpu theDirectLpu ;
 	
 	/** Показания для госпитализации */
 	@Comment("Показания для госпитализации")

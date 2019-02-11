@@ -138,11 +138,10 @@ public class ApiRecordServiceBean implements IApiRecordService {
             wct.setCreateTimePreRecord(currentTime);
             if (patient!=null) {
                 wct.setPrePatient(patient);
-                recordLogInfo.append(". Пациент ").append(patient.getPatientInfo());
             } else {
                 wct.setPrePatientInfo(prePatientInfo.toUpperCase());
-                recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             }
+            recordLogInfo.append(". Пациент ").append(prePatientInfo.toUpperCase());
             wct.setPatientComment(aComment);
             recordLogInfo.append(".Создана предварительная запись");
             LOG.info("RECORD_MAKE!!!");

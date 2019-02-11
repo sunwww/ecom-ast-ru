@@ -678,7 +678,7 @@ private Boolean isCheckIsRunning = false;
                 }
 
                 boolean isCancer = isNotNull(currentEntry.getIsCancer());
-                if (isCancer && currentEntry.getMedHelpProfile().getCode().equals("12")) {isCancer=false;} //Убрать колхоз
+         //       if (isCancer && currentEntry.getMedHelpProfile().getCode().equals("12")) {isCancer=false;} //Убрать колхоз
                 if (isCancer && currentEntry.getVisitPurpose()!=null && "1.3".equals(currentEntry.getVisitPurpose().getCode())) {isCancer=false;}
                 E2CancerEntry cancerEntry = null;
                 if (isCancer && !currentEntry.getCancerEntries().isEmpty()) {
@@ -777,9 +777,9 @@ private Boolean isCheckIsRunning = false;
                             return null;
                         }
                         onkSl=add(onkSl,"STAD",cancerEntry.getStage());
-                        onkSl=add(onkSl,"ONK_T",cancerEntry.getTumor());
-                        onkSl=add(onkSl,"ONK_N",cancerEntry.getNodus());
-                        onkSl=add(onkSl,"ONK_M",cancerEntry.getMetastasis());
+                        onkSl=addIfNotNull(onkSl,"ONK_T",cancerEntry.getTumor());
+                        onkSl=addIfNotNull(onkSl,"ONK_N",cancerEntry.getNodus());
+                        onkSl=addIfNotNull(onkSl,"ONK_M",cancerEntry.getMetastasis());
                         onkSl=addIfNotNull(onkSl,"MTSTZ",cancerEntry.getIsMetastasisFound());
                         onkSl=addIfNotNull(onkSl,"SOD",cancerEntry.getSod());
                         List<E2CancerDiagnostic> directions= cancerEntry.getDiagnostics();

@@ -47,6 +47,9 @@
         <msh:row>
         	<msh:autoComplete property="orderLpu" label="Направлен из ЛПУ" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
         </msh:row>
+          <msh:row>
+              <msh:autoComplete property="directLpu" label="Направлен в" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
+          </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" horizontalFill="true"/>
         </msh:row>

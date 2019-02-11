@@ -180,17 +180,17 @@ public class ApiRecordResource {
         //    String debug = getJsonField(root,"debug");
             String token = getJsonField(root,"token");
             String annul = getJsonField(root,"annul");
-            JSONObject list;
+            String list;
 
             ApiUtil.init(aRequest,token);
             IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
             if (!StringUtil.isNullOrEmpty(annul)) {
-                list = new JSONObject(new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service));
+                list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
             } else {
                 String recordInfo = ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
                 if (recordInfo == null) {
                     list=new JSONObject(ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD"));
-                } else { //Записали успешно, пишем файл
+                } /*else { //Записали успешно, пишем файл
                     list = new JSONObject(recordInfo);
                     if (!list.has("error_code")) {
                         String medcaseID = getJsonField(list, "medcaseId");
@@ -210,7 +210,7 @@ public class ApiRecordResource {
                             service.saveFile(filename, fileContent);
                         }
                     }
-                }
+                } */
             }
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) обработан, вот ответ: "+list); //debug
             list.put("requestId",requestId);

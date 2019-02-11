@@ -182,18 +182,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
      <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.id}"
      	action='/javascript:initSelectPrinter("print-preghistory.do?s=HospitalPrintService&amp;m=printPregHistoryByMC&id=${param.id}",1)' 
      	name="Истории родов" title="Печать истории родов"/>
-		
 </msh:sideMenu>
-
 <msh:sideMenu>
-    	
-    	
-    	
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit" 
+    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
     	name="Выписка &larr;"   params="id"  action='/entityParentEdit-stac_sslDischarge'  
     	key='Alt+9' title='Выписка' styleId="stac_sslDischarge" />
-
-    <msh:sideLink roles="/Policy/Stac/ExpOmcService/Show" name="Цена по ОМС"   params="slsId"  action='/viewCalcPriceResultSls' title='Результат определения цены'/>  
 
         <msh:sideLink styleId="viewShort" action="/javascript:getDefinition('entityParentList-stac_deathCase.do?short=Short&id=${param.id}','.do')" name='Случай смерти' title="Просмотр случая смерти"
         	roles="/Policy/Mis/MedCase/DeathCase/View" />
@@ -202,7 +195,11 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
 		params="id"  action='/entityParentList-stac_birthCase' title='Просмотр случая рождения'
 		styleId="stac_birthCase"
 		/>
-<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Delete;/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin" 
+		<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/View"  name="Направления на госпитализацию"
+		params="id"  action='/entityParentList-smo_planHospitalByHosp' title='Список направлений на госпитализацию'
+		styleId="smo_planHospitalByHosp"
+		/>
+<msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Delete;/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin"
     	name="Удалить"   params="id"  action="/entityParentDeleteGoParentView-stac_ssl"  
     	key='ALT+DEL' title='Удалить' confirm="Удалить?" />
 </msh:sideMenu>
