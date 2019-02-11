@@ -18,7 +18,10 @@ public class ApiRecordUtil {
 
     /** Формируем json с ошибкой */
     public static String getErrorJson(String aReasonText, String aCode) {
-        String err = createJson(null,null,aCode,aReasonText);
+            return getErrorJsonObj(aReasonText, aCode).toString();
+    }
+    public static JSONObject getErrorJsonObj(String aReasonText, String aCode) {
+        JSONObject err = createJson(null,null,aCode,aReasonText);
         LOG.error("ERROR_JSON "+err);
             return err;
     }
@@ -267,14 +270,14 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
         sql.append(" having count(wct.id)>0");
         if (aOrderBy!=null) {sql.append(" order by ").append(aOrderBy);}
         String jsonData = aService.executeNativeSqlGetJSON(aJsonFields,sql.toString(),aMaxResult);
-        return createJson("data",jsonData);
+        return createJson("data",jsonData).toString();
     }
 
-    public static String createJson(String aElementName, String aJsonData) {
+    public static JSONObject createJson(String aElementName, String aJsonData) {
         return createJson(aElementName,aJsonData,null,null);
 
     }
-    public static String createJson(String aElementName, String aJsonData, String aErrorCode, String aErrorName) {
+    public static JSONObject createJson(String aElementName, String aJsonData, String aErrorCode, String aErrorName) {
         JSONObject ret = new JSONObject();
         if (aElementName!=null) {
             ret.put(aElementName, aJsonData!=null ? new JSONArray(aJsonData) : new JSONArray());
@@ -284,6 +287,6 @@ public static String recordPatient(Long aCalendarTimeId, String aPatientLastname
             ret.put("error_code",aErrorCode);
             ret.put("error_name",aErrorName);
        }
-        return ret.toString();
+        return ret;
     }
 }

@@ -167,7 +167,7 @@ public class ApiRecordResource {
             if (requestId!=null) LOG.info("Запрос №"+requestId+" (makeRecordOrAnnul) получен :"+root); //debug
             String calendarId = getJsonField(root,"calendarTime_id");
             if (calendarId==null ||"".equals(calendarId)) {
-                return new JSONObject(ApiRecordUtil.getErrorJson("NO_CALENDARTIME","Не указано время записи"));
+                return ApiRecordUtil.getErrorJsonObj("NO_CALENDARTIME","Не указано время записи");
             }
             Long calendarTimeId = Long.valueOf(calendarId);
             String lastname = getJsonField(root,"lastname");
@@ -180,16 +180,18 @@ public class ApiRecordResource {
         //    String debug = getJsonField(root,"debug");
             String token = getJsonField(root,"token");
             String annul = getJsonField(root,"annul");
-            String list;
+            JSONObject list;
 
             ApiUtil.init(aRequest,token);
             IApiRecordService service =Injection.find(aRequest).getService(IApiRecordService.class);
             if (!StringUtil.isNullOrEmpty(annul)) {
-                list = new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service);
+                list = new JSONObject(new ApiRecordUtil().annulRecord(calendarTimeId,lastname,firstname,middlename, (birthday!=null?DateFormat.parseSqlDate(birthday,"yyyy-MM-dd"):null),patientGUID,service));
             } else {
                 String recordInfo = ApiRecordUtil.recordPatient(calendarTimeId,lastname,firstname,middlename,(birthday!=null ? DateFormat.parseSqlDate(birthday,"yyyy-MM-dd") : null) ,patientGUID ,patientComment ,patientPhone ,service);
                 if (recordInfo == null) {
-                    list=new JSONObject(ApiRecordUtil.getErrorJson("No make record","ERROR_RECORD"));
+                    list=ApiRecordUtil.getErrorJsonObj("No make record","ERROR_RECORD");
+                } else {
+                    list = new JSONObject(recordInfo);
                 } /*else { //Записали успешно, пишем файл
                     list = new JSONObject(recordInfo);
                     if (!list.has("error_code")) {
@@ -216,21 +218,19 @@ public class ApiRecordResource {
             list.put("requestId",requestId);
             return list;
         } catch (Exception e) {
-            e.printStackTrace();
-            String ret =ApiRecordUtil.getErrorJson(e.getLocalizedMessage(),e.toString());
-            System.out.println("ERRR, ROOT = "+root.toString());
-            System.out.println(ret);
-            return new JSONObject(ret);
+            JSONObject ret =ApiRecordUtil.getErrorJsonObj(e.getLocalizedMessage(),e.toString());
+            LOG.error("ERROR, We GET = "+root.toString()+", WE SEND = "+ret,e);
+            return ret;
         }
     }
 
     private <T>T getJsonField(JSONObject obj, String aProperty) {
         if (obj.has(aProperty)) {
             try {
-                Object o = obj.get(aProperty)!=null&&!obj.get(aProperty).equals("")?obj.get(aProperty):null;
+                Object o = obj.get(aProperty)!=null && !obj.get(aProperty).equals("") ? obj.get(aProperty) : null;
                 return (T) o;
             } catch (JSONException e) {
-                e.printStackTrace();
+                LOG.error(e);
             }
         }
         return null;
