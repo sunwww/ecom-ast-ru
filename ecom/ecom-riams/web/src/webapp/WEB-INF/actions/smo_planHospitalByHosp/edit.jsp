@@ -45,18 +45,14 @@
         	<msh:separator label="Параметры госпитализации" colSpan="4"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="orderLpu" label="Направлен" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
+        	<msh:autoComplete property="orderLpu" label="Направлен из" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
+        </msh:row>
+        <msh:row>
+        	<msh:autoComplete property="directLpu" label="Направлен в" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
         </msh:row>
         <msh:row>
         	<msh:autoComplete vocName="vocServiceStream" property="serviceStream" label="Поток обслуживания" horizontalFill="true"/>
-        	
          </msh:row>
-        
-          
-       <%--
-        <msh:row>
-        	<msh:autoComplete property="department" label="Куда направлен" fieldColSpan="3" horizontalFill="true" vocName="mainLpu"/>
-        </msh:row> --%>
         <msh:row>
         	<msh:autoComplete property="bedType" label="Профиль коек" fieldColSpan="3" horizontalFill="true" vocName="vocBedType"/>
         </msh:row>

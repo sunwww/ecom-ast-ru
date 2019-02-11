@@ -16,7 +16,7 @@ public class WorkCalendarHospitalBedSave implements IFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		WorkCalendarHospitalBedForm form = (WorkCalendarHospitalBedForm)aForm ;
 		WorkCalendarHospitalBed hospitalBed = (WorkCalendarHospitalBed) aEntity;
-		if (form.getInternalCode()==null||form.getInternalCode().equals("")){//Генерация номера направления
+		if (form.getInternalCode()==null || form.getInternalCode().equals("")){//Генерация номера направления
 			EntityManager manager = aContext.getEntityManager();
 			String defaultLpuId = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU",null,manager);
 			if (defaultLpuId!=null) {
@@ -25,13 +25,13 @@ public class WorkCalendarHospitalBedSave implements IFormInterceptor {
 				if (list!=null) { //Есть код
 					String code = list.get(0).toString();
 					SequenceHelper sequenceHelper = SequenceHelper.getInstance();
-					String number= sequenceHelper.startUseNextValueNoCheck("OMC#DIRECTIONID#"+code,"",manager);
-					while (number.length()<6){
-						number="0"+number;
+					StringBuilder number= new StringBuilder().append(sequenceHelper.startUseNextValueNoCheck("OMC#DIRECTIONID#"+code,"",manager));
+					if (number.length()<6){
+						number.insert(0,"00000".substring(0,6-number.length())); //="0"+number;
 					}
-					code +=number;
-					form.setInternalCode(code);
-					hospitalBed.setInternalCode(code);
+					number.insert(0,code);
+					form.setInternalCode(number.toString());
+					hospitalBed.setInternalCode(number.toString());
 					manager.persist(hospitalBed);
 				}
 			}

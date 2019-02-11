@@ -13,7 +13,6 @@ import java.util.List;
 
 public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
-    	
     	WorkCalendarHospitalBedForm form = (WorkCalendarHospitalBedForm)aForm ;
         Date date = new Date();
         String username = aContext.getSessionContext().getCallerPrincipal().toString() ;
@@ -23,11 +22,13 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
         EntityManager manager = aContext.getEntityManager();
         //MedCase parent = manager.find(MedCase.class, aParentId) ;
         List<Object[]> list= manager.createNativeQuery("select mkb.code,d.name,mkb.id,mc.serviceStream_id,mc.patient_id,to_char(mc.dateFinish,'dd.mm.yyyy') as datefin,mc.moveToAnotherLPU_id "
-        		+" ,(select max(slo.ownerFunction_Id) from medcase slo where slo.parent_id=mc.id and mc.datefinish is not null and upper(slo.dtype)='DEPARTMENTMEDCASE') as wf "
+        		+" ,(select max(slo.ownerFunction_Id) from medcase slo where slo.parent_id=mc.id and slo.datefinish is not null and slo.dtype='DepartmentMedCase') as wf " +
+				" , coalesce(p.phone,'') as f9_phone"
         		+" from MedCase mc "
+				+" left join patient p on p.id=mc.patient_id"
         		+" left join Diagnosis d on mc.id=d.medCase_id "
         		+" left join VocIdc10 mkb on mkb.id=d.idc10_id "
-        		+" where mc.id='"+aParentId+"' order by d.id").getResultList() ;
+        		+" where mc.id=:parentId order by d.id").setParameter("parentId",aParentId).getResultList() ;
         StringBuilder res = new StringBuilder() ; 
         boolean isFirst = true ;
         for (Object[] obj:list) {
@@ -38,11 +39,12 @@ public class WorkCalendarHospitalBedCreate  implements IParentFormInterceptor {
         		form.setDateFrom(ConvertSql.parseString(obj[5],true)) ;
         		form.setOrderLpu(ConvertSql.parseLong(obj[6])) ;
         		form.setWorkFunction(ConvertSql.parseLong(obj[7])) ;
+        		form.setPhone(obj[8].toString());
+        		isFirst=false;
         	}
         	res.append(obj[0]).append(". ").append(obj[1]).append("\n") ;
         }
         form.setDiagnosis(res.toString()) ;
-        list.clear() ;
         if (form.getWorkFunction()==null){
 	    	list = manager.createNativeQuery("select wf.id as wfid,su.id as suid " 
 	    			+ " from SecUser su " 
